@@ -65,7 +65,7 @@ public:
     virtual void suspendPendingRequests() = 0;
     virtual void resumePendingRequests() = 0;
 
-    using PingLoadCompletionHandler = WTF::Function<void(const ResourceError&)>;
+    using PingLoadCompletionHandler = WTF::Function<void(const ResourceError&, const ResourceResponse&)>;
     virtual void startPingLoad(Frame&, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions&, PingLoadCompletionHandler&& = { }) = 0;
 
     using PreconnectCompletionHandler = WTF::Function<void(const ResourceError&)>;

@@ -44,7 +44,7 @@ public:
         No,
     };
     
-    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects, WTF::CompletionHandler<void(const ResourceError&)>&& completionHandler)
+    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects, WTF::CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
         : m_currentRequest(request)
         , m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
         , m_shouldUseCredentialStorage(shouldUseCredentialStorage)
@@ -73,7 +73,7 @@ private:
         }
         pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Not allowed to follow redirects"), ResourceError::Type::AccessControl });
     }
-    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) final { pingLoadComplete(); }
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&& response) final { pingLoadComplete({ }, response); }
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) final { pingLoadComplete(); }
     void didFinishLoading(ResourceHandle*) final { pingLoadComplete(); }
     void didFail(ResourceHandle*, const ResourceError& error) final { pingLoadComplete(error); }
@@ -81,10 +81,10 @@ private:
     bool usesAsyncCallbacks() final { return m_usesAsyncCallbacks == UsesAsyncCallbacks::Yes; }
     void timeoutTimerFired() { pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Load timed out"), ResourceError::Type::Timeout }); }
 
-    void pingLoadComplete(const ResourceError& error = { })
+    void pingLoadComplete(const ResourceError& error = { }, const ResourceResponse& response = { })
     {
         if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
-            completionHandler(error);
+            completionHandler(error, response);
         delete this;
     }
 
@@ -104,7 +104,7 @@ private:
     bool m_shouldUseCredentialStorage;
     bool m_shouldFollowRedirects;
     UsesAsyncCallbacks m_usesAsyncCallbacks;
-    WTF::CompletionHandler<void(const ResourceError&)> m_completionHandler;
+    WTF::CompletionHandler<void(const ResourceError&, const ResourceResponse&)> m_completionHandler;
 };
 
 } // namespace WebCore

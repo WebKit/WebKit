@@ -32,6 +32,7 @@
 #include "config.h"
 #include "InspectorInstrumentation.h"
 
+#include "CachedResource.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "Database.h"
@@ -560,9 +561,13 @@ void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrume
         networkAgent->willSendRequest(identifier, *loader, request, redirectResponse);
 }
 
-void InspectorInstrumentation::continueAfterPingLoaderImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& response)
+void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
 {
-    willSendRequestImpl(instrumentingAgents, identifier, loader, request, response);
+    if (!loader)
+        return;
+
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->willSendRequestOfType(identifier, *loader, request, loadType);
 }
 
 void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource)

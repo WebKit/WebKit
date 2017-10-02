@@ -1,3 +1,24 @@
+2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include Beacon and Ping requests in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=177641
+        <rdar://problem/33086839>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/inspector/network/beacon-type-expected.txt: Added.
+        * http/tests/inspector/network/beacon-type.html: Added.
+        * http/tests/inspector/network/ping-type-expected.txt: Added.
+        * http/tests/inspector/network/ping-type.html: Added.
+        * http/tests/inspector/network/resources/beacon.php: Added.
+        * http/tests/inspector/network/resources/ping.php: Added.
+        Test for Beacon and Ping resource loads.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip beacon tests where beacon is not supported.
+
 2017-10-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         Mark imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker.html as slow

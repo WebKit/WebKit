@@ -3680,6 +3680,7 @@ webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFa
 
 # Beacon is not supported on WK1.
 http/tests/blink/sendbeacon/ [ Skip ]
+http/tests/inspector/network/beacon-type.html [ Skip ]
 http/wpt/beacon/ [ Skip ]
 imported/blink/fast/beacon/ [ Skip ]
 imported/w3c/web-platform-tests/beacon/ [ Skip ]

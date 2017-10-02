@@ -37,22 +37,23 @@
 #include "FrameLoaderClient.h"
 #include "HTTPHeaderNames.h"
 #include "InspectorInstrumentation.h"
-#include "URL.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "PlatformStrategies.h"
+#include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SubresourceLoader.h"
+#include "URL.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 #if USE(QUICK_LOOK)
 #include "QuickLook.h"
@@ -270,12 +271,22 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         if (shouldUsePingLoad(type())) {
             ASSERT(m_originalRequestHeaders);
             CachedResourceHandle<CachedResource> protectedThis(this);
-            platformStrategies()->loaderStrategy()->startPingLoad(frame, request, *m_originalRequestHeaders, m_options, [this, protectedThis = WTFMove(protectedThis)] (const ResourceError& error) {
-                if (error.isNull())
+
+            // FIXME: Move beacon loads to normal subresource loading to get normal inspector request instrumentation hooks.
+            unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
+            InspectorInstrumentation::willSendRequestOfType(&frame, identifier, frameLoader.activeDocumentLoader(), request, InspectorInstrumentation::LoadType::Beacon);
+
+            platformStrategies()->loaderStrategy()->startPingLoad(frame, request, *m_originalRequestHeaders, m_options, [this, protectedThis = WTFMove(protectedThis), protectedFrame = makeRef(frame), identifier] (const ResourceError& error, const ResourceResponse& response) {
+                if (!response.isNull())
+                    InspectorInstrumentation::didReceiveResourceResponse(protectedFrame, identifier, protectedFrame->loader().activeDocumentLoader(), response, nullptr);
+                if (error.isNull()) {
                     finishLoading(nullptr);
-                else {
+                    NetworkLoadMetrics emptyMetrics;
+                    InspectorInstrumentation::didFinishLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, emptyMetrics, nullptr);
+                } else {
                     setResourceError(error);
                     this->error(LoadError);
+                    InspectorInstrumentation::didFailLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, error);
                 }
             });
             return;

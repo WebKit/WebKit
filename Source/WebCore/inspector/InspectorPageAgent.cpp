@@ -101,7 +101,7 @@ static bool hasTextContent(CachedResource* cachedResource)
     // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
     // We should not assume XHR / Fetch have text content.
 
-    InspectorPageAgent::ResourceType type = InspectorPageAgent::cachedResourceType(*cachedResource);
+    InspectorPageAgent::ResourceType type = InspectorPageAgent::inspectorResourceType(*cachedResource);
     return type == InspectorPageAgent::DocumentResource
         || type == InspectorPageAgent::StylesheetResource
         || type == InspectorPageAgent::ScriptResource
@@ -263,6 +263,10 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJson(Ins
         return Inspector::Protocol::Page::ResourceType::XHR;
     case FetchResource:
         return Inspector::Protocol::Page::ResourceType::Fetch;
+    case PingResource:
+        return Inspector::Protocol::Page::ResourceType::Ping;
+    case BeaconResource:
+        return Inspector::Protocol::Page::ResourceType::Beacon;
     case WebSocketResource:
         return Inspector::Protocol::Page::ResourceType::WebSocket;
     case OtherResource:
@@ -271,9 +275,9 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJson(Ins
     return Inspector::Protocol::Page::ResourceType::Other;
 }
 
-InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const CachedResource& cachedResource)
+InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(CachedResource::Type type)
 {
-    switch (cachedResource.type()) {
+    switch (type) {
     case CachedResource::ImageResource:
         return InspectorPageAgent::ImageResource;
 #if ENABLE(SVG_FONTS)
@@ -290,9 +294,19 @@ InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const Ca
         return InspectorPageAgent::ScriptResource;
     case CachedResource::MainResource:
         return InspectorPageAgent::DocumentResource;
+    case CachedResource::Beacon:
+        return InspectorPageAgent::BeaconResource;
     case CachedResource::MediaResource:
     case CachedResource::Icon:
-    case CachedResource::RawResource: {
+    case CachedResource::RawResource:
+    default:
+        return InspectorPageAgent::OtherResource;
+    }
+}
+
+InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(const CachedResource& cachedResource)
+{
+    if (cachedResource.type() == CachedResource::RawResource) {
         switch (cachedResource.resourceRequest().requester()) {
         case ResourceRequest::Requester::Fetch:
             return InspectorPageAgent::FetchResource;
@@ -302,15 +316,13 @@ InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const Ca
             return InspectorPageAgent::XHRResource;
         }
     }
-    default:
-        break;
-    }
-    return InspectorPageAgent::OtherResource;
+
+    return inspectorResourceType(cachedResource.type());
 }
 
 Inspector::Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJson(const CachedResource& cachedResource)
 {
-    return resourceTypeJson(cachedResourceType(cachedResource));
+    return resourceTypeJson(inspectorResourceType(cachedResource));
 }
 
 RefPtr<TextResourceDecoder> InspectorPageAgent::createTextDecoder(const String& mimeType, const String& textEncodingName)

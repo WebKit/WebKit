@@ -502,9 +502,9 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         let frame = this.frameForIdentifier(frameIdentifier);
         if (frame) {
             // This is a new request for an existing frame, which might be the main resource or a new resource.
-            if (frame.mainResource.url === url && frame.loaderIdentifier === loaderIdentifier)
+            if (type === PageAgent.ResourceType.Document && frame.mainResource.url === url && frame.loaderIdentifier === loaderIdentifier)
                 resource = frame.mainResource;
-            else if (frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === loaderIdentifier)
+            else if (type === PageAgent.ResourceType.Document && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === loaderIdentifier)
                 resource = frame.provisionalMainResource;
             else {
                 resource = new WI.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
@@ -674,7 +674,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
             // The main resource is included as a resource. We can skip it since we already created
             // a main resource when we created the Frame. The resource payload does not include anything
             // didn't already get from the frame payload.
-            if (resourcePayload.type === "Document" && resourcePayload.url === payload.frame.url)
+            if (resourcePayload.type === PageAgent.ResourceType.Document && resourcePayload.url === payload.frame.url)
                 continue;
 
             var resource = this._createResource(resourcePayload, payload);

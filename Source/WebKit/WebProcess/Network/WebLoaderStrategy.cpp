@@ -355,7 +355,7 @@ void WebLoaderStrategy::networkProcessCrashed()
 
     auto pingLoadCompletionHandlers = WTFMove(m_pingLoadCompletionHandlers);
     for (auto& pingLoadCompletionHandler : pingLoadCompletionHandlers.values())
-        pingLoadCompletionHandler(internalError(URL()));
+        pingLoadCompletionHandler(internalError(URL()), { });
 
     auto preconnectCompletionHandlers = WTFMove(m_preconnectCompletionHandlers);
     for (auto& preconnectCompletionHandler : preconnectCompletionHandlers.values())
@@ -409,7 +409,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     auto* networkingContext = frame.loader().networkingContext();
     if (!networkingContext) {
         if (completionHandler)
-            completionHandler(internalError(request.url()));
+            completionHandler(internalError(request.url()), { });
         return;
     }
 
@@ -421,7 +421,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     auto* document = frame.document();
     if (!document) {
         if (completionHandler)
-            completionHandler(internalError(request.url()));
+            completionHandler(internalError(request.url()), { });
         return;
     }
     
@@ -457,10 +457,10 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(WTFMove(loadParameters), originalRequestHeaders), 0);
 }
 
-void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceError&& error)
+void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceError&& error, ResourceResponse&& response)
 {
     if (auto completionHandler = m_pingLoadCompletionHandlers.take(pingLoadIdentifier))
-        completionHandler(WTFMove(error));
+        completionHandler(WTFMove(error), WTFMove(response));
 }
 
 void WebLoaderStrategy::preconnectTo(NetworkingContext& context, const WebCore::URL& url, StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)

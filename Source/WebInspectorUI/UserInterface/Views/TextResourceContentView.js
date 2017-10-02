@@ -208,6 +208,9 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
         this._codeCoverageButtonNavigationItem.enabled = this._textEditor.canShowCoverageHints();
         this._codeCoverageButtonNavigationItem.activated = WI.enableControlFlowProfilerSetting.value;
+
+        if (!this._textEditor.string)
+            this.showMessage(WI.UIString("Resource has no content"));
     }
 
     _togglePrettyPrint(event)

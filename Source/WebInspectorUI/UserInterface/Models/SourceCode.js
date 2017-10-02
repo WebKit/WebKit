@@ -197,7 +197,7 @@ WI.SourceCode = class SourceCode extends WI.Object
         var content = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
         var error = parameters.error;
         if (parameters.base64Encoded)
-            content = decodeBase64ToBlob(content, this.mimeType);
+            content = content ? decodeBase64ToBlob(content, this.mimeType) : "";
 
         var revision = this.revisionForRequestedContent;
 

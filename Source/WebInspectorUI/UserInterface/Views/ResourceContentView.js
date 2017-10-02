@@ -86,6 +86,12 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         this._contentError(WI.UIString("An error occurred trying to load the resource."));
     }
 
+    showMessage(message)
+    {
+        this.element.removeChildren();
+        this.element.appendChild(WI.createMessageTextView(message));
+    }
+
     addIssue(issue)
     {
         // This generically shows only the last issue, subclasses can override for better handling.

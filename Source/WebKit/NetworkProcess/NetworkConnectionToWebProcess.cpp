@@ -240,8 +240,8 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResource
 
 void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loadParameters, HTTPHeaderMap&& originalRequestHeaders)
 {
-    auto completionHandler = [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] (const ResourceError& error) {
-        didFinishPingLoad(identifier, error);
+    auto completionHandler = [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] (const ResourceError& error, const ResourceResponse& response) {
+        didFinishPingLoad(identifier, error, response);
     };
 
 #if USE(NETWORK_SESSION)
@@ -256,12 +256,12 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
 #endif
 }
 
-void NetworkConnectionToWebProcess::didFinishPingLoad(uint64_t pingLoadIdentifier, const ResourceError& error)
+void NetworkConnectionToWebProcess::didFinishPingLoad(uint64_t pingLoadIdentifier, const ResourceError& error, const ResourceResponse& response)
 {
     if (!m_connection->isValid())
         return;
 
-    m_connection->send(Messages::NetworkProcessConnection::DidFinishPingLoad(pingLoadIdentifier, error), 0);
+    m_connection->send(Messages::NetworkProcessConnection::DidFinishPingLoad(pingLoadIdentifier, error, response), 0);
 }
 
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)

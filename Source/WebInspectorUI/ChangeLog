@@ -1,3 +1,47 @@
+2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include Beacon and Ping requests in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=177641
+        <rdar://problem/33086839>
+
+        Reviewed by Chris Dumez.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings for Beacon/Ping.
+
+        * UserInterface/Images/Beacon.svg: Added.
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon.resource-type-ping .icon,):
+        (body:not(.mac-platform, .windows-platform) .resource-icon.resource-type-ping .icon,):
+        (body:not(.mac-platform, .windows-platform) .large .resource-icon.resource-type-ping .icon,):
+        New icon for Beacon/Ping. They share an icon since they are similiar in concept:
+        a request that is sent and the page doesn't expect a response.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WI.FrameResourceManager.prototype._addNewResourceToFrameOrTarget):
+        When a sub-resource and a main-resource have the same URL we were not
+        distinguishing them. Use the resource type to distinguish them better.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype._processContent):
+        Safer handling if the body was base64 encoded but an empty string.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.displayNameForType):
+        * UserInterface/Models/ResourceCollection.js:
+        (WI.ResourceCollection.verifierForType):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.shortDisplayNameForResourceType):
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WI.ResourceClusterContentView.prototype.get responseContentView):
+        New resource types.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype.showMessage):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype._contentDidPopulate):
+        Nicer display for empty content, which may be common for these requests.
+
 2017-09-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: support undo/redo of manual edits

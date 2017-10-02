@@ -1,3 +1,52 @@
+2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include Beacon and Ping requests in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=177641
+        <rdar://problem/33086839>
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/tests/inspector/network/beacon-type.html
+               http/tests/inspector/network/ping-type.html
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        Fix a typo.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::startPingLoad):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        Include InspectorInstrumentation hooks for ping network loads.
+
+        * loader/LoaderStrategy.h:
+        * platform/network/PingHandle.h:
+        Include an optional ResourceResponse in the ping load completion callback.
+        If available this will be enough for Web Inspector to include details such
+        as the response statusCode.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willSendRequestOfTypeImpl):
+        (WebCore::InspectorInstrumentation::continueAfterPingLoaderImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willSendRequestOfType):
+        (WebCore::InspectorInstrumentation::continueAfterPingLoader): Deleted.
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::resourceTypeForCachedResource):
+        (WebCore::resourceTypeForLoadType):
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        (WebCore::InspectorNetworkAgent::willSendRequestOfType):
+        * inspector/InspectorNetworkAgent.h:
+        Make a general willSendRequestOfType hook when sending a request that does
+        not go through normal CachedResource loading. The Ping and Beacon requests
+        go through this process, we may also use this path for Preflight requests.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::resourceTypeJson):
+        (WebCore::InspectorPageAgent::cachedResourceType):
+        * inspector/InspectorPageAgent.h:
+        Small refactoring.
+
 2017-10-02  Zalan Bujtas  <zalan@apple.com>
 
         SelectionRangeData should not hold raw RenderObject pointers

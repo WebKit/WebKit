@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include "InspectorInstrumentation.h"
+#include "InspectorPageAgent.h"
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
@@ -49,7 +51,6 @@ class CachedResource;
 class Document;
 class DocumentLoader;
 class DocumentThreadableLoader;
-class InspectorPageAgent;
 class NetworkLoadMetrics;
 class NetworkResourcesData;
 class ResourceError;
@@ -76,6 +77,7 @@ public:
     void willRecalculateStyle();
     void didRecalculateStyle();
     void willSendRequest(unsigned long identifier, DocumentLoader&, ResourceRequest&, const ResourceResponse& redirectResponse);
+    void willSendRequestOfType(unsigned long identifier, DocumentLoader&, ResourceRequest&, InspectorInstrumentation::LoadType);
     void didReceiveResponse(unsigned long identifier, DocumentLoader&, const ResourceResponse&, ResourceLoader*);
     void didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     void didFinishLoading(unsigned long identifier, DocumentLoader&, const NetworkLoadMetrics&, ResourceLoader*);
@@ -114,6 +116,8 @@ public:
 
 private:
     void enable();
+
+    void willSendRequest(unsigned long identifier, DocumentLoader&, ResourceRequest&, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType);
 
     WebSocket* webSocketForRequestId(const String& requestId);
 

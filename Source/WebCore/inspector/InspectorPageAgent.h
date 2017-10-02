@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "CachedResource.h"
 #include "InspectorWebAgentBase.h"
 #include "LayoutRect.h"
 #include <inspector/InspectorBackendDispatchers.h>
@@ -45,7 +46,6 @@ class InspectorObject;
 
 namespace WebCore {
 
-class CachedResource;
 class DocumentLoader;
 class Frame;
 class InspectorClient;
@@ -73,6 +73,8 @@ public:
         ScriptResource,
         XHRResource,
         FetchResource,
+        PingResource,
+        BeaconResource,
         WebSocketResource,
         OtherResource,
     };
@@ -84,7 +86,8 @@ public:
 
     static CachedResource* cachedResource(Frame*, const URL&);
     static Inspector::Protocol::Page::ResourceType resourceTypeJson(ResourceType);
-    static ResourceType cachedResourceType(const CachedResource&);
+    static ResourceType inspectorResourceType(CachedResource::Type);
+    static ResourceType inspectorResourceType(const CachedResource&);
     static Inspector::Protocol::Page::ResourceType cachedResourceTypeJson(const CachedResource&);
     static RefPtr<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
 

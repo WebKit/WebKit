@@ -43,7 +43,6 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
-#include "InspectorPageAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSMainThreadExecState.h"
@@ -181,7 +180,7 @@ void InspectorNetworkAgent::willDestroyFrontendAndBackend(Inspector::DisconnectR
 static Ref<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
 {
     Ref<InspectorObject> headersObject = InspectorObject::create();
-    
+
     for (const auto& header : headers)
         headersObject->setString(header.key, header.value);
     return headersObject;
@@ -336,7 +335,7 @@ double InspectorNetworkAgent::timestamp()
     return m_environment.executionStopwatch()->elapsedTime();
 }
 
-void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader& loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader& loader, ResourceRequest& request, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType type)
 {
     if (request.hiddenFromInspector()) {
         m_hiddenRequestIdentifiers.add(identifier);
@@ -346,8 +345,6 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     String requestId = IdentifiersFactory::requestId(identifier);
     m_resourcesData->resourceCreated(requestId, m_pageAgent->loaderId(&loader));
 
-    CachedResource* cachedResource = InspectorPageAgent::cachedResource(loader.frame(), request.url());
-    InspectorPageAgent::ResourceType type = cachedResource ? InspectorPageAgent::cachedResourceType(*cachedResource) : m_resourcesData->resourceType(requestId);
     if (type == InspectorPageAgent::OtherResource) {
         if (m_loadingXHRSynchronously)
             type = InspectorPageAgent::XHRResource;
@@ -368,12 +365,43 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     for (auto& entry : m_extraRequestHeaders)
         request.setHTTPHeaderField(entry.key, entry.value);
 
-    Inspector::Protocol::Page::ResourceType resourceType = InspectorPageAgent::resourceTypeJson(type);
+    Inspector::Protocol::Page::ResourceType protocolResourceType = InspectorPageAgent::resourceTypeJson(type);
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
     String targetId = request.initiatorIdentifier();
 
-    m_frontendDispatcher->requestWillBeSent(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), loader.url().string(), buildObjectForResourceRequest(request), timestamp(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &resourceType : nullptr, targetId.isEmpty() ? nullptr : &targetId);
+    m_frontendDispatcher->requestWillBeSent(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), loader.url().string(), buildObjectForResourceRequest(request), timestamp(), initiatorObject, buildObjectForResourceResponse(redirectResponse, nullptr), type != InspectorPageAgent::OtherResource ? &protocolResourceType : nullptr, targetId.isEmpty() ? nullptr : &targetId);
+}
+
+static InspectorPageAgent::ResourceType resourceTypeForCachedResource(CachedResource* resource)
+{
+    if (resource)
+        return InspectorPageAgent::inspectorResourceType(*resource);
+    return InspectorPageAgent::OtherResource;
+}
+
+static InspectorPageAgent::ResourceType resourceTypeForLoadType(InspectorInstrumentation::LoadType loadType)
+{
+    switch (loadType) {
+    case InspectorInstrumentation::LoadType::Ping:
+        return InspectorPageAgent::PingResource;
+    case InspectorInstrumentation::LoadType::Beacon:
+        return InspectorPageAgent::BeaconResource;
+    }
+
+    ASSERT_NOT_REACHED();
+    return InspectorPageAgent::OtherResource;
+}
+
+void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader& loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    auto* cachedResource = InspectorPageAgent::cachedResource(loader.frame(), request.url());
+    willSendRequest(identifier, loader, request, redirectResponse, resourceTypeForCachedResource(cachedResource));
+}
+
+void InspectorNetworkAgent::willSendRequestOfType(unsigned long identifier, DocumentLoader& loader, ResourceRequest& request, InspectorInstrumentation::LoadType loadType)
+{
+    willSendRequest(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType));
 }
 
 void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
@@ -400,7 +428,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     }
 
     InspectorPageAgent::ResourceType type = m_resourcesData->resourceType(requestId);
-    InspectorPageAgent::ResourceType newType = cachedResource ? InspectorPageAgent::cachedResourceType(*cachedResource) : type;
+    InspectorPageAgent::ResourceType newType = cachedResource ? InspectorPageAgent::inspectorResourceType(*cachedResource) : type;
 
     // FIXME: XHRResource is returned for CachedResource::RawResource, it should be OtherResource unless it truly is an XHR.
     // RawResource is used for loading worker scripts, and those should stay as ScriptResource and not change to XHRResource.

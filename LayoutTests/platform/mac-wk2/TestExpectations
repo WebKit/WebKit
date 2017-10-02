@@ -724,6 +724,7 @@ webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbo
 
 # Beacon is not supported on WK2 for the non NETWORK_SESSION code path.
 [ ElCapitan ] http/tests/blink/sendbeacon/ [ Skip ]
+[ ElCapitan ] http/tests/inspector/network/beacon-type.html [ Skip ]
 [ ElCapitan ] http/wpt/beacon/ [ Skip ]
 [ ElCapitan ] imported/blink/fast/beacon/ [ Skip ]
 [ ElCapitan ] imported/w3c/web-platform-tests/beacon/ [ Skip ]

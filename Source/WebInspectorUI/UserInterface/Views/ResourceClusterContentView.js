@@ -71,8 +71,10 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
         case WI.Resource.Type.XHR:
         case WI.Resource.Type.Fetch:
+        case WI.Resource.Type.Ping:
+        case WI.Resource.Type.Beacon:
             // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
-            // XHR / Fetch content may not always be text.
+            // The response content for these requests may not always be text.
             this._responseContentView = new WI.TextResourceContentView(this._resource);
             break;
 

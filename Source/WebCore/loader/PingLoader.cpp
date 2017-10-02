@@ -41,6 +41,7 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
+#include "NetworkLoadMetrics.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
@@ -191,7 +192,7 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
 {
     unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
-    // Itseems like the PingLoader should be associated with the current
+    // It seems like the PingLoader should be associated with the current
     // Document in the Frame, but the activeDocumentLoader will be associated
     // with the provisional DocumentLoader if there is a provisional
     // DocumentLoader.
@@ -200,9 +201,18 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
     options.credentials = shouldUseCredentialStorage ? FetchOptions::Credentials::Include : FetchOptions::Credentials::Omit;
     options.redirect = shouldFollowRedirects == ShouldFollowRedirects::Yes ? FetchOptions::Redirect::Follow : FetchOptions::Redirect::Error;
 
-    InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame.loader().activeDocumentLoader(), request, ResourceResponse());
+    // FIXME: Move ping loads to normal subresource loading to get normal inspector request instrumentation hooks.
+    InspectorInstrumentation::willSendRequestOfType(&frame, identifier, frame.loader().activeDocumentLoader(), request, InspectorInstrumentation::LoadType::Ping);
 
-    platformStrategies()->loaderStrategy()->startPingLoad(frame, request, WTFMove(originalRequestHeaders), options);
+    platformStrategies()->loaderStrategy()->startPingLoad(frame, request, WTFMove(originalRequestHeaders), options, [protectedFrame = makeRef(frame), identifier] (const ResourceError& error, const ResourceResponse& response) {
+        if (!response.isNull())
+            InspectorInstrumentation::didReceiveResourceResponse(protectedFrame, identifier, protectedFrame->loader().activeDocumentLoader(), response, nullptr);
+        if (error.isNull()) {
+            NetworkLoadMetrics emptyMetrics;
+            InspectorInstrumentation::didFinishLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, emptyMetrics, nullptr);
+        } else
+            InspectorInstrumentation::didFailLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, error);
+    });
 }
 
 }

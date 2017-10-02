@@ -60,7 +60,7 @@ public:
     void resumePendingRequests() final;
 
     void startPingLoad(WebCore::Frame&, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap& originalRequestHeaders, const WebCore::FetchOptions&, PingLoadCompletionHandler&&) final;
-    void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&);
+    void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
 
     void preconnectTo(WebCore::NetworkingContext&, const WebCore::URL&, WebCore::StoredCredentialsPolicy, PreconnectCompletionHandler&&) final;
     void didFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError&&);

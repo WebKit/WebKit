@@ -103,7 +103,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     URL parsedUrl = document.completeURL(url);
 
     // Set parsedUrl to the result of the URL parser steps with url and base. If the algorithm returns an error, or if
-    // parsedUrl's scheme is not "http" or "https", throw a " TypeError" exception and terminate these steps.
+    // parsedUrl's scheme is not "http" or "https", throw a "TypeError" exception and terminate these steps.
     if (!parsedUrl.isValid())
         return Exception { TypeError, ASCIILiteral("This URL is invalid") };
     if (!parsedUrl.protocolIsInHTTPFamily())

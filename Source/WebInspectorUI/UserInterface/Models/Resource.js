@@ -140,6 +140,14 @@ WI.Resource = class Resource extends WI.SourceCode
             if (plural)
                 return WI.UIString("Fetches");
             return WI.UIString("Fetch");
+        case WI.Resource.Type.Ping:
+            if (plural)
+                return WI.UIString("Pings");
+            return WI.UIString("Ping");
+        case WI.Resource.Type.Beacon:
+            if (plural)
+                return WI.UIString("Beacons");
+            return WI.UIString("Beacon");
         case WI.Resource.Type.WebSocket:
             if (plural)
                 return WI.UIString("Sockets");
@@ -1008,8 +1016,10 @@ WI.Resource.Type = {
     Script: "resource-type-script",
     XHR: "resource-type-xhr",
     Fetch: "resource-type-fetch",
+    Ping: "resource-type-ping",
+    Beacon: "resource-type-beacon",
     WebSocket: "resource-type-websocket",
-    Other: "resource-type-other"
+    Other: "resource-type-other",
 };
 
 WI.Resource.ResponseSource = {

@@ -53,6 +53,10 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
             return WI.ResourceCollection.TypeVerifier.XHR;
         case WI.Resource.Type.Fetch:
             return WI.ResourceCollection.TypeVerifier.Fetch;
+        case WI.Resource.Type.Ping:
+            return WI.ResourceCollection.TypeVerifier.Ping;
+        case WI.Resource.Type.Beacon:
+            return WI.ResourceCollection.TypeVerifier.Beacon;
         case WI.Resource.Type.WebSocket:
             return WI.ResourceCollection.TypeVerifier.WebSocket;
         case WI.Resource.Type.Other:
@@ -200,6 +204,7 @@ WI.ResourceCollection.TypeVerifier = {
     Script: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Script,
     XHR: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.XHR,
     Fetch: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Fetch,
+    Beacon: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Beacon,
     WebSocket: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.WebSocket,
     Other: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Other,
 };
