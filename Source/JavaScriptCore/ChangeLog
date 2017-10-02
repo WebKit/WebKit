@@ -1,3 +1,19 @@
+2017-10-02  Keith Miller  <keith_miller@apple.com>
+
+        VMTraps shouldn't crash if it sees an exception it doesn't understand.
+        https://bugs.webkit.org/show_bug.cgi?id=177780
+
+        Reviewed by Mark Lam.
+
+        VMTraps could see a JIT breakpoint (SegV) for any number of
+        reasons it doesn't understand. e.g.  a bug in JIT code, Wasm OOB,
+        etc. This patch makes it handle that case gracefully. It's worth
+        noting that this means there's no way to know if, due to a bug, we
+        didn't accurately track all the VMTraps we installed. I'm not sure
+        if there is a good solution to that problem though.
+
+        * runtime/VMTraps.cpp:
+
 2017-10-02  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Add missing exception check for the custom-get-set-inline-caching-one-level-up-proto-chain.js
