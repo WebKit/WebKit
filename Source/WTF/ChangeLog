@@ -1,3 +1,21 @@
+2017-10-02  Geoffrey Garen  <ggaren@apple.com>
+
+        NULL WeakPtr should not malloc!
+        https://bugs.webkit.org/show_bug.cgi?id=177773
+
+        Reviewed by Antti Koivisto.
+
+        Translating NULL into malloc is... inefficient.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::WeakPtr):
+        (WTF::WeakPtr::operator=):
+        (WTF::WeakPtr::clear): Make m_ref lazy so that a NULL m_ref can represent
+        a NULL pointer. Normal dereference is no slower because we can rely on
+        the fact that dereference of NULL should crash. operator bool() and get()
+        incur an extra branch. That's probably worth it to avoid malloc
+        for NULL.
+
 2017-10-02  Antti Koivisto  <antti@apple.com>
 
         Add makeWeakPtr variant that takes pointer

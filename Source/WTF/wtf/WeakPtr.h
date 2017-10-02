@@ -65,24 +65,24 @@ template<typename T>
 class WeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WeakPtr() : m_ref(WeakReference<T>::create(nullptr)) { }
-    WeakPtr(std::nullptr_t) : m_ref(WeakReference<T>::create(nullptr)) { }
-    WeakPtr(const WeakPtr& o) : m_ref(o.m_ref.copyRef()) { }
+    WeakPtr() { }
+    WeakPtr(std::nullptr_t) { }
+    WeakPtr(const WeakPtr& o) : m_ref(o.m_ref) { }
     WeakPtr(Ref<WeakReference<T>>&& ref) : m_ref(std::forward<Ref<WeakReference<T>>>(ref)) { }
 
-    T* get() const { return m_ref->get(); }
-    operator bool() const { return m_ref->get(); }
+    T* get() const { return m_ref ? m_ref->get() : nullptr; }
+    operator bool() const { return m_ref && m_ref->get(); }
 
-    WeakPtr& operator=(const WeakPtr& o) { m_ref = o.m_ref.copyRef(); return *this; }
-    WeakPtr& operator=(std::nullptr_t) { m_ref = WeakReference<T>::create(nullptr); return *this; }
+    WeakPtr& operator=(const WeakPtr& o) { m_ref = o.m_ref; return *this; }
+    WeakPtr& operator=(std::nullptr_t) { m_ref = nullptr; return *this; }
 
-    T* operator->() const { return get(); }
-    T& operator*() const { return *get(); }
+    T* operator->() const { return m_ref->get(); }
+    T& operator*() const { return *m_ref->get(); }
 
-    void clear() { m_ref = WeakReference<T>::create(nullptr); }
+    void clear() { m_ref = nullptr; }
 
 private:
-    Ref<WeakReference<T>> m_ref;
+    RefPtr<WeakReference<T>> m_ref;
 };
 
 template<typename T>
