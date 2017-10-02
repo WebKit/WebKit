@@ -2114,7 +2114,7 @@ void FrameSelection::updateAppearance()
         RenderObject* endRenderer = endPos.deprecatedNode()->renderer();
         int endOffset = endPos.deprecatedEditingOffset();
         ASSERT(startOffset >= 0 && endOffset >= 0);
-        view->selection().set(SelectionRangeData::Context(startRenderer, endRenderer, startOffset, endOffset));
+        view->selection().set({ startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset) });
     }
 }
 

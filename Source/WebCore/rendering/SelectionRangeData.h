@@ -44,36 +44,42 @@ class SelectionRangeData {
 public:
     SelectionRangeData(RenderView&);
     
-    struct Context {
-        Context()
-        { }
+    class Context {
+    public:
+        Context() = default;
+        Context(RenderObject* start, RenderObject* end, unsigned startOffset, unsigned endOffset)
+            : m_start(start ? makeWeakPtr(*start) : nullptr)
+            , m_end(end ? makeWeakPtr(*end) : nullptr)
+            , m_startPosition(startOffset)
+            , m_endPosition(endOffset)
+        {
+        }
 
-        Context(RenderObject* startRenderer, RenderObject* endRenderer, unsigned startOffset, unsigned endOffset)
-            : start(startRenderer)
-            , end(endRenderer)
-            , startPosition(startOffset)
-            , endPosition(endOffset)
-        { }
-
-        RenderObject* start { nullptr };
-        RenderObject* end { nullptr };
-        std::optional<unsigned> startPosition;
-        std::optional<unsigned> endPosition;
+        RenderObject* start() const { return m_start.get(); }
+        RenderObject* end() const { return m_end.get(); }
+        std::optional<unsigned> startPosition() const { return m_startPosition; }
+        std::optional<unsigned> endPosition() const { return m_endPosition; }
 
         bool operator==(const Context& other) const
         {
-            return start == other.start && end == other.end && startPosition == other.startPosition && endPosition == other.endPosition;
+            return m_start == other.m_start && m_end == other.m_end && m_startPosition == other.m_startPosition && m_endPosition == other.m_endPosition;
         }
+
+    private:
+        WeakPtr<RenderObject> m_start;
+        WeakPtr<RenderObject> m_end;
+        std::optional<unsigned> m_startPosition;
+        std::optional<unsigned> m_endPosition;
     };
 
     enum class RepaintMode { NewXOROld, NewMinusOld, Nothing };
     void set(const Context&, RepaintMode = RepaintMode::NewXOROld);
     const Context& get() const { return m_selectionContext; }
 
-    RenderObject* start() const { return m_selectionContext.start; }
-    RenderObject* end() const { return m_selectionContext.end; }
-    unsigned startPosition() const { ASSERT(m_selectionContext.startPosition); return m_selectionContext.startPosition.value(); }
-    unsigned endPosition() const { ASSERT(m_selectionContext.endPosition); return m_selectionContext.endPosition.value(); }
+    RenderObject* start() const { return m_selectionContext.start(); }
+    RenderObject* end() const { return m_selectionContext.end(); }
+    unsigned startPosition() const { ASSERT(m_selectionContext.startPosition()); return m_selectionContext.startPosition().value(); }
+    unsigned endPosition() const { ASSERT(m_selectionContext.endPosition()); return m_selectionContext.endPosition().value(); }
 
     void clear();
     IntRect bounds() const { return collectBounds(ClipToVisibleContent::No); }

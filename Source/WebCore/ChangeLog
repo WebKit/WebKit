@@ -1,3 +1,40 @@
+2017-10-02  Zalan Bujtas  <zalan@apple.com>
+
+        SelectionRangeData should not hold raw RenderObject pointers
+        https://bugs.webkit.org/show_bug.cgi?id=177677
+        <rdar://problem/34763060>
+
+        Reviewed by Sam Weinig.
+
+        SelectionRangeData::Context start and end renderers' lifetime is not strictly tied
+        to the lifetime of SelectionRangeData.
+
+        Covered by existing tests.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageForRange):
+        * rendering/SelectionRangeData.cpp:
+        (WebCore::isValidRendererForSelection):
+        (WebCore::collect):
+        (WebCore::SelectionRangeData::set):
+        (WebCore::SelectionRangeData::clear):
+        (WebCore::SelectionRangeData::repaint const):
+        (WebCore::SelectionRangeData::collectBounds const):
+        (WebCore::SelectionRangeData::apply):
+        * rendering/SelectionRangeData.h:
+        (WebCore::SelectionRangeData::Context::Context):
+        (WebCore::SelectionRangeData::Context::start const):
+        (WebCore::SelectionRangeData::Context::end const):
+        (WebCore::SelectionRangeData::Context::startPosition const):
+        (WebCore::SelectionRangeData::Context::endPosition const):
+        (WebCore::SelectionRangeData::Context::operator== const):
+        (WebCore::SelectionRangeData::start const):
+        (WebCore::SelectionRangeData::end const):
+        (WebCore::SelectionRangeData::startPosition const):
+        (WebCore::SelectionRangeData::endPosition const):
+
 2017-10-02  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] Remove GnuTLS dependency
