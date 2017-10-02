@@ -19,7 +19,7 @@ Called with this: object[[object Object]], args: []
 Called with this: object[[object Object]], args: []
 Called with this: object[[object Object]], args: []
 Called with this: object[[object Object]], args: []
-Called with this: object[[object Object]], args: []
+Exception: RangeError : Maximum call stack size exceeded.
 Called with this: object[[object Object]], args: []
 
 --- f.apply(x, arr), arr.length is huge ---
