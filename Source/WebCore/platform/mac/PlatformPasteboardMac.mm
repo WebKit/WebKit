@@ -104,9 +104,6 @@ static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (platformType == String(NSHTMLPboardType))
         return ASCIILiteral("text/html");
 
-    if (platformType == String(NSFilenamesPboardType) || platformType == String(NSFilesPromisePboardType) || Pasteboard::shouldTreatCocoaTypeAsFile(platformType))
-        return ASCIILiteral("Files");
-
     return nullptr;
 }
 
@@ -126,12 +123,8 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
 
         if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type))
             domPasteboardTypes.add(type);
-        else if (auto* domType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
-            auto coercedType = String::fromUTF8(domType);
-            if (coercedType == "Files" && !numberOfFiles())
-                continue;
-            domPasteboardTypes.add(WTFMove(coercedType));
-        }
+        else if (auto* domType = safeTypeForDOMToReadAndWriteForPlatformType(type))
+            domPasteboardTypes.add(String::fromUTF8(domType));
     }
 
     Vector<String> result;

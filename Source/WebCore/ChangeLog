@@ -1,3 +1,20 @@
+2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PasteImage tests are failing on debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=177778
+
+        Reviewed by Wenson Hsieh.
+
+        After r222702, PlatformPasteboard is no longer responsible for adding "Files" as a type"
+        as DataTransfer takes care of it now. Removed the code to do this from PlatformPasteboardIOS.mm
+        and PlatformPasteboardMac.mm so that we don't fail assertions in debug builds.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType):
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+
 2017-10-02  Daniel Bates  <dabates@apple.com>
 
         No need to truncate text after calling InlineTextBox::text()
