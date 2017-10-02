@@ -1,3 +1,25 @@
+2017-10-02  Tomas Popela  <tpopela@redhat.com>
+
+        [SOUP] Default kerberos authentication credentials are used in ephemeral (private) mode
+        https://bugs.webkit.org/show_bug.cgi?id=177738
+
+        Reviewed by Carlos Garcia Campos.
+
+        If the session is ephemeral then don't enable the Negotiate support in
+        our SoupSession.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp: Pass the
+        session ID if it's known to the SoupNetworkSession.
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::getOrCreateSoupNetworkSession const):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession): If the session is
+        ephemeral (based on given session ID) then don't activate the
+        Negotiate support in SoupSession.
+        * platform/network/soup/SoupNetworkSession.h:
+        Change the constructor to accept the PAL::SessionID with the default
+        value set to PAL::SessionID::emptySessionID.
+
 2017-10-02  Joanmarie Diggs  <jdiggs@igalia.com>
 
         REGRESSION(r222640) [GTK] Build broken with ATK 2.14
