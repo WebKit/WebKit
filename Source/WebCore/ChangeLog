@@ -1,3 +1,30 @@
+2017-10-02  Daniel Bates  <dabates@apple.com>
+
+        Use InlineTextBox::lineFont() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=177749
+
+        Reviewed by Zalan Bujtas.
+
+        Currently InlineTextBox::paint() calls InlineTextBox::lineFont() to compute the font for the
+        line and then passes this value to various paint helper functions. The computation is not
+        expensive and it is sufficient to have the individual paint helper functions compute it
+        directly. We should have the individual paint helper functions compute it directly. This
+        will help towards sharing more code throughout InlineTextBox by reducing the noise of
+        passing the font for the line.
+
+        No functionality changed. So, no new tests.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintTextSubrangeBackground):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/InlineTextBox.h:
+
 2017-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Implement missing async method in RecourceHandle and make it actually async
