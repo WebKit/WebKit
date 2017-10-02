@@ -368,8 +368,8 @@ void CurlRequest::setupPUT(ResourceRequest& request)
     // Disable the Expect: 100 continue header
     m_curlHandle->removeRequestHeader("Expect");
 
-    auto numElements = request.httpBody()->elements().size();
-    if (!numElements)
+    auto body = request.httpBody();
+    if (!body || body->isEmpty())
         return;
 
     setupFormData(request, false);

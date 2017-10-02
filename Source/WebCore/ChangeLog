@@ -1,3 +1,15 @@
+2017-10-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Crashes in CurlRequest::setupPUT()
+        https://bugs.webkit.org/show_bug.cgi?id=177733
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/xmlhttprequest/xmlhttprequest-open-method-allowed.html
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupPUT): Null-check the result of request.httpBody().
+
 2017-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [CURL] Should handle redirects in WebCore
