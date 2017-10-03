@@ -575,6 +575,16 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
             attributeSet = addToAtkAttributeSet(attributeSet, "atomic", "true");
     }
 
+    // The Core AAM states the author-provided value should be exposed as-is.
+    String dropEffect = coreObject->getAttribute(HTMLNames::aria_dropeffectAttr);
+    if (!dropEffect.isEmpty())
+        attributeSet = addToAtkAttributeSet(attributeSet, "dropeffect", dropEffect.utf8().data());
+
+    if (coreObject->isARIAGrabbed())
+        attributeSet = addToAtkAttributeSet(attributeSet, "grabbed", "true");
+    else if (coreObject->supportsARIADragging())
+        attributeSet = addToAtkAttributeSet(attributeSet, "grabbed", "false");
+
     return attributeSet;
 }
 
