@@ -41,6 +41,7 @@ public:
 
     // Can only be called if the underlying shared memory is in read / write mode.
     bool add(WebCore::SharedStringHash);
+    bool remove(WebCore::SharedStringHash);
 
     bool contains(WebCore::SharedStringHash) const;
 
@@ -49,6 +50,7 @@ public:
 
 private:
     RefPtr<SharedMemory> m_sharedMemory;
+    WebCore::SharedStringHash* findSlot(WebCore::SharedStringHash) const;
 
     unsigned m_tableSize { 0 };
     unsigned m_tableSizeMask { 0 };

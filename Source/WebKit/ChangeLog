@@ -1,3 +1,36 @@
+2017-10-03  Chris Dumez  <cdumez@apple.com>
+
+        SharedStringHashStore should support removing hashes
+        https://bugs.webkit.org/show_bug.cgi?id=177770
+
+        Reviewed by Alex Christensen.
+
+        SharedStringHashStore should support removing hashes. It currently only supports adding hashes or
+        clearing all of them, which is sufficient for the VisitedLinkStore but will not be for Service
+        Worker purposes.
+
+        * Shared/SharedStringHashStore.cpp:
+        (WebKit::SharedStringHashStore::SharedStringHashStore):
+        (WebKit::SharedStringHashStore::add):
+        (WebKit::SharedStringHashStore::remove):
+        (WebKit::SharedStringHashStore::contains):
+        (WebKit::SharedStringHashStore::clear):
+        (WebKit::SharedStringHashStore::resizeTable):
+        (WebKit::SharedStringHashStore::pendingOperationsTimerFired):
+        * Shared/SharedStringHashStore.h:
+        * Shared/SharedStringHashTable.cpp:
+        (WebKit::SharedStringHashTable::remove):
+        * Shared/SharedStringHashTable.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.mm:
+        (-[_WKVisitedLinkStore containsVisitedLinkWithURL:]):
+        (-[_WKVisitedLinkStore removeVisitedLinkWithURL:]):
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::containsVisitedLinkHash):
+        (WebKit::VisitedLinkStore::removeVisitedLinkHash):
+        (WebKit::VisitedLinkStore::didUpdateSharedStringHashes):
+        * UIProcess/VisitedLinkStore.h:
+
 2017-10-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix API tests after r222794.

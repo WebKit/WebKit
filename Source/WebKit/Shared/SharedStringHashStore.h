@@ -40,27 +40,35 @@ public:
         virtual ~Client() { }
 
         virtual void didInvalidateSharedMemory() = 0;
-        virtual void didAddSharedStringHashes(const Vector<WebCore::SharedStringHash>&) = 0;
+        virtual void didUpdateSharedStringHashes(const Vector<WebCore::SharedStringHash>& addedHashes, const Vector<WebCore::SharedStringHash>& removedHashes) = 0;
     };
 
     SharedStringHashStore(Client&);
 
     bool createSharedMemoryHandle(SharedMemory::Handle&);
     void add(WebCore::SharedStringHash);
+    void remove(WebCore::SharedStringHash);
+    bool contains(WebCore::SharedStringHash);
     void clear();
 
     bool isEmpty() const { return !m_keyCount; }
 
 private:
     void resizeTable(unsigned newTableSize);
-    void pendingSharedStringHashesTimerFired();
+    void pendingOperationsTimerFired();
+
+    struct Operation {
+        enum Type { Add, Remove };
+        Type type;
+        WebCore::SharedStringHash sharedStringHash;
+    };
 
     Client& m_client;
     unsigned m_keyCount { 0 };
     unsigned m_tableSize { 0 };
     SharedStringHashTable m_table;
-    HashSet<WebCore::SharedStringHash, WebCore::SharedStringHashHash> m_pendingSharedStringHashes;
-    RunLoop::Timer<SharedStringHashStore> m_pendingSharedStringHashesTimer;
+    Vector<Operation> m_pendingOperations;
+    RunLoop::Timer<SharedStringHashStore> m_pendingOperationsTimer;
 };
 
 } // namespace WebKit

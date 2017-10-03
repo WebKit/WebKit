@@ -75,63 +75,59 @@ static inline unsigned doubleHash(unsigned key)
     
 bool SharedStringHashTable::add(SharedStringHash sharedStringHash)
 {
-    ASSERT(m_sharedMemory);
+    auto* slot = findSlot(sharedStringHash);
+    ASSERT(slot);
 
-    int k = 0;
-    SharedStringHash* table = m_table;
-    int sizeMask = m_tableSizeMask;
-    unsigned h = static_cast<unsigned>(sharedStringHash);
-    int i = h & sizeMask;
+    // Check if the same link hash is in the table already.
+    if (*slot)
+        return false;
 
-    SharedStringHash* entry;
-    while (1) {
-        entry = table + i;
+    *slot = sharedStringHash;
+    return true;
+}
 
-        // Check if this bucket is empty.
-        if (!*entry)
-            break;
+bool SharedStringHashTable::remove(SharedStringHash sharedStringHash)
+{
+    auto* slot = findSlot(sharedStringHash);
+    if (!slot || !*slot)
+        return false;
 
-        // Check if the same link hash is in the table already.
-        if (*entry == sharedStringHash)
-            return false;
-
-        if (!k)
-            k = 1 | doubleHash(h);
-        i = (i + k) & sizeMask;
-    }
-
-    *entry = sharedStringHash;
+    *slot = 0;
     return true;
 }
 
 bool SharedStringHashTable::contains(SharedStringHash sharedStringHash) const
 {
+    auto* slot = findSlot(sharedStringHash);
+    return slot && *slot;
+}
+
+SharedStringHash* SharedStringHashTable::findSlot(SharedStringHash sharedStringHash) const
+{
     if (!m_sharedMemory)
-        return false;
+        return nullptr;
 
     int k = 0;
     SharedStringHash* table = m_table;
     int sizeMask = m_tableSizeMask;
     unsigned h = static_cast<unsigned>(sharedStringHash);
     int i = h & sizeMask;
-    
+
     SharedStringHash* entry;
     while (1) {
         entry = table + i;
 
         // Check if we've reached the end of the table.
         if (!*entry)
-            break;
-        
+            return entry;
+
         if (*entry == sharedStringHash)
-            return true;
-        
+            return entry;
+
         if (!k)
             k = 1 | doubleHash(h);
         i = (i + k) & sizeMask;
     }
-
-    return false;
 }
 
 void SharedStringHashTable::clear()

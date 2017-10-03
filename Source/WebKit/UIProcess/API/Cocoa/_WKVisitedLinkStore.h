@@ -33,6 +33,8 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 - (void)addVisitedLinkWithURL:(NSURL *)URL;
 - (void)removeAll;
+- (BOOL)containsVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)removeVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

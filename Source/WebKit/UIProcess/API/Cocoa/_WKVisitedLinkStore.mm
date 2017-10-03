@@ -62,6 +62,20 @@
     _visitedLinkStore->removeAll();
 }
 
+- (BOOL)containsVisitedLinkWithURL:(NSURL *)URL
+{
+    auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
+
+    return _visitedLinkStore->containsVisitedLinkHash(linkHash);
+}
+
+- (void)removeVisitedLinkWithURL:(NSURL *)URL
+{
+    auto linkHash = WebCore::computeSharedStringHash(URL.absoluteString);
+
+    _visitedLinkStore->removeVisitedLinkHash(linkHash);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

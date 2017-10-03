@@ -512,6 +512,7 @@
 		8349D3C41DB9728E004A9F65 /* link-with-download-attribute.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 8349D3C31DB9724F004A9F65 /* link-with-download-attribute.html */; };
 		835CF9671D25FCD6001A65D4 /* RestoreSessionStateWithoutNavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835CF9661D25FCD6001A65D4 /* RestoreSessionStateWithoutNavigation.cpp */; };
 		8361F1781E610B4E00759B25 /* link-with-download-attribute-with-slashes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 8361F1771E610B2100759B25 /* link-with-download-attribute-with-slashes.html */; };
+		83779C381F82FECE007CDA8A /* VisitedLinkStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */; };
 		837A35F11D9A1E7D00663C57 /* DownloadRequestBlobURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 837A35F01D9A1E6400663C57 /* DownloadRequestBlobURL.html */; };
 		83B6DE6F1EE75221001E792F /* RestoreSessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */; };
 		83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */; };
@@ -1446,6 +1447,7 @@
 		8349D3C31DB9724F004A9F65 /* link-with-download-attribute.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "link-with-download-attribute.html"; sourceTree = "<group>"; };
 		835CF9661D25FCD6001A65D4 /* RestoreSessionStateWithoutNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionStateWithoutNavigation.cpp; sourceTree = "<group>"; };
 		8361F1771E610B2100759B25 /* link-with-download-attribute-with-slashes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "link-with-download-attribute-with-slashes.html"; sourceTree = "<group>"; };
+		83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VisitedLinkStore.mm; sourceTree = "<group>"; };
 		837A35F01D9A1E6400663C57 /* DownloadRequestBlobURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestBlobURL.html; sourceTree = "<group>"; };
 		83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionState.cpp; sourceTree = "<group>"; };
 		83B88A331C80056D00BB2418 /* HTMLParserIdioms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserIdioms.cpp; sourceTree = "<group>"; };
@@ -2040,6 +2042,7 @@
 				07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */,
 				93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */,
 				6356FB211EC4E0BA0044BF18 /* VisibleContentRect.mm */,
+				83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */,
 				5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */,
 				51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */,
 				5120C83C1E6750790025B250 /* WebsiteDataStoreCustomPaths.mm */,
@@ -3457,6 +3460,7 @@
 				7C83E0C61D0A654E00FEBCF3 /* VideoControlsManager.mm in Sources */,
 				115EB3431EE0BA03003C2C0A /* ViewportSizeForViewportUnits.mm in Sources */,
 				6356FB221EC4E0BA0044BF18 /* VisibleContentRect.mm in Sources */,
+				83779C381F82FECE007CDA8A /* VisitedLinkStore.mm in Sources */,
 				0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */,
 				7CCE7F191A411AE600447C4C /* WebArchive.cpp in Sources */,
 				7C83E04C1D0A641800FEBCF3 /* WebCoreNSURLSession.mm in Sources */,

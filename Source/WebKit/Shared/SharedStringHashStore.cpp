@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SharedStringHashStore.h"
 
+#include <algorithm>
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -63,7 +65,7 @@ static unsigned tableSizeForKeyCount(unsigned keyCount)
 
 SharedStringHashStore::SharedStringHashStore(Client& client)
     : m_client(client)
-    , m_pendingSharedStringHashesTimer(RunLoop::main(), this, &SharedStringHashStore::pendingSharedStringHashesTimerFired)
+    , m_pendingOperationsTimer(RunLoop::main(), this, &SharedStringHashStore::pendingOperationsTimerFired)
 {
 }
 
@@ -74,16 +76,33 @@ bool SharedStringHashStore::createSharedMemoryHandle(SharedMemory::Handle& handl
 
 void SharedStringHashStore::add(SharedStringHash sharedStringHash)
 {
-    m_pendingSharedStringHashes.add(sharedStringHash);
+    m_pendingOperations.append({ Operation::Add, sharedStringHash });
 
-    if (!m_pendingSharedStringHashesTimer.isActive())
-        m_pendingSharedStringHashesTimer.startOneShot(0_s);
+    if (!m_pendingOperationsTimer.isActive())
+        m_pendingOperationsTimer.startOneShot(0_s);
+}
+
+void SharedStringHashStore::remove(WebCore::SharedStringHash sharedStringHash)
+{
+    m_pendingOperations.append({ Operation::Remove, sharedStringHash });
+
+    if (!m_pendingOperationsTimer.isActive())
+        m_pendingOperationsTimer.startOneShot(0_s);
+}
+
+bool SharedStringHashStore::contains(WebCore::SharedStringHash sharedStringHash)
+{
+    if (m_pendingOperationsTimer.isActive()) {
+        m_pendingOperationsTimer.stop();
+        pendingOperationsTimerFired();
+    }
+    return m_table.contains(sharedStringHash);
 }
 
 void SharedStringHashStore::clear()
 {
-    m_pendingSharedStringHashesTimer.stop();
-    m_pendingSharedStringHashes.clear();
+    m_pendingOperationsTimer.stop();
+    m_pendingOperations.clear();
     m_keyCount = 0;
     m_tableSize = 0;
     m_table.clear();
@@ -122,19 +141,31 @@ void SharedStringHashStore::resizeTable(unsigned newTableSize)
         }
     }
 
-    for (auto& sharedStringHash : m_pendingSharedStringHashes) {
-        if (m_table.add(sharedStringHash))
-            ++m_keyCount;
+    for (auto& operation : m_pendingOperations) {
+        switch (operation.type) {
+        case Operation::Add:
+            if (m_table.add(operation.sharedStringHash))
+                ++m_keyCount;
+            break;
+        case Operation::Remove:
+            if (m_table.remove(operation.sharedStringHash))
+                --m_keyCount;
+            break;
+        }
     }
-    m_pendingSharedStringHashes.clear();
+    m_pendingOperations.clear();
 
     m_client.didInvalidateSharedMemory();
 }
 
-void SharedStringHashStore::pendingSharedStringHashesTimerFired()
+void SharedStringHashStore::pendingOperationsTimerFired()
 {
     unsigned currentTableSize = m_tableSize;
-    unsigned newTableSize = tableSizeForKeyCount(m_keyCount + m_pendingSharedStringHashes.size());
+    unsigned approximateNewHashCount = std::count_if(m_pendingOperations.begin(), m_pendingOperations.end(), [](auto& operation) {
+        return operation.type == Operation::Add;
+    });
+    // FIXME: The table can currently only grow. We should probably support shrinking it to save memory.
+    unsigned newTableSize = tableSizeForKeyCount(m_keyCount + approximateNewHashCount);
 
     newTableSize = std::max(currentTableSize, newTableSize);
 
@@ -144,18 +175,30 @@ void SharedStringHashStore::pendingSharedStringHashesTimerFired()
     }
 
     Vector<SharedStringHash> addedSharedStringHashes;
-    addedSharedStringHashes.reserveInitialCapacity(m_pendingSharedStringHashes.size());
-    for (auto& sharedStringHash : m_pendingSharedStringHashes) {
-        if (m_table.add(sharedStringHash)) {
-            addedSharedStringHashes.uncheckedAppend(sharedStringHash);
-            ++m_keyCount;
+    Vector<SharedStringHash> removedSharedStringHashes;
+    addedSharedStringHashes.reserveInitialCapacity(approximateNewHashCount);
+    removedSharedStringHashes.reserveInitialCapacity(m_pendingOperations.size() - approximateNewHashCount);
+    for (auto& operation : m_pendingOperations) {
+        switch (operation.type) {
+        case Operation::Add:
+            if (m_table.add(operation.sharedStringHash)) {
+                addedSharedStringHashes.uncheckedAppend(operation.sharedStringHash);
+                ++m_keyCount;
+            }
+            break;
+        case Operation::Remove:
+            if (m_table.remove(operation.sharedStringHash)) {
+                removedSharedStringHashes.uncheckedAppend(operation.sharedStringHash);
+                --m_keyCount;
+            }
+            break;
         }
     }
 
-    m_pendingSharedStringHashes.clear();
+    m_pendingOperations.clear();
 
-    if (!addedSharedStringHashes.isEmpty())
-        m_client.didAddSharedStringHashes(addedSharedStringHashes);
+    if (!addedSharedStringHashes.isEmpty() || !removedSharedStringHashes.isEmpty())
+        m_client.didUpdateSharedStringHashes(addedSharedStringHashes, removedSharedStringHashes);
 }
 
 } // namespace WebKit
