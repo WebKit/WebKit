@@ -1,3 +1,11 @@
+2017-10-03  Timothy Horton  <timothy_horton@apple.com>
+
+        Include a few widespread WTF headers in WebCorePrefix.h
+        https://bugs.webkit.org/show_bug.cgi?id=173481
+
+        * WebCorePrefix.h:
+        Turn this off on Windows because it doesn't work; needs further investigation.
+
 2017-10-03  Tim Horton  <timothy_horton@apple.com>
 
         Include a few widespread WTF headers in WebCorePrefix.h
