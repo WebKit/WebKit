@@ -1,3 +1,22 @@
+2017-10-03  Daniel Bates  <dabates@apple.com>
+
+        XMLHttpRequest.setRequestHeader() should allow Content-Transfer-Encoding header; remove
+        duplicate logic to check for a forbidden XHR header field
+        https://bugs.webkit.org/show_bug.cgi?id=177829
+        <rdar://problem/34798441>
+
+        Update tests and expected results now that we match the XHR standard, <https://xhr.spec.whatwg.org> (09/08/2017).
+
+        We no longer consider Content-Transfer-Encoding and User-Agent forbidden headers as per
+        the standard.
+
+        * fast/xmlhttprequest/set-dangerous-headers-expected.txt:
+        * fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html:
+        * fast/xmlhttprequest/set-dangerous-headers.html:
+        * http/tests/xmlhttprequest/check-combining-headers-expected.txt:
+        * http/tests/xmlhttprequest/set-dangerous-headers-expected.txt:
+        * http/tests/xmlhttprequest/set-dangerous-headers.html:
+
 2017-10-03  Megan Gardner  <megan_gardner@apple.com>
 
         Add long press and drag test

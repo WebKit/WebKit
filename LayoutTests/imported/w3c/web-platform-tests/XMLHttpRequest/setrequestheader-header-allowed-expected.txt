@@ -1,12 +1,8 @@
-CONSOLE MESSAGE: line 16: Refused to set unsafe header "User-Agent"
-CONSOLE MESSAGE: line 17: Refused to set unsafe header "User-Agent"
-CONSOLE MESSAGE: line 16: Refused to set unsafe header "Content-Transfer-Encoding"
-CONSOLE MESSAGE: line 17: Refused to set unsafe header "Content-Transfer-Encoding"
 
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (Authorization) 
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (Pragma) 
 FAIL XMLHttpRequest: setRequestHeader() - headers that are allowed (User-Agent) assert_equals: expected "User-Agent," but got ""
-FAIL XMLHttpRequest: setRequestHeader() - headers that are allowed (Content-Transfer-Encoding) assert_equals: expected "Content-Transfer-Encoding," but got ""
+PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (Content-Transfer-Encoding) 
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (Content-Type) 
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (Overwrite) 
 PASS XMLHttpRequest: setRequestHeader() - headers that are allowed (If) 
