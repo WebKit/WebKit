@@ -216,7 +216,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
 
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
     connection->setShouldExitOnSyncMessageSendFailure(true);
+#endif
 
 #if HAVE(QOS_CLASSES)
     connection->setShouldBoostMainThreadOnSyncMessage(true);
