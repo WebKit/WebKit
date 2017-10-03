@@ -1,3 +1,15 @@
+2017-10-03  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: no VM / JS version of everything but Instance
+        https://bugs.webkit.org/show_bug.cgi?id=177473
+
+        Reviewed by Filip Pizlo.
+
+        * ForwardingHeaders/wasm/WasmModule.h: Added. This used to be
+        included in JSWebAssemblyModule.h.
+        * bindings/js/SerializedScriptValue.cpp: Update postMessage code
+        according to C++ API changes.
+
 2017-10-03  Zalan Bujtas  <zalan@apple.com>
 
         [AX] Do not trigger redundant layout on tables.

@@ -166,8 +166,8 @@ function assertBadTableImport(tableDescription, message) {
          "WebAssembly.Module doesn't parse at byte 29 / 32: resizable limits has a initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
          "WebAssembly.Module doesn't parse at byte 37 / 43: resizable limits has a initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 2**31, element: "anyfunc"},
-         "WebAssembly.Module doesn't parse at byte 24 / 27: Table's initial page count of 2147483648 is invalid (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 32 / 38: Table's initial page count of 2147483648 is invalid (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 24 / 27: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 32 / 38: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
     ];
 
     for (const d of badDescriptions) {

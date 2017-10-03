@@ -93,7 +93,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
     UNUSED_PARAM(scope);
     auto* globalObject = exec->lexicalGlobalObject();
 
-    JSWebAssemblyCodeBlock* codeBlock = instance->codeBlock();
+    Wasm::CodeBlock* codeBlock = instance->instance().codeBlock();
     const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
 
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
@@ -152,7 +152,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
             // Return ToJSValue(v).
             switch (global.type) {
             case Wasm::I32:
-                exportedValue = JSValue(instance->loadI32Global(exp.kindIndex));
+                exportedValue = JSValue(instance->instance().loadI32Global(exp.kindIndex));
                 break;
 
             case Wasm::I64:
@@ -160,11 +160,11 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
                 return;
 
             case Wasm::F32:
-                exportedValue = JSValue(instance->loadF32Global(exp.kindIndex));
+                exportedValue = JSValue(instance->instance().loadF32Global(exp.kindIndex));
                 break;
 
             case Wasm::F64:
-                exportedValue = JSValue(instance->loadF64Global(exp.kindIndex));
+                exportedValue = JSValue(instance->instance().loadF64Global(exp.kindIndex));
                 break;
 
             default:
@@ -217,12 +217,12 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyModule* module = m_instance->module();
-    JSWebAssemblyCodeBlock* codeBlock = m_instance->codeBlock();
-    const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
+    Wasm::Module& module = m_instance->instance().module();
+    Wasm::CodeBlock* codeBlock = m_instance->instance().codeBlock();
+    const Wasm::ModuleInformation& moduleInformation = module.moduleInformation();
     JSWebAssemblyTable* table = m_instance->table();
 
-    const Vector<Wasm::Segment::Ptr>& data = m_instance->module()->moduleInformation().data;
+    const Vector<Wasm::Segment::Ptr>& data = moduleInformation.data;
     JSWebAssemblyMemory* jsMemory = m_instance->memory();
 
     std::optional<JSValue> exception;
@@ -239,7 +239,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
                 continue;
 
             uint32_t tableIndex = element.offset.isGlobalImport()
-                ? static_cast<uint32_t>(m_instance->loadI32Global(element.offset.globalImportIndex()))
+                ? static_cast<uint32_t>(m_instance->instance().loadI32Global(element.offset.globalImportIndex()))
                 : element.offset.constValue();
 
             fn(element, tableIndex);
@@ -255,7 +255,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
 
         for (const Wasm::Segment::Ptr& segment : data) {
             uint32_t offset = segment->offset.isGlobalImport()
-                ? static_cast<uint32_t>(m_instance->loadI32Global(segment->offset.globalImportIndex()))
+                ? static_cast<uint32_t>(m_instance->instance().loadI32Global(segment->offset.globalImportIndex()))
                 : segment->offset.constValue();
 
             fn(memory, sizeInBytes, segment, offset);
@@ -293,7 +293,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
             // for the import.
             // https://bugs.webkit.org/show_bug.cgi?id=165510
             uint32_t functionIndex = element.functionIndices[i];
-            Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
+            Wasm::SignatureIndex signatureIndex = module.signatureIndexFromFunctionIndexSpace(functionIndex);
             if (functionIndex < codeBlock->functionImportCount()) {
                 JSObject* functionImport = jsCast<JSObject*>(m_instance->importFunction(functionIndex));
                 if (isWebAssemblyHostFunction(vm, functionImport)) {

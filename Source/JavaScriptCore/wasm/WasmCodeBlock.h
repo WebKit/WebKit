@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "MacroAssemblerCodeRef.h"
+#include "WasmEmbedder.h"
 #include "WasmTierUpCount.h"
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -37,11 +38,10 @@
 
 namespace JSC {
 
-class VM;
-
 namespace Wasm {
 
 class Callee;
+struct Context;
 class BBQPlan;
 class OMGPlan;
 struct ModuleInformation;
@@ -51,20 +51,42 @@ enum class MemoryMode : uint8_t;
     
 class CodeBlock : public ThreadSafeRefCounted<CodeBlock> {
 public:
-    typedef void CallbackType(VM&, Ref<CodeBlock>&&);
+    typedef void CallbackType(Ref<CodeBlock>&&);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
-    static Ref<CodeBlock> create(MemoryMode mode, ModuleInformation& moduleInformation)
+    static Ref<CodeBlock> create(Context*, MemoryMode, ModuleInformation&, CreateEmbedderWrapper&&, ThrowWasmException);
+
+    static size_t offsetOfImportStubs()
     {
-        return adoptRef(*new CodeBlock(mode, moduleInformation));
+        return WTF::roundUpToMultipleOf<sizeof(void*)>(sizeof(CodeBlock));
+    }
+
+    static size_t allocationSize(Checked<size_t> functionImportCount)
+    {
+        return (offsetOfImportStubs() + sizeof(void*) * functionImportCount).unsafeGet();
+    }
+
+    void*& importWasmToEmbedderStub(unsigned importIndex)
+    {
+        return *bitwise_cast<void**>(bitwise_cast<char*>(this) + offsetOfImportWasmToEmbedderStub(importIndex));
+    }
+
+    static ptrdiff_t offsetOfImportWasmToEmbedderStub(unsigned importIndex)
+    {
+        return offsetOfImportStubs() + sizeof(void*) * importIndex;
+    }
+
+    Wasm::WasmEntrypointLoadLocation wasmToJSCallStubForImport(unsigned importIndex)
+    {
+        ASSERT(runnable());
+        return &importWasmToEmbedderStub(importIndex);
     }
 
     void waitUntilFinished();
-    void compileAsync(VM&, AsyncCompilationCallback&&);
+    void compileAsync(Context*, AsyncCompilationCallback&&);
 
     bool compilationFinished()
     {
-        auto locker = holdLock(m_lock);
-        return !m_plan;
+        return m_compilationFinished.load();
     }
     bool runnable() { return compilationFinished() && !m_errorMessage; }
 
@@ -79,8 +101,11 @@ public:
 
     unsigned functionImportCount() const { return m_wasmToWasmExitStubs.size(); }
 
+    // These two callee getters are only valid once the callees have been populated.
+
     Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
+        ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
 
@@ -90,6 +115,7 @@ public:
     }
     Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
+        ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         if (m_optimizedCallees[calleeIndex])
@@ -117,7 +143,8 @@ public:
 private:
     friend class OMGPlan;
 
-    CodeBlock(MemoryMode, ModuleInformation&);
+    CodeBlock(Context*, MemoryMode, ModuleInformation&, CreateEmbedderWrapper&&, ThrowWasmException);
+    void setCompilationFinished();
     unsigned m_calleeCount;
     MemoryMode m_mode;
     Vector<RefPtr<Callee>> m_callees;
@@ -128,6 +155,7 @@ private:
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
     Vector<MacroAssemblerCodeRef> m_wasmToWasmExitStubs;
     RefPtr<BBQPlan> m_plan;
+    std::atomic<bool> m_compilationFinished { false };
     String m_errorMessage;
     Lock m_lock;
 };

@@ -1,3 +1,461 @@
+2017-10-03  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: no VM / JS version of everything but Instance
+        https://bugs.webkit.org/show_bug.cgi?id=177473
+
+        Reviewed by Filip Pizlo.
+
+        This change entails cleaning up and splitting a bunch of code which we had
+        intertwined between C++ classes which represent JS objects, and pure C++
+        implementation objects. This specific change goes most of the way towards
+        allowing JSC's WebAssembly to work without VM / JS, up to but excluding
+        JSWebAssemblyInstance (there's Wasm::Instance, but it's not *the* thing
+        yet). Because of this we still have a few FIXME identifying places that need to
+        change. A follow-up change will go the rest of the way.
+
+        I went about this change in the simplest way possible: grep the
+        JavaScriptCore/wasm directory for "JS[^C_]" as well as "VM" and exclude the /js/
+        sub-directory (which contains the JS implementation of WebAssembly).
+
+        None of this change removes the need for a JIT entitlement to be able to use
+        WebAssembly. We don't have an interpreter, the process therefore still needs to
+        be allowed to JIT to use these pure-C++ APIs.
+
+        Interesting things to note:
+
+          - Remove VM from Plan and associated places. It can just live as a capture in
+            the callback lambda if it's needed.
+          - Wasm::Memory shouldn't require a VM. It was only used to ask the GC to
+            collect. We now instead pass two lambdas at construction time for this
+            purpose: one to notify of memory pressure, and the other to ask for
+            syncrhonous memory reclamation. This allows whoever creates the memory to
+            dictate how to react to both these cases, and for a JS embedding that's to
+            call the GC (async or sync, respectively).
+          - Move grow logic from JSWebAssemblyMemory to Wasm::Memory::grow. Use Expected
+            there, with an enum class for failure types.
+          - Exceeding max on memory growth now returns a range error as per spec. This
+            is a (very minor) breaking change: it used to throw OOM error. Update the
+            corresponding test.
+          - When generating the grow_memory opcode, no need to get the VM. Instead,
+            reach directly for Wasm::Memory and grow it.
+          - JSWebAssemblyMemory::grow can now always throw on failure, because it's only
+            ever called from JS (not from grow_memory as before).
+          - Wasm::Memory now takes a callback for successful growth. This allows JS
+            wrappers to register themselves when growth succeeds without Wasm::Memory
+            knowning anything about JS. It'll also allow creating a list of callbacks
+            for when we add thread support (we'll want to notify many wrappers, all
+            under a lock).
+          - Wasm::Memory is now back to being the source of truth about address / size,
+            used directly by generated code instead of JSWebAssemblyMemory.
+          - Move wasmToJS from the general WasmBinding header to its own header under
+            wasm/js. It's only used by wasm/js/JSWebAssemblyCodeBlock.cpp, and uses VM,
+            and therefore isn't general WebAssembly.
+          - Make Wasm::Context an actual type (just a struct holding a
+            JSWebAssemlyInstance for now) instead of an alias for that. Notably this
+            doesn't add anything to the Context and doesn't change what actually gets
+            passed around in JIT code (fast TLS or registers) because these changes
+            potentially impact performance. The entire purpose of this change is to
+            allow passing Wasm::Context around without having to know about VM. Since VM
+            contains a Wasm::Context the JS embedding is effectively the same, but with
+            this setup a non-JS embedding is much better off.
+          - Move JSWebAssembly into the JS folder.
+          - OMGPlan: use Wasm::CodeBlock directly instead of JSWebAssemblyCodeBlock.
+          - wasm->JS stubs are now on Wasm::CodeBlock's tail as raw pointers, instead of
+            being on JSWebAssemblyCodeBlock, and are now called wasm->Embedder
+            stubs. The owned reference is still on JSWebAssemblyCodeBlock, and is still
+            called wasm->JS stub. This move means that the embedder must, after creating
+            a Wasm::CodeBlock, somehow create the stubs to call back into the
+            embedder. This isn't adding any indirection to the generated code because
+            the B3 IR generator now reaches for Wasm::CodeBlock instead of
+            JSWebAssemblyCodeBlock.
+          - Move more CodeBlock things. Compilation completion is now marked by its own
+            atomic<bool> flag instead of a nullptr plan: that required using a lock, and
+            was causing a deadlock in stack-trace.js because before my changes
+            JSWebAssemblyCodeBlock did its own completion checking separately from
+            Wasm::CodeBlock, without getting the lock. Now that everything points to
+            Wasm::CodeBlock and there's no cached completion marker, the lock was being
+            acquired in a sanity-check assertion.
+          - Embedder -> Wasm wrappers are now generated through a function that's passed
+            in at compilation time, instead of being hard-coded as a JS -> Wasm wrapper.
+          - WasmMemory doens't need to know about fault handling thunks. Only the IR
+            generator should know, and should make sure that the exception throwing
+            thunk is generated if any memory is present (note: with signal handling not
+            all of them generate an exception check).
+          - Make exception throwing pluggable: instead of having a hard-coded
+            JS-specific lambda we now have a regular C++ function being called from JIT
+            code when a WebAssembly exception is thrown. This allows any embedder to get
+            called as they wish. For now a process can only have a single of these
+            functions (i.e. only one embedder per process) because the trap handler is a
+            singleton. That can be fixed in in #177475.
+          - Create WasmEmbedder.h where all embedder plugging will live.
+          - Split up JSWebAssemblyTable into Wasm::Table which is
+            refcounted. JSWebAssemblyTable now only contains the JS functions in the
+            table, and Wasm::Table is what's used by the JIT code to lookup where to
+            call and do the instance check (for context switch). Note that this creates
+            an extra allocation for all the instances in Wasm::Table, and in exchange
+            removes an indirection in JIT code because the instance used to be obtained
+            off of the JS function. Also note that it's the embedder than keeps the
+            instances alive, not Wasm::Table (which holds a dumb pointer to the
+            instance), because doing otherwise would cause reference cycles.
+          - Add WasmInstance. It doesn't do much for now, owns globals.
+          - JSWebAssembly instance now doesn't just contain the imported functions as
+            JSObjects, it also has the corresponding import's instance and wasm
+            entrypoint. This triples the space allocated per instance's imported
+            function, but there shouldn't be that many imports. This has two upsides: it
+            creates smaller and faster code, and makes is easier to disassociate
+            embedder-specific things from embedder-neutral things. The small / faster
+            win is in two places: B3 IR generator only needs offsetOfImportFunction for
+            the call opcode (when the called index is an import) to know whether the
+            import is wasm->wasm or wasm->embedder (this isn't known at compile-time
+            because it's dependent on the import object), this is now done by seeing if
+            that import function has an associated target instance (only wasm->wasm
+            does); the other place is wasmBinding which uses offsetOfImportFunction to
+            figure out the wasm->wasm target instance, and then gets
+            WebAssemblyFunction::offsetOfWasmEntrypointLoadLocation to do a tail
+            call. The disassociation comes because the target instance can be
+            Wasm::Instance once we change what the Context is, and
+            WasmEntrypointLoadLocation is already embedder-independent. As a next step I
+            can move this tail allocation from JSWebAssemblyInstance to Wasm::Instance,
+            and leave importFunction in as an opaque pointer which is embedder-specific,
+            and in JS will remain WriteBarrier<JSObject>.
+          - Rename VMEntryFrame to EntryFrame, and in many places pass a pointer to it
+            around instead of VM. This is a first step in allowing entry frames which
+            aren't stored on VM, but which are instead stored in an embedder-specific
+            location. That change won't really affect JS except through code churn, but
+            will allow WebAssembly to use some machinery in a generic manner without
+            having a VM.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::stepOutOfFunction):
+        (JSC::Debugger::returnEvent):
+        (JSC::Debugger::unwindEvent):
+        (JSC::Debugger::didExecuteProgram):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::wasmAwareLexicalGlobalObject):
+        (JSC::CallFrame::callerFrame):
+        (JSC::CallFrame::unsafeCallerFrame):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callerFrame const):
+        (JSC::ExecState::callerFrameOrEntryFrame const):
+        (JSC::ExecState::unsafeCallerFrameOrEntryFrame const):
+        * interpreter/FrameTracers.h:
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        (JSC::NativeCallFrameTracerWithRestore::NativeCallFrameTracerWithRestore):
+        (JSC::NativeCallFrameTracerWithRestore::~NativeCallFrameTracerWithRestore):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator() const):
+        (JSC::UnwindFunctor::copyCalleeSavesToEntryFrameCalleeSavesBuffer const):
+        (JSC::Interpreter::unwind):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::StackVisitor):
+        (JSC::StackVisitor::gotoNextFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::Frame::dump const):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::callerIsEntryFrame const):
+        * interpreter/VMEntryRecord.h:
+        (JSC::VMEntryRecord::prevTopEntryFrame):
+        (JSC::VMEntryRecord::unsafePrevTopEntryFrame):
+        (JSC::EntryFrame::vmEntryRecordOffset):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::loadWasmContextInstance):
+        (JSC::AssemblyHelpers::storeWasmContextInstance):
+        (JSC::AssemblyHelpers::loadWasmContextInstanceNeedsMacroScratchRegister):
+        (JSC::AssemblyHelpers::storeWasmContextInstanceNeedsMacroScratchRegister):
+        (JSC::AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::nativeForGenerator):
+        * jsc.cpp:
+        (functionDumpCallFrame):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntThunks.cpp:
+        (JSC::vmEntryRecord):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::FrameWalker::advanceToParentFrame):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        * runtime/ThrowScope.cpp:
+        (JSC::ThrowScope::~ThrowScope):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        (JSC::VM::topEntryFrameOffset):
+        * runtime/VMTraps.cpp:
+        (JSC::isSaneFrame):
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWasmContextInstance):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmBinding.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::create):
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        (JSC::Wasm::CodeBlock::compileAsync):
+        (JSC::Wasm::CodeBlock::setCompilationFinished):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::offsetOfImportStubs):
+        (JSC::Wasm::CodeBlock::allocationSize):
+        (JSC::Wasm::CodeBlock::importWasmToEmbedderStub):
+        (JSC::Wasm::CodeBlock::offsetOfImportWasmToEmbedderStub):
+        (JSC::Wasm::CodeBlock::wasmToJSCallStubForImport):
+        (JSC::Wasm::CodeBlock::compilationFinished):
+        (JSC::Wasm::CodeBlock::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        * wasm/WasmContext.cpp:
+        (JSC::Wasm::Context::useFastTLS):
+        (JSC::Wasm::Context::load const):
+        (JSC::Wasm::Context::store):
+        * wasm/WasmContext.h:
+        * wasm/WasmEmbedder.h: Copied from Source/JavaScriptCore/wasm/WasmContext.h.
+        * wasm/WasmFaultSignalHandler.cpp:
+        * wasm/WasmFaultSignalHandler.h:
+        * wasm/WasmFormat.h:
+        * wasm/WasmInstance.cpp: Copied from Source/JavaScriptCore/wasm/WasmFaultSignalHandler.h.
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::~Instance):
+        (JSC::Wasm::Instance::extraMemoryAllocated const):
+        * wasm/WasmInstance.h: Added.
+        (JSC::Wasm::Instance::create):
+        (JSC::Wasm::Instance::finalizeCreation):
+        (JSC::Wasm::Instance::module):
+        (JSC::Wasm::Instance::codeBlock):
+        (JSC::Wasm::Instance::memory):
+        (JSC::Wasm::Instance::table):
+        (JSC::Wasm::Instance::loadI32Global const):
+        (JSC::Wasm::Instance::loadI64Global const):
+        (JSC::Wasm::Instance::loadF32Global const):
+        (JSC::Wasm::Instance::loadF64Global const):
+        (JSC::Wasm::Instance::setGlobal):
+        (JSC::Wasm::Instance::offsetOfCachedStackLimit):
+        (JSC::Wasm::Instance::cachedStackLimit const):
+        (JSC::Wasm::Instance::setCachedStackLimit):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::~Memory):
+        (JSC::Wasm::Memory::grow):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::offsetOfMemory):
+        (JSC::Wasm::Memory::offsetOfSize):
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave const):
+        * wasm/WasmMemoryMode.cpp: Copied from Source/JavaScriptCore/wasm/WasmFaultSignalHandler.h.
+        (JSC::Wasm::makeString):
+        * wasm/WasmMemoryMode.h: Copied from Source/JavaScriptCore/wasm/WasmFaultSignalHandler.h.
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::makeValidationCallback):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        (JSC::Wasm::Module::compileSync):
+        (JSC::Wasm::Module::compileAsync):
+        * wasm/WasmModule.h:
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseTableHelper):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        (JSC::Wasm::OMGPlan::runForIndex):
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmPageCount.h:
+        (JSC::Wasm::PageCount::isValid const):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::runCompletionTasks):
+        (JSC::Wasm::Plan::addCompletionTask):
+        (JSC::Wasm::Plan::tryRemoveContextAndCancelIfLast):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::dontFinalize):
+        * wasm/WasmSignature.cpp:
+        * wasm/WasmSignature.h:
+        * wasm/WasmTable.cpp: Added.
+        (JSC::Wasm::Table::create):
+        (JSC::Wasm::Table::~Table):
+        (JSC::Wasm::Table::Table):
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::Table::clearFunction):
+        (JSC::Wasm::Table::setFunction):
+        * wasm/WasmTable.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyTable.h.
+        (JSC::Wasm::Table::maximum const):
+        (JSC::Wasm::Table::size const):
+        (JSC::Wasm::Table::offsetOfSize):
+        (JSC::Wasm::Table::offsetOfFunctions):
+        (JSC::Wasm::Table::offsetOfInstances):
+        (JSC::Wasm::Table::isValidSize):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator):
+        (JSC::Wasm::Thunks::setThrowWasmException):
+        (JSC::Wasm::Thunks::throwWasmException):
+        * wasm/WasmThunks.h:
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::stopAllPlansForContext):
+        * wasm/WasmWorklist.h:
+        * wasm/js/JSToWasm.cpp: Added.
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSToWasm.h: Copied from Source/JavaScriptCore/wasm/WasmBinding.h.
+        * wasm/js/JSWebAssembly.cpp: Renamed from Source/JavaScriptCore/wasm/JSWebAssembly.cpp.
+        * wasm/js/JSWebAssembly.h: Renamed from Source/JavaScriptCore/wasm/JSWebAssembly.h.
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::create):
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::instance):
+        (JSC::JSWebAssemblyInstance::context const):
+        (JSC::JSWebAssemblyInstance::table):
+        (JSC::JSWebAssemblyInstance::webAssemblyToJSCallee):
+        (JSC::JSWebAssemblyInstance::setMemory):
+        (JSC::JSWebAssemblyInstance::offsetOfTail):
+        (JSC::JSWebAssemblyInstance::importFunctionInfo):
+        (JSC::JSWebAssemblyInstance::offsetOfTargetInstance):
+        (JSC::JSWebAssemblyInstance::offsetOfWasmEntrypoint):
+        (JSC::JSWebAssemblyInstance::offsetOfImportFunction):
+        (JSC::JSWebAssemblyInstance::importFunction):
+        (JSC::JSWebAssemblyInstance::internalMemory):
+        (JSC::JSWebAssemblyInstance::wasmCodeBlock const):
+        (JSC::JSWebAssemblyInstance::offsetOfWasmTable):
+        (JSC::JSWebAssemblyInstance::offsetOfCallee):
+        (JSC::JSWebAssemblyInstance::offsetOfGlobals):
+        (JSC::JSWebAssemblyInstance::offsetOfWasmCodeBlock):
+        (JSC::JSWebAssemblyInstance::offsetOfWasmMemory):
+        (JSC::JSWebAssemblyInstance::cachedStackLimit const):
+        (JSC::JSWebAssemblyInstance::setCachedStackLimit):
+        (JSC::JSWebAssemblyInstance::wasmMemory):
+        (JSC::JSWebAssemblyInstance::wasmModule):
+        (JSC::JSWebAssemblyInstance::allocationSize):
+        (JSC::JSWebAssemblyInstance::module const):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::create):
+        (JSC::JSWebAssemblyMemory::adopt):
+        (JSC::JSWebAssemblyMemory::JSWebAssemblyMemory):
+        (JSC::JSWebAssemblyMemory::grow):
+        (JSC::JSWebAssemblyMemory::growSuccessCallback):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::moduleInformation const):
+        (JSC::JSWebAssemblyModule::exportSymbolTable const):
+        (JSC::JSWebAssemblyModule::signatureIndexFromFunctionIndexSpace const):
+        (JSC::JSWebAssemblyModule::callee const):
+        (JSC::JSWebAssemblyModule::codeBlock):
+        (JSC::JSWebAssemblyModule::module):
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::create):
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::visitChildren):
+        (JSC::JSWebAssemblyTable::grow):
+        (JSC::JSWebAssemblyTable::getFunction):
+        (JSC::JSWebAssemblyTable::clearFunction):
+        (JSC::JSWebAssemblyTable::setFunction):
+        * wasm/js/JSWebAssemblyTable.h:
+        (JSC::JSWebAssemblyTable::isValidSize):
+        (JSC::JSWebAssemblyTable::maximum const):
+        (JSC::JSWebAssemblyTable::size const):
+        (JSC::JSWebAssemblyTable::table):
+        * wasm/js/WasmToJS.cpp: Copied from Source/JavaScriptCore/wasm/WasmBinding.cpp.
+        (JSC::Wasm::materializeImportJSCell):
+        (JSC::Wasm::wasmToJS):
+        (JSC::Wasm::wasmToJSException):
+        * wasm/js/WasmToJS.h: Copied from Source/JavaScriptCore/wasm/WasmBinding.h.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::webAssemblyMemoryProtoFuncGrow):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyCompileFunc):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyValidateFunc):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::constructJSWebAssemblyTable):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+
 2017-10-02  Keith Miller  <keith_miller@apple.com>
 
         VMTraps shouldn't crash if it sees an exception it doesn't understand.

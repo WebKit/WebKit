@@ -89,7 +89,7 @@ inline CallFrame* sanitizedTopCallFrame(CallFrame* topCallFrame)
     return topCallFrame;
 }
 
-static bool isSaneFrame(CallFrame* frame, CallFrame* calleeFrame, VMEntryFrame* entryFrame, StackBounds stackBounds)
+static bool isSaneFrame(CallFrame* frame, CallFrame* calleeFrame, EntryFrame* entryFrame, StackBounds stackBounds)
 {
     if (reinterpret_cast<void*>(frame) >= reinterpret_cast<void*>(entryFrame))
         return false;
@@ -121,18 +121,18 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
     }
 
     CodeBlock* foundCodeBlock = nullptr;
-    VMEntryFrame* vmEntryFrame = vm.topVMEntryFrame;
+    EntryFrame* entryFrame = vm.topEntryFrame;
 
     // We don't have a callee to start with. So, use the end of the stack to keep the
     // isSaneFrame() checker below happy for the first iteration. It will still check
     // to ensure that the address is in the stackBounds.
     CallFrame* calleeFrame = reinterpret_cast<CallFrame*>(stackBounds.end());
 
-    if (!vmEntryFrame || !callFrame)
+    if (!entryFrame || !callFrame)
         return; // Not running JS code. Let the SignalSender try again later.
 
     do {
-        if (!isSaneFrame(callFrame, calleeFrame, vmEntryFrame, stackBounds))
+        if (!isSaneFrame(callFrame, calleeFrame, entryFrame, stackBounds))
             return; // Let the SignalSender try again later.
 
         CodeBlock* candidateCodeBlock = callFrame->codeBlock();
@@ -142,9 +142,9 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
         }
 
         calleeFrame = callFrame;
-        callFrame = callFrame->callerFrame(vmEntryFrame);
+        callFrame = callFrame->callerFrame(entryFrame);
 
-    } while (callFrame && vmEntryFrame);
+    } while (callFrame && entryFrame);
 
     if (!foundCodeBlock) {
         // We may have just entered the frame and the codeBlock pointer is not
@@ -181,17 +181,17 @@ void VMTraps::invalidateCodeBlocksOnStack(Locker<Lock>&, ExecState* topCallFrame
 
     m_needToInvalidatedCodeBlocks = false;
 
-    VMEntryFrame* vmEntryFrame = vm().topVMEntryFrame;
+    EntryFrame* entryFrame = vm().topEntryFrame;
     CallFrame* callFrame = topCallFrame;
 
-    if (!vmEntryFrame)
+    if (!entryFrame)
         return; // Not running JS code. Nothing to invalidate.
 
     while (callFrame) {
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (codeBlock && JITCode::isOptimizingJIT(codeBlock->jitType()))
             codeBlock->jettison(Profiler::JettisonDueToVMTraps);
-        callFrame = callFrame->callerFrame(vmEntryFrame);
+        callFrame = callFrame->callerFrame(entryFrame);
     }
 }
 

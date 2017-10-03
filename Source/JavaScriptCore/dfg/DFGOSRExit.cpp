@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,7 +185,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
         if (exit.m_kind == GenericUnwind) {
             // We are acting as a defacto op_catch because we arrive here from genericUnwind().
             // So, we must restore our call frame and stack pointer.
-            jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(*vm);
+            jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
             jit.loadPtr(vm->addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
         }
         jit.addPtr(
@@ -537,7 +537,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     jit.emitMaterializeTagCheckRegisters();
 
     if (exit.isExceptionHandler())
-        jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm);
+        jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
 
     // Do all data format conversions and store the results into the stack.
 

@@ -28,8 +28,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CompilationResult.h"
-#include "VM.h"
 #include "WasmB3IRGenerator.h"
+#include "WasmEmbedder.h"
 #include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
 #include <wtf/SharedTask.h>
@@ -39,25 +39,27 @@
 namespace JSC {
 
 class CallLinkInfo;
-class JSGlobalObject;
-class JSPromiseDeferred;
 
 namespace Wasm {
 
+struct Context;
+
 class Plan : public ThreadSafeRefCounted<Plan> {
 public:
-    typedef void CallbackType(VM*, Plan&);
+    typedef void CallbackType(Plan&);
     using CompletionTask = RefPtr<SharedTask<CallbackType>>;
-    static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](VM*, Plan&) { }); }
-    Plan(VM*, Ref<ModuleInformation>, CompletionTask&&);
+
+    static CompletionTask dontFinalize() { return createSharedTask<CallbackType>([](Plan&) { }); }
+    Plan(Context*, Ref<ModuleInformation>, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
+    Plan(Context*, Ref<ModuleInformation>, CompletionTask&&);
 
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
-    JS_EXPORT_PRIVATE Plan(VM*, const uint8_t*, size_t, CompletionTask&&);
+    JS_EXPORT_PRIVATE Plan(Context*, const uint8_t*, size_t, CompletionTask&&);
     virtual JS_EXPORT_PRIVATE ~Plan();
 
     // If you guarantee the ordering here, you can rely on FIFO of the
     // completion tasks being called.
-    void addCompletionTask(VM&, CompletionTask&&);
+    void addCompletionTask(Context*, CompletionTask&&);
 
     void setMode(MemoryMode mode) { m_mode = mode; }
     MemoryMode mode() const { return m_mode; }
@@ -72,7 +74,7 @@ public:
 
     void waitForCompletion();
     // Returns true if it cancelled the plan.
-    bool tryRemoveVMAndCancelIfLast(VM&);
+    bool tryRemoveContextAndCancelIfLast(Context&);
 
 protected:
     void runCompletionTasks(const AbstractLocker&);
@@ -83,7 +85,10 @@ protected:
 
     Ref<ModuleInformation> m_moduleInformation;
 
-    Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks;
+    Vector<std::pair<Context*, CompletionTask>, 1> m_completionTasks;
+
+    CreateEmbedderWrapper m_createEmbedderWrapper;
+    ThrowWasmException m_throwWasmException { nullptr };
 
     const uint8_t* m_source;
     const size_t m_sourceLength;

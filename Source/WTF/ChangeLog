@@ -1,3 +1,14 @@
+2017-10-03  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: no VM / JS version of everything but Instance
+        https://bugs.webkit.org/show_bug.cgi?id=177473
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/StdLibExtras.h:
+        (WTF::default_construct_at): this makes code in WasmTable much
+        more readable, and is generally useful for generic code
+
 2017-10-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move LineEnding.{h,cpp} from WebCore/platform/text to wtf/text

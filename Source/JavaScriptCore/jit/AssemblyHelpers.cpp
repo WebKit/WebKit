@@ -582,7 +582,7 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
 }
 #endif
 
-void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(VM& vm)
+void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
@@ -605,8 +605,8 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(VM& vm
     }
     ASSERT(scratch != InvalidGPRReg);
 
-    loadPtr(&vm.topVMEntryFrame, scratch);
-    addPtr(TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), scratch);
+    loadPtr(&topEntryFrame, scratch);
+    addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), scratch);
 
     // Restore all callee saves except for the scratch.
     for (unsigned i = 0; i < registerCount; i++) {
@@ -627,7 +627,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(VM& vm
     ASSERT(scratch == entry.reg().gpr());
     loadPtr(Address(scratch, entry.offset()), scratch);
 #else
-    UNUSED_PARAM(vm);
+    UNUSED_PARAM(topEntryFrame);
 #endif
 }
 
@@ -778,41 +778,41 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 }
 
 #if ENABLE(WEBASSEMBLY)
-void AssemblyHelpers::loadWasmContext(GPRReg dst)
+void AssemblyHelpers::loadWasmContextInstance(GPRReg dst)
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForContext()) {
+    if (Wasm::Context::useFastTLS()) {
         loadFromTLSPtr(fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY), dst);
         return;
     }
 #endif
-    move(Wasm::PinnedRegisterInfo::get().wasmContextPointer, dst);
+    move(Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer, dst);
 }
 
-void AssemblyHelpers::storeWasmContext(GPRReg src)
+void AssemblyHelpers::storeWasmContextInstance(GPRReg src)
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForContext()) {
+    if (Wasm::Context::useFastTLS()) {
         storeToTLSPtr(src, fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY));
         return;
     }
 #endif
-    move(src, Wasm::PinnedRegisterInfo::get().wasmContextPointer);
+    move(src, Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer);
 }
 
-bool AssemblyHelpers::loadWasmContextNeedsMacroScratchRegister()
+bool AssemblyHelpers::loadWasmContextInstanceNeedsMacroScratchRegister()
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForContext())
+    if (Wasm::Context::useFastTLS())
         return loadFromTLSPtrNeedsMacroScratchRegister();
 #endif
     return false;
 }
 
-bool AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister()
+bool AssemblyHelpers::storeWasmContextInstanceNeedsMacroScratchRegister()
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (Wasm::useFastTLSForContext())
+    if (Wasm::Context::useFastTLS())
         return storeToTLSPtrNeedsMacroScratchRegister();
 #endif
     return false;
@@ -875,10 +875,10 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
     }
 }
 
-void AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer)
+void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-    addPtr(TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), calleeSavesBuffer);
+    addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), calleeSavesBuffer);
 
     RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
     RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();

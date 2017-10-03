@@ -27,8 +27,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "VM.h"
-
 #include <queue>
 
 #include <wtf/AutomaticThread.h>
@@ -37,10 +35,9 @@
 
 namespace JSC {
 
-class JSPromiseDeferred;
-
 namespace Wasm {
 
+struct Context;
 class Plan;
 
 class Worklist {
@@ -50,12 +47,9 @@ public:
     ~Worklist();
 
     JS_EXPORT_PRIVATE void enqueue(Ref<Plan>);
-    void stopAllPlansForVM(VM&);
+    void stopAllPlansForContext(Context&);
 
     JS_EXPORT_PRIVATE void completePlanSynchronously(Plan&);
-
-    void activatePlan(JSPromiseDeferred*, Plan*);
-    void deactivePlan(JSPromiseDeferred*, Plan*);
 
     enum class Priority {
         Shutdown,

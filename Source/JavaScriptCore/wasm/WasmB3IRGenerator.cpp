@@ -49,8 +49,6 @@
 #include "B3WasmBoundsCheckValue.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyModule.h"
-#include "JSWebAssemblyRuntimeError.h"
 #include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
@@ -178,7 +176,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, CompilationMode, unsigned functionIndex, TierUpCount*);
+    B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, CompilationMode, unsigned functionIndex, TierUpCount*, ThrowWasmException);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -247,7 +245,7 @@ private:
 
     int32_t WARN_UNUSED_RETURN fixupPointerPlusOffset(ExpressionType&, uint32_t);
 
-    void restoreWasmContext(Procedure&, BasicBlock*, Value*);
+    void restoreWasmContextInstance(Procedure&, BasicBlock*, Value*);
     void restoreWebAssemblyGlobalState(const MemoryInformation&, Value* instance, Procedure&, BasicBlock*);
 
     Origin origin();
@@ -267,7 +265,7 @@ private:
     InsertionSet m_constantInsertionValues;
     GPRReg m_memoryBaseGPR { InvalidGPRReg };
     GPRReg m_memorySizeGPR { InvalidGPRReg };
-    GPRReg m_wasmContextGPR { InvalidGPRReg };
+    GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
     bool m_makesCalls { false };
 
     Value* m_instanceValue { nullptr }; // Always use the accessor below to ensure the instance value is materialized when used.
@@ -291,37 +289,37 @@ int32_t B3IRGenerator::fixupPointerPlusOffset(ExpressionType& ptr, uint32_t offs
     return offset;
 }
 
-void B3IRGenerator::restoreWasmContext(Procedure& proc, BasicBlock* block, Value* arg)
+void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* block, Value* arg)
 {
-    if (useFastTLSForContext()) {
+    if (Context::useFastTLS()) {
         PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
-        if (CCallHelpers::storeWasmContextNeedsMacroScratchRegister())
+        if (CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister())
             patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::storeWasmContextNeedsMacroScratchRegister());
-                jit.storeWasmContext(params[0].gpr());
+                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister());
+                jit.storeWasmContextInstance(params[0].gpr());
             });
         return;
     }
 
-    // FIXME: Because WasmToWasm call clobbers wasmContext register and does not restore it, we need to restore it in the caller side.
+    // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
     // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
     PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
     Effects effects = Effects::none();
     effects.writesPinned = true;
     effects.reads = B3::HeapRange::top();
     patchpoint->effects = effects;
-    patchpoint->clobberLate(RegisterSet(m_wasmContextGPR));
+    patchpoint->clobberLate(RegisterSet(m_wasmContextInstanceGPR));
     patchpoint->append(instanceValue(), ValueRep::SomeRegister);
-    GPRReg wasmContextGPR = m_wasmContextGPR;
+    GPRReg wasmContextInstanceGPR = m_wasmContextInstanceGPR;
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& param) {
-        jit.move(param[0].gpr(), wasmContextGPR);
+        jit.move(param[0].gpr(), wasmContextInstanceGPR);
     });
 }
 
-B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, TierUpCount* tierUp)
+B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
     : m_info(info)
     , m_mode(mode)
     , m_compilationMode(compilationMode)
@@ -339,9 +337,9 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
     m_memoryBaseGPR = pinnedRegs.baseMemoryPointer;
     m_proc.pinRegister(m_memoryBaseGPR);
 
-    m_wasmContextGPR = pinnedRegs.wasmContextPointer;
-    if (!useFastTLSForContext())
-        m_proc.pinRegister(m_wasmContextGPR);
+    m_wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
+    if (!Context::useFastTLS())
+        m_proc.pinRegister(m_wasmContextInstanceGPR);
 
     if (mode != MemoryMode::Signaling) {
         ASSERT(!pinnedRegs.sizeRegisters[0].sizeOffset);
@@ -349,6 +347,9 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
         for (const PinnedSizeRegisterInfo& regInfo : pinnedRegs.sizeRegisters)
             m_proc.pinRegister(regInfo.sizeRegister);
     }
+
+    if (throwWasmException)
+        Thunks::singleton().setThrowWasmException(throwWasmException);
 
     if (info.memory) {
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
@@ -363,6 +364,16 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
             }
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
+
+        switch (m_mode) {
+        case MemoryMode::BoundsChecking:
+            break;
+        case MemoryMode::Signaling:
+        // Most memory accesses in signaling mode don't do an explicit exception check because they can rely on fault handling to detect out-of-bounds accesses. FaultSignalHandler nonetheless needs the thunk to exist so that it can jump to that thunk.
+            if (UNLIKELY(!Thunks::singleton().stub(throwExceptionFromWasmThunkGenerator)))
+                CRASH();
+            break;
+        }
     }
 
     wasmCallingConvention().setupFrameInPrologue(&compilation->calleeMoveLocation, m_proc, Origin(), m_currentBlock);
@@ -373,12 +384,12 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
         m_instanceValue = stackOverflowCheck;
         stackOverflowCheck->appendSomeRegister(framePointer);
         stackOverflowCheck->clobber(RegisterSet::macroScratchRegisters());
-        if (!useFastTLSForContext()) {
-            // FIXME: Because WasmToWasm call clobbers wasmContext register and does not restore it, we need to restore it in the caller side.
+        if (!Context::useFastTLS()) {
+            // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
             // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
             stackOverflowCheck->effects.writesPinned = false;
             stackOverflowCheck->effects.readsPinned = true;
-            stackOverflowCheck->resultConstraint = ValueRep::reg(m_wasmContextGPR);
+            stackOverflowCheck->resultConstraint = ValueRep::reg(m_wasmContextInstanceGPR);
         }
         stackOverflowCheck->numGPScratchRegisters = 2;
         stackOverflowCheck->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -401,7 +412,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
             bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
             bool needsOverflowCheck = m_makesCalls || wasmFrameSize >= minimumParentCheckSize || needUnderflowCheck;
 
-            GPRReg context = useFastTLSForContext() ? params[0].gpr() : m_wasmContextGPR;
+            GPRReg contextInstance = Context::useFastTLS() ? params[0].gpr() : m_wasmContextInstanceGPR;
 
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
@@ -411,10 +422,10 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
                 GPRReg scratch1 = params.gpScratch(0);
                 GPRReg scratch2 = params.gpScratch(1);
 
-                if (useFastTLSForContext())
-                    jit.loadWasmContext(context);
+                if (Context::useFastTLS())
+                    jit.loadWasmContextInstance(contextInstance);
 
-                jit.loadPtr(CCallHelpers::Address(context, Context::offsetOfCachedStackLimit()), scratch2);
+                jit.loadPtr(CCallHelpers::Address(contextInstance, JSWebAssemblyInstance::offsetOfCachedStackLimit()), scratch2);
                 jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), fp, scratch1);
                 MacroAssembler::JumpList overflow;
                 if (UNLIKELY(needUnderflowCheck))
@@ -423,10 +434,10 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
                 });
-            } else if (m_usesInstanceValue && useFastTLSForContext()) {
+            } else if (m_usesInstanceValue && Context::useFastTLS()) {
                 // No overflow check is needed, but the instance values still needs to be correct.
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::loadWasmContextNeedsMacroScratchRegister());
-                jit.loadWasmContext(context);
+                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::loadWasmContextInstanceNeedsMacroScratchRegister());
+                jit.loadWasmContextInstance(contextInstance);
             } else {
                 // We said we'd return a pointer. We don't actually need to because it isn't used, but the patchpoint conservatively said it had effects (potential stack check) which prevent it from getting removed.
             }
@@ -438,7 +449,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
 void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memory, Value* instance, Procedure& proc, BasicBlock* block)
 {
-    restoreWasmContext(proc, block, instance);
+    restoreWasmContextInstance(proc, block, instance);
 
     if (!!memory) {
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
@@ -458,12 +469,12 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memor
 
         patchpoint->setGenerator([pinnedRegs] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
-            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
+            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), JSWebAssemblyInstance::offsetOfWasmMemory()), baseMemory);
             const auto& sizeRegs = pinnedRegs->sizeRegisters;
             ASSERT(sizeRegs.size() >= 1);
             ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
-            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister);
-            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfSize()), sizeRegs[0].sizeRegister);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfMemory()), baseMemory);
             for (unsigned i = 1; i < sizeRegs.size(); ++i)
                 jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
         });
@@ -541,24 +552,22 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
 
 auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
-    int32_t (*growMemory) (Context*, int32_t) = [] (Context* wasmContext, int32_t delta) -> int32_t {
-        VM& vm = *wasmContext->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        JSWebAssemblyMemory* wasmMemory = wasmContext->memory();
-
+    int32_t (*growMemory)(JSWebAssemblyInstance*, int32_t) = [] (JSWebAssemblyInstance* instance, int32_t delta) -> int32_t {
         if (delta < 0)
             return -1;
 
-        bool shouldThrowExceptionsOnFailure = false;
-        // grow() does not require ExecState* if it doesn't throw exceptions.
-        ExecState* exec = nullptr;
-        PageCount result = wasmMemory->grow(vm, exec, static_cast<uint32_t>(delta), shouldThrowExceptionsOnFailure);
-        scope.releaseAssertNoException();
-        if (!result)
-            return -1;
+        auto grown = instance->internalMemory().grow(PageCount(delta));
+        if (!grown) {
+            switch (grown.error()) {
+            case Memory::GrowFailReason::InvalidDelta:
+            case Memory::GrowFailReason::InvalidGrowSize:
+            case Memory::GrowFailReason::WouldExceedMaximum:
+            case Memory::GrowFailReason::OutOfMemory:
+                return -1;
+            }
+        }
 
-        return result.pageCount();
+        return grown.value().pageCount();
     };
 
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(),
@@ -572,13 +581,13 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
 
 auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 {
-    Value* memoryObject = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfMemory()));
+    Value* memoryObject = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfWasmMemory()));
 
-    static_assert(sizeof(decltype(static_cast<JSWebAssemblyInstance*>(nullptr)->memory()->memory().size())) == sizeof(uint64_t), "codegen relies on this size");
-    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), memoryObject, safeCast<int32_t>(JSWebAssemblyMemory::offsetOfSize()));
+    static_assert(sizeof(decltype(static_cast<Wasm::Memory*>(nullptr)->size())) == sizeof(uint64_t), "codegen relies on this size");
+    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), memoryObject, safeCast<int32_t>(Wasm::Memory::offsetOfSize()));
     
     constexpr uint32_t shiftValue = 16;
-    static_assert(PageCount::pageSize == 1 << shiftValue, "This must hold for the code below to be correct.");
+    static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
     Value* numPages = m_currentBlock->appendNew<Value>(m_proc, ZShr, origin(),
         size, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), shiftValue));
 
@@ -1069,14 +1078,13 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
         // FIXME imports can be linked here, instead of generating a patchpoint, because all import stubs are generated before B3 compilation starts. https://bugs.webkit.org/show_bug.cgi?id=166462
-        Value* functionImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfImportFunction(functionIndex)));
-        Value* jsTypeOfImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, origin(), functionImport, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
-        Value* isWasmCall = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), jsTypeOfImport, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), WebAssemblyFunctionType));
+        Value* targetInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTargetInstance(functionIndex)));
+        Value* isWasmCall = m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), targetInstance, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0));
 
         BasicBlock* isWasmBlock = m_proc.addBlock();
-        BasicBlock* isJSBlock = m_proc.addBlock();
+        BasicBlock* isEmbedderBlock = m_proc.addBlock();
         BasicBlock* continuation = m_proc.addBlock();
-        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isWasmCall, FrequentedBlock(isWasmBlock), FrequentedBlock(isJSBlock));
+        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isWasmCall, FrequentedBlock(isWasmBlock), FrequentedBlock(isEmbedderBlock));
 
         Value* wasmCallResult = wasmCallingConvention().setupCall(m_proc, isWasmBlock, origin(), args, toB3Type(returnType),
             [=] (PatchpointValue* patchpoint) {
@@ -1097,15 +1105,15 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         UpsilonValue* wasmCallResultUpsilon = returnType == Void ? nullptr : isWasmBlock->appendNew<UpsilonValue>(m_proc, origin(), wasmCallResult);
         isWasmBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
-        // FIXME: Lets remove this indirection by creating a PIC friendly IC
+        // FIXME: Let's remove this indirection by creating a PIC friendly IC
         // for calls out to JS. This shouldn't be that hard to do. We could probably
         // implement the IC to be over Wasm::Context*.
         // https://bugs.webkit.org/show_bug.cgi?id=170375
-        Value* codeBlock = isJSBlock->appendNew<MemoryValue>(m_proc,
-            Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCodeBlock()));
-        Value* jumpDestination = isJSBlock->appendNew<MemoryValue>(m_proc,
-            Load, pointerType(), origin(), codeBlock, safeCast<int32_t>(JSWebAssemblyCodeBlock::offsetOfImportWasmToJSStub(functionIndex)));
-        Value* jsCallResult = wasmCallingConvention().setupCall(m_proc, isJSBlock, origin(), args, toB3Type(returnType),
+        Value* codeBlock = isEmbedderBlock->appendNew<MemoryValue>(m_proc,
+            Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfWasmCodeBlock()));
+        Value* jumpDestination = isEmbedderBlock->appendNew<MemoryValue>(m_proc,
+            Load, pointerType(), origin(), codeBlock, safeCast<int32_t>(CodeBlock::offsetOfImportWasmToEmbedderStub(functionIndex)));
+        Value* embedderCallResult = wasmCallingConvention().setupCall(m_proc, isEmbedderBlock, origin(), args, toB3Type(returnType),
             [&] (PatchpointValue* patchpoint) {
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
@@ -1119,8 +1127,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                     jit.call(params[returnType == Void ? 0 : 1].gpr());
                 });
             });
-        UpsilonValue* jsCallResultUpsilon = returnType == Void ? nullptr : isJSBlock->appendNew<UpsilonValue>(m_proc, origin(), jsCallResult);
-        isJSBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+        UpsilonValue* embedderCallResultUpsilon = returnType == Void ? nullptr : isEmbedderBlock->appendNew<UpsilonValue>(m_proc, origin(), embedderCallResult);
+        isEmbedderBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
         m_currentBlock = continuation;
 
@@ -1129,7 +1137,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         else {
             result = continuation->appendNew<Value>(m_proc, Phi, toB3Type(returnType), origin());
             wasmCallResultUpsilon->setPhi(result);
-            jsCallResultUpsilon->setPhi(result);
+            embedderCallResultUpsilon->setPhi(result);
         }
 
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
@@ -1165,17 +1173,17 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     ExpressionType callableFunctionBuffer;
-    ExpressionType jsFunctionBuffer;
+    ExpressionType instancesBuffer;
     ExpressionType callableFunctionBufferSize;
     {
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTable()));
+            instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfWasmTable()));
         callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfFunctions()));
-        jsFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfJSFunctions()));
+            table, safeCast<int32_t>(Wasm::Table::offsetOfFunctions()));
+        instancesBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+            table, safeCast<int32_t>(Wasm::Table::offsetOfInstances()));
         callableFunctionBufferSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
-            table, safeCast<int32_t>(JSWebAssemblyTable::offsetOfSize()));
+            table, safeCast<int32_t>(Wasm::Table::offsetOfSize()));
     }
 
     // Check the index we are looking for is valid.
@@ -1195,6 +1203,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
     ExpressionType callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, offset);
 
     // Check that the CallableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
+    // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
     static_assert(sizeof(CallableFunction::signatureIndex) == sizeof(uint32_t), "Load codegen assumes i32");
     ExpressionType calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), callableFunction, safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, signatureIndex)));
     {
@@ -1223,19 +1232,17 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
     {
         Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
             m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex),
-            constant(pointerType(), sizeof(WriteBarrier<JSObject>)));
-        Value* jsObject = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Add, origin(), jsFunctionBuffer, offset));
+            constant(pointerType(), sizeof(Wasm::Instance*)));
+        Value* newContextInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Add, origin(), instancesBuffer, offset));
 
         BasicBlock* continuation = m_proc.addBlock();
         BasicBlock* doContextSwitch = m_proc.addBlock();
 
-        Value* newContext = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            jsObject, safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfInstance()));
-        Value* isSameContext = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
-            newContext, instanceValue());
+        Value* isSameContextInstance = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+            newContextInstance, instanceValue());
         m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
-            isSameContext, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
+            isSameContextInstance, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
 
         PatchpointValue* patchpoint = doContextSwitch->appendNew<PatchpointValue>(m_proc, B3::Void, origin());
         patchpoint->effects.writesPinned = true;
@@ -1243,26 +1250,26 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
         patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
-        patchpoint->append(newContext, ValueRep::SomeRegister);
+        patchpoint->append(newContextInstance, ValueRep::SomeRegister);
         patchpoint->append(instanceValue(), ValueRep::SomeRegister);
         patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            GPRReg newContext = params[0].gpr();
-            GPRReg oldContext = params[1].gpr();
+            GPRReg newContextInstance = params[0].gpr();
+            GPRReg oldContextInstance = params[1].gpr();
             const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
             const auto& sizeRegs = pinnedRegs.sizeRegisters;
             GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-            ASSERT(newContext != baseMemory);
-            jit.loadPtr(CCallHelpers::Address(oldContext, Context::offsetOfCachedStackLimit()), baseMemory);
-            jit.storePtr(baseMemory, CCallHelpers::Address(newContext, Context::offsetOfCachedStackLimit()));
-            jit.storeWasmContext(newContext);
-            jit.loadPtr(CCallHelpers::Address(newContext, Context::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
+            ASSERT(newContextInstance != baseMemory);
+            jit.loadPtr(CCallHelpers::Address(oldContextInstance, JSWebAssemblyInstance::offsetOfCachedStackLimit()), baseMemory);
+            jit.storePtr(baseMemory, CCallHelpers::Address(newContextInstance, JSWebAssemblyInstance::offsetOfCachedStackLimit()));
+            jit.storeWasmContextInstance(newContextInstance);
+            jit.loadPtr(CCallHelpers::Address(newContextInstance, JSWebAssemblyInstance::offsetOfWasmMemory()), baseMemory); // Wasm::Memory*.
             ASSERT(sizeRegs.size() == 1);
             ASSERT(sizeRegs[0].sizeRegister != baseMemory);
-            ASSERT(sizeRegs[0].sizeRegister != newContext);
+            ASSERT(sizeRegs[0].sizeRegister != newContextInstance);
             ASSERT(!sizeRegs[0].sizeOffset);
-            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
-            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory); // WasmMemory::void*.
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfMemory()), baseMemory); // Wasm::Memory::void*.
         });
         doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
@@ -1339,194 +1346,6 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn();
 }
 
-std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& compilationContext, const Signature& signature, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
-{
-    CCallHelpers& jit = *compilationContext.jsEntrypointJIT;
-
-    auto result = std::make_unique<InternalFunction>();
-    jit.emitFunctionPrologue();
-
-    // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
-    jit.store64(CCallHelpers::TrustedImm64(0), CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register))));
-    MacroAssembler::DataLabelPtr calleeMoveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), GPRInfo::nonPreservedNonReturnGPR);
-    jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
-    CodeLocationDataLabelPtr* linkedCalleeMove = &result->calleeMoveLocation;
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        *linkedCalleeMove = linkBuffer.locationOf(calleeMoveLocation);
-    });
-
-    const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
-    RegisterSet toSave = pinnedRegs.toSave(mode);
-
-#if !ASSERT_DISABLED
-    unsigned toSaveSize = toSave.numberOfSetGPRs();
-    // They should all be callee saves.
-    toSave.filter(RegisterSet::calleeSaveRegisters());
-    ASSERT(toSave.numberOfSetGPRs() == toSaveSize);
-#endif
-
-    RegisterAtOffsetList registersToSpill(toSave, RegisterAtOffsetList::OffsetBaseType::FramePointerBased);
-    result->entrypoint.calleeSaveRegisters = registersToSpill;
-
-    unsigned totalFrameSize = registersToSpill.size() * sizeof(void*);
-    totalFrameSize += WasmCallingConvention::headerSizeInBytes();
-    totalFrameSize -= sizeof(CallerFrameAndPC);
-    unsigned numGPRs = 0;
-    unsigned numFPRs = 0;
-    for (unsigned i = 0; i < signature.argumentCount(); i++) {
-        switch (signature.argument(i)) {
-        case Wasm::I64:
-        case Wasm::I32:
-            if (numGPRs >= wasmCallingConvention().m_gprArgs.size())
-                totalFrameSize += sizeof(void*);
-            ++numGPRs;
-            break;
-        case Wasm::F32:
-        case Wasm::F64:
-            if (numFPRs >= wasmCallingConvention().m_fprArgs.size())
-                totalFrameSize += sizeof(void*);
-            ++numFPRs;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-
-    totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
-    jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
-
-    // We save all these registers regardless of having a memory or not.
-    // The reason is that we use one of these as a scratch. That said,
-    // almost all real wasm programs use memory, so it's not really
-    // worth optimizing for the case that they don't.
-    for (const RegisterAtOffset& regAtOffset : registersToSpill) {
-        GPRReg reg = regAtOffset.reg().gpr();
-        ptrdiff_t offset = regAtOffset.offset();
-        jit.storePtr(reg, CCallHelpers::Address(GPRInfo::callFrameRegister, offset));
-    }
-
-    GPRReg wasmContextGPR = pinnedRegs.wasmContextPointer;
-
-    {
-        CCallHelpers::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
-        numGPRs = 0;
-        numFPRs = 0;
-        // We're going to set the pinned registers after this. So
-        // we can use this as a scratch for now since we saved it above.
-        GPRReg scratchReg = pinnedRegs.baseMemoryPointer;
-
-        ptrdiff_t jsOffset = CallFrameSlot::thisArgument * sizeof(EncodedJSValue);
-
-        // vmEntryToWasm passes Wasm::Context* as the first JS argument when we're
-        // not using fast TLS to hold the Wasm::Context*.
-        if (!useFastTLSForContext()) {
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmContextGPR);
-            jsOffset += sizeof(EncodedJSValue);
-        }
-
-        ptrdiff_t wasmOffset = CallFrame::headerSizeInRegisters * sizeof(void*);
-        for (unsigned i = 0; i < signature.argumentCount(); i++) {
-            switch (signature.argument(i)) {
-            case Wasm::I32:
-            case Wasm::I64:
-                if (numGPRs >= wasmCallingConvention().m_gprArgs.size()) {
-                    if (signature.argument(i) == Wasm::I32) {
-                        jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
-                        jit.store32(scratchReg, calleeFrame.withOffset(wasmOffset));
-                    } else {
-                        jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
-                        jit.store64(scratchReg, calleeFrame.withOffset(wasmOffset));
-                    }
-                    wasmOffset += sizeof(void*);
-                } else {
-                    if (signature.argument(i) == Wasm::I32)
-                        jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_gprArgs[numGPRs].gpr());
-                    else
-                        jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_gprArgs[numGPRs].gpr());
-                }
-                ++numGPRs;
-                break;
-            case Wasm::F32:
-            case Wasm::F64:
-                if (numFPRs >= wasmCallingConvention().m_fprArgs.size()) {
-                    if (signature.argument(i) == Wasm::F32) {
-                        jit.load32(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
-                        jit.store32(scratchReg, calleeFrame.withOffset(wasmOffset));
-                    } else {
-                        jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), scratchReg);
-                        jit.store64(scratchReg, calleeFrame.withOffset(wasmOffset));
-                    }
-                    wasmOffset += sizeof(void*);
-                } else {
-                    if (signature.argument(i) == Wasm::F32)
-                        jit.loadFloat(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_fprArgs[numFPRs].fpr());
-                    else
-                        jit.loadDouble(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmCallingConvention().m_fprArgs[numFPRs].fpr());
-                }
-                ++numFPRs;
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-
-            jsOffset += sizeof(EncodedJSValue);
-        }
-    }
-
-    if (!!info.memory) {
-        GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-
-        if (!useFastTLSForContext())
-            jit.loadPtr(CCallHelpers::Address(wasmContextGPR, JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
-        else {
-            jit.loadWasmContext(baseMemory);
-            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
-        }
-
-        if (mode != MemoryMode::Signaling) {
-            const auto& sizeRegs = pinnedRegs.sizeRegisters;
-            ASSERT(sizeRegs.size() >= 1);
-            ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
-            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister);
-            for (unsigned i = 1; i < sizeRegs.size(); ++i)
-                jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
-        }
-
-        jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory);
-    }
-
-    CCallHelpers::Call call = jit.threadSafePatchableNearCall();
-    unsigned functionIndexSpace = functionIndex + info.importFunctionCount();
-    ASSERT(functionIndexSpace < info.functionIndexSpaceSize());
-    jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace] (LinkBuffer& linkBuffer) {
-        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall(call), functionIndexSpace });
-    });
-
-
-    for (const RegisterAtOffset& regAtOffset : registersToSpill) {
-        GPRReg reg = regAtOffset.reg().gpr();
-        ASSERT(reg != GPRInfo::returnValueGPR);
-        ptrdiff_t offset = regAtOffset.offset();
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, offset), reg);
-    }
-
-    switch (signature.returnType()) {
-    case Wasm::F32:
-        jit.moveFloatTo32(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
-        break;
-    case Wasm::F64:
-        jit.moveDoubleTo64(FPRInfo::returnValueFPR, GPRInfo::returnValueGPR);
-        break;
-    default:
-        break;
-    }
-
-    jit.emitFunctionEpilogue();
-    jit.ret();
-
-    return result;
-}
-
 auto B3IRGenerator::origin() -> Origin
 {
     OpcodeOrigin origin(m_parser->currentOpcode(), m_parser->currentOpcodeStartingOffset());
@@ -1534,7 +1353,7 @@ auto B3IRGenerator::origin() -> Origin
     return bitwise_cast<Origin>(origin);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
 {
     auto result = std::make_unique<InternalFunction>();
 
@@ -1558,11 +1377,11 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
         ? Options::webAssemblyBBQOptimizationLevel()
         : Options::webAssemblyOMGOptimizationLevel());
 
-    B3IRGenerator context(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, compilationMode, functionIndex, tierUp);
-    FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, info);
+    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, compilationMode, functionIndex, tierUp, throwWasmException);
+    FunctionParser<B3IRGenerator> parser(irGenerator, functionStart, functionLength, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
-    context.insertConstants();
+    irGenerator.insertConstants();
 
     procedure.resetReachability();
     if (!ASSERT_DISABLED)

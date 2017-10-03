@@ -184,7 +184,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
     , vmType(vmType)
     , clientData(0)
-    , topVMEntryFrame(nullptr)
+    , topEntryFrame(nullptr)
     , topCallFrame(CallFrame::noCaller())
     , promiseDeferredTimer(std::make_unique<PromiseDeferredTimer>(*this))
     , m_atomicStringTable(vmType == Default ? Thread::current().atomicStringTable() : new AtomicStringTable)
@@ -368,7 +368,7 @@ VM::~VM()
     promiseDeferredTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
     if (Wasm::existingWorklistOrNull())
-        Wasm::ensureWorklist().stopAllPlansForVM(*this);
+        Wasm::ensureWorklist().stopAllPlansForContext(wasmContext);
 #endif
     if (UNLIKELY(m_watchdog))
         m_watchdog->willDestroyVM(this);

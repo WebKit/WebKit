@@ -90,8 +90,15 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
         }
     }
 
+    RefPtr<Wasm::Table> wasmTable = Wasm::Table::create(initial, maximum);
+    if (!wasmTable) {
+        return JSValue::encode(throwException(exec, throwScope,
+            createRangeError(exec, ASCIILiteral("couldn't create Table"))));
+    }
+
     throwScope.release();
-    return JSValue::encode(JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyTableStructure(), initial, maximum));
+
+    return JSValue::encode(JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyTableStructure(), wasmTable.releaseNonNull()));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyTable(ExecState* exec)

@@ -659,7 +659,7 @@ end
 
 macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
     if ARM64 or X86_64 or X86_64_WIN
-        loadp VM::topVMEntryFrame[vm], temp
+        loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
         if ARM64
@@ -701,7 +701,7 @@ end
 
 macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
     if ARM64 or X86_64 or X86_64_WIN
-        loadp VM::topVMEntryFrame[vm], temp
+        loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
         if ARM64
@@ -1144,7 +1144,7 @@ if not C_LOOP
         storep address, VM::m_lastStackTop[vm]
         ret
     
-    # VMEntryRecord* vmEntryRecord(const VMEntryFrame* entryFrame)
+    # VMEntryRecord* vmEntryRecord(const EntryFrame* entryFrame)
     global _vmEntryRecord
     _vmEntryRecord:
         if X86 or X86_WIN

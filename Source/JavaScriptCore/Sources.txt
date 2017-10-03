@@ -935,7 +935,6 @@ tools/JSDollarVMPrototype.cpp
 tools/SigillCrashAnalyzer.cpp
 tools/VMInspector.cpp
 
-wasm/JSWebAssembly.cpp
 wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
@@ -943,12 +942,16 @@ wasm/WasmCallee.cpp
 wasm/WasmCallingConvention.cpp
 wasm/WasmCodeBlock.cpp
 wasm/WasmContext.cpp
+wasm/WasmEmbedder.h
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp
 wasm/WasmIndexOrName.cpp
+wasm/WasmInstance.cpp
+wasm/WasmInstance.h
 wasm/WasmMachineThreads.cpp
 wasm/WasmMemory.cpp
 wasm/WasmMemoryInformation.cpp
+wasm/WasmMemoryMode.cpp
 wasm/WasmModule.cpp
 wasm/WasmModuleInformation.cpp
 wasm/WasmModuleParser.cpp
@@ -958,10 +961,15 @@ wasm/WasmOpcodeOrigin.cpp
 wasm/WasmPageCount.cpp
 wasm/WasmPlan.cpp
 wasm/WasmSignature.cpp
+wasm/WasmTable.cpp
+wasm/WasmTable.h
 wasm/WasmThunks.cpp
 wasm/WasmValidate.cpp
 wasm/WasmWorklist.cpp
 
+wasm/js/JSToWasm.cpp
+wasm/js/JSToWasm.h
+wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyCodeBlock.cpp
 wasm/js/JSWebAssemblyCodeBlockSubspace.cpp
 wasm/js/JSWebAssemblyCompileError.cpp
@@ -971,6 +979,8 @@ wasm/js/JSWebAssemblyMemory.cpp
 wasm/js/JSWebAssemblyModule.cpp
 wasm/js/JSWebAssemblyRuntimeError.cpp
 wasm/js/JSWebAssemblyTable.cpp
+wasm/js/WasmToJS.cpp
+wasm/js/WasmToJS.h
 wasm/js/WebAssemblyCompileErrorConstructor.cpp
 wasm/js/WebAssemblyCompileErrorPrototype.cpp
 wasm/js/WebAssemblyFunction.cpp

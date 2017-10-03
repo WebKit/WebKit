@@ -30,15 +30,19 @@
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "UnconditionalFinalizer.h"
-#include "WasmModule.h"
+#include "WasmMemoryMode.h"
 #include <wtf/Bag.h>
+#include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 namespace Wasm {
 class Module;
+struct ModuleInformation;
 class Plan;
+using SignatureIndex = uint32_t;
 }
 
 class SymbolTable;
@@ -52,23 +56,20 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static JSWebAssemblyModule* createStub(VM&, ExecState*, Structure*, Wasm::Module::ValidationResult&&);
+    JS_EXPORT_PRIVATE static JSWebAssemblyModule* createStub(VM&, ExecState*, Structure*, WTF::Expected<RefPtr<Wasm::Module>, String>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    const Wasm::ModuleInformation& moduleInformation() const { return m_module->moduleInformation(); }
-    SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
-    Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
-    {
-        return m_module->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
-    }
-    WebAssemblyToJSCallee* callee() const { return m_callee.get(); }
+    const Wasm::ModuleInformation& moduleInformation() const;
+    SymbolTable* exportSymbolTable() const;
+    Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
+    WebAssemblyToJSCallee* callee() const;
 
-    JSWebAssemblyCodeBlock* codeBlock(Wasm::MemoryMode mode) { return m_codeBlocks[static_cast<size_t>(mode)].get(); }
+    JSWebAssemblyCodeBlock* codeBlock(Wasm::MemoryMode mode);
+    void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
 
     const Vector<uint8_t>& source() const;
 
-    Wasm::Module& module() { return m_module.get(); }
-    void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
+    JS_EXPORT_PRIVATE Wasm::Module& module();
 
 private:
     friend class JSWebAssemblyCodeBlock;
