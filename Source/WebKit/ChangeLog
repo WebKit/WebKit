@@ -1,3 +1,27 @@
+2017-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC equivalent of WKPageLoaderClient.pluginDidFail
+        https://bugs.webkit.org/show_bug.cgi?id=177787
+        <rdar://problem/22387633>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didFailToInitializePlugin):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::canHandleDidFailToInitializePlugIn const):
+        (API::NavigationClient::didFailToInitializePlugIn):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::canHandleDidFailToInitializePlugIn const):
+        (WebKit::NavigationState::NavigationClient::didFailToInitializePlugIn):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailToInitializePlugin):
+
 2017-10-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Prefer -webkit-system-font

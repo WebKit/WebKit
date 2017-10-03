@@ -120,6 +120,7 @@ private:
         void webGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
         void resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
         bool willGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem&, bool inPageCache, API::Object*) final;
+        bool didFailToInitializePlugIn(WebKit::WebPageProxy&, API::Dictionary&) final;
 #endif
 
         void contentRuleListNotification(WebPageProxy&, WebCore::URL&&, Vector<String>&&, Vector<String>&&) final;
@@ -213,6 +214,7 @@ private:
 #if PLATFORM(MAC)
         bool webViewWebGLLoadPolicyForURL : 1;
         bool webViewResolveWebGLLoadPolicyForURL : 1;
+        bool webViewDidFailToInitializePlugInWithInfo : 1;
         bool webViewWillGoToBackForwardListItemInPageCache : 1;
 #endif
     } m_navigationDelegateMethods;
