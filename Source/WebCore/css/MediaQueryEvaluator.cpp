@@ -299,9 +299,9 @@ static bool monochromeEvaluate(CSSValue* value, const CSSToLengthConversionData&
 {
     bool isMonochrome;
 
-    if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::On)
+    if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == Settings::ForcedAccessibilityValue::On)
         isMonochrome = true;
-    else if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::Off)
+    else if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == Settings::ForcedAccessibilityValue::Off)
         isMonochrome = false;
     else
         isMonochrome = screenIsMonochrome(frame.mainFrame().view());
@@ -315,9 +315,9 @@ static bool invertedColorsEvaluate(CSSValue* value, const CSSToLengthConversionD
 {
     bool isInverted;
 
-    if (frame.settings().forcedColorsAreInvertedAccessibilityValue() == ForcedAccessibilityValue::On)
+    if (frame.settings().forcedColorsAreInvertedAccessibilityValue() == Settings::ForcedAccessibilityValue::On)
         isInverted = true;
-    else if (frame.settings().forcedColorsAreInvertedAccessibilityValue() == ForcedAccessibilityValue::Off)
+    else if (frame.settings().forcedColorsAreInvertedAccessibilityValue() == Settings::ForcedAccessibilityValue::Off)
         isInverted = false;
     else
         isInverted = screenHasInvertedColors();
@@ -716,12 +716,12 @@ static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConve
     bool userPrefersReducedMotion = false;
 
     switch (frame.settings().forcedPrefersReducedMotionAccessibilityValue()) {
-    case ForcedAccessibilityValue::On:
+    case Settings::ForcedAccessibilityValue::On:
         userPrefersReducedMotion = true;
         break;
-    case ForcedAccessibilityValue::Off:
+    case Settings::ForcedAccessibilityValue::Off:
         break;
-    case ForcedAccessibilityValue::System:
+    case Settings::ForcedAccessibilityValue::System:
 #if USE(NEW_THEME)
         userPrefersReducedMotion = Theme::singleton().userPrefersReducedMotion();
 #endif

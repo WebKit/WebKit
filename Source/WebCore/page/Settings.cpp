@@ -43,6 +43,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "RuntimeApplicationChecks.h"
+#include "StorageMap.h"
 #include <limits>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -120,6 +121,29 @@ bool Settings::gShouldOptOutOfNetworkStateObservation = false;
 bool Settings::gManageAudioSession = false;
 bool Settings::gCustomPasteboardDataEnabled = false;
 
+// NOTEs
+//  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;
+//  2) EditingWindowsBehavior comprises Win32 build;
+//  3) EditingUnixBehavior comprises all unix-based systems, but Darwin/MacOS (and then abusing the terminology);
+// 99) MacEditingBehavior is used as a fallback.
+static EditingBehaviorType editingBehaviorTypeForPlatform()
+{
+    return
+#if PLATFORM(IOS)
+    EditingIOSBehavior
+#elif OS(DARWIN)
+    EditingMacBehavior
+#elif OS(WINDOWS)
+    EditingWindowsBehavior
+#elif OS(UNIX)
+    EditingUnixBehavior
+#else
+    // Fallback
+    EditingMacBehavior
+#endif
+    ;
+}
+
 bool Settings::customPasteboardDataEnabled()
 {
     static std::once_flag initializeCustomPasteboardDataToDefaultValue;
@@ -136,37 +160,96 @@ bool Settings::customPasteboardDataEnabled()
     return gCustomPasteboardDataEnabled;
 }
 
+#if PLATFORM(COCOA)
+static const bool defaultYouTubeFlashPluginReplacementEnabled = true;
+#else
+static const bool defaultYouTubeFlashPluginReplacementEnabled = false;
+#endif
+
+#if PLATFORM(IOS)
+static const bool defaultFixedBackgroundsPaintRelativeToDocument = true;
+static const bool defaultAcceleratedCompositingForFixedPositionEnabled = true;
+static const bool defaultAllowsInlineMediaPlayback = false;
+static const bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute = true;
+static const bool defaultVideoPlaybackRequiresUserGesture = true;
+static const bool defaultAudioPlaybackRequiresUserGesture = true;
+static const bool defaultMediaDataLoadsAutomatically = false;
+static const bool defaultShouldRespectImageOrientation = true;
+static const bool defaultImageSubsamplingEnabled = true;
+static const bool defaultScrollingTreeIncludesFrames = true;
+static const bool defaultMediaControlsScaleWithPageZoom = true;
+static const bool defaultQuickTimePluginReplacementEnabled = true;
+#else
+static const bool defaultFixedBackgroundsPaintRelativeToDocument = false;
+static const bool defaultAcceleratedCompositingForFixedPositionEnabled = false;
+static const bool defaultAllowsInlineMediaPlayback = true;
+static const bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute = false;
+static const bool defaultVideoPlaybackRequiresUserGesture = false;
+static const bool defaultAudioPlaybackRequiresUserGesture = false;
+static const bool defaultMediaDataLoadsAutomatically = true;
+static const bool defaultShouldRespectImageOrientation = false;
+static const bool defaultImageSubsamplingEnabled = false;
+static const bool defaultScrollingTreeIncludesFrames = false;
+static const bool defaultMediaControlsScaleWithPageZoom = true;
+static const bool defaultQuickTimePluginReplacementEnabled = false;
+#endif
+
+static const bool defaultRequiresUserGestureToLoadVideo = true;
+
+static const bool defaultAllowsPictureInPictureMediaPlayback = true;
+
+static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
+#if USE(UNIFIED_TEXT_CHECKING)
+static const bool defaultUnifiedTextCheckerEnabled = true;
+#else
+static const bool defaultUnifiedTextCheckerEnabled = false;
+#endif
+static const bool defaultSmartInsertDeleteEnabled = true;
+static const bool defaultSelectTrailingWhitespaceEnabled = false;
+
 // This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
 // FIXME: For faster machines this value can really be lowered to 200. 250 is adequate, but a little high
 // for dual G5s. :)
 static const Seconds layoutScheduleThreshold = 250_ms;
 
 Settings::Settings(Page* page)
-    : m_mediaTypeOverride("screen")
+    : m_page(nullptr)
+    , m_mediaTypeOverride("screen")
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
+    SETTINGS_INITIALIZER_LIST
+    , m_isJavaEnabled(false)
+    , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
     , m_areImagesEnabled(true)
+    , m_preferMIMETypeForImages(false)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
+    , m_needsAdobeFrameReloadingQuirk(false)
     , m_usesPageCache(false)
+    , m_fontRenderingMode(0)
+    , m_showTiledScrollingIndicator(false)
     , m_backgroundShouldExtendBeyondPage(false)
     , m_dnsPrefetchingEnabled(false)
+#if ENABLE(TOUCH_EVENTS)
+    , m_touchEventEmulationEnabled(false)
+#endif
     , m_scrollingPerformanceLoggingEnabled(false)
+    , m_timeWithoutMouseMovementBeforeHidingControls(3_s)
     , m_setImageLoadingSettingsTimer(*this, &Settings::imageLoadingSettingsTimerFired)
     , m_hiddenPageDOMTimerThrottlingEnabled(false)
     , m_hiddenPageCSSAnimationSuspensionEnabled(false)
+    , m_fontFallbackPrefersPictographs(false)
+    , m_webFontsAlwaysFallBack(false)
+    , m_forcePendingWebGLPolicy(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
     AtomicString::init();
-
     initializeDefaultFontFamilies();
-
-    // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
-    m_page = page;
+    m_page = page; // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
 }
 
 Settings::~Settings()
@@ -177,6 +260,8 @@ Ref<Settings> Settings::create(Page* page)
 {
     return adoptRef(*new Settings(page));
 }
+
+SETTINGS_SETTER_BODIES
 
 #if !PLATFORM(COCOA)
 void Settings::initializeDefaultFontFamilies()
@@ -269,15 +354,17 @@ void Settings::setPictographFontFamily(const AtomicString& family, UScriptCode s
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-bool Settings::defaultTextAutosizingEnabled()
-{
-    return WebCore::defaultTextAutosizingEnabled();
-}
-
 float Settings::defaultMinimumZoomFontSize()
 {
-    return WebCore::defaultMinimumZoomFontSize;
+    return 15;
 }
+
+#if !PLATFORM(IOS)
+bool Settings::defaultTextAutosizingEnabled()
+{
+    return false;
+}
+#endif
 
 void Settings::setMediaTypeOverride(const String& mediaTypeOverride)
 {
@@ -330,12 +417,32 @@ void Settings::setScriptEnabled(bool isScriptEnabled)
 #endif
 }
 
+void Settings::setJavaEnabled(bool isJavaEnabled)
+{
+    m_isJavaEnabled = isJavaEnabled;
+}
+
+void Settings::setJavaEnabledForLocalFiles(bool isJavaEnabledForLocalFiles)
+{
+    m_isJavaEnabledForLocalFiles = isJavaEnabledForLocalFiles;
+}
+
 void Settings::setImagesEnabled(bool areImagesEnabled)
 {
     m_areImagesEnabled = areImagesEnabled;
 
     // See comment in setLoadsImagesAutomatically.
     m_setImageLoadingSettingsTimer.startOneShot(0_s);
+}
+
+void Settings::setPreferMIMETypeForImages(bool preferMIMETypeForImages)
+{
+    m_preferMIMETypeForImages = preferMIMETypeForImages;
+}
+
+void Settings::setForcePendingWebGLPolicy(bool forced)
+{
+    m_forcePendingWebGLPolicy = forced;
 }
 
 void Settings::setPluginsEnabled(bool arePluginsEnabled)
@@ -356,6 +463,13 @@ void Settings::setUserStyleSheetLocation(const URL& userStyleSheetLocation)
 
     if (m_page)
         m_page->userStyleSheetLocationChanged();
+}
+
+// FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
+// can fix the bug from their end.
+void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
+{
+    m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
 }
 
 void Settings::setMinimumDOMTimerInterval(Seconds interval)
@@ -392,6 +506,20 @@ void Settings::setUsesPageCache(bool usesPageCache)
         PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
 }
 
+void Settings::setFontRenderingMode(FontRenderingMode mode)
+{
+    if (fontRenderingMode() == mode)
+        return;
+    m_fontRenderingMode = static_cast<int>(mode);
+    if (m_page)
+        m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+FontRenderingMode Settings::fontRenderingMode() const
+{
+    return static_cast<FontRenderingMode>(m_fontRenderingMode);
+}
+
 void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
 {
     if (m_dnsPrefetchingEnabled == dnsPrefetchingEnabled)
@@ -400,6 +528,14 @@ void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
     m_dnsPrefetchingEnabled = dnsPrefetchingEnabled;
     if (m_page)
         m_page->dnsPrefetchingStateChanged();
+}
+
+void Settings::setShowTiledScrollingIndicator(bool enabled)
+{
+    if (m_showTiledScrollingIndicator == enabled)
+        return;
+        
+    m_showTiledScrollingIndicator = enabled;
 }
 
 #if ENABLE(RESOURCE_USAGE)
@@ -585,6 +721,24 @@ void Settings::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
     m_hiddenPageCSSAnimationSuspensionEnabled = flag;
     if (m_page)
         m_page->hiddenPageCSSAnimationSuspensionStateChanged();
+}
+
+void Settings::setFontFallbackPrefersPictographs(bool preferPictographs)
+{
+    if (m_fontFallbackPrefersPictographs == preferPictographs)
+        return;
+
+    m_fontFallbackPrefersPictographs = preferPictographs;
+    if (m_page)
+        m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void Settings::setWebFontsAlwaysFallBack(bool enable)
+{
+    if (m_webFontsAlwaysFallBack == enable)
+        return;
+
+    m_webFontsAlwaysFallBack = enable;
 }
 
 void Settings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)

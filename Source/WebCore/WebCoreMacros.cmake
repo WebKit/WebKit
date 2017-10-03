@@ -209,7 +209,6 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
     # build in parallel or the two instances of the rule may conflict.
     # <https://cmake.org/cmake/help/v3.0/command/add_custom_command.html>
     set(_extra_output
-        ${DERIVED_SOURCES_WEBCORE_DIR}/SettingsGenerated.cpp
         ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.h
         ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp
         ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl
@@ -219,9 +218,8 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsHeaderFile.py
         ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsIDLFile.py
         ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsImplementationFile.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettingsHeaderFile.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettingsImplementationFile.py
         ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettings.py
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettingsMacrosHeader.py
         ${WEBCORE_DIR}/Scripts/GenerateSettings/Settings.py
         ${WEBCORE_DIR}/Scripts/GenerateSettings/__init__.py
     )

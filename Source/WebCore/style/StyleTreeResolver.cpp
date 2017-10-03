@@ -350,8 +350,6 @@ static bool hasLoadingStylesheet(const Style::Scope& styleScope, const Element& 
     return false;
 }
 
-static const unsigned defaultMaximumRenderTreeDepth = 512;
-
 void TreeResolver::resolveComposedTree()
 {
     ASSERT(m_parentStack.size() == 1);
@@ -386,7 +384,7 @@ void TreeResolver::resolveComposedTree()
 
         auto& element = downcast<Element>(node);
 
-        if (it.depth() > defaultMaximumRenderTreeDepth) {
+        if (it.depth() > Settings::defaultMaximumRenderTreeDepth) {
             resetStyleForNonRenderedDescendants(element);
             element.clearChildNeedsStyleRecalc();
             it.traverseNextSkippingChildren();

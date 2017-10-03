@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "EditingBehaviorType.h"
+#include "EditingBehaviorTypes.h"
 
 namespace WebCore {
 

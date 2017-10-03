@@ -65,8 +65,6 @@ class Setting:
         self.initial = None
         self.conditional = None
         self.setNeedsStyleRecalcInAllFrames = None
-        self.include = None
-        self.getter = None
 
     def __str__(self):
         result = self.name + " TYPE:" + self.type
@@ -76,10 +74,6 @@ class Setting:
             result += " COND:" + self.conditional
         if (self.setNeedsStyleRecalcInAllFrames):
             result += " RECALC:" + self.setNeedsStyleRecalcInAllFrames
-        if (self.include):
-            result += " INCLUDE:" + self.include
-        if (self.getter):
-            result += " GETTER:" + self.getter
         return result
 
 
@@ -92,12 +86,6 @@ def makeSetterFunctionName(setting):
         if setting.name.startswith(prefix):
             return "set" + uppercaseFirstN(setting.name, len(prefix))
     return "set" + uppercaseFirstN(setting.name, 1)
-
-
-def makeGetterFunctionName(setting):
-    if setting.getter:
-        return setting.getter
-    return setting.name
 
 
 def makePreferredConditional(conditional):
@@ -113,7 +101,7 @@ def mapToIDLType(setting):
     # FIXME: Add support for more types including enumerate types.
     if setting.type == 'int':
         return 'long'
-    if setting.type == 'unsigned':
+    if setting.type == 'unsigned' or setting.type == 'size_t':
         return 'unsigned long'
     if setting.type == 'double':
         return 'double'
@@ -126,51 +114,11 @@ def mapToIDLType(setting):
     return None
 
 
-def typeIsPrimitive(setting):
-    if setting.type == 'int':
-        return True
-    if setting.type == 'unsigned':
-        return True
-    if setting.type == 'double':
-        return True
-    if setting.type == 'float':
-        return True
-    if setting.type == 'bool':
-        return True
-    return False
-
-
-def typeIsValueType(setting):
-    if setting.type == 'String':
-        return True
-
-    return False
-
-
-def includeForSetting(setting):
-    # Always prefer an explicit include.
-    if setting.include:
-        return setting.include
-
-    # Include nothing for primitive types.
-    if typeIsPrimitive(setting):
-        return None
-
-    # Special case String and Seconds, as they doesn't follow the pattern of being in a file with the
-    # same name as the class.
-    if setting.type == 'String':
-        return "<wtf/text/WTFString.h>"
-    if setting.type == 'Seconds':
-        return "<wtf/Seconds.h>"
-
-    # Default to using the type name for the include.
-    return "\"" + setting.type + ".h\""
-
-
 def parseInput(input):
     settings = {}
     for line in open(input, "r"):
         if not line.startswith("#") and not line.isspace():
+
             (name, optionsString) = line.rstrip().split(' ', 1)
 
             options = re.split(r' *, *', optionsString)
@@ -186,10 +134,6 @@ def parseInput(input):
                     setting.conditional = value
                 if (name == 'setNeedsStyleRecalcInAllFrames'):
                     setting.setNeedsStyleRecalcInAllFrames = value
-                if (name == 'include'):
-                    setting.include = value
-                if (name == 'getter'):
-                    setting.getter = value
 
             # FIXME: ASSERT something about setting.initial
 

@@ -1,3 +1,27 @@
+2017-10-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r222686, r222695, and r222698.
+        https://bugs.webkit.org/show_bug.cgi?id=177835
+
+        Caused LayoutTests to crash in
+        WebCore::TimerBase::setNextFireTime (Requested by ryanhaddad
+        on #webkit).
+
+        Reverted changesets:
+
+        "[Settings] Replace SettingsMacros.h with a generated base
+        class for Settings"
+        https://bugs.webkit.org/show_bug.cgi?id=177681
+        http://trac.webkit.org/changeset/222686
+
+        "[Settings] Enums should not be passed by const reference"
+        https://bugs.webkit.org/show_bug.cgi?id=177727
+        http://trac.webkit.org/changeset/222695
+
+        "[Settings] Move remaining simple settings to Settings.in"
+        https://bugs.webkit.org/show_bug.cgi?id=177730
+        http://trac.webkit.org/changeset/222698
+
 2017-10-03  Jer Noble  <jer.noble@apple.com>
 
         Implement quality-of-service tiers in WebCoreDecompressionSession

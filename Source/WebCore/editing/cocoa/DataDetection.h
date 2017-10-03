@@ -27,7 +27,6 @@
 
 #if ENABLE(DATA_DETECTION)
 
-#import "DataDetectorTypes.h"
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
@@ -43,6 +42,18 @@ class FloatRect;
 class HitTestResult;
 class Range;
 class URL;
+
+enum DataDetectorTypes {
+    DataDetectorTypeNone = 0,
+    DataDetectorTypePhoneNumber = 1 << 0,
+    DataDetectorTypeLink = 1 << 1,
+    DataDetectorTypeAddress = 1 << 2,
+    DataDetectorTypeCalendarEvent = 1 << 3,
+    DataDetectorTypeTrackingNumber = 1 << 4,
+    DataDetectorTypeFlightNumber = 1 << 5,
+    DataDetectorTypeLookupSuggestion = 1 << 6,
+    DataDetectorTypeAll = ULONG_MAX
+};
 
 class DataDetection {
 public:
