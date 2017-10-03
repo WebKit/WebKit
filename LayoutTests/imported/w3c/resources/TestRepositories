@@ -16,7 +16,6 @@
             "fonts",
             "images",
             "resources",
-            "tools",
             "serve.py"
         ],
         "import_options": ["generate_init_py"]
