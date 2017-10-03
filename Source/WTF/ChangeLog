@@ -1,3 +1,18 @@
+2017-10-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move LineEnding.{h,cpp} from WebCore/platform/text to wtf/text
+        https://bugs.webkit.org/show_bug.cgi?id=176575
+
+        Reviewed by Alex Christensen.
+
+        As part of the PAL effort, we're trying to move everything out of WebCore/platform, one-by-one.
+        These LineEnding files belong in WTF.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/text/LineEnding.cpp: Renamed from Source/WebCore/platform/text/LineEnding.cpp.
+        (WTF::normalizeLineEndingsToCRLF):
+        * wtf/text/LineEnding.h: Renamed from Source/WebCore/platform/text/LineEnding.h.
+
 2017-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         WeakPtr should have a move constructor

@@ -31,10 +31,10 @@
 #include "File.h"
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
-#include "LineEnding.h"
 #include "Page.h"
 #include "TextEncoding.h"
 #include "ThreadableBlobRegistry.h"
+#include <wtf/text/LineEnding.h>
 
 namespace WebCore {
 

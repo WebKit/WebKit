@@ -32,11 +32,11 @@
 #include "BlobBuilder.h"
 
 #include "Blob.h"
-#include "LineEnding.h"
 #include "TextEncoding.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/LineEnding.h>
 
 namespace WebCore {
 
@@ -73,7 +73,7 @@ void BlobBuilder::append(const String& text)
     CString utf8Text = UTF8Encoding().encode(text, EntitiesForUnencodables);
 
     if (m_endings == BlobLineEndings::Native)
-        normalizeLineEndingsToNative(utf8Text, m_appendableData);
+        normalizeAndAppendLineEndingsToNative(utf8Text, m_appendableData);
     else {
         ASSERT(m_endings == BlobLineEndings::Transparent);
         m_appendableData.append(utf8Text.data(), utf8Text.length());

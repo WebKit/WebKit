@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,20 +29,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LineEnding_h
-#define LineEnding_h
+#pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
-namespace WebCore {
+namespace WTF {
 
 // Normalize all line-endings in the given string to CRLF.
-CString normalizeLineEndingsToCRLF(const CString& from);
+WTF_EXPORT CString normalizeLineEndingsToCRLF(const CString& from);
 
 // Normalize all line-endings in the given string to the native line-endings and append the result to the given buffer.
 // (Normalize to CRLF on Windows and normalize to LF on all other platforms.)
-void normalizeLineEndingsToNative(const CString& from, Vector<uint8_t>& result);
+WTF_EXPORT void normalizeAndAppendLineEndingsToNative(const CString& from, Vector<uint8_t>& result);
 
-} // namespace WebCore
+} // namespace WTF
 
-#endif // LineEnding_h
+using WTF::normalizeLineEndingsToCRLF;
+using WTF::normalizeAndAppendLineEndingsToNative;

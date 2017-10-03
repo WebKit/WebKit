@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ namespace {
 
 class OutputBuffer {
 public:
-    virtual uint8_t* allocate(size_t size) = 0;
+    virtual uint8_t* allocate(size_t) = 0;
     virtual void copy(const CString&) = 0;
     virtual ~OutputBuffer() { }
 };
@@ -153,7 +153,7 @@ void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffe
 
 };
 
-namespace WebCore {
+namespace WTF {
 
 // Normalize all line-endings to CR or LF.
 static void normalizeToCROrLF(const CString& from, Vector<uint8_t>& result, bool toCR)
@@ -209,12 +209,12 @@ static void normalizeToCROrLF(const CString& from, Vector<uint8_t>& result, bool
 CString normalizeLineEndingsToCRLF(const CString& from)
 {
     CString result;
-    CStringBuffer buffer(result);
+    ::CStringBuffer buffer(result);
     internalNormalizeLineEndingsToCRLF(from, buffer);
     return buffer.buffer();
 }
 
-void normalizeLineEndingsToNative(const CString& from, Vector<uint8_t>& result)
+void normalizeAndAppendLineEndingsToNative(const CString& from, Vector<uint8_t>& result)
 {
 #if OS(WINDOWS)
     VectorCharAppendBuffer buffer(result);
@@ -224,4 +224,4 @@ void normalizeLineEndingsToNative(const CString& from, Vector<uint8_t>& result)
 #endif
 }
 
-} // namespace WebCore
+} // namespace WTF

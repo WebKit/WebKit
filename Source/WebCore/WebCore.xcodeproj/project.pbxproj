@@ -3762,8 +3762,6 @@
 		8931DE5B14C44C44000DC9D2 /* JSBlobCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */; };
 		898785F4122E1EAC003AABDA /* JSFileReaderSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898785F2122E1EAC003AABDA /* JSFileReaderSync.cpp */; };
 		898785F5122E1EAC003AABDA /* JSFileReaderSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 898785F3122E1EAC003AABDA /* JSFileReaderSync.h */; };
-		89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89B5EA9F11E8003D00F2367E /* LineEnding.cpp */; };
-		89B5EAA211E8003D00F2367E /* LineEnding.h in Headers */ = {isa = PBXBuildFile; fileRef = 89B5EAA011E8003D00F2367E /* LineEnding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60B0A157F686D0075E157 /* DOMWindowQuota.h */; };
 		89F60CDA15809D760075E157 /* JSStorageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CD215809D760075E157 /* JSStorageInfo.h */; };
 		8A12E35D11FA33280025836A /* LoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A12E35C11FA33280025836A /* LoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12136,8 +12134,6 @@
 		8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobCustom.cpp; sourceTree = "<group>"; };
 		898785F2122E1EAC003AABDA /* JSFileReaderSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReaderSync.cpp; sourceTree = "<group>"; };
 		898785F3122E1EAC003AABDA /* JSFileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReaderSync.h; sourceTree = "<group>"; };
-		89B5EA9F11E8003D00F2367E /* LineEnding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineEnding.cpp; sourceTree = "<group>"; };
-		89B5EAA011E8003D00F2367E /* LineEnding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineEnding.h; sourceTree = "<group>"; };
 		89F60B0A157F686D0075E157 /* DOMWindowQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowQuota.h; sourceTree = "<group>"; };
 		89F60CD215809D760075E157 /* JSStorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfo.h; sourceTree = "<group>"; };
 		89FD58D816EEDBD400E183F0 /* NavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorStorageQuota.h; sourceTree = "<group>"; };
@@ -23982,8 +23978,6 @@
 				CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */,
 				7CCB11D81F81B22000849AFD /* FontRenderingMode.h */,
 				375CD231119D43C800A2A859 /* Hyphenation.h */,
-				89B5EA9F11E8003D00F2367E /* LineEnding.cpp */,
-				89B5EAA011E8003D00F2367E /* LineEnding.h */,
 				7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */,
 				7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */,
 				F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */,
@@ -29229,7 +29223,6 @@
 				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
-				89B5EAA211E8003D00F2367E /* LineEnding.h in Headers */,
 				FFEFAB2A18380DA000514534 /* LineLayoutState.h in Headers */,
 				FFDBC047183D27B700407109 /* LineWidth.h in Headers */,
 				CBA9DC0B1DF44DF40005675C /* LinkHeader.h in Headers */,
@@ -33313,7 +33306,6 @@
 				417612B11E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.cpp in Sources */,
 				41A1B00E1E526579007F3769 /* LibWebRTCProvider.cpp in Sources */,
 				FFB698CC1833EE0D00158A31 /* LineBreaker.cpp in Sources */,
-				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				FFB698CF183402BB00158A31 /* LineInfo.cpp in Sources */,
 				FFDBC048183D27B700407109 /* LineWidth.cpp in Sources */,
 				CBA9DC0A1DF44DF10005675C /* LinkHeader.cpp in Sources */,

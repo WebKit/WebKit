@@ -1,3 +1,16 @@
+2017-10-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move LineEnding.{h,cpp} from WebCore/platform/text to wtf/text
+        https://bugs.webkit.org/show_bug.cgi?id=176575
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/BlobBuilder.cpp:
+        * html/FormDataList.cpp:
+
 2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename methods ending in *Json() as *JSON()

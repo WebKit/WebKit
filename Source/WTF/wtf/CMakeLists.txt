@@ -178,6 +178,7 @@ set(WTF_HEADERS
     text/CString.h
     text/IntegerToStringConversion.h
     text/LChar.h
+    text/LineEnding.h
     text/LineBreakIteratorPoolICU.h
     text/StringBuffer.h
     text/StringCommon.h
@@ -287,6 +288,7 @@ set(WTF_SOURCES
     text/AtomicStringTable.cpp
     text/Base64.cpp
     text/CString.cpp
+    text/LineEnding.cpp
     text/StringBuilder.cpp
     text/StringBuilderJSON.cpp
     text/StringImpl.cpp
