@@ -67,13 +67,11 @@ class WeakPtr {
 public:
     WeakPtr() { }
     WeakPtr(std::nullptr_t) { }
-    WeakPtr(const WeakPtr& o) : m_ref(o.m_ref) { }
     WeakPtr(Ref<WeakReference<T>>&& ref) : m_ref(std::forward<Ref<WeakReference<T>>>(ref)) { }
 
     T* get() const { return m_ref ? m_ref->get() : nullptr; }
     operator bool() const { return m_ref && m_ref->get(); }
 
-    WeakPtr& operator=(const WeakPtr& o) { m_ref = o.m_ref; return *this; }
     WeakPtr& operator=(std::nullptr_t) { m_ref = nullptr; return *this; }
 
     T* operator->() const { return m_ref->get(); }

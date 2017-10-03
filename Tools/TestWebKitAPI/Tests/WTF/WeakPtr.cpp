@@ -116,6 +116,24 @@ TEST(WTF_WeakPtr, Dereference)
     weakPtr->bar();
 }
 
+TEST(WTF_WeakPtr, Operators)
+{
+    Foo f;
+    WeakPtrFactory<Foo> factory;
+    WeakPtr<Foo> weakPtr = factory.createWeakPtr(f);
+
+    WeakPtr<Foo> weakPtr2 = weakPtr;
+    EXPECT_EQ(weakPtr2.get(), &f);
+
+    WeakPtr<Foo> weakPtr3;
+    weakPtr3 = weakPtr;
+    EXPECT_EQ(weakPtr3.get(), &f);
+
+    WeakPtr<Foo> weakPtr4 = WTFMove(weakPtr);
+    EXPECT_EQ(weakPtr4.get(), &f);
+    EXPECT_FALSE(weakPtr);
+}
+
 TEST(WTF_WeakPtr, Forget)
 {
     int dummy = 5;
