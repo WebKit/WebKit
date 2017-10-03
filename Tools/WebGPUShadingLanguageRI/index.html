@@ -189,6 +189,7 @@ fragment FragmentOutput fragmentShader(VertexOutput stageIn) {
 }`;
 
 let shaderSourceTextarea;
+let compileButton;
 let localStorage;
 let compileLogElement;
 let vertexShaderSelect;
@@ -209,7 +210,8 @@ let stageInArgumentIndex;
 
 window.addEventListener("load", function() {
     shaderSourceTextarea = document.getElementById("ShaderSource");
-    document.getElementById("CompileButton").addEventListener("click", compilePresentShaderSource);
+    compileButton = document.getElementById("CompileButton");
+    compileButton.addEventListener("click", compilePresentShaderSource);
     compileLogElement = document.getElementById("CompileLog");
     vertexShaderSelect = document.getElementById("VertexShaderSelect");
     fragmentShaderSelect = document.getElementById("FragmentShaderSelect");
@@ -230,7 +232,7 @@ window.addEventListener("load", function() {
     if (!shaderSource)
         shaderSource = defaultShaderSource;
     shaderSourceTextarea.value = shaderSource;
-    compilePresentShaderSource();
+    window.setTimeout(compilePresentShaderSource, 0);
 });
 
 function clearDataTable()
@@ -269,7 +271,13 @@ function presentError(message) {
 }
 
 function compilePresentShaderSource() {
-    compileLogElement.textContent = "";
+    compileLogElement.textContent = "Compiling...";
+    compileButton.disabled = true;
+    window.setTimeout(doCompilePresentShaderSource, 0);
+}
+
+function doCompilePresentShaderSource() {
+    compileButton.disabled = false;
     let start = new Date().getTime();
     let result;
     try {
@@ -385,7 +393,8 @@ function runShaders() {
     let func = inlinedVertexShader;
 
     let index = 0;
-    for (let childElement of dataTable.children) {
+    for (let i = 0; i < dataTable.children.length; ++i) {
+        let childElement = dataTable.children[i];
         if (!(childElement instanceof HTMLTableRowElement))
             continue;
         let value = childElement.children[1].firstChild.value;
