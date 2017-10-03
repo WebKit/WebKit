@@ -1,3 +1,10 @@
+2017-10-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed test gardening. Add debugging to flakey test.
+
+        * http/tests/inspector/network/beacon-type.html:
+        Add some debugging to try and understand why this test times out.
+
 2017-10-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Support the "system" CSS font family

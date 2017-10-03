@@ -20,6 +20,10 @@ function triggerBeaconWithData() {
 
 function test()
 {
+    // FIXME: <https://webkit.org/b/177834> Layout Test http/tests/inspector/network/beacon-type.html is flaky.
+    // Adding debugging to try to determine why this test is timing out.    
+    InspectorTest.debug();
+
     let suite = InspectorTest.createAsyncSuite("Resource.Type.Beacon");
 
     function addTestCase({name, description, expression, resourceHandler}) {
