@@ -28,21 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Do clean-up in the includes
-
 #include "config.h"
 #include "RealtimeIncomingVideoSource.h"
 
 #if USE(LIBWEBRTC)
 
-#include "GraphicsContext.h"
-#include "ImageBuffer.h"
-#include "IntRect.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
-#include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
-#include <wtf/MainThread.h>
 
 #include "CoreMediaSoftLink.h"
 #include "CoreVideoSoftLink.h"
@@ -51,22 +44,14 @@ namespace WebCore {
 
 Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
-    const OSType imageFormat = kCVPixelFormatType_32BGRA;
-    RetainPtr<CFNumberRef> imageFormatNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &imageFormat));
-
-    RetainPtr<CFMutableDictionaryRef> conformerOptions = adoptCF(CFDictionaryCreateMutable(0, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    CFDictionarySetValue(conformerOptions.get(), kCVPixelBufferPixelFormatTypeKey, imageFormatNumber.get());
-    PixelBufferConformerCV conformer(conformerOptions.get());
-
-    auto source = adoptRef(*new RealtimeIncomingVideoSource(WTFMove(videoTrack), WTFMove(trackId), conformerOptions.get()));
+    auto source = adoptRef(*new RealtimeIncomingVideoSource(WTFMove(videoTrack), WTFMove(trackId)));
     source->start();
     return source;
 }
 
-RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId, CFMutableDictionaryRef conformerOptions)
+RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
     : RealtimeMediaSource(WTFMove(videoTrackId), RealtimeMediaSource::Type::Video, String())
     , m_videoTrack(WTFMove(videoTrack))
-    , m_conformer(conformerOptions)
 {
     m_currentSettings.setWidth(640);
     m_currentSettings.setHeight(480);

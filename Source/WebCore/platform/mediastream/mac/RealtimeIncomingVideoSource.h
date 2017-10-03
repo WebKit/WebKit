@@ -33,12 +33,12 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
-#include "PixelBufferConformerCV.h"
 #include "RealtimeMediaSource.h"
 #include <webrtc/api/mediastreaminterface.h>
 #include <wtf/RetainPtr.h>
 
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
+using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ public:
     void setSourceTrack(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&);
 
 private:
-    RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&, CFMutableDictionaryRef);
+    RealtimeIncomingVideoSource(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
 
     // RealtimeMediaSource API
     void startProducingData() final;
@@ -70,11 +70,9 @@ private:
 
     CVPixelBufferRef pixelBufferFromVideoFrame(const webrtc::VideoFrame&);
 
-    RefPtr<Image> m_currentImage;
     RealtimeMediaSourceSettings m_currentSettings;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
     RetainPtr<CMSampleBufferRef> m_buffer;
-    PixelBufferConformerCV m_conformer;
     RetainPtr<CVPixelBufferRef> m_blackFrame;
     int m_blackFrameWidth { 0 };
     int m_blackFrameHeight { 0 };

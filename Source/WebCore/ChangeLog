@@ -1,3 +1,18 @@
+2017-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Clean-up RealtimeIncomingVideoSource
+        https://bugs.webkit.org/show_bug.cgi?id=177782
+
+        Reviewed by Alejandro G. Castro.
+
+        No change of behavior.
+        Removing code that is no longer needed.
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::create):
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.h:
+
 2017-10-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Use safer decoding practices for NSKeyedUnarchiver
