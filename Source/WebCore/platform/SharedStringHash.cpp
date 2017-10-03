@@ -280,7 +280,7 @@ static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const C
     return;
 }
 
-SharedStringHash computeSharedStringHash(const URL& base, const AtomicString& attributeURL)
+SharedStringHash computeVisitedLinkHash(const URL& base, const AtomicString& attributeURL)
 {
     if (attributeURL.isEmpty())
         return 0;

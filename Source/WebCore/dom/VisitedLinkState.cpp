@@ -71,7 +71,7 @@ inline static SharedStringHash linkHashForElement(Document& document, const Elem
     if (is<HTMLAnchorElement>(element))
         return downcast<HTMLAnchorElement>(element).visitedLinkHash();
     if (const AtomicString* attribute = linkAttribute(element))
-        return WebCore::computeSharedStringHash(document.baseURL(), *attribute);
+        return computeVisitedLinkHash(document.baseURL(), *attribute);
     return 0;
 }
 
@@ -102,7 +102,7 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
     if (is<HTMLAnchorElement>(element))
         hash = downcast<HTMLAnchorElement>(element).visitedLinkHash();
     else
-        hash = WebCore::computeSharedStringHash(element.document().baseURL(), *attribute);
+        hash = computeVisitedLinkHash(element.document().baseURL(), *attribute);
 
     if (!hash)
         return InsideUnvisitedLink;

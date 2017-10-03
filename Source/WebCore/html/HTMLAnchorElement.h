@@ -112,7 +112,7 @@ private:
 inline SharedStringHash HTMLAnchorElement::visitedLinkHash() const
 {
     if (!m_cachedVisitedLinkHash)
-        m_cachedVisitedLinkHash = WebCore::computeSharedStringHash(document().baseURL(), attributeWithoutSynchronization(HTMLNames::hrefAttr));
+        m_cachedVisitedLinkHash = computeVisitedLinkHash(document().baseURL(), attributeWithoutSynchronization(HTMLNames::hrefAttr));
     return m_cachedVisitedLinkHash; 
 }
 
