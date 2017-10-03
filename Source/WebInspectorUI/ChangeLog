@@ -1,3 +1,28 @@
+2017-10-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add View layout tests, make views more testable
+        https://bugs.webkit.org/show_bug.cgi?id=161274
+        <rdar://problem/28038615>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds support for View testing. Since view layouts are scheduled
+        using requestAnimationFrame, FrontendTestHarness now provides a timer-based
+        polyfill, to allow nonintrusive testing of the frontend View hierarchy.
+
+        * UserInterface/Test.html:
+        Make WI.View available to tests.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.redirectRequestAnimationFrame):
+
+        * UserInterface/Views/View.js:
+        (WI.View.rootView):
+        (WI.View.prototype.replaceSubview):
+        (WI.View.prototype._didMoveToWindow):
+        (WI.View._cancelScheduledLayoutForView):
+        Fixed issues caught while writing tests for the expected View behavior.
+
 2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Escape more characters in posix string conversion

@@ -1,3 +1,33 @@
+2017-10-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add View layout tests, make views more testable
+        https://bugs.webkit.org/show_bug.cgi?id=161274
+        <rdar://problem/28038615>
+
+        Reviewed by Devin Rousso.
+
+        Add tests for creating views, adding and removing subviews, and layout
+        operations. These tests rely on a mock requestAnimationFrame, which is
+        enabled with FrontendTestHarness.redirectRequestAnimationFrame.
+
+        * inspector/view/asynchronous-layout-expected.txt: Added.
+        * inspector/view/asynchronous-layout.html: Added.
+        * inspector/view/basics-expected.txt: Added.
+        * inspector/view/basics.html: Added.
+        * inspector/view/synchronous-layout-expected.txt: Added.
+        * inspector/view/synchronous-layout.html: Added.
+
+        * inspector/view/resources/test-view.js: Added.
+        (TestPage.registerInitializer.WI.TestView):
+        (TestPage.registerInitializer.WI.TestView.prototype.get initialLayoutCount):
+        (TestPage.registerInitializer.WI.TestView.prototype.get layoutCount):
+        (TestPage.registerInitializer.WI.TestView.prototype.evaluateAfterLayout):
+        (TestPage.registerInitializer.WI.TestView.prototype.initialLayout):
+        (TestPage.registerInitializer.WI.TestView.prototype.layout):
+        (TestPage.registerInitializer):
+        Register an instrumentation subclass of View. TestView counts calls to
+        protected methods and accepts callbacks to execute when a layout completes.
+
 2017-10-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update iOS TestExpectations for payment-request tests.

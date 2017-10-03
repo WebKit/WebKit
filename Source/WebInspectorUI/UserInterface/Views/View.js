@@ -44,8 +44,12 @@ WI.View = class View extends WI.Object
 
     static rootView()
     {
-        if (!WI.View._rootView)
+        if (!WI.View._rootView) {
+            // Since the root view is attached by definition, it does not go through the
+            // normal view attachment process. Simply mark it as attached.
             WI.View._rootView = new WI.View(document.body);
+            WI.View._rootView._isAttachedToRoot = true;
+        }
 
         return WI.View._rootView;
     }
@@ -129,6 +133,8 @@ WI.View = class View extends WI.Object
     replaceSubview(oldView, newView)
     {
         console.assert(oldView !== newView, "Cannot replace subview with itself.");
+        if (oldView === newView)
+            return;
 
         this.insertSubviewBefore(newView, oldView);
         this.removeSubview(oldView);
@@ -234,10 +240,13 @@ WI.View = class View extends WI.Object
 
         this._isAttachedToRoot = isAttachedToRoot;
         if (this._isAttachedToRoot) {
-            this.attached();
             WI.View._scheduleLayoutForView(this);
-        } else
+            this.attached();
+        } else {
+            if (this._dirty)
+                this.cancelLayout();
             this.detached();
+        }
 
         for (let view of this._subviews)
             view._didMoveToWindow(isAttachedToRoot);
@@ -327,6 +336,8 @@ WI.View = class View extends WI.Object
             parentView._dirtyDescendantsCount = Math.max(0, parentView._dirtyDescendantsCount - cancelledLayoutsCount);
             parentView = parentView.parentView;
         }
+
+        view._dirty = false;
 
         if (!WI.View._scheduledLayoutUpdateIdentifier)
             return;
