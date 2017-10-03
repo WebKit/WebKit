@@ -1,5 +1,0 @@
-toDataURL.jpeg.quality.outsiderange
-toDataURL with JPEG handles out-of-range quality parameters
-Spec references: toDataURL.jpeg.range
-Actual output:
-Passed

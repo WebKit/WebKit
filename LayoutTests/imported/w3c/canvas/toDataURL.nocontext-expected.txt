@@ -1,5 +1,0 @@
-toDataURL.nocontext
-toDataURL works before any context has been got
-Spec references: toDataURL.noarguments
-Actual output:
-Passed

@@ -1,5 +1,0 @@
-toDataURL.png
-toDataURL with image/png returns a PNG
-Spec references: toDataURL.png toDataURL.witharguments
-Actual output:
-Passed

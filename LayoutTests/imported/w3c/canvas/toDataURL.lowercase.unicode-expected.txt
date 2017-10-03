@@ -1,5 +1,0 @@
-toDataURL.lowercase.unicode
-toDataURL type is ASCII-case-insensitive
-Spec references: toDataURL.lowercase
-Actual output:
-Passed

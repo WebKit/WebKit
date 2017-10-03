@@ -1,5 +1,0 @@
-toDataURL.bogustype
-toDataURL with a syntactically invalid type returns a PNG
-Spec references: toDataURL.unrecognised
-Actual output:
-Passed

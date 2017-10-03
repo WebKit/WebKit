@@ -3,8 +3,6 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 #
 
-canvas/philip/tests/toDataURL.png.complexcolours.html
-
 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
 compositing/canvas/accelerated-canvas-compositing.html [ Failure ]
 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
