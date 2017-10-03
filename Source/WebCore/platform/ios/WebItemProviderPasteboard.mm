@@ -554,7 +554,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 
     // For compatibility with DataTransfer APIs, additionally load web-exposed types. Since this is the only chance to
     // fault in any data at all, we need to load up front any information that the page may ask for later down the line.
-    NSString *customPasteboardDataUTI = @(customWebKitPasteboardDataType);
+    NSString *customPasteboardDataUTI = @(PasteboardCustomData::cocoaType());
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
         if ([typesToLoad containsObject:registeredTypeIdentifier])
             continue;

@@ -156,17 +156,18 @@ struct PasteboardFileReader {
 
 // FIXME: We need to ensure that the contents of sameOriginCustomData are not accessible across different origins.
 struct PasteboardCustomData {
+    String origin;
     Vector<String> orderedTypes;
     HashMap<String, String> platformData;
     HashMap<String, String> sameOriginCustomData;
-};
 
-WEBCORE_EXPORT Ref<SharedBuffer> sharedBufferFromCustomData(const PasteboardCustomData&);
-WEBCORE_EXPORT PasteboardCustomData customDataFromSharedBuffer(const SharedBuffer&);
+    WEBCORE_EXPORT Ref<SharedBuffer> createSharedBuffer() const;
+    WEBCORE_EXPORT static PasteboardCustomData fromSharedBuffer(const SharedBuffer&);
 
 #if PLATFORM(COCOA)
-const char customWebKitPasteboardDataType[] = "com.apple.WebKit.custom-pasteboard-data";
+    static const char* cocoaType();
 #endif
+};
 
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;

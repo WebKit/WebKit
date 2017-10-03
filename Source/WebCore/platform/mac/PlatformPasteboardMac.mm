@@ -110,15 +110,15 @@ static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
 Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
 {
     ListHashSet<String> domPasteboardTypes;
-    if (NSData *serializedCustomData = [m_pasteboard dataForType:@(customWebKitPasteboardDataType)]) {
+    if (NSData *serializedCustomData = [m_pasteboard dataForType:@(PasteboardCustomData::cocoaType())]) {
         auto buffer = SharedBuffer::create(serializedCustomData);
-        for (auto& type : customDataFromSharedBuffer(buffer.get()).orderedTypes)
+        for (auto& type : PasteboardCustomData::fromSharedBuffer(buffer.get()).orderedTypes)
             domPasteboardTypes.add(type);
     }
 
     NSArray<NSString *> *allTypes = [m_pasteboard types];
     for (NSString *type in allTypes) {
-        if ([type isEqualToString:@(customWebKitPasteboardDataType)])
+        if ([type isEqualToString:@(PasteboardCustomData::cocoaType())])
             continue;
 
         if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type))
@@ -138,7 +138,7 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
     for (auto& entry : data.platformData)
         [types addObject:platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(entry.key)];
     if (data.sameOriginCustomData.size())
-        [types addObject:@(customWebKitPasteboardDataType)];
+        [types addObject:@(PasteboardCustomData::cocoaType())];
 
     [m_pasteboard declareTypes:types owner:nil];
 
@@ -150,8 +150,8 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
     }
 
     if (data.sameOriginCustomData.size()) {
-        if (auto serializedCustomData = sharedBufferFromCustomData(data)->createNSData())
-            [m_pasteboard setData:serializedCustomData.get() forType:@(customWebKitPasteboardDataType)];
+        if (auto serializedCustomData = data.createSharedBuffer()->createNSData())
+            [m_pasteboard setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType())];
     }
 
     return changeCount();

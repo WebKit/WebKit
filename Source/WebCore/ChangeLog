@@ -1,3 +1,31 @@
+2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move more code into PasteboardCustomData
+        https://bugs.webkit.org/show_bug.cgi?id=177795
+
+        Reviewed by Wenson Hsieh.
+
+        Moved sharedBufferFromCustomData, customDataFromSharedBuffer, and customWebKitPasteboardDataType into
+        PasteboardCustomData as createSharedBuffer, fromSharedBuffer, and cocoaType respectively.
+
+        * platform/Pasteboard.cpp:
+        (WebCore::PasteboardCustomData::createSharedBuffer const): Renamed from sharedBufferFromCustomData.
+        (WebCore::PasteboardCustomData::fromSharedBuffer): Renamed from customDataFromSharedBuffer.
+        * platform/Pasteboard.h:
+        * platform/StaticPasteboard.cpp:
+        (WebCore::StaticPasteboard::commitToPasteboard): Now initializes with an empty origin string.
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::PasteboardCustomData::cocoaType): Moved here from Pasteboard.h
+        (WebCore::Pasteboard::readStringInCustomData):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::write):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard typeIdentifiersToLoadForRegisteredTypeIdentfiers:]):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::write):
+
 2017-10-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Use safer decoding practices for NSKeyedUnarchiver

@@ -83,7 +83,7 @@ void StaticPasteboard::commitToPasteboard(Pasteboard& pasteboard)
         return;
 
     if (Settings::customPasteboardDataEnabled()) {
-        pasteboard.writeCustomData({ WTFMove(m_types), WTFMove(m_platformData), WTFMove(m_customData) });
+        pasteboard.writeCustomData({ { }, WTFMove(m_types), WTFMove(m_platformData), WTFMove(m_customData) });
         return;
     }
 

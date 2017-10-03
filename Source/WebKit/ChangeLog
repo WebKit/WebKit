@@ -1,3 +1,16 @@
+2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move more code into PasteboardCustomData
+        https://bugs.webkit.org/show_bug.cgi?id=177795
+
+        Reviewed by Wenson Hsieh.
+
+        Added the support for encoding and decoding the origin string in PasteboardCustomData.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PasteboardCustomData>::encode):
+        (IPC::ArgumentCoder<PasteboardCustomData>::decode):
+
 2017-10-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Do not hardcode font family in served remote inspector HTML snippets

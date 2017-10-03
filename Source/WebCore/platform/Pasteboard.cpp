@@ -44,20 +44,19 @@ bool Pasteboard::isSafeTypeForDOMToReadAndWrite(const String& type)
     return type == "text/plain" || type == "text/html" || type == "text/uri-list";
 }
 
-Ref<SharedBuffer> sharedBufferFromCustomData(const PasteboardCustomData& data)
+Ref<SharedBuffer> PasteboardCustomData::createSharedBuffer() const
 {
     const static unsigned currentCustomDataSerializationVersion = 1;
 
     WTF::Persistence::Encoder encoder;
     encoder << currentCustomDataSerializationVersion;
-    // FIXME: Replace with origin information from PasteboardCustomData once same origin restrictions are implemented.
-    encoder << emptyString();
-    encoder << data.sameOriginCustomData;
-    encoder << data.orderedTypes;
+    encoder << origin;
+    encoder << sameOriginCustomData;
+    encoder << orderedTypes;
     return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
 }
 
-PasteboardCustomData customDataFromSharedBuffer(const SharedBuffer& buffer)
+PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& buffer)
 {
     const static unsigned maxSupportedDataSerializationVersionNumber = 1;
 
@@ -67,8 +66,7 @@ PasteboardCustomData customDataFromSharedBuffer(const SharedBuffer& buffer)
     if (!decoder.decode(version) || version > maxSupportedDataSerializationVersionNumber)
         return { };
 
-    String origin;
-    if (!decoder.decode(origin))
+    if (!decoder.decode(result.origin))
         return { };
 
     if (!decoder.decode(result.sameOriginCustomData))

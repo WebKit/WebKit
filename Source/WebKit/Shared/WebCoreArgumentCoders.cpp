@@ -1580,6 +1580,7 @@ bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& d
 
 void ArgumentCoder<PasteboardCustomData>::encode(Encoder& encoder, const PasteboardCustomData& data)
 {
+    encoder << data.origin;
     encoder << data.orderedTypes;
     encoder << data.platformData;
     encoder << data.sameOriginCustomData;
@@ -1587,6 +1588,9 @@ void ArgumentCoder<PasteboardCustomData>::encode(Encoder& encoder, const Pastebo
 
 bool ArgumentCoder<PasteboardCustomData>::decode(Decoder& decoder, PasteboardCustomData& data)
 {
+    if (!decoder.decode(data.origin))
+        return false;
+
     if (!decoder.decode(data.orderedTypes))
         return false;
 

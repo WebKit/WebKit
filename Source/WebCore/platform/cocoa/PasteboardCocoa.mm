@@ -43,6 +43,11 @@ namespace WebCore {
 PasteboardWebContent::PasteboardWebContent() = default;
 PasteboardWebContent::~PasteboardWebContent() = default;
 
+const char* PasteboardCustomData::cocoaType()
+{
+    return "com.apple.WebKit.custom-pasteboard-data";
+}
+
 enum class ImageType {
     Invalid = 0,
     TIFF,
@@ -210,7 +215,7 @@ String Pasteboard::readString(const String& type)
 
 String Pasteboard::readStringInCustomData(const String& type)
 {
-    auto buffer = readBufferForTypeWithSecurityCheck(customWebKitPasteboardDataType);
+    auto buffer = readBufferForTypeWithSecurityCheck(PasteboardCustomData::cocoaType());
     if (!buffer)
         return { };
 
@@ -219,7 +224,7 @@ String Pasteboard::readStringInCustomData(const String& type)
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
         return { };
 
-    return customDataFromSharedBuffer(*buffer).sameOriginCustomData.get(type);
+    return PasteboardCustomData::fromSharedBuffer(*buffer).sameOriginCustomData.get(type);
 }
 
 void Pasteboard::writeCustomData(const PasteboardCustomData& data)

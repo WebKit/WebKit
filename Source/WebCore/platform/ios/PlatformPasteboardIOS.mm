@@ -354,7 +354,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
         if (!teamDataObject || ![teamDataObject isKindOfClass:[NSDictionary class]])
             continue;
 
-        id customTypes = [(NSDictionary *)teamDataObject objectForKey:@(customWebKitPasteboardDataType)];
+        id customTypes = [(NSDictionary *)teamDataObject objectForKey:@(PasteboardCustomData::cocoaType())];
         if (![customTypes isKindOfClass:[NSArray class]])
             continue;
 
@@ -362,14 +362,14 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
             domPasteboardTypes.add(type);
     }
 
-    if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(customWebKitPasteboardDataType)]) {
+    if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
         auto buffer = SharedBuffer::create(serializedCustomData);
-        for (auto& type : customDataFromSharedBuffer(buffer.get()).orderedTypes)
+        for (auto& type : PasteboardCustomData::fromSharedBuffer(buffer.get()).orderedTypes)
             domPasteboardTypes.add(type);
     }
 
     for (NSString *type in [m_pasteboard pasteboardTypes]) {
-        if ([type isEqualToString:@(customWebKitPasteboardDataType)])
+        if ([type isEqualToString:@(PasteboardCustomData::cocoaType())])
             continue;
 
         if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type)) {
@@ -392,7 +392,7 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
     [representationsToRegister setPreferredPresentationStyle:WebPreferredPresentationStyleInline];
 
     if (data.sameOriginCustomData.size()) {
-        if (auto serializedSharedBuffer = sharedBufferFromCustomData(data)->createNSData()) {
+        if (auto serializedSharedBuffer = data.createSharedBuffer()->createNSData()) {
             // We stash the list of supplied pasteboard types in teamData here for compatibility with drag and drop.
             // Since the contents of item providers cannot be loaded prior to drop, but the pasteboard types are
             // contained within the custom data blob and we need to vend them to the page when firing `dragover`
@@ -402,8 +402,8 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
             NSMutableArray<NSString *> *typesAsNSArray = [NSMutableArray array];
             for (auto& type : data.orderedTypes)
                 [typesAsNSArray addObject:type];
-            [representationsToRegister setTeamData:[NSKeyedArchiver archivedDataWithRootObject:@{ @(customWebKitPasteboardDataType) : typesAsNSArray }]];
-            [representationsToRegister addData:serializedSharedBuffer.get() forType:@(customWebKitPasteboardDataType)];
+            [representationsToRegister setTeamData:[NSKeyedArchiver archivedDataWithRootObject:@{ @(PasteboardCustomData::cocoaType()) : typesAsNSArray }]];
+            [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
         }
     }
 
