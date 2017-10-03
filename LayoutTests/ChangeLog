@@ -1,3 +1,12 @@
+2017-10-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move payment-request TestExpectations to ios-wk2.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-10-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add View layout tests, make views more testable
