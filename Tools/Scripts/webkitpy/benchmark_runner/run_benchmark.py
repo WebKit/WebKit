@@ -8,6 +8,7 @@ import os
 import sys
 
 from browser_driver.browser_driver_factory import BrowserDriverFactory
+from benchmark_runner import BenchmarkRunner
 from webdriver_benchmark_runner import WebDriverBenchmarkRunner
 from webserver_benchmark_runner import WebServerBenchmarkRunner
 
