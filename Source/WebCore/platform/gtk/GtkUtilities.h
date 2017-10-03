@@ -19,6 +19,8 @@
 #ifndef GtkUtilities_h 
 #define GtkUtilities_h 
 
+#include <wtf/MonotonicTime.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -27,6 +29,12 @@ class IntPoint;
 
 IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
 bool widgetIsOnscreenToplevelWindow(GtkWidget*);
+
+template<typename GdkEventType>
+WallTime wallTimeForEvent(const GdkEventType* event) { return MonotonicTime::fromRawSeconds(event->time / 1000.).approximateWallTime(); }
+
+template<>
+WallTime wallTimeForEvent(const GdkEvent*);
 
 #if ENABLE(DEVELOPER_MODE)
 CString webkitBuildDirectory();

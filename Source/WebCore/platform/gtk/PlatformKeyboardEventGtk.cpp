@@ -30,6 +30,7 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
+#include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"
@@ -1259,7 +1260,7 @@ static OptionSet<PlatformEvent::Modifier> modifiersForGdkKeyEvent(GdkEventKey* e
 
 // Keep this in sync with the other platform event constructors
 PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event, const CompositionResults& compositionResults)
-    : PlatformEvent(eventTypeForGdkKeyEvent(event), modifiersForGdkKeyEvent(event), WallTime::now())
+    : PlatformEvent(eventTypeForGdkKeyEvent(event), modifiersForGdkKeyEvent(event), wallTimeForEvent(event))
     , m_text(compositionResults.simpleString.length() ? compositionResults.simpleString : singleCharacterString(event->keyval))
     , m_unmodifiedText(m_text)
     , m_key(keyValueForGdkKeyCode(event->keyval))

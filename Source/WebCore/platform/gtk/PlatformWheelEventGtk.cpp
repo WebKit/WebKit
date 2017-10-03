@@ -29,6 +29,7 @@
 #include "PlatformWheelEvent.h"
 
 #include "FloatPoint.h"
+#include "GtkUtilities.h"
 #include "PlatformKeyboardEvent.h"
 #include "Scrollbar.h"
 #include <gdk/gdk.h>
@@ -43,7 +44,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     static const float delta = 1;
 
     m_type = PlatformEvent::Wheel;
-    m_timestamp = WallTime::now();
+    m_timestamp = wallTimeForEvent(event);
 
     if (event->state & GDK_SHIFT_MASK)
         m_modifiers |= Modifier::ShiftKey;

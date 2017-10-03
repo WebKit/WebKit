@@ -54,6 +54,16 @@ bool widgetIsOnscreenToplevelWindow(GtkWidget* widget)
     return widget && gtk_widget_is_toplevel(widget) && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
 }
 
+template<>
+WallTime wallTimeForEvent(const GdkEvent* event)
+{
+    // This works if and only if the X server or Wayland compositor happens to
+    // be using CLOCK_MONOTONIC for its monotonic time, and so long as
+    // g_get_monotonic_time() continues to do so as well, and so long as
+    // WTF::MonotonicTime continues to use g_get_monotonic_time().
+    return MonotonicTime::fromRawSeconds(gdk_event_get_time(event) / 1000.).approximateWallTime();
+}
+
 #if ENABLE(DEVELOPER_MODE)
 static CString topLevelPath()
 {
