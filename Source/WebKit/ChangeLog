@@ -1,3 +1,15 @@
+2017-10-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Prefer -webkit-system-font
+        https://bugs.webkit.org/show_bug.cgi?id=177814
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use "font-family: -webkit-system-font" instead of "font: menu".
+
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest): Edited HTML snippet.
+
 2017-10-03  Alex Christensen  <achristensen@webkit.org>
 
         Add ObjC SPI equivalent to WKPageLoaderClient.willGoToBackForwardListItem

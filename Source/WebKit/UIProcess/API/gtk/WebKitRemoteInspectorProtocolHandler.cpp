@@ -119,7 +119,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
         "<style>"
         "  h1 { color: #babdb6; text-shadow: 0 1px 0 white; margin-bottom: 0; }"
-        "  html { font-family: menu; font-size: 11pt; color: #2e3436; padding: 20px 20px 0 20px; background-color: #f6f6f4; "
+        "  html { font-family: -webkit-system-font; font-size: 11pt; color: #2e3436; padding: 20px 20px 0 20px; background-color: #f6f6f4; "
         "         background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeec), color-stop(1, #f6f6f4));"
         "         background-size: 100% 5em; background-repeat: no-repeat; }"
         "  table { width: 100%; border-collapse: collapse; }"
