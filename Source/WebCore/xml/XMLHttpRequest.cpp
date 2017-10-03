@@ -327,13 +327,6 @@ ExceptionOr<void> XMLHttpRequest::setWithCredentials(bool value)
     return { };
 }
 
-bool XMLHttpRequest::isAllowedHTTPMethod(const String& method)
-{
-    return !equalLettersIgnoringASCIICase(method, "trace")
-        && !equalLettersIgnoringASCIICase(method, "track")
-        && !equalLettersIgnoringASCIICase(method, "connect");
-}
-
 String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
 {
     const char* const methods[] = { "DELETE", "GET", "HEAD", "OPTIONS", "POST", "PUT" };
@@ -375,7 +368,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     if (!isValidHTTPToken(method))
         return Exception { SyntaxError };
 
-    if (!isAllowedHTTPMethod(method))
+    if (isForbiddenMethod(method))
         return Exception { SecurityError };
 
     if (!async && scriptExecutionContext()->isDocument()) {

@@ -39,13 +39,10 @@ static std::optional<Exception> setMethod(ResourceRequest& request, const String
 {
     if (!isValidHTTPToken(initMethod))
         return Exception { TypeError, ASCIILiteral("Method is not a valid HTTP token.") };
-
-    String method = initMethod.convertToASCIIUppercase();
-    if (method == "CONNECT" || method == "TRACE" || method == "TRACK")
+    if (isForbiddenMethod(initMethod))
         return Exception { TypeError, ASCIILiteral("Method is forbidden.") };
-
+    String method = initMethod.convertToASCIIUppercase();
     request.setHTTPMethod((method == "DELETE" || method == "GET" || method == "HEAD" || method == "OPTIONS" || method == "POST" || method == "PUT") ? method : initMethod);
-
     return std::nullopt;
 }
 

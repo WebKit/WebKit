@@ -1,3 +1,25 @@
+2017-10-03  Daniel Bates  <dabates@apple.com>
+
+        Share code to determine a forbidden method
+        https://bugs.webkit.org/show_bug.cgi?id=177833
+
+        Reviewed by Andy Estes.
+
+        Currently we duplicate code in XMLHttpRequest and FetchRequest to determine if a method is
+        forbidden. We should add a common helper function and update both classes to make use of it.
+
+        No functionality changed. So, no new tests.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::setMethod): Modified to use WebCore::isForbiddenMethod().
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isForbiddenMethod): Added.
+        * platform/network/HTTPParsers.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Modified to use WebCore::isForbiddenMethod().
+        (WebCore::XMLHttpRequest::isAllowedHTTPMethod): Deleted.
+        * xml/XMLHttpRequest.h:
+
 2017-10-03  Zalan Bujtas  <zalan@apple.com>
 
         RenderMenuList should not hold raw pointers

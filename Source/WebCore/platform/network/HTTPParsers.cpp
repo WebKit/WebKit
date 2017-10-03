@@ -778,7 +778,7 @@ void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHea
     }
 }
 
-// Implementation of https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name
+// Implements <https://fetch.spec.whatwg.org/#forbidden-header-name>.
 bool isForbiddenHeaderName(const String& name)
 {
     HTTPHeaderName headerName;
@@ -812,9 +812,16 @@ bool isForbiddenHeaderName(const String& name)
     return startsWithLettersIgnoringASCIICase(name, "sec-") || startsWithLettersIgnoringASCIICase(name, "proxy-");
 }
 
+// Implements <https://fetch.spec.whatwg.org/#forbidden-response-header-name>.
 bool isForbiddenResponseHeaderName(const String& name)
 {
     return equalLettersIgnoringASCIICase(name, "set-cookie") || equalLettersIgnoringASCIICase(name, "set-cookie2");
+}
+
+// Implements <https://fetch.spec.whatwg.org/#forbidden-method>.
+bool isForbiddenMethod(const String& name)
+{
+    return equalLettersIgnoringASCIICase(name, "connect") || equalLettersIgnoringASCIICase(name, "trace") || equalLettersIgnoringASCIICase(name, "track");
 }
 
 bool isSimpleHeader(const String& name, const String& value)

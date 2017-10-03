@@ -104,7 +104,6 @@ public:
     void didCacheResponse();
 
     // Expose HTTP validation methods for other untrusted requests.
-    static bool isAllowedHTTPMethod(const String&);
     static String uppercaseKnownHTTPMethod(const String&);
 
     enum class ResponseType { EmptyString, Arraybuffer, Blob, Document, Json, Text };
