@@ -1,5 +1,0 @@
-
-
-PASS TextTrackCue.endTime, script-created cue 
-PASS TextTrackCue.endTime, parsed cue 
-

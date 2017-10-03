@@ -1,3 +1,67 @@
+2017-10-03  Ms2ger  <Ms2ger@igalia.com>
+
+        Remove some duplicate w3c tests for media tracks.
+        https://bugs.webkit.org/show_bug.cgi?id=177819
+
+        Reviewed by Youenn Fablet.
+
+        All these tests also exist in
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces,
+        where they are kept up-to-date with upstream.
+
+        * media/track/w3c/interfaces/HTMLMediaElement/addTextTrack-expected.txt: Removed.
+        * media/track/w3c/interfaces/HTMLMediaElement/addTextTrack.html: Removed.
+        * media/track/w3c/interfaces/HTMLMediaElement/textTracks-expected.txt: Removed.
+        * media/track/w3c/interfaces/HTMLMediaElement/textTracks.html: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/default-expected.txt: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/default.html: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/label-expected.txt: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/label.html: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/readyState-expected.txt: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/readyState.html: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/srclang-expected.txt: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/srclang.html: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/track-expected.txt: Removed.
+        * media/track/w3c/interfaces/HTMLTrackElement/track.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/addCue-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/addCue.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/constants-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/constants.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/kind-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/kind.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/label-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/label.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/language-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/language.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/mode-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/mode.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/oncuechange-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/oncuechange.html: Removed.
+        * media/track/w3c/interfaces/TextTrack/removeCue-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrack/removeCue.html: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/endTime-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/endTime.html: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/id-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/id.html: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/pauseOnExit-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/startTime-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/startTime.html: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/track-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackCue/track.html: Removed.
+        * media/track/w3c/interfaces/TextTrackCueList/getCueById-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackCueList/getCueById.html: Removed.
+        * media/track/w3c/interfaces/TextTrackCueList/length-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackCueList/length.html: Removed.
+        * media/track/w3c/interfaces/TextTrackList/length-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackList/length.html: Removed.
+        * media/track/w3c/interfaces/TextTrackList/onaddtrack-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackList/onaddtrack.html: Removed.
+        * media/track/w3c/interfaces/TextTrackList/onremovetrack-expected.txt: Removed.
+        * media/track/w3c/interfaces/TextTrackList/onremovetrack.html: Removed.
+        * platform/ios/TestExpectations: Removed references to removed tests.
+        * platform/mac/TestExpectations: Removed references to removed tests.
+
 2017-10-03  Daniel Bates  <dabates@apple.com>
 
         XMLHttpRequest.setRequestHeader() should allow Content-Transfer-Encoding header; remove

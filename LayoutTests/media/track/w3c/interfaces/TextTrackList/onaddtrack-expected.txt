@@ -1,4 +1,0 @@
-
-PASS TextTrackList.onaddtrack 
-PASS TextTrackList.addEventListener/removeEventListener 
-

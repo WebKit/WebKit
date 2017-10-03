@@ -1,4 +1,0 @@
-
-PASS TextTrack.label 
-PASS TextTrack.label, \u0000 
-
