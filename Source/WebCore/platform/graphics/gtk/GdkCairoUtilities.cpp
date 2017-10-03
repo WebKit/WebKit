@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 

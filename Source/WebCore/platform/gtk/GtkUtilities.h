@@ -22,6 +22,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -35,6 +36,8 @@ WallTime wallTimeForEvent(const GdkEventType* event) { return MonotonicTime::fro
 
 template<>
 WallTime wallTimeForEvent(const GdkEvent*);
+
+String defaultGtkSystemFont();
 
 #if ENABLE(DEVELOPER_MODE)
 CString webkitBuildDirectory();

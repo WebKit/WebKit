@@ -1,3 +1,15 @@
+2017-10-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Support the "system" CSS font family
+        https://bugs.webkit.org/show_bug.cgi?id=177755
+
+        Reviewed by Carlos Garcia Campos.
+
+        Obtain the system UI font from the GtkSettings::gtk-font-name property
+
+        * platform/gtk/fonts/systemFont-expected.html: Added.
+        * platform/gtk/fonts/systemFont.html: Added.
+
 2017-10-03  Daniel Bates  <dabates@apple.com>
 
         [XHR] Only exempt Dashboard widgets from XHR header restrictions

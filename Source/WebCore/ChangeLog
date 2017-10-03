@@ -1,3 +1,23 @@
+2017-10-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Support the "system" CSS font family
+        https://bugs.webkit.org/show_bug.cgi?id=177755
+
+        Reviewed by Carlos Garcia Campos.
+
+        Obtain the system UI font from the GtkSettings::gtk-font-name property
+
+        Test: platform/gtk/fonts/systemFont.html
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::getFamilyNameStringFromFamily): Use defaultGtkSystemFont()
+        to handle -webkit-system-font and -webkit-system-ui.
+        (WebCore::isCommonlyUsedGenericFamily): Handle -webkit-system-font and
+        -webkit-system-ui as generic family names.
+        * platform/graphics/gtk/GtkUtilities.cpp:
+        (WebCore::defaultGtkSystemFont): Added.
+        * platform/graphics/gtk/GtkUtilities.h: Add prototype for defaultGtkSystemFont().
+
 2017-10-03  Daniel Bates  <dabates@apple.com>
 
         [XHR] Only exempt Dashboard widgets from XHR header restrictions

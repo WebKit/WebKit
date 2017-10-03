@@ -64,6 +64,17 @@ WallTime wallTimeForEvent(const GdkEvent* event)
     return MonotonicTime::fromRawSeconds(gdk_event_get_time(event) / 1000.).approximateWallTime();
 }
 
+String defaultGtkSystemFont()
+{
+    GUniqueOutPtr<char> fontString;
+    g_object_get(gtk_settings_get_default(), "gtk-font-name", &fontString.outPtr(), nullptr);
+    // We need to remove the size from the value of the property,
+    // which is separated from the font family using a space.
+    if (auto* spaceChar = strrchr(fontString.get(), ' '))
+        *spaceChar = '\0';
+    return String::fromUTF8(fontString.get());
+}
+
 #if ENABLE(DEVELOPER_MODE)
 static CString topLevelPath()
 {
