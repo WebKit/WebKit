@@ -1,3 +1,15 @@
+2017-10-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r222760.
+
+        This change caused LayoutTest crashes.
+
+        Reverted changeset:
+
+        "[Mac] Use safer decoding practices for NSKeyedUnarchiver"
+        https://bugs.webkit.org/show_bug.cgi?id=175887
+        http://trac.webkit.org/changeset/222760
+
 2017-10-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r222392): [WPE][GTK] Many forms tests are failing due to broken event timestamps
