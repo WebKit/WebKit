@@ -1,3 +1,31 @@
+2017-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI equivalent to WKPageLoaderClient.willGoToBackForwardListItem
+        https://bugs.webkit.org/show_bug.cgi?id=177825
+        <rdar://problem/22387505>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::willGoToBackForwardListItem):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::canHandleWillGoToBackForwardListItem const):
+        (API::NavigationClient::willGoToBackForwardListItem):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::canHandleWillGoToBackForwardListItem const):
+        (WebKit::NavigationState::NavigationClient::willGoToBackForwardListItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem const):
+
 2017-10-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r222392): [WPE][GTK] Many forms tests are failing due to broken event timestamps

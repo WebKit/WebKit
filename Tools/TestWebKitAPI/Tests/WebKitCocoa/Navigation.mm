@@ -292,4 +292,42 @@ TEST(WKNavigation, WebViewDidCancelClientRedirect)
     ASSERT_TRUE(didCancelRedirect);
 }
 
-#endif
+#if PLATFORM(MAC)
+
+static bool navigationComplete;
+
+@interface BackForwardDelegate : NSObject<WKNavigationDelegatePrivate>
+@end
+@implementation BackForwardDelegate
+- (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache
+{
+    const char* expectedURL = [[[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] absoluteString] UTF8String];
+    EXPECT_STREQ(item.URL.absoluteString.UTF8String, expectedURL);
+    EXPECT_TRUE(item.title == nil);
+    EXPECT_STREQ(item.initialURL.absoluteString.UTF8String, expectedURL);
+    EXPECT_TRUE(inPageCache);
+    isDone = true;
+}
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    navigationComplete = true;
+}
+@end
+
+TEST(WKNavigation, WillGoToBackForwardListItem)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto delegate = adoptNS([[BackForwardDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    TestWebKitAPI::Util::run(&navigationComplete);
+    navigationComplete = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    TestWebKitAPI::Util::run(&navigationComplete);
+    [webView goBack];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+#endif // PLATFORM(MAC)
+
+#endif // WK_API_ENABLED

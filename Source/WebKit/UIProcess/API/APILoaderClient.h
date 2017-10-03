@@ -91,7 +91,7 @@ public:
 
     virtual void didChangeBackForwardList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem*, Vector<RefPtr<WebKit::WebBackForwardListItem>>) { }
     virtual bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem*) { return true; }
-    virtual void willGoToBackForwardListItem(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem*, API::Object*) { }
+    virtual void willGoToBackForwardListItem(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem&, API::Object*) { }
 
     virtual void didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy&) { }
     virtual void didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }

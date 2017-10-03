@@ -91,8 +91,8 @@ private:
     private:
         void didStartProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
-        void willPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String&, double) override;
-        void didCancelClientRedirect(WebKit::WebPageProxy&) override;
+        void willPerformClientRedirect(WebPageProxy&, const WTF::String&, double) override;
+        void didCancelClientRedirect(WebPageProxy&) override;
         void didFailProvisionalNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         void didFailProvisionalLoadInSubframeWithError(WebPageProxy&, WebFrameProxy&, const WebCore::SecurityOriginData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         void didCommitNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
@@ -116,9 +116,10 @@ private:
         void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&) override;
 #endif
 
-#if ENABLE(WEBGL) && PLATFORM(MAC)
+#if PLATFORM(MAC)
         void webGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
         void resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
+        bool willGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem&, bool inPageCache, API::Object*) final;
 #endif
 
         void contentRuleListNotification(WebPageProxy&, WebCore::URL&&, Vector<String>&&, Vector<String>&&) final;
@@ -209,9 +210,10 @@ private:
         bool webViewDidRequestPasswordForQuickLookDocument : 1;
 #endif
 
-#if ENABLE(WEBGL) && PLATFORM(MAC)
+#if PLATFORM(MAC)
         bool webViewWebGLLoadPolicyForURL : 1;
         bool webViewResolveWebGLLoadPolicyForURL : 1;
+        bool webViewWillGoToBackForwardListItemInPageCache : 1;
 #endif
     } m_navigationDelegateMethods;
 

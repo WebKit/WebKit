@@ -1,3 +1,16 @@
+2017-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI equivalent to WKPageLoaderClient.willGoToBackForwardListItem
+        https://bugs.webkit.org/show_bug.cgi?id=177825
+        <rdar://problem/22387505>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (-[BackForwardDelegate _webView:willGoToBackForwardListItem:inPageCache:]):
+        (-[BackForwardDelegate webView:didFinishNavigation:]):
+        (TEST):
+
 2017-10-03  Antti Koivisto  <antti@apple.com>
 
         Allow assigning WeakPtr<Derived> to WeakPtr<Base>

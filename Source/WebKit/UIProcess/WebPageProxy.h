@@ -410,7 +410,7 @@ public:
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem*);
     void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removed);
-    void willGoToBackForwardListItem(uint64_t itemID, const UserData&);
+    void willGoToBackForwardListItem(uint64_t itemID, bool inPageCache, const UserData&);
 
     bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem*);
 
