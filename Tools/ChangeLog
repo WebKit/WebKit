@@ -1,3 +1,16 @@
+2017-10-03  Olivier Blin  <olivier.blin@softathome.com>
+
+        [WPE] Bump deps to add support for xdg-shell-unstable-v6 protocol
+        https://bugs.webkit.org/show_bug.cgi?id=177820
+
+        Reviewed by Žan Doberšek.
+
+        gnome-shell does not advertize the xdg-shell protocol anymore, but xdg-shell-unstable-v6 instead.
+        Support has been added in WPEBackend-mesa, we need to update the requirements.
+        wayland-1.10 is needed for wl_proxy_get_version(), used in the generated headers.
+
+        * wpe/jhbuild.modules:
+
 2017-10-03  Alex Christensen  <achristensen@webkit.org>
 
         Add ObjC SPI equivalent to WKPageLoaderClient.willGoToBackForwardListItem

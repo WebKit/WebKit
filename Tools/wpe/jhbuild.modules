@@ -163,9 +163,9 @@
   <autotools id="wayland"
              autogen-sh="configure"
              autogenargs="--disable-documentation">
-    <branch module="releases/wayland-1.9.0.tar.xz" version="1.9.0"
+    <branch module="releases/wayland-1.10.0.tar.xz" version="1.10.0"
             repo="wayland.freedesktop.org"
-            hash="sha256:9c8770720aa0034479735f58a4dc4ca9b172ecfede28f5134312e135b7301efa"/>
+            hash="sha256:4bf6e790aa6f50ab3825676282ecd75850ec9c4767af96ecb7127b1f3c3d60dc"/>
   </autotools>
 
   <cmake id="wpe">
@@ -181,7 +181,7 @@
       <dep package="xkbcommon" />
     </dependencies>
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend-mesa.git"
-            tag="b6e2a82dfd5a12761911dc890625ec81d2a012b4" />
+            tag="0286aed84a09120de16c3ab08bdf83c91d4a1754" />
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">
