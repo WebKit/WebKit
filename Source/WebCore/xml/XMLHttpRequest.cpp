@@ -348,56 +348,6 @@ String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
     return method;
 }
 
-static bool isForbiddenRequestHeader(const String& name)
-{
-    HTTPHeaderName headerName;
-    if (!findHTTPHeaderName(name, headerName))
-        return false;
-
-    switch (headerName) {
-    case HTTPHeaderName::AcceptCharset:
-    case HTTPHeaderName::AcceptEncoding:
-    case HTTPHeaderName::AccessControlRequestHeaders:
-    case HTTPHeaderName::AccessControlRequestMethod:
-    case HTTPHeaderName::Connection:
-    case HTTPHeaderName::ContentLength:
-    case HTTPHeaderName::ContentTransferEncoding:
-    case HTTPHeaderName::Cookie:
-    case HTTPHeaderName::Cookie2:
-    case HTTPHeaderName::Date:
-    case HTTPHeaderName::DNT:
-    case HTTPHeaderName::Expect:
-    case HTTPHeaderName::Host:
-    case HTTPHeaderName::KeepAlive:
-    case HTTPHeaderName::Origin:
-    case HTTPHeaderName::Referer:
-    case HTTPHeaderName::TE:
-    case HTTPHeaderName::Trailer:
-    case HTTPHeaderName::TransferEncoding:
-    case HTTPHeaderName::Upgrade:
-    case HTTPHeaderName::UserAgent:
-    case HTTPHeaderName::Via:
-        return true;
-
-    default:
-        return false;
-    }
-}
-
-bool XMLHttpRequest::isAllowedHTTPHeader(const String& name)
-{
-    if (isForbiddenRequestHeader(name))
-        return false;
-
-    if (name.startsWith("proxy-", false))
-        return false;
-
-    if (name.startsWith("sec-", false))
-        return false;
-
-    return true;
-}
-
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url)
 {
     // If the async argument is omitted, set async to true.
@@ -927,7 +877,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
 #if ENABLE(DASHBOARD_SUPPORT)
     allowUnsafeHeaderField = usesDashboardBackwardCompatibilityMode();
 #endif
-    if (!allowUnsafeHeaderField && !isAllowedHTTPHeader(name)) {
+    if (!allowUnsafeHeaderField && isForbiddenHeaderName(name)) {
         logConsoleError(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
         return { };
     }
