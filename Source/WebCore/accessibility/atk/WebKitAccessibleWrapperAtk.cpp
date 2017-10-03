@@ -448,9 +448,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
             attributeSet = addToAtkAttributeSet(attributeSet, "html-id", id.utf8().data());
     }
 
-    int headingLevel = coreObject->headingLevel();
-    if (headingLevel) {
-        String value = String::number(headingLevel);
+    int level = coreObject->isHeading() ? coreObject->headingLevel() : coreObject->hierarchicalLevel();
+    if (level) {
+        String value = String::number(level);
         attributeSet = addToAtkAttributeSet(attributeSet, "level", value.utf8().data());
     }
 

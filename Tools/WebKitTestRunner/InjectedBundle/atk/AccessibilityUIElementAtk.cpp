@@ -1680,7 +1680,10 @@ bool AccessibilityUIElement::isIndeterminate() const
 
 int AccessibilityUIElement::hierarchicalLevel() const
 {
-    // FIXME: implement
+    String level = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "level");
+    if (!level.isEmpty())
+        return level.toInt();
+
     return 0;
 }
 
