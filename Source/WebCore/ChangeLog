@@ -1,3 +1,22 @@
+2017-10-03  Daniel Bates  <dabates@apple.com>
+
+        [XHR] Only exempt Dashboard widgets from XHR header restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=177824
+        <rdar://problem/34384301>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently we allow file URLs to set arbitrary XHR headers. In contrast, non-file URLs are
+        restricted from setting some XHR headers (e.g. COOKIE). Historically the relaxation for file
+        URL was for backwards compatibility to allow Dashboard widgets to work. Instead we should
+        apply the non-file URL policy to all URLs and only relax the policy for Dashboard widgets.
+
+        Tests: fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html
+               fast/xmlhttprequest/set-dangerous-headers.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setRequestHeader):
+
 2017-10-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r221909): Failing fast/text/international/iso-8859-8.html

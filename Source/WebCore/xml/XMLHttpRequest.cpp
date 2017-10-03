@@ -923,8 +923,11 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
     if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(normalizedValue))
         return Exception { SyntaxError };
 
-    // A privileged script (e.g. a Dashboard widget) can set any headers.
-    if (!securityOrigin()->canLoadLocalResources() && !isAllowedHTTPHeader(name)) {
+    bool allowUnsafeHeaderField = false;
+#if ENABLE(DASHBOARD_SUPPORT)
+    allowUnsafeHeaderField = usesDashboardBackwardCompatibilityMode();
+#endif
+    if (!allowUnsafeHeaderField && !isAllowedHTTPHeader(name)) {
         logConsoleError(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
         return { };
     }

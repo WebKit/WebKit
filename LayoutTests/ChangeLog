@@ -1,3 +1,24 @@
+2017-10-03  Daniel Bates  <dabates@apple.com>
+
+        [XHR] Only exempt Dashboard widgets from XHR header restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=177824
+        <rdar://problem/34384301>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add tests to ensure that file URLs are forbidden from setting the same set of blacklisted
+        headers as non-file URLs except when running in Dashboard compatibility mode.
+
+        * TestExpectations: Mark test fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html
+        as WontFix on all platforms. We will selectively enable this test on Mac because it is the
+        only platform that supports Dashboard widgets.
+        * fast/xmlhttprequest/set-dangerous-headers-expected.txt: Added.
+        * fast/xmlhttprequest/set-dangerous-headers-in-dashboard-expected.txt: Added.
+        * fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html: Added.
+        * fast/xmlhttprequest/set-dangerous-headers.html: Added. Derived from LayoutTests/http/tests/xmlhttprequest/set-dangerous-headers.html.
+        * platform/mac/TestExpectations: Enable test fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html
+        on Mac.
+
 2017-10-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r221909): Failing fast/text/international/iso-8859-8.html
