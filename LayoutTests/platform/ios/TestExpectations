@@ -508,6 +508,23 @@ fast/css/variables/env/ios [ Pass ]
 # This test relies on APIs not available on iOS
 fast/images/animated-image-mp4.html [ Skip ]
 
+ # skip manual payment-request tests
+imported/w3c/web-platform-tests/payment-request/algorithms-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/change-shipping-option-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/complete-method-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/methodName-attribute-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/payerEmail-attribute-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/payerName-attribute-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/payerPhone-attribute-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/requestId-attribute-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/shippingAddress-attribute-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-response/shippingOption-attribute-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/PaymentAddress/attributes-and-toJSON-method-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/shipping-address-changed-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/updateWith-method-pmi-handling-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/user-abort-algorithm-manual.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-algo-manual.https.html [ Skip ]
+
 ###
 # Known failures
 ##
