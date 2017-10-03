@@ -1,5 +1,27 @@
 2017-10-03  Daniel Bates  <dabates@apple.com>
 
+        Share code to normalize an HTTP method
+        https://bugs.webkit.org/show_bug.cgi?id=177837
+
+        Reviewed by Andy Estes.
+
+        Currently we duplicate code in XMLHttpRequest and FetchRequest to normalize an HTTP method.
+        We should add a common helper function and update both classes to make use of it.
+
+        No functionality changed. So, no new tests.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::setMethod): Modified to use WebCore::normalizeHTTPMethod().
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::normalizeHTTPMethod): Moved from XMLHttpRequest.cpp.
+        * platform/network/HTTPParsers.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open): Modified to use WebCore::normalizeHTTPMethod().
+        (WebCore::XMLHttpRequest::uppercaseKnownHTTPMethod): Deleted; moved to HTTPParsers.cpp.
+        * xml/XMLHttpRequest.h:
+
+2017-10-03  Daniel Bates  <dabates@apple.com>
+
         Share code to determine a forbidden method
         https://bugs.webkit.org/show_bug.cgi?id=177833
 

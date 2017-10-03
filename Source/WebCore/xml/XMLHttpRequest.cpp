@@ -327,20 +327,6 @@ ExceptionOr<void> XMLHttpRequest::setWithCredentials(bool value)
     return { };
 }
 
-String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
-{
-    const char* const methods[] = { "DELETE", "GET", "HEAD", "OPTIONS", "POST", "PUT" };
-    for (auto* value : methods) {
-        if (equalIgnoringASCIICase(method, value)) {
-            // Don't bother allocating a new string if it's already all uppercase.
-            if (method == value)
-                break;
-            return ASCIILiteral(value);
-        }
-    }
-    return method;
-}
-
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url)
 {
     // If the async argument is omitted, set async to true.
@@ -388,7 +374,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
         }
     }
 
-    m_method = uppercaseKnownHTTPMethod(method);
+    m_method = normalizeHTTPMethod(method);
 
     m_url = url;
     scriptExecutionContext()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);

@@ -101,6 +101,8 @@ bool isCrossOriginSafeHeader(HTTPHeaderName, const HTTPHeaderSet&);
 bool isCrossOriginSafeHeader(const String&, const HTTPHeaderSet&);
 bool isCrossOriginSafeRequestHeader(HTTPHeaderName, const String&);
 
+String normalizeHTTPMethod(const String&);
+
 inline bool isHTTPSpace(UChar character)
 {
     return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r');

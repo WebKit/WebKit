@@ -881,4 +881,19 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
     }
 }
 
+// Implements <https://fetch.spec.whatwg.org/#concept-method-normalize>.
+String normalizeHTTPMethod(const String& method)
+{
+    const char* const methods[] = { "DELETE", "GET", "HEAD", "OPTIONS", "POST", "PUT" };
+    for (auto* value : methods) {
+        if (equalIgnoringASCIICase(method, value)) {
+            // Don't bother allocating a new string if it's already all uppercase.
+            if (method == value)
+                break;
+            return ASCIILiteral { value };
+        }
+    }
+    return method;
+}
+
 }

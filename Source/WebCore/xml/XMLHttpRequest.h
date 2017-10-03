@@ -103,9 +103,6 @@ public:
     bool responseCacheIsValid() const { return m_responseCacheIsValid; }
     void didCacheResponse();
 
-    // Expose HTTP validation methods for other untrusted requests.
-    static String uppercaseKnownHTTPMethod(const String&);
-
     enum class ResponseType { EmptyString, Arraybuffer, Blob, Document, Json, Text };
     ExceptionOr<void> setResponseType(ResponseType);
     ResponseType responseType() const;
