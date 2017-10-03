@@ -95,6 +95,14 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
     });
 }
 
+Vector<Ref<FetchResponse>> DOMCache::cloneResponses(const Vector<CacheStorageRecord>& records)
+{
+    auto& context = *scriptExecutionContext();
+    return WTF::map(records, [&context] (const auto& record) {
+        return record.response->clone(context).releaseReturnValue();
+    });
+}
+
 void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
@@ -116,11 +124,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
                 promise.reject(WTFMove(exception.value()));
                 return;
             }
-            Vector<Ref<FetchResponse>> responses;
-            responses.reserveInitialCapacity(m_records.size());
-            for (auto& record : m_records)
-                responses.uncheckedAppend(record.response->clone(*scriptExecutionContext()).releaseReturnValue());
-            promise.resolve(WTFMove(responses));
+            promise.resolve(cloneResponses(m_records));
         });
         return;
     }
@@ -129,12 +133,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
             promise.reject(result.releaseException());
             return;
         }
-        auto records = result.releaseReturnValue();
-        Vector<Ref<FetchResponse>> responses;
-        responses.reserveInitialCapacity(records.size());
-        for (auto& record : records)
-            responses.uncheckedAppend(record.response->clone(*scriptExecutionContext()).releaseReturnValue());
-        promise.resolve(responses);
+        promise.resolve(cloneResponses(result.releaseReturnValue()));
     });
 }
 
@@ -373,6 +372,11 @@ void DOMCache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromis
     });
 }
 
+static inline Ref<FetchRequest> copyRequestRef(const CacheStorageRecord& record)
+{
+    return record.request.copyRef();
+}
+
 void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
@@ -394,11 +398,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
                 promise.reject(WTFMove(exception.value()));
                 return;
             }
-            Vector<Ref<FetchRequest>> requests;
-            requests.reserveInitialCapacity(m_records.size());
-            for (auto& record : m_records)
-                requests.uncheckedAppend(record.request.copyRef());
-            promise.resolve(requests);
+            promise.resolve(WTF::map(m_records, copyRequestRef));
         });
         return;
     }
@@ -409,12 +409,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
             return;
         }
 
-        auto records = result.releaseReturnValue();
-        Vector<Ref<FetchRequest>> requests;
-        requests.reserveInitialCapacity(records.size());
-        for (auto& record : records)
-            requests.uncheckedAppend(record.request.copyRef());
-        promise.resolve(requests);
+        promise.resolve(WTF::map(result.releaseReturnValue(), copyRequestRef));
     });
 }
 

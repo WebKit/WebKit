@@ -74,13 +74,9 @@ static inline void startSequentialMatch(Vector<Ref<DOMCache>>&& caches, DOMCache
     doSequentialMatch(0, WTFMove(caches), WTFMove(info), WTFMove(options), WTFMove(completionHandler));
 }
 
-static inline Vector<Ref<DOMCache>> copyCaches(const Vector<Ref<DOMCache>>& caches)
+static inline Ref<DOMCache> copyCache(const Ref<DOMCache>& cache)
 {
-    Vector<Ref<DOMCache>> copy;
-    copy.reserveInitialCapacity(caches.size());
-    for (auto& cache : caches)
-        copy.uncheckedAppend(cache.copyRef());
-    return copy;
+    return cache.copyRef();
 }
 
 void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
@@ -102,7 +98,7 @@ void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& op
         }
 
         setPendingActivity(this);
-        startSequentialMatch(copyCaches(m_caches), WTFMove(info), WTFMove(options), [this, promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
+        startSequentialMatch(WTF::map(m_caches, copyCache), WTFMove(info), WTFMove(options), [this, promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
             if (!m_isStopped) {
                 if (result.hasException()) {
                     promise->reject(result.releaseException());
@@ -129,6 +125,14 @@ void DOMCacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
     });
 }
 
+Ref<DOMCache> DOMCacheStorage::findCacheOrCreate(CacheInfo&& info)
+{
+   auto position = m_caches.findMatching([&] (const auto& cache) { return info.identifier == cache->identifier(); });
+   if (position != notFound)
+       return m_caches[position].copyRef();
+   return DOMCache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef());
+}
+
 void DOMCacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&& callback)
 {
     String origin = this->origin();
@@ -148,16 +152,9 @@ void DOMCacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>
             if (m_updateCounter != cachesInfo.updateCounter) {
                 m_updateCounter = cachesInfo.updateCounter;
 
-                ASSERT(scriptExecutionContext());
-
-                Vector<Ref<DOMCache>> caches;
-                caches.reserveInitialCapacity(cachesInfo.infos.size());
-                for (auto& info : cachesInfo.infos) {
-                    auto position = m_caches.findMatching([&](const auto& cache) { return info.identifier == cache->identifier(); });
-                    caches.uncheckedAppend(position != notFound ? m_caches[position].copyRef() : DOMCache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef()));
-                }
-                m_caches = WTFMove(caches);
-
+                m_caches = WTF::map(WTFMove(cachesInfo.infos), [this] (CacheInfo&& info) {
+                    return findCacheOrCreate(WTFMove(info));
+                });
             }
             callback(std::nullopt);
         }
@@ -252,11 +249,9 @@ void DOMCacheStorage::keys(KeysPromise&& promise)
             return;
         }
 
-        Vector<String> keys;
-        keys.reserveInitialCapacity(m_caches.size());
-        for (auto& cache : m_caches)
-            keys.uncheckedAppend(cache->name());
-        promise.resolve(keys);
+        promise.resolve(WTF::map(m_caches, [] (const auto& cache) {
+            return cache->name();
+        }));
     });
 }
 

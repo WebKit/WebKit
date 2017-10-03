@@ -53,6 +53,7 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     void retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&&);
+    Ref<DOMCache> findCacheOrCreate(DOMCacheEngine::CacheInfo&&);
     String origin() const;
 
     Vector<Ref<DOMCache>> m_caches;

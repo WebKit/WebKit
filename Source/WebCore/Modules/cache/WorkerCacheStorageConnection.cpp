@@ -185,11 +185,7 @@ void WorkerCacheStorageConnection::dereference(uint64_t cacheIdentifier)
 
 static inline Vector<CrossThreadRecordData> recordsDataFromRecords(const Vector<Record>& records)
 {
-    Vector<CrossThreadRecordData> recordsData;
-    recordsData.reserveInitialCapacity(records.size());
-    for (const auto& record : records)
-        recordsData.uncheckedAppend(toCrossThreadRecordData(record));
-    return recordsData;
+    return WTF::map(records, toCrossThreadRecordData);
 }
 
 static inline Expected<Vector<CrossThreadRecordData>, Error> recordsDataOrErrorFromRecords(const RecordsOrError& result)
@@ -202,11 +198,7 @@ static inline Expected<Vector<CrossThreadRecordData>, Error> recordsDataOrErrorF
 
 static inline Vector<Record> recordsFromRecordsData(Vector<CrossThreadRecordData>&& recordsData)
 {
-    Vector<Record> records;
-    records.reserveInitialCapacity(recordsData.size());
-    for (auto& recordData : recordsData)
-        records.uncheckedAppend(fromCrossThreadRecordData(WTFMove(recordData)));
-    return records;
+    return WTF::map(WTFMove(recordsData), fromCrossThreadRecordData);
 }
 
 static inline RecordsOrError recordsOrErrorFromRecordsData(Expected<Vector<CrossThreadRecordData>, Error>&& recordsData)

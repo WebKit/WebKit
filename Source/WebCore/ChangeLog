@@ -1,3 +1,30 @@
+2017-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Use vector map routine in WebCore CacheStorage implementation
+        https://bugs.webkit.org/show_bug.cgi?id=177002
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+        Replacing use of reserveInitialCapacity/uncheckedAppend by use of map.
+
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::copyCache):
+        (WebCore::CacheStorage::match):
+        (WebCore::CacheStorage::retrieveCaches):
+        (WebCore::CacheStorage::keys):
+        (WebCore::copyCaches): Deleted.
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::matchAll):
+        (WebCore::copyRequestRef):
+        (WebCore::DOMCache::keys):
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::isolateCacheInfo):
+        (WebCore::DOMCacheEngine::CacheInfos::isolatedCopy):
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::recordsDataFromRecords):
+        (WebCore::recordsFromRecordsData):
+
 2017-10-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move LineEnding.{h,cpp} from WebCore/platform/text to wtf/text

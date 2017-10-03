@@ -79,6 +79,7 @@ private:
     void batchPutOperation(Vector<DOMCacheEngine::Record>&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
 
     void updateRecords(Vector<DOMCacheEngine::Record>&&);
+    Vector<Ref<FetchResponse>> cloneResponses(const Vector<CacheStorageRecord>&);
 
     String m_name;
     uint64_t m_identifier;
