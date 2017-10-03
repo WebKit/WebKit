@@ -354,8 +354,8 @@ bool HarfBuzzShaper::shape(GlyphBuffer* glyphBuffer, std::optional<unsigned> fro
         return false;
     m_totalWidth = roundf(m_totalWidth);
 
-    if (glyphBuffer && !fillGlyphBuffer(glyphBuffer, from.value_or(0), to.value_or(m_run.length())))
-        return false;
+    if (glyphBuffer)
+        fillGlyphBuffer(glyphBuffer, from.value_or(0), to.value_or(m_run.length()));
 
     return true;
 }
@@ -606,7 +606,7 @@ void HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun(GlyphBuffer* glyphBuffer, un
     }
 }
 
-bool HarfBuzzShaper::fillGlyphBuffer(GlyphBuffer* glyphBuffer, unsigned from, unsigned to)
+void HarfBuzzShaper::fillGlyphBuffer(GlyphBuffer* glyphBuffer, unsigned from, unsigned to)
 {
     unsigned numRuns = m_harfBuzzRuns.size();
     if (m_run.rtl()) {
@@ -634,7 +634,6 @@ bool HarfBuzzShaper::fillGlyphBuffer(GlyphBuffer* glyphBuffer, unsigned from, un
             }
         }
     }
-    return glyphBuffer->size();
 }
 
 int HarfBuzzShaper::offsetForPosition(float targetX, bool includePartialGlyphs)
@@ -716,7 +715,7 @@ FloatRect HarfBuzzShaper::selectionRect(const FloatPoint& point, int height, uns
 
     // The position in question might be just after the text.
     if (!foundFromX)
-        fromX = 0;
+        fromX = m_run.rtl() ? 0 : m_totalWidth;
     if (!foundToX)
         toX = m_run.rtl() ? 0 : m_totalWidth;
 

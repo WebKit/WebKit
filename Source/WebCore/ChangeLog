@@ -1,3 +1,29 @@
+2017-10-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r221909): Failing fast/text/international/iso-8859-8.html
+        https://bugs.webkit.org/show_bug.cgi?id=177364
+
+        Reviewed by Carlos Garcia Campos.
+
+        Range.getClientRects returned an incorrect rect for a last
+        collapsed space of RenderText in HarfBuzz port.
+
+        HarfBuzzShaper::selectionRect needs to return a valid value even
+        if the arguments 'from' and 'to' point to the just after the end
+        of the text run.
+
+        Tests: fast/text/international/iso-8859-8.html
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shape): Do not check the return value of
+        fillGlyphBuffer.
+        (WebCore::HarfBuzzShaper::fillGlyphBuffer): Change the return
+        value type from bool to void.
+        (WebCore::HarfBuzzShaper::selectionRect): Set the rightmost
+        position to fromX if foundFromX is false.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h: Change the return
+        value type of fillGlyphBuffer from bool to void.
+
 2017-10-03  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: no VM / JS version of everything but Instance
