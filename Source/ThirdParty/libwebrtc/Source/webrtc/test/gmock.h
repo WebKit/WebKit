@@ -14,7 +14,7 @@
 #include "webrtc/base/ignore_wundef.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
-#include "testing/gmock/include/gmock/gmock.h"
+#include "gmock/gmock.h"
 RTC_POP_IGNORING_WUNDEF()
 
 #endif  // WEBRTC_TEST_GMOCK_H_

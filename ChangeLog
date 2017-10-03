@@ -1,3 +1,12 @@
+2017-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Build libwebrtc unit tests executables
+        https://bugs.webkit.org/show_bug.cgi?id=177211
+
+        Reviewed by Alex Christensen.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
 2017-10-02  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] Remove GnuTLS dependency

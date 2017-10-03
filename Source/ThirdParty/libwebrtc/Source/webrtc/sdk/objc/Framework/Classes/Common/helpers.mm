@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <sys/sysctl.h>
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_IOS) && !defined(WEBRTC_WEBKIT_BUILD)
 #import <UIKit/UIKit.h>
 #endif
 
@@ -63,7 +63,7 @@ std::string GetCurrentThreadDescription() {
   return StdStringFromNSString(name);
 }
 
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_IOS) && !defined(WEBRTC_WEBKIT_BUILD)
 std::string GetSystemName() {
   NSString* osName = [[UIDevice currentDevice] systemName];
   return StdStringFromNSString(osName);
