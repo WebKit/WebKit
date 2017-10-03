@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google, Inc. All Rights Reserved.
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015, 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,9 @@ private:
     T* m_ptr;
 };
 
+template<typename T, typename U> WeakReference<T>* weak_reference_upcast(WeakReference<U>*);
+template<typename T, typename U> WeakReference<T>* weak_reference_downcast(WeakReference<U>*);
+
 template<typename T>
 class WeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
@@ -68,11 +71,15 @@ public:
     WeakPtr() { }
     WeakPtr(std::nullptr_t) { }
     WeakPtr(Ref<WeakReference<T>>&& ref) : m_ref(std::forward<Ref<WeakReference<T>>>(ref)) { }
+    template<typename U> WeakPtr(const WeakPtr<U>&);
+    template<typename U> WeakPtr(WeakPtr<U>&&);
 
     T* get() const { return m_ref ? m_ref->get() : nullptr; }
     operator bool() const { return m_ref && m_ref->get(); }
 
     WeakPtr& operator=(std::nullptr_t) { m_ref = nullptr; return *this; }
+    template<typename U> WeakPtr& operator=(const WeakPtr<U>&);
+    template<typename U> WeakPtr& operator=(WeakPtr<U>&&);
 
     T* operator->() const { return m_ref->get(); }
     T& operator*() const { return *m_ref->get(); }
@@ -80,6 +87,8 @@ public:
     void clear() { m_ref = nullptr; }
 
 private:
+    template<typename U> friend class WeakPtr;
+
     RefPtr<WeakReference<T>> m_ref;
 };
 
@@ -101,9 +110,7 @@ public:
     {
         if (!m_ref)
             m_ref = WeakReference<T>::create(&ptr);
-        ASSERT(&ptr == m_ref->get());
-        static_assert(std::is_convertible<U*, T*>::value, "T* must be convertible to U*");
-        return WeakPtr<U>(Ref<WeakReference<U>>(reinterpret_cast<WeakReference<U>&>(*m_ref)));
+        return { makeRef(*weak_reference_downcast<U>(m_ref.get())) };
     }
 
     void revokeAll()
@@ -119,12 +126,46 @@ private:
     mutable RefPtr<WeakReference<T>> m_ref;
 };
 
-template <typename T> inline WeakPtr<T> makeWeakPtr(T& ref)
+template<typename T, typename U> inline WeakReference<T>* weak_reference_upcast(WeakReference<U>* weakReference)
+{
+    static_assert(std::is_convertible<U*, T*>::value, "U* must be convertible to T*");
+    return reinterpret_cast<WeakReference<T>*>(weakReference);
+}
+
+template<typename T, typename U> inline WeakReference<T>* weak_reference_downcast(WeakReference<U>* weakReference)
+{
+    static_assert(std::is_convertible<T*, U*>::value, "T* must be convertible to U*");
+    return reinterpret_cast<WeakReference<T>*>(weakReference);
+}
+
+template<typename T> template<typename U> inline WeakPtr<T>::WeakPtr(const WeakPtr<U>& o)
+    : m_ref(weak_reference_upcast<T>(o.m_ref.get()))
+{
+}
+
+template<typename T> template<typename U> inline WeakPtr<T>::WeakPtr(WeakPtr<U>&& o)
+    : m_ref(adoptRef(weak_reference_upcast<T>(o.m_ref.leakRef())))
+{
+}
+
+template<typename T> template<typename U> inline WeakPtr<T>& WeakPtr<T>::operator=(const WeakPtr<U>& o)
+{
+    m_ref = weak_reference_upcast<T>(o.m_ref.get());
+    return *this;
+}
+
+template<typename T> template<typename U> inline WeakPtr<T>& WeakPtr<T>::operator=(WeakPtr<U>&& o)
+{
+    m_ref = adoptRef(weak_reference_upcast<T>(o.m_ref.leakRef()));
+    return *this;
+}
+
+template<typename T> inline WeakPtr<T> makeWeakPtr(T& ref)
 {
     return ref.weakPtrFactory().template createWeakPtr<T>(ref);
 }
 
-template <typename T> inline WeakPtr<T> makeWeakPtr(T* ptr)
+template<typename T> inline WeakPtr<T> makeWeakPtr(T* ptr)
 {
     if (!ptr)
         return { };

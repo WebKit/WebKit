@@ -212,6 +212,8 @@ public:
         return m_weakPtrFactory.createWeakPtr<T>(*this);
     }
 
+    auto& weakPtrFactory() { return m_weakPtrFactory; }
+
 private:
     WeakPtrFactory<Base> m_weakPtrFactory;
 };
@@ -252,6 +254,40 @@ TEST(WTF_WeakPtr, Downcasting)
 
     EXPECT_NULL(baseWeakPtr.get());
     EXPECT_NULL(derivedWeakPtr.get());
+}
+
+TEST(WTF_WeakPtr, DerivedConstructAndAssign)
+{
+    Derived derived;
+    {
+        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<Base> baseWeakPtr { WTFMove(derivedWeakPtr) };
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_NULL(derivedWeakPtr.get());
+    }
+
+    {
+        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<Base> baseWeakPtr { derivedWeakPtr };
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_EQ(derivedWeakPtr.get(), &derived);
+    }
+
+    {
+        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<Base> baseWeakPtr;
+        baseWeakPtr = WTFMove(derivedWeakPtr);
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_NULL(derivedWeakPtr.get());
+    }
+
+    {
+        WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<Base> baseWeakPtr;
+        baseWeakPtr = derivedWeakPtr;
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_EQ(derivedWeakPtr.get(), &derived);
+    }
 }
 
 } // namespace TestWebKitAPI

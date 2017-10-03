@@ -1,3 +1,20 @@
+2017-10-03  Antti Koivisto  <antti@apple.com>
+
+        Allow assigning WeakPtr<Derived> to WeakPtr<Base>
+        https://bugs.webkit.org/show_bug.cgi?id=177817
+
+        Reviewed by Geoff Garen.
+
+        Add templated copy/move constructors/assignment operators, similar to RefPtr.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrFactory::createWeakPtr const):
+        (WTF::weak_reference_upcast):
+        (WTF::weak_reference_downcast):
+        (WTF::WeakPtr<T>::WeakPtr):
+        (WTF::=):
+        (WTF::makeWeakPtr):
+
 2017-10-03  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: no VM / JS version of everything but Instance

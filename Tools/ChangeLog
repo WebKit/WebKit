@@ -1,3 +1,14 @@
+2017-10-03  Antti Koivisto  <antti@apple.com>
+
+        Allow assigning WeakPtr<Derived> to WeakPtr<Base>
+        https://bugs.webkit.org/show_bug.cgi?id=177817
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::Base::weakPtrFactory):
+        (TestWebKitAPI::TEST):
+
 2017-10-03  Youenn Fablet  <youenn@apple.com>
 
         Remove no longer needed WebRTC build infrastructure
