@@ -638,17 +638,16 @@ webrtc/peer-connection-remote-audio-mute.html [ Failure ]
 webrtc/peer-connection-track-end.html [ Failure ]
 webrtc/video-addTrack.html [ Crash ]
 webrtc/video-disabled-black.html [ Failure ]
-webrtc/video-getParameters.html [ Failure ]
-webrtc/video.html [ Failure ]
 webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webrtc/video-mute.html [ Failure Timeout ]
 webrtc/video-remote-mute.html [ Failure ]
 webrtc/video-replace-muted-track.html [ Failure Timeout Crash ]
-# Crash is bug #176801
-webrtc/video-replace-track.html [ Failure Crash ]
+webkit.org/b/176801 webrtc/video-replace-track.html [ Failure Crash ]
+webkit.org/b/176801 webrtc/video-getParameters.html [ Failure Crash ]
+webkit.org/b/176801 webrtc/video.html [ Failure Crash ]
 webrtc/video-replace-track-to-null.html [ Failure ]
 webrtc/video-rotation.html [ Failure ]
-webrtc/video-stats.html [ Failure ]
+webrtc/video-stats.html [ Failure Crash ]
 webrtc/video-unmute.html [ Failure Timeout ]
 webrtc/video-with-data-channel.html [ Failure ]
 webrtc/video-with-receiver.html [ Failure ]
@@ -1392,6 +1391,10 @@ webkit.org/b/177535 fast/mediastream/media-device-info.html [ Crash Pass ]
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
 webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure ]
 webkit.org/b/177537 http/tests/multipart/multipart-html.php [ Crash ]
+
+webkit.org/b/177816 webgl/1.0.2/conformance/ogles/GL/vec/vec_001_to_008.html [ Crash Pass ]
+
+webkit.org/b/177818 webrtc/negotiatedneeded-event-addStream.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -3164,7 +3167,7 @@ webkit.org/b/163383 accessibility/roles-computedRoleString.html [ Failure ]
 
 webkit.org/b/163512 media/media-controls-accessibility.html [ Failure ]
 webkit.org/b/163521 media/tab-focus-inside-media-elements.html [ Failure ]
-webkit.org/b/163523 media/track/track-manual-mode.html [ Failure ]
+webkit.org/b/163523 media/track/track-manual-mode.html [ Failure Crash ]
 webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
 webkit.org/b/163525 media/video-background-tab-playback.html [ Failure Pass Crash Timeout ]
 webkit.org/b/163526 media/video-controls-drop-and-restore-timeline.html [ Failure ]

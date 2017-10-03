@@ -1,3 +1,9 @@
+2017-10-03  Charles Turner  <cturner@igalia.com>
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-10-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move payment-request TestExpectations to ios-wk2.
