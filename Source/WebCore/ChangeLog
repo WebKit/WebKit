@@ -1,5 +1,17 @@
 2017-10-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222786. rdar://problem/34706688
+
+    2017-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed test fix after r222779.
+
+            * testing/cocoa/WebArchiveDumpSupport.mm:
+            (WebCoreTestSupport::createCFURLResponseFromResponseData): Setting NSSecureCoding in this test code should be
+            done based on build system, just like it is in the actual WebArchive handling code.
+
+2017-10-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222779. rdar://problem/34706688
 
     2017-10-03  Brent Fulgham  <bfulgham@apple.com>
