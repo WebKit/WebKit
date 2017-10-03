@@ -307,7 +307,7 @@ Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildOb
 {
     auto resourceObject = Inspector::Protocol::Network::CachedResource::create()
         .setUrl(cachedResource->url())
-        .setType(InspectorPageAgent::cachedResourceTypeJson(*cachedResource))
+        .setType(InspectorPageAgent::cachedResourceTypeJSON(*cachedResource))
         .setBodySize(cachedResource->encodedSize())
         .release();
 
@@ -365,7 +365,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     for (auto& entry : m_extraRequestHeaders)
         request.setHTTPHeaderField(entry.key, entry.value);
 
-    Inspector::Protocol::Page::ResourceType protocolResourceType = InspectorPageAgent::resourceTypeJson(type);
+    auto protocolResourceType = InspectorPageAgent::resourceTypeJSON(type);
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
     String targetId = request.initiatorIdentifier();
@@ -438,7 +438,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader.frame()), response);
     m_resourcesData->setResourceType(requestId, type);
 
-    m_frontendDispatcher->responseReceived(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), timestamp(), InspectorPageAgent::resourceTypeJson(type), resourceResponse);
+    m_frontendDispatcher->responseReceived(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), timestamp(), InspectorPageAgent::resourceTypeJSON(type), resourceResponse);
 
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveData from the network stack.

@@ -246,7 +246,7 @@ CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
     return cachedResource;
 }
 
-Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJson(InspectorPageAgent::ResourceType resourceType)
+Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(InspectorPageAgent::ResourceType resourceType)
 {
     switch (resourceType) {
     case DocumentResource:
@@ -320,9 +320,9 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(const
     return inspectorResourceType(cachedResource.type());
 }
 
-Inspector::Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJson(const CachedResource& cachedResource)
+Inspector::Protocol::Page::ResourceType InspectorPageAgent::cachedResourceTypeJSON(const CachedResource& cachedResource)
 {
-    return resourceTypeJson(inspectorResourceType(cachedResource));
+    return resourceTypeJSON(inspectorResourceType(cachedResource));
 }
 
 RefPtr<TextResourceDecoder> InspectorPageAgent::createTextDecoder(const String& mimeType, const String& textEncodingName)
@@ -849,7 +849,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
     for (auto* cachedResource : cachedResourcesForFrame(frame)) {
         auto resourceObject = Inspector::Protocol::Page::FrameResource::create()
             .setUrl(cachedResource->url())
-            .setType(cachedResourceTypeJson(*cachedResource))
+            .setType(cachedResourceTypeJSON(*cachedResource))
             .setMimeType(cachedResource->response().mimeType())
             .release();
         if (cachedResource->wasCanceled())
