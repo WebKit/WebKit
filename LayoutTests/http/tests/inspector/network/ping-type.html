@@ -44,10 +44,12 @@ function test()
                     .then((event) => {
                         resource = event.data.resource;
                         alwaysTest(resource);
-                        return Promise.race([
-                            resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
-                            resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
-                        ]);
+                        if (resource.isLoading()) {
+                            return Promise.race([
+                                resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                                resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                            ]);
+                        }
                     })
                     .then(() => { resourceHandler(resource); })
                     .then(resolve, reject);
