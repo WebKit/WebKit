@@ -1,5 +1,14 @@
 2017-10-03  Alex Christensen  <achristensen@webkit.org>
 
+        Fix API tests after r222794.
+        https://bugs.webkit.org/show_bug.cgi?id=177825
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        Sometimes there's no navigation client.
+
+2017-10-03  Alex Christensen  <achristensen@webkit.org>
+
         Add ObjC equivalent of WKPageLoaderClient.pluginDidFail
         https://bugs.webkit.org/show_bug.cgi?id=177787
         <rdar://problem/22387633>

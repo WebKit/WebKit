@@ -1209,7 +1209,7 @@ void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, bool inPageCache
     PageClientProtector protector(m_pageClient);
 
     if (auto* item = m_process->webBackForwardItem(itemID)) {
-        if (m_navigationClient->willGoToBackForwardListItem(*this, *item, inPageCache, m_process->transformHandlesToObjects(userData.object()).get()))
+        if (m_navigationClient && m_navigationClient->willGoToBackForwardListItem(*this, *item, inPageCache, m_process->transformHandlesToObjects(userData.object()).get()))
             return;
         m_loaderClient->willGoToBackForwardListItem(*this, *item, m_process->transformHandlesToObjects(userData.object()).get());
     }
