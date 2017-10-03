@@ -1,3 +1,21 @@
+2017-10-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Layers tab sidebar's DOM highlight should be by row hover, not row selection
+        https://bugs.webkit.org/show_bug.cgi?id=177690
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel):
+        (WI.LayerDetailsSidebarPanel.prototype._buildDataGrid):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridSelectedNodeChanged):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridMouseMove):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridMouseLeave):
+        (WI.LayerDetailsSidebarPanel.prototype._hideDOMNodeHighlight):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridFocused): Deleted.
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridBlurred): Deleted.
+        (WI.LayerDetailsSidebarPanel.prototype._highlightSelectedNode): Deleted.
+
 2017-10-03  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: support editing of rule selectors

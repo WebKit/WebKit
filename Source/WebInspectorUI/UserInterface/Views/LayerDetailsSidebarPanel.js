@@ -36,6 +36,7 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         this._dataGridNodesByLayerId = new Map;
 
         this._dataGrid = null;
+        this._hoveredDataGridNode = null;
         this._bottomBar = null;
         this._layersCountLabel = null;
         this._layersMemoryLabel = null;
@@ -91,8 +92,8 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Descending;
         this._dataGrid.createSettings("layer-details-sidebar-panel");
 
-        this._dataGrid.element.addEventListener("focus", this._dataGridFocused.bind(this), false);
-        this._dataGrid.element.addEventListener("blur", this._dataGridBlurred.bind(this), false);
+        this._dataGrid.element.addEventListener("mousemove", this._dataGridMouseMove.bind(this), false);
+        this._dataGrid.element.addEventListener("mouseleave", this._dataGridMouseLeave.bind(this), false);
 
         this.contentView.addSubview(this._dataGrid);
     }
@@ -124,34 +125,38 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
 
     _dataGridSelectedNodeChanged()
     {
-        if (this._dataGrid.selectedNode) {
-            this._highlightSelectedNode();
-            this._showPopoverForSelectedNode();
-        } else
-            WI.domTreeManager.hideDOMNodeHighlight();
+        this._showPopoverForSelectedNode();
     }
 
-    _dataGridFocused(event)
+    _dataGridMouseMove(event)
     {
-        this._highlightSelectedNode();
-    }
-
-    _dataGridBlurred(event)
-    {
-        WI.domTreeManager.hideDOMNodeHighlight();
-    }
-
-    _highlightSelectedNode()
-    {
-        if (!this._dataGrid.selectedNode)
+        let node = this._dataGrid.dataGridNodeFromNode(event.target);
+        if (node === this._hoveredDataGridNode)
             return;
 
-        let layer = this._dataGrid.selectedNode.layer;
-        if (layer.isGeneratedContent || layer.isReflection || layer.isAnonymous) {
+        if (!node) {
+            this._hideDOMNodeHighlight();
+            return;
+        }
+
+        this._hoveredDataGridNode = node;
+
+        if (node.layer.isGeneratedContent || node.layer.isReflection || node.layer.isAnonymous) {
             const usePageCoordinates = true;
-            WI.domTreeManager.highlightRect(layer.bounds, usePageCoordinates);
+            WI.domTreeManager.highlightRect(node.layer.bounds, usePageCoordinates);
         } else
-            WI.domTreeManager.highlightDOMNode(layer.nodeId);
+            WI.domTreeManager.highlightDOMNode(node.layer.nodeId);
+    }
+
+    _dataGridMouseLeave(event)
+    {
+        this._hideDOMNodeHighlight();
+    }
+
+    _hideDOMNodeHighlight()
+    {
+        WI.domTreeManager.hideDOMNodeHighlight();
+        this._hoveredDataGridNode = null;
     }
 
     _updateDisplayWithLayers(newLayers)
