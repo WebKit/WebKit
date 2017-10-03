@@ -1,3 +1,24 @@
+2017-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r222595): Intermittent crash while accessing DataTransferItemList
+        https://bugs.webkit.org/show_bug.cgi?id=177791
+        <rdar://problem/34781456>
+
+        Reviewed by Ryosuke Niwa.
+
+        DataTransfer::moveDragState() currently attempts to move the other DataTransfer's DataTransferItemList and
+        DragImageLoader as members of its own. This is incorrect, since both of these entities hold raw references of
+        some form to the other DataTransfer, yet they are held as unique_ptrs in the new DataTransfer. To fix this, we
+        (1) remove the line of code that moves the item list, since item lists will be lazily generated on the new
+        DataTransfer anyways, and (2) update the DataTransfer pointer on the old DataTransfer's DragImageLoader after
+        moving it to the new DataTransfer.
+
+        Test: editing/pasteboard/drag-end-crash-accessing-item-list.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DragImageLoader::moveToDataTransfer):
+        (WebCore::DataTransfer::moveDragState):
+
 2017-10-02  Chris Dumez  <cdumez@apple.com>
 
         Rename computeSharedStringHash() overload taking a URL to computedVisitedLinkHash()

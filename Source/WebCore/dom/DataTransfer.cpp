@@ -51,6 +51,7 @@ public:
     explicit DragImageLoader(DataTransfer*);
     void startLoading(CachedResourceHandle<CachedImage>&);
     void stopLoading(CachedResourceHandle<CachedImage>&);
+    void moveToDataTransfer(DataTransfer&);
 
 private:
     void imageChanged(CachedImage*, const IntRect*) override;
@@ -365,6 +366,11 @@ DragImageLoader::DragImageLoader(DataTransfer* dataTransfer)
 {
 }
 
+void DragImageLoader::moveToDataTransfer(DataTransfer& newDataTransfer)
+{
+    m_dataTransfer = &newDataTransfer;
+}
+
 void DragImageLoader::startLoading(CachedResourceHandle<WebCore::CachedImage>& image)
 {
     // FIXME: Does this really trigger a load? Does it need to?
@@ -508,7 +514,8 @@ void DataTransfer::moveDragState(Ref<DataTransfer>&& other)
     m_dragImage = other->m_dragImage;
     m_dragImageElement = WTFMove(other->m_dragImageElement);
     m_dragImageLoader = WTFMove(other->m_dragImageLoader);
-    m_itemList = WTFMove(other->m_itemList);
+    if (m_dragImageLoader)
+        m_dragImageLoader->moveToDataTransfer(*this);
     m_fileList = WTFMove(other->m_fileList);
 }
 

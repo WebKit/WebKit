@@ -1,3 +1,19 @@
+2017-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r222595): Intermittent crash while accessing DataTransferItemList
+        https://bugs.webkit.org/show_bug.cgi?id=177791
+        <rdar://problem/34781456>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new layout test that simulates the crash encountered in this bug by forcing a garbage collection sweep
+        right before accessing the pasteboard in a "dragend" event handler.
+
+        * TestExpectations:
+        * editing/pasteboard/drag-end-crash-accessing-item-list-expected.txt: Added.
+        * editing/pasteboard/drag-end-crash-accessing-item-list.html: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-02  Brent Fulgham  <bfulgham@apple.com>
 
         Merge three Blink test cases
