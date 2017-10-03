@@ -180,10 +180,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._valueElement.textContent = this._property.rawValue;
 
         if (this._property.editable && this._property.enabled) {
+            this._nameElement.tabIndex = 1;
             this._nameElement.contentEditable = "plaintext-only";
+            this._nameElement.spellcheck = false;
             this._nameElement.addEventListener("input", this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleNameChange);
 
+            this._valueElement.tabIndex = 1;
             this._valueElement.contentEditable = "plaintext-only";
+            this._valueElement.spellcheck = false;
             this._valueElement.addEventListener("input", this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleValueChange);
         }
 

@@ -1,3 +1,50 @@
+2017-10-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: support editing of rule selectors
+        https://bugs.webkit.org/show_bug.cgi?id=177012
+
+        Reviewed by Matt Baker.
+
+        Clicking or focusing (by tabbing from another field) on a CSS selector should select the text and make the selector
+        field editable.
+
+        Keyboard behavior while editing:
+        - Enter should commit changes.
+        - Escape should discard changes.
+        - Tab should commit changes and navigate to the first property name.
+        - Shift-Tab should commit changes and navigate to the last rule's property value, if there's one.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        Add tabIndex so the keyboard navigation (Tab & Shift-Tab) to and from selectors works as expected.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .selector:focus,):
+        (.spreadsheet-css-declaration .selector.spreadsheet-selector-field):
+        (.spreadsheet-css-declaration .selector.spreadsheet-selector-field.editing):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get selectorEditable):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.layout):
+        Split layout into _renderOrigin and _renderSelector, so selector field can be updated separately
+        from everything else.
+
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.cssStyleDeclarationTextEditorFocused):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidChange):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidDiscard):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._discardSelectorChange):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._renderSelector):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._renderOrigin):
+
+        (WI.SpreadsheetSelectorField):
+        (WI.SpreadsheetSelectorField.prototype.get editing):
+        (WI.SpreadsheetSelectorField.prototype.startEditing):
+        (WI.SpreadsheetSelectorField.prototype.stopEditing):
+        (WI.SpreadsheetSelectorField.prototype._handleClick):
+        (WI.SpreadsheetSelectorField.prototype._handleFocus):
+        (WI.SpreadsheetSelectorField.prototype._handleBlur):
+        (WI.SpreadsheetSelectorField.prototype._handleKeyDown):
+
 2017-10-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add View layout tests, make views more testable
