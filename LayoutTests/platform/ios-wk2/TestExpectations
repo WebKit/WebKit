@@ -1966,3 +1966,5 @@ imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm
 webkit.org/b/176240 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
 
 webkit.org/b/177391 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ Pass Failure ]
+
+webkit.org/b/177832 imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ Skip ]
