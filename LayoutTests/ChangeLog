@@ -1,3 +1,24 @@
+2017-10-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge three Blink test cases
+        https://bugs.webkit.org/show_bug.cgi?id=177797
+        <rdar://problem/27331975>
+
+        Unreviewed merge of Blink test cases.
+
+        Merge three test cases from the following Blink change:
+            https://chromium.googlesource.com/chromium/blink/+/17c5b48f130e4ebb796f9db89628f887624db4ef
+
+        Relevant fixes had been made in WebKit over the years, but we did not include proper
+        test coverage.
+
+        * fast/dom/assertion-on-node-removal-expected.txt: Added.
+        * fast/dom/assertion-on-node-removal.html: Added.
+        * fast/forms/control-detach-crash-expected.txt: Added.
+        * fast/forms/control-detach-crash.html: Added.
+        * svg/custom/assert-on-node-removal-expected.txt: Added.
+        * svg/custom/assert-on-node-removal.html: Added.
+
 2017-10-02  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] The value of aria-level is not exposed on non-heading roles
