@@ -166,6 +166,15 @@
 #endif
 
 #ifdef __cplusplus
+
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+#import <wtf/FastMalloc.h>
+#import <wtf/Optional.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/text/AtomicString.h>
+#import <wtf/text/WTFString.h>
+#endif
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
