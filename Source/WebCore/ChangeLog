@@ -1,3 +1,17 @@
+2017-10-02  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Validate payment method identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=177794
+
+        Reviewed by Sam Weinig.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::isValidStandardizedPaymentMethodIdentifier):
+        (WebCore::isValidURLBasedPaymentMethodIdentifier):
+        (WebCore::convertAndValidatePaymentMethodIdentifier):
+        (WebCore::PaymentRequest::create):
+        * Modules/paymentrequest/PaymentRequest.h:
+
 2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move more code into PasteboardCustomData

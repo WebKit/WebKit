@@ -1,12 +1,6 @@
 
 PASS Must support valid standard URL PMIs 
 PASS Must not throw on syntactically valid standardized payment method identifiers, even if they are not supported 
-FAIL Test for validity of payment method identifiers during construction assert_throws: expected RangeError processing invalid standardized PMI "basic-💳" function "() => {
-        const methods = [{ supportedMethods: invalidMethod }];
-        new PaymentRequest(methods, defaultDetails);
-      }" did not throw
-FAIL Constructor MUST throw if given an invalid URL-based payment method identifier assert_throws: expected RangeError processing invalid URL PMI "https://username@example.com/pay" function "() => {
-        const methods = [{ supportedMethods: invalidMethod }];
-        new PaymentRequest(methods, defaultDetails);
-      }" did not throw
+PASS Test for validity of payment method identifiers during construction 
+PASS Constructor MUST throw if given an invalid URL-based payment method identifier 
 

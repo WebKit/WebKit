@@ -1,5 +1,14 @@
 2017-10-02  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] Validate payment method identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=177794
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/payment-request/payment-request-ctor-pmi-handling.https-expected.txt:
+
+2017-10-02  Andy Estes  <aestes@apple.com>
+
         [Payment Request] Update payment-request imported tests
         https://bugs.webkit.org/show_bug.cgi?id=177786
 

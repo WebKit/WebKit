@@ -33,6 +33,8 @@
 #include "JSDOMPromiseDeferred.h"
 #include "PaymentDetailsInit.h"
 #include "PaymentOptions.h"
+#include "URL.h"
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -60,6 +62,7 @@ public:
     const String& shippingOption() const { return m_shippingOption; }
     std::optional<PaymentShippingType> shippingType() const;
 
+    using MethodIdentifier = Variant<String, URL>;
     using RefCounted<PaymentRequest>::ref;
     using RefCounted<PaymentRequest>::deref;
 
@@ -71,7 +74,7 @@ private:
     };
 
     struct Method {
-        String supportedMethods;
+        MethodIdentifier identifier;
         String serializedData;
     };
 
