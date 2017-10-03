@@ -71,8 +71,6 @@ static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 
 RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     : RenderFlexibleBox(element, WTFMove(style))
-    , m_buttonText(nullptr)
-    , m_innerBlock(nullptr)
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
 #if !PLATFORM(IOS)
@@ -108,7 +106,7 @@ void RenderMenuList::createInnerBlock()
     // Create an anonymous block.
     ASSERT(!firstChild());
     auto newInnerBlock = createAnonymousBlock();
-    m_innerBlock = newInnerBlock.get();
+    m_innerBlock = makeWeakPtr(*newInnerBlock.get());
     adjustInnerStyle();
     RenderFlexibleBox::addChild(WTFMove(newInnerBlock));
 }
@@ -185,10 +183,8 @@ void RenderMenuList::addChild(RenderPtr<RenderObject> newChild, RenderObject* be
 
 RenderPtr<RenderObject> RenderMenuList::takeChild(RenderObject& oldChild)
 {
-    if (&oldChild == m_innerBlock || !m_innerBlock) {
-        m_innerBlock = 0;
+    if (!m_innerBlock || &oldChild == m_innerBlock)
         return RenderFlexibleBox::takeChild(oldChild);
-    }
     return m_innerBlock->takeChild(oldChild);
 }
 
@@ -297,7 +293,7 @@ void RenderMenuList::setText(const String& s)
         m_buttonText->setText(textToUse.impl(), true);
     else {
         auto newButtonText = createRenderer<RenderText>(document(), textToUse);
-        m_buttonText = newButtonText.get();
+        m_buttonText = makeWeakPtr(*newButtonText);
         addChild(WTFMove(newButtonText));
     }
 
