@@ -46,6 +46,15 @@ namespace WebCore {
 
 using namespace PAL;
 
+#if !USE(LIBWEBRTC)
+static std::unique_ptr<PeerConnectionBackend> createNoPeerConnectionBackend(RTCPeerConnection&)
+{
+    return nullptr;
+}
+
+CreatePeerConnectionBackend PeerConnectionBackend::create = createNoPeerConnectionBackend;
+#endif
+
 PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
     : m_peerConnection(peerConnection)
 #if !RELEASE_LOG_DISABLED

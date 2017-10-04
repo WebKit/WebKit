@@ -28,28 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockRealtimeMediaSource_h
-#define MockRealtimeMediaSource_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSource.h"
 
-#if USE(OPENWEBRTC)
-#include "RealtimeMediaSourceOwr.h"
-#endif
-
 namespace WebCore {
 
 class CaptureDevice;
 
-#if USE(OPENWEBRTC)
-using BaseRealtimeMediaSourceClass = RealtimeMediaSourceOwr;
-#else
-using BaseRealtimeMediaSourceClass = RealtimeMediaSource;
-#endif
-
-class MockRealtimeMediaSource : public BaseRealtimeMediaSourceClass {
+class MockRealtimeMediaSource : public RealtimeMediaSource {
 public:
     virtual ~MockRealtimeMediaSource() { }
 
@@ -61,9 +50,7 @@ protected:
 
     virtual void updateSettings(RealtimeMediaSourceSettings&) = 0;
     virtual void initializeCapabilities(RealtimeMediaSourceCapabilities&) = 0;
-#if !USE(OPENWEBRTC)
     virtual void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) = 0;
-#endif
 
     const RealtimeMediaSourceCapabilities& capabilities() const override;
     const RealtimeMediaSourceSettings& settings() const override;
@@ -74,11 +61,7 @@ protected:
 
 private:
     void initializeCapabilities();
-#if USE(OPENWEBRTC)
-    void initializeSettings() final;
-#else
     void initializeSettings();
-#endif
 
     RealtimeMediaSourceSettings m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
@@ -89,5 +72,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MockRealtimeMediaSource_h

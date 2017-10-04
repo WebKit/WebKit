@@ -82,7 +82,7 @@ Vector<CaptureDevice>& MockRealtimeMediaSource::videoDevices()
 }
 
 MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMediaSource::Type type, const String& name)
-    : BaseRealtimeMediaSourceClass(id, type, name)
+    : RealtimeMediaSource(id, type, name)
 {
     switch (type) {
     case RealtimeMediaSource::Type::Audio:

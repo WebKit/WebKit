@@ -199,7 +199,6 @@
 #endif
 
 #if ENABLE(WEB_RTC)
-#include "MockMediaEndpoint.h"
 #include "RTCPeerConnection.h"
 #endif
 
@@ -484,12 +483,6 @@ Internals::Internals(Document& document)
 #if ENABLE(MEDIA_STREAM)
     setMockMediaCaptureDevicesEnabled(true);
     WebCore::Settings::setMediaCaptureRequiresSecureConnection(false);
-#endif
-
-#if ENABLE(WEB_RTC)
-#if USE(OPENWEBRTC)
-    enableMockMediaEndpoint();
-#endif
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1248,13 +1241,6 @@ void Internals::enableMockSpeechSynthesizer()
 #endif
 
 #if ENABLE(WEB_RTC)
-
-#if USE(OPENWEBRTC)
-void Internals::enableMockMediaEndpoint()
-{
-    MediaEndpoint::create = MockMediaEndpoint::create;
-}
-#endif
 
 void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connection, const String& action)
 {

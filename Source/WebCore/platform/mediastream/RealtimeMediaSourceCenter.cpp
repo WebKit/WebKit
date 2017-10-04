@@ -35,6 +35,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+// FIXME: GTK to implement its own RealtimeMediaSourceCenter.
+#if PLATFORM(GTK)
+#include "MockRealtimeMediaSourceCenter.h"
+#endif
+
 #include "CaptureDeviceManager.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
@@ -59,8 +64,14 @@ RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
     RealtimeMediaSourceCenter* override = mediaStreamCenterOverride();
     if (override)
         return *override;
-    
+#if PLATFORM(GTK)
+    WTFLogAlways("WebKitGTK LIBWEBRTC RealtimeMediaSourceCenter NOT IMPLEMENTED. Returning MockRealtimeMediaSourceCenter instead to avoid crash!\n");
+    ASSERT(isMainThread());
+    static NeverDestroyed<MockRealtimeMediaSourceCenter> center;
+    return center;
+#else
     return RealtimeMediaSourceCenter::platformCenter();
+#endif
 }
 
 void RealtimeMediaSourceCenter::setSharedStreamCenterOverride(RealtimeMediaSourceCenter* center)

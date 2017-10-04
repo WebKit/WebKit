@@ -1,26 +1,3 @@
-list(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/platform/mediastream/openwebrtc"
-)
-
-if (ENABLE_MEDIA_STREAM)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${OPENWEBRTC_INCLUDE_DIRS}
-    )
-
-    list(APPEND WebCore_LIBRARIES
-        ${OPENWEBRTC_LIBRARIES}
-    )
-
-    list(APPEND WebCore_SOURCES
-        platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp
-
-        platform/mediastream/openwebrtc/MediaEndpointOwr.cpp
-        platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp
-        platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.cpp
-        platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp
-    )
-endif ()
-
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gstreamer"

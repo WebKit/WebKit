@@ -1,3 +1,52 @@
+2017-10-04  Youenn Fablet  <youenn@apple.com>
+
+        Remove OpenWebRTC backend
+        https://bugs.webkit.org/show_bug.cgi?id=177868
+
+        Reviewed by Alejandro G. Castro.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp: Removed.
+        * Modules/mediastream/MediaEndpointPeerConnection.h: Removed.
+        * Modules/mediastream/MediaEndpointSessionDescription.cpp: Removed.
+        * Modules/mediastream/MediaEndpointSessionDescription.h: Removed.
+        * Modules/mediastream/SDPProcessor.cpp: Removed.
+        * Modules/mediastream/SDPProcessor.h: Removed.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/GStreamer.cmake:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp: Removed.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.h: Removed.
+        * platform/mediastream/MediaEndpoint.cpp: Removed.
+        * platform/mediastream/MediaEndpoint.h: Removed.
+        * platform/mediastream/MediaEndpointSessionConfiguration.h: Removed.
+        * platform/mediastream/SDPProcessorScriptResource.cpp: Removed.
+        * platform/mediastream/SDPProcessorScriptResource.h: Removed.
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp: Removed.
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.h: Removed.
+        * platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp: Removed.
+        * platform/mediastream/openwebrtc/OpenWebRTCUtilities.h: Removed.
+        * platform/mediastream/openwebrtc/RealtimeAudioSourceOwr.h: Removed.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp: Removed.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h: Removed.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.cpp: Removed.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h: Removed.
+        * platform/mediastream/openwebrtc/RealtimeVideoSourceOwr.h: Removed.
+        * platform/mock/MockMediaEndpoint.cpp: Removed.
+        * platform/mock/MockMediaEndpoint.h: Removed.
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::MockRealtimeMediaSource):
+        * platform/mock/MockRealtimeMediaSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::enableMockMediaEndpoint): Deleted.
+        * testing/Internals.h:
+
 2017-10-04  Zalan Bujtas  <zalan@apple.com>
 
         Remove RenderTreeInternalMutationScope
