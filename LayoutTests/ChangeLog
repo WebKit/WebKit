@@ -1,3 +1,9 @@
+2017-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Remove tests from expectations passing since freetype upgrade in r221670.
+
+        * platform/gtk/TestExpectations:
+
 2017-10-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/xmlhttprequest/set-dangerous-headers.html and http/tests/xmlhttprequest/set-dangerous-headers.html
