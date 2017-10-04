@@ -242,12 +242,12 @@ static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorati
 }
 
 TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, TextDecoration decoration, const RenderText& renderer, bool isFirstLine)
-    : m_context(context)
-    , m_decoration(decoration)
-    , m_wavyOffset(wavyOffsetFromDecoration())
-    , m_isPrinting(renderer.document().printing())
-    , m_styles(stylesForRenderer(renderer, m_decoration, isFirstLine))
-    , m_lineStyle(isFirstLine ? renderer.firstLineStyle() : renderer.style())
+    : m_context { context }
+    , m_decoration { decoration }
+    , m_wavyOffset { wavyOffsetFromDecoration() }
+    , m_isPrinting { renderer.document().printing() }
+    , m_styles { stylesForRenderer(renderer, m_decoration, isFirstLine) }
+    , m_lineStyle { isFirstLine ? renderer.firstLineStyle() : renderer.style() }
 {
 }
 
@@ -327,13 +327,13 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         // These decorations should match the visual overflows computed in visualOverflowForDecorations()
         if (m_decoration & TextDecorationUnderline) {
             const int offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.fontMetrics(), m_inlineTextBox, textDecorationThickness);
-            int wavyOffset = m_styles.underlineStyle == TextDecorationStyleWavy ? m_wavyOffset : 0;
+            float wavyOffset = m_styles.underlineStyle == TextDecorationStyleWavy ? m_wavyOffset : 0;
             FloatPoint start = localOrigin + FloatSize(0, offset + wavyOffset);
             FloatPoint end = localOrigin + FloatSize(m_width, offset + wavyOffset);
             paintDecoration(TextDecorationUnderline, m_styles.underlineStyle, m_styles.underlineColor, start, end, offset);
         }
         if (m_decoration & TextDecorationOverline) {
-            int wavyOffset = m_styles.overlineStyle == TextDecorationStyleWavy ? m_wavyOffset : 0;
+            float wavyOffset = m_styles.overlineStyle == TextDecorationStyleWavy ? m_wavyOffset : 0;
             FloatPoint start = localOrigin - FloatSize(0, wavyOffset);
             FloatPoint end = localOrigin + FloatSize(m_width, -wavyOffset);
             paintDecoration(TextDecorationOverline, m_styles.overlineStyle, m_styles.overlineColor, start, end, 0);

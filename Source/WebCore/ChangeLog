@@ -1,3 +1,22 @@
+2017-10-04  Daniel Bates  <dabates@apple.com>
+
+        TextDecorationPainter::m_wavyOffset should be a float
+        https://bugs.webkit.org/show_bug.cgi?id=177883
+
+        Reviewed by Simon Fraser.
+
+        In r194447 we extracted the text decoration painting code from InlineTextBox into
+        TextDecorationPainter and changed the data type of the wavy offset from float to int.
+        We use floating point numbers throughout the painting code and should store the wavy
+        offset as a float.
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::TextDecorationPainter): Use C++ uniform initializer
+        syntax to initialize member fields.
+        (WebCore::TextDecorationPainter::paintTextDecoration): Change int to float.
+        * rendering/TextDecorationPainter.h: Remove unnecessary equal initializer for m_wavyOffset
+        as this class has exactly one constructor and it always initializes it.
+
 2017-10-04  Youenn Fablet  <youenn@apple.com>
 
         Remove OpenWebRTC backend

@@ -64,7 +64,7 @@ public:
 private:
     GraphicsContext& m_context;
     TextDecoration m_decoration;
-    int m_wavyOffset { 0 };
+    float m_wavyOffset;
     bool m_isPrinting { false };
     float m_width { 0 };
     float m_baseline { 0 };
