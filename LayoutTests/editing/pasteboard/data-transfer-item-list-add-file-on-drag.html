@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+</style>
+<body>
+    <div style="font-size: 40px;" id="source" draggable="true">Drag me out.</div>
+    <p>To manually test, drag the above text. The output below dumps DataTransfer state following each operation,</p>
+    <p>described directly above the output text for each step. The DataTransfer state should be consistent with the</p>
+    <p>operation performed at each step.</p>
+    <pre style="width: 100%; height: 100%" id="output"></pre>
+</body>
+<script>
+function write(message) {
+    output.textContent += `${message}\n`;
+}
+
+function representationForFile(file) {
+    return file ? {
+        name: file.name,
+        bytes: file.size,
+        type: file.type
+    } : null;
+}
+
+function updateOutputText(description, event) {
+    const dataInfo = {};
+    for (const type of event.dataTransfer.types)
+        dataInfo[type] = event.dataTransfer.getData(type);
+    const itemsInfo = []
+    for (const item of event.dataTransfer.items) {
+        itemsInfo.push({
+            type: item.type,
+            kind: item.kind,
+            file: representationForFile(item.getAsFile())
+        });
+    }
+    write(`\n${description}\n${JSON.stringify({
+        data: dataInfo,
+        items: itemsInfo,
+        files: Array.from(event.dataTransfer.files).map(representationForFile)
+    }, null, "    ")}`);
+}
+
+function removeAt(itemList, index) {
+    const removedItem = itemList[index];
+    itemList.remove(index);
+    return removedItem;
+}
+
+output.addEventListener("dragover", event => event.preventDefault());
+output.addEventListener("drop", event => event.preventDefault());
+source.addEventListener("dragstart", event => {
+    const fileList = event.dataTransfer.files;
+    event.dataTransfer.items.add("hello world", "text/plain");
+    updateOutputText("1. After adding a string", event);
+
+    const buffer = new ArrayBuffer(64);
+    const array = new Int8Array(buffer);
+    array.fill(15);
+    event.dataTransfer.items.add(new File([ buffer ], "foo", { type: "custom" }));
+    updateOutputText("2. After adding a file of custom type", event);
+
+    event.dataTransfer.items.add(new File([
+        new Blob(["This part is from a JavaScript Blob"], { type : "text/plain" }),
+        "This part is just from a plain string"
+    ], "first.txt", { type: "text/plain" }));
+    updateOutputText("3. After adding the first plain text file", event);
+
+    removedItem = removeAt(event.dataTransfer.items, 2);
+    updateOutputText("4. After removing the last file", event);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    event.dataTransfer.items.add("<a>goodbye world</a>", "text/html");
+    updateOutputText("5. After adding an HTML string", event);
+
+    event.dataTransfer.items.add(new File([ "This is just a plain string" ], "second.txt", { type: "text/plain" }));
+    updateOutputText("6. After adding another plain text file", event);
+
+    removedItem = removeAt(event.dataTransfer.items, 1);
+    updateOutputText("7. After removing the custom file", event);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    removedItem = removeAt(event.dataTransfer.items, 1);
+    updateOutputText("8. After removing the HTML string", event);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    removedItem = removeAt(event.dataTransfer.items, 1);
+    updateOutputText("9. After removing the second text file", event);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+
+    removedItem = removeAt(event.dataTransfer.items, 0);
+    updateOutputText("10. After removing the plain text string", event);
+    write(`removedItem.getAsFile() should be null: ${removedItem.getAsFile()}`);
+    write(`The DataTransfer's FileList should be the same object: ${fileList == event.dataTransfer.files}`);
+
+    event.preventDefault();
+});
+
+if (window.testRunner && window.eventSender && window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.dumpAsText();
+    eventSender.mouseMoveTo(100, 25);
+    eventSender.mouseDown();
+    eventSender.leapForward(1000);
+    eventSender.mouseMoveTo(100, 400);
+    eventSender.mouseUp();
+}
+</script>
+</html>

@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "CachedImageClient.h"
+#include "DataTransferItem.h"
 #include "DataTransferItemList.h"
 #include "DragData.h"
 #include "Editor.h"
@@ -161,6 +162,26 @@ void DataTransfer::setData(const String& type, const String& data)
         m_itemList->didSetStringData(normalizedType);
 }
 
+void DataTransfer::updateFileList()
+{
+    // If we're removing an item, then the item list must exist, which implies that the file list must have been initialized already.
+    ASSERT(m_fileList);
+    ASSERT(canWriteData());
+
+    m_fileList->m_files = filesFromPasteboardAndItemList();
+}
+
+void DataTransfer::didAddFileToItemList()
+{
+    ASSERT(canWriteData());
+    if (!m_fileList)
+        return;
+
+    auto& newItem = m_itemList->items().last();
+    ASSERT(newItem->isFile());
+    m_fileList->append(*newItem->file());
+}
+
 DataTransferItemList& DataTransfer::items()
 {
     if (!m_itemList)
@@ -181,6 +202,9 @@ Vector<String> DataTransfer::types() const
         return types;
     }
 
+    if (m_itemList && m_itemList->hasItems() && m_itemList->items().findMatching([] (const auto& item) { return item->isFile(); }) != notFound)
+        return { "Files" };
+
     if (m_pasteboard->containsFiles()) {
         ASSERT(!m_pasteboard->typesSafeForBindings().contains("Files"));
         return { "Files" };
@@ -189,6 +213,31 @@ Vector<String> DataTransfer::types() const
     auto types = m_pasteboard->typesSafeForBindings();
     ASSERT(!types.contains("Files"));
     return types;
+}
+
+Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const
+{
+    bool addedFilesFromPasteboard = false;
+    Vector<Ref<File>> files;
+    if (!forDrag() || forFileDrag()) {
+        WebCorePasteboardFileReader reader;
+        m_pasteboard->read(reader);
+        files = WTFMove(reader.files);
+        addedFilesFromPasteboard = !files.isEmpty();
+    }
+
+    bool itemListContainsItems = false;
+    if (m_itemList && m_itemList->hasItems()) {
+        for (auto& item : m_itemList->items()) {
+            if (auto file = item->file()) {
+                files.append(*file);
+            }
+        }
+        itemListContainsItems = true;
+    }
+
+    ASSERT(!itemListContainsItems || !addedFilesFromPasteboard);
+    return files;
 }
 
 FileList& DataTransfer::files() const
@@ -201,19 +250,9 @@ FileList& DataTransfer::files() const
         return *m_fileList;
     }
 
-    if (forDrag() && !forFileDrag()) {
-        if (m_fileList)
-            ASSERT(m_fileList->isEmpty());
-        else
-            m_fileList = FileList::create();
-        return *m_fileList;
-    }
+    if (!m_fileList)
+        m_fileList = FileList::create(filesFromPasteboardAndItemList());
 
-    if (!m_fileList) {
-        WebCorePasteboardFileReader reader;
-        m_pasteboard->read(reader);
-        m_fileList = FileList::create(WTFMove(reader.files));
-    }
     return *m_fileList;
 }
 

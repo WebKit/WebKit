@@ -36,6 +36,7 @@ class DragData;
 class DragImageLoader;
 class Element;
 class FileList;
+class File;
 class Pasteboard;
 
 class DataTransfer : public RefCounted<DataTransfer> {
@@ -99,6 +100,9 @@ public:
     bool hasDragImage() const;
 #endif
 
+    void didAddFileToItemList();
+    void updateFileList();
+
 private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
     DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste);
@@ -110,6 +114,8 @@ private:
     bool forDrag() const { return false; }
     bool forFileDrag() const { return false; }
 #endif
+
+    Vector<Ref<File>> filesFromPasteboardAndItemList() const;
 
     StoreMode m_storeMode;
     std::unique_ptr<Pasteboard> m_pasteboard;

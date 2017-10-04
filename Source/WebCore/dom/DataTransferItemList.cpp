@@ -84,9 +84,14 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& da
     return RefPtr<DataTransferItem> { m_items->last().copyRef() };
 }
 
-RefPtr<DataTransferItem> DataTransferItemList::add(Ref<File>&&)
+RefPtr<DataTransferItem> DataTransferItemList::add(Ref<File>&& file)
 {
-    return nullptr;
+    if (!m_dataTransfer.canWriteData())
+        return nullptr;
+
+    ensureItems().append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*this), file->type(), file.copyRef()));
+    m_dataTransfer.didAddFileToItemList();
+    return RefPtr<DataTransferItem> { m_items->last().ptr() };
 }
 
 ExceptionOr<void> DataTransferItemList::remove(unsigned index)
@@ -98,13 +103,16 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
     if (items.size() <= index)
         return Exception { IndexSizeError }; // Matches Gecko. See https://github.com/whatwg/html/issues/2925
 
-    // FIXME: Handle the removal of files once we added the support for writing a File.
-    ASSERT(!items[index]->isFile());
-
+    // Since file-backed DataTransferItems are not actually written to the pasteboard yet, we don't need to remove any
+    // temporary files. When we support writing file-backed DataTransferItems to the platform pasteboard, we will need
+    // to clean up here.
     auto& removedItem = items[index].get();
-    m_dataTransfer.pasteboard().clear(removedItem.type());
+    if (!removedItem.isFile())
+        m_dataTransfer.pasteboard().clear(removedItem.type());
     removedItem.clearListAndPutIntoDisabledMode();
     items.remove(index);
+    if (removedItem.isFile())
+        m_dataTransfer.updateFileList();
 
     return { };
 }
@@ -112,11 +120,17 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
 void DataTransferItemList::clear()
 {
     m_dataTransfer.pasteboard().clear();
+    bool removedItemContainingFile = false;
     if (m_items) {
-        for (auto& item : *m_items)
+        for (auto& item : *m_items) {
+            removedItemContainingFile |= item->isFile();
             item->clearListAndPutIntoDisabledMode();
+        }
         m_items->clear();
     }
+
+    if (removedItemContainingFile)
+        m_dataTransfer.updateFileList();
 }
 
 Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const

@@ -65,6 +65,12 @@ public:
 
     void didClearStringData(const String& type);
     void didSetStringData(const String& type);
+    bool hasItems() const { return m_items.has_value(); }
+    const Vector<Ref<DataTransferItem>>& items() const
+    {
+        ASSERT(m_items);
+        return *m_items;
+    }
 
 private:
     Vector<Ref<DataTransferItem>>& ensureItems() const;

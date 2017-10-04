@@ -1,3 +1,25 @@
+2017-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add basic support for the version of DataTransferItemList.add that takes a File
+        https://bugs.webkit.org/show_bug.cgi?id=177853
+        <rdar://problem/34807346>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add tests to verify that Files can be added to and removed from the DataTransferItemList, and also read back via
+        both the item list and the DataTransfer's FileList when copying and dragging. Additionally, adds a test that adds
+        and removes the same File to the DataTransferItemList multiple times.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-item-list-add-file-multiple-times-expected.txt: Added.
+        * editing/pasteboard/data-transfer-item-list-add-file-multiple-times.html: Added.
+        * editing/pasteboard/data-transfer-item-list-add-file-on-copy-expected.txt: Added.
+        * editing/pasteboard/data-transfer-item-list-add-file-on-copy.html: Added.
+        * editing/pasteboard/data-transfer-item-list-add-file-on-drag-expected.txt: Added.
+        * editing/pasteboard/data-transfer-item-list-add-file-on-drag.html: Added.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-04  Per Arne Vollan  <pvollan@apple.com>
 
         Mark http/wpt/cache-storage/cache-quota.any.html as flaky on Windows.

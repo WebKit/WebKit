@@ -1,3 +1,57 @@
+2017-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add basic support for the version of DataTransferItemList.add that takes a File
+        https://bugs.webkit.org/show_bug.cgi?id=177853
+        <rdar://problem/34807346>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds very basic support for DataTransferItemList.add(File). So far, a File added in this way can only be read
+        back from the same DataTransfer, during dragstart or copy. This File isn't written to the platform pasteboard
+        yet, so even dropping or pasting in the same page will not transfer the File, but this brings us closer to
+        parity with other browsers. See per-method comments for details.
+
+        Tests: editing/pasteboard/data-transfer-item-list-add-file-multiple-times.html
+               editing/pasteboard/data-transfer-item-list-add-file-on-copy.html
+               editing/pasteboard/data-transfer-item-list-add-file-on-drag.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::updateFileList):
+
+        Recompute the DataTransfer's FileList. This behaves the same way as destroying the FileList altogether and
+        building it from scratch, but we avoid that approach because the FileList object needs to maintain the same DOM
+        wrapper after a File-backed item is removed.
+
+        (WebCore::DataTransfer::itemListDidAddFile):
+
+        Add the newly appended DataTransferItem's File to the DataTransfer's FileList.
+
+        (WebCore::DataTransfer::types const):
+
+        Return only the "Files" type if there are file-backed items in the DataTransfer's item list.
+
+        (WebCore::DataTransfer::updatedFilesForFileList const):
+        (WebCore::DataTransfer::files const):
+        * dom/DataTransfer.h:
+        * dom/DataTransferItem.h:
+        (WebCore::DataTransferItem::file const):
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::add):
+        (WebCore::DataTransferItemList::remove):
+        (WebCore::DataTransferItemList::clear):
+
+        When removing a File, only clear from the DataTransfer's pasteboard if the removed item is not a File (otherwise,
+        clearing a File that shares the same type as some other item in the pasteboard will erroneously clear that other
+        item as well). Additionally, call out to the DataTransfer to update the FileList.
+
+        * dom/DataTransferItemList.h:
+        (WebCore::DataTransferItemList::hasItems const):
+        (WebCore::DataTransferItemList::items const):
+
+        Add helpers for directly accessing an item list's items. items() should be used in conjunction with hasItems().
+        This route is taken to (1) avoid having to copy the vector of Files, and (2) to avoid generating m_items if it
+        doesn't already exist.
+
 2017-10-04  Zalan Bujtas  <zalan@apple.com>
 
         RenderMultiColumnFlow populate/evacuate should not disable layout state.
