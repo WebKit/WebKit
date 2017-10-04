@@ -350,8 +350,6 @@ static RenderTextFragment* quoteTextRenderer(RenderObject* lastChild)
 void RenderQuote::updateTextRenderer()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(document().inRenderTreeUpdate());
-    ASSERT_WITH_SECURITY_IMPLICATION(!view().renderTreeIsBeingMutatedInternally());
-
     String text = computeText();
     if (m_text == text)
         return;
@@ -405,9 +403,6 @@ bool RenderQuote::isOpen() const
 void RenderQuote::updateRenderer(RenderQuote* previousQuote)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(document().inRenderTreeUpdate());
-    ASSERT_WITH_SECURITY_IMPLICATION(!view().renderTreeIsBeingMutatedInternally());
-    ASSERT_WITH_SECURITY_IMPLICATION(!view().layoutState());
-
     int depth = -1;
     if (previousQuote) {
         depth = previousQuote->m_depth;

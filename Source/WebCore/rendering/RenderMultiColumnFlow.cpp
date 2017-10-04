@@ -151,7 +151,6 @@ void RenderMultiColumnFlow::populate()
     // now. At this point there's obviously nothing after the flow thread, but renderers (column
     // sets and spanners) will be inserted there as we insert elements into the flow thread.
     LayoutStateDisabler layoutStateDisabler(view());
-    RenderTreeInternalMutationScope reparentingIsOn(view());
     multicolContainer->moveChildrenTo(this, multicolContainer->firstChild(), this, true);
     
     if (multicolContainer->isFieldset()) {
@@ -177,7 +176,6 @@ void RenderMultiColumnFlow::evacuateAndDestroy()
     // container, we need to unregister the flow thread, so that they aren't just re-added again to
     // the flow thread that we're trying to empty.
     multicolContainer->setMultiColumnFlow(nullptr);
-    RenderTreeInternalMutationScope reparentingIsOn(view());
     moveAllChildrenTo(multicolContainer, true);
 
     // Move spanners back to their original DOM position in the tree, and destroy the placeholders.

@@ -1,3 +1,27 @@
+2017-10-04  Zalan Bujtas  <zalan@apple.com>
+
+        Remove RenderTreeInternalMutationScope
+        https://bugs.webkit.org/show_bug.cgi?id=177875
+        <rdar://problem/34813088>
+
+        Reviewed by Antti Koivisto.
+
+        RenderTree mutation is in the past now. -and we've got assertions in place.
+
+        Not testable.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::populate):
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy):
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::updateTextRenderer):
+        (WebCore::RenderQuote::updateRenderer):
+        * rendering/RenderView.h:
+        (WebCore::RenderTreeInternalMutationScope::RenderTreeInternalMutationScope): Deleted.
+        (WebCore::RenderTreeInternalMutationScope::~RenderTreeInternalMutationScope): Deleted.
+
 2017-10-04  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed: fix GTK debug build after r222841.
