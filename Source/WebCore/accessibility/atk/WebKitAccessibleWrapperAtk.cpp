@@ -39,6 +39,7 @@
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
+#include "AccessibilityTableRow.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Frame.h"
@@ -470,9 +471,12 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         int columnCount = table.ariaColumnCount();
         if (columnCount)
             attributeSet = addToAtkAttributeSet(attributeSet, "colcount", String::number(columnCount).utf8().data());
-    }
-
-    if (is<AccessibilityTableCell>(*coreObject)) {
+    } else if (is<AccessibilityTableRow>(*coreObject)) {
+        auto& row = downcast<AccessibilityTableRow>(*coreObject);
+        int rowIndex = row.ariaRowIndex();
+        if (rowIndex != -1)
+            attributeSet = addToAtkAttributeSet(attributeSet, "rowindex", String::number(rowIndex).utf8().data());
+    } else if (is<AccessibilityTableCell>(*coreObject)) {
         auto& cell = downcast<AccessibilityTableCell>(*coreObject);
         int rowIndex = cell.ariaRowIndex();
         if (rowIndex != -1)

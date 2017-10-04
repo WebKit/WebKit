@@ -1,3 +1,13 @@
+2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] aria-rowindex set on row element is not being exposed
+        https://bugs.webkit.org/show_bug.cgi?id=177821
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/aria-rowindex-on-row-expected.txt: Added.
+        * accessibility/gtk/aria-rowindex-on-row.html: Added.
+
 2017-10-03  Ms2ger  <Ms2ger@igalia.com>
 
         Remove some duplicate w3c tests for media tracks.
