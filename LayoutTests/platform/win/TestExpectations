@@ -384,6 +384,7 @@ fast/images/webp-color-profile-lossy-alpha.html [ Skip ]
 fast/images/webp-color-profile-lossy.html [ Skip ]
 http/tests/images/webp-partial-load.html [ Skip ]
 http/tests/images/webp-progressive-load.html [ Skip ]
+fast/images/animated-webp-expected.html [ Skip ]
 
 # TODO The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
 # method. But that method is not implemented in win port since win port can't

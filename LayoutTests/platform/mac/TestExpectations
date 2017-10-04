@@ -178,6 +178,7 @@ fast/images/webp-color-profile-lossy-alpha.html
 fast/images/webp-color-profile-lossy.html
 http/tests/images/webp-partial-load.html
 http/tests/images/webp-progressive-load.html
+fast/images/animated-webp-expected.html
 
 # Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation
 webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html

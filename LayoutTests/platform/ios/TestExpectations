@@ -230,6 +230,7 @@ fast/dom/DeviceOrientation
 
 # WebP image format is not supported
 fast/canvas/canvas-toDataURL-webp.html
+fast/images/animated-webp-expected.html
 
 # Drag-and-drop is not supported:
 editing/pasteboard/datatransfer-items-drop-plaintext-file.html

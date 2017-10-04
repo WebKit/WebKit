@@ -33,19 +33,33 @@ find_package(PkgConfig)
 pkg_check_modules(PC_WEBP QUIET libwebp)
 
 # Look for the header file.
-find_path(WEBP_INCLUDE_DIRS
+find_path(WEBP_INCLUDE_DIR
     NAMES webp/decode.h
     HINTS ${PC_WEBP_INCLUDEDIR} ${PC_WEBP_INCLUDE_DIRS}
 )
+list(APPEND WEBP_INCLUDE_DIRS ${WEBP_INCLUDE_DIR})
 mark_as_advanced(WEBP_INCLUDE_DIRS)
 
 # Look for the library.
 find_library(
-    WEBP_LIBRARIES
+    WEBP_LIBRARY
     NAMES webp
     HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
 )
+list(APPEND WEBP_LIBRARIES ${WEBP_LIBRARY})
 mark_as_advanced(WEBP_LIBRARIES)
+
+find_path(WEBP_DEMUX_INCLUDE_DIR
+    NAMES webp/demux.h
+    HINTS ${PC_WEBP_INCLUDEDIR} ${PC_WEBP_INCLUDE_DIRS}
+)
+list(APPEND WEBP_INCLUDE_DIRS ${WEBP_DEMUX_INCLUDE_DIR})
+
+find_library(WEBP_DEMUX_LIBRARY
+    NAMES webpdemux
+    HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
+)
+list(APPEND WEBP_LIBRARIES ${WEBP_DEMUX_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(WebP REQUIRED_VARS WEBP_INCLUDE_DIRS WEBP_LIBRARIES

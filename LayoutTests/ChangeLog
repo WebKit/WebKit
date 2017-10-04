@@ -1,3 +1,40 @@
+2017-10-04  Miguel Gomez  <magomez@igalia.com>
+
+        Add animation support for WebP images
+        https://bugs.webkit.org/show_bug.cgi?id=113124
+
+        Reviewed by Žan Doberšek.
+
+        Add a new test for WebP animations and skip it on ios, mac and win. Also unskip some
+        webp tests that are passing on gtk.
+
+        * fast/images/animated-webp-expected.html: Added.
+        * fast/images/animated-webp.html: Added.
+        * fast/images/resources/awebp00-ref.webp: Added.
+        * fast/images/resources/awebp00.webp: Added.
+        * fast/images/resources/awebp01-ref.webp: Added.
+        * fast/images/resources/awebp01.webp: Added.
+        * fast/images/resources/awebp02-ref.webp: Added.
+        * fast/images/resources/awebp02.webp: Added.
+        * fast/images/resources/awebp03-ref.webp: Added.
+        * fast/images/resources/awebp03.webp: Added.
+        * fast/images/resources/awebp04-ref.webp: Added.
+        * fast/images/resources/awebp04.webp: Added.
+        * fast/images/resources/awebp05-ref.webp: Added.
+        * fast/images/resources/awebp05.webp: Added.
+        * fast/images/resources/awebp06-ref.webp: Added.
+        * fast/images/resources/awebp06.webp: Added.
+        * fast/images/resources/awebp07-ref.webp: Added.
+        * fast/images/resources/awebp07.webp: Added.
+        * fast/images/resources/awebp08-ref.webp: Added.
+        * fast/images/resources/awebp08.webp: Added.
+        * fast/images/resources/awebp09-ref.webp: Added.
+        * fast/images/resources/awebp09.webp: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-10-04  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] aria-pressed="mixed" should be exposed via ATK_STATE_INDETERMINATE

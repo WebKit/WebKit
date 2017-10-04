@@ -183,12 +183,6 @@ webkit.org/b/177447 imported/w3c/web-platform-tests/dom/events/Event-timestamp-h
 
 # Requires WebP support.
 webkit.org/b/98939 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
-# Requires WebP 0.2 support.
-webkit.org/b/98939 fast/images/webp-image-decoding.html [ Skip ]
-# Requires WebP 0.3 and color profile support.
-webkit.org/b/98939 fast/images/webp-color-profile-lossless.html [ Skip ]
-webkit.org/b/98939 fast/images/webp-color-profile-lossy-alpha.html [ Skip ]
-webkit.org/b/98939 fast/images/webp-color-profile-lossy.html [ Skip ]
 
 # DataTransferItems is not yet implemented.
 webkit.org/b/98940 editing/pasteboard/data-transfer-items.html [ Skip ]

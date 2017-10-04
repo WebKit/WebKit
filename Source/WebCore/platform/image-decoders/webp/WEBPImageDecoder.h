@@ -33,6 +33,7 @@
 #if USE(WEBP)
 
 #include "webp/decode.h"
+#include "webp/demux.h"
 
 namespace WebCore {
 
@@ -46,19 +47,26 @@ public:
     virtual ~WEBPImageDecoder();
 
     String filenameExtension() const override { return ASCIILiteral("webp"); }
+    void setData(SharedBuffer&, bool) final;
     ImageFrame* frameBufferAtIndex(size_t index) override;
+    RepetitionCount repetitionCount() const override;
+    size_t frameCount() const override { return m_frameCount; }
+    void clearFrameBufferCache(size_t) override;
 
 private:
     WEBPImageDecoder(AlphaOption, GammaAndColorProfileOption);
-    void tryDecodeSize(bool allDataReceived) override { decode(true, allDataReceived); }
+    void tryDecodeSize(bool) override { parseHeader(); }
+    void decode(size_t, bool);
+    void decodeFrame(size_t, WebPDemuxer*);
+    void parseHeader();
+    bool initFrameBuffer(size_t, const WebPIterator*);
+    void applyPostProcessing(size_t, WebPIDecoder*, WebPDecBuffer&, bool);
+    size_t findFirstRequiredFrameToDecode(size_t, WebPDemuxer*);
 
-    bool decode(bool onlySize, bool allDataReceived);
-
-    WebPIDecoder* m_decoder;
-    bool m_hasAlpha;
-
-    void applyColorProfile(const uint8_t*, size_t, ImageFrame&) { };
-    void clear();
+    int m_repetitionCount { 0 };
+    size_t m_frameCount { 0 };
+    int m_formatFlags { 0 };
+    bool m_headerParsed { false };
 };
 
 } // namespace WebCore

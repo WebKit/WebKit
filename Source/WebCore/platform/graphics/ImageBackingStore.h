@@ -147,7 +147,6 @@ public:
         setPixel(pixelAt(x, y), r, g, b, a);
     }
 
-#if ENABLE(APNG)
     void blendPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
     {
         if (!a)
@@ -173,7 +172,6 @@ public:
         else
             *dest = makeUnPremultipliedRGBA(r, g, b, a);
     }
-#endif
 
     static bool isOverSize(const IntSize& size)
     {
