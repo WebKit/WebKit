@@ -23,18 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebBackForwardList_h
-#define WebBackForwardList_h
+#pragma once
 
 #include "APIObject.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxy.h"
 #include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#if USE(CF)
-#include <CoreFoundation/CFDictionary.h>
-#endif
 
 namespace WebKit {
 
@@ -51,7 +46,7 @@ public:
     virtual ~WebBackForwardList();
 
     void addItem(WebBackForwardListItem*);
-    void goToItem(WebBackForwardListItem*);
+    void goToItem(WebBackForwardListItem&);
     void removeAllItems();
     void clear();
 
@@ -85,11 +80,10 @@ private:
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
     
+    // FIXME: m_currentIndex should be a std::optional<size_t>
     bool m_hasCurrentIndex;
-    unsigned m_currentIndex;
-    unsigned m_capacity;
+    size_t m_currentIndex;
+    size_t m_capacity;
 };
 
 } // namespace WebKit
-
-#endif // WebBackForwardList_h

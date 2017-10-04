@@ -1,3 +1,50 @@
+2017-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        Moderize WebKit's back forward list code
+        https://bugs.webkit.org/show_bug.cgi?id=177843
+
+        Reviewed by Tim Horton.
+
+        Use Ref instead of RefPtr when possible.
+        Use references instead of pointers when possible.
+        Remove unnecessary null checks.
+        Reduce unnecessary Vector copying.
+
+        * Shared/SessionState.h:
+        * Shared/WebBackForwardListItem.h:
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didChangeBackForwardList):
+        (API::LoaderClient::shouldKeepCurrentBackForwardListItemInList):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::pageClosed):
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::currentItem const):
+        (WebKit::WebBackForwardList::backItem const):
+        (WebKit::WebBackForwardList::forwardItem const):
+        (WebKit::WebBackForwardList::itemAtIndex const):
+        (WebKit::WebBackForwardList::backListAsAPIArrayWithLimit const):
+        (WebKit::WebBackForwardList::forwardListAsAPIArrayWithLimit const):
+        (WebKit::WebBackForwardList::removeAllItems):
+        (WebKit::WebBackForwardList::clear):
+        (WebKit::WebBackForwardList::backForwardListState const):
+        (WebKit::WebBackForwardList::restoreFromState):
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        (WebKit::WebPageProxy::shouldKeepCurrentBackForwardListItemInList):
+        (WebKit::WebPageProxy::backForwardGoToItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::registerNewWebBackForwardListItem):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+
 2017-10-03  Chris Dumez  <cdumez@apple.com>
 
         SharedStringHashStore should support removing hashes

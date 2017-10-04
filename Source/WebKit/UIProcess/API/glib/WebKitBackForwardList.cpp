@@ -128,7 +128,7 @@ WebKitBackForwardList* webkitBackForwardListCreate(WebBackForwardList* backForwa
     return list;
 }
 
-void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, const Vector<RefPtr<WebBackForwardListItem>>& webRemovedItems)
+void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, Vector<Ref<WebBackForwardListItem>>&& webRemovedItems)
 {
     WebKitBackForwardListItem* addedItem = webkitBackForwardListGetOrCreateItem(backForwardList, webAddedItem);
     GList* removedItems = nullptr;
@@ -138,12 +138,12 @@ void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBac
         // After a session restore, we still don't have wrappers for the newly added items, so it would be possible that
         // the removed items are not in the map. In that case we create a wrapper now to pass it the changed signal, but
         // without adding it to the item map. See https://bugs.webkit.org/show_bug.cgi?id=153233.
-        GRefPtr<WebKitBackForwardListItem> removedItem = priv->itemsMap.get(webItem.get());
+        GRefPtr<WebKitBackForwardListItem> removedItem = priv->itemsMap.get(webItem.ptr());
         if (removedItem) {
             removedItems = g_list_prepend(removedItems, g_object_ref(removedItem.get()));
-            priv->itemsMap.remove(webItem.get());
+            priv->itemsMap.remove(webItem.ptr());
         } else
-            removedItems = g_list_prepend(removedItems, webkitBackForwardListItemGetOrCreate(webItem.get()));
+            removedItems = g_list_prepend(removedItems, webkitBackForwardListItemGetOrCreate(webItem.ptr()));
     }
 
     g_signal_emit(backForwardList, signals[CHANGED], 0, addedItem, removedItems, nullptr);

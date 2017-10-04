@@ -424,13 +424,13 @@ WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) con
     return m_backForwardListItemMap.get(itemID);
 }
 
-void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem* item)
+void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem& item)
 {
     // This item was just created by the UIProcess and is being added to the map for the first time
     // so we should not already have an item for this ID.
-    ASSERT(!m_backForwardListItemMap.contains(item->itemID()));
+    ASSERT(!m_backForwardListItemMap.contains(item.itemID()));
 
-    m_backForwardListItemMap.set(item->itemID(), item);
+    m_backForwardListItemMap.set(item.itemID(), &item);
 }
 
 void WebProcessProxy::removeBackForwardItem(uint64_t itemID)

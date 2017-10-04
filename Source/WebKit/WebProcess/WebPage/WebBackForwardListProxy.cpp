@@ -172,14 +172,14 @@ void WebBackForwardListProxy::goToItem(HistoryItem* item)
 HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
 {
     if (!m_page)
-        return 0;
+        return nullptr;
 
     uint64_t itemID = 0;
     if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
-        return 0;
+        return nullptr;
 
     if (!itemID)
-        return 0;
+        return nullptr;
 
     return idToHistoryItemMap().get(itemID);
 }

@@ -684,7 +684,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
         return nullptr;
 
     if (item != m_backForwardList->currentItem())
-        m_backForwardList->goToItem(item);
+        m_backForwardList->goToItem(*item);
 
     auto navigation = m_navigationState->createBackForwardNavigation();
 
@@ -698,7 +698,7 @@ void WebPageProxy::initializeWebPage()
 {
     ASSERT(isValid());
 
-    BackForwardListItemVector items = m_backForwardList->entries();
+    const BackForwardListItemVector& items = m_backForwardList->entries();
     for (size_t i = 0; i < items.size(); ++i)
         m_process->registerNewWebBackForwardListItem(items[i].get());
 
@@ -1192,7 +1192,7 @@ void WebPageProxy::tryRestoreScrollPosition()
     m_process->send(Messages::WebPage::TryRestoreScrollPosition(), m_pageID);
 }
 
-void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<RefPtr<WebBackForwardListItem>> removed)
+void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vector<Ref<WebBackForwardListItem>>&& removed)
 {
     PageClientProtector protector(m_pageClient);
 
@@ -1215,7 +1215,7 @@ void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, bool inPageCache
     }
 }
 
-bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem* item)
+bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem& item)
 {
     PageClientProtector protector(m_pageClient);
 
@@ -4494,7 +4494,7 @@ void WebPageProxy::backForwardGoToItem(uint64_t itemID, SandboxExtension::Handle
     bool createdExtension = maybeInitializeSandboxExtensionHandle(URL(URL(), item->url()), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_backForwardList->goToItem(item);
+    m_backForwardList->goToItem(*item);
 }
 
 void WebPageProxy::backForwardItemAtIndex(int32_t index, uint64_t& itemID)

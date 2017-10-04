@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SessionState_h
-#define SessionState_h
+#pragma once
 
 #if PLATFORM(COCOA)
 #include "ViewSnapshotStore.h"
@@ -150,5 +149,3 @@ struct SessionState {
 };
 
 } // namespace WebKit
-
-#endif // SessionState_h

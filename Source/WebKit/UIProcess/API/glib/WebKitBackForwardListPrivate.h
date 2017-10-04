@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitBackForwardListPrivate_h
-#define WebKitBackForwardListPrivate_h
+#pragma once
 
 #include "WebBackForwardList.h"
 #include "WebKitBackForwardList.h"
@@ -32,6 +31,4 @@
 WebKitBackForwardList* webkitBackForwardListCreate(WebKit::WebBackForwardList*);
 WebKitBackForwardListItem* webkitBackForwardListItemGetOrCreate(WebKit::WebBackForwardListItem*);
 WebKit::WebBackForwardListItem* webkitBackForwardListItemGetItem(WebKitBackForwardListItem*);
-void webkitBackForwardListChanged(WebKitBackForwardList*, WebKit::WebBackForwardListItem* webAddedItem, const Vector<RefPtr<WebKit::WebBackForwardListItem>>&);
-
-#endif // WebKitBackForwardListPrivate_h
+void webkitBackForwardListChanged(WebKitBackForwardList*, WebKit::WebBackForwardListItem* webAddedItem, Vector<Ref<WebKit::WebBackForwardListItem>>&&);

@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebBackForwardListItem_h
-#define WebBackForwardListItem_h
+#pragma once
 
 #include "APIObject.h"
 #include "SessionState.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -74,8 +73,6 @@ private:
     uint64_t m_pageID;
 };
 
-typedef Vector<RefPtr<WebBackForwardListItem>> BackForwardListItemVector;
+typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;
 
 } // namespace WebKit
-
-#endif // WebBackForwardListItem_h

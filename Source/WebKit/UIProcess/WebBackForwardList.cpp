@@ -72,13 +72,8 @@ void WebBackForwardList::pageClosed()
 
     if (m_page) {
         size_t size = m_entries.size();
-        for (size_t i = 0; i < size; ++i) {
-            ASSERT(m_entries[i]);
-            if (!m_entries[i])
-                continue;
-
-            didRemoveItem(*m_entries[i]);
-        }
+        for (size_t i = 0; i < size; ++i)
+            didRemoveItem(m_entries[i]);
     }
 
     m_page = 0;
@@ -93,7 +88,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     if (!m_capacity || !newItem || !m_page)
         return;
 
-    Vector<RefPtr<WebBackForwardListItem>> removedItems;
+    Vector<Ref<WebBackForwardListItem>> removedItems;
     
     if (m_hasCurrentIndex) {
         m_page->recordAutomaticNavigationSnapshot();
@@ -102,7 +97,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         unsigned targetSize = m_currentIndex + 1;
         removedItems.reserveCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
-            didRemoveItem(*m_entries.last());
+            didRemoveItem(m_entries.last());
             removedItems.append(WTFMove(m_entries.last()));
             m_entries.removeLast();
         }
@@ -110,7 +105,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         // Toss the first item if the list is getting too big, as long as we're not using it
         // (or even if we are, if we only want 1 entry).
         if (m_entries.size() == m_capacity && (m_currentIndex || m_capacity == 1)) {
-            didRemoveItem(*m_entries[0]);
+            didRemoveItem(m_entries[0]);
             removedItems.append(WTFMove(m_entries[0]));
             m_entries.remove(0);
 
@@ -126,10 +121,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         // But just in case it does happen in practice we'll get back in to a consistent state now before adding the new item.
         size_t size = m_entries.size();
         for (size_t i = 0; i < size; ++i) {
-            ASSERT(m_entries[i]);
-            if (!m_entries[i])
-                continue;
-            didRemoveItem(*m_entries[i]);
+            didRemoveItem(m_entries[i]);
             removedItems.append(WTFMove(m_entries[i]));
         }
         m_entries.clear();
@@ -142,7 +134,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         m_currentIndex = 0;
         m_hasCurrentIndex = true;
     } else {
-        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex].get());
+        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex]);
         if (shouldKeepCurrentItem)
             m_currentIndex++;
     }
@@ -152,28 +144,34 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
         // If it is, something has gone wrong and we should not try to swap in the new item.
         ASSERT(m_currentIndex < m_entries.size());
 
-        removedItems.append(m_entries[m_currentIndex]);
-        m_entries[m_currentIndex] = newItem;
+        removedItems.append(m_entries[m_currentIndex].copyRef());
+        m_entries[m_currentIndex] = *newItem;
     } else {
         // m_current should never be pointing more than 1 past the end of the entries Vector.
         // If it is, something has gone wrong and we should not try to insert the new item.
         ASSERT(m_currentIndex <= m_entries.size());
 
         if (m_currentIndex <= m_entries.size())
-            m_entries.insert(m_currentIndex, newItem);
+            m_entries.insert(m_currentIndex, *newItem);
     }
 
     m_page->didChangeBackForwardList(newItem, WTFMove(removedItems));
 }
 
-void WebBackForwardList::goToItem(WebBackForwardListItem* item)
+void WebBackForwardList::goToItem(WebBackForwardListItem& item)
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    if (!m_entries.size() || !item || !m_page || !m_hasCurrentIndex)
+    if (!m_entries.size() || !m_page || !m_hasCurrentIndex)
         return;
 
-    size_t targetIndex = m_entries.find(item);
+    size_t targetIndex = notFound;
+    for (size_t i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].ptr() == &item) {
+            targetIndex = i;
+            break;
+        }
+    }
 
     // If the target item wasn't even in the list, there's nothing else to do.
     if (targetIndex == notFound)
@@ -187,46 +185,51 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
 
     // If we're going to an item different from the current item, ask the client if the current
     // item should remain in the list.
-    WebBackForwardListItem* currentItem = m_entries[m_currentIndex].get();
+    auto& currentItem = m_entries[m_currentIndex];
     bool shouldKeepCurrentItem = true;
-    if (currentItem != item) {
+    if (currentItem.ptr() != &item) {
         m_page->recordAutomaticNavigationSnapshot();
-        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex].get());
+        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex]);
     }
 
     // If the client said to remove the current item, remove it and then update the target index.
-    Vector<RefPtr<WebBackForwardListItem>> removedItems;
+    Vector<Ref<WebBackForwardListItem>> removedItems;
     if (!shouldKeepCurrentItem) {
-        removedItems.append(currentItem);
+        removedItems.append(currentItem.copyRef());
         m_entries.remove(m_currentIndex);
-        targetIndex = m_entries.find(item);
-
+        targetIndex = notFound;
+        for (size_t i = 0; i < m_entries.size(); ++i) {
+            if (m_entries[0].ptr() == &item) {
+                targetIndex = i;
+                break;
+            }
+        }
         ASSERT(targetIndex != notFound);
     }
 
     m_currentIndex = targetIndex;
-    m_page->didChangeBackForwardList(nullptr, removedItems);
+    m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
 WebBackForwardListItem* WebBackForwardList::currentItem() const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    return m_page && m_hasCurrentIndex ? m_entries[m_currentIndex].get() : nullptr;
+    return m_page && m_hasCurrentIndex ? m_entries[m_currentIndex].ptr() : nullptr;
 }
 
 WebBackForwardListItem* WebBackForwardList::backItem() const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    return m_page && m_hasCurrentIndex && m_currentIndex ? m_entries[m_currentIndex - 1].get() : nullptr;
+    return m_page && m_hasCurrentIndex && m_currentIndex ? m_entries[m_currentIndex - 1].ptr() : nullptr;
 }
 
 WebBackForwardListItem* WebBackForwardList::forwardItem() const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    return m_page && m_hasCurrentIndex && m_entries.size() && m_currentIndex < m_entries.size() - 1 ? m_entries[m_currentIndex + 1].get() : nullptr;
+    return m_page && m_hasCurrentIndex && m_entries.size() && m_currentIndex < m_entries.size() - 1 ? m_entries[m_currentIndex + 1].ptr() : nullptr;
 }
 
 WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index) const
@@ -243,7 +246,7 @@ WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index) const
     if (index > forwardListCount())
         return nullptr;
         
-    return m_entries[index + m_currentIndex].get();
+    return m_entries[index + m_currentIndex].ptr();
 }
 
 int WebBackForwardList::backListCount() const
@@ -286,10 +289,8 @@ Ref<API::Array> WebBackForwardList::backListAsAPIArrayWithLimit(unsigned limit) 
     vector.reserveInitialCapacity(size);
 
     ASSERT(backListSize >= size);
-    for (unsigned i = backListSize - size; i < backListSize; ++i) {
-        ASSERT(m_entries[i]);
-        vector.uncheckedAppend(m_entries[i].get());
-    }
+    for (unsigned i = backListSize - size; i < backListSize; ++i)
+        vector.uncheckedAppend(m_entries[i].ptr());
 
     return API::Array::create(WTFMove(vector));
 }
@@ -310,10 +311,8 @@ Ref<API::Array> WebBackForwardList::forwardListAsAPIArrayWithLimit(unsigned limi
 
     unsigned last = m_currentIndex + size;
     ASSERT(last < m_entries.size());
-    for (unsigned i = m_currentIndex + 1; i <= last; ++i) {
-        ASSERT(m_entries[i]);
-        vector.uncheckedAppend(m_entries[i].get());
-    }
+    for (unsigned i = m_currentIndex + 1; i <= last; ++i)
+        vector.uncheckedAppend(m_entries[i].ptr());
 
     return API::Array::create(WTFMove(vector));
 }
@@ -322,14 +321,10 @@ void WebBackForwardList::removeAllItems()
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
-    Vector<RefPtr<WebBackForwardListItem>> removedItems;
+    Vector<Ref<WebBackForwardListItem>> removedItems;
 
     for (auto& entry : m_entries) {
-        ASSERT(entry);
-        if (!entry)
-            continue;
-
-        didRemoveItem(*entry);
+        didRemoveItem(entry);
         removedItems.append(WTFMove(entry));
     }
 
@@ -347,7 +342,7 @@ void WebBackForwardList::clear()
         return;
 
     RefPtr<WebBackForwardListItem> currentItem = this->currentItem();
-    Vector<RefPtr<WebBackForwardListItem>> removedItems;
+    Vector<Ref<WebBackForwardListItem>> removedItems;
 
     if (!currentItem) {
         // We should only ever have no current item if we also have no current item index.
@@ -355,11 +350,7 @@ void WebBackForwardList::clear()
 
         // But just in case it does happen in practice we should get back into a consistent state now.
         for (size_t i = 0; i < size; ++i) {
-            ASSERT(m_entries[i]);
-            if (!m_entries[i])
-                continue;
-
-            didRemoveItem(*m_entries[i]);
+            didRemoveItem(m_entries[i]);
             removedItems.append(WTFMove(m_entries[i]));
         }
 
@@ -371,14 +362,13 @@ void WebBackForwardList::clear()
     }
 
     for (size_t i = 0; i < size; ++i) {
-        ASSERT(m_entries[i]);
-        if (m_entries[i] && m_entries[i] != currentItem)
-            didRemoveItem(*m_entries[i]);
+        if (m_entries[i].ptr() != currentItem)
+            didRemoveItem(m_entries[i]);
     }
 
     removedItems.reserveCapacity(size - 1);
     for (size_t i = 0; i < size; ++i) {
-        if (i != m_currentIndex && m_hasCurrentIndex && m_entries[i])
+        if (i != m_currentIndex && m_hasCurrentIndex)
             removedItems.append(WTFMove(m_entries[i]));
     }
 
@@ -386,7 +376,7 @@ void WebBackForwardList::clear()
 
     if (currentItem) {
         m_entries.shrink(1);
-        m_entries[0] = WTFMove(currentItem);
+        m_entries[0] = currentItem.releaseNonNull();
     } else {
         m_entries.clear();
         m_hasCurrentIndex = false;
@@ -404,7 +394,7 @@ BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool
         backForwardListState.currentIndex = m_currentIndex;
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
-        auto& entry = *m_entries[i];
+        auto& entry = m_entries[i];
 
         if (filter && !filter(entry)) {
             auto& currentIndex = backForwardListState.currentIndex;
@@ -414,7 +404,7 @@ BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool
             continue;
         }
 
-        backForwardListState.items.append(entry.itemState());
+        backForwardListState.items.append(entry->itemState());
     }
 
     if (backForwardListState.items.isEmpty())
@@ -427,7 +417,7 @@ BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool
 
 void WebBackForwardList::restoreFromState(BackForwardListState backForwardListState)
 {
-    Vector<RefPtr<WebBackForwardListItem>> items;
+    Vector<Ref<WebBackForwardListItem>> items;
     items.reserveInitialCapacity(backForwardListState.items.size());
 
     for (auto& backForwardListItemState : backForwardListState.items) {
