@@ -1,3 +1,15 @@
+2017-10-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r222392): [WPE][GTK] Many forms tests are failing due to broken event timestamps
+        https://bugs.webkit.org/show_bug.cgi?id=177449
+
+        Reviewed by Chris Dumez.
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::wallTimeForEvent):
+        * platform/gtk/GtkUtilities.h:
+        (WebCore::wallTimeForEvent):
+
 2017-10-04  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Fix playback of GIFs

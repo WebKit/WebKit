@@ -32,7 +32,15 @@ IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
 bool widgetIsOnscreenToplevelWindow(GtkWidget*);
 
 template<typename GdkEventType>
-WallTime wallTimeForEvent(const GdkEventType* event) { return MonotonicTime::fromRawSeconds(event->time / 1000.).approximateWallTime(); }
+WallTime wallTimeForEvent(const GdkEventType* event)
+{
+    // FIXME: 0 is GDK_CURRENT_TIME. We should stop including this header from
+    // HyphenationLibHyphen.cpp so that we can include gtk/gtk.h here and use
+    // GDK_CURRENT_TIME.
+    if (event->time == 0)
+        return WallTime::now();
+    return MonotonicTime::fromRawSeconds(event->time / 1000.).approximateWallTime();
+}
 
 template<>
 WallTime wallTimeForEvent(const GdkEvent*);

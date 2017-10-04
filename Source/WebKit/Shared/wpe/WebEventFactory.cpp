@@ -79,7 +79,7 @@ WallTime wallTimeForEventTime(uint64_t timestamp)
     // so as well, and so long as WTF::MonotonicTime continues to use
     // g_get_monotonic_time(). It also assumes the event timestamp is in
     // milliseconds.
-    return MonotonicTime::fromRawSeconds(timestamp / 1000.).approximateWallTime();
+    return timestamp ? MonotonicTime::fromRawSeconds(seconds / 1000.).approximateWallTime() : WallTime::now();
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event)

@@ -61,7 +61,10 @@ WallTime wallTimeForEvent(const GdkEvent* event)
     // be using CLOCK_MONOTONIC for its monotonic time, and so long as
     // g_get_monotonic_time() continues to do so as well, and so long as
     // WTF::MonotonicTime continues to use g_get_monotonic_time().
-    return MonotonicTime::fromRawSeconds(gdk_event_get_time(event) / 1000.).approximateWallTime();
+    auto time = gdk_event_get_time(event);
+    if (time == GDK_CURRENT_TIME)
+        return WallTime::now();
+    return MonotonicTime::fromRawSeconds(time / 1000.).approximateWallTime();
 }
 
 String defaultGtkSystemFont()
