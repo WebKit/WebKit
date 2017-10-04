@@ -1,3 +1,12 @@
+2017-10-04  Antti Koivisto  <antti@apple.com>
+
+        Fix typo.
+
+        Unreviewed.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::willBeDestroyed):
+
 2017-10-04  Daniel Bates  <dabates@apple.com>
 
         Teach TextDecorationPainter about pseudo styles
