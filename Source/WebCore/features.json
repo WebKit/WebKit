@@ -382,7 +382,7 @@
     {
         "name": "Media Capture and Streams",
         "status": {
-            "status": "Supported In Preview"
+            "status": "Supported"
         },
         "url": "https://w3c.github.io/mediacapture-main/",
         "keywords": ["mediastream", "getusermedia"],
@@ -415,7 +415,7 @@
     {
         "name": "Performance Observer",
         "status": {
-            "status": "Supported In Preview",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/performance-timeline/",
@@ -455,7 +455,7 @@
     {
         "name": "Resource Timing Level 2",
         "status": {
-            "status": "Supported In Preview",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/resource-timing/",
@@ -508,7 +508,7 @@
     {
         "name": "User Timing Level 2",
         "status": {
-            "status": "Supported in Preview",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/user-timing/",
@@ -580,7 +580,7 @@
     {
         "name": "Web Cryptography API",
         "status": {
-            "status": "Supported In Preview",
+            "status": "Supported",
             "enabled-by-default": true
         },
         "url": "http://www.w3.org/TR/WebCryptoAPI/",
@@ -616,7 +616,7 @@
     {
         "name": "WebRTC",
         "status": {
-            "status": "Supported In Preview"
+            "status": "Supported"
         },
         "url": "http://www.w3.org/TR/webrtc/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=124288",

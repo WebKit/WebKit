@@ -1,3 +1,15 @@
+2017-10-03  Jon Davis  <jond@apple.com>
+
+        Update several features to "Supported"
+        https://bugs.webkit.org/show_bug.cgi?id=177831
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update Media Capture and Streams, Performance Observer, Resource Timing, User Timing, 
+        Web Cryptography, and WebRTC.
+
+        * features.json:
+
 2017-10-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Reimplement CurlDownload with CurlRequest

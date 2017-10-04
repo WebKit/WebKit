@@ -43,7 +43,7 @@
     {
         "name": "WebAssembly",
         "status": {
-            "status": "Supported in Preview"
+            "status": "Supported"
         },
         "url": "http://webassembly.github.io",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=146064",
@@ -98,7 +98,7 @@
     {
         "name": "Async Iteration",
         "status": {
-            "status": "In development",
+            "status": "In Development",
             "enabled-by-default": false
         },
         "url": "https://tc39.github.io/proposal-async-iteration/",
@@ -229,7 +229,7 @@
     {
         "name": "Object rest/spread",
         "status": {
-            "status": "In development",
+            "status": "In Development",
             "enabled-by-default": false
         },
         "url": "https://github.com/tc39/proposal-object-rest-spread",
