@@ -118,15 +118,19 @@
     <branch repo="github.com" module="mrobinson/webkitgtk-test-dicts.git" checkoutdir="webkitgtk-test-dicts" tag="0.0.1"/>
   </autotools>
 
-  <autotools id="freetype6" autogen-sh="configure">
+  <autotools id="freetype6" autogen-sh="configure"
+        autogenargs="--with-harfbuzz=no">
     <branch module="freetype/freetype-2.8.tar.bz2" version="2.8"
             repo="savannah.gnu.org"
             hash="sha256:a3c603ed84c3c2495f9c9331fe6bba3bb0ee65e06ec331e0a0fb52158291b40b"/>
   </autotools>
 
-  <autotools id="harfbuzz" autogen-sh="configure">
+  <autotools id="harfbuzz" autogen-sh="configure"
+        autogenargs="--with-freetype=yes --with-fontconfig=yes --with-icu=yes">
     <dependencies>
       <dep package="icu"/>
+      <dep package="freetype6"/>
+      <dep package="fontconfig"/>
     </dependencies>
     <branch module="software/harfbuzz/release/harfbuzz-1.4.2.tar.bz2"
             version="1.4.2"
