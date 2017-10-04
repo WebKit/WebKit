@@ -1,3 +1,28 @@
+2017-10-04  Zalan Bujtas  <zalan@apple.com>
+
+        RenderMultiColumnFlow::m_beingEvacuated is redundant.
+        https://bugs.webkit.org/show_bug.cgi?id=177886
+        <rdar://problem/34815997>
+
+        Reviewed by Simon Fraser.
+
+        m_beingEvacuated was introduced to protect RenderMultiColumnFlow from triggering
+        remove/insert code while the column is being destroyed and the descendants are getting reparented.
+        However, 
+        1. the setMultiColumnFlow(nullptr) call already protects from triggering the remove callback
+        2. When adding the children back to their original position, we should not be able to find
+        this column as the enclosing block anymore (simply because we are moving the children as siblings
+        to the multicol renderer) 
+
+        Covered by existing tests.
+
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::RenderMultiColumnFlow):
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy):
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted):
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowRelativeWillBeRemoved):
+        * rendering/RenderMultiColumnFlow.h:
+
 2017-10-04  Antti Koivisto  <antti@apple.com>
 
         Fix typo.

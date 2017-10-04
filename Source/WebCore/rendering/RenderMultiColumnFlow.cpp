@@ -49,7 +49,6 @@ RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& s
     , m_needsHeightsRecalculation(false)
     , m_progressionIsInline(false)
     , m_progressionIsReversed(false)
-    , m_beingEvacuated(false)
 {
     setFragmentedFlowState(InsideInFragmentedFlow);
 }
@@ -165,8 +164,6 @@ void RenderMultiColumnFlow::populate()
 void RenderMultiColumnFlow::evacuateAndDestroy()
 {
     RenderBlockFlow* multicolContainer = multiColumnBlockFlow();
-    m_beingEvacuated = true;
-    
     // Delete the line box tree.
     deleteLines();
     
@@ -403,7 +400,7 @@ RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObje
 
 void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDescendant)
 {
-    if (gShiftingSpanner || m_beingEvacuated || newDescendant.isInFlowRenderFragmentedFlow())
+    if (gShiftingSpanner || newDescendant.isInFlowRenderFragmentedFlow())
         return;
 
     Vector<RenderPtr<RenderObject>> spannersToDelete;
@@ -468,8 +465,6 @@ void RenderMultiColumnFlow::handleSpannerRemoval(RenderObject& spanner)
 
 void RenderMultiColumnFlow::fragmentedFlowRelativeWillBeRemoved(RenderObject& relative)
 {
-    if (m_beingEvacuated)
-        return;
     invalidateFragments();
     if (is<RenderMultiColumnSpannerPlaceholder>(relative)) {
         // Remove the map entry for this spanner, but leave the actual spanner renderer alone. Also

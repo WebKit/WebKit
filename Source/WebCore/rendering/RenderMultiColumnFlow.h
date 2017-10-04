@@ -145,7 +145,6 @@ private:
     
     bool m_progressionIsInline;
     bool m_progressionIsReversed;
-    bool m_beingEvacuated;
     
     static bool gShiftingSpanner;
 };
