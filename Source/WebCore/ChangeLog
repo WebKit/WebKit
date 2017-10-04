@@ -1,3 +1,7 @@
+2017-10-04  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r222786. rdar://problem/34706688
+
 2017-10-03  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222786. rdar://problem/34706688

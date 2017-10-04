@@ -41,14 +41,13 @@ namespace WebCoreTestSupport {
 static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
 {
     RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
-    NSURLResponse *response;
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
-    // Because of <rdar://problem/34063313> we can't use this for decoding in older OS's.
     [unarchiver setRequiresSecureCoding:YES];
+    NSURLResponse *response;
     @try {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
+        // Because of <rdar://problem/34063313> we can't use this for decoding in older OS's.
         response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
 #else
-    @try {
         response = [unarchiver decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
 #endif
         [unarchiver finishDecoding];
