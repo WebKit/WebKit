@@ -40,9 +40,7 @@ void WebCorePasteboardFileReader::readFilename(const String& filename)
 
 void WebCorePasteboardFileReader::readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&& buffer)
 {
-    Vector<uint8_t> data;
-    data.append(buffer->data(), buffer->size());
-    files.append(File::create(Blob::create(WTFMove(data), type), filename));
+    files.append(File::create(Blob::create(buffer.get(), type), filename));
 }
 
 }

@@ -108,7 +108,7 @@ void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
 void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
 {
     if (isBodyNullOrOpaque()) {
-        promise->resolve<IDLInterface<Blob>>(Blob::create({ }, Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType))));
+        promise->resolve<IDLInterface<Blob>>(Blob::create(Vector<uint8_t> { }, Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType))));
         return;
     }
     if (isDisturbedOrLocked()) {

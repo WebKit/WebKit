@@ -122,6 +122,38 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
 
 #endif
 
+class DeferredLoadingScope {
+public:
+    DeferredLoadingScope(Frame& frame)
+        : m_frame(frame)
+        , m_cachedResourceLoader(frame.document()->cachedResourceLoader())
+    {
+        if (!frame.page()->defersLoading()) {
+            frame.page()->setDefersLoading(true);
+            m_didEnabledDeferredLoading = true;
+        }
+
+        if (m_cachedResourceLoader->imagesEnabled()) {
+            m_cachedResourceLoader->setImagesEnabled(false);
+            m_didDisableImage = true;
+        }
+    }
+
+    ~DeferredLoadingScope()
+    {
+        if (m_didEnabledDeferredLoading)
+            m_cachedResourceLoader->setImagesEnabled(true);
+        if (m_didDisableImage)
+            m_frame->page()->setDefersLoading(false);
+    }
+
+private:
+    Ref<Frame> m_frame;
+    Ref<CachedResourceLoader> m_cachedResourceLoader;
+    bool m_didEnabledDeferredLoading { false };
+    bool m_didDisableImage { false };
+};
+
 RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string)
 {
     if (!frame.page() || !frame.document())
@@ -131,25 +163,18 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
     if (!document.isHTMLDocument() || !string)
         return nullptr;
 
-    bool wasDeferringCallbacks = frame.page()->defersLoading();
-    if (!wasDeferringCallbacks)
-        frame.page()->setDefersLoading(true);
-
-    auto& cachedResourceLoader = document.cachedResourceLoader();
-    bool wasImagesEnabled = cachedResourceLoader.imagesEnabled();
-    if (wasImagesEnabled)
-        cachedResourceLoader.setImagesEnabled(false);
-
+    DeferredLoadingScope scope(frame);
     auto fragmentAndResources = createFragment(frame, string);
-    if (auto* loader = frame.loader().documentLoader()) {
-        for (auto& resource : fragmentAndResources.resources)
-            loader->addArchiveResource(WTFMove(resource));
-    }
+    if (!fragmentAndResources.fragment)
+        return nullptr;
 
-    if (wasImagesEnabled)
-        cachedResourceLoader.setImagesEnabled(true);
-    if (!wasDeferringCallbacks)
-        frame.page()->setDefersLoading(false);
+    HashMap<AtomicString, AtomicString> blobURLMap;
+    for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
+        auto blob = Blob::create(subresource->data(), subresource->mimeType());
+        String blobURL = DOMURL::createObjectURL(document, blob);
+        blobURLMap.set(subresource->url().string(), blobURL);
+    }
+    replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
 
     return WTFMove(fragmentAndResources.fragment);
 }
@@ -225,9 +250,7 @@ bool WebContentReader::readPlainText(const String& text)
 
 bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
 {
-    Vector<uint8_t> data;
-    data.append(buffer->data(), buffer->size());
-    auto blob = Blob::create(WTFMove(data), type);
+    auto blob = Blob::create(buffer.get(), type);
     ASSERT(frame.document());
     auto& document = *frame.document();
     String blobURL = DOMURL::createObjectURL(document, blob);

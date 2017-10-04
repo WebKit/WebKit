@@ -45,6 +45,7 @@ namespace WebCore {
 
 class Blob;
 class ScriptExecutionContext;
+class SharedBuffer;
 
 using BlobPartVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
 
@@ -58,6 +59,11 @@ public:
     static Ref<Blob> create(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     {
         return adoptRef(*new Blob(WTFMove(blobPartVariants), propertyBag));
+    }
+
+    static Ref<Blob> create(const SharedBuffer& buffer, const String& contentType)
+    {
+        return adoptRef(*new Blob(buffer, contentType));
     }
 
     static Ref<Blob> create(Vector<uint8_t>&& data, const String& contentType)
@@ -99,6 +105,7 @@ public:
 protected:
     Blob();
     Blob(Vector<BlobPartVariant>&&, const BlobPropertyBag&);
+    Blob(const SharedBuffer&, const String& contentType);
     Blob(Vector<uint8_t>&&, const String& contentType);
 
     enum ReferencingExistingBlobConstructor { referencingExistingBlobConstructor };

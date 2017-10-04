@@ -27,10 +27,8 @@
 
 #if WK_API_ENABLED && PLATFORM(COCOA)
 
-#import "AppKitSPI.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 

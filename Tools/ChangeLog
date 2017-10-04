@@ -1,3 +1,19 @@
+2017-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use blob URL when pasting RTFD instead of overriding DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=177801
+        <rdar://problem/34542270>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test for an assertion failure when pasting an empty RTFD as well as a test for pasting
+        RTFD with an image, which should result in an image element with a blob URL.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteRTFD.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/paste-rtfd.html:
+
 2017-10-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GLib] Let WebCore know of low power situations

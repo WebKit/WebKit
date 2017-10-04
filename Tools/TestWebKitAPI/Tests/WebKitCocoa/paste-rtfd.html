@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" contenteditable></div>
+<script>
+const editor = document.getElementById('editor');
+editor.focus();
+
+editor.addEventListener('paste', (event) => {
+    setTimeout(() => {
+       let img = document.querySelector('img');
+       if (img.complete)
+           notifyLoaded();
+       else
+           img.onload = notifyLoaded;
+    }, 0);
+});
+
+function notifyLoaded()
+{
+    webkit.messageHandlers.testHandler.postMessage('loaded');
+}
+
+</script>
+</body>
+</html>

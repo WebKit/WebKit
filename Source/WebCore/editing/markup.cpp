@@ -116,6 +116,25 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
     for (auto& change : changes)
         change.apply();
 }
+
+void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomicString, AtomicString>&& replacementMap)
+{
+    Vector<AttributeChange> changes;
+    for (auto& element : descendantsOfType<Element>(fragment)) {
+        if (!element.hasAttributes())
+            continue;
+        for (const Attribute& attribute : element.attributesIterator()) {
+            // FIXME: This won't work for srcset.
+            if (element.attributeContainsURL(attribute) && !attribute.value().isEmpty()) {
+                auto replacement = replacementMap.get(attribute.value());
+                if (!replacement.isNull())
+                    changes.append({ &element, attribute.name(), replacement });
+            }
+        }
+    }
+    for (auto& change : changes)
+        change.apply();
+}
     
 class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:

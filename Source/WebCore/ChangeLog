@@ -1,3 +1,39 @@
+2017-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use blob URL when pasting RTFD instead of overriding DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=177801
+        <rdar://problem/34542270>
+
+        Reviewed by Wenson Hsieh.
+
+        Before this patch, pasting RTFD resulted in images and other subresources in RTFD are being placed
+        into the document using WebKit fake URL, and DocumentLoader was overridden to return the appropriate
+        data upon resource requests. This is bad because there is no mechanism for websites to access its content.
+
+        Like r222119 and r208451, this patch fixes thie problem by using a blob URL instead of a WebKit fake URL.
+        This patch also adds a Blob::create variant which takes a SharedBuffer.
+
+        API Tests: PasteRTFD
+
+        * editing/WebCorePasteboardFileReader.cpp:
+        (WebCore::WebCorePasteboardFileReader::readBuffer):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::DeferredLoadingScope): Extracted out of createFragmentAndAddResources for clarity.
+        (WebCore::DeferredLoadingScope::DeferredLoadingScope):
+        (WebCore::DeferredLoadingScope::~DeferredLoadingScope):
+        (WebCore::createFragmentAndAddResources): Instead of adding resources to document loader, replace each
+        URL in the document by a blob URL.
+        (WebCore::WebContentReader::readImage):
+        * editing/markup.cpp:
+        (WebCore::replaceSubresourceURLs): Added. A helper to replace each URL in the document fragment by a blob
+        URL created for each subresource. This won't work for iframes or srcset but that's okay for now since DOM
+        constructed from RTFD doesn't use either.
+        * editing/markup.h:
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob): Added a variant which takes a SharedBuffer.
+        * fileapi/Blob.h:
+        (WebCore::Blob::create): Ditto.
+
 2017-10-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r222392): [WPE][GTK] Many forms tests are failing due to broken event timestamps

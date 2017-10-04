@@ -75,6 +75,8 @@ void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName
     if (!buffer)
         return;
     size = buffer->size();
+    if (!size)
+        return;
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
     if (!sharedMemoryBuffer)
         return;

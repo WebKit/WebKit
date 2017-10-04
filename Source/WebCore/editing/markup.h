@@ -29,6 +29,7 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLInterchange.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -43,6 +44,8 @@ class URL;
 class Node;
 class QualifiedName;
 class Range;
+
+void replaceSubresourceURLs(Ref<DocumentFragment>&&, HashMap<AtomicString, AtomicString>&&);
 
 enum EChildrenOnly { IncludeNode, ChildrenOnly };
 enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
