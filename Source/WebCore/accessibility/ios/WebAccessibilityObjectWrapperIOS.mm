@@ -29,6 +29,7 @@
 #if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
 #import "AccessibilityAttachment.h"
+#import "AccessibilityMediaObject.h"
 #import "AccessibilityRenderObject.h"
 #import "AccessibilityScrollView.h"
 #import "AccessibilityTable.h"
@@ -665,6 +666,70 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return traits;
 }
 
+- (BOOL)accessibilityIsWebInteractiveVideo
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    // Only make the video object interactive if it plays inline and has no native controls.
+    if (m_object->roleValue() != VideoRole || !is<AccessibilityMediaObject>(m_object))
+        return NO;
+    
+    AccessibilityMediaObject* mediaObject = downcast<AccessibilityMediaObject>(m_object);
+    return !mediaObject->isAutoplayEnabled() && mediaObject->isPlayingInline() && !downcast<AccessibilityMediaObject>(m_object)->hasControlsAttributeSet();
+}
+
+- (NSString *)interactiveVideoDescription
+{
+    if (!is<AccessibilityMediaObject>(m_object))
+        return nil;
+    return downcast<AccessibilityMediaObject>(m_object)->interactiveVideoDuration();
+}
+
+- (BOOL)accessibilityIsMediaPlaying
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    if (!is<AccessibilityMediaObject>(m_object))
+        return NO;
+    
+    return downcast<AccessibilityMediaObject>(m_object)->isPlaying();
+}
+
+- (BOOL)accessibilityIsMediaMuted
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    if (!is<AccessibilityMediaObject>(m_object))
+        return NO;
+    
+    return downcast<AccessibilityMediaObject>(m_object)->isMuted();
+}
+
+- (void)accessibilityToggleMuteForMedia
+{
+    if (![self _prepareAccessibilityCall])
+        return;
+    
+    if (!is<AccessibilityMediaObject>(m_object))
+        return;
+
+    downcast<AccessibilityMediaObject>(m_object)->toggleMute();
+}
+
+- (void)accessibilityVideoEnterFullscreen
+{
+    if (![self _prepareAccessibilityCall])
+        return;
+    
+    if (!is<AccessibilityMediaObject>(m_object))
+        return;
+    
+    downcast<AccessibilityMediaObject>(m_object)->enterFullscreen();
+}
+
 - (uint64_t)_accessibilityTextEntryTraits
 {
     uint64_t traits = [self _axTextEntryTrait];
@@ -828,6 +893,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
                 return true;
             return false;
             
+        case VideoRole:
+            return [self accessibilityIsWebInteractiveVideo];
+            
         // Links can sometimes be elements (when they only contain static text or don't contain anything).
         // They should not be elements when containing text and other types.
         case WebCoreLinkRole:
@@ -944,7 +1012,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case ToolbarRole:
         case UnknownRole:
         case UserInterfaceTooltipRole:
-        case VideoRole:
         case WebApplicationRole:
         case WebAreaRole:
         case WindowRole:
@@ -974,6 +1041,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (m_object->roleValue() == PopUpButtonRole)
         return NO;
     if (m_object->isFileUploadButton())
+        return NO;
+    if ([self accessibilityIsWebInteractiveVideo])
         return NO;
 
     return YES;
@@ -1040,6 +1109,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     NSString *axTitle = [self baseAccessibilityTitle];
     NSString *axDescription = [self baseAccessibilityDescription];
     NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
+    NSString *interactiveVideoDescription = [self interactiveVideoDescription];
     
     // We should expose the value of the input type date or time through AXValue instead of AXTitle.
     if (m_object->isInputTypePopupButton() && [axTitle isEqualToString:[self accessibilityValue]])
@@ -1061,6 +1131,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         appendStringToResult(result, valueLabel);
     }
     appendStringToResult(result, landmarkDescription);
+    appendStringToResult(result, interactiveVideoDescription);
     
     return [result length] ? result : nil;
 }

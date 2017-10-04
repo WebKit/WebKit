@@ -1,3 +1,62 @@
+2017-10-04  Nan Wang  <n_wang@apple.com>
+
+        AX: Make video objects accessible on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=177788
+        <rdar://problem/34778028>
+
+        Reviewed by Chris Fleizach.
+
+        Exposed certain <video> elements on iOS:
+        1. If they have no controls attribute set and have playsinline attribute set, that means
+           normally there are custom controls provided. 
+        2. Without autoplay attribute set. From iOS 10, with the motivation to improve performace by 
+           replacing GIF with <video>, elements will now honor the autoplay attribute if they
+           have no audio. So normally those <video> elements are not interactive.
+
+        Also provided functions to let iOS users interact with the video elements:
+        - Play/Pause: accessibilityActivate
+        - Fast forward: accessibilityIncrement
+        - Rewind: accessibilityDecrement
+
+        Test: accessibility/ios-simulator/video-elements-ios.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityMediaObject.cpp: Added.
+        (WebCore::AccessibilityMediaObject::AccessibilityMediaObject):
+        (WebCore::AccessibilityMediaObject::~AccessibilityMediaObject):
+        (WebCore::AccessibilityMediaObject::create):
+        (WebCore::AccessibilityMediaObject::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityMediaObject::mediaElement const):
+        (WebCore::AccessibilityMediaObject::stringValue const):
+        (WebCore::AccessibilityMediaObject::interactiveVideoDuration const):
+        (WebCore::AccessibilityMediaObject::mediaSeek):
+        (WebCore::AccessibilityMediaObject::toggleMute):
+        (WebCore::AccessibilityMediaObject::increment):
+        (WebCore::AccessibilityMediaObject::decrement):
+        (WebCore::AccessibilityMediaObject::press):
+        (WebCore::AccessibilityMediaObject::hasControlsAttributeSet const):
+        (WebCore::AccessibilityMediaObject::isPlaying const):
+        (WebCore::AccessibilityMediaObject::isMuted const):
+        (WebCore::AccessibilityMediaObject::isAutoplayEnabled const):
+        (WebCore::AccessibilityMediaObject::isPlayingInline const):
+        (WebCore::AccessibilityMediaObject::enterFullscreen const):
+        * accessibility/AccessibilityMediaObject.h: Added.
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isMediaObject const):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityIsWebInteractiveVideo]):
+        (-[WebAccessibilityObjectWrapper interactiveVideoDescription]):
+        (-[WebAccessibilityObjectWrapper accessibilityIsMediaPlaying]):
+        (-[WebAccessibilityObjectWrapper accessibilityIsMediaMuted]):
+        (-[WebAccessibilityObjectWrapper accessibilityToggleMuteForMedia]):
+        (-[WebAccessibilityObjectWrapper accessibilityVideoEnterFullscreen]):
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        (-[WebAccessibilityObjectWrapper stringValueShouldBeUsedInLabel]):
+        (-[WebAccessibilityObjectWrapper accessibilityLabel]):
+
 2017-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add basic support for the version of DataTransferItemList.add that takes a File

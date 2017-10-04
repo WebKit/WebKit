@@ -563,6 +563,7 @@ public:
     virtual bool isSpinButtonPart() const { return false; }
     virtual bool isMockObject() const { return false; }
     virtual bool isMediaControlLabel() const { return false; }
+    virtual bool isMediaObject() const { return false; }
     bool isSwitch() const { return roleValue() == SwitchRole; }
     bool isToggleButton() const { return roleValue() == ToggleButtonRole; }
     bool isTextControl() const;

@@ -1,3 +1,14 @@
+2017-10-04  Nan Wang  <n_wang@apple.com>
+
+        AX: Make video objects accessible on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=177788
+        <rdar://problem/34778028>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/video-elements-ios-expected.txt: Added.
+        * accessibility/ios-simulator/video-elements-ios.html: Added.
+
 2017-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add basic support for the version of DataTransferItemList.add that takes a File

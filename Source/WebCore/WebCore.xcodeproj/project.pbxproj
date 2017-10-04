@@ -5012,6 +5012,7 @@
 		A91C9FBF1B6586DE00AFFD54 /* AccessibilityTree.h in Headers */ = {isa = PBXBuildFile; fileRef = A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */; };
 		A91C9FC21B659A6700AFFD54 /* AccessibilityTreeItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */; };
 		A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */; };
+		A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9787CB31F5F5C6500C551C6 /* AccessibilityMediaObject.cpp */; };
 		A9C6E4E30D745E05006442E9 /* DOMMimeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */; };
 		A9C6E4E40D745E05006442E9 /* DOMMimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = A9C6E4E20D745E05006442E9 /* DOMMimeType.h */; };
 		A9C6E4E70D745E18006442E9 /* DOMMimeTypeArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E50D745E18006442E9 /* DOMMimeTypeArray.cpp */; };
@@ -13524,6 +13525,8 @@
 		A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTree.h; sourceTree = "<group>"; };
 		A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTreeItem.cpp; sourceTree = "<group>"; };
 		A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTreeItem.h; sourceTree = "<group>"; };
+		A9787CB21F5F599200C551C6 /* AccessibilityMediaObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaObject.h; sourceTree = "<group>"; };
+		A9787CB31F5F5C6500C551C6 /* AccessibilityMediaObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMediaObject.cpp; sourceTree = "<group>"; };
 		A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeType.cpp; sourceTree = "<group>"; };
 		A9C6E4E20D745E05006442E9 /* DOMMimeType.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMimeType.h; sourceTree = "<group>"; };
 		A9C6E4E50D745E18006442E9 /* DOMMimeTypeArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeTypeArray.cpp; sourceTree = "<group>"; };
@@ -17697,6 +17700,8 @@
 				07B0ABCE1032242200FBDC33 /* AccessibilityMathMLElement.h */,
 				2981CAA4131822EC00D12F2A /* AccessibilityMediaControls.cpp */,
 				07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */,
+				A9787CB21F5F599200C551C6 /* AccessibilityMediaObject.h */,
+				A9787CB31F5F5C6500C551C6 /* AccessibilityMediaObject.cpp */,
 				76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */,
 				76CDD2ED1103DA6600680521 /* AccessibilityMenuList.h */,
 				76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */,
@@ -31201,6 +31206,7 @@
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
 				37F57AC31A50728F00876F98 /* AccessibilityProgressIndicator.cpp in Sources */,
 				37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */,
+				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
 				37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */,
 				37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */,
 				37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */,

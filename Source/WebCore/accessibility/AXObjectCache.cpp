@@ -43,6 +43,7 @@
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityMathMLElement.h"
 #include "AccessibilityMediaControls.h"
+#include "AccessibilityMediaObject.h"
 #include "AccessibilityMenuList.h"
 #include "AccessibilityMenuListOption.h"
 #include "AccessibilityMenuListPopup.h"
@@ -443,6 +444,11 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 
     if (node && is<HTMLLabelElement>(node) && nodeHasRole(node, nullAtom()))
         return AccessibilityLabel::create(renderer);
+
+#if PLATFORM(IOS)
+    if (is<HTMLMediaElement>(node) && nodeHasRole(node, nullAtom()))
+        return AccessibilityMediaObject::create(renderer);
+#endif
 
 #if ENABLE(VIDEO)
     // media controls
