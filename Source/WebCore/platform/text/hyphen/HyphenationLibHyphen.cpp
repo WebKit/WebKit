@@ -62,7 +62,7 @@ static String extractLocaleFromDictionaryFilePath(const String& filePath)
     return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength);
 }
 
-static void scanDirectoryForDicionaries(const char* directoryPath, HashMap<AtomicString, Vector<String>>& availableLocales)
+static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomicString, Vector<String>>& availableLocales)
 {
     for (auto& filePath : listDirectory(directoryPath, "hyph_*.dic")) {
         String locale = extractLocaleFromDictionaryFilePath(filePath).convertToASCIILowercase();
@@ -97,15 +97,15 @@ static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, Vecto
     CString buildDirectory = webkitBuildDirectory();
     GUniquePtr<char> dictionariesPath(g_build_filename(buildDirectory.data(), "DependenciesGTK", "Root", "webkitgtk-test-dicts", nullptr));
     if (g_file_test(dictionariesPath.get(), static_cast<GFileTest>(G_FILE_TEST_IS_DIR))) {
-        scanDirectoryForDicionaries(dictionariesPath.get(), availableLocales);
+        scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
         return;
     }
 
     // Try alternative dictionaries path for people not using JHBuild.
     dictionariesPath.reset(g_build_filename(buildDirectory.data(), "webkitgtk-test-dicts", nullptr));
-    scanDirectoryForDicionaries(dictionariesPath.get(), availableLocales);
+    scanDirectoryForDictionaries(dictionariesPath.get(), availableLocales);
 #elif defined(TEST_HYPHENATAION_PATH)
-    scanDirectoryForDicionaries(TEST_HYPHENATAION_PATH, availableLocales);
+    scanDirectoryForDictionaries(TEST_HYPHENATAION_PATH, availableLocales);
 #else
     UNUSED_PARAM(availableLocales);
 #endif
@@ -119,7 +119,7 @@ static HashMap<AtomicString, Vector<String>>& availableLocales()
 
     if (!scannedLocales) {
         for (size_t i = 0; i < WTF_ARRAY_LENGTH(gDictionaryDirectories); i++)
-            scanDirectoryForDicionaries(gDictionaryDirectories[i], availableLocales);
+            scanDirectoryForDictionaries(gDictionaryDirectories[i], availableLocales);
 
 #if ENABLE(DEVELOPER_MODE)
         scanTestDictionariesDirectoryIfNecessary(availableLocales);
