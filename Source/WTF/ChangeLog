@@ -1,3 +1,13 @@
+2017-10-04  Tomas Popela  <tpopela@redhat.com>
+
+        Allow building without WOFF enabled
+
+        Reviewed by Michael Catanzaro.
+
+        Don't force the WOFF to be turned on, but follow what is set in cmake.
+
+        * wtf/Platform.h:
+
 2017-10-03  Saam Barati  <sbarati@apple.com>
 
         Implement polymorphic prototypes
