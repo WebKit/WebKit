@@ -1,5 +1,22 @@
 2017-10-04  Zalan Bujtas  <zalan@apple.com>
 
+        RenderFragmentContainerRange should not hold raw pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=177854
+        <rdar://problem/34805954>
+
+        Reviewed by Antti Koivisto.
+
+        m_startFragment and m_endFragment object's lifetimes are not tied to the lifetime of
+        RenderFragmentContainerRange.
+
+        Covered by existing tests.
+
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::setFragmentRangeForBox):
+        * rendering/RenderFragmentedFlow.h:
+
+2017-10-04  Zalan Bujtas  <zalan@apple.com>
+
         RenderMultiColumnSpannerPlaceholder should not hold raw pointers.
         https://bugs.webkit.org/show_bug.cgi?id=177840
         <rdar://problem/34800109>

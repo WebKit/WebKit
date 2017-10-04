@@ -564,20 +564,15 @@ void RenderFragmentedFlow::setFragmentRangeForBox(const RenderBox& box, RenderFr
 {
     ASSERT(hasFragments());
     ASSERT(startFragment && endFragment && startFragment->fragmentedFlow() == this && endFragment->fragmentedFlow() == this);
-
-    auto it = m_fragmentRangeMap.find(&box);
-    if (it == m_fragmentRangeMap.end()) {
-        m_fragmentRangeMap.set(&box, RenderFragmentContainerRange(startFragment, endFragment));
+    auto result = m_fragmentRangeMap.set(&box, RenderFragmentContainerRange(startFragment, endFragment));
+    if (result.isNewEntry)
         return;
-    }
 
     // If nothing changed, just bail.
-    RenderFragmentContainerRange& range = it->value;
+    auto& range = result.iterator->value;
     if (range.startFragment() == startFragment && range.endFragment() == endFragment)
         return;
-
     clearRenderBoxFragmentInfoAndCustomStyle(box, startFragment, endFragment, range.startFragment(), range.endFragment());
-    range.setRange(startFragment, endFragment);
 }
 
 bool RenderFragmentedFlow::hasCachedFragmentRangeForBox(const RenderBox& box) const

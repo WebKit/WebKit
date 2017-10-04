@@ -31,6 +31,7 @@
 
 #include "LayerFragment.h"
 #include "RenderBlockFlow.h"
+#include "RenderFragmentContainer.h"
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
@@ -214,11 +215,7 @@ protected:
 
     class RenderFragmentContainerRange {
     public:
-        RenderFragmentContainerRange()
-        {
-            setRange(nullptr, nullptr);
-        }
-
+        RenderFragmentContainerRange() = default;
         RenderFragmentContainerRange(RenderFragmentContainer* start, RenderFragmentContainer* end)
         {
             setRange(start, end);
@@ -226,19 +223,19 @@ protected:
         
         void setRange(RenderFragmentContainer* start, RenderFragmentContainer* end)
         {
-            m_startFragment = start;
-            m_endFragment = end;
+            m_startFragment = makeWeakPtr(start);
+            m_endFragment = makeWeakPtr(end);
             m_rangeInvalidated = true;
         }
 
-        RenderFragmentContainer* startFragment() const { return m_startFragment; }
-        RenderFragmentContainer* endFragment() const { return m_endFragment; }
+        RenderFragmentContainer* startFragment() const { return m_startFragment.get(); }
+        RenderFragmentContainer* endFragment() const { return m_endFragment.get(); }
         bool rangeInvalidated() const { return m_rangeInvalidated; }
         void clearRangeInvalidated() { m_rangeInvalidated = false; }
 
     private:
-        RenderFragmentContainer* m_startFragment;
-        RenderFragmentContainer* m_endFragment;
+        WeakPtr<RenderFragmentContainer> m_startFragment;
+        WeakPtr<RenderFragmentContainer> m_endFragment;
         bool m_rangeInvalidated;
     };
 
