@@ -1,3 +1,16 @@
+2017-10-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r222840.
+
+        This change breaks internal builds.
+
+        Reverted changeset:
+
+        "Generate a compile error if release is built without compiler
+        optimizations"
+        https://bugs.webkit.org/show_bug.cgi?id=177665
+        http://trac.webkit.org/changeset/222840
+
 2017-10-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Generate a compile error if release is built without compiler optimizations
