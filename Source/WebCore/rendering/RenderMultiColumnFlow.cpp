@@ -348,7 +348,7 @@ RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObje
         // content before and after the spanner, so that it becomes separate line boxes. Secondly,
         // this placeholder serves as a break point for column sets, so that, when encountered, we
         // end flowing one column set and move to the next one.
-        auto newPlaceholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(this, downcast<RenderBox>(descendant), &container->style());
+        auto newPlaceholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(*this, downcast<RenderBox>(descendant), container->style());
         auto& placeholder = *newPlaceholder;
         container->addChild(WTFMove(newPlaceholder), descendant.nextSibling());
         auto takenDescendant = container->takeChild(descendant);

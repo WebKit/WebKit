@@ -1,3 +1,20 @@
+2017-10-04  Zalan Bujtas  <zalan@apple.com>
+
+        RenderMultiColumnSpannerPlaceholder should not hold raw pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=177840
+        <rdar://problem/34800109>
+
+        Reviewed by Sam Weinig.
+
+        Though we should always have a spanner as long as there's a RenderMultiColumnSpannerPlaceholder,
+        the spanner inject/removal logic is complicated enough to protect them with WeakPtr.  
+
+        Covered by existing tests.
+
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+
 2017-10-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] GtkUtilities.h should not be included in libs not linked to GTK
