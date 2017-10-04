@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-:matches(.navigation-bar, .toolbar) .item.flexible-space {
-    flex: 1;
+.network-resource-detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* left or right set by NetworkTableView on display / resize */
+    z-index: 10;
+    background-color: white;
 }
 
-:matches(.navigation-bar, .toolbar) .item.flexible-space.align-start > .item {
-    -webkit-margin-end: auto;
+.network-resource-detail .navigation-bar {
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 1;
 }
 
-:matches(.navigation-bar, .toolbar) .item.flexible-space.align-end > .item {
-    -webkit-margin-start: auto;
+.network-resource-detail .item.close > .glyph {
+    border-radius: 2px;
+    padding: 2px;
+    background: white;
+}
+
+.network-resource-detail .item.close > .glyph:hover {
+    background-color: var(--button-background-color-hover);
+}
+
+.network-resource-detail .item.close > .glyph:active {
+    background-color: var(--button-background-color-pressed);
+}
+
+.network .network-resource-detail .navigation-bar .item.radio.button.text-only {
+    color: inherit;
+    background-color: inherit;
+}
+
+.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected {
+    color: var(--selected-background-color);
+    background-color: white;
+}
+
+.network-resource-detail > .content-browser {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }

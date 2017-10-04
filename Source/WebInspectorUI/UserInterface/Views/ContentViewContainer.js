@@ -83,6 +83,10 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         if (!(contentView instanceof WI.ContentView))
             return null;
 
+        // No change.
+        if (contentView === this.currentContentView && !cookie)
+            return contentView;
+
         // ContentViews can be shared between containers. If this content view is
         // not owned by us, it may need to be transferred to this container.
         if (contentView.parentContainer !== this)

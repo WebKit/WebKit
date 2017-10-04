@@ -33,6 +33,6 @@
     flex: 1;
 }
 
-.content-browser > .navigation-bar > .item {
+.content-browser > .navigation-bar .item {
     height: 100%;
 }

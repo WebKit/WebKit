@@ -73,6 +73,9 @@ WI.Table = class Table extends WI.View
         this._fillerRow = this._listElement.appendChild(document.createElement("li"));
         this._fillerRow.className = "filler";
 
+        this._resizersElement = this._element.appendChild(document.createElement("div"));
+        this._resizersElement.className = "resizers";
+
         this._cachedRows = new Map;
 
         this._columnSpecs = new Map;
@@ -121,6 +124,7 @@ WI.Table = class Table extends WI.View
     get delegate() { return this._delegate; }
     get rowHeight() { return this._rowHeight; }
     get selectedRow() { return this._selectedRowIndex; }
+    get scrollContainer() { return this._scrollContainerElement; }
 
     get sortOrder()
     {
@@ -986,12 +990,12 @@ WI.Table = class Table extends WI.View
                 do {
                     let resizer = new WI.Resizer(WI.Resizer.RuleOrientation.Vertical, this);
                     this._resizers.push(resizer);
-                    this.element.appendChild(resizer.element);
+                    this._resizersElement.appendChild(resizer.element);
                 } while (this._resizers.length < resizersNeededCount);
             } else {
                 do {
                     let resizer = this._resizers.pop();
-                    this.element.removeChild(resizer.element);
+                    this._resizersElement.removeChild(resizer.element);
                 } while (this._resizers.length > resizersNeededCount);
             }
         }

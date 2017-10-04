@@ -59,3 +59,11 @@ body[dir=rtl] .content-view.network .table .cell.name > .status {
     width: 14px;
     height: 14px;
 }
+
+.showing-detail .table .cell:not(.name) {
+    display: none;
+}
+
+.showing-detail .table .resizer:not(:first-of-type) {
+    display: none;
+}

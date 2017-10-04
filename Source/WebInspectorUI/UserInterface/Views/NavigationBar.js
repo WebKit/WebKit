@@ -42,6 +42,9 @@ WI.NavigationBar = class NavigationBar extends WI.View
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
         this.element.addEventListener("mousedown", this._mouseDown.bind(this), false);
 
+        this._mouseMovedEventListener = this._mouseMoved.bind(this);
+        this._mouseUpEventListener = this._mouseUp.bind(this);
+
         this._forceLayout = false;
         this._minimumWidth = NaN;
         this._navigationItems = [];
@@ -301,9 +304,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         this._mouseIsDown = true;
 
-        this._mouseMovedEventListener = this._mouseMoved.bind(this);
-        this._mouseUpEventListener = this._mouseUp.bind(this);
-
         if (typeof this.selectedNavigationItem.dontPreventDefaultOnNavigationBarMouseDown === "function"
             && this.selectedNavigationItem.dontPreventDefaultOnNavigationBarMouseDown()
             && this._previousSelectedNavigationItem === this.selectedNavigationItem)
@@ -362,9 +362,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         document.removeEventListener("mousemove", this._mouseMovedEventListener, false);
         document.removeEventListener("mouseup", this._mouseUpEventListener, false);
-
-        delete this._mouseMovedEventListener;
-        delete this._mouseUpEventListener;
 
         // Restore the tabIndex so the navigation bar can be in the keyboard tab loop.
         this.element.tabIndex = 0;

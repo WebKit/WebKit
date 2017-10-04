@@ -1,0 +1,177 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
+{
+    constructor(resource, delegate)
+    {
+        super();
+
+        console.assert(resource instanceof WI.Resource);
+
+        this._resource = resource;
+        this._delegate = delegate || null;
+
+        this.element.classList.add("network-resource-detail");
+
+        this._contentBrowser = null;
+        this._headersContentView = null;
+        this._cookiesContentView = null;
+        this._timingContentView = null;
+        this._detailsContentView = null;
+    }
+
+    // Public
+
+    get resource() { return this._resource; }
+
+    shown()
+    {
+        if (!this._contentBrowser)
+            return;
+
+        this._showPreferredContentView();
+        this._contentBrowser.shown();
+    }
+
+    hidden()
+    {
+        this._contentBrowser.hidden();
+    }
+
+    dispose()
+    {
+        this._delegate = null;
+
+        this._contentBrowser.contentViewContainer.closeAllContentViews();
+    }
+
+    // Protected
+
+    initialLayout()
+    {
+        let closeNavigationItem = new WI.ButtonNavigationItem("close", WI.UIString("Close detail view"), "Images/CloseLarge.svg", 16, 16);
+        closeNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCloseButton.bind(this));
+        closeNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+
+        let contentViewNavigationItemsGroup = new WI.GroupNavigationItem;
+        let contentViewNavigationItemsFlexItem = new WI.FlexibleSpaceNavigationItem(contentViewNavigationItemsGroup, WI.FlexibleSpaceNavigationItem.Align.End);
+        contentViewNavigationItemsFlexItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+
+        const disableBackForward = true;
+        const disableFindBanner = false;
+        this._contentBrowser = new WI.ContentBrowser(null, this, disableBackForward, disableFindBanner, contentViewNavigationItemsFlexItem, contentViewNavigationItemsGroup);
+
+        // Insert all of our custom navigation items at the start of the ContentBrowser's NavigationBar.
+        let index = 0;
+        this._contentBrowser.navigationBar.insertNavigationItem(closeNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(new WI.FlexibleSpaceNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("preview", WI.UIString("Preview")), index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("headers", WI.UIString("Headers")), index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("cookies", WI.UIString("Cookies")), index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("timing", WI.UIString("Timing")), index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("details", WI.UIString("Details")), index++);
+        this._contentBrowser.navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
+
+        this.addSubview(this._contentBrowser);
+
+        this._showPreferredContentView();
+    }
+
+    // Private
+
+    _showPreferredContentView()
+    {
+        // Restore the preferred navigation item.
+        let firstNavigationItem = null;
+        let defaultIdentifier = WI.settings.selectedNetworkDetailContentViewIdentifier.value;
+        for (let navigationItem of this._contentBrowser.navigationBar.navigationItems) {
+            if (!(navigationItem instanceof WI.RadioButtonNavigationItem))
+                continue;
+
+            if (!firstNavigationItem)
+                firstNavigationItem = navigationItem;
+
+            if (navigationItem.identifier === defaultIdentifier) {
+                this._contentBrowser.navigationBar.selectedNavigationItem = navigationItem;
+                return;
+            }
+        }
+
+        console.assert(firstNavigationItem, "Should have found at least one navigation item above");
+        this._contentBrowser.navigationBar.selectedNavigationItem = firstNavigationItem;
+    }
+
+    _showContentViewForNavigationItem(navigationItem)
+    {
+        switch (navigationItem.identifier) {
+        case "preview":
+            this._contentBrowser.showContentViewForRepresentedObject(this._resource);
+            break;
+        case "headers":
+            // FIXME: Provide a Resource Headers View.
+            if (!this._headersContentView)
+                this._headersContentView = new WI.DebugContentView("Headers");
+            this._contentBrowser.showContentView(this._headersContentView);
+            break;
+        case "cookies":
+            // FIXME: Provide a Resource Cookies View.
+            if (!this._cookiesContentView)
+                this._cookiesContentView = new WI.DebugContentView("Cookies");
+            this._contentBrowser.showContentView(this._cookiesContentView);
+            break;
+        case "timing":
+            // FIXME: Provide a Resource Timing View.
+            if (!this._timingContentView)
+                this._timingContentView = new WI.DebugContentView("Timing");
+            this._contentBrowser.showContentView(this._timingContentView);
+            break;
+        case "details":
+            // FIXME: Provide a Resource Details View.
+            if (!this._detailsContentView)
+                this._detailsContentView = new WI.DebugContentView("Details");
+            this._contentBrowser.showContentView(this._detailsContentView);
+            break;
+        }
+    }
+
+    _navigationItemSelected(event)
+    {
+        let navigationItem = event.target.selectedNavigationItem;
+        if (!(navigationItem instanceof WI.RadioButtonNavigationItem))
+            return;
+
+        this._showContentViewForNavigationItem(navigationItem);
+
+        console.assert(navigationItem.identifier);
+        WI.settings.selectedNetworkDetailContentViewIdentifier.value = navigationItem.identifier;
+    }
+
+    _handleCloseButton(event)
+    {
+        if (this._delegate && this._delegate.networkResourceDetailViewClose)
+            this._delegate.networkResourceDetailViewClose(this);
+    }
+};

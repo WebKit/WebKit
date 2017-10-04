@@ -29,6 +29,9 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
     {
         super(identifier);
 
+        this._collapsedComponent = null;
+        this._needsUpdate = false;
+
         this.components = components;
     }
 
@@ -60,20 +63,18 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
         if (this._components && componentsEqual(this._components, newComponents))
             return;
 
-        for (var i = 0; this._components && i < this._components.length; ++i)
-            this._components[i].removeEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
+        if (this._components) {
+            for (let component of this._components)
+                component.removeEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
+        }
 
-        // Make a shallow copy of the newComponents array using slice.
         this._components = newComponents.slice(0);
 
-        for (var i = 0; i < this._components.length; ++i)
-            this._components[i].addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
+        for (let component of this._components)
+            component.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
 
-        this.element.removeChildren();
-        delete this._collapsedComponent;
-
-        for (var i = 0; i < newComponents.length; ++i)
-            this.element.appendChild(newComponents[i].element);
+        // Wait until layout to update the DOM.
+        this._needsUpdate = true;
 
         // Update layout for the so other items can adjust to the extra space (or lack thereof) too.
         if (this.parentNavigationBar)
@@ -100,6 +101,8 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
 
     updateLayout(expandOnly)
     {
+        this._updateComponentsIfNeeded();
+
         super.updateLayout(expandOnly);
 
         var navigationBar = this.parentNavigationBar;
@@ -108,7 +111,7 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
 
         if (this._collapsedComponent) {
             this.element.removeChild(this._collapsedComponent.element);
-            delete this._collapsedComponent;
+            this._collapsedComponent = null;
         }
 
         // Expand our components to full width to test if the items can fit at full width.
@@ -243,6 +246,20 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
     }
 
     // Private
+
+    _updateComponentsIfNeeded()
+    {
+        if (!this._needsUpdate)
+            return;
+
+        this._needsUpdate = false;
+
+        this.element.removeChildren();
+        this._collapsedComponent = null;
+
+        for (let component of this._components)
+            this.element.appendChild(component.element);
+    }
 
     _siblingPathComponentWasSelected(event)
     {

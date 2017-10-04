@@ -94,6 +94,15 @@ body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::af
     overflow-y: scroll;
 }
 
+.table > .resizers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
 .table > .data-container.not-scrollable {
     overflow-y: hidden;
 }

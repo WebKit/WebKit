@@ -1,5 +1,146 @@
 2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Detail Views for resources in Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=177553
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and resources.
+
+        * UserInterface/Base/Main.js:
+        (WI._focusedContentBrowser):
+        Detect nested content browsers instead of only top level tab content browsers.
+
+        * UserInterface/Base/Setting.js:
+        Add a new global setting for which Network Detail view is preferred.
+
+        * UserInterface/Views/ContentBrowser.css:
+        (.content-browser > .navigation-bar .item):
+        (.content-browser > .navigation-bar > .item): Deleted.
+        Generalize a navigation item style so it works on items nested inside a group.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype._updateContentViewSelectionPathNavigationItem):
+        (WI.ContentBrowser.prototype._updateContentViewNavigationItems):
+        (WI.ContentBrowser.prototype._removeAllNavigationItems):
+        Give ContentBrowser a way to group all ContentView specific navigation items
+        inside a GroupNavigationItem. This lets the client decide what to do with
+        those navigation items, instead of default behavior in the navigation bar.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype.showContentView):
+        Avoid a flash when showContentView is called with the current content view.
+
+        * UserInterface/Views/FlexibleSpaceNavigationItem.css:
+        (:matches(.navigation-bar, .toolbar) .item.flexible-space.align-start > .item):
+        (:matches(.navigation-bar, .toolbar) .item.flexible-space.align-end > .item):
+        When containing a navigation item decide where you want the items to align to.
+
+        * UserInterface/Views/FlexibleSpaceNavigationItem.js:
+        (WI.FlexibleSpaceNavigationItem):
+        (WI.FlexibleSpaceNavigationItem.prototype.updateLayout):
+        Provide an option to embed a NavigationItem within a FlexibleSpace. Its behavior right
+        now is rather simple. If the embedded Item fits in the current available space it is
+        shown. If it doesn't fit, it is hidden and we have just a flexible space. This is used
+        in the network detail view's navigation bar to keep the main navigation items centered
+        while allowing for buttons to show up on the side without affecting the centering.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar):
+        (WI.NavigationBar.prototype._mouseDown):
+        (WI.NavigationBar.prototype._mouseUp):
+        Simplify event registration. This would also help avoid cases where we
+        might have registered multiple mousedown handlers.
+
+        * UserInterface/Views/GroupNavigationItem.js:
+        (WI.GroupNavigationItem):
+        (WI.GroupNavigationItem.prototype.get navigationItems):
+        (WI.GroupNavigationItem.prototype.set navigationItems):
+        (WI.GroupNavigationItem.prototype.get width):
+        (WI.GroupNavigationItem.prototype.get minimumWidth):
+        (WI.GroupNavigationItem.prototype._updateItems):
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WI.HierarchicalPathNavigationItem):
+        (WI.HierarchicalPathNavigationItem.prototype.set components):
+        (WI.HierarchicalPathNavigationItem.prototype.updateLayout):
+        (WI.HierarchicalPathNavigationItem.prototype._updateComponentsIfNeeded):
+        Defer DOM modifications until layout for NavigationItems container classes
+        that change items/components dynamically. This reduces UI flashing in the
+        bar when items/components change by coalescing all DOM updates at the same
+        time; when the NavigationBar does its next layout.
+
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.network-resource-detail):
+        (.network-resource-detail .navigation-bar):
+        (.network-resource-detail .item.close > .glyph):
+        (.network-resource-detail .item.close > .glyph:hover):
+        (.network-resource-detail .item.close > .glyph:active):
+        (.network .network-resource-detail .navigation-bar .item.radio.button.text-only):
+        (.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected):
+        (.network-resource-detail > .content-browser):
+        Styles for the detail view's navigation bar.
+
+        * UserInterface/Views/NetworkResourceDetailView.js: Added.
+        (WI.NetworkResourceDetailView):
+        (WI.NetworkResourceDetailView.prototype.get resource):
+        (WI.NetworkResourceDetailView.prototype.shown):
+        (WI.NetworkResourceDetailView.prototype.hidden):
+        (WI.NetworkResourceDetailView.prototype.dispose):
+        (WI.NetworkResourceDetailView.prototype.initialLayout):
+        (WI.NetworkResourceDetailView.prototype._showPreferredContentView):
+        (WI.NetworkResourceDetailView.prototype._showContentViewForNavigationItem):
+        (WI.NetworkResourceDetailView.prototype._navigationItemSelected):
+        (WI.NetworkResourceDetailView.prototype._handleCloseButton):
+        ContentBrowser with customized navigation bar. This container has a fixed
+        list of ContentViews all relating to the Resource. The detail view has
+        a single delegate method for its close button. Since it maintains a
+        ContentBrowser it needs to expose shown/hidden/dispose logic to ensure
+        proper ContentView lifecycle events.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.showing-detail .table .cell:not(.name)):
+        (.showing-detail .table .resizer:not(:first-of-type)):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.shown):
+        (WI.NetworkTableContentView.prototype.hidden):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.networkResourceDetailViewClose):
+        (WI.NetworkTableContentView.prototype.tableSortChanged):
+        (WI.NetworkTableContentView.prototype.tableCellClicked):
+        (WI.NetworkTableContentView.prototype.tableSelectedRowChanged):
+        (WI.NetworkTableContentView.prototype.layout):
+        (WI.NetworkTableContentView.prototype._hideResourceDetailView):
+        (WI.NetworkTableContentView.prototype._showResourceDetailView):
+        (WI.NetworkTableContentView.prototype._positionDetailView):
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._typeFilterScopeBarSelectionChanged):
+        (WI.NetworkTableContentView.prototype._restoreSelectedRow):
+        (WI.NetworkTableContentView.prototype._tableNameColumnDidChangeWidth):
+        Behavior for selecting a row and showing / hiding the detail view.
+        The detail view is positioned beside the Network Table's "name" column
+        and resizes when that column resizes.
+
+        * UserInterface/Views/Resizer.css:
+        (.resizer):
+        * UserInterface/Views/Table.css:
+        (.table > .resizers):
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.get scrollContainer):
+        (WI.Table.prototype._positionResizerElements):
+        To let clients customize the table a bit, put resizers into their own
+        container and expose the scroll container.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add a new button hover color, slightly lighter than the existing button active color.
+
+2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix Beacon and Ping folderization issues
         https://bugs.webkit.org/show_bug.cgi?id=177885
 
