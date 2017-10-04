@@ -125,10 +125,6 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     if (m_frameBufferCache.isEmpty())
         return; // Nothing to do.
 
-    // Lock the decodelock here, as we are going to destroy the GIFImageReader and doing so while
-    // there's an ongoing decode will cause a crash.
-    LockHolder locker(m_decodeLock);
-
     // The "-1" here is tricky.  It does not mean that |clearBeforeFrame| is the
     // last frame we wish to preserve, but rather that we never want to clear
     // the very last frame in the cache: it's empty (so clearing it is
@@ -170,10 +166,6 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
         if (j->isInvalid())
             j->clear();
     }
-
-    // When some frames are cleared, the reader is out of sync, since the caller might ask for any frame not
-    // necessarily in the order expected by the reader. See https://bugs.webkit.org/show_bug.cgi?id=159089.
-    m_reader = nullptr;
 }
 
 bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels)
@@ -302,7 +294,6 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query, bool allDataR
     if (failed())
         return;
 
-    LockHolder locker(m_decodeLock);
     if (!m_reader) {
         m_reader = std::make_unique<GIFImageReader>(this);
         m_reader->setData(m_data.get());

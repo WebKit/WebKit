@@ -363,6 +363,12 @@ bool GIFImageReader::decode(GIFImageDecoder::GIFQuery query, unsigned haltAtFram
     if (query != GIFImageDecoder::GIFFullQuery)
         return true;
 
+    // Already decoded frames can be deleted from the cache and then they require to be decoded again, so
+    // the haltAtFrame value we receive here may be lower than m_currentDecodingFrame. In this case
+    // we position m_currentDecodingFrame to haltAtFrame and decode from there.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=176089.
+    m_currentDecodingFrame = std::min(m_currentDecodingFrame, static_cast<size_t>(haltAtFrame));
+
     while (m_currentDecodingFrame < std::min(m_frames.size(), static_cast<size_t>(haltAtFrame))) {
         bool frameDecoded = false;
         GIFFrameContext* currentFrame = m_frames[m_currentDecodingFrame].get();

@@ -80,7 +80,6 @@ private:
     bool m_currentBufferSawAlpha;
     mutable RepetitionCount m_repetitionCount { RepetitionCountOnce };
     std::unique_ptr<GIFImageReader> m_reader;
-    Lock m_decodeLock;
 };
 
 } // namespace WebCore
