@@ -1,3 +1,17 @@
+2017-10-04  Antti Koivisto  <antti@apple.com>
+
+        Add assert verifying all renderers get destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=177870
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::willBeDestroyed):
+
+            Add assert to verify all renderers for this tree have been destroyed before the RenderView is.
+
+        * rendering/RenderView.h:
+
 2017-10-04  Daniel Bates  <dabates@apple.com>
 
         TextDecorationPainter::m_wavyOffset should be a float

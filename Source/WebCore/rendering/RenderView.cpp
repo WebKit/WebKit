@@ -641,6 +641,13 @@ bool RenderView::isScrollableOrRubberbandableBox() const
     return frameView().isScrollable(defineScrollable);
 }
 
+void RenderView::willBeDestroyed()
+{
+    RenderBlockFlow::willBeDestroyed();
+
+    ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have be destroyed");
+}
+
 void RenderView::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     rects.append(snappedIntRect(accumulatedOffset, layer()->size()));
