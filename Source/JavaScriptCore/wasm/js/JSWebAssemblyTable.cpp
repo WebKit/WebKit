@@ -62,7 +62,7 @@ JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, Ref<Wasm::T
     // But for now, we're not doing that.
     m_jsFunctions = MallocPtr<WriteBarrier<JSObject>>::malloc(sizeof(WriteBarrier<JSObject>) * static_cast<size_t>(size()));
     for (uint32_t i = 0; i < size(); ++i)
-        new (&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();
+        default_construct_at(&m_jsFunctions.get()[i]);
 }
 
 void JSWebAssemblyTable::finishCreation(VM& vm)
@@ -102,7 +102,7 @@ bool JSWebAssemblyTable::grow(uint32_t delta)
     m_jsFunctions.realloc(sizeof(WriteBarrier<JSObject>) * newSize);
 
     for (size_t i = oldSize; i < newSize; ++i)
-        new (&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();
+        default_construct_at(&m_jsFunctions.get()[i]);
 
     return true;
 }

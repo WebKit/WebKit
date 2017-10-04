@@ -42,9 +42,6 @@ namespace Wasm {
 
 class Table : public ThreadSafeRefCounted<Table> {
 public:
-    enum class CreateFail {
-        InvalidSize,
-    };
     static RefPtr<Table> create(uint32_t initial, std::optional<uint32_t> maximum);
 
     JS_EXPORT_PRIVATE ~Table();

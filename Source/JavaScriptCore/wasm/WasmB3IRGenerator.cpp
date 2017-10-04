@@ -369,7 +369,10 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
         case MemoryMode::BoundsChecking:
             break;
         case MemoryMode::Signaling:
-        // Most memory accesses in signaling mode don't do an explicit exception check because they can rely on fault handling to detect out-of-bounds accesses. FaultSignalHandler nonetheless needs the thunk to exist so that it can jump to that thunk.
+            // Most memory accesses in signaling mode don't do an explicit
+            // exception check because they can rely on fault handling to detect
+            // out-of-bounds accesses. FaultSignalHandler nonetheless needs the
+            // thunk to exist so that it can jump to that thunk.
             if (UNLIKELY(!Thunks::singleton().stub(throwExceptionFromWasmThunkGenerator)))
                 CRASH();
             break;
@@ -473,8 +476,8 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memor
             const auto& sizeRegs = pinnedRegs->sizeRegisters;
             ASSERT(sizeRegs.size() >= 1);
             ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
-            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfSize()), sizeRegs[0].sizeRegister);
-            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfMemory()), baseMemory);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Memory::offsetOfSize()), sizeRegs[0].sizeRegister);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Memory::offsetOfMemory()), baseMemory);
             for (unsigned i = 1; i < sizeRegs.size(); ++i)
                 jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
         });
@@ -583,8 +586,8 @@ auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 {
     Value* memoryObject = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfWasmMemory()));
 
-    static_assert(sizeof(decltype(static_cast<Wasm::Memory*>(nullptr)->size())) == sizeof(uint64_t), "codegen relies on this size");
-    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), memoryObject, safeCast<int32_t>(Wasm::Memory::offsetOfSize()));
+    static_assert(sizeof(decltype(static_cast<Memory*>(nullptr)->size())) == sizeof(uint64_t), "codegen relies on this size");
+    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), memoryObject, safeCast<int32_t>(Memory::offsetOfSize()));
     
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
@@ -1107,7 +1110,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
 
         // FIXME: Let's remove this indirection by creating a PIC friendly IC
         // for calls out to JS. This shouldn't be that hard to do. We could probably
-        // implement the IC to be over Wasm::Context*.
+        // implement the IC to be over Context*.
         // https://bugs.webkit.org/show_bug.cgi?id=170375
         Value* codeBlock = isEmbedderBlock->appendNew<MemoryValue>(m_proc,
             Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfWasmCodeBlock()));
@@ -1179,11 +1182,11 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfWasmTable()));
         callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(Wasm::Table::offsetOfFunctions()));
+            table, safeCast<int32_t>(Table::offsetOfFunctions()));
         instancesBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            table, safeCast<int32_t>(Wasm::Table::offsetOfInstances()));
+            table, safeCast<int32_t>(Table::offsetOfInstances()));
         callableFunctionBufferSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
-            table, safeCast<int32_t>(Wasm::Table::offsetOfSize()));
+            table, safeCast<int32_t>(Table::offsetOfSize()));
     }
 
     // Check the index we are looking for is valid.
@@ -1232,7 +1235,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
     {
         Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
             m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex),
-            constant(pointerType(), sizeof(Wasm::Instance*)));
+            constant(pointerType(), sizeof(Instance*)));
         Value* newContextInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             m_currentBlock->appendNew<Value>(m_proc, Add, origin(), instancesBuffer, offset));
 
@@ -1263,13 +1266,13 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             jit.loadPtr(CCallHelpers::Address(oldContextInstance, JSWebAssemblyInstance::offsetOfCachedStackLimit()), baseMemory);
             jit.storePtr(baseMemory, CCallHelpers::Address(newContextInstance, JSWebAssemblyInstance::offsetOfCachedStackLimit()));
             jit.storeWasmContextInstance(newContextInstance);
-            jit.loadPtr(CCallHelpers::Address(newContextInstance, JSWebAssemblyInstance::offsetOfWasmMemory()), baseMemory); // Wasm::Memory*.
+            jit.loadPtr(CCallHelpers::Address(newContextInstance, JSWebAssemblyInstance::offsetOfWasmMemory()), baseMemory); // Memory*.
             ASSERT(sizeRegs.size() == 1);
             ASSERT(sizeRegs[0].sizeRegister != baseMemory);
             ASSERT(sizeRegs[0].sizeRegister != newContextInstance);
             ASSERT(!sizeRegs[0].sizeOffset);
-            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
-            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfMemory()), baseMemory); // Wasm::Memory::void*.
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Memory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Memory::offsetOfMemory()), baseMemory); // Memory::void*.
         });
         doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
 

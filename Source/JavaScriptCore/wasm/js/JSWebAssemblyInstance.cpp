@@ -59,7 +59,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, unsig
     , m_numImportFunctions(numImportFunctions)
 {
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
-        new (importFunctionInfo(i)) ImportFunctionInfo();
+        default_construct_at(importFunctionInfo(i));
 }
 
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
