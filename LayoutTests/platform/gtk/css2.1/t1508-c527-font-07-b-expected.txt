@@ -4,13 +4,13 @@ layer at (0,0) size 785x708
   RenderBlock {HTML} at (0,0) size 785x708
     RenderBody {BODY} at (8,18) size 769x672 [color=#000080]
       RenderBlock {P} at (0,0) size 769x672
-        RenderText {#text} at (0,38) size 734x116
-          text run at (0,38) width 734: "This text should be 18px sans-serif, in small-caps and italicized. The lines should be one inch"
+        RenderText {#text} at (0,38) size 735x116
+          text run at (0,38) width 735: "This text should be 18px sans-serif, in small-caps and italicized. The lines should be one inch"
           text run at (0,134) width 53: "apart. "
         RenderInline {SPAN} at (0,0) size 753x500 [color=#C0C0C0]
-          RenderText {#text} at (53,134) size 753x500
-            text run at (53,134) width 519: "dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (572,134) width 181: "text dummy text dummy"
+          RenderText {#text} at (52,134) size 753x500
+            text run at (52,134) width 520: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (571,134) width 182: "text dummy text dummy"
             text run at (0,230) width 372: "text dummy text dummy text dummy text dummy "
             text run at (372,230) width 367: "text dummy text dummy text dummy text dummy"
             text run at (0,326) width 186: "text dummy text dummy "

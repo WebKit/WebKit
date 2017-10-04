@@ -15,7 +15,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
     platform/graphics/harfbuzz/HarfBuzzFace.cpp
-    platform/graphics/harfbuzz/HarfBuzzShaper.cpp
 )
 
 if (USE_CAIRO)

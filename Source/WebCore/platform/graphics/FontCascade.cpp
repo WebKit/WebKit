@@ -1347,6 +1347,38 @@ float FontCascade::getGlyphsAndAdvancesForSimpleText(const TextRun& run, unsigne
     return initialAdvance;
 }
 
+#if !PLATFORM(WIN)
+float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+{
+    float initialAdvance;
+
+    ComplexTextController controller(*this, run, false, 0, forTextEmphasis);
+    GlyphBuffer dummyGlyphBuffer;
+    controller.advance(from, &dummyGlyphBuffer);
+    controller.advance(to, &glyphBuffer);
+
+    if (glyphBuffer.isEmpty())
+        return 0;
+
+    if (run.rtl()) {
+        // Exploit the fact that the sum of the paint advances is equal to
+        // the sum of the layout advances.
+        initialAdvance = controller.totalWidth();
+        for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
+            initialAdvance -= dummyGlyphBuffer.advanceAt(i).width();
+        for (unsigned i = 0; i < glyphBuffer.size(); ++i)
+            initialAdvance -= glyphBuffer.advanceAt(i).width();
+        glyphBuffer.reverse(0, glyphBuffer.size());
+    } else {
+        initialAdvance = dummyGlyphBuffer.initialAdvance().width();
+        for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
+            initialAdvance += dummyGlyphBuffer.advanceAt(i).width();
+    }
+
+    return initialAdvance;
+}
+#endif
+
 void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext& context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
@@ -1460,6 +1492,20 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
     return it.m_runWidthSoFar;
 }
 
+#if !PLATFORM(WIN)
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+{
+    ComplexTextController controller(*this, run, true, fallbackFonts);
+    if (glyphOverflow) {
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().descent()));
+        glyphOverflow->left = std::max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
+        glyphOverflow->right = std::max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalWidth()));
+    }
+    return controller.totalWidth();
+}
+#endif
+
 void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
@@ -1478,6 +1524,23 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
         selectionRect.move(beforeWidth, 0);
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
 }
+
+#if !PLATFORM(WIN)
+void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
+{
+    ComplexTextController controller(*this, run);
+    controller.advance(from);
+    float beforeWidth = controller.runWidthSoFar();
+    controller.advance(to);
+    float afterWidth = controller.runWidthSoFar();
+
+    if (run.rtl())
+        selectionRect.move(controller.totalWidth() - afterWidth, 0);
+    else
+        selectionRect.move(beforeWidth, 0);
+    selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
+}
+#endif
 
 int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
@@ -1522,7 +1585,15 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     return offset;
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(WIN)
+int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
+{
+    ComplexTextController controller(*this, run);
+    return controller.offsetForPosition(x, includePartialGlyphs);
+}
+#endif
+
+#if !PLATFORM(COCOA) && !USE(CAIRO)
 // FIXME: Unify this with the macOS and iOS implementation.
 const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
 {

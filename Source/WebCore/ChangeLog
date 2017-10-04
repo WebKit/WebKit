@@ -1,3 +1,51 @@
+2017-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harfbuzz] Implement ComplexTextController on top of HarfBuzz
+        https://bugs.webkit.org/show_bug.cgi?id=167956
+
+        Reviewed by Myles C. Maxfield.
+
+        Implement ComplexTextController using HarfBuzz and remove HarfBuzzShaper.
+
+        Covered by existing tests, a rebaseline will be neeed.
+
+        * platform/FreeType.cmake:
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::TextLayoutDeleter::operator() const): Enable TextLayout when using HarfBuzz.
+        (WebCore::FontCascade::createLayout const): Ditto.
+        (WebCore::FontCascade::width): Ditto.
+        * platform/graphics/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::create): Add constructor that receives an hb_buffer_t.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::variantCapsSupportsCharacterForSynthesis const): Simple implementation for non-cocoa ports.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText const): Moved from FontCascadeCocoa.mm.
+        (WebCore::FontCascade::floatWidthForComplexText const): Ditto.
+        (WebCore::FontCascade::adjustSelectionRectForComplexText const): Ditto.
+        (WebCore::FontCascade::offsetForPositionForComplexText const): Ditto.
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const): Normalize the sequence and get the font of the
+        base character.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::harfBuzzPositionToFloat):
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::fontFeatures):
+        (WebCore::characterScript):
+        (WebCore::scriptsAreCompatibleForCharacters):
+        (WebCore::findNextRun):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::harfBuzzGetGlyph): Check here if the character is a white space and use the space or zeroWidthSpace
+        to ensure we get a glyph.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp: Removed.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h: Removed.
+        * platform/graphics/harfbuzz/HbUniquePtr.h: Added.
+        (WebCore::HbPtrDeleter::operator() const):
+        (WebCore::HbPtrDeleter<hb_font_t>::operator() const):
+        (WebCore::HbPtrDeleter<hb_buffer_t>::operator() const):
+        * platform/graphics/opentype/OpenTypeMathData.h: Use HbUniquePtr.
+
 2017-10-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix typo in function name scanDirectoryForDicionaries

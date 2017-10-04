@@ -90,7 +90,7 @@ private:
 
 void TextLayoutDeleter::operator()(TextLayout* layout) const
 {
-#if PLATFORM(COCOA)
+#if !PLATFORM(WIN)
     delete layout;
 #else
     ASSERT_UNUSED(layout, !layout);
@@ -99,7 +99,7 @@ void TextLayoutDeleter::operator()(TextLayout* layout) const
 
 std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderText& text, float xPos, bool collapseWhiteSpace) const
 {
-#if PLATFORM(COCOA)
+#if !PLATFORM(WIN)
     if (!collapseWhiteSpace || !TextLayout::isNeeded(text, *this))
         return nullptr;
     return std::unique_ptr<TextLayout, TextLayoutDeleter>(new TextLayout(text, *this, xPos));
@@ -113,7 +113,7 @@ std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderT
 
 float FontCascade::width(TextLayout& layout, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts)
 {
-#if PLATFORM(COCOA)
+#if !PLATFORM(WIN)
     return layout.width(from, len, fallbackFonts);
 #else
     UNUSED_PARAM(layout);

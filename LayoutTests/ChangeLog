@@ -1,3 +1,98 @@
+2017-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harfbuzz] Implement ComplexTextController on top of HarfBuzz
+        https://bugs.webkit.org/show_bug.cgi?id=167956
+
+        Unreviewed GTK+ gardening. Rebaseline tests.
+
+        * platform/gtk/css1/font_properties/font-expected.png:
+        * platform/gtk/css1/font_properties/font-expected.txt:
+        * platform/gtk/css1/pseudo/firstline-expected.png:
+        * platform/gtk/css1/pseudo/firstline-expected.txt:
+        * platform/gtk/css1/pseudo/multiple_pseudo_elements-expected.png:
+        * platform/gtk/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * platform/gtk/css2.1/t051201-c23-first-line-00-b-expected.png:
+        * platform/gtk/css2.1/t051201-c23-first-line-00-b-expected.txt:
+        * platform/gtk/css2.1/t051202-c26-psudo-nest-00-c-expected.png:
+        * platform/gtk/css2.1/t051202-c26-psudo-nest-00-c-expected.txt:
+        * platform/gtk/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/gtk/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-00-b-expected.png:
+        * platform/gtk/css2.1/t1508-c527-font-00-b-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-06-b-expected.png:
+        * platform/gtk/css2.1/t1508-c527-font-06-b-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-07-b-expected.png:
+        * platform/gtk/css2.1/t1508-c527-font-07-b-expected.txt:
+        * platform/gtk/css2.1/t1508-c527-font-10-c-expected.png:
+        * platform/gtk/css2.1/t1508-c527-font-10-c-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-left-expected.png:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-left-expected.txt:
+        * platform/gtk/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/gtk/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/gtk/fast/text/atsui-pointtooffset-calls-cg-expected.png:
+        * platform/gtk/fast/text/atsui-pointtooffset-calls-cg-expected.txt:
+        * platform/gtk/fast/text/atsui-rtl-override-selection-expected.png:
+        * platform/gtk/fast/text/atsui-rtl-override-selection-expected.txt:
+        * platform/gtk/fast/text/atsui-spacing-features-expected.png:
+        * platform/gtk/fast/text/atsui-spacing-features-expected.txt:
+        * platform/gtk/fast/text/emphasis-expected.png:
+        * platform/gtk/fast/text/emphasis-expected.txt:
+        * platform/gtk/fast/text/international/bold-bengali-expected.png:
+        * platform/gtk/fast/text/international/bold-bengali-expected.txt:
+        * platform/gtk/fast/text/international/hebrew-vowels-expected.png:
+        * platform/gtk/fast/text/international/hebrew-vowels-expected.txt:
+        * platform/gtk/fast/text/international/thai-baht-space-expected.png:
+        * platform/gtk/fast/text/international/thai-baht-space-expected.txt:
+        * platform/gtk/fast/text/international/thai-line-breaks-expected.png:
+        * platform/gtk/fast/text/international/thai-line-breaks-expected.txt:
+        * platform/gtk/fast/text/large-text-composed-char-dos-expected.txt: Added.
+        * platform/gtk/svg/W3C-I18N/g-dirLTR-ubNone-expected.png:
+        * platform/gtk/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt:
+        * platform/gtk/svg/W3C-I18N/g-dirLTR-ubOverride-expected.png:
+        * platform/gtk/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt:
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubNone-expected.png:
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt:
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png:
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-dirLTR-ubNone-expected.png:
+        * platform/gtk/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png:
+        * platform/gtk/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubNone-expected.png:
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubOverride-expected.png:
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt:
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.png:
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt:
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.png:
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt:
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png:
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt:
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.png:
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt:
+        * platform/gtk/svg/W3C-I18N/tspan-direction-rtl-expected.png:
+        * platform/gtk/svg/W3C-I18N/tspan-direction-rtl-expected.txt:
+        * platform/gtk/svg/text/bidi-tspans-expected.png:
+        * platform/gtk/svg/text/bidi-tspans-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-1-expected.png:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-2-expected.png:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-2-expected.png:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-3-expected.png:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+
 2017-10-04  Miguel Gomez  <magomez@igalia.com>
 
         Add animation support for WebP images

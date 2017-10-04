@@ -499,9 +499,18 @@ void Font::removeFromSystemFallbackCache()
 }
 
 #if !PLATFORM(COCOA)
-bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps, UChar32) const
+bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32) const
 {
-    return false;
+    switch (fontVariantCaps) {
+    case FontVariantCaps::Small:
+    case FontVariantCaps::Petite:
+    case FontVariantCaps::AllSmall:
+    case FontVariantCaps::AllPetite:
+        return false;
+    default:
+        // Synthesis only supports the variant-caps values listed above.
+        return true;
+    }
 }
 #endif
 

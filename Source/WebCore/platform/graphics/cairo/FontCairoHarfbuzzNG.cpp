@@ -29,30 +29,10 @@
 
 #if USE(CAIRO)
 
-#include "Font.h"
-#include "GraphicsContext.h"
-#include "HarfBuzzShaper.h"
-#include "LayoutRect.h"
-#include "Logging.h"
-#include "NotImplemented.h"
-#include "PlatformContextCairo.h"
-#include <cairo.h>
+#include "SurrogatePairAwareTextIterator.h"
+#include <unicode/normlzr.h>
 
 namespace WebCore {
-
-float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
-{
-    HarfBuzzShaper shaper(this, run);
-    if (!shaper.shape(&glyphBuffer, from, to)) {
-        LOG_ERROR("Shaper couldn't shape glyphBuffer.");
-        return 0;
-    }
-
-    if (glyphBuffer.isEmpty())
-        return 0;
-
-    return shaper.selectionRect({ }, 0, from, to).x();
-}
 
 bool FontCascade::canReturnFallbackFontsForComplexText()
 {
@@ -64,42 +44,21 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>*, GlyphOverflow* glyphOverflow) const
+const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
 {
-    if (glyphOverflow) {
-        // FIXME: Calculate the actual values rather than just the font's ascent and descent
-        glyphOverflow->top = glyphOverflow->computeBounds ? fontMetrics().ascent() : 0;
-        glyphOverflow->bottom = glyphOverflow->computeBounds ? fontMetrics().descent() : 0;
-        glyphOverflow->left = 0;
-        glyphOverflow->right = 0;
-    }
-    HarfBuzzShaper shaper(this, run);
-    if (shaper.shape())
-        return shaper.totalWidth();
-    LOG_ERROR("Shaper couldn't shape text run.");
-    return 0;
-}
+    UErrorCode error = U_ZERO_ERROR;
+    Vector<UChar, 4> normalizedCharacters(length);
+    int32_t normalizedLength = unorm_normalize(characters, length, UNORM_NFC, UNORM_UNICODE_3_2, normalizedCharacters.data(), length, &error);
+    if (U_FAILURE(error))
+        return nullptr;
 
-int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
-{
-    HarfBuzzShaper shaper(this, run);
-    if (shaper.shape())
-        return shaper.offsetForPosition(x, includePartialGlyphs);
-    LOG_ERROR("Shaper couldn't shape text run.");
-    return 0;
-}
+    UChar32 character;
+    unsigned clusterLength = 0;
+    SurrogatePairAwareTextIterator iterator(normalizedCharacters.data(), 0, normalizedLength, normalizedLength);
+    if (!iterator.consume(character, clusterLength))
+        return nullptr;
 
-void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
-{
-    HarfBuzzShaper shaper(this, run);
-    GlyphBuffer glyphBuffer;
-    if (!shaper.shape(&glyphBuffer, from, to)) {
-        LOG_ERROR("Shaper couldn't shape text run.");
-        return;
-    }
-
-    // FIXME: This should mimic Mac port.
-    selectionRect = LayoutRect(shaper.selectionRect(selectionRect.location(), selectionRect.height().toInt(), from, to));
+    return glyphDataForCharacter(character, false, NormalVariant).font;
 }
 
 } // namespace WebCore

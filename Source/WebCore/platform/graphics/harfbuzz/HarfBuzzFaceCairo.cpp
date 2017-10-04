@@ -34,9 +34,9 @@
 
 #include "CairoUtilities.h"
 #include "Font.h"
+#include "FontCascade.h"
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
-#include "HarfBuzzShaper.h"
 #include "TextEncoding.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -101,10 +101,12 @@ static hb_bool_t harfBuzzGetGlyph(hb_font_t*, void* fontData, hb_codepoint_t uni
         int numGlyphs = 0;
         char buffer[U8_MAX_LENGTH];
         size_t bufferLength = 0;
+        if (FontCascade::treatAsSpace(unicode) && unicode != '\t')
+            unicode = ' ';
+        else if (FontCascade::treatAsZeroWidthSpaceInComplexScript(unicode))
+            unicode = zeroWidthSpace;
         U8_APPEND_UNSAFE(buffer, bufferLength, unicode);
-        if (cairo_scaled_font_text_to_glyphs(scaledFont, 0, 0, buffer, bufferLength, &glyphs, &numGlyphs, nullptr, nullptr, nullptr) != CAIRO_STATUS_SUCCESS)
-            return false;
-        if (!numGlyphs)
+        if (cairo_scaled_font_text_to_glyphs(scaledFont, 0, 0, buffer, bufferLength, &glyphs, &numGlyphs, nullptr, nullptr, nullptr) != CAIRO_STATUS_SUCCESS || !numGlyphs)
             return false;
         result.iterator->value = glyphs[0].index;
         cairo_glyph_free(glyphs);
@@ -212,11 +214,6 @@ hb_font_t* HarfBuzzFace::createFont()
     hb_font_set_scale(font, scale, scale);
     hb_font_make_immutable(font);
     return font;
-}
-
-GlyphBufferAdvance HarfBuzzShaper::createGlyphBufferAdvance(float width, float height)
-{
-    return GlyphBufferAdvance(width, height);
 }
 
 } // namespace WebCore

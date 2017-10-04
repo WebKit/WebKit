@@ -31,9 +31,9 @@ layer at (0,0) size 785x703
         RenderInline {SPAN} at (0,0) size 111x26
           RenderText {#text} at (3,70) size 111x26
             text run at (3,70) width 111: "odio sa\x{300}pien"
-        RenderText {#text} at (114,70) size 338x66
-          text run at (114,70) width 12: ", "
-          text run at (126,70) width 215: "lobortis eu iaculis vel,"
+        RenderText {#text} at (113,70) size 338x66
+          text run at (113,70) width 13: ", "
+          text run at (125,70) width 216: "lobortis eu iaculis vel,"
           text run at (3,110) width 211: "scelerisque nec dolor."
       RenderBlock (floating) {DIV} at (8,164) size 366x154 [border: (3px solid #000000)]
         RenderText {#text} at (3,17) size 71x26
