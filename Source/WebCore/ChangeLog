@@ -1,3 +1,13 @@
+2017-10-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build fix.
+
+        Use different enum value for the check. UP_DEVICE_LEVEL_NORMAL is only available on newer
+        upower.
+
+        * platform/glib/LowPowerModeNotifierGLib.cpp:
+        (WebCore::LowPowerModeNotifier::updateState):
+
 2017-10-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GLib] Let WebCore know of low power situations
