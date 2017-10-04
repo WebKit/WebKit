@@ -1,3 +1,29 @@
+2017-10-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GLib] Let WebCore know of low power situations
+        https://bugs.webkit.org/show_bug.cgi?id=177810
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebCore can use knowledge of low power situations to throttle timers and avoid expensive
+        checks, lowering power usage. We can use upower's warning level to let WebCore know we are
+        in such a situation.
+
+        No tests as there is no way to mock upower.
+
+        * PlatformGTK.cmake: add new file.
+        * PlatformWPE.cmake: add new file.
+        * platform/LowPowerModeNotifier.cpp: use upower-glib to know about low power situations.
+        * platform/LowPowerModeNotifier.h: includes upower header as UpClient and UpDevice are not forward
+        declaration-friendly.
+        * platform/glib/LowPowerModeNotifierGLib.cpp: Added.
+        (WebCore::LowPowerModeNotifier::LowPowerModeNotifier):
+        (WebCore::LowPowerModeNotifier::updateState): update low power mode from warning-level.
+        (WebCore::LowPowerModeNotifier::warningLevelCallback): track upower's warning-level to know when
+        a low power situation occurs.
+        (WebCore::LowPowerModeNotifier::~LowPowerModeNotifier): stop tracking the warning-level signal.
+        (WebCore::LowPowerModeNotifier::isLowPowerModeEnabled const):
+
 2017-10-04  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] aria-pressed="mixed" should be exposed via ATK_STATE_INDETERMINATE

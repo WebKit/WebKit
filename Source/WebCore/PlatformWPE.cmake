@@ -74,6 +74,7 @@ list(APPEND WebCore_SOURCES
     platform/glib/FileSystemGlib.cpp
     platform/glib/KeyedDecoderGlib.cpp
     platform/glib/KeyedEncoderGlib.cpp
+    platform/glib/LowPowerModeNotifierGLib.cpp
     platform/glib/MainThreadSharedTimerGLib.cpp
     platform/glib/SSLKeyGeneratorGLib.cpp
     platform/glib/SharedBufferGlib.cpp
@@ -173,6 +174,7 @@ list(APPEND WebCore_LIBRARIES
     ${ICU_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
     ${LIBTASN1_LIBRARIES}
+    ${UPOWERGLIB_LIBRARIES}
     ${WPE_LIBRARIES}
 )
 
@@ -183,6 +185,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${ICU_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
     ${LIBTASN1_INCLUDE_DIRS}
+    ${UPOWERGLIB_INCLUDE_DIRS}
     ${WPE_INCLUDE_DIRS}
 )
 

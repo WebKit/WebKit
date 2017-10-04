@@ -137,6 +137,7 @@ function installDependenciesWithApt {
         libtool \
         libvorbis-dev \
         libvpx-dev \
+        libupower-glib-dev \
         libwebp-dev \
         libxcomposite-dev \
         libxt-dev \
@@ -296,6 +297,7 @@ function installDependenciesWithPacman {
         libxt \
         libxslt \
         libxtst \
+        upower \
         ninja \
         ruby \
         util-linux \
@@ -439,7 +441,8 @@ function installDependenciesWithDnf {
         python-devel \
         redhat-rpm-config \
         ruby \
-        sqlite-devel"
+        sqlite-devel \
+        upower-devel"
 
     # These are dependencies necessary for running tests.
     packages="$packages \

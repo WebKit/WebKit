@@ -1,3 +1,17 @@
+2017-10-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GLib] Let WebCore know of low power situations
+        https://bugs.webkit.org/show_bug.cgi?id=177810
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebCore can use knowledge of low power situations to throttle timers and avoid expensive
+        checks, lowering power usage. We can use upower's warning level to let WebCore know we are
+        in such a situation.
+
+        * Source/cmake/OptionsGTK.cmake: depend on upower-glib.
+        * Source/cmake/FindUPowerGLib.cmake: Added.
+
 2017-10-03  Youenn Fablet  <youenn@apple.com>
 
         Build libwebrtc unit tests executables
