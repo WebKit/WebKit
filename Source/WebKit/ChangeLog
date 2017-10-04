@@ -1,3 +1,12 @@
+2017-10-04  Don Olmstead  <don.olmstead@sony.com>
+
+        Include Pasteboard.h for all in WebCoreArgumentCoders
+        https://bugs.webkit.org/show_bug.cgi?id=177902
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+
 2017-10-04  David Kilzer  <ddkilzer@apple.com>
 
         Remove unused variables in lambdas for network process cache
