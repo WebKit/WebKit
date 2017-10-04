@@ -1,3 +1,29 @@
+2017-10-03  Antti Koivisto  <antti@apple.com>
+
+        Use WeakPtr in RenderFullScreen
+        https://bugs.webkit.org/show_bug.cgi?id=177827
+
+        Reviewed by Zalan Bujtas.
+
+        Make Document::m_fullScreenRenderer RenderFullScreen::m_placeholder WeakPtrs
+        and get rid of the custom nulling code.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        (WebCore::Document::setFullScreenRenderer):
+        (WebCore::Document::fullScreenRendererDestroyed): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::fullScreenRenderer const):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::RenderFullScreen):
+        (WebCore::RenderFullScreen::willBeDestroyed):
+        (WebCore::RenderFullScreen::createPlaceholder):
+        (WebCore::RenderFullScreenPlaceholder::willBeDestroyed): Deleted.
+        (WebCore::RenderFullScreen::setPlaceholder): Deleted.
+        * rendering/RenderFullScreen.h:
+
 2017-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable pasteboard custom data in macOS 10.12 and earlier

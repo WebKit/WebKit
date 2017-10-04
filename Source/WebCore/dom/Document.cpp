@@ -2247,11 +2247,6 @@ void Document::destroyRenderTree()
     if (view())
         view()->willDestroyRenderTree();
 
-#if ENABLE(FULLSCREEN_API)
-    if (m_fullScreenRenderer)
-        setFullScreenRenderer(nullptr);
-#endif
-
     if (m_documentElement)
         RenderTreeUpdater::tearDownRenderers(*m_documentElement);
 
@@ -6028,7 +6023,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
 
     ASSERT(page()->settings().fullScreenEnabled());
 
-    unwrapFullScreenRenderer(m_fullScreenRenderer, m_fullScreenElement.get());
+    unwrapFullScreenRenderer(m_fullScreenRenderer.get(), m_fullScreenElement.get());
 
     if (element)
         element->willBecomeFullscreenElement();
@@ -6095,7 +6090,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
 
     m_areKeysEnabledInFullScreen = false;
 
-    unwrapFullScreenRenderer(m_fullScreenRenderer, m_fullScreenElement.get());
+    unwrapFullScreenRenderer(m_fullScreenRenderer.get(), m_fullScreenElement.get());
 
     m_fullScreenElement = nullptr;
     scheduleForcedStyleRecalc();
@@ -6114,23 +6109,20 @@ void Document::setFullScreenRenderer(RenderFullScreen* renderer)
     if (renderer == m_fullScreenRenderer)
         return;
 
-    if (renderer && m_savedPlaceholderRenderStyle) 
-        renderer->createPlaceholder(WTFMove(m_savedPlaceholderRenderStyle), m_savedPlaceholderFrameRect);
-    else if (renderer && m_fullScreenRenderer && m_fullScreenRenderer->placeholder()) {
-        RenderBlock* placeholder = m_fullScreenRenderer->placeholder();
-        renderer->createPlaceholder(RenderStyle::clonePtr(placeholder->style()), placeholder->frameRect());
+    if (renderer) {
+        if (m_savedPlaceholderRenderStyle)
+            renderer->createPlaceholder(WTFMove(m_savedPlaceholderRenderStyle), m_savedPlaceholderFrameRect);
+        else if (m_fullScreenRenderer && m_fullScreenRenderer->placeholder()) {
+            auto* placeholder = m_fullScreenRenderer->placeholder();
+            renderer->createPlaceholder(RenderStyle::clonePtr(placeholder->style()), placeholder->frameRect());
+        }
     }
 
     if (m_fullScreenRenderer)
-        m_fullScreenRenderer->destroy();
+        m_fullScreenRenderer->removeFromParentAndDestroy();
     ASSERT(!m_fullScreenRenderer);
 
-    m_fullScreenRenderer = renderer;
-}
-
-void Document::fullScreenRendererDestroyed()
-{
-    m_fullScreenRenderer = nullptr;
+    m_fullScreenRenderer = makeWeakPtr(renderer);
 }
 
 void Document::fullScreenChangeDelayTimerFired()

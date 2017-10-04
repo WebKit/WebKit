@@ -36,27 +36,17 @@ namespace WebCore {
 
 class RenderFullScreenPlaceholder final : public RenderBlockFlow {
 public:
-    RenderFullScreenPlaceholder(RenderFullScreen& owner, RenderStyle&& style)
-        : RenderBlockFlow(owner.document(), WTFMove(style))
-        , m_owner(owner) 
+    RenderFullScreenPlaceholder(Document& document, RenderStyle&& style)
+        : RenderBlockFlow(document, WTFMove(style))
     {
     }
 
 private:
     bool isRenderFullScreenPlaceholder() const override { return true; }
-    void willBeDestroyed() override;
-    RenderFullScreen& m_owner;
 };
-
-void RenderFullScreenPlaceholder::willBeDestroyed()
-{
-    m_owner.setPlaceholder(0);
-    RenderBlockFlow::willBeDestroyed();
-}
 
 RenderFullScreen::RenderFullScreen(Document& document, RenderStyle&& style)
     : RenderFlexibleBox(document, WTFMove(style))
-    , m_placeholder(0)
 {
     setReplaced(false); 
 }
@@ -64,15 +54,9 @@ RenderFullScreen::RenderFullScreen(Document& document, RenderStyle&& style)
 void RenderFullScreen::willBeDestroyed()
 {
     if (m_placeholder) {
-        if (!m_placeholder->beingDestroyed())
-            m_placeholder->destroy();
+        m_placeholder->removeFromParentAndDestroy();
         ASSERT(!m_placeholder);
     }
-
-    // RenderObjects are unretained, so notify the document (which holds a pointer to a RenderFullScreen)
-    // if it's RenderFullScreen is destroyed.
-    if (document().fullScreenRenderer() == this)
-        document().fullScreenRendererDestroyed();
 
     RenderFlexibleBox::willBeDestroyed();
 }
@@ -194,11 +178,6 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
     removeFromParentAndDestroy();
 }
 
-void RenderFullScreen::setPlaceholder(RenderBlock* placeholder)
-{
-    m_placeholder = placeholder;
-}
-
 void RenderFullScreen::createPlaceholder(std::unique_ptr<RenderStyle> style, const LayoutRect& frameRect)
 {
     if (style->width().isAuto())
@@ -214,10 +193,10 @@ void RenderFullScreen::createPlaceholder(std::unique_ptr<RenderStyle> style, con
     if (!parent())
         return;
 
-    auto newPlaceholder = createRenderer<RenderFullScreenPlaceholder>(*this, WTFMove(*style));
+    auto newPlaceholder = createRenderer<RenderFullScreenPlaceholder>(document(), WTFMove(*style));
     newPlaceholder->initializeStyle();
 
-    m_placeholder = newPlaceholder.get();
+    m_placeholder = makeWeakPtr(*newPlaceholder);
 
     parent()->addChild(WTFMove(newPlaceholder), this);
     parent()->setNeedsLayoutAndPrefWidthsRecalc();
