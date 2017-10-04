@@ -1,3 +1,15 @@
+2017-10-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Generate a compile error if release is built without compiler optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=177665
+
+        Reviewed by Michael Catanzaro.
+
+        Pass -DRELEASE_WITHOUT_OPTIMIZATIONS to testair.cpp and testb3.cpp because
+        this files are compiled with -O0 for build speed reasons after r195639.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2017-10-03  Jon Davis  <jond@apple.com>
 
         Update WebAssembly to "Supported"
