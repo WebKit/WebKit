@@ -1,3 +1,20 @@
+2017-10-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve CanvasManager recording events
+        https://bugs.webkit.org/show_bug.cgi?id=177762
+
+        Reviewed by Devin Rousso.
+
+        Update tests for renamed CanvasManager event.
+
+        * inspector/canvas/recording-2d.html:
+        * inspector/canvas/recording-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/recording-webgl.html:
+        * inspector/canvas/recording.html:
+        * inspector/canvas/resources/recording-utilities.js:
+        (TestPage.registerInitializer):
+
 2017-10-04  Nan Wang  <n_wang@apple.com>
 
         AX: Make video objects accessible on iOS

@@ -1,3 +1,22 @@
+2017-10-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve CanvasManager recording events
+        https://bugs.webkit.org/show_bug.cgi?id=177762
+
+        Reviewed by Devin Rousso.
+
+        Dispatch Canvas.recordingFinished regardless of whether any actions were
+        recorded. Without this extra guarantee, the frontend has to keep track
+        of additional state to determine whether a recording is in progress.
+
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::startRecording):
+        (WebCore::InspectorCanvasAgent::stopRecording):
+        (WebCore::InspectorCanvasAgent::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorCanvasAgent::requestRecording): Deleted.
+        (WebCore::InspectorCanvasAgent::cancelRecording): Deleted.
+        * inspector/InspectorCanvasAgent.h:
+
 2017-10-04  Nan Wang  <n_wang@apple.com>
 
         AX: Make video objects accessible on iOS

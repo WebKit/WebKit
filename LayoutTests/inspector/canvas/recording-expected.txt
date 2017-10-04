@@ -2,11 +2,11 @@ Test general cases of CanvasAgent recording calls.
 
 
 == Running test suite: Canvas.recording
--- Running test case: Canvas.requestRecording.InvalidCanvasId
+-- Running test case: Canvas.startRecording.InvalidCanvasId
 PASS: Should produce an error.
 Error: No canvas for given identifier.
 
--- Running test case: Canvas.cancelRecording.InvalidCanvasId
+-- Running test case: Canvas.stopRecording.InvalidCanvasId
 PASS: Should produce an error.
 Error: No canvas for given identifier.
 

@@ -237,7 +237,7 @@ void InspectorCanvasAgent::resolveCanvasContext(ErrorString& errorString, const 
     result = injectedScript.wrapObject(value, objectGroupName);
 }
 
-void InspectorCanvasAgent::requestRecording(ErrorString& errorString, const String& canvasId, const bool* const singleFrame, const int* const memoryLimit)
+void InspectorCanvasAgent::startRecording(ErrorString& errorString, const String& canvasId, const bool* const singleFrame, const int* const memoryLimit)
 {
     auto* inspectorCanvas = assertInspectorCanvas(errorString, canvasId);
     if (!inspectorCanvas)
@@ -257,7 +257,7 @@ void InspectorCanvasAgent::requestRecording(ErrorString& errorString, const Stri
     inspectorCanvas->canvas().renderingContext()->setCallTracingActive(true);
 }
 
-void InspectorCanvasAgent::cancelRecording(ErrorString& errorString, const String& canvasId)
+void InspectorCanvasAgent::stopRecording(ErrorString& errorString, const String& canvasId)
 {
     auto* inspectorCanvas = assertInspectorCanvas(errorString, canvasId);
     if (!inspectorCanvas)
@@ -460,8 +460,11 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
     if (!canvasRenderingContext->callTracingActive())
         return;
 
-    if (!inspectorCanvas->hasRecordingData())
+    if (!inspectorCanvas->hasRecordingData()) {
+        if (forceDispatch)
+            m_frontendDispatcher->recordingFinished(inspectorCanvas->identifier(), nullptr);
         return;
+    }
 
     if (!forceDispatch && !inspectorCanvas->singleFrame()) {
         inspectorCanvas->markNewFrame();

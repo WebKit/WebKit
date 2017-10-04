@@ -61,14 +61,14 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
         this._recordingCanvas = canvas;
 
-        CanvasAgent.requestRecording(canvas.identifier, singleFrame, (error) => {
-            if (!error)
+        CanvasAgent.startRecording(canvas.identifier, singleFrame, (error) => {
+            if (error) {
+                console.error(error);
+                this._recordingCanvas = null;
                 return;
+            }
 
-            console.error(error);
-            this._recordingCanvas = null;
-
-            this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingFinished, {canvas, recording: null});
+            this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingStarted, {canvas});
         });
     }
 
@@ -78,12 +78,15 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!this._recordingCanvas)
             return;
 
-        let canvasIdentifier = this._recordingCanvas.identifier;
+        let canvas = this._recordingCanvas;
         this._recordingCanvas = null;
 
-        CanvasAgent.cancelRecording(canvasIdentifier, (error) => {
-            if (error)
-                console.error(error);
+        CanvasAgent.stopRecording(canvas.identifier, (error) => {
+            if (!error)
+                return;
+
+            console.error(error);
+            this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingStopped, {canvas, recording: null});
         });
     }
 
@@ -155,10 +158,11 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!canvas)
             return;
 
-        let recording = WI.Recording.fromPayload(recordingPayload);
-        recording.source = canvas;
+        let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload) : null
+        if (recording)
+            recording.source = canvas;
 
-        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingFinished, {canvas, recording});
+        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingStopped, {canvas, recording});
     }
 
     programCreated(canvasIdentifier, programIdentifier)
@@ -222,7 +226,8 @@ WI.CanvasManager.Event = {
     Cleared: "canvas-manager-cleared",
     CanvasWasAdded: "canvas-manager-canvas-was-added",
     CanvasWasRemoved: "canvas-manager-canvas-was-removed",
-    RecordingFinished: "canvas-managger-recording-finished",
+    RecordingStarted: "canvas-manager-recording-started",
+    RecordingStopped: "canvas-manager-recording-stopped",
     ShaderProgramAdded: "canvas-manager-shader-program-added",
     ShaderProgramRemoved: "canvas-manager-shader-program-removed",
 };

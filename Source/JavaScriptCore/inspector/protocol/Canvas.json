@@ -105,8 +105,8 @@
             ]
         },
         {
-            "name": "requestRecording",
-            "description": "Requests that the next frame or up to the given number of bytes of data be recorded for the given canvas.",
+            "name": "startRecording",
+            "description": "Record the next frame, or up to the given number of bytes of data, for the given canvas.",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },
                 { "name": "singleFrame", "type": "boolean", "optional": true, "description": "Whether to record a single frame or until the memory limit is reached." },
@@ -114,8 +114,8 @@
             ]
         },
         {
-            "name": "cancelRecording",
-            "description": "Cancels a requested recording for the given canvas.",
+            "name": "stopRecording",
+            "description": "Stop recording the given canvas.",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" }
             ]
@@ -179,7 +179,7 @@
             "name": "recordingFinished",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },
-                { "name": "recording", "$ref": "Recording.Recording" }
+                { "name": "recording", "$ref": "Recording.Recording", "optional": true }
             ]
         },
         {

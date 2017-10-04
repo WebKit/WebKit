@@ -69,7 +69,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
     {
         super.initialLayout();
 
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingFinished, this._recordingFinished, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._recordingStarted, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingStopped, this);
     }
 
     shown()
@@ -106,11 +107,14 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             let singleFrame = event.data.nativeEvent.shiftKey;
             WI.canvasManager.startRecording(this.representedObject, singleFrame);
         }
+    }
 
+    _recordingStarted(event)
+    {
         this._updateRecordNavigationItem();
     }
 
-    _recordingFinished(event)
+    _recordingStopped(event)
     {
         this._updateRecordNavigationItem();
 

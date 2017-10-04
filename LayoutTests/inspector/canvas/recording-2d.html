@@ -406,7 +406,7 @@ function test() {
         name: "Canvas.recording2D.singleFrame",
         description: "Check that the recording is stopped after a single frame.",
         test(resolve, reject) {
-            requestRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {singleFrame: true});
+            startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {singleFrame: true});
         },
     });
 
@@ -414,10 +414,10 @@ function test() {
         name: "Canvas.recording2D.multipleFrames",
         description: "Check that recording data is serialized correctly for multiple frames.",
         test(resolve, reject) {
-            let canvas = requestRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {singleFrame: false});
+            let canvas = startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {singleFrame: false});
 
             InspectorTest.singleFireEventListener("LastFrame", () => {
-                CanvasAgent.cancelRecording(canvas.identifier, (error) => {
+                CanvasAgent.stopRecording(canvas.identifier, (error) => {
                     if (error) {
                         reject(error);
                         return;
@@ -431,7 +431,7 @@ function test() {
         name: "Canvas.recording2D.memoryLimit",
         description: "Check that the recording is stopped when it reaches the memory limit.",
         test(resolve, reject) {
-            requestRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {memoryLimit: 10});
+            startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {memoryLimit: 10});
         },
     });
 
@@ -445,7 +445,7 @@ function test() {
                 return;
             }
 
-            WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingFinished)
+            WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingStopped)
             .then((event) => {
                 let recording = event.data.recording.toJSON();
 
@@ -460,7 +460,7 @@ function test() {
             .then(resolve, reject);
 
             const singleFrame = true;
-            CanvasAgent.requestRecording(canvas.identifier, singleFrame, (error) => {
+            CanvasAgent.startRecording(canvas.identifier, singleFrame, (error) => {
                 if (error) {
                     reject(error);
                     return;

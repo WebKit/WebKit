@@ -1,3 +1,13 @@
+2017-10-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve CanvasManager recording events
+        https://bugs.webkit.org/show_bug.cgi?id=177762
+
+        Reviewed by Devin Rousso.
+
+        * inspector/protocol/Canvas.json:
+        Renamed events for clarity and consistency; made recording data optional.
+
 2017-10-04  JF Bastien  <jfbastien@apple.com>
 
         WTF: Update std::expected to match current proposal

@@ -7,11 +7,11 @@ function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.recording");
 
     suite.addTestCase({
-        name: "Canvas.requestRecording.InvalidCanvasId",
+        name: "Canvas.startRecording.InvalidCanvasId",
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.requestRecording(canvasId, (error) => {
+            CanvasAgent.startRecording(canvasId, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();
@@ -20,11 +20,11 @@ function test() {
     });
 
     suite.addTestCase({
-        name: "Canvas.cancelRecording.InvalidCanvasId",
+        name: "Canvas.stopRecording.InvalidCanvasId",
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.cancelRecording(canvasId, (error) => {
+            CanvasAgent.stopRecording(canvasId, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();

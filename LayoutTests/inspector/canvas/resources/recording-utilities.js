@@ -93,14 +93,14 @@ TestPage.registerInitializer(() => {
         return canvases[0];
     };
 
-    window.requestRecording = function(type, resolve, reject, {singleFrame, memoryLimit} = {}) {
+    window.startRecording = function(type, resolve, reject, {singleFrame, memoryLimit} = {}) {
         let canvas = getCanvas(type);
         if (!canvas) {
             reject(`Missing canvas with type "${type}".`);
             return;
         }
 
-        WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingFinished).then((event) => {
+        WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingStopped).then((event) => {
             InspectorTest.evaluateInPage(`cancelActions()`);
 
             let recording = event.data.recording;
@@ -111,7 +111,7 @@ TestPage.registerInitializer(() => {
             });
         }).then(resolve, reject);
 
-        CanvasAgent.requestRecording(canvas.identifier, singleFrame, memoryLimit, (error) => {
+        CanvasAgent.startRecording(canvas.identifier, singleFrame, memoryLimit, (error) => {
             if (error) {
                 reject(error);
                 return;

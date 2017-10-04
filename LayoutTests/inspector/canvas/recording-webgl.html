@@ -503,7 +503,7 @@ function test() {
         name: "Canvas.recordingWebGL.singleFrame",
         description: "Check that the recording is stopped after a single frame.",
         test(resolve, reject) {
-            requestRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: true});
+            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: true});
         },
     });
 
@@ -511,10 +511,10 @@ function test() {
         name: "Canvas.recordingWebGL.multipleFrames",
         description: "Check that recording data is serialized correctly for multiple frames.",
         test(resolve, reject) {
-            let canvas = requestRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: false});
+            let canvas = startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: false});
 
             InspectorTest.singleFireEventListener("LastFrame", () => {
-                CanvasAgent.cancelRecording(canvas.identifier, (error) => {
+                CanvasAgent.stopRecording(canvas.identifier, (error) => {
                     if (error) {
                         reject(error);
                         return;
@@ -528,7 +528,7 @@ function test() {
         name: "Canvas.recordingWebGL.memoryLimit",
         description: "Check that the recording is stopped when it reaches the memory limit.",
         test(resolve, reject) {
-            requestRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {memoryLimit: 10});
+            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {memoryLimit: 10});
         },
     });
 

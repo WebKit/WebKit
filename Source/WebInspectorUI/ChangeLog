@@ -1,3 +1,27 @@
+2017-10-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Improve CanvasManager recording events
+        https://bugs.webkit.org/show_bug.cgi?id=177762
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.startRecording):
+        (WI.CanvasManager.prototype.stopRecording):
+        (WI.CanvasManager.prototype.recordingFinished):
+        Replace the RecordingFinished event with a pair of events. RecordingStarted
+        is sent when CanvasAgent.startRecording succeeds. RecordingStopped is
+        sent when a recordingFinished event is received from the backend, or
+        when a call to CanvasAgent.stopRecording fails.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype._toggleRecording):
+        (WI.CanvasContentView.prototype._recordingStarted):
+        (WI.CanvasContentView.prototype._recordingFinished): Deleted.
+        Update recording status when CanvasManager fires recording events,
+        instead of immediately after clicking the record button.
+
 2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Detail Views for resources in Network Tab
