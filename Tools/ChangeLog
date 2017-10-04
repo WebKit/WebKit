@@ -1,3 +1,14 @@
+2017-10-04  Lucas Forschler  <lforschler@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=177888
+        WebKitArchiveSupport - add API Gateway to source control
+        This is a swagger configuration export via AWS API Gateway console.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * WebKitArchiveSupport/AWS-APIGateway: Added.
+        * WebKitArchiveSupport/AWS-APIGateway/stage-v2.json: Added.
+
 2017-10-04  Mark Lam  <mark.lam@apple.com>
 
         Add support for using Probe DFG OSR Exit behind a runtime flag.
