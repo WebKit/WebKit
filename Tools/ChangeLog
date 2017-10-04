@@ -1,3 +1,20 @@
+2017-10-04  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy.tool.steps.steps_unittest.StepsTest.test_runtests_api is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=177751
+        <rdar://problem/34769470>
+
+        Reviewed by Daniel Bates.
+
+        Port._build_path() calls Tools/Scripts/webkit-build-directory and caches this
+        result. When capturing output from the MockExecutive, the first invocation of
+        Port._build_path() will log the running of Tools/Scripts/webkit-build-directory
+        but subsequent invocations will not.
+
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest):
+        (StepsTest.setUp): Cache the build path before running tests.
+
 2017-10-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [JHBuild][GTK][WKE] Circular dependency between harfbuzz and freetype6

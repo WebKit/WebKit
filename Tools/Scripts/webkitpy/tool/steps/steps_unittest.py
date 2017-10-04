@@ -38,6 +38,14 @@ from webkitpy.tool import steps
 
 
 class StepsTest(unittest.TestCase):
+
+    def setUp(self):
+        # Port._build_path() calls Tools/Scripts/webkit-build-directory and caches the result. When capturing output,
+        # this can cause the first invocation of Port._build_path() to have more output than subsequent invocations.
+        # This may cause test flakiness when test order changes. By explicitly calling Port._build_path() before running
+        # tests in this suite, we avoid such flakiness.
+        MockTool().port_factory.get(options=self._step_options())._build_path()
+
     def _step_options(self):
         options = MockOptions()
         options.group = None
