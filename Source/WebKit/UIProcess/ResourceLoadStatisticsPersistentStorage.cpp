@@ -98,7 +98,6 @@ void ResourceLoadStatisticsPersistentStorage::initialize()
 
 ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorage()
 {
-    finishAllPendingWorkSynchronously();
     ASSERT(!m_hasPendingWrite);
 }
 
