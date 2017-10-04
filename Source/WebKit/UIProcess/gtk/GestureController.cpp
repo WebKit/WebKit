@@ -67,6 +67,11 @@ GestureController::Gesture::Gesture(GtkGesture* gesture, WebPageProxy& page)
     gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(m_gesture.get()), GTK_PHASE_NONE);
 }
 
+void GestureController::Gesture::reset()
+{
+    gtk_event_controller_reset(GTK_EVENT_CONTROLLER(m_gesture.get()));
+}
+
 bool GestureController::Gesture::isActive() const
 {
     return gtk_gesture_is_active(m_gesture.get());
