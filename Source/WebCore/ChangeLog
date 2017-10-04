@@ -1,5 +1,21 @@
 2017-10-04  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] aria-pressed="mixed" should be exposed via ATK_STATE_INDETERMINATE
+        https://bugs.webkit.org/show_bug.cgi?id=177807
+
+        Reviewed by Chris Fleizach.
+
+        Include toggle buttons in the element types for which the mixed state is checked
+        and exposed via ATK_STATE_INDETERMINATE if found. Also only do the role checks when
+        AccessibilityObject::isIndeterminate() has returned false.
+
+        Test: accessibility/gtk/aria-pressed-mixed-value.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkStateSetFromCoreObject):
+
+2017-10-04  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] ARIA tabpanel role should be exposed as ATK_ROLE_SCROLL_PANE
         https://bugs.webkit.org/show_bug.cgi?id=177815
 

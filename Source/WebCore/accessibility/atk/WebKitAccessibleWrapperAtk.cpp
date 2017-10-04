@@ -954,8 +954,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
     if (coreObject->isIndeterminate())
         atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
-
-    if (coreObject->isCheckboxOrRadio() || coreObject->isMenuItem()) {
+    else if (coreObject->isCheckboxOrRadio() || coreObject->isMenuItem() || coreObject->isToggleButton()) {
         if (coreObject->checkboxOrRadioValue() == ButtonStateMixed)
             atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
     }
