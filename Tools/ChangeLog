@@ -1,3 +1,39 @@
+2017-10-03  Myles C. Maxfield  <mmaxfield@apple.com> 
+
+        Create a SPIR-V assembler 
+        https://bugs.webkit.org/show_bug.cgi?id=177726 
+
+        Reviewed by Filip Pizlo. 
+
+        Khronos has released a json file containing every SPIR-V opcode and operand at 
+        https://github.com/KhronosGroup/SPIRV-Headers/blob/master/include/spirv/1.2/spirv.core.grammar.json 
+        This patch creates a function which loads this file (via the fetch API), parses it, and creates
+        an object which holds two things: 
+        - For each opcode, a class which accepts the appropriate operands 
+        - For each enum type, an object which holds each enum value 
+        The constructor for each opcode is smart enough to do some basic type-checking of the argument, 
+        according to the types listed in Khronos's json file. 
+
+        This patch also includes an example .html file which outputs a dummy SPIR-V program, 
+        which happens to be compatible with the SPIR-V demo at 
+        https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/blob/master/demos/cube.cpp 
+        If you modify this demo to use the generated SPIR-V program, you can see the result in 
+        action.
+
+        This patch also commits a copy of Khronos's json file mentioned above. This isn't the first 
+        Khronos file we've committed into our repository with this license, so there shouldn't be any 
+        problems there. 
+
+        * WebGPUShadingLanguageRI/SPIR-V.js: Added. 
+        (SPIRV.): 
+        (SPIRVAssembler): 
+        (SPIRVAssembler.prototype.append): 
+        (SPIRVAssembler.prototype.get size): 
+        (SPIRVAssembler.prototype.get storage): 
+        (SPIRVAssembler.prototype.get result): 
+        * WebGPUShadingLanguageRI/SPIRV.html: Added. 
+        * WebGPUShadingLanguageRI/spirv.core.grammar.json: Added. 
+
 2017-10-03  Chris Dumez  <cdumez@apple.com>
 
         SharedStringHashStore should support removing hashes

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="SPIR-V.js"></script>
+<script>
+
+    window.addEventListener("load", function () {
+        fetch("spirv.core.grammar.json").then(response => response.json()).then(function (json) {
+            let spirv = SPIRV(json);
+            let assembler = new SPIRVAssembler();
+            assembler.append(new spirv.ops.Capability(spirv.kinds.Capability.Shader));
+            assembler.append(new spirv.ops.MemoryModel(spirv.kinds.AddressingModel.Logical, spirv.kinds.MemoryModel.GLSL450));
+            assembler.append(new spirv.ops.EntryPoint(spirv.kinds.ExecutionModel.Fragment, 5, "main", 10, 17));
+            assembler.append(new spirv.ops.ExecutionMode(5, spirv.kinds.ExecutionMode.OriginLowerLeft));
+            assembler.append(new spirv.ops.Decorate(10, spirv.kinds.Decoration.Location, 0));
+            assembler.append(new spirv.ops.Decorate(14, spirv.kinds.Decoration.DescriptorSet, 0));
+            assembler.append(new spirv.ops.Decorate(14, spirv.kinds.Decoration.Binding, 1));
+            assembler.append(new spirv.ops.Decorate(17, spirv.kinds.Decoration.Location, 0));
+            assembler.append(new spirv.ops.TypeVoid(3));
+            assembler.append(new spirv.ops.TypeFunction(4, 3));
+            assembler.append(new spirv.ops.TypeFloat(7, 32));
+            assembler.append(new spirv.ops.TypeVector(8, 7, 4));
+            assembler.append(new spirv.ops.TypePointer(9, spirv.kinds.StorageClass.Output, 8));
+            assembler.append(new spirv.ops.Variable(9, 10, spirv.kinds.StorageClass.Output));
+            assembler.append(new spirv.ops.TypeImage(11, 7, spirv.kinds.Dim["2D"], 0, 0, 0, 1, spirv.kinds.ImageFormat.Unknown));
+            assembler.append(new spirv.ops.TypeSampledImage(12, 11));
+            assembler.append(new spirv.ops.TypePointer(13, spirv.kinds.StorageClass.UniformConstant, 12));
+            assembler.append(new spirv.ops.Variable(13, 14, spirv.kinds.StorageClass.UniformConstant));
+            assembler.append(new spirv.ops.TypePointer(16, spirv.kinds.StorageClass.Input, 8));
+            assembler.append(new spirv.ops.Variable(16, 17, spirv.kinds.StorageClass.Input));
+            assembler.append(new spirv.ops.TypeVector(18, 7, 2));
+            assembler.append(new spirv.ops.Function(3, 5, spirv.kinds.FunctionControl.None, 4));
+            assembler.append(new spirv.ops.Label(6));
+            assembler.append(new spirv.ops.Load(12, 15, 14));
+            assembler.append(new spirv.ops.Load(8, 19, 17));
+            assembler.append(new spirv.ops.VectorShuffle(18, 20, 19, 19, 0, 1));
+            assembler.append(new spirv.ops.ImageSampleImplicitLod(8, 21, 15, 20));
+            assembler.append(new spirv.ops.Store(10, 21));
+            assembler.append(new spirv.ops.Return());
+            assembler.append(new spirv.ops.FunctionEnd());
+            let result = assembler.result;
+            
+            let resultElement = document.getElementById("Result");
+            while (resultElement.childNodes.length != 0)
+                resultElement.removeChild(resultElement.childNodes[0]);
+            let anchor = document.createElement("a");
+            let blob = new Blob([result], { type: "application/octet-binary" });
+            anchor.href = URL.createObjectURL(blob);
+            anchor.download = "result.spv";
+            anchor.textContent = "Download generated SPIR-V";
+            resultElement.appendChild(anchor);
+        }).then(undefined, function () {
+            let resultElement = document.getElementById("Result");
+            while (resultElement.childNodes.length != 0)
+                resultElement.removeChild(resultElement.childNodes[0]);
+            resultElement.textContent = "Load failed.";
+        });
+    });
+</script>
+</head>
+<body>
+    <div id="Result">Loading...</div>
+</body>
+</html>
