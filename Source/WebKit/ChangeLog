@@ -1,3 +1,11 @@
+2017-10-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed WPE build fix after r222837
+        https://bugs.webkit.org/show_bug.cgi?id=177449
+
+        * Shared/wpe/WebEventFactory.cpp:
+        (WebKit::wallTimeForEventTime):
+
 2017-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use blob URL when pasting RTFD instead of overriding DocumentLoader
