@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,26 +28,30 @@
 #include "RefLogger.h"
 
 #include <string>
-#include <unordered_map>
 
 #include <wtf/Expected.h>
 #include <wtf/Ref.h>
 
 namespace WTF {
 
-template <class E> std::ostream& operator<<(std::ostream& os, const UnexpectedType<E>& u)
+template<typename T0, typename T1> std::ostream& operator<<(std::ostream& os, const std::pair<T0, T1>& p)
+{
+    return os << '(' << p.first << ", " << p.second << ')';
+}
+
+template<class E> std::ostream& operator<<(std::ostream& os, const Unexpected<E>& u)
 {
     return os << u.value();
 }
 
-template <class T, class E> std::ostream& operator<<(std::ostream& os, const Expected<T, E>& e)
+template<class T, class E> std::ostream& operator<<(std::ostream& os, const Expected<T, E>& e)
 {
     if (e.hasValue())
         return os << e.value();
     return os << e.error();
 }
 
-template <class E> std::ostream& operator<<(std::ostream& os, const Expected<void, E>& e)
+template<class E> std::ostream& operator<<(std::ostream& os, const Expected<void, E>& e)
 {
     if (e.hasValue())
         return os << "";
@@ -61,19 +65,15 @@ namespace TestWebKitAPI {
 constexpr const char* oops = "oops";
 constexpr const char* foof = "foof";
 
-TEST(WTF_Expected, UnexpectedType)
+TEST(WTF_Expected, Unexpected)
 {
     {
-        auto u = UnexpectedType<int>(42);
+        auto u = Unexpected<int>(42);
         EXPECT_EQ(u.value(), 42);
         constexpr auto c = makeUnexpected(42);
         EXPECT_EQ(c.value(), 42);
         EXPECT_EQ(u, c);
         EXPECT_FALSE(u != c);
-        EXPECT_FALSE(u < c);
-        EXPECT_FALSE(u > c);
-        EXPECT_LE(u, c);
-        EXPECT_GE(u, c);
     }
     {
         auto c = makeUnexpected(oops);
@@ -227,7 +227,7 @@ TEST(WTF_Expected, expected)
     }
 }
 
-TEST(WTF_Expected, Expected_void)
+TEST(WTF_Expected, void)
 {
     typedef Expected<void, const char*> E;
     typedef Expected<void, const void*> EV;
@@ -308,6 +308,10 @@ TEST(WTF_Expected, Expected_void)
         EXPECT_EQ(e0, *e5);
         delete e5;
     }
+    {
+        typedef Expected<std::pair<int, int>, std::string> Et;
+        EXPECT_EQ(Et(WTF::InPlace, 1, 2), Et(WTF::InPlace, 1, 2));
+    }
 }
 
 TEST(WTF_Expected, comparison)
@@ -318,99 +322,43 @@ TEST(WTF_Expected, comparison)
     // Two Expected, no errors.
     EXPECT_EQ(Ex(42), Ex(42));
     EXPECT_NE(Ex(42), Ex(1024));
-    EXPECT_LT(Ex(42), Ex(1024));
-    EXPECT_GT(Ex(1024), Ex(42));
-    EXPECT_LE(Ex(42), Ex(42));
-    EXPECT_GE(Ex(42), Ex(42));
-    EXPECT_LE(Ex(42), Ex(1024));
-    EXPECT_GE(Ex(1024), Ex(42));
 
     EXPECT_FALSE(Ex(42) == Ex(1024));
     EXPECT_FALSE(Ex(42) != Ex(42));
-    EXPECT_FALSE(Ex(1024) < Ex(42));
-    EXPECT_FALSE(Ex(42) > Ex(1024));
-    EXPECT_FALSE(Ex(1024) < Ex(42));
-    EXPECT_FALSE(Ex(42) >= Ex(1024));
 
     // Two Expected, half errors.
     EXPECT_FALSE(Ex(42) == Ex(makeUnexpected(oops)));
     EXPECT_NE(Ex(42), Ex(makeUnexpected(oops)));
-    EXPECT_LT(Ex(42), Ex(makeUnexpected(oops)));
-    EXPECT_FALSE(Ex(42) > Ex(makeUnexpected(oops)));
-    EXPECT_LE(Ex(42), Ex(makeUnexpected(oops)));
-    EXPECT_FALSE(Ex(42) >= Ex(makeUnexpected(oops)));
 
     EXPECT_FALSE(Ex(makeUnexpected(oops)) == Ex(42));
     EXPECT_NE(Ex(makeUnexpected(oops)), Ex(42));
-    EXPECT_FALSE(Ex(makeUnexpected(oops)) < Ex(42));
-    EXPECT_GT(Ex(makeUnexpected(oops)), Ex(42));
-    EXPECT_FALSE(Ex(makeUnexpected(oops)) <= Ex(42));
-    EXPECT_GE(Ex(makeUnexpected(oops)), Ex(42));
 
     // Two Expected, all errors.
     EXPECT_EQ(Er(42), Er(42));
     EXPECT_NE(Er(42), Er(1024));
-    EXPECT_LT(Er(42), Er(1024));
-    EXPECT_GT(Er(1024), Er(42));
-    EXPECT_LE(Er(42), Er(42));
-    EXPECT_GE(Er(42), Er(42));
-    EXPECT_LE(Er(42), Er(1024));
-    EXPECT_GE(Er(1024), Er(42));
 
     EXPECT_FALSE(Er(42) == Er(1024));
     EXPECT_FALSE(Er(42) != Er(42));
-    EXPECT_FALSE(Er(1024) < Er(42));
-    EXPECT_FALSE(Er(42) > Er(1024));
-    EXPECT_FALSE(Er(1024) <= Er(42));
-    EXPECT_FALSE(Er(42) >= Er(1024));
 
     // One Expected, one value.
     EXPECT_EQ(Ex(42), 42);
     EXPECT_NE(Ex(42), 0);
-    EXPECT_LT(Ex(42), 1024);
-    EXPECT_GT(Ex(1024), 42);
-    EXPECT_LE(Ex(42), 42);
-    EXPECT_GE(Ex(42), 42);
-    EXPECT_LE(Ex(42), 1024);
-    EXPECT_GE(Ex(1024), 42);
 
     EXPECT_FALSE(Ex(42) == 0);
     EXPECT_FALSE(Ex(42) != 42);
-    EXPECT_FALSE(Ex(1024) < 42);
-    EXPECT_FALSE(Ex(42) > 1024);
-    EXPECT_FALSE(Ex(1024) < 42);
-    EXPECT_FALSE(Ex(42) >= 1024);
 
     EXPECT_EQ(42, Ex(42));
     EXPECT_NE(42, Ex(1024));
-    EXPECT_LT(42, Ex(1024));
-    EXPECT_GT(1024, Ex(42));
-    EXPECT_LE(42, Ex(42));
-    EXPECT_GE(42, Ex(42));
-    EXPECT_LE(42, Ex(1024));
-    EXPECT_GE(1024, Ex(42));
 
     EXPECT_FALSE(42 == Ex(1024));
     EXPECT_FALSE(42 != Ex(42));
-    EXPECT_FALSE(1024 < Ex(42));
-    EXPECT_FALSE(42 > Ex(1024));
-    EXPECT_FALSE(1024 <= Ex(42));
-    EXPECT_FALSE(42 >= Ex(1024));
 
     // One Expected, one unexpected.
     EXPECT_FALSE(Ex(42) == makeUnexpected(oops));
     EXPECT_NE(Ex(42), makeUnexpected(oops));
-    EXPECT_LT(Ex(42), makeUnexpected(oops));
-    EXPECT_FALSE(Ex(42) > makeUnexpected(oops));
-    EXPECT_LE(Ex(42), makeUnexpected(oops));
-    EXPECT_FALSE(Ex(42) >= makeUnexpected(oops));
 
     EXPECT_FALSE(makeUnexpected(oops) == Ex(42));
     EXPECT_NE(makeUnexpected(oops), Ex(42));
-    EXPECT_FALSE(makeUnexpected(oops) < Ex(42));
-    EXPECT_GT(makeUnexpected(oops), Ex(42));
-    EXPECT_FALSE(makeUnexpected(oops) <= Ex(42));
-    EXPECT_GE(makeUnexpected(oops), Ex(42));
 }
 
 struct NonTrivialDtor {
@@ -442,32 +390,6 @@ TEST(WTF_Expected, destructors)
     EXPECT_EQ(NonTrivialDtor::count, 8);
     { VN vn = makeUnexpected(NonTrivialDtor()); }
     EXPECT_EQ(NonTrivialDtor::count, 11);
-}
-
-TEST(WTF_Expected, hash)
-{
-    typedef Expected<int, const char*> E;
-    std::unordered_map<E, int> m;
-    m.insert({ E(42), 42 });
-    m.insert({ E(makeUnexpected(oops)), 5 });
-    m.insert({ E(1024), 1024 });
-    m.insert({ E(makeUnexpected(foof)), 0xf00f });
-    EXPECT_EQ(m[E(42)], 42);
-    EXPECT_EQ(m[E(1024)], 1024);
-    EXPECT_EQ(m[E(makeUnexpected(oops))], 5);
-    EXPECT_EQ(m[E(makeUnexpected(foof))], 0xf00f);
-}
-
-TEST(WTF_Expected, hash_void)
-{
-    typedef Expected<void, const char*> E;
-    std::unordered_map<E, int> m;
-    m.insert({ E(), 42 });
-    m.insert({ E(makeUnexpected(oops)), 5 });
-    m.insert({ E(makeUnexpected(foof)), 0xf00f });
-    EXPECT_EQ(m[E()], 42);
-    EXPECT_EQ(m[E(makeUnexpected(oops))], 5);
-    EXPECT_EQ(m[E(makeUnexpected(foof))], 0xf00f);
 }
 
 TEST(WTF_Expected, Ref)

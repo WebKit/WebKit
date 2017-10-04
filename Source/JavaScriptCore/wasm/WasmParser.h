@@ -54,7 +54,7 @@ template<typename SuccessType>
 class Parser {
 public:
     typedef String ErrorType;
-    typedef UnexpectedType<ErrorType> UnexpectedResult;
+    typedef Unexpected<ErrorType> UnexpectedResult;
     typedef Expected<void, ErrorType> PartialResult;
     typedef Expected<SuccessType, ErrorType> Result;
 

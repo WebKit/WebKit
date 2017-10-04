@@ -1,5 +1,23 @@
 2017-10-04  JF Bastien  <jfbastien@apple.com>
 
+        WTF: Update std::expected to match current proposal
+        https://bugs.webkit.org/show_bug.cgi?id=177881
+
+        Reviewed by Mark Lam.
+
+        Update API.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::makeValidationResult):
+        * wasm/WasmParser.h:
+        * wasm/WasmValidate.cpp:
+        * wasm/generateWasmValidateInlinesHeader.py:
+        (loadMacro):
+        (storeMacro):
+
+2017-10-04  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: address no VM / JS follow-ups
         https://bugs.webkit.org/show_bug.cgi?id=177887
 

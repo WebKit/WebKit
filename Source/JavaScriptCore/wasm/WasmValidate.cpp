@@ -76,7 +76,7 @@ public:
         Type m_signature;
     };
     typedef String ErrorType;
-    typedef UnexpectedType<ErrorType> UnexpectedResult;
+    typedef Unexpected<ErrorType> UnexpectedResult;
     typedef Expected<void, ErrorType> Result;
     typedef Type ExpressionType;
     typedef ControlData ControlType;

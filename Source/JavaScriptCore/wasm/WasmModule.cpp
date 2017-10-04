@@ -50,7 +50,7 @@ static Module::ValidationResult makeValidationResult(BBQPlan& plan)
 {
     ASSERT(!plan.hasWork());
     if (plan.failed())
-        return UnexpectedType<String>(plan.errorMessage());
+        return Unexpected<String>(plan.errorMessage());
     return Module::ValidationResult(Module::create(plan.takeModuleInformation()));
 }
 

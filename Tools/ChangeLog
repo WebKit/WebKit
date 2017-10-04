@@ -1,3 +1,28 @@
+2017-10-04  JF Bastien  <jfbastien@apple.com>
+
+        WTF: Update std::expected to match current proposal
+        https://bugs.webkit.org/show_bug.cgi?id=177881
+
+        Reviewed by Mark Lam.
+
+        The proposal is likely to be in C++20 and I've been asked to help co-champion
+        it. I'm therefore updating our implementation to more closely match the current
+        proposal, and to make sure it'll work for us if standardized.
+
+         - Rename UnexpectedType to Unexpected to match the proposal.
+         - Remove relational operators, only equality / inequality remains.
+         - Fix minor type signatures.
+         - Add UnexpectedType typedef.
+         - Uncomment rebind implementation.
+         - Add in-place construction tag, as well as explicit error construction tag.
+         - Add template unexpected constructor.
+         - Note that make_unexpected isn't in the proposal anymore, but we keep it because we don't have C++17 deduction guides.
+         - Remove hashing, which isn't in the proposal anymore.
+
+        * TestWebKitAPI/Tests/WTF/Expected.cpp:
+        (WTF::operator<<):
+        (TestWebKitAPI::TEST):
+
 2017-10-04  Lucas Forschler  <lforschler@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=177888
