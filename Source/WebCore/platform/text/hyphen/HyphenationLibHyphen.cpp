@@ -36,14 +36,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TinyLRUCache.h>
+#include <wtf/glib/GLibUtilities.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
-
-#if PLATFORM(GTK)
-#include "GtkUtilities.h"
-#include <wtf/glib/GUniquePtr.h>
-#endif
 
 namespace WebCore {
 
@@ -88,6 +85,30 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
 }
 
 #if ENABLE(DEVELOPER_MODE)
+static CString topLevelPath()
+{
+    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
+        return topLevelDirectory;
+
+    // If the environment variable wasn't provided then assume we were built into
+    // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build
+    // directory is non-standard, but we can't do much more about this.
+    GUniquePtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
+    GUniquePtr<char> layoutTestsPath(g_build_filename(parentPath.get(), "..", "..", "..", nullptr));
+    GUniquePtr<char> absoluteTopLevelPath(realpath(layoutTestsPath.get(), 0));
+    return absoluteTopLevelPath.get();
+}
+
+static CString webkitBuildDirectory()
+{
+    const char* webkitOutputDir = g_getenv("WEBKIT_OUTPUTDIR");
+    if (webkitOutputDir)
+        return webkitOutputDir;
+
+    GUniquePtr<char> outputDir(g_build_filename(topLevelPath().data(), "WebKitBuild", nullptr));
+    return outputDir.get();
+}
+
 static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, Vector<String>>& availableLocales)
 {
     // It's unfortunate that we need to look for the dictionaries this way, but
