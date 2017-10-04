@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,6 +89,7 @@ static CompilationResult compileImpl(
     
     // Make sure that any stubs that the DFG is going to use are initialized. We want to
     // make sure that all JIT code generation does finalization on the main thread.
+    vm.getCTIStub(osrExitThunkGenerator);
     vm.getCTIStub(osrExitGenerationThunkGenerator);
     vm.getCTIStub(throwExceptionFromCallSlowPathGenerator);
     vm.getCTIStub(linkCallThunkGenerator);

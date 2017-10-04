@@ -28,15 +28,26 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGOSRExitBase.h"
+#include "DFGVariableEventStream.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "MethodOfGettingAValueProfile.h"
 #include "Operands.h"
 #include "ValueRecovery.h"
+#include <wtf/RefPtr.h>
 
 namespace JSC {
 
+class ArrayProfile;
 class CCallHelpers;
+
+namespace Probe {
+class Context;
+} // namespace Probe
+
+namespace Profiler {
+class OSRExit;
+} // namespace Profiler
 
 namespace DFG {
 
@@ -91,6 +102,39 @@ private:
     SpeculationRecoveryType m_type;
 };
 
+enum class ExtraInitializationLevel;
+
+struct OSRExitState : RefCounted<OSRExitState> {
+    OSRExitState(OSRExitBase& exit, CodeBlock* codeBlock, CodeBlock* baselineCodeBlock, Operands<ValueRecovery>& operands, Vector<UndefinedOperandSpan>&& undefinedOperandSpans, SpeculationRecovery* recovery, ptrdiff_t stackPointerOffset, int32_t activeThreshold, double memoryUsageAdjustedThreshold, void* jumpTarget, ArrayProfile* arrayProfile)
+        : exit(exit)
+        , codeBlock(codeBlock)
+        , baselineCodeBlock(baselineCodeBlock)
+        , operands(operands)
+        , undefinedOperandSpans(undefinedOperandSpans)
+        , recovery(recovery)
+        , stackPointerOffset(stackPointerOffset)
+        , activeThreshold(activeThreshold)
+        , memoryUsageAdjustedThreshold(memoryUsageAdjustedThreshold)
+        , jumpTarget(jumpTarget)
+        , arrayProfile(arrayProfile)
+    { }
+
+    OSRExitBase& exit;
+    CodeBlock* codeBlock;
+    CodeBlock* baselineCodeBlock;
+    Operands<ValueRecovery> operands;
+    Vector<UndefinedOperandSpan> undefinedOperandSpans;
+    SpeculationRecovery* recovery;
+    ptrdiff_t stackPointerOffset;
+    uint32_t activeThreshold;
+    double memoryUsageAdjustedThreshold;
+    void* jumpTarget;
+    ArrayProfile* arrayProfile;
+
+    ExtraInitializationLevel extraInitializationLevel;
+    Profiler::OSRExit* profilerExit { nullptr };
+};
+
 // === OSRExit ===
 //
 // This structure describes how to exit the speculative path by
@@ -99,10 +143,13 @@ struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
     static void JIT_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
+    static void executeOSRExit(Probe::Context&);
 
     unsigned m_patchableCodeOffset { 0 };
     
     MacroAssemblerCodeRef m_code;
+
+    RefPtr<OSRExitState> exitState;
     
     JSValueSource m_jsValueSource;
     MethodOfGettingAValueProfile m_valueProfile;

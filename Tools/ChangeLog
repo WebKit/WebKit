@@ -1,3 +1,16 @@
+2017-10-04  Mark Lam  <mark.lam@apple.com>
+
+        Add support for using Probe DFG OSR Exit behind a runtime flag.
+        https://bugs.webkit.org/show_bug.cgi?id=177844
+        <rdar://problem/34801425>
+
+        Reviewed by Saam Barati.
+
+        Enable --useProbeOSrExit=true for dfg-eager and ftl-no-cjit-validate-sampling-profiler
+        test configurations.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-10-04  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy.tool.steps.steps_unittest.StepsTest.test_runtests_api is flakey

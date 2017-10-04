@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,7 +91,7 @@ struct MinifiedGenerationInfo {
 
 } // namespace
 
-bool VariableEventStream::tryToSetConstantRecovery(ValueRecovery& recovery, MinifiedNode* node) const
+static bool tryToSetConstantRecovery(ValueRecovery& recovery, MinifiedNode* node)
 {
     if (!node)
         return false;
@@ -114,14 +114,39 @@ bool VariableEventStream::tryToSetConstantRecovery(ValueRecovery& recovery, Mini
     return false;
 }
 
-void VariableEventStream::reconstruct(
+template<VariableEventStream::ReconstructionStyle style>
+unsigned VariableEventStream::reconstruct(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, MinifiedGraph& graph,
-    unsigned index, Operands<ValueRecovery>& valueRecoveries) const
+    unsigned index, Operands<ValueRecovery>& valueRecoveries, Vector<UndefinedOperandSpan>* undefinedOperandSpans) const
 {
     ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
     CodeBlock* baselineCodeBlock = codeBlock->baselineVersion();
-    
+
     unsigned numVariables;
+    static const unsigned invalidIndex = std::numeric_limits<unsigned>::max();
+    unsigned firstUndefined = invalidIndex;
+    bool firstUndefinedIsArgument = false;
+
+    auto flushUndefinedOperandSpan = [&] (unsigned i) {
+        if (firstUndefined == invalidIndex)
+            return;
+        int firstOffset = valueRecoveries.virtualRegisterForIndex(firstUndefined).offset();
+        int lastOffset = valueRecoveries.virtualRegisterForIndex(i - 1).offset();
+        int minOffset = std::min(firstOffset, lastOffset);
+        undefinedOperandSpans->append({ firstUndefined, minOffset, i - firstUndefined });
+        firstUndefined = invalidIndex;
+    };
+    auto recordUndefinedOperand = [&] (unsigned i) {
+        // We want to separate the span of arguments from the span of locals even if they have adjacent operands indexes.
+        if (firstUndefined != invalidIndex && firstUndefinedIsArgument != valueRecoveries.isArgument(i))
+            flushUndefinedOperandSpan(i);
+
+        if (firstUndefined == invalidIndex) {
+            firstUndefined = i;
+            firstUndefinedIsArgument = valueRecoveries.isArgument(i);
+        }
+    };
+
     if (codeOrigin.inlineCallFrame)
         numVariables = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame)->m_numCalleeLocals + VirtualRegister(codeOrigin.inlineCallFrame->stackOffset).toLocal() + 1;
     else
@@ -136,7 +161,7 @@ void VariableEventStream::reconstruct(
             valueRecoveries[i] = ValueRecovery::displacedInJSStack(
                 VirtualRegister(valueRecoveries.operandForIndex(i)), DataFormatJS);
         }
-        return;
+        return numVariables;
     }
     
     // Step 1: Find the last checkpoint, and figure out the number of virtual registers as we go.
@@ -191,6 +216,12 @@ void VariableEventStream::reconstruct(
         ValueSource& source = operandSources[i];
         if (source.isTriviallyRecoverable()) {
             valueRecoveries[i] = source.valueRecovery();
+            if (style == ReconstructionStyle::Separated) {
+                if (valueRecoveries[i].isConstant() && valueRecoveries[i].constant() == jsUndefined())
+                    recordUndefinedOperand(i);
+                else
+                    flushUndefinedOperandSpan(i);
+            }
             continue;
         }
         
@@ -199,14 +230,25 @@ void VariableEventStream::reconstruct(
         MinifiedGenerationInfo info = generationInfos.get(source.id());
         if (!info.alive) {
             valueRecoveries[i] = ValueRecovery::constant(jsUndefined());
+            if (style == ReconstructionStyle::Separated)
+                recordUndefinedOperand(i);
             continue;
         }
 
-        if (tryToSetConstantRecovery(valueRecoveries[i], node))
+        if (tryToSetConstantRecovery(valueRecoveries[i], node)) {
+            if (style == ReconstructionStyle::Separated) {
+                if (node->hasConstant() && node->constant() == jsUndefined())
+                    recordUndefinedOperand(i);
+                else
+                    flushUndefinedOperandSpan(i);
+            }
             continue;
+        }
         
         ASSERT(info.format != DataFormatNone);
-        
+        if (style == ReconstructionStyle::Separated)
+            flushUndefinedOperandSpan(i);
+
         if (info.filled) {
             if (info.format == DataFormatDouble) {
                 valueRecoveries[i] = ValueRecovery::inFPR(info.u.fpr, DataFormatDouble);
@@ -225,6 +267,24 @@ void VariableEventStream::reconstruct(
         valueRecoveries[i] =
             ValueRecovery::displacedInJSStack(static_cast<VirtualRegister>(info.u.virtualReg), info.format);
     }
+    if (style == ReconstructionStyle::Separated)
+        flushUndefinedOperandSpan(operandSources.size());
+
+    return numVariables;
+}
+
+unsigned VariableEventStream::reconstruct(
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, MinifiedGraph& graph,
+    unsigned index, Operands<ValueRecovery>& valueRecoveries) const
+{
+    return reconstruct<ReconstructionStyle::Combined>(codeBlock, codeOrigin, graph, index, valueRecoveries, nullptr);
+}
+
+unsigned VariableEventStream::reconstruct(
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, MinifiedGraph& graph,
+    unsigned index, Operands<ValueRecovery>& valueRecoveries, Vector<UndefinedOperandSpan>* undefinedOperandSpans) const
+{
+    return reconstruct<ReconstructionStyle::Separated>(codeBlock, codeOrigin, graph, index, valueRecoveries, undefinedOperandSpans);
 }
 
 } } // namespace JSC::DFG

@@ -172,6 +172,7 @@ typedef const char* optionString;
     v(bool, verboseCompilation, false, Normal, nullptr) \
     v(bool, verboseFTLCompilation, false, Normal, nullptr) \
     v(bool, logCompilationChanges, false, Normal, nullptr) \
+    v(bool, useProbeOSRExit, false, Normal, nullptr) \
     v(bool, printEachOSRExit, false, Normal, nullptr) \
     v(bool, validateGraph, false, Normal, nullptr) \
     v(bool, validateGraphAtEachPhase, false, Normal, nullptr) \

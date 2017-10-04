@@ -34,6 +34,8 @@
 namespace JSC {
 namespace Probe {
 
+static void* const maxLowWatermark = reinterpret_cast<void*>(std::numeric_limits<uintptr_t>::max());
+
 #if ASAN_ENABLED
 // FIXME: we should consider using the copy function for both ASan and non-ASan builds.
 // https://bugs.webkit.org/show_bug.cgi?id=176961
@@ -49,7 +51,7 @@ static void copyStackPage(void* dst, void* src, size_t size)
         *dstPointer++ = *srcPointer++;
 }
 #else
-#define copyStackPage(dst, src, size) std::memcpy(dst, src, size);
+#define copyStackPage(dst, src, size) std::memcpy(dst, src, size)
 #endif
 
 Page::Page(void* baseAddress)
@@ -84,12 +86,24 @@ void Page::flushWrites()
     m_dirtyBits = 0;
 }
 
+void* Page::lowWatermarkFromVisitingDirtyChunks()
+{
+    uint64_t dirtyBits = m_dirtyBits;
+    size_t offset = 0;
+    while (dirtyBits) {
+        if (dirtyBits & 1)
+            return reinterpret_cast<uint8_t*>(m_baseLogicalAddress) + offset;
+        dirtyBits = dirtyBits >> 1;
+        offset += s_chunkSize;
+    }
+    return maxLowWatermark;
+}
+
 Stack::Stack(Stack&& other)
-    : m_newStackPointer(other.m_newStackPointer)
-    , m_lowWatermark(other.m_lowWatermark)
-    , m_stackBounds(WTFMove(other.m_stackBounds))
+    : m_stackBounds(WTFMove(other.m_stackBounds))
     , m_pages(WTFMove(other.m_pages))
 {
+    m_savedStackPointer = other.m_savedStackPointer;
 #if !ASSERT_DISABLED
     other.m_isValid = false;
 #endif
@@ -126,6 +140,18 @@ Page* Stack::ensurePageFor(void* address)
     }
     m_lastAccessedPageBaseAddress = baseAddress;
     return m_lastAccessedPage;
+}
+
+void* Stack::lowWatermarkFromVisitingDirtyPages()
+{
+    void* low = maxLowWatermark;
+    for (auto it = m_pages.begin(); it != m_pages.end(); ++it) {
+        Page& page = *it->value;
+        if (!page.hasWritesToFlush() || low < page.baseAddress())
+            continue;
+        low = std::min(low, page.lowWatermarkFromVisitingDirtyChunks());
+    }
+    return low;
 }
 
 } // namespace Probe

@@ -1,3 +1,95 @@
+2017-10-04  Mark Lam  <mark.lam@apple.com>
+
+        Add support for using Probe DFG OSR Exit behind a runtime flag.
+        https://bugs.webkit.org/show_bug.cgi?id=177844
+        <rdar://problem/34801425>
+
+        Reviewed by Saam Barati.
+
+        This is based on the code originally posted in https://bugs.webkit.org/show_bug.cgi?id=175144
+        (in r221774 and r221832) with some optimizations and bug fixes added.  The probe
+        based DFG OSR Exit is only enabled if Options::useProbeOSRExit() is true.  We're
+        landing this behind an option switch to make it easier to tune performance using
+        the probe based OSR exit.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printCallback):
+        * assembler/ProbeContext.cpp:
+        (JSC::Probe::executeProbe):
+        (JSC::Probe::flushDirtyStackPages):
+        * assembler/ProbeContext.h:
+        (JSC::Probe::Context::Context):
+        (JSC::Probe::Context::arg):
+        * assembler/ProbeFrame.h: Added.
+        (JSC::Probe::Frame::Frame):
+        (JSC::Probe::Frame::argument):
+        (JSC::Probe::Frame::operand):
+        (JSC::Probe::Frame::setArgument):
+        (JSC::Probe::Frame::setOperand):
+        (JSC::Probe::Frame::get):
+        (JSC::Probe::Frame::set):
+        * assembler/ProbeStack.cpp:
+        (JSC::Probe::Page::lowWatermarkFromVisitingDirtyChunks):
+        (JSC::Probe::Stack::Stack):
+        (JSC::Probe::Stack::lowWatermarkFromVisitingDirtyPages):
+        * assembler/ProbeStack.h:
+        (JSC::Probe::Stack::Stack):
+        (JSC::Probe::Stack::lowWatermark):
+        (JSC::Probe::Stack::set):
+        (JSC::Probe::Stack::savedStackPointer const):
+        (JSC::Probe::Stack::setSavedStackPointer):
+        (JSC::Probe::Stack::newStackPointer const): Deleted.
+        (JSC::Probe::Stack::setNewStackPointer): Deleted.
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::observeArrayMode):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addressOfOSRExitCounter): Deleted.
+        * bytecode/ExecutionCounter.h:
+        (JSC::ExecutionCounter::hasCrossedThreshold const):
+        (JSC::ExecutionCounter::setNewThresholdForOSRExit):
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::reportValue):
+        * bytecode/MethodOfGettingAValueProfile.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::jsValueFor):
+        (JSC::DFG::restoreCalleeSavesFor):
+        (JSC::DFG::saveCalleeSavesFor):
+        (JSC::DFG::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::DFG::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        (JSC::DFG::saveOrCopyCalleeSavesFor):
+        (JSC::DFG::createDirectArgumentsDuringExit):
+        (JSC::DFG::createClonedArgumentsDuringExit):
+        (JSC::DFG::emitRestoreArguments):
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        (JSC::DFG::printOSRExit):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExitState::OSRExitState):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitThunkGenerator):
+        * dfg/DFGThunks.h:
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::tryToSetConstantRecovery):
+        (JSC::DFG::VariableEventStream::reconstruct const):
+        (JSC::DFG::VariableEventStream::tryToSetConstantRecovery const): Deleted.
+        * dfg/DFGVariableEventStream.h:
+        * profiler/ProfilerOSRExit.h:
+        (JSC::Profiler::OSRExit::incCount):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/Options.h:
+
 2017-10-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r222840.

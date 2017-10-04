@@ -175,7 +175,7 @@ void printMemory(PrintStream& out, Context& context)
 void printCallback(Probe::Context& probeContext)
 {
     auto& out = WTF::dataFile();
-    PrintRecordList& list = *reinterpret_cast<PrintRecordList*>(probeContext.arg);
+    PrintRecordList& list = *probeContext.arg<PrintRecordList*>();
     for (size_t i = 0; i < list.size(); i++) {
         auto& record = list[i];
         Context context(probeContext, record.data);

@@ -191,10 +191,12 @@ public:
     using FPRegisterID = MacroAssembler::FPRegisterID;
 
     Context(State* state)
-        : m_state(state)
-        , arg(state->arg)
-        , cpu(state->cpu)
+        : cpu(state->cpu)
+        , m_state(state)
     { }
+
+    template<typename T>
+    T arg() { return reinterpret_cast<T>(m_state->arg); }
 
     uintptr_t& gpr(RegisterID id) { return cpu.gpr(id); }
     uintptr_t& spr(SPRegisterID id) { return cpu.spr(id); }
@@ -224,13 +226,10 @@ public:
     bool hasWritesToFlush() { return m_stack.hasWritesToFlush(); }
     Stack* releaseStack() { return new Stack(WTFMove(m_stack)); }
 
-private:
-    State* m_state;
-public:
-    void* arg;
     CPUState& cpu;
 
 private:
+    State* m_state;
     Stack m_stack;
 
     friend JS_EXPORT_PRIVATE void* probeStateForContext(Context&); // Not for general use. This should only be for writing tests.

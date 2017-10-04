@@ -457,6 +457,7 @@ EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", 
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
 B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
+PROBE_OSR_EXIT_OPTION = ["--useProbeOSRExit=true"]
 
 require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
 
@@ -623,7 +624,7 @@ def runFTLNoCJITB3O1(*optionalTestSpecificOptions)
 end
 
 def runFTLNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + PROBE_OSR_EXIT_OPTION + optionalTestSpecificOptions))
 end
 
 def runFTLNoCJITNoPutStackValidate(*optionalTestSpecificOptions)
@@ -639,7 +640,7 @@ def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)
 end
 
 def runDFGEager(*optionalTestSpecificOptions)
-    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + PROBE_OSR_EXIT_OPTION + optionalTestSpecificOptions))
 end
 
 def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)

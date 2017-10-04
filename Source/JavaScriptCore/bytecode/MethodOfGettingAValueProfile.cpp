@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,34 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueReg
         return;
     } }
     
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void MethodOfGettingAValueProfile::reportValue(JSValue value)
+{
+    switch (m_kind) {
+    case None:
+        return;
+
+    case Ready:
+        *u.profile->specFailBucket(0) = JSValue::encode(value);
+        return;
+
+    case LazyOperand: {
+        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, VirtualRegister(u.lazyOperand.operand));
+
+        ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
+        LazyOperandValueProfile* profile =
+            u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(locker, key);
+        *profile->specFailBucket(0) = JSValue::encode(value);
+        return;
+    }
+
+    case ArithProfileReady: {
+        u.arithProfile->observeResult(value);
+        return;
+    } }
+
     RELEASE_ASSERT_NOT_REACHED();
 }
 

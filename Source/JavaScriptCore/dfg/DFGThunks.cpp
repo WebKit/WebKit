@@ -40,6 +40,14 @@
 
 namespace JSC { namespace DFG {
 
+MacroAssemblerCodeRef osrExitThunkGenerator(VM* vm)
+{
+    MacroAssembler jit;
+    jit.probe(OSRExit::executeOSRExit, vm);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(patchBuffer, ("DFG OSR exit thunk"));
+}
+
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 {
     MacroAssembler jit;

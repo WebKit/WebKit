@@ -95,6 +95,8 @@ public:
             flushWrites();
     }
 
+    void* lowWatermarkFromVisitingDirtyChunks();
+
 private:
     uint64_t dirtyBitFor(void* logicalAddress)
     {
@@ -146,17 +148,15 @@ class Stack {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Stack()
-        : m_lowWatermark(reinterpret_cast<void*>(-1))
-        , m_stackBounds(Thread::current().stack())
+        : m_stackBounds(Thread::current().stack())
     { }
     Stack(Stack&& other);
 
-    void* lowWatermark()
+    void* lowWatermarkFromVisitingDirtyPages();
+    void* lowWatermark(void* stackPointer)
     {
-        // We use the chunkAddress for the low watermark because we'll be doing write backs
-        // to the stack in increments of chunks. Hence, we'll treat the lowest address of
-        // the chunk as the low watermark of any given set address.
-        return Page::chunkAddressFor(m_lowWatermark);
+        ASSERT(Page::chunkAddressFor(stackPointer) == lowWatermarkFromVisitingDirtyPages());
+        return Page::chunkAddressFor(stackPointer);
     }
 
     template<typename T>
@@ -176,9 +176,6 @@ public:
     {
         Page* page = pageFor(address);
         page->set<T>(address, value);
-
-        if (address < m_lowWatermark)
-            m_lowWatermark = address;
     }
 
     template<typename T>
@@ -189,8 +186,8 @@ public:
 
     JS_EXPORT_PRIVATE Page* ensurePageFor(void* address);
 
-    void* newStackPointer() const { return m_newStackPointer; };
-    void setNewStackPointer(void* sp) { m_newStackPointer = sp; };
+    void* savedStackPointer() const { return m_savedStackPointer; }
+    void setSavedStackPointer(void* sp) { m_savedStackPointer = sp; }
 
     bool hasWritesToFlush();
     void flushWrites();
@@ -207,8 +204,7 @@ private:
         return ensurePageFor(address);
     }
 
-    void* m_newStackPointer { nullptr };
-    void* m_lowWatermark;
+    void* m_savedStackPointer { nullptr };
 
     // A cache of the last accessed page details for quick access.
     void* m_lastAccessedPageBaseAddress { nullptr };

@@ -4596,6 +4596,7 @@
 		FEA0C4001CDD7D0E00481991 /* FunctionWhitelist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionWhitelist.cpp; sourceTree = "<group>"; };
 		FEA0C4011CDD7D0E00481991 /* FunctionWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionWhitelist.h; sourceTree = "<group>"; };
 		FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerARM64.cpp; sourceTree = "<group>"; };
+		FEB41CCB1F73284200C5481E /* ProbeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeFrame.h; sourceTree = "<group>"; };
 		FEB51F6A1A97B688001F921C /* Regress141809.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Regress141809.h; path = API/tests/Regress141809.h; sourceTree = "<group>"; };
 		FEB51F6B1A97B688001F921C /* Regress141809.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Regress141809.mm; path = API/tests/Regress141809.mm; sourceTree = "<group>"; };
 		FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorHandlingScope.cpp; sourceTree = "<group>"; };
@@ -7295,6 +7296,7 @@
 				FE63DD531EA9B60E00103A69 /* Printer.h */,
 				FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */,
 				FE10AAED1F44D946009DEDC5 /* ProbeContext.h */,
+				FEB41CCB1F73284200C5481E /* ProbeFrame.h */,
 				FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */,
 				FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */,
 				FE533CA01F217C310016A1FE /* testmasm.cpp */,

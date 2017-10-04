@@ -52,8 +52,9 @@ void executeProbe(State* state)
 #endif
 
     if (context.hasWritesToFlush()) {
-        context.stack().setNewStackPointer(state->cpu.sp());
-        state->cpu.sp() = std::min(context.stack().lowWatermark(), state->cpu.sp());
+        context.stack().setSavedStackPointer(state->cpu.sp());
+        void* lowWatermark = context.stack().lowWatermark(state->cpu.sp());
+        state->cpu.sp() = std::min(lowWatermark, state->cpu.sp());
 
         state->initializeStackFunction = flushDirtyStackPages;
         state->initializeStackArg = context.releaseStack();
@@ -64,7 +65,7 @@ static void flushDirtyStackPages(State* state)
 {
     std::unique_ptr<Stack> stack(reinterpret_cast<Probe::Stack*>(state->initializeStackArg));
     stack->flushWrites();
-    state->cpu.sp() = stack->newStackPointer();
+    state->cpu.sp() = stack->savedStackPointer();
 }
 
 // Not for general use. This should only be for writing tests.
