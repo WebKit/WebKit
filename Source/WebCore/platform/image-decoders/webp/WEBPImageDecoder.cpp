@@ -240,7 +240,7 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
             return false;
     } else {
         const ImageFrame& prevBuffer = m_frameBufferCache[frameIndex - 1];
-        ASSERT(prevBuffer.status() == ImageFrame::FrameComplete);
+        ASSERT(prevBuffer.isComplete());
 
         // Preserve the last frame as the starting state for this frame.
         if (!prevBuffer.backingStore() || !buffer.initialize(*prevBuffer.backingStore()))

@@ -1,3 +1,10 @@
+2017-10-04  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed: fix GTK debug build after r222841.
+
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::initFrameBuffer):
+
 2017-10-04  Zalan Bujtas  <zalan@apple.com>
 
         RenderFragmentContainerRange should not hold raw pointers.
