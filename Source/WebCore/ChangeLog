@@ -1,3 +1,35 @@
+2017-10-04  Daniel Bates  <dabates@apple.com>
+
+        Have TextDecorationPainter hold an OptionSet of decorations
+        https://bugs.webkit.org/show_bug.cgi?id=177889
+
+        Reviewed by Simon Fraser.
+
+        Currently TextDecorationPainter implicitly maintains the set of one or more TextDecoration
+        flags in a instance variable bitmask of type TextDecoration. Instead we should represent
+        this set explicitly as an OptionSet to improve readability of the code.
+
+        For now we have the TextDecorationPainter constructor and TextDecorationPainter::stylesForRenderer()
+        to take the set of decorations as an unsigned value to avoid the need to update callers.
+        We will look to apply a similar change throughout the code in <https://bugs.webkit.org/show_bug.cgi?id=176844>.
+
+        No functionality changed. So, no new tests.
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::TextDecorationPainter): For now, changed data type for passed
+        decorations from TextDecoration to unsigned to convey that it is a bitmask.
+        (WebCore::TextDecorationPainter::paintTextDecoration): Renamed linesAreOpaque to areLinesOpaque
+        while I am here. Fixed some minor style issues.
+        (WebCore::collectStylesForRenderer): Modified to take the remaining decorations as an OptionSet,
+        and removed an unnecessary copy of these decorations by taking advantage of the fact that they
+        are passed by value.
+        (WebCore::TextDecorationPainter::stylesForRenderer): Convert the passed decorations to an OptionSet as needed to
+        pass to collectStylesForRenderer().
+        * rendering/TextDecorationPainter.h: Change m_decoration from TextDecoration to OptionSet<TextDecoration>
+        and rename it to m_decorations to reflect that it is used as a set of one or more TextDecoration flags.
+        Also remove unnecessary initializer for m_isPrinting while I am here and group it with the other boolean,
+        m_isHorizontal. There is exactly one constructor for this class and it initializes m_isPrinting.
+
 2017-10-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Improve CanvasManager recording events
