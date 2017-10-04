@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,7 +40,7 @@ class TextRun;
     
 class TextDecorationPainter {
 public:
-    TextDecorationPainter(GraphicsContext&, TextDecoration, const RenderText&, bool isFirstLine);
+    TextDecorationPainter(GraphicsContext&, TextDecoration, const RenderText&, bool isFirstLine, PseudoId = NOPSEUDO);
     
     void setInlineTextBox(const InlineTextBox* inlineTextBox) { m_inlineTextBox = inlineTextBox; }
     void setFont(const FontCascade& font) { m_font = &font; }
@@ -59,7 +59,7 @@ public:
         TextDecorationStyle overlineStyle;
         TextDecorationStyle linethroughStyle;
     };
-    static Styles stylesForRenderer(const RenderObject&, unsigned requestedDecorations, bool firstLineStyle = false);
+    static Styles stylesForRenderer(const RenderObject&, unsigned requestedDecorations, bool firstLineStyle = false, PseudoId = NOPSEUDO);
         
 private:
     GraphicsContext& m_context;

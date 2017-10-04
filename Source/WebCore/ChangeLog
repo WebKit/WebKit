@@ -1,3 +1,25 @@
+2017-10-04  Daniel Bates  <dabates@apple.com>
+
+        Teach TextDecorationPainter about pseudo styles
+        https://bugs.webkit.org/show_bug.cgi?id=177882
+
+        Reviewed by Simon Fraser.
+
+        As a step towards implementing support for CSS pseudo elements ::spelling-error and ::grammar-error
+        (https://bugs.webkit.org/show_bug.cgi?id=175784) teach TextDecorationPainter about pseudo styles.
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::TextDecorationPainter): Modified to take an optional
+        pseudo style (defaults to NOPSEUDO - no pseudo style).
+        (WebCore::collectStylesForRenderer): Modified to take a pseudo style. Note that getCachedPseudoStyle()
+        is only defined on RenderText and RenderElement objects (i.e. it is not a virtual function on RenderObject).
+        So, we must explicitly type check the renderer and cast appropriately before calling it. We may want
+        to consider making it virtual in the future if we find there are more call sites that would benefit
+        from polymorphism.
+        (WebCore::TextDecorationPainter::stylesForRenderer): Modified to take an optional
+        pseudo style (defaults to NOPSEUDO - no pseudo style).
+        * rendering/TextDecorationPainter.h:
+
 2017-10-04  Antti Koivisto  <antti@apple.com>
 
         Add assert verifying all renderers get destroyed

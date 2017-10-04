@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -241,12 +241,12 @@ static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorati
     return strokeStyle;
 }
 
-TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, TextDecoration decoration, const RenderText& renderer, bool isFirstLine)
+TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, TextDecoration decoration, const RenderText& renderer, bool isFirstLine, PseudoId pseudoId)
     : m_context { context }
     , m_decoration { decoration }
     , m_wavyOffset { wavyOffsetFromDecoration() }
     , m_isPrinting { renderer.document().printing() }
-    , m_styles { stylesForRenderer(renderer, m_decoration, isFirstLine) }
+    , m_styles { stylesForRenderer(renderer, m_decoration, isFirstLine, pseudoId) }
     , m_lineStyle { isFirstLine ? renderer.firstLineStyle() : renderer.style() }
 {
 }
@@ -367,7 +367,7 @@ static Color decorationColor(const RenderStyle& style)
     return style.visitedDependentColor(CSSPropertyWebkitTextFillColor);
 }
 
-static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, unsigned requestedDecorations, bool firstLineStyle)
+static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, unsigned requestedDecorations, bool firstLineStyle, PseudoId pseudoId)
 {
     unsigned remainingDecoration = requestedDecorations;
     auto extractDecorations = [&] (const RenderStyle& style, unsigned decorations) {
@@ -392,9 +392,18 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
 
     };
 
+    auto styleForRenderer = [&] (const RenderObject& renderer) -> const RenderStyle& {
+        if (pseudoId != NOPSEUDO && renderer.style().hasPseudoStyle(pseudoId)) {
+            if (is<RenderText>(renderer))
+                return *downcast<RenderText>(renderer).getCachedPseudoStyle(pseudoId);
+            return *downcast<RenderElement>(renderer).getCachedPseudoStyle(pseudoId);
+        }
+        return firstLineStyle ? renderer.firstLineStyle() : renderer.style();
+    };
+
     auto* current = &renderer;
     do {
-        auto& style = firstLineStyle ? current->firstLineStyle() : current->style();
+        const auto& style = styleForRenderer(*current);
         extractDecorations(style, style.textDecoration());
 
         if (current->isRubyText())
@@ -410,18 +419,16 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
     } while (current && !is<HTMLAnchorElement>(current->node()) && !is<HTMLFontElement>(current->node()));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
-    if (remainingDecoration && current) {
-        auto& style = firstLineStyle ? current->firstLineStyle() : current->style();
-        extractDecorations(style, remainingDecoration);
-    }
+    if (remainingDecoration && current)
+        extractDecorations(styleForRenderer(*current), remainingDecoration);
 }
 
-auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, unsigned requestedDecorations, bool firstLineStyle) -> Styles
+auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, unsigned requestedDecorations, bool firstLineStyle, PseudoId pseudoId) -> Styles
 {
     Styles result;
-    collectStylesForRenderer(result, renderer, requestedDecorations, false);
+    collectStylesForRenderer(result, renderer, requestedDecorations, false, pseudoId);
     if (firstLineStyle)
-        collectStylesForRenderer(result, renderer, requestedDecorations, true);
+        collectStylesForRenderer(result, renderer, requestedDecorations, true, pseudoId);
     return result;
 }
 
