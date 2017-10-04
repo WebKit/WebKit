@@ -1,3 +1,15 @@
+2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: After enabling the new Network Tab in experimental settings, the network tab disappears
+        https://bugs.webkit.org/show_bug.cgi?id=177774
+        <rdar://problem/34771647>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        When enabling the new network tab, ensure it gets added to the list of open tabs.
+        Place it where the old network tab was so the UI is as consistent as possible.
+
 2017-10-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layers tab sidebar's DOM highlight should be by row hover, not row selection
