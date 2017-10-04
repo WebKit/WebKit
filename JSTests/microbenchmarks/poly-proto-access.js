@@ -30,7 +30,7 @@ function bar(o) {
 noInline(bar);
 
 let start = Date.now();
-for (let i = 0; i < 1000000; ++i) {
+for (let i = 0; i < 100000; ++i) {
     if (i === 5000) {
         for (let arr of a)
             arr.__proto__.foo = 42;
