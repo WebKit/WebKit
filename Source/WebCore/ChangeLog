@@ -1,5 +1,21 @@
 2017-10-04  Zalan Bujtas  <zalan@apple.com>
 
+        RenderMultiColumnFlow populate/evacuate should not disable layout state.
+        https://bugs.webkit.org/show_bug.cgi?id=177894
+        <rdar://problem/34818696>
+
+        Reviewed by Antti Koivisto.
+
+        Populate/evacuate methods are not called at layout time.
+
+        Covered by existing tests.
+
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::populate):
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy):
+
+2017-10-04  Zalan Bujtas  <zalan@apple.com>
+
         RenderMultiColumnFlow::m_beingEvacuated is redundant.
         https://bugs.webkit.org/show_bug.cgi?id=177886
         <rdar://problem/34815997>
