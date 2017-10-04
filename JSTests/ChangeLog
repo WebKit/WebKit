@@ -1,5 +1,12 @@
 2017-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, marking one async iterator test262 test failed
+        https://bugs.webkit.org/show_bug.cgi?id=177859
+
+        * test262.yaml:
+
+2017-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [Test262] Update Test262 to Oct 4 version
         https://bugs.webkit.org/show_bug.cgi?id=177859
 
