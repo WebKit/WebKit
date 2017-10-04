@@ -1,3 +1,59 @@
+2017-10-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Reimplement CurlDownload with CurlRequest
+        https://bugs.webkit.org/show_bug.cgi?id=177779
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::enableAllowedProtocols):
+        (WebCore::CurlHandle::enableFollowLocation): Deleted.
+        (WebCore::CurlHandle::getEffectiveURL): Deleted.
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::~CurlDownload):
+        (WebCore::CurlDownload::init):
+        (WebCore::CurlDownload::start):
+        (WebCore::CurlDownload::cancel):
+        (WebCore::CurlDownload::createCurlRequest):
+        (WebCore::CurlDownload::curlDidReceiveResponse):
+        (WebCore::CurlDownload::curlDidReceiveBuffer):
+        (WebCore::CurlDownload::curlDidComplete):
+        (WebCore::CurlDownload::curlDidFailWithError):
+        (WebCore::CurlDownload::shouldRedirectAsGET):
+        (WebCore::CurlDownload::willSendRequest):
+        (WebCore::CurlDownload::getResponse const): Deleted.
+        (WebCore::CurlDownload::retain): Deleted.
+        (WebCore::CurlDownload::release): Deleted.
+        (WebCore::CurlDownload::setupTransfer): Deleted.
+        (WebCore::CurlDownload::didCompleteTransfer): Deleted.
+        (WebCore::CurlDownload::didCancelTransfer): Deleted.
+        (WebCore::CurlDownload::closeFile): Deleted.
+        (WebCore::CurlDownload::moveFileToDestination): Deleted.
+        (WebCore::CurlDownload::writeDataToFile): Deleted.
+        (WebCore::CurlDownload::didReceiveHeader): Deleted.
+        (WebCore::CurlDownload::didReceiveData): Deleted.
+        (WebCore::CurlDownload::didReceiveResponse): Deleted.
+        (WebCore::CurlDownload::didReceiveDataOfLength): Deleted.
+        (WebCore::CurlDownload::didFinish): Deleted.
+        (WebCore::CurlDownload::didFail): Deleted.
+        (WebCore::CurlDownload::writeCallback): Deleted.
+        (WebCore::CurlDownload::headerCallback): Deleted.
+        * platform/network/curl/CurlDownload.h:
+        (WebCore::CurlDownloadListener::didReceiveResponse):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::didReceiveData):
+        (WebCore::CurlRequest::finalizeTransfer):
+        (WebCore::CurlRequest::enableDownloadToFile):
+        (WebCore::CurlRequest::getDownloadedFilePath):
+        (WebCore::CurlRequest::writeDataToDownloadFileIfEnabled):
+        (WebCore::CurlRequest::closeDownloadFile):
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::create):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::createCurlRequest):
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+
 2017-10-03  Zalan Bujtas <zalan@apple.com>
 
         Move scroll snap point unregistration from willBeRemovedFromTree to willBeDestroyed

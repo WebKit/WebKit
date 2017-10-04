@@ -147,7 +147,7 @@ void ResourceHandleCurlDelegate::dispatchSynchronousJob()
     m_curlRequest->start(true);
 }
 
-RefPtr<CurlRequest> ResourceHandleCurlDelegate::createCurlRequest(ResourceRequest& request)
+Ref<CurlRequest> ResourceHandleCurlDelegate::createCurlRequest(ResourceRequest& request)
 {
     ASSERT(isMainThread());
 
@@ -170,7 +170,7 @@ RefPtr<CurlRequest> ResourceHandleCurlDelegate::createCurlRequest(ResourceReques
         }
     }
 
-    return adoptRef(new CurlRequest(request, this, m_defersLoading));
+    return CurlRequest::create(request, this, m_defersLoading);
 }
 
 bool ResourceHandleCurlDelegate::cancelledOrClientless()

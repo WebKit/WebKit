@@ -326,6 +326,8 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
 
     auto receiveBytes = buffer->size();
 
+    writeDataToDownloadFileIfEnabled(buffer);
+
     if (receiveBytes) {
         callDelegate([this, buffer = WTFMove(buffer)](CurlRequestDelegate* delegate) mutable {
             if (delegate)
@@ -381,6 +383,7 @@ void CurlRequest::didCancelTransfer()
 void CurlRequest::finalizeTransfer()
 {
     m_formDataStream = nullptr;
+    closeDownloadFile();
     m_curlHandle = nullptr;
 }
 
@@ -588,6 +591,43 @@ void CurlRequest::pausedStatusChanged()
         if ((error != CURLE_OK) && !isPaused())
             cancel();
     }
+}
+
+void CurlRequest::enableDownloadToFile()
+{
+    LockHolder locker(m_downloadMutex);
+    m_isEnabledDownloadToFile = true;
+}
+
+const String& CurlRequest::getDownloadedFilePath()
+{
+    LockHolder locker(m_downloadMutex);
+    return m_downloadFilePath;
+}
+
+void CurlRequest::writeDataToDownloadFileIfEnabled(const SharedBuffer& buffer)
+{
+    LockHolder locker(m_downloadMutex);
+
+    if (!m_isEnabledDownloadToFile)
+        return;
+
+    if (m_downloadFilePath.isEmpty())
+        m_downloadFilePath = openTemporaryFile("download", m_downloadFileHandle);
+
+    if (m_downloadFileHandle != invalidPlatformFileHandle)
+        writeToFile(m_downloadFileHandle, buffer.data(), buffer.size());
+}
+
+void CurlRequest::closeDownloadFile()
+{
+    LockHolder locker(m_downloadMutex);
+
+    if (m_downloadFileHandle == invalidPlatformFileHandle)
+        return;
+
+    WebCore::closeFile(m_downloadFileHandle);
+    m_downloadFileHandle = invalidPlatformFileHandle;
 }
 
 CURLcode CurlRequest::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData)

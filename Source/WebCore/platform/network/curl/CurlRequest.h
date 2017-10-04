@@ -28,6 +28,7 @@
 #include "CurlJobManager.h"
 #include "CurlResponse.h"
 #include "CurlSSLVerifier.h"
+#include "FileSystem.h"
 #include "FormDataStreamCurl.h"
 #include "NetworkLoadMetrics.h"
 #include "ResourceRequest.h"
@@ -43,7 +44,11 @@ class CurlRequest : public ThreadSafeRefCounted<CurlRequest>, public CurlJobClie
     WTF_MAKE_NONCOPYABLE(CurlRequest);
 
 public:
-    CurlRequest(const ResourceRequest&, CurlRequestDelegate* = nullptr, bool shouldSuspend = false);
+    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestDelegate* delegate, bool shouldSuspend = false)
+    {
+        return adoptRef(*new CurlRequest(request, delegate, shouldSuspend));
+    }
+
     virtual ~CurlRequest() { }
 
     void setDelegate(CurlRequestDelegate* delegate) { m_delegate = delegate;  }
@@ -59,6 +64,10 @@ public:
     // Processing for DidReceiveResponse
     void completeDidReceiveResponse();
 
+    // Download
+    void enableDownloadToFile();
+    const String& getDownloadedFilePath();
+
     NetworkLoadMetrics getNetworkLoadMetrics() { return m_networkLoadMetrics.isolatedCopy(); }
 
 private:
@@ -68,6 +77,8 @@ private:
         StartTransfer,
         FinishTransfer
     };
+
+    CurlRequest(const ResourceRequest&, CurlRequestDelegate*, bool shouldSuspend);
 
     void retain() override { ref(); }
     void release() override { deref(); }
@@ -103,6 +114,10 @@ private:
     void pausedStatusChanged();
     bool isPaused() const { return m_isPausedOfRequest || m_isPausedOfCallback; };
 
+    // Download
+    void writeDataToDownloadFileIfEnabled(const SharedBuffer&);
+    void closeDownloadFile();
+
     // Callback functions for curl
     static CURLcode willSetupSslCtxCallback(CURL*, void*, void*);
     static size_t willSendDataCallback(char*, size_t, size_t, void*);
@@ -133,6 +148,11 @@ private:
 
     bool m_isPausedOfRequest { false };
     bool m_isPausedOfCallback { false };
+
+    Lock m_downloadMutex;
+    bool m_isEnabledDownloadToFile { false };
+    String m_downloadFilePath;
+    PlatformFileHandle m_downloadFileHandle { invalidPlatformFileHandle };
 
     NetworkLoadMetrics m_networkLoadMetrics;
 };

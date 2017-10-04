@@ -414,15 +414,6 @@ void CurlHandle::enableAllowedProtocols()
     static const long allowedProtocols = CURLPROTO_FILE | CURLPROTO_FTP | CURLPROTO_FTPS | CURLPROTO_HTTP | CURLPROTO_HTTPS;
 
     curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
-    curl_easy_setopt(m_handle, CURLOPT_REDIR_PROTOCOLS, allowedProtocols);
-}
-
-void CurlHandle::enableFollowLocation()
-{
-    static const long maxNumberOfRedirectCount = 10;
-
-    curl_easy_setopt(m_handle, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(m_handle, CURLOPT_MAXREDIRS, maxNumberOfRedirectCount);
 }
 
 void CurlHandle::enableHttpAuthentication(long option)
@@ -530,19 +521,6 @@ void CurlHandle::setSslCtxCallbackFunction(curl_ssl_ctx_callback callbackFunc, v
 {
     curl_easy_setopt(m_handle, CURLOPT_SSL_CTX_DATA, userData);
     curl_easy_setopt(m_handle, CURLOPT_SSL_CTX_FUNCTION, callbackFunc);
-}
-
-URL CurlHandle::getEffectiveURL()
-{
-    if (!m_handle)
-        return URL();
-
-    char* url;
-    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_EFFECTIVE_URL, &url);
-    if (errorCode != CURLE_OK)
-        return URL();
-
-    return URL(URL(), url);
 }
 
 std::optional<uint16_t> CurlHandle::getPrimaryPort()

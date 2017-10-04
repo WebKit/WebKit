@@ -1,3 +1,15 @@
+2017-10-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Reimplement CurlDownload with CurlRequest
+        https://bugs.webkit.org/show_bug.cgi?id=177779
+
+        Reviewed by Alex Christensen.
+
+        * WebDownload.h:
+        * WebDownloadCurl.cpp:
+        (WebDownload::init):
+        (WebDownload::didReceiveResponse):
+
 2017-09-29  Chris Dumez  <cdumez@apple.com>
 
         Split some logic out of VisitedLinkStore and make it reusable

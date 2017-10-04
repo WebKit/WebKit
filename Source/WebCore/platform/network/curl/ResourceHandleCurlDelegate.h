@@ -68,7 +68,7 @@ private:
 
     bool cancelledOrClientless();
 
-    RefPtr<CurlRequest> createCurlRequest(ResourceRequest&);
+    Ref<CurlRequest> createCurlRequest(ResourceRequest&);
     void curlDidReceiveResponse(const CurlResponse&) override;
     void curlDidReceiveBuffer(Ref<SharedBuffer>&&) override;
     void curlDidComplete() override;
@@ -86,7 +86,7 @@ private:
     ResourceHandle* m_handle;
     std::unique_ptr<MultipartHandle> m_multipartHandle;
     unsigned m_authFailureCount { 0 };
-    int m_redirectCount { 0 };
+    unsigned m_redirectCount { 0 };
 
     ResourceRequest m_firstRequest;
     ResourceRequest m_currentRequest;

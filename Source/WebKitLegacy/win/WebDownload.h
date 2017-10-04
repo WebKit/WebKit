@@ -97,7 +97,7 @@ public:
     void didFinish();
     void didFail(CFErrorRef);
 #elif USE(CURL)
-    virtual void didReceiveResponse();
+    virtual void didReceiveResponse(const WebCore::ResourceResponse&);
     virtual void didReceiveDataOfLength(int size);
     virtual void didFinish();
     virtual void didFail();
