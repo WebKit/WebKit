@@ -89,7 +89,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "FB39D0D01200F0E300088E69"
                BuildableName = "libwebrtc.dylib"
-               BlueprintName = "libwebrtc-dylib"
+               BlueprintName = "libwebrtc"
                ReferencedContainer = "container:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

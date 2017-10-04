@@ -56,6 +56,17 @@ void CheckExpectedBufferSizes(size_t src_length,
 }  // namespace
 
 template <typename T>
+PushResampler<T>::PushResampler()
+    : src_sample_rate_hz_(0),
+      dst_sample_rate_hz_(0),
+      num_channels_(0) {
+}
+
+template <typename T>
+PushResampler<T>::~PushResampler() {
+}
+
+template <typename T>
 int PushResampler<T>::InitializeIfNeeded(int src_sample_rate_hz,
                                          int dst_sample_rate_hz,
                                          size_t num_channels) {

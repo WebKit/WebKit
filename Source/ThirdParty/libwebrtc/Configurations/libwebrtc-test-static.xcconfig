@@ -1,3 +1,0 @@
-#include "libwebrtc-base.xcconfig"
-
-PRODUCT_NAME = libwebrtc-static;
