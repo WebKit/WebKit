@@ -1,10 +1,9 @@
 Bug(WPE) compositing/ [ Skip ]
-Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) editing/ [ Skip ]
 Bug(WPE) fonts/ [ Skip ]
 Bug(WPE) fullscreen/ [ Skip ]
 Bug(WPE) gamepad/ [ Skip ]
-Bug(WPE) http/ [ Skip ]
+Bug(WPE) http/tests/ [ Skip ]
 Bug(WPE) inspector/ [ Skip ]
 Bug(WPE) mathml/ [ Skip ]
 Bug(WPE) media/ [ Skip ]
@@ -841,3 +840,14 @@ webkit.org/b/176820 fast/dom/Document/CaretRangeFromPoint/replace-element.html [
 # Accessibility support isn't glued to any API yet.
 Bug(WPE) accessibility/ [ Skip ]
 Bug(WPE) perf/accessibility-title-ui-element.html [ Failure ]
+
+webkit.org/b/177873 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
+
+webkit.org/b/177872 http/wpt/fetch/response-status-text.html [ Failure ]
+
+webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
+webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
+webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
+
+Bug(WPE) contentfiltering/ [ Skip ]
+Bug(WPE) http/wpt/beacon/contentextensions/ [ Skip ]

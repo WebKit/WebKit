@@ -1,3 +1,10 @@
+2017-10-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations: Unskip tests under http/wpt/. Manage
+        expectations for failures that are currently present.
+
 2017-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Harfbuzz] Implement ComplexTextController on top of HarfBuzz
