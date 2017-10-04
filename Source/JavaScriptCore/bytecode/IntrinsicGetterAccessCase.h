@@ -42,6 +42,8 @@ public:
     static bool canEmitIntrinsicGetter(JSFunction*, Structure*);
     void emitIntrinsicGetter(AccessGenerationState&);
 
+    // FIXME: Make this work with poly proto:
+    // https://bugs.webkit.org/show_bug.cgi?id=177318
     static std::unique_ptr<AccessCase> create(VM&, JSCell*, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction);
 
     std::unique_ptr<AccessCase> clone() const override;

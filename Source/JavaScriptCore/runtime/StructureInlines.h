@@ -51,16 +51,17 @@ inline Structure* Structure::createStructure(VM& vm)
     return structure;
 }
 
-inline Structure* Structure::create(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
+inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
 {
     ASSERT(vm.structureStructure);
-    Structure* newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, structure, deferred);
-    newStructure->finishCreation(vm);
+    Structure* newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, previous, deferred);
+    newStructure->finishCreation(vm, previous);
     return newStructure;
 }
 
 inline JSObject* Structure::storedPrototypeObject() const
 {
+    RELEASE_ASSERT(hasMonoProto());
     JSValue value = m_prototype.get();
     if (value.isNull())
         return nullptr;
@@ -69,10 +70,39 @@ inline JSObject* Structure::storedPrototypeObject() const
 
 inline Structure* Structure::storedPrototypeStructure() const
 {
+    RELEASE_ASSERT(hasMonoProto());
     JSObject* object = storedPrototypeObject();
     if (!object)
         return nullptr;
     return object->structure();
+}
+
+ALWAYS_INLINE JSValue Structure::storedPrototype(const JSObject* object) const
+{
+    RELEASE_ASSERT(object->structure() == this);
+    if (hasMonoProto())
+        return storedPrototype();
+    RELEASE_ASSERT(m_prototype.get().isInt32());
+    PropertyOffset offset = m_prototype.get().asInt32();
+    return object->getDirect(offset);
+}
+
+ALWAYS_INLINE JSObject* Structure::storedPrototypeObject(const JSObject* object) const
+{
+    RELEASE_ASSERT(object->structure() == this);
+    if (hasMonoProto())
+        return storedPrototypeObject();
+    JSValue proto = object->getDirect(polyProtoOffset());
+    if (proto.isNull())
+        return nullptr;
+    return asObject(proto);
+}
+
+ALWAYS_INLINE Structure* Structure::storedPrototypeStructure(const JSObject* object) const
+{
+    if (JSObject* proto = storedPrototypeObject(object))
+        return proto->structure();
+    return nullptr;
 }
 
 ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
@@ -166,43 +196,56 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     return false;
 }
 
+ALWAYS_INLINE JSValue prototypeForLookupPrimitiveImpl(JSGlobalObject* globalObject, const Structure* structure)
+{
+    ASSERT(!structure->isObject());
+
+    if (structure->typeInfo().type() == StringType)
+        return globalObject->stringPrototype();
+
+    ASSERT(structure->typeInfo().type() == SymbolType);
+    return globalObject->symbolPrototype();
+
+}
+
 inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const
 {
+    RELEASE_ASSERT(hasMonoProto());
     if (isObject())
-        return m_prototype.get();
-    if (typeInfo().type() == SymbolType)
-        return globalObject->symbolPrototype();
-
-    ASSERT(typeInfo().type() == StringType);
-    return globalObject->stringPrototype();
+        return storedPrototype();
+    return prototypeForLookupPrimitiveImpl(globalObject, this);
 }
 
-inline JSValue Structure::prototypeForLookup(ExecState* exec) const
+inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject, JSCell* base) const
 {
-    return prototypeForLookup(exec->lexicalGlobalObject());
+    RELEASE_ASSERT(base->structure() == this);
+    if (isObject())
+        return storedPrototype(asObject(base));
+    return prototypeForLookupPrimitiveImpl(globalObject, this);
 }
 
-inline StructureChain* Structure::prototypeChain(VM& vm, JSGlobalObject* globalObject) const
+inline StructureChain* Structure::prototypeChain(VM& vm, JSGlobalObject* globalObject, JSObject* base) const
 {
+    RELEASE_ASSERT(base->structure(vm) == this);
     // We cache our prototype chain so our clients can share it.
-    if (!isValid(globalObject, m_cachedPrototypeChain.get())) {
-        JSValue prototype = prototypeForLookup(globalObject);
-        m_cachedPrototypeChain.set(vm, this, StructureChain::create(vm, prototype.isNull() ? 0 : asObject(prototype)->structure()));
+    if (!isValid(globalObject, m_cachedPrototypeChain.get(), base)) {
+        JSValue prototype = prototypeForLookup(globalObject, base);
+        m_cachedPrototypeChain.set(vm, this, StructureChain::create(vm, prototype.isNull() ? nullptr : asObject(prototype)));
     }
     return m_cachedPrototypeChain.get();
 }
 
-inline StructureChain* Structure::prototypeChain(ExecState* exec) const
+inline StructureChain* Structure::prototypeChain(ExecState* exec, JSObject* base) const
 {
-    return prototypeChain(exec->vm(), exec->lexicalGlobalObject());
+    return prototypeChain(exec->vm(), exec->lexicalGlobalObject(), base);
 }
 
-inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cachedPrototypeChain) const
+inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cachedPrototypeChain, JSObject* base) const
 {
     if (!cachedPrototypeChain)
         return false;
 
-    JSValue prototype = prototypeForLookup(globalObject);
+    JSValue prototype = prototypeForLookup(globalObject, base);
     WriteBarrier<Structure>* cachedStructure = cachedPrototypeChain->head();
     while (*cachedStructure && !prototype.isNull()) {
         if (asObject(prototype)->structure() != cachedStructure->get())
@@ -211,11 +254,6 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
         prototype = asObject(prototype)->getPrototypeDirect();
     }
     return prototype.isNull() && !*cachedStructure;
-}
-
-inline bool Structure::isValid(ExecState* exec, StructureChain* cachedPrototypeChain) const
-{
-    return isValid(exec->lexicalGlobalObject(), cachedPrototypeChain);
 }
 
 inline void Structure::didReplaceProperty(PropertyOffset offset)
@@ -341,6 +379,8 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     auto rep = propertyName.uid();
 
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
+
+    m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
     
     PropertyOffset newLastOffset = m_offset;
     table->add(PropertyMapEntry(rep, newOffset, attributes), newLastOffset, PropertyTable::PropertyOffsetMayChange);
@@ -400,9 +440,56 @@ inline PropertyOffset Structure::removePropertyWithoutTransition(VM&, PropertyNa
     return remove(propertyName, func);
 }
 
-inline void Structure::setPropertyTable(VM& vm, PropertyTable* table)
+ALWAYS_INLINE void Structure::setPropertyTable(VM& vm, PropertyTable* table)
 {
     m_propertyTableUnsafe.setMayBeNull(vm, this, table);
+}
+
+ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const Structure* b)
+{
+    if (!a || !b)
+        return false;
+
+    if (a == b)
+        return false;
+
+    if (a->propertyHash() != b->propertyHash())
+        return false;
+
+    // We only care about objects created via a constructor's to_this. These
+    // all have Structures with rare data and a sharedPolyProtoWatchpoint.
+    if (!a->hasRareData() || !b->hasRareData())
+        return false;
+
+    // We only care about Structure's generated from functions that share
+    // the same executable.
+    const Box<InlineWatchpointSet>& aInlineWatchpointSet = a->rareData()->sharedPolyProtoWatchpoint();
+    const Box<InlineWatchpointSet>& bInlineWatchpointSet = b->rareData()->sharedPolyProtoWatchpoint();
+    if (aInlineWatchpointSet.get() != bInlineWatchpointSet.get() || !aInlineWatchpointSet)
+        return false;
+    ASSERT(aInlineWatchpointSet && bInlineWatchpointSet && aInlineWatchpointSet.get() == bInlineWatchpointSet.get());
+
+    if (a->hasPolyProto() || b->hasPolyProto())
+        return false;
+
+    if (a->storedPrototype() == b->storedPrototype())
+        return false;
+
+    VM& vm = *a->vm();
+    JSObject* aObj = a->storedPrototypeObject();
+    JSObject* bObj = b->storedPrototypeObject();
+    while (aObj && bObj) {
+        a = aObj->structure(vm);
+        b = bObj->structure(vm);
+
+        if (a->propertyHash() != b->propertyHash())
+            return false;
+
+        aObj = a->storedPrototypeObject(aObj);
+        bObj = b->storedPrototypeObject(bObj);
+    }
+
+    return !aObj && !bObj;
 }
     
 } // namespace JSC

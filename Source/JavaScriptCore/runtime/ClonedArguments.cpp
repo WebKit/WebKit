@@ -49,10 +49,9 @@ ClonedArguments* ClonedArguments::createEmpty(
         return 0;
 
     Butterfly* butterfly;
-    if (UNLIKELY(structure->needsSlowPutIndexing())) {
+    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing())) {
         butterfly = createArrayStorageButterfly(vm, nullptr, structure, length, vectorLength);
         butterfly->arrayStorage()->m_numValuesInVector = vectorLength;
-
     } else {
         IndexingHeader indexingHeader;
         indexingHeader.setVectorLength(vectorLength);
@@ -81,7 +80,7 @@ ClonedArguments* ClonedArguments::createEmpty(ExecState* exec, JSFunction* calle
     // NB. Some clients might expect that the global object of of this object is the global object
     // of the callee. We don't do this for now, but maybe we should.
     ClonedArguments* result = createEmpty(vm, exec->lexicalGlobalObject()->clonedArgumentsStructure(), callee, length);
-    ASSERT(!result->structure(vm)->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
     return result;
 }
 
@@ -125,14 +124,14 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
     } }
 
     ASSERT(myFrame->lexicalGlobalObject()->clonedArgumentsStructure() == result->structure());
-    ASSERT(!result->structure()->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
 ClonedArguments* ClonedArguments::createWithMachineFrame(ExecState* myFrame, ExecState* targetFrame, ArgumentsMode mode)
 {
     ClonedArguments* result = createWithInlineFrame(myFrame, targetFrame, nullptr, mode);
-    ASSERT(!result->structure()->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
@@ -145,7 +144,7 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
     
     for (unsigned i = length; i--;)
         result->putDirectIndex(exec, i, argumentStart[i].jsValue());
-    ASSERT(!result->structure(vm)->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure(vm)->indexingType()));
     return result;
 }
 

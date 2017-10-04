@@ -52,7 +52,8 @@ public:
         GaveUp,
         Buffered,
         GeneratedNewCode,
-        GeneratedFinalCode // Generated so much code that we never want to generate code again.
+        GeneratedFinalCode, // Generated so much code that we never want to generate code again.
+        ResetStub // We found out some data that makes us want to start over fresh with this stub. Currently, this happens when we detect poly proto.
     };
     
     AccessGenerationResult()
@@ -98,6 +99,7 @@ public:
     bool buffered() const { return m_kind == Buffered; }
     bool generatedNewCode() const { return m_kind == GeneratedNewCode; }
     bool generatedFinalCode() const { return m_kind == GeneratedFinalCode; }
+    bool shouldResetStub() const { return m_kind == ResetStub; }
     
     // If we gave up on this attempt to generate code, or if we generated the "final" code, then we
     // should give up after this.
@@ -171,14 +173,16 @@ private:
 };
 
 struct AccessGenerationState {
-    AccessGenerationState(VM& vm)
+    AccessGenerationState(VM& vm, JSGlobalObject* globalObject)
         : m_vm(vm) 
+        , m_globalObject(globalObject)
         , m_calculatedRegistersForCallAndExceptionHandling(false)
         , m_needsToRestoreRegistersIfException(false)
         , m_calculatedCallSiteIndex(false)
     {
     }
     VM& m_vm;
+    JSGlobalObject* m_globalObject;
     CCallHelpers* jit { nullptr };
     ScratchRegisterAllocator* allocator;
     ScratchRegisterAllocator::PreservedState preservedReusedRegisterState;

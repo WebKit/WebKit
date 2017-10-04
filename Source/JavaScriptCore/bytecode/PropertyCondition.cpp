@@ -107,14 +107,30 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             return false;
         }
 
+        if (structure->hasPolyProto()) {
+            // FIXME: I think this is too conservative. We can probably prove this if
+            // we have the base. Anyways, we should make this work when integrating
+            // OPC and poly proto.
+            // https://bugs.webkit.org/show_bug.cgi?id=177339
+            return false;
+        }
+
         PropertyOffset currentOffset = structure->getConcurrently(uid());
         if (currentOffset != invalidOffset) {
             if (PropertyConditionInternal::verbose)
                 dataLog("Invalid because the property exists at offset: ", currentOffset, "\n");
             return false;
         }
-        
-        if (structure->storedPrototypeObject() != prototype()) {
+
+        JSObject* currentPrototype;
+        if (structure->hasMonoProto())
+            currentPrototype = structure->storedPrototypeObject();
+        else {
+            RELEASE_ASSERT(base);
+            currentPrototype = jsDynamicCast<JSObject*>(*structure->vm(), base->getPrototypeDirect());
+        }
+
+        if (currentPrototype != prototype()) {
             if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the prototype is ", structure->storedPrototype(), " even though "
@@ -144,6 +160,14 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
                 }
                 return false;
             }
+        }
+
+        if (structure->hasPolyProto()) {
+            // FIXME: I think this is too conservative. We can probably prove this if
+            // we have the base. Anyways, we should make this work when integrating
+            // OPC and poly proto.
+            // https://bugs.webkit.org/show_bug.cgi?id=177339
+            return false;
         }
         
         if (structure->storedPrototypeObject() != prototype()) {

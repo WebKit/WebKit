@@ -96,11 +96,12 @@ const String InternalFunction::calculatedDisplayName(VM& vm)
 
 Structure* InternalFunction::createSubclassStructureSlow(ExecState* exec, JSValue newTarget, Structure* baseClass)
 {
-
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(!newTarget || newTarget.isConstructor());
     ASSERT(newTarget && newTarget != exec->jsCallee());
+
+    ASSERT(baseClass->hasMonoProto());
 
     // newTarget may be an InternalFunction if we were called from Reflect.construct.
     JSFunction* targetFunction = jsDynamicCast<JSFunction*>(vm, newTarget);

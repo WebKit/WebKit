@@ -28,6 +28,7 @@
 
 #include "AsyncGeneratorPrototype.h"
 #include "BuiltinNames.h"
+#include "CatchScope.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CommonIdentifiers.h"
@@ -126,16 +127,24 @@ FunctionRareData* JSFunction::allocateRareData(VM& vm)
     return m_rareData.get();
 }
 
+JSObject* JSFunction::prototypeForConstruction(VM& vm, ExecState* exec)
+{
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSValue prototype = get(exec, vm.propertyNames->prototype);
+    ASSERT_UNUSED(scope, !scope.exception());
+    if (prototype.isObject())
+        return asObject(prototype);
+
+    return globalObject(vm)->objectPrototype();
+}
+
 FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, size_t inlineCapacity)
 {
     ASSERT(!m_rareData);
     VM& vm = exec->vm();
-    JSObject* prototype = jsDynamicCast<JSObject*>(vm, get(exec, vm.propertyNames->prototype));
-    JSGlobalObject* globalObject = this->globalObject(vm);
-    if (!prototype)
-        prototype = globalObject->objectPrototype();
+    JSObject* prototype = prototypeForConstruction(vm, exec);
     FunctionRareData* rareData = FunctionRareData::create(vm);
-    rareData->initializeObjectAllocationProfile(vm, globalObject, prototype, inlineCapacity);
+    rareData->initializeObjectAllocationProfile(vm, globalObject(vm), prototype, inlineCapacity, this);
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
@@ -149,11 +158,8 @@ FunctionRareData* JSFunction::initializeRareData(ExecState* exec, size_t inlineC
 {
     ASSERT(!!m_rareData);
     VM& vm = exec->vm();
-    JSObject* prototype = jsDynamicCast<JSObject*>(vm, get(exec, vm.propertyNames->prototype));
-    JSGlobalObject* globalObject = this->globalObject(vm);
-    if (!prototype)
-        prototype = globalObject->objectPrototype();
-    m_rareData->initializeObjectAllocationProfile(vm, globalObject, prototype, inlineCapacity);
+    JSObject* prototype = prototypeForConstruction(vm, exec);
+    m_rareData->initializeObjectAllocationProfile(vm, globalObject(vm), prototype, inlineCapacity, this);
     return m_rareData.get();
 }
 
@@ -371,7 +377,6 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
             offset = thisObject->getDirectOffset(vm, vm.propertyNames->prototype, attributes);
             ASSERT(isValidOffset(offset));
         }
-
         slot.setValue(thisObject, attributes, thisObject->getDirect(offset), offset);
     }
 

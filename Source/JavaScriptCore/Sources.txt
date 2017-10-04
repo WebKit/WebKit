@@ -227,9 +227,11 @@ bytecode/LazyOperandValueProfile.cpp
 bytecode/MethodOfGettingAValueProfile.cpp
 bytecode/ModuleNamespaceAccessCase.cpp
 bytecode/ModuleProgramCodeBlock.cpp
+bytecode/ObjectAllocationProfile.cpp
 bytecode/ObjectPropertyCondition.cpp
 bytecode/ObjectPropertyConditionSet.cpp
 bytecode/Opcode.cpp
+bytecode/PolyProtoAccessChain.cpp
 bytecode/PolymorphicAccess.cpp
 bytecode/PreciseJumpTargets.cpp
 bytecode/ProgramCodeBlock.cpp

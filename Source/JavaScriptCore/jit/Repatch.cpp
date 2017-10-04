@@ -244,6 +244,8 @@ static InlineCacheAction tryCacheGetByID(const GCSafeConcurrentJSLocker& locker,
             }
         }
 
+        std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
+
         PropertyOffset offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
 
         if (slot.isUnset() || slot.slotBase() != baseValue) {
@@ -255,23 +257,35 @@ static InlineCacheAction tryCacheGetByID(const GCSafeConcurrentJSLocker& locker,
                     return GiveUpOnCache;
                 structure->flattenDictionaryStructure(vm, jsCast<JSObject*>(baseCell));
             }
-            
+
             if (slot.isUnset() && structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
                 return GiveUpOnCache;
 
-            if (slot.isUnset()) {
-                conditionSet = generateConditionsForPropertyMiss(
-                    vm, codeBlock, exec, structure, propertyName.impl());
-            } else {
-                conditionSet = generateConditionsForPrototypePropertyHit(
-                    vm, codeBlock, exec, structure, slot.slotBase(),
-                    propertyName.impl());
-            }
-            
-            if (!conditionSet.isValid())
+            bool usesPolyProto;
+            prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot, usesPolyProto);
+            if (!prototypeAccessChain) {
+                // It's invalid to access this prototype property.
                 return GiveUpOnCache;
+            }
 
-            offset = slot.isUnset() ? invalidOffset : conditionSet.slotBaseCondition().offset();
+            if (!usesPolyProto) {
+                // We use ObjectPropertyConditionSet instead for faster accesses.
+                prototypeAccessChain = nullptr;
+
+                if (slot.isUnset()) {
+                    conditionSet = generateConditionsForPropertyMiss(
+                        vm, codeBlock, exec, structure, propertyName.impl());
+                } else {
+                    conditionSet = generateConditionsForPrototypePropertyHit(
+                        vm, codeBlock, exec, structure, slot.slotBase(),
+                        propertyName.impl());
+                }
+
+                if (!conditionSet.isValid())
+                    return GiveUpOnCache;
+            }
+
+            offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
         }
 
         JSFunction* getter = nullptr;
@@ -293,13 +307,17 @@ static InlineCacheAction tryCacheGetByID(const GCSafeConcurrentJSLocker& locker,
             else
                 RELEASE_ASSERT_NOT_REACHED();
 
-            newCase = ProxyableAccessCase::create(vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet());
-        } else if (!loadTargetFromProxy && getter && IntrinsicGetterAccessCase::canEmitIntrinsicGetter(getter, structure))
+            newCase = ProxyableAccessCase::create(vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
+        } else if (!loadTargetFromProxy && getter && IntrinsicGetterAccessCase::canEmitIntrinsicGetter(getter, structure) && !prototypeAccessChain) {
+            // FIXME: We should make this work with poly proto, but for our own sanity, we probably
+            // want to do a pointer check on the actual getter. A good time to make this work would
+            // be when we can inherit from builtin types in poly proto fashion:
+            // https://bugs.webkit.org/show_bug.cgi?id=177318
             newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, slot.cachedOffset(), structure, conditionSet, getter);
-        else {
+        } else {
             if (slot.isCacheableValue() || slot.isUnset()) {
                 newCase = ProxyableAccessCase::create(vm, codeBlock, slot.isUnset() ? AccessCase::Miss : AccessCase::Load,
-                    offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet());
+                    offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
             } else {
                 AccessCase::AccessType type;
                 if (slot.isCacheableGetter())
@@ -316,7 +334,7 @@ static InlineCacheAction tryCacheGetByID(const GCSafeConcurrentJSLocker& locker,
                     vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
                     slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
                     slot.isCacheableCustom() ? slot.slotBase() : nullptr,
-                    domAttribute);
+                    domAttribute, WTFMove(prototypeAccessChain));
             }
         }
     }
@@ -386,6 +404,7 @@ static InlineCacheAction tryCachePutByID(const GCSafeConcurrentJSLocker& locker,
         return GiveUpOnCache;
 
     std::unique_ptr<AccessCase> newCase;
+    JSCell* baseCell = baseValue.asCell();
 
     if (slot.base() == baseValue && slot.isCacheablePut()) {
         if (slot.type() == PutPropertySlot::ExistingProperty) {
@@ -429,48 +448,83 @@ static InlineCacheAction tryCachePutByID(const GCSafeConcurrentJSLocker& locker,
             ASSERT(!newStructure->isDictionary());
             ASSERT(newStructure->isObject());
             
+            std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
             ObjectPropertyConditionSet conditionSet;
             if (putKind == NotDirect) {
-                conditionSet =
-                    generateConditionsForPropertySetterMiss(
-                        vm, codeBlock, exec, newStructure, ident.impl());
-                if (!conditionSet.isValid())
+                bool usesPolyProto;
+                prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, nullptr, usesPolyProto);
+                if (!prototypeAccessChain) {
+                    // It's invalid to access this prototype property.
                     return GiveUpOnCache;
+                }
+
+                if (!usesPolyProto) {
+                    prototypeAccessChain = nullptr;
+                    conditionSet =
+                        generateConditionsForPropertySetterMiss(
+                            vm, codeBlock, exec, newStructure, ident.impl());
+                    if (!conditionSet.isValid())
+                        return GiveUpOnCache;
+                }
+
             }
 
-            newCase = AccessCase::create(vm, codeBlock, offset, structure, newStructure, conditionSet);
+            newCase = AccessCase::create(vm, codeBlock, offset, structure, newStructure, conditionSet, WTFMove(prototypeAccessChain));
         }
     } else if (slot.isCacheableCustom() || slot.isCacheableSetter()) {
         if (slot.isCacheableCustom()) {
             ObjectPropertyConditionSet conditionSet;
+            std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
 
             if (slot.base() != baseValue) {
-                conditionSet =
-                    generateConditionsForPrototypePropertyHit(
-                        vm, codeBlock, exec, structure, slot.base(), ident.impl());
-                if (!conditionSet.isValid())
+                bool usesPolyProto;
+                prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot.base(), usesPolyProto);
+                if (!prototypeAccessChain) {
+                    // It's invalid to access this prototype property.
                     return GiveUpOnCache;
+                }
+
+                if (!usesPolyProto) {
+                    prototypeAccessChain = nullptr;
+                    conditionSet =
+                        generateConditionsForPrototypePropertyHit(
+                            vm, codeBlock, exec, structure, slot.base(), ident.impl());
+                    if (!conditionSet.isValid())
+                        return GiveUpOnCache;
+                }
             }
 
             newCase = GetterSetterAccessCase::create(
-                vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, structure, invalidOffset, conditionSet,
-                slot.customSetter(), slot.base());
+                vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, structure, invalidOffset,
+                conditionSet, WTFMove(prototypeAccessChain), slot.customSetter(), slot.base());
         } else {
             ObjectPropertyConditionSet conditionSet;
-            PropertyOffset offset;
+            std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
+            PropertyOffset offset = slot.cachedOffset();
 
             if (slot.base() != baseValue) {
-                conditionSet =
-                    generateConditionsForPrototypePropertyHit(
-                        vm, codeBlock, exec, structure, slot.base(), ident.impl());
-                if (!conditionSet.isValid())
+                bool usesPolyProto;
+                prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot.base(), usesPolyProto);
+                if (!prototypeAccessChain) {
+                    // It's invalid to access this prototype property.
                     return GiveUpOnCache;
-                offset = conditionSet.slotBaseCondition().offset();
-            } else
-                offset = slot.cachedOffset();
+                }
+
+                if (!usesPolyProto) {
+                    prototypeAccessChain = nullptr;
+                    conditionSet =
+                        generateConditionsForPrototypePropertyHit(
+                            vm, codeBlock, exec, structure, slot.base(), ident.impl());
+                    if (!conditionSet.isValid())
+                        return GiveUpOnCache;
+
+                    RELEASE_ASSERT(offset == conditionSet.slotBaseCondition().offset());
+                }
+
+            }
 
             newCase = GetterSetterAccessCase::create(
-                vm, codeBlock, AccessCase::Setter, structure, offset, conditionSet);
+                vm, codeBlock, AccessCase::Setter, structure, offset, conditionSet, WTFMove(prototypeAccessChain));
         }
     }
 
@@ -517,15 +571,35 @@ static InlineCacheAction tryRepatchIn(
     VM& vm = exec->vm();
     Structure* structure = base->structure(vm);
     
+    std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
     ObjectPropertyConditionSet conditionSet;
     if (wasFound) {
         if (slot.slotBase() != base) {
-            conditionSet = generateConditionsForPrototypePropertyHit(
-                vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
+            bool usesPolyProto;
+            prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), base, slot, usesPolyProto);
+            if (!prototypeAccessChain) {
+                // It's invalid to access this prototype property.
+                return GiveUpOnCache;
+            }
+            if (!usesPolyProto) {
+                prototypeAccessChain = nullptr;
+                conditionSet = generateConditionsForPrototypePropertyHit(
+                    vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
+            }
         }
     } else {
-        conditionSet = generateConditionsForPropertyMiss(
-            vm, codeBlock, exec, structure, ident.impl());
+        bool usesPolyProto;
+        prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), base, slot, usesPolyProto);
+        if (!prototypeAccessChain) {
+            // It's invalid to access this prototype property.
+            return GiveUpOnCache;
+        }
+
+        if (!usesPolyProto) {
+            prototypeAccessChain = nullptr;
+            conditionSet = generateConditionsForPropertyMiss(
+                vm, codeBlock, exec, structure, ident.impl());
+        }
     }
     if (!conditionSet.isValid())
         return GiveUpOnCache;
@@ -533,7 +607,7 @@ static InlineCacheAction tryRepatchIn(
     LOG_IC((ICEvent::InAddAccessCase, structure->classInfo(), ident));
 
     std::unique_ptr<AccessCase> newCase = AccessCase::create(
-        vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, invalidOffset, structure, conditionSet);
+        vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
 
     AccessGenerationResult result = stubInfo.addAccessCase(locker, codeBlock, ident, WTFMove(newCase));
     

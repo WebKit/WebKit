@@ -108,7 +108,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(ExecState* exec, JSObjec
     Structure* structure = base->structure(vm);
     if (!indexedLength
         && (enumerator = structure->cachedPropertyNameEnumerator())
-        && enumerator->cachedPrototypeChain() == structure->prototypeChain(exec))
+        && enumerator->cachedPrototypeChain() == structure->prototypeChain(exec, base))
         return enumerator;
 
     uint32_t numberStructureProperties = 0;
@@ -133,12 +133,15 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(ExecState* exec, JSObjec
 
     ASSERT(propertyNames.size() < UINT32_MAX);
 
-    bool successfullyNormalizedChain = normalizePrototypeChain(exec, structure) != InvalidPrototypeChain;
+    bool sawPolyProto;
+    bool successfullyNormalizedChain = normalizePrototypeChain(exec, base, sawPolyProto) != InvalidPrototypeChain;
 
     enumerator = JSPropertyNameEnumerator::create(vm, structure, indexedLength, numberStructureProperties, WTFMove(propertyNames));
-    enumerator->setCachedPrototypeChain(vm, structure->prototypeChain(exec));
-    if (!indexedLength && successfullyNormalizedChain && structure->canCachePropertyNameEnumerator())
-        structure->setCachedPropertyNameEnumerator(vm, enumerator);
+    if (!indexedLength && successfullyNormalizedChain && base->structure(vm) == structure) {
+        enumerator->setCachedPrototypeChain(vm, structure->prototypeChain(exec, base));
+        if (structure->canCachePropertyNameEnumerator())
+            structure->setCachedPropertyNameEnumerator(vm, enumerator);
+    }
     return enumerator;
 }
 

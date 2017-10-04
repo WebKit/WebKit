@@ -38,7 +38,7 @@
 namespace JSC {
 
 ModuleNamespaceAccessCase::ModuleNamespaceAccessCase(VM& vm, JSCell* owner, JSModuleNamespaceObject* moduleNamespaceObject, JSModuleEnvironment* moduleEnvironment, ScopeOffset scopeOffset)
-    : Base(vm, owner, ModuleNamespaceLoad, invalidOffset, nullptr, ObjectPropertyConditionSet())
+    : Base(vm, owner, ModuleNamespaceLoad, invalidOffset, nullptr, ObjectPropertyConditionSet(), nullptr)
     , m_scopeOffset(scopeOffset)
 {
     m_moduleNamespaceObject.set(vm, owner, moduleNamespaceObject);

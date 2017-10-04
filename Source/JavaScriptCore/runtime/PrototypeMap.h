@@ -46,18 +46,18 @@ public:
     {
     }
 
-    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity);
+    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false);
     JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*);
     void clearEmptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity);
     JS_EXPORT_PRIVATE void addPrototype(JSObject*);
     inline TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
 
 private:
-    Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
+    Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure);
 
     WeakGCMap<JSObject*, JSObject> m_prototypes;
     // FIXME: make the key a struct.
-    typedef WeakGCMap<std::tuple<JSObject*, unsigned, const ClassInfo*, JSGlobalObject*>, Structure> StructureMap;
+    using StructureMap = WeakGCMap<std::tuple<JSObject*, unsigned, const ClassInfo*, JSGlobalObject*>, Structure>;
     StructureMap m_structures;
 };
 

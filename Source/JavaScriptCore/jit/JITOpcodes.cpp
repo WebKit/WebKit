@@ -166,8 +166,13 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 
     // Load the prototype of the object in regT2.  If this is equal to regT1 - WIN!
     // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
-    emitLoadStructure(*vm(), regT2, regT2, regT3);
-    load64(Address(regT2, Structure::prototypeOffset()), regT2);
+    emitLoadStructure(*vm(), regT2, regT4, regT3);
+    load64(Address(regT4, Structure::prototypeOffset()), regT4);
+    auto hasMonoProto = branchIfNotInt32(JSValueRegs(regT4));
+    zeroExtend32ToPtr(regT4, regT4);
+    load64(BaseIndex(regT2, regT4, TimesEight, JSObject::offsetOfInlineStorage()), regT4);
+    hasMonoProto.link(this);
+    move(regT4, regT2);
     Jump isInstance = branchPtr(Equal, regT2, regT1);
     emitJumpIfJSCell(regT2).linkTo(loop, this);
 

@@ -204,11 +204,15 @@ ObjectPropertyCondition generateCondition(
         break;
     }
     case PropertyCondition::Absence: {
+        if (structure->hasPolyProto())
+            return ObjectPropertyCondition();
         result = ObjectPropertyCondition::absence(
             vm, owner, object, uid, object->structure()->storedPrototypeObject());
         break;
     }
     case PropertyCondition::AbsenceOfSetEffect: {
+        if (structure->hasPolyProto())
+            return ObjectPropertyCondition();
         result = ObjectPropertyCondition::absenceOfSetEffect(
             vm, owner, object, uid, object->structure()->storedPrototypeObject());
         break;
@@ -256,6 +260,15 @@ ObjectPropertyConditionSet generateConditions(
         if (structure->isProxy()) {
             if (ObjectPropertyConditionSetInternal::verbose)
                 dataLog("It's a proxy, so invalid.\n");
+            return ObjectPropertyConditionSet::invalid();
+        }
+
+        if (structure->hasPolyProto()) {
+            // FIXME: Integrate this with PolyProtoAccessChain:
+            // https://bugs.webkit.org/show_bug.cgi?id=177339
+            // Or at least allow OPC set generation when the
+            // base is not poly proto:
+            // https://bugs.webkit.org/show_bug.cgi?id=177721
             return ObjectPropertyConditionSet::invalid();
         }
         

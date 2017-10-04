@@ -21,19 +21,21 @@ var tests = [
     new Test(Object(Symbol.iterator), true),
 ];
 
-tests.forEach(function (test) {
-    function Constructor() {
-        return test.value;
-    }
+for (let i = 0; i < 1000; ++i) {
+    tests.forEach(function (test) {
+        function Constructor() {
+            return test.value;
+        }
 
-    var result = new Constructor();
-    if (test.returnIt) {
-        if (test.value !== result) {
-            throw "Bad result: " + result;
+        var result = new Constructor();
+        if (test.returnIt) {
+            if (test.value !== result) {
+                throw "Bad result: " + result;
+            }
+        } else {
+            if (!(result instanceof Constructor)) {
+                throw "Bad result: " + result;
+            }
         }
-    } else {
-        if (!(result instanceof Constructor)) {
-            throw "Bad result: " + result;
-        }
-    }
-});
+    });
+}

@@ -129,7 +129,9 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
+    enum PolyProtoTag { PolyProto };
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
+    static Structure* create(PolyProtoTag, VM&, JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
 
     ~Structure();
 
@@ -138,7 +140,19 @@ protected:
     {
         Base::finishCreation(vm);
         ASSERT(m_prototype);
-        ASSERT(m_prototype.isObject() || m_prototype.isNull());
+        ASSERT(m_prototype.isObject() || m_prototype.isNull() || m_prototype.isInt32());
+    }
+
+    void finishCreation(VM& vm, const Structure* previous)
+    {
+        this->finishCreation(vm);
+        if (previous->hasRareData()) {
+            const StructureRareData* previousRareData = previous->rareData();
+            if (previousRareData->hasSharedPolyProtoWatchpoint()) {
+                ensureRareData(vm);
+                rareData()->setSharedPolyProtoWatchpoint(previousRareData->copySharedPolyProtoWatchpoint());
+            }
+        }
     }
 
     void finishCreation(VM& vm, CreatingEarlyCellTag)
@@ -167,7 +181,7 @@ public:
     static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, UniquedStringImpl* uid, unsigned attributes, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&);
-    JS_EXPORT_PRIVATE static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype);
+    static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype);
     JS_EXPORT_PRIVATE static Structure* attributeChangeTransition(VM&, Structure*, PropertyName, unsigned attributes);
     JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     static Structure* toUncacheableDictionaryTransition(VM&, Structure*);
@@ -208,7 +222,7 @@ public:
     {
         return !typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence();
     }
-    
+
     bool needImpurePropertyWatchpoint()
     {
         return propertyAccessesAreCacheable()
@@ -240,26 +254,42 @@ public:
         return !!(indexingTypeIncludingHistory() & MayHaveIndexedAccessors);
     }
         
-    JS_EXPORT_PRIVATE bool anyObjectInChainMayInterceptIndexedAccesses() const;
-    bool holesMustForwardToPrototype(VM&) const;
-        
-    bool needsSlowPutIndexing() const;
-    NonPropertyTransition suggestedArrayStorageTransition() const;
+    bool holesMustForwardToPrototype(VM&, JSObject*) const;
         
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }
 
     // NOTE: This method should only be called during the creation of structures, since the global
     // object of a structure is presumed to be immutable in a bunch of places.
     void setGlobalObject(VM& vm, JSGlobalObject* globalObject) { m_globalObject.set(vm, this, globalObject); }
-        
-    JSValue storedPrototype() const { return m_prototype.get(); }
+
+    bool hasMonoProto() const
+    {
+        return !m_prototype.get().isInt32();
+    }
+    bool hasPolyProto() const
+    {
+        return !hasMonoProto();
+    }
+    JSValue storedPrototype() const
+    {
+        RELEASE_ASSERT(hasMonoProto());
+        return m_prototype.get();
+    }
+    PropertyOffset polyProtoOffset() const
+    {
+        RELEASE_ASSERT(hasPolyProto());
+        return m_prototype.get().asInt32();
+    }
+    JSValue storedPrototype(const JSObject*) const;
+    JSObject* storedPrototypeObject(const JSObject*) const;
+    Structure* storedPrototypeStructure(const JSObject*) const;
+
     JSObject* storedPrototypeObject() const;
     Structure* storedPrototypeStructure() const;
-    JSValue prototypeForLookup(ExecState*) const;
     JSValue prototypeForLookup(JSGlobalObject*) const;
-    JSValue prototypeForLookup(CodeBlock*) const;
-    StructureChain* prototypeChain(VM&, JSGlobalObject*) const;
-    StructureChain* prototypeChain(ExecState*) const;
+    JSValue prototypeForLookup(JSGlobalObject*, JSCell* base) const;
+    StructureChain* prototypeChain(VM&, JSGlobalObject*, JSObject* base) const;
+    StructureChain* prototypeChain(ExecState*, JSObject* base) const;
     static void visitChildren(JSCell*, SlotVisitor&);
     
     // A Structure is cheap to mark during GC if doing so would only add a small and bounded amount
@@ -272,13 +302,29 @@ public:
     
     // Returns true if this structure is now marked.
     bool markIfCheap(SlotVisitor&);
-        
-    // Will just the prototype chain intercept this property access?
-    JS_EXPORT_PRIVATE bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
     
     bool hasRareData() const
     {
         return isRareData(m_previousOrRareData.get());
+    }
+
+    StructureRareData* rareData()
+    {
+        ASSERT(hasRareData());
+        return static_cast<StructureRareData*>(m_previousOrRareData.get());
+    }
+
+    const StructureRareData* rareData() const
+    {
+        ASSERT(hasRareData());
+        return static_cast<const StructureRareData*>(m_previousOrRareData.get());
+    }
+
+    StructureRareData* ensureRareData(VM& vm)
+    {
+        if (!hasRareData())
+            allocateRareData(vm);
+        return rareData();
     }
     
     Structure* previousID() const
@@ -533,12 +579,6 @@ public:
         startWatchingInternalProperties(vm);
     }
     
-    void startWatchingInternalPropertiesIfNecessaryForEntireChain(VM& vm)
-    {
-        for (Structure* structure = this; structure; structure = structure->storedPrototypeStructure())
-            structure->startWatchingInternalPropertiesIfNecessary(vm);
-    }
-
     bool hasInferredTypes() const
     {
         return !!m_inferredTypeTable;
@@ -588,11 +628,7 @@ public:
         willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::OldProperty);
     }
 
-    Ref<StructureShape> toStructureShape(JSValue);
-    
-    // Determines if the two structures match enough that this one could be used for allocations
-    // of the other one.
-    bool canUseForAllocationsOf(Structure*);
+    Ref<StructureShape> toStructureShape(JSValue, bool& sawPolyProtoStructure);
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
@@ -601,6 +637,10 @@ public:
     static void dumpContextHeader(PrintStream&);
     
     ConcurrentJSLock& lock() { return m_lock; }
+
+    unsigned propertyHash() const { return m_propertyHash; }
+
+    static bool shouldConvertToPolyProto(const Structure* a, const Structure* b);
     
     DECLARE_EXPORT_INFO;
 
@@ -720,8 +760,7 @@ private:
         return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
     }
 
-    bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain) const;
-    bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
+    bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain, JSObject* base) const;
 
     // You have to hold the structure lock to do these.
     JS_EXPORT_PRIVATE void pin(const AbstractLocker&, VM&, PropertyTable*);
@@ -730,12 +769,6 @@ private:
     bool isRareData(JSCell* cell) const
     {
         return cell && cell->structureID() != structureID();
-    }
-
-    StructureRareData* rareData() const
-    {
-        ASSERT(hasRareData());
-        return static_cast<StructureRareData*>(m_previousOrRareData.get());
     }
 
     template<typename DetailsFunc>
@@ -787,6 +820,8 @@ private:
 
     // m_offset does not account for anonymous slots
     PropertyOffset m_offset;
+
+    uint32_t m_propertyHash;
 };
 
 } // namespace JSC

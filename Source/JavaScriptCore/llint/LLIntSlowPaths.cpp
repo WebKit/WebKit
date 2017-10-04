@@ -667,6 +667,24 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         && baseValue.isCell()
         && slot.isCacheable()) {
 
+        {
+            StructureID oldStructureID = pc[4].u.structureID;
+            if (oldStructureID) {
+                auto opcode = Interpreter::getOpcodeID(pc[0]);
+                if (opcode == op_get_by_id
+                    || opcode == op_get_by_id_unset
+                    || opcode == op_get_by_id_proto_load) {
+                    Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                    Structure* b = baseValue.asCell()->structure(vm);
+
+                    if (Structure::shouldConvertToPolyProto(a, b)) {
+                        ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
+                        a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    }
+                }
+            }
+        }
+
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();
         if (slot.isValue() && slot.slotBase() == baseValue) {
@@ -737,6 +755,22 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         && baseValue.isCell()
         && slot.isCacheablePut()) {
 
+
+        {
+            StructureID oldStructureID = pc[4].u.structureID;
+            if (oldStructureID) {
+                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* b = baseValue.asCell()->structure(vm);
+                if (slot.type() == PutPropertySlot::NewProperty)
+                    b = b->previousID();
+
+                if (Structure::shouldConvertToPolyProto(a, b)) {
+                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    b->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                }
+            }
+        }
+
         // Start out by clearing out the old cache.
         pc[4].u.pointer = nullptr; // old structure
         pc[5].u.pointer = nullptr; // offset
@@ -760,16 +794,17 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                 if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
                     ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
 
-                    if (normalizePrototypeChain(exec, structure) != InvalidPrototypeChain) {
+                    bool sawPolyProto = false;
+                    auto result = normalizePrototypeChain(exec, baseCell, sawPolyProto);
+                    if (result != InvalidPrototypeChain && !sawPolyProto) {
                         ASSERT(structure->previousID()->isObject());
                         pc[4].u.structureID = structure->previousID()->id();
                         pc[5].u.operand = slot.cachedOffset();
                         pc[6].u.structureID = structure->id();
                         if (!(pc[8].u.putByIdFlags & PutByIdIsDirect)) {
-                            StructureChain* chain = structure->prototypeChain(exec);
+                            StructureChain* chain = structure->prototypeChain(exec, asObject(baseCell));
                             ASSERT(chain);
-                            pc[7].u.structureChain.set(
-                                vm, codeBlock, chain);
+                            pc[7].u.structureChain.set(vm, codeBlock, chain);
                         }
                         pc[8].u.putByIdFlags = static_cast<PutByIdFlags>(
                             pc[8].u.putByIdFlags |

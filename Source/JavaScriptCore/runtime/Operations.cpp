@@ -136,23 +136,30 @@ bool jsIsFunctionType(JSValue v)
     return false;
 }
 
-size_t normalizePrototypeChain(CallFrame* callFrame, Structure* structure)
+size_t normalizePrototypeChain(CallFrame* callFrame, JSCell* base, bool& sawPolyProto)
 {
     VM& vm = callFrame->vm();
     size_t count = 0;
+    sawPolyProto = false;
+    JSCell* current = base;
+    JSGlobalObject* globalObject = callFrame->lexicalGlobalObject();
     while (1) {
+        Structure* structure = current->structure(vm);
         if (structure->isProxy())
             return InvalidPrototypeChain;
-        JSValue v = structure->prototypeForLookup(callFrame);
-        if (v.isNull())
+
+        sawPolyProto |= structure->hasPolyProto();
+
+        JSValue prototype = structure->prototypeForLookup(globalObject, current);
+        if (prototype.isNull())
             return count;
 
-        JSCell* base = v.asCell();
-        structure = base->structure(vm);
+        current = prototype.asCell();
+        structure = current->structure(vm);
         if (structure->isDictionary()) {
             if (structure->hasBeenFlattenedBefore())
                 return InvalidPrototypeChain;
-            structure->flattenDictionaryStructure(vm, asObject(base));
+            structure->flattenDictionaryStructure(vm, asObject(current));
         }
 
         ++count;

@@ -34,7 +34,7 @@ JSValue jsTypeStringForValue(CallFrame*, JSValue);
 JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
 bool jsIsObjectTypeOrNull(CallFrame*, JSValue);
 bool jsIsFunctionType(JSValue);
-size_t normalizePrototypeChain(CallFrame*, Structure*);
+size_t normalizePrototypeChain(CallFrame*, JSCell*, bool& sawPolyProto);
 
 ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2)
 {

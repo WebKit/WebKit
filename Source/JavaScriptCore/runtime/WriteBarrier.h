@@ -144,6 +144,7 @@ public:
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
     void setStartingValue(JSValue value) { m_value = JSValue::encode(value); }
     bool isNumber() const { return get().isNumber(); }
+    bool isInt32() const { return get().isInt32(); }
     bool isObject() const { return get().isObject(); }
     bool isNull() const { return get().isNull(); }
     bool isGetterSetter() const { return get().isGetterSetter(); }

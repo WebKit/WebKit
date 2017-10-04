@@ -148,6 +148,9 @@ public:
 
     void setFunctionName(ExecState*, JSValue name);
 
+    // Returns the __proto__ for the |this| value if this JSFunction were to be constructed.
+    JSObject* prototypeForConstruction(VM&, ExecState*);
+
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
     JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);

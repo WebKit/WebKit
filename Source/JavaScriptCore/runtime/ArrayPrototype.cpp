@@ -522,10 +522,9 @@ template<typename T> static inline bool containsHole(T* data, unsigned length)
     return false;
 }
 
-static inline bool holesMustForwardToPrototype(ExecState& state, JSObject* object)
+static inline bool holesMustForwardToPrototype(VM& vm, JSObject* object)
 {
-    auto& vm = state.vm();
-    return object->structure(vm)->holesMustForwardToPrototype(vm);
+    return object->structure(vm)->holesMustForwardToPrototype(vm, object);
 }
 
 static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separator, uint64_t length)
@@ -610,7 +609,7 @@ static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringVie
                     goto generalCase;
             } else {
                 if (!holesKnownToBeOK) {
-                    if (holesMustForwardToPrototype(state, thisObject))
+                    if (holesMustForwardToPrototype(vm, thisObject))
                         goto generalCase;
                     holesKnownToBeOK = true;
                 }
@@ -634,7 +633,7 @@ static inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringVie
                 joiner.append(state, jsDoubleNumber(value));
             else {
                 if (!holesKnownToBeOK) {
-                    if (thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+                    if (holesMustForwardToPrototype(vm, thisObject))
                         goto generalCase;
                     holesKnownToBeOK = true;
                 }
@@ -816,7 +815,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (length > butterfly.publicLength())
             break;
         auto data = butterfly.contiguous().data();
-        if (containsHole(data, length) && holesMustForwardToPrototype(*exec, thisObject))
+        if (containsHole(data, length) && holesMustForwardToPrototype(vm, thisObject))
             break;
         std::reverse(data, data + length);
         return JSValue::encode(thisObject);
@@ -826,7 +825,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (length > butterfly.publicLength())
             break;
         auto data = butterfly.contiguousDouble().data();
-        if (containsHole(data, length) && holesMustForwardToPrototype(*exec, thisObject))
+        if (containsHole(data, length) && holesMustForwardToPrototype(vm, thisObject))
             break;
         std::reverse(data, data + length);
         return JSValue::encode(thisObject);
@@ -835,7 +834,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         auto& storage = *thisObject->butterfly()->arrayStorage();
         if (length > storage.vectorLength())
             break;
-        if (storage.hasHoles() && holesMustForwardToPrototype(*exec, thisObject))
+        if (storage.hasHoles() && holesMustForwardToPrototype(vm, thisObject))
             break;
         auto data = storage.vector().data();
         std::reverse(data, data + length);
@@ -1176,7 +1175,7 @@ static bool moveElements(ExecState* exec, VM& vm, JSArray* target, unsigned targ
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (LIKELY(!hasAnyArrayStorage(source->indexingType()) && !source->structure()->holesMustForwardToPrototype(vm))) {
+    if (LIKELY(!hasAnyArrayStorage(source->indexingType()) && !holesMustForwardToPrototype(vm, source))) {
         for (unsigned i = 0; i < sourceLength; ++i) {
             JSValue value = source->tryGetIndexQuickly(i);
             if (value) {

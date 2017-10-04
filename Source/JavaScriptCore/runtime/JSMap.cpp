@@ -56,7 +56,7 @@ bool JSMap::isIteratorProtocolFastAndNonObservable()
     if (structure == globalObject->mapStructure())
         return true;
 
-    if (structure->storedPrototype() != globalObject->mapPrototype())
+    if (getPrototypeDirect() != globalObject->mapPrototype())
         return false;
 
     VM& vm = globalObject->vm();
@@ -71,6 +71,9 @@ bool JSMap::canCloneFastAndNonObservable(Structure* structure)
     auto setFastAndNonObservable = [&] (Structure* structure) {
         JSGlobalObject* globalObject = structure->globalObject();
         if (!globalObject->isMapPrototypeSetFastAndNonObservable())
+            return false;
+
+        if (structure->hasPolyProto())
             return false;
 
         if (structure->storedPrototype() != globalObject->mapPrototype())

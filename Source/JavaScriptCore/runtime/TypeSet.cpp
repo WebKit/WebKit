@@ -41,14 +41,17 @@ TypeSet::TypeSet()
 {
 }
 
-void TypeSet::addTypeInformation(RuntimeType type, RefPtr<StructureShape>&& passedNewShape, Structure* structure)
+void TypeSet::addTypeInformation(RuntimeType type, RefPtr<StructureShape>&& passedNewShape, Structure* structure, bool sawPolyProtoStructure)
 {
     m_seenTypes = m_seenTypes | type;
 
     if (structure && passedNewShape && !runtimeTypeIsPrimitive(type)) {
         Ref<StructureShape> newShape = passedNewShape.releaseNonNull();
-        if (!m_structureSet.contains(structure)) {
-            {
+        // FIXME: TypeSet should be able to cache poly proto chains
+        // just by caching the prototype chain:
+        // https://bugs.webkit.org/show_bug.cgi?id=177627
+        if (sawPolyProtoStructure || !m_structureSet.contains(structure)) {
+            if (!sawPolyProtoStructure) {
                 ConcurrentJSLocker locker(m_lock);
                 m_structureSet.add(structure);
             }

@@ -242,6 +242,8 @@ SLOW_PATH_DECL(slow_path_create_this)
         size_t inlineCapacity = pc[3].u.operand;
         Structure* structure = constructor->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure();
         result = constructEmptyObject(exec, structure);
+        if (structure->hasPolyProto())
+            result->putDirect(vm, structure->polyProtoOffset(), constructor->prototypeForConstruction(vm, exec));
     } else {
         // http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor
         JSValue proto = constructorAsObject->get(exec, vm.propertyNames->prototype);

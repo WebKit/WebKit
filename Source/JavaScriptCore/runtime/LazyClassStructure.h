@@ -101,13 +101,6 @@ public:
         return m_structure.getConcurrently();
     }
     
-    JSObject* prototypeConcurrently() const
-    {
-        if (Structure* structure = getConcurrently())
-            return structure->storedPrototypeObject();
-        return nullptr;
-    }
-    
     JSObject* constructorConcurrently() const
     {
         return m_constructor.get();

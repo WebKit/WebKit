@@ -1,3 +1,118 @@
+2017-10-03  Saam Barati  <sbarati@apple.com>
+
+        Implement polymorphic prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=176391
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/poly-proto-access.js: Added.
+        (assert):
+        (foo.C):
+        (foo.C.prototype.get bar):
+        (foo):
+        (bar):
+        * microbenchmarks/poly-proto-put-transition-speed.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (performSet):
+        * microbenchmarks/poly-proto-setter-speed.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo.C.prototype.set p):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (performSet):
+        * stress/constructor-with-return.js:
+        (i.tests.forEach.Constructor):
+        (i.tests.forEach):
+        (tests.forEach.Constructor): Deleted.
+        (tests.forEach): Deleted.
+        * stress/dom-jit-with-poly-proto.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (validate):
+        * stress/poly-proto-custom-value-and-accessor.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (items.forEach):
+        (set get for):
+        * stress/poly-proto-intrinsic-getter-correctness.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (foo):
+        * stress/poly-proto-miss.js: Added.
+        (makePolyProtoInstanceWithNullPrototype.foo.C):
+        (makePolyProtoInstanceWithNullPrototype.foo):
+        (makePolyProtoInstanceWithNullPrototype):
+        (assert):
+        (validate):
+        * stress/poly-proto-op-in-caching.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (validate):
+        (validate2):
+        * stress/poly-proto-put-transition.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (performSet):
+        (i.obj.__proto__.set p):
+        * stress/poly-proto-set-prototype.js: Added.
+        (assert):
+        (let.alternateProto.get x):
+        (let.alternateProto2.get y):
+        (let.alternateProto2.get x):
+        (foo.C):
+        (foo):
+        (validate):
+        * stress/poly-proto-setter.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo.C.prototype.set p):
+        (makePolyProtoObject.foo.C.prototype.get p):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (performSet):
+        * stress/poly-proto-using-inheritance.js: Added.
+        (assert):
+        (foo.C):
+        (foo.C.prototype.get baz):
+        (foo):
+        (bar.C):
+        (bar):
+        (validate):
+        * stress/primitive-poly-proto.js: Added.
+        (makePolyProtoInstance.foo.C):
+        (makePolyProtoInstance.foo):
+        (makePolyProtoInstance):
+        (assert):
+        (validate):
+        * stress/prototype-is-not-js-object.js: Added.
+        (foo.bar):
+        (foo):
+        (assert):
+        (validate):
+        * stress/try-get-by-id-poly-proto.js: Added.
+        (assert):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (tryGetByIdText):
+        (x.__proto__.get bar):
+        (validate):
+        * typeProfiler/overflow.js:
+
 2017-10-03  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: no VM / JS version of everything but Instance

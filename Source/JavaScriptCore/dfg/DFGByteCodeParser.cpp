@@ -3744,6 +3744,11 @@ Node* ByteCodeParser::load(
                 // the structures in the variant.structureSet() agree on the prototype (it would be
                 // hilariously rare if they didn't). Note that we are relying on structureSet() having
                 // at least one element. That will always be true here because of how GetByIdStatus/PutByIdStatus work.
+
+                // FIXME: right now, if we have an OPCS, we have mono proto. However, this will
+                // need to be changed in the future once we have a hybrid data structure for
+                // poly proto:
+                // https://bugs.webkit.org/show_bug.cgi?id=177339
                 JSObject* prototype = variant.structureSet()[0]->storedPrototypeObject();
                 bool allAgree = true;
                 for (unsigned i = 1; i < variant.structureSet().size(); ++i) {
@@ -4341,12 +4346,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (function) {
                 if (FunctionRareData* rareData = function->rareData()) {
                     if (Structure* structure = rareData->objectAllocationStructure()) {
-                        m_graph.freeze(rareData);
-                        m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                        // The callee is still live up to this point.
-                        addToGraph(Phantom, callee);
-                        set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure))));
-                        alreadyEmitted = true;
+                        // FIXME: we should be able to allocate a poly proto object here:
+                        // https://bugs.webkit.org/show_bug.cgi?id=177517
+                        if (structure->hasMonoProto()) {
+                            m_graph.freeze(rareData);
+                            m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                            // The callee is still live up to this point.
+                            addToGraph(Phantom, callee);
+                            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure))));
+                            alreadyEmitted = true;
+                        }
                     }
                 }
             }

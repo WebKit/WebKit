@@ -184,6 +184,8 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
             const AccessCase& access = list->at(i);
             if (access.viaProxy())
                 return PutByIdStatus(slowPathState);
+            if (access.usesPolyProto())
+                return PutByIdStatus(slowPathState);
             
             PutByIdVariant variant;
             

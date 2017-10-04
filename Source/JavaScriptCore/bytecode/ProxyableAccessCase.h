@@ -33,13 +33,13 @@ namespace JSC {
 
 class ProxyableAccessCase : public AccessCase {
 public:
-    typedef AccessCase Base;
+    using Base = AccessCase;
 
     bool viaProxy() const override { return m_viaProxy; }
     WatchpointSet* additionalSet() const override { return m_additionalSet.get(); }
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell*, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
-        bool viaProxy = false, WatchpointSet* additionalSet = nullptr);
+        bool viaProxy = false, WatchpointSet* additionalSet = nullptr, std::unique_ptr<PolyProtoAccessChain> = nullptr);
 
     void dumpImpl(PrintStream&, CommaPrinter&) const override;
     std::unique_ptr<AccessCase> clone() const override;
@@ -47,7 +47,7 @@ public:
     ~ProxyableAccessCase();
 
 protected:
-    ProxyableAccessCase(VM&, JSCell*, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet);
+    ProxyableAccessCase(VM&, JSCell*, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain>);
 
 private:
     bool m_viaProxy;

@@ -83,6 +83,8 @@ public:
     // This conversion operator allows implicit conversion to bool but not to other integer types.
     typedef T* (RefPtr::*UnspecifiedBoolType);
     operator UnspecifiedBoolType() const { return m_ptr ? &RefPtr::m_ptr : nullptr; }
+
+    explicit operator bool() const { return !!m_ptr; }
     
     RefPtr& operator=(const RefPtr&);
     RefPtr& operator=(T*);

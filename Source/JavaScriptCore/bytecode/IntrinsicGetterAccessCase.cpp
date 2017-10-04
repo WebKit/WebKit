@@ -33,7 +33,7 @@
 namespace JSC {
 
 IntrinsicGetterAccessCase::IntrinsicGetterAccessCase(VM& vm, JSCell* owner, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, JSFunction* intrinsicFunction)
-    : Base(vm, owner, IntrinsicGetter, offset, structure, conditionSet)
+    : Base(vm, owner, IntrinsicGetter, offset, structure, conditionSet, nullptr)
 {
     m_intrinsicFunction.set(vm, owner, intrinsicFunction);
 }

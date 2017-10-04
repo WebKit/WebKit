@@ -3237,7 +3237,7 @@ void SpeculativeJIT::compilePutByValForCellWithSymbol(Node* node, Edge& child1, 
     noResult(node);
 }
 
-void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchReg, GPRReg scratch2Reg)
+void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchReg, GPRReg scratch2Reg, GPRReg scratch3Reg)
 {
     // Check that prototype is an object.
     speculationCheck(BadType, JSValueRegs(), 0, m_jit.branchIfNotObject(prototypeReg));
@@ -3249,8 +3249,23 @@ void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg p
     MacroAssembler::Label loop(&m_jit);
     MacroAssembler::Jump performDefaultHasInstance = m_jit.branch8(MacroAssembler::Equal,
         MacroAssembler::Address(scratchReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ProxyObjectType));
-    m_jit.emitLoadStructure(*m_jit.vm(), scratchReg, scratchReg, scratch2Reg);
-    m_jit.loadPtr(MacroAssembler::Address(scratchReg, Structure::prototypeOffset() + CellPayloadOffset), scratchReg);
+    m_jit.emitLoadStructure(*m_jit.vm(), scratchReg, scratch3Reg, scratch2Reg);
+#if USE(JSVALUE64)
+    m_jit.load64(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset()), scratch3Reg);
+    auto isMonoProto = m_jit.branchIfNotInt32(JSValueRegs(scratch3Reg));
+    m_jit.zeroExtend32ToPtr(scratch3Reg, scratch3Reg);
+    m_jit.load64(JITCompiler::BaseIndex(scratchReg, scratch3Reg, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage()), scratch3Reg);
+    isMonoProto.link(&m_jit);
+    m_jit.move(scratch3Reg, scratchReg);
+#else
+    m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + TagOffset), scratch2Reg);
+    m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + PayloadOffset), scratch3Reg);
+    auto isMonoProto = m_jit.branch32(CCallHelpers::NotEqual, scratch2Reg, TrustedImm32(JSValue::Int32Tag));
+    m_jit.load32(JITCompiler::BaseIndex(scratchReg, scratch3Reg, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + PayloadOffset), scratch3Reg);
+    isMonoProto.link(&m_jit);
+    m_jit.move(scratch3Reg, scratchReg);
+#endif
+
     MacroAssembler::Jump isInstance = m_jit.branchPtr(MacroAssembler::Equal, scratchReg, prototypeReg);
 #if USE(JSVALUE64)
     m_jit.branchIfCell(JSValueRegs(scratchReg)).linkTo(loop, &m_jit);
@@ -3381,10 +3396,12 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
         SpeculateCellOperand prototype(this, node->child2());
         GPRTemporary scratch(this);
         GPRTemporary scratch2(this);
+        GPRTemporary scratch3(this);
         
         GPRReg prototypeReg = prototype.gpr();
         GPRReg scratchReg = scratch.gpr();
         GPRReg scratch2Reg = scratch2.gpr();
+        GPRReg scratch3Reg = scratch3.gpr();
         
         MacroAssembler::Jump isCell = m_jit.branchIfCell(value.jsValueRegs());
         GPRReg valueReg = value.jsValueRegs().payloadGPR();
@@ -3394,7 +3411,7 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
         
         isCell.link(&m_jit);
         
-        compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg, scratch2Reg);
+        compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg, scratch2Reg, scratch3Reg);
         
         done.link(&m_jit);
 
@@ -3407,13 +3424,15 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
     
     GPRTemporary scratch(this);
     GPRTemporary scratch2(this);
+    GPRTemporary scratch3(this);
     
     GPRReg valueReg = value.gpr();
     GPRReg prototypeReg = prototype.gpr();
     GPRReg scratchReg = scratch.gpr();
     GPRReg scratch2Reg = scratch2.gpr();
+    GPRReg scratch3Reg = scratch3.gpr();
     
-    compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg, scratch2Reg);
+    compileInstanceOfForObject(node, valueReg, prototypeReg, scratchReg, scratch2Reg, scratch3Reg);
 
     blessedBooleanResult(scratchReg, node);
 }

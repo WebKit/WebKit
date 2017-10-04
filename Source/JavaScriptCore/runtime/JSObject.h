@@ -40,6 +40,7 @@
 #include "PutDirectIndexMode.h"
 #include "PutPropertySlot.h"
 #include "Structure.h"
+#include "StructureTransitionTable.h"
 #include "VM.h"
 #include "JSString.h"
 #include "SparseArrayValueMap.h"
@@ -733,6 +734,12 @@ public:
     JS_EXPORT_PRIVATE static bool isExtensible(JSObject*, ExecState*);
     bool isSealed(VM& vm) { return structure(vm)->isSealed(vm); }
     bool isFrozen(VM& vm) { return structure(vm)->isFrozen(vm); }
+
+    bool anyObjectInChainMayInterceptIndexedAccesses() const;
+    JS_EXPORT_PRIVATE bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
+    bool needsSlowPutIndexing() const;
+    NonPropertyTransition suggestedArrayStorageTransition() const;
+
 private:
     ALWAYS_INLINE bool isExtensibleImpl() { return isStructureExtensible(); }
 public:
@@ -866,7 +873,7 @@ protected:
     {
         Base::finishCreation(vm);
         ASSERT(inherits(vm, info()));
-        ASSERT(getPrototypeDirect().isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect()));
+        ASSERT(structure()->hasPolyProto() || getPrototypeDirect().isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect()));
         ASSERT(structure()->isObject());
         ASSERT(classInfo(vm));
     }
@@ -1298,7 +1305,7 @@ inline JSObject::JSObject(VM& vm, Structure* structure, Butterfly* butterfly)
 
 inline JSValue JSObject::getPrototypeDirect() const
 {
-    return structure()->storedPrototype();
+    return structure()->storedPrototype(this);
 }
 
 inline JSValue JSObject::getPrototype(VM& vm, ExecState* exec)
@@ -1400,7 +1407,9 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
         Structure* structure = structureIDTable.get(object->structureID());
         if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
             return true;
-        JSValue prototype = structure->storedPrototype();
+        // FIXME: This doesn't look like it's following the specification:
+        // https://bugs.webkit.org/show_bug.cgi?id=172572
+        JSValue prototype = structure->storedPrototype(object);
         if (!prototype.isObject())
             break;
         object = asObject(prototype);

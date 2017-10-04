@@ -244,7 +244,11 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     if (constructor->type() == JSFunctionType) {
         auto rareData = jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        return constructEmptyObject(exec, rareData->objectAllocationProfile()->structure());
+        Structure* structure = rareData->objectAllocationProfile()->structure();
+        JSObject* result = constructEmptyObject(exec, structure);
+        if (structure->hasPolyProto())
+            result->putDirect(vm, structure->polyProtoOffset(), jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec));
+        return result;
     }
 
     JSValue proto = constructor->get(exec, vm.propertyNames->prototype);

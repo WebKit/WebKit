@@ -63,19 +63,35 @@ void TypeProfilerLog::processLogEntries(const String& reason)
         before = currentTimeMS();
     }
 
+    HashMap<Structure*, RefPtr<StructureShape>> cachedMonoProtoShapes;
+    HashMap<std::pair<Structure*, JSCell*>, RefPtr<StructureShape>> cachedPolyProtoShapes;
+
     LogEntry* entry = m_logStartPtr;
-    HashMap<Structure*, RefPtr<StructureShape>> seenShapes;
+
     while (entry != m_currentLogEntryPtr) {
         StructureID id = entry->structureID;
-        RefPtr<StructureShape> shape; 
+        RefPtr<StructureShape> shape;
         JSValue value = entry->value;
         Structure* structure = nullptr;
+        bool sawPolyProtoStructure = false;
         if (id) {
-            structure = Heap::heap(value.asCell())->structureIDTable().get(id); 
-            auto iter = seenShapes.find(structure);
-            if (iter == seenShapes.end()) {
-                shape = structure->toStructureShape(value);
-                seenShapes.set(structure, shape);
+            structure = Heap::heap(value.asCell())->structureIDTable().get(id);
+            auto iter = cachedMonoProtoShapes.find(structure);
+            if (iter == cachedMonoProtoShapes.end()) {
+                auto key = std::make_pair(structure, value.asCell());
+                auto iter = cachedPolyProtoShapes.find(key);
+                if (iter != cachedPolyProtoShapes.end()) {
+                    shape = iter->value;
+                    sawPolyProtoStructure = true;
+                }
+
+                if (!shape) {
+                    shape = structure->toStructureShape(value, sawPolyProtoStructure);
+                    if (sawPolyProtoStructure)
+                        cachedPolyProtoShapes.set(key, shape);
+                    else
+                        cachedMonoProtoShapes.set(structure, shape);
+                }
             } else
                 shape = iter->value;
         }
@@ -84,8 +100,8 @@ void TypeProfilerLog::processLogEntries(const String& reason)
         TypeLocation* location = entry->location;
         location->m_lastSeenType = type;
         if (location->m_globalTypeSet)
-            location->m_globalTypeSet->addTypeInformation(type, shape.copyRef(), structure);
-        location->m_instructionTypeSet->addTypeInformation(type, WTFMove(shape), structure);
+            location->m_globalTypeSet->addTypeInformation(type, shape.copyRef(), structure, sawPolyProtoStructure);
+        location->m_instructionTypeSet->addTypeInformation(type, WTFMove(shape), structure, sawPolyProtoStructure);
 
         entry++;
     }

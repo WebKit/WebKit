@@ -1,3 +1,329 @@
+2017-10-03  Saam Barati  <sbarati@apple.com>
+
+        Implement polymorphic prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=176391
+
+        Reviewed by Filip Pizlo.
+
+        This patch changes JSC's object model with respect to where the prototype
+        of an object is stored. Previously, it was always stored as
+        a constant value inside Structure. So an object's structure used to
+        always tell you what its prototype is. Anytime an object changed
+        its prototype, it would do a structure transition. This enables
+        a large class of optimizations: just by doing a structure check,
+        we know what the prototype is.
+        
+        However, this design falls down when you have many objects that
+        have the same shape, but only differ in what their prototype value
+        is. This arises in many JS programs. A simple, and probably common, example
+        is when the program has a constructor inside of a function:
+        ```
+        function foo() {
+            class C {
+                constructor() { this.field1 = 42; ...; this.fieldN = 42; }
+                method1() { doStuffWith(this.field); }
+                method2() { doStuffWith(this.field); }
+            }
+            let c = new C;
+            do things with c;
+            }
+        repeatedly call foo() here.
+        ```
+        
+        Before this patch, in the above program, each time `new C` created an
+        object, it would create an object with a different structure. The
+        reason for this is that each time foo is called, there is a new
+        instance of C.prototype. However, each `new C` that was created
+        with have identical shape sans its prototype value. This would
+        cause all ICs that used `c` to quickly give up on any form of caching
+        because they would see too many structures and give up and permanently
+        divert control flow to the slow path.
+        
+        This patch fixes this issue by expanding the notion of where the prototype
+        of an object is stored. There are now two notions of where the prototype
+        is stored. A Structure can now be in two modes:
+        1. Mono proto mode. This is the same mode as we used to have. It means
+        the structure itself has a constant prototype value.
+        2. Poly proto mode. This means the structure knows nothing about the
+        prototype value itself. Objects with this structure store their prototype
+        in normal object field storage. The structure will tell you the offset of
+        this prototype inside the object's storage. As of today, we only reserve
+        inline slots for the prototype field because poly proto only occurs
+        for JSFinalObject. However, this will be expanded to support out of line
+        offsets in a future patch when we extend poly proto to work when we inherit
+        from builtin types like Map and Array.
+        
+        In this initial patch, we do poly proto style inline caching whenever
+        we see an object that is poly proto or if an object in its prototype lookup
+        chain is poly proto. Poly proto ICs work by verifying the lookup chain
+        at runtime. This essentially boils down to performing structure checks
+        up the prototype chain. In a future patch, we're going to extend object
+        property condition set to work with objects that don't have poly proto bases.
+        
+        Initially, accesses that have poly proto access chains will always turn
+        into GetById/PutById in the DFG. In a future patch, I'm going to teach
+        the DFG how to inline certain accesses that have poly proto in the access
+        chain.
+        
+        One of most interesting parts about this patch is how we decide when to go
+        poly proto. This patch uses a profiling based approach. An IC will inform
+        a watchpoint that it sees an opportunity when two Structure's are structurally
+        the same, sans the base object's prototype. This means that two structures
+        have equivalent shapes all the way up the prototype chain. To support fast
+        structural comparison, we compute a hash for a structure based on the properties
+        it has. We compute this hash as we add properties to the structure. This
+        computation is nearly free since we always add UniquedStringImpl*'s which
+        already have their hashes computed. To compare structural equivalence, we
+        just compare hash values all the way up the prototype chain. This means we
+        can get hash conflicts between two structures, but it's extremely rare. First,
+        it'll be rare for two structures to have the same hash. Secondly, we only
+        consider structures originating from the same executable.
+        
+        How we set up this poly proto watchpoint is crucial to its design. When we create_this
+        an object originating from some executable, that executable will create a Box<InlineWatchpointSet>.
+        Each structure that originates from this executable will get a copy of that
+        Box<InlineWatchpointSet>. As that structure transitions to new structures,
+        they too will get a copy of that Box<InilneWatchpointSet>. Therefore, when
+        invalidating an arbitrary structure's poly proto watchpoint, we will know
+        the next time we create_this from that executable that it had been
+        invalidated, and that we should create an object with a poly proto
+        structure. We also use the pointer value of this Box<InlineWatchpointSet>
+        to determine if two structures originated from the same executable. This
+        pruning will severely limit the chances of getting a hash conflict in practice.
+        
+        This patch is neutral on my MBP on traditional JS benchmarks like Octane/Kraken/Sunspider.
+        It may be a 1-2% ARES-6 progression.
+        
+        This patch is between neutral and a 9x progression on the various tests
+        I added. Most of the microbenchmarks are progressed by at least 50%.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/BuiltinNames.cpp:
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames):
+        (JSC::BuiltinNames::underscoreProtoPrivateName const):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::commit):
+        (JSC::AccessCase::guardedByStructureCheck const):
+        (JSC::AccessCase::canReplace const):
+        (JSC::AccessCase::dump const):
+        (JSC::AccessCase::visitWeak const):
+        (JSC::AccessCase::propagateTransitions const):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::usesPolyProto const):
+        (JSC::AccessCase::AccessCase):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::create):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::IntrinsicGetterAccessCase):
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * bytecode/ModuleNamespaceAccessCase.cpp:
+        (JSC::ModuleNamespaceAccessCase::ModuleNamespaceAccessCase):
+        * bytecode/ObjectAllocationProfile.cpp: Added.
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        (JSC::ObjectAllocationProfile::possibleDefaultPropertyCount):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::clear):
+        (JSC::ObjectAllocationProfile::initialize): Deleted.
+        (JSC::ObjectAllocationProfile::possibleDefaultPropertyCount): Deleted.
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        * bytecode/PolyProtoAccessChain.cpp: Added.
+        (JSC::PolyProtoAccessChain::create):
+        (JSC::PolyProtoAccessChain::needImpurePropertyWatchpoint const):
+        (JSC::PolyProtoAccessChain::operator== const):
+        (JSC::PolyProtoAccessChain::dump const):
+        * bytecode/PolyProtoAccessChain.h: Added.
+        (JSC::PolyProtoAccessChain::clone):
+        (JSC::PolyProtoAccessChain:: const):
+        (JSC::PolyProtoAccessChain::operator!= const):
+        (JSC::PolyProtoAccessChain::forEach const):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::addCases):
+        (JSC::PolymorphicAccess::regenerate):
+        (WTF::printInternal):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationResult::shouldResetStub const):
+        (JSC::AccessGenerationState::AccessGenerationState):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::ProxyableAccessCase):
+        (JSC::ProxyableAccessCase::create):
+        * bytecode/ProxyableAccessCase.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::canDoFastSpread):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        * jsc.cpp:
+        (WTF::DOMJITGetterBaseJSObject::DOMJITGetterBaseJSObject):
+        (WTF::DOMJITGetterBaseJSObject::createStructure):
+        (WTF::DOMJITGetterBaseJSObject::create):
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::DOMJITAttribute):
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::slowCall):
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::callDOMGetter):
+        (WTF::DOMJITGetterBaseJSObject::customGetter):
+        (WTF::DOMJITGetterBaseJSObject::finishCreation):
+        (GlobalObject::finishCreation):
+        (functionCreateDOMJITGetterBaseJSObject):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::holesMustForwardToPrototype):
+        (JSC::fastJoin):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::moveElements):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        (JSC::ClonedArguments::createWithInlineFrame):
+        (JSC::ClonedArguments::createWithMachineFrame):
+        (JSC::ClonedArguments::createByCopyingFrom):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::initializeObjectAllocationProfile):
+        * runtime/FunctionRareData.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructureSlow):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::isIteratorProtocolFastAndNonObservable):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::canFastCopy):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure const):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::prototypeForConstruction):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSFunction.h:
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::isIteratorProtocolFastAndNonObservable):
+        (JSC::JSMap::canCloneFastAndNonObservable):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::ensureInt32Slow):
+        (JSC::JSObject::ensureDoubleSlow):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC::JSObject::setPrototypeDirect):
+        (JSC::JSObject::ordinaryToPrimitive const):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexSlowOrBeyondVectorLength):
+        (JSC::JSObject::getEnumerableLength):
+        (JSC::JSObject::anyObjectInChainMayInterceptIndexedAccesses const):
+        (JSC::JSObject::prototypeChainMayInterceptStoreTo):
+        (JSC::JSObject::needsSlowPutIndexing const):
+        (JSC::JSObject::suggestedArrayStorageTransition const):
+        * runtime/JSObject.h:
+        (JSC::JSObject::finishCreation):
+        (JSC::JSObject::getPrototypeDirect const):
+        (JSC::JSObject::getPropertySlot):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        (JSC::JSObject::putInlineForJSObject):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::isIteratorProtocolFastAndNonObservable):
+        (JSC::JSSet::canCloneFastAndNonObservable):
+        * runtime/LazyClassStructure.h:
+        (JSC::LazyClassStructure::prototypeConcurrently const): Deleted.
+        * runtime/Operations.cpp:
+        (JSC::normalizePrototypeChain):
+        * runtime/Operations.h:
+        * runtime/Options.h:
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::createEmptyStructure):
+        (JSC::PrototypeMap::emptyStructureForPrototypeFromBaseStructure):
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype):
+        (JSC::PrototypeMap::clearEmptyObjectStructureForPrototype):
+        * runtime/PrototypeMap.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::create):
+        (JSC::Structure::holesMustForwardToPrototype const):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::isCheapDuringGC):
+        (JSC::Structure::toStructureShape):
+        (JSC::Structure::dump const):
+        (JSC::Structure::canCachePropertyNameEnumerator const):
+        (JSC::Structure::anyObjectInChainMayInterceptIndexedAccesses const): Deleted.
+        (JSC::Structure::needsSlowPutIndexing const): Deleted.
+        (JSC::Structure::suggestedArrayStorageTransition const): Deleted.
+        (JSC::Structure::prototypeForLookup const): Deleted.
+        (JSC::Structure::prototypeChainMayInterceptStoreTo): Deleted.
+        (JSC::Structure::canUseForAllocationsOf): Deleted.
+        * runtime/Structure.h:
+        * runtime/StructureChain.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::create):
+        (JSC::Structure::storedPrototypeObject const):
+        (JSC::Structure::storedPrototypeStructure const):
+        (JSC::Structure::storedPrototype const):
+        (JSC::prototypeForLookupPrimitiveImpl):
+        (JSC::Structure::prototypeForLookup const):
+        (JSC::Structure::prototypeChain const):
+        (JSC::Structure::isValid const):
+        (JSC::Structure::add):
+        (JSC::Structure::setPropertyTable):
+        (JSC::Structure::shouldConvertToPolyProto):
+        * runtime/StructureRareData.h:
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::addTypeInformation):
+        * runtime/TypeSet.h:
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase<Unknown>::isInt32 const):
+
 2017-10-03  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: no VM / JS version of everything but Instance

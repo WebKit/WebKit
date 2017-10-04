@@ -277,13 +277,13 @@ void JSValue::dumpInContextAssumingStructure(
         else if (structure->classInfo()->isSubClassOf(JSObject::info())) {
             out.print("Object: ", RawPointer(asCell()));
             out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()));
-            out.print(" (", inContext(*structure, context), ")");
+            out.print(" (Structure ", inContext(*structure, context), ")");
         } else {
             out.print("Cell: ", RawPointer(asCell()));
             out.print(" (", inContext(*structure, context), ")");
         }
 #if USE(JSVALUE64)
-        out.print(", ID: ", asCell()->structureID());
+        out.print(", StructureID: ", asCell()->structureID());
 #endif
     } else if (isTrue())
         out.print("True");

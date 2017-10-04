@@ -770,7 +770,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
         PropertyOffset offset = obj->structure(vm)->get(vm, propertyName, attributes);
         if (isValidOffset(offset)) {
             if (attributes & PropertyAttribute::ReadOnly) {
-                ASSERT(structure(vm)->prototypeChainMayInterceptStoreTo(vm, propertyName) || obj == this);
+                ASSERT(this->prototypeChainMayInterceptStoreTo(vm, propertyName) || obj == this);
                 return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
             }
 
@@ -1016,7 +1016,7 @@ Butterfly* JSObject::createInitialIndexedStorage(VM& vm, unsigned length)
     ASSERT(length <= MAX_STORAGE_VECTOR_LENGTH);
     IndexingType oldType = indexingType();
     ASSERT_UNUSED(oldType, !hasIndexedProperties(oldType));
-    ASSERT(!structure()->needsSlowPutIndexing());
+    ASSERT(!needsSlowPutIndexing());
     ASSERT(!indexingShouldBeSparse());
     Structure* structure = this->structure(vm);
     unsigned propertyCapacity = structure->outOfLineCapacity();
@@ -1112,7 +1112,7 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
 
     Butterfly* newButterfly = createArrayStorageButterfly(vm, this, oldStructure, length, vectorLength, m_butterfly.getMayBeNull());
     ArrayStorage* result = newButterfly->arrayStorage();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, oldStructure->suggestedArrayStorageTransition());
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, suggestedArrayStorageTransition());
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
     return result;
@@ -1207,7 +1207,7 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, NonPropertyTransi
 
 ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm)
 {
-    return convertUndecidedToArrayStorage(vm, structure(vm)->suggestedArrayStorageTransition());
+    return convertUndecidedToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 ContiguousDoubles JSObject::convertInt32ToDouble(VM& vm)
@@ -1265,7 +1265,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, NonPropertyTransition
 
 ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm)
 {
-    return convertInt32ToArrayStorage(vm, structure(vm)->suggestedArrayStorageTransition());
+    return convertInt32ToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
@@ -1318,7 +1318,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransitio
 
 ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm)
 {
-    return convertDoubleToArrayStorage(vm, structure(vm)->suggestedArrayStorageTransition());
+    return convertDoubleToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTransition transition)
@@ -1367,7 +1367,7 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
 
 ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm)
 {
-    return convertContiguousToArrayStorage(vm, structure(vm)->suggestedArrayStorageTransition());
+    return convertContiguousToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 void JSObject::convertUndecidedForValue(VM& vm, JSValue value)
@@ -1448,7 +1448,7 @@ ContiguousJSValues JSObject::ensureInt32Slow(VM& vm)
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
-        if (UNLIKELY(indexingShouldBeSparse() || structure(vm)->needsSlowPutIndexing()))
+        if (UNLIKELY(indexingShouldBeSparse() || needsSlowPutIndexing()))
             return ContiguousJSValues();
         return createInitialInt32(vm, 0);
         
@@ -1475,7 +1475,7 @@ ContiguousDoubles JSObject::ensureDoubleSlow(VM& vm)
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
-        if (UNLIKELY(indexingShouldBeSparse() || structure(vm)->needsSlowPutIndexing()))
+        if (UNLIKELY(indexingShouldBeSparse() || needsSlowPutIndexing()))
             return ContiguousDoubles();
         return createInitialDouble(vm, 0);
         
@@ -1504,7 +1504,7 @@ ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm)
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
-        if (UNLIKELY(indexingShouldBeSparse() || structure(vm)->needsSlowPutIndexing()))
+        if (UNLIKELY(indexingShouldBeSparse() || needsSlowPutIndexing()))
             return ContiguousJSValues();
         return createInitialContiguous(vm, 0);
         
@@ -1541,22 +1541,22 @@ ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
         
     case ALL_UNDECIDED_INDEXING_TYPES:
         ASSERT(!indexingShouldBeSparse());
-        ASSERT(!structure(vm)->needsSlowPutIndexing());
+        ASSERT(!needsSlowPutIndexing());
         return convertUndecidedToArrayStorage(vm);
         
     case ALL_INT32_INDEXING_TYPES:
         ASSERT(!indexingShouldBeSparse());
-        ASSERT(!structure(vm)->needsSlowPutIndexing());
+        ASSERT(!needsSlowPutIndexing());
         return convertInt32ToArrayStorage(vm);
         
     case ALL_DOUBLE_INDEXING_TYPES:
         ASSERT(!indexingShouldBeSparse());
-        ASSERT(!structure(vm)->needsSlowPutIndexing());
+        ASSERT(!needsSlowPutIndexing());
         return convertDoubleToArrayStorage(vm);
         
     case ALL_CONTIGUOUS_INDEXING_TYPES:
         ASSERT(!indexingShouldBeSparse());
-        ASSERT(!structure(vm)->needsSlowPutIndexing());
+        ASSERT(!needsSlowPutIndexing());
         return convertContiguousToArrayStorage(vm);
         
     default:
@@ -1634,14 +1634,17 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
     if (prototype.isObject())
         vm.prototypeMap.addPrototype(asObject(prototype));
     
-    Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype);
-    setStructure(vm, newStructure);
-    
-    if (!newStructure->anyObjectInChainMayInterceptIndexedAccesses())
+    if (structure(vm)->hasMonoProto()) {
+        Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype);
+        setStructure(vm, newStructure);
+    } else
+        putDirect(vm, structure(vm)->polyProtoOffset(), prototype);
+
+    if (!anyObjectInChainMayInterceptIndexedAccesses())
         return;
     
     if (vm.prototypeMap.isPrototype(this)) {
-        newStructure->globalObject()->haveABadTime(vm);
+        structure(vm)->globalObject()->haveABadTime(vm);
         return;
     }
     
@@ -1952,7 +1955,8 @@ JSValue JSObject::ordinaryToPrimitive(ExecState* exec, PreferredPrimitiveType hi
 
     // Make sure that whatever default value methods there are on object's prototype chain are
     // being watched.
-    this->structure()->startWatchingInternalPropertiesIfNecessaryForEntireChain(vm);
+    for (const JSObject* object = this; object; object = object->structure(vm)->storedPrototypeObject(object))
+        object->structure(vm)->startWatchingInternalPropertiesIfNecessary(vm);
 
     JSValue value;
     if (hint == PreferString) {
@@ -2727,7 +2731,7 @@ bool JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
             return putByIndexBeyondVectorLengthWithArrayStorage(
                 exec, i, value, shouldThrow, createArrayStorage(vm, 0, 0));
         }
-        if (structure(vm)->needsSlowPutIndexing()) {
+        if (needsSlowPutIndexing()) {
             // Convert the indexing type to the SlowPutArrayStorage and retry.
             createArrayStorage(vm, i + 1, getNewVectorLength(0, 0, 0, i + 1));
             return putByIndex(this, exec, i, value, shouldThrow);
@@ -2879,7 +2883,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned 
             return putDirectIndexBeyondVectorLengthWithArrayStorage(
                 exec, i, value, attributes, mode, createArrayStorage(vm, 0, 0));
         }
-        if (structure(vm)->needsSlowPutIndexing()) {
+        if (needsSlowPutIndexing()) {
             ArrayStorage* storage = createArrayStorage(vm, i + 1, getNewVectorLength(0, 0, 0, i + 1));
             storage->m_vector[i].set(vm, this, value);
             storage->m_numValuesInVector++;
@@ -3559,7 +3563,7 @@ uint32_t JSObject::getEnumerableLength(ExecState* exec, JSObject* object)
 {
     VM& vm = exec->vm();
     Structure* structure = object->structure(vm);
-    if (structure->holesMustForwardToPrototype(vm))
+    if (structure->holesMustForwardToPrototype(vm, object))
         return 0;
     switch (object->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -3667,6 +3671,58 @@ JSValue JSObject::getMethod(ExecState* exec, CallData& callData, CallType& callT
     }
 
     return method;
+}
+
+bool JSObject::anyObjectInChainMayInterceptIndexedAccesses() const
+{
+    VM& vm = *this->vm();
+    for (const JSObject* current = this; ;) {
+        if (current->structure(vm)->mayInterceptIndexedAccesses())
+            return true;
+        
+        JSValue prototype = current->getPrototypeDirect();
+        if (prototype.isNull())
+            return false;
+        
+        current = asObject(prototype);
+    }
+}
+
+bool JSObject::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
+{
+    if (parseIndex(propertyName))
+        return anyObjectInChainMayInterceptIndexedAccesses();
+    
+    for (JSObject* current = this; ;) {
+        JSValue prototype = current->getPrototypeDirect();
+        if (prototype.isNull())
+            return false;
+        
+        current = asObject(prototype);
+        
+        unsigned attributes;
+        PropertyOffset offset = current->structure(vm)->get(vm, propertyName, attributes);
+        if (!JSC::isValidOffset(offset))
+            continue;
+        
+        if (attributes & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor))
+            return true;
+        
+        return false;
+    }
+}
+
+bool JSObject::needsSlowPutIndexing() const
+{
+    return anyObjectInChainMayInterceptIndexedAccesses() || globalObject()->isHavingABadTime();
+}
+
+NonPropertyTransition JSObject::suggestedArrayStorageTransition() const
+{
+    if (needsSlowPutIndexing())
+        return NonPropertyTransition::AllocateSlowPutArrayStorage;
+    
+    return NonPropertyTransition::AllocateArrayStorage;
 }
 
 } // namespace JSC

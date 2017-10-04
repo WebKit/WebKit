@@ -9,6 +9,8 @@ var oldProto;
 for (var i = 0; i < MaxStructureCountWithoutOverflow; i++) {
     // Make sure we get a new prototype chain on each assignment to x because objects with shared prototype chains will be merged.
     x = new Proto;
+    x['field' + i] = 20;
+    x = x
     oldProto = Proto;
     Proto = function() {};
     Proto.prototype.__proto__ = oldProto.prototype;
@@ -20,6 +22,8 @@ Proto = function() {};
 oldProto = null;
 for (var i = 0; i < MaxStructureCountWithoutOverflow - 1; i++) {
     y = new Proto;
+    y['field' + i] = 20;
+    y = y
     oldProto = Proto;
     Proto = function() {};
     Proto.prototype.__proto__ = oldProto.prototype;

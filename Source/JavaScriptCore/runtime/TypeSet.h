@@ -85,7 +85,7 @@ class TypeSet : public ThreadSafeRefCounted<TypeSet> {
 public:
     static Ref<TypeSet> create() { return adoptRef(*new TypeSet); }
     TypeSet();
-    void addTypeInformation(RuntimeType, RefPtr<StructureShape>&&, Structure*);
+    void addTypeInformation(RuntimeType, RefPtr<StructureShape>&&, Structure*, bool sawPolyProtoStructure);
     void invalidateCache();
     String dumpTypes() const;
     String displayName() const;

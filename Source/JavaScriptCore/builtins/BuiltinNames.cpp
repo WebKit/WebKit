@@ -44,6 +44,7 @@ JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_PRIVATE_NAM
 #undef INITIALIZE_BUILTIN_PRIVATE_NAMES
 
 SymbolImpl::StaticSymbolImpl dollarVMPrivateName { "PrivateSymbol.$vm", SymbolImpl::s_flagIsPrivate };
+SymbolImpl::StaticSymbolImpl underscoreProtoPrivateName { "PrivateSymbol.__proto__", SymbolImpl::s_flagIsPrivate };
 
 } // namespace Symbols
 } // namespace JSC

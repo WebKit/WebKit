@@ -219,6 +219,9 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
             const AccessCase& access = list->at(listIndex);
             if (access.viaProxy())
                 return GetByIdStatus(slowPathState, true);
+
+            if (access.usesPolyProto())
+                return GetByIdStatus(slowPathState, true);
             
             Structure* structure = access.structure();
             if (!structure) {

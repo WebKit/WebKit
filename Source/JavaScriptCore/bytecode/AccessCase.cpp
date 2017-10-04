@@ -55,36 +55,39 @@ namespace AccessCaseInternal {
 static const bool verbose = false;
 }
 
-AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet)
+AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
     : m_type(type)
     , m_offset(offset)
+    , m_polyProtoAccessChain(WTFMove(prototypeAccessChain))
 {
     m_structure.setMayBeNull(vm, owner, structure);
     m_conditionSet = conditionSet;
 }
 
-std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet)
+std::unique_ptr<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
     switch (type) {
     case InHit:
     case InMiss:
+        break;
     case ArrayLength:
     case StringLength:
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case ModuleNamespaceLoad:
     case Replace:
+        RELEASE_ASSERT(!prototypeAccessChain);
         break;
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
-    return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, type, offset, structure, conditionSet));
+    return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, type, offset, structure, conditionSet, WTFMove(prototypeAccessChain)));
 }
 
 std::unique_ptr<AccessCase> AccessCase::create(
     VM& vm, JSCell* owner, PropertyOffset offset, Structure* oldStructure, Structure* newStructure,
-    const ObjectPropertyConditionSet& conditionSet)
+    const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
     RELEASE_ASSERT(oldStructure == newStructure->previousID());
 
@@ -96,7 +99,7 @@ std::unique_ptr<AccessCase> AccessCase::create(
         return nullptr;
     }
 
-    return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, Transition, offset, newStructure, conditionSet));
+    return std::unique_ptr<AccessCase>(new AccessCase(vm, owner, Transition, offset, newStructure, conditionSet, WTFMove(prototypeAccessChain)));
 }
 
 AccessCase::~AccessCase()
@@ -135,7 +138,8 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm, const Identifier& ident)
     Vector<WatchpointSet*, 2> result;
 
     if ((structure() && structure()->needImpurePropertyWatchpoint())
-        || m_conditionSet.needImpurePropertyWatchpoint())
+        || m_conditionSet.needImpurePropertyWatchpoint()
+        || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint()))
         result.append(vm.ensureWatchpointSetForImpureProperty(ident));
 
     if (additionalSet())
@@ -149,6 +153,9 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm, const Identifier& ident)
 bool AccessCase::guardedByStructureCheck() const
 {
     if (viaProxy())
+        return false;
+
+    if (m_polyProtoAccessChain)
         return false;
 
     switch (m_type) {
@@ -210,6 +217,19 @@ bool AccessCase::canReplace(const AccessCase& other) const
         return thisCase.moduleNamespaceObject() == otherCase.moduleNamespaceObject();
     }
     default:
+        if (other.type() != type())
+            return false;
+
+        if (m_polyProtoAccessChain) {
+            if (!other.m_polyProtoAccessChain)
+                return false;
+            // This is the only check we need since PolyProtoAccessChain contains the base structure.
+            // If we ever change it to contain only the prototype chain, we'll also need to change
+            // this to check the base structure.
+            return structure() == other.structure()
+                && *m_polyProtoAccessChain == *other.m_polyProtoAccessChain;
+        }
+
         if (!guardedByStructureCheck() || !other.guardedByStructureCheck())
             return false;
 
@@ -219,21 +239,26 @@ bool AccessCase::canReplace(const AccessCase& other) const
 
 void AccessCase::dump(PrintStream& out) const
 {
-    out.print(m_type, ":(");
+    out.print("\n", m_type, ":(");
 
     CommaPrinter comma;
 
     out.print(comma, m_state);
 
-    if (m_type == Transition)
-        out.print(comma, "structure = ", pointerDump(structure()), " -> ", pointerDump(newStructure()));
-    else if (m_structure)
-        out.print(comma, "structure = ", pointerDump(m_structure.get()));
-
     if (isValidOffset(m_offset))
         out.print(comma, "offset = ", m_offset);
     if (!m_conditionSet.isEmpty())
         out.print(comma, "conditions = ", m_conditionSet);
+
+    if (m_polyProtoAccessChain) {
+        out.print(comma, "prototype access chain = ");
+        m_polyProtoAccessChain->dump(structure(), out);
+    } else {
+        if (m_type == Transition)
+            out.print(comma, "structure = ", pointerDump(structure()), " -> ", pointerDump(newStructure()));
+        else if (m_structure)
+            out.print(comma, "structure = ", pointerDump(m_structure.get()));
+    }
 
     dumpImpl(out, comma);
     out.print(")");
@@ -243,6 +268,12 @@ bool AccessCase::visitWeak(VM& vm) const
 {
     if (m_structure && !Heap::isMarked(m_structure.get()))
         return false;
+    if (m_polyProtoAccessChain) {
+        for (Structure* structure : m_polyProtoAccessChain->chain()) {
+            if (!Heap::isMarked(structure))
+                return false;
+        }
+    }
     if (!m_conditionSet.areStillLive())
         return false;
     if (isAccessor()) {
@@ -272,6 +303,11 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
 
     if (m_structure)
         result &= m_structure->markIfCheap(visitor);
+
+    if (m_polyProtoAccessChain) {
+        for (Structure* structure : m_polyProtoAccessChain->chain())
+            result &= structure->markIfCheap(visitor);
+    }
 
     switch (m_type) {
     case Transition:
@@ -372,26 +408,72 @@ void AccessCase::generateWithGuard(
     }
 
     default: {
-        if (viaProxy()) {
-            fallThrough.append(
-                jit.branch8(
-                    CCallHelpers::NotEqual,
-                    CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
-                    CCallHelpers::TrustedImm32(PureForwardingProxyType)));
-
-            jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
-
-            fallThrough.append(
-                jit.branchStructure(
-                    CCallHelpers::NotEqual,
-                    CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()),
-                    structure()));
+        if (m_polyProtoAccessChain) {
+            GPRReg baseForAccessGPR = state.scratchGPR;
+            jit.move(state.baseGPR, baseForAccessGPR);
+            m_polyProtoAccessChain->forEach(structure(), [&] (Structure* structure, bool atEnd) {
+                fallThrough.append(
+                    jit.branchStructure(
+                        CCallHelpers::NotEqual,
+                        CCallHelpers::Address(baseForAccessGPR, JSCell::structureIDOffset()),
+                        structure));
+                if (atEnd) {
+                    if ((m_type == Miss || m_type == InMiss || m_type == Transition) && structure->hasPolyProto()) {
+                        // For a Miss/InMiss/Transition, we must ensure we're at the end when the last item is poly proto.
+                        // Transitions must do this because they need to verify there isn't a setter in the chain.
+                        // Miss/InMiss need to do this to ensure there isn't a new item at the end of the chain that
+                        // has the property.
+                        PropertyOffset polyProtoOffset = structure->polyProtoOffset();
+                        RELEASE_ASSERT(isInlineOffset(polyProtoOffset));
+#if USE(JSVALUE64)
+                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset)), baseForAccessGPR);
+                        fallThrough.append(jit.branch64(CCallHelpers::NotEqual, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
+#else
+                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset) + PayloadOffset), baseForAccessGPR);
+                        fallThrough.append(jit.branchTestPtr(CCallHelpers::NonZero, baseForAccessGPR));
+#endif
+                    }
+                } else {
+                    if (structure->hasMonoProto()) {
+                        JSValue prototype = structure->prototypeForLookup(state.m_globalObject);
+                        RELEASE_ASSERT(prototype.isObject());
+                        jit.move(CCallHelpers::TrustedImmPtr(asObject(prototype)), baseForAccessGPR);
+                    } else {
+                        RELEASE_ASSERT(structure->isObject()); // Primitives must have a stored prototype. We use prototypeForLookup for them.
+                        PropertyOffset polyProtoOffset = structure->polyProtoOffset();
+                        RELEASE_ASSERT(isInlineOffset(polyProtoOffset));
+#if USE(JSVALUE64)
+                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset)), baseForAccessGPR);
+                        fallThrough.append(jit.branch64(CCallHelpers::Equal, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
+#else
+                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset) + PayloadOffset), baseForAccessGPR);
+                        fallThrough.append(jit.branchTestPtr(CCallHelpers::Zero, baseForAccessGPR));
+#endif
+                    }
+                }
+            });
         } else {
-            fallThrough.append(
-                jit.branchStructure(
-                    CCallHelpers::NotEqual,
-                    CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()),
-                    structure()));
+            if (viaProxy()) {
+                fallThrough.append(
+                    jit.branch8(
+                        CCallHelpers::NotEqual,
+                        CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
+                        CCallHelpers::TrustedImm32(PureForwardingProxyType)));
+
+                jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+
+                fallThrough.append(
+                    jit.branchStructure(
+                        CCallHelpers::NotEqual,
+                        CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()),
+                        structure()));
+            } else {
+                fallThrough.append(
+                    jit.branchStructure(
+                        CCallHelpers::NotEqual,
+                        CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()),
+                        structure()));
+            }
         }
         break;
     } };
@@ -428,6 +510,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     ASSERT(m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint());
 
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
+        RELEASE_ASSERT(!m_polyProtoAccessChain);
+
         Structure* structure = condition.object()->structure();
 
         if (condition.isWatchableAssumingImpurePropertyWatchpoint()) {
@@ -504,13 +588,19 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             baseForGetGPR = baseGPR;
 
         GPRReg baseForAccessGPR;
-        if (!m_conditionSet.isEmpty()) {
-            jit.move(
-                CCallHelpers::TrustedImmPtr(alternateBase()),
-                scratchGPR);
+        if (m_polyProtoAccessChain) {
+            // This isn't pretty, but we know we got here via generateWithGuard,
+            // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
+            // but it'd require emitting the same code to load the base twice.
             baseForAccessGPR = scratchGPR;
-        } else
-            baseForAccessGPR = baseForGetGPR;
+        } else {
+            if (!m_conditionSet.isEmpty()) {
+                jit.move(
+                    CCallHelpers::TrustedImmPtr(alternateBase()), scratchGPR);
+                baseForAccessGPR = scratchGPR;
+            } else
+                baseForAccessGPR = baseForGetGPR;
+        }
 
         GPRReg loadedValueGPR = InvalidGPRReg;
         if (m_type != CustomValueGetter && m_type != CustomAccessorGetter && m_type != CustomValueSetter && m_type != CustomAccessorSetter) {
@@ -1016,7 +1106,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         
     case IntrinsicGetter: {
         RELEASE_ASSERT(isValidOffset(offset()));
-        
+
         // We need to ensure the getter value does not move from under us. Note that GetterSetters
         // are immutable so we just need to watch the property not any value inside it.
         Structure* currStructure;

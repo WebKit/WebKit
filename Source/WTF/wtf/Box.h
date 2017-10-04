@@ -36,13 +36,16 @@ namespace WTF {
 template<typename T>
 class Box {
 public:
-    Box()
-    {
-    }
+    Box() = default;
+    Box(Box&&) = default;
+    Box(const Box&) = default;
 
     Box(std::nullptr_t)
     {
     }
+
+    Box& operator=(Box&&) = default;
+    Box& operator=(const Box&) = default;
 
     template<typename... Arguments>
     static Box create(Arguments&&... arguments)
@@ -57,7 +60,7 @@ public:
     T& operator*() const { return m_data->value; }
     T* operator->() const { return &m_data->value; }
 
-    explicit operator bool() { return m_data; }
+    explicit operator bool() const { return static_cast<bool>(m_data); }
     
 private:
     struct Data : ThreadSafeRefCounted<Data> {

@@ -131,6 +131,11 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         if (StructureStubInfoInternal::verbose)
             dataLog("Had stub, result: ", result, "\n");
 
+        if (result.shouldResetStub()) {
+            reset(codeBlock);
+            return result;
+        }
+
         if (!result.buffered()) {
             bufferedStructures.clear();
             return result;
@@ -151,6 +156,11 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         
         if (StructureStubInfoInternal::verbose)
             dataLog("Created stub, result: ", result, "\n");
+
+        if (result.shouldResetStub()) {
+            reset(codeBlock);
+            return result;
+        }
 
         if (!result.buffered()) {
             bufferedStructures.clear();

@@ -91,6 +91,7 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
         codeBlockForConstruct->visitWeakly(visitor);
     visitor.append(thisObject->m_unlinkedExecutable);
     visitor.append(thisObject->m_singletonFunction);
+    visitor.append(thisObject->m_cachedPolyProtoStructure);
 }
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(

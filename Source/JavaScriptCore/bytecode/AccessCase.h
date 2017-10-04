@@ -29,6 +29,7 @@
 
 #include "JSFunctionInlines.h"
 #include "ObjectPropertyConditionSet.h"
+#include "PolyProtoAccessChain.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -120,11 +121,11 @@ public:
     }
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, PropertyOffset = invalidOffset,
-        Structure* = nullptr, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
+        Structure* = nullptr, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(), std::unique_ptr<PolyProtoAccessChain> = nullptr);
 
     // This create method should be used for transitions.
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, PropertyOffset, Structure* oldStructure,
-        Structure* newStructure, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
+        Structure* newStructure, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
 
     static std::unique_ptr<AccessCase> fromStructureStubInfo(VM&, JSCell* owner, StructureStubInfo&);
 
@@ -186,9 +187,25 @@ public:
 
     virtual ~AccessCase();
 
+    bool usesPolyProto() const
+    {
+        return !!m_polyProtoAccessChain;
+    }
+
 protected:
-    AccessCase(VM&, JSCell* owner, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet&);
-    AccessCase(const AccessCase&) = default;
+    AccessCase(VM&, JSCell* owner, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
+    AccessCase(AccessCase&&) = default;
+    AccessCase(const AccessCase& other)
+        : m_type(other.m_type)
+        , m_state(other.m_state)
+        , m_offset(other.m_offset)
+        , m_structure(other.m_structure)
+        , m_conditionSet(other.m_conditionSet)
+    {
+        if (other.m_polyProtoAccessChain)
+            m_polyProtoAccessChain = other.m_polyProtoAccessChain->clone();
+    }
+
     AccessCase& operator=(const AccessCase&) = delete;
     void resetState() { m_state = Primordial; }
 
@@ -227,6 +244,8 @@ private:
     WriteBarrier<Structure> m_structure;
 
     ObjectPropertyConditionSet m_conditionSet;
+
+    std::unique_ptr<PolyProtoAccessChain> m_polyProtoAccessChain;
 };
 
 } // namespace JSC

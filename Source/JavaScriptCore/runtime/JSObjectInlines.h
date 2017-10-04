@@ -116,7 +116,7 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
             return true;
         JSValue prototype;
         if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = structure->storedPrototype();
+            prototype = object->getPrototypeDirect();
         else {
             prototype = object->getPrototype(vm, exec);
             RETURN_IF_EXCEPTION(scope, false);
@@ -150,7 +150,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
         }
         JSValue prototype;
         if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = structure->storedPrototype();
+            prototype = object->getPrototypeDirect();
         else {
             prototype = object->getPrototype(vm, exec);
             RETURN_IF_EXCEPTION(scope, false);
@@ -219,7 +219,7 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, ExecState* exec,
     }
 
     if (thisObject->canPerformFastPutInline(vm, propertyName)) {
-        ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(vm, propertyName));
+        ASSERT(!thisObject->prototypeChainMayInterceptStoreTo(vm, propertyName));
         if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
             return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
         return true;

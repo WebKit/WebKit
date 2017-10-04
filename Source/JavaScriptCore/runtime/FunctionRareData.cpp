@@ -79,9 +79,9 @@ FunctionRareData::~FunctionRareData()
 {
 }
 
-void FunctionRareData::initializeObjectAllocationProfile(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, size_t inlineCapacity)
+void FunctionRareData::initializeObjectAllocationProfile(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, size_t inlineCapacity, JSFunction* constructor)
 {
-    m_objectAllocationProfile.initialize(vm, globalObject, this, prototype, inlineCapacity);
+    m_objectAllocationProfile.initializeProfile(vm, globalObject, this, prototype, inlineCapacity, constructor);
 }
 
 void FunctionRareData::clear(const char* reason)
