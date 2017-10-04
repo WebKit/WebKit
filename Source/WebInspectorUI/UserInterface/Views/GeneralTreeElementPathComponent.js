@@ -25,24 +25,21 @@
 
 WI.GeneralTreeElementPathComponent = class GeneralTreeElementPathComponent extends WI.HierarchicalPathComponent
 {
-    constructor(generalTreeElement, representedObject)
+    constructor(generalTreeElement)
     {
-        super(generalTreeElement.mainTitle, generalTreeElement.classNames, representedObject || generalTreeElement.representedObject);
+        super(generalTreeElement.mainTitle, generalTreeElement.classNames, generalTreeElement.representedObject);
 
         this._generalTreeElement = generalTreeElement;
-        generalTreeElement.addEventListener(WI.GeneralTreeElement.Event.MainTitleDidChange, this._mainTitleDidChange, this);
+        this._generalTreeElement.addEventListener(WI.GeneralTreeElement.Event.MainTitleDidChange, this._mainTitleDidChange, this);
     }
 
     // Public
 
-    get generalTreeElement()
-    {
-        return this._generalTreeElement;
-    }
+    get generalTreeElement() { return this._generalTreeElement; }
 
     get previousSibling()
     {
-        var previousSibling = this._generalTreeElement.previousSibling;
+        let previousSibling = this._generalTreeElement.previousSibling;
         while (previousSibling && previousSibling.hidden)
             previousSibling = previousSibling.previousSibling;
 
@@ -54,7 +51,7 @@ WI.GeneralTreeElementPathComponent = class GeneralTreeElementPathComponent exten
 
     get nextSibling()
     {
-        var nextSibling = this._generalTreeElement.nextSibling;
+        let nextSibling = this._generalTreeElement.nextSibling;
         while (nextSibling && nextSibling.hidden)
             nextSibling = nextSibling.nextSibling;
 

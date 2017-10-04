@@ -1,3 +1,16 @@
+2017-10-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove unused `representedObject` parameter from GeneralTreeElementPathComponent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=177561
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/GeneralTreeElementPathComponent.js:
+        (WI.GeneralTreeElementPathComponent):
+        (WI.GeneralTreeElementPathComponent.prototype.get generalTreeElement):
+        (WI.GeneralTreeElementPathComponent.prototype.get previousSibling):
+        (WI.GeneralTreeElementPathComponent.prototype.get nextSibling):
+
 2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: After enabling the new Network Tab in experimental settings, the network tab disappears
