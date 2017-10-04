@@ -1,0 +1,13 @@
+AXRole: AXMenu AXTitle: 
+    AXRole: AXGroup AXTitle: 
+        AXRole: AXMenuItem AXTitle: content 1
+    AXRole: AXMenuItem AXTitle: content 2
+This verifies the accessibility tree of a menu with a group child.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

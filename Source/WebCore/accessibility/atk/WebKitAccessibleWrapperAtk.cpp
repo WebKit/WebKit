@@ -650,6 +650,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_MENU;
     case MenuListOptionRole:
     case MenuItemRole:
+    case MenuButtonRole:
         return ATK_ROLE_MENU_ITEM;
     case MenuItemCheckboxRole:
         return ATK_ROLE_CHECK_MENU_ITEM;
