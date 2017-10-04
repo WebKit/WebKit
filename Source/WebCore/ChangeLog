@@ -1,3 +1,15 @@
+2017-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable pasteboard custom data in macOS 10.12 and earlier
+        https://bugs.webkit.org/show_bug.cgi?id=177855
+
+        Reviewed by Wenson Hsieh.
+
+        Make customPasteboardDataEnabled return true on macOS 10.12 and earlier as long as the app is Safari.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::customPasteboardDataEnabled):
+
 2017-10-03  Jon Davis  <jond@apple.com>
 
         Update several features to "Supported"

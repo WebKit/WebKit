@@ -150,9 +150,10 @@ bool Settings::customPasteboardDataEnabled()
     std::call_once(initializeCustomPasteboardDataToDefaultValue, [] {
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
         gCustomPasteboardDataEnabled = IOSApplication::isMobileSafari() || dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_11_3;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304
-        // FIXME: Update this linked-on check once the correct macro is in the SDK.
+#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
         gCustomPasteboardDataEnabled = MacApplication::isSafari() || dyld_get_program_sdk_version() > DYLD_MACOSX_VERSION_10_13;
+#elif PLATFORM(MAC)
+        gCustomPasteboardDataEnabled = MacApplication::isSafari();
 #else
         gCustomPasteboardDataEnabled = false;
 #endif
