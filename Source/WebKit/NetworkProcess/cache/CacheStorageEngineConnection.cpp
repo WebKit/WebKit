@@ -100,7 +100,7 @@ void CacheStorageEngineConnection::reference(PAL::SessionID sessionID, uint64_t 
     auto& references = m_cachesLocks.ensure(sessionID, []() {
         return HashMap<CacheIdentifier, LockCount> { };
     }).iterator->value;
-    auto& counter = references.ensure(cacheIdentifier, [this]() {
+    auto& counter = references.ensure(cacheIdentifier, []() {
         return 0;
     }).iterator->value;
     if (!counter++)

@@ -85,7 +85,7 @@ Engine::Engine(String&& rootPath)
 
 void Engine::open(const String& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
-    readCachesFromDisk(origin, [this, cacheName, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
+    readCachesFromDisk(origin, [cacheName, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
         if (!cachesOrError.hasValue()) {
             callback(makeUnexpected(cachesOrError.error()));
             return;
@@ -138,7 +138,7 @@ void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::URL&& url, Recor
 
 void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
-    readCache(cacheIdentifier, [this, records = WTFMove(records), callback = WTFMove(callback)](CacheOrError&& result) mutable {
+    readCache(cacheIdentifier, [records = WTFMove(records), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.hasValue()) {
             callback(makeUnexpected(result.error()));
             return;
@@ -150,7 +150,7 @@ void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, Reco
 
 void Engine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
-    readCache(cacheIdentifier, [this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
+    readCache(cacheIdentifier, [request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.hasValue()) {
             callback(makeUnexpected(result.error()));
             return;

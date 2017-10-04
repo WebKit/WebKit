@@ -1,3 +1,19 @@
+2017-10-04  David Kilzer  <ddkilzer@apple.com>
+
+        Remove unused variables in lambdas for network process cache
+        <https://webkit.org/b/177878>
+        <rdar://problem/34038482>
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::open):
+        (WebKit::CacheStorage::Engine::putRecords):
+        (WebKit::CacheStorage::Engine::deleteMatchingRecords):
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::reference):
+        - Remove unused |this| from lambda captures.
+
 2017-10-04  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] add PLATFORM(WIN) configurations to config.h
