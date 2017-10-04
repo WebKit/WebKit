@@ -109,7 +109,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         case WI.Resource.Type.Fetch:
             return "XHR";
         case WI.Resource.Type.Ping:
-            return WI.UIString("ping");
+            return WI.UIString("Ping");
         case WI.Resource.Type.Beacon:
             return WI.UIString("Beacon");
         case WI.Resource.Type.WebSocket:

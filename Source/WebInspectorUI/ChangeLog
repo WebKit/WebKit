@@ -1,3 +1,18 @@
+2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix Beacon and Ping folderization issues
+        https://bugs.webkit.org/show_bug.cgi?id=177885
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.shortDisplayNameForResourceType):
+        Use common capitalized UIString "Ping". It gets lowercased later.
+
+        * UserInterface/Models/ResourceCollection.js:
+        Add missing verifier.
+
 2017-10-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove unused `representedObject` parameter from GeneralTreeElementPathComponent constructor

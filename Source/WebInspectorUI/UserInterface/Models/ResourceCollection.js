@@ -204,6 +204,7 @@ WI.ResourceCollection.TypeVerifier = {
     Script: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Script,
     XHR: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.XHR,
     Fetch: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Fetch,
+    Ping: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Ping,
     Beacon: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Beacon,
     WebSocket: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.WebSocket,
     Other: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Other,

@@ -986,7 +986,6 @@ localizedStrings["for changes to take effect"] = "for changes to take effect";
 localizedStrings["key"] = "key";
 localizedStrings["line "] = "line ";
 localizedStrings["originally %s"] = "originally %s";
-localizedStrings["ping"] = "ping";
 localizedStrings["popup"] = "popup";
 localizedStrings["popup, toggle"] = "popup, toggle";
 localizedStrings["spaces"] = "spaces";
