@@ -1,3 +1,11 @@
+2017-10-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove failure expectation for async-func-decl-dstr-obj-id-put-unresolvable-no-strict.js.
+
+        Unreviewed test gardening.
+
+        * test262.yaml:
+
 2017-10-04  Saam Barati  <sbarati@apple.com>
 
         3 poly-proto JSC tests timing out on debug after r222827
