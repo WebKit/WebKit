@@ -20,7 +20,7 @@ info: |
        a. Let realm be ? GetFunctionRealm(constructor).
        b. Let proto be realm's intrinsic object named intrinsicDefaultProto.
     [...]
-features: [Reflect, SharedArrayBuffer]
+features: [cross-realm, Reflect, SharedArrayBuffer]
 ---*/
 
 var other = $262.createRealm().global;

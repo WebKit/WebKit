@@ -10,6 +10,7 @@ info: >
     The result must be derived according to the locale-insensitive case mappings in the Unicode Character
     Database (this explicitly includes not only the UnicodeData.txt file, but also all locale-insensitive
     mappings in the SpecialCasings.txt file that accompanies it).
+features: [u180e]
 ---*/
 
 // SpecialCasing.txt, conditional, language-insensitive mappings.

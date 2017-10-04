@@ -12,6 +12,7 @@ info: >
   produces the value 0).
   10. ReturnIfAbrupt(pos).
   ...
+features: [String.prototype.includes]
 ---*/
 
 var position = {

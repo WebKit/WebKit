@@ -28,6 +28,7 @@ info: |
         a, If e.[[Strings]] and rawStrings contain the same values in the same
            order, then
            i. Return e.[[Array]].
+features: [cross-realm]
 ---*/
 
 var other = $262.createRealm().global;

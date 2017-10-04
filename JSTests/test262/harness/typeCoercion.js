@@ -6,6 +6,20 @@ description: |
     operations like ToNumber.
 ---*/
 
+function testCoercibleToIndexZero(test) {
+  testCoercibleToIntegerZero(test);
+}
+
+function testCoercibleToIndexOne(test) {
+  testCoercibleToIntegerOne(test);
+}
+
+function testCoercibleToIndexFromIndex(nominalIndex, test) {
+  assert(Number.isInteger(nominalIndex));
+  assert(0 <= nominalIndex && nominalIndex <= 2**53 - 1);
+  testCoercibleToIntegerFromInteger(nominalIndex, test);
+}
+
 function testCoercibleToIntegerZero(test) {
   testCoercibleToNumberZero(test);
 
@@ -176,10 +190,35 @@ function testCoercibleToPrimitiveWithMethod(hint, method, test) {
   });
 }
 
+function testNotCoercibleToIndex(test) {
+  function testPrimitiveValue(value) {
+    test(RangeError, value);
+    // ToPrimitive
+    testPrimitiveWrappers(value, "number", function(value) {
+      test(RangeError, value);
+    });
+  }
+
+  // Let integerIndex be ? ToInteger(value).
+  testNotCoercibleToInteger(test);
+
+  // If integerIndex < 0, throw a RangeError exception.
+  testPrimitiveValue(-1);
+  testPrimitiveValue(-2.5);
+  testPrimitiveValue("-2.5");
+  testPrimitiveValue(-Infinity);
+
+  // Let index be ! ToLength(integerIndex).
+  // If SameValueZero(integerIndex, index) is false, throw a RangeError exception.
+  testPrimitiveValue(2 ** 53);
+  testPrimitiveValue(Infinity);
+}
+
 function testNotCoercibleToInteger(test) {
   // ToInteger only throws from ToNumber.
-  return testNotCoercibleToNumber(test);
+  testNotCoercibleToNumber(test);
 }
+
 function testNotCoercibleToNumber(test) {
   function testPrimitiveValue(value) {
     test(TypeError, value);
@@ -282,4 +321,89 @@ function testNotCoercibleToString(test) {
 
   // ToPrimitive
   testNotCoercibleToPrimitive("string", test);
+}
+
+function testCoercibleToBigIntZero(test) {
+  function testPrimitiveValue(value) {
+    test(value);
+    // ToPrimitive
+    testPrimitiveWrappers(value, "number", test);
+  }
+
+  testCoercibleToBigIntFromBigInt(BigInt(0), test);
+  testPrimitiveValue(-BigInt(0));
+  testPrimitiveValue("-0");
+  testPrimitiveValue(false);
+  testPrimitiveValue("");
+  testPrimitiveValue("   ");
+
+  // toString() returns ""
+  test([]);
+
+  // toString() returns "0"
+  test([0]);
+}
+
+function testCoercibleToBigIntOne(test) {
+  function testPrimitiveValue(value) {
+    test(value);
+    // ToPrimitive
+    testPrimitiveWrappers(value, "number", test);
+  }
+
+  testCoercibleToBigIntFromBigInt(BigInt(1), test);
+  testPrimitiveValue(true);
+
+  // toString() returns "1"
+  test([1]);
+}
+
+function testCoercibleToBigIntFromBigInt(nominalBigInt, test) {
+  function testPrimitiveValue(value) {
+    test(value);
+    // ToPrimitive
+    testPrimitiveWrappers(value, "number", test);
+  }
+
+  testPrimitiveValue(nominalBigInt);
+  testPrimitiveValue(nominalBigInt.toString());
+  testPrimitiveValue("0b" + nominalBigInt.toString(2));
+  testPrimitiveValue("0o" + nominalBigInt.toString(8));
+  testPrimitiveValue("0x" + nominalBigInt.toString(16));
+  testPrimitiveValue("   " + nominalBigInt.toString() + "   ");
+
+  // toString() returns the decimal string representation
+  test([nominalBigInt]);
+  test([nominalBigInt.toString()]);
+}
+
+function testNotCoercibleToBigInt(test) {
+  function testPrimitiveValue(error, value) {
+    test(error, value);
+    // ToPrimitive
+    testPrimitiveWrappers(value, "number", function(value) {
+      test(error, value);
+    });
+  }
+
+  // Undefined, Null, Number, Symbol -> TypeError
+  testPrimitiveValue(TypeError, undefined);
+  testPrimitiveValue(TypeError, null);
+  testPrimitiveValue(TypeError, 0);
+  testPrimitiveValue(TypeError, NaN);
+  testPrimitiveValue(TypeError, Infinity);
+  testPrimitiveValue(TypeError, Symbol("1"));
+
+  // when a String parses to NaN -> SyntaxError
+  function testStringValue(string) {
+    testPrimitiveValue(SyntaxError, string);
+    testPrimitiveValue(SyntaxError, "   " + string);
+    testPrimitiveValue(SyntaxError, string + "   ");
+    testPrimitiveValue(SyntaxError, "   " + string + "   ");
+  }
+  testStringValue("a");
+  testStringValue("0b2");
+  testStringValue("0o8");
+  testStringValue("0xg");
+  testStringValue("1n");
 }

@@ -12,6 +12,7 @@ info: >
   5. ReturnIfAbrupt(isRegExp).
   6. If isRegExp is true, throw a TypeError exception.
   ...
+features: [String.prototype.endsWith]
 ---*/
 
 var searchString = /./;

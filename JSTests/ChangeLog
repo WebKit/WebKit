@@ -1,3 +1,292 @@
+2017-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Test262] Update Test262 to Oct 4 version
+        https://bugs.webkit.org/show_bug.cgi?id=177859
+
+        Reviewed by Sam Weinig.
+
+        Let's rebaseline test262. Since it includes the latest changes to ArrayIterator::next,
+        we no longer need to mark it skip/fail. Also this update includes bunch of BigInt tests.
+
+        * test262.yaml:
+        * test262/harness/promiseHelper.js: Renamed from JSTests/test262/harness/PromiseHelper.js.
+        (checkSequence):
+        * test262/harness/typeCoercion.js:
+        (testCoercibleToIndexZero):
+        (testCoercibleToIndexOne):
+        (testCoercibleToIndexFromIndex):
+        (testNotCoercibleToIndex.testPrimitiveValue):
+        (testNotCoercibleToInteger):
+        (testCoercibleToBigIntZero.testPrimitiveValue):
+        (testCoercibleToBigIntZero):
+        (testCoercibleToBigIntOne.testPrimitiveValue):
+        (testCoercibleToBigIntOne):
+        (testPrimitiveValue):
+        (testCoercibleToBigIntFromBigInt):
+        (testNotCoercibleToBigInt.testPrimitiveValue):
+        (testNotCoercibleToBigInt.testStringValue):
+        (testNotCoercibleToBigInt):
+        * test262/test/built-ins/Array/from/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Array/length/define-own-prop-length-overflow-realm.js:
+        * test262/test/built-ins/Array/of/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Array/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Array/prototype/concat/create-proto-from-ctor-realm-array.js:
+        * test262/test/built-ins/Array/prototype/concat/create-proto-from-ctor-realm-non-array.js:
+        * test262/test/built-ins/Array/prototype/filter/create-proto-from-ctor-realm-array.js:
+        * test262/test/built-ins/Array/prototype/filter/create-proto-from-ctor-realm-non-array.js:
+        * test262/test/built-ins/Array/prototype/map/create-proto-from-ctor-realm-array.js:
+        * test262/test/built-ins/Array/prototype/map/create-proto-from-ctor-realm-non-array.js:
+        * test262/test/built-ins/Array/prototype/slice/create-proto-from-ctor-realm-array.js:
+        * test262/test/built-ins/Array/prototype/slice/create-proto-from-ctor-realm-non-array.js:
+        * test262/test/built-ins/Array/prototype/splice/create-proto-from-ctor-realm-array.js:
+        * test262/test/built-ins/Array/prototype/splice/create-proto-from-ctor-realm-non-array.js:
+        * test262/test/built-ins/ArrayBuffer/proto-from-ctor-realm.js:
+        * test262/test/built-ins/BigInt/asIntN/bigint-tobigint.js:
+        (testCoercibleToBigIntZero):
+        (testCoercibleToBigIntOne):
+        (testNotCoercibleToBigInt):
+        (MyError): Deleted.
+        (valueOf): Deleted.
+        (toString): Deleted.
+        (Symbol.toPrimitive): Deleted.
+        * test262/test/built-ins/BigInt/asIntN/bits-toindex.js:
+        (testCoercibleToIndexZero):
+        (testCoercibleToIndexOne):
+        (testNotCoercibleToIndex):
+        (MyError): Deleted.
+        (assert.sameValue.BigInt.asIntN.valueOf): Deleted.
+        (assert.sameValue.BigInt.asIntN.toString): Deleted.
+        (BigInt.asIntN.Symbol.toPrimitive): Deleted.
+        (BigInt.asIntN.valueOf): Deleted.
+        (BigInt.asIntN.toString): Deleted.
+        * test262/test/built-ins/BigInt/asUintN/arithmetic.js: Added.
+        * test262/test/built-ins/BigInt/asUintN/asUintN.js: Added.
+        * test262/test/built-ins/BigInt/asUintN/bigint-tobigint.js: Added.
+        (testCoercibleToBigIntZero):
+        (testCoercibleToBigIntOne):
+        (testNotCoercibleToBigInt):
+        * test262/test/built-ins/BigInt/asUintN/bits-toindex.js: Added.
+        (testCoercibleToIndexZero):
+        (testCoercibleToIndexOne):
+        (testNotCoercibleToIndex):
+        * test262/test/built-ins/BigInt/asUintN/length.js: Added.
+        * test262/test/built-ins/BigInt/asUintN/name.js: Added.
+        * test262/test/built-ins/BigInt/asUintN/order-of-steps.js: Added.
+        (bits.valueOf):
+        (bigint.valueOf):
+        * test262/test/built-ins/BigInt/prototype/valueOf/length.js: Added.
+        * test262/test/built-ins/BigInt/prototype/valueOf/name.js: Added.
+        * test262/test/built-ins/BigInt/prototype/valueOf/prop-desc.js: Added.
+        * test262/test/built-ins/BigInt/prototype/valueOf/return.js: Added.
+        * test262/test/built-ins/BigInt/prototype/valueOf/this-value-invalid-object-throws.js: Added.
+        * test262/test/built-ins/BigInt/prototype/valueOf/this-value-invalid-primitive-throws.js: Added.
+        * test262/test/built-ins/Boolean/proto-from-ctor-realm.js:
+        * test262/test/built-ins/DataView/proto-from-ctor-realm-sab.js:
+        * test262/test/built-ins/DataView/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Date/proto-from-ctor-realm-one.js:
+        * test262/test/built-ins/Date/proto-from-ctor-realm-two.js:
+        * test262/test/built-ins/Date/proto-from-ctor-realm-zero.js:
+        * test262/test/built-ins/Error/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Function/call-bind-this-realm-undef.js:
+        * test262/test/built-ins/Function/call-bind-this-realm-value.js:
+        * test262/test/built-ins/Function/internals/Call/class-ctor-realm.js:
+        * test262/test/built-ins/Function/internals/Construct/base-ctor-revoked-proxy-realm.js:
+        * test262/test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
+        * test262/test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
+        * test262/test/built-ins/Function/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Function/prototype/bind/get-fn-realm.js:
+        * test262/test/built-ins/Function/prototype/bind/proto-from-ctor-realm.js:
+        * test262/test/built-ins/GeneratorFunction/proto-from-ctor-realm.js:
+        * test262/test/built-ins/JSON/stringify/bigint-order.js: Added.
+        (replacer):
+        (BigInt.prototype.toJSON):
+        * test262/test/built-ins/JSON/stringify/bigint-replacer.js: Added.
+        (replacer):
+        * test262/test/built-ins/JSON/stringify/bigint-tojson.js: Added.
+        (BigInt.prototype.toJSON):
+        * test262/test/built-ins/JSON/stringify/bigint.js:
+        * test262/test/built-ins/Map/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Number/S9.3.1_A2_U180E.js:
+        * test262/test/built-ins/Number/S9.3.1_A3_T1_U180E.js:
+        * test262/test/built-ins/Number/S9.3.1_A3_T2_U180E.js:
+        * test262/test/built-ins/Number/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Object/proto-from-ctor.js:
+        * test262/test/built-ins/Promise/proto-from-ctor-realm.js:
+        * test262/test/built-ins/Proxy/apply/arguments-realm.js:
+        * test262/test/built-ins/Proxy/apply/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/construct/arguments-realm.js:
+        * test262/test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/construct/trap-is-undefined-proto-from-ctor-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/desc-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/null-handler-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/targetdesc-configurable-desc-not-configurable-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/targetdesc-not-compatible-descriptor-not-configurable-target-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/targetdesc-not-compatible-descriptor-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/targetdesc-undefined-not-configurable-descriptor-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/targetdesc-undefined-target-is-not-extensible-realm.js:
+        * test262/test/built-ins/Proxy/defineProperty/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/deleteProperty/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/get-fn-realm.js:
+        * test262/test/built-ins/Proxy/get/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/getOwnPropertyDescriptor/result-type-is-not-object-nor-undefined-realm.js:
+        * test262/test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/getPrototypeOf/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/has/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/isExtensible/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/ownKeys/return-not-list-object-throws-realm.js:
+        * test262/test/built-ins/Proxy/ownKeys/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/preventExtensions/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/set/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/Proxy/setPrototypeOf/trap-is-not-callable-realm.js:
+        * test262/test/built-ins/RegExp/S15.10.2.12_A1_T1.js:
+        (i6.replace):
+        (i6b.replace):
+        * test262/test/built-ins/RegExp/dotall/with-dotall-unicode.js:
+        * test262/test/built-ins/RegExp/dotall/with-dotall.js:
+        * test262/test/built-ins/RegExp/dotall/without-dotall-unicode.js:
+        * test262/test/built-ins/RegExp/dotall/without-dotall.js:
+        * test262/test/built-ins/RegExp/proto-from-ctor-realm.js:
+        * test262/test/built-ins/RegExp/prototype/Symbol.split/splitter-proto-from-ctor-realm.js:
+        * test262/test/built-ins/RegExp/u180e.js: Added.
+        * test262/test/built-ins/Set/proto-from-ctor-realm.js:
+        * test262/test/built-ins/SharedArrayBuffer/proto-from-ctor-realm.js:
+        * test262/test/built-ins/String/proto-from-ctor-realm.js:
+        * test262/test/built-ins/String/prototype/endsWith/String.prototype.endsWith_Fail.js:
+        * test262/test/built-ins/String/prototype/endsWith/String.prototype.endsWith_Fail_2.js:
+        * test262/test/built-ins/String/prototype/endsWith/String.prototype.endsWith_Success.js:
+        * test262/test/built-ins/String/prototype/endsWith/String.prototype.endsWith_Success_2.js:
+        * test262/test/built-ins/String/prototype/endsWith/String.prototype.endsWith_Success_3.js:
+        * test262/test/built-ins/String/prototype/endsWith/String.prototype.endsWith_Success_4.js:
+        * test262/test/built-ins/String/prototype/endsWith/coerced-values-of-position.js:
+        * test262/test/built-ins/String/prototype/endsWith/endsWith.js:
+        * test262/test/built-ins/String/prototype/endsWith/length.js:
+        * test262/test/built-ins/String/prototype/endsWith/name.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-abrupt-from-position-as-symbol.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-abrupt-from-position.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-abrupt-from-searchstring-as-symbol.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-abrupt-from-searchstring-regexp-test.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-abrupt-from-searchstring.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-abrupt-from-this-as-symbol.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-abrupt-from-this.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-false-if-search-start-is-less-than-zero.js:
+        * test262/test/built-ins/String/prototype/endsWith/return-true-if-searchstring-is-empty.js:
+        * test262/test/built-ins/String/prototype/endsWith/searchstring-found-with-position.js:
+        * test262/test/built-ins/String/prototype/endsWith/searchstring-found-without-position.js:
+        * test262/test/built-ins/String/prototype/endsWith/searchstring-is-regexp-throws.js:
+        * test262/test/built-ins/String/prototype/endsWith/searchstring-not-found-with-position.js:
+        * test262/test/built-ins/String/prototype/endsWith/searchstring-not-found-without-position.js:
+        * test262/test/built-ins/String/prototype/endsWith/this-is-null-throws.js:
+        * test262/test/built-ins/String/prototype/endsWith/this-is-undefined-throws.js:
+        * test262/test/built-ins/String/prototype/includes/String.prototype.includes_FailBadLocation.js:
+        * test262/test/built-ins/String/prototype/includes/String.prototype.includes_FailLocation.js:
+        * test262/test/built-ins/String/prototype/includes/String.prototype.includes_FailMissingLetter.js:
+        * test262/test/built-ins/String/prototype/includes/String.prototype.includes_Success.js:
+        * test262/test/built-ins/String/prototype/includes/String.prototype.includes_SuccessNoLocation.js:
+        * test262/test/built-ins/String/prototype/includes/String.prototype.includes_lengthProp.js:
+        * test262/test/built-ins/String/prototype/includes/coerced-values-of-position.js:
+        * test262/test/built-ins/String/prototype/includes/includes.js:
+        * test262/test/built-ins/String/prototype/includes/length.js:
+        * test262/test/built-ins/String/prototype/includes/name.js:
+        * test262/test/built-ins/String/prototype/includes/return-abrupt-from-position-as-symbol.js:
+        * test262/test/built-ins/String/prototype/includes/return-abrupt-from-position.js:
+        * test262/test/built-ins/String/prototype/includes/return-abrupt-from-searchstring-as-symbol.js:
+        * test262/test/built-ins/String/prototype/includes/return-abrupt-from-searchstring-regexp-test.js:
+        * test262/test/built-ins/String/prototype/includes/return-abrupt-from-searchstring.js:
+        * test262/test/built-ins/String/prototype/includes/return-abrupt-from-this-as-symbol.js:
+        * test262/test/built-ins/String/prototype/includes/return-abrupt-from-this.js:
+        * test262/test/built-ins/String/prototype/includes/return-false-with-out-of-bounds-position.js:
+        * test262/test/built-ins/String/prototype/includes/return-true-if-searchstring-is-empty.js:
+        * test262/test/built-ins/String/prototype/includes/searchstring-found-with-position.js:
+        * test262/test/built-ins/String/prototype/includes/searchstring-found-without-position.js:
+        * test262/test/built-ins/String/prototype/includes/searchstring-is-regexp-throws.js:
+        * test262/test/built-ins/String/prototype/includes/searchstring-not-found-with-position.js:
+        * test262/test/built-ins/String/prototype/includes/searchstring-not-found-without-position.js:
+        * test262/test/built-ins/String/prototype/includes/this-is-null-throws.js:
+        * test262/test/built-ins/String/prototype/includes/this-is-undefined-throws.js:
+        * test262/test/built-ins/String/prototype/toLocaleLowerCase/Final_Sigma_U180E.js:
+        * test262/test/built-ins/String/prototype/toLowerCase/Final_Sigma_U180E.js:
+        * test262/test/built-ins/String/prototype/trim/u180e.js:
+        * test262/test/built-ins/Symbol/for/cross-realm.js:
+        * test262/test/built-ins/Symbol/hasInstance/cross-realm.js:
+        * test262/test/built-ins/Symbol/isConcatSpreadable/cross-realm.js:
+        * test262/test/built-ins/Symbol/iterator/cross-realm.js:
+        * test262/test/built-ins/Symbol/keyFor/cross-realm.js:
+        * test262/test/built-ins/Symbol/match/cross-realm.js:
+        * test262/test/built-ins/Symbol/replace/cross-realm.js:
+        * test262/test/built-ins/Symbol/search/cross-realm.js:
+        * test262/test/built-ins/Symbol/species/cross-realm.js:
+        * test262/test/built-ins/Symbol/split/cross-realm.js:
+        * test262/test/built-ins/Symbol/toPrimitive/cross-realm.js:
+        * test262/test/built-ins/Symbol/toStringTag/cross-realm.js:
+        * test262/test/built-ins/Symbol/unscopables/cross-realm.js:
+        * test262/test/built-ins/ThrowTypeError/distinct-cross-realm.js:
+        * test262/test/built-ins/TypedArrays/buffer-arg-proto-from-ctor-realm-sab.js:
+        * test262/test/built-ins/TypedArrays/buffer-arg-proto-from-ctor-realm.js:
+        * test262/test/built-ins/TypedArrays/internals/DefineOwnProperty/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrays/internals/Get/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrays/internals/GetOwnProperty/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrays/internals/HasProperty/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrays/internals/Set/detached-buffer-realm.js:
+        * test262/test/built-ins/TypedArrays/length-arg-proto-from-ctor-realm.js:
+        * test262/test/built-ins/TypedArrays/no-args-proto-from-ctor-realm.js:
+        * test262/test/built-ins/TypedArrays/object-arg-proto-from-ctor-realm.js:
+        * test262/test/built-ins/TypedArrays/typedarray-arg-other-ctor-buffer-ctor-custom-species-proto-from-ctor-realm.js:
+        * test262/test/built-ins/TypedArrays/typedarray-arg-proto-from-ctor-realm.js:
+        * test262/test/built-ins/TypedArrays/typedarray-arg-same-ctor-buffer-ctor-species-custom-proto-from-ctor-realm.js:
+        * test262/test/built-ins/WeakMap/proto-from-ctor-realm.js:
+        * test262/test/built-ins/WeakSet/proto-from-ctor-realm.js:
+        * test262/test/built-ins/parseFloat/S15.1.2.3_A2_T10_U180E.js:
+        * test262/test/built-ins/parseInt/S15.1.2.2_A2_T10_U180E.js:
+        * test262/test/intl402/NumberFormat/prototype/formatToParts/length.js:
+        * test262/test/language/comments/mongolian-vowel-separator-multi.js:
+        * test262/test/language/comments/mongolian-vowel-separator-single-eval.js:
+        * test262/test/language/comments/mongolian-vowel-separator-single.js:
+        * test262/test/language/eval-code/indirect/realm.js:
+        * test262/test/language/expressions/assignment/dstr-obj-rest-order.js: Added.
+        (o.get z):
+        (o.get a):
+        * test262/test/language/expressions/call/eval-realm-indirect.js:
+        * test262/test/language/expressions/generators/eval-body-proto-realm.js:
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-bigint.js: Added.
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-non-finite.js: Added.
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-number-extremes.js: Added.
+        * test262/test/language/expressions/greater-than-or-equal/bigint-and-number.js:
+        * test262/test/language/expressions/greater-than/bigint-and-bigint.js: Added.
+        * test262/test/language/expressions/greater-than/bigint-and-non-finite.js: Added.
+        * test262/test/language/expressions/greater-than/bigint-and-number-extremes.js: Added.
+        * test262/test/language/expressions/greater-than/bigint-and-number.js:
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-bigint.js: Added.
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-non-finite.js: Added.
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-number-extremes.js: Added.
+        * test262/test/language/expressions/less-than-or-equal/bigint-and-number.js:
+        * test262/test/language/expressions/less-than/bigint-and-bigint.js: Added.
+        * test262/test/language/expressions/less-than/bigint-and-non-finite.js: Added.
+        * test262/test/language/expressions/less-than/bigint-and-number-extremes.js: Added.
+        * test262/test/language/expressions/less-than/bigint-and-number.js:
+        * test262/test/language/expressions/new/non-ctor-err-realm.js:
+        * test262/test/language/expressions/super/realm.js:
+        * test262/test/language/expressions/tagged-template/cache-realm.js:
+        * test262/test/language/expressions/template-literal/mongolian-vowel-separator-eval.js:
+        * test262/test/language/expressions/template-literal/mongolian-vowel-separator.js:
+        * test262/test/language/literals/regexp/mongolian-vowel-separator-eval.js:
+        * test262/test/language/literals/regexp/mongolian-vowel-separator.js:
+        * test262/test/language/literals/string/mongolian-vowel-separator-eval.js:
+        * test262/test/language/literals/string/mongolian-vowel-separator.js:
+        * test262/test/language/statements/for-of/dstr-obj-rest-order.js: Added.
+        (o.get z):
+        (o.get a):
+        * test262/test/language/statements/for-of/iterator-next-reference.js:
+        (next):
+        (iterator.next): Deleted.
+        (x.of.iterable.): Deleted.
+        (x.of.iterable.get return): Deleted.
+        (x.of.iterable.iterator.next): Deleted.
+        * test262/test/language/types/reference/get-value-prop-base-primitive-realm.js:
+        * test262/test/language/types/reference/put-value-prop-base-primitive-realm.js:
+        * test262/test/language/white-space/mongolian-vowel-separator-eval.js:
+        * test262/test/language/white-space/mongolian-vowel-separator.js:
+        * test262/test262-Revision.txt:
+
 2017-10-03  Saam Barati  <sbarati@apple.com>
 
         Implement polymorphic prototypes

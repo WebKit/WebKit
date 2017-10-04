@@ -16,6 +16,7 @@ info: >
   It is useful to allow format-control characters in source text to facilitate
   editing and display. All format control characters may be used within comments,
   and within string literals, template literals, and regular expression literals.
+features: [u180e]
 ---*/
 
 assert.sameValue(eval("`\u180E`"), "\u180E");

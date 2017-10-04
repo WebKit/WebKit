@@ -19,6 +19,7 @@ info: >
         ii. Let globalEnvRec be globalEnv's EnvironmentRecord.
         iii. Let thisValue be globalEnvRec.[[GlobalThisValue]].
   [...]
+features: [cross-realm]
 ---*/
 
 var other = $262.createRealm().global;

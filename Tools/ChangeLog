@@ -1,3 +1,12 @@
+2017-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Test262] Update Test262 to Oct 4 version
+        https://bugs.webkit.org/show_bug.cgi?id=177859
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/import-test262-tests:
+
 2017-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use blob URL when pasting RTFD instead of overriding DocumentLoader

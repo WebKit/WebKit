@@ -28,6 +28,7 @@ info: >
     <USP>
   <USP> ::
     Other category “Zs” code points
+features: [u180e]
 ---*/
 
 function dynaString(s1, s2){

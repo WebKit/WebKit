@@ -14,7 +14,7 @@ info: >
         i. Assert: In this case, base will never be null or undefined.
         ii. Let base be ToObject(base).
      b. Return ? base.[[Get]](GetReferencedName(V), GetThisValue(V)).
-features: [Symbol]
+features: [cross-realm, Symbol]
 ---*/
 
 var other = $262.createRealm().global;

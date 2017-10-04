@@ -13,6 +13,7 @@ info: >
   10. ReturnIfAbrupt(pos).
   ...
 features: [Symbol]
+features: [String.prototype.includes]
 ---*/
 
 var position = Symbol();

@@ -10,7 +10,7 @@ info: |
   [...]
   2. If F's [[FunctionKind]] internal slot is "classConstructor", throw a
      TypeError exception.
-features: [class]
+features: [cross-realm, class]
 ---*/
 
 var C = $262.createRealm().global.eval('0, class {}');

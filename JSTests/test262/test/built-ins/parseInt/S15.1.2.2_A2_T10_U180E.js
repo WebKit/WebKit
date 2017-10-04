@@ -22,6 +22,7 @@ info: >
       such code unit; otherwise, let Z be S.
   14. If Z is empty, return NaN.
   ...
+features: [u180e]
 ---*/
 
 var mongolianVowelSeparator = "\u180E";

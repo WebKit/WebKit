@@ -13,6 +13,7 @@ info: |
     3. If obj is a Bound Function exotic object, then
        a. Let target be obj's [[BoundTargetFunction]] internal slot.
        b. Return ? GetFunctionRealm(target).
+features: [cross-realm]
 ---*/
 
 var other = $262.createRealm().global;

@@ -10,6 +10,7 @@ info: >
   The length property of the endsWith method is 1.
 
 includes: [propertyHelper.js]
+features: [String.prototype.endsWith]
 ---*/
 
 assert.sameValue(

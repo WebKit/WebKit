@@ -18,7 +18,7 @@ info: >
   4. If neither trimmedString nor any prefix of trimmedString satisfies the
      syntax of a StrDecimalLiteral (see 7.1.3.1), return NaN.
   ...
-
+features: [u180e]
 ---*/
 
 var mongolianVowelSeparator = "\u180E";

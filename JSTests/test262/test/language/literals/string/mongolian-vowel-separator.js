@@ -16,6 +16,7 @@ info: >
   It is useful to allow format-control characters in source text to facilitate
   editing and display. All format control characters may be used within comments,
   and within string literals, template literals, and regular expression literals.
+features: [u180e]
 ---*/
 
 // U+180E in strings; UTF8(0x180E) = 0xE1 0xA0 0x8E

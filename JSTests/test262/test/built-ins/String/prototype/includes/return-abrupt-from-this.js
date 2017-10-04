@@ -10,8 +10,8 @@ info: >
   1. Let O be RequireObjectCoercible(this value).
   2. Let S be ToString(O).
   3. ReturnIfAbrupt(S).
+features: [String.prototype.includes]
 ---*/
-
 var o = {
   toString: function() {
     throw new Test262Error();

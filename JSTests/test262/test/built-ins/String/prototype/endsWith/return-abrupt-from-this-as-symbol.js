@@ -11,7 +11,7 @@ info: >
   2. Let S be ToString(O).
   3. ReturnIfAbrupt(S).
   ...
-features: [Symbol]
+features: [Symbol, String.prototype.endsWith]
 ---*/
 
 var s = Symbol('');

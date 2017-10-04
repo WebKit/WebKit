@@ -9,6 +9,7 @@ info: >
 
   1. Let O be RequireObjectCoercible(this value).
   2. Let S be ToString(O).
+features: [String.prototype.endsWith]
 ---*/
 
 assert.throws(TypeError, function() {

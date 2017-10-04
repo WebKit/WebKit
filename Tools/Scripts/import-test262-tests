@@ -278,12 +278,12 @@ def replaceResources(test262Path)
     harnessDestination = File.join(WEBKIT_PATH, "JSTests", "test262", "harness")
     testSource = File.join(test262Path, "test")
     testDestination = File.join(WEBKIT_PATH, "JSTests", "test262", "test")
-    
-    `rm -r #{Shellwords.shellescape(harnessDestination.to_s)}`
-    `ditto #{Shellwords.shellescape(harnessSource.to_s)} #{Shellwords.shellescape(harnessDestination.to_s)}`
-    
-    `rm -r #{Shellwords.shellescape(testDestination.to_s)}`
-    `ditto #{Shellwords.shellescape(testSource.to_s)} #{Shellwords.shellescape(testDestination.to_s)}`
+
+    FileUtils.rm_r harnessDestination.to_s
+    FileUtils.cp_r harnessSource.to_s, harnessDestination.to_s
+
+    FileUtils.rm_r testDestination.to_s
+    FileUtils.cp_r testSource.to_s, testDestination.to_s
 end
 
 if ARGV.empty?

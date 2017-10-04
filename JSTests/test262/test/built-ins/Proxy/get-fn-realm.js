@@ -16,6 +16,7 @@ info: |
           throw a TypeError exception.
        b. Let proxyTarget be the value of obj's [[ProxyTarget]] internal slot.
        c. Return ? GetFunctionRealm(proxyTarget).
+features: [cross-realm]
 ---*/
 
 var other = $262.createRealm().global;

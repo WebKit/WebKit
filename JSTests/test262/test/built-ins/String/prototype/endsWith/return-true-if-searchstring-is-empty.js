@@ -18,6 +18,7 @@ info: >
   16. If the sequence of elements of S starting at start of length searchLength
   is the same as the full element sequence of searchStr, return true.
   ...
+features: [String.prototype.endsWith]
 ---*/
 
 var str = 'The future is cool!';

@@ -23,6 +23,7 @@ info: |
   [...]
   24. Let result be EvalDeclarationInstantiation(body, varEnv, lexEnv,
       strictEval).
+features: [cross-realm]
 ---*/
 
 var other = $262.createRealm().global;

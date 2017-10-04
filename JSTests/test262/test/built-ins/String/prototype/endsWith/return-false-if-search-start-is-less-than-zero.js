@@ -19,6 +19,7 @@ info: >
   ...
 
   Note: (min(max(pos, 0), len) - searchString.length) < 0;
+features: [String.prototype.endsWith]
 ---*/
 
 assert.sameValue(

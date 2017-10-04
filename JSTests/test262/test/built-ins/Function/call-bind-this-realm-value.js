@@ -20,6 +20,7 @@ info: >
         i. Let thisValue be ! ToObject(thisArgument).
         ii. NOTE ToObject produces wrapper objects using calleeRealm.
   [...]
+features: [cross-realm]
 ---*/
 
 var other = $262.createRealm().global;

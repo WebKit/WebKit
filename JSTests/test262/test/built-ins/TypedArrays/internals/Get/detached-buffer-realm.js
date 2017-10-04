@@ -15,7 +15,7 @@ info: >
       i. Return ? IntegerIndexedElementGet(O, numericIndex).
   ...
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [TypedArray]
+features: [cross-realm, TypedArray]
 ---*/
 
 var other = $262.createRealm().global;

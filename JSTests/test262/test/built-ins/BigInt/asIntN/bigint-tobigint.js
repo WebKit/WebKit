@@ -8,24 +8,26 @@ info: >
 
   2. Let bigint ? ToBigInt(bigint).
 
-features: [BigInt, Symbol, Symbol.toPrimitive, arrow-function]
+features: [BigInt, Symbol, Symbol.toPrimitive]
+includes: [typeCoercion.js]
 ---*/
 
-function MyError() {}
+testCoercibleToBigIntZero(function(zero) {
+  assert.sameValue(BigInt.asIntN(2, zero), 0n);
+});
 
-assert.sameValue(BigInt.asIntN(3, Object(10n)), 2n);
-assert.sameValue(BigInt.asIntN(3, {[Symbol.toPrimitive]:()=>10n, valueOf(){throw new MyError();}, toString(){throw new MyError();}}), 2n);
-assert.sameValue(BigInt.asIntN(3, {valueOf:()=>10n, toString(){throw new MyError();}}), 2n);
-assert.sameValue(BigInt.asIntN(3, {toString:()=>"10"}), 2n);
-assert.throws(MyError, () => BigInt.asIntN(0, {[Symbol.toPrimitive](){throw new MyError();}, valueOf:()=>10n, toString:()=>"10"}));
-assert.throws(MyError, () => BigInt.asIntN(0, {valueOf(){throw new MyError();}, toString:()=>"10"}));
-assert.throws(MyError, () => BigInt.asIntN(0, {toString(){throw new MyError();}}));
-assert.throws(TypeError, () => BigInt.asIntN(0, undefined));
-assert.throws(TypeError, () => BigInt.asIntN(0, null));
-assert.sameValue(BigInt.asIntN(2, true), 1n);
-assert.sameValue(BigInt.asIntN(2, false), 0n);
-assert.throws(TypeError, () => BigInt.asIntN(0, 0));
-assert.throws(SyntaxError, () => BigInt.asIntN(0, "foo"));
-assert.sameValue(BigInt.asIntN(3, "10"), 2n);
-assert.sameValue(BigInt.asIntN(4, "12345678901234567890003"), 3n);
-assert.throws(TypeError, () => BigInt.asIntN(0, Symbol("1")));
+testCoercibleToBigIntOne(function(one) {
+  assert.sameValue(BigInt.asIntN(2, one), 1n);
+});
+
+testCoercibleToBigIntFromBigInt(10n, function(ten) {
+  assert.sameValue(BigInt.asIntN(3, ten), 2n);
+});
+
+testCoercibleToBigIntFromBigInt(12345678901234567890003n, function(value) {
+  assert.sameValue(BigInt.asIntN(4, value), 3n);
+});
+
+testNotCoercibleToBigInt(function(error, value) {
+  assert.throws(error, function() { BigInt.asIntN(0, value); });
+});

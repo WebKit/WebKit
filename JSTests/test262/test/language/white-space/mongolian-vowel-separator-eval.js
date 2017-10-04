@@ -20,6 +20,7 @@ info: >
     Other category “Zs” code points
 
   General Category of U+180E is “Cf” (Format).
+features: [u180e]
 ---*/
 
 // U+180E between "var" and "foo".

@@ -23,7 +23,7 @@ info: >
   5. If IsDetachedBuffer(buffer) is true, throw a TypeError exception.
   ...
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [TypedArray]
+features: [cross-realm, TypedArray]
 ---*/
 
 var other = $262.createRealm().global;

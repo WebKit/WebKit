@@ -10,6 +10,7 @@ info: >
 
   3. [...] The definition of white space is the union of |WhiteSpace| and
      |LineTerminator|.
+features: [u180e]
 ---*/
 
 assert.sameValue("_\u180E".trim(), "_\u180E");

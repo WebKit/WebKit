@@ -28,6 +28,7 @@ info: >
     <USP>
   <USP> ::
     Other category “Zs” code points
+features: [u180e]
 ---*/
 
 assert.sameValue(Number('\u180E'), NaN, 'Number("\\u180E") === NaN. Actual: ' + (Number("\u180E")));

@@ -15,7 +15,7 @@ info: |
   [...]
   3. If envRec.[[ThisBindingStatus]] is "uninitialized", throw a ReferenceError
      exception.
-features: [class]
+features: [cross-realm, class]
 ---*/
 
 var C = $262.createRealm().global.eval(

@@ -34,7 +34,7 @@ info: >
      b. Let proto be realm's intrinsic object named intrinsicDefaultProto.
   ...
 includes: [testTypedArray.js]
-features: [Symbol.species, TypedArray]
+features: [cross-realm, Symbol.species, TypedArray]
 ---*/
 
 var sample1 = new Int8Array();

@@ -14,6 +14,7 @@ info: |
     19. If targetDesc is undefined, then
         a. If extensibleTarget is false, throw a TypeError exception.
     ...
+features: [cross-realm]
 ---*/
 
 var OProxy = $262.createRealm().global.Proxy;

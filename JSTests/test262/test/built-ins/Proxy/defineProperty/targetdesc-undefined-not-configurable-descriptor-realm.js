@@ -15,6 +15,7 @@ info: |
         ...
         b. If settingConfigFalse is true, throw a TypeError exception.
     ...
+features: [cross-realm]
 ---*/
 
 var OProxy = $262.createRealm().global.Proxy;

@@ -12,6 +12,7 @@ info: |
     3. Call CharacterSetMatcher(A, false) and return its Matcher result.
 
 esid: sec-atom
+features: [u180e]
 ---*/
 
 // The behavior is the same regardless of the m flag

@@ -17,6 +17,7 @@ info: >
   at index j of searchStr, return true; but if there is no such integer k,
   return false.
   ...
+features: [String.prototype.includes]
 ---*/
 
 var str = 'The future is cool!';
