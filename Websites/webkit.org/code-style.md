@@ -234,6 +234,34 @@ f (a, b);
 f( a, b );
 ```
 
+[](#spacing-function-paren) In Objective-C, do not place spaces between the start of a block and its arguments, or the start of a block and its opening brace. **Do** place a space between argument lists and the opening brace of the block.
+
+###### Right:
+
+```cpp
+block = ^{
+...
+};
+
+block = ^(int, int) {
+...
+};
+
+```
+
+###### Wrong:
+
+```cpp
+block = ^ {
+...
+};
+
+block = ^ (int, int){
+...
+};
+
+```
+
 ### Line breaking
 
 [](#linebreaking-multiple-statements) Each statement should get its own line.
