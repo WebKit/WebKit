@@ -51,7 +51,7 @@ private:
     String m_close;
     RefPtr<StringImpl> m_separators;
 
-    RenderMathMLFencedOperator* m_closeFenceRenderer;
+    WeakPtr<RenderMathMLFencedOperator> m_closeFenceRenderer;
 };
 
 }

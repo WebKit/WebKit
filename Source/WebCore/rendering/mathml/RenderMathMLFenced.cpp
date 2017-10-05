@@ -45,7 +45,6 @@ static const char* gClosingBraceChar = ")";
 
 RenderMathMLFenced::RenderMathMLFenced(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))
-    , m_closeFenceRenderer(nullptr)
 {
 }
 
@@ -97,7 +96,7 @@ void RenderMathMLFenced::makeFences()
     RenderMathMLRow::addChild(WTFMove(openFence), firstChild());
 
     auto closeFence = createMathMLOperator(m_close, MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
-    m_closeFenceRenderer = closeFence.get();
+    m_closeFenceRenderer = makeWeakPtr(*closeFence);
     RenderMathMLRow::addChild(WTFMove(closeFence));
 }
 
@@ -145,8 +144,8 @@ void RenderMathMLFenced::addChild(RenderPtr<RenderObject> child, RenderObject* b
     } else {
         // Adding |y| at the end of an existing element e.g. (x) - insert the separator first before the closing fence, then |y|, to get (x, y).
         if (separatorRenderer)
-            RenderMathMLRow::addChild(WTFMove(separatorRenderer), m_closeFenceRenderer);
-        RenderMathMLRow::addChild(WTFMove(child), m_closeFenceRenderer);
+            RenderMathMLRow::addChild(WTFMove(separatorRenderer), m_closeFenceRenderer.get());
+        RenderMathMLRow::addChild(WTFMove(child), m_closeFenceRenderer.get());
     }
 }
 

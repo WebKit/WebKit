@@ -1,3 +1,22 @@
+2017-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        RenderMathMLFenced should not hold a raw pointer to RenderMathMLFencedOperator
+        https://bugs.webkit.org/show_bug.cgi?id=177950
+        <rdar://problem/34837002>
+
+        Reviewed by Antti Koivisto.
+
+        Even though RenderMathMLFencedOperator is a child renderer, it's lifetime is not explicitly managed by
+        RenderMathMLFenced.
+
+        Covered by existing test cases.
+
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::RenderMathMLFenced):
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        * rendering/mathml/RenderMathMLFenced.h:
+
 2017-10-05  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Add a payment method that supports Apple Pay
