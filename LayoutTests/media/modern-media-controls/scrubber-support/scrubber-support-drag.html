@@ -29,9 +29,10 @@ scheduler.frameDidFire = function() {
     if (media.paused)
         return;
 
+    const elapsed = mediaController.controls.timeControl.elapsedTimeLabel.element;
     const input = mediaController.controls.timeControl.scrubber.children[1].element;
     const bounds = input.getBoundingClientRect();
-    if (bounds.width === 0)
+    if (elapsed.getBoundingClientRect().width === 0 || bounds.width === 0)
         return;
 
     media.pause();
