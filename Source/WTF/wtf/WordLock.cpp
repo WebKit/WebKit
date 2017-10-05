@@ -76,6 +76,10 @@ ThreadData* myThreadData()
 
 } // anonymous namespace
 
+// NOTE: It's a bug to use any memory order other than seq_cst in this code. The cost of seq_cst
+// fencing is negligible on slow paths, so any use of a more relaxed memory model is all risk and no
+// reward.
+
 NEVER_INLINE void WordLockBase::lockSlow()
 {
     unsigned spinCount = 0;

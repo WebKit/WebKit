@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #ifndef StaticMutex_h
 #define StaticMutex_h
 
+#include "Algorithm.h"
 #include "BAssert.h"
+#include "BExport.h"
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -35,6 +37,16 @@
 
 // Use StaticMutex in static storage, where global constructors and exit-time
 // destructors are prohibited, but all memory is zero-initialized automatically.
+
+// This uses the code from what WTF used to call WordLock. It's a fully adaptive mutex that uses
+// sizeof(void*) storage. It has a fast path that is similar to a spinlock, and a slow path that is
+// similar to std::mutex.
+
+// NOTE: In general, this is a great lock to use if you are very low in the stack. WTF continues to
+// have a copy of this code.
+
+// FIXME: Either fold bmalloc into WTF or find a better way to share code between them.
+// https://bugs.webkit.org/show_bug.cgi?id=177719
 
 namespace bmalloc {
 
@@ -45,57 +57,49 @@ protected:
 
 public:
     void lock();
-    bool try_lock();
+    bool tryLock();
+    bool try_lock() { return tryLock(); }
     void unlock();
+    
+    bool isHeld() const;
+    bool isLocked() const { return isHeld(); }
 
 private:
-    void lockSlowCase();
+    BEXPORT void lockSlow();
+    BEXPORT void unlockSlow();
 
-    std::atomic_flag m_flag;
-    std::atomic_flag m_isSpinning;
+    static const uintptr_t clear = 0;
+    static const uintptr_t isLockedBit = 1;
+    static const uintptr_t isQueueLockedBit = 2;
+    static const uintptr_t queueHeadMask = 3;
+
+    std::atomic<uintptr_t> m_word;
 };
-
-static inline void sleep(
-    std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds duration)
-{
-    if (duration == std::chrono::milliseconds(0))
-        return;
-    
-    lock.unlock();
-    std::this_thread::sleep_for(duration);
-    lock.lock();
-}
-
-static inline void waitUntilFalse(
-    std::unique_lock<StaticMutex>& lock, std::chrono::milliseconds sleepDuration,
-    bool& condition)
-{
-    while (condition) {
-        condition = false;
-        sleep(lock, sleepDuration);
-    }
-}
 
 inline void StaticMutex::init()
 {
-    m_flag.clear();
-    m_isSpinning.clear();
+    m_word.store(0, std::memory_order_relaxed);
 }
 
-inline bool StaticMutex::try_lock()
+inline bool StaticMutex::tryLock()
 {
-    return !m_flag.test_and_set(std::memory_order_acquire);
+    return m_word.load(std::memory_order_acquire) & isLockedBit;
 }
 
 inline void StaticMutex::lock()
 {
-    if (!try_lock())
-        lockSlowCase();
+    if (compareExchangeWeak(m_word, clear, isLockedBit, std::memory_order_acquire))
+        return;
+    
+    lockSlow();
 }
 
 inline void StaticMutex::unlock()
 {
-    m_flag.clear(std::memory_order_release);
+    if (compareExchangeWeak(m_word, isLockedBit, clear, std::memory_order_release))
+        return;
+    
+    unlockSlow();
 }
 
 } // namespace bmalloc
