@@ -1,3 +1,21 @@
+2017-10-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        RenderSVGRoot should check the renderers inside its visualOverflowRect for hit testing if the overflow is visible
+        https://bugs.webkit.org/show_bug.cgi?id=177953
+        <rdar://problem/34788389>
+
+        Reviewed by Simon Fraser.
+
+        Test: svg/hittest/svg-visual-overflow-rect.html
+
+        If an SVGElement is positioned outside the rectangle of the root element,
+        it can still be drawn if the root element has "overflow: visible" applied.
+        But since SVGElement can be drawn in this case, it should be accessible
+        through nodeAtPoint() which is used for hit testing.
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+
 2017-10-05  Zalan Bujtas  <zalan@apple.com>
 
         RenderButton should not hold raw pointers to its direct children.
