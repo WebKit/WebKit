@@ -1,3 +1,36 @@
+2017-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        Move multicolumn flow clear to RenderTreeUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=177898
+        <rdar://problem/34820157>
+
+        Reviewed by Antti Koivisto.
+
+        There are 2 cases when we need to clear the the multicolumn flow from its container.
+
+        1. When the column renderer is not need anymore due to style change (evacuateAndDestroy).
+        During the subtree reparenting (moving back the descendants to the original position),
+        if we still had the multicolumn set on the RenderBlockFlow, RenderBlockFlow::addChild() would
+        put the children back under the column. -> Move the clear call to the RenderTreeUpdater.
+         
+        2. When the column is detached from the tree/destroyed (willBeRemoveFromTree).
+        Since it does not trigger reparenting, we don't need to clear the column immediately. 
+        We call clear to avoid accessing state column renderer. -> Use WeakPtr to
+        manage lifetime instead.
+
+        Covered by existing tests.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::setMultiColumnFlow):
+        (WebCore::RenderBlockFlow::clearMultiColumnFlow):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy):
+        (WebCore::RenderMultiColumnFlow::willBeRemovedFromTree):
+        * style/RenderTreeUpdaterMultiColumn.cpp:
+        (WebCore::RenderTreeUpdater::MultiColumn::update):
+        (WebCore::RenderTreeUpdater::MultiColumn::createFragmentedFlow):
+
 2017-10-05  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] GIFImageDecoder never clears decoded frames even when told to do so

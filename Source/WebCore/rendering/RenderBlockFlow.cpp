@@ -3160,12 +3160,17 @@ void RenderBlockFlow::updateLogicalHeight()
     RenderBlock::updateLogicalHeight();
 }
 
-void RenderBlockFlow::setMultiColumnFlow(RenderMultiColumnFlow* fragmentedFlow)
+void RenderBlockFlow::setMultiColumnFlow(RenderMultiColumnFlow& fragmentedFlow)
 {
-    if (fragmentedFlow || hasRareBlockFlowData()) {
-        RenderBlockFlowRareData& rareData = ensureRareBlockFlowData();
-        rareData.m_multiColumnFlow = fragmentedFlow;
-    }
+    ASSERT(!hasRareBlockFlowData() || !rareBlockFlowData()->m_multiColumnFlow);
+    ensureRareBlockFlowData().m_multiColumnFlow = makeWeakPtr(fragmentedFlow);
+}
+
+void RenderBlockFlow::clearMultiColumnFlow()
+{
+    ASSERT(hasRareBlockFlowData());
+    ASSERT(rareBlockFlowData()->m_multiColumnFlow);
+    rareBlockFlowData()->m_multiColumnFlow.clear();
 }
 
 static bool shouldCheckLines(const RenderBlockFlow& blockFlow)

@@ -35,6 +35,7 @@ void RenderTreeUpdater::MultiColumn::update(RenderBlockFlow& flow)
     auto* multiColumnFlow = flow.multiColumnFlow();
     if (!needsFragmentedFlow) {
         if (multiColumnFlow) {
+            flow.clearMultiColumnFlow();
             multiColumnFlow->evacuateAndDestroy();
             ASSERT(!flow.multiColumnFlow());
         }
@@ -53,7 +54,7 @@ void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     auto& fragmentedFlow = *newFragmentedFlow;
     flow.RenderBlock::addChild(WTFMove(newFragmentedFlow));
     fragmentedFlow.populate(); // Called after the flow thread is inserted so that we are reachable by the flow thread.
-    flow.setMultiColumnFlow(&fragmentedFlow);
+    flow.setMultiColumnFlow(fragmentedFlow);
 }
 
 

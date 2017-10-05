@@ -165,13 +165,7 @@ void RenderMultiColumnFlow::evacuateAndDestroy()
     RenderBlockFlow* multicolContainer = multiColumnBlockFlow();
     // Delete the line box tree.
     deleteLines();
-    
-    // First promote all children of the flow thread. Before we move them to the flow thread's
-    // container, we need to unregister the flow thread, so that they aren't just re-added again to
-    // the flow thread that we're trying to empty.
-    multicolContainer->setMultiColumnFlow(nullptr);
     moveAllChildrenTo(multicolContainer, true);
-
     // Move spanners back to their original DOM position in the tree, and destroy the placeholders.
     SpannerMap::iterator it;
     while ((it = m_spannerMap.begin()) != m_spannerMap.end()) {
@@ -212,7 +206,6 @@ void RenderMultiColumnFlow::willBeRemovedFromTree()
     // further up on the call stack.
     for (RenderMultiColumnSet* columnSet = firstMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet())
         columnSet->detachFragment();
-    multiColumnBlockFlow()->setMultiColumnFlow(nullptr);
     RenderFragmentedFlow::willBeRemovedFromTree();
 }
 
