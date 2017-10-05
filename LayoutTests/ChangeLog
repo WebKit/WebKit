@@ -1,3 +1,16 @@
+2017-10-05  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] Layout Test accessibility/ios-simulator/video-elements-ios.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=177954
+        <rdar://problem/34838094>
+
+        We should do the isIgnored check instead of the null check.
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/video-elements-ios-expected.txt:
+        * accessibility/ios-simulator/video-elements-ios.html:
+
 2017-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement font-display loading behaviors

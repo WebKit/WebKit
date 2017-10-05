@@ -4,10 +4,9 @@ This tests the video elements on iOS.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS video2 is null
-AXLabel: Video label, 9 seconds
-AXValue: 0 seconds
-PASS video.description is 'AXLabel: Video label, 9 seconds'
+PASS video.isIgnored is false
+PASS video2.isIgnored is true
+PASS video.description is 'AXLabel: Video label1, 9 seconds'
 PASS video.stringValue is 'AXValue: 0 seconds'
 PASS vid.paused is true
 PASS vid.paused is false
