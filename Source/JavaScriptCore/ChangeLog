@@ -1,5 +1,27 @@
 2017-10-05  Saam Barati  <sbarati@apple.com>
 
+        Only add prototypes to the PrototypeMap if they're not already present
+        https://bugs.webkit.org/show_bug.cgi?id=177952
+
+        Reviewed by Michael Saboff and JF Bastien.
+
+        With poly proto, we need to call PrototypeMap::add more frequently since we don't
+        know if the prototype is already in the map or not based solely on Structure.
+        PrototypeMap::add was calling WeakMap::set unconditionally, which would unconditionally
+        allocate a Weak handle. Allocating a Weak handle is expensive. It's at least 8x more
+        expensive than just checking if the prototype is in the map prior to adding it. This
+        patch makes the change to only add the prototype if it's not already in the map. To
+        do this, I've added a WeakMap::add API that just forwards into HashMap's add API.
+        This allows us to both only do a single hash table lookup and also to allocate only
+        a single Weak handle when necessary.
+
+        * runtime/PrototypeMapInlines.h:
+        (JSC::PrototypeMap::addPrototype):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::add):
+
+2017-10-05  Saam Barati  <sbarati@apple.com>
+
         Unreviewed. Disable probe OSR exit on 32-bit until it's fixed.
 
         * runtime/Options.cpp:
