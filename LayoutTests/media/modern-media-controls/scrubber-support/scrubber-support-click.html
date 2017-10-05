@@ -24,29 +24,22 @@ description("Testing the <code>ScrubberSupport</code> behavior when clicking the
 const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
+const scrubber = mediaController.controls.timeControl.scrubber.children[1].element;
 
 mediaController.controls.showsStartButton = false;
 
-scheduler.frameDidFire = function() {
-    if (media.paused)
-        return;
-
-    const scrubber = mediaController.controls.timeControl.scrubber.children[1].element;
-    if (scrubber.getBoundingClientRect().width === 0)
-        return;
-
+media.addEventListener("play", () => {
     media.pause();
-
-    media.addEventListener("timeupdate", () => {
-        shouldBeCloseTo("media.currentTime", 3.1872, 0.2);
-        container.remove();
-        media.remove();
-        finishJSTest();
+    shouldBecomeDifferent("scrubber.getBoundingClientRect().width", "0", () => {
+        media.addEventListener("timeupdate", () => {
+            shouldBeCloseTo("media.currentTime", 3.1872, 0.2);
+            container.remove();
+            media.remove();
+            finishJSTest();
+        });
+        pressOnElement(scrubber);
     });
-    
-    scheduler.frameDidFire = null;
-    pressOnElement(scrubber);
-};
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
