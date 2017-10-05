@@ -42,15 +42,19 @@
 #include "stress_aligned.h"
 #include "theverge.h"
 #include "tree.h"
-#include <dispatch/dispatch.h>
+#include <algorithm>
 #include <iostream>
-#include <mach/mach.h>
-#include <mach/task_info.h>
 #include <map>
+#include <stdio.h>
 #include <string>
+#include <strings.h>
 #include <sys/time.h>
 #include <thread>
-#include <unistd.h>
+#include <vector>
+
+#ifdef __APPLE__
+#include <dispatch/dispatch.h>
+#endif
 
 #include "mbmalloc.h"
 
@@ -130,9 +134,7 @@ static void deallocateHeap(void*** chunks, size_t heapSize, size_t chunkSize, si
 }
 
 Benchmark::Benchmark(CommandLine& commandLine)
-    : m_benchmarkPair()
-    , m_elapsedTime()
-    , m_commandLine(commandLine)
+    : m_commandLine(commandLine)
 {
     const BenchmarkPair* benchmarkPair = std::find(
         benchmarkPairs, benchmarkPairs + benchmarksPairsCount, m_commandLine.benchmarkName());
@@ -156,6 +158,7 @@ void Benchmark::runOnce()
         return;
     }
 
+#ifdef __APPLE__
     dispatch_group_t group = dispatch_group_create();
 
     for (size_t i = 0; i < cpuCount(); ++i) {
@@ -167,6 +170,16 @@ void Benchmark::runOnce()
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
 
     dispatch_release(group);
+#else
+    std::vector<std::thread> threads;
+    for (size_t i = 0; i < cpuCount(); ++i) {
+        threads.emplace_back([&] {
+            m_benchmarkPair->function(m_commandLine);
+        });
+    }
+    for (auto& thread : threads)
+        thread.join();
+#endif
 }
 
 void Benchmark::run()
@@ -212,18 +225,3 @@ double Benchmark::currentTimeMS()
     return (now.tv_sec * 1000.0) + now.tv_usec / 1000.0;
 }
 
-Benchmark::Memory Benchmark::currentMemoryBytes()
-{
-    Memory memory;
-
-    task_vm_info_data_t vm_info;
-    mach_msg_type_number_t vm_size = TASK_VM_INFO_COUNT;
-    if (KERN_SUCCESS != task_info(mach_task_self(), TASK_VM_INFO_PURGEABLE, (task_info_t)(&vm_info), &vm_size)) {
-        cout << "Failed to get mach task info" << endl;
-        exit(1);
-    }
-
-    memory.resident = vm_info.internal + vm_info.compressed - vm_info.purgeable_volatile_pmap;
-    memory.residentMax = vm_info.resident_size_peak;
-    return memory;
-}

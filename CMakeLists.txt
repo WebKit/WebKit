@@ -166,6 +166,8 @@ if (ENABLE_TOOLS)
     add_subdirectory(Tools)
 endif ()
 
+add_subdirectory(PerformanceTests)
+
 # -----------------------------------------------------------------------------
 # Print the features list last, for maximum visibility.
 # -----------------------------------------------------------------------------

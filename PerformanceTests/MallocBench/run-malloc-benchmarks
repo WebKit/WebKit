@@ -7,6 +7,29 @@ require 'pathname'
 $binDir = "#{File.expand_path(File.dirname(__FILE__))}"
 $productDir = `perl -e 'use lib \"#{$binDir}/../../Tools/Scripts\"; use webkitdirs; print productDir()'`
 
+def determineOS
+    case RbConfig::CONFIG["host_os"]
+    when /darwin/i
+        "darwin"
+    when /linux/i
+        "linux"
+    when /mswin|mingw|cygwin/
+        "windows"
+    else
+        $stderr.puts "Warning: unable to determine host operating system"
+        nil
+    end
+end
+
+$hostOS = determineOS unless $hostOS
+$cmake = false
+
+if $hostOS == 'darwin'
+    $libraryExtension = "dylib"
+else
+    $libraryExtension = "so"
+end
+
 $benchmarks_all = [
     # Single-threaded benchmarks.
     "churn",
@@ -91,7 +114,8 @@ def usage
 	puts "Options:"
     puts
     puts "    --benchmark <benchmark>      Select a single benchmark to run instead of the full suite."
-    puts "    --heap <heap>           Set a baseline heap size."
+    puts "    --heap <heap>                Set a baseline heap size."
+    puts "    --cmake                      Specify if build directory layout is for CMake."
     puts
 end
 
@@ -101,7 +125,7 @@ class Dylib
 
     def initialize(name, path)
         @name = name
-        @path = File.join(path, "libmbmalloc.dylib")
+        @path = File.join(path, "libmbmalloc.#{$libraryExtension}")
     end
 end
 
@@ -214,6 +238,7 @@ end
 def parseOptions
     GetoptLong.new(
         ['--benchmark', GetoptLong::REQUIRED_ARGUMENT],
+        ['--cmake', GetoptLong::NO_ARGUMENT],
         ['--memory', GetoptLong::NO_ARGUMENT],
         ['--memory_warning', GetoptLong::NO_ARGUMENT],
         ['--heap', GetoptLong::REQUIRED_ARGUMENT],
@@ -227,6 +252,8 @@ def parseOptions
             $benchmarks = $benchmarks_memory
         when '--memory_warning'
             $benchmarks = $benchmarks_memory_warning
+        when '--cmake'
+            $cmake = true
         when '--heap'
             $heap = arg
         when '--help'
@@ -237,6 +264,16 @@ def parseOptions
         end
     }
 
+    if $cmake
+        $libraryDir = "#{$productDir}/lib"
+        $systemMallocLibraryDir = "#{$productDir}/lib/system"
+        $binaryDir = "#{$productDir}/bin"
+    else
+        $libraryDir = $productDir
+        $binaryDir = $productDir
+        $systemMallocLibraryDir = $productDir
+    end
+
     if ARGV.length < 1
         puts "Error: No dylib specified."
         exit 1
@@ -246,9 +283,9 @@ def parseOptions
     ARGV.each {
         | arg |
         if arg == "SystemMalloc"
-            dylib = Dylib.new("SystemMalloc", $productDir)
+            dylib = Dylib.new("SystemMalloc", $systemMallocLibraryDir)
         elsif arg == "NanoMalloc"
-            dylib = Dylib.new("NanoMalloc", $productDir)
+            dylib = Dylib.new("NanoMalloc", $libraryDir)
         else
             name = arg.split(":")[0]
             path = arg.split(":")[1]
@@ -288,10 +325,11 @@ def runBenchmarks(dylibs)
 
             $stderr.print "\rRUNNING #{dylib.name}: #{benchmark}...                                "
             env = "DYLD_LIBRARY_PATH='#{Pathname.new(dylib.path).dirname}' "
+            env += "LD_LIBRARY_PATH='#{Pathname.new(dylib.path).dirname}' "
             if dylib.name == "NanoMalloc"
                 env += "MallocNanoZone=1 "
             end
-            input = "cd '#{$productDir}'; #{env} '#{$productDir}/MallocBench' --benchmark #{benchmark} --heap #{$heap}}"
+            input = "cd '#{$productDir}'; #{env} '#{$binaryDir}/MallocBench' --benchmark #{benchmark} --heap #{$heap}}"
             output =`#{input}`
             splitOutput = output.split("\n")
 

@@ -27,6 +27,7 @@
 #include "CPUCount.h"
 #include "stress_aligned.h"
 #include <array>
+#include <cassert>
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
@@ -89,6 +90,8 @@ public:
             return random() % largeMax;
         }
         }
+        assert(0);
+        return 0;
     }
 
 private:

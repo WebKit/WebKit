@@ -26,7 +26,12 @@
 #include <limits>
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef __APPLE__
 #import <malloc/malloc.h>
+#else
+#include <malloc.h>
+#endif
 
 extern "C" {
 
@@ -38,7 +43,8 @@ void* mbmalloc(size_t size)
 void* mbmemalign(size_t alignment, size_t size)
 {
     void* result;
-    posix_memalign(&result, alignment, size);
+    if (posix_memalign(&result, alignment, size))
+        return nullptr;
     return result;
 }
 
@@ -54,7 +60,11 @@ void* mbrealloc(void* p, size_t, size_t newSize)
 
 void mbscavenge()
 {
+#ifdef __APPLE__
     malloc_zone_pressure_relief(nullptr, 0);
+#else
+    malloc_trim(0);
+#endif
 }
 
 } // extern "C"

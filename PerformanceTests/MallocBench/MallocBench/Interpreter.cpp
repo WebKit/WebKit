@@ -227,7 +227,7 @@ static size_t compute2toPower(unsigned log2n)
     return result;
 }
 
-void Interpreter::doMallocOp(Op op, ThreadId threadId)
+void Interpreter::doMallocOp(Op op, ThreadId)
 {
     switch (op.opcode) {
         case op_malloc: {

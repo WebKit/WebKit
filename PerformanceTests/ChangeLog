@@ -1,3 +1,65 @@
+2017-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Linux] Port MallocBench
+        https://bugs.webkit.org/show_bug.cgi?id=177856
+
+        Reviewed by Filip Pizlo.
+
+        We would like to optimize locking in bmalloc in Linux by using futex APIs. So we should have
+        the way to ensure this actually improves / does not regress the performance.
+
+        This patch ports MallocBench to Linux to measure/ensure the effect of bmalloc patch in Linux.
+
+        While we replace the dispatch serial queue in message.cpp, we still use libdispatch in Benchmark.cpp
+        since we do not have priority mechanism in C++11 threading implementation.
+
+        We also extend run-malloc-benchmarks to accept cmake style layout of build product directory.
+        And we also support building MallocBench in CMake environment including CMake Mac ports.
+        Currently, we do not support Windows yet.
+
+        Based on the measurement, we can say the following observation. glibc's malloc performance is not
+        so bad. While bmalloc shows 3.8x (in geomean) performance improvement, bmalloc in Linux shows 2.0x
+        improvement. Since both numbers in bmalloc are similar, we can think that bmalloc's optimization is
+        actually working in Linux too. And even though glibc's malloc perofmrnace is not so bad, bmalloc
+        still offers performance improvement.
+
+        * CMakeLists.txt: Added.
+        * MallocBench/CMakeLists.txt: Added.
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp:
+        (Benchmark::Benchmark):
+        (Benchmark::runOnce):
+        (Benchmark::currentMemoryBytes): Deleted.
+        * MallocBench/MallocBench/Benchmark.h:
+        (Benchmark::Memory::Memory): Deleted.
+        (Benchmark::Memory::operator-): Deleted.
+        * MallocBench/MallocBench/CMakeLists.txt: Added.
+        * MallocBench/MallocBench/CPUCount.cpp:
+        (cpuCount):
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::doMallocOp):
+        * MallocBench/MallocBench/Memory.cpp: Added.
+        (currentMemoryBytes):
+        * MallocBench/MallocBench/Memory.h: Copied from PerformanceTests/MallocBench/MallocBench/CPUCount.cpp.
+        (Memory::Memory):
+        (Memory::operator-):
+        * MallocBench/MallocBench/balloon.cpp:
+        (benchmark_balloon):
+        * MallocBench/MallocBench/mbmalloc.cpp:
+        * MallocBench/MallocBench/message.cpp:
+        (WorkQueue::WorkQueue):
+        (WorkQueue::~WorkQueue):
+        (WorkQueue::dispatchAsync):
+        (WorkQueue::dispatchSync):
+        (benchmark_message_one):
+        (benchmark_message_many):
+        * MallocBench/MallocBench/nimlang.cpp:
+        (benchmark_nimlang):
+        * MallocBench/MallocBench/stress.cpp:
+        (SizeStream::next):
+        * MallocBench/MallocBench/stress_aligned.cpp:
+        * MallocBench/run-malloc-benchmarks:
+
 2017-09-26  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer: ensure all TodoMVC tests use the complete latest CSS

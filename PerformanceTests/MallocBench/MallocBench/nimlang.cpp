@@ -51,6 +51,6 @@ void benchmark_nimlang(CommandLine& commandLine)
     for (size_t i = 0; i < times; ++i)
         interpreter.run();
 
-        if (commandLine.detailedReport())
-            interpreter.detailedReport();
+    if (commandLine.detailedReport())
+        interpreter.detailedReport();
 }

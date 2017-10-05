@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,38 +21,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CPUCount.h"
-#include <stdlib.h>
-#include <sys/param.h>
-#include <sys/sysctl.h>
-#include <sys/types.h>
-#include <unistd.h>
+#pragma once
 
-static size_t count;
+#include <cstddef>
 
-size_t cpuCount()
-{
-    if (count)
-        return count;
+struct Memory {
+    Memory()
+        : resident()
+        , residentMax()
+    {
+    }
 
-#ifdef __APPLE__
-    size_t length = sizeof(count);
-    int name[] = {
-            CTL_HW,
-            HW_NCPU
-    };
-    int sysctlResult = sysctl(name, sizeof(name) / sizeof(int), &count, &length, 0, 0);
-    if (sysctlResult < 0)
-        abort();
-#else
-    long sysconfResult = sysconf(_SC_NPROCESSORS_ONLN);
-    if (sysconfResult < 0)
-        abort();
-    count = sysconfResult;
-#endif
+    Memory(size_t resident, size_t residentMax)
+        : resident(resident)
+        , residentMax(residentMax)
+    {
+    }
 
-    return count;
-}
+    Memory operator-(const Memory& other)
+    {
+        return Memory(resident - other.resident, residentMax - other.residentMax);
+    }
+
+    size_t resident;
+    size_t residentMax;
+};
+
+Memory currentMemoryBytes();

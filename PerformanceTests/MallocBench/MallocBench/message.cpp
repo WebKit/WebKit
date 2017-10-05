@@ -25,9 +25,13 @@
 
 #include "CPUCount.h"
 #include "message.h"
-#include <dispatch/dispatch.h>
+#include <condition_variable>
+#include <deque>
+#include <functional>
+#include <mutex>
 #include <stdlib.h>
 #include <strings.h>
+#include <thread>
 
 #include "mbmalloc.h"
 
@@ -110,6 +114,68 @@ private:
 
 } // namespace
 
+class WorkQueue {
+public:
+    WorkQueue()
+    {
+        m_thread = std::thread([&] {
+            while (true) {
+                std::function<void()> target;
+                {
+                    std::unique_lock<std::mutex> locker(m_mutex);
+                    m_condition.wait(locker, [&] { return !m_queue.empty(); });
+                    auto queued = m_queue.front();
+                    m_queue.pop_front();
+                    if (!queued)
+                        return;
+                    target = std::move(queued);
+                }
+                target();
+            }
+        });
+    }
+
+    ~WorkQueue() {
+        {
+            std::unique_lock<std::mutex> locker(m_mutex);
+            m_queue.push_back(nullptr);
+            m_condition.notify_one();
+        }
+        m_thread.join();
+    }
+
+    void dispatchAsync(std::function<void()> target)
+    {
+        std::unique_lock<std::mutex> locker(m_mutex);
+        m_queue.push_back(target);
+        m_condition.notify_one();
+    }
+
+    void dispatchSync(std::function<void()> target)
+    {
+        std::mutex syncMutex;
+        std::condition_variable syncCondition;
+
+        std::unique_lock<std::mutex> locker(syncMutex);
+        bool done = false;
+        dispatchAsync([&] {
+            target();
+            {
+                std::unique_lock<std::mutex> locker(syncMutex);
+                done = true;
+                syncCondition.notify_one();
+            }
+        });
+        syncCondition.wait(locker, [&] { return done; });
+    }
+
+private:
+    std::mutex m_mutex;
+    std::condition_variable m_condition;
+    std::deque<std::function<void()>> m_queue;
+    std::thread m_thread;
+};
+
 void benchmark_message_one(CommandLine& commandLine)
 {
     if (commandLine.isParallel())
@@ -118,24 +184,20 @@ void benchmark_message_one(CommandLine& commandLine)
     const size_t times = 2048;
     const size_t quantum = 16;
 
-    dispatch_queue_t queue = dispatch_queue_create("message", 0);
-
+    WorkQueue workQueue;
     for (size_t i = 0; i < times; i += quantum) {
         for (size_t j = 0; j < quantum; ++j) {
             Message* message = new Message;
-            dispatch_async(queue, ^{
+            workQueue.dispatchAsync([message] {
                 size_t hash = message->hash();
                 if (hash)
                     abort();
                 delete message;
             });
         }
-        dispatch_sync(queue, ^{ });
+        workQueue.dispatchSync([] { });
     }
-
-    dispatch_sync(queue, ^{ });
-
-    dispatch_release(queue);
+    workQueue.dispatchSync([] { });
 }
 
 void benchmark_message_many(CommandLine& commandLine)
@@ -147,15 +209,15 @@ void benchmark_message_many(CommandLine& commandLine)
     const size_t quantum = 16;
 
     const size_t queueCount = cpuCount() - 1;
-    dispatch_queue_t queues[queueCount];
+    std::unique_ptr<WorkQueue> queues[queueCount];
     for (size_t i = 0; i < queueCount; ++i)
-        queues[i] = dispatch_queue_create("message", 0);
+        queues[i] = std::make_unique<WorkQueue>();
 
     for (size_t i = 0; i < times; i += quantum) {
         for (size_t j = 0; j < quantum; ++j) {
             for (size_t k = 0; k < queueCount; ++k) {
                 Message* message = new Message;
-                dispatch_async(queues[k], ^{
+                queues[k]->dispatchAsync([message] {
                     size_t hash = message->hash();
                     if (hash)
                         abort();
@@ -165,12 +227,9 @@ void benchmark_message_many(CommandLine& commandLine)
         }
 
         for (size_t i = 0; i < queueCount; ++i)
-            dispatch_sync(queues[i], ^{ });
+            queues[i]->dispatchSync([] { });
     }
 
     for (size_t i = 0; i < queueCount; ++i)
-        dispatch_sync(queues[i], ^{ });
-
-    for (size_t i = 0; i < queueCount; ++i)
-        dispatch_release(queues[i]);
+        queues[i]->dispatchSync([] { });
 }
