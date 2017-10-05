@@ -58,11 +58,6 @@ public:
         return m_map.set(key, WTFMove(value));
     }
 
-    AddResult add(const KeyType& key, ValueType value)
-    {
-        return m_map.add(key, WTFMove(value));
-    }
-
     bool remove(const KeyType& key)
     {
         return m_map.remove(key);

@@ -44,11 +44,7 @@ ALWAYS_INLINE TriState PrototypeMap::isPrototype(JSObject* object) const
 
 ALWAYS_INLINE void PrototypeMap::addPrototype(JSObject* object)
 {
-    auto addResult = m_prototypes.add(object, Weak<JSObject>());
-    if (addResult.isNewEntry)
-        addResult.iterator->value = Weak<JSObject>(object);
-    else
-        ASSERT(addResult.iterator->value.get() == object);
+    m_prototypes.set(object, object);
 
     // Note that this method makes the somewhat odd decision to not check if this
     // object currently has indexed accessors. We could do that check here, and if
