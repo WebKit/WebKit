@@ -12,10 +12,10 @@ set(WOFF2_SOURCES
   ${WOFF2_DIR}/src/woff2_out.cc
 )
 
-include_directories("${THIRDPARTY_DIR}/brotli/include")
+include_directories("${BROTLIDEC_INCLUDE_DIRS}")
 include_directories("${WOFF2_INCLUDE_DIRECTORIES}")
 add_library(woff2 STATIC ${WOFF2_SOURCES})
-target_link_libraries(woff2 brotli)
+target_link_libraries(woff2 "${BROTLIDEC_LIBRARIES}")
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(woff2 -Wno-cast-align

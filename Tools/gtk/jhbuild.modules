@@ -7,6 +7,7 @@
 
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
+      <dep package="brotli"/>
       <dep package="cairo"/>
       <dep package="fonts"/>
       <dep package="dicts"/>
@@ -78,6 +79,10 @@
       href="http://webkitgtk.org/jhbuild_mirror/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
+
+  <cmake id="brotli">
+    <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.1"/>
+  </cmake>
 
   <autotools id="cairo"
              autogen-sh="configure">

@@ -57,7 +57,6 @@ WEBKIT_OPTION_BEGIN()
 include(GStreamerDefinitions)
 
 set(USE_CAIRO ON)
-set(USE_WOFF2 ON)
 set(USE_XDGMIME ON)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 
@@ -93,6 +92,7 @@ WEBKIT_OPTION_DEFINE(USE_LIBNOTIFY "Whether to enable the default web notificati
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_UPOWER "Whether to enable the low power mode implementation." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 
 # Private options specific to the GTK+ port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
@@ -379,6 +379,13 @@ if (USE_UPOWER)
     find_package(UPowerGLib)
     if (NOT UPOWERGLIB_FOUND)
        message(FATAL_ERROR "upower-glib is needed for USE_UPOWER.")
+    endif ()
+endif ()
+
+if (USE_WOFF2)
+    find_package(BrotliDec 1.0.1)
+    if (NOT BROTLIDEC_FOUND)
+       message(FATAL_ERROR "librotlidec is needed for USE_WOFF2.")
     endif ()
 endif ()
 

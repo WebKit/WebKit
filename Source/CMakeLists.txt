@@ -18,7 +18,6 @@ if (ENABLE_API_TESTS)
 endif ()
 
 if (USE_WOFF2)
-    add_subdirectory(ThirdParty/brotli)
     add_subdirectory(ThirdParty/woff2)
 endif ()
 

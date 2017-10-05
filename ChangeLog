@@ -1,3 +1,15 @@
+2017-10-03  Frederic Wang  <fwang@igalia.com>
+
+        Remove Brotli from Source/ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=177804
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/CMakeLists.txt: Do not build ThirdParty/brotli anymore.
+        * Source/cmake/FindBrotliDec.cmake: Added. New cmake module to find Brotli via PkgConfig.
+        * Source/cmake/OptionsGTK.cmake: Expose USE_WOFF2 as a public option and use find_package
+        to look for brotli.
+
 2017-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Linux] Port MallocBench

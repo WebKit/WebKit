@@ -1,3 +1,36 @@
+2017-10-03  Frederic Wang  <fwang@igalia.com>
+
+        Remove Brotli from Source/ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=177804
+
+        Reviewed by Michael Catanzaro.
+
+        * brotli/CMakeLists.txt: Removed.
+        * brotli/LICENSE: Removed.
+        * brotli/README.webkit: Removed.
+        * brotli/common/constants.h: Removed.
+        * brotli/common/dictionary.bin: Removed.
+        * brotli/common/dictionary.c: Removed.
+        * brotli/common/dictionary.h: Removed.
+        * brotli/common/version.h: Removed.
+        * brotli/dec/bit_reader.c: Removed.
+        * brotli/dec/bit_reader.h: Removed.
+        * brotli/dec/context.h: Removed.
+        * brotli/dec/decode.c: Removed.
+        * brotli/dec/huffman.c: Removed.
+        * brotli/dec/huffman.h: Removed.
+        * brotli/dec/port.h: Removed.
+        * brotli/dec/prefix.h: Removed.
+        * brotli/dec/state.c: Removed.
+        * brotli/dec/state.h: Removed.
+        * brotli/dec/transform.h: Removed.
+        * brotli/include/brotli/decode.h: Removed.
+        * brotli/include/brotli/encode.h: Removed.
+        * brotli/include/brotli/port.h: Removed.
+        * brotli/include/brotli/types.h: Removed.
+        * brotli/update.sh: Removed.
+        * woff2/CMakeLists.txt: Use Brotli's include and library paths found by CMake.
+
 2017-10-05  Frederic Wang  <fwang@igalia.com>
 
         Upgrade Brotli to version 1.0.1 and WOFF2 to latest upstream
