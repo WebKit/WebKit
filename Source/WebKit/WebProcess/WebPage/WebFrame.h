@@ -61,7 +61,6 @@ class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class WebPage;
 struct FrameInfoData;
-struct WebsitePolicies;
 
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame> {
 public:
@@ -80,10 +79,9 @@ public:
     FrameInfoData info() const;
     uint64_t frameID() const { return m_frameID; }
 
-    enum class ForNavigationAction { No, Yes };
-    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
+    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID, const WebsitePolicies&);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID);
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
@@ -173,7 +171,6 @@ private:
 
     uint64_t m_policyListenerID { 0 };
     WebCore::FramePolicyFunction m_policyFunction;
-    ForNavigationAction m_policyFunctionForNavigationAction { ForNavigationAction::No };
     DownloadID m_policyDownloadID { 0 };
 
     std::unique_ptr<WebFrameLoaderClient> m_frameLoaderClient;

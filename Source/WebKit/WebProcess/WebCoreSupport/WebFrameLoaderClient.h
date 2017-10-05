@@ -35,7 +35,6 @@ namespace WebKit {
 
 class PluginView;
 class WebFrame;
-struct WebsitePolicies;
     
 class WebFrameLoaderClient final : public WebCore::FrameLoaderClient {
 public:
@@ -48,8 +47,6 @@ public:
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
     void setUseIconLoadingClient(bool useIconLoadingClient) { m_useIconLoadingClient = useIconLoadingClient; }
-
-    void applyToDocumentLoader(const WebsitePolicies&);
 
 private:
     void frameLoaderDestroyed() final;
