@@ -1,3 +1,10 @@
+2017-10-05  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations and rebaseline tests failing at r222905.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+
 2017-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.
