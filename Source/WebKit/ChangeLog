@@ -1,3 +1,21 @@
+2017-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI with userInfo corresponding to WKPageNavigationClient's decidePolicyForNavigationAction, didStartProvisionalNavigation, and didFailNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=177974
+        <rdar://problem/22888802>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::didStartProvisionalNavigation):
+        (WebKit::NavigationState::NavigationClient::didFailNavigationWithError):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::ContextMenuClient::menuFromProposedMenu):
+
 2017-10-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Web process should ask UI process for grant/deny
