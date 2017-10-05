@@ -1,3 +1,17 @@
+2017-10-05  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: EventLoop::cycle() should not send nil NSEvents
+        https://bugs.webkit.org/show_bug.cgi?id=177971
+        <rdar://problem/20387399>
+
+        Reviewed by Joseph Pecoraro.
+
+        It is possible for the next matching event to be nil.
+        WebKit clients don't expect to be sent a nil NSEvent, so add a null check here.
+
+        * platform/mac/EventLoopMac.mm:
+        (WebCore::EventLoop::cycle):
+
 2017-10-05  Chris Dumez  <cdumez@apple.com>
 
         Drop unused parameters for CookiesStrategy::cookiesEnabled()
