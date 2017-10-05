@@ -1,3 +1,22 @@
+2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: When scrolled Network Table reduces the number of rows it may appear as blank
+        https://bugs.webkit.org/show_bug.cgi?id=177914
+        <rdar://problem/34827613>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype._updateVisibleRows):
+        (WI.Table.prototype._updateFillerRowWithNewHeight):
+        Reduce the scrollTop when the table was scrolled and was then reloaded with a
+        smaller number of rows. This can happen in two ways. Either the number of rows
+        was reduced so much that we enter non-scrollable mode with a non-zero filler
+        row. This can always reset the scrollTop to 0. Or when a large number of rows
+        is reduced to a smaller number than our current scrollTop but still more than
+        fit on one screen. In that case we can reduce the scrollTop to whatever would
+        scroll the table to its max position.
+
 2017-10-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Improve CanvasManager recording events

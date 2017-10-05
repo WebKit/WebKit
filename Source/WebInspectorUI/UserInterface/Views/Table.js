@@ -890,6 +890,21 @@ WI.Table = class Table extends WI.View
         let numberOfRows = this._dataSource.tableNumberOfRows(this);
         this._previousRevealedRowCount = numberOfRows;
 
+        // Scroll back up if the number of rows was reduced such that the existing
+        // scroll top value is larger than it could otherwise have been. We only
+        // need to do this adjustment if there are more rows than would fit on screen,
+        // because when the filler row activates it will reset our scroll.
+        if (scrollTop) {
+            let rowsThatCanFitOnScreen = Math.ceil(scrollableOffsetHeight / rowHeight);
+            if (numberOfRows >= rowsThatCanFitOnScreen) {
+                let maximumScrollTop = Math.max(0, (numberOfRows * rowHeight) - scrollableOffsetHeight);
+                if (scrollTop > maximumScrollTop) {
+                    this._scrollContainerElement.scrollTop = maximumScrollTop;
+                    this._cachedScrollTop = maximumScrollTop;
+                }
+            }
+        }
+
         let topHiddenRowCount = Math.max(0, Math.floor((scrollTop - overflowPadding) / rowHeight));
         let bottomHiddenRowCount = Math.max(0, this._previousRevealedRowCount - topHiddenRowCount - visibleRowCount);
 
@@ -930,6 +945,13 @@ WI.Table = class Table extends WI.View
         }
 
         this._scrollContainerElement.classList.add("not-scrollable");
+
+        // In the event that we just made the table not scrollable then the number
+        // of rows can fit on screen. Reset the scroll top.
+        if (this._cachedScrollTop) {
+            this._scrollContainerElement.scrollTop = 0;
+            this._cachedScrollTop = 0;
+        }
 
         // Extend past edge some reasonable amount. At least 200px.
         const paddingPastTheEdge = 200;
