@@ -127,7 +127,7 @@ std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSessio
     return cookiesForSession(session, url, true, includeSecureCookies);
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession& session)
 {
     auto policy = soup_cookie_jar_get_accept_policy(session.cookieStorage());
     return policy == SOUP_COOKIE_JAR_ACCEPT_ALWAYS || policy == SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;

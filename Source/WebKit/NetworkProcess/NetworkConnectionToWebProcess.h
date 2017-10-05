@@ -103,7 +103,7 @@ private:
 
     void cookiesForDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
     void setCookiesFromDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, const String&);
-    void cookiesEnabled(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, bool& result);
+    void cookiesEnabled(PAL::SessionID, bool& result);
     void cookieRequestHeaderFieldValue(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
     void getRawCookies(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&);
     void deleteCookie(PAL::SessionID, const WebCore::URL&, const String& cookieName);

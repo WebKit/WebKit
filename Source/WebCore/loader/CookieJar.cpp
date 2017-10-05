@@ -73,7 +73,7 @@ void setCookies(Document& document, const URL& url, const String& cookieString)
 
 bool cookiesEnabled(const Document& document)
 {
-    return platformStrategies()->cookiesStrategy()->cookiesEnabled(storageSession(document), document.firstPartyForCookies(), document.cookieURL());
+    return platformStrategies()->cookiesStrategy()->cookiesEnabled(storageSession(document));
 }
 
 String cookieRequestHeaderFieldValue(Document& document, const URL& url)

@@ -203,7 +203,7 @@ std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSessio
     return { cookieString, didAccessSecureCookies };
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession& session)
 {
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageGetCookieAcceptPolicy(session.cookieStorage().get());
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;

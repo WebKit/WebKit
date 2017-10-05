@@ -299,7 +299,7 @@ std::pair<String, bool> CookieJarCurlFileSystem::cookieRequestHeaderFieldValue(c
     return { cookiesForSession(session, firstParty, url, true), false };
 }
 
-bool CookieJarCurlFileSystem::cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&)
+bool CookieJarCurlFileSystem::cookiesEnabled(const NetworkStorageSession&)
 {
     return true;
 }
@@ -353,9 +353,9 @@ std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSessio
     return CurlContext::singleton().cookieJar().cookieRequestHeaderFieldValue(session, firstParty, url, includeSecureCookies);
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+bool cookiesEnabled(const NetworkStorageSession& session)
 {
-    return CurlContext::singleton().cookieJar().cookiesEnabled(session, firstParty, url);
+    return CurlContext::singleton().cookieJar().cookiesEnabled(session);
 }
 
 bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, Vector<Cookie>& rawCookies)

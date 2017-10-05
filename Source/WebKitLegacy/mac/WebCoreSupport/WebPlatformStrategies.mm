@@ -82,9 +82,9 @@ void WebPlatformStrategies::setCookiesFromDOM(const NetworkStorageSession& sessi
     WebCore::setCookiesFromDOM(session, firstParty, url, cookieString);
 }
 
-bool WebPlatformStrategies::cookiesEnabled(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+bool WebPlatformStrategies::cookiesEnabled(const NetworkStorageSession& session)
 {
-    return WebCore::cookiesEnabled(session, firstParty, url);
+    return WebCore::cookiesEnabled(session);
 }
 
 std::pair<String, bool> WebPlatformStrategies::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)

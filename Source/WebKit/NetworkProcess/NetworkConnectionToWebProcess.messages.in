@@ -35,7 +35,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     CookiesForDOM(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url, enum WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies)
     SetCookiesFromDOM(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url, String cookieString)
-    CookiesEnabled(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (bool enabled)
+    CookiesEnabled(PAL::SessionID sessionID) -> (bool enabled)
     CookieRequestHeaderFieldValue(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url, enum WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies)
     GetRawCookies(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
     DeleteCookie(PAL::SessionID sessionID, WebCore::URL url, String cookieName)

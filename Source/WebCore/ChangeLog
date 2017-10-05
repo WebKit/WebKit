@@ -1,3 +1,25 @@
+2017-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused parameters for CookiesStrategy::cookiesEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=177957
+
+        Reviewed by Alex Christensen.
+
+        * loader/CookieJar.cpp:
+        (WebCore::cookiesEnabled):
+        * platform/CookiesStrategy.h:
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::cookiesEnabled):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::CookieJarCurlFileSystem::cookiesEnabled):
+        (WebCore::cookiesEnabled):
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesEnabled):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookiesEnabled):
+
 2017-10-05  Zalan Bujtas  <zalan@apple.com>
 
         RenderListItem should not hold raw pointers to RenderListMarker.

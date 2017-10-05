@@ -43,7 +43,7 @@ class CookiesStrategy {
 public:
     virtual std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies) = 0;
     virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String& cookieString) = 0;
-    virtual bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
+    virtual bool cookiesEnabled(const NetworkStorageSession&) = 0;
     virtual std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies) = 0;
     virtual std::pair<String, bool> cookieRequestHeaderFieldValue(PAL::SessionID, const URL& firstParty, const URL&, IncludeSecureCookies) = 0;
     virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&) = 0;

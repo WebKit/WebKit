@@ -280,7 +280,7 @@ static NSHTTPCookieAcceptPolicy httpCookieAcceptPolicy(CFHTTPCookieStorageRef co
     return static_cast<NSHTTPCookieAcceptPolicy>(CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage));
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession& session)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

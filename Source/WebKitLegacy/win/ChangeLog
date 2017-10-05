@@ -1,3 +1,14 @@
+2017-10-05  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused parameters for CookiesStrategy::cookiesEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=177957
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookiesEnabled):
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2017-10-03  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Reimplement CurlDownload with CurlRequest
