@@ -65,7 +65,7 @@ class TestTimeout(Exception):
     pass
 
 class TestRunner:
-    TEST_DIRS = [ "WebKit2Gtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore" ]
+    TEST_DIRS = [ "WebKit2Gtk", "WebKit", "JavaScriptCore", "WTF", "WebCore" ]
 
     SKIPPED = [
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
@@ -76,18 +76,18 @@ class TestRunner:
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/editable/editable", "Test hits an assertion in Debug builds", 151654, "Debug"),
         SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebExtension/form-controls-associated-signal", "Test is flaky", 168194),
         SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebView/install-missing-plugins-permission-request", "Test times out", 147822),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.SpacebarScrolling", "Test fails", 84961),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.WKConnection", "Tests fail and time out out", 84959),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ForceRepaint", "Test times out", 105532),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ReloadPageAfterCrash", "Test flakily times out", 110129),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.DidAssociateFormControls", "Test times out", 120302),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.InjectedBundleFrameHitTest", "Test times out", 120303),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
+        SkippedTest("WebKit/TestWebKit", "WebKit.MouseMoveAfterCrash", "Test is flaky", 85066),
+        SkippedTest("WebKit/TestWebKit", "WebKit.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
+        SkippedTest("WebKit/TestWebKit", "WebKit.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),
+        SkippedTest("WebKit/TestWebKit", "WebKit.SpacebarScrolling", "Test fails", 84961),
+        SkippedTest("WebKit/TestWebKit", "WebKit.WKConnection", "Tests fail and time out out", 84959),
+        SkippedTest("WebKit/TestWebKit", "WebKit.ForceRepaint", "Test times out", 105532),
+        SkippedTest("WebKit/TestWebKit", "WebKit.ReloadPageAfterCrash", "Test flakily times out", 110129),
+        SkippedTest("WebKit/TestWebKit", "WebKit.DidAssociateFormControls", "Test times out", 120302),
+        SkippedTest("WebKit/TestWebKit", "WebKit.InjectedBundleFrameHitTest", "Test times out", 120303),
+        SkippedTest("WebKit/TestWebKit", "WebKit.TerminateTwice", "Test causes crash on the next test", 121970),
+        SkippedTest("WebKit/TestWebKit", "WebKit.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
+        SkippedTest("WebKit/TestWebKit", "WebKit.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
     ]
 
     SLOW = [
@@ -443,7 +443,7 @@ class TestRunner:
         if basedir in ["WebKit2Gtk", "WebKitGtk"]:
             return self._run_test_glib(test_program)
 
-        if basedir in ["WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk"]:
+        if basedir in ["WebKit", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk"]:
             return self._run_google_test_suite(test_program)
 
         return 1
