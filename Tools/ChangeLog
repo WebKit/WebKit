@@ -1,3 +1,9 @@
+2017-10-05  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Try to make debug type profiler tests stop timing out.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-10-03  Frederic Wang  <fwang@igalia.com>
 
         Remove Brotli from Source/ThirdParty
