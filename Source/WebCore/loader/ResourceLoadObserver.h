@@ -60,7 +60,6 @@ public:
     void logWebSocketLoading(const Frame*, const URL&);
     void logUserInteractionWithReducedTimeResolution(const Document&);
 
-    void registerStorageAccess(const String& subFrameTopPrivatelyControlledDomain, const String& topFrameTopPrivatelyControlledDomain);
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
@@ -77,7 +76,6 @@ private:
     Vector<ResourceLoadStatistics> takeStatistics();
 
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
-    HashMap<String, HashSet<String>> m_storageAccessMap;
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     Timer m_notificationTimer;

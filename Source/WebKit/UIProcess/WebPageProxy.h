@@ -1209,6 +1209,8 @@ public:
 #endif
     void editorStateChanged(const EditorState&);
 
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t webProcessContextId);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();

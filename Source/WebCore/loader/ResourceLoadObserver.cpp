@@ -284,23 +284,6 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     notifyObserver();
 }
 
-void ResourceLoadObserver::registerStorageAccess(const String& subFrameTopPrivatelyControlledDomain, const String& topFrameTopPrivatelyControlledDomain)
-{
-    auto addResult = m_storageAccessMap.add(subFrameTopPrivatelyControlledDomain, HashSet<String> { });
-    if (!addResult.isNewEntry && addResult.iterator->value.contains(topFrameTopPrivatelyControlledDomain))
-        return;
-
-    if (addResult.isNewEntry)
-        addResult.iterator->value = HashSet<String> { topFrameTopPrivatelyControlledDomain };
-    else
-        m_storageAccessMap.get(subFrameTopPrivatelyControlledDomain).add(topFrameTopPrivatelyControlledDomain);
-
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(subFrameTopPrivatelyControlledDomain);
-    statistics.storageAccessUnderTopFrameOrigins.add(topFrameTopPrivatelyControlledDomain);
-    m_notificationTimer.stop();
-    notifyObserver();
-}
-
 ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {
     auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {

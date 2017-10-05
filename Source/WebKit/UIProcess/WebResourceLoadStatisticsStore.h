@@ -78,6 +78,7 @@ public:
     void setShouldSubmitTelemetry(bool value) { m_parameters.shouldSubmitTelemetry = value; }
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);

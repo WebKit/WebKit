@@ -7,6 +7,19 @@
         description("Tests that cross-origin iframe storage access is denied if the iframe is not sandboxed.");
         jsTestIsAsync = true;
 
+        window.addEventListener("message", receiveMessage, false);
+
+        function receiveMessage(event) {
+            if (event.origin === "http://localhost:8000") {
+                if (event.data.indexOf("PASS ") !== -1)
+                    testPassed(event.data.replace("PASS ", ""));
+                else
+                    testFailed(event.data);
+            } else
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+            finishJSTest();
+        }
+
         function activateElement(elementId) {
             var element = document.getElementById(elementId);
             var centerX = element.offsetLeft + element.offsetWidth / 2;
@@ -15,8 +28,11 @@
                 function () {
                     if (window.eventSender)
                         eventSender.keyDown("escape");
+                    else {
+                        testFailed("No eventSender.");
                         finishJSTest();
-                    },
+                    }
+                },
                 function () {
                     testFailed("Promise rejected.");
                     finishJSTest();

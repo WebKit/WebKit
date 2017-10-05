@@ -132,6 +132,8 @@ public:
 
     void enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback);
 
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback);
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Configuration, PAL::SessionID);

@@ -7277,31 +7277,31 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
     
     if (m_hasStorageAccess) {
-        promise->resolve<IDLBoolean>(true);
+        promise->resolve();
         return;
     }
     
     if (!m_frame || securityOrigin().isUnique()) {
-        promise->resolve<IDLBoolean>(false);
+        promise->reject();
         return;
     }
     
     if (m_frame->isMainFrame()) {
         m_hasStorageAccess = true;
-        promise->resolve<IDLBoolean>(true);
+        promise->resolve();
         return;
     }
     
     // There has to be a sandbox and it has to allow the storage access API to be called.
     if (sandboxFlags() == SandboxNone || isSandboxed(SandboxStorageAccessByUserActivation)) {
-        promise->resolve<IDLBoolean>(false);
+        promise->reject();
         return;
     }
 
     // The iframe has to be a direct child of the top document.
     auto& topDocument = this->topDocument();
     if (&topDocument != parentDocument()) {
-        promise->resolve<IDLBoolean>(false);
+        promise->reject();
         return;
     }
 
@@ -7309,33 +7309,41 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     auto& topSecurityOrigin = topDocument.securityOrigin();
     if (securityOrigin.equal(&topSecurityOrigin)) {
         m_hasStorageAccess = true;
-        promise->resolve<IDLBoolean>(true);
+        promise->resolve();
         return;
     }
     
     if (!UserGestureIndicator::processingUserGesture()) {
-        promise->resolve<IDLBoolean>(false);
+        promise->reject();
         return;
     }
     
-    auto partitionDomain = securityOrigin.domainForCachePartition();
-    auto topPartitionDomain = topSecurityOrigin.domainForCachePartition();
+    auto iframeHost = securityOrigin.host();
+    auto topHost = topSecurityOrigin.host();
     StringBuilder builder;
     builder.appendLiteral("Do you want to use your ");
-    builder.append(partitionDomain);
+    builder.append(iframeHost);
     builder.appendLiteral(" ID on ");
-    builder.append(topPartitionDomain);
+    builder.append(topHost);
     builder.appendLiteral("?");
     Page* page = this->page();
     // FIXME: Don't use runJavaScriptConfirm because it responds synchronously.
     if ((page && page->chrome().runJavaScriptConfirm(*m_frame, builder.toString())) || m_grantStorageAccessOverride) {
-        m_hasStorageAccess = true;
-        ResourceLoadObserver::shared().registerStorageAccess(partitionDomain, topPartitionDomain);
-        promise->resolve<IDLBoolean>(true);
+        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool wasGranted) {
+            Document* document = documentReference.get();
+            if (!document)
+                return;
+
+            if (wasGranted) {
+                document->m_hasStorageAccess = true;
+                promise->resolve();
+            } else
+                promise->reject();
+        });
         return;
     }
     
-    promise->resolve<IDLBoolean>(false);
+    promise->reject();
 }
 
 void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)

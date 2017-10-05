@@ -1367,6 +1367,16 @@ void WebsiteDataStore::removePendingCookie(const WebCore::Cookie& cookie)
     m_pendingCookies.remove(cookie);
 }
 
+void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback)
+{
+    if (!resourceLoadStatisticsEnabled()) {
+        callback(false);
+        return;
+    }
+
+    m_resourceLoadStatistics->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), WTFMove(callback));
+}
+
 #if !PLATFORM(COCOA)
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {

@@ -1,3 +1,30 @@
+2017-10-05  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Web process should ask UI process for grant/deny
+        https://bugs.webkit.org/show_bug.cgi?id=176941
+        <rdar://problem/34440036>
+
+        Reviewed by Chris Dumez and Sam Weinig.
+
+        Tests: http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe.html
+               http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html
+               http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html
+
+        This patch changes Document::requestStorageAccess() so that it
+        calls the ChromeClient instead of the ResourceLoadObserver to
+        request storage access on behalf of the iframe.
+        The patch also changes how the promise is used, from returning
+        a boolean to either resolving or rejecting to signal grant/deny
+        access respectively.
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestStorageAccess):
+        * dom/Document.idl:
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::registerStorageAccess): Deleted.
+        * loader/ResourceLoadObserver.h:
+        * page/ChromeClient.h:
+
 2017-10-05  Brian Burg  <bburg@apple.com>
 
         Web Inspector: EventLoop::cycle() should not send nil NSEvents

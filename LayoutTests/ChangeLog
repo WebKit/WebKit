@@ -1,3 +1,50 @@
+2017-10-05  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Web process should ask UI process for grant/deny
+        https://bugs.webkit.org/show_bug.cgi?id=176941
+        <rdar://problem/34440036>
+
+        Reviewed by Chris Dumez and Sam Weinig.
+
+        The iframes now communicate the results back to the top frame through postMessage.
+        Also, denied access results in a rejected promise which is handled in these
+        changed test cases.
+ 
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe.html:
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-iframe-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-iframe.html: Removed.
+            Renamed to request-and-grant-storage-access-cross-origin-non-sandboxed-iframe.html.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe.html: Added.
+            See comment above on renaming.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html: Added.
+            Two new test cases added for the new logic in WebKit::WebResourceLoadStatisticsStore.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin-expected.txt:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token-expected.txt:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe-expected.txt:
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token-expected.txt:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-storage-access-top-frame-expected.txt:
+        * http/tests/storageAccess/request-storage-access-top-frame.html:
+        * http/tests/storageAccess/resources/request-storage-access-iframe.html:
+        * platform/mac-wk2/TestExpectations:
+            Added the new tests as [ Pass ].
+
 2017-10-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderSVGRoot should check the renderers inside its visualOverflowRect for hit testing if the overflow is visible

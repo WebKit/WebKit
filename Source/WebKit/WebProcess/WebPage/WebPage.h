@@ -994,6 +994,9 @@ public:
     void sendPartialEditorStateAndSchedulePostLayoutUpdate();
     void flushPendingEditorStateUpdate();
 
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback);
+    void storageAccessResponse(bool wasGranted, uint64_t contextId);
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1588,6 +1591,8 @@ private:
 
     HashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;
+
+    HashMap<uint64_t, WTF::Function<void (bool granted)>> m_storageAccessResponseCallbackMap;
 };
 
 } // namespace WebKit

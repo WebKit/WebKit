@@ -191,7 +191,7 @@ typedef (
 
     // Non standard, to bring up with standards working group.
     [EnabledBySetting=StorageAccessAPI] readonly attribute boolean hasStorageAccess;
-    [EnabledBySetting=StorageAccessAPI] Promise<boolean> requestStorageAccess();
+    [EnabledBySetting=StorageAccessAPI] Promise<void> requestStorageAccess();
 
     // Obsolete features from https://html.spec.whatwg.org/multipage/obsolete.html
 

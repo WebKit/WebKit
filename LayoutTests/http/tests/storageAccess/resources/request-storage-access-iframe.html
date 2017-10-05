@@ -12,28 +12,34 @@
 
         function storageAccessShouldBeFalse() {
             if (document.hasStorageAccess)
-                console.log("FAIL document.hasStorageAccess was true when it was not supposed to.");
-            if (requestStorageAccessReturnValue)
-                console.log("FAIL requestStorageAccessReturnValue was true when it was not supposed to.");
+                top.postMessage("FAIL document.hasStorageAccess was true when it was not supposed to.", "http://127.0.0.1:8000");
+            if (requestStorageAccessResolved)
+                top.postMessage("FAIL requestStorageAccessResolved was true when it was not supposed to.", "http://127.0.0.1:8000");
         }
 
         function storageAccessShouldBeTrue() {
             if (!document.hasStorageAccess)
-                console.log("FAIL document.hasStorageAccess was false when it was not supposed to.");
-            if (!requestStorageAccessReturnValue)
-                console.log("FAIL requestStorageAccessReturnValue was false when it was not supposed to.");
+                top.postMessage("FAIL document.hasStorageAccess was false when it was not supposed to.", "http://127.0.0.1:8000");
+            if (!requestStorageAccessResolved)
+                top.postMessage("FAIL requestStorageAccessResolved was false when it was not supposed to.", "http://127.0.0.1:8000");
         }
 
-        var requestStorageAccessReturnValue;
+        var requestStorageAccessResolved;
 
         function makeRequestWithoutUserGesture() {
             storageAccessShouldBeFalse();
 
             var promise = document.requestStorageAccess();
-            promise.then(function (hasAccess) {
-                requestStorageAccessReturnValue = hasAccess;
-                continueAfterRequestWithoutUserGesture();
-            });
+            promise.then(
+                function () {
+                    requestStorageAccessResolved = true;
+                    continueAfterRequestWithoutUserGesture();
+                },
+                function () {
+                    requestStorageAccessResolved = false;
+                    continueAfterRequestWithoutUserGesture();
+                }
+            );
         }
 
         function continueAfterRequestWithoutUserGesture() {
@@ -50,30 +56,36 @@
                 storageAccessShouldBeFalse();
 
             var promise = document.requestStorageAccess();
-            promise.then(function (hasAccess) {
-                requestStorageAccessReturnValue = hasAccess;
-                continueAfterRequestWithUserGesture();
-            });
+            promise.then(
+                function () {
+                    requestStorageAccessResolved = true;
+                    continueAfterRequestWithUserGesture();
+                },
+                function () {
+                    requestStorageAccessResolved = false;
+                    continueAfterRequestWithUserGesture();
+                }
+            );
         }
 
         function continueAfterRequestWithUserGesture() {
-            if (requestStorageAccessReturnValue
+            if (requestStorageAccessResolved
                 && document.hasStorageAccess
                 && (userShouldGrantAccess || !userShouldBeConsulted)
                 && policyShouldGrantAccess)
-                console.log("PASS document.hasStorageAccess was granted.");
+                top.postMessage("PASS document.hasStorageAccess was granted.", "http://127.0.0.1:8000");
             else if (!document.hasStorageAccess
-                    && !requestStorageAccessReturnValue
+                    && !requestStorageAccessResolved
                     && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess))
-                console.log("PASS document.hasStorageAccess was denied.");
+                top.postMessage("PASS document.hasStorageAccess was denied.", "http://127.0.0.1:8000");
             else
-                console.log("FAIL document.hasStorageAccess was " +
+                top.postMessage("FAIL document.hasStorageAccess was " +
                     (document.hasStorageAccess ? "" : "not ") +
-                    "granted and requestStorageAccessReturnValue was " +
-                    (requestStorageAccessReturnValue ? "" : "not ") +
+                    "granted and requestStorageAccessResolved was " +
+                    (requestStorageAccessResolved ? "" : "not ") +
                     "granted but should " +
                     (userShouldGrantAccess && policyShouldGrantAccess ? "" : "not ") +
-                    "have been granted.");
+                    "have been granted.", "http://127.0.0.1:8000");
         }
     </script>
 </head>

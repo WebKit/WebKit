@@ -12,36 +12,55 @@
         var centerX = element.offsetLeft + element.offsetWidth / 2;
         var centerY = element.offsetTop + element.offsetHeight / 2;
         UIHelper.activateAt(centerX, centerY).then(
-            function() { },
-            function() {
+            function () {
+            },
+            function () {
                 testFailed("Promise rejected.");
                 finishJSTest();
             }
         );
     }
 
-    var requestStorageAccessReturnValue;
+    var requestStorageAccessResolved;
 
     function makeRequestWithoutUserGesture() {
-        document.requestStorageAccess();
         var promise = document.requestStorageAccess();
-        promise.then(function (hasAccess) {
-            requestStorageAccessReturnValue = hasAccess;
-            shouldBe("requestStorageAccessReturnValue", "true");
-            shouldBe("document.hasStorageAccess", "true");
-            activateElement("theButton");
-        });
+        promise.then(
+            function () {
+                requestStorageAccessResolved = true;
+                continueAfterRequestWithoutUserGesture();
+            },
+            function () {
+                requestStorageAccessResolved = false;
+                continueAfterRequestWithoutUserGesture();
+            }
+        );
+    }
+
+    function continueAfterRequestWithoutUserGesture() {
+        shouldBe("requestStorageAccessResolved", "true");
+        shouldBe("document.hasStorageAccess", "true");
+        activateElement("theButton");
     }
 
     function makeRequestWithUserGesture() {
-        document.requestStorageAccess();
         var promise = document.requestStorageAccess();
-        promise.then(function (hasAccess) {
-            requestStorageAccessReturnValue = hasAccess;
-            shouldBe("requestStorageAccessReturnValue", "true");
-            shouldBe("document.hasStorageAccess", "true");
-            finishJSTest();
-        });
+        promise.then(
+            function () {
+                requestStorageAccessResolved = true;
+                continueAfterRequestWithUserGesture();
+            },
+            function () {
+                requestStorageAccessResolved = false;
+                continueAfterRequestWithUserGesture();
+            }
+        );
+    }
+
+    function continueAfterRequestWithUserGesture() {
+        shouldBe("requestStorageAccessResolved", "true");
+        shouldBe("document.hasStorageAccess", "true");
+        finishJSTest();
     }
 
     function runTest() {

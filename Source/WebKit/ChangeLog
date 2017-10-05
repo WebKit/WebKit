@@ -1,3 +1,41 @@
+2017-10-05  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Web process should ask UI process for grant/deny
+        https://bugs.webkit.org/show_bug.cgi?id=176941
+        <rdar://problem/34440036>
+
+        Reviewed by Chris Dumez and Sam Weinig.
+
+        This patch adds infrastructure to let WebCore::Document call
+        WebKit::WebResourceLoadStatisticsStore and ask for storage
+        access on behalf of an iframe. The communication goes through
+        the ChromeClient since we might want to add a native prompt.
+        From the ChromeClient it continues to the WebPage which
+        messages the WebPageProxy. The WebPageProxy calls the
+        WebsiteDataStore which owns the WebResourceLoadStatisticsStore.
+        A uint64_t is used to match the right callback with the boolean
+        result.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestStorageAccess):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::nextRequestStorageAccessContextId):
+        (WebKit::WebPage::requestStorageAccess):
+        (WebKit::WebPage::storageAccessResponse):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-10-05  Chris Dumez  <cdumez@apple.com>
 
         Drop unused parameters for CookiesStrategy::cookiesEnabled()

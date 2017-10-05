@@ -7074,4 +7074,11 @@ void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskId
     iterator->value->stopTask(*this, taskIdentifier);
 }
 
+void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t webProcessContextId)
+{
+    m_websiteDataStore->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), [this, webProcessContextId] (bool wasGranted) {
+        m_process->send(Messages::WebPage::StorageAccessResponse(wasGranted, webProcessContextId), m_pageID);
+    });
+}
+
 } // namespace WebKit

@@ -1223,4 +1223,9 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
     m_page.findController().didInvalidateDocumentMarkerRects();
 }
 
+void WebChromeClient::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback)
+{
+    m_page.requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), WTFMove(callback));
+}
+
 } // namespace WebKit
