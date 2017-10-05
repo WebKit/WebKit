@@ -378,6 +378,17 @@ public:
             return fat()->isBeingWatched();
         return false;
     }
+
+    // We expose this because sometimes a client knows its about to start
+    // watching this InlineWatchpointSet, hence it'll become inflated regardless.
+    // Such clients may find it useful to have a WatchpointSet* pointer, for example,
+    // if they collect a Vector of WatchpointSet*.
+    WatchpointSet* inflate()
+    {
+        if (LIKELY(isFat()))
+            return fat();
+        return inflateSlow();
+    }
     
 private:
     static const uintptr_t IsThinFlag        = 1;
@@ -416,13 +427,6 @@ private:
     {
         ASSERT(isFat());
         return fat(m_data);
-    }
-    
-    WatchpointSet* inflate()
-    {
-        if (LIKELY(isFat()))
-            return fat();
-        return inflateSlow();
     }
     
     JS_EXPORT_PRIVATE WatchpointSet* inflateSlow();

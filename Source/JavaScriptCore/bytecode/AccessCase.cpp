@@ -136,14 +136,23 @@ Vector<WatchpointSet*, 2> AccessCase::commit(VM& vm, const Identifier& ident)
     RELEASE_ASSERT(m_state == Primordial || m_state == Committed);
 
     Vector<WatchpointSet*, 2> result;
+    Structure* structure = this->structure();
 
-    if ((structure() && structure()->needImpurePropertyWatchpoint())
+    if ((structure && structure->needImpurePropertyWatchpoint())
         || m_conditionSet.needImpurePropertyWatchpoint()
         || (m_polyProtoAccessChain && m_polyProtoAccessChain->needImpurePropertyWatchpoint()))
         result.append(vm.ensureWatchpointSetForImpureProperty(ident));
 
     if (additionalSet())
         result.append(additionalSet());
+
+    if (structure
+        && structure->hasRareData()
+        && structure->rareData()->hasSharedPolyProtoWatchpoint()
+        && structure->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
+        WatchpointSet* set = structure->rareData()->sharedPolyProtoWatchpoint()->inflate();
+        result.append(set);
+    }
 
     m_state = Committed;
 

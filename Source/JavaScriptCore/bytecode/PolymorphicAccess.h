@@ -53,12 +53,13 @@ public:
         Buffered,
         GeneratedNewCode,
         GeneratedFinalCode, // Generated so much code that we never want to generate code again.
-        ResetStub // We found out some data that makes us want to start over fresh with this stub. Currently, this happens when we detect poly proto.
+        ResetStubAndFireWatchpoints // We found out some data that makes us want to start over fresh with this stub. Currently, this happens when we detect poly proto.
     };
     
-    AccessGenerationResult()
-    {
-    }
+
+    AccessGenerationResult() = default;
+    AccessGenerationResult(AccessGenerationResult&&) = default;
+    AccessGenerationResult& operator=(AccessGenerationResult&&) = default;
     
     AccessGenerationResult(Kind kind)
         : m_kind(kind)
@@ -99,7 +100,7 @@ public:
     bool buffered() const { return m_kind == Buffered; }
     bool generatedNewCode() const { return m_kind == GeneratedNewCode; }
     bool generatedFinalCode() const { return m_kind == GeneratedFinalCode; }
-    bool shouldResetStub() const { return m_kind == ResetStub; }
+    bool shouldResetStubAndFireWatchpoints() const { return m_kind == ResetStubAndFireWatchpoints; }
     
     // If we gave up on this attempt to generate code, or if we generated the "final" code, then we
     // should give up after this.
@@ -108,10 +109,22 @@ public:
     bool generatedSomeCode() const { return generatedNewCode() || generatedFinalCode(); }
     
     void dump(PrintStream&) const;
+
+    void addWatchpointToFire(InlineWatchpointSet& set, StringFireDetail detail)
+    {
+        m_watchpointsToFire.append(std::pair<InlineWatchpointSet&, StringFireDetail>(set, detail));
+    }
+    void fireWatchpoints(VM& vm)
+    {
+        ASSERT(m_kind == ResetStubAndFireWatchpoints);
+        for (auto& pair : m_watchpointsToFire)
+            pair.first.invalidate(vm, pair.second);
+    }
     
 private:
     Kind m_kind;
     MacroAssemblerCodePtr m_code;
+    Vector<std::pair<InlineWatchpointSet&, StringFireDetail>> m_watchpointsToFire;
 };
 
 class PolymorphicAccess {

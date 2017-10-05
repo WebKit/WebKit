@@ -259,19 +259,18 @@ AccessGenerationResult PolymorphicAccess::addCases(
         return AccessGenerationResult::MadeNoChanges;
 
     bool shouldReset = false;
+    AccessGenerationResult resetResult(AccessGenerationResult::ResetStubAndFireWatchpoints);
     auto considerPolyProtoReset = [&] (Structure* a, Structure* b) {
         if (Structure::shouldConvertToPolyProto(a, b)) {
             // For now, we only reset if this is our first time invalidating this watchpoint.
-            // FIXME: We should probably have all that can watch for the poly proto
-            // watchpoint do it. This will allow stubs to clear out their non-poly-proto
-            // IC cases. This is likely to be faster if you build up a bunch of ICs, then
-            // trigger poly proto, then only access poly proto objects. If we do this, we'll
-            // need this code below to delay firing the watchpoint since it might cause
-            // us to deallocate ourselves:
-            // https://bugs.webkit.org/show_bug.cgi?id=177765
+            // The reason we don't immediately fire this watchpoint is that we may be already
+            // watching the poly proto watchpoint, which if fired, would destroy us. We let
+            // the person handling the result to do a delayed fire.
             ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-            shouldReset |= a->rareData()->sharedPolyProtoWatchpoint()->hasBeenInvalidated(); 
-            a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto optimization opportunity."));
+            if (a->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
+                shouldReset = true;
+                resetResult.addWatchpointToFire(*a->rareData()->sharedPolyProtoWatchpoint(), StringFireDetail("Detected poly proto optimization opportunity."));
+            }
         }
     };
 
@@ -291,7 +290,7 @@ AccessGenerationResult PolymorphicAccess::addCases(
     }
 
     if (shouldReset)
-        return AccessGenerationResult::ResetStub;
+        return resetResult;
 
     // Now add things to the new list. Note that at this point, we will still have old cases that
     // may be replaced by the new ones. That's fine. We will sort that out when we regenerate.
@@ -625,8 +624,8 @@ void printInternal(PrintStream& out, AccessGenerationResult::Kind kind)
     case AccessGenerationResult::GeneratedFinalCode:
         out.print("GeneratedFinalCode");
         return;
-    case AccessGenerationResult::ResetStub:
-        out.print("ResetStub");
+    case AccessGenerationResult::ResetStubAndFireWatchpoints:
+        out.print("ResetStubAndFireWatchpoints");
         return;
     }
     

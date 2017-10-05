@@ -1,3 +1,50 @@
+2017-10-04  Saam Barati  <sbarati@apple.com>
+
+        Make pertinent AccessCases watch the poly proto watchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=177765
+
+        Reviewed by Keith Miller.
+
+        This patch makes it so that stubs that encounter a structure with a
+        valid poly proto watchpoint will watch the poly proto watchpoint. This
+        ensures that if the watchpoint is fired, the stub will be cleared
+        and have a chance to regenerate. In an ideal world, this will lead
+        to the stub generating better code since it may never encounter the
+        non-poly proto structure again.
+        
+        This patch also fixes a bug in the original poly proto code where
+        I accidentally had a condition inverted. The bad code caused a
+        stub that continually cached two structures which are structurally
+        equivalent but with different prototype objects to always clear itself.
+        The code should have been written differently. It should have only
+        cleared if the poly proto watchpoint *was not* fired. The code
+        accidentally cleared only if stub *was* fired.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::commit):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::addCases):
+        (WTF::printInternal):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationResult::shouldResetStubAndFireWatchpoints const):
+        (JSC::AccessGenerationResult::addWatchpointToFire):
+        (JSC::AccessGenerationResult::fireWatchpoints):
+        (JSC::AccessGenerationResult::shouldResetStub const): Deleted.
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        * bytecode/Watchpoint.h:
+        (JSC::InlineWatchpointSet::inflate):
+        * jit/Repatch.cpp:
+        (JSC::fireWatchpointsAndClearStubIfNeeded):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryCacheIn):
+        (JSC::repatchIn):
+        (JSC::tryRepatchIn): Deleted.
+
 2017-10-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Improve CanvasManager recording events

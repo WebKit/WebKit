@@ -1,3 +1,20 @@
+2017-10-04  Saam Barati  <sbarati@apple.com>
+
+        Make pertinent AccessCases watch the poly proto watchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=177765
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/poly-proto-and-non-poly-proto-same-ic.js: Added.
+        (assert):
+        (foo.C):
+        (foo):
+        (validate):
+        * stress/poly-proto-clear-stub.js: Added.
+        (assert):
+        (foo.C):
+        (foo):
+
 2017-10-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove failure expectation for async-func-decl-dstr-obj-id-put-unresolvable-no-strict.js.
