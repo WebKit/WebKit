@@ -116,7 +116,6 @@ static void updateFirstLetterStyle(RenderElement& firstLetterBlock, RenderObject
         newFirstLetter->initializeStyle();
 
         // Move the first letter into the new renderer.
-        LayoutStateDisabler layoutStateDisabler(firstLetterBlock.view());
         while (RenderObject* child = firstLetter->firstChild()) {
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();

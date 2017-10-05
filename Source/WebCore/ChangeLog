@@ -1,3 +1,17 @@
+2017-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant LayoutStateDisabler from RenderTreeUpdaterFirstLetter
+        https://bugs.webkit.org/show_bug.cgi?id=177946
+
+        Reviewed by Simon Fraser.
+
+        First letter is updated prior to layout.
+
+        Covered by existing tests.
+
+        * style/RenderTreeUpdaterFirstLetter.cpp:
+        (WebCore::updateFirstLetterStyle):
+
 2017-10-05  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Factor out ApplePaySession's interface to PaymentCoordinator into a base class
