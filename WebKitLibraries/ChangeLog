@@ -1,3 +1,18 @@
+2017-10-05  Darin Adler  <darin@apple.com>
+
+        Remove additional WebKitSystemInterface remnants
+        https://bugs.webkit.org/show_bug.cgi?id=177948
+
+        Reviewed by Andy Estes.
+
+        * libWebKitSystemInterfaceElCapitan.a: Removed.
+        * libWebKitSystemInterfaceIOSDevice10.a: Removed.
+        * libWebKitSystemInterfaceIOSDevice11.a: Removed.
+        * libWebKitSystemInterfaceIOSSimulator10.a: Removed.
+        * libWebKitSystemInterfaceIOSSimulator11.a: Removed.
+        * libWebKitSystemInterfaceOSX10.12.a: Removed.
+        * libWebKitSystemInterfaceOSX10.13.a: Removed.
+
 2017-07-05  Jonathan Bedard  <jbedard@apple.com>
 
         Add WebKitPrivateFrameworkStubs for iOS 11

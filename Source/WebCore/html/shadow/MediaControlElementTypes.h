@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-// Must match WebKitSystemInterface.h
 enum MediaControlElementType {
     MediaEnterFullscreenButton = 0,
     MediaMuteButton,

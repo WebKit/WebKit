@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
   --help                        Show this help message
-  --[no-]wksi                   Toggle copying WebKitSystemInterface drops (default: $wksi)
+  --[no-]wksi                   Obsolete. Does nothing. Remove once we are sure nobody passes this option any more.
   --clean                       Clean the libraries (default: $clean)
   --[no-]use-full-lib-paths     Toggle using full library paths
   --sdk=<sdk>                   Use a specific Xcode SDK
@@ -120,45 +120,7 @@ sub dittoHeaders
 
 if ($clean) {
     print "Cleaning.\n";    
-    (system("rm", "-rf", File::Spec->catfile($productDir, "usr", "local", "include", "WebKitSystemInterface.h")) == 0) or die;
-    unlink glob "$productDir/libWebKitSystemInterface*" or die if glob "$productDir/libWebKitSystemInterface*";
-    unlink glob "$productDir/usr/local/lib/libWebKitSystemInterface*" or die if glob "$productDir/usr/local/lib/libWebKitSystemInterface*";
     unlink glob "$productDir/libLTO*" or die if glob "$productDir/libLTO*";
-}
-
-if ($wksi) {
-    (system("mkdir", "-p", "$productDir/usr/local/include") == 0) or die;
-    
-    my $libraryDir = $useFullLibPaths ? "$productDir/usr/local/lib" : $productDir;
-    (system("mkdir", "-p", $libraryDir) == 0) or die;
-
-    my @librariesToCopy;
-    if (isIOSWebKit()) {
-        push(@librariesToCopy, (
-            "libWebKitSystemInterfaceIOSDevice10.a",
-            "libWebKitSystemInterfaceIOSSimulator10.a",
-            "libWebKitSystemInterfaceIOSDevice11.a",
-            "libWebKitSystemInterfaceIOSSimulator11.a",
-        ));
-    } else {
-        push(@librariesToCopy, (
-            "libWebKitSystemInterfaceElCapitan.a",
-            "libWebKitSystemInterfaceOSX10.12.a",
-            "libWebKitSystemInterfaceOSX10.13.a"
-        ));
-    }
-
-    foreach my $libraryName (@librariesToCopy) {
-        my $sourceLibrary = "WebKitLibraries/" . $libraryName;
-        my $targetLibrary = "$libraryDir/" . $libraryName;
-        if ($force || !-e $targetLibrary || -M $targetLibrary > -M $sourceLibrary) {
-            print "Updating $targetLibrary\n";
-            (system("ditto", $sourceLibrary, $targetLibrary) == 0) or die;
-            executeRanlib($targetLibrary);
-        }
-    }
-    
-    dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
 }
 
 sub fileContains

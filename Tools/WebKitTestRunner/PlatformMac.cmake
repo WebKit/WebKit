@@ -5,18 +5,10 @@ find_library(CORESERVICES_LIBRARY CoreServices)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${CORESERVICES_LIBRARY}/Versions/Current/Frameworks)
 
-if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
-elif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
-else ()
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
-endif ()
 link_directories(../../WebKitLibraries)
 
 list(APPEND WebKitTestRunner_LIBRARIES
     ${CARBON_LIBRARY}
-    ${WEBKITSYSTEMINTERFACE_LIBRARY}
 )
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES

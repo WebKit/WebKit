@@ -1,11 +1,3 @@
-if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
-    set(WEBKITSYSTEMINTERFACE_LIBRARY ${CMAKE_SOURCE_DIR}/WebKitLibraries/libWebKitSystemInterfaceMavericks.a)
-elseif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
-    set(WEBKITSYSTEMINTERFACE_LIBRARY ${CMAKE_SOURCE_DIR}/WebKitLibraries/libWebKitSystemInterfaceYosemite.a)
-else ()
-    set(WEBKITSYSTEMINTERFACE_LIBRARY ${CMAKE_SOURCE_DIR}/WebKitLibraries/libWebKitSystemInterfaceElCapitan.a)
-endif ()
-
 find_library(ACCELERATE_LIBRARY accelerate)
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
@@ -49,7 +41,6 @@ list(APPEND WebCore_LIBRARIES
     ${SECURITY_LIBRARY}
     ${SQLITE_LIBRARIES}
     ${SYSTEMCONFIGURATION_LIBRARY}
-    ${WEBKITSYSTEMINTERFACE_LIBRARY}
     ${XML2_LIBRARY}
     ${ZLIB_LIBRARY}
 )

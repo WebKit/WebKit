@@ -1,3 +1,23 @@
+2017-10-05  Darin Adler  <darin@apple.com>
+
+        Remove additional WebKitSystemInterface remnants
+        https://bugs.webkit.org/show_bug.cgi?id=177948
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/PlatformMac.cmake: Removed code to link the
+        WebKitSystemInterface library. Left in code that points to
+        the WebKitLibraries directory, but maybe that can be removed by
+        someone who is more certain it's no longer needed.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: Removed code
+        to copy and delete WebKitSystemInterface libraries and headers.
+
+        * WebKitTestRunner/PlatformMac.cmake: Removed code to link the
+        WebKitSystemInterface library. Left in code that points to
+        the WebKitLibraries directory, but maybe that can be removed by
+        someone who is more certain it's no longer needed.
+
 2017-10-05  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Try to make debug type profiler tests stop timing out.
