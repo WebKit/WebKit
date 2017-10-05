@@ -1,3 +1,18 @@
+2017-10-04  Filip Pizlo  <fpizlo@apple.com>
+
+        bmalloc mutex should be adaptive
+        https://bugs.webkit.org/show_bug.cgi?id=177839
+
+        Reviewed by Michael Saboff.
+        
+        Add some comments that I thought of while copy-pasting this code.
+
+        Reland after fixing ancient WordLock bug: the notify_one has to happen with the lock held
+        to ensure it doesn't run after that thread has died.
+
+        * wtf/LockAlgorithmInlines.h:
+        * wtf/WordLock.cpp:
+
 2017-10-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Generate a compile error if release is built without compiler optimizations
