@@ -27,7 +27,7 @@
 #include <memory>
 #include <utility>
 
-#include "./decode.h"
+#include "./brotli/decode.h"
 #include "./buffer.h"
 #include "./port.h"
 #include "./round.h"
@@ -411,6 +411,14 @@ bool ReconstructGlyf(const uint8_t* data, Table* glyf_table,
     return FONT_COMPRESSION_FAILURE();
   }
 
+  // https://dev.w3.org/webfonts/WOFF2/spec/#conform-mustRejectLoca
+  // dst_length here is origLength in the spec
+  uint32_t expected_loca_dst_length = (info->index_format ? 4 : 2)
+    * (static_cast<uint32_t>(info->num_glyphs) + 1);
+  if (PREDICT_FALSE(loca_table->dst_length != expected_loca_dst_length)) {
+    return FONT_COMPRESSION_FAILURE();
+  }
+
   unsigned int offset = (2 + kNumSubStreams) * 4;
   if (PREDICT_FALSE(offset > glyf_table->transform_length)) {
     return FONT_COMPRESSION_FAILURE();
@@ -592,6 +600,14 @@ bool ReconstructGlyf(const uint8_t* data, Table* glyf_table,
             instruction_size, glyph_buf.get(), glyph_buf_size, &glyph_size))) {
         return FONT_COMPRESSION_FAILURE();
       }
+    } else {
+      // n_contours == 0; empty glyph. Must NOT have a bbox.
+      if (PREDICT_FALSE(have_bbox)) {
+#ifdef FONT_COMPRESSION_BIN
+        fprintf(stderr, "Empty glyph has a bbox\n");
+#endif
+        return FONT_COMPRESSION_FAILURE();
+      }
     }
 
     loca_values[i] = out->Size() - glyf_start;
@@ -669,6 +685,14 @@ bool ReconstructTransformedHmtx(const uint8_t* transformed_buf,
   bool has_proportional_lsbs = (hmtx_flags & 1) == 0;
   bool has_monospace_lsbs = (hmtx_flags & 2) == 0;
 
+  // Bits 2-7 are reserved and MUST be zero.
+  if ((hmtx_flags & 0xFC) != 0) {
+#ifdef FONT_COMPRESSION_BIN
+    fprintf(stderr, "Illegal hmtx flags; bits 2-7 must be 0\n");
+#endif
+    return FONT_COMPRESSION_FAILURE();
+  }
+
   // you say you transformed but there is little evidence of it
   if (has_proportional_lsbs && has_monospace_lsbs) {
     return FONT_COMPRESSION_FAILURE();
@@ -742,9 +766,10 @@ bool ReconstructTransformedHmtx(const uint8_t* transformed_buf,
 bool Woff2Uncompress(uint8_t* dst_buf, size_t dst_size,
   const uint8_t* src_buf, size_t src_size) {
   size_t uncompressed_size = dst_size;
-  int ok = BrotliDecompressBuffer(src_size, src_buf,
-                                  &uncompressed_size, dst_buf);
-  if (PREDICT_FALSE(!ok || uncompressed_size != dst_size)) {
+  BrotliDecoderResult result = BrotliDecoderDecompress(
+      src_size, src_buf, &uncompressed_size, dst_buf);
+  if (PREDICT_FALSE(result != BROTLI_DECODER_RESULT_SUCCESS ||
+                    uncompressed_size != dst_size)) {
     return FONT_COMPRESSION_FAILURE();
   }
   return true;
@@ -875,9 +900,24 @@ bool ReconstructFont(uint8_t* transformed_buf,
   std::vector<Table*> tables = Tables(hdr, font_index);
 
   // 'glyf' without 'loca' doesn't make sense
-  if (PREDICT_FALSE(static_cast<bool>(FindTable(&tables, kGlyfTableTag)) !=
-                    static_cast<bool>(FindTable(&tables, kLocaTableTag)))) {
+  const Table* glyf_table = FindTable(&tables, kGlyfTableTag);
+  const Table* loca_table = FindTable(&tables, kLocaTableTag);
+  if (PREDICT_FALSE(static_cast<bool>(glyf_table) !=
+                    static_cast<bool>(loca_table))) {
+#ifdef FONT_COMPRESSION_BIN
+      fprintf(stderr, "Cannot have just one of glyf/loca\n");
+#endif
     return FONT_COMPRESSION_FAILURE();
+  }
+
+  if (glyf_table != NULL) {
+    if (PREDICT_FALSE((glyf_table->flags & kWoff2FlagsTransform)
+                      != (loca_table->flags & kWoff2FlagsTransform))) {
+#ifdef FONT_COMPRESSION_BIN
+      fprintf(stderr, "Cannot transform just one of glyf/loca\n");
+#endif
+      return FONT_COMPRESSION_FAILURE();
+    }
   }
 
   uint32_t font_checksum = metadata->header_checksum;
@@ -898,7 +938,7 @@ bool ReconstructFont(uint8_t* transformed_buf,
 
     // TODO(user) a collection with optimized hmtx that reused glyf/loca
     // would fail. We don't optimize hmtx for collections yet.
-    if (PREDICT_FALSE(static_cast<uint64_t>(table.src_offset + table.src_length)
+    if (PREDICT_FALSE(static_cast<uint64_t>(table.src_offset) + table.src_length
         > transformed_buf_size)) {
       return FONT_COMPRESSION_FAILURE();
     }
@@ -1099,8 +1139,9 @@ bool ReadWOFF2Header(const uint8_t* data, size_t length, WOFF2Header* hdr) {
 
       ttc_font.table_indices.resize(num_tables);
 
-      const Table* glyf_table = NULL;
-      const Table* loca_table = NULL;
+
+      unsigned int glyf_idx = 0;
+      unsigned int loca_idx = 0;
 
       for (uint32_t j = 0; j < num_tables; j++) {
         unsigned int table_idx;
@@ -1112,19 +1153,23 @@ bool ReadWOFF2Header(const uint8_t* data, size_t length, WOFF2Header* hdr) {
 
         const Table& table = hdr->tables[table_idx];
         if (table.tag == kLocaTableTag) {
-          loca_table = &table;
+          loca_idx = table_idx;
         }
         if (table.tag == kGlyfTableTag) {
-          glyf_table = &table;
+          glyf_idx = table_idx;
         }
 
       }
 
-      if (PREDICT_FALSE((glyf_table == NULL) != (loca_table == NULL))) {
+      // if we have both glyf and loca make sure they are consecutive
+      // if we have just one we'll reject the font elsewhere
+      if (glyf_idx > 0 || loca_idx > 0) {
+        if (PREDICT_FALSE(glyf_idx > loca_idx || loca_idx - glyf_idx != 1)) {
 #ifdef FONT_COMPRESSION_BIN
-        fprintf(stderr, "Cannot have just one of glyf/loca\n");
+        fprintf(stderr, "TTC font %d has non-consecutive glyf/loca\n", i);
 #endif
-        return FONT_COMPRESSION_FAILURE();
+          return FONT_COMPRESSION_FAILURE();
+        }
       }
     }
   }
@@ -1298,6 +1343,9 @@ bool ConvertWOFF2ToTTF(const uint8_t* data, size_t length,
 
   const uint8_t* src_buf = data + hdr.compressed_offset;
   std::vector<uint8_t> uncompressed_buf(hdr.uncompressed_size);
+  if (PREDICT_FALSE(hdr.uncompressed_size < 1)) {
+    return FONT_COMPRESSION_FAILURE();
+  }
   if (PREDICT_FALSE(!Woff2Uncompress(&uncompressed_buf[0],
                                      hdr.uncompressed_size, src_buf,
                                      hdr.compressed_length))) {

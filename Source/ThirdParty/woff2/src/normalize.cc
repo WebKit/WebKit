@@ -52,7 +52,7 @@ bool WriteNormalizedLoca(int index_fmt, int num_glyphs, Font* font) {
   loca_table->buffer.resize(Round4(num_glyphs + 1) * glyph_sz);
   loca_table->length = (num_glyphs + 1) * glyph_sz;
 
-  uint8_t* glyf_dst = &glyf_table->buffer[0];
+  uint8_t* glyf_dst = num_glyphs ? &glyf_table->buffer[0] : NULL;
   uint8_t* loca_dst = &loca_table->buffer[0];
   uint32_t glyf_offset = 0;
   size_t loca_offset = 0;
@@ -78,16 +78,13 @@ bool WriteNormalizedLoca(int index_fmt, int num_glyphs, Font* font) {
     }
     glyf_offset += glyf_dst_size;
   }
-  if (glyf_offset == 0) {
-    return false;
-  }
 
   StoreLoca(index_fmt, glyf_offset, &loca_offset, loca_dst);
 
   glyf_table->buffer.resize(glyf_offset);
-  glyf_table->data = &glyf_table->buffer[0];
+  glyf_table->data = glyf_offset ? &glyf_table->buffer[0] : NULL;
   glyf_table->length = glyf_offset;
-  loca_table->data = &loca_table->buffer[0];
+  loca_table->data = loca_offset ? &loca_table->buffer[0] : NULL;
 
   return true;
 }

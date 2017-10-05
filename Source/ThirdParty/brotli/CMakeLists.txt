@@ -1,13 +1,15 @@
 set(BROTLI_DIR "${THIRDPARTY_DIR}/brotli")
 
 set(BROTLI_INCLUDE_DIRECTORIES
+  "${BROTLI_DIR}/common"
   "${BROTLI_DIR}/dec"
+  "${BROTLI_DIR}/include"
 )
 
 set(BROTLI_SOURCES
+    ${BROTLI_DIR}/common/dictionary.c
     ${BROTLI_DIR}/dec/bit_reader.c
     ${BROTLI_DIR}/dec/decode.c
-    ${BROTLI_DIR}/dec/dictionary.c
     ${BROTLI_DIR}/dec/huffman.c
     ${BROTLI_DIR}/dec/state.c
 )

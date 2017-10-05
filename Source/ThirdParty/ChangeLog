@@ -1,3 +1,59 @@
+2017-10-05  Frederic Wang  <fwang@igalia.com>
+
+        Upgrade Brotli to version 1.0.1 and WOFF2 to latest upstream
+        https://bugs.webkit.org/show_bug.cgi?id=177768
+
+        Reviewed by Michael Catanzaro.
+
+        * brotli/CMakeLists.txt:
+        * brotli/README.webkit:
+        * brotli/common/constants.h: Added.
+        * brotli/common/dictionary.bin: Added.
+        * brotli/common/dictionary.c: Added.
+        * brotli/common/dictionary.h: Added.
+        * brotli/common/version.h: Added.
+        * brotli/dec/Makefile: Removed.
+        * brotli/dec/bit_reader.c:
+        * brotli/dec/bit_reader.h:
+        * brotli/dec/context.h:
+        * brotli/dec/decode.c:
+        * brotli/dec/decode.h: Removed.
+        * brotli/dec/dictionary.c: Removed.
+        * brotli/dec/dictionary.h: Removed.
+        * brotli/dec/huffman.c:
+        * brotli/dec/huffman.h:
+        * brotli/dec/port.h:
+        (BrotliDump):
+        (BrotliRBit):
+        * brotli/dec/prefix.h:
+        * brotli/dec/state.c:
+        * brotli/dec/state.h:
+        * brotli/dec/transform.h:
+        * brotli/dec/types.h: Removed.
+        * brotli/include/brotli/decode.h: Added.
+        * brotli/include/brotli/encode.h: Added.
+        * brotli/include/brotli/port.h: Added.
+        * brotli/include/brotli/types.h: Added.
+        * brotli/update.sh:
+        * woff2/CMakeLists.txt:
+        * woff2/README.webkit:
+        * woff2/src/buffer.h:
+        (woff2::Buffer::Buffer):
+        (woff2::Buffer::Read):
+        * woff2/src/convert_woff2ttf_*.cc: Added.
+        * woff2/src/font.cc:
+        * woff2/src/glyph.cc:
+        * woff2/src/normalize.cc:
+        * woff2/src/port.h:
+        * woff2/src/store_bytes.h:
+        (woff2::Store16):
+        * woff2/src/variable_length.cc:
+        * woff2/src/woff2_common.cc:
+        * woff2/src/woff2_dec.cc:
+        * woff2/src/woff2_decompress.cc:
+        * woff2/src/woff2_enc.cc:
+        * woff2/src/woff2_info.cc: Added.
+
 2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Properly test if compiler supports compiler flags

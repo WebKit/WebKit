@@ -65,8 +65,8 @@ inline bool Failure(const char *f, int l, const char *fn) {
 // -----------------------------------------------------------------------------
 class Buffer {
  public:
-  Buffer(const uint8_t *buffer, size_t len)
-      : buffer_(buffer),
+  Buffer(const uint8_t *data, size_t len)
+      : buffer_(data),
         length_(len),
         offset_(0) { }
 
@@ -74,7 +74,7 @@ class Buffer {
     return Read(NULL, n_bytes);
   }
 
-  bool Read(uint8_t *buffer, size_t n_bytes) {
+  bool Read(uint8_t *data, size_t n_bytes) {
     if (n_bytes > 1024 * 1024 * 1024) {
       return FONT_COMPRESSION_FAILURE();
     }
@@ -82,8 +82,8 @@ class Buffer {
         (offset_ > length_ - n_bytes)) {
       return FONT_COMPRESSION_FAILURE();
     }
-    if (buffer) {
-      std::memcpy(buffer, buffer_ + offset_, n_bytes);
+    if (data) {
+      std::memcpy(data, buffer_ + offset_, n_bytes);
     }
     offset_ += n_bytes;
     return true;
