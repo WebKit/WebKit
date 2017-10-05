@@ -1,3 +1,13 @@
+2017-10-05  Tim Horton  <timothy_horton@apple.com>
+
+        Make progress toward properly-formed XPC services in the Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=177918
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/WebKitMacros.cmake:
+        Add a macro wrapper around 'ln'.
+
 2017-10-03  Frederic Wang  <fwang@igalia.com>
 
         Remove Brotli from Source/ThirdParty

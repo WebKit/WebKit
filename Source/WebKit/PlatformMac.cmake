@@ -457,13 +457,14 @@ list(APPEND NetworkProcess_SOURCES
 )
 
 list(APPEND StorageProcess_SOURCES
-    DatabaseProcess/EntryPoint/mac/XPCService/StorageServiceEntryPoint.mm
+    StorageProcess/EntryPoint/mac/XPCService/StorageServiceEntryPoint.mm
     ${XPCService_SOURCES}
 )
 
 # FIXME: These should not have Development in production builds.
 set(WebKit_WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
 set(WebKit_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
+set(WebKit_StorageProcess_OUTPUT_NAME com.apple.WebKit.Storage.Development)
 
 add_definitions("-include WebKit2Prefix.h")
 
@@ -750,3 +751,48 @@ file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 
 set(WebKit_OUTPUT_NAME WebKit)
+
+# XPC Services
+
+function(WEBKIT_DEFINE_XPC_SERVICES)
+    set(WebKit_XPC_SERVICE_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/XPCServices)
+    WEBKIT_CREATE_SYMLINK(WebProcess ${WebKit_XPC_SERVICE_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices)
+
+    function(WEBKIT_XPC_SERVICE _target _bundle_identifier _info_plist _executable_name)
+        set(_service_dir ${WebKit_XPC_SERVICE_DIR}/${_bundle_identifier}.xpc/Contents)
+        make_directory(${_service_dir}/MacOS)
+        make_directory(${_service_dir}/_CodeSignature)
+        make_directory(${_service_dir}/Resources)
+
+        # FIXME: These version strings don't match Xcode's.
+        set(BUNDLE_VERSION ${WEBKIT_VERSION})
+        set(SHORT_VERSION_STRING ${WEBKIT_VERSION_MAJOR})
+        set(BUNDLE_VERSION ${WEBKIT_VERSION})
+        set(EXECUTABLE_NAME ${_executable_name})
+        set(PRODUCT_BUNDLE_IDENTIFIER ${_bundle_identifier})
+        set(PRODUCT_NAME ${_bundle_identifier})
+        configure_file(${_info_plist} ${_service_dir}/Info.plist)
+
+        set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${_service_dir}/MacOS")
+    endfunction()
+
+    WEBKIT_XPC_SERVICE(WebProcess
+        "com.apple.WebKit.WebContent"
+        ${WEBKIT_DIR}/WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist
+        ${WebKit_WebProcess_OUTPUT_NAME})
+
+    WEBKIT_XPC_SERVICE(NetworkProcess
+        "com.apple.WebKit.Networking"
+        ${WEBKIT_DIR}/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist
+        ${WebKit_NetworkProcess_OUTPUT_NAME})
+
+    WEBKIT_XPC_SERVICE(StorageProcess
+        "com.apple.WebKit.Storage"
+        ${WEBKIT_DIR}/StorageProcess/EntryPoint/mac/XPCService/StorageService/Info.plist
+        ${WebKit_StorageProcess_OUTPUT_NAME})
+
+    add_custom_target(WebContentProcessNib COMMAND
+        ibtool --compile ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib ${WEBKIT_DIR}/Resources/WebContentProcess.xib
+        VERBATIM)
+    add_dependencies(WebKit WebContentProcessNib)
+endfunction()

@@ -1,3 +1,20 @@
+2017-10-05  Tim Horton  <timothy_horton@apple.com>
+
+        Make progress toward properly-formed XPC services in the Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=177918
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        Turn on the storage process on Mac, and fix its build.
+        Move XPC services to Versions/A/XPCServices and add the toplevel
+        XPCServices as a symlink of that.
+        Run the XPC services' Info.plists through configure_file, and substitute
+        the important variables (most critically the bundle identifier).
+        Factor out the service setup so we don't keep duplicating it as it
+        gets more complicated.
+
 2017-10-05  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Add a payment method that supports Apple Pay

@@ -259,3 +259,10 @@ macro(WEBKIT_POPULATE_LIBRARY_VERSION library_name)
         set(${library_name}_VERSION ${PROJECT_VERSION})
     endif ()
 endmacro()
+
+macro(WEBKIT_CREATE_SYMLINK target src dest)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ln -sf ${src} ${dest}
+        DEPENDS ${dest}
+        COMMENT "Create symlink from ${src} to ${dest}")
+endmacro()
