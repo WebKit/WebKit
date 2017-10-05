@@ -37,6 +37,7 @@ public:
 
 private:
     static void createFragmentedFlow(RenderBlockFlow&);
+    static void destroyFragmentedFlow(RenderBlockFlow&);
 };
 
 }

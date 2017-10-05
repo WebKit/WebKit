@@ -43,22 +43,13 @@ public:
     RenderMultiColumnSet* firstMultiColumnSet() const;
     RenderMultiColumnSet* lastMultiColumnSet() const;
     RenderBox* firstColumnSetOrSpanner() const;
-    bool hasColumnSpanner() const { return !m_spannerMap.isEmpty(); }
+    bool hasColumnSpanner() const { return !m_spannerMap->isEmpty(); }
     static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
     static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
 
-    RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(RenderBox* spanner) const { return m_spannerMap.get(spanner).get(); }
+    RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(RenderBox* spanner) const { return m_spannerMap->get(spanner).get(); }
 
     void layout() override;
-
-    // Populate the flow thread with what's currently its siblings. Called when a regular block
-    // becomes a multicol container.
-    void populate();
-
-    // Empty the flow thread by moving everything to the parent. Remove all multicol specific
-    // renderers. Then destroy the flow thread. Called when a multicol container becomes a regular
-    // block.
-    void evacuateAndDestroy();
 
     unsigned columnCount() const { return m_columnCount; }
     LayoutUnit columnWidth() const { return m_columnWidth; }
@@ -105,6 +96,9 @@ public:
     // FIXME: Eventually as column and fragment flow threads start nesting, this will end up changing.
     bool shouldCheckColumnBreaks() const override;
 
+    typedef HashMap<RenderBox*, WeakPtr<RenderMultiColumnSpannerPlaceholder>> SpannerMap;
+    std::unique_ptr<SpannerMap> takeSpannerMap() { return WTFMove(m_spannerMap); }
+
 private:
     bool isRenderMultiColumnFlow() const override { return true; }
     const char* renderName() const override;
@@ -125,10 +119,11 @@ private:
 
     void handleSpannerRemoval(RenderObject& spanner);
     RenderObject* processPossibleSpannerDescendant(RenderObject*& subtreeRoot, RenderObject& descendant);
+
+    SpannerMap& spannerMap() { return *m_spannerMap; }
     
 private:
-    typedef HashMap<RenderBox*, WeakPtr<RenderMultiColumnSpannerPlaceholder>> SpannerMap;
-    SpannerMap m_spannerMap;
+    std::unique_ptr<SpannerMap> m_spannerMap;
 
     // The last set we worked on. It's not to be used as the "current set". The concept of a
     // "current set" is difficult, since layout may jump back and forth in the tree, due to wrong

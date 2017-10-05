@@ -1,3 +1,33 @@
+2017-10-05  Antti Koivisto  <antti@apple.com>
+
+        Move more multicolumn render tree mutation code to RenderTreeUpdater::MultiColumn
+        https://bugs.webkit.org/show_bug.cgi?id=177942
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::RenderMultiColumnFlow):
+
+            Use std::unique_ptr for the spanner map for safe owenership transfer.
+
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted):
+        (WebCore::RenderMultiColumnFlow::handleSpannerRemoval):
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowRelativeWillBeRemoved):
+        (WebCore::RenderMultiColumnFlow::populate): Deleted.
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy): Deleted.
+
+            This code moves to RenderTreeUpdater::MultiColumn.
+
+        * rendering/RenderMultiColumnFlow.h:
+        * style/RenderTreeUpdaterMultiColumn.cpp:
+        (WebCore::RenderTreeUpdater::MultiColumn::update):
+        (WebCore::RenderTreeUpdater::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeUpdater::MultiColumn::destroyFragmentedFlow):
+
+            Use Hyatt's preferred 'fragmented flow' terminology.
+
+        * style/RenderTreeUpdaterMultiColumn.h:
+
 2017-10-05  Darin Adler  <darin@apple.com>
 
         Remove additional WebKitSystemInterface remnants
