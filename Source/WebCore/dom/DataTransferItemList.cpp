@@ -91,7 +91,7 @@ RefPtr<DataTransferItem> DataTransferItemList::add(Ref<File>&& file)
 
     ensureItems().append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*this), file->type(), file.copyRef()));
     m_dataTransfer.didAddFileToItemList();
-    return RefPtr<DataTransferItem> { m_items->last().ptr() };
+    return m_items->last().ptr();
 }
 
 ExceptionOr<void> DataTransferItemList::remove(unsigned index)
@@ -103,15 +103,13 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
     if (items.size() <= index)
         return Exception { IndexSizeError }; // Matches Gecko. See https://github.com/whatwg/html/issues/2925
 
-    // Since file-backed DataTransferItems are not actually written to the pasteboard yet, we don't need to remove any
-    // temporary files. When we support writing file-backed DataTransferItems to the platform pasteboard, we will need
-    // to clean up here.
-    auto& removedItem = items[index].get();
-    if (!removedItem.isFile())
-        m_dataTransfer.pasteboard().clear(removedItem.type());
-    removedItem.clearListAndPutIntoDisabledMode();
+    // FIXME: Remove the file from the pasteboard object once we add support for it.
+    Ref<DataTransferItem> removedItem = items[index].copyRef();
+    if (!removedItem->isFile())
+        m_dataTransfer.pasteboard().clear(removedItem->type());
+    removedItem->clearListAndPutIntoDisabledMode();
     items.remove(index);
-    if (removedItem.isFile())
+    if (removedItem->isFile())
         m_dataTransfer.updateFileList();
 
     return { };

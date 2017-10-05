@@ -164,8 +164,6 @@ void DataTransfer::setData(const String& type, const String& data)
 
 void DataTransfer::updateFileList()
 {
-    // If we're removing an item, then the item list must exist, which implies that the file list must have been initialized already.
-    ASSERT(m_fileList);
     ASSERT(canWriteData());
 
     m_fileList->m_files = filesFromPasteboardAndItemList();
@@ -203,11 +201,11 @@ Vector<String> DataTransfer::types() const
     }
 
     if (m_itemList && m_itemList->hasItems() && m_itemList->items().findMatching([] (const auto& item) { return item->isFile(); }) != notFound)
-        return { "Files" };
+        return { ASCIILiteral("Files") };
 
     if (m_pasteboard->containsFiles()) {
         ASSERT(!m_pasteboard->typesSafeForBindings().contains("Files"));
-        return { "Files" };
+        return { ASCIILiteral("Files") };
     }
 
     auto types = m_pasteboard->typesSafeForBindings();
@@ -229,9 +227,8 @@ Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const
     bool itemListContainsItems = false;
     if (m_itemList && m_itemList->hasItems()) {
         for (auto& item : m_itemList->items()) {
-            if (auto file = item->file()) {
-                files.append(*file);
-            }
+            if (auto file = item->file())
+                files.append(file.releaseNonNull());
         }
         itemListContainsItems = true;
     }

@@ -1,3 +1,25 @@
+2017-10-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address post-review feedback following r222885
+        https://bugs.webkit.org/show_bug.cgi?id=177853
+        <rdar://problem/34807346>
+
+        Reviewed by Ryosuke Niwa and Dan Bates.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::updateFileList):
+        (WebCore::DataTransfer::types const):
+        (WebCore::DataTransfer::filesFromPasteboardAndItemList const):
+        * dom/DataTransferItem.h:
+        (WebCore::DataTransferItem::file):
+        (WebCore::DataTransferItem::file const): Deleted.
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::add):
+        (WebCore::DataTransferItemList::remove):
+
+        When removing a data transfer item, capture it in a Ref for the scope of remove(), so that it won't be destroyed
+        immediately after removing from the item list.
+
 2017-10-05  Youenn Fablet  <youenn@apple.com>
 
         Make LibWebRTCProvider port agnostic
