@@ -1133,10 +1133,8 @@ RenderListMarker::~RenderListMarker()
 
 void RenderListMarker::willBeDestroyed()
 {
-    m_listItem.setMarkerRenderer(nullptr);
     if (m_image)
         m_image->removeClient(this);
-
     RenderBox::willBeDestroyed();
 }
 

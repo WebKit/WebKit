@@ -23,11 +23,11 @@
 #pragma once
 
 #include "RenderBlockFlow.h"
+#include "RenderListMarker.h"
 
 namespace WebCore {
 
 class HTMLOListElement;
-class RenderListMarker;
 
 class RenderListItem final : public RenderBlockFlow {
 public:
@@ -56,8 +56,8 @@ public:
 
     RenderStyle computeMarkerStyle() const;
 
-    RenderListMarker* markerRenderer() { return m_marker; }
-    void setMarkerRenderer(RenderListMarker* marker) { m_marker = marker; }
+    RenderListMarker* markerRenderer() const { return m_marker.get(); }
+    void setMarkerRenderer(RenderListMarker& marker) { m_marker = makeWeakPtr(marker); }
 
 #if !ASSERT_DISABLED
     bool inLayout() const { return m_inLayout; }
@@ -88,7 +88,7 @@ private:
 
 
     int m_explicitValue;
-    RenderListMarker* m_marker;
+    WeakPtr<RenderListMarker> m_marker;
     mutable int m_value;
 #if !ASSERT_DISABLED
     bool m_inLayout { false };

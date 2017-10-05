@@ -76,10 +76,8 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
     auto& style = listItemRenderer.style();
 
     if (style.listStyleType() == NoneListStyle && (!style.listStyleImage() || style.listStyleImage()->errorOccurred())) {
-        if (listItemRenderer.markerRenderer()) {
-            listItemRenderer.markerRenderer()->destroy();
-            ASSERT(!listItemRenderer.markerRenderer());
-        }
+        if (auto* marker = listItemRenderer.markerRenderer())
+            marker->removeFromParentAndDestroy();
         return;
     }
 
@@ -92,7 +90,7 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
         newMarkerRenderer = WebCore::createRenderer<RenderListMarker>(listItemRenderer, WTFMove(newStyle));
         newMarkerRenderer->initializeStyle();
         markerRenderer = newMarkerRenderer.get();
-        listItemRenderer.setMarkerRenderer(markerRenderer);
+        listItemRenderer.setMarkerRenderer(*markerRenderer);
     }
 
     RenderElement* currentParent = markerRenderer->parent();

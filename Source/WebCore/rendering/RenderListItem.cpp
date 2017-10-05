@@ -48,7 +48,6 @@ using namespace HTMLNames;
 
 RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
-    , m_marker(nullptr)
     , m_hasExplicitValue(false)
     , m_isValueUpToDate(false)
     , m_notInList(false)
@@ -63,10 +62,8 @@ RenderListItem::~RenderListItem()
 
 void RenderListItem::willBeDestroyed()
 {
-    if (m_marker) {
-        m_marker->destroy();
-        ASSERT(!m_marker);
-    }
+    if (m_marker)
+        m_marker->removeFromParentAndDestroy();
     RenderBlockFlow::willBeDestroyed();
 }
 
@@ -332,25 +329,25 @@ void RenderListItem::positionListMarker()
         LayoutRect markerRect(markerLogicalLeft + lineOffset, blockOffset, m_marker->width(), m_marker->height());
         if (!style().isHorizontalWritingMode())
             markerRect = markerRect.transposedRect();
-        RenderBox* o = m_marker;
+        RenderBox* markerAncestor = m_marker.get();
         bool propagateVisualOverflow = true;
         bool propagateLayoutOverflow = true;
         do {
-            o = o->parentBox();
-            if (o->hasOverflowClip())
+            markerAncestor = markerAncestor->parentBox();
+            if (markerAncestor->hasOverflowClip())
                 propagateVisualOverflow = false;
-            if (is<RenderBlock>(*o)) {
+            if (is<RenderBlock>(*markerAncestor)) {
                 if (propagateVisualOverflow)
-                    downcast<RenderBlock>(*o).addVisualOverflow(markerRect);
+                    downcast<RenderBlock>(*markerAncestor).addVisualOverflow(markerRect);
                 if (propagateLayoutOverflow)
-                    downcast<RenderBlock>(*o).addLayoutOverflow(markerRect);
+                    downcast<RenderBlock>(*markerAncestor).addLayoutOverflow(markerRect);
             }
-            if (o->hasOverflowClip())
+            if (markerAncestor->hasOverflowClip())
                 propagateLayoutOverflow = false;
-            if (o->hasSelfPaintingLayer())
+            if (markerAncestor->hasSelfPaintingLayer())
                 propagateVisualOverflow = false;
-            markerRect.moveBy(-o->location());
-        } while (o != this && propagateVisualOverflow && propagateLayoutOverflow);
+            markerRect.moveBy(-markerAncestor->location());
+        } while (markerAncestor != this && propagateVisualOverflow && propagateLayoutOverflow);
     }
 }
 

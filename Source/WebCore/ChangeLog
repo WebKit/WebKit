@@ -1,3 +1,25 @@
+2017-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        RenderListItem should not hold raw pointers to RenderListMarker.
+        https://bugs.webkit.org/show_bug.cgi?id=177968
+        <rdar://problem/34842943>
+
+        Reviewed by Antti Koivisto.
+
+        Now we don't need to unregister the marker from the list item explicitly.
+
+        Covered by existing tests.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem):
+        (WebCore::RenderListItem::willBeDestroyed):
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::willBeDestroyed):
+        * style/RenderTreeUpdaterListItem.cpp:
+        (WebCore::RenderTreeUpdater::ListItem::updateMarker):
+
 2017-10-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderSVGRoot should check the renderers inside its visualOverflowRect for hit testing if the overflow is visible
