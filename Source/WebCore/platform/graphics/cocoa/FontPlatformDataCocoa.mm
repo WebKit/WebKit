@@ -25,7 +25,6 @@
 #import "FontPlatformData.h"
 
 #import "SharedBuffer.h"
-#import "WebCoreSystemInterface.h"
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <wtf/text/WTFString.h>
 

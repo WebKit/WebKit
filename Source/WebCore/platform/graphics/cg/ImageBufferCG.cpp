@@ -48,7 +48,6 @@
 
 #if PLATFORM(COCOA)
 #include "UTIUtilities.h"
-#include "WebCoreSystemInterface.h"
 #endif
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)

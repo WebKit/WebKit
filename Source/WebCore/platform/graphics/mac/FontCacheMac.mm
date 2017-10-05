@@ -38,7 +38,6 @@
 
 #if PLATFORM(MAC)
 #import "WebCoreNSStringExtras.h"
-#import "WebCoreSystemInterface.h"
 #import <AppKit/AppKit.h>
 #import <pal/spi/mac/NSFontSPI.h>
 #import <wtf/MainThread.h>

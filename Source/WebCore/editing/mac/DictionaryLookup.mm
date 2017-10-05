@@ -42,7 +42,6 @@
 #import "VisiblePosition.h"
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
-#import "WebCoreSystemInterface.h"
 #import <PDFKit/PDFKit.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>

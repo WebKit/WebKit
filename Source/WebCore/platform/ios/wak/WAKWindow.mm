@@ -31,7 +31,6 @@
 #import "LegacyTileCache.h"
 #import "PlatformScreen.h"
 #import "WAKViewInternal.h"
-#import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
 #import "WebEvent.h"
 #import "WKContentObservation.h"

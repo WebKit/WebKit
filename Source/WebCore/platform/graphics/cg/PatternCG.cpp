@@ -35,10 +35,6 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MainThread.h>
 
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#endif
-
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif

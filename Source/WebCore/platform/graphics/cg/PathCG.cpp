@@ -39,10 +39,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#endif
-
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif

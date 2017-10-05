@@ -33,7 +33,6 @@
 #import "LengthSize.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
-#import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>

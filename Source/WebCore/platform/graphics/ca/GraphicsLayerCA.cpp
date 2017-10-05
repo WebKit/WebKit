@@ -63,7 +63,6 @@
 #if PLATFORM(COCOA)
 #include "PlatformCAAnimationCocoa.h"
 #include "PlatformCALayerCocoa.h"
-#include "WebCoreSystemInterface.h"
 #endif
 
 #if PLATFORM(WIN)

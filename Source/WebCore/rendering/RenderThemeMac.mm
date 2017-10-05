@@ -68,7 +68,6 @@
 #import "UTIUtilities.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
-#import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #import <math.h>

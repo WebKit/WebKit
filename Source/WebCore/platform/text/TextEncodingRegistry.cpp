@@ -43,10 +43,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#endif
-
 #if PLATFORM(MAC)
 #include "TextCodecMac.h"
 #endif

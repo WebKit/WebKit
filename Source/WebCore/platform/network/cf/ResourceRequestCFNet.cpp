@@ -42,7 +42,6 @@
 
 #if PLATFORM(COCOA)
 #include "ResourceLoadPriority.h"
-#include "WebCoreSystemInterface.h"
 #include <dlfcn.h>
 #endif
 

@@ -33,7 +33,6 @@
 #import "HTTPHeaderNames.h"
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
-#import "WebCoreSystemInterface.h"
 #import <Foundation/Foundation.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/text/CString.h>

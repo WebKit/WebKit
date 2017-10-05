@@ -32,7 +32,6 @@
 #import "AccessibilityTable.h"
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperMac.h"
-#import "WebCoreSystemInterface.h"
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)

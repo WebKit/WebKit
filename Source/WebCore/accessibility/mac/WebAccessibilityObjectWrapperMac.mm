@@ -77,7 +77,6 @@
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
-#import "WebCoreSystemInterface.h"
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjcRuntimeExtras.h>

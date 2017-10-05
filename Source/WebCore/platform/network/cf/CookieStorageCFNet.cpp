@@ -32,9 +32,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#elif PLATFORM(WIN)
+#if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>

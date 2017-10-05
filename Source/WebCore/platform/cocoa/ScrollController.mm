@@ -28,7 +28,6 @@
 
 #import "LayoutSize.h"
 #import "PlatformWheelEvent.h"
-#import "WebCoreSystemInterface.h"
 #import "WheelEventTestTrigger.h"
 #import <sys/sysctl.h>
 #import <sys/time.h>

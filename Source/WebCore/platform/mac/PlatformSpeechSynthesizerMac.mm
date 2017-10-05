@@ -28,7 +28,6 @@
 
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesisVoice.h"
-#include "WebCoreSystemInterface.h"
 #include <AppKit/NSSpeechSynthesizer.h>
 #include <pal/spi/mac/SpeechSynthesisSPI.h>
 #include <wtf/RetainPtr.h>

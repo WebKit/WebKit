@@ -42,7 +42,6 @@
 #import "TextureCacheCV.h"
 #import "VideoTextureCopierCV.h"
 #import "WebCoreDecompressionSession.h"
-#import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVTime.h>
 #import <QuartzCore/CALayer.h>

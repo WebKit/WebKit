@@ -36,7 +36,6 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebBackgroundTaskController.h>
-#import <WebCore/WebCoreSystemInterface.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 

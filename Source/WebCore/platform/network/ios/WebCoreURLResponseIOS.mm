@@ -31,7 +31,6 @@
 
 #import "QuickLook.h"
 #import "UTIUtilities.h"
-#import "WebCoreSystemInterface.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 #import "QuickLookSoftLink.h"

@@ -29,7 +29,6 @@
 
 #import "FloatConversion.h"
 #import <WebCore/HTMLVideoElement.h>
-#import <WebCoreSystemInterface.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/QTKitSPI.h>
 #import <wtf/SoftLinking.h>

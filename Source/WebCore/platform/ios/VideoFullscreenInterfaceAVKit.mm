@@ -38,7 +38,6 @@
 #import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenModel.h"
 #import "WebAVPlayerController.h"
-#import "WebCoreSystemInterface.h"
 #import <AVFoundation/AVTime.h>
 #import <UIKit/UIKit.h>
 #import <objc/message.h>

@@ -3963,8 +3963,6 @@
 		93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2425E0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp */; };
 		93E2A306123E9DC0009FE12A /* HTMLParserIdioms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2A304123E9DC0009FE12A /* HTMLParserIdioms.cpp */; };
 		93E2A307123E9DC0009FE12A /* HTMLParserIdioms.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A305123E9DC0009FE12A /* HTMLParserIdioms.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */; };
-		93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */; };
 		93EF7D551954F13900DFB71D /* ScrollingStateNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EF7D541954E98F00DFB71D /* ScrollingStateNode.mm */; };
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6874,7 +6872,6 @@
 		E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390190EAFCACA003695C8 /* PasteboardIOS.mm */; };
 		E45390430EAFD637003695C8 /* PlatformScreenIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */; };
 		E45390450EAFD637003695C8 /* ScrollViewIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390340EAFD637003695C8 /* ScrollViewIOS.mm */; };
-		E45390490EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */; };
 		E453904D0EAFD637003695C8 /* WidgetIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E453903C0EAFD637003695C8 /* WidgetIOS.mm */; };
 		E45390AE0EAFF4B5003695C8 /* SystemMemoryIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */; };
 		E46180291C8A06CD0026C02C /* RenderTreeUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */; };
@@ -12337,8 +12334,6 @@
 		93E2425E0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameOwnerElement.cpp; sourceTree = "<group>"; };
 		93E2A304123E9DC0009FE12A /* HTMLParserIdioms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserIdioms.cpp; sourceTree = "<group>"; };
 		93E2A305123E9DC0009FE12A /* HTMLParserIdioms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserIdioms.h; sourceTree = "<group>"; };
-		93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSystemInterface.mm; sourceTree = "<group>"; };
-		93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreSystemInterface.h; sourceTree = "<group>"; };
 		93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseEventWithHitTestResults.cpp; sourceTree = "<group>"; };
 		93EEC1E509C2877700C515D1 /* Attr.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Attr.idl; sourceTree = "<group>"; };
 		93EEC1E609C2877700C515D1 /* CharacterData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CharacterData.idl; sourceTree = "<group>"; };
@@ -15663,7 +15658,6 @@
 		E45390190EAFCACA003695C8 /* PasteboardIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardIOS.mm; sourceTree = "<group>"; };
 		E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScreenIOS.mm; sourceTree = "<group>"; };
 		E45390340EAFD637003695C8 /* ScrollViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewIOS.mm; sourceTree = "<group>"; };
-		E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSystemInterfaceIOS.mm; sourceTree = "<group>"; };
 		E453903C0EAFD637003695C8 /* WidgetIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetIOS.mm; sourceTree = "<group>"; };
 		E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemMemoryIOS.cpp; sourceTree = "<group>"; };
 		E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdater.h; sourceTree = "<group>"; };
@@ -19585,8 +19579,6 @@
 				C5B4C24C1509236C00A6EF37 /* WebCoreNSURLExtras.mm */,
 				DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */,
 				B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */,
-				93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */,
-				93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */,
 				BE855F7F0701E83500239769 /* WebCoreView.h */,
 				BE8560510701F91100239769 /* WebCoreView.m */,
 				1AFFC4511D5E7EC700267A66 /* WebGLBlacklist.h */,
@@ -21719,7 +21711,6 @@
 				1F36EA9B1E21BA1700621E25 /* WebBackgroundTaskController.mm */,
 				31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */,
 				31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */,
-				E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */,
 				FE0D84E810484348001A179E /* WebEvent.h */,
 				FE0D84EA1048436E001A179E /* WebEvent.mm */,
 				F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */,
@@ -30634,7 +30625,6 @@
 				EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */,
 				E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */,
 				E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */,
-				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
 				A14832C7187F66C800DA63A6 /* WebCoreThread.h in Headers */,
 				A14832C9187F676B00DA63A6 /* WebCoreThreadInternal.h in Headers */,
 				A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */,
@@ -34408,8 +34398,6 @@
 				9BDD18271F7E05F400E8E577 /* WebCorePasteboardFileReader.cpp in Sources */,
 				E180810E16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm in Sources */,
 				E152551616FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm in Sources */,
-				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
-				E45390490EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm in Sources */,
 				A14832C8187F673F00DA63A6 /* WebCoreThread.mm in Sources */,
 				A14832CB187F67B400DA63A6 /* WebCoreThreadRun.cpp in Sources */,
 				A14832CE187F683400DA63A6 /* WebCoreThreadSystemInterface.cpp in Sources */,

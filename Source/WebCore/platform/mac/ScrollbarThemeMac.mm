@@ -34,7 +34,6 @@
 #include "PlatformMouseEvent.h"
 #include "ScrollAnimatorMac.h"
 #include "ScrollView.h"
-#include "WebCoreSystemInterface.h"
 #include <Carbon/Carbon.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <pal/spi/mac/NSScrollerImpSPI.h>

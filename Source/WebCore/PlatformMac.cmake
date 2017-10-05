@@ -524,7 +524,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreNSStringExtras.mm
     platform/mac/WebCoreNSURLExtras.mm
     platform/mac/WebCoreObjCExtras.mm
-    platform/mac/WebCoreSystemInterface.mm
     platform/mac/WebGLBlacklist.mm
     platform/mac/WebNSAttributedStringExtras.mm
     platform/mac/WebVideoFullscreenController.mm
@@ -753,8 +752,6 @@ set(WebCore_FORWARDING_HEADERS_FILES
     platform/graphics/cocoa/IOSurface.h
 
     platform/graphics/transforms/AffineTransform.h
-
-    platform/mac/WebCoreSystemInterface.h
 
     platform/network/cf/CertificateInfo.h
     platform/network/cf/ResourceResponse.h

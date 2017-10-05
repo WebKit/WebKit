@@ -60,7 +60,6 @@
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "WebCoreSystemInterface.h"
 #include "WheelEventDeltaFilter.h"
 #include "WheelEventTestTrigger.h"
 #include <wtf/BlockObjCExceptions.h>

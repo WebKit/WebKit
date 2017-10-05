@@ -35,7 +35,6 @@
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-#include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/MainThread.h>

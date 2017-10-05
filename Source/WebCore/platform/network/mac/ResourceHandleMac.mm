@@ -46,7 +46,6 @@
 #import "SynchronousLoaderClient.h"
 #import "WebCoreResourceHandleAsDelegate.h"
 #import "WebCoreResourceHandleAsOperationQueueDelegate.h"
-#import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponse.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>

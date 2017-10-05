@@ -27,6 +27,7 @@
 
 #if USE(IOSURFACE)
 
+#include <objc/objc.h>
 #include "GraphicsContext.h"
 #include "IntSize.h"
 

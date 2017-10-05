@@ -34,7 +34,6 @@
 #import "HostWindow.h"
 #import "IntRect.h"
 #import "WAKWindow.h"
-#import "WebCoreSystemInterface.h"
 #import "Widget.h"
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>

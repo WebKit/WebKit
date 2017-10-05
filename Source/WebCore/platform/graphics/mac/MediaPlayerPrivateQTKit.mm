@@ -39,7 +39,6 @@
 #import "SecurityOrigin.h"
 #import "URL.h"
 #import "UTIUtilities.h"
-#import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
 #import <pal/spi/mac/QTKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>

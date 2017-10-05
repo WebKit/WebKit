@@ -34,10 +34,6 @@
 #include "MIMETypeRegistry.h"
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#endif
-
 namespace WebCore {
 
 static CFStringRef const commonHeaderFields[] = {

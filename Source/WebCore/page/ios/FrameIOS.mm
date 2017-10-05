@@ -65,7 +65,6 @@
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import "WAKWindow.h"
-#import "WebCoreSystemInterface.h"
 #import <runtime/JSLock.h>
 #import <wtf/BlockObjCExceptions.h>
 

@@ -27,7 +27,6 @@
 #import "LocalizedStrings.h"
 
 #import "NotImplemented.h"
-#import "WebCoreSystemInterface.h"
 #import <pal/system/mac/DefaultSearchProvider.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>

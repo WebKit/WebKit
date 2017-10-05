@@ -31,7 +31,6 @@
 
 #include "Font.h"
 #include "FontCascade.h"
-#include "WebCoreSystemInterface.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <pal/spi/cocoa/CoreTextSPI.h>
 #if !PLATFORM(IOS)

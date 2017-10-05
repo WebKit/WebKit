@@ -28,7 +28,6 @@
 
 #import "Device.h"
 #import "SystemVersion.h"
-#import "WebCoreSystemInterface.h"
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>

@@ -57,7 +57,6 @@
 
 #if PLATFORM(COCOA)
 #include "ResourceHandleCFURLConnectionDelegateWithOperationQueue.h"
-#include "WebCoreSystemInterface.h"
 #if USE(CFURLCONNECTION)
 #include "WebCoreURLResponse.h"
 #include <CFNetwork/CFURLConnectionPriv.h>

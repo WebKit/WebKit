@@ -34,7 +34,6 @@
 #import "FontDescription.h"
 #import "OpenTypeCG.h"
 #import "SharedBuffer.h"
-#import "WebCoreSystemInterface.h"
 #import <float.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>

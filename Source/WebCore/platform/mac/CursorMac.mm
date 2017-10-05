@@ -26,7 +26,6 @@
 #import "config.h"
 #import "Cursor.h"
 
-#import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/BlockObjCExceptions.h>

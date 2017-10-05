@@ -34,7 +34,6 @@
 #import "LegacyCDM.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "VideoToolboxSoftLink.h"
-#import "WebCoreSystemInterface.h"
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringView.h>
 #import <yarr/RegularExpression.h>

@@ -163,7 +163,7 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float, float
 #endif
 }
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
 static NSImage *findImage(NSString* firstChoiceName, NSString* secondChoiceName, bool& usingDot)
 {
     // Eventually we should be able to get rid of the secondChoiceName. For the time being we need both to keep
@@ -175,6 +175,9 @@ static NSImage *findImage(NSString* firstChoiceName, NSString* secondChoiceName,
     usingDot = image;
     return image;
 }
+static NSImage *spellingImage = nullptr;
+static NSImage *grammarImage = nullptr;
+static NSImage *correctionImage = nullptr;
 #else
 static RetainPtr<CGPatternRef> createDotPattern(bool& usingDot, const char* resourceName)
 {
@@ -183,20 +186,18 @@ static RetainPtr<CGPatternRef> createDotPattern(bool& usingDot, const char* reso
     usingDot = true;
     return adoptCF(WKCreatePatternFromCGImage(image.get()));
 }
-#endif // !PLATFORM(IOS)
-
-static NSImage *spellingImage = nullptr;
-static NSImage *grammarImage = nullptr;
-static NSImage *correctionImage = nullptr;
+#endif // PLATFORM(MAC)
 
 void GraphicsContext::updateDocumentMarkerResources()
 {
+#if PLATFORM(MAC)
     [spellingImage release];
     spellingImage = nullptr;
     [grammarImage release];
     grammarImage = nullptr;
     [correctionImage release];
     correctionImage = nullptr;
+#endif
 }
 
 static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phasePoint)

@@ -62,7 +62,6 @@
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
-#import "WebCoreSystemInterface.h"
 
 using namespace WebCore;
 using namespace HTMLNames;

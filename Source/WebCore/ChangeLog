@@ -1,5 +1,76 @@
 2017-10-04  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebCoreSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=177916
+
+        Reviewed by Antti Koivisto.
+
+        * Configurations/WebCore.xcconfig:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        * dom/Document.cpp:
+        * editing/mac/DictionaryLookup.mm:
+        * page/ios/FrameIOS.mm:
+        * page/ios/UserAgentIOS.mm:
+        * page/mac/EventHandlerMac.mm:
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        * platform/cocoa/ScrollController.mm:
+        * platform/graphics/Font.h:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cg/PatternCG.cpp:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        * platform/graphics/mac/FontCacheMac.mm:
+        * platform/graphics/mac/GlyphPageMac.cpp:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/ios/LegacyTileCache.mm:
+        * platform/ios/PlatformScreenIOS.mm:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        * platform/ios/WebCoreSystemInterfaceIOS.mm: Removed.
+        * platform/ios/wak/WAKWindow.mm:
+        * platform/mac/CursorMac.mm:
+        * platform/mac/FileSystemMac.mm:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/ThemeMac.mm:
+        * platform/mac/WebCoreNSURLExtras.mm:
+        * platform/mac/WebCoreSystemInterface.h: Removed.
+        * platform/mac/WebCoreSystemInterface.mm: Removed.
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        * platform/mac/WebWindowAnimation.mm:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        * platform/network/mac/CookieJarMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        * platform/text/TextEncodingRegistry.cpp:
+        * rendering/RenderThemeMac.mm:
+
+2017-10-04  Alex Christensen  <achristensen@webkit.org>
+
         Remove unnecessary includes of WebKitSystemInterface on Cocoa platforms
         https://bugs.webkit.org/show_bug.cgi?id=177912
 

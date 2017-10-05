@@ -33,10 +33,6 @@
 #include "ResourceHandle.h"
 #include <pal/spi/cf/CFNetworkSPI.h>
 
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#endif
-
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif

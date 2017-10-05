@@ -30,7 +30,6 @@
 #import "Logging.h"
 #import "PlatformScreen.h"
 #import "Scrollbar.h"
-#import "WebCoreSystemInterface.h"
 #import "WindowsKeyboardCodes.h"
 #import <HIToolbox/CarbonEvents.h>
 #import <HIToolbox/Events.h>

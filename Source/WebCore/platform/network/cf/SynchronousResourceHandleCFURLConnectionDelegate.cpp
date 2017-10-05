@@ -41,7 +41,6 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
 #include <pal/spi/cf/CFNetworkSPI.h>
 #endif // PLATFORM(COCOA)

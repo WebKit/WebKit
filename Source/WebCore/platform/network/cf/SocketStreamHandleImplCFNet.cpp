@@ -50,8 +50,6 @@
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
-#else
-#include "WebCoreSystemInterface.h"
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(MAC)

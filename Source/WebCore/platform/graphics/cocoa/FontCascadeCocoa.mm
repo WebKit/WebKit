@@ -30,7 +30,6 @@
 #import "GraphicsContext.h"
 #import "LayoutRect.h"
 #import "Logging.h"
-#import "WebCoreSystemInterface.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #if USE(APPKIT)

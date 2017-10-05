@@ -34,9 +34,7 @@
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#elif PLATFORM(WIN)
+#if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 

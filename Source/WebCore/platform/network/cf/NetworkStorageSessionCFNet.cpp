@@ -33,7 +33,6 @@
 #if PLATFORM(COCOA)
 #include "PublicSuffix.h"
 #include "ResourceRequest.h"
-#include "WebCoreSystemInterface.h"
 #else
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif

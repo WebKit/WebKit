@@ -31,7 +31,6 @@
 #import "WebCoreObjCExtras.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreNSURLExtras.h"
-#import "WebCoreSystemInterface.h"
 #import <wtf/Function.h>
 #import <wtf/HexNumber.h>
 #import <wtf/ObjcRuntimeExtras.h>

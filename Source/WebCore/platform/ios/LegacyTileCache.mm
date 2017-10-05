@@ -37,7 +37,6 @@
 #include "SystemMemory.h"
 #include "WAKWindow.h"
 #include "WKGraphics.h"
-#include "WebCoreSystemInterface.h"
 #include "WebCoreThreadRun.h"
 #include <CoreText/CoreText.h>
 #include <pal/spi/cocoa/QuartzCoreSPI.h>

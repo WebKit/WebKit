@@ -31,7 +31,6 @@
 
 #import "MIMETypeRegistry.h"
 #import "UTIUtilities.h"
-#import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 

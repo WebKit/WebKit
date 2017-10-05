@@ -237,7 +237,6 @@
 #include "Navigator.h"
 #include "NavigatorGeolocation.h"
 #include "WKContentObservation.h"
-#include "WebCoreSystemInterface.h"
 #endif
 
 #if ENABLE(IOS_GESTURE_EVENTS)

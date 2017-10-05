@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "WebCoreNSURLExtras.h"
-#import "WebCoreSystemInterface.h"
 #import <pal/spi/mac/MetadataSPI.h>
 #import <wtf/text/WTFString.h>
 
