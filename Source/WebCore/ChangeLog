@@ -1,3 +1,24 @@
+2017-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        RenderButton should not hold raw pointers to its direct children.
+        https://bugs.webkit.org/show_bug.cgi?id=177960
+        <rdar://problem/34840807>
+
+        Reviewed by Antti Koivisto.
+
+        The correct way of destroying a renderer is to call ::removeFromParentAndDestroy().
+
+        Covered by existing tests.
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::RenderButton):
+        (WebCore::RenderButton::addChild):
+        (WebCore::RenderButton::takeChild):
+        (WebCore::RenderButton::updateAnonymousChildStyle const):
+        (WebCore::RenderButton::setText):
+        (WebCore::RenderButton::text const):
+        * rendering/RenderButton.h:
+
 2017-10-05  David Kilzer  <ddkilzer@apple.com>
 
         Bug 177893: Disable -Wcast-qual for new clang compiler in Apple ports

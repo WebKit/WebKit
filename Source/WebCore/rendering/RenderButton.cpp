@@ -39,8 +39,6 @@ using namespace HTMLNames;
 
 RenderButton::RenderButton(HTMLFormControlElement& element, RenderStyle&& style)
     : RenderFlexibleBox(element, WTFMove(style))
-    , m_buttonText(0)
-    , m_inner(0)
 {
 }
 
@@ -70,10 +68,9 @@ void RenderButton::addChild(RenderPtr<RenderObject> newChild, RenderObject* befo
         ASSERT(!firstChild());
         auto newInner = createAnonymousBlock(style().display());
         updateAnonymousChildStyle(*newInner, newInner->mutableStyle());
-        m_inner = newInner.get();
+        m_inner = makeWeakPtr(*newInner);
         RenderFlexibleBox::addChild(WTFMove(newInner));
-    }
-    
+    }    
     m_inner->addChild(WTFMove(newChild), beforeChild);
 }
 
@@ -84,7 +81,6 @@ RenderPtr<RenderObject> RenderButton::takeChild(RenderObject& oldChild)
     // violated.
     if (&oldChild == m_inner || !m_inner || oldChild.parent() == this) {
         ASSERT(&oldChild == m_inner || !m_inner);
-        m_inner = nullptr;
         return RenderFlexibleBox::takeChild(oldChild);
     }
     return m_inner->takeChild(oldChild);
@@ -93,7 +89,6 @@ RenderPtr<RenderObject> RenderButton::takeChild(RenderObject& oldChild)
 void RenderButton::updateAnonymousChildStyle(const RenderObject& child, RenderStyle& childStyle) const
 {
     ASSERT_UNUSED(child, !m_inner || &child == m_inner);
-    
     childStyle.setFlexGrow(1.0f);
     // min-width: 0; is needed for correct shrinking.
     childStyle.setMinWidth(Length(0, Fixed));
@@ -120,25 +115,28 @@ void RenderButton::updateFromElement()
 
 void RenderButton::setText(const String& str)
 {
-    if (str.isEmpty()) {
-        if (m_buttonText) {
-            m_buttonText->destroy();
-            m_buttonText = 0;
-        }
-    } else {
-        if (m_buttonText)
-            m_buttonText->setText(str.impl());
-        else {
-            auto newButtonText = createRenderer<RenderTextFragment>(document(), str);
-            m_buttonText = newButtonText.get();
-            addChild(WTFMove(newButtonText));
-        }
+    if (!m_buttonText && str.isEmpty())
+        return;
+
+    if (!m_buttonText) {
+        auto newButtonText = createRenderer<RenderTextFragment>(document(), str);
+        m_buttonText = makeWeakPtr(*newButtonText);
+        addChild(WTFMove(newButtonText));
+        return;
     }
+
+    if (!str.isEmpty()) {
+        m_buttonText->setText(str.impl());
+        return;
+    }
+    m_buttonText->removeFromParentAndDestroy();
 }
 
 String RenderButton::text() const
 {
-    return m_buttonText ? m_buttonText->text() : 0;
+    if (m_buttonText)
+        return m_buttonText->text();
+    return { };
 }
 
 bool RenderButton::canHaveGeneratedChildren() const
