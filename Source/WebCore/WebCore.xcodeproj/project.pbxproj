@@ -813,7 +813,7 @@
 		1A8A64601D19FCFC00D0E00F /* ApplePayShippingMethodSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A644C1D19FCFB00D0E00F /* ApplePayShippingMethodSelectedEvent.h */; };
 		1A8A64621D19FCFC00D0E00F /* ApplePayValidateMerchantEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A644E1D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.cpp */; };
 		1A8A64631D19FCFC00D0E00F /* ApplePayValidateMerchantEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A644F1D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.h */; };
-		1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.cpp */; };
+		1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.mm */; };
 		1A8A64681D19FDFF00D0E00F /* PaymentRequestValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64661D19FDFF00D0E00F /* PaymentRequestValidator.h */; };
 		1A8A646C1D19FF8700D0E00F /* PaymentCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64691D19FF8700D0E00F /* PaymentCocoa.mm */; };
 		1A8A646D1D19FF8700D0E00F /* PaymentContactCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A646A1D19FF8700D0E00F /* PaymentContactCocoa.mm */; };
@@ -4473,6 +4473,25 @@
 		A1CC567E1F4614B400A4555B /* JSPaymentShippingType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC565E1F46146100A4555B /* JSPaymentShippingType.cpp */; };
 		A1CC567F1F4614B700A4555B /* JSPaymentShippingType.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56501F46145300A4555B /* JSPaymentShippingType.h */; };
 		A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE712B18612AC100734192 /* TouchEvents.cpp */; };
+		A1DF5A7F1F7EBD0B0058A477 /* ApplePayRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A7C1F7EBD0B0058A477 /* ApplePayRequest.h */; };
+		A1DF5A861F7EBDF20058A477 /* ApplePayMerchantCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A831F7EBDF20058A477 /* ApplePayMerchantCapability.h */; };
+		A1DF5A8D1F7EC0020058A477 /* JSApplePayMerchantCapability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5A891F7EC0000058A477 /* JSApplePayMerchantCapability.cpp */; };
+		A1DF5A8E1F7EC0020058A477 /* JSApplePayMerchantCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A8A1F7EC0000058A477 /* JSApplePayMerchantCapability.h */; };
+		A1DF5A8F1F7EC0020058A477 /* JSApplePayRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A8B1F7EC0010058A477 /* JSApplePayRequest.h */; };
+		A1DF5A901F7EC0020058A477 /* JSApplePayRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5A8C1F7EC0010058A477 /* JSApplePayRequest.cpp */; };
+		A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A911F7EC4320058A477 /* ApplePayContactField.h */; };
+		A1DF5A991F7EC8C00058A477 /* JSApplePayContactField.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A971F7EC8BF0058A477 /* JSApplePayContactField.h */; };
+		A1DF5A9A1F7EC8C00058A477 /* JSApplePayContactField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5A981F7EC8C00058A477 /* JSApplePayContactField.cpp */; };
+		A1DF5AA21F7EE1130058A477 /* ApplePayPaymentHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AA01F7EE1130058A477 /* ApplePayPaymentHandler.h */; };
+		A1DF5AA31F7EE1130058A477 /* ApplePayPaymentHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AA11F7EE1130058A477 /* ApplePayPaymentHandler.cpp */; };
+		A1DF5AA61F7F64BB0058A477 /* PaymentHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AA41F7F64BB0058A477 /* PaymentHandler.h */; };
+		A1DF5AA71F7F64BB0058A477 /* PaymentHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AA51F7F64BB0058A477 /* PaymentHandler.cpp */; };
+		A1DF5AA91F8070D40058A477 /* ApplePayMerchantCapability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AA81F8070D40058A477 /* ApplePayMerchantCapability.cpp */; };
+		A1DF5AAD1F8075F00058A477 /* ApplePayRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AAA1F8075F00058A477 /* ApplePayRequestBase.h */; };
+		A1DF5AAE1F8075F10058A477 /* ApplePayRequestBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AAB1F8075F00058A477 /* ApplePayRequestBase.cpp */; };
+		A1DF5AB21F8077530058A477 /* JSApplePayRequestBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AB01F8077520058A477 /* JSApplePayRequestBase.cpp */; };
+		A1DF5AB31F8077530058A477 /* JSApplePayRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AB11F8077520058A477 /* JSApplePayRequestBase.h */; };
+		A1DF5AB51F8078F30058A477 /* ApplePayContactField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AB41F8078F30058A477 /* ApplePayContactField.cpp */; };
 		A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */; };
 		A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154513015C4E0054AC8C /* PointLightSource.cpp */; };
 		A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */; };
@@ -8391,7 +8410,7 @@
 		1A8A644E1D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayValidateMerchantEvent.cpp; sourceTree = "<group>"; };
 		1A8A644F1D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayValidateMerchantEvent.h; sourceTree = "<group>"; };
 		1A8A64501D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayValidateMerchantEvent.idl; sourceTree = "<group>"; };
-		1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentRequestValidator.cpp; sourceTree = "<group>"; };
+		1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentRequestValidator.mm; sourceTree = "<group>"; };
 		1A8A64661D19FDFF00D0E00F /* PaymentRequestValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentRequestValidator.h; sourceTree = "<group>"; };
 		1A8A64691D19FF8700D0E00F /* PaymentCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PaymentCocoa.mm; path = Modules/applepay/cocoa/PaymentCocoa.mm; sourceTree = SOURCE_ROOT; };
 		1A8A646A1D19FF8700D0E00F /* PaymentContactCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PaymentContactCocoa.mm; path = Modules/applepay/cocoa/PaymentContactCocoa.mm; sourceTree = SOURCE_ROOT; };
@@ -12920,6 +12939,29 @@
 		A1CC56641F46146700A4555B /* JSPaymentResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentResponse.h; sourceTree = "<group>"; };
 		A1CC56651F46146800A4555B /* JSPaymentAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentAddress.h; sourceTree = "<group>"; };
 		A1DE712B18612AC100734192 /* TouchEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchEvents.cpp; sourceTree = "<group>"; };
+		A1DF5A7C1F7EBD0B0058A477 /* ApplePayRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayRequest.h; sourceTree = "<group>"; };
+		A1DF5A7E1F7EBD0B0058A477 /* ApplePayRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayRequest.idl; sourceTree = "<group>"; };
+		A1DF5A831F7EBDF20058A477 /* ApplePayMerchantCapability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayMerchantCapability.h; sourceTree = "<group>"; };
+		A1DF5A851F7EBDF20058A477 /* ApplePayMerchantCapability.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayMerchantCapability.idl; sourceTree = "<group>"; };
+		A1DF5A891F7EC0000058A477 /* JSApplePayMerchantCapability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayMerchantCapability.cpp; sourceTree = "<group>"; };
+		A1DF5A8A1F7EC0000058A477 /* JSApplePayMerchantCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayMerchantCapability.h; sourceTree = "<group>"; };
+		A1DF5A8B1F7EC0010058A477 /* JSApplePayRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayRequest.h; sourceTree = "<group>"; };
+		A1DF5A8C1F7EC0010058A477 /* JSApplePayRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayRequest.cpp; sourceTree = "<group>"; };
+		A1DF5A911F7EC4320058A477 /* ApplePayContactField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayContactField.h; sourceTree = "<group>"; };
+		A1DF5A931F7EC4320058A477 /* ApplePayContactField.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayContactField.idl; sourceTree = "<group>"; };
+		A1DF5A971F7EC8BF0058A477 /* JSApplePayContactField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayContactField.h; sourceTree = "<group>"; };
+		A1DF5A981F7EC8C00058A477 /* JSApplePayContactField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayContactField.cpp; sourceTree = "<group>"; };
+		A1DF5AA01F7EE1130058A477 /* ApplePayPaymentHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayPaymentHandler.h; sourceTree = "<group>"; };
+		A1DF5AA11F7EE1130058A477 /* ApplePayPaymentHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayPaymentHandler.cpp; sourceTree = "<group>"; };
+		A1DF5AA41F7F64BB0058A477 /* PaymentHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentHandler.h; sourceTree = "<group>"; };
+		A1DF5AA51F7F64BB0058A477 /* PaymentHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentHandler.cpp; sourceTree = "<group>"; };
+		A1DF5AA81F8070D40058A477 /* ApplePayMerchantCapability.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayMerchantCapability.cpp; sourceTree = "<group>"; };
+		A1DF5AAA1F8075F00058A477 /* ApplePayRequestBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayRequestBase.h; sourceTree = "<group>"; };
+		A1DF5AAB1F8075F00058A477 /* ApplePayRequestBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayRequestBase.cpp; sourceTree = "<group>"; };
+		A1DF5AAC1F8075F00058A477 /* ApplePayRequestBase.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayRequestBase.idl; sourceTree = "<group>"; };
+		A1DF5AB01F8077520058A477 /* JSApplePayRequestBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayRequestBase.cpp; sourceTree = "<group>"; };
+		A1DF5AB11F8077520058A477 /* JSApplePayRequestBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayRequestBase.h; sourceTree = "<group>"; };
+		A1DF5AB41F8078F30058A477 /* ApplePayContactField.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayContactField.cpp; sourceTree = "<group>"; };
 		A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DistantLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154513015C4E0054AC8C /* PointLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpotLightSource.cpp; sourceTree = "<group>"; };
@@ -17173,11 +17215,18 @@
 			isa = PBXGroup;
 			children = (
 				1A58E8691D19D8C000C0EA73 /* cocoa */,
+				A1DF5A9F1F7EE0F10058A477 /* paymentrequest */,
+				A1DF5AB41F8078F30058A477 /* ApplePayContactField.cpp */,
+				A1DF5A911F7EC4320058A477 /* ApplePayContactField.h */,
+				A1DF5A931F7EC4320058A477 /* ApplePayContactField.idl */,
 				1ADFDFD51E71D8DF008F5D34 /* ApplePayError.cpp */,
 				1ADFDFD61E71D8DF008F5D34 /* ApplePayError.h */,
 				1ADFDFD71E71D8DF008F5D34 /* ApplePayError.idl */,
 				7C6579E21E00827000E3A27A /* ApplePayLineItem.h */,
 				7C6579E41E0082C800E3A27A /* ApplePayLineItem.idl */,
+				A1DF5AA81F8070D40058A477 /* ApplePayMerchantCapability.cpp */,
+				A1DF5A831F7EBDF20058A477 /* ApplePayMerchantCapability.h */,
+				A1DF5A851F7EBDF20058A477 /* ApplePayMerchantCapability.idl */,
 				7C6522FE1E00D03400677F22 /* ApplePayPayment.h */,
 				7C6522FF1E00D03400677F22 /* ApplePayPayment.idl */,
 				1ADFDFD81E71D8DF008F5D34 /* ApplePayPaymentAuthorizationResult.h */,
@@ -17198,6 +17247,9 @@
 				7C6522F31E00A51700677F22 /* ApplePayPaymentPass.idl */,
 				7C6579DF1E0079F900E3A27A /* ApplePayPaymentRequest.h */,
 				7C6579E11E007A1100E3A27A /* ApplePayPaymentRequest.idl */,
+				A1DF5AAB1F8075F00058A477 /* ApplePayRequestBase.cpp */,
+				A1DF5AAA1F8075F00058A477 /* ApplePayRequestBase.h */,
+				A1DF5AAC1F8075F00058A477 /* ApplePayRequestBase.idl */,
 				1A8A64441D19FCFB00D0E00F /* ApplePaySession.cpp */,
 				1A8A64451D19FCFB00D0E00F /* ApplePaySession.h */,
 				1A8A64461D19FCFB00D0E00F /* ApplePaySession.idl */,
@@ -17227,8 +17279,8 @@
 				7CF930E61E01F9AD00BAFFBE /* PaymentHeaders.h */,
 				1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */,
 				1A8A64391D19FC5300D0E00F /* PaymentMethod.h */,
-				1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.cpp */,
 				1A8A64661D19FDFF00D0E00F /* PaymentRequestValidator.h */,
+				1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.mm */,
 				A1491DA21F859D870095F5D4 /* PaymentSession.h */,
 			);
 			path = applepay;
@@ -17336,10 +17388,14 @@
 		1AE96A791D1A0A5C00B86768 /* ApplePay */ = {
 			isa = PBXGroup;
 			children = (
+				A1DF5A981F7EC8C00058A477 /* JSApplePayContactField.cpp */,
+				A1DF5A971F7EC8BF0058A477 /* JSApplePayContactField.h */,
 				1ADFDFE11E71DCA0008F5D34 /* JSApplePayError.cpp */,
 				1ADFDFE21E71DCA0008F5D34 /* JSApplePayError.h */,
 				7C6579E91E00856600E3A27A /* JSApplePayLineItem.cpp */,
 				7C6579EA1E00856600E3A27A /* JSApplePayLineItem.h */,
+				A1DF5A891F7EC0000058A477 /* JSApplePayMerchantCapability.cpp */,
+				A1DF5A8A1F7EC0000058A477 /* JSApplePayMerchantCapability.h */,
 				7C65231D1E018B5A00677F22 /* JSApplePayPayment.cpp */,
 				7C65230A1E00DBB400677F22 /* JSApplePayPayment.h */,
 				1ADFDFE31E71DCA0008F5D34 /* JSApplePayPaymentAuthorizationResult.cpp */,
@@ -17358,6 +17414,10 @@
 				7C6523101E00DBB400677F22 /* JSApplePayPaymentPass.h */,
 				7C6579EB1E00856600E3A27A /* JSApplePayPaymentRequest.cpp */,
 				7C6579EC1E00856600E3A27A /* JSApplePayPaymentRequest.h */,
+				A1DF5A8C1F7EC0010058A477 /* JSApplePayRequest.cpp */,
+				A1DF5A8B1F7EC0010058A477 /* JSApplePayRequest.h */,
+				A1DF5AB01F8077520058A477 /* JSApplePayRequestBase.cpp */,
+				A1DF5AB11F8077520058A477 /* JSApplePayRequestBase.h */,
 				1AE96A7E1D1A0A8000B86768 /* JSApplePaySession.cpp */,
 				1AE96A7F1D1A0A8000B86768 /* JSApplePaySession.h */,
 				1AE96A801D1A0A8000B86768 /* JSApplePayShippingContactSelectedEvent.cpp */,
@@ -21604,6 +21664,17 @@
 			name = PaymentRequest;
 			sourceTree = "<group>";
 		};
+		A1DF5A9F1F7EE0F10058A477 /* paymentrequest */ = {
+			isa = PBXGroup;
+			children = (
+				A1DF5AA11F7EE1130058A477 /* ApplePayPaymentHandler.cpp */,
+				A1DF5AA01F7EE1130058A477 /* ApplePayPaymentHandler.h */,
+				A1DF5A7C1F7EBD0B0058A477 /* ApplePayRequest.h */,
+				A1DF5A7E1F7EBD0B0058A477 /* ApplePayRequest.idl */,
+			);
+			path = paymentrequest;
+			sourceTree = "<group>";
+		};
 		A1F76B0E1F44C0CF0014C318 /* paymentrequest */ = {
 			isa = PBXGroup;
 			children = (
@@ -21621,6 +21692,8 @@
 				A1F76B4E1F44D2420014C318 /* PaymentDetailsModifier.idl */,
 				A1F600471F47594E0077E83F /* PaymentDetailsUpdate.h */,
 				A1F600481F47594E0077E83F /* PaymentDetailsUpdate.idl */,
+				A1DF5AA51F7F64BB0058A477 /* PaymentHandler.cpp */,
+				A1DF5AA41F7F64BB0058A477 /* PaymentHandler.h */,
 				A1F76B2E1F44C55A0014C318 /* PaymentItem.h */,
 				A1F76B301F44C55A0014C318 /* PaymentItem.idl */,
 				A1F76B161F44C3900014C318 /* PaymentMethodData.h */,
@@ -27047,14 +27120,19 @@
 				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
+				A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */,
 				7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */,
+				A1DF5A861F7EBDF20058A477 /* ApplePayMerchantCapability.h in Headers */,
 				7C6523011E00D03400677F22 /* ApplePayPayment.h in Headers */,
 				1A8A64521D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h in Headers */,
 				7C6522FB1E00C90900677F22 /* ApplePayPaymentContact.h in Headers */,
+				A1DF5AA21F7EE1130058A477 /* ApplePayPaymentHandler.h in Headers */,
 				7C6522EF1E00A4C700677F22 /* ApplePayPaymentMethod.h in Headers */,
 				1A8A64561D19FCFC00D0E00F /* ApplePayPaymentMethodSelectedEvent.h in Headers */,
 				7C6522F51E00A51700677F22 /* ApplePayPaymentPass.h in Headers */,
 				7C6579E01E0079F900E3A27A /* ApplePayPaymentRequest.h in Headers */,
+				A1DF5A7F1F7EBD0B0058A477 /* ApplePayRequest.h in Headers */,
+				A1DF5AAD1F8075F00058A477 /* ApplePayRequestBase.h in Headers */,
 				1A8A64591D19FCFC00D0E00F /* ApplePaySession.h in Headers */,
 				1A58E8651D19D4EB00C0EA73 /* ApplePaySessionPaymentRequest.h in Headers */,
 				1A8A645C1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.h in Headers */,
@@ -28304,7 +28382,9 @@
 				120DE3FD1C87E18400B6D4DD /* JSAnimationEffect.h in Headers */,
 				3198480C1A1E6CE800A13318 /* JSAnimationEvent.h in Headers */,
 				1221E06D1C03D224006A1A00 /* JSAnimationTimeline.h in Headers */,
+				A1DF5A991F7EC8C00058A477 /* JSApplePayContactField.h in Headers */,
 				7C6579F01E00856600E3A27A /* JSApplePayLineItem.h in Headers */,
+				A1DF5A8E1F7EC0020058A477 /* JSApplePayMerchantCapability.h in Headers */,
 				7C6523141E00DBB400677F22 /* JSApplePayPayment.h in Headers */,
 				1AE96A8B1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.h in Headers */,
 				7C6523161E00DBB500677F22 /* JSApplePayPaymentContact.h in Headers */,
@@ -28312,6 +28392,8 @@
 				1AE96A8D1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.h in Headers */,
 				7C65231A1E00DBB500677F22 /* JSApplePayPaymentPass.h in Headers */,
 				7C6579F21E00856600E3A27A /* JSApplePayPaymentRequest.h in Headers */,
+				A1DF5A8F1F7EC0020058A477 /* JSApplePayRequest.h in Headers */,
+				A1DF5AB31F8077530058A477 /* JSApplePayRequestBase.h in Headers */,
 				1AE96A8F1D1A0DDD00B86768 /* JSApplePaySession.h in Headers */,
 				1AE96A911D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.h in Headers */,
 				7C6579F41E00856600E3A27A /* JSApplePayShippingMethod.h in Headers */,
@@ -29471,6 +29553,7 @@
 				A1F76B251F44C4910014C318 /* PaymentDetailsInit.h in Headers */,
 				A1F76B4F1F44D2420014C318 /* PaymentDetailsModifier.h in Headers */,
 				A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */,
+				A1DF5AA61F7F64BB0058A477 /* PaymentHandler.h in Headers */,
 				7CF930E71E01F9B400BAFFBE /* PaymentHeaders.h in Headers */,
 				A1F76B311F44C55A0014C318 /* PaymentItem.h in Headers */,
 				1AE96A891D1A0CEB00B86768 /* PaymentMerchantSession.h in Headers */,
@@ -31230,9 +31313,13 @@
 				49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */,
 				1221E0631C02D623006A1A00 /* AnimationTimeline.cpp in Sources */,
 				93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */,
+				A1DF5AB51F8078F30058A477 /* ApplePayContactField.cpp in Sources */,
 				1ADFDFE01E71D8EE008F5D34 /* ApplePayError.cpp in Sources */,
+				A1DF5AA91F8070D40058A477 /* ApplePayMerchantCapability.cpp in Sources */,
 				1A8A64511D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.cpp in Sources */,
+				A1DF5AA31F7EE1130058A477 /* ApplePayPaymentHandler.cpp in Sources */,
 				1A8A64541D19FCFC00D0E00F /* ApplePayPaymentMethodSelectedEvent.cpp in Sources */,
+				A1DF5AAE1F8075F10058A477 /* ApplePayRequestBase.cpp in Sources */,
 				1A8A64581D19FCFC00D0E00F /* ApplePaySession.cpp in Sources */,
 				1A58E8671D19D80E00C0EA73 /* ApplePaySessionPaymentRequest.cpp in Sources */,
 				1A8A645B1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.cpp in Sources */,
@@ -32321,8 +32408,10 @@
 				3198480B1A1E6CE400A13318 /* JSAnimationEvent.cpp in Sources */,
 				1221E06C1C03D224006A1A00 /* JSAnimationTimeline.cpp in Sources */,
 				1221E0731C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp in Sources */,
+				A1DF5A9A1F7EC8C00058A477 /* JSApplePayContactField.cpp in Sources */,
 				1ADFDFEC1E71E455008F5D34 /* JSApplePayError.cpp in Sources */,
 				7C6579EF1E00856600E3A27A /* JSApplePayLineItem.cpp in Sources */,
+				A1DF5A8D1F7EC0020058A477 /* JSApplePayMerchantCapability.cpp in Sources */,
 				7C65231E1E018B5A00677F22 /* JSApplePayPayment.cpp in Sources */,
 				1ADFDFF01E71E4AC008F5D34 /* JSApplePayPaymentAuthorizationResult.cpp in Sources */,
 				1AE96A8A1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.cpp in Sources */,
@@ -32332,6 +32421,8 @@
 				1ADFDFED1E71E475008F5D34 /* JSApplePayPaymentMethodUpdate.cpp in Sources */,
 				7C6523191E00DBB500677F22 /* JSApplePayPaymentPass.cpp in Sources */,
 				7C6579F11E00856600E3A27A /* JSApplePayPaymentRequest.cpp in Sources */,
+				A1DF5A901F7EC0020058A477 /* JSApplePayRequest.cpp in Sources */,
+				A1DF5AB21F8077530058A477 /* JSApplePayRequestBase.cpp in Sources */,
 				1AE96A8E1D1A0DDD00B86768 /* JSApplePaySession.cpp in Sources */,
 				1AE96A901D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.cpp in Sources */,
 				1ADFDFEF1E71E483008F5D34 /* JSApplePayShippingContactUpdate.cpp in Sources */,
@@ -33487,11 +33578,12 @@
 				1A8A646C1D19FF8700D0E00F /* PaymentCocoa.mm in Sources */,
 				1A8A646D1D19FF8700D0E00F /* PaymentContactCocoa.mm in Sources */,
 				1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */,
+				A1DF5AA71F7F64BB0058A477 /* PaymentHandler.cpp in Sources */,
 				1ADA4A1C1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm in Sources */,
 				1A8A646E1D19FF8700D0E00F /* PaymentMethodCocoa.mm in Sources */,
 				A1F76B141F44C2450014C318 /* PaymentRequest.cpp in Sources */,
 				A1F600451F4757A90077E83F /* PaymentRequestUpdateEvent.cpp in Sources */,
-				1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.cpp in Sources */,
+				1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.mm in Sources */,
 				A1F76B3E1F44CF240014C318 /* PaymentResponse.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
 				2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */,

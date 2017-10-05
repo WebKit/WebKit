@@ -25,22 +25,10 @@
 
 [
     Conditional=APPLE_PAY,
-] enum ApplePayShippingType {
-    "shipping",
-    "delivery",
-    "storePickup",
-    "servicePickup"
-};
-
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentRequest : ApplePayRequestBase {
-    required ApplePayLineItem total;
-    sequence<ApplePayLineItem> lineItems;
-
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
-
-    ApplePayShippingType shippingType = "shipping";
-    sequence<ApplePayShippingMethod> shippingMethods;
+] enum ApplePayContactField {
+    "email",
+    "name",
+    "phoneticName",
+    "phone",
+    "postalAddress"
 };

@@ -89,10 +89,7 @@ public:
             Final,
         } type { Type::Final };
 
-        // Stored as a fixed point decimal number with two decimals:
-        // 1.23 -> 123.
-        // 0.01 -> 1.
-        std::optional<int64_t> amount;
+        String amount;
         String label;
     };
 
@@ -108,7 +105,7 @@ public:
     struct ShippingMethod {
         String label;
         String detail;
-        int64_t amount;
+        String amount;
 
         String identifier;
     };

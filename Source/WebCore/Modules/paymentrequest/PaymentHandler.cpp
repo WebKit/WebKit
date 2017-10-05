@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] enum ApplePayShippingType {
-    "shipping",
-    "delivery",
-    "storePickup",
-    "servicePickup"
-};
+#include "config.h"
+#include "PaymentHandler.h"
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentRequest : ApplePayRequestBase {
-    required ApplePayLineItem total;
-    sequence<ApplePayLineItem> lineItems;
+#if ENABLE(PAYMENT_REQUEST)
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
+#if ENABLE(APPLE_PAY)
+#include "ApplePayPaymentHandler.h"
+#endif
 
-    ApplePayShippingType shippingType = "shipping";
-    sequence<ApplePayShippingMethod> shippingMethods;
-};
+namespace WebCore {
+
+std::unique_ptr<PaymentHandler> PaymentHandler::create(PaymentRequest& paymentRequest, const PaymentRequest::MethodIdentifier& identifier)
+{
+#if ENABLE(APPLE_PAY)
+    if (ApplePayPaymentHandler::handlesIdentifier(identifier))
+        return std::make_unique<ApplePayPaymentHandler>(paymentRequest);
+#else
+    UNUSED_PARAM(paymentRequest);
+    UNUSED_PARAM(identifier);
+#endif
+
+    return nullptr;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(PAYMENT_REQUEST)

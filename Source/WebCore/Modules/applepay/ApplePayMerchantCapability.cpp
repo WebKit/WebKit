@@ -23,24 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] enum ApplePayShippingType {
-    "shipping",
-    "delivery",
-    "storePickup",
-    "servicePickup"
-};
+#include "config.h"
+#include "ApplePayMerchantCapability.h"
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentRequest : ApplePayRequestBase {
-    required ApplePayLineItem total;
-    sequence<ApplePayLineItem> lineItems;
+#if ENABLE(APPLE_PAY)
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
+namespace WebCore {
 
-    ApplePayShippingType shippingType = "shipping";
-    sequence<ApplePayShippingMethod> shippingMethods;
-};
+ExceptionOr<ApplePaySessionPaymentRequest::MerchantCapabilities> convertAndValidate(const Vector<ApplePayMerchantCapability>& merchantCapabilities)
+{
+    if (merchantCapabilities.isEmpty())
+        return Exception { TypeError, "At least one merchant capability must be provided." };
+
+    ApplePaySessionPaymentRequest::MerchantCapabilities result;
+
+    for (auto& merchantCapability : merchantCapabilities) {
+        switch (merchantCapability) {
+        case ApplePayMerchantCapability::Supports3DS:
+            result.supports3DS = true;
+            break;
+        case ApplePayMerchantCapability::SupportsEMV:
+            result.supportsEMV = true;
+            break;
+        case ApplePayMerchantCapability::SupportsCredit:
+            result.supportsCredit = true;
+            break;
+        case ApplePayMerchantCapability::SupportsDebit:
+            result.supportsDebit = true;
+            break;
+        }
+    }
+
+    return WTFMove(result);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

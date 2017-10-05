@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
 PASS Throws if the promise [[state]] is not "interactive" 
 PASS Calling abort must not change the [[state]] until after "interactive" 

@@ -29,26 +29,16 @@
 
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentContact.h"
+#include "ApplePayRequest.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingMethod.h"
 
 namespace WebCore {
 
-struct ApplePayPaymentRequest {
-    enum class MerchantCapability { Supports3DS, SupportsEMV, SupportsCredit, SupportsDebit };
-    enum class ContactField { Email, Name, PhoneticName, Phone, PostalAddress };
-
+struct ApplePayPaymentRequest : ApplePayRequest {
     using ShippingType = ApplePaySessionPaymentRequest::ShippingType;
 
-    Vector<MerchantCapability> merchantCapabilities;
-    Vector<String> supportedNetworks;
-    String countryCode;
-    String currencyCode;
-
-    std::optional<Vector<ContactField>> requiredBillingContactFields;
-    std::optional<ApplePayPaymentContact> billingContact;
-
-    std::optional<Vector<ContactField>>  requiredShippingContactFields;
+    std::optional<Vector<ApplePayContactField>> requiredShippingContactFields;
     std::optional<ApplePayPaymentContact> shippingContact;
 
     ShippingType shippingType { ShippingType::Shipping };
@@ -56,9 +46,6 @@ struct ApplePayPaymentRequest {
 
     ApplePayLineItem total;
     std::optional<Vector<ApplePayLineItem>> lineItems;
-
-    String applicationData;
-    Vector<String> supportedCountries;
 };
 
 }

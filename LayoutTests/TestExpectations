@@ -196,7 +196,6 @@ imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html [
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_4.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
-imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ Pass Failure ]
 
 # The follow two tests change their output each run
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Skip ]

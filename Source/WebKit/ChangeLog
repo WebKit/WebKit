@@ -1,3 +1,17 @@
+2017-10-05  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Add a payment method that supports Apple Pay
+        https://bugs.webkit.org/show_bug.cgi?id=177850
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (toShippingMethod): Converted the NSDecimalNumber amount to a string rather than an integer.
+        (WebKit::toDecimalNumber): used -decimalNumberWithString:locale: rather than
+        -initWithMantissa:exponent:isNegative: to create an NSDecimalNumber.
+        (WebKit::toPKPaymentSummaryItem):
+        (WebKit::toPKShippingMethod):
+
 2017-10-05  Youenn Fablet  <youenn@apple.com>
 
         Make LibWebRTCProvider port agnostic

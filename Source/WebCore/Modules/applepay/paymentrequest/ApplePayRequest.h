@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] enum ApplePayShippingType {
-    "shipping",
-    "delivery",
-    "storePickup",
-    "servicePickup"
+#pragma once
+
+#if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
+
+#include "ApplePayRequestBase.h"
+
+namespace WebCore {
+
+struct ApplePayRequest : public ApplePayRequestBase {
+    unsigned long version;
 };
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentRequest : ApplePayRequestBase {
-    required ApplePayLineItem total;
-    sequence<ApplePayLineItem> lineItems;
+} // namespace WebCore
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
-
-    ApplePayShippingType shippingType = "shipping";
-    sequence<ApplePayShippingMethod> shippingMethods;
-};
+#endif // ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)

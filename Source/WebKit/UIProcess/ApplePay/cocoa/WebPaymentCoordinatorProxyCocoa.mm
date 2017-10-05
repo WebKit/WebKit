@@ -150,7 +150,7 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
     WebCore::ApplePaySessionPaymentRequest::ShippingMethod result;
     result.label = shippingMethod.label;
     result.detail = shippingMethod.detail;
-    result.amount = [shippingMethod.amount decimalNumberByMultiplyingByPowerOf10:2].integerValue;
+    result.amount = shippingMethod.amount.stringValue;
     result.identifier = shippingMethod.identifier;
 
     return result;
@@ -397,14 +397,16 @@ static PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySess
     }
 }
 
-static RetainPtr<NSDecimalNumber> toDecimalNumber(int64_t value)
+static NSDecimalNumber *toDecimalNumber(const String& amount)
 {
-    return adoptNS([[NSDecimalNumber alloc] initWithMantissa:llabs(value) exponent:-2 isNegative:value < 0]);
+    if (!amount)
+        return [NSDecimalNumber zero];
+    return [NSDecimalNumber decimalNumberWithString:amount locale:@{ NSLocaleDecimalSeparator : @"." }];
 }
 
 static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
-    return [getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount.value_or(0)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
+    return [getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 
 static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
@@ -491,7 +493,7 @@ static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::S
 
 static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
-    RetainPtr<PKShippingMethod> result = [getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount).get()];
+    RetainPtr<PKShippingMethod> result = [getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
 

@@ -23,24 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] enum ApplePayShippingType {
-    "shipping",
-    "delivery",
-    "storePickup",
-    "servicePickup"
+#pragma once
+
+#if ENABLE(APPLE_PAY)
+
+#include "ApplePaySessionPaymentRequest.h"
+#include "ExceptionOr.h"
+
+namespace WebCore {
+
+enum class ApplePayContactField {
+    Email,
+    Name,
+    PhoneticName,
+    Phone,
+    PostalAddress,
 };
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentRequest : ApplePayRequestBase {
-    required ApplePayLineItem total;
-    sequence<ApplePayLineItem> lineItems;
+ExceptionOr<ApplePaySessionPaymentRequest::ContactFields> convertAndValidate(unsigned version, const Vector<ApplePayContactField>&);
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
+} // namespace WebCore
 
-    ApplePayShippingType shippingType = "shipping";
-    sequence<ApplePayShippingMethod> shippingMethods;
-};
+#endif // ENABLE(APPLE_PAY)

@@ -1,3 +1,15 @@
+2017-10-05  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Add a payment method that supports Apple Pay
+        https://bugs.webkit.org/show_bug.cgi?id=177850
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/ssl/applepay/PaymentRequest.https-expected.txt: Added.
+        * http/tests/ssl/applepay/PaymentRequest.https.html: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2017-10-05  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations and rebaseline tests failing at r222905.

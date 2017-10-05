@@ -23,24 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] enum ApplePayShippingType {
-    "shipping",
-    "delivery",
-    "storePickup",
-    "servicePickup"
-};
+#include "config.h"
+#include "ApplePayContactField.h"
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentRequest : ApplePayRequestBase {
-    required ApplePayLineItem total;
-    sequence<ApplePayLineItem> lineItems;
+#if ENABLE(APPLE_PAY)
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
+namespace WebCore {
 
-    ApplePayShippingType shippingType = "shipping";
-    sequence<ApplePayShippingMethod> shippingMethods;
-};
+ExceptionOr<ApplePaySessionPaymentRequest::ContactFields> convertAndValidate(unsigned version, const Vector<ApplePayContactField>& contactFields)
+{
+    ApplePaySessionPaymentRequest::ContactFields result;
+
+    for (auto& contactField : contactFields) {
+        switch (contactField) {
+        case ApplePayContactField::Email:
+            result.email = true;
+            break;
+        case ApplePayContactField::Name:
+            result.name = true;
+            break;
+        case ApplePayContactField::PhoneticName:
+            if (version < 3)
+                return Exception { TypeError, "\"phoneticName\" is not a valid contact field." };
+            result.phoneticName = true;
+            break;
+        case ApplePayContactField::Phone:
+            result.phone = true;
+            break;
+        case ApplePayContactField::PostalAddress:
+            result.postalAddress = true;
+            break;
+        }
+    }
+
+    return WTFMove(result);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

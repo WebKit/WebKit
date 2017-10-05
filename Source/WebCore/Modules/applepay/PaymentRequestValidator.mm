@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,6 @@ static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPayme
 static ExceptionOr<void> validateSupportedNetworks(const Vector<String>&);
 static ExceptionOr<void> validateShippingMethods(const Vector<ApplePaySessionPaymentRequest::ShippingMethod>&);
 static ExceptionOr<void> validateShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&);
-
 
 ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPaymentRequest& paymentRequest)
 {
@@ -85,10 +84,12 @@ ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePaySessionPa
     if (!total.amount)
         return Exception { TypeError, "Missing total amount." };
 
-    if (*total.amount <= 0) 
+    double amount = [NSDecimalNumber decimalNumberWithString:total.amount locale:@{ NSLocaleDecimalSeparator : @"." }].doubleValue;
+
+    if (amount <= 0)
         return Exception { TypeError, "Total amount must be greater than zero." };
 
-    if (*total.amount > 10000000000)
+    if (amount > 100000000)
         return Exception { TypeError, "Total amount is too big." };
 
     return { };
@@ -142,7 +143,8 @@ static ExceptionOr<void> validateSupportedNetworks(const Vector<String>& support
 
 static ExceptionOr<void> validateShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
-    if (shippingMethod.amount < 0)
+    NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:shippingMethod.amount locale:@{ NSLocaleDecimalSeparator : @"." }];
+    if (amount.integerValue < 0)
         return Exception { TypeError, "Shipping method amount must be greater than or equal to zero." };
 
     return { };

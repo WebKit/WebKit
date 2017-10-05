@@ -34,6 +34,8 @@ webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/removing-allowpaymentrequest.https.sub.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest.https.sub.html [ Skip ]
+webkit.org/b/177391 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ Pass Failure ]
+webkit.org/b/177391 imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html [ Pass Failure ]
 
  # skip manual payment-request tests
 imported/w3c/web-platform-tests/payment-request/algorithms-manual.https.html [ Skip ]
@@ -1964,7 +1966,5 @@ webkit.org/b/175939 [ Debug ] editing/execCommand/forward-delete-read-write-canv
 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
 
 webkit.org/b/176240 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
-
-webkit.org/b/177391 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ Pass Failure ]
 
 webkit.org/b/177832 imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ Skip ]

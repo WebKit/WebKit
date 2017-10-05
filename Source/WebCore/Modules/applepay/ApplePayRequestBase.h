@@ -23,24 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] enum ApplePayShippingType {
-    "shipping",
-    "delivery",
-    "storePickup",
-    "servicePickup"
+#pragma once
+
+#if ENABLE(APPLE_PAY)
+
+#include "ApplePayContactField.h"
+#include "ApplePayMerchantCapability.h"
+#include "ApplePayPaymentContact.h"
+
+namespace WebCore {
+
+struct ApplePayRequestBase {
+    Vector<ApplePayMerchantCapability> merchantCapabilities;
+    Vector<String> supportedNetworks;
+    String countryCode;
+    String currencyCode;
+
+    std::optional<Vector<ApplePayContactField>> requiredBillingContactFields;
+    std::optional<ApplePayPaymentContact> billingContact;
+
+    String applicationData;
+    Vector<String> supportedCountries;
 };
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayPaymentRequest : ApplePayRequestBase {
-    required ApplePayLineItem total;
-    sequence<ApplePayLineItem> lineItems;
+ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayRequestBase&);
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
+} // namespace WebCore
 
-    ApplePayShippingType shippingType = "shipping";
-    sequence<ApplePayShippingMethod> shippingMethods;
-};
+#endif // ENABLE(APPLE_PAY)
