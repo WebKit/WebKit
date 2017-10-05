@@ -50,7 +50,7 @@ static RetainPtr<NSURL> secondURL;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    if ([navigationAction.request.URL.absoluteString isEqualToString:[secondURL absoluteString]]) {
+    if ([navigationAction.request.URL isEqualTo:secondURL.get()]) {
         [webView evaluateJavaScript:@"alert(document.location);" completionHandler:^(id, NSError *) {
             decisionHandler(WKNavigationActionPolicyAllow);
         }];
@@ -60,7 +60,7 @@ static RetainPtr<NSURL> secondURL;
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
-    if ([navigationResponse.response.URL.absoluteString isEqualToString:[secondURL absoluteString]]) {
+    if ([navigationResponse.response.URL isEqualTo:secondURL.get()]) {
         [webView evaluateJavaScript:@"alert(document.location);" completionHandler:^(id, NSError *) {
             decisionHandler(WKNavigationResponsePolicyAllow);
         }];
