@@ -130,7 +130,14 @@ private:
     StorageType toStorageType(id ptr) const { return (__bridge StorageType)ptr; }
     StorageType toStorageType(CFTypeRef ptr) const { return (StorageType)ptr; }
 #else
-    PtrType fromStorageType(StorageType ptr) const { return (PtrType)ptr; }
+    PtrType fromStorageType(StorageType ptr) const
+    {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-qual"
+        // FIXME: Bug 177895: Re-enable -Wcast-qual for Apple ports.
+        return (PtrType)ptr;
+#pragma clang diagnostic pop
+    }
     StorageType toStorageType(PtrType ptr) const { return (StorageType)ptr; }
 #endif
 

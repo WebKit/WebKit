@@ -1,3 +1,16 @@
+2017-10-05  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 177893: Disable -Wcast-qual for new clang compiler in Apple ports
+        <https://webkit.org/b/177893>
+        <rdar://problem/33667497>
+
+        Reviewed by Tim Horton.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::fromStorageType const): Disable warnings for
+        -Wcast-qual until we can provide a safe cast function that lets
+        us re-enable the warning.
+
 2017-10-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r222893.
