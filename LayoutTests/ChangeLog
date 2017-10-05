@@ -1,3 +1,16 @@
+2017-10-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        Enable the http/tests/ layout tests in general, but skip the directories
+        that contain failing tests that still have to be cataloged.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/http: Added.
+        * platform/wpe/http/wpt: Added.
+        * platform/wpe/http/wpt/resource-timing: Added.
+        * platform/wpe/http/wpt/resource-timing/rt-initiatorType-media-expected.txt: Added.
+
 2017-10-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Improve CanvasManager recording events

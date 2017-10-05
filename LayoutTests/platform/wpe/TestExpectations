@@ -3,7 +3,6 @@ Bug(WPE) editing/ [ Skip ]
 Bug(WPE) fonts/ [ Skip ]
 Bug(WPE) fullscreen/ [ Skip ]
 Bug(WPE) gamepad/ [ Skip ]
-Bug(WPE) http/tests/ [ Skip ]
 Bug(WPE) inspector/ [ Skip ]
 Bug(WPE) mathml/ [ Skip ]
 Bug(WPE) media/ [ Skip ]
@@ -16,6 +15,9 @@ Bug(WPE) svg/ [ Skip ]
 Bug(WPE) webarchive/ [ Skip ]
 Bug(WPE) webaudio/ [ Skip ]
 Bug(WPE) webrtc [ Skip ]
+
+# Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy.
+http/tests/cookies/third-party-cookie-relaxing.html [ WontFix Failure ]
 
 Bug(WPE) http/tests/appcache [ Pass ]
 # Appcache manifest is still downloaded in the WebProcess
@@ -851,3 +853,50 @@ webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html 
 
 Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/wpt/beacon/contentextensions/ [ Skip ]
+
+http/tests/contentdispositionattachmentsandbox [ Skip ]
+http/tests/contentextensions [ Skip ]
+http/tests/contentfiltering [ Skip ]
+http/tests/download [ Skip ]
+http/tests/fileapi [ Skip ]
+http/tests/frame-throttling [ Skip ]
+http/tests/fullscreen [ Skip ]
+http/tests/globalhistory [ Skip ]
+http/tests/history [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/loading [ Skip ]
+http/tests/local [ Skip ]
+http/tests/media [ Skip ]
+http/tests/messaging [ Skip ]
+http/tests/misc [ Skip ]
+http/tests/multipart [ Skip ]
+http/tests/navigation [ Skip ]
+http/tests/notifications [ Skip ]
+http/tests/permissionclient [ Skip ]
+http/tests/plugins [ Skip ]
+http/tests/pointer-lock [ Skip ]
+http/tests/preconnect [ Skip ]
+http/tests/preload [ Skip ]
+http/tests/quicklook [ Skip ]
+http/tests/security [ Skip ]
+http/tests/ssl [ Skip ]
+http/tests/svg [ Skip ]
+http/tests/webarchive [ Skip ]
+http/tests/webfont [ Skip ]
+http/tests/webrtc [ Skip ]
+http/tests/websocket [ Skip ]
+http/tests/xmlhttprequest [ Skip ]
+
+webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Failure Pass ]
+webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
+
+webkit.org/b/175419 http/tests/workers/service [ Skip ]
+
+webkit.org/b/176652 http/tests/cache-storage/cache-origins.https.html [ Failure ]
+webkit.org/b/176652 http/tests/cache-storage/cache-records-persistency.https.html [ Failure ]
+
+http/tests/dom/document-attributes-null-handling [ Failure ]
+
+webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
+
+http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure ]
