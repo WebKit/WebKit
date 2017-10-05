@@ -31,6 +31,7 @@
 #include "ApplePayPaymentRequest.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "PaymentSession.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -57,7 +58,7 @@ struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
 
-class ApplePaySession final : public RefCounted<ApplePaySession>, public ActiveDOMObject, public EventTargetWithInlineData {
+class ApplePaySession final : public PaymentSession, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
     static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, ApplePayPaymentRequest&&);
     virtual ~ApplePaySession();
@@ -92,15 +93,8 @@ public:
 
     const ApplePaySessionPaymentRequest& paymentRequest() const { return m_paymentRequest; }
 
-    void validateMerchant(const URL&);
-    void didAuthorizePayment(const Payment&);
-    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&);
-    void didSelectShippingContact(const PaymentContact&);
-    void didSelectPaymentMethod(const PaymentMethod&);
-    void didCancelPaymentSession();
-
-    using RefCounted<ApplePaySession>::ref;
-    using RefCounted<ApplePaySession>::deref;
+    using PaymentSession::ref;
+    using PaymentSession::deref;
 
 private:
     ApplePaySession(Document&, ApplePaySessionPaymentRequest&&);
@@ -115,6 +109,14 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
+
+    // PaymentSession
+    void validateMerchant(const URL&) override;
+    void didAuthorizePayment(const Payment&) override;
+    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) override;
+    void didSelectShippingContact(const PaymentContact&) override;
+    void didSelectPaymentMethod(const PaymentMethod&) override;
+    void didCancelPaymentSession() override;
 
     PaymentCoordinator& paymentCoordinator() const;
 

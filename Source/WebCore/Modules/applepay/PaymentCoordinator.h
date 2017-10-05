@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-class ApplePaySession;
 class Payment;
 class PaymentCoordinatorClient;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
+class PaymentSession;
 class URL;
 enum class PaymentAuthorizationStatus;
 struct PaymentAuthorizationResult;
@@ -57,7 +57,7 @@ public:
 
     bool hasActiveSession() const { return m_activeSession; }
 
-    bool beginPaymentSession(ApplePaySession&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&);
+    bool beginPaymentSession(PaymentSession&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
     void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&);
     void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&);
@@ -76,7 +76,7 @@ public:
 private:
     PaymentCoordinatorClient& m_client;
 
-    RefPtr<ApplePaySession> m_activeSession;
+    RefPtr<PaymentSession> m_activeSession;
 };
 
 }

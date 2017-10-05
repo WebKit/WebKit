@@ -28,9 +28,9 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySession.h"
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
+#include "PaymentSession.h"
 #include "URL.h"
 
 namespace WebCore {
@@ -65,7 +65,7 @@ void PaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, cons
     m_client.openPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
-bool PaymentCoordinator::beginPaymentSession(ApplePaySession& paymentSession, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest& paymentRequest)
+bool PaymentCoordinator::beginPaymentSession(PaymentSession& paymentSession, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest& paymentRequest)
 {
     ASSERT(!m_activeSession);
 
