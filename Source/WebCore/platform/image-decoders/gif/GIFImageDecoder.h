@@ -65,6 +65,7 @@ public:
 private:
     GIFImageDecoder(AlphaOption, GammaAndColorProfileOption);
     void tryDecodeSize(bool allDataReceived) final { decode(0, GIFSizeQuery, allDataReceived); }
+    size_t findFirstRequiredFrameToDecode(size_t);
 
     // If the query is GIFFullQuery, decodes the image up to (but not
     // including) |haltAtFrame|. Otherwise, decodes as much as is needed to
