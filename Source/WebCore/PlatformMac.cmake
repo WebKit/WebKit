@@ -12,6 +12,7 @@ find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
 find_library(AUDIOUNIT_LIBRARY AudioUnit)
 find_library(CARBON_LIBRARY Carbon)
+find_library(CFNETWORK_LIBRARY CFNetwork)
 find_library(COCOA_LIBRARY Cocoa)
 find_library(COREAUDIO_LIBRARY CoreAudio)
 find_library(CORESERVICES_LIBRARY CoreServices)
@@ -34,6 +35,7 @@ list(APPEND WebCore_LIBRARIES
     ${AUDIOUNIT_LIBRARY}
     ${AVFOUNDATION_LIBRARY}
     ${CARBON_LIBRARY}
+    ${CFNETWORK_LIBRARY}
     ${COCOA_LIBRARY}
     ${COREAUDIO_LIBRARY}
     ${CORESERVICES_LIBRARY}

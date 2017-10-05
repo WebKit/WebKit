@@ -1,3 +1,14 @@
+2017-10-04  Tim Horton  <timothy_horton@apple.com>
+
+        Link WebCore against CFNetwork in the CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=177910
+
+        Reviewed by Ryosuke Niwa.
+
+        * PlatformMac.cmake:
+        This is enough to get WebKit1 MiniBrowser running; otherwise, we
+        crash trying to access the public suffix list.
+
 2017-10-04  Daniel Bates  <dabates@apple.com>
 
         Have TextDecorationPainter hold an OptionSet of decorations
