@@ -26,6 +26,7 @@
 
 enum ForcedAccessibilityValue { "system", "on", "off" };
 enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "FullyEnabled" };
+enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
 
 [
     NoInterfaceObject,
@@ -43,7 +44,8 @@ enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "Fully
     [MayThrowException] void setFantasyFontFamily(DOMString family, DOMString script);
     [MayThrowException] void setPictographFontFamily(DOMString family, DOMString script);
     [MayThrowException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
-    [MayThrowException] void setWebFontsAlwaysFallBack(boolean enable);
+    [MayThrowException] void setFontLoadTimingOverride(FontLoadTimingOverride override);
+    [MayThrowException] void setShouldIgnoreFontLoadCompletions(boolean ignore);
 
     [MayThrowException] void setTextAutosizingEnabled(boolean enabled);
     [MayThrowException] void setTextAutosizingWindowSizeOverride(long width, long height);

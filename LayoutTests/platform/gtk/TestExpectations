@@ -3227,8 +3227,6 @@ webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [
 
 webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
 webkit.org/b/172270 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
-webkit.org/b/172270 fast/text/web-font-load-fallback-during-loading-2.html [ ImageOnlyFailure ]
-webkit.org/b/172270 fast/text/web-font-load-fallback-during-loading.html [ ImageOnlyFailure ]
 
 webkit.org/b/172271 fast/text/softbank-emoji.html [ Failure ]
 webkit.org/b/172271 fast/text/system-font-fallback-emoji.html [ Failure ]

@@ -90,10 +90,12 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
 
     if (status() == Status::Pending && m_font && m_font->isLoaded()) {
         setStatus(Status::Loading);
-        if (m_font && m_font->errorOccurred())
-            setStatus(Status::Failure);
-        else
-            setStatus(Status::Success);
+        if (!shouldIgnoreFontLoadCompletions()) {
+            if (m_font && m_font->errorOccurred())
+                setStatus(Status::Failure);
+            else
+                setStatus(Status::Success);
+        }
     }
 }
 
@@ -103,9 +105,17 @@ CSSFontFaceSource::~CSSFontFaceSource()
         m_font->removeClient(*this);
 }
 
+bool CSSFontFaceSource::shouldIgnoreFontLoadCompletions() const
+{
+    return m_face.shouldIgnoreFontLoadCompletions();
+}
+
 void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
 {
     ASSERT_UNUSED(loadedFont, &loadedFont == m_font.get());
+
+    if (shouldIgnoreFontLoadCompletions())
+        return;
 
     Ref<CSSFontFace> protectedFace(m_face);
 
@@ -117,9 +127,6 @@ void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
         ASSERT(m_font->errorOccurred());
         return;
     }
-
-    if (m_face.webFontsShouldAlwaysFallBack())
-        return;
 
     if (m_font->errorOccurred() || !m_font->ensureCustomFontData(m_familyNameOrURI))
         setStatus(Status::Failure);

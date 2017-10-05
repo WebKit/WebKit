@@ -303,5 +303,8 @@ allowMediaContentTypesRequiringHardwareSupportAsFallback initial=false
 
 paymentRequestEnabled initial=false, conditional=PAYMENT_REQUEST
 
+fontLoadTimingOverride type=FontLoadTimingOverride, initial=FontLoadTimingOverride::None
+shouldIgnoreFontLoadCompletions initial=false
+
 storageAccessAPIEnabled initial=false
 

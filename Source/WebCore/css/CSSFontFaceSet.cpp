@@ -114,7 +114,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
         face->setFamilies(familyList.get());
         face->setFontSelectionCapabilities(item);
         face->adoptSource(std::make_unique<CSSFontFaceSource>(face.get(), familyName));
-        ASSERT(!face->allSourcesFailed());
+        ASSERT(!face->computeFailureState());
         faces.append(WTFMove(face));
     }
     m_locallyInstalledFacesLookupTable.add(familyName, WTFMove(faces));

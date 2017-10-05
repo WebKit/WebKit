@@ -243,7 +243,6 @@ Settings::Settings(Page* page)
     , m_hiddenPageDOMTimerThrottlingEnabled(false)
     , m_hiddenPageCSSAnimationSuspensionEnabled(false)
     , m_fontFallbackPrefersPictographs(false)
-    , m_webFontsAlwaysFallBack(false)
     , m_forcePendingWebGLPolicy(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
@@ -732,14 +731,6 @@ void Settings::setFontFallbackPrefersPictographs(bool preferPictographs)
     m_fontFallbackPrefersPictographs = preferPictographs;
     if (m_page)
         m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setWebFontsAlwaysFallBack(bool enable)
-{
-    if (m_webFontsAlwaysFallBack == enable)
-        return;
-
-    m_webFontsAlwaysFallBack = enable;
 }
 
 void Settings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)

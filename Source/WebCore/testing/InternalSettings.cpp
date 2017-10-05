@@ -77,7 +77,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_youTubeFlashPluginReplacementEnabled(settings.youTubeFlashPluginReplacementEnabled())
     , m_shouldConvertPositionStyleOnCopy(settings.shouldConvertPositionStyleOnCopy())
     , m_fontFallbackPrefersPictographs(settings.fontFallbackPrefersPictographs())
-    , m_webFontsAlwaysFallBack(settings.webFontsAlwaysFallBack())
+    , m_shouldIgnoreFontLoadCompletions(settings.shouldIgnoreFontLoadCompletions())
     , m_backgroundShouldExtendBeyondPage(settings.backgroundShouldExtendBeyondPage())
     , m_storageBlockingPolicy(settings.storageBlockingPolicy())
     , m_scrollingTreeIncludesFrames(settings.scrollingTreeIncludesFrames())
@@ -98,6 +98,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedColorsAreInvertedAccessibilityValue(settings.forcedColorsAreInvertedAccessibilityValue())
     , m_forcedDisplayIsMonochromeAccessibilityValue(settings.forcedDisplayIsMonochromeAccessibilityValue())
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
+    , m_fontLoadTimingOverride(settings.fontLoadTimingOverride())
     , m_frameFlattening(settings.frameFlattening())
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
@@ -171,7 +172,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setAutoscrollForDragAndDropEnabled(m_autoscrollForDragAndDropEnabled);
     settings.setShouldConvertPositionStyleOnCopy(m_shouldConvertPositionStyleOnCopy);
     settings.setFontFallbackPrefersPictographs(m_fontFallbackPrefersPictographs);
-    settings.setWebFontsAlwaysFallBack(m_webFontsAlwaysFallBack);
+    settings.setShouldIgnoreFontLoadCompletions(m_shouldIgnoreFontLoadCompletions);
     settings.setBackgroundShouldExtendBeyondPage(m_backgroundShouldExtendBeyondPage);
     settings.setStorageBlockingPolicy(m_storageBlockingPolicy);
     settings.setScrollingTreeIncludesFrames(m_scrollingTreeIncludesFrames);
@@ -191,6 +192,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setForcedColorsAreInvertedAccessibilityValue(m_forcedColorsAreInvertedAccessibilityValue);
     settings.setForcedDisplayIsMonochromeAccessibilityValue(m_forcedDisplayIsMonochromeAccessibilityValue);
     settings.setForcedPrefersReducedMotionAccessibilityValue(m_forcedPrefersReducedMotionAccessibilityValue);
+    settings.setFontLoadTimingOverride(m_fontLoadTimingOverride);
     Settings::setAllowsAnySSLCertificate(false);
     RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
     FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
@@ -612,11 +614,31 @@ ExceptionOr<void> InternalSettings::setFontFallbackPrefersPictographs(bool prefe
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setWebFontsAlwaysFallBack(bool enable)
+ExceptionOr<void> InternalSettings::setFontLoadTimingOverride(const FontLoadTimingOverride& fontLoadTimingOverride)
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    settings().setWebFontsAlwaysFallBack(enable);
+    auto policy = Settings::FontLoadTimingOverride::None;
+    switch (fontLoadTimingOverride) {
+    case FontLoadTimingOverride::Block:
+        policy = Settings::FontLoadTimingOverride::Block;
+        break;
+    case FontLoadTimingOverride::Swap:
+        policy = Settings::FontLoadTimingOverride::Swap;
+        break;
+    case FontLoadTimingOverride::Failure:
+        policy = Settings::FontLoadTimingOverride::Failure;
+        break;
+    }
+    settings().setFontLoadTimingOverride(policy);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setShouldIgnoreFontLoadCompletions(bool ignore)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    settings().setShouldIgnoreFontLoadCompletions(ignore);
     return { };
 }
 

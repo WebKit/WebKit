@@ -76,6 +76,8 @@ public:
 #endif
 
 private:
+    bool shouldIgnoreFontLoadCompletions() const;
+
     void fontLoaded(CachedFont&) override;
 
     void setStatus(Status);

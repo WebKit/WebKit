@@ -115,7 +115,7 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
 
     if (addResult.isNewEntry) {
         for (auto& face : m_fontFaces) {
-            if (face->allSourcesFailed())
+            if (face->computeFailureState())
                 continue;
 
             auto selectionCapabilities = face->fontSelectionCapabilities();

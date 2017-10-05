@@ -1,3 +1,36 @@
+2017-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-display loading behaviors
+        https://bugs.webkit.org/show_bug.cgi?id=175384
+        <rdar://problem/33813243>
+
+        Reviewed by Darin Adler.
+
+        Delete the tests using the old testing infrastructure and replace them
+        with tests that use the new testing infrastructure.
+
+        * fast/text/font-loading-system-fallback-expected.html: Removed.
+        * fast/text/font-loading-system-fallback.html: Removed.
+        * fast/text/loading-block-finish-expected.html: Added.
+        * fast/text/loading-block-finish.html: Added.
+        * fast/text/loading-block-nofinish-expected.html: Added.
+        * fast/text/loading-block-nofinish.html: Added.
+        * fast/text/loading-failure-finish-expected.html: Added.
+        * fast/text/loading-failure-finish.html: Added.
+        * fast/text/loading-failure-nofinish-expected.html: Added.
+        * fast/text/loading-failure-nofinish.html: Added.
+        * fast/text/loading-swap-finish-expected.html: Added.
+        * fast/text/loading-swap-finish.html: Added.
+        * fast/text/loading-swap-nofinish-expected.html: Added.
+        * fast/text/loading-swap-nofinish.html: Added.
+        * fast/text/web-font-load-fallback-during-loading-2-expected.html: Removed.
+        * fast/text/web-font-load-fallback-during-loading-2.html: Removed.
+        * fast/text/web-font-load-fallback-during-loading-expected.html: Removed.
+        * fast/text/web-font-load-fallback-during-loading.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-10-05  Antoine Quint  <graouts@apple.com>
 
         Layout Test media/modern-media-controls/scrubber-support/scrubber-support-drag.html is flaky.

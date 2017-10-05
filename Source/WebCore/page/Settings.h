@@ -104,6 +104,8 @@ public:
 
     void pageDestroyed() { m_page = nullptr; }
 
+    enum class FontLoadTimingOverride { None, Block, Swap, Failure };
+
     enum class ForcedAccessibilityValue { System, On, Off };
     static const Settings::ForcedAccessibilityValue defaultForcedColorsAreInvertedAccessibilityValue = ForcedAccessibilityValue::System;
     static const Settings::ForcedAccessibilityValue defaultForcedDisplayIsMonochromeAccessibilityValue = ForcedAccessibilityValue::System;
@@ -271,9 +273,6 @@ public:
     WEBCORE_EXPORT void setFontFallbackPrefersPictographs(bool);
     bool fontFallbackPrefersPictographs() const { return m_fontFallbackPrefersPictographs; }
 
-    WEBCORE_EXPORT void setWebFontsAlwaysFallBack(bool);
-    bool webFontsAlwaysFallBack() const { return m_webFontsAlwaysFallBack; }
-
     static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
@@ -385,7 +384,6 @@ private:
     bool m_hiddenPageDOMTimerThrottlingEnabled : 1;
     bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
     bool m_fontFallbackPrefersPictographs : 1;
-    bool m_webFontsAlwaysFallBack : 1;
 
     bool m_forcePendingWebGLPolicy : 1;
 

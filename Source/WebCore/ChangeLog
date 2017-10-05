@@ -1,3 +1,111 @@
+2017-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-display loading behaviors
+        https://bugs.webkit.org/show_bug.cgi?id=175384
+        <rdar://problem/33813243>
+
+        Reviewed by Darin Adler.
+
+        The font-display descriptors works off of the following model of font loading:
+
+        1. When a font loads, the @font-face enters the first phase, called the "block period." Here,
+        text using this @font-face is rendered as invisible using a fallback font for metrics. If the
+        file finishes loading during this period, it is swapped in (visibly).
+        2. When the first phase is over, the @font-face enters the second phase, called the "swap
+        period." Here, text using this @font-face is rendered visibly using a fallback font. If the
+        file finishes loading during this period, it is swapped in.
+        3. When the second phase is over, the @font-face enters the third phase, called the "failure
+        period." Here, text using this @font-face is rendered visibly using a fallback font. If the
+        file finishes loading during this period, it is not swapped in (but it does live in the
+        network cache for subsequent page loads). This phase lasts forever.
+
+        The font-display descriptor changes the duration of these phases. For example, our default
+        font loading behavior can be achieved by making the first phase 3 seconds long and making the
+        second phase infinitely long (so the third phase is never reached).
+
+        Luckily, our CSSFontFace class already has states which correspond to each phase listed above:
+        Loading, TimedOut, and Failure. This patch migrates our existing 3-second timer to have logic
+        to correctly set the timeout duration based on the value of the font-display descriptor and
+        the current status(). This occurs inside CSSFontFace::setStatus().
+
+        This has implications for testing. Previously, our tests for the font loading behavior had a
+        single boolean that describes whether or not font loads should immediately jump to the "swap
+        period". Clearly, this is insufficient for testing all aspects of the font-display descriptor.
+        Instead, this patch deletes this existing infrastructure and instead creates three more fake
+        values of font-display (achieved in tests by using window.internals). These fake values make
+        fonts immediately jump into a particular state and stay there forever (so the timeout values
+        are, for example, [0, infinity, infinity] to test the swap period). This works because
+        CSSFontFace is smart enough to synchronously move between states that have a 0 timeout, so
+        there is no race between these timers and font loads.
+
+        We also need to test the behavior when a file downloads and when a file hasn't been loaded
+        yet (and the @font-face is in a particular state). Therefore, this patch adds another bool
+        which indicates whether the font subsystem should totally ignore font load events. This means
+        that a font will successfully download (and DOMContentLoaded will be fired, because that
+        uses the loading subsystem), but the font subsystem will plug its ears and ignore the load.
+        This means we can test the invisibility of text during the "block period" because DRT will
+        see that the page load has completed, but the font subsystem will pretend like the font is
+        still loading and draw invisibly.
+
+        Therefore, there are 6 tests: a test to test each of the 3 states an @font-face block may be
+        in, times 2 for whether or not we are ignoring font loads. These are more comprehensive than
+        the existing font loading tests which used internals.settings.setWebFontsAlwaysFallBack(),
+        so I deleted those tests in favor of these new ones.
+
+        Tests: fast/text/loading-block-finish.html
+               fast/text/loading-block-nofinish.html
+               fast/text/loading-failure-finish.html
+               fast/text/loading-failure-nofinish.html
+               fast/text/loading-swap-finish.html
+               fast/text/loading-swap-nofinish.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::setLoadingBehavior):
+        (WebCore::CSSFontFace::fontLoadEventOccurred): Remove old testing infrastructure.
+        (WebCore::CSSFontFace::timeoutFired): Previously, the timer was only used for going
+        from Loading -> TimedOut. Now, we have to ask the status() to figure out which
+        state transition we should be performing.
+        (WebCore::CSSFontFace::allSourcesFailed const): A Failed state needs to return true
+        here, even if some of the sources successfully downloaded.
+        (WebCore::CSSFontFace::setStatus): The logic to figure out how long to set the timer
+        for. Also, if the timer value is 0, synchronously recurse to change the status instead
+        of setting a 0-delay timer.
+        (WebCore::CSSFontFace::fontLoaded): Remove old testing infrastructure.
+        (WebCore::CSSFontFace::fontTimeoutIndex const): Implement new testing infrastructure.
+        (WebCore::CSSFontFace::shouldIgnoreFontLoadCompletions const): Ditto.
+        (WebCore::CSSFontFace::pump): See comment. Also, we're allowed to be in the Failure
+        state in more scenarios now, so relax some of our ASSERT()s.
+        (WebCore::CSSFontFace::font): Ditto.
+        (WebCore::CSSFontFace::webFontsShouldAlwaysFallBack const): Deleted.
+        * css/CSSFontFace.h: Migrate to new testing infrastructure.
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource): Implement new testing infrastructure.
+        (WebCore::CSSFontFaceSource::shouldIgnoreFontLoadCompletions const): Ditto.
+        (WebCore::CSSFontFaceSource::fontLoaded): Ditto.
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadingFontSoon): Remove old testing infrastructure.
+        * css/CSSSegmentedFontFace.cpp: It's possible to get different values out of
+        CSSFontFace::font() in successive calls during the same runloop. FontRanges will 
+        include a raw pointer to one of the values, so all the values need to be kept alive.
+        * page/Settings.cpp: Migrate to new testing infrastructure.
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setFontTimeoutIndex):
+        (WebCore::Settings::setShouldIgnoreFontLoadCompletions):
+        (WebCore::Settings::setWebFontsAlwaysFallBack): Deleted.
+        * page/Settings.h: Ditto.
+        (WebCore::Settings::fontTimeoutIndex const):
+        (WebCore::Settings::shouldIgnoreFontLoadCompletions const):
+        (WebCore::Settings::webFontsAlwaysFallBack const): Deleted.
+        * testing/InternalSettings.cpp: Ditto.
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setFontTimeoutIndex):
+        (WebCore::InternalSettings::setShouldIgnoreFontLoadCompletions):
+        (WebCore::InternalSettings::setWebFontsAlwaysFallBack): Deleted.
+        * testing/InternalSettings.h: Ditto.
+        * testing/InternalSettings.idl: Ditto.
+
 2017-10-05  Zalan Bujtas  <zalan@apple.com>
 
         RenderMathMLFenced should not hold a raw pointer to RenderMathMLFencedOperator

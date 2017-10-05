@@ -202,7 +202,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         fontFace->setLoadingBehavior(*loadingBehavior);
 
     CSSFontFace::appendSources(fontFace, srcList, m_document, isInitiatingElementInUserAgentShadowTree);
-    if (fontFace->allSourcesFailed())
+    if (fontFace->computeFailureState())
         return;
 
     if (RefPtr<CSSFontFace> existingFace = m_cssFontFaceSet->lookUpByCSSConnection(fontFaceRule)) {
@@ -334,13 +334,12 @@ void CSSFontSelector::beginLoadingFontSoon(CachedFont& font)
     if (!m_document)
         return;
 
-    if (!m_document->settings().webFontsAlwaysFallBack()) {
-        m_fontsToBeginLoading.append(&font);
-        // Increment the request count now, in order to prevent didFinishLoad from being dispatched
-        // after this font has been requested but before it began loading. Balanced by
-        // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
-        m_document->cachedResourceLoader().incrementRequestCount(font);
-    }
+    m_fontsToBeginLoading.append(&font);
+    // Increment the request count now, in order to prevent didFinishLoad from being dispatched
+    // after this font has been requested but before it began loading. Balanced by
+    // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
+    m_document->cachedResourceLoader().incrementRequestCount(font);
+
     m_beginLoadingTimer.startOneShot(0_s);
 }
 
