@@ -27,7 +27,6 @@
 
 #import "WebTextInputWindowController.h"
 
-#import <WebKitSystemInterface.h>
 #import <pal/system/mac/WebPanel.h>
 
 @interface WebTextInputView : NSTextView {

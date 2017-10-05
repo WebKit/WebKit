@@ -32,7 +32,6 @@
 #import "CookieStorageUtilsCF.h"
 #import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
-#import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/ScopeGuard.h>
 #import <WebCore/SystemVersion.h>

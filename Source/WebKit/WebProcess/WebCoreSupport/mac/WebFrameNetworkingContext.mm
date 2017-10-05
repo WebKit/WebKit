@@ -40,7 +40,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
-#include <WebKitSystemInterface.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 
 using namespace WebCore;

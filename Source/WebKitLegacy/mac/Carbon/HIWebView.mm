@@ -34,7 +34,6 @@
 #import "HIViewAdapter.h"
 #import "WebHTMLViewInternal.h"
 #import "WebKit.h"
-#import <WebKitSystemInterface.h>
 #import <pal/spi/mac/NSEventSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>

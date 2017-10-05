@@ -48,7 +48,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/ScriptController.h>
 #import <WebKitLegacy/DOMExtensions.h>
-#import <WebKitSystemInterface.h>
 #import <algorithm>
 #import <bindings/ScriptValue.h>
 #import <inspector/InspectorAgentBase.h>

@@ -36,7 +36,6 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SubframeLoader.h>
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

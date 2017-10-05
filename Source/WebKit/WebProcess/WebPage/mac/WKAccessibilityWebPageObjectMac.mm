@@ -44,7 +44,6 @@
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjcRuntimeExtras.h>
 

@@ -1826,8 +1826,6 @@
 		41F54F8B1C50C50300338488 /* FetchBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F54F7D1C50C4F600338488 /* FetchBody.cpp */; };
 		41F54F8D1C50C50800338488 /* FetchHeaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F54F821C50C4F600338488 /* FetchHeaders.cpp */; };
 		41F54F8E1C50C50C00338488 /* FetchRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F54F871C50C4F600338488 /* FetchRequest.cpp */; };
-		41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */; };
-		41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */; };
 		41FABD2D1F4DFE4A006A6C97 /* DOMCacheEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FABD2B1F4DFE42006A6C97 /* DOMCacheEngine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41FABD2F1F4E02CB006A6C97 /* DOMCacheEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FABD2E1F4E0251006A6C97 /* DOMCacheEngine.cpp */; };
 		41FB279C1F34DB8A00795487 /* DOMWindowCaches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */; };
@@ -9638,8 +9636,6 @@
 		41F54F871C50C4F600338488 /* FetchRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchRequest.cpp; sourceTree = "<group>"; };
 		41F54F881C50C4F600338488 /* FetchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchRequest.h; sourceTree = "<group>"; };
 		41F54F891C50C4F600338488 /* FetchRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchRequest.idl; sourceTree = "<group>"; };
-		41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
-		41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
 		41FABD2B1F4DFE42006A6C97 /* DOMCacheEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCacheEngine.h; sourceTree = "<group>"; };
 		41FABD2E1F4E0251006A6C97 /* DOMCacheEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCacheEngine.cpp; sourceTree = "<group>"; };
 		41FB278C1F34C28200795487 /* DOMWindowCaches.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMWindowCaches.h; sourceTree = "<group>"; };
@@ -17700,8 +17696,8 @@
 				07B0ABCE1032242200FBDC33 /* AccessibilityMathMLElement.h */,
 				2981CAA4131822EC00D12F2A /* AccessibilityMediaControls.cpp */,
 				07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */,
-				A9787CB21F5F599200C551C6 /* AccessibilityMediaObject.h */,
 				A9787CB31F5F5C6500C551C6 /* AccessibilityMediaObject.cpp */,
+				A9787CB21F5F599200C551C6 /* AccessibilityMediaObject.h */,
 				76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */,
 				76CDD2ED1103DA6600680521 /* AccessibilityMenuList.h */,
 				76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */,
@@ -25961,8 +25957,6 @@
 				E4C279570CF9741900E97B98 /* RenderMedia.h */,
 				DE49B307165F2FE10010338D /* RenderMediaControlElements.cpp */,
 				DE49B308165F2FE10010338D /* RenderMediaControlElements.h */,
-				41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */,
-				41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */,
 				ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */,
 				ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */,
 				A454424C119B3687009BE912 /* RenderMeter.cpp */,
@@ -29703,7 +29697,6 @@
 				439046EA12DA25E800AF80A2 /* RenderMathMLUnderOver.h in Headers */,
 				E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */,
 				DEBCCDD216646E8200A452E1 /* RenderMediaControlElements.h in Headers */,
-				41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */,
 				ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */,
 				A454424F119B3687009BE912 /* RenderMeter.h in Headers */,
 				1A3586E015264C450022A659 /* RenderMultiColumnFlow.h in Headers */,
@@ -31196,6 +31189,7 @@
 				37F57ABF1A50728100876F98 /* AccessibilityListBoxOption.cpp in Sources */,
 				37F57ABC1A50728400876F98 /* AccessibilityMathMLElement.cpp in Sources */,
 				37F57AC01A50728400876F98 /* AccessibilityMediaControls.cpp in Sources */,
+				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
 				76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */,
 				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
 				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
@@ -31206,7 +31200,6 @@
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
 				37F57AC31A50728F00876F98 /* AccessibilityProgressIndicator.cpp in Sources */,
 				37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */,
-				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
 				37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */,
 				37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */,
 				37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */,
@@ -33666,7 +33659,6 @@
 				439046E912DA25E800AF80A2 /* RenderMathMLUnderOver.cpp in Sources */,
 				E4C279580CF9741900E97B98 /* RenderMedia.cpp in Sources */,
 				DE49B309165F2FE10010338D /* RenderMediaControlElements.cpp in Sources */,
-				41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */,
 				ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */,
 				A454424E119B3687009BE912 /* RenderMeter.cpp in Sources */,
 				1A3586DF15264C450022A659 /* RenderMultiColumnFlow.cpp in Sources */,

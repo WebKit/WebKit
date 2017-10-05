@@ -72,7 +72,6 @@
 #import "WebBackForwardList.h"
 #import "WebCertificateInfo.h"
 #import "WebFullScreenManagerProxy.h"
-#import "WebKitSystemInterface.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferencesKeys.h"

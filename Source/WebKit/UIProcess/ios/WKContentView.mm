@@ -50,7 +50,6 @@
 #import "WebKit2Initialize.h"
 #import "WebPageGroup.h"
 #import "WebProcessPool.h"
-#import "WebSystemInterface.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <CoreGraphics/CoreGraphics.h>

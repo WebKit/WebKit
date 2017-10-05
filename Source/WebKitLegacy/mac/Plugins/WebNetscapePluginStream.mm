@@ -51,7 +51,6 @@
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <runtime/JSLock.h>
 #import <wtf/HashMap.h>

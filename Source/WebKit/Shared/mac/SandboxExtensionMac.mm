@@ -31,7 +31,6 @@
 #import "DataReference.h"
 #import "Decoder.h"
 #import "Encoder.h"
-#import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
 #import <sys/stat.h>
 #import <wtf/spi/darwin/SandboxSPI.h>

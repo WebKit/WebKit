@@ -28,7 +28,6 @@
 
 #import "WebStringTruncator.h"
 
-#import "WebSystemInterface.h"
 #import <WebCore/FontCascade.h>
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/StringTruncator.h>
@@ -51,7 +50,6 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
 
 + (void)initialize
 {
-    InitWebCoreSystemInterface();
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
 }

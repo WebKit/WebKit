@@ -28,7 +28,6 @@
 #import "WebApplicationCacheInternal.h"
 #import "WebNSObjectExtras.h"
 #import "WebPreferences.h"
-#import "WebSystemInterface.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
@@ -58,7 +57,6 @@
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    InitWebCoreSystemInterface();   
 }
 
 + (NSArray *)statistics

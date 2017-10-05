@@ -35,7 +35,6 @@
 #import "WebsiteDataStoreParameters.h"
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceError.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/MainThread.h>
 
 using namespace WebCore;

@@ -43,7 +43,6 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebWindowAnimation.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 

@@ -51,7 +51,6 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/StringTruncator.h>
 #import <WebCore/WebCoreNSURLExtras.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/StdLibExtras.h>
 
 #if PLATFORM(IOS)

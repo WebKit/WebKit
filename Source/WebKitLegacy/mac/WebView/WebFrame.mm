@@ -99,7 +99,6 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/markup.h>
-#import <WebKitSystemInterface.h>
 #import <bindings/ScriptValue.h>
 #import <runtime/JSCJSValue.h>
 #import <runtime/JSLock.h>

@@ -33,7 +33,6 @@
 #import "MachUtilities.h"
 #import "WKCrashReporter.h"
 #import <WebCore/AXObjectCache.h>
-#import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
 #import <mach/vm_map.h>
 #import <sys/mman.h>

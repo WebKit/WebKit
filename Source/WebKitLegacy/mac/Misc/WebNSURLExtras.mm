@@ -32,12 +32,10 @@
 #import "WebKitNSStringExtras.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSDataExtras.h"
-#import "WebSystemInterface.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/URL.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/WebCoreNSURLExtras.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <unicode/uchar.h>

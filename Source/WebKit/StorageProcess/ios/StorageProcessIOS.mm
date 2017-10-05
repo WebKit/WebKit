@@ -33,7 +33,6 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotImplemented.h>
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

@@ -27,7 +27,6 @@
 
 #import "WebNetscapePluginEventHandlerCocoa.h"
 
-#import "WebKitSystemInterface.h"
 #import "WebNetscapePluginView.h"
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSEventSPI.h>

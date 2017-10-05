@@ -28,7 +28,6 @@
 
 #if USE(APPKIT)
 
-#import "WebKitSystemInterface.h"
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Scrollbar.h>

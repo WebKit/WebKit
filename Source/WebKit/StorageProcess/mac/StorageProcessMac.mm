@@ -32,7 +32,6 @@
 #import "SandboxInitializationParameters.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 
 using namespace WebCore;

@@ -79,7 +79,6 @@
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WheelEventTestTrigger.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/CurrentTime.h>

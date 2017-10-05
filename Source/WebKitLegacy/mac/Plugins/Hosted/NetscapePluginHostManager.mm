@@ -29,7 +29,6 @@
 
 #import "NetscapePluginHostProxy.h"
 #import "NetscapePluginInstanceProxy.h"
-#import "WebKitSystemInterface.h"
 #import "WebLocalizableStringsInternal.h"
 #import "WebNetscapePluginPackage.h"
 #import <WebCore/WebCoreNSStringExtras.h>

@@ -50,7 +50,6 @@
 #import <WebCore/FrameLoader.h>
 #import <WebKitLegacy/DOM.h>
 #import <WebKitLegacy/DOMPrivate.h>
-#import <WebKitSystemInterface.h>
 #import <pal/system/mac/DefaultSearchProvider.h>
 #import <wtf/Assertions.h>
 

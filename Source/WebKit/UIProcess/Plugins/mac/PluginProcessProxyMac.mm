@@ -31,7 +31,6 @@
 #import "PluginProcessCreationParameters.h"
 #import "PluginProcessMessages.h"
 #import "SandboxUtilities.h"
-#import "WebKitSystemInterface.h"
 #import <QuartzCore/CARemoteLayerServer.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/URL.h>

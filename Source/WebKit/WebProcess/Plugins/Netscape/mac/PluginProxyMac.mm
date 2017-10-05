@@ -33,7 +33,6 @@
 #import "PluginProcessConnection.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/WebCoreCALayerExtras.h>
-#import <WebKitSystemInterface.h>
 
 const static double fadeInDuration = 0.5;
 

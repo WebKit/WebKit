@@ -63,8 +63,6 @@
 #import "CarbonWindowContentView.h"
 #import "HIViewAdapter.h"
 
-#import <WebKitSystemInterface.h>
-
 #import <AppKit/AppKit.h>
 //#import <CoreGraphics/CGSWindow.h>
 #import <HIToolbox/CarbonEvents.h>

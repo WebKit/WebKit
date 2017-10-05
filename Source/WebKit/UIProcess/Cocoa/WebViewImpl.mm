@@ -85,7 +85,6 @@
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebCore/WebPlaybackControlsManager.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>

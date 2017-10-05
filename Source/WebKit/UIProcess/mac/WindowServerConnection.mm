@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WindowServerConnection.h"
 
-#import "WebKitSystemInterface.h"
 #import "WebProcessPool.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 

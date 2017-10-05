@@ -90,7 +90,6 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/SetForScope.h>
 

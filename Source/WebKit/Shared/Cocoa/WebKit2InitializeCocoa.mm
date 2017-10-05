@@ -27,7 +27,6 @@
 #import "WebKit2Initialize.h"
 
 #import "LogInitialization.h"
-#import "WebSystemInterface.h"
 #import <WebCore/LogInitialization.h>
 #import <mutex>
 #import <runtime/InitializeThreading.h>
@@ -44,7 +43,6 @@ static std::once_flag flag;
 
 static void runInitializationCode(void* = nullptr)
 {
-    InitWebCoreSystemInterface();
 #if PLATFORM(IOS)
     InitWebCoreThreadSystemInterface();
 #endif

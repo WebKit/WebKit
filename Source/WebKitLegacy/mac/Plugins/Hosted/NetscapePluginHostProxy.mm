@@ -35,7 +35,6 @@
 #import "NetscapePluginInstanceProxy.h"
 #import "WebFrameInternal.h"
 #import "WebHostedNetscapePluginView.h"
-#import "WebKitSystemInterface.h"
 #import <JavaScriptCore/IdentifierInlines.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/Frame.h>

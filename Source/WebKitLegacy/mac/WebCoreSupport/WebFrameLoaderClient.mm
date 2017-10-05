@@ -122,7 +122,6 @@
 #import <WebCore/Widget.h>
 #import <WebKitLegacy/DOMElement.h>
 #import <WebKitLegacy/DOMHTMLFormElement.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cocoa/NSURLDownloadSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <runtime/InitializeThreading.h>

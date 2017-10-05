@@ -31,7 +31,6 @@
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
 #import <WebCore/DynamicLinkerInterposing.h>
-#import <WebKitSystemInterface.h>
 #import <mach/mach_vm.h>
 #import <objc/message.h>
 #import <stdio.h>

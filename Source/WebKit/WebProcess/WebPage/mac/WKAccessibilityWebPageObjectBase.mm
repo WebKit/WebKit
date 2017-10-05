@@ -41,7 +41,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
 using namespace WebCore;

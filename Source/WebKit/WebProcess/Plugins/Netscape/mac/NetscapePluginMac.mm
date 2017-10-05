@@ -35,7 +35,6 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/MachSendRight.h>
 #import <WebCore/NotImplemented.h>
-#import <WebKitSystemInterface.h>
 #import <objc/runtime.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>

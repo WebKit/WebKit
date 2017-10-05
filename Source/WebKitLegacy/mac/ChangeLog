@@ -1,3 +1,43 @@
+2017-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary includes of WebKitSystemInterface on Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=177912
+
+        Reviewed by Saam Barati.
+
+        * Carbon/CarbonUtils.m:
+        * Carbon/CarbonWindowAdapter.mm:
+        * Carbon/HIWebView.mm:
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * Misc/WebNSFileManagerExtras.mm:
+        * Misc/WebNSPasteboardExtras.mm:
+        * Misc/WebNSURLExtras.mm:
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebTextInputWindowController.m:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebNetscapePluginView.mm:
+        * Plugins/WebPluginDatabase.mm:
+        * WebCoreSupport/PopupMenuMac.mm:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        * WebCoreSupport/WebSystemInterface.mm:
+        * WebView/WebDynamicScrollBarsView.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebFullScreenController.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPreferences.mm:
+        * WebView/WebView.mm:
+
 2017-09-29  Alexey Proskuryakov  <ap@apple.com>
 
         Follow-up to https://trac.webkit.org/r222239 to fix crashes.

@@ -39,7 +39,6 @@
 #import <WebCore/PlatformLayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebCore/WebCoreCALayerExtras.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if PLATFORM(IOS)

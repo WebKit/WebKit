@@ -27,7 +27,6 @@
 #import "LayerHostingContext.h"
 
 #import <WebCore/MachSendRight.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 

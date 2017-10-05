@@ -42,7 +42,6 @@
 #import "WebPluginPackage.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <wtf/Assertions.h>
 

@@ -29,7 +29,6 @@
 #if PLATFORM(IOS)
 
 #import "UIKitSPI.h"
-#import "WebKitSystemInterface.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 

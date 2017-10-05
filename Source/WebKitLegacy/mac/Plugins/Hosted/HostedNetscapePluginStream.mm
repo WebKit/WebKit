@@ -33,7 +33,6 @@
 #import "WebHostedNetscapePluginView.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitPluginHost.h"
-#import "WebKitSystemInterface.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebResourceLoadScheduler.h"

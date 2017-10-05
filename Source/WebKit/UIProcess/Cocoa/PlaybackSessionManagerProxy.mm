@@ -32,7 +32,6 @@
 #import "PlaybackSessionManagerProxyMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

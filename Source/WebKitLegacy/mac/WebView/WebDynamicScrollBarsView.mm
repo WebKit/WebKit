@@ -32,7 +32,6 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/PlatformEventFactoryMac.h>
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

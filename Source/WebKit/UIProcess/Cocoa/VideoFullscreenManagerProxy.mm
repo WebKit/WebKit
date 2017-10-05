@@ -39,7 +39,6 @@
 #import <WebCore/MachSendRight.h>
 #import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/TimeRanges.h>
-#import <WebKitSystemInterface.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if PLATFORM(IOS)

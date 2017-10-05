@@ -1,3 +1,49 @@
+2017-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary includes of WebKitSystemInterface on Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=177912
+
+        Reviewed by Saam Barati.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        * Platform/mac/LayerHostingContext.mm:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * Shared/ios/ChildProcessIOS.mm:
+        * Shared/mac/ChildProcessMac.mm:
+        * Shared/mac/SandboxExtensionMac.mm:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        * Shared/mac/WebEventFactory.mm:
+        * StorageProcess/ios/StorageProcessIOS.mm:
+        * StorageProcess/mac/StorageProcessMac.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        * UIProcess/mac/PageClientImplMac.mm:
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        * UIProcess/mac/WindowServerConnection.mm:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2017-10-04  Youenn Fablet  <youenn@apple.com>
 
         rtc::PacketOptions should have its own IPC encoding/decoding routines

@@ -62,7 +62,6 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>
-#import <WebKitSystemInterface.h>
 #import <bindings/ScriptValue.h>
 #import <mach/mach.h>
 #import <utility>

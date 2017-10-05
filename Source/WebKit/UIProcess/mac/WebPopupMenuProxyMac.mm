@@ -33,7 +33,6 @@
 #import "PlatformPopupMenuData.h"
 #import "StringUtilities.h"
 #import "WebPopupItem.h"
-#import <WebKitSystemInterface.h>
 #import <pal/system/mac/PopupMenu.h>
 
 using namespace WebCore;

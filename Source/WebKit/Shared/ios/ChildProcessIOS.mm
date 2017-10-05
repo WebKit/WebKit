@@ -30,7 +30,6 @@
 #import "ChildProcess.h"
 
 #import "SandboxInitializationParameters.h"
-#import "WebKitSystemInterface.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/FloatingPointEnvironment.h>

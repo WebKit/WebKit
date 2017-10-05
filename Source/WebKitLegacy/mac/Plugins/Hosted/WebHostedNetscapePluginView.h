@@ -26,7 +26,6 @@
 #if USE(PLUGIN_HOST_PROCESS)
 
 #import "WebBaseNetscapePluginView.h"
-#import "WebKitSystemInterface.h"
 #import <wtf/RefPtr.h>
 
 namespace WebKit {
