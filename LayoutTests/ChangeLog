@@ -1,3 +1,12 @@
+2017-10-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark 4 fast/text layout tests as flaky on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=177964
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-10-05  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] Layout Test accessibility/ios-simulator/video-elements-ios.html is failing
