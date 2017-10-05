@@ -225,6 +225,11 @@ Decoder& Decoder::operator>>(std::optional<uint64_t>& optional)
     return getOptional(optional);
 }
 
+Decoder& Decoder::operator>>(std::optional<int16_t>& optional)
+{
+    return getOptional(optional);
+}
+
 Decoder& Decoder::operator>>(std::optional<int32_t>& optional)
 {
     return getOptional(optional);
@@ -286,6 +291,15 @@ bool Decoder::decode(uint64_t& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
+    decodeValueFromBuffer(result, m_bufferPos);
+    return true;
+}
+
+bool Decoder::decode(int16_t& result)
+{
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
+        return false;
+
     decodeValueFromBuffer(result, m_bufferPos);
     return true;
 }

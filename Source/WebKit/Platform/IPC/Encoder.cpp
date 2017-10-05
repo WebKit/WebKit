@@ -224,6 +224,12 @@ void Encoder::encode(uint64_t n)
     copyValueToBuffer(n, buffer);
 }
 
+void Encoder::encode(int16_t n)
+{
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
+    copyValueToBuffer(n, buffer);
+}
+
 void Encoder::encode(int32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));

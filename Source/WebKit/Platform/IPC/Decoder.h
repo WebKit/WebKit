@@ -87,6 +87,8 @@ public:
     Decoder& operator>>(std::optional<uint32_t>&);
     bool decode(uint64_t&);
     Decoder& operator>>(std::optional<uint64_t>&);
+    bool decode(int16_t&);
+    Decoder& operator>>(std::optional<int16_t>&);
     bool decode(int32_t&);
     Decoder& operator>>(std::optional<int32_t>&);
     bool decode(int64_t&);

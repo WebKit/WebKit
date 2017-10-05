@@ -898,6 +898,7 @@
 		41897ED81F415D8A0016FA42 /* CacheStorageEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ED21F415D850016FA42 /* CacheStorageEngine.h */; };
 		41897ED91F415D8A0016FA42 /* CacheStorageEngineConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ED31F415D850016FA42 /* CacheStorageEngineConnection.cpp */; };
 		41897EDA1F415D8A0016FA42 /* CacheStorageEngineConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ED41F415D850016FA42 /* CacheStorageEngineConnection.h */; };
+		41B28B0A1F83AD4200FB52AC /* RTCPacketOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */; };
 		41C8581A1F5136CA0065E085 /* CacheStorageEngineCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */; };
 		41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */; };
 		41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */; };
@@ -3187,6 +3188,8 @@
 		41897ED51F415D850016FA42 /* CacheStorageEngineConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStorageEngineConnection.messages.in; sourceTree = "<group>"; };
 		41897ED61F415D860016FA42 /* CacheStorageEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngine.cpp; sourceTree = "<group>"; };
 		41AC86811E042E5300303074 /* WebRTCResolver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = WebRTCResolver.messages.in; path = Network/webrtc/WebRTCResolver.messages.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
+		41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPacketOptions.h; sourceTree = "<group>"; };
+		41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPacketOptions.cpp; sourceTree = "<group>"; };
 		41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCache.cpp; sourceTree = "<group>"; };
 		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
 		41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCProvider.h; path = NetworkProcess/webrtc/NetworkRTCProvider.h; sourceTree = "<group>"; };
@@ -5023,6 +5026,8 @@
 				F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */,
 				410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */,
 				410482CC1DDD2FB500F006D0 /* RTCNetwork.h */,
+				41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */,
+				41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */,
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */,
@@ -10346,6 +10351,7 @@
 				51E6C1601F29356000FD3437 /* ResourceLoadStatisticsPersistentStorageIOS.mm in Sources */,
 				BC111B09112F5E3C00337BAB /* ResponsivenessTimer.cpp in Sources */,
 				410482CD1DDD324C00F006D0 /* RTCNetwork.cpp in Sources */,
+				41B28B0A1F83AD4200FB52AC /* RTCPacketOptions.cpp in Sources */,
 				1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */,
 				E1E552C416AE065F004ED653 /* SandboxInitialiationParametersMac.mm in Sources */,
 				E19BDA8B19368D4600B97F57 /* SandboxUtilities.mm in Sources */,

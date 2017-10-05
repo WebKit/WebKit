@@ -102,6 +102,7 @@ private:
     void encode(uint16_t);
     void encode(uint32_t);
     void encode(uint64_t);
+    void encode(int16_t);
     void encode(int32_t);
     void encode(int64_t);
     void encode(float);
