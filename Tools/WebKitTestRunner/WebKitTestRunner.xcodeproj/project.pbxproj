@@ -79,6 +79,7 @@
 		2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */; };
 		2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */; };
 		31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */; };
+		4430AE191F82C4FD0099915A /* GeneratedTouchesDebugWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */; };
 		51058AD51D678820009A538C /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */; };
 		51058AD61D678825009A538C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
@@ -271,6 +272,8 @@
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueManager.cpp; sourceTree = "<group>"; };
 		4429FC611627089600F66D8B /* WorkQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueManager.h; sourceTree = "<group>"; };
+		4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedTouchesDebugWindow.mm; sourceTree = "<group>"; };
+		4430AE181F82C4EF0099915A /* GeneratedTouchesDebugWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedTouchesDebugWindow.h; sourceTree = "<group>"; };
 		5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
@@ -463,10 +466,10 @@
 		0F18E71A1D6BC4BC0027E547 /* TestRunnerShared */ = {
 			isa = PBXGroup;
 			children = (
-				3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */,
-				3148A0541E6F85B600D3B316 /* IOSLayoutTestCommunication.h */,
 				0F18E71B1D6BC4E60027E547 /* Bindings */,
 				0F73B5471BA782FE004B3EF4 /* UIScriptContext */,
+				3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */,
+				3148A0541E6F85B600D3B316 /* IOSLayoutTestCommunication.h */,
 			);
 			name = TestRunnerShared;
 			sourceTree = "<group>";
@@ -484,10 +487,10 @@
 		0F73B5471BA782FE004B3EF4 /* UIScriptContext */ = {
 			isa = PBXGroup;
 			children = (
-				2DB6187F1D7D598800978D19 /* spi */,
 				0F73B54B1BA78350004B3EF4 /* Bindings */,
-				2DD4C4971D6E7D3B0007379C /* Event Serialization */,
 				0F73B54E1BA78954004B3EF4 /* Derived Sources */,
+				2DD4C4971D6E7D3B0007379C /* Event Serialization */,
+				2DB6187F1D7D598800978D19 /* spi */,
 				0F18E6DD1D6B9AAF0027E547 /* UIScriptContext.cpp */,
 				0F18E6DE1D6B9AAF0027E547 /* UIScriptContext.h */,
 				0F18E6DF1D6B9AAF0027E547 /* UIScriptController.cpp */,
@@ -567,9 +570,9 @@
 		2DB6187F1D7D598800978D19 /* spi */ = {
 			isa = PBXGroup;
 			children = (
-				31268EB91EF06A3B001963E2 /* UIKitTestSPI.h */,
 				2DB6187D1D7D58D400978D19 /* CoreGraphicsTestSPI.h */,
 				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
+				31268EB91EF06A3B001963E2 /* UIKitTestSPI.h */,
 			);
 			name = spi;
 			sourceTree = "<group>";
@@ -629,6 +632,8 @@
 		2EE52D121890A9FB0010ED21 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				4430AE181F82C4EF0099915A /* GeneratedTouchesDebugWindow.h */,
+				4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */,
 				0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */,
 				0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
@@ -641,9 +646,9 @@
 		65EB859E11EC67CC0034D300 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				299E2AA41E3DEE140065DC30 /* AccessibilityCommonMac.h */,
 				29210EAB144CACB200835BB6 /* AccessibilityCommonMac.mm */,
 				8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */,
-				299E2AA41E3DEE140065DC30 /* AccessibilityCommonMac.h */,
 				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
 				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
 				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
@@ -806,9 +811,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */,
+				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,
 				0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */,
 				2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */,
-				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -982,6 +987,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */,
+				4430AE191F82C4FD0099915A /* GeneratedTouchesDebugWindow.mm in Sources */,
 				0FEBF85A1BB61DF20028722D /* HIDEventGenerator.mm in Sources */,
 				2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */,
 				2E63ED911891ADAD002A7AFC /* PlatformWebViewIOS.mm in Sources */,
@@ -1011,16 +1017,16 @@
 			files = (
 				A185103A1B9AE0DA00744AEB /* CrashReporterInfo.mm in Sources */,
 				A185103E1B9AE12200744AEB /* CyclicRedundancyCheck.cpp in Sources */,
+				2DD4C49B1D6E7D3B0007379C /* EventSerializerMac.mm in Sources */,
 				A185103F1B9AE12900744AEB /* GeolocationProviderMock.cpp in Sources */,
+				31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */,
 				0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */,
 				0F18E7181D6BC4560027E547 /* JSWrapper.cpp in Sources */,
 				A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */,
-				2DD4C49B1D6E7D3B0007379C /* EventSerializerMac.mm in Sources */,
 				A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */,
-				A18510411B9AE13800744AEB /* TestController.cpp in Sources */,
 				2DFA98491D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm in Sources */,
+				A18510411B9AE13800744AEB /* TestController.cpp in Sources */,
 				A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */,
-				31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */,
 				A18510421B9AE13E00744AEB /* TestInvocation.cpp in Sources */,
 				A185103D1B9AE10600744AEB /* TestInvocationCG.cpp in Sources */,
 				0F622CE91BBB3A1A00838AD3 /* TestOptions.cpp in Sources */,

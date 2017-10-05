@@ -1,3 +1,41 @@
+2017-10-04  Megan Gardner  <megan_gardner@apple.com>
+
+        Break out new touch debugging code into seperate file
+        https://bugs.webkit.org/show_bug.cgi?id=177796
+
+        Reviewed by Simon Fraser.
+
+        Encapsulate the new debug touch code into it's own file.
+        This allows for cleaner code and a better way to show the touches
+        in a completely separate window, which should also be in screen
+        coordinates, and not subject to any transforms that get put on the
+        WebViews.
+
+        * TestRunnerShared/spi/UIKitTestSPI.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/HIDDebugTouchWindow.h: Added.
+        * WebKitTestRunner/ios/HIDDebugTouchWindow.mm: Added.
+        (+[HIDDebugTouchWindow sharedHIDDebugTouchWindow]):
+        (-[HIDDebugTouchWindow init]):
+        (-[HIDDebugTouchWindow dealloc]):
+        (-[HIDDebugTouchWindow updateDebugIndicatorForTouch:withPointInWindowCoordinates:isTouching:]):
+        (-[HIDDebugTouchWindow initDebugViewsIfNeeded]):
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator init]):
+        (-[HIDEventGenerator _createIOHIDEventWithInfo:]):
+        (-[HIDEventGenerator _createIOHIDEventType:]):
+        (-[HIDEventGenerator _updateTouchPoints:count:]):
+        (-[HIDEventGenerator touchDownAtPoints:touchCount:]):
+        (-[HIDEventGenerator touchDown:touchCount:]):
+        (-[HIDEventGenerator liftUpAtPoints:touchCount:]):
+        (-[HIDEventGenerator liftUp:touchCount:]):
+        (-[HIDEventGenerator moveToPoints:touchCount:duration:]):
+        (-[HIDEventGenerator initDebugViewsIfNeeded]): Deleted.
+        (-[HIDEventGenerator updateDebugIndicatorForTouch:withPoint:isTouching:]): Deleted.
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const):
+
 2017-10-04  JF Bastien  <jfbastien@apple.com>
 
         WTF: Update std::expected to match current proposal

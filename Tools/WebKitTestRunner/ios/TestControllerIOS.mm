@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestController.h"
 
+#import "GeneratedTouchesDebugWindow.h"
 #import "HIDEventGenerator.h"
 #import "IOSLayoutTestCommunication.h"
 #import "PlatformWebView.h"
@@ -129,9 +130,8 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 
 void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const std::string&) const
 {
-    
     options.shouldShowTouches = shouldShowTouches();
-    [[HIDEventGenerator sharedHIDEventGenerator] setShouldShowTouches:options.shouldShowTouches];
+    [[GeneratedTouchesDebugWindow sharedGeneratedTouchesDebugWindow] setShouldShowTouches:options.shouldShowTouches];
 }
 
 void TestController::platformInitializeContext()
