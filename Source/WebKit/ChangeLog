@@ -1,3 +1,7 @@
+2017-10-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Revert r222431. rdar://problem/34826998
+
 2017-09-23  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r214201): WebProcess hangs during policy decisions

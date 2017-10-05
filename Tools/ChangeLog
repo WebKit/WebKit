@@ -1,5 +1,9 @@
 2017-10-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Revert r222431. rdar://problem/34826998
+
+2017-10-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Revert r222453. rdar://problem/34826998
 
 2017-09-25  Alex Christensen  <achristensen@webkit.org>

@@ -700,21 +700,19 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 
     bool canShowMIMEType = webPage->canShowMIMEType(response.mimeType());
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::No);
-    bool receivedPolicyAction;
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function));
     uint64_t policyAction;
     DownloadID downloadID;
 
     Ref<WebFrame> protect(*m_frame);
     WebCore::Frame* coreFrame = m_frame->coreFrame();
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), response, request, canShowMIMEType, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(receivedPolicyAction, policyAction, downloadID), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend)) {
-        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { }, { });
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), response, request, canShowMIMEType, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(policyAction, downloadID), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend)) {
+        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { });
         return;
     }
 
     // We call this synchronously because CFNetwork can only convert a loading connection to a download from its didReceiveResponse callback.
-    if (receivedPolicyAction)
-        m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), 0, downloadID, { });
+    m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), 0, downloadID);
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& navigationAction, const ResourceRequest& request, FormState* formState, const String& frameName, FramePolicyFunction&& function)
@@ -737,7 +735,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     }
 
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::No);
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function));
 
     NavigationActionData navigationActionData;
     navigationActionData.navigationType = action->navigationType();
@@ -752,52 +750,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
 
     WebCore::Frame* coreFrame = m_frame ? m_frame->coreFrame() : nullptr;
     webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), navigationActionData, request, frameName, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-}
-
-void WebFrameLoaderClient::applyToDocumentLoader(const WebsitePolicies& websitePolicies)
-{
-    if (!m_frame)
-        return;
-    auto* coreFrame = m_frame->coreFrame();
-    if (!coreFrame)
-        return;
-    WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
-    if (!documentLoader)
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader());
-    if (!documentLoader)
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
-    if (!documentLoader)
-        return;
-
-    // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
-    if (documentLoader->userContentExtensionsEnabled())
-        documentLoader->setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
-    
-    OptionSet<AutoplayQuirk> quirks;
-    auto allowedQuirks = websitePolicies.allowedAutoplayQuirks;
-    
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
-        quirks |= AutoplayQuirk::InheritedUserGestures;
-    
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
-        quirks |= AutoplayQuirk::SynthesizedPauseEvents;
-    
-    documentLoader->setAllowedAutoplayQuirks(quirks);
-    
-    switch (websitePolicies.autoplayPolicy) {
-    case WebsiteAutoplayPolicy::Default:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Default);
-        break;
-    case WebsiteAutoplayPolicy::Allow:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Allow);
-        break;
-    case WebsiteAutoplayPolicy::AllowWithoutSound:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::AllowWithoutSound);
-        break;
-    case WebsiteAutoplayPolicy::Deny:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Deny);
-        break;
-    }
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, bool didReceiveRedirectResponse, FormState* formState, FramePolicyFunction&& function)
@@ -825,8 +777,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
     
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::Yes);
-    bool receivedPolicyAction;
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function));
     uint64_t newNavigationID;
     uint64_t policyAction;
     DownloadID downloadID;
@@ -870,14 +821,43 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // FIXME: Determine the originating page independently from the originating frame as it may exist even if
     // the originating frame does not exist. This can happen if the originating frame was removed from the page.
     // See <https://bugs.webkit.org/show_bug.cgi?id=174531>.
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingFrame && originatingFrame->page() ? originatingFrame->page()->pageID() : 0, navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, newNavigationID, policyAction, downloadID, websitePolicies))) {
-        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { }, { });
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingFrame && originatingFrame->page() ? originatingFrame->page()->pageID() : 0, navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(newNavigationID, policyAction, downloadID, websitePolicies))) {
+        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { });
         return;
     }
 
+    // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
+    if (documentLoader->userContentExtensionsEnabled())
+        documentLoader->setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
+
+    OptionSet<AutoplayQuirk> quirks;
+    auto allowedQuirks = websitePolicies.allowedAutoplayQuirks;
+
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
+        quirks |= AutoplayQuirk::InheritedUserGestures;
+
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
+        quirks |= AutoplayQuirk::SynthesizedPauseEvents;
+
+    documentLoader->setAllowedAutoplayQuirks(quirks);
+
+    switch (websitePolicies.autoplayPolicy) {
+    case WebsiteAutoplayPolicy::Default:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::Default);
+        break;
+    case WebsiteAutoplayPolicy::Allow:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::Allow);
+        break;
+    case WebsiteAutoplayPolicy::AllowWithoutSound:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::AllowWithoutSound);
+        break;
+    case WebsiteAutoplayPolicy::Deny:
+        documentLoader->setAutoplayPolicy(AutoplayPolicy::Deny);
+        break;
+    }
+
     // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.
-    if (receivedPolicyAction)
-        m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), newNavigationID, downloadID, websitePolicies);
+    m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), newNavigationID, downloadID);
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()
@@ -931,7 +911,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, FramePol
     RefPtr<API::Object> userData;
     webPage->injectedBundleFormClient().willSubmitForm(webPage, &form, m_frame, sourceFrame, values, userData);
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::No);
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function));
 
     webPage->send(Messages::WebPageProxy::WillSubmitForm(m_frame->frameID(), sourceFrame->frameID(), values, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }

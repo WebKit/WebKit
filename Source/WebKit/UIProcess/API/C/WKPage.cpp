@@ -2159,17 +2159,19 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
     private:
         void decidePolicyForNavigationAction(WebPageProxy& page, API::NavigationAction& navigationAction, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
-            if (!m_client.decidePolicyForNavigationAction)
+            if (!m_client.decidePolicyForNavigationAction) {
+                listener->use({ });
                 return;
-
+            }
             m_client.decidePolicyForNavigationAction(toAPI(&page), toAPI(&navigationAction), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 
         void decidePolicyForNavigationResponse(WebPageProxy& page, API::NavigationResponse& navigationResponse, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
-            if (!m_client.decidePolicyForNavigationResponse)
+            if (!m_client.decidePolicyForNavigationResponse) {
+                listener->use({ });
                 return;
-
+            }
             m_client.decidePolicyForNavigationResponse(toAPI(&page), toAPI(&navigationResponse), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 

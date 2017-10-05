@@ -1127,7 +1127,7 @@ private:
     void platformPreferencesDidChange(const WebPreferencesStore&);
     void updatePreferences(const WebPreferencesStore&);
 
-    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, const DownloadID&, WebsitePolicies&&);
+    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, const DownloadID&);
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);
     void suspendActiveDOMObjectsAndAnimations();
