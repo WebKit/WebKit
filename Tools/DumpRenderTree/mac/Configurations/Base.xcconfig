@@ -102,8 +102,6 @@ WEBCORE_PRIVATE_HEADERS_DIR_Debug = $(WEBCORE_PRIVATE_HEADERS_DIR_engineering);
 WEBCORE_PRIVATE_HEADERS_DIR_Production = $(PRODUCTION_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
 WEBCORE_PRIVATE_HEADERS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;
 
-WEBKIT_SYSTEM_INTERFACE_LIBRARY = WebKitSystemInterface
-
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;

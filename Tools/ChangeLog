@@ -1,5 +1,22 @@
 2017-10-04  Alex Christensen  <achristensen@webkit.org>
 
+        Stop linking with WebKitSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=177915
+
+        Reviewed by Antti Koivisto.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig:
+
+2017-10-04  Alex Christensen  <achristensen@webkit.org>
+
         Remove unnecessary includes of WebKitSystemInterface on Cocoa platforms
         https://bugs.webkit.org/show_bug.cgi?id=177912
 

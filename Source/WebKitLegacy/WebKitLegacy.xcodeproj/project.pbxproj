@@ -3711,7 +3711,6 @@
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 			};
 			name = Debug;
@@ -3723,7 +3722,6 @@
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_$(CURRENT_VARIANT)) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 			};
 			name = Release;
@@ -3735,7 +3733,6 @@
 				BUILD_VARIANTS = normal;
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-lWebKitSystemInterface",
 				);
 			};
 			name = Production;

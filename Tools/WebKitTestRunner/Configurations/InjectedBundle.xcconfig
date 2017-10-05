@@ -30,7 +30,7 @@ PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKitTestRunner.InjectedBundle;
 
 SKIP_INSTALL = NO;
 
-OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -framework CoreText -framework QuartzCore;
+OTHER_LDFLAGS_BASE = -framework CoreText -framework QuartzCore;
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework Foundation -framework UIKit;
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Carbon -framework Cocoa;

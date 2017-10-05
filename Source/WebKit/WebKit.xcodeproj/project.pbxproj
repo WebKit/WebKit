@@ -11034,7 +11034,6 @@
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 				PRODUCT_NAME = PluginProcessShim;
 			};
@@ -11046,7 +11045,6 @@
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 				PRODUCT_NAME = PluginProcessShim;
 			};
@@ -11058,7 +11056,6 @@
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-lWebKitSystemInterface",
 				);
 				PRODUCT_NAME = PluginProcessShim;
 			};
@@ -11070,7 +11067,6 @@
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 			};
 			name = Debug;
@@ -11081,7 +11077,6 @@
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
 			};
 			name = Release;
@@ -11168,7 +11163,6 @@
 			buildSettings = {
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
-					"-lWebKitSystemInterface",
 				);
 			};
 			name = Production;
