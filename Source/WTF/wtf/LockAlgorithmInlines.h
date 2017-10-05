@@ -33,10 +33,6 @@
 // the lock algorithm slow path without recompiling the world. Right now this should be included in two
 // places (Lock.cpp and JSCell.cpp).
 
-// NOTE: It's a bug to use any memory order other than seq_cst in this code. The cost of seq_cst
-// fencing is negligible on slow paths, so any use of a more relaxed memory model is all risk and no
-// reward.
-
 namespace WTF {
 
 template<typename LockType, LockType isHeldBit, LockType hasParkedBit>

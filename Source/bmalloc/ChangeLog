@@ -1,3 +1,15 @@
+2017-10-05  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r222893.
+
+        This caused multiple API failures.
+
+        Reverted changeset:
+
+        "bmalloc mutex should be adaptive"
+        https://bugs.webkit.org/show_bug.cgi?id=177839
+        http://trac.webkit.org/changeset/222893
+
 2017-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Linux] Port MallocBench

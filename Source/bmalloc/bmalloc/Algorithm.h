@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #include "BAssert.h"
 #include <algorithm>
-#include <atomic>
 #include <cstdint>
 #include <cstddef>
 #include <limits>
@@ -157,24 +156,6 @@ __forceinline constexpr unsigned long __builtin_clzl(unsigned long value)
 inline constexpr unsigned long log2(unsigned long value)
 {
     return bitCount<unsigned long>() - 1 - __builtin_clzl(value);
-}
-
-// We need a CAS API that isn't the badly designed one from C++.
-template<typename T>
-bool compareExchangeWeak(std::atomic<T>& word, T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
-{
-    // They could have made a sensible CAS API, but they didn't. Sneaky fact: for no good reason, the
-    // C++ API will mutate expected. I think that apologists will say something about how it saves you
-    // reloading the value around the back of your CAS loop, but that's nonsense. The delay along the
-    // back edge of a CAS loop has almost no impact on CAS loop performance. More often than not, we
-    // want to *add* delays to the back edge, not remove them.
-    return word.compare_exchange_weak(expected, desired, order, std::memory_order_relaxed);
-}
-
-template<typename T>
-bool compareExchangeStrong(std::atomic<T>& word, T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
-{
-    return word.compare_exchange_strong(expected, desired, order, std::memory_order_relaxed);
 }
 
 } // namespace bmalloc
