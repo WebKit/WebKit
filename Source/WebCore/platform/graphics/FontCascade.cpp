@@ -1593,7 +1593,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 }
 #endif
 
-#if !PLATFORM(COCOA) && !USE(CAIRO)
+#if !PLATFORM(COCOA) && !USE(HARFBUZZ)
 // FIXME: Unify this with the macOS and iOS implementation.
 const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
 {

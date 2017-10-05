@@ -1,3 +1,17 @@
+2017-10-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Fix build after Bug 167956
+        https://bugs.webkit.org/show_bug.cgi?id=177921
+
+        Reviewed by Carlos Garcia Campos.
+
+        FontCascade::fontForCombiningCharacterSequence wasn't defined for
+        WinCairo port. It should be defined if !USE(HARFBUZZ).
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.cpp: Use !USE(HARFBUZZ) instead of !USE(CAIRO).
+
 2017-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Align BitmapImage::LargeAnimationCutoff to a megabyte value
