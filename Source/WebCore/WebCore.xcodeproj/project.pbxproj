@@ -1795,6 +1795,8 @@
 		41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AD75391CEF6BCE00A31486 /* FetchOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B28B141F8501A600FB52AC /* MediaEndpointConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B28B131F8501A400FB52AC /* MediaEndpointConfiguration.cpp */; };
 		41B28B151F8501D300FB52AC /* MediaEndpointConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B28B121F8501A300FB52AC /* MediaEndpointConfiguration.h */; };
+		41B28B391F860BD600FB52AC /* LibWebRTCProviderCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B28B381F860BD100FB52AC /* LibWebRTCProviderCocoa.cpp */; };
+		41B28B3D1F860EF300FB52AC /* LibWebRTCProviderCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B2A6261EF1BF6D002B9D7A /* WebAudioSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B459EF1F55EBD10000F6FD /* ReadableStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B459ED1F55EBC70000F6FD /* ReadableStream.cpp */; };
 		41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9590,6 +9592,8 @@
 		41AD75391CEF6BCE00A31486 /* FetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchOptions.h; sourceTree = "<group>"; };
 		41B28B121F8501A300FB52AC /* MediaEndpointConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEndpointConfiguration.h; sourceTree = "<group>"; };
 		41B28B131F8501A400FB52AC /* MediaEndpointConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEndpointConfiguration.cpp; sourceTree = "<group>"; };
+		41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCProviderCocoa.h; path = libwebrtc/LibWebRTCProviderCocoa.h; sourceTree = "<group>"; };
+		41B28B381F860BD100FB52AC /* LibWebRTCProviderCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCProviderCocoa.cpp; path = libwebrtc/LibWebRTCProviderCocoa.cpp; sourceTree = "<group>"; };
 		41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAudioSourceProvider.h; sourceTree = "<group>"; };
 		41B459DA1F4CADB90000F6FD /* ReadableStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStream.h; sourceTree = "<group>"; };
 		41B459ED1F55EBC70000F6FD /* ReadableStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStream.cpp; sourceTree = "<group>"; };
@@ -18054,6 +18058,8 @@
 				415747431E38699E00E914D8 /* LibWebRTCMacros.h */,
 				41A1B00D1E52656E007F3769 /* LibWebRTCProvider.cpp */,
 				415747441E38699E00E914D8 /* LibWebRTCProvider.h */,
+				41B28B381F860BD100FB52AC /* LibWebRTCProviderCocoa.cpp */,
+				41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */,
 				41D7E5551F73085000E26991 /* VideoToolBoxDecoderFactory.cpp */,
 				41D7E5541F73085000E26991 /* VideoToolBoxDecoderFactory.h */,
 				41CAD71C1EA0905700178164 /* VideoToolBoxEncoderFactory.cpp */,
@@ -29129,6 +29135,7 @@
 				417612B01E3A994000C3D81D /* LibWebRTCMediaEndpoint.h in Headers */,
 				417612B21E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.h in Headers */,
 				415747481E3869A700E914D8 /* LibWebRTCProvider.h in Headers */,
+				41B28B3D1F860EF300FB52AC /* LibWebRTCProviderCocoa.h in Headers */,
 				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
@@ -33201,6 +33208,7 @@
 				417612AF1E3A994000C3D81D /* LibWebRTCMediaEndpoint.cpp in Sources */,
 				417612B11E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.cpp in Sources */,
 				41A1B00E1E526579007F3769 /* LibWebRTCProvider.cpp in Sources */,
+				41B28B391F860BD600FB52AC /* LibWebRTCProviderCocoa.cpp in Sources */,
 				FFB698CC1833EE0D00158A31 /* LineBreaker.cpp in Sources */,
 				FFB698CF183402BB00158A31 /* LineInfo.cpp in Sources */,
 				FFDBC048183D27B700407109 /* LineWidth.cpp in Sources */,

@@ -690,7 +690,7 @@ Page* InspectorOverlay::overlayPage()
     PageConfiguration pageConfiguration(
         createEmptyEditorClient(),
         SocketProvider::create(),
-        makeUniqueRef<LibWebRTCProvider>(),
+        LibWebRTCProvider::create(),
         CacheStorageProvider::create()
     );
     fillWithEmptyClients(pageConfiguration);

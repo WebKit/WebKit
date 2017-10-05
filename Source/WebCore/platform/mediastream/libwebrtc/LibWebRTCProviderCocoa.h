@@ -25,31 +25,28 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
-#include <WebCore/LibWebRTCProviderCocoa.h>
-#else
-#include <WebCore/LibWebRTCProvider.h>
-#endif
-
-namespace WebKit {
+#include "LibWebRTCProvider.h"
 
 #if USE(LIBWEBRTC)
 
-#if PLATFORM(COCOA)
-using LibWebRTCProviderBase = WebCore::LibWebRTCProviderCocoa;
-#else
-using LibWebRTCProviderBase = WebCore::LibWebRTCProvider;
-#endif
+namespace WebCore {
 
-class LibWebRTCProvider final : public LibWebRTCProviderBase {
+class VideoToolboxVideoDecoderFactory;
+class VideoToolboxVideoEncoderFactory;
+
+class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
 public:
-    LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
+    LibWebRTCProviderCocoa() = default;
 
 private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
-};
-#else
-using LibWebRTCProvider = WebCore::LibWebRTCProvider;
-#endif // USE(LIBWEBRTC)
+    void setActive(bool) final;
+    std::unique_ptr<cricket::WebRtcVideoDecoderFactory> createDecoderFactory() final;
+    std::unique_ptr<cricket::WebRtcVideoEncoderFactory> createEncoderFactory() final;
 
-} // namespace WebKit
+    VideoToolboxVideoDecoderFactory* m_decoderFactory { nullptr };
+    VideoToolboxVideoEncoderFactory* m_encoderFactory { nullptr };
+};
+
+} // namespace WebCore
+
+#endif

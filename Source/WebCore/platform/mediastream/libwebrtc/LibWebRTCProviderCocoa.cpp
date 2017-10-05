@@ -23,33 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if PLATFORM(COCOA)
-#include <WebCore/LibWebRTCProviderCocoa.h>
-#else
-#include <WebCore/LibWebRTCProvider.h>
-#endif
-
-namespace WebKit {
+#include "config.h"
+#include "LibWebRTCProviderCocoa.h"
 
 #if USE(LIBWEBRTC)
 
-#if PLATFORM(COCOA)
-using LibWebRTCProviderBase = WebCore::LibWebRTCProviderCocoa;
-#else
-using LibWebRTCProviderBase = WebCore::LibWebRTCProvider;
+#include "VideoToolBoxDecoderFactory.h"
+#include "VideoToolBoxEncoderFactory.h"
+
+namespace WebCore {
+
+std::unique_ptr<cricket::WebRtcVideoDecoderFactory> LibWebRTCProviderCocoa::createDecoderFactory()
+{
+    ASSERT(!m_decoderFactory);
+    auto decoderFactory = std::make_unique<VideoToolboxVideoDecoderFactory>();
+    m_decoderFactory = decoderFactory.get();
+
+    return WTFMove(decoderFactory);
+}
+
+std::unique_ptr<cricket::WebRtcVideoEncoderFactory> LibWebRTCProviderCocoa::createEncoderFactory()
+{
+    ASSERT(!m_encoderFactory);
+    auto encoderFactory = std::make_unique<VideoToolboxVideoEncoderFactory>();
+    m_encoderFactory = encoderFactory.get();
+
+    return WTFMove(encoderFactory);
+}
+
+void LibWebRTCProviderCocoa::setActive(bool value)
+{
+    if (m_decoderFactory)
+        m_decoderFactory->setActive(value);
+    if (m_encoderFactory)
+        m_encoderFactory->setActive(value);
+}
+
+} // namespace WebCore
+
 #endif
-
-class LibWebRTCProvider final : public LibWebRTCProviderBase {
-public:
-    LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
-
-private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
-};
-#else
-using LibWebRTCProvider = WebCore::LibWebRTCProvider;
-#endif // USE(LIBWEBRTC)
-
-} // namespace WebKit

@@ -27,15 +27,19 @@
 
 #include "LibWebRTCMacros.h"
 #include <wtf/Forward.h>
+#include <wtf/UniqueRef.h>
 
 #if USE(LIBWEBRTC)
 
 #include <webrtc/api/peerconnectioninterface.h>
 #include <webrtc/base/scoped_ref_ptr.h>
+#include <webrtc/media/engine/webrtcvideodecoderfactory.h>
+#include <webrtc/media/engine/webrtcvideoencoderfactory.h>
 
 namespace rtc {
 class NetworkManager;
 class PacketSocketFactory;
+class Thread;
 }
 
 namespace webrtc {
@@ -45,26 +49,26 @@ class PeerConnectionFactoryInterface;
 
 namespace WebCore {
 
-class VideoToolboxVideoDecoderFactory;
-class VideoToolboxVideoEncoderFactory;
+class LibWebRTCAudioModule;
 
 class WEBCORE_EXPORT LibWebRTCProvider {
 public:
-    LibWebRTCProvider() = default;
+    static UniqueRef<LibWebRTCProvider> create();
+
     virtual ~LibWebRTCProvider() = default;
 
     static bool webRTCAvailable();
 
-    void setActive(bool);
+    virtual void setActive(bool) { };
 
 #if USE(LIBWEBRTC)
-    WEBCORE_EXPORT virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
+    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
-    WEBCORE_EXPORT webrtc::PeerConnectionFactoryInterface* factory();
+    webrtc::PeerConnectionFactoryInterface* factory();
 
     // FIXME: Make these methods not static.
-    static WEBCORE_EXPORT void callOnWebRTCNetworkThread(Function<void()>&&);
-    static WEBCORE_EXPORT void callOnWebRTCSignalingThread(Function<void()>&&);
+    static void callOnWebRTCNetworkThread(Function<void()>&&);
+    static void callOnWebRTCSignalingThread(Function<void()>&&);
 
     // Used for mock testing
     void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
@@ -73,15 +77,19 @@ public:
     void enableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = true; }
 
 protected:
-    WEBCORE_EXPORT rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
+    LibWebRTCProvider() = default;
+
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
+
+    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread, LibWebRTCAudioModule*);
+    virtual std::unique_ptr<cricket::WebRtcVideoDecoderFactory> createDecoderFactory() { return nullptr; }
+    virtual std::unique_ptr<cricket::WebRtcVideoEncoderFactory> createEncoderFactory() { return nullptr; }
 
     bool m_enableEnumeratingAllNetworkInterfaces { false };
     // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
     bool m_useNetworkThreadWithSocketServer { true };
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
-    VideoToolboxVideoDecoderFactory* m_decoderFactory { nullptr };
-    VideoToolboxVideoEncoderFactory* m_encoderFactory { nullptr };
 #endif
 };
 

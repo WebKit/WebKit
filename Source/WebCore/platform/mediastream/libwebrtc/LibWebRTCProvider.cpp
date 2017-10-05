@@ -26,6 +26,10 @@
 #include "config.h"
 #include "LibWebRTCProvider.h"
 
+#if PLATFORM(COCOA)
+#include "LibWebRTCProviderCocoa.h"
+#endif
+
 #if USE(LIBWEBRTC)
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
@@ -42,6 +46,15 @@
 #endif
 
 namespace WebCore {
+
+UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
+{
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+    return makeUniqueRef<LibWebRTCProviderCocoa>();
+#else
+    return makeUniqueRef<LibWebRTCProvider>();
+#endif
+}
 
 #if USE(LIBWEBRTC)
 struct PeerConnectionFactoryAndThreads : public rtc::MessageHandler {
@@ -138,15 +151,14 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
 
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
-    auto decoderFactory = std::make_unique<VideoToolboxVideoDecoderFactory>();
-    auto encoderFactory = std::make_unique<VideoToolboxVideoEncoderFactory>();
-
-    m_decoderFactory = decoderFactory.get();
-    m_encoderFactory = encoderFactory.get();
-
-    m_factory = webrtc::CreatePeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get(), factoryAndThreads.signalingThread.get(), factoryAndThreads.audioDeviceModule.get(), encoderFactory.release(), decoderFactory.release());
+    m_factory = createPeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get(), factoryAndThreads.audioDeviceModule.get());
 
     return m_factory;
+}
+
+rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread, LibWebRTCAudioModule* audioModule)
+{
+    return webrtc::CreatePeerConnectionFactory(networkThread, networkThread, signalingThread, audioModule, createEncoderFactory().release(), createDecoderFactory().release());
 }
 
 void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)
@@ -187,18 +199,6 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
 }
 
 #endif // USE(LIBWEBRTC)
-
-void LibWebRTCProvider::setActive(bool value)
-{
-#if USE(LIBWEBRTC)
-    if (m_decoderFactory)
-        m_decoderFactory->setActive(value);
-    if (m_encoderFactory)
-        m_encoderFactory->setActive(value);
-#else
-    UNUSED_PARAM(value);
-#endif
-}
 
 bool LibWebRTCProvider::webRTCAvailable()
 {

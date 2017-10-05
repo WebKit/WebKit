@@ -1415,7 +1415,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     PageConfiguration pageConfiguration(
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
-        makeUniqueRef<WebCore::LibWebRTCProvider>(),
+        LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create()
     );
 #if !PLATFORM(IOS)
@@ -1679,7 +1679,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     PageConfiguration pageConfiguration(
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
-        makeUniqueRef<WebCore::LibWebRTCProvider>(),
+        LibWebRTCProvider::create(),
         WebCore::CacheStorageProvider::create()
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
