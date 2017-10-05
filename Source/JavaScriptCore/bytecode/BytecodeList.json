@@ -8,7 +8,11 @@
             { "name" : "op_create_direct_arguments", "length" : 2 },
             { "name" : "op_create_scoped_arguments", "length" : 3 },
             { "name" : "op_create_cloned_arguments", "length" : 2 },
-            { "name" : "op_create_this", "length" : 5 },
+            { "name" : "op_create_this", "offsets" :
+                       [{"dst" : "int"},
+                        {"callee" : "int"},
+                        {"inlineCapacity" : "int"},
+                        {"cachedCallee" : "WriteBarrier<JSCell>"}]},
             { "name" : "op_get_argument", "length" : 4 },
             { "name" : "op_argument_count", "length" : 2 },
             { "name" : "op_to_this", "length" : 4 },

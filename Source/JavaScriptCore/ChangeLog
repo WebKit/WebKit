@@ -1,3 +1,27 @@
+2017-10-05  Saam Barati  <sbarati@apple.com>
+
+        Make sure all prototypes under poly proto get added into the VM's prototype map
+        https://bugs.webkit.org/show_bug.cgi?id=177909
+
+        Reviewed by Keith Miller.
+
+        This is an invariant of prototypes that I broke when doing poly proto. This patch fixes it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSCInlines.h:
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::addPrototype): Deleted.
+        * runtime/PrototypeMap.h:
+        * runtime/PrototypeMapInlines.h:
+        (JSC::PrototypeMap::isPrototype const):
+        (JSC::PrototypeMap::addPrototype):
+
 2017-09-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Introduce import.meta

@@ -1,3 +1,16 @@
+2017-10-05  Saam Barati  <sbarati@apple.com>
+
+        Make sure all prototypes under poly proto get added into the VM's prototype map
+        https://bugs.webkit.org/show_bug.cgi?id=177909
+
+        Reviewed by Keith Miller.
+
+        * stress/poly-proto-prototype-map-having-a-bad-time.js: Added.
+        (assert):
+        (foo.C):
+        (foo):
+        (set x):
+
 2017-09-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Introduce import.meta

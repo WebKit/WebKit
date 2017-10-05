@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-inline TriState PrototypeMap::isPrototype(JSObject* object) const
+ALWAYS_INLINE TriState PrototypeMap::isPrototype(JSObject* object) const
 {
     if (!m_prototypes.contains(object))
         return FalseTriState;
@@ -40,6 +40,27 @@ inline TriState PrototypeMap::isPrototype(JSObject* object) const
     // to find out for sure, and we don't know of any cases where being precise
     // would improve performance.)
     return MixedTriState;
+}
+
+ALWAYS_INLINE void PrototypeMap::addPrototype(JSObject* object)
+{
+    m_prototypes.set(object, object);
+
+    // Note that this method makes the somewhat odd decision to not check if this
+    // object currently has indexed accessors. We could do that check here, and if
+    // indexed accessors were found, we could tell the global object to have a bad
+    // time. But we avoid this, to allow the following to be always fast:
+    //
+    // 1) Create an object.
+    // 2) Give it a setter or read-only property that happens to have a numeric name.
+    // 3) Allocate objects that use this object as a prototype.
+    //
+    // This avoids anyone having a bad time. Even if the instance objects end up
+    // having indexed storage, the creation of indexed storage leads to a prototype
+    // chain walk that detects the presence of indexed setters and then does the
+    // right thing. As a result, having a bad time only happens if you add an
+    // indexed setter (or getter, or read-only field) to an object that is already
+    // used as a prototype.
 }
 
 } // namespace JSC

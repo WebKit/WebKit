@@ -4324,12 +4324,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_create_this: {
-            int calleeOperand = currentInstruction[2].u.operand;
-            Node* callee = get(VirtualRegister(calleeOperand));
+            auto& bytecode = *reinterpret_cast<OpCreateThis*>(currentInstruction);
+            Node* callee = get(VirtualRegister(bytecode.callee()));
 
             JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
             if (!function) {
-                JSCell* cachedFunction = currentInstruction[4].u.jsCell.unvalidatedGet();
+                JSCell* cachedFunction = bytecode.cachedCallee().unvalidatedGet();
                 if (cachedFunction
                     && cachedFunction != JSCell::seenMultipleCalleeObjects()
                     && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
@@ -4353,15 +4353,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                             // The callee is still live up to this point.
                             addToGraph(Phantom, callee);
-                            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure))));
+                            set(VirtualRegister(bytecode.dst()), addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure))));
                             alreadyEmitted = true;
                         }
                     }
                 }
             }
             if (!alreadyEmitted) {
-                set(VirtualRegister(currentInstruction[1].u.operand),
-                    addToGraph(CreateThis, OpInfo(currentInstruction[3].u.operand), callee));
+                set(VirtualRegister(bytecode.dst()),
+                    addToGraph(CreateThis, OpInfo(bytecode.inlineCapacity()), callee));
             }
             NEXT_OPCODE(op_create_this);
         }

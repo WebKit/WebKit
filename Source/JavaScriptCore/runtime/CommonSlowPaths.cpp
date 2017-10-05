@@ -29,6 +29,7 @@
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
 #include "BuiltinNames.h"
+#include "BytecodeStructs.h"
 #include "CallFrame.h"
 #include "ClonedArguments.h"
 #include "CodeProfiling.h"
@@ -92,6 +93,8 @@ namespace JSC {
 
 #define OP(index) (exec->uncheckedR(pc[index].u.operand))
 #define OP_C(index) (exec->r(pc[index].u.operand))
+
+#define GET(operand) (exec->uncheckedR(operand))
 
 #define RETURN_TWO(first, second) do {       \
         return encodeResult(first, second);        \
@@ -229,21 +232,25 @@ SLOW_PATH_DECL(slow_path_create_cloned_arguments)
 SLOW_PATH_DECL(slow_path_create_this)
 {
     BEGIN();
+    auto& bytecode = *reinterpret_cast<OpCreateThis*>(pc);
     JSObject* result;
-    JSObject* constructorAsObject = asObject(OP(2).jsValue());
+    JSObject* constructorAsObject = asObject(GET(bytecode.callee()).jsValue());
     if (constructorAsObject->type() == JSFunctionType) {
         JSFunction* constructor = jsCast<JSFunction*>(constructorAsObject);
-        auto& cacheWriteBarrier = pc[4].u.jsCell;
-        if (!cacheWriteBarrier)
-            cacheWriteBarrier.set(vm, exec->codeBlock(), constructor);
-        else if (cacheWriteBarrier.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cacheWriteBarrier.get() != constructor)
-            cacheWriteBarrier.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
+        WriteBarrier<JSCell>& cachedCallee = bytecode.cachedCallee();
+        if (!cachedCallee)
+            cachedCallee.set(vm, exec->codeBlock(), constructor);
+        else if (cachedCallee.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cachedCallee.get() != constructor)
+            cachedCallee.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
-        size_t inlineCapacity = pc[3].u.operand;
+        size_t inlineCapacity = bytecode.inlineCapacity();
         Structure* structure = constructor->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure();
         result = constructEmptyObject(exec, structure);
-        if (structure->hasPolyProto())
-            result->putDirect(vm, structure->polyProtoOffset(), constructor->prototypeForConstruction(vm, exec));
+        if (structure->hasPolyProto()) {
+            JSObject* prototype = constructor->prototypeForConstruction(vm, exec);
+            result->putDirect(vm, structure->polyProtoOffset(), prototype);
+            vm.prototypeMap.addPrototype(prototype);
+        }
     } else {
         // http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor
         JSValue proto = constructorAsObject->get(exec, vm.propertyNames->prototype);

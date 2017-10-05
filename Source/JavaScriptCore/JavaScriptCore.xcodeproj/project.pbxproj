@@ -447,7 +447,7 @@
 		0F9E32641B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9E32621B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h */; };
 		0F9FB4F517FCB91700CB67F8 /* DFGStackLayoutPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9FB4F317FCB91700CB67F8 /* DFGStackLayoutPhase.h */; };
 		0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FA131711D8DD72B00EC130A /* PrototypeMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA131701D8DD72900EC130A /* PrototypeMapInlines.h */; };
+		0FA131711D8DD72B00EC130A /* PrototypeMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA131701D8DD72900EC130A /* PrototypeMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FA2C17C17D7CF84009D015F /* TestRunnerUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA2C17A17D7CF84009D015F /* TestRunnerUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FA581BB150E953000B9A2D9 /* DFGNodeFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA581B8150E952A00B9A2D9 /* DFGNodeFlags.h */; };
 		0FA581BC150E953000B9A2D9 /* DFGNodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */; };

@@ -33,27 +33,6 @@
 
 namespace JSC {
 
-void PrototypeMap::addPrototype(JSObject* object)
-{
-    m_prototypes.set(object, object);
-
-    // Note that this method makes the somewhat odd decision to not check if this
-    // object currently has indexed accessors. We could do that check here, and if
-    // indexed accessors were found, we could tell the global object to have a bad
-    // time. But we avoid this, to allow the following to be always fast:
-    //
-    // 1) Create an object.
-    // 2) Give it a setter or read-only property that happens to have a numeric name.
-    // 3) Allocate objects that use this object as a prototype.
-    //
-    // This avoids anyone having a bad time. Even if the instance objects end up
-    // having indexed storage, the creation of indexed storage leads to a prototype
-    // chain walk that detects the presence of indexed setters and then does the
-    // right thing. As a result, having a bad time only happens if you add an
-    // indexed setter (or getter, or read-only field) to an object that is already
-    // used as a prototype.
-}
-
 inline Structure* PrototypeMap::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity, bool makePolyProtoStructure)
 {
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.

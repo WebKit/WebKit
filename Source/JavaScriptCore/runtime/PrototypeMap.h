@@ -49,8 +49,8 @@ public:
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false);
     JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*);
     void clearEmptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity);
-    JS_EXPORT_PRIVATE void addPrototype(JSObject*);
-    inline TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
+    ALWAYS_INLINE void addPrototype(JSObject*);
+    ALWAYS_INLINE TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
 
 private:
     Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure);

@@ -246,8 +246,11 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
         RETURN_IF_EXCEPTION(scope, nullptr);
         Structure* structure = rareData->objectAllocationProfile()->structure();
         JSObject* result = constructEmptyObject(exec, structure);
-        if (structure->hasPolyProto())
-            result->putDirect(vm, structure->polyProtoOffset(), jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec));
+        if (structure->hasPolyProto()) {
+            JSObject* prototype = jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec);
+            result->putDirect(vm, structure->polyProtoOffset(), prototype);
+            vm.prototypeMap.addPrototype(prototype);
+        }
         return result;
     }
 
