@@ -1,3 +1,39 @@
+2017-09-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Introduce import.meta
+        https://bugs.webkit.org/show_bug.cgi?id=177703
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds stage 3 `import.meta`[1].
+        We add a new hook function moduleLoaderCreateImportMetaProperties, which creates
+        import meta properties object to this module. And we set this object as @meta
+        private variable in module environments. So module code can access this by accessing
+        @meta private variable.
+
+        [1]: https://github.com/tc39/proposal-import-meta
+
+        * builtins/BuiltinNames.h:
+        * builtins/ModuleLoaderPrototype.js:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderCreateImportMetaProperties):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::createImportMetaProperties):
+        * runtime/JSModuleLoader.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSModuleRecord.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeModuleDeclarationInstantiation):
+
 2017-10-04  Saam Barati  <sbarati@apple.com>
 
         Make pertinent AccessCases watch the poly proto watchpoint

@@ -366,7 +366,7 @@ function link(entry, fetcher)
             this.link(pair.value.registryEntry, fetcher);
         }
 
-        this.moduleDeclarationInstantiation(entry.module, fetcher);
+        this.moduleDeclarationInstantiation(entry.module, entry.key, fetcher);
     } catch (error) {
         entry.linkSucceeded = false;
         entry.linkError = error;

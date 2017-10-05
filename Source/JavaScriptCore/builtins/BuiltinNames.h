@@ -194,6 +194,7 @@ namespace JSC {
     macro(CompileError) \
     macro(LinkError) \
     macro(RuntimeError) \
+    macro(meta) \
 
 namespace Symbols {
 #define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern SymbolImpl::StaticSymbolImpl name##Symbol;

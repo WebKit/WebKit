@@ -22,3 +22,7 @@ export function shouldThrow(func, errorMessage) {
     if (String(error) !== errorMessage)
         throw new Error(`bad error: ${String(error)}`);
 }
+
+export function shouldNotThrow(func) {
+    func();
+}

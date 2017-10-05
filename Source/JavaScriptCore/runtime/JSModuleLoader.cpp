@@ -43,6 +43,7 @@
 #include "ModuleAnalyzer.h"
 #include "ModuleLoaderPrototype.h"
 #include "Nodes.h"
+#include "ObjectConstructor.h"
 #include "Parser.h"
 #include "ParserError.h"
 
@@ -247,6 +248,14 @@ JSInternalPromise* JSModuleLoader::instantiate(ExecState* exec, JSValue key, JSV
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     deferred->resolve(exec, jsUndefined());
     return deferred->promise();
+}
+
+JSObject* JSModuleLoader::createImportMetaProperties(ExecState* exec, JSValue key, JSModuleRecord* moduleRecord, JSValue scriptFetcher)
+{
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    if (globalObject->globalObjectMethodTable()->moduleLoaderCreateImportMetaProperties)
+        return globalObject->globalObjectMethodTable()->moduleLoaderCreateImportMetaProperties(globalObject, exec, this, key, moduleRecord, scriptFetcher);
+    return constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
 }
 
 JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)

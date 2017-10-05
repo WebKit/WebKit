@@ -73,6 +73,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &moduleLoaderResolve,
     &moduleLoaderFetch,
     nullptr, // moduleLoaderInstantiate
+    nullptr, // moduleLoaderCreateImportMetaProperties
     &moduleLoaderEvaluate,
     &promiseRejectionTracker,
     &defaultLanguage

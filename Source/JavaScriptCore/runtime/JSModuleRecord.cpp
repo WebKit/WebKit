@@ -76,7 +76,7 @@ void JSModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_moduleProgramExecutable);
 }
 
-void JSModuleRecord::link(ExecState* exec)
+void JSModuleRecord::link(ExecState* exec, JSValue key, JSValue scriptFetcher)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -87,12 +87,12 @@ void JSModuleRecord::link(ExecState* exec)
         throwSyntaxError(exec, scope);
         return;
     }
-    instantiateDeclarations(exec, executable);
+    instantiateDeclarations(exec, executable, key, scriptFetcher);
     RETURN_IF_EXCEPTION(scope, void());
     m_moduleProgramExecutable.set(vm, this, executable);
 }
 
-void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecutable* moduleProgramExecutable)
+void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecutable* moduleProgramExecutable, JSValue key, JSValue scriptFetcher)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -203,6 +203,14 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
             symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, unlinkedFunctionExecutable->name(), function, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
             RETURN_IF_EXCEPTION(scope, void());
         }
+    }
+
+    {
+        JSObject* metaProperties = exec->lexicalGlobalObject()->moduleLoader()->createImportMetaProperties(exec, key, this, scriptFetcher);
+        RETURN_IF_EXCEPTION(scope, void());
+        bool putResult = false;
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, vm.propertyNames->builtinNames().metaPrivateName(), metaProperties, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
+        RETURN_IF_EXCEPTION(scope, void());
     }
 
     m_moduleEnvironment.set(vm, this, moduleEnvironment);

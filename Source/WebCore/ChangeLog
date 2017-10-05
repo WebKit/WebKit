@@ -1,3 +1,13 @@
+2017-09-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Introduce import.meta
+        https://bugs.webkit.org/show_bug.cgi?id=177703
+
+        Reviewed by Filip Pizlo.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+
 2017-10-04  Tim Horton  <timothy_horton@apple.com>
 
         Link WebCore against CFNetwork in the CMake build

@@ -74,6 +74,7 @@ public:
     JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer, JSValue scriptFetcher);
     JSInternalPromise* fetch(ExecState*, JSValue key, JSValue scriptFetcher);
     JSInternalPromise* instantiate(ExecState*, JSValue key, JSValue source, JSValue scriptFetcher);
+    JSObject* createImportMetaProperties(ExecState*, JSValue key, JSModuleRecord*, JSValue scriptFetcher);
 
     // Additional platform dependent hooked APIs.
     JSValue evaluate(ExecState*, JSValue key, JSValue moduleRecord, JSValue scriptFetcher);

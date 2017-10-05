@@ -419,7 +419,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSo
         case IMPORT: {
             SavePoint savePoint = createSavePoint();
             next();
-            bool isImportDeclaration = !match(OPENPAREN);
+            bool isImportDeclaration = !match(OPENPAREN) && !match(DOT);
             restoreSavePoint(savePoint);
             if (isImportDeclaration) {
                 statement = parseImportDeclaration(context);
@@ -428,7 +428,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseModuleSo
                 break;
             }
 
-            // This is `import("...")` call case.
+            // This is `import("...")` call or `import.meta` meta property case.
             FALLTHROUGH;
         }
 
@@ -4687,11 +4687,25 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     } else if (baseIsImport) {
         next();
         JSTextPosition expressionEnd = lastTokenEndPosition();
-        consumeOrFail(OPENPAREN, "import call expects exactly one argument");
-        TreeExpression expr = parseAssignmentExpression(context);
-        failIfFalse(expr, "Cannot parse expression");
-        consumeOrFail(CLOSEPAREN, "import call expects exactly one argument");
-        base = context.createImportExpr(location, expr, expressionStart, expressionEnd, lastTokenEndPosition());
+        if (consume(DOT)) {
+            if (!match(IDENT))
+                failDueToUnexpectedToken();
+            const Identifier* ident = m_token.m_data.ident;
+            if (m_vm->propertyNames->builtinNames().metaPublicName() != *ident)
+                failWithMessage("\"import.\" can only followed with meta");
+
+            semanticFailIfFalse(m_scriptMode == JSParserScriptMode::Module, "import.meta is only valid inside modules");
+
+            JSTokenLocation location(tokenLocation());
+            base = createResolveAndUseVariable(context, &m_vm->propertyNames->builtinNames().metaPrivateName(), false, expressionStart, location);
+            next();
+        } else {
+            consumeOrFail(OPENPAREN, "import call expects exactly one argument");
+            TreeExpression expr = parseAssignmentExpression(context);
+            failIfFalse(expr, "Cannot parse expression");
+            consumeOrFail(CLOSEPAREN, "import call expects exactly one argument");
+            base = context.createImportExpr(location, expr, expressionStart, expressionEnd, lastTokenEndPosition());
+        }
     } else if (!baseIsNewTarget) {
         const bool isAsync = match(ASYNC);
 

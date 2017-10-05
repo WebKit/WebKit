@@ -80,7 +80,7 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
     requestLink                    JSBuiltin                                           DontEnum|Function 2
     requestReady                   JSBuiltin                                           DontEnum|Function 2
     link                           JSBuiltin                                           DontEnum|Function 2
-    moduleDeclarationInstantiation moduleLoaderPrototypeModuleDeclarationInstantiation DontEnum|Function 2
+    moduleDeclarationInstantiation moduleLoaderPrototypeModuleDeclarationInstantiation DontEnum|Function 3
     moduleEvaluation               JSBuiltin                                           DontEnum|Function 2
     evaluate                       moduleLoaderPrototypeEvaluate                       DontEnum|Function 3
     provide                        JSBuiltin                                           DontEnum|Function 3
@@ -168,7 +168,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
 
-    moduleRecord->link(exec);
+    moduleRecord->link(exec, exec->argument(1), exec->argument(2));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsUndefined());
