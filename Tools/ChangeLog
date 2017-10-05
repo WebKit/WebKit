@@ -1,3 +1,18 @@
+2017-10-04  Megan Gardner  <megan_gardner@apple.com>
+
+        check-webkit-style erroneously requires a space between the carrot and brace in obj-c blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=177897
+
+        Reviewed by Dan Bernstein and Jonathan Bedard.
+
+        Remove the check for a space between ^ and {, 
+        as this is valid and expected Obj-C. Now check to make sure there is
+        no space at all between ^ and {, and also that there is a space between
+        the end of an argument list and the {.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (regex_for_lambdas_and_blocks):
+
 2017-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Run WebKit2 C API tests in GTK+ bots again after the last WebKit2 -> WebKit rename.

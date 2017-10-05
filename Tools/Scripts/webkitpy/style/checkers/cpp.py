@@ -1241,14 +1241,14 @@ class _EnumState(object):
 
 def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
     cpp_result = search(r'\s\[.*?\]\s', line)
-    objc_result = search(r'(\s\^\s?\(.*?\)\s|\^\s?\{|:\^\s?\(.*?\)\s\{)', line)
+    objc_result = search(r'(\s\^\s?\(.*?\)\s?|\^\s*\{|:\^\s?\(.*?\)\s\{)', line)
     if cpp_result:
         group = cpp_result.group()
         targ_error = None
 
         if search(r'(\[\s|\s\]|\s,)', group):
             targ_error = [line_number, 'whitespace/brackets', 4,
-              'Extra space in capture list.']
+              'Extra space in capture list.',line]
 
         if targ_error and regex_for_lambdas_and_blocks.__last_error != targ_error:
             error(targ_error[0], targ_error[1], targ_error[2], targ_error[3])
@@ -1261,13 +1261,13 @@ def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
 
         if search(r'(\(\s|\s\)|\s,)', group):
             targ_error = [line_number, 'whitespace/brackets', 4,
-              'Extra space in block arguments.']
-        if search(r'\^\{', group):
+              'Extra space in block arguments.',line]
+        if search(r'\^\s+\{', group):
             targ_error = [line_number, 'whitespace/brackets', 4,
-              'No space between ^ and block definition.']
+              'Extra space between ^ and block definition.',line]
         if search(r'\^\s\(', group):
             targ_error = [line_number, 'whitespace/brackets', 4,
-              'Extra space between ^ and block arguments.']
+              'Extra space between ^ and block arguments.',line]
 
         if targ_error and regex_for_lambdas_and_blocks.__last_error != targ_error:
             error(targ_error[0], targ_error[1], targ_error[2], targ_error[3])
