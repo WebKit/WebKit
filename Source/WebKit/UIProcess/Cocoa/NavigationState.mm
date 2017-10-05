@@ -183,6 +183,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:)];
     m_navigationDelegateMethods.webViewWillGoToBackForwardListItemInPageCache = [delegate respondsToSelector:@selector(_webView:willGoToBackForwardListItem:inPageCache:)];
     m_navigationDelegateMethods.webViewDidFailToInitializePlugInWithInfo = [delegate respondsToSelector:@selector(_webView:didFailToInitializePlugInWithInfo:)];
+    m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved = [delegate respondsToSelector:@selector(_webView:backForwardListItemAdded:removed:)];
 #endif
 }
 
@@ -297,7 +298,7 @@ NavigationState::NavigationClient::~NavigationClient()
 }
 
 #if PLATFORM(MAC)
-bool NavigationState::NavigationClient::didFailToInitializePlugIn(WebKit::WebPageProxy&, API::Dictionary& info)
+bool NavigationState::NavigationClient::didFailToInitializePlugIn(WebPageProxy&, API::Dictionary& info)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidFailToInitializePlugInWithInfo)
         return false;
@@ -357,6 +358,25 @@ void NavigationState::NavigationClient::resolveWebGLLoadPolicy(WebPageProxy&, co
         checker->didCallCompletionHandler();
         completionHandler(toWebCoreWebGLLoadPolicy(policy));
     }).get()];
+}
+
+bool NavigationState::NavigationClient::didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem* added, const Vector<Ref<WebBackForwardListItem>>& removed)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved)
+        return false;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return false;
+
+    NSMutableArray<WKBackForwardListItem *> *removedItems = nil;
+    if (removed.size()) {
+        removedItems = [[[NSMutableArray alloc] initWithCapacity:removed.size()] autorelease];
+        for (auto& removedItem : removed)
+            [removedItems addObject:wrapper(removedItem.get())];
+    }
+    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView backForwardListItemAdded:added ? wrapper(*added) : nil removed:removedItems];
+    return true;
 }
 
 bool NavigationState::NavigationClient::willGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem& item, bool inPageCache, API::Object*)
@@ -606,7 +626,7 @@ void NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNa
     [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:wkNavigation];
 }
 
-void NavigationState::NavigationClient::willPerformClientRedirect(WebKit::WebPageProxy& page, const WTF::String& urlString, double delay)
+void NavigationState::NavigationClient::willPerformClientRedirect(WebPageProxy& page, const WTF::String& urlString, double delay)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewWillPerformClientRedirect)
         return;
@@ -620,7 +640,7 @@ void NavigationState::NavigationClient::willPerformClientRedirect(WebKit::WebPag
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState.m_webView willPerformClientRedirectToURL:url delay:delay];
 }
 
-void NavigationState::NavigationClient::didCancelClientRedirect(WebKit::WebPageProxy& page)
+void NavigationState::NavigationClient::didCancelClientRedirect(WebPageProxy& page)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidCancelClientRedirect)
         return;
@@ -775,7 +795,7 @@ void NavigationState::NavigationClient::didSameDocumentNavigation(WebPageProxy&,
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigation:wkNavigation didSameDocumentNavigation:toWKSameDocumentNavigationType(navigationType)];
 }
 
-void NavigationState::NavigationClient::renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones layoutMilestones)
+void NavigationState::NavigationClient::renderingProgressDidChange(WebPageProxy&, WebCore::LayoutMilestones layoutMilestones)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewRenderingProgressDidChange)
         return;
@@ -787,7 +807,7 @@ void NavigationState::NavigationClient::renderingProgressDidChange(WebKit::WebPa
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView renderingProgressDidChange:renderingProgressEvents(layoutMilestones)];
 }
 
-bool NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace(WebKit::WebPageProxy&, WebKit::WebProtectionSpace* protectionSpace)
+bool NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace(WebPageProxy&, WebProtectionSpace* protectionSpace)
 {
     if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler)
         return true;
@@ -859,7 +879,7 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(*authenticationChallenge)];
 }
 
-void NavigationState::NavigationClient::processDidTerminate(WebKit::WebPageProxy& page, WebKit::ProcessTerminationReason)
+void NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, ProcessTerminationReason)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminate && !m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
         return;
@@ -878,7 +898,7 @@ void NavigationState::NavigationClient::processDidTerminate(WebKit::WebPageProxy
         [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidCrash:m_navigationState.m_webView];
 }
 
-void NavigationState::NavigationClient::processDidBecomeResponsive(WebKit::WebPageProxy& page)
+void NavigationState::NavigationClient::processDidBecomeResponsive(WebPageProxy& page)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidBecomeResponsive)
         return;
@@ -890,7 +910,7 @@ void NavigationState::NavigationClient::processDidBecomeResponsive(WebKit::WebPa
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidBecomeResponsive:m_navigationState.m_webView];
 }
 
-void NavigationState::NavigationClient::processDidBecomeUnresponsive(WebKit::WebPageProxy& page)
+void NavigationState::NavigationClient::processDidBecomeUnresponsive(WebPageProxy& page)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidBecomeUnresponsive)
         return;
@@ -902,7 +922,7 @@ void NavigationState::NavigationClient::processDidBecomeUnresponsive(WebKit::Web
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidBecomeUnresponsive:m_navigationState.m_webView];
 }
 
-RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebKit::WebPageProxy&)
+RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebPageProxy&)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webCryptoMasterKeyForWebView) {
         Vector<uint8_t> masterKey;
@@ -936,7 +956,7 @@ void NavigationState::NavigationClient::didStartLoadForQuickLookDocumentInMainFr
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:fileName uti:uti];
 }
 
-void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData& data)
+void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData& data)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame)
         return;
@@ -960,7 +980,7 @@ NavigationState::HistoryClient::~HistoryClient()
 {
 }
 
-void NavigationState::HistoryClient::didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore& navigationDataStore)
+void NavigationState::HistoryClient::didNavigateWithNavigationData(WebPageProxy&, const WebNavigationDataStore& navigationDataStore)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidNavigateWithNavigationData)
         return;
@@ -972,7 +992,7 @@ void NavigationState::HistoryClient::didNavigateWithNavigationData(WebKit::WebPa
     [historyDelegate _webView:m_navigationState.m_webView didNavigateWithNavigationData:wrapper(API::NavigationData::create(navigationDataStore))];
 }
 
-void NavigationState::HistoryClient::didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
+void NavigationState::HistoryClient::didPerformClientRedirect(WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidPerformClientRedirectFromURLToURL)
         return;
@@ -984,7 +1004,7 @@ void NavigationState::HistoryClient::didPerformClientRedirect(WebKit::WebPagePro
     [historyDelegate _webView:m_navigationState.m_webView didPerformClientRedirectFromURL:[NSURL _web_URLWithWTFString:sourceURL] toURL:[NSURL _web_URLWithWTFString:destinationURL]];
 }
 
-void NavigationState::HistoryClient::didPerformServerRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
+void NavigationState::HistoryClient::didPerformServerRedirect(WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidPerformServerRedirectFromURLToURL)
         return;
@@ -996,7 +1016,7 @@ void NavigationState::HistoryClient::didPerformServerRedirect(WebKit::WebPagePro
     [historyDelegate _webView:m_navigationState.m_webView didPerformServerRedirectFromURL:[NSURL _web_URLWithWTFString:sourceURL] toURL:[NSURL _web_URLWithWTFString:destinationURL]];
 }
 
-void NavigationState::HistoryClient::didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String& title, const WTF::String& url)
+void NavigationState::HistoryClient::didUpdateHistoryTitle(WebPageProxy&, const WTF::String& title, const WTF::String& url)
 {
     if (!m_navigationState.m_historyDelegateMethods.webViewDidUpdateHistoryTitleForURL)
         return;

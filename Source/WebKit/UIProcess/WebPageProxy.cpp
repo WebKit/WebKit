@@ -1196,7 +1196,8 @@ void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vecto
 {
     PageClientProtector protector(m_pageClient);
 
-    m_loaderClient->didChangeBackForwardList(*this, added, WTFMove(removed));
+    if (!m_navigationClient || !m_navigationClient->didChangeBackForwardList(*this, added, removed))
+        m_loaderClient->didChangeBackForwardList(*this, added, WTFMove(removed));
 
     auto transaction = m_pageLoadState.transaction();
 

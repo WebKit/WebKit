@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
@@ -328,6 +329,61 @@ TEST(WKNavigation, WillGoToBackForwardListItem)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+RetainPtr<WKBackForwardListItem> firstItem;
+RetainPtr<WKBackForwardListItem> secondItem;
+
+@interface ListItemDelegate : NSObject<WKNavigationDelegatePrivate>
+@end
+@implementation ListItemDelegate
+- (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved
+{
+    NSString *firstURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"].absoluteString;
+    NSString *secondURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"].absoluteString;
+
+    if (!firstItem) {
+        EXPECT_NULL(firstItem);
+        EXPECT_NULL(secondItem);
+        EXPECT_NULL(itemsRemoved);
+        EXPECT_NOT_NULL(itemAdded);
+        EXPECT_STREQ(firstURL.UTF8String, itemAdded.URL.absoluteString.UTF8String);
+        firstItem = itemAdded;
+    } else if (!secondItem) {
+        EXPECT_NOT_NULL(firstItem);
+        EXPECT_NULL(secondItem);
+        EXPECT_NULL(itemsRemoved);
+        EXPECT_NOT_NULL(itemAdded);
+        EXPECT_STREQ(secondURL.UTF8String, itemAdded.URL.absoluteString.UTF8String);
+        secondItem = itemAdded;
+    } else {
+        EXPECT_NOT_NULL(firstItem);
+        EXPECT_NOT_NULL(secondItem);
+        EXPECT_NOT_NULL(itemsRemoved);
+        EXPECT_NULL(itemAdded);
+        EXPECT_EQ([itemsRemoved count], 2u);
+        EXPECT_STREQ(firstURL.UTF8String, [itemsRemoved objectAtIndex:0].URL.absoluteString.UTF8String);
+        EXPECT_STREQ(secondURL.UTF8String, [itemsRemoved objectAtIndex:1].URL.absoluteString.UTF8String);
+        isDone = true;
+    }
+}
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    navigationComplete = true;
+}
+@end
+
+TEST(WKNavigation, ListItemAddedRemoved)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto delegate = adoptNS([[ListItemDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    TestWebKitAPI::Util::run(&navigationComplete);
+    navigationComplete = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    TestWebKitAPI::Util::run(&navigationComplete);
+    [[webView backForwardList] _removeAllItems];
+    TestWebKitAPI::Util::run(&isDone);
+}
 #endif // PLATFORM(MAC)
 
 #endif // WK_API_ENABLED

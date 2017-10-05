@@ -1,3 +1,16 @@
+2017-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC equivalent of WKPageNavigationClient.didChangeBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=177966
+        <rdar://problem/22387135>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (-[ListItemDelegate _webView:backForwardListItemAdded:removed:]):
+        (-[ListItemDelegate webView:didFinishNavigation:]):
+        (TEST):
+
 2017-10-04  Megan Gardner  <megan_gardner@apple.com>
 
         check-webkit-style erroneously requires a space between the carrot and brace in obj-c blocks.

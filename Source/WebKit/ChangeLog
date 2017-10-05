@@ -1,5 +1,37 @@
 2017-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        Add ObjC equivalent of WKPageNavigationClient.didChangeBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=177966
+        <rdar://problem/22387135>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didChangeBackForwardList):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::didFailToInitializePlugIn):
+        (WebKit::NavigationState::NavigationClient::didChangeBackForwardList):
+        (WebKit::NavigationState::NavigationClient::willPerformClientRedirect):
+        (WebKit::NavigationState::NavigationClient::didCancelClientRedirect):
+        (WebKit::NavigationState::NavigationClient::renderingProgressDidChange):
+        (WebKit::NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NavigationState::NavigationClient::processDidTerminate):
+        (WebKit::NavigationState::NavigationClient::processDidBecomeResponsive):
+        (WebKit::NavigationState::NavigationClient::processDidBecomeUnresponsive):
+        (WebKit::NavigationState::NavigationClient::webCryptoMasterKey):
+        (WebKit::NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame):
+        (WebKit::NavigationState::HistoryClient::didNavigateWithNavigationData):
+        (WebKit::NavigationState::HistoryClient::didPerformClientRedirect):
+        (WebKit::NavigationState::HistoryClient::didPerformServerRedirect):
+        (WebKit::NavigationState::HistoryClient::didUpdateHistoryTitle):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+
+2017-10-05  Alex Christensen  <achristensen@webkit.org>
+
         Add ObjC SPI with userInfo corresponding to WKPageNavigationClient's decidePolicyForNavigationAction, didStartProvisionalNavigation, and didFailNavigation
         https://bugs.webkit.org/show_bug.cgi?id=177974
         <rdar://problem/22888802>
