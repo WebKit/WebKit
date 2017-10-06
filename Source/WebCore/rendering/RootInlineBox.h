@@ -22,6 +22,7 @@
 
 #include "BidiContext.h"
 #include "InlineFlowBox.h"
+#include "RenderBox.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -137,13 +138,14 @@ public:
     InlineBox* closestLeafChildForPoint(const IntPoint&, bool onlyEditableLeaves);
     InlineBox* closestLeafChildForLogicalLeftPosition(int, bool onlyEditableLeaves = false);
 
+    using CleanLineFloatList = Vector<WeakPtr<RenderBox>>;
     void appendFloat(RenderBox& floatingBox)
     {
         ASSERT(!isDirty());
         if (m_floats)
-            m_floats->append(&floatingBox);
+            m_floats->append(makeWeakPtr(floatingBox));
         else
-            m_floats = std::make_unique<Vector<RenderBox*>>(1, &floatingBox);
+            m_floats = std::make_unique<CleanLineFloatList>(1, makeWeakPtr(floatingBox));
     }
 
     void removeFloat(RenderBox& floatingBox)
@@ -153,7 +155,7 @@ public:
         m_floats->remove(m_floats->find(&floatingBox));
     }
 
-    Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
+    CleanLineFloatList* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
 
     void extractLineBoxFromRenderObject() final;
     void attachLineBoxToRenderObject() final;
@@ -228,7 +230,7 @@ private:
 
     // Floats hanging off the line are pushed into this vector during layout. It is only
     // good for as long as the line has not been marked dirty.
-    std::unique_ptr<Vector<RenderBox*>> m_floats;
+    std::unique_ptr<CleanLineFloatList> m_floats;
     WeakPtrFactory<RootInlineBox> m_weakPtrFactory;
 };
 

@@ -1549,7 +1549,9 @@ void RenderBlockFlow::reattachCleanLineFloats(RootInlineBox& cleanLine, LayoutUn
     if (!cleanLineFloats)
         return;
 
-    for (auto* floatingBox : *cleanLineFloats) {
+    for (auto& floatingBox : *cleanLineFloats) {
+        if (!floatingBox)
+            continue;
         auto* floatingObject = insertFloatingObject(*floatingBox);
         if (isFirstCleanLine && floatingObject->originatingLine()) {
             // Float box does not belong to this line anymore.
@@ -1820,8 +1822,10 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
             if (auto* cleanLineFloats = currentLine->floatsPtr()) {
                 // If a new float has been inserted before this line or before its last known float, just do a full layout.
                 bool encounteredNewFloat = false;
-                for (auto* floatBoxOnCleanLine : *cleanLineFloats) {
+                for (auto& floatBoxOnCleanLine : *cleanLineFloats) {
                     ASSERT(floatsIterator != end);
+                    if (!floatBoxOnCleanLine)
+                        continue;
                     checkFloatInCleanLine(*currentLine, *floatBoxOnCleanLine, *floatsIterator, encounteredNewFloat, dirtiedByFloat);
                     ++floatsIterator;
                     if (floatsIterator == end || encounteredNewFloat) {
@@ -1866,9 +1870,10 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
         // Restore floats from clean lines.
         RootInlineBox* line = firstRootBox();
         while (line != currentLine) {
-            if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
-                for (auto it = cleanLineFloats->begin(), end = cleanLineFloats->end(); it != end; ++it) {
-                    auto* floatingBox = *it;
+            if (auto* cleanLineFloats = line->floatsPtr()) {
+                for (auto& floatingBox : *cleanLineFloats) {
+                    if (!floatingBox)
+                        continue;
                     auto* floatingObject = insertFloatingObject(*floatingBox);
                     ASSERT_WITH_SECURITY_IMPLICATION(!floatingObject->originatingLine());
                     floatingObject->setOriginatingLine(*line);
@@ -1921,7 +1926,9 @@ void RenderBlockFlow::determineEndPosition(LineLayoutState& layoutState, RootInl
             if (auto* cleanLineFloats = currentLine->floatsPtr()) {
                 bool encounteredNewFloat = false;
                 bool dirtiedByFloat = false;
-                for (auto* floatBoxOnCleanLine : *cleanLineFloats) {
+                for (auto& floatBoxOnCleanLine : *cleanLineFloats) {
+                    if (!floatBoxOnCleanLine)
+                        continue;
                     ASSERT(floatsIterator != end);
                     checkFloatInCleanLine(*currentLine, *floatBoxOnCleanLine, *floatsIterator, encounteredNewFloat, dirtiedByFloat);
                     ++floatsIterator;

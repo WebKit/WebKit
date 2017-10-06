@@ -1,5 +1,25 @@
 2017-10-06  Zalan Bujtas  <zalan@apple.com>
 
+        RootInlineBox should not hold a collection of raw pointers to RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=178025
+        <rdar://problem/34862488>
+
+        Reviewed by Simon Fraser.
+
+        There are already some assertions in place to check if the renderers are valid.
+
+        Covered by existing test cases.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::reattachCleanLineFloats):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        (WebCore::RenderBlockFlow::determineEndPosition):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::appendFloat):
+        (WebCore::RootInlineBox::floatsPtr):
+
+2017-10-06  Zalan Bujtas  <zalan@apple.com>
+
         Continuation map should not hold a raw pointer
         https://bugs.webkit.org/show_bug.cgi?id=178021
         <rdar://problem/34861590>
