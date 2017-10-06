@@ -1,3 +1,27 @@
+2017-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTable should not hold section raw pointers
+        https://bugs.webkit.org/show_bug.cgi?id=177977
+        <rdar://problem/34846034>
+
+        Reviewed by Simon Fraser.
+
+        This enables us to remove forced recalcSections calls.
+
+        Covered by existing tests.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::resetSectionPointerIfNotBefore):
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::recalcSections const):
+        (WebCore::RenderTable::sectionAbove const):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::header const):
+        (WebCore::RenderTable::footer const):
+        (WebCore::RenderTable::firstBody const):
+        (WebCore::RenderTable::topSection const):
+
 2017-10-05  Dean Jackson  <dino@apple.com>
 
         Lots of missing frames in YouTube360 when fullscreen on MacBook

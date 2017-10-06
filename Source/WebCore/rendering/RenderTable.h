@@ -153,9 +153,9 @@ public:
         m_columnPos[index] = position;
     }
 
-    RenderTableSection* header() const { return m_head; }
-    RenderTableSection* footer() const { return m_foot; }
-    RenderTableSection* firstBody() const { return m_firstBody; }
+    RenderTableSection* header() const { return m_head.get(); }
+    RenderTableSection* footer() const { return m_foot.get(); }
+    RenderTableSection* firstBody() const { return m_firstBody.get(); }
 
     // This function returns 0 if the table has no section.
     RenderTableSection* topSection() const;
@@ -332,9 +332,9 @@ private:
     typedef HashMap<const RenderTableCol*, unsigned> EffectiveColumnIndexMap;
     mutable EffectiveColumnIndexMap m_effectiveColumnIndexMap;
 
-    mutable RenderTableSection* m_head;
-    mutable RenderTableSection* m_foot;
-    mutable RenderTableSection* m_firstBody;
+    mutable WeakPtr<RenderTableSection> m_head;
+    mutable WeakPtr<RenderTableSection> m_foot;
+    mutable WeakPtr<RenderTableSection> m_firstBody;
 
     std::unique_ptr<TableLayout> m_tableLayout;
 
@@ -372,10 +372,10 @@ inline RenderTableSection* RenderTable::topSection() const
 {
     ASSERT(!needsSectionRecalc());
     if (m_head)
-        return m_head;
+        return m_head.get();
     if (m_firstBody)
-        return m_firstBody;
-    return m_foot;
+        return m_firstBody.get();
+    return m_foot.get();
 }
 
 inline bool isDirectionSame(const RenderBox* tableItem, const RenderBox* otherTableItem) { return tableItem && otherTableItem ? tableItem->style().direction() == otherTableItem->style().direction() : true; }
