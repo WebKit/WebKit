@@ -411,7 +411,7 @@ void PlatformCALayerCocoa::copyContentsFromLayer(PlatformCALayer* layer)
     if ([m_layer contents] != [caLayer contents])
         [m_layer setContents:[caLayer contents]];
     else
-        [m_layer setContentsChanged];
+        [m_layer reloadValueForKeyPath:@"contents"];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

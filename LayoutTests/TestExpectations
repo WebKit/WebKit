@@ -1513,3 +1513,5 @@ imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-002.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/177799 accessibility/table-detection.html [ Pass Failure ]
+
+webkit.org/b/177997 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.html [ Pass Failure ]

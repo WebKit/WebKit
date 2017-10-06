@@ -91,7 +91,7 @@ typedef struct _CARenderContext CARenderContext;
 - (void)setContextId:(uint32_t)contextID;
 - (CGSize)size;
 - (void *)regionBeingDrawn;
-- (void)setContentsChanged;
+- (void)reloadValueForKeyPath:(NSString *)keyPath;
 @property BOOL allowsGroupBlending;
 @property BOOL canDrawConcurrently;
 @property BOOL contentsOpaque;
