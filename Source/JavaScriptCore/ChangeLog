@@ -1,3 +1,15 @@
+2017-10-06  Michael Saboff  <msaboff@apple.com>
+
+        Enable RegExp JIT for match only Unicode RegExp's
+        https://bugs.webkit.org/show_bug.cgi?id=178033
+
+        Reviewed by JF Bastien.
+
+        I forgot to turn on JIT'ing for match-only Unicode RegExp's in r221052.  Do it now.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compileMatchOnly):
+
 2017-10-06  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r223002.

@@ -345,7 +345,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && !unicode() && vm->canUseRegExpJIT()) {
+    if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && vm->canUseRegExpJIT()) {
         Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode, Yarr::MatchOnly);
         if (!m_regExpJITCode.isFallBack()) {
             m_state = JITCode;
