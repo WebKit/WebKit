@@ -1,3 +1,29 @@
+2017-10-06  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Add shared curl files
+        https://bugs.webkit.org/show_bug.cgi?id=177999
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake:
+        * Shared/Authentication/curl/AuthenticationManagerCurl.cpp: Added.
+        (WebKit::AuthenticationManager::receivedCredential):
+        (WebKit::AuthenticationManager::receivedRequestToContinueWithoutCredential):
+        (WebKit::AuthenticationManager::receivedCancellation):
+        (WebKit::AuthenticationManager::receivedRequestToPerformDefaultHandling):
+        (WebKit::AuthenticationManager::receivedChallengeRejection):
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp: Added.
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData):
+        (IPC::ArgumentCoder<Credential>::encodePlatformData):
+        (IPC::ArgumentCoder<Credential>::decodePlatformData):
+
 2017-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         Sandbox rules block PluginProcess using "File Open/Save" dialogs

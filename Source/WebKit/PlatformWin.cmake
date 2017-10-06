@@ -17,6 +17,10 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/win/NetworkProcessMainWin.cpp
     NetworkProcess/win/SystemProxyWin.cpp
 
+    Shared/Authentication/curl/AuthenticationManagerCurl.cpp
+
+    Shared/curl/WebCoreArgumentCodersCurl.cpp
+
     StorageProcess/win/StorageProcessMainWin.cpp
 
     WebProcess/win/WebProcessMainWin.cpp
