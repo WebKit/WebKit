@@ -23,65 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.network-resource-detail {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* left or right set by NetworkTableView on display / resize */
-    z-index: 10;
-    background-color: white;
-}
+WI.ResourceDetailsSection = class ResourceDetailsSection
+{
+    constructor(title, className)
+    {
+        this._element = document.createElement("section");
+        if (className)
+            this._element.className = className;
 
-.network-resource-detail .navigation-bar {
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 1;
-}
+        this._titleElement = this._element.appendChild(document.createElement("div"));
+        this._titleElement.className = "title";
+        this._titleElement.textContent = title;
 
-.network-resource-detail .item.close > .glyph {
-    border-radius: 2px;
-    padding: 2px;
-    background: white;
-}
+        this._detailsElement = this._element.appendChild(document.createElement("div"));
+        this._detailsElement.className = "details";
+    }
 
-.network-resource-detail .item.close > .glyph:hover {
-    background-color: var(--button-background-color-hover);
-}
+    // Public
 
-.network-resource-detail .item.close > .glyph:active {
-    background-color: var(--button-background-color-pressed);
-}
+    get element() { return this._element; }
+    get titleElement() { return this._titleElement; }
+    get detailsElement() { return this._detailsElement; }
 
-.network .network-resource-detail .navigation-bar .item.radio.button.text-only {
-    color: inherit;
-    background-color: inherit;
-}
+    toggleIncomplete(isIncomplete)
+    {
+        console.assert(typeof isIncomplete === "boolean");
+        this.element.classList.toggle("incomplete", isIncomplete);
+    }
 
-.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected {
-    color: var(--selected-background-color);
-    background-color: white;
-}
-
-.network-resource-detail > .content-browser {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.content-view.resource-details {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    padding: 0 20px 20px;
-    overflow: scroll;
-
-    -webkit-user-select: text;
-    white-space: nowrap;
+    toggleError(isError)
+    {
+        console.assert(typeof isError === "boolean");
+        this.element.classList.toggle("error", isError);
+    }
 }

@@ -721,6 +721,8 @@ WI.Resource = class Resource extends WI.SourceCode
             this.dispatchEventToListeners(WI.Resource.Event.SizeDidChange, {previousSize: this._estimatedSize});
             this.dispatchEventToListeners(WI.Resource.Event.TransferSizeDidChange);
         }
+
+        this.dispatchEventToListeners(WI.Resource.Event.MetricsDidChange);
     }
 
     setCachedResponseBodySize(size)
@@ -1005,6 +1007,7 @@ WI.Resource.Event = {
     SizeDidChange: "resource-size-did-change",
     TransferSizeDidChange: "resource-transfer-size-did-change",
     CacheStatusDidChange: "resource-cached-did-change",
+    MetricsDidChange: "resource-metrics-did-change",
     InitiatedResourcesDidChange: "resource-initiated-resources-did-change",
 };
 

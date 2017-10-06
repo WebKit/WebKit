@@ -12,6 +12,7 @@ PASS: URL constructor thinks this is invalid
 
 Test Valid: http://example.com
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: 'null'
@@ -21,6 +22,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: http://example.com/
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: '/'
@@ -30,6 +32,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: http://example.com:80/
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: '80'
 PASS: path should be: '/'
@@ -39,6 +42,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: http://example.com/path/to/page.html
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: '/path/to/page.html'
@@ -48,6 +52,7 @@ PASS: lastPathComponent should be: 'page.html'
 
 Test Valid: http://example.com/path/to/page.html?
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: '/path/to/page.html'
@@ -57,6 +62,7 @@ PASS: lastPathComponent should be: 'page.html'
 
 Test Valid: http://example.com/path/to/page.html?a=1
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: '/path/to/page.html'
@@ -66,6 +72,7 @@ PASS: lastPathComponent should be: 'page.html'
 
 Test Valid: http://example.com/path/to/page.html?a=1&b=2
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: '/path/to/page.html'
@@ -75,6 +82,7 @@ PASS: lastPathComponent should be: 'page.html'
 
 Test Valid: http://example.com/path/to/page.html?a=1&b=2#test
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: '/path/to/page.html'
@@ -84,6 +92,7 @@ PASS: lastPathComponent should be: 'page.html'
 
 Test Valid: http://example.com:123/path/to/page.html?a=1&b=2#test
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: '123'
 PASS: path should be: '/path/to/page.html'
@@ -93,6 +102,7 @@ PASS: lastPathComponent should be: 'page.html'
 
 Test Valid: http://example.com/path/to/page.html#test
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: '/path/to/page.html'
@@ -102,6 +112,7 @@ PASS: lastPathComponent should be: 'page.html'
 
 Test Valid: http://example.com#alpha/beta
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: 'null'
@@ -111,6 +122,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: app-specific://example.com
 PASS: scheme should be: 'app-specific'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example.com'
 PASS: port should be: 'null'
 PASS: path should be: 'null'
@@ -120,6 +132,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: http://example
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'example'
 PASS: port should be: 'null'
 PASS: path should be: 'null'
@@ -129,6 +142,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: http://my.example.com
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'my.example.com'
 PASS: port should be: 'null'
 PASS: path should be: 'null'
@@ -138,6 +152,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: data:text/plain,test
 PASS: scheme should be: 'data'
+PASS: userinfo should be: 'null'
 PASS: host should be: 'null'
 PASS: port should be: 'null'
 PASS: path should be: 'null'
@@ -163,6 +178,7 @@ Test Valid: http:example.com/
 FAIL: scheme should be: 'http'
     Expected: "http"
     Actual: null
+PASS: userinfo should be: 'null'
 FAIL: host should be: 'example.com'
     Expected: "example.com"
     Actual: null
@@ -178,6 +194,7 @@ Test Valid: http:/example.com/
 FAIL: scheme should be: 'http'
     Expected: "http"
     Actual: null
+PASS: userinfo should be: 'null'
 FAIL: host should be: 'example.com'
     Expected: "example.com"
     Actual: null
@@ -189,10 +206,21 @@ PASS: queryString should be: 'null'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
 
+Test Valid: http://user:pass@example.com/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'user:pass'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
 Test Valid: http://user@pass:example.com/
 FAIL: scheme should be: 'http'
     Expected: "http"
     Actual: null
+PASS: userinfo should be: 'null'
 FAIL: host should be: 'example.com'
     Expected: "example.com"
     Actual: null
@@ -206,6 +234,7 @@ PASS: lastPathComponent should be: 'null'
 
 Test Valid: http://example.com?key=alpha/beta
 PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
 FAIL: host should be: 'example.com'
     Expected: "example.com"
     Actual: "example.com?key=alpha"
@@ -305,4 +334,47 @@ PASS: mimeType should be: 'image/png'
 PASS: charset should be: 'US-ASCII'
 PASS: base64 should be: 'true'
 PASS: data should be: 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
+
+-- Running test case: WI.h2Authority
+PASS: HTTP/2 :authority of 'http://example.com' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://example.com' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://example.com' should be 'example.com'.
+PASS: HTTP/2 :authority of 'http://example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'http://example.com:123' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'https://example.com:123' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'ftp://example.com:123' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'ftp://user:pass@example.com/foo' should be 'user:pass@example.com'.
+PASS: HTTP/2 :authority of 'http://user:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://user:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://user:pass@example.com:123/foo' should be 'user:pass@example.com:123'.
+PASS: HTTP/2 :authority of 'http://user:pass@example.com:123/foo' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'https://user:pass@example.com:123/foo' should be 'example.com:123'.
+
+-- Running test case: WI.h2Path
+PASS: HTTP/2 :path of 'http://example.com' should be '/'.
+PASS: HTTP/2 :path of 'https://example.com' should be '/'.
+PASS: HTTP/2 :path of 'ftp://example.com' should be ''.
+PASS: HTTP/2 :path of 'http://example.com/foo' should be '/foo'.
+PASS: HTTP/2 :path of 'https://example.com/foo' should be '/foo'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo' should be '/foo'.
+PASS: HTTP/2 :path of 'http://example.com/foo#hash' should be '/foo'.
+PASS: HTTP/2 :path of 'https://example.com/foo#hash' should be '/foo'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo#hash' should be '/foo'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js#hash' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js#hash' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js#hash' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'http://example.com/?t=1' should be '/?t=1'.
+PASS: HTTP/2 :path of 'https://example.com/?t=1' should be '/?t=1'.
+PASS: HTTP/2 :path of 'ftp://example.com/?t=1' should be '/?t=1'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js?t=1' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js?t=1' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js?t=1' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js?t=1#hash' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js?t=1#hash' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js?t=1#hash' should be '/foo/bar.js?t=1'.
 

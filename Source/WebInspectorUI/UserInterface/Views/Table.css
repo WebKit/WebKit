@@ -30,8 +30,6 @@
     height: 100%;
     background: white;
 
-    --even-zebra-stripe-row-background-color: white;
-    --odd-zebra-stripe-row-background-color: hsl(0, 0%, 95%);
     --table-column-border-start: 1px solid transparent;
     --table-column-border-end: 0.5px solid var(--border-color);
 }

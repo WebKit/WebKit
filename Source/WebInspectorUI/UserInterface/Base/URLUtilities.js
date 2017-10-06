@@ -96,23 +96,24 @@ function parseURL(url)
     url = url ? url.trim() : "";
 
     if (url.startsWith("data:"))
-        return {scheme: "data", host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
+        return {scheme: "data", userinfo: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 
-    var match = url.match(/^(?<scheme>[^\/:]+):\/\/(?<host>[^\/#:]*)(?::(?<port>[\d]+))?(?:(?<path>\/[^#]*)?(?:#(?<fragment>.*))?)?$/i);
+    let match = url.match(/^(?<scheme>[^\/:]+):\/\/(?:(?<userinfo>[^#@\/]+)@)?(?<host>[^\/#:]*)(?::(?<port>[\d]+))?(?:(?<path>\/[^#]*)?(?:#(?<fragment>.*))?)?$/i);
     if (!match)
-        return {scheme: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
+        return {scheme: null, userinfo: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 
-    var scheme = match.groups.scheme.toLowerCase();
-    var host = match.groups.host.toLowerCase();
-    var port = Number(match.groups.port) || null;
-    var wholePath = match.groups.path || null;
-    var fragment = match.groups.fragment || null;
-    var path = wholePath;
-    var queryString = null;
+    let scheme = match.groups.scheme.toLowerCase();
+    let userinfo = match.groups.userinfo || null;
+    let host = match.groups.host.toLowerCase();
+    let port = Number(match.groups.port) || null;
+    let wholePath = match.groups.path || null;
+    let fragment = match.groups.fragment || null;
+    let path = wholePath;
+    let queryString = null;
 
     // Split the path and the query string.
     if (wholePath) {
-        var indexOfQuery = wholePath.indexOf("?");
+        let indexOfQuery = wholePath.indexOf("?");
         if (indexOfQuery !== -1) {
             path = wholePath.substring(0, indexOfQuery);
             queryString = wholePath.substring(indexOfQuery + 1);
@@ -121,16 +122,16 @@ function parseURL(url)
     }
 
     // Find last path component.
-    var lastPathComponent = null;
+    let lastPathComponent = null;
     if (path && path !== "/") {
         // Skip the trailing slash if there is one.
-        var endOffset = path[path.length - 1] === "/" ? 1 : 0;
-        var lastSlashIndex = path.lastIndexOf("/", path.length - 1 - endOffset);
+        let endOffset = path[path.length - 1] === "/" ? 1 : 0;
+        let lastSlashIndex = path.lastIndexOf("/", path.length - 1 - endOffset);
         if (lastSlashIndex !== -1)
             lastPathComponent = path.substring(lastSlashIndex + 1, path.length - endOffset);
     }
 
-    return {scheme, host, port, path, queryString, fragment, lastPathComponent};
+    return {scheme, userinfo, host, port, path, queryString, fragment, lastPathComponent};
 }
 
 function absoluteURL(partialURL, baseURL)
@@ -262,4 +263,38 @@ WI.displayNameForHost = function(host)
 {
     // FIXME <rdar://problem/11237413>: This should decode punycode hostnames.
     return host;
+};
+
+// https://tools.ietf.org/html/rfc7540#section-8.1.2.3
+WI.h2Authority = function(components)
+{
+    let {scheme, userinfo, host, port} = components;
+    let result = host || "";
+
+    // The authority MUST NOT include the deprecated "userinfo"
+    // subcomponent for "http" or "https" schemed URIs.
+    if (userinfo && (scheme !== "http" && scheme !== "https"))
+        result = userinfo + "@" + result;
+    if (port)
+        result += ":" + port;
+
+    return result;
+};
+
+// https://tools.ietf.org/html/rfc7540#section-8.1.2.3
+WI.h2Path = function(components)
+{
+    let {scheme, path, queryString} = components;
+    let result = path || "";
+
+    // The ":path" pseudo-header field includes the path and query parts
+    // of the target URI. [...] This pseudo-header field MUST NOT be empty
+    // for "http" or "https" URIs; "http" or "https" URIs that do not contain
+    // a path component MUST include a value of '/'.
+    if (!path && (scheme === "http" || scheme === "https"))
+        result = "/";
+    if (queryString)
+        result += "?" + queryString;
+
+    return result;
 };

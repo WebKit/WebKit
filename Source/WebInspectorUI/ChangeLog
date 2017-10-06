@@ -1,5 +1,119 @@
 2017-10-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab - Headers Detail View
+        https://bugs.webkit.org/show_bug.cgi?id=177896
+        <rdar://problem/34071924>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New resources and strings.
+
+        * UserInterface/Base/URLUtilities.js:
+        (parseURL):
+        (WI.h2Authority):
+        (WI.h2Path):
+        Utility methods to get the :authority and :path pseudo-headers from a URL.
+        This required adding user info (user:pass@) support to URL parsing.
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.get navigationItems):
+        (WI.NetworkTableContentView.prototype.get filterNavigationItems):
+        Move the NetworkTab's filter controls to the left. Since these are not
+        dynamic just vend them from the TableContentView and place them in the
+        navigation bar.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.updateWithMetrics):
+        New event whenever metrics change. This is the first event that will allow
+        a client to react to a resource.protocol change.
+
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.content-view.resource-details):
+        Base styles for the sub detail views.
+
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView):
+        (WI.NetworkResourceDetailView.prototype.headersContentViewGoToRequestData):
+        (WI.NetworkResourceDetailView.prototype.initialLayout):
+        (WI.NetworkResourceDetailView.prototype._showPreferredContentView):
+        (WI.NetworkResourceDetailView.prototype._showContentViewForNavigationItem):
+        Create a Header view and provide a way to switch to a particular view. This wil
+        be useful to jump from the Header's Request Data directly to the Preview's
+        Request ContentView.
+
+        * UserInterface/Views/ResourceDetailsSection.css:
+        (.resource-details > section):
+        (.resource-details > section > .title):
+        (.resource-details > section > .details):
+        (.resource-details > section > .details > p):
+        (.resource-details > section.incomplete > .details):
+        * UserInterface/Views/ResourceDetailsSection.js:
+        (WI.ResourceDetailsSection):
+        (WI.ResourceDetailsSection.prototype.get element):
+        (WI.ResourceDetailsSection.prototype.get titleElement):
+        (WI.ResourceDetailsSection.prototype.get detailsElement):
+        (WI.ResourceDetailsSection.prototype.toggleIncomplete):
+        (WI.ResourceDetailsSection.prototype.toggleError):
+        Simple sections with a title and details div with a border.
+        It may be common to have an incomplete load / error so this
+        provides some APIs and styles for sections marked incomplete
+        or with errors.
+
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (.resource-headers > section > .details):
+        (.resource-headers > section.headers > .details):
+        (.resource-headers > section.error > .details):
+        (.resource-headers > section.error .key):
+        Style the left border different colors for different sections or cases.
+
+        (.resource-headers .details):
+        (.resource-headers .details .pair):
+        (.resource-headers .details .key):
+        (.resource-headers .value):
+        (.resource-headers .header > .key):
+        (.resource-headers .h1-status > .key):
+        (.resource-headers .h2-pseudo-header > .key):
+        Wrapped text for key/value pairs and different colors for different
+        sections or cases.
+
+        (.resource-headers .go-to-arrow):
+        Go-to arrow styles for a request data section.
+
+        * UserInterface/Views/ResourceHeadersContentView.js: Added.
+        (WI.ResourceHeadersContentView):
+        (WI.ResourceHeadersContentView.prototype.initialLayout):
+        (WI.ResourceHeadersContentView.prototype.layout):
+        (WI.ResourceHeadersContentView.prototype._incompleteSectionWithMessage):
+        (WI.ResourceHeadersContentView.prototype._incompleteSectionWithLoadingIndicator):
+        (WI.ResourceHeadersContentView.prototype._appendKeyValuePair):
+        (WI.ResourceHeadersContentView.prototype._responseSourceDisplayString):
+        (WI.ResourceHeadersContentView.prototype._refreshSummarySection):
+        (WI.ResourceHeadersContentView.prototype._refreshRequestHeadersSection):
+        (WI.ResourceHeadersContentView.prototype._refreshResponseHeadersSection):
+        (WI.ResourceHeadersContentView.prototype._refreshQueryStringSection):
+        (WI.ResourceHeadersContentView.prototype._refreshRequestDataSection):
+        (WI.ResourceHeadersContentView.prototype._resourceMetricsDidChange):
+        (WI.ResourceHeadersContentView.prototype._resourceRequestHeadersDidChange):
+        (WI.ResourceHeadersContentView.prototype._resourceResponseReceived):
+        (WI.ResourceHeadersContentView.prototype._goToRequestDataClicked):
+        Summary, Request, Response, Query String, and Request Data sections.
+        The sections refresh as data becomes available.
+
+        * UserInterface/Views/Table.css:
+        (.table):
+        These variables are already defined globally.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        New variables for the colors we use. They closely match, and are
+        sometimes identical to ones used in Timelines / Memory views.
+
+2017-10-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab - Make selection in the table more reliable (mousedown instead of click)
         https://bugs.webkit.org/show_bug.cgi?id=177990
 

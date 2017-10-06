@@ -133,13 +133,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     get navigationItems()
     {
-        let items = [this._typeFilterScopeBar];
-
+        let items = [];
         if (this._disableResourceCacheNavigationItem)
             items.push(this._disableResourceCacheNavigationItem);
         items.push(this._clearNetworkItemsNavigationItem);
-
         return items;
+    }
+
+    get filterNavigationItems()
+    {
+        return [this._typeFilterScopeBar];
     }
 
     shown()

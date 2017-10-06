@@ -37,6 +37,7 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this.element.classList.add("network-resource-detail");
 
         this._contentBrowser = null;
+        this._resourceContentView = null;
         this._headersContentView = null;
         this._cookiesContentView = null;
         this._timingContentView = null;
@@ -68,6 +69,15 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._contentBrowser.contentViewContainer.closeAllContentViews();
     }
 
+    // ResourceHeadersContentView delegate
+
+    headersContentViewGoToRequestData(headersContentView)
+    {
+        this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
+
+        this._resourceContentView.showRequest();
+    }
+
     // Protected
 
     initialLayout()
@@ -84,15 +94,21 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         const disableFindBanner = false;
         this._contentBrowser = new WI.ContentBrowser(null, this, disableBackForward, disableFindBanner, contentViewNavigationItemsFlexItem, contentViewNavigationItemsGroup);
 
+        this._previewNavigationItem = new WI.RadioButtonNavigationItem("preview", WI.UIString("Preview"));
+        this._headersNavigationItem = new WI.RadioButtonNavigationItem("headers", WI.UIString("Headers"));
+        this._cookiesNavigationItem = new WI.RadioButtonNavigationItem("cookies", WI.UIString("Cookies"));
+        this._timingNavigationItem = new WI.RadioButtonNavigationItem("timing", WI.UIString("Timing"));
+        this._detailsNavigationItem = new WI.RadioButtonNavigationItem("details", WI.UIString("Details"));
+
         // Insert all of our custom navigation items at the start of the ContentBrowser's NavigationBar.
         let index = 0;
         this._contentBrowser.navigationBar.insertNavigationItem(closeNavigationItem, index++);
         this._contentBrowser.navigationBar.insertNavigationItem(new WI.FlexibleSpaceNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("preview", WI.UIString("Preview")), index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("headers", WI.UIString("Headers")), index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("cookies", WI.UIString("Cookies")), index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("timing", WI.UIString("Timing")), index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(new WI.RadioButtonNavigationItem("details", WI.UIString("Details")), index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(this._previewNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(this._headersNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(this._cookiesNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(this._timingNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(this._detailsNavigationItem, index++);
         this._contentBrowser.navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
 
         this.addSubview(this._contentBrowser);
@@ -109,6 +125,13 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         let defaultIdentifier = WI.settings.selectedNetworkDetailContentViewIdentifier.value;
         for (let navigationItem of this._contentBrowser.navigationBar.navigationItems) {
             if (!(navigationItem instanceof WI.RadioButtonNavigationItem))
+                continue;
+
+            if (navigationItem !== this._previewNavigationItem
+                && navigationItem !== this._headersNavigationItem
+                && navigationItem !== this._cookiesNavigationItem
+                && navigationItem !== this._timingNavigationItem
+                && navigationItem !== this._detailsNavigationItem)
                 continue;
 
             if (!firstNavigationItem)
@@ -128,12 +151,13 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
     {
         switch (navigationItem.identifier) {
         case "preview":
-            this._contentBrowser.showContentViewForRepresentedObject(this._resource);
+            if (!this._resourceContentView)
+                this._resourceContentView = this._contentBrowser.showContentViewForRepresentedObject(this._resource);
+            this._contentBrowser.showContentView(this._resourceContentView);
             break;
         case "headers":
-            // FIXME: Provide a Resource Headers View.
             if (!this._headersContentView)
-                this._headersContentView = new WI.DebugContentView("Headers");
+                this._headersContentView = new WI.ResourceHeadersContentView(this._resource, this);
             this._contentBrowser.showContentView(this._headersContentView);
             break;
         case "cookies":

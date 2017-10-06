@@ -23,65 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.network-resource-detail {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* left or right set by NetworkTableView on display / resize */
-    z-index: 10;
-    background-color: white;
+body[dir] .resource-headers > section > .details {
+    border-color: var(--network-system-color);
 }
 
-.network-resource-detail .navigation-bar {
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 1;
+body[dir] .resource-headers > section.headers > .details {
+    border-color: var(--network-header-color);
 }
 
-.network-resource-detail .item.close > .glyph {
-    border-radius: 2px;
-    padding: 2px;
-    background: white;
+body[dir] .resource-headers > section.error > .details {
+    border-color: var(--network-error-color);
 }
 
-.network-resource-detail .item.close > .glyph:hover {
-    background-color: var(--button-background-color-hover);
+.resource-headers > section.error .key {
+    color: var(--network-error-color);
 }
 
-.network-resource-detail .item.close > .glyph:active {
-    background-color: var(--button-background-color-pressed);
+.resource-headers .details {
+    white-space: normal;
+    word-break: break-all;
 }
 
-.network .network-resource-detail .navigation-bar .item.radio.button.text-only {
-    color: inherit;
-    background-color: inherit;
+.resource-headers .details .pair {
+    --resource-headers-value-indent: 15px;
+    -webkit-margin-start: var(--resource-headers-value-indent);
 }
 
-.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected {
-    color: var(--selected-background-color);
-    background-color: white;
+body[dir=rtl] .resource-headers .details .pair {
+    /* Don't include indents in RTL */
+    --resource-headers-value-indent: 0px;
 }
 
-.network-resource-detail > .content-browser {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+.resource-headers .details .key {
+    color: var(--network-system-color);
+    font-weight: 500;
+    -webkit-margin-start: calc(var(--resource-headers-value-indent) * -1);
 }
 
-.content-view.resource-details {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+.resource-headers .value {
+    color: black;
+}
 
-    padding: 0 20px 20px;
-    overflow: scroll;
+.resource-headers .header > .key {
+    color: var(--network-header-color);
+}
 
-    -webkit-user-select: text;
-    white-space: nowrap;
+.resource-headers .h1-status > .key,
+.resource-headers .h2-pseudo-header > .key {
+    color: var(--network-pseudo-header-color);
+}
+
+.resource-headers .go-to-arrow {
+    vertical-align: top;
+    bottom: 1px;
 }

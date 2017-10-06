@@ -39,6 +39,10 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         this._contentBrowser = new WI.ContentBrowser(null, this, disableBackForward, disableFindBanner);
         this._contentBrowser.showContentView(this._networkTableContentView);
 
+        let filterNavigationItems = this._networkTableContentView.filterNavigationItems;
+        for (let i = 0; i < filterNavigationItems.length; ++i)
+            this._contentBrowser.navigationBar.insertNavigationItem(filterNavigationItems[i], i);
+
         this.addSubview(this._contentBrowser);
     }
 

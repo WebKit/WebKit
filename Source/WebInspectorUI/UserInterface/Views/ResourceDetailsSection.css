@@ -23,65 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.network-resource-detail {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* left or right set by NetworkTableView on display / resize */
-    z-index: 10;
-    background-color: white;
+.resource-details > section {
+    padding-top: 8px;
 }
 
-.network-resource-detail .navigation-bar {
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 1;
+.resource-details > section > .title {
+    margin: 10px 0;
 }
 
-.network-resource-detail .item.close > .glyph {
-    border-radius: 2px;
-    padding: 2px;
-    background: white;
+.resource-details > section > .details {
+    -webkit-margin-start: 10px;
 }
 
-.network-resource-detail .item.close > .glyph:hover {
-    background-color: var(--button-background-color-hover);
+body[dir=ltr] .resource-details > section > .details {
+    border-left: 2px solid var(--border-color);
+}
+    
+body[dir=rtl] .resource-details > section > .details {
+    border-right: 2px solid var(--border-color);
 }
 
-.network-resource-detail .item.close > .glyph:active {
-    background-color: var(--button-background-color-pressed);
+.resource-details > section > .details > p {
+    margin: 0;
+    padding: 2px 0;
+    -webkit-padding-start: 7px;
 }
 
-.network .network-resource-detail .navigation-bar .item.radio.button.text-only {
-    color: inherit;
-    background-color: inherit;
-}
-
-.network .network-resource-detail .navigation-bar .item.radio.button.text-only.selected {
-    color: var(--selected-background-color);
-    background-color: white;
-}
-
-.network-resource-detail > .content-browser {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.content-view.resource-details {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    padding: 0 20px 20px;
-    overflow: scroll;
-
-    -webkit-user-select: text;
-    white-space: nowrap;
+.resource-details > section.incomplete > .details {
+    color: var(--console-secondary-text-color) !important;
+    border-color: var(--console-secondary-text-color) !important;
 }
