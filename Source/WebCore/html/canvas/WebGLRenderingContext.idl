@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+typedef unsigned long GLenum;
+typedef long GLint;
+typedef long GLsizei;
+
 [
     Conditional=WEBGL,
     JSCustomMarkFunction,
@@ -31,6 +35,9 @@
     ExportMacro=WEBCORE_EXPORT,
     CallTracingCallback=recordCanvasAction,
 ] interface WebGLRenderingContext {
+    // This method is placed outside of WebGLRenderingContextBase to avoid
+    // conficts with overloads in WebGL2RenderingContext.
+    void compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, ArrayBufferView data);
 };
 
 WebGLRenderingContext implements WebGLRenderingContextBase;
