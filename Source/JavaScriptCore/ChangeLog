@@ -1,3 +1,16 @@
+2017-10-05  Keith Miller  <keith_miller@apple.com>
+
+        JSC generate unified sources doesn't need to run during installhdrs.
+        https://bugs.webkit.org/show_bug.cgi?id=177640
+
+        Reviewed by Dan Bernstein.
+
+        generate unified sources doesn't need to have a xcconfig file
+        since we don't have any feature defines. Also, remove the plist
+        because there's no plist for this...
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2017-10-05  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Enable ENABLE_ENCRYPTED_MEDIA build-time setting

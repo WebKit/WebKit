@@ -10384,36 +10384,28 @@
 		};
 		53B4BD0B1F68AF8900D2BEA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Offline Assembler copy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
 		53B4BD0C1F68AF8900D2BEA3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Offline Assembler copy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
 		53B4BD0D1F68AF8900D2BEA3 /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Offline Assembler copy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Profiling;
 		};
 		53B4BD0E1F68AF8900D2BEA3 /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Offline Assembler copy-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
