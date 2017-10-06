@@ -52,6 +52,7 @@ public:
 
     ResourceRequest&& releaseResourceRequest() { return WTFMove(m_resourceRequest); }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
+    ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const String& charset() const { return m_charset; }
     void setCharset(const String& charset) { m_charset = charset; }
     const ResourceLoaderOptions& options() const { return m_options; }

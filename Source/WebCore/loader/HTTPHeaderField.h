@@ -31,32 +31,44 @@ namespace WebCore {
 
 class WEBCORE_EXPORT HTTPHeaderField {
 public:
-    HTTPHeaderField(const String&);
-    
-    const String& field() const { return m_field; }
+    static std::optional<HTTPHeaderField> create(String&& name, String&& value);
+
+    const String& name() const { return m_name; }
+    const String& value() const { return m_value; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<HTTPHeaderField> decode(Decoder&);
 
 private:
-    String m_field;
+    HTTPHeaderField(String&& name, String&& value)
+        : m_name(WTFMove(name))
+        , m_value(WTFMove(value))
+    { }
+    String m_name;
+    String m_value;
 };
 
 template<class Encoder>
 void HTTPHeaderField::encode(Encoder& encoder) const
 {
-    encoder << m_field;
+    encoder << m_name;
+    encoder << m_value;
 }
 
 template<class Decoder>
 std::optional<HTTPHeaderField> HTTPHeaderField::decode(Decoder& decoder)
 {
-    std::optional<String> field;
-    decoder >> field;
-    if (!field)
+    std::optional<String> name;
+    decoder >> name;
+    if (!name)
         return std::nullopt;
 
-    return {{ WTFMove(*field) }};
+    std::optional<String> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
+
+    return {{ WTFMove(*name), WTFMove(*value) }};
 }
 
 } // namespace WebCore

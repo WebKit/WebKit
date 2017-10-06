@@ -1,3 +1,57 @@
+2017-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add more infrastructure to apply custom header fields to same-origin requests
+        https://bugs.webkit.org/show_bug.cgi?id=177629
+
+        Reviewed by Ryosuke Niwa.
+
+        Covered by new API tests.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::customHeaderFields):
+        * loader/HTTPHeaderField.cpp:
+        (WebCore::HTTPHeaderField::create):
+        (WebCore::HTTPHeaderField::HTTPHeaderField): Deleted.
+        * loader/HTTPHeaderField.h:
+        (WebCore::HTTPHeaderField::encode const):
+        (WebCore::HTTPHeaderField::decode):
+        
+        Change HTTPHeaderField from one String containing the name and value
+        to a string for the name and another for value.  This matches HTTPHeaderMap
+        and NSURLRequest more closely where names and values are treated as separate Strings.
+        
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        
+        If the DocumentLoader has custom header fields from the WebsitePolicies, apply them to any same-origin requests.
+        
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::resourceRequest):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setCachePolicy):
+        (WebCore::ResourceRequestBase::setTimeoutInterval):
+        (WebCore::ResourceRequestBase::setHTTPMethod):
+        (WebCore::ResourceRequestBase::setHTTPHeaderField):
+        (WebCore::ResourceRequestBase::clearHTTPAuthorization):
+        (WebCore::ResourceRequestBase::clearHTTPContentType):
+        (WebCore::ResourceRequestBase::clearHTTPReferrer):
+        (WebCore::ResourceRequestBase::clearHTTPOrigin):
+        (WebCore::ResourceRequestBase::clearHTTPUserAgent):
+        (WebCore::ResourceRequestBase::clearHTTPAccept):
+        (WebCore::ResourceRequestBase::clearHTTPAcceptEncoding):
+        (WebCore::ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray):
+        (WebCore::ResourceRequestBase::setHTTPBody):
+        (WebCore::ResourceRequestBase::setAllowCookies):
+        (WebCore::ResourceRequestBase::setPriority):
+        (WebCore::ResourceRequestBase::addHTTPHeaderFieldIfNotPresent):
+        (WebCore::ResourceRequestBase::addHTTPHeaderField):
+        (WebCore::ResourceRequestBase::setHTTPHeaderFields):
+        
+        non-HTTP/HTTPS ResourceRequests need to be updated, too, if header fields are added.
+        Skipping updating non-HTTP/HTTPS ResourceRequests is not a valid shortcut, and with the
+        growing importance of custom schemes with our new public API, we should update ResourceRequests
+        of custom schemes correctly.
+
 2017-10-06  Sam Weinig  <sam@webkit.org>
 
         Add basic support for getting a ImageBitmapRenderingContext

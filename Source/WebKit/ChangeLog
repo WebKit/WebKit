@@ -1,3 +1,23 @@
+2017-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add more infrastructure to apply custom headers to same-origin requests
+        https://bugs.webkit.org/show_bug.cgi?id=177629
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesCopyCustomHeaderFields):
+        (WKWebsitePoliciesSetCustomHeaderFields):
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies customHeaderFields]):
+        (-[_WKWebsitePolicies setCustomHeaderFields:]):
+
+        Make the SPI for setting custom header fields take a dictionary<String, String>
+        instead of an array of Strings with colons. This matches NSURLRequest and other
+        APIs that deal with header fields.
+
 2017-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Tweak support for classifying form controls (followup to r222487)

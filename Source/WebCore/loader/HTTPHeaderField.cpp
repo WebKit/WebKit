@@ -202,18 +202,16 @@ static bool isValidValue(StringView value)
 
 } // namespace RFC7230
 
-HTTPHeaderField::HTTPHeaderField(const String& field)
+std::optional<HTTPHeaderField> HTTPHeaderField::create(String&& unparsedName, String&& unparsedValue)
 {
-    size_t colonLocation = field.find(':');
-    if (colonLocation == notFound)
-        return;
+    StringView strippedName = StringView(unparsedName).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace);
+    StringView strippedValue = StringView(unparsedValue).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace);
+    if (!RFC7230::isValidName(strippedName) || !RFC7230::isValidValue(strippedValue))
+        return std::nullopt;
 
-    StringView name = StringView(field).substring(0, colonLocation).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace);
-    StringView value = StringView(field).substring(colonLocation + 1).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace);
-    if (!RFC7230::isValidName(name) || !RFC7230::isValidValue(value))
-        return;
-
-    m_field = makeString(name, ':', ' ',  value);
+    String name = strippedName.length() == unparsedName.length() ? WTFMove(unparsedName) : strippedName.toString();
+    String value = strippedValue.length() == unparsedValue.length() ? WTFMove(unparsedValue) : strippedValue.toString();
+    return {{ WTFMove(name), WTFMove(value) }};
 }
 
 }

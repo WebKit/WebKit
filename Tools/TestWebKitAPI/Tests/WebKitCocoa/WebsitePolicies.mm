@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -627,13 +628,110 @@ TEST(WebKit, WebsitePoliciesAutoplayQuirks)
 TEST(WebKit, InvalidCustomHeaders)
 {
     auto websitePolicies = adoptNS([[_WKWebsitePolicies alloc] init]);
-    [websitePolicies setCustomHeaderFields:@[@"invalidheader:", @"noncustom: header", @"X-custom: header", @"    x-Custom :  Needs Canonicalization\t "]];
-    NSArray<NSString *> *canonicalized = [websitePolicies customHeaderFields];
+    [websitePolicies setCustomHeaderFields:@{@"invalidheader" : @"", @"noncustom" : @"header", @"    x-Custom ":@"  Needs Canonicalization\t ", @"x-other" : @"other value"}];
+    NSDictionary<NSString *, NSString *> *canonicalized = [websitePolicies customHeaderFields];
     EXPECT_EQ(canonicalized.count, 2u);
-    EXPECT_STREQ([canonicalized objectAtIndex:0].UTF8String, "X-custom: header");
-    EXPECT_STREQ([canonicalized objectAtIndex:1].UTF8String, "x-Custom: Needs Canonicalization");
+    EXPECT_STREQ([canonicalized objectForKey:@"x-Custom"].UTF8String, "Needs Canonicalization");
+    EXPECT_STREQ([canonicalized objectForKey:@"x-other"].UTF8String, "other value");
 }
 
-// FIXME: Apply the custom headers from the DocumentLoader to each request and test that they are sent on main resource and subresources.
+static bool firstTestDone;
+static bool secondTestDone;
+static bool thirdTestDone;
+
+static void expectHeaders(id <WKURLSchemeTask> task, bool expected)
+{
+    NSURLRequest *request = task.request;
+    if (expected) {
+        // FIXME: Check that headers are on the request.
+        // https://bugs.webkit.org/show_bug.cgi?id=177629
+    } else {
+        EXPECT_TRUE([request valueForHTTPHeaderField:@"X-key1"] == nil);
+        EXPECT_TRUE([request valueForHTTPHeaderField:@"X-key2"] == nil);
+    }
+}
+
+static void respond(id <WKURLSchemeTask>task, NSString *html = nil)
+{
+    [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil] autorelease]];
+    [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
+    [task didFinish];
+}
+
+@interface CustomHeaderFieldsDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler>
+@end
+
+@implementation CustomHeaderFieldsDelegate
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    [websitePolicies setCustomHeaderFields:@{@"X-key1": @"value1", @"X-key2": @"value2"}];
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+{
+    NSString *path = urlSchemeTask.request.URL.path;
+    if ([path isEqualToString:@"/mainresource"]) {
+        expectHeaders(urlSchemeTask, true);
+        respond(urlSchemeTask, @"<script>fetch('subresource').then(function(response){fetch('test://differentsecurityorigin/crossoriginsubresource',{mode:'no-cors'})})</script>");
+    } else if ([path isEqualToString:@"/subresource"]) {
+        expectHeaders(urlSchemeTask, true);
+        respond(urlSchemeTask);
+    } else if ([path isEqualToString:@"/crossoriginsubresource"]) {
+        expectHeaders(urlSchemeTask, false);
+        respond(urlSchemeTask);
+        firstTestDone = true;
+    } else if ([path isEqualToString:@"/mainresourcewithiframe"]) {
+        expectHeaders(urlSchemeTask, true);
+        respond(urlSchemeTask, @"<iframe src='test://iframeorigin/iframemainresource'></iframe>");
+    } else if ([path isEqualToString:@"/iframemainresource"]) {
+        expectHeaders(urlSchemeTask, false);
+        respond(urlSchemeTask, @"<script>fetch('iframesubresource').then(function(response){fetch('test://mainframeorigin/originaloriginsubresource',{mode:'no-cors'})})</script>");
+    } else if ([path isEqualToString:@"/iframesubresource"]) {
+        expectHeaders(urlSchemeTask, false);
+        respond(urlSchemeTask);
+    } else if ([path isEqualToString:@"/originaloriginsubresource"]) {
+        expectHeaders(urlSchemeTask, false);
+        respond(urlSchemeTask);
+        secondTestDone = true;
+    } else if ([path isEqualToString:@"/nestedtop"]) {
+        expectHeaders(urlSchemeTask, true);
+        respond(urlSchemeTask, @"<iframe src='test://otherorigin/nestedmid'></iframe>");
+    } else if ([path isEqualToString:@"/nestedmid"]) {
+        expectHeaders(urlSchemeTask, false);
+        respond(urlSchemeTask, @"<iframe src='test://toporigin/nestedbottom'></iframe>");
+    } else if ([path isEqualToString:@"/nestedbottom"]) {
+        expectHeaders(urlSchemeTask, true);
+        respond(urlSchemeTask);
+        thirdTestDone = true;
+    } else
+        EXPECT_TRUE(false);
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+{
+}
+
+@end
+
+TEST(WebKit, CustomHeaderFields)
+{
+    auto delegate = adoptNS([[CustomHeaderFieldsDelegate alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///mainresource"]]];
+    TestWebKitAPI::Util::run(&firstTestDone);
+    
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://mainframeorigin/mainresourcewithiframe"]]];
+    TestWebKitAPI::Util::run(&secondTestDone);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://toporigin/nestedtop"]]];
+    TestWebKitAPI::Util::run(&thirdTestDone);
+}
+
 
 #endif // WK_API_ENABLED

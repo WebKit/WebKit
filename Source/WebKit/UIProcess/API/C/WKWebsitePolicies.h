@@ -51,8 +51,8 @@ WK_EXPORT WKWebsitePoliciesRef WKWebsitePoliciesCreate();
 WK_EXPORT bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef, bool);
 
-WK_EXPORT WKArrayRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef);
-WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef, WKArrayRef);
+WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef, WKDictionaryRef);
 
 WK_EXPORT WKWebsiteAutoplayQuirk WKWebsitePoliciesGetAllowedAutoplayQuirks(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef, WKWebsiteAutoplayQuirk);

@@ -26,10 +26,12 @@
 #include "config.h"
 #include "WKWebsitePolicies.h"
 
-#include "APIArray.h"
+#include "APIDictionary.h"
 #include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
+#include "WKDictionary.h"
+#include "WKRetainPtr.h"
 #include "WebsitePolicies.h"
 
 using namespace WebKit;
@@ -54,26 +56,25 @@ bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePoli
     return toImpl(websitePolicies)->contentBlockersEnabled();
 }
 
-WK_EXPORT WKArrayRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef websitePolicies)
+WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef websitePolicies)
 {
-    const auto& fields = toImpl(websitePolicies)->customHeaderFields();
-    Vector<RefPtr<API::Object>> strings;
-    strings.reserveInitialCapacity(fields.size());
-    for (const auto& field : fields)
-        strings.uncheckedAppend(API::String::create(field.field()));
-    return toAPI(API::Array::create(WTFMove(strings)).ptr());
+    HashMap<WTF::String, RefPtr<API::Object>> fields;
+    for (const auto& field : toImpl(websitePolicies)->customHeaderFields())
+        fields.add(field.name(), API::String::create(field.value()));
+    return toAPI(API::Dictionary::create(WTFMove(fields)).ptr());
 }
 
-WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef websitePolicies, WKArrayRef array)
+WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef websitePolicies, WKDictionaryRef dictionary)
 {
-    size_t length = WKArrayGetSize(array);
+    auto keys = adoptWK(WKDictionaryCopyKeys(dictionary));
+    size_t length = WKArrayGetSize(keys.get());
     Vector<WebCore::HTTPHeaderField> fields;
     fields.reserveInitialCapacity(length);
     for (size_t i = 0; i < length; ++i) {
-        WebCore::HTTPHeaderField parsedField(toImpl(static_cast<WKStringRef>(WKArrayGetItemAtIndex(array, i)))->string());
-        if (!parsedField.field().isNull()
-            && parsedField.field().startsWithIgnoringASCIICase("X-")) // Let's just pretend RFC6648 never happened.
-            fields.uncheckedAppend(WTFMove(parsedField));
+        WKStringRef name = static_cast<WKStringRef>(WKArrayGetItemAtIndex(keys.get(), i));
+        auto field = WebCore::HTTPHeaderField::create(toImpl(name)->string(), toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionary, name)))->string());
+        if (field && field->name().startsWithIgnoringASCIICase("X-"))
+            fields.uncheckedAppend(WTFMove(*field));
     }
     toImpl(websitePolicies)->setCustomHeaderFields(WTFMove(fields));
 }

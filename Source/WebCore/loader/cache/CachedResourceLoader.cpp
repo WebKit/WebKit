@@ -51,6 +51,7 @@
 #include "FrameLoaderClient.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTTPHeaderField.h"
 #include "LoaderStrategy.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
@@ -749,6 +750,9 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         url = MemoryCache::removeFragmentIdentifierIfNeeded(url); // Might need to remove fragment identifier again.
     }
 #endif
+
+    // FIXME: Add custom headers to first-party requests.
+    // https://bugs.webkit.org/show_bug.cgi?id=177629
 
     LoadTiming loadTiming;
     loadTiming.markStartTimeAndFetchStart();

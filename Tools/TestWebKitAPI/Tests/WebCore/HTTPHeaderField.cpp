@@ -28,22 +28,33 @@
 #include "Test.h"
 #include <WebCore/HTTPHeaderField.h>
 
+static String canonicalizeHTTPHeader(const String& string)
+{
+    size_t colonLocation = string.find(':');
+    if (colonLocation == notFound)
+        return { };
+    auto field = WebCore::HTTPHeaderField::create(string.substring(0, colonLocation), string.substring(colonLocation + 1));
+    if (!field)
+        return { };
+    return makeString(field->name(), ": ", field->value());
+}
+
 static void shouldRemainUnchanged(Vector<String>&& strings)
 {
     for (const auto& string : strings)
-        EXPECT_TRUE(WebCore::HTTPHeaderField(string).field() == string);
+        EXPECT_TRUE(canonicalizeHTTPHeader(string) == string);
 }
 
 static void shouldBeInvalid(Vector<String>&& strings)
 {
     for (const auto& string : strings)
-        EXPECT_TRUE(WebCore::HTTPHeaderField(string).field() == String());
+        EXPECT_TRUE(canonicalizeHTTPHeader(string) == String());
 }
 
 static void shouldBecome(Vector<std::pair<String, String>>&& pairs)
 {
     for (const auto& pair : pairs)
-        EXPECT_TRUE(WebCore::HTTPHeaderField(pair.first).field() == pair.second);
+        EXPECT_TRUE(canonicalizeHTTPHeader(pair.first) == pair.second);
 }
 
 TEST(HTTPHeaderField, Parser)

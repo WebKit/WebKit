@@ -116,24 +116,24 @@
     }
 }
 
-- (NSArray<NSString *> *)customHeaderFields
+- (NSDictionary<NSString *, NSString *> *)customHeaderFields
 {
     const auto& fields = _websitePolicies->customHeaderFields();
-    NSMutableArray *array = [[[NSMutableArray alloc] initWithCapacity:fields.size()] autorelease];
+    NSMutableDictionary *dictionary = [[[NSMutableDictionary alloc] initWithCapacity:fields.size()] autorelease];
     for (const auto& field : fields)
-        [array addObject:field.field()];
-    return array;
+        [dictionary setObject:field.value() forKey:field.name()];
+    return dictionary;
 }
 
-- (void)setCustomHeaderFields:(NSArray<NSString *> *)fields
+- (void)setCustomHeaderFields:(NSDictionary<NSString *, NSString *> *)fields
 {
     Vector<WebCore::HTTPHeaderField> parsedFields;
     parsedFields.reserveInitialCapacity(fields.count);
-    for (NSString *string in fields) {
-        WebCore::HTTPHeaderField parsedField(string);
-        if (!parsedField.field().isNull()
-            && parsedField.field().startsWithIgnoringASCIICase("X-")) // Let's just pretend RFC6648 never happened.
-            parsedFields.uncheckedAppend(WTFMove(parsedField));
+    
+    for (NSString* name in fields) {
+        auto field = WebCore::HTTPHeaderField::create(name, [fields objectForKey:name]);
+        if (field && field->name().startsWithIgnoringASCIICase("X-"))
+            parsedFields.uncheckedAppend(WTFMove(*field));
     }
     _websitePolicies->setCustomHeaderFields(WTFMove(parsedFields));
 }
