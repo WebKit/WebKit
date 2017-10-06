@@ -61,9 +61,6 @@ private:
     T* m_ptr;
 };
 
-template<typename T, typename U> WeakReference<T>* weak_reference_upcast(WeakReference<U>*);
-template<typename T, typename U> WeakReference<T>* weak_reference_downcast(WeakReference<U>*);
-
 template<typename T>
 class WeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
@@ -75,7 +72,7 @@ public:
     template<typename U> WeakPtr(WeakPtr<U>&&);
 
     T* get() const { return m_ref ? m_ref->get() : nullptr; }
-    operator bool() const { return m_ref && m_ref->get(); }
+    explicit operator bool() const { return m_ref && m_ref->get(); }
 
     WeakPtr& operator=(std::nullptr_t) { m_ref = nullptr; return *this; }
     template<typename U> WeakPtr& operator=(const WeakPtr<U>&);
@@ -88,6 +85,7 @@ public:
 
 private:
     template<typename U> friend class WeakPtr;
+    template<typename U> friend WeakPtr<U> makeWeakPtr(U&);
 
     RefPtr<WeakReference<T>> m_ref;
 };
@@ -105,12 +103,11 @@ public:
         m_ref->clear();
     }
 
-    template<typename U = T>
-    WeakPtr<U> createWeakPtr(T& ptr) const
+    WeakPtr<T> createWeakPtr(T& ptr) const
     {
         if (!m_ref)
             m_ref = WeakReference<T>::create(&ptr);
-        return { makeRef(*weak_reference_downcast<U>(m_ref.get())) };
+        return { makeRef(*m_ref) };
     }
 
     void revokeAll()
@@ -162,7 +159,7 @@ template<typename T> template<typename U> inline WeakPtr<T>& WeakPtr<T>::operato
 
 template<typename T> inline WeakPtr<T> makeWeakPtr(T& ref)
 {
-    return ref.weakPtrFactory().template createWeakPtr<T>(ref);
+    return { adoptRef(*weak_reference_downcast<T>(ref.weakPtrFactory().createWeakPtr(ref).m_ref.leakRef())) };
 }
 
 template<typename T> inline WeakPtr<T> makeWeakPtr(T* ptr)

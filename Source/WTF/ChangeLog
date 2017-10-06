@@ -1,3 +1,21 @@
+2017-10-06  Antti Koivisto  <antti@apple.com>
+
+        Minor WeakPtr improvements
+        https://bugs.webkit.org/show_bug.cgi?id=177958
+
+        Reviewed by Sam Weinig.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::operator bool const):
+
+            Make explicit.
+
+        (WTF::WeakPtrFactory::createWeakPtr const):
+        (WTF::makeWeakPtr):
+
+            Remove templating from createWeakPtr, makeWeakPtr() is now the
+            canonical way to make derived-type WeakPtrs.
+
 2017-10-04  Filip Pizlo  <fpizlo@apple.com>
 
         bmalloc mutex should be adaptive

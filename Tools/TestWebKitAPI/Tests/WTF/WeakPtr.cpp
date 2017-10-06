@@ -40,9 +40,9 @@ TEST(WTF_WeakPtr, Basic)
     EXPECT_EQ(weakPtr1.get(), &dummy);
     EXPECT_EQ(weakPtr2.get(), &dummy);
     EXPECT_EQ(weakPtr3.get(), &dummy);
-    EXPECT_TRUE(weakPtr1);
-    EXPECT_TRUE(weakPtr2);
-    EXPECT_TRUE(weakPtr3);
+    EXPECT_TRUE(!!weakPtr1);
+    EXPECT_TRUE(!!weakPtr2);
+    EXPECT_TRUE(!!weakPtr3);
     EXPECT_TRUE(weakPtr1 == weakPtr2);
     EXPECT_TRUE(weakPtr1 == &dummy);
     EXPECT_TRUE(&dummy == weakPtr2);
@@ -206,12 +206,6 @@ public:
         return 0;
     }
 
-    template<typename T>
-    WeakPtr<T> createWeakPtr()
-    {
-        return m_weakPtrFactory.createWeakPtr<T>(*this);
-    }
-
     auto& weakPtrFactory() { return m_weakPtrFactory; }
 
 private:
@@ -239,12 +233,12 @@ TEST(WTF_WeakPtr, Downcasting)
         Derived* derivedPtr = &object;
         Base* basePtr = static_cast<Base*>(&object);
 
-        baseWeakPtr = object.createWeakPtr<Base>();
+        baseWeakPtr = object.weakPtrFactory().createWeakPtr(object);
         EXPECT_EQ(basePtr->foo(), dummy0);
         EXPECT_EQ(baseWeakPtr->foo(), basePtr->foo());
         EXPECT_EQ(baseWeakPtr.get()->foo(), basePtr->foo());
 
-        derivedWeakPtr = object.createWeakPtr<Derived>();
+        derivedWeakPtr = makeWeakPtr(object);
         EXPECT_EQ(derivedWeakPtr->foo(), dummy1);
         EXPECT_EQ(derivedWeakPtr->foo(), derivedPtr->foo());
         EXPECT_EQ(derivedWeakPtr.get()->foo(), derivedPtr->foo());
