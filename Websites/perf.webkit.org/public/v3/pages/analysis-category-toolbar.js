@@ -71,12 +71,19 @@ class AnalysisCategoryToolbar extends ComponentBase {
                 position: absolute;
                 right: 1rem;
             }
+            .trybot-button {
+                position: absolute;
+                left: 1rem;
+            }
         `
     }
 
     static htmlTemplate()
     {
         return `
+            <ul class="buttoned-toolbar trybot-button">
+                <li><a href="#/analysis/task/create">Create</a></li>
+            </ul>
             <ul class="analysis-task-category-toolbar buttoned-toolbar"></ul>
             <input type="text">
             <ul class="buttoned-toolbar queue-toolbar">
