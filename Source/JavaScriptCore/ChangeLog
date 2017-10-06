@@ -1,3 +1,16 @@
+2017-10-06  Robin Morisset  <rmorisset@apple.com>
+
+        Avoid integer overflow in DFGStrengthReduction.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=177944
+
+        Reviewed by Saam Barati.
+
+        The check that we won't do integer overflow by negating INT32_MIN was itself an integer overflow.
+        I think that signed integer overflow is undefined behaviour in C, so I replace it by an explicit check that value != INT32_MIN instead.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2017-10-05  Keith Miller  <keith_miller@apple.com>
 
         JSC generate unified sources doesn't need to run during installhdrs.

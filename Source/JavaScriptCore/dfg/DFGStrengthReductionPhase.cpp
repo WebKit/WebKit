@@ -155,7 +155,7 @@ private:
             if (m_node->child2()->isInt32Constant()
                 && m_node->isBinaryUseKind(Int32Use)) {
                 int32_t value = m_node->child2()->asInt32();
-                if (-value != value) {
+                if (value != INT32_MIN) {
                     m_node->setOp(ArithAdd);
                     m_node->child2().setNode(
                         m_insertionSet.insertConstant(
