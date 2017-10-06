@@ -1,3 +1,50 @@
+2017-10-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Use one Scavenger thread for all Heaps
+        https://bugs.webkit.org/show_bug.cgi?id=174973
+
+        Reviewed by JF Bastien.
+        
+        This combines the scavengers from all Heap instances into a single scavenger. It also combines
+        the accounting for deciding when to run. Each Heap still controls what it means to scavenge
+        itself (it's all in Heap::scavenge) but the policy decisions are all controlled by Scavenger.
+        Because Scavenger is also the only thing that needs an AsyncTask, this removes AsyncTask and
+        moves all of AsyncTask's logic into Scavenger.
+        
+        This appears to be a 1% progression on JetStream (with high statistical confidence: p = 0.0049).
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/AsyncTask.h: Removed.
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::concurrentScavenge): Deleted.
+        (bmalloc::Heap::scheduleScavengerIfUnderMemoryPressure): Deleted.
+        (bmalloc::Heap::scheduleScavenger): Deleted.
+        * bmalloc/Heap.h:
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::run):
+        (bmalloc::Scavenger::runHoldingLock):
+        (bmalloc::Scavenger::runSoon):
+        (bmalloc::Scavenger::runSoonHoldingLock):
+        (bmalloc::Scavenger::didStartGrowing):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressure):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressureHoldingLock):
+        (bmalloc::Scavenger::schedule):
+        (bmalloc::Scavenger::threadEntryPoint):
+        (bmalloc::Scavenger::threadRunLoop):
+        (bmalloc::Scavenger::setSelfQOSClass):
+        * bmalloc/Scavenger.h:
+        (bmalloc::Scavenger::willRun):
+        (bmalloc::Scavenger::willRunSoon):
+
 2017-10-04  Filip Pizlo  <fpizlo@apple.com>
 
         bmalloc mutex should be adaptive
