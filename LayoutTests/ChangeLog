@@ -1,3 +1,16 @@
+2017-10-06  Brady Eidson  <beidson@apple.com>
+
+        Add (entirely incorrect) fetching of ServiceWorker scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=176179
+
+        Reviewed by Andy Estes.
+
+        * http/tests/workers/service/basic-register-exceptions-expected.txt:
+        * http/tests/workers/service/basic-register-expected.txt:
+        * http/tests/workers/service/resources/basic-register-exceptions.js:
+        * http/tests/workers/service/resources/basic-register.js:
+        * http/tests/workers/service/resources/registration-task-queue-scheduling-1.js:
+
 2017-10-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html

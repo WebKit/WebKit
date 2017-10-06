@@ -29,6 +29,8 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "JSDOMPromiseDeferred.h"
+#include "ResourceError.h"
+#include "ResourceResponse.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
 
@@ -62,6 +64,46 @@ void ServiceWorkerJob::resolvedWithRegistration(const ServiceWorkerRegistrationD
 
     m_completed = true;
     m_client->jobResolvedWithRegistration(*this, data);
+}
+
+void ServiceWorkerJob::startScriptFetch()
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+
+    m_client->startScriptFetchForJob(*this);
+}
+
+void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context)
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+
+    // FIXME: WorkerScriptLoader is the wrong loader class to use here, but there's nothing else better right now.
+    m_scriptLoader = WorkerScriptLoader::create();
+    m_scriptLoader->loadAsynchronously(&context, m_jobData.scriptURL, FetchOptions::Mode::SameOrigin, ContentSecurityPolicyEnforcement::DoNotEnforce, "serviceWorkerScriptLoad:", this);
+}
+
+void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse& response)
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+    ASSERT(m_scriptLoader);
+
+    m_lastResponse = response;
+}
+
+void ServiceWorkerJob::notifyFinished()
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(m_scriptLoader);
+    
+    if (!m_scriptLoader->failed())
+        m_client->jobFinishedLoadingScript(*this, m_scriptLoader->script());
+    else
+        m_client->jobFailedLoadingScript(*this, m_scriptLoader->error());
+
+    m_scriptLoader = nullptr;
 }
 
 } // namespace WebCore

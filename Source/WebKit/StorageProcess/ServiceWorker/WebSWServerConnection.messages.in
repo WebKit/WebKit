@@ -25,6 +25,7 @@
 messages -> WebSWServerConnection {
     # When possible, these messages can be implemented directly by WebCore::SWClientConnection
     ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
+    FinishFetchingScriptInServer(struct WebCore::ServiceWorkerFetchResult result)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

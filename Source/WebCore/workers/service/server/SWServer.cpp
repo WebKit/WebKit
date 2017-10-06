@@ -32,6 +32,7 @@
 #include "ExceptionData.h"
 #include "Logging.h"
 #include "SWServerRegistration.h"
+#include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
 #include <wtf/text/WTFString.h>
 
@@ -72,6 +73,11 @@ void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobDa
     m_server.scheduleJob(jobData);
 }
 
+void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
+{
+    m_server.scriptFetchFinished(result);
+}
+
 SWServer::SWServer()
 {
     m_taskThread = Thread::create(ASCIILiteral("ServiceWorker Task Thread"), [this] {
@@ -110,6 +116,29 @@ void SWServer::resolveJob(const ServiceWorkerJobData& jobData, const ServiceWork
         return;
 
     connection->resolveJobInClient(jobData.identifier(), registrationData);
+}
+
+void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData)
+{
+    LOG(ServiceWorker, "Server issuing startScriptFetch for current job %" PRIu64 "-%" PRIu64 " in client", jobData.connectionIdentifier(), jobData.identifier());
+    auto* connection = m_connections.get(jobData.connectionIdentifier());
+    if (!connection)
+        return;
+
+    connection->startScriptFetchInClient(jobData.identifier());
+}
+
+void SWServer::scriptFetchFinished(const ServiceWorkerFetchResult& result)
+{
+    LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %" PRIu64 "-%" PRIu64 " in client", result.connectionIdentifier, result.jobIdentifier);
+
+    ASSERT(m_connections.contains(result.connectionIdentifier));
+
+    auto registration = m_registrations.get(result.registrationKey);
+    if (!registration)
+        return;
+
+    registration->scriptFetchFinished(result);
 }
 
 void SWServer::taskThreadEntryPoint()

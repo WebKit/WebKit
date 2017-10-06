@@ -26,10 +26,11 @@
 
 #pragma once
 
-#include "URL.h"
+#include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
+#include "URL.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
@@ -38,54 +39,56 @@
 
 namespace WebCore {
 
-    class ResourceResponse;
-    class ScriptExecutionContext;
-    class TextResourceDecoder;
-    class WorkerScriptLoaderClient;
+class ResourceResponse;
+class ScriptExecutionContext;
+class TextResourceDecoder;
+class WorkerScriptLoaderClient;
 
-    class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        static Ref<WorkerScriptLoader> create()
-        {
-            return adoptRef(*new WorkerScriptLoader);
-        }
+class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<WorkerScriptLoader> create()
+    {
+        return adoptRef(*new WorkerScriptLoader);
+    }
 
-        void loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-        void loadAsynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier, WorkerScriptLoaderClient*);
+    void loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
+    void loadAsynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier, WorkerScriptLoaderClient*);
 
-        void notifyError();
+    void notifyError();
 
-        String script();
-        const URL& url() const { return m_url; }
-        const URL& responseURL() const;
-        bool failed() const { return m_failed; }
-        unsigned long identifier() const { return m_identifier; }
+    String script();
+    const URL& url() const { return m_url; }
+    const URL& responseURL() const;
+    bool failed() const { return m_failed; }
+    unsigned long identifier() const { return m_identifier; }
+    const ResourceError& error() const { return m_error; }
 
-        void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
-        void didReceiveData(const char* data, int dataLength) override;
-        void didFinishLoading(unsigned long identifier) override;
-        void didFail(const ResourceError&) override;
+    void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
+    void didReceiveData(const char* data, int dataLength) override;
+    void didFinishLoading(unsigned long identifier) override;
+    void didFail(const ResourceError&) override;
 
-    private:
-        friend class WTF::RefCounted<WorkerScriptLoader>;
+private:
+    friend class WTF::RefCounted<WorkerScriptLoader>;
 
-        WorkerScriptLoader();
-        ~WorkerScriptLoader();
+    WorkerScriptLoader();
+    ~WorkerScriptLoader();
 
-        std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
-        void notifyFinished();
+    std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
+    void notifyFinished();
 
-        WorkerScriptLoaderClient* m_client { nullptr };
-        RefPtr<ThreadableLoader> m_threadableLoader;
-        String m_responseEncoding;        
-        RefPtr<TextResourceDecoder> m_decoder;
-        StringBuilder m_script;
-        URL m_url;
-        URL m_responseURL;
-        unsigned long m_identifier { 0 };
-        bool m_failed { false };
-        bool m_finishing { false };
-    };
+    WorkerScriptLoaderClient* m_client { nullptr };
+    RefPtr<ThreadableLoader> m_threadableLoader;
+    String m_responseEncoding;
+    RefPtr<TextResourceDecoder> m_decoder;
+    StringBuilder m_script;
+    URL m_url;
+    URL m_responseURL;
+    unsigned long m_identifier { 0 };
+    bool m_failed { false };
+    bool m_finishing { false };
+    ResourceError m_error;
+};
 
 } // namespace WebCore

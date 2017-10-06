@@ -26,6 +26,7 @@ messages -> WebSWClientConnection {
     # When possible, these messages can be implemented directly by WebCore::SWServer::Connection
     JobRejectedInServer(uint64_t identifier, struct WebCore::ExceptionData exception)
     JobResolvedInServer(uint64_t identifier, struct WebCore::ServiceWorkerRegistrationData registration)
+    StartScriptFetchForServer(uint64_t jobIdentifier)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

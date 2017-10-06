@@ -38,6 +38,7 @@ namespace WebCore {
 class SWServer;
 class SWServerWorker;
 struct ExceptionData;
+struct ServiceWorkerFetchResult;
 
 class SWServerRegistration : public ThreadSafeIdentified<SWServerRegistration> {
 public:
@@ -46,6 +47,7 @@ public:
     ~SWServerRegistration();
 
     void enqueueJob(const ServiceWorkerJobData&);
+    void scriptFetchFinished(const ServiceWorkerFetchResult&);
 
     ServiceWorkerRegistrationData data() const;
 
@@ -54,6 +56,7 @@ private:
     void startNextJob();
     void rejectCurrentJob(const ExceptionData&);
     void resolveCurrentJob(const ServiceWorkerRegistrationData&);
+    void startScriptFetchForCurrentJob();
     void finishCurrentJob();
 
     void runRegisterJob(const ServiceWorkerJobData&);
@@ -61,6 +64,7 @@ private:
 
     void rejectWithExceptionOnMainThread(const ExceptionData&);
     void resolveWithRegistrationOnMainThread();
+    void startScriptFetchFromMainThread();
     bool isEmpty();
     SWServerWorker* getNewestWorker();
 

@@ -164,8 +164,9 @@ void WorkerScriptLoader::didFinishLoading(unsigned long identifier)
     notifyFinished();
 }
 
-void WorkerScriptLoader::didFail(const ResourceError&)
+void WorkerScriptLoader::didFail(const ResourceError& error)
 {
+    m_error = error;
     notifyError();
 }
 

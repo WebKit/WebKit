@@ -3,6 +3,16 @@ function done()
     finishSWTest();
 }
 
+navigator.serviceWorker.register("image-mime-type.php", { })
+.then(function(r) {
+	console.log("Registered! (unexpectedly)");
+}, function(e) {
+	console.log("Registration failed with error: " + e);
+})
+.catch(function(e) {
+	console.log("Exception registering: " + e);
+});
+
 navigator.serviceWorker.register("", { })
 .then(function(r) {
 	console.log("Registered! (unexpectedly)");

@@ -1320,7 +1320,7 @@
 		2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E94F439119207DA00B7F75D /* JSFileReader.cpp */; };
 		2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E94F43A119207DA00B7F75D /* JSFileReader.h */; };
 		2E9B5D8F1B66A94E008C6A24 /* WheelEventDeltaFilterMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E9B5D8E1B66A94E008C6A24 /* WheelEventDeltaFilterMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; };
+		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EB4BCD2121F03E300EC4885 /* BlobResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EB4BCD0121F03E300EC4885 /* BlobResourceHandle.cpp */; };
 		2EB4BCD3121F03E300EC4885 /* BlobResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */; };
 		2EB767561DA19B99003E23B5 /* InputEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EB767551DA19B99003E23B5 /* InputEvent.cpp */; };
@@ -2343,6 +2343,10 @@
 		517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53421F50C16100DCDC0A /* SWServerWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A534E1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A534B1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.cpp */; };
 		517A534F1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B61C89912600A7E715 /* FetchLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A535A1F5889EF00DCDC0A /* FetchLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B51C89912600A7E715 /* FetchLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A535B1F588A4C00DCDC0A /* FetchBodyConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A535C1F5899F200DCDC0A /* ServiceWorkerFetchResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */; };
 		517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */; };
 		517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4702,7 +4706,7 @@
 		A7D20F62107F406900A80392 /* JSWebGLActiveInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */; };
 		A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */; };
 		A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */; };
-		A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */; };
+		A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D6B34A0F61104500B79FD1 /* WorkerScriptLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */; };
 		A7DBF8DD1276919C006B6008 /* TextCheckingHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */; };
 		A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */; };
@@ -10259,6 +10263,7 @@
 		517A53431F50C16100DCDC0A /* SWServerWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServerWorker.cpp; sourceTree = "<group>"; };
 		517A534B1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistrationData.cpp; sourceTree = "<group>"; };
 		517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationData.h; sourceTree = "<group>"; };
+		517A535C1F5899F200DCDC0A /* ServiceWorkerFetchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerFetchResult.h; sourceTree = "<group>"; };
 		517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedDecoderCF.cpp; sourceTree = "<group>"; };
 		517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedDecoderCF.h; sourceTree = "<group>"; };
 		517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedEncoderCF.cpp; sourceTree = "<group>"; };
@@ -19172,6 +19177,7 @@
 				51F175581F3EBC0C00C74950 /* ServiceWorkerContainer.cpp */,
 				51F175571F3EBC0C00C74950 /* ServiceWorkerContainer.h */,
 				51F175561F3EBC0C00C74950 /* ServiceWorkerContainer.idl */,
+				517A535C1F5899F200DCDC0A /* ServiceWorkerFetchResult.h */,
 				51F175551F3EBC0C00C74950 /* ServiceWorkerGlobalScope.cpp */,
 				51F175541F3EBC0C00C74950 /* ServiceWorkerGlobalScope.h */,
 				51F175531F3EBC0C00C74950 /* ServiceWorkerGlobalScope.idl */,
@@ -28145,6 +28151,7 @@
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
+				517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */,
 				A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */,
 				977B37241228721700B81FF8 /* HTMLElementStack.h in Headers */,
 				B562DB6017D3CD630010AF96 /* HTMLElementTypeHelpers.h in Headers */,
@@ -29321,6 +29328,7 @@
 				FA654A6C1108ABED002626F1 /* MathMLUnderOverElement.h in Headers */,
 				37C738EF1EDBD71B003F2B0B /* MathMLUnknownElement.h in Headers */,
 				439046EA12DA25E812AF80AC /* MathOperator.h in Headers */,
+				517A535B1F588A4C00DCDC0A /* FetchBodyConsumer.h in Headers */,
 				49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */,
 				49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */,
 				5CBC8DAD1AAA302200E1C803 /* MediaAccessibilitySoftLink.h in Headers */,
@@ -29476,6 +29484,7 @@
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
 				A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */,
 				628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */,
+				517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */,
 				8A81BF8511DCFD9000DA2B98 /* NetworkLoadMetrics.h in Headers */,
 				59C27F07138D28CF0079B7E2 /* NetworkResourcesData.h in Headers */,
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,

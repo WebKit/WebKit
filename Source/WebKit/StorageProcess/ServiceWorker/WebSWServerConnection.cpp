@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DataReference.h"
 #include "Logging.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebProcess.h"
@@ -68,6 +69,11 @@ void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const Exce
 void WebSWServerConnection::resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
 {
     send(Messages::WebSWClientConnection::JobResolvedInServer(jobIdentifier, registrationData));
+}
+
+void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
+{
+    send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier));
 }
 
 } // namespace WebKit
