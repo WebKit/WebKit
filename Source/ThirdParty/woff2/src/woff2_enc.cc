@@ -1,20 +1,12 @@
-// Copyright 2014 Google Inc. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// Library for converting TTF format font files to their WOFF2 versions.
+/* Copyright 2014 Google Inc. All Rights Reserved.
 
-#include "./woff2_enc.h"
+   Distributed under MIT license.
+   See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+*/
+
+/* Library for converting TTF format font files to their WOFF2 versions. */
+
+#include <woff2/encode.h>
 
 #include <stdlib.h>
 #include <complex>
@@ -23,7 +15,7 @@
 #include <string>
 #include <vector>
 
-#include "./brotli/encode.h"
+#include <brotli/encode.h>
 #include "./buffer.h"
 #include "./font.h"
 #include "./normalize.h"
@@ -436,7 +428,7 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
         std::pair<uint32_t, uint32_t> tag_offset(table.tag, table_offset);
         if (index_by_tag_offset.find(tag_offset) == index_by_tag_offset.end()) {
 #ifdef FONT_COMPRESSION_BIN
-          fprintf(stderr, "Missing table index for offset 0x%08x\n",
+fprintf(stderr, "Missing table index for offset 0x%08x\n",
                   table_offset);
 #endif
           return FONT_COMPRESSION_FAILURE();

@@ -1,5 +1,5 @@
 #include <string>
-#include "woff2_dec.h"
+#include <woff2/decode.h>
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t data_size) {
   // Decode using newer entry pattern.
