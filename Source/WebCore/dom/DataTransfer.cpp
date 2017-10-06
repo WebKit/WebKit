@@ -156,10 +156,21 @@ void DataTransfer::setData(const String& type, const String& data)
     if ((forFileDrag() || Settings::customPasteboardDataEnabled()) && m_pasteboard->containsFiles())
         return;
 
-    String normalizedType = normalizeType(type);
-    m_pasteboard->writeString(normalizedType, data);
+    auto normalizedType = normalizeType(type);
+    setDataFromItemList(normalizedType, data);
     if (m_itemList)
         m_itemList->didSetStringData(normalizedType);
+}
+
+void DataTransfer::setDataFromItemList(const String& type, const String& data)
+{
+    ASSERT(canWriteData());
+    RELEASE_ASSERT(is<StaticPasteboard>(*m_pasteboard));
+
+    if (Settings::customPasteboardDataEnabled() && !Pasteboard::isSafeTypeForDOMToReadAndWrite(type))
+        downcast<StaticPasteboard>(*m_pasteboard).writeStringInCustomData(type, data);
+    else
+        m_pasteboard->writeString(type, data);
 }
 
 void DataTransfer::updateFileList()

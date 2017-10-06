@@ -78,7 +78,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& da
     if (!isSupportedType(lowercasedType))
         return nullptr;
 
-    m_dataTransfer.pasteboard().writeString(lowercasedType, data);
+    m_dataTransfer.setDataFromItemList(lowercasedType, data);
     ASSERT(m_items);
     m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*this), lowercasedType));
     return RefPtr<DataTransferItem> { m_items->last().copyRef() };

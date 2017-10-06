@@ -1,3 +1,25 @@
+2017-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Split StaticPasteboard::writeString into writeString and writeStringInCustomData
+        https://bugs.webkit.org/show_bug.cgi?id=177991
+
+        Reviewed by Wenson Hsieh.
+
+        Split writeString into the one that writes into the plaform pasteboard natively and the custom pasteboard data like we did
+        in r222680 for readString and readStringInCustomData.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::setData):
+        (WebCore::DataTransfer::setDataFromItemList): Extracted out of setData.
+        * dom/DataTransfer.h:
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::add):
+        * platform/StaticPasteboard.cpp:
+        (WebCore::updateTypes): Extacted out of writeString.
+        (WebCore::StaticPasteboard::writeString):
+        (WebCore::StaticPasteboard::writeStringInCustomData):
+        * platform/StaticPasteboard.h:
+
 2017-10-05  Dean Jackson  <dino@apple.com>
 
         [WebGL] Safari performance is slow due to high MSAA usage

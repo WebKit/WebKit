@@ -50,16 +50,24 @@ String StaticPasteboard::readStringInCustomData(const String& type)
     return m_customData.get(type);
 }
 
+static void updateTypes(Vector<String>& types, String type, bool moveToEnd)
+{
+    if (moveToEnd)
+        types.removeFirst(type);
+    ASSERT(!types.contains(type));
+    types.append(type);
+}
+
 void StaticPasteboard::writeString(const String& type, const String& value)
 {
-    auto& pasteboardData = Pasteboard::isSafeTypeForDOMToReadAndWrite(type) ? m_platformData : m_customData;
-    if (pasteboardData.set(type, value).isNewEntry)
-        m_types.append(type);
-    else {
-        m_types.removeFirst(type);
-        ASSERT(!m_types.contains(type));
-        m_types.append(type);
-    }
+    bool typeWasAlreadyPresent = !m_platformData.set(type, value).isNewEntry || m_customData.contains(type);
+    updateTypes(m_types, type, typeWasAlreadyPresent);
+}
+
+void StaticPasteboard::writeStringInCustomData(const String& type, const String& value)
+{
+    bool typeWasAlreadyPresent = !m_customData.set(type, value).isNewEntry || m_platformData.contains(type);
+    updateTypes(m_types, type, typeWasAlreadyPresent);
 }
 
 void StaticPasteboard::clear()

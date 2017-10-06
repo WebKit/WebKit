@@ -47,6 +47,7 @@ public:
     String readStringInCustomData(const String& type) final;
 
     void writeString(const String& type, const String& data) final;
+    void writeStringInCustomData(const String& type, const String& data);
     void clear() final;
     void clear(const String& type) final;
 
