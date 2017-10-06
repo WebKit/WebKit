@@ -121,7 +121,7 @@ private:
     bool hasSingleSecurityOrigin() const override;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*) override;
+    std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient*) override;
 #endif
 
     String languageOfPrimaryAudioTrack() const override;

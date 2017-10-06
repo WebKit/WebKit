@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-class CDM;
+class LegacyCDM;
 class CDMSessionMediaSourceAVFObjC;
 
 class CDMPrivateMediaSourceAVFObjC : public CDMPrivateInterface {
 public:
-    explicit CDMPrivateMediaSourceAVFObjC(CDM* cdm)
+    explicit CDMPrivateMediaSourceAVFObjC(LegacyCDM* cdm)
         : m_cdm(cdm)
     { }
     virtual ~CDMPrivateMediaSourceAVFObjC();
@@ -47,14 +47,14 @@ public:
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
     bool supportsMIMEType(const String& mimeType) override;
-    std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
+    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient*) override;
 
-    CDM* cdm() const { return m_cdm; }
+    LegacyCDM* cdm() const { return m_cdm; }
 
     void invalidateSession(CDMSessionMediaSourceAVFObjC*);
 
 protected:
-    CDM* m_cdm;
+    LegacyCDM* m_cdm;
     Vector<CDMSessionMediaSourceAVFObjC*> m_sessions;
 };
 

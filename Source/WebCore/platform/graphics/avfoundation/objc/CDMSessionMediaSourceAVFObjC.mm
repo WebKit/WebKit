@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC& cdm, CDMSessionClient* client)
+CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient* client)
     : m_cdm(&cdm)
     , m_client(client)
 {
@@ -57,7 +57,7 @@ void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLay
     // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
     shouldIgnore = m_stopped && code == 12785;
     if (!shouldIgnore)
-        m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, code);
+        m_client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);
 }
 
 void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error, bool& shouldIgnore)
@@ -70,7 +70,7 @@ void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRe
     // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
     shouldIgnore = m_stopped && code == 12785;
     if (!shouldIgnore)
-        m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, code);
+        m_client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);
 }
 
 

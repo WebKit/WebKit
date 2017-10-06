@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-class CDMSession;
-class CDMSessionClient;
+class LegacyCDMSession;
+class LegacyCDMSessionClient;
 
 class CDMPrivateInterface {
 public:
@@ -41,7 +41,7 @@ public:
 
     virtual bool supportsMIMEType(const String&) = 0;
 
-    virtual std::unique_ptr<CDMSession> createSession(CDMSessionClient*) = 0;
+    virtual std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient*) = 0;
 };
 
 } // namespace WebCore

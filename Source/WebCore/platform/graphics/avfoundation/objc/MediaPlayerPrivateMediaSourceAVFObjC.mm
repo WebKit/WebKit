@@ -945,7 +945,7 @@ AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
     return m_streamSession.get();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(CDMSession* session)
+void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* session)
 {
     if (session == m_session)
         return;

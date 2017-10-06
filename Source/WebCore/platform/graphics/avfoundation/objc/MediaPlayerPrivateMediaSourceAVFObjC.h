@@ -122,7 +122,7 @@ public:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool hasStreamSession() { return m_streamSession; }
     AVStreamSession *streamSession();
-    void setCDMSession(CDMSession*) override;
+    void setCDMSession(LegacyCDMSession*) override;
     CDMSessionMediaSourceAVFObjC* cdmSession() const { return m_session; }
     void keyNeeded(Uint8Array*);
 #endif

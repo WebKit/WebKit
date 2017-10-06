@@ -30,6 +30,7 @@
 
 #include "InitDataRegistry.h"
 #include <runtime/ArrayBuffer.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
@@ -377,7 +378,7 @@ void MockCDMInstance::storeRecordOfKeyUsage(const String&)
 
 const String& MockCDMInstance::keySystem() const
 {
-    static const String s_keySystem("org.webkit.mock");
+    static const NeverDestroyed<String> s_keySystem = MAKE_STATIC_STRING_IMPL("org.webkit.mock");
 
     return s_keySystem;
 }

@@ -139,7 +139,7 @@ struct PlatformVideoPlaybackQualityMetrics {
 
 extern const PlatformMedia NoPlatformMedia;
 
-class CDMSessionClient;
+class LegacyCDMSessionClient;
 class CachedResourceLoader;
 class ContentType;
 class GraphicsContext;
@@ -388,8 +388,8 @@ public:
     // This is different from the asynchronous MediaKeyError.
     enum MediaKeyException { NoError, InvalidPlayerState, KeySystemNotSupported };
 
-    std::unique_ptr<CDMSession> createSession(const String& keySystem, CDMSessionClient*);
-    void setCDMSession(CDMSession*);
+    std::unique_ptr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient*);
+    void setCDMSession(LegacyCDMSession*);
     void keyAdded();
 #endif
 

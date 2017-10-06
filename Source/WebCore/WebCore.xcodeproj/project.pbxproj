@@ -6360,6 +6360,9 @@
 		CD8B5A46180DFF4E008B8E65 /* VideoTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A45180DFF4E008B8E65 /* VideoTrackMediaSource.h */; };
 		CD8B5A49180E138B008B8E65 /* TextTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */; };
 		CD8B5A4C180E17C0008B8E65 /* AudioTrackMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8B5A4B180E17C0008B8E65 /* AudioTrackMediaSource.h */; };
+		CD94A5DC1F71D5D300F525C5 /* CDMFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD94A5D11F71CB6B00F525C5 /* CDMFactory.cpp */; };
+		CD94A5DD1F71D5D800F525C5 /* CDMClearKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD94A5DB1F71CBB000F525C5 /* CDMClearKey.cpp */; };
+		CD94A5DE1F72F57B00F525C5 /* CDMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD94A5C91F71CA9D00F525C5 /* CDMClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD9D82751C7AE535006FF066 /* TextureCacheCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */; };
 		CD9D82761C7AE535006FF066 /* TextureCacheCV.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9D82741C7AE535006FF066 /* TextureCacheCV.h */; };
 		CD9D82791C7B8EE1006FF066 /* VideoTextureCopierCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9D82771C7B8EE1006FF066 /* VideoTextureCopierCV.cpp */; };
@@ -6475,7 +6478,6 @@
 		CDF4B71E1E01E11A00E235A2 /* JSMediaKeySessionType.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B71C1E01E11A00E235A2 /* JSMediaKeySessionType.h */; };
 		CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */; };
 		CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7221E03BF8100E235A2 /* MockCDMFactory.h */; };
-		CDF4B7261E03C15B00E235A2 /* CDMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */; };
 		CDF4B7281E03C57300E235A2 /* MediaKeysRequirement.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7271E03C57300E235A2 /* MediaKeysRequirement.idl */; };
 		CDF4B72B1E03C63E00E235A2 /* JSMediaKeysRequirement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B7291E03C63E00E235A2 /* JSMediaKeysRequirement.cpp */; };
 		CDF4B72C1E03C63E00E235A2 /* JSMediaKeysRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B72A1E03C63E00E235A2 /* JSMediaKeysRequirement.h */; };
@@ -15123,7 +15125,20 @@
 		CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackMediaSource.h; sourceTree = "<group>"; };
 		CD8B5A4A180E17A3008B8E65 /* AudioTrackMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioTrackMediaSource.idl; sourceTree = "<group>"; };
 		CD8B5A4B180E17C0008B8E65 /* AudioTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackMediaSource.h; sourceTree = "<group>"; };
-		CD9D05421E1EFA12003B4C4F /* CDMInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMInstance.h; sourceTree = "<group>"; };
+		CD94A5C91F71CA9D00F525C5 /* CDMClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMClient.h; sourceTree = "<group>"; };
+		CD94A5CC1F71CB6900F525C5 /* CDMRequirement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMRequirement.h; sourceTree = "<group>"; };
+		CD94A5CD1F71CB6900F525C5 /* CDMKeySystemConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMKeySystemConfiguration.h; sourceTree = "<group>"; };
+		CD94A5CE1F71CB6A00F525C5 /* CDMInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMInstance.h; sourceTree = "<group>"; };
+		CD94A5CF1F71CB6A00F525C5 /* CDMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMPrivate.h; sourceTree = "<group>"; };
+		CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMRestrictions.h; sourceTree = "<group>"; };
+		CD94A5D11F71CB6B00F525C5 /* CDMFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMFactory.cpp; sourceTree = "<group>"; };
+		CD94A5D21F71CB6B00F525C5 /* CDMFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMFactory.h; sourceTree = "<group>"; };
+		CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMMediaCapability.h; sourceTree = "<group>"; };
+		CD94A5D41F71CB6C00F525C5 /* CDMKeyStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMKeyStatus.h; sourceTree = "<group>"; };
+		CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMSessionType.h; sourceTree = "<group>"; };
+		CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMMessageType.h; sourceTree = "<group>"; };
+		CD94A5DA1F71CBB000F525C5 /* CDMClearKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMClearKey.h; sourceTree = "<group>"; };
+		CD94A5DB1F71CBB000F525C5 /* CDMClearKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMClearKey.cpp; sourceTree = "<group>"; };
 		CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextureCacheCV.mm; path = ../cv/TextureCacheCV.mm; sourceTree = "<group>"; };
 		CD9D82741C7AE535006FF066 /* TextureCacheCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureCacheCV.h; path = ../cv/TextureCacheCV.h; sourceTree = "<group>"; };
 		CD9D82771C7B8EE1006FF066 /* VideoTextureCopierCV.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoTextureCopierCV.cpp; path = ../cv/VideoTextureCopierCV.cpp; sourceTree = "<group>"; };
@@ -15264,7 +15279,6 @@
 		CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MockCDMFactory.idl; sourceTree = "<group>"; };
 		CDF4B7211E03BF8100E235A2 /* MockCDMFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockCDMFactory.cpp; sourceTree = "<group>"; };
 		CDF4B7221E03BF8100E235A2 /* MockCDMFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockCDMFactory.h; sourceTree = "<group>"; };
-		CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMPrivate.h; sourceTree = "<group>"; };
 		CDF4B7271E03C57300E235A2 /* MediaKeysRequirement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeysRequirement.idl; sourceTree = "<group>"; };
 		CDF4B7291E03C63E00E235A2 /* JSMediaKeysRequirement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeysRequirement.cpp; sourceTree = "<group>"; };
 		CDF4B72A1E03C63E00E235A2 /* JSMediaKeysRequirement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeysRequirement.h; sourceTree = "<group>"; };
@@ -24604,6 +24618,7 @@
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				A5C974CE11485FDA0066F2AB /* cocoa */,
+				CD94A5CB1F71CB4600F525C5 /* encryptedmedia */,
 				515BE1871D54F5DB00DD7C68 /* gamepad */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
 				A59E3C1B11580F340072928E /* ios */,
@@ -24857,6 +24872,34 @@
 			name = cocoa;
 			sourceTree = "<group>";
 		};
+		CD94A5CB1F71CB4600F525C5 /* encryptedmedia */ = {
+			isa = PBXGroup;
+			children = (
+				CD94A5D91F71CB9F00F525C5 /* clearkey */,
+				CD94A5D11F71CB6B00F525C5 /* CDMFactory.cpp */,
+				CD94A5D21F71CB6B00F525C5 /* CDMFactory.h */,
+				CD94A5CE1F71CB6A00F525C5 /* CDMInstance.h */,
+				CD94A5D41F71CB6C00F525C5 /* CDMKeyStatus.h */,
+				CD94A5CD1F71CB6900F525C5 /* CDMKeySystemConfiguration.h */,
+				CD94A5D31F71CB6C00F525C5 /* CDMMediaCapability.h */,
+				CD94A5D61F71CB6D00F525C5 /* CDMMessageType.h */,
+				CD94A5CF1F71CB6A00F525C5 /* CDMPrivate.h */,
+				CD94A5CC1F71CB6900F525C5 /* CDMRequirement.h */,
+				CD94A5D01F71CB6B00F525C5 /* CDMRestrictions.h */,
+				CD94A5D51F71CB6D00F525C5 /* CDMSessionType.h */,
+			);
+			path = encryptedmedia;
+			sourceTree = "<group>";
+		};
+		CD94A5D91F71CB9F00F525C5 /* clearkey */ = {
+			isa = PBXGroup;
+			children = (
+				CD94A5DB1F71CBB000F525C5 /* CDMClearKey.cpp */,
+				CD94A5DA1F71CBB000F525C5 /* CDMClearKey.h */,
+			);
+			path = clearkey;
+			sourceTree = "<group>";
+		};
 		CD9A37F517C7D93600C5FA7A /* mediacontrols */ = {
 			isa = PBXGroup;
 			children = (
@@ -24891,8 +24934,7 @@
 				2D0621461DA639EC00A7FB26 /* legacy */,
 				CDF4B7131E00B7E500E235A2 /* CDM.cpp */,
 				CDF4B7141E00B7E500E235A2 /* CDM.h */,
-				CD9D05421E1EFA12003B4C4F /* CDMInstance.h */,
-				CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */,
+				CD94A5C91F71CA9D00F525C5 /* CDMClient.h */,
 				CD063F801E23FA8900812BE3 /* InitDataRegistry.cpp */,
 				CD063F811E23FA8900812BE3 /* InitDataRegistry.h */,
 				2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */,
@@ -27343,7 +27385,7 @@
 				CDC734151977896D0046BFC5 /* CARingBuffer.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,
-				CDF4B7261E03C15B00E235A2 /* CDMPrivate.h in Headers */,
+				CD94A5DE1F72F57B00F525C5 /* CDMClient.h in Headers */,
 				CD318623199F1E2A0030A0F7 /* CDMPrivateMediaSourceAVFObjC.h in Headers */,
 				CDE595971BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h in Headers */,
 				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
@@ -31481,6 +31523,8 @@
 				CDC734141977896C0046BFC5 /* CARingBuffer.cpp in Sources */,
 				6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */,
 				CDF4B7151E00B7E500E235A2 /* CDM.cpp in Sources */,
+				CD94A5DD1F71D5D800F525C5 /* CDMClearKey.cpp in Sources */,
+				CD94A5DC1F71D5D300F525C5 /* CDMFactory.cpp in Sources */,
 				CD318622199F1E2A0030A0F7 /* CDMPrivateMediaSourceAVFObjC.mm in Sources */,
 				CDE595951BF16DF300A1CBE8 /* CDMSessionAVContentKeySession.mm in Sources */,
 				CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */,

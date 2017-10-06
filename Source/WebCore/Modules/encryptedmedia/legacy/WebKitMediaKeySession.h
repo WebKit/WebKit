@@ -41,7 +41,7 @@ namespace WebCore {
 class WebKitMediaKeyError;
 class WebKitMediaKeys;
 
-class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, private ActiveDOMObject, private CDMSessionClient {
+class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, private ActiveDOMObject, private LegacyCDMSessionClient {
 public:
     static Ref<WebKitMediaKeySession> create(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
     ~WebKitMediaKeySession();
@@ -52,7 +52,7 @@ public:
     ExceptionOr<void> update(Ref<Uint8Array>&& key);
     void close();
 
-    CDMSession* session() { return m_session.get(); }
+    LegacyCDMSession* session() { return m_session.get(); }
 
     void detachKeys() { m_keys = nullptr; }
 
@@ -88,7 +88,7 @@ private:
     String m_sessionId;
     RefPtr<WebKitMediaKeyError> m_error;
     GenericEventQueue m_asyncEventQueue;
-    std::unique_ptr<CDMSession> m_session;
+    std::unique_ptr<LegacyCDMSession> m_session;
 
     struct PendingKeyRequest {
         String mimeType;

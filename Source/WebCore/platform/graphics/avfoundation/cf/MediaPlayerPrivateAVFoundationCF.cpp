@@ -1130,7 +1130,7 @@ RetainPtr<AVCFAssetResourceLoadingRequestRef> MediaPlayerPrivateAVFoundationCF::
     return m_avfWrapper->takeRequestForKeyURI(keyURI);
 }
 
-std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, CDMSessionClient* client)
+std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, LegacyCDMSessionClient* client)
 {
     if (!keySystemIsSupported(keySystem))
         return nullptr;
@@ -1140,7 +1140,7 @@ std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(cons
 
 #elif ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, CDMSessionClient*)
+std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, LegacyCDMSessionClient*)
 {
     return nullptr;
 }

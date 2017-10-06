@@ -43,7 +43,7 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class CDMSession;
+class LegacyCDMSession;
 class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateClient;
 class SourceBufferPrivateAVFObjC;

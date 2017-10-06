@@ -109,7 +109,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::IsNotSupported;
 }
 
-std::unique_ptr<CDMSession> CDMPrivateMediaSourceAVFObjC::createSession(CDMSessionClient* client)
+std::unique_ptr<LegacyCDMSession> CDMPrivateMediaSourceAVFObjC::createSession(LegacyCDMSessionClient* client)
 {
     String keySystem = m_cdm->keySystem(); // Local copy for StringView usage
     StringView keySystemStringView { keySystem };

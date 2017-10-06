@@ -35,46 +35,46 @@
 
 namespace WebCore {
 
-class CDM;
+class LegacyCDM;
 class CDMPrivateInterface;
 class MediaPlayer;
 
-using CreateCDM = WTF::Function<std::unique_ptr<CDMPrivateInterface> (CDM*)>;
+using CreateCDM = WTF::Function<std::unique_ptr<CDMPrivateInterface> (LegacyCDM*)>;
 typedef bool (*CDMSupportsKeySystem)(const String&);
 typedef bool (*CDMSupportsKeySystemAndMimeType)(const String&, const String&);
 
-class CDMClient {
+class LegacyCDMClient {
 public:
-    virtual ~CDMClient() { }
+    virtual ~LegacyCDMClient() { }
 
-    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const = 0;
+    virtual MediaPlayer* cdmMediaPlayer(const LegacyCDM*) const = 0;
 };
 
-class CDM {
+class LegacyCDM {
 public:
-    explicit CDM(const String& keySystem);
+    explicit LegacyCDM(const String& keySystem);
 
     enum CDMErrorCode { NoError, UnknownError, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     static bool supportsKeySystem(const String&);
     static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
-    static std::unique_ptr<CDM> create(const String& keySystem);
+    static std::unique_ptr<LegacyCDM> create(const String& keySystem);
     WEBCORE_EXPORT static void registerCDMFactory(CreateCDM&&, CDMSupportsKeySystem, CDMSupportsKeySystemAndMimeType);
-    ~CDM();
+    ~LegacyCDM();
 
     bool supportsMIMEType(const String&) const;
-    std::unique_ptr<CDMSession> createSession(CDMSessionClient&);
+    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&);
 
     const String& keySystem() const { return m_keySystem; }
 
-    CDMClient* client() const { return m_client; }
-    void setClient(CDMClient* client) { m_client = client; }
+    LegacyCDMClient* client() const { return m_client; }
+    void setClient(LegacyCDMClient* client) { m_client = client; }
 
     MediaPlayer* mediaPlayer() const;
 
 private:
     String m_keySystem;
     std::unique_ptr<CDMPrivateInterface> m_private;
-    CDMClient* m_client;
+    LegacyCDMClient* m_client;
 };
 
 }

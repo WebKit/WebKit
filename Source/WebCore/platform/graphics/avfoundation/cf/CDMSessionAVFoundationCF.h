@@ -37,12 +37,12 @@ namespace WebCore {
 
 class MediaPlayerPrivateAVFoundationCF;
 
-class CDMSessionAVFoundationCF final : public CDMSession {
+class CDMSessionAVFoundationCF final : public LegacyCDMSession {
 public:
-    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, CDMSessionClient*);
+    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient*);
 
 private:
-    void setClient(CDMSessionClient* client) final { }
+    void setClient(LegacyCDMSessionClient* client) final { }
     const String& sessionId() const final { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
     void releaseKeys() final;

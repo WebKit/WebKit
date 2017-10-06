@@ -583,12 +583,12 @@ void MediaPlayer::setShouldBufferData(bool shouldBuffer)
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-std::unique_ptr<CDMSession> MediaPlayer::createSession(const String& keySystem, CDMSessionClient* client)
+std::unique_ptr<LegacyCDMSession> MediaPlayer::createSession(const String& keySystem, LegacyCDMSessionClient* client)
 {
     return m_private->createSession(keySystem, client);
 }
 
-void MediaPlayer::setCDMSession(CDMSession* session)
+void MediaPlayer::setCDMSession(LegacyCDMSession* session)
 {
     m_private->setCDMSession(session);
 }

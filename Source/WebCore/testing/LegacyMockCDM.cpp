@@ -37,28 +37,28 @@
 
 namespace WebCore {
 
-class MockCDMSession : public CDMSession {
+class MockCDMSession : public LegacyCDMSession {
 public:
-    MockCDMSession(CDMSessionClient*);
+    MockCDMSession(LegacyCDMSessionClient*);
     virtual ~MockCDMSession() { }
 
-    void setClient(CDMSessionClient* client) override { m_client = client; }
+    void setClient(LegacyCDMSessionClient* client) override { m_client = client; }
     const String& sessionId() const override { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
 
 protected:
-    CDMSessionClient* m_client;
+    LegacyCDMSessionClient* m_client;
     String m_sessionId;
 };
 
-bool MockCDM::supportsKeySystem(const String& keySystem)
+bool LegacyMockCDM::supportsKeySystem(const String& keySystem)
 {
     return equalLettersIgnoringASCIICase(keySystem, "com.webcore.mock");
 }
 
-bool MockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+bool LegacyMockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
 {
     if (!supportsKeySystem(keySystem))
         return false;
@@ -66,12 +66,12 @@ bool MockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String
     return equalLettersIgnoringASCIICase(mimeType, "video/mock");
 }
 
-bool MockCDM::supportsMIMEType(const String& mimeType)
+bool LegacyMockCDM::supportsMIMEType(const String& mimeType)
 {
     return equalLettersIgnoringASCIICase(mimeType, "video/mock");
 }
 
-std::unique_ptr<CDMSession> MockCDM::createSession(CDMSessionClient* client)
+std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient* client)
 {
     return std::make_unique<MockCDMSession>(client);
 }
@@ -106,7 +106,7 @@ static String generateSessionId()
     return String::number(monotonicallyIncreasingSessionId++);
 }
 
-MockCDMSession::MockCDMSession(CDMSessionClient* client)
+MockCDMSession::MockCDMSession(LegacyCDMSessionClient* client)
     : m_client(client)
     , m_sessionId(generateSessionId())
 {

@@ -2951,8 +2951,8 @@ void Internals::enableAutoSizeMode(bool enabled, int minimumWidth, int minimumHe
 
 void Internals::initializeMockCDM()
 {
-    CDM::registerCDMFactory([] (CDM* cdm) { return std::make_unique<MockCDM>(cdm); },
-        MockCDM::supportsKeySystem, MockCDM::supportsKeySystemAndMimeType);
+    LegacyCDM::registerCDMFactory([] (LegacyCDM* cdm) { return std::make_unique<LegacyMockCDM>(cdm); },
+        LegacyMockCDM::supportsKeySystem, LegacyMockCDM::supportsKeySystemAndMimeType);
 }
 
 #endif

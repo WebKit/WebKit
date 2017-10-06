@@ -37,6 +37,7 @@
 #include "SharedBuffer.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
 using namespace Inspector;
@@ -52,19 +53,20 @@ public:
     KeyStore& keys() { return m_keys; }
 
 private:
+    friend class NeverDestroyed<ClearKeyState>;
     ClearKeyState();
     KeyStore m_keys;
 };
 
 ClearKeyState& ClearKeyState::singleton()
 {
-    static ClearKeyState s_state;
+    static NeverDestroyed<ClearKeyState> s_state;
     return s_state;
 }
 
 ClearKeyState::ClearKeyState() = default;
 
-RefPtr<InspectorObject> parseJSONObject(const SharedBuffer& buffer)
+static RefPtr<InspectorObject> parseJSONObject(const SharedBuffer& buffer)
 {
     // Fail on large buffers whose size doesn't fit into a 32-bit unsigned integer.
     size_t size = buffer.size();
@@ -81,7 +83,7 @@ RefPtr<InspectorObject> parseJSONObject(const SharedBuffer& buffer)
     return object;
 }
 
-std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const InspectorObject& root)
+static std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const InspectorObject& root)
 {
     // If the 'keys' key is present in the root object, parse the JSON further
     // according to the specified 'license' format.
@@ -122,7 +124,7 @@ std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const Inspect
     return decodedKeys;
 }
 
-bool parseLicenseReleaseAcknowledgementFormat(const InspectorObject& root)
+static bool parseLicenseReleaseAcknowledgementFormat(const InspectorObject& root)
 {
     // If the 'kids' key is present in the root object, parse the JSON further
     // according to the specified 'license release acknowledgement' format.
@@ -141,7 +143,7 @@ bool parseLicenseReleaseAcknowledgementFormat(const InspectorObject& root)
 
 CDMFactoryClearKey& CDMFactoryClearKey::singleton()
 {
-    static CDMFactoryClearKey s_factory;
+    static NeverDestroyed<CDMFactoryClearKey> s_factory;
     return s_factory;
 }
 
@@ -173,7 +175,7 @@ bool CDMPrivateClearKey::supportsInitDataType(const AtomicString& initDataType) 
     return equalLettersIgnoringASCIICase(initDataType, "keyids");
 }
 
-bool containsPersistentLicenseType(const Vector<CDMSessionType>& types)
+static bool containsPersistentLicenseType(const Vector<CDMSessionType>& types)
 {
     return std::any_of(types.begin(), types.end(),
         [] (auto& sessionType) { return sessionType == CDMSessionType::PersistentLicense; });
@@ -560,7 +562,7 @@ void CDMInstanceClearKey::storeRecordOfKeyUsage(const String&)
 
 const String& CDMInstanceClearKey::keySystem() const
 {
-    static const String s_keySystem("org.w3.clearkey");
+    static const NeverDestroyed<String> s_keySystem = MAKE_STATIC_STRING_IMPL("org.w3.clearkey");
 
     return s_keySystem;
 }

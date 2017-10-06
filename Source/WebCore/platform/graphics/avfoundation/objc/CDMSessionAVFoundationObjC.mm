@@ -49,7 +49,7 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetResourceLoadingRequest)
 
 namespace WebCore {
 
-CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, CDMSessionClient* client)
+CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient* client)
     : m_parent(parent->createWeakPtr())
     , m_client(client)
     , m_sessionId(createCanonicalUUIDString())
@@ -65,7 +65,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     UNUSED_PARAM(mimeType);
 
     if (!m_parent) {
-        errorCode = CDM::UnknownError;
+        errorCode = LegacyCDM::UnknownError;
         return nullptr;
     }
 
@@ -73,13 +73,13 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     String keyID;
     RefPtr<Uint8Array> certificate;
     if (!MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromInitData(initData, keyURI, keyID, certificate)) {
-        errorCode = CDM::UnknownError;
+        errorCode = LegacyCDM::UnknownError;
         return nullptr;
     }
 
     m_request = m_parent->takeRequestForKeyURI(keyURI);
     if (!m_request) {
-        errorCode = CDM::UnknownError;
+        errorCode = LegacyCDM::UnknownError;
         return nullptr;
     }
 
@@ -90,7 +90,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     RetainPtr<NSData> keyRequest = [m_request streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:assetID.get() options:nil error:&nsError];
 
     if (!keyRequest) {
-        errorCode = CDM::DomainError;
+        errorCode = LegacyCDM::DomainError;
         systemCode = mediaKeyErrorSystemCode(nsError);
         return nullptr;
     }
@@ -126,7 +126,7 @@ void CDMSessionAVFoundationObjC::playerDidReceiveError(NSError *error)
         return;
 
     unsigned long code = mediaKeyErrorSystemCode(error);
-    m_client->sendError(CDMSessionClient::MediaKeyErrorDomain, code);
+    m_client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);
 }
 
 }

@@ -48,6 +48,7 @@ public:
     bool supportsKeySystem(const String&) override;
 
 private:
+    friend class NeverDestroyed<CDMFactoryClearKey>;
     CDMFactoryClearKey();
 };
 

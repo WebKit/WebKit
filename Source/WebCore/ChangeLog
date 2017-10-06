@@ -1,3 +1,141 @@
+2017-10-05  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Enable ENABLE_ENCRYPTED_MEDIA build-time setting
+        https://bugs.webkit.org/show_bug.cgi?id=177261
+
+        Reviewed by Eric Carlson.
+
+        Enable ENCRYPTED_MEDIA, and make the changes required for ENABLED_MEDIA and LEGACY_ENABLED_MEDIA
+        to co-exist while both enabled simultaneously.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/encryptedmedia/legacy/LegacyCDM.cpp:
+        (WebCore::LegacyCDM::registerCDMFactory):
+        (WebCore::LegacyCDM::supportsKeySystem):
+        (WebCore::LegacyCDM::keySystemSupportsMimeType):
+        (WebCore::LegacyCDM::create):
+        (WebCore::LegacyCDM::LegacyCDM):
+        (WebCore::LegacyCDM::~LegacyCDM):
+        (WebCore::LegacyCDM::supportsMIMEType const):
+        (WebCore::LegacyCDM::createSession):
+        (WebCore::LegacyCDM::mediaPlayer const):
+        (WebCore::CDM::registerCDMFactory): Deleted.
+        (WebCore::CDM::supportsKeySystem): Deleted.
+        (WebCore::CDM::keySystemSupportsMimeType): Deleted.
+        (WebCore::CDM::create): Deleted.
+        (WebCore::CDM::CDM): Deleted.
+        (WebCore::CDM::~CDM): Deleted.
+        (WebCore::CDM::supportsMIMEType const): Deleted.
+        (WebCore::CDM::createSession): Deleted.
+        (WebCore::CDM::mediaPlayer const): Deleted.
+        * Modules/encryptedmedia/legacy/LegacyCDM.h:
+        (WebCore::LegacyCDMClient::~LegacyCDMClient):
+        (WebCore::LegacyCDM::client const):
+        (WebCore::LegacyCDM::setClient):
+        (WebCore::CDMClient::~CDMClient): Deleted.
+        (WebCore::CDM::keySystem const): Deleted.
+        (WebCore::CDM::client const): Deleted.
+        (WebCore::CDM::setClient): Deleted.
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivate.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.cpp:
+        (WebCore::LegacyCDMPrivateClearKey::supportsKeySystem):
+        (WebCore::LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType):
+        (WebCore::LegacyCDMPrivateClearKey::supportsMIMEType):
+        (WebCore::LegacyCDMPrivateClearKey::createSession):
+        (WebCore::CDMPrivateClearKey::supportsKeySystem): Deleted.
+        (WebCore::CDMPrivateClearKey::supportsKeySystemAndMimeType): Deleted.
+        (WebCore::CDMPrivateClearKey::supportsMIMEType): Deleted.
+        (WebCore::CDMPrivateClearKey::createSession): Deleted.
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.h:
+        (WebCore::LegacyCDMPrivateClearKey::LegacyCDMPrivateClearKey):
+        (WebCore::LegacyCDMPrivateClearKey::~LegacyCDMPrivateClearKey):
+        (WebCore::CDMPrivateClearKey::CDMPrivateClearKey): Deleted.
+        (WebCore::CDMPrivateClearKey::~CDMPrivateClearKey): Deleted.
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.cpp:
+        (WebCore::CDMPrivateMediaPlayer::createSession):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.h:
+        (WebCore::CDMPrivateMediaPlayer::CDMPrivateMediaPlayer):
+        (WebCore::CDMPrivateMediaPlayer::cdm const):
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::CDMSessionClearKey):
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp:
+        (WebCore::WebKitMediaKeys::create):
+        (WebCore::WebKitMediaKeys::WebKitMediaKeys):
+        (WebCore::WebKitMediaKeys::isTypeSupported):
+        (WebCore::WebKitMediaKeys::cdmMediaPlayer const):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/encryptedmedia/CDMFactory.cpp:
+        (WebCore::CDMFactory::platformRegisterFactories):
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::ClearKeyState::singleton):
+        (WebCore::parseJSONObject):
+        (WebCore::parseLicenseFormat):
+        (WebCore::parseLicenseReleaseAcknowledgementFormat):
+        (WebCore::CDMFactoryClearKey::singleton):
+        (WebCore::containsPersistentLicenseType):
+        (WebCore::CDMInstanceClearKey::keySystem const):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/LegacyCDMSession.h:
+        (WebCore::LegacyCDMSessionClient::~LegacyCDMSessionClient):
+        (WebCore::CDMSession::type):
+        (WebCore::CDMSessionClient::~CDMSessionClient): Deleted.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::createSession):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::createSession):
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.h:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::CDMPrivateMediaSourceAVFObjC):
+        (WebCore::CDMPrivateMediaSourceAVFObjC::cdm const):
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::createSession):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createSession):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::CDMSessionAVContentKeySession):
+        (WebCore::CDMSessionAVContentKeySession::update):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        (WebCore::CDMSessionAVFoundationObjC::generateKeyRequest):
+        (WebCore::CDMSessionAVFoundationObjC::playerDidReceiveError):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::CDMSessionAVStreamSession):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC):
+        (WebCore::CDMSessionMediaSourceAVFObjC::layerDidReceiveError):
+        (WebCore::CDMSessionMediaSourceAVFObjC::rendererDidReceiveError):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createSession):
+        * testing/Internals.cpp:
+        (WebCore::Internals::initializeMockCDM):
+        * testing/LegacyMockCDM.cpp:
+        (WebCore::LegacyMockCDM::supportsKeySystem):
+        (WebCore::LegacyMockCDM::supportsKeySystemAndMimeType):
+        (WebCore::LegacyMockCDM::supportsMIMEType):
+        (WebCore::LegacyMockCDM::createSession):
+        (WebCore::MockCDMSession::MockCDMSession):
+        (WebCore::MockCDM::supportsKeySystem): Deleted.
+        (WebCore::MockCDM::supportsKeySystemAndMimeType): Deleted.
+        (WebCore::MockCDM::supportsMIMEType): Deleted.
+        (WebCore::MockCDM::createSession): Deleted.
+        * testing/LegacyMockCDM.h:
+        (WebCore::LegacyMockCDM::LegacyMockCDM):
+        (WebCore::LegacyMockCDM::~LegacyMockCDM):
+        (WebCore::MockCDM::MockCDM): Deleted.
+        (WebCore::MockCDM::~MockCDM): Deleted.
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::keySystem const):
+
 2017-10-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Web process should ask UI process for grant/deny

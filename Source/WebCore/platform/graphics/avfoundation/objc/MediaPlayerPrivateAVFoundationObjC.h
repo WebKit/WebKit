@@ -155,7 +155,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    void removeSession(CDMSession&);
+    void removeSession(LegacyCDMSession&);
 #endif
 
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
@@ -280,7 +280,7 @@ private:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    std::unique_ptr<CDMSession> createSession(const String& keySystem, CDMSessionClient*) override;
+    std::unique_ptr<LegacyCDMSession> createSession(const String& keySystem, LegacyCDMSessionClient*) override;
 #endif
 
     String languageOfPrimaryAudioTrack() const override;

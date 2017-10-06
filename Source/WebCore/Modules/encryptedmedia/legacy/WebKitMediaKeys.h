@@ -38,7 +38,7 @@ class HTMLMediaElement;
 class ScriptExecutionContext;
 class WebKitMediaKeySession;
 
-class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private CDMClient {
+class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private LegacyCDMClient {
 public:
     static ExceptionOr<Ref<WebKitMediaKeys>> create(const String& keySystem);
     virtual ~WebKitMediaKeys();
@@ -47,7 +47,7 @@ public:
     static bool isTypeSupported(const String& keySystem, const String& mimeType);
     const String& keySystem() const { return m_keySystem; }
 
-    CDM& cdm() { ASSERT(m_cdm); return *m_cdm; }
+    LegacyCDM& cdm() { ASSERT(m_cdm); return *m_cdm; }
 
     void setMediaElement(HTMLMediaElement*);
 
@@ -55,14 +55,14 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
 private:
-    MediaPlayer* cdmMediaPlayer(const CDM*) const final;
+    MediaPlayer* cdmMediaPlayer(const LegacyCDM*) const final;
 
-    WebKitMediaKeys(const String& keySystem, std::unique_ptr<CDM>&&);
+    WebKitMediaKeys(const String& keySystem, std::unique_ptr<LegacyCDM>&&);
 
     Vector<Ref<WebKitMediaKeySession>> m_sessions;
     HTMLMediaElement* m_mediaElement { nullptr };
     String m_keySystem;
-    std::unique_ptr<CDM> m_cdm;
+    std::unique_ptr<LegacyCDM> m_cdm;
 };
 
 }

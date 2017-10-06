@@ -42,11 +42,11 @@ class CDMPrivateMediaSourceAVFObjC;
 
 class CDMSessionAVStreamSession : public CDMSessionMediaSourceAVFObjC {
 public:
-    CDMSessionAVStreamSession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC&, CDMSessionClient*);
+    CDMSessionAVStreamSession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient*);
     virtual ~CDMSessionAVStreamSession();
 
-    // CDMSession
-    CDMSessionType type() override { return CDMSessionTypeAVStreamSession; }
+    // LegacyCDMSession
+    LegacyCDMSessionType type() override { return CDMSessionTypeAVStreamSession; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     void releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
@@ -70,7 +70,7 @@ protected:
     enum { Normal, KeyRelease } m_mode;
 };
 
-inline CDMSessionAVStreamSession* toCDMSessionAVStreamSession(CDMSession* session)
+inline CDMSessionAVStreamSession* toCDMSessionAVStreamSession(LegacyCDMSession* session)
 {
     if (!session || session->type() != CDMSessionTypeAVStreamSession)
         return nullptr;
