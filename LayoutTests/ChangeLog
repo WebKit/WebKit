@@ -1,3 +1,16 @@
+2017-10-06  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] Layout Test accessibility/ios-simulator/video-elements-ios.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=177954
+        <rdar://problem/34838094>
+
+        The test is flaky because that the video element has triggered the canplaythrough event before
+        we registered the event handler. Fixed it by setting the source after registering the handler.
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/video-elements-ios.html:
+
 2017-10-06  Sam Weinig  <sam@webkit.org>
 
         Add basic support for getting a ImageBitmapRenderingContext

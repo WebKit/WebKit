@@ -5,10 +5,7 @@
 </head>
 <body id="body">
 
-<video width="320" height="240" playsinline id="video" aria-label="Video label1">
-  <source src="../../media/content/counting.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<video width="320" height="240" playsinline id="video" aria-label="Video label1"></video>
 
 <video width="320" height="240" controls id="video2" aria-label="Video label2">
   <source src="../../media/content/counting.mp4" type="video/mp4">
@@ -54,6 +51,7 @@
             finishJSTest();
         };
         
+        vid.src = "../../media/content/counting.mp4";
     }
     
 </script>
