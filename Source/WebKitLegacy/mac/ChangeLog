@@ -1,3 +1,9 @@
+2017-10-05  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, tapi builds without optimization so we should have TAPI passes -DRELEASE_WITHOUT_OPTIMIZATIONS.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
 2017-10-05  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Enable ENABLE_ENCRYPTED_MEDIA build-time setting
