@@ -132,6 +132,7 @@ class HTMLPictureElement;
 class HTMLScriptElement;
 class HitTestRequest;
 class HitTestResult;
+class ImageBitmapRenderingContext;
 class IntPoint;
 class JSNode;
 class LayoutPoint;
@@ -296,7 +297,9 @@ using RenderingContext = Variant<
 #if ENABLE(WEBGPU)
     RefPtr<WebGPURenderingContext>,
 #endif
-    RefPtr<CanvasRenderingContext2D>>;
+    RefPtr<ImageBitmapRenderingContext>,
+    RefPtr<CanvasRenderingContext2D>
+>;
 
 class Document
     : public ContainerNode

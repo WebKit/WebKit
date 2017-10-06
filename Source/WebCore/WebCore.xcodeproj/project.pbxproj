@@ -3266,12 +3266,16 @@
 		7C73FB0D191EF5A8007DE061 /* JSUserMessageHandlersNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C73FB0B191EF5A8007DE061 /* JSUserMessageHandlersNamespace.h */; };
 		7C73FB11191EF6F4007DE061 /* JSUserMessageHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C73FB0F191EF6F4007DE061 /* JSUserMessageHandler.cpp */; };
 		7C73FB12191EF6F4007DE061 /* JSUserMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C73FB10191EF6F4007DE061 /* JSUserMessageHandler.h */; };
+		7C7761A81F878A8B00F869FC /* JSImageBitmapRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */; };
+		7C7761AA1F878AA500F869FC /* JSImageBitmapRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */; };
 		7C77C3D11DEE472400A50BFA /* BlobPropertyBag.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D01DEE472400A50BFA /* BlobPropertyBag.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C77C3D41DEF178E00A50BFA /* JSBlobPropertyBag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C77C3D21DEF178E00A50BFA /* JSBlobPropertyBag.cpp */; };
 		7C77C3D51DEF178E00A50BFA /* JSBlobPropertyBag.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D31DEF178E00A50BFA /* JSBlobPropertyBag.h */; };
 		7C77C3D71DEF850A00A50BFA /* BlobLineEndings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D61DEF850A00A50BFA /* BlobLineEndings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C77C3DB1DEF86D700A50BFA /* JSBlobLineEndings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C77C3D91DEF86D700A50BFA /* JSBlobLineEndings.cpp */; };
 		7C77C3DC1DEF86D700A50BFA /* JSBlobLineEndings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */; };
+		7C7903B31F86F95C00463A70 /* ImageBitmapRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7903B01F86F95C00463A70 /* ImageBitmapRenderingContext.h */; };
+		7C7903B41F86F95C00463A70 /* ImageBitmapRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7903B11F86F95C00463A70 /* ImageBitmapRenderingContext.cpp */; };
 		7C7941E41C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */; };
 		7C7941E51C56C29300A4C58E /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */; };
 		7C8139A61ED6286A00CE26E8 /* JSDOMAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11539,6 +11543,13 @@
 		7C77C3D81DEF854000A50BFA /* BlobLineEndings.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = BlobLineEndings.idl; sourceTree = "<group>"; };
 		7C77C3D91DEF86D700A50BFA /* JSBlobLineEndings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobLineEndings.cpp; sourceTree = "<group>"; };
 		7C77C3DA1DEF86D700A50BFA /* JSBlobLineEndings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlobLineEndings.h; sourceTree = "<group>"; };
+		7C7903B01F86F95C00463A70 /* ImageBitmapRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBitmapRenderingContext.h; sourceTree = "<group>"; };
+		7C7903B11F86F95C00463A70 /* ImageBitmapRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBitmapRenderingContext.cpp; sourceTree = "<group>"; };
+		7C7903B21F86F95C00463A70 /* ImageBitmapRenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageBitmapRenderingContext.idl; sourceTree = "<group>"; };
+		7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmapRenderingContext.cpp; sourceTree = "<group>"; };
+		7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapRenderingContext.h; sourceTree = "<group>"; };
+		7C7903BA1F86FF3300463A70 /* PlaceholderRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlaceholderRenderingContext.cpp; sourceTree = "<group>"; };
+		7C7903BC1F86FF3400463A70 /* PlaceholderRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceholderRenderingContext.h; sourceTree = "<group>"; };
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
 		7C8139A31ED6281D00CE26E8 /* JSDOMAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMAttribute.h; sourceTree = "<group>"; };
@@ -18549,6 +18560,9 @@
 				7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */,
 				7728694D14F8882500F484DC /* EXTTextureFilterAnisotropic.idl */,
 				311518FB1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h */,
+				7C7903B11F86F95C00463A70 /* ImageBitmapRenderingContext.cpp */,
+				7C7903B01F86F95C00463A70 /* ImageBitmapRenderingContext.h */,
+				7C7903B21F86F95C00463A70 /* ImageBitmapRenderingContext.idl */,
 				7C193BAF1F5E0EB40088F3E6 /* ImageSmoothingQuality.h */,
 				7C193BA81F5E0EAF0088F3E6 /* ImageSmoothingQuality.idl */,
 				7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */,
@@ -18575,6 +18589,8 @@
 				7C193BA71F5E0EAF0088F3E6 /* Path2D.cpp */,
 				7C193BAB1F5E0EB10088F3E6 /* Path2D.h */,
 				7C193BB41F5E0EB70088F3E6 /* Path2D.idl */,
+				7C7903BA1F86FF3300463A70 /* PlaceholderRenderingContext.cpp */,
+				7C7903BC1F86FF3400463A70 /* PlaceholderRenderingContext.h */,
 				D3F3D35B1A69A5060059FC2B /* WebGL2RenderingContext.cpp */,
 				D3F3D35C1A69A5060059FC2B /* WebGL2RenderingContext.h */,
 				D3F3D35D1A69A5060059FC2B /* WebGL2RenderingContext.idl */,
@@ -22155,6 +22171,8 @@
 				6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */,
 				E446140E0CD6826900FADA75 /* JSHTMLVideoElement.cpp */,
 				E446140F0CD6826900FADA75 /* JSHTMLVideoElement.h */,
+				7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */,
+				7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */,
 				31D26BC61F86D269008FF255 /* JSImageBitmap.cpp */,
 				31D26BC31F86D265008FF255 /* JSImageBitmap.h */,
 				31D26BC41F86D266008FF255 /* JSImageBitmapOptions.cpp */,
@@ -28336,6 +28354,7 @@
 				467302021C4EFE7800BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */,
+				7C7903B31F86F95C00463A70 /* ImageBitmapRenderingContext.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
 				22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */,
 				22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */,
@@ -29423,6 +29442,7 @@
 				CDC8B5A7180474F70016E685 /* MediaSourcePrivateAVFObjC.h in Headers */,
 				CDDC1E7A18A952F30027A9D4 /* MediaSourcePrivateClient.h in Headers */,
 				CD61FE681794AADB004101EB /* MediaSourceRegistry.h in Headers */,
+				7C7761AA1F878AA500F869FC /* JSImageBitmapRenderingContext.h in Headers */,
 				078E091517D14D1C00420AA1 /* MediaStream.h in Headers */,
 				078E094C17D1709600420AA1 /* MediaStreamAudioDestinationNode.h in Headers */,
 				0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */,
@@ -31729,6 +31749,7 @@
 				4A6E9FC313C17D1D0046A7F8 /* CSSFontFeatureValue.cpp in Sources */,
 				BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */,
 				C2E38F011E84573500CA3ADF /* CSSFontStyleRangeValue.cpp in Sources */,
+				7C7761A81F878A8B00F869FC /* JSImageBitmapRenderingContext.cpp in Sources */,
 				C2E38EFD1E8396FD00CA3ADF /* CSSFontStyleValue.cpp in Sources */,
 				A80E6CF10A1989CA007FB8C5 /* CSSFontValue.cpp in Sources */,
 				C21DF2E91D9E4E9900F5B24C /* CSSFontVariationValue.cpp in Sources */,
@@ -32371,6 +32392,7 @@
 				C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */,
 				C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
+				7C7903B41F86F95C00463A70 /* ImageBitmapRenderingContext.cpp in Sources */,
 				31D26BCB1F87065B008FF255 /* ImageBitmap.cpp in Sources */,
 				43D2597713C816F400608559 /* ImageBuffer.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,

@@ -58,6 +58,8 @@ public:
 #endif
     virtual bool isGPUBased() const { return false; }
     virtual bool isAccelerated() const { return false; }
+    virtual bool isBitmapRenderer() const { return false; }
+    virtual bool isPlaceholder() const { return false; }
 
     virtual void paintRenderingResultsToCanvas() {}
     virtual PlatformLayer* platformLayer() const { return 0; }

@@ -99,6 +99,7 @@
 #include "HashChangeEvent.h"
 #include "History.h"
 #include "HitTestResult.h"
+#include "ImageBitmapRenderingContext.h"
 #include "ImageLoader.h"
 #include "InspectorInstrumentation.h"
 #include "JSCustomElementInterface.h"

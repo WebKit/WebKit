@@ -948,6 +948,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').hasOwnProperty('get'
 PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmapRenderingContext').value is ImageBitmapRenderingContext
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmapRenderingContext').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmapRenderingContext').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmapRenderingContext').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmapRenderingContext').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').value is ImageData
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('set') is false

@@ -83,10 +83,10 @@ public:
     unsigned width() const { return size().width(); }
     unsigned height() const { return size().height(); }
 
-    const IntSize& size() const { return m_size; }
+    WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
+    WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
 
-    WEBCORE_EXPORT void setWidth(unsigned);
-    WEBCORE_EXPORT void setHeight(unsigned);
+    const IntSize& size() const { return m_size; }
 
     void setSize(const IntSize& newSize)
     { 
@@ -104,16 +104,23 @@ public:
     CanvasRenderingContext* getContext(const String&);
 
     static bool is2dType(const String&);
+    CanvasRenderingContext2D* createContext2d(const String& type);
     CanvasRenderingContext2D* getContext2d(const String&);
 
 #if ENABLE(WEBGL)
-    static bool is3dType(const String&);
+    static bool isWebGLType(const String&);
+    WebGLRenderingContextBase* createContextWebGL(const String&, WebGLContextAttributes&& = { });
     WebGLRenderingContextBase* getContextWebGL(const String&, WebGLContextAttributes&& = { });
 #endif
 #if ENABLE(WEBGPU)
     static bool isWebGPUType(const String&);
+    WebGPURenderingContext* createContextWebGPU(const String&);
     WebGPURenderingContext* getContextWebGPU(const String&);
 #endif
+
+    static bool isBitmapRendererType(const String&);
+    ImageBitmapRenderingContext* createContextBitmapRenderer(const String&);
+    ImageBitmapRenderingContext* getContextBitmapRenderer(const String&);
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);

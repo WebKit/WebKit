@@ -716,6 +716,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/CanvasTextDrawingStyles.idl
     html/canvas/CanvasTransform.idl
     html/canvas/CanvasUserInterface.idl
+    html/canvas/ImageBitmapRenderingContext.idl
     html/canvas/ImageSmoothingQuality.idl
     html/canvas/Path2D.idl
     html/canvas/WebGPUBuffer.idl
@@ -1986,7 +1987,9 @@ set(WebCore_SOURCES
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
+    html/canvas/ImageBitmapRenderingContext.cpp
     html/canvas/Path2D.cpp
+    html/canvas/PlaceholderRenderingContext.cpp
     html/canvas/WebGPUBuffer.cpp
     html/canvas/WebGPUCommandBuffer.cpp
     html/canvas/WebGPUCommandQueue.cpp
