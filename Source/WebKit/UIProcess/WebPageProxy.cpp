@@ -1644,6 +1644,16 @@ void WebPageProxy::validateCommand(const String& commandName, WTF::Function<void
     m_process->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_pageID);
 }
 
+bool WebPageProxy::maintainsInactiveSelection() const
+{
+    // Regardless of what the client wants to do, keep selections if a local Inspector is open.
+    // Otherwise, there is no way to use the console to inspect the state of a selection.
+    if (inspector() && inspector()->isVisible())
+        return true;
+
+    return m_maintainsInactiveSelection;
+}
+
 void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
 {
     m_maintainsInactiveSelection = newValue;
@@ -4411,11 +4421,10 @@ void WebPageProxy::didEndColorPicker()
 }
 #endif
 
-// Inspector
 WebInspectorProxy* WebPageProxy::inspector() const
 {
     if (isClosed() || !isValid())
-        return 0;
+        return nullptr;
     return m_inspector.get();
 }
 

@@ -472,7 +472,7 @@ public:
     bool hasSelectedRange() const { return m_editorState.selectionIsRange; }
     bool isContentEditable() const { return m_editorState.isContentEditable; }
     
-    bool maintainsInactiveSelection() const { return m_maintainsInactiveSelection; }
+    bool maintainsInactiveSelection() const;
     void setMaintainsInactiveSelection(bool);
     void setEditable(bool);
     bool isEditable() const { return m_isEditable; }
