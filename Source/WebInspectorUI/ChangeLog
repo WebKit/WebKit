@@ -1,5 +1,19 @@
 2017-10-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab - Make selection in the table more reliable (mousedown instead of click)
+        https://bugs.webkit.org/show_bug.cgi?id=177990
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.tableCellClicked): Deleted.
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype._handleMouseDown):
+        (WI.Table.prototype._handleClick): Deleted.
+        Switch to mousedown.
+
+2017-10-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve setting the default / initial sort of a Table
         https://bugs.webkit.org/show_bug.cgi?id=177989
 

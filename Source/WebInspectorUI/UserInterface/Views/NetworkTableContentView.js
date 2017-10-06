@@ -226,7 +226,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     // Table delegate
 
-    tableCellClicked(table, cell, column, rowIndex, event)
+    tableCellMouseDown(table, cell, column, rowIndex, event)
     {
         if (column !== this._nameColumn)
             return;

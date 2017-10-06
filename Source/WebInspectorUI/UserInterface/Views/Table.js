@@ -56,8 +56,8 @@ WI.Table = class Table extends WI.View
         this._scrollContainerElement.className = "data-container";
         this._scrollContainerElement.addEventListener("scroll", scrollHandler);
         this._scrollContainerElement.addEventListener("mousewheel", scrollHandler);
-        if (this._delegate.tableCellClicked)
-            this._scrollContainerElement.addEventListener("click", this._handleClick.bind(this));
+        if (this._delegate.tableCellMouseDown)
+            this._scrollContainerElement.addEventListener("mousedown", this._handleMouseDown.bind(this));
         if (this._delegate.tableCellContextMenuClicked)
             this._scrollContainerElement.addEventListener("contextmenu", this._handleContextMenu.bind(this));
 
@@ -1100,8 +1100,11 @@ WI.Table = class Table extends WI.View
         }
     }
 
-    _handleClick(event)
+    _handleMouseDown(event)
     {
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
         let cell = event.target.enclosingNodeOrSelfWithClass("cell");
         if (!cell)
             return;
@@ -1114,7 +1117,7 @@ WI.Table = class Table extends WI.View
         let column = this._visibleColumns[columnIndex];
         let rowIndex = row.__index;
 
-        this._delegate.tableCellClicked(this, cell, column, rowIndex, event);
+        this._delegate.tableCellMouseDown(this, cell, column, rowIndex, event);
     }
 
     _handleContextMenu(event)
