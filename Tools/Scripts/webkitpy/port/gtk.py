@@ -142,6 +142,8 @@ class GtkPort(Port):
             # Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.
             environment['G_SLICE'] = 'always-malloc'
             environment['G_DEBUG'] += ',gc-friendly'
+            # Turn off bmalloc when running under Valgrind, see https://bugs.webkit.org/show_bug.cgi?id=177745
+            environment['Malloc'] = '1'
             xmlfilename = "".join(("drt-%p-", uuid.uuid1().hex, "-leaks.xml"))
             xmlfile = os.path.join(self.results_directory(), xmlfilename)
             suppressionsfile = self.path_from_webkit_base('Tools', 'Scripts', 'valgrind', 'suppressions.txt')

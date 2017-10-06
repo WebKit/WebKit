@@ -1,3 +1,13 @@
+2017-10-06  Charles Turner  <cturner@igalia.com>
+
+        Disable bmalloc when running Valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=177923
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+
 2017-10-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Implement TestController::platformContext() for WPE, returning the
