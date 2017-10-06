@@ -1,3 +1,18 @@
+2017-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Tweak support for classifying form controls (followup to r222487)
+        https://bugs.webkit.org/show_bug.cgi?id=177917
+        <rdar://problem/34820122>
+
+        Reviewed by Dean Jackson.
+
+        Implement _autofillContext in legacy WebKit, and remove the two previous SPI hooks.
+
+        * DOM/DOMHTMLInputElement.mm:
+        (-[DOMHTMLInputElement _autofillContext]):
+        (-[DOMHTMLInputElement acceptsAutofilledLoginCredentials]): Deleted.
+        (-[DOMHTMLInputElement representingPageURL]): Deleted.
+
 2017-10-05  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, tapi builds without optimization so we should have TAPI passes -DRELEASE_WITHOUT_OPTIMIZATIONS.

@@ -27,23 +27,16 @@
 
 #import <UIKit/UITextInputTraits.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 @protocol UIDragSession;
 @class UIDragInteraction;
 @class UIDragItem;
-#endif
 
-#if USE(APPLE_INTERNAL_SDK) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+#if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIDragInteraction_Private.h>
 #import <UIKit/UITextInputTraits_Private.h>
-#import <UIKit/UITextSuggestion.h>
-
-
-@protocol UITextInputTraits_Private_Staging_34583628 <NSObject, UITextInputTraits>
-@property (nonatomic, readonly) BOOL acceptsAutofilledLoginCredentials;
-@end
+#import <UIKit/UITextInput_Private.h>
 
 #else
 
@@ -53,23 +46,40 @@ void UIApplicationInitialize(void);
 
 WTF_EXTERN_C_END
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+@interface UITextSuggestion : NSObject
+
+@end
+
 @protocol UIDragInteractionDelegate_ForWebKitOnly <UIDragInteractionDelegate>
 @optional
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(void(^)(void))completion;
 @end
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
-@property (nonatomic, readonly) BOOL acceptsAutofilledLoginCredentials;
+@end
+
+@protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
+- (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 @end
 
 #endif
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+@protocol UITextInputTraits_Private_Proposed_SPI_34583628 <UITextInputPrivate>
+- (NSDictionary *)_autofillContext;
+@end
+
 @protocol UIDragInteractionDelegate_Proposed_SPI_33146803 <UIDragInteractionDelegate>
 - (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion;
 @end
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+
+#if __has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
+// FIXME: Move this import under USE(APPLE_INTERNAL_SDK) once <rdar://problem/34583628> lands in the SDK.
+#import <UIKit/UIKeyboardLoginCredentialsSuggestion.h>
+#else
+@interface UIKeyboardLoginCredentialsSuggestion : UITextSuggestion
+@property (nonatomic, assign) NSString *username;
+@property (nonatomic, assign) NSString *password;
+@end
+#endif
 
 #endif // PLATFORM(IOS)

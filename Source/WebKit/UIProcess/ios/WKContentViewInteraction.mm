@@ -4518,6 +4518,18 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return dragItems;
 }
 
+- (NSDictionary *)_autofillContext
+{
+    if (_assistedNodeInformation.elementType == InputType::None || !_assistedNodeInformation.acceptsAutofilledLoginCredentials)
+        return nil;
+
+    NSURL *platformURL = _assistedNodeInformation.representingPageURL;
+    if (!platformURL)
+        return nil;
+
+    return @{ @"_WebViewURL" : platformURL };
+}
+
 #pragma mark - UIDragInteractionDelegate
 
 - (BOOL)_dragInteraction:(UIDragInteraction *)interaction shouldDelayCompetingGestureRecognizer:(UIGestureRecognizer *)competingGestureRecognizer

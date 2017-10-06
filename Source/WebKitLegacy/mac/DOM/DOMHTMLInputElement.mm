@@ -34,7 +34,7 @@
 #import "DOMPrivate.h"
 #import "ExceptionHandlers.h"
 
-// FIXME <radar:34583628>: Simplyfy this once the UIKit work is available in the build.
+// FIXME: Simplify this once <rdar://problem/34583628> is available in the build.
 #if USE(APPLE_INTERNAL_SDK) && TARGET_OS_IPHONE
 #if __has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
 #import <UIKit/UIKeyboardLoginCredentialsSuggestion.h>
@@ -683,16 +683,17 @@
     IMPL->setValueForUser(inValue);
 }
 
-- (BOOL)acceptsAutofilledLoginCredentials
+- (NSDictionary *)_autofillContext
 {
     WebCore::JSMainThreadNullState state;
-    return !!WebCore::AutofillElements::computeAutofillElements(*IMPL);
-}
+    if (!WebCore::AutofillElements::computeAutofillElements(*IMPL))
+        return nil;
 
-- (NSURL *)representingPageURL
-{
-    WebCore::JSMainThreadNullState state;
-    return [NSURL URLWithString:self.ownerDocument.URL];
+    NSURL *documentURL = [NSURL URLWithString:self.ownerDocument.URL];
+    if (!documentURL)
+        return nil;
+
+    return @{ @"_WebViewURL" : documentURL };
 }
 
 #if USE(APPLE_INTERNAL_SDK) && TARGET_OS_IPHONE

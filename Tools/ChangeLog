@@ -1,3 +1,46 @@
+2017-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Tweak support for classifying form controls (followup to r222487)
+        https://bugs.webkit.org/show_bug.cgi?id=177917
+        <rdar://problem/34820122>
+
+        Reviewed by Dean Jackson.
+
+        Minor cleanup around autofill API tests added in r222487. Additionally, augments some of these API tests to
+        verify that after blurring the focused element, the content view no longer accepts autofill credentials (see
+        WebKit ChangeLog for more details). Also augments tests to verify that the URL in the autofill context matches
+        the document URL.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+
+        Remove the USE(APPLE_INTERNAL_SDK) guard for these API tests.
+
+        (newUIKeyboardLoginCredentialsSuggestion):
+
+        Add a stub implementation of UIKeyboardLoginCredentialsSuggestion. This allows
+        [UIKeyboardLoginCredentialsSuggestion new] to return a nonnull object, which allows these API tests to verify
+        that the credential filling codepath works as intended without any additional UIKit changes. Currently, tests
+        for the value of username and password fields are passing even though the fields are not being populated because
+        the expected string values are null, and the observed value is an empty string. We instead check the literal
+        string values here instead of credentialSuggestion's properties, so that tests verifying the behavior of
+        -insertTextSuggestion: will require username and password inputs to be populated.
+
+        (-[TestInputDelegate _webView:focusShouldStartInputSession:]):
+        (-[AutofillTestView initWithFrame:]):
+        (-[AutofillTestView _autofillInputView]):
+        (-[AutofillTestView textInputHasAutofillContext]):
+        (TestWebKitAPI::TEST):
+
+        Add an additional API test to verify that programmatic focus without user interaction (and also without testing
+        overrides) does not activate autofill.
+
+        (createUIKeyboardLoginCredentialsSuggestion): Deleted.
+        (-[WKWebView _privateTextInput]): Deleted.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+        Minor gardening to remove iOS version >= 11 guards that are now unnecessary. Additionally, add some more private
+        header imports (with corresponding interface definitions for building and running with the public SDK).
+
 2017-10-06  Antti Koivisto  <antti@apple.com>
 
         Minor WeakPtr improvements

@@ -1,3 +1,49 @@
+2017-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Tweak support for classifying form controls (followup to r222487)
+        https://bugs.webkit.org/show_bug.cgi?id=177917
+        <rdar://problem/34820122>
+
+        Reviewed by Dean Jackson.
+
+        This patch follows up with <http://trac.webkit.org/r222487>. It combines the functionality of two SPI hooks
+        implemented on WKContentView into a single method that vends a context dictionary, and additionally addresses an
+        issue with the original implementation, wherein some cached state on WebPageProxy is set upon starting node
+        assistance, but is never unset when stopping node assistance, nor set anywhere else. See per-method comments for
+        more detail.
+
+        * UIProcess/WebPageProxy.h:
+
+        Remove members m_acceptsAutofilledLoginCredentials and m_representingPageURL from WebPageProxy. This state is
+        retrieved from the AssistedNodeInformation struct when starting node assistance, but is never reset anywhere
+        else. Instead of introducing new members to remember this state, we can just use the WKContentView's current
+        assisted node information.
+
+        This also means that programmatically focusing forms (without user gesture) will no longer cause WKContentView
+        to accept autofilled login credentials, since we bail out of node assistance and don't begin an input session.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView acceptsAutofilledLoginCredentials]): Deleted.
+        (-[WKContentView representingPageURL]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _autofillContext]):
+
+        Merge functionality of the previous two SPI hooks, such that -_autofillContext will return a non-null dictionary
+        containing the URL of the focused element's document if and only if WKContentView accepts autofilled login
+        credentials, and there exists a representing page URL.
+
+        When the page stops assisting the focused node, we set the AssistedNodeInformation's element type to None, so we
+        additionally bail and return nil if the element type is None. As an aside, it seems a more reasonable approach to
+        resetting state upon stopping node assistance is to just completely reset _assistedNodeInformation to its initial
+        value, i.e. via _assistedNodeInformation = { }. It's not clear whether there are behaviors relying on the fact
+        that all members but the element type in the content view's assisted node information could be stale, so this
+        seems worthy of some investigation.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAssistingNode):
+        (WebKit::WebPageProxy::acceptsAutofilledLoginCredentials): Deleted.
+        (WebKit::WebPageProxy::representingPageURL): Deleted.
+
 2017-10-06  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Add shared curl files

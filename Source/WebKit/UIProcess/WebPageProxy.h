@@ -559,8 +559,6 @@ public:
     void setIsScrollingOrZooming(bool);
     void requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, uint32_t offset, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&&);
     void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&&);
-    bool acceptsAutofilledLoginCredentials();
-    WebCore::URL representingPageURL();
     void autofillLoginCredentials(const String& username, const String& password);
 #if ENABLE(DATA_INTERACTION)
     void didPerformDataInteractionControllerOperation(bool handled);
@@ -1998,8 +1996,6 @@ private:
     bool m_hasDeferredStartAssistingNode { false };
     std::unique_ptr<NodeAssistanceArguments> m_deferredNodeAssistanceArguments;
     bool m_forceAlwaysUserScalable { false };
-    bool m_acceptsAutofilledLoginCredentials { false };
-    WebCore::URL m_representingPageURL;
 #endif
 
 #if ENABLE(POINTER_LOCK)
