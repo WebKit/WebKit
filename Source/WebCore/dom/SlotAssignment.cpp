@@ -137,7 +137,7 @@ void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ShadowRoot
     it->value->assignedNodes.clear();
     m_slotAssignmentsIsValid = false;
 
-    HTMLSlotElement* slotElement = findFirstSlotElement(*it->value, shadowRoot);
+    RefPtr<HTMLSlotElement> slotElement = findFirstSlotElement(*it->value, shadowRoot);
     if (!slotElement)
         return;
 

@@ -74,7 +74,7 @@ Vector<HTMLInputElement*> RadioButtonGroup::members() const
 
 void RadioButtonGroup::setCheckedButton(HTMLInputElement* button)
 {
-    HTMLInputElement* oldCheckedButton = m_checkedButton;
+    RefPtr<HTMLInputElement> oldCheckedButton = m_checkedButton;
     if (oldCheckedButton == button)
         return;
 

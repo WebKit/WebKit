@@ -1,3 +1,51 @@
+2017-10-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Replace some stack raw pointers with RefPtrs within WebCore/dom
+        https://bugs.webkit.org/show_bug.cgi?id=177852
+        <rdar://problem/34804487>
+
+        Reviewed by Ryosuke Niwa.
+
+        This is an effort to reduce raw pointer usage in DOM code. In this patch,
+        stack raw pointers that could be freed during their lifetime because of
+        event dispatching, layout updating and etc are selected. All selections are
+        basing on code speculation.
+
+        No changes in behaviours.
+
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::addChildNodesToDeletionQueue):
+        Escalate the RefPtr to where node is first defined.
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        Possible layout updates during their lifetime.
+        (WebCore::Document::implicitClose):
+        Possible event dispatching during its lifetime.
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        Possible node removal during their lifetime.
+        (WebCore::command):
+        Possible layout updates during its lifetime.
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        Possible layout updates during its lifetime.
+        * dom/Element.cpp:
+        (WebCore::Element::removedFrom):
+         Possible event dispatching during its lifetime.
+        (WebCore::checkForSiblingStyleChanges):
+        Possible layout updates during their lifetime.
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        Possible layout updates during its lifetime.
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroup::setCheckedButton):
+        Possible layout updates during its lifetime.
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::didChangeSlot):
+        Possible layout updates during its lifetime.
+
 2017-10-06  Zalan Bujtas  <zalan@apple.com>
 
         RootInlineBox should not hold a raw pointer to RenderObject

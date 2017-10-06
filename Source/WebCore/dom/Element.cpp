@@ -1765,7 +1765,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
     if (hasPendingResources())
         document().accessSVGExtensions().removeElementFromPendingResources(this);
 
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (frame)
         frame->animation().cancelAnimations(*this);
 
@@ -1998,7 +1998,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
     // |afterChange| is 0 in the parser case, so it works out that we'll skip this block.
     if (parent.childrenAffectedByFirstChildRules() && elementAfterChange) {
         // Find our new first child.
-        Element* newFirstElement = ElementTraversal::firstChild(parent);
+        RefPtr<Element> newFirstElement = ElementTraversal::firstChild(parent);
         // Find the first element node following |afterChange|
 
         // This is the insert/append case.
@@ -2020,7 +2020,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
     // In the DOM case, we only need to do something if |afterChange| is not 0.
     if (parent.childrenAffectedByLastChildRules() && elementBeforeChange) {
         // Find our new last child.
-        Element* newLastElement = ElementTraversal::lastChild(parent);
+        RefPtr<Element> newLastElement = ElementTraversal::lastChild(parent);
 
         if (newLastElement != elementBeforeChange) {
             auto* style = elementBeforeChange->renderStyle();

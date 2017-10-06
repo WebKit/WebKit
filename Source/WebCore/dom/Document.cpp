@@ -1233,7 +1233,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
     if (!visualUpdatesAllowed)
         return;
 
-    FrameView* frameView = view();
+    RefPtr<FrameView> frameView = view();
     bool needsLayout = frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout());
     if (needsLayout)
         updateLayout();
@@ -1916,7 +1916,7 @@ void Document::updateLayout()
     ASSERT(LayoutDisallowedScope::isLayoutAllowed());
     ASSERT(isMainThread());
 
-    FrameView* frameView = view();
+    RefPtr<FrameView> frameView = view();
     if (frameView && frameView->isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
@@ -1991,7 +1991,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     }
     
     // Check for re-entrancy and assert (same code that is in updateLayout()).
-    FrameView* frameView = view();
+    RefPtr<FrameView> frameView = view();
     if (frameView && frameView->isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
@@ -2718,7 +2718,7 @@ void Document::implicitClose()
     //  -When any new HTMLLinkElement is inserted into the document
     // But those add a dynamic component to the favicon that has UI 
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
-    Frame* f = frame();
+    RefPtr<Frame> f = frame();
     if (f) {
         if (auto* documentLoader = loader())
             documentLoader->startIconLoading();
@@ -4063,7 +4063,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
             it->nodeWillBeRemoved(*n);
     }
 
-    if (Frame* frame = this->frame()) {
+    if (RefPtr<Frame> frame = this->frame()) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling()) {
             frame->eventHandler().nodeWillBeRemoved(*n);
             frame->selection().nodeWillBeRemoved(*n);
@@ -4094,7 +4094,7 @@ void Document::nodeWillBeRemoved(Node& node)
     for (auto* range : m_ranges)
         range->nodeWillBeRemoved(node);
 
-    if (Frame* frame = this->frame()) {
+    if (RefPtr<Frame> frame = this->frame()) {
         frame->eventHandler().nodeWillBeRemoved(node);
         frame->selection().nodeWillBeRemoved(node);
         frame->page()->dragCaretController().nodeWillBeRemoved(node);
@@ -4979,7 +4979,7 @@ bool Document::shouldCreateRenderers()
 
 static Editor::Command command(Document* document, const String& commandName, bool userInterface = false)
 {
-    Frame* frame = document->frame();
+    RefPtr<Frame> frame = document->frame();
     if (!frame || frame->document() != document)
         return Editor::Command();
 

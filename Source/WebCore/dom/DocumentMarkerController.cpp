@@ -255,7 +255,7 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
         return result;
     ASSERT(!(m_markers.isEmpty()));
 
-    Frame* frame = m_document.frame();
+    RefPtr<Frame> frame = m_document.frame();
     if (!frame)
         return result;
     FrameView* frameView = frame->view();

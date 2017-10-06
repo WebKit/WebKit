@@ -155,14 +155,14 @@ void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node& child)
 void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& container)
 {
     // We have to tell all children that their parent has died.
-    Node* next = nullptr;
-    for (auto* node = container.firstChild(); node; node = next) {
+    RefPtr<Node> next = nullptr;
+    for (RefPtr<Node> node = container.firstChild(); node; node = next) {
         ASSERT(!node->m_deletionHasBegun);
 
         next = node->nextSibling();
         node->setNextSibling(nullptr);
         node->setParentNode(nullptr);
-        container.setFirstChild(next);
+        container.setFirstChild(next.get());
         if (next)
             next->setPreviousSibling(nullptr);
 
@@ -173,13 +173,12 @@ void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& conta
             // Add the node to the list of nodes to be deleted.
             // Reuse the nextSibling pointer for this purpose.
             if (tail)
-                tail->setNextSibling(node);
+                tail->setNextSibling(node.get());
             else
-                head = node;
+                head = node.get();
 
-            tail = node;
+            tail = node.get();
         } else {
-            Ref<Node> protect(*node); // removedFromDocument may remove remove all references to this node.
             node->setTreeScopeRecursively(container.document());
             if (node->isInTreeScope())
                 notifyChildNodeRemoved(container, *node);

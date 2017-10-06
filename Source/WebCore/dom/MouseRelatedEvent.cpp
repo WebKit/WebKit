@@ -146,7 +146,7 @@ void MouseRelatedEvent::receivedTarget()
 
 void MouseRelatedEvent::computeRelativePosition()
 {
-    Node* targetNode = target() ? target()->toNode() : nullptr;
+    RefPtr<Node> targetNode = target() ? target()->toNode() : nullptr;
     if (!targetNode)
         return;
 
@@ -169,7 +169,7 @@ void MouseRelatedEvent::computeRelativePosition()
     // FIXME: event.layerX and event.layerY are poorly defined,
     // and probably don't always correspond to RenderLayer offsets.
     // https://bugs.webkit.org/show_bug.cgi?id=21868
-    Node* n = targetNode;
+    Node* n = targetNode.get();
     while (n && !n->renderer())
         n = n->parentNode();
 
