@@ -1,3 +1,20 @@
+2017-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        Continuation map should not hold a raw pointer
+        https://bugs.webkit.org/show_bug.cgi?id=178021
+        <rdar://problem/34861590>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures proper lifetime management for renderers stored in the Continuation map
+        (currently they rely on the correctness of addChild/takeChild methods).
+
+        Covered by existing tests.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::continuation const):
+        (WebCore::RenderBoxModelObject::setContinuation):
+
 2017-10-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r222791 and r222873.
