@@ -566,6 +566,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._table.addColumn(this._timeColumn);
         this._table.addColumn(this._waterfallColumn);
 
+        if (!this._table.sortColumnIdentifier) {
+            this._table.sortOrder = WI.Table.SortOrder.Ascending;
+            this._table.sortColumnIdentifier = "waterfall";
+        }
+
         this.addSubview(this._table);
     }
 

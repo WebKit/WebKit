@@ -1,3 +1,20 @@
+2017-10-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve setting the default / initial sort of a Table
+        https://bugs.webkit.org/show_bug.cgi?id=177989
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.initialLayout):
+        Set the default / initial sort.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.set sortOrder):
+        (WI.Table.prototype.set sortColumnIdentifier):
+        During setup we should always update header views.
+
 2017-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: Add support for keyboard navigation (Tab, Shift-Tab, Enter, Esc)

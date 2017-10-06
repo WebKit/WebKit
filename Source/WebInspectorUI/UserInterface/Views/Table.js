@@ -96,13 +96,12 @@ WI.Table = class Table extends WI.View
         this._resizeOriginalColumnWidths = null;
         this._lastColumnIndexToAcceptRemainderPixel = 0;
 
-        this._sortOrder = WI.Table.SortOrder.Indeterminate;
-        this._sortColumnIdentifier = null;
-        this._sortRequestIdentifier = undefined;
-
-        this._sortOrderSetting = new WI.Setting(this._identifier + "-sort-order", this._sortOrder);
-        this._sortColumnIdentifierSetting = new WI.Setting(this._identifier + "-sort", this._sortColumnIdentifier);
+        this._sortOrderSetting = new WI.Setting(this._identifier + "-sort-order", WI.Table.SortOrder.Indeterminate);
+        this._sortColumnIdentifierSetting = new WI.Setting(this._identifier + "-sort", null);
         this._columnVisibilitySetting = new WI.Setting(this._identifier + "-column-visibility", {});
+
+        this._sortOrder = this._sortOrderSetting.value;
+        this._sortColumnIdentifier = this._sortColumnIdentifierSetting.value;
 
         this._cachedWidth = NaN;
         this._cachedHeight = NaN;
@@ -133,7 +132,7 @@ WI.Table = class Table extends WI.View
 
     set sortOrder(sortOrder)
     {
-        if (sortOrder === this._sortOrder)
+        if (sortOrder === this._sortOrder && this.didInitialLayout)
             return;
 
         console.assert(sortOrder === WI.Table.SortOrder.Indeterminate || sortOrder === WI.Table.SortOrder.Ascending || sortOrder === WI.Table.SortOrder.Descending);
@@ -162,7 +161,7 @@ WI.Table = class Table extends WI.View
 
     set sortColumnIdentifier(columnIdentifier)
     {
-        if (columnIdentifier === this._sortColumnIdentifier)
+        if (columnIdentifier === this._sortColumnIdentifier && this.didInitialLayout)
             return;
 
         let column = this._columnSpecs.get(columnIdentifier);
