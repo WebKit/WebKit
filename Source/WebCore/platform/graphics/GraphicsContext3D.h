@@ -747,7 +747,7 @@ public:
 
 #if PLATFORM(COCOA)
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
-    Platform3DObject platformTexture() const { return m_texture; }
+    Platform3DObject platformTexture() const { return m_fbo; }
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
 #else
     PlatformGraphicsContext3D platformGraphicsContext3D();
@@ -1147,16 +1147,12 @@ public:
     RefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintCompositedResultsToCanvas(ImageBuffer*);
 
-#if PLATFORM(COCOA)
+#if PLATFORM(IOS)
     void endPaint();
 #endif
-
 #if PLATFORM(MAC)
-    void allocateIOSurfaceBackingStore(IntSize);
-    void updateFramebufferTextureBackingStoreFromLayer();
     void updateCGLContext();
 #endif
-
     void setContextVisibility(bool);
 
     GraphicsContext3DPowerPreference powerPreferenceUsedForCreation() const { return m_powerPreferenceUsedForCreation; }

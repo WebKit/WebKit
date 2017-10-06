@@ -1,3 +1,23 @@
+2017-10-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r222951 and r222952.
+        https://bugs.webkit.org/show_bug.cgi?id=177992
+
+        "Broke the iOS build and introduced a webgl LayoutTest
+        failure." (Requested by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "Lots of missing frames in YouTube360 when fullscreen on
+        MacBook"
+        https://bugs.webkit.org/show_bug.cgi?id=177903
+        http://trac.webkit.org/changeset/222951
+
+        "Lots of missing frames in YouTube360 when fullscreen on
+        MacBook"
+        https://bugs.webkit.org/show_bug.cgi?id=177903
+        http://trac.webkit.org/changeset/222952
+
 2017-10-05  Dean Jackson  <dino@apple.com>
 
         Lots of missing frames in YouTube360 when fullscreen on MacBook

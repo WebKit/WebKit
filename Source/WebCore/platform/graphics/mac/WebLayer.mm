@@ -30,7 +30,6 @@
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 #import <QuartzCore/QuartzCore.h>
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SetForScope.h>
 
 #if PLATFORM(IOS)
@@ -38,6 +37,10 @@
 #import "WAKWindow.h"
 #import "WebCoreThread.h"
 #endif
+
+@interface CALayer(WebCoreCALayerPrivate)
+- (void)reloadValueForKeyPath:(NSString *)keyPath;
+@end
 
 using namespace WebCore;
 
