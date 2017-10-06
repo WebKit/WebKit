@@ -69,6 +69,7 @@ void GraphicsContext3D::releaseShaderCompiler()
     notImplemented();
 }
 
+#if PLATFORM(MAC)
 static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
 {
     // We can assume this doesn't overflow because the calling functions
@@ -77,6 +78,7 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
     for (int i = 0; i < totalBytes; i += 4)
         pixels[i + 3] = 255;
 }
+#endif
 
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
