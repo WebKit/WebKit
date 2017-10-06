@@ -1,3 +1,10 @@
+2017-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix parsing of GTK unit tests output in bot configuration.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkAPITests.commandComplete): Remove trailing ':' from the regular expression.
+
 2017-10-06  Charles Turner  <cturner@igalia.com>
 
         Disable bmalloc when running Valgrind
