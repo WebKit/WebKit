@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
 
@@ -31,7 +32,12 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         return;
     }
 
-    if (g_str_equal(path, "/empty")) {
+    if (g_str_equal(path, "/")) {
+        const char* html = "<html><body></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, html, strlen(html));
+        soup_message_body_complete(message->response_body);
+        soup_message_set_status(message, SOUP_STATUS_OK);
+    } else if (g_str_equal(path, "/empty")) {
         const char* emptyHTML = "<html><body></body></html>";
         soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
@@ -161,9 +167,12 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_cmpstr(diskCacheDirectory.get(), ==, webkit_website_data_manager_get_disk_cache_directory(test->m_manager));
     g_assert(g_file_test(diskCacheDirectory.get(), G_FILE_TEST_IS_DIR));
 
+    GUniquePtr<char> resourceLoadStatisticsDirectory(g_build_filename(Test::dataDirectory(), "resource-load-statistics", nullptr));
+    g_assert_cmpstr(resourceLoadStatisticsDirectory.get(), ==, webkit_website_data_manager_get_resource_load_statistics_directory(test->m_manager));
+
     // Clear all persistent caches, since the data dir is common to all test cases.
     static const WebKitWebsiteDataTypes persistentCaches = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_DISK_CACHE | WEBKIT_WEBSITE_DATA_LOCAL_STORAGE
-        | WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE);
+        | WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES | WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES | WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE | WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS);
     test->clear(persistentCaches, 0);
     g_assert(!test->fetch(persistentCaches));
 
@@ -193,6 +202,9 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     webSQLDirectory.reset(g_build_filename(Test::dataDirectory(), "databases", nullptr));
     g_assert_cmpstr(webkit_website_data_manager_get_websql_directory(baseDataManager.get()), ==, webSQLDirectory.get());
 
+    resourceLoadStatisticsDirectory.reset(g_build_filename(Test::dataDirectory(), "resourceloadstatistics", nullptr));
+    g_assert_cmpstr(webkit_website_data_manager_get_resource_load_statistics_directory(baseDataManager.get()), ==, resourceLoadStatisticsDirectory.get());
+
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
 
     // Any specific configuration provided takes precedence over base dirs.
@@ -205,6 +217,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     // The result should be the same as previous manager.
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(baseDataManager.get()), ==, localStorageDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_websql_directory(baseDataManager.get()), ==, webSQLDirectory.get());
+    g_assert_cmpstr(webkit_website_data_manager_get_resource_load_statistics_directory(baseDataManager.get()), ==, resourceLoadStatisticsDirectory.get());
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(baseDataManager.get()), ==, Test::dataDirectory());
 }
 
@@ -227,11 +240,14 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_assert(!webkit_website_data_manager_get_offline_application_cache_directory(manager.get()));
     g_assert(!webkit_website_data_manager_get_indexeddb_directory(manager.get()));
     g_assert(!webkit_website_data_manager_get_websql_directory(manager.get()));
+    g_assert(!webkit_website_data_manager_get_resource_load_statistics_directory(manager.get()));
 
     // Configuration is ignored when is-ephemeral is used.
     manager = adoptGRef(WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, "base-data-directory", Test::dataDirectory(), "is-ephemeral", TRUE, nullptr)));
     g_assert(webkit_website_data_manager_is_ephemeral(manager.get()));
     g_assert(!webkit_website_data_manager_get_base_data_directory(manager.get()));
+    webkit_website_data_manager_set_resource_load_statistics_enabled(manager.get(), TRUE);
+    g_assert(webkit_website_data_manager_get_resource_load_statistics_enabled(manager.get()));
 
     // Non persistent data can be queried in an ephemeral manager.
     GRefPtr<WebKitWebContext> webContext = adoptGRef(webkit_web_context_new_with_website_data_manager(manager.get()));
@@ -243,6 +259,9 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/empty").data());
     g_main_loop_run(test->m_mainLoop);
+
+    GUniquePtr<char> resourceLoadStatisticsDirectory(g_build_filename(Test::dataDirectory(), "resource-load-statistics", nullptr));
+    g_assert(!g_file_test(resourceLoadStatisticsDirectory.get(), G_FILE_TEST_IS_DIR));
 
     webkit_website_data_manager_fetch(manager.get(), WEBKIT_WEBSITE_DATA_MEMORY_CACHE, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
         auto* test = static_cast<WebViewTest*>(userData);
@@ -258,6 +277,8 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
         test->quitMainLoop();
     }, test);
     g_main_loop_run(test->m_mainLoop);
+
+    webkit_website_data_manager_set_resource_load_statistics_enabled(manager.get(), FALSE);
 }
 
 static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
@@ -517,6 +538,44 @@ static void testWebsiteDataCookies(WebsiteDataTest* test, gconstpointer)
     g_assert(!dataList);
 }
 
+static void testWebsiteDataResourceLoadStatistics(WebsiteDataTest* test, gconstpointer)
+{
+    const char* resourceLoadStatisticsDirectory = webkit_website_data_manager_get_resource_load_statistics_directory(test->m_manager);
+    GUniquePtr<char> resourceLoadStatisticsLogFile(g_build_filename(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist", nullptr));
+
+    // Delete any previous data.
+    g_unlink(resourceLoadStatisticsLogFile.get());
+    g_rmdir(resourceLoadStatisticsDirectory);
+
+    g_assert(!webkit_website_data_manager_get_resource_load_statistics_enabled(test->m_manager));
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    webkit_website_data_manager_set_resource_load_statistics_enabled(test->m_manager, TRUE);
+    g_assert(webkit_website_data_manager_get_resource_load_statistics_enabled(test->m_manager));
+    g_assert(!g_file_test(resourceLoadStatisticsDirectory, G_FILE_TEST_IS_DIR));
+    g_assert(!g_file_test(resourceLoadStatisticsLogFile.get(), G_FILE_TEST_IS_REGULAR));
+
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+
+    test->waitUntilFileExists(resourceLoadStatisticsLogFile.get());
+
+    g_assert(g_file_test(resourceLoadStatisticsDirectory, G_FILE_TEST_IS_DIR));
+    g_assert(g_file_test(resourceLoadStatisticsLogFile.get(), G_FILE_TEST_IS_REGULAR));
+
+    // Clear all.
+    static const WebKitWebsiteDataTypes cacheAndResourceLoadStatistics = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    test->clear(cacheAndResourceLoadStatistics, 0);
+    g_assert(g_file_test(resourceLoadStatisticsDirectory, G_FILE_TEST_IS_DIR));
+    g_assert(!g_file_test(resourceLoadStatisticsLogFile.get(), G_FILE_TEST_IS_REGULAR));
+
+    webkit_website_data_manager_set_resource_load_statistics_enabled(test->m_manager, FALSE);
+    g_assert(!webkit_website_data_manager_get_resource_load_statistics_enabled(test->m_manager));
+
+    g_rmdir(resourceLoadStatisticsDirectory);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -529,6 +588,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "databases", testWebsiteDataDatabases);
     WebsiteDataTest::add("WebKitWebsiteData", "appcache", testWebsiteDataAppcache);
     WebsiteDataTest::add("WebKitWebsiteData", "cookies", testWebsiteDataCookies);
+    WebsiteDataTest::add("WebKitWebsiteData", "resource-load-statistics", testWebsiteDataResourceLoadStatistics);
 }
 
 void afterAll()

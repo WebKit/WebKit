@@ -1,5 +1,30 @@
 2017-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Add API to configure and enable resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=177943
+
+        Reviewed by Michael Catanzaro.
+
+        Add a command line option to enable intelligent tracking prevention to MiniBrowser and tests cases to check the
+        new API.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (serverCallback):
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataEphemeral):
+        (testWebsiteDataResourceLoadStats):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::Test):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (directoryChangedCallback):
+        (WebViewTest::waitUntilFileExists):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
+2017-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] All resource load statistics tests added in r212183 crash in GTK bots, timeout in GTK and WPE bots since r219049
         https://bugs.webkit.org/show_bug.cgi?id=168171
 
