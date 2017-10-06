@@ -1,3 +1,16 @@
+2017-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Sandbox rules block PluginProcess using "File Open/Save" dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=177965
+        <rdar://problem/33976846>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update the PluginProcess sandboxes to allow the same XPC services as
+        the WebContent process. Also allow access to the openAndSavePanelServices.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in: 
+
 2017-10-06  Brady Eidson  <beidson@apple.com>
 
         Add (entirely incorrect) fetching of ServiceWorker scripts.
