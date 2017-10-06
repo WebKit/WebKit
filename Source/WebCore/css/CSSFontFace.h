@@ -88,6 +88,7 @@ public:
     const Vector<UnicodeRange>& ranges() const { return m_ranges; }
     const FontFeatureSettings& featureSettings() const { return m_featureSettings; }
     const FontVariantSettings& variantSettings() const { return m_variantSettings; }
+    FontLoadingBehavior loadingBehavior() const { return m_loadingBehavior; }
     void setVariantSettings(const FontVariantSettings& variantSettings) { m_variantSettings = variantSettings; }
     void setWeight(FontSelectionRange weight) { m_fontSelectionCapabilities.weight = weight; }
     void setStretch(FontSelectionRange stretch) { m_fontSelectionCapabilities.width = stretch; }

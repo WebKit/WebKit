@@ -1,3 +1,14 @@
+2017-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add "display" to FontFace Javascript object
+        https://bugs.webkit.org/show_bug.cgi?id=175383
+        <rdar://problem/33813239>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-loading-font-display-expected.txt: Added.
+        * fast/text/font-loading-font-display.html: Added.
+
 2017-10-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Web process should ask UI process for grant/deny

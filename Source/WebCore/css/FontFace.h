@@ -47,6 +47,7 @@ public:
         String unicodeRange;
         String variant;
         String featureSettings;
+        String display;
     };
     
     using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
@@ -61,6 +62,7 @@ public:
     ExceptionOr<void> setUnicodeRange(const String&);
     ExceptionOr<void> setVariant(const String&);
     ExceptionOr<void> setFeatureSettings(const String&);
+    ExceptionOr<void> setDisplay(const String&);
 
     String family() const;
     String style() const;
@@ -69,6 +71,7 @@ public:
     String unicodeRange() const;
     String variant() const;
     String featureSettings() const;
+    String display() const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;

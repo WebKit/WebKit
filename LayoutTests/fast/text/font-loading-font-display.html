@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="styleElement">
+@font-face {
+    font-family: "WebFont";
+    src: url("garbage");
+}
+</style>
+</head>
+<body>
+<script>
+var styleElement = document.getElementById("styleElement");
+let fontFaceRule = styleElement.sheet.rules[0];
+let fontFace = document.fonts.entries().next().value;
+
+shouldBeEqualToString("fontFaceRule.style.getPropertyValue('font-display')", "");
+shouldBeEqualToString("fontFace.display", "auto");
+
+let values = ["auto", "block", "swap", "fallback", "optional"];
+for (let value of values) {
+    fontFace.display = value;
+    shouldBeEqualToString("fontFaceRule.style.getPropertyValue('font-display')", value == "auto" ? "" : value);
+    shouldBeEqualToString("fontFace.display", value);
+}
+shouldThrow("fontFace.display = 'garbage'");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

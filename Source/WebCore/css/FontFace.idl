@@ -39,6 +39,7 @@ dictionary FontFaceDescriptors {
     DOMString unicodeRange = "U+0-10FFFF";
     DOMString variant = "normal";
     DOMString featureSettings = "normal";
+    DOMString display = "auto";
 };
 
 [
@@ -53,6 +54,7 @@ dictionary FontFaceDescriptors {
     attribute DOMString unicodeRange;
     attribute DOMString variant;
     attribute DOMString featureSettings;
+    attribute DOMString display;
 
     readonly attribute FontFaceLoadStatus status;
 

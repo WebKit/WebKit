@@ -5698,10 +5698,4 @@ template<> inline CSSPrimitiveValue::operator FontLoadingBehavior() const
     return FontLoadingBehavior::Auto;
 }
 
-/*
-enum class FontLoadingBehavior {
-    Auto, Block, Swap, Fallback, Optional
-};
-*/
-
 }

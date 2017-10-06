@@ -31,6 +31,7 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleValue.h"
 #include "CSSParser.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -104,6 +105,9 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
     auto setFeatureSettingsResult = result->setFeatureSettings(descriptors.featureSettings.isEmpty() ? ASCIILiteral("normal") : descriptors.featureSettings);
     if (setFeatureSettingsResult.hasException())
         return setFeatureSettingsResult.releaseException();
+    auto setDisplayResult = result->setDisplay(descriptors.display.isEmpty() ? ASCIILiteral("auto") : descriptors.display);
+    if (setDisplayResult.hasException())
+        return setDisplayResult.releaseException();
 
     if (!dataRequiresAsynchronousLoading) {
         result->backing().load();
@@ -278,6 +282,19 @@ ExceptionOr<void> FontFace::setFeatureSettings(const String& featureSettings)
     return { };
 }
 
+ExceptionOr<void> FontFace::setDisplay(const String& display)
+{
+    if (display.isEmpty())
+        return Exception { SyntaxError };
+
+    if (auto value = parseString(display, CSSPropertyFontDisplay)) {
+        m_backing->setLoadingBehavior(*value);
+        return { };
+    }
+
+    return Exception { SyntaxError };
+}
+
 String FontFace::family() const
 {
     m_backing->updateStyleIfNeeded();
@@ -382,6 +399,12 @@ String FontFace::featureSettings() const
     for (auto& feature : m_backing->featureSettings())
         list->append(CSSFontFeatureValue::create(FontTag(feature.tag()), feature.value()));
     return list->cssText();
+}
+
+String FontFace::display() const
+{
+    m_backing->updateStyleIfNeeded();
+    return CSSValuePool::singleton().createValue(m_backing->loadingBehavior())->cssText();
 }
 
 auto FontFace::status() const -> LoadStatus
