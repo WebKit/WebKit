@@ -1,3 +1,42 @@
+2017-10-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Create Cairo patterns from Gradient objects on-the-fly
+        https://bugs.webkit.org/show_bug.cgi?id=177947
+
+        Reviewed by Carlos Garcia Campos.
+
+        Stop caching cairo_pattern_t objects for a specific global alpha value
+        in the Gradient class. Instead, create these as required, for whatever
+        alpha value. This drops some efficiency benefits in exchange for better
+        Cairo operation isolation, while also matching the same approach that
+        is used in the Pattern implementation for Cairo.
+
+        Introduce the createPlatformGradient() method for Cairo, resuing the
+        implementation of platformGradient() that's now removed. The
+        Cairo-specific setPlatformGradientSpaceTransform() method is also
+        removed since there's no cached cairo_pattern_t object that we can
+        update. The Cairo-specific m_platformGradientAlpha member float is also
+        deleted.
+
+        Gradient::fill() and prepareCairoContextSource() are the only two places
+        that need to create a cairo_pattern_t object off of Gradient, so they
+        are updated accordingly.
+
+        No new tests -- no changes in behavior.
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::setGradientSpaceTransform):
+        (WebCore::Gradient::setPlatformGradientSpaceTransform): Deleted.
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::Gradient::createPlatformGradient):
+        (WebCore::Gradient::fill):
+        (WebCore::Gradient::platformGradient): Deleted.
+        (WebCore::Gradient::setPlatformGradientSpaceTransform): Deleted.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::prepareCairoContextSource):
+
 2017-10-06  Ms2ger  <Ms2ger@igalia.com>
 
         Create bindings for WebGL2's versions of compressedTexImage2D.

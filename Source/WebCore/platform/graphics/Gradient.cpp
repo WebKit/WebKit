@@ -163,16 +163,9 @@ void Gradient::setGradientSpaceTransform(const AffineTransform& gradientSpaceTra
         return;
 
     m_gradientSpaceTransformation = gradientSpaceTransformation;
-    setPlatformGradientSpaceTransform(gradientSpaceTransformation);
 
     invalidateHash();
 }
-
-#if !USE(CAIRO)
-void Gradient::setPlatformGradientSpaceTransform(const AffineTransform&)
-{
-}
-#endif
 
 unsigned Gradient::hash() const
 {

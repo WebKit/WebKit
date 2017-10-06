@@ -269,12 +269,13 @@ static inline void reduceSourceByAlpha(cairo_t* cr, float alpha)
 static void prepareCairoContextSource(cairo_t* cr, Pattern* pattern, Gradient* gradient, const Color& color, float globalAlpha)
 {
     if (pattern) {
-        RefPtr<cairo_pattern_t> cairoPattern(adoptRef(pattern->createPlatformPattern(AffineTransform())));
+        RefPtr<cairo_pattern_t> cairoPattern = adoptRef(pattern->createPlatformPattern(AffineTransform()));
         cairo_set_source(cr, cairoPattern.get());
         reduceSourceByAlpha(cr, globalAlpha);
-    } else if (gradient)
-        cairo_set_source(cr, gradient->platformGradient(globalAlpha));
-    else { // Solid color source.
+    } else if (gradient) {
+        RefPtr<cairo_pattern_t> cairoPattern = adoptRef(gradient->createPlatformGradient(globalAlpha));
+        cairo_set_source(cr, cairoPattern.get());
+    } else { // Solid color source.
         if (globalAlpha < 1)
             setSourceRGBAFromColor(cr, colorWithOverrideAlpha(color.rgb(), color.alpha() / 255.f * globalAlpha));
         else

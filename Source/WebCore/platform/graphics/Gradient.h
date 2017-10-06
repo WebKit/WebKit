@@ -159,8 +159,6 @@ namespace WebCore {
         void fill(GraphicsContext*, const FloatRect&);
         void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);
 
-        void setPlatformGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
-
         unsigned hash() const;
         void invalidateHash() { m_cachedHash = 0; }
 
@@ -170,7 +168,7 @@ namespace WebCore {
 #elif USE(DIRECT2D)
         PlatformGradient createPlatformGradientIfNecessary(ID2D1RenderTarget*);
 #elif USE(CAIRO)
-        PlatformGradient platformGradient(float globalAlpha);
+        PlatformGradient createPlatformGradient(float globalAlpha);
 #endif
 
     private:
@@ -201,11 +199,6 @@ namespace WebCore {
         mutable unsigned m_cachedHash;
 
         PlatformGradient m_gradient;
-
-#if USE(CAIRO)
-        float m_platformGradientAlpha;
-#endif
-
     };
 
 } //namespace

@@ -37,77 +37,57 @@ namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-    if (m_gradient) {
-        cairo_pattern_destroy(m_gradient);
-        m_gradient = 0;
-    }
 }
 
-cairo_pattern_t* Gradient::platformGradient()
+cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
 {
-    return platformGradient(1);
-}
-
-cairo_pattern_t* Gradient::platformGradient(float globalAlpha)
-{
-    if (m_gradient && m_platformGradientAlpha == globalAlpha)
-        return m_gradient;
-
-    platformDestroy();
-    m_platformGradientAlpha = globalAlpha;
-
+    cairo_pattern_t* gradient;
     if (m_radial)
-        m_gradient = cairo_pattern_create_radial(m_p0.x(), m_p0.y(), m_r0, m_p1.x(), m_p1.y(), m_r1);
+        gradient = cairo_pattern_create_radial(m_p0.x(), m_p0.y(), m_r0, m_p1.x(), m_p1.y(), m_r1);
     else
-        m_gradient = cairo_pattern_create_linear(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
+        gradient = cairo_pattern_create_linear(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
 
     for (const auto& stop : m_stops) {
         if (stop.color.isExtended()) {
-            cairo_pattern_add_color_stop_rgba(m_gradient, stop.offset, stop.color.asExtended().red(), stop.color.asExtended().green(), stop.color.asExtended().blue(),
+            cairo_pattern_add_color_stop_rgba(gradient, stop.offset, stop.color.asExtended().red(), stop.color.asExtended().green(), stop.color.asExtended().blue(),
                 stop.color.asExtended().alpha() * globalAlpha);
         } else {
             float r, g, b, a;
             stop.color.getRGBA(r, g, b, a);
-            cairo_pattern_add_color_stop_rgba(m_gradient, stop.offset, r, g, b, a * globalAlpha);
+            cairo_pattern_add_color_stop_rgba(gradient, stop.offset, r, g, b, a * globalAlpha);
         }
     }
 
     switch (m_spreadMethod) {
     case SpreadMethodPad:
-        cairo_pattern_set_extend(m_gradient, CAIRO_EXTEND_PAD);
+        cairo_pattern_set_extend(gradient, CAIRO_EXTEND_PAD);
         break;
     case SpreadMethodReflect:
-        cairo_pattern_set_extend(m_gradient, CAIRO_EXTEND_REFLECT);
+        cairo_pattern_set_extend(gradient, CAIRO_EXTEND_REFLECT);
         break;
     case SpreadMethodRepeat:
-        cairo_pattern_set_extend(m_gradient, CAIRO_EXTEND_REPEAT);
+        cairo_pattern_set_extend(gradient, CAIRO_EXTEND_REPEAT);
         break;
     }
 
     cairo_matrix_t matrix = toCairoMatrix(m_gradientSpaceTransformation);
     cairo_matrix_invert(&matrix);
-    cairo_pattern_set_matrix(m_gradient, &matrix);
+    cairo_pattern_set_matrix(gradient, &matrix);
 
-    return m_gradient;
-}
-
-void Gradient::setPlatformGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation)
-{
-    if (m_gradient) {
-        cairo_matrix_t matrix = toCairoMatrix(gradientSpaceTransformation);
-        cairo_matrix_invert(&matrix);
-        cairo_pattern_set_matrix(m_gradient, &matrix);
-    }
+    return gradient;
 }
 
 void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
-    cairo_t* cr = context->platformContext()->cr();
+    RefPtr<cairo_pattern_t> gradient = adoptRef(createPlatformGradient(1.0));
 
     context->save();
-    cairo_set_source(cr, platformGradient());
+
+    cairo_t* cr = context->platformContext()->cr();
+    cairo_set_source(cr, gradient.get());
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill(cr);
+
     context->restore();
 }
 
