@@ -1,3 +1,18 @@
+2017-10-06  Youenn Fablet  <youenn@apple.com>
+
+        Removing some dead code in RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=178011
+
+        Reviewed by Alejandro G. Castro.
+
+        No change of behavior.
+        Removing code used by non-libwebrtc WebRTC backends.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::completeAddTransceiver):
+
 2017-10-05  Dean Jackson  <dino@apple.com>
 
         ImageBitmap API stubs
