@@ -1,3 +1,78 @@
+2017-10-05  Dean Jackson  <dino@apple.com>
+
+        Lots of missing frames in YouTube360 when fullscreen on MacBook
+        https://bugs.webkit.org/show_bug.cgi?id=177903
+        <rdar://problem/33273300>
+
+        Reviewed by Sam Weinig.
+
+        Our compositing path for WebGL on macOS was too slow, requiring a copy
+        of the framebuffer into another GL context. Replace this by having
+        WebGL render into a texture that is backed by an IOSurface, and then
+        set the WebGLLayer to use the IOSurface as contents.
+
+        Covered by the existing WebGL tests.
+
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::platformTexture const): We no longer use the
+        framebuffer object outside the class, so change this to return the GL texture
+        that the framebuffer is rendering in to. It was kind-of strange that it was
+        named this way originally.
+        Also make endPaint available on macOS, and add the definitions for
+        createIOSurfaceBackingStore and updateFramebufferTextureBackingStoreFromLayer.
+
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Now that we're using an IOSurface,
+        we're binding to a new attachment point, GL_TEXTURE_RECTANGLE.
+        (WebCore::GraphicsContext3D::endPaint): This is now being called on macOS and iOS,
+        so add a comment that explains the extra work that iOS needs to do. At some future
+        point it would be nice to make this slightly cleaner, so that iOS and macOS are
+        more similar.
+        (WebCore::GraphicsContext3D::allocateIOSurfaceBackingStore): New function that calls
+        into the corresponding WebGLLayer function.
+        (WebCore::GraphicsContext3D::updateFramebufferTextureBackingStoreFromLayer): Ditto.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::wipeAlphaChannelFromPixels): Both readPixels and drawing a WebGL context
+        into another buffer need to fill out the alpha channel if this context was
+        created without one, otherwise the IOSurface backing store will happily provide
+        what might be non-zero values.
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary): Call the helper above.
+        (WebCore::GraphicsContext3D::reshapeFBOs): Add more code to call into the macOS-specific
+        function to use an IOSurface as the framebuffer texture.
+        (WebCore::GraphicsContext3D::readPixels): Call the helper above.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::copyContentsFromLayer): Replace the use of the
+        deprecated setContentsChanged with reloadValueForKeyPath.
+
+        * platform/graphics/cocoa/WebGLLayer.h: The macOS implementation now
+        inherits from CALayer directly rather than CAOpenGLLayer. It also adds
+        a few member variables to handle the IOSurfaces used for triple buffering.
+
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]): If we were created without an
+        alpha channel, tell CA that we're an opaque layer. Also set the layer's transform
+        to identity, so that it calls into the code below to flip the contents.
+        (-[WebGLLayer setTransform:]): Because an IOSurface is used for the layer contents,
+        we don't get a chance to flip the drawing the way we do via the drawInContext delegate.
+        Instead we have to apply a scale(1, -1) transform on top of the layer transform to
+        make sure the layer is rendered right-way up.
+        (-[WebGLLayer setAnchorPoint:]): Ditto, except we have to assume the anchor point is
+        at the bottom of the layer, so flip the Y value.
+        (-[WebGLLayer display]): Swap between the drawing buffer and the contents buffer, and
+        then get a new buffer ready for display.
+        (createAppropriateIOSurface): Helper.
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]): Initializes the
+        IOSurfaces used for drawing buffers.
+        (-[WebGLLayer bindFramebufferToNextAvailableSurface]): Take the next available IOSurface and
+        make it the drawing buffer (binding in to WebGL at the same time).
+        (-[WebGLLayer copyCGLPixelFormatForDisplayMask:]): Deleted.
+        (-[WebGLLayer copyCGLContextForPixelFormat:]): Deleted.
+        (-[WebGLLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]): Deleted.
+
+        * platform/graphics/mac/WebLayer.mm: Remove the definition of reloadValueForKeyPath.
+
 2017-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add "display" to FontFace Javascript object

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import "IOSurface.h"
+#import "IntSize.h"
 #import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {
@@ -32,14 +34,21 @@ class GraphicsLayer;
 class GraphicsContext3D;
 }
 
-#if PLATFORM(IOS)
-@interface WebGLLayer : CAEAGLLayer
+#if PLATFORM(MAC)
+@interface WebGLLayer : CALayer
 #else
-@interface WebGLLayer : CAOpenGLLayer
+@interface WebGLLayer : CAEAGLLayer
 #endif
 {
     WebCore::GraphicsContext3D* _context;
     float _devicePixelRatio;
+#if PLATFORM(MAC)
+    std::unique_ptr<WebCore::IOSurface> _contentsBuffer;
+    std::unique_ptr<WebCore::IOSurface> _drawingBuffer;
+    std::unique_ptr<WebCore::IOSurface> _spareBuffer;
+    WebCore::IntSize _bufferSize;
+    BOOL _usingAlpha;
+#endif
 }
 
 @property (nonatomic) WebCore::GraphicsContext3D* context;
@@ -47,6 +56,11 @@ class GraphicsContext3D;
 - (id)initWithGraphicsContext3D:(WebCore::GraphicsContext3D*)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
+
+#if PLATFORM(MAC)
+- (void)allocateIOSurfaceBackingStoreWithSize:(WebCore::IntSize)size usingAlpha:(BOOL)usingAlpha;
+- (void)bindFramebufferToNextAvailableSurface;
+#endif
 
 @end
 
