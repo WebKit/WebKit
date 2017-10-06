@@ -3362,9 +3362,6 @@ webkit.org/b/177936 imported/blink/editing/selection/offset-from-point-complex-s
 webkit.org/b/177937 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 webkit.org/b/177937 fast/text/unknown-char-notdef.html [ ImageOnlyFailure ]
 
-webkit.org/b/177938 fast/text/woff2-totalsfntsize.html [ ImageOnlyFailure ]
-webkit.org/b/177938 fast/text/woff2.html [ ImageOnlyFailure ]
-
 webkit.org/b/177939 editing/pasteboard/data-transfer-get-data-non-normalized-types.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
