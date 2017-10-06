@@ -1,3 +1,15 @@
+2017-10-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=177985
+
+        Unreviewed build fix.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        After r222917, there's one more piece of WebKitSystemInterface left.
+        And some missing bits of PaymentRequest.
+
 2017-10-05  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, tapi builds without optimization so we should have TAPI passes -DRELEASE_WITHOUT_OPTIMIZATIONS.

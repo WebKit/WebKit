@@ -17,6 +17,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/beacon"
     "${WEBCORE_DIR}/Modules/applepay"
+    "${WEBCORE_DIR}/Modules/applepay/paymentrequest"
     "${WEBCORE_DIR}/Modules/cache"
     "${WEBCORE_DIR}/Modules/credentials"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
@@ -1122,6 +1123,7 @@ set(WebCore_SOURCES
     Modules/notifications/Notification.cpp
     Modules/notifications/NotificationController.cpp
 
+    Modules/paymentrequest/PaymentHandler.cpp
     Modules/paymentrequest/PaymentRequest.cpp
     Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
     Modules/paymentrequest/PaymentResponse.cpp

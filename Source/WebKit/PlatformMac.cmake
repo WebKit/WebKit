@@ -370,7 +370,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
     WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
     WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
-    WebProcess/WebCoreSupport/mac/WebSystemInterface.mm
 
     WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
