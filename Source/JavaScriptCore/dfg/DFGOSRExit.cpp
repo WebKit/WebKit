@@ -126,7 +126,7 @@ static void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(Context& context
     RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->size();
 
-    VMEntryRecord* entryRecord = vmEntryRecord(vm.topEntryFrame);
+    VMEntryRecord* entryRecord = vmEntryRecord(vm.topVMEntryFrame);
     uintptr_t* calleeSaveBuffer = reinterpret_cast<uintptr_t*>(entryRecord->calleeSaveRegistersBuffer);
 
     // Restore all callee saves.
@@ -148,7 +148,7 @@ static void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(Context& context)
     VM& vm = *context.arg<VM*>();
     auto& stack = context.stack();
 
-    VMEntryRecord* entryRecord = vmEntryRecord(vm.topEntryFrame);
+    VMEntryRecord* entryRecord = vmEntryRecord(vm.topVMEntryFrame);
     void* calleeSaveBuffer = entryRecord->calleeSaveRegistersBuffer;
 
     RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
