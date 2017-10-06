@@ -1,3 +1,21 @@
+2017-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        RootInlineBox should not hold a raw pointer to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=178018
+        <rdar://problem/34859256>
+
+        Reviewed by Simon Fraser.
+
+        Not resetting the line break object could lead to dereferencing a stale renderer.  
+
+        Covered by existing tests.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::setLineBreakInfo):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::lineBreakObj const):
+
 2017-10-06  Youenn Fablet  <youenn@apple.com>
 
         Removing some dead code in RTCPeerConnection

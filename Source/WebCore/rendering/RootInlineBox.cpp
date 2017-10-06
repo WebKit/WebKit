@@ -60,7 +60,6 @@ static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
     : InlineFlowBox(block)
     , m_lineBreakPos(0)
-    , m_lineBreakObj(nullptr)
 {
     setIsHorizontal(block.isHorizontalWritingMode());
 }
@@ -810,7 +809,7 @@ BidiStatus RootInlineBox::lineBreakBidiStatus() const
 
 void RootInlineBox::setLineBreakInfo(RenderObject* object, unsigned breakPosition, const BidiStatus& status)
 {
-    m_lineBreakObj = object;
+    m_lineBreakObj = makeWeakPtr(object);
     m_lineBreakPos = breakPosition;
     m_lineBreakBidiStatusEor = status.eor;
     m_lineBreakBidiStatusLastStrong = status.lastStrong;

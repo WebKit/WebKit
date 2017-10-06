@@ -89,7 +89,7 @@ public:
         m_lineBottomWithLeading = bottomWithLeading;
     }
 
-    RenderObject* lineBreakObj() const { return m_lineBreakObj; }
+    RenderObject* lineBreakObj() const { return m_lineBreakObj.get(); }
     BidiStatus lineBreakBidiStatus() const;
     void setLineBreakInfo(RenderObject*, unsigned breakPos, const BidiStatus&);
 
@@ -214,7 +214,7 @@ private:
 
     // Where this line ended.  The exact object and the position within that object are stored so that
     // we can create an InlineIterator beginning just after the end of this line.
-    RenderObject* m_lineBreakObj;
+    WeakPtr<RenderObject> m_lineBreakObj;
     RefPtr<BidiContext> m_lineBreakContext;
 
     LayoutUnit m_lineTop;
