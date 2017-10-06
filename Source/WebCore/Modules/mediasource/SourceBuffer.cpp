@@ -547,13 +547,6 @@ void SourceBuffer::appendBufferTimerFired()
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
 
     // 1. Run the segment parser loop algorithm.
-    size_t appendSize = m_pendingAppendData.size();
-    if (!appendSize) {
-        // Resize buffer for 0 byte appends so we always have a valid pointer.
-        // We need to convey all appends, even 0 byte ones to |m_private| so
-        // that it can clear its end of stream state if necessary.
-        m_pendingAppendData.resize(1);
-    }
 
     // Section 3.5.1 Segment Parser Loop
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-segment-parser-loop
@@ -565,7 +558,7 @@ void SourceBuffer::appendBufferTimerFired()
         return;
     }
 
-    m_private->append(m_pendingAppendData.data(), appendSize);
+    m_private->append(m_pendingAppendData.data(), m_pendingAppendData.size());
     m_pendingAppendData.clear();
 }
 
