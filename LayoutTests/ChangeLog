@@ -1,3 +1,18 @@
+2017-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DataTransfer shouldn't contain text/html when performing Paste and Match Style
+        https://bugs.webkit.org/show_bug.cgi?id=174165
+        <rdar://problem/33138027>
+
+        Reviewed by Wenson Hsieh.
+
+        Added regression tests for pasting as plain text.
+
+        * editing/pasteboard/data-transfer-get-data-on-paste-as-plain-text-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-as-plain-text-when-custom-pasteboard-data-disabled-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-as-plain-text-when-custom-pasteboard-data-disabled.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-as-plain-text.html: Added.
+
 2017-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add "display" to FontFace Javascript object

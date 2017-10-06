@@ -314,36 +314,83 @@ bool Editor::canEditRichly() const
     return m_frame.selection().selection().isContentRichlyEditable();
 }
 
+enum class ClipboardEventKind {
+    Copy,
+    Cut,
+    Paste,
+    PasteAsPlainText,
+    BeforeCopy,
+    BeforeCut,
+    BeforePaste,
+};
+
+static AtomicString eventNameForClipboardEvent(ClipboardEventKind kind)
+{
+    switch (kind) {
+    case ClipboardEventKind::Copy:
+        return eventNames().copyEvent;
+    case ClipboardEventKind::Cut:
+        return eventNames().cutEvent;
+    case ClipboardEventKind::Paste:
+    case ClipboardEventKind::PasteAsPlainText:
+        return eventNames().pasteEvent;
+    case ClipboardEventKind::BeforeCopy:
+        return eventNames().beforecopyEvent;
+    case ClipboardEventKind::BeforeCut:
+        return eventNames().beforecutEvent;
+    case ClipboardEventKind::BeforePaste:
+        return eventNames().beforepasteEvent;
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+static Ref<DataTransfer> createDataTransferForClipboardEvent(ClipboardEventKind kind)
+{
+    switch (kind) {
+    case ClipboardEventKind::Copy:
+    case ClipboardEventKind::Cut:
+        return DataTransfer::createForCopyAndPaste(DataTransfer::StoreMode::ReadWrite, std::make_unique<StaticPasteboard>());
+    case ClipboardEventKind::PasteAsPlainText:
+        if (Settings::customPasteboardDataEnabled()) {
+            auto plainTextType = ASCIILiteral("text/plain");
+            auto plainText = Pasteboard::createForCopyAndPaste()->readString(plainTextType);
+            auto pasteboard = std::make_unique<StaticPasteboard>();
+            pasteboard->writeString(plainTextType, plainText);
+            return DataTransfer::createForCopyAndPaste(DataTransfer::StoreMode::Readonly, WTFMove(pasteboard));
+        }
+        FALLTHROUGH;
+    case ClipboardEventKind::Paste:
+        return DataTransfer::createForCopyAndPaste(DataTransfer::StoreMode::Readonly, Pasteboard::createForCopyAndPaste());
+    case ClipboardEventKind::BeforeCopy:
+    case ClipboardEventKind::BeforeCut:
+    case ClipboardEventKind::BeforePaste:
+        return DataTransfer::createForCopyAndPaste(DataTransfer::StoreMode::Invalid, std::make_unique<StaticPasteboard>());
+    }
+    ASSERT_NOT_REACHED();
+    return DataTransfer::createForCopyAndPaste(DataTransfer::StoreMode::Invalid, std::make_unique<StaticPasteboard>());
+}
+
 // Returns whether caller should continue with "the default processing", which is the same as
 // the event handler NOT setting the return value to false
 // https://w3c.github.io/clipboard-apis/#fire-a-clipboard-event
-static bool dispatchClipboardEvent(RefPtr<Element>&& target, const AtomicString& eventType)
+static bool dispatchClipboardEvent(RefPtr<Element>&& target, ClipboardEventKind kind)
 {
     // FIXME: Move the target selection code here.
     if (!target)
         return true;
 
-    DataTransfer::StoreMode storeMode;
-    if (eventType == eventNames().pasteEvent)
-        storeMode = DataTransfer::StoreMode::Readonly;
-    else if (eventType == eventNames().copyEvent || eventType == eventNames().cutEvent)
-        storeMode = DataTransfer::StoreMode::ReadWrite;
-    else {
-        ASSERT(eventType == eventNames().beforecutEvent || eventType == eventNames().beforecopyEvent || eventType == eventNames().beforepasteEvent);
-        storeMode = DataTransfer::StoreMode::Invalid;
-    }
-
-    auto dataTransfer = DataTransfer::createForCopyAndPaste(storeMode);
+    auto dataTransfer = createDataTransferForClipboardEvent(kind);
 
     ClipboardEvent::Init init;
     init.bubbles = true;
     init.cancelable = true;
     init.clipboardData = dataTransfer.ptr();
-    auto event = ClipboardEvent::create(eventType, init, Event::IsTrusted::Yes);
+    auto event = ClipboardEvent::create(eventNameForClipboardEvent(kind), init, Event::IsTrusted::Yes);
 
     target->dispatchEvent(event);
     bool noDefaultProcessing = event->defaultPrevented();
-    if (noDefaultProcessing && storeMode == DataTransfer::StoreMode::ReadWrite) {
+    if (noDefaultProcessing && (kind == ClipboardEventKind::Copy || kind == ClipboardEventKind::Cut)) {
         auto pasteboard = Pasteboard::createForCopyAndPaste();
         pasteboard->clear();
         downcast<StaticPasteboard>(dataTransfer->pasteboard()).commitToPasteboard(*pasteboard);
@@ -364,19 +411,19 @@ bool Editor::canDHTMLCut()
     if (m_frame.selection().selection().isInPasswordField())
         return false;
 
-    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().beforecutEvent);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::BeforeCut);
 }
 
 bool Editor::canDHTMLCopy()
 {
     if (m_frame.selection().selection().isInPasswordField())
         return false;
-    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().beforecopyEvent);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::BeforeCopy);
 }
 
 bool Editor::canDHTMLPaste()
 {
-    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().beforepasteEvent);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::BeforePaste);
 }
 
 bool Editor::canCut() const
@@ -644,7 +691,7 @@ bool Editor::tryDHTMLCopy()
     if (m_frame.selection().selection().isInPasswordField())
         return false;
 
-    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().copyEvent);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Copy);
 }
 
 bool Editor::tryDHTMLCut()
@@ -652,12 +699,7 @@ bool Editor::tryDHTMLCut()
     if (m_frame.selection().selection().isInPasswordField())
         return false;
     
-    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().cutEvent);
-}
-
-bool Editor::tryDHTMLPaste()
-{
-    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().pasteEvent);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Cut);
 }
 
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
@@ -1336,7 +1378,7 @@ void Editor::paste()
 
 void Editor::paste(Pasteboard& pasteboard)
 {
-    if (tryDHTMLPaste())
+    if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Paste))
         return; // DHTML did the whole operation
     if (!canPaste())
         return;
@@ -1350,7 +1392,7 @@ void Editor::paste(Pasteboard& pasteboard)
 
 void Editor::pasteAsPlainText()
 {
-    if (tryDHTMLPaste())
+    if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteAsPlainText))
         return;
     if (!canPaste())
         return;

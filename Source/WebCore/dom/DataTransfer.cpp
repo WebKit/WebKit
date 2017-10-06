@@ -76,9 +76,9 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
 #endif
 }
 
-Ref<DataTransfer> DataTransfer::createForCopyAndPaste(StoreMode mode)
+Ref<DataTransfer> DataTransfer::createForCopyAndPaste(StoreMode storeMode, std::unique_ptr<Pasteboard>&& pasteboard)
 {
-    return adoptRef(*new DataTransfer(mode, mode == StoreMode::ReadWrite ? std::make_unique<StaticPasteboard>() : Pasteboard::createForCopyAndPaste()));
+    return adoptRef(*new DataTransfer(storeMode, WTFMove(pasteboard)));
 }
 
 DataTransfer::~DataTransfer()

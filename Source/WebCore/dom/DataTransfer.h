@@ -44,7 +44,7 @@ public:
     // https://html.spec.whatwg.org/multipage/dnd.html#drag-data-store-mode
     enum class StoreMode { Invalid, ReadWrite, Readonly, Protected };
 
-    static Ref<DataTransfer> createForCopyAndPaste(StoreMode);
+    static Ref<DataTransfer> createForCopyAndPaste(StoreMode, std::unique_ptr<Pasteboard>&&);
     static Ref<DataTransfer> createForInputEvent(const String& plainText, const String& htmlText);
 
     WEBCORE_EXPORT ~DataTransfer();

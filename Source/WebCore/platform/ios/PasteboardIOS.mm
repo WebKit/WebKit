@@ -358,6 +358,10 @@ void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTy
         resultTypes.add(ASCIILiteral("text/uri-list"));
         return;
     }
+    if ([cocoaType isEqualToString:(NSString *)kUTTypeHTML]) {
+        resultTypes.add(ASCIILiteral("text/html"));
+        // We don't return here for App compatibility.
+    }
     if (Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType))
         return;
     String utiType = utiTypeFromCocoaType(cocoaType);

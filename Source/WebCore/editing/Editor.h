@@ -146,7 +146,6 @@ public:
     WEBCORE_EXPORT bool canDHTMLPaste();
     bool tryDHTMLCopy();
     bool tryDHTMLCut();
-    WEBCORE_EXPORT bool tryDHTMLPaste();
 
     WEBCORE_EXPORT bool canCut() const;
     WEBCORE_EXPORT bool canCopy() const;
