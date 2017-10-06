@@ -83,7 +83,7 @@ public:
     FrameWalker(VM& vm, ExecState* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker)
         : m_vm(vm)
         , m_callFrame(callFrame)
-        , m_entryFrame(vm.topEntryFrame)
+        , m_vmEntryFrame(vm.topVMEntryFrame)
         , m_codeBlockSetLocker(codeBlockSetLocker)
         , m_machineThreadsLocker(machineThreadsLocker)
     {
@@ -130,7 +130,7 @@ protected:
     SUPPRESS_ASAN
     void advanceToParentFrame()
     {
-        m_callFrame = m_callFrame->unsafeCallerFrame(m_entryFrame);
+        m_callFrame = m_callFrame->unsafeCallerFrame(m_vmEntryFrame);
     }
 
     bool isAtTop() const
@@ -188,7 +188,7 @@ protected:
 
     VM& m_vm;
     ExecState* m_callFrame;
-    EntryFrame* m_entryFrame;
+    VMEntryFrame* m_vmEntryFrame;
     const AbstractLocker& m_codeBlockSetLocker;
     const AbstractLocker& m_machineThreadsLocker;
     bool m_bailingOut { false };
@@ -577,7 +577,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 // We reuse LLInt CodeBlocks for the baseline JIT, so we need to check for both jit types.
                 // This might also be false for various reasons (known and unknown), even though
                 // it's super unlikely. One reason that this can be false is when we throw from a DFG frame,
-                // and we end up having to unwind past an EntryFrame, we will end up executing
+                // and we end up having to unwind past a VMEntryFrame, we will end up executing
                 // inside the LLInt's handleUncaughtException. So we just protect against this
                 // by ignoring it.
                 unsigned bytecodeIndex = 0;

@@ -32,8 +32,8 @@
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
+#include "WasmBinding.h"
 #include "WasmModuleInformation.h"
-#include "WasmToJS.h"
 
 #include <wtf/CurrentTime.h>
 
@@ -44,7 +44,7 @@ const ClassInfo JSWebAssemblyCodeBlock::s_info = { "WebAssemblyCodeBlock", nullp
 JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, JSWebAssemblyModule* module)
 {
     const Wasm::ModuleInformation& moduleInformation = module->module().moduleInformation();
-    auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap)) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
+    auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(moduleInformation.importFunctionCount()))) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
     result->finishCreation(vm, module);
     return result;
 }
@@ -58,7 +58,7 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
     m_wasmToJSExitStubs.reserveCapacity(m_codeBlock->functionImportCount());
     for (unsigned importIndex = 0; importIndex < m_codeBlock->functionImportCount(); ++importIndex) {
         Wasm::SignatureIndex signatureIndex = moduleInformation.importFunctionSignatureIndices.at(importIndex);
-        auto binding = Wasm::wasmToJS(&vm, m_callLinkInfos, signatureIndex, importIndex);
+        auto binding = Wasm::wasmToJs(&vm, m_callLinkInfos, signatureIndex, importIndex);
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {
             case Wasm::BindingFailure::OutOfMemory:
@@ -68,7 +68,7 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
             RELEASE_ASSERT_NOT_REACHED();
         }
         m_wasmToJSExitStubs.uncheckedAppend(binding.value());
-        m_codeBlock->importWasmToEmbedderStub(importIndex) = m_wasmToJSExitStubs[importIndex].code().executableAddress();
+        importWasmToJSStub(importIndex) = m_wasmToJSExitStubs[importIndex].code().executableAddress();
     }
 }
 
@@ -81,6 +81,11 @@ void JSWebAssemblyCodeBlock::finishCreation(VM& vm, JSWebAssemblyModule* module)
 void JSWebAssemblyCodeBlock::destroy(JSCell* cell)
 {
     static_cast<JSWebAssemblyCodeBlock*>(cell)->JSWebAssemblyCodeBlock::~JSWebAssemblyCodeBlock();
+}
+
+bool JSWebAssemblyCodeBlock::isSafeToRun(JSWebAssemblyMemory* memory) const
+{
+    return m_codeBlock->isSafeToRun(memory->memory().mode());
 }
 
 void JSWebAssemblyCodeBlock::clearJSCallICs(VM& vm)

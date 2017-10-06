@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,8 @@ class PrintStream;
 }
 
 namespace JSC {
+
+class VM;
 
 namespace Wasm {
 
@@ -154,7 +156,7 @@ template<> struct HashTraits<JSC::Wasm::SignatureHash> : SimpleClassHashTraits<J
 
 namespace JSC { namespace Wasm {
 
-// Signature information is held globally and shared by the entire process to allow all signatures to be unique. This is required when wasm calls another wasm instance, and must work when modules are shared between multiple VMs.
+// Signature information is held globally and shared by VMs to allow all signatures to be unique. This is required when wasm calls another wasm instance, and must work when modules are shared between multiple VMs.
 // Note: signatures are never removed because that would require accounting for all WebAssembly.Module and which signatures they use. The maximum number of signatures is bounded, and isn't worth the counting overhead. We could clear everything when we reach zero outstanding WebAssembly.Module. https://bugs.webkit.org/show_bug.cgi?id=166037
 class SignatureInformation {
     WTF_MAKE_NONCOPYABLE(SignatureInformation);

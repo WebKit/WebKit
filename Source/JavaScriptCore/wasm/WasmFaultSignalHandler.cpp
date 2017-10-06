@@ -30,11 +30,11 @@
 
 #include "ExecutableAllocator.h"
 #include "MachineContext.h"
+#include "VM.h"
 #include "WasmExceptionType.h"
 #include "WasmMemory.h"
 #include "WasmThunks.h"
 
-#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/threads/Signals.h>

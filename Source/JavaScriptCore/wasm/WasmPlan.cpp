@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Compilation.h"
+#include "JSCInlines.h"
+#include "JSGlobalObject.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmBinding.h"
 #include "WasmCallee.h"
@@ -49,27 +51,20 @@ namespace WasmPlanInternal {
 static const bool verbose = false;
 }
 
-Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
+Plan::Plan(VM* vm, Ref<ModuleInformation> info, CompletionTask&& task)
     : m_moduleInformation(WTFMove(info))
-    , m_createEmbedderWrapper(WTFMove(createEmbedderWrapper))
-    , m_throwWasmException(throwWasmException)
     , m_source(m_moduleInformation->source.data())
     , m_sourceLength(m_moduleInformation->source.size())
 {
-    m_completionTasks.append(std::make_pair(context, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(vm, WTFMove(task)));
 }
 
-Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task)
-    : Plan(context, WTFMove(info), WTFMove(task), nullptr, nullptr)
-{
-}
-
-Plan::Plan(Context* context, const uint8_t* source, size_t sourceLength, CompletionTask&& task)
+Plan::Plan(VM* vm, const uint8_t* source, size_t sourceLength, CompletionTask&& task)
     : m_moduleInformation(adoptRef(*new ModuleInformation(Vector<uint8_t>())))
     , m_source(source)
     , m_sourceLength(sourceLength)
 {
-    m_completionTasks.append(std::make_pair(context, WTFMove(task)));
+    m_completionTasks.append(std::make_pair(vm, WTFMove(task)));
 }
 
 void Plan::runCompletionTasks(const AbstractLocker&)
@@ -77,18 +72,18 @@ void Plan::runCompletionTasks(const AbstractLocker&)
     ASSERT(isComplete() && !hasWork());
 
     for (auto& task : m_completionTasks)
-        task.second->run(*this);
+        task.second->run(task.first, *this);
     m_completionTasks.clear();
     m_completed.notifyAll();
 }
 
-void Plan::addCompletionTask(Context* context, CompletionTask&& task)
+void Plan::addCompletionTask(VM& vm, CompletionTask&& task)
 {
     LockHolder locker(m_lock);
     if (!isComplete())
-        m_completionTasks.append(std::make_pair(context, WTFMove(task)));
+        m_completionTasks.append(std::make_pair(&vm, WTFMove(task)));
     else
-        task->run(*this);
+        task->run(&vm, *this);
 }
 
 void Plan::waitForCompletion()
@@ -99,19 +94,19 @@ void Plan::waitForCompletion()
     }
 }
 
-bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
+bool Plan::tryRemoveVMAndCancelIfLast(VM& vm)
 {
     LockHolder locker(m_lock);
 
     if (!ASSERT_DISABLED) {
-        // We allow the first completion task to not have a Context.
+        // We allow the first completion task to not have a vm.
         for (unsigned i = 1; i < m_completionTasks.size(); ++i)
             ASSERT(m_completionTasks[i].first);
     }
 
     bool removedAnyTasks = false;
-    m_completionTasks.removeAllMatching([&] (const std::pair<Context*, CompletionTask>& pair) {
-        bool shouldRemove = pair.first == &context;
+    m_completionTasks.removeAllMatching([&] (const std::pair<VM*, CompletionTask>& pair) {
+        bool shouldRemove = pair.first == &vm;
         removedAnyTasks |= shouldRemove;
         return shouldRemove;
     });

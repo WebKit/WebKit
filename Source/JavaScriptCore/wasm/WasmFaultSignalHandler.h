@@ -27,6 +27,8 @@
 
 namespace JSC {
 
+class VM;
+
 namespace Wasm {
 
 void registerCode(void* start, void* end);

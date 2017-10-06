@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013-2014, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
-#include "JSWebAssemblyInstance.h"
 #include "VMEntryScope.h"
 #include "WasmContext.h"
 #include <wtf/StringPrintStream.h>
@@ -218,7 +217,7 @@ JSGlobalObject* CallFrame::wasmAwareLexicalGlobalObject(VM& vm)
 #if ENABLE(WEBASSEMBLY)
     if (!callee().isWasm())
         return lexicalGlobalObject();
-    return vm.wasmContext.load()->globalObject();
+    return Wasm::loadContext(vm)->globalObject();
 #else
     UNUSED_PARAM(vm);
     return lexicalGlobalObject();
@@ -238,24 +237,24 @@ bool CallFrame::isAnyWasmCallee()
     return false;
 }
 
-CallFrame* CallFrame::callerFrame(EntryFrame*& currEntryFrame)
+CallFrame* CallFrame::callerFrame(VMEntryFrame*& currVMEntryFrame)
 {
-    if (callerFrameOrEntryFrame() == currEntryFrame) {
-        VMEntryRecord* currVMEntryRecord = vmEntryRecord(currEntryFrame);
-        currEntryFrame = currVMEntryRecord->prevTopEntryFrame();
+    if (callerFrameOrVMEntryFrame() == currVMEntryFrame) {
+        VMEntryRecord* currVMEntryRecord = vmEntryRecord(currVMEntryFrame);
+        currVMEntryFrame = currVMEntryRecord->prevTopVMEntryFrame();
         return currVMEntryRecord->prevTopCallFrame();
     }
-    return static_cast<CallFrame*>(callerFrameOrEntryFrame());
+    return static_cast<CallFrame*>(callerFrameOrVMEntryFrame());
 }
 
-SUPPRESS_ASAN CallFrame* CallFrame::unsafeCallerFrame(EntryFrame*& currEntryFrame)
+SUPPRESS_ASAN CallFrame* CallFrame::unsafeCallerFrame(VMEntryFrame*& currVMEntryFrame)
 {
-    if (unsafeCallerFrameOrEntryFrame() == currEntryFrame) {
-        VMEntryRecord* currVMEntryRecord = vmEntryRecord(currEntryFrame);
-        currEntryFrame = currVMEntryRecord->unsafePrevTopEntryFrame();
+    if (unsafeCallerFrameOrVMEntryFrame() == currVMEntryFrame) {
+        VMEntryRecord* currVMEntryRecord = vmEntryRecord(currVMEntryFrame);
+        currVMEntryFrame = currVMEntryRecord->unsafePrevTopVMEntryFrame();
         return currVMEntryRecord->unsafePrevTopCallFrame();
     }
-    return static_cast<CallFrame*>(unsafeCallerFrameOrEntryFrame());
+    return static_cast<CallFrame*>(unsafeCallerFrameOrVMEntryFrame());
 }
 
 SourceOrigin CallFrame::callerSourceOrigin()

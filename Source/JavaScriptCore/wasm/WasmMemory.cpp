@@ -28,19 +28,13 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "Options.h"
-#include <wtf/DataLog.h>
+#include "VM.h"
+#include "WasmThunks.h"
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
-#include <wtf/OSAllocator.h>
-#include <wtf/PageBlock.h>
 #include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RAMSize.h>
-#include <wtf/Vector.h>
-
-#include <cstring>
-#include <mutex>
 
 namespace JSC { namespace Wasm {
 
@@ -57,19 +51,19 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH void webAssemblyCouldntGetFastMemory() { CRA
 struct MemoryResult {
     enum Kind {
         Success,
-        SuccessAndNotifyMemoryPressure,
-        SyncTryToReclaimMemory
+        SuccessAndAsyncGC,
+        SyncGCAndRetry
     };
-
+    
     static const char* toString(Kind kind)
     {
         switch (kind) {
         case Success:
             return "Success";
-        case SuccessAndNotifyMemoryPressure:
-            return "SuccessAndNotifyMemoryPressure";
-        case SyncTryToReclaimMemory:
-            return "SyncTryToReclaimMemory";
+        case SuccessAndAsyncGC:
+            return "SuccessAndAsyncGC";
+        case SyncGCAndRetry:
+            return "SyncGCAndRetry";
         }
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
@@ -104,17 +98,17 @@ public:
         MemoryResult result = [&] {
             auto holder = holdLock(m_lock);
             if (m_memories.size() >= m_maxCount)
-                return MemoryResult(nullptr, MemoryResult::SyncTryToReclaimMemory);
+                return MemoryResult(nullptr, MemoryResult::SyncGCAndRetry);
             
             void* result = Gigacage::tryAllocateVirtualPages(Gigacage::Primitive, Memory::fastMappedBytes());
             if (!result)
-                return MemoryResult(nullptr, MemoryResult::SyncTryToReclaimMemory);
+                return MemoryResult(nullptr, MemoryResult::SyncGCAndRetry);
             
             m_memories.append(result);
             
             return MemoryResult(
                 result,
-                m_memories.size() >= m_maxCount / 2 ? MemoryResult::SuccessAndNotifyMemoryPressure : MemoryResult::Success);
+                m_memories.size() >= m_maxCount / 2 ? MemoryResult::SuccessAndAsyncGC : MemoryResult::Success);
         }();
         
         if (Options::logWebAssemblyMemory())
@@ -159,12 +153,12 @@ public:
         MemoryResult::Kind result = [&] {
             auto holder = holdLock(m_lock);
             if (m_physicalBytes + bytes > memoryLimit())
-                return MemoryResult::SyncTryToReclaimMemory;
+                return MemoryResult::SyncGCAndRetry;
             
             m_physicalBytes += bytes;
             
             if (m_physicalBytes >= memoryLimit() / 2)
-                return MemoryResult::SuccessAndNotifyMemoryPressure;
+                return MemoryResult::SuccessAndAsyncGC;
             
             return MemoryResult::Success;
         }();
@@ -211,7 +205,7 @@ static MemoryManager& memoryManager()
 }
 
 template<typename Func>
-bool tryAllocate(const Func& allocate, const WTF::Function<void(Memory::NotifyPressure)>& notifyMemoryPressure, const WTF::Function<void(Memory::SyncTryToReclaim)>& syncTryToReclaimMemory)
+bool tryAndGC(VM& vm, const Func& allocate)
 {
     unsigned numTries = 2;
     bool done = false;
@@ -220,16 +214,14 @@ bool tryAllocate(const Func& allocate, const WTF::Function<void(Memory::NotifyPr
         case MemoryResult::Success:
             done = true;
             break;
-        case MemoryResult::SuccessAndNotifyMemoryPressure:
-            if (notifyMemoryPressure)
-                notifyMemoryPressure(Memory::NotifyPressureTag);
+        case MemoryResult::SuccessAndAsyncGC:
+            vm.heap.collectAsync(CollectionScope::Full);
             done = true;
             break;
-        case MemoryResult::SyncTryToReclaimMemory:
+        case MemoryResult::SyncGCAndRetry:
             if (i + 1 == numTries)
                 break;
-            if (syncTryToReclaimMemory)
-                syncTryToReclaimMemory(Memory::SyncTryToReclaimTag);
+            vm.heap.collectSync(CollectionScope::Full);
             break;
         }
     }
@@ -238,32 +230,32 @@ bool tryAllocate(const Func& allocate, const WTF::Function<void(Memory::NotifyPr
 
 } // anonymous namespace
 
-Memory::Memory()
+const char* makeString(MemoryMode mode)
 {
+    switch (mode) {
+    case MemoryMode::BoundsChecking: return "BoundsChecking";
+    case MemoryMode::Signaling: return "Signaling";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "";
 }
 
-Memory::Memory(PageCount initial, PageCount maximum, Function<void(NotifyPressure)>&& notifyMemoryPressure, Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
+Memory::Memory(PageCount initial, PageCount maximum)
     : m_initial(initial)
     , m_maximum(maximum)
-    , m_notifyMemoryPressure(WTFMove(notifyMemoryPressure))
-    , m_syncTryToReclaimMemory(WTFMove(syncTryToReclaimMemory))
-    , m_growSuccessCallback(WTFMove(growSuccessCallback))
 {
     ASSERT(!initial.bytes());
     ASSERT(m_mode == MemoryMode::BoundsChecking);
     dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
 }
 
-Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, MemoryMode mode, Function<void(NotifyPressure)>&& notifyMemoryPressure, Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
+Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, MemoryMode mode)
     : m_memory(memory)
     , m_size(initial.bytes())
     , m_initial(initial)
     , m_maximum(maximum)
     , m_mappedCapacity(mappedCapacity)
     , m_mode(mode)
-    , m_notifyMemoryPressure(WTFMove(notifyMemoryPressure))
-    , m_syncTryToReclaimMemory(WTFMove(syncTryToReclaimMemory))
-    , m_growSuccessCallback(WTFMove(growSuccessCallback))
 {
     dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
 }
@@ -283,12 +275,7 @@ static void commitZeroPages(void* startAddress, size_t sizeInBytes)
 #endif
 }
 
-RefPtr<Memory> Memory::create()
-{
-    return adoptRef(new Memory());
-}
-
-RefPtr<Memory> Memory::create(PageCount initial, PageCount maximum, WTF::Function<void(NotifyPressure)>&& notifyMemoryPressure, WTF::Function<void(SyncTryToReclaim)>&& syncTryToReclaimMemory, WTF::Function<void(GrowSuccess, PageCount, PageCount)>&& growSuccessCallback)
+RefPtr<Memory> Memory::create(VM& vm, PageCount initial, PageCount maximum)
 {
     ASSERT(initial);
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
@@ -296,27 +283,33 @@ RefPtr<Memory> Memory::create(PageCount initial, PageCount maximum, WTF::Functio
     const size_t initialBytes = initial.bytes();
     const size_t maximumBytes = maximum ? maximum.bytes() : 0;
 
+    // We need to be sure we have a stub prior to running code.
+    if (UNLIKELY(!Thunks::singleton().stub(throwExceptionFromWasmThunkGenerator)))
+        return nullptr;
+
     if (maximum && !maximumBytes) {
         // User specified a zero maximum, initial size must also be zero.
         RELEASE_ASSERT(!initialBytes);
-        return adoptRef(new Memory(initial, maximum, WTFMove(notifyMemoryPressure), WTFMove(syncTryToReclaimMemory), WTFMove(growSuccessCallback)));
+        return adoptRef(new Memory(initial, maximum));
     }
     
-    bool done = tryAllocate(
+    bool done = tryAndGC(
+        vm,
         [&] () -> MemoryResult::Kind {
             return memoryManager().tryAllocatePhysicalBytes(initialBytes);
-        }, notifyMemoryPressure, syncTryToReclaimMemory);
+        });
     if (!done)
         return nullptr;
         
     char* fastMemory = nullptr;
     if (Options::useWebAssemblyFastMemory()) {
-        tryAllocate(
+        tryAndGC(
+            vm,
             [&] () -> MemoryResult::Kind {
                 auto result = memoryManager().tryAllocateVirtualPages();
                 fastMemory = bitwise_cast<char*>(result.basePtr);
                 return result.kind;
-            }, notifyMemoryPressure, syncTryToReclaimMemory);
+            });
     }
     
     if (fastMemory) {
@@ -327,15 +320,15 @@ RefPtr<Memory> Memory::create(PageCount initial, PageCount maximum, WTF::Functio
         }
 
         commitZeroPages(fastMemory, initialBytes);
-
-        return adoptRef(new Memory(fastMemory, initial, maximum, Memory::fastMappedBytes(), MemoryMode::Signaling, WTFMove(notifyMemoryPressure), WTFMove(syncTryToReclaimMemory), WTFMove(growSuccessCallback)));
+        
+        return adoptRef(new Memory(fastMemory, initial, maximum, Memory::fastMappedBytes(), MemoryMode::Signaling));
     }
     
     if (UNLIKELY(Options::crashIfWebAssemblyCantFastMemory()))
         webAssemblyCouldntGetFastMemory();
 
     if (!initialBytes)
-        return adoptRef(new Memory(initial, maximum, WTFMove(notifyMemoryPressure), WTFMove(syncTryToReclaimMemory), WTFMove(growSuccessCallback)));
+        return adoptRef(new Memory(initial, maximum));
     
     void* slowMemory = Gigacage::tryAlignedMalloc(Gigacage::Primitive, WTF::pageSize(), initialBytes);
     if (!slowMemory) {
@@ -343,7 +336,7 @@ RefPtr<Memory> Memory::create(PageCount initial, PageCount maximum, WTF::Functio
         return nullptr;
     }
     memset(slowMemory, 0, initialBytes);
-    return adoptRef(new Memory(slowMemory, initial, maximum, initialBytes, MemoryMode::BoundsChecking, WTFMove(notifyMemoryPressure), WTFMove(syncTryToReclaimMemory), WTFMove(growSuccessCallback)));
+    return adoptRef(new Memory(slowMemory, initial, maximum, initialBytes, MemoryMode::BoundsChecking));
 }
 
 Memory::~Memory()
@@ -352,10 +345,7 @@ Memory::~Memory()
         memoryManager().freePhysicalBytes(m_size);
         switch (m_mode) {
         case MemoryMode::Signaling:
-            if (mprotect(m_memory, Memory::fastMappedBytes(), PROT_READ | PROT_WRITE)) {
-                dataLog("mprotect failed: ", strerror(errno), "\n");
-                RELEASE_ASSERT_NOT_REACHED();
-            }
+            mprotect(m_memory, Memory::fastMappedBytes(), PROT_READ | PROT_WRITE);
             memoryManager().freeVirtualPages(m_memory);
             break;
         case MemoryMode::BoundsChecking:
@@ -381,50 +371,34 @@ bool Memory::addressIsInActiveFastMemory(void* address)
     return memoryManager().containsAddress(address);
 }
 
-Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
+bool Memory::grow(VM& vm, PageCount newSize)
 {
-    const Wasm::PageCount oldPageCount = sizeInPages();
+    RELEASE_ASSERT(newSize > PageCount::fromBytes(m_size));
 
-    if (!delta.isValid())
-        return makeUnexpected(GrowFailReason::InvalidDelta);
-    
-    const Wasm::PageCount newPageCount = oldPageCount + delta;
-    if (!newPageCount)
-        return makeUnexpected(GrowFailReason::InvalidGrowSize);
+    dataLogLnIf(verbose, "Memory::grow to ", newSize, " from ", *this);
 
-    auto success = [&] () {
-        m_growSuccessCallback(GrowSuccessTag, oldPageCount, newPageCount);
-        return oldPageCount;
-    };
+    if (maximum() && newSize > maximum())
+        return false;
 
-    if (delta.pageCount() == 0)
-        return success();
-
-    dataLogLnIf(verbose, "Memory::grow(", delta, ") to ", newPageCount, " from ", *this);
-    RELEASE_ASSERT(newPageCount > PageCount::fromBytes(m_size));
-
-    if (maximum() && newPageCount > maximum())
-        return makeUnexpected(GrowFailReason::WouldExceedMaximum);
-
-    size_t desiredSize = newPageCount.bytes();
+    size_t desiredSize = newSize.bytes();
     RELEASE_ASSERT(desiredSize > m_size);
     size_t extraBytes = desiredSize - m_size;
     RELEASE_ASSERT(extraBytes);
-    bool allocationSuccess = tryAllocate(
+    bool success = tryAndGC(
+        vm,
         [&] () -> MemoryResult::Kind {
             return memoryManager().tryAllocatePhysicalBytes(extraBytes);
-        }, m_notifyMemoryPressure, m_syncTryToReclaimMemory);
-    if (!allocationSuccess)
-        return makeUnexpected(GrowFailReason::OutOfMemory);
-
+        });
+    if (!success)
+        return false;
+        
     switch (mode()) {
     case MemoryMode::BoundsChecking: {
         RELEASE_ASSERT(maximum().bytes() != 0);
-
+        
         void* newMemory = Gigacage::tryAlignedMalloc(Gigacage::Primitive, WTF::pageSize(), desiredSize);
         if (!newMemory)
-            return makeUnexpected(GrowFailReason::OutOfMemory);
-
+            return false;
         memcpy(newMemory, m_memory, m_size);
         memset(static_cast<char*>(newMemory) + m_size, 0, desiredSize - m_size);
         if (m_memory)
@@ -432,7 +406,7 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
         m_memory = newMemory;
         m_mappedCapacity = desiredSize;
         m_size = desiredSize;
-        return success();
+        return true;
     }
     case MemoryMode::Signaling: {
         RELEASE_ASSERT(m_memory);
@@ -441,17 +415,16 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
         
         dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(m_memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         if (mprotect(startAddress, extraBytes, PROT_READ | PROT_WRITE)) {
-            dataLog("mprotect failed: ", strerror(errno), "\n");
-            RELEASE_ASSERT_NOT_REACHED();
+            dataLogLnIf(verbose, "Memory::grow in-place failed ", *this);
+            return false;
         }
         commitZeroPages(startAddress, extraBytes);
         m_size = desiredSize;
-        return success();
-    }
-    }
-
+        return true;
+    } }
+    
     RELEASE_ASSERT_NOT_REACHED();
-    return oldPageCount;
+    return false;
 }
 
 void Memory::dump(PrintStream& out) const

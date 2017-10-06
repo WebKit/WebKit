@@ -103,14 +103,14 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
     VM* vm = codeBlock->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
 
-    EntryFrame* entryFrame = vm->topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(entryFrame);
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
     if (!callerFrame) {
         callerFrame = exec;
-        entryFrame = vm->topEntryFrame;
+        vmEntryFrame = vm->topVMEntryFrame;
     }
 
-    NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
+    NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
     throwStackOverflowError(callerFrame, scope);
 }
 
@@ -120,10 +120,10 @@ void JIT_OPERATION operationThrowDivideError(ExecState* exec)
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
 
-    EntryFrame* entryFrame = vm->topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(entryFrame);
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
 
-    NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
+    NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
     ErrorHandlingScope errorScope(*vm);
     throwException(callerFrame, scope, createError(callerFrame, ASCIILiteral("Division by zero or division overflow.")));
 }
@@ -133,10 +133,10 @@ void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState* exec)
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
 
-    EntryFrame* entryFrame = vm->topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(entryFrame);
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
 
-    NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
+    NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
     ErrorHandlingScope errorScope(*vm);
     throwException(callerFrame, scope, createError(callerFrame, ASCIILiteral("Out-of-bounds access.")));
 }
@@ -149,9 +149,9 @@ int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, *vm, CodeForCall);
     if (missingArgCount < 0) {
-        EntryFrame* entryFrame = vm->topEntryFrame;
-        CallFrame* callerFrame = exec->callerFrame(entryFrame);
-        NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
+        VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+        CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
+        NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
         throwStackOverflowError(callerFrame, scope);
     }
 
@@ -165,9 +165,9 @@ int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, *vm, CodeForConstruct);
     if (missingArgCount < 0) {
-        EntryFrame* entryFrame = vm->topEntryFrame;
-        CallFrame* callerFrame = exec->callerFrame(entryFrame);
-        NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
+        VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+        CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
+        NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
         throwStackOverflowError(callerFrame, scope);
     }
 

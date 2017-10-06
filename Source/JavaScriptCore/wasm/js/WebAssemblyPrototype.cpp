@@ -33,7 +33,6 @@
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 #include "JSPromiseDeferred.h"
-#include "JSToWasm.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
@@ -41,7 +40,6 @@
 #include "PromiseDeferredTimer.h"
 #include "StrongInlines.h"
 #include "WasmBBQPlan.h"
-#include "WasmToJS.h"
 #include "WasmWorklist.h"
 #include "WebAssemblyInstanceConstructor.h"
 #include "WebAssemblyModuleConstructor.h"
@@ -96,7 +94,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     if (UNLIKELY(scope.exception()))
         reject(exec, scope, promise);
     else {
-        Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+        Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, globalObject] (VM& vm, Wasm::Module::ValidationResult&& result) mutable {
             vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, globalObject, result = WTFMove(result), &vm] () mutable {
                 auto scope = DECLARE_CATCH_SCOPE(vm);
                 ExecState* exec = globalObject->globalExec();
@@ -137,7 +135,7 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
     // In order to avoid potentially recompiling a module. We first gather all the import/memory information prior to compiling code.
-    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, exec->lexicalGlobalObject()->WebAssemblyInstanceStructure(), Wasm::Instance::create(Ref<Wasm::Module>(module->module())));
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, exec->lexicalGlobalObject()->WebAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, reject(exec, scope, promise));
 
     Vector<Strong<JSCell>> dependencies;
@@ -145,13 +143,13 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
     dependencies.append(Strong<JSCell>(vm, instance));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
     // Note: This completion task may or may not get called immediately.
-    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CodeBlock::CallbackType>([promise, instance, module, resolveKind, &vm] (Ref<Wasm::CodeBlock>&& refCodeBlock) mutable {
+    module->module().compileAsync(vm, instance->memoryMode(), createSharedTask<Wasm::CodeBlock::CallbackType>([promise, instance, module, resolveKind] (VM& vm, Ref<Wasm::CodeBlock>&& refCodeBlock) mutable {
         RefPtr<Wasm::CodeBlock> codeBlock = WTFMove(refCodeBlock);
         vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, resolveKind, &vm, codeBlock = WTFMove(codeBlock)] () mutable {
             ExecState* exec = instance->globalObject()->globalExec();
             resolve(vm, exec, promise, instance, module, codeBlock.releaseNonNull(), resolveKind);
         });
-    }), &Wasm::createJSToWasmWrapper, &Wasm::wasmToJSException);
+    }));
 }
 
 static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSValue buffer, JSObject* importObject)
@@ -167,7 +165,7 @@ static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* pr
     Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, buffer);
     RETURN_IF_EXCEPTION(scope, reject(exec, scope, promise));
 
-    Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, importObject, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+    Wasm::Module::validateAsync(vm, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, importObject, globalObject] (VM& vm, Wasm::Module::ValidationResult&& result) mutable {
         vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, result = WTFMove(result), &vm] () mutable {
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();
@@ -215,7 +213,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState* exec)
     size_t byteSize;
     uint8_t* base = getWasmBufferFromValue(exec, exec->argument(0), byteOffset, byteSize);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    BBQPlan plan(&vm.wasmContext, base + byteOffset, byteSize, BBQPlan::Validation, Plan::dontFinalize());
+    BBQPlan plan(&vm, base + byteOffset, byteSize, BBQPlan::Validation, Plan::dontFinalize());
     // FIXME: We might want to throw an OOM exception here if we detect that something will OOM.
     // https://bugs.webkit.org/show_bug.cgi?id=166015
     return JSValue::encode(jsBoolean(plan.parseAndValidateModule()));

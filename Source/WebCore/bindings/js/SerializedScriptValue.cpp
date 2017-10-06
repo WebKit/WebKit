@@ -79,7 +79,6 @@
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/TypedArrays.h>
 #include <wasm/js/JSWebAssemblyModule.h>
-#include <wasm/WasmModule.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>

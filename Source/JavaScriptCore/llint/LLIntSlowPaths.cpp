@@ -481,13 +481,13 @@ LLINT_SLOW_PATH_DECL(stack_check)
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    EntryFrame* topEntryFrame = vm.topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(topEntryFrame);
+    VMEntryFrame* vmEntryFrame = vm.topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
     if (!callerFrame) {
         callerFrame = exec;
-        topEntryFrame = vm.topEntryFrame;
+        vmEntryFrame = vm.topVMEntryFrame;
     }
-    NativeCallFrameTracerWithRestore tracer(&vm, topEntryFrame, callerFrame);
+    NativeCallFrameTracerWithRestore tracer(&vm, vmEntryFrame, callerFrame);
 
     LLINT_SET_PC_FOR_STUBS();
 

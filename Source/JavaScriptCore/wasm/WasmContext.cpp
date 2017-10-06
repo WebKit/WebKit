@@ -28,41 +28,30 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSWebAssemblyInstance.h"
-#include "Options.h"
-
+#include "VM.h"
 #include <mutex>
 #include <wtf/FastTLS.h>
 
 namespace JSC { namespace Wasm {
 
-bool Context::useFastTLS()
+Context* loadContext(VM& vm)
 {
 #if ENABLE(FAST_TLS_JIT)
-    return Options::useFastTLSForWasmContext();
-#else
-    return false;
+    if (useFastTLSForContext())
+        return bitwise_cast<Context*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
 #endif
+    return vm.wasmContext;
 }
 
-JSWebAssemblyInstance* Context::load() const
+void storeContext(VM& vm, Context* context)
 {
 #if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        return bitwise_cast<JSWebAssemblyInstance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
+    if (useFastTLSForContext())
+        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(context));
 #endif
-    return instance;
-}
-
-void Context::store(JSWebAssemblyInstance* inst, void* softStackLimit)
-{
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(inst));
-#endif
-    instance = inst;
-    if (instance)
-        instance->setCachedStackLimit(softStackLimit);
+    vm.wasmContext = context;
+    if (context)
+        context->setCachedStackLimit(vm.softStackLimit());
 }
 
 } } // namespace JSC::Wasm

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2013, 2014, 2016 Apple Inc. All rights reserved.
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
@@ -652,8 +652,8 @@ void Debugger::stepOutOfFunction()
     if (!m_isPaused)
         return;
 
-    EntryFrame* topEntryFrame = m_vm.topEntryFrame;
-    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topEntryFrame) : nullptr;
+    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrame(topVMEntryFrame) : nullptr;
     m_pauseOnStepOut = true;
     setSteppingMode(SteppingModeEnabled);
     notifyDoneProcessingDebuggerEvents();
@@ -831,8 +831,8 @@ void Debugger::returnEvent(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
 
-    EntryFrame* topEntryFrame = m_vm.topEntryFrame;
-    CallFrame* callerFrame = m_currentCallFrame->callerFrame(topEntryFrame);
+    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+    CallFrame* callerFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 
     // Returning from a call, there was at least one expression on the statement we are returning to.
     m_pastFirstExpressionInStatement = true;
@@ -856,8 +856,8 @@ void Debugger::unwindEvent(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
 
-    EntryFrame* topEntryFrame = m_vm.topEntryFrame;
-    CallFrame* callerFrame = m_currentCallFrame->callerFrame(topEntryFrame);
+    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+    CallFrame* callerFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 
     // Treat stepping over an exception location like a step-out.
     if (m_currentCallFrame == m_pauseOnCallFrame)
@@ -886,8 +886,8 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
 
-    EntryFrame* topEntryFrame = m_vm.topEntryFrame;
-    CallFrame* callerFrame = m_currentCallFrame->callerFrame(topEntryFrame);
+    VMEntryFrame* topVMEntryFrame = m_vm.topVMEntryFrame;
+    CallFrame* callerFrame = m_currentCallFrame->callerFrame(topVMEntryFrame);
 
     // Returning from a program, could be eval(), there was at least one expression on the statement we are returning to.
     m_pastFirstExpressionInStatement = true;

@@ -35,7 +35,6 @@
 #include "WasmCallee.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
-#include "WasmModule.h"
 #include "WasmPlan.h"
 #include "WebAssemblyToJSCallee.h"
 #include <wtf/StdLibExtras.h>
@@ -61,7 +60,6 @@ Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalOb
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
-
 
 JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, Ref<Wasm::Module>&& module)
     : Base(vm, structure)
@@ -91,36 +89,6 @@ void JSWebAssemblyModule::destroy(JSCell* cell)
 {
     static_cast<JSWebAssemblyModule*>(cell)->JSWebAssemblyModule::~JSWebAssemblyModule();
     Wasm::SignatureInformation::tryCleanup();
-}
-
-const Wasm::ModuleInformation& JSWebAssemblyModule::moduleInformation() const
-{
-    return m_module->moduleInformation();
-}
-
-SymbolTable* JSWebAssemblyModule::exportSymbolTable() const
-{
-    return m_exportSymbolTable.get();
-}
-
-Wasm::SignatureIndex JSWebAssemblyModule::signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
-{
-    return m_module->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
-}
-
-WebAssemblyToJSCallee* JSWebAssemblyModule::callee() const
-{
-    return m_callee.get();
-}
-
-JSWebAssemblyCodeBlock* JSWebAssemblyModule::codeBlock(Wasm::MemoryMode mode)
-{
-    return m_codeBlocks[static_cast<size_t>(mode)].get();
-}
-
-Wasm::Module& JSWebAssemblyModule::module()
-{
-    return m_module.get();
 }
 
 void JSWebAssemblyModule::setCodeBlock(VM& vm, Wasm::MemoryMode mode, JSWebAssemblyCodeBlock* codeBlock)

@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "VM.h"
 #include "WasmContext.h"
 #include "WasmModule.h"
 #include "WasmPlan.h"
@@ -40,19 +41,16 @@ namespace Wasm {
 class OMGPlan final : public Plan {
 public:
     using Base = Plan;
+    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
+    OMGPlan(Ref<Module>, uint32_t functionIndex, MemoryMode, CompletionTask&&);
 
     bool hasWork() const override { return !m_completed; }
     void work(CompilationEffort) override;
     bool multiThreaded() const override { return false; }
 
-    static void runForIndex(JSWebAssemblyInstance*, uint32_t functionIndex);
-
 private:
     // For some reason friendship doesn't extend to parent classes...
     using Base::m_lock;
-
-    // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    OMGPlan(Context*, Ref<Module>&&, uint32_t functionIndex, MemoryMode, CompletionTask&&);
 
     bool isComplete() const override { return m_completed; }
     void complete(const AbstractLocker& locker) override
@@ -66,6 +64,8 @@ private:
     bool m_completed { false };
     uint32_t m_functionIndex;
 };
+
+void runOMGPlanForIndex(Context*, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 

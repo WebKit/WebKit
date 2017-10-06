@@ -64,11 +64,38 @@ public:
         return &vm.webAssemblyCodeBlockSpace;
     }
 
-    Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }
-
+    unsigned functionImportCount() const { return m_codeBlock->functionImportCount(); }
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
+    bool isSafeToRun(JSWebAssemblyMemory*) const;
+
     void finishCreation(VM&, JSWebAssemblyModule*);
+
+    // These two callee getters are only valid once the callees have been populated.
+
+    Wasm::Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    {
+        ASSERT(runnable());
+        return m_codeBlock->jsEntrypointCalleeFromFunctionIndexSpace(functionIndexSpace);
+    }
+    Wasm::WasmEntrypointLoadLocation wasmEntrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
+    {
+        ASSERT(runnable());
+        return m_codeBlock->wasmEntrypointLoadLocationFromFunctionIndexSpace(functionIndexSpace);
+    }
+
+    Wasm::WasmEntrypointLoadLocation wasmToJsCallStubForImport(unsigned importIndex)
+    {
+        ASSERT(runnable());
+        return &importWasmToJSStub(importIndex);
+    }
+
+    static ptrdiff_t offsetOfImportWasmToJSStub(unsigned importIndex)
+    {
+        return offsetOfImportStubs() + sizeof(void*) * importIndex;
+    }
+
+    Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }
 
     void clearJSCallICs(VM&);
 
@@ -86,6 +113,21 @@ private:
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    static size_t offsetOfImportStubs()
+    {
+        return WTF::roundUpToMultipleOf<sizeof(void*)>(sizeof(JSWebAssemblyCodeBlock));
+    }
+
+    static size_t allocationSize(Checked<size_t> functionImportCount)
+    {
+        return (offsetOfImportStubs() + sizeof(void*) * functionImportCount).unsafeGet();
+    }
+
+    void*& importWasmToJSStub(unsigned importIndex)
+    {
+        return *bitwise_cast<void**>(bitwise_cast<char*>(this) + offsetOfImportWasmToJSStub(importIndex));
+    }
 
     class UnconditionalFinalizer : public JSC::UnconditionalFinalizer {
         void finalizeUnconditionally() override;

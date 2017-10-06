@@ -56,26 +56,27 @@ static Module::ValidationResult makeValidationResult(BBQPlan& plan)
 
 static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallback&& callback)
 {
-    return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (Plan& plan) {
+    return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (VM* vm, Plan& plan) {
         ASSERT(!plan.hasWork());
-        callback->run(makeValidationResult(static_cast<BBQPlan&>(plan)));
+        ASSERT(vm);
+        callback->run(*vm, makeValidationResult(static_cast<BBQPlan&>(plan)));
     });
 }
 
-Module::ValidationResult Module::validateSync(Context* context, Vector<uint8_t>&& source)
+Module::ValidationResult Module::validateSync(VM& vm, Vector<uint8_t>&& source)
 {
-    Ref<BBQPlan> plan = adoptRef(*new BBQPlan(context, WTFMove(source), BBQPlan::Validation, Plan::dontFinalize(), nullptr, nullptr));
+    Ref<BBQPlan> plan = adoptRef(*new BBQPlan(&vm, WTFMove(source), BBQPlan::Validation, Plan::dontFinalize()));
     plan->parseAndValidateModule();
     return makeValidationResult(plan.get());
 }
 
-void Module::validateAsync(Context* context, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
+void Module::validateAsync(VM& vm, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
 {
-    Ref<Plan> plan = adoptRef(*new BBQPlan(context, WTFMove(source), BBQPlan::Validation, makeValidationCallback(WTFMove(callback)), nullptr, nullptr));
+    Ref<Plan> plan = adoptRef(*new BBQPlan(&vm, WTFMove(source), BBQPlan::Validation, makeValidationCallback(WTFMove(callback))));
     Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 
-Ref<CodeBlock> Module::getOrCreateCodeBlock(Context* context, MemoryMode mode, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
+Ref<CodeBlock> Module::getOrCreateCodeBlock(MemoryMode mode)
 {
     RefPtr<CodeBlock> codeBlock;
     auto locker = holdLock(m_lock);
@@ -86,23 +87,23 @@ Ref<CodeBlock> Module::getOrCreateCodeBlock(Context* context, MemoryMode mode, C
     // FIXME: We might want to back off retrying at some point:
     // https://bugs.webkit.org/show_bug.cgi?id=170607
     if (!codeBlock || (codeBlock->compilationFinished() && !codeBlock->runnable())) {
-        codeBlock = CodeBlock::create(context, mode, const_cast<ModuleInformation&>(moduleInformation()), WTFMove(createEmbedderWrapper), throwWasmException);
+        codeBlock = CodeBlock::create(mode, const_cast<ModuleInformation&>(moduleInformation()));
         m_codeBlocks[static_cast<uint8_t>(mode)] = codeBlock;
     }
     return codeBlock.releaseNonNull();
 }
 
-Ref<CodeBlock> Module::compileSync(Context* context, MemoryMode mode, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
+Ref<CodeBlock> Module::compileSync(MemoryMode mode)
 {
-    Ref<CodeBlock> codeBlock = getOrCreateCodeBlock(context, mode, WTFMove(createEmbedderWrapper), throwWasmException);
+    Ref<CodeBlock> codeBlock = getOrCreateCodeBlock(mode);
     codeBlock->waitUntilFinished();
     return codeBlock;
 }
 
-void Module::compileAsync(Context* context, MemoryMode mode, CodeBlock::AsyncCompilationCallback&& task, CreateEmbedderWrapper&& createEmbedderWrapper, ThrowWasmException throwWasmException)
+void Module::compileAsync(VM& vm, MemoryMode mode, CodeBlock::AsyncCompilationCallback&& task)
 {
-    Ref<CodeBlock> codeBlock = getOrCreateCodeBlock(context, mode, WTFMove(createEmbedderWrapper), throwWasmException);
-    codeBlock->compileAsync(context, WTFMove(task));
+    Ref<CodeBlock> codeBlock = getOrCreateCodeBlock(mode);
+    codeBlock->compileAsync(vm, WTFMove(task));
 }
 
 } } // namespace JSC::Wasm

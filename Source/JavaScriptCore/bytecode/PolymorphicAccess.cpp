@@ -179,7 +179,7 @@ CallSiteIndex AccessGenerationState::originalCallSiteIndex() const { return stub
 void AccessGenerationState::emitExplicitExceptionHandler()
 {
     restoreScratch();
-    jit->copyCalleeSavesToEntryFrameCalleeSavesBuffer(m_vm.topEntryFrame);
+    jit->copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(m_vm);
     if (needsToRestoreRegistersIfException()) {
         // To the JIT that produces the original exception handling
         // call site, they will expect the OSR exit to be arrived

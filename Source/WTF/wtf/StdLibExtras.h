@@ -160,12 +160,6 @@ inline ToType safeCast(FromType value)
     return static_cast<ToType>(value);
 }
 
-template<typename T>
-inline T& default_construct_at(T* addr)
-{
-    return *new (addr) T();
-}
-
 // Returns a count of the number of bits set in 'bits'.
 inline size_t bitCount(unsigned bits)
 {
@@ -541,7 +535,6 @@ using WTF::GB;
 using WTF::approximateBinarySearch;
 using WTF::binarySearch;
 using WTF::bitwise_cast;
-using WTF::default_construct_at;
 using WTF::callStatelessLambda;
 using WTF::checkAndSet;
 using WTF::findBitInWord;

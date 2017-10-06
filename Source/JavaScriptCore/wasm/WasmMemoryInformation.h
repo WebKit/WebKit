@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ struct PinnedSizeRegisterInfo {
 struct PinnedRegisterInfo {
     Vector<PinnedSizeRegisterInfo> sizeRegisters;
     GPRReg baseMemoryPointer;
-    GPRReg wasmContextInstancePointer;
+    GPRReg wasmContextPointer;
     static const PinnedRegisterInfo& get();
     PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&&, GPRReg, GPRReg);
 
@@ -52,8 +52,8 @@ struct PinnedRegisterInfo {
     {
         RegisterSet result;
         result.set(baseMemoryPointer);
-        if (wasmContextInstancePointer != InvalidGPRReg)
-            result.set(wasmContextInstancePointer);
+        if (wasmContextPointer != InvalidGPRReg)
+            result.set(wasmContextPointer);
         if (mode != MemoryMode::Signaling) {
             for (const auto& info : sizeRegisters)
                 result.set(info.sizeRegister);

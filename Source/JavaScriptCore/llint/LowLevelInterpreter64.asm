@@ -129,8 +129,8 @@ macro doVMEntry(makeCall)
     storep vm, VMEntryRecord::m_vm[sp]
     loadp VM::topCallFrame[vm], t4
     storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
-    loadp VM::topEntryFrame[vm], t4
-    storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
+    loadp VM::topVMEntryFrame[vm], t4
+    storep t4, VMEntryRecord::m_prevTopVMEntryFrame[sp]
 
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t4
     addp CallFrameHeaderSlots, t4, t4
@@ -171,8 +171,8 @@ macro doVMEntry(makeCall)
     loadp VMEntryRecord::m_vm[t4], vm
     loadp VMEntryRecord::m_prevTopCallFrame[t4], extraTempReg
     storep extraTempReg, VM::topCallFrame[vm]
-    loadp VMEntryRecord::m_prevTopEntryFrame[t4], extraTempReg
-    storep extraTempReg, VM::topEntryFrame[vm]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[t4], extraTempReg
+    storep extraTempReg, VM::topVMEntryFrame[vm]
 
     subp cfr, CalleeRegisterSaveSize, sp
 
@@ -220,7 +220,7 @@ macro doVMEntry(makeCall)
     else
         storep sp, VM::topCallFrame[vm]
     end
-    storep cfr, VM::topEntryFrame[vm]
+    storep cfr, VM::topVMEntryFrame[vm]
 
     checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
@@ -236,8 +236,8 @@ macro doVMEntry(makeCall)
     loadp VMEntryRecord::m_vm[t4], vm
     loadp VMEntryRecord::m_prevTopCallFrame[t4], t2
     storep t2, VM::topCallFrame[vm]
-    loadp VMEntryRecord::m_prevTopEntryFrame[t4], t2
-    storep t2, VM::topEntryFrame[vm]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[t4], t2
+    storep t2, VM::topVMEntryFrame[vm]
 
     subp cfr, CalleeRegisterSaveSize, sp
 
@@ -276,6 +276,7 @@ macro makeHostFunctionCall(entry, temp)
     end
 end
 
+
 _handleUncaughtException:
     loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
@@ -290,8 +291,8 @@ _handleUncaughtException:
     loadp VMEntryRecord::m_vm[t2], t3
     loadp VMEntryRecord::m_prevTopCallFrame[t2], extraTempReg
     storep extraTempReg, VM::topCallFrame[t3]
-    loadp VMEntryRecord::m_prevTopEntryFrame[t2], extraTempReg
-    storep extraTempReg, VM::topEntryFrame[t3]
+    loadp VMEntryRecord::m_prevTopVMEntryFrame[t2], extraTempReg
+    storep extraTempReg, VM::topVMEntryFrame[t3]
 
     subp cfr, CalleeRegisterSaveSize, sp
 

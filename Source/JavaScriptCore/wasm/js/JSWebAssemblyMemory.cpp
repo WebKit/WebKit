@@ -37,7 +37,7 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
 
-JSWebAssemblyMemory* JSWebAssemblyMemory::create(ExecState* exec, VM& vm, Structure* structure)
+JSWebAssemblyMemory* JSWebAssemblyMemory::create(ExecState* exec, VM& vm, Structure* structure, Ref<Wasm::Memory>&& memory)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* globalObject = exec->lexicalGlobalObject();
@@ -50,16 +50,10 @@ JSWebAssemblyMemory* JSWebAssemblyMemory::create(ExecState* exec, VM& vm, Struct
     if (!globalObject->webAssemblyEnabled())
         return exception(createEvalError(exec, globalObject->webAssemblyDisabledErrorMessage()));
 
-    auto* memory = new (NotNull, allocateCell<JSWebAssemblyMemory>(vm.heap)) JSWebAssemblyMemory(vm, structure);
-    memory->finishCreation(vm);
-    return memory;
-}
-    
-void JSWebAssemblyMemory::adopt(Ref<Wasm::Memory>&& memory)
-{
-    m_memory.swap(memory);
-    ASSERT(m_memory->refCount() == 1);
-    m_memory->check();
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyMemory>(vm.heap)) JSWebAssemblyMemory(vm, structure, WTFMove(memory));
+    instance->m_memory->check();
+    instance->finishCreation(vm);
+    return instance;
 }
 
 Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -67,10 +61,13 @@ Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure)
+JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure, Ref<Wasm::Memory>&& memory)
     : Base(vm, structure)
-    , m_memory(Wasm::Memory::create().releaseNonNull())
+    , m_memory(WTFMove(memory))
 {
+    ASSERT(m_memory->refCount() == 1);
+    m_memoryBase = m_memory->memory();
+    m_memorySize = m_memory->size();
 }
 
 JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
@@ -88,45 +85,52 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
     return m_bufferWrapper.get();
 }
 
-Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delta)
+Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delta, bool shouldThrowExceptionsOnFailure)
 {
+    // Note: We can only use exec if shouldThrowExceptionsOnFailure is true.
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto grown = memory().grow(Wasm::PageCount(delta));
-    if (!grown) {
-        switch (grown.error()) {
-        case Wasm::Memory::GrowFailReason::InvalidDelta:
+    Wasm::PageCount oldPageCount = memory().sizeInPages();
+
+    if (!Wasm::PageCount::isValid(delta)) {
+        if (shouldThrowExceptionsOnFailure)
             throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow expects the delta to be a valid page count")));
-            break;
-        case Wasm::Memory::GrowFailReason::InvalidGrowSize:
-            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow expects the grown size to be a valid page count")));
-            break;
-        case Wasm::Memory::GrowFailReason::WouldExceedMaximum:
-            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow would exceed the memory's declared maximum size")));
-            break;
-        case Wasm::Memory::GrowFailReason::OutOfMemory:
-            throwException(exec, throwScope, createOutOfMemoryError(exec));
-            break;
-        }
         return Wasm::PageCount();
     }
 
-    return grown.value();
-}
+    Wasm::PageCount newSize = oldPageCount + Wasm::PageCount(delta);
+    if (!newSize) {
+        if (shouldThrowExceptionsOnFailure)
+            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow expects the grown size to be a valid page count")));
+        return Wasm::PageCount();
+    }
 
-void JSWebAssemblyMemory::growSuccessCallback(VM& vm, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount)
-{
-    // We need to clear out the old array buffer because it might now be pointing to stale memory.
+    if (delta) {
+        bool success = memory().grow(vm, newSize);
+        if (!success) {
+            ASSERT(m_memoryBase == memory().memory());
+            ASSERT(m_memorySize == memory().size());
+            if (shouldThrowExceptionsOnFailure)
+                throwException(exec, throwScope, createOutOfMemoryError(exec));
+            return Wasm::PageCount();
+        }
+        m_memoryBase = memory().memory();
+        m_memorySize = memory().size();
+    }
+
+    // We need to clear out the old array buffer because it might now be pointing
+    // to stale memory.
     // Neuter the old array.
     if (m_buffer) {
         m_buffer->neuter(vm);
         m_buffer = nullptr;
         m_bufferWrapper.clear();
     }
-    
+
     memory().check();
-    
-    vm.heap.reportExtraMemoryAllocated(newPageCount.bytes() - oldPageCount.bytes());
+
+    vm.heap.reportExtraMemoryAllocated(Wasm::PageCount(delta).bytes());
+    return oldPageCount;
 }
 
 void JSWebAssemblyMemory::finishCreation(VM& vm)

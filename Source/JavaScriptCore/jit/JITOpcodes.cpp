@@ -460,7 +460,7 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     ASSERT(regT0 == returnValueGPR);
-    copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
+    copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm());
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
     callOperationNoExceptionCheck(operationThrow, regT0);
     jumpToExceptionHandler(*vm());
@@ -539,7 +539,7 @@ void JIT::emit_op_to_string(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(*vm());
 
     move(TrustedImmPtr(m_vm), regT3);
     load64(Address(regT3, VM::callFrameForCatchOffset()), callFrameRegister);
@@ -957,7 +957,7 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
     if (canBeOptimized()) {
         linkSlowCase(iter);
 
-        copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
+        copyCalleeSavesFromFrameOrRegisterToVMEntryFrameCalleeSavesBuffer(*vm());
 
         callOperation(operationOptimize, m_bytecodeOffset);
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);

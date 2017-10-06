@@ -77,7 +77,8 @@ EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(ExecState* exec)
     uint32_t delta = toNonWrappingUint32(exec, exec->argument(0));
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    Wasm::PageCount result = memory->grow(vm, exec, delta);
+    bool shouldThrowExceptionsOnFailure = true;
+    Wasm::PageCount result = memory->grow(vm, exec, delta, shouldThrowExceptionsOnFailure);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     return JSValue::encode(jsNumber(result.pageCount()));

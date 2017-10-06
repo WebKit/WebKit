@@ -141,12 +141,12 @@ namespace JSC  {
 
         CallFrame& operator=(const Register& r) { *static_cast<Register*>(this) = r; return *this; }
 
-        CallFrame* callerFrame() const { return static_cast<CallFrame*>(callerFrameOrEntryFrame()); }
-        void* callerFrameOrEntryFrame() const { return callerFrameAndPC().callerFrame; }
-        SUPPRESS_ASAN void* unsafeCallerFrameOrEntryFrame() const { return unsafeCallerFrameAndPC().callerFrame; }
+        CallFrame* callerFrame() const { return static_cast<CallFrame*>(callerFrameOrVMEntryFrame()); }
+        void* callerFrameOrVMEntryFrame() const { return callerFrameAndPC().callerFrame; }
+        SUPPRESS_ASAN void* unsafeCallerFrameOrVMEntryFrame() const { return unsafeCallerFrameAndPC().callerFrame; }
 
-        CallFrame* unsafeCallerFrame(EntryFrame*&);
-        JS_EXPORT_PRIVATE CallFrame* callerFrame(EntryFrame*&);
+        CallFrame* unsafeCallerFrame(VMEntryFrame*&);
+        JS_EXPORT_PRIVATE CallFrame* callerFrame(VMEntryFrame*&);
 
         JS_EXPORT_PRIVATE SourceOrigin callerSourceOrigin();
 

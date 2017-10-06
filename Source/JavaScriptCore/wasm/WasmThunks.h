@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "MacroAssemblerCodeRef.h"
-#include "WasmEmbedder.h"
 
 namespace JSC { namespace Wasm {
 
@@ -43,9 +42,6 @@ public:
     static void initialize();
     static Thunks& singleton();
 
-    void setThrowWasmException(ThrowWasmException);
-    ThrowWasmException throwWasmException();
-
     MacroAssemblerCodeRef stub(ThunkGenerator);
     MacroAssemblerCodeRef stub(const AbstractLocker&, ThunkGenerator);
     MacroAssemblerCodeRef existingStub(ThunkGenerator);
@@ -54,7 +50,6 @@ private:
     Thunks() = default;
 
     HashMap<ThunkGenerator, MacroAssemblerCodeRef> m_stubs;
-    ThrowWasmException m_throwWasmException { nullptr };
     Lock m_lock;
 };
 

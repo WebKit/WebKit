@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ public:
 
         size_t index() const { return m_index; }
         size_t argumentCountIncludingThis() const { return m_argumentCountIncludingThis; }
-        bool callerIsEntryFrame() const { return m_callerIsEntryFrame; }
+        bool callerIsVMEntryFrame() const { return m_callerIsVMEntryFrame; }
         CallFrame* callerFrame() const { return m_callerFrame; }
         CalleeBits callee() const { return m_callee; }
         CodeBlock* codeBlock() const { return m_codeBlock; }
@@ -97,6 +97,7 @@ public:
         RegisterAtOffsetList* calleeSaveRegisters();
 
         ClonedArguments* createArguments();
+        VMEntryFrame* vmEntryFrame() const { return m_VMEntryFrame; }
         CallFrame* callFrame() const { return m_callFrame; }
         
         void dump(PrintStream&, Indenter = Indenter()) const;
@@ -113,8 +114,8 @@ public:
         InlineCallFrame* m_inlineCallFrame;
 #endif
         CallFrame* m_callFrame;
-        EntryFrame* m_entryFrame;
-        EntryFrame* m_callerEntryFrame;
+        VMEntryFrame* m_VMEntryFrame;
+        VMEntryFrame* m_CallerVMEntryFrame;
         CallFrame* m_callerFrame;
         CalleeBits m_callee;
         CodeBlock* m_codeBlock;
@@ -122,7 +123,7 @@ public:
         size_t m_argumentCountIncludingThis;
         unsigned m_bytecodeOffset;
         Wasm::IndexOrName m_wasmFunctionIndexOrName;
-        bool m_callerIsEntryFrame : 1;
+        bool m_callerIsVMEntryFrame : 1;
         bool m_isWasmFrame : 1;
 
         friend class StackVisitor;

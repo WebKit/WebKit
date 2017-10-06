@@ -55,7 +55,6 @@
 #include "TemplateRegistryKeyTable.h"
 #include "VMEntryRecord.h"
 #include "VMTraps.h"
-#include "WasmContext.h"
 #include "Watchpoint.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
@@ -330,15 +329,14 @@ public:
 
     VMType vmType;
     ClientData* clientData;
-    EntryFrame* topEntryFrame;
+    VMEntryFrame* topVMEntryFrame;
     // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
-    // topEntryFrame.
+    // topVMEntryFrame.
     // FIXME: This should be a void*, because it might not point to a CallFrame.
     // https://bugs.webkit.org/show_bug.cgi?id=160441
     ExecState* topCallFrame { nullptr };
-#if ENABLE(WEBASSEMBLY)
-    Wasm::Context wasmContext;
-#endif
+    // FIXME: Save this state elsewhere to allow PIC. https://bugs.webkit.org/show_bug.cgi?id=169773
+    JSWebAssemblyInstance* wasmContext { nullptr };
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
     Strong<Structure> terminatedExecutionErrorStructure;
@@ -503,9 +501,9 @@ public:
         return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
     }
 
-    static ptrdiff_t topEntryFrameOffset()
+    static ptrdiff_t topVMEntryFrameOffset()
     {
-        return OBJECT_OFFSETOF(VM, topEntryFrame);
+        return OBJECT_OFFSETOF(VM, topVMEntryFrame);
     }
 
     void restorePreviousException(Exception* exception) { setException(exception); }

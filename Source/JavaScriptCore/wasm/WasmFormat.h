@@ -44,14 +44,13 @@
 
 namespace JSC {
 
+class JSFunction;
+
 namespace B3 {
 class Compilation;
 }
 
 namespace Wasm {
-
-struct CompilationContext;
-struct ModuleInformation;
 
 inline bool isValueType(Type type)
 {

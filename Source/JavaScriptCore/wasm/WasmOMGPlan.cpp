@@ -31,10 +31,9 @@
 #include "B3Compilation.h"
 #include "B3OpaqueByproducts.h"
 #include "JSCInlines.h"
-#include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyModule.h"
 #include "LinkBuffer.h"
 #include "WasmB3IRGenerator.h"
-#include "WasmCallee.h"
 #include "WasmContext.h"
 #include "WasmMachineThreads.h"
 #include "WasmMemory.h"
@@ -52,10 +51,10 @@ namespace WasmOMGPlanInternal {
 static const bool verbose = false;
 }
 
-OMGPlan::OMGPlan(Context* context, Ref<Module>&& module, uint32_t functionIndex, MemoryMode mode, CompletionTask&& task)
-    : Base(context, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
-    , m_module(WTFMove(module))
-    , m_codeBlock(*m_module->codeBlockFor(mode))
+OMGPlan::OMGPlan(Ref<Module> module, uint32_t functionIndex, MemoryMode mode, CompletionTask&& task)
+    : Base(nullptr, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
+    , m_module(module.copyRef())
+    , m_codeBlock(*module->codeBlockFor(mode))
     , m_functionIndex(functionIndex)
 {
     setMode(mode);
@@ -163,13 +162,13 @@ void OMGPlan::work(CompilationEffort)
     complete(holdLock(m_lock));
 }
 
-void OMGPlan::runForIndex(JSWebAssemblyInstance* instance, uint32_t functionIndex)
+void runOMGPlanForIndex(Context* context, uint32_t functionIndex)
 {
-    Wasm::CodeBlock& codeBlock = instance->wasmCodeBlock();
-    ASSERT(instance->wasmMemory()->mode() == codeBlock.mode());
+    JSWebAssemblyCodeBlock* codeBlock = context->codeBlock();
+    ASSERT(context->memoryMode() == codeBlock->m_codeBlock->mode());
 
-    if (codeBlock.tierUpCount(functionIndex).shouldStartTierUp()) {
-        Ref<Plan> plan = adoptRef(*new OMGPlan(instance->context(), Ref<Wasm::Module>(instance->wasmModule()), functionIndex, codeBlock.mode(), Plan::dontFinalize()));
+    if (codeBlock->m_codeBlock->tierUpCount(functionIndex).shouldStartTierUp()) {
+        Ref<Plan> plan = adoptRef(*new OMGPlan(context->module()->module(), functionIndex, codeBlock->m_codeBlock->mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();
