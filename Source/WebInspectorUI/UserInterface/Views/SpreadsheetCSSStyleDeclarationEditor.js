@@ -31,6 +31,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
         this.element.classList.add(WI.SpreadsheetCSSStyleDeclarationEditor.StyleClassName);
 
+        this._delegate = delegate;
         this.style = style;
     }
 
@@ -45,8 +46,13 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         let properties = this._propertiesToRender;
         this.element.classList.toggle("no-properties", !properties.length);
 
-        for (let property of properties)
-            this.element.append(new WI.SpreadsheetStyleProperty(property).element);
+        this._propertyViews = [];
+        for (let index = 0; index < properties.length; index++) {
+            let property = properties[index];
+            let propertyView = new WI.SpreadsheetStyleProperty(this, property, index);
+            this.element.append(propertyView.element);
+            this._propertyViews.push(propertyView);
+        }
     }
 
     get style()
@@ -70,6 +76,71 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this.needsLayout();
     }
 
+    startEditingFirstProperty()
+    {
+        if (this._propertyViews.length)
+            this._propertyViews[0].nameTextField.startEditing();
+        else {
+            let index = 0;
+            this._addBlankProperty(index);
+        }
+    }
+
+    startEditingLastProperty()
+    {
+        let lastProperty = this._propertyViews.lastValue;
+        if (lastProperty)
+            lastProperty.valueTextField.startEditing();
+        else {
+            let index = 0;
+            this._addBlankProperty(index);
+        }
+    }
+
+    spreadsheetCSSStyleDeclarationEditorFocusMoved({direction, movedFromProperty, willRemoveProperty})
+    {
+        let movedFromIndex = this._propertyViews.indexOf(movedFromProperty);
+        console.assert(movedFromIndex !== -1, "Property doesn't exist, focusing on a selector as a fallback.");
+        if (movedFromIndex === -1) {
+            if (this._style.selectorEditable)
+                this._delegate.cssStyleDeclarationTextEditorStartEditingRuleSelector();
+
+            return;
+        }
+
+        if (direction === "forward") {
+            // Move from the value to the next property's name.
+            let index = movedFromIndex + 1;
+            if (index < this._propertyViews.length)
+                this._propertyViews[index].nameTextField.startEditing();
+            else {
+                if (willRemoveProperty) {
+                    // Move from the last value in the rule to the next rule's selector.
+                    let reverse = false;
+                    this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule(reverse);
+                } else
+                    this._addBlankProperty(movedFromIndex);
+            }
+        } else {
+            let index = movedFromIndex - 1;
+            if (index < 0) {
+                // Move from the first property's name to the rule's selector.
+                if (this._style.selectorEditable)
+                    this._delegate.cssStyleDeclarationTextEditorStartEditingRuleSelector();
+            } else {
+                // Move from the property's name to the previous property's value.
+                let valueTextField = this._propertyViews[index].valueTextField;
+                if (valueTextField)
+                    valueTextField.startEditing();
+            }
+        }
+    }
+
+    spreadsheetStylePropertyRemoved(propertyView)
+    {
+        this._propertyViews.remove(propertyView);
+    }
+
     // Private
 
     get _propertiesToRender()
@@ -80,132 +151,31 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         return this._style.allProperties;
     }
 
-    _propertiesChanged(event)
+    _addBlankProperty(afterIndex)
+    {
+        let blankProperty = this._style.newBlankProperty(afterIndex);
+        const newlyAdded = true;
+        let propertyView = new WI.SpreadsheetStyleProperty(this, blankProperty, blankProperty.index, newlyAdded);
+        this.element.append(propertyView.element);
+        this._propertyViews.push(propertyView);
+        propertyView.nameTextField.startEditing();
+    }
+
+    _isFocused()
     {
         let focusedElement = document.activeElement;
-        let isFocused = focusedElement && focusedElement.isSelfOrDescendant(this.element);
-        if (!isFocused)
+
+        if (!focusedElement || focusedElement.tagName === "BODY")
+            return false;
+
+        return focusedElement.isSelfOrDescendant(this.element);
+    }
+
+    _propertiesChanged(event)
+    {
+        if (!this._isFocused())
             this.needsLayout();
     }
 };
 
 WI.SpreadsheetCSSStyleDeclarationEditor.StyleClassName = "spreadsheet-style-declaration-editor";
-
-WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
-{
-    constructor(property)
-    {
-        super();
-
-        this._property = property;
-        this._element = document.createElement("div");
-
-        this._update();
-    }
-
-    // Public
-
-    get element() { return this._element; }
-
-    // Private
-
-    _update()
-    {
-        this.element.removeChildren();
-        this.element.className = "";
-
-        let duplicatePropertyExistsBelow = (cssProperty) => {
-            let propertyFound = false;
-
-            for (let property of this._property.ownerStyle.properties) {
-                if (property === cssProperty)
-                    propertyFound = true;
-                else if (property.name === cssProperty.name && propertyFound)
-                    return true;
-            }
-
-            return false;
-        };
-
-        let classNames = ["property"];
-
-        if (this._property.overridden)
-            classNames.push("overridden");
-
-        if (this._property.implicit)
-            classNames.push("implicit");
-
-        if (this._property.ownerStyle.inherited && !this._property.inherited)
-            classNames.push("not-inherited");
-
-        if (!this._property.valid && this._property.hasOtherVendorNameOrKeyword())
-            classNames.push("other-vendor");
-        else if (!this._property.valid) {
-            let propertyNameIsValid = false;
-            if (WI.CSSCompletions.cssNameCompletions)
-                propertyNameIsValid = WI.CSSCompletions.cssNameCompletions.isValidPropertyName(this._property.name);
-
-            if (!propertyNameIsValid || duplicatePropertyExistsBelow(this._property))
-                classNames.push("invalid");
-        }
-
-        if (!this._property.enabled)
-            classNames.push("disabled");
-
-        this._element.classList.add(...classNames);
-
-        if (this._property.editable) {
-            this._checkboxElement = this.element.appendChild(document.createElement("input"));
-            this._checkboxElement.classList.add("property-toggle");
-            this._checkboxElement.type = "checkbox";
-            this._checkboxElement.checked = this._property.enabled;
-            this._checkboxElement.addEventListener("change", () => {
-                let disabled = !this._checkboxElement.checked;
-                this._property.commentOut(disabled);
-                this._update();
-            });
-        }
-
-        if (!this._property.enabled)
-            this.element.append("/* ");
-
-        this._nameElement = this.element.appendChild(document.createElement("span"));
-        this._nameElement.classList.add("name");
-        this._nameElement.textContent = this._property.name;
-
-        this.element.append(": ");
-
-        this._valueElement = this.element.appendChild(document.createElement("span"));
-        this._valueElement.classList.add("value");
-        this._valueElement.textContent = this._property.rawValue;
-
-        if (this._property.editable && this._property.enabled) {
-            this._nameElement.tabIndex = 1;
-            this._nameElement.contentEditable = "plaintext-only";
-            this._nameElement.spellcheck = false;
-            this._nameElement.addEventListener("input", this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleNameChange);
-
-            this._valueElement.tabIndex = 1;
-            this._valueElement.contentEditable = "plaintext-only";
-            this._valueElement.spellcheck = false;
-            this._valueElement.addEventListener("input", this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleValueChange);
-        }
-
-        this.element.append(";");
-
-        if (!this._property.enabled)
-            this.element.append(" */");
-    }
-
-    _handleNameChange()
-    {
-        this._property.name = this._nameElement.textContent.trim();
-    }
-
-    _handleValueChange()
-    {
-        this._property.rawValue = this._valueElement.textContent.trim();
-    }
-};
-
-WI.SpreadsheetStyleProperty.CommitCoalesceDelay = 250;

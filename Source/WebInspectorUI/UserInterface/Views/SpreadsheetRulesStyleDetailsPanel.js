@@ -99,6 +99,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         let orderedStyles = uniqueOrderedStyles(this.nodeStyles.orderedStyles);
         let previousStyle = null;
 
+        this._sections = [];
+
         for (let style of orderedStyles) {
             if (style.inherited && (!previousStyle || previousStyle.node !== style.node))
                 this.element.append(createInheritedHeader(style));
@@ -117,6 +119,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
             this.addSubview(section);
             section.needsLayout();
+            this._sections.push(section);
 
             previousStyle = style;
         }
@@ -124,6 +127,31 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this.element.append(this._emptyFilterResultsElement);
 
         super.refresh(significantChange);
+    }
+
+    cssStyleDeclarationSectionStartEditingNextRule(currentSection)
+    {
+        let currentIndex = this._sections.indexOf(currentSection);
+        let index = currentIndex < this._sections.length - 1 ? currentIndex + 1 : 0;
+        this._sections[index].startEditingRuleSelector();
+    }
+
+    cssStyleDeclarationSectionStartEditingPreviousRule(currentSection)
+    {
+        let index = this._sections.indexOf(currentSection);
+        console.assert(index > -1);
+
+        while (true) {
+            index--;
+            if (index < 0)
+                break;
+
+            let section = this._sections[index];
+            if (section.editable) {
+                section._propertiesEditor.startEditingLastProperty();
+                break;
+            }
+        }
     }
 };
 

@@ -93,6 +93,11 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return false;
     }
 
+    get selectorEditable()
+    {
+        return this._ownerRule && this._ownerRule.editable;
+    }
+
     update(text, properties, styleSheetTextRange, dontFireEvents)
     {
         text = text || "";
@@ -191,11 +196,11 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         if (this._text === text)
             return;
 
-        let trimmedText = WI.CSSStyleDeclarationTextEditor.PrefixWhitespace + text.trim();
+        let trimmedText = WI.CSSStyleDeclaration.PrefixWhitespace + text.trim();
         if (this._text === trimmedText)
             return;
 
-        if (trimmedText === WI.CSSStyleDeclarationTextEditor.PrefixWhitespace || this._type === WI.CSSStyleDeclaration.Type.Inline)
+        if (trimmedText === WI.CSSStyleDeclaration.PrefixWhitespace || this._type === WI.CSSStyleDeclaration.Type.Inline)
             text = trimmedText;
 
         let modified = text !== this._initialText;
@@ -352,11 +357,67 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return !!this._properties.length;
     }
 
+    newBlankProperty(insertAfterIndex)
+    {
+        let text, name, value, priority, overridden, implicit, anonymous;
+        let enabled = true;
+        let valid = true;
+        let styleSheetTextRange = this._rangeAfterPropertyAtIndex(insertAfterIndex);
+        let property = new WI.CSSProperty(insertAfterIndex + 1, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
+        property.ownerStyle = this;
+
+        return property;
+    }
+
+    shiftPropertiesAfter(cssProperty, lineDelta, columnDelta, propertyWasRemoved)
+    {
+        // cssProperty.index could be set to NaN by WI.CSSStyleDeclaration.prototype.update.
+        let realIndex = this._allProperties.indexOf(cssProperty);
+        if (realIndex === -1)
+            return;
+
+        let endLine = cssProperty.styleSheetTextRange.endLine;
+
+        for (let i = realIndex + 1; i < this._allProperties.length; i++) {
+            let property = this._allProperties[i];
+
+            if (property._styleSheetTextRange) {
+                if (property.styleSheetTextRange.startLine === endLine) {
+                    // Only update column data if it's on the same line.
+                    property._styleSheetTextRange = property._styleSheetTextRange.cloneAndModify(lineDelta, columnDelta, lineDelta, columnDelta);
+                } else
+                    property._styleSheetTextRange = property._styleSheetTextRange.cloneAndModify(lineDelta, 0, lineDelta, 0);
+            }
+
+            if (propertyWasRemoved && !isNaN(property._index))
+                property._index--;
+        }
+
+        if (propertyWasRemoved)
+            this._allProperties.splice(realIndex, 1);
+
+        // Invalidate cached properties.
+        this._allVisibleProperties = null;
+    }
+
     // Protected
 
     get nodeStyles()
     {
         return this._nodeStyles;
+    }
+
+    // Private
+
+    _rangeAfterPropertyAtIndex(index)
+    {
+        if (index > 0) {
+            let property = this.allVisibleProperties[index];
+            if (property && property.styleSheetTextRange)
+                return property.styleSheetTextRange.collapseToEnd();
+        }
+
+        return this._styleSheetTextRange.collapseToEnd();
     }
 };
 
@@ -371,3 +432,5 @@ WI.CSSStyleDeclaration.Type = {
     Attribute: "css-style-declaration-type-attribute",
     Computed: "css-style-declaration-type-computed"
 };
+
+WI.CSSStyleDeclaration.PrefixWhitespace = "\n";

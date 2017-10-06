@@ -583,8 +583,8 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
     {
         function switchRule()
         {
-            if (this._delegate && typeof this._delegate.cssStyleDeclarationTextEditorSwitchRule === "function") {
-                this._delegate.cssStyleDeclarationTextEditorSwitchRule(true);
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule === "function") {
+                this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule(true);
                 return;
             }
 
@@ -639,8 +639,8 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
     _handleTabKey(codeMirror)
     {
         function switchRule() {
-            if (this._delegate && typeof this._delegate.cssStyleDeclarationTextEditorSwitchRule === "function") {
-                this._delegate.cssStyleDeclarationTextEditorSwitchRule();
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule === "function") {
+                this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule();
                 return;
             }
 
@@ -740,7 +740,7 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
     _formattedContent()
     {
         // Start with the prefix whitespace we stripped.
-        var content = WI.CSSStyleDeclarationTextEditor.PrefixWhitespace;
+        var content = WI.CSSStyleDeclaration.PrefixWhitespace;
 
         // Get each line and add the line prefix whitespace and newlines.
         var lineCount = this._codeMirror.lineCount();
@@ -1801,7 +1801,6 @@ WI.CSSStyleDeclarationTextEditor.PropertyVisibilityMode = {
     HideNonVariables: Symbol("variable-visibility-hide-non-variables"),
 };
 
-WI.CSSStyleDeclarationTextEditor.PrefixWhitespace = "\n";
 WI.CSSStyleDeclarationTextEditor.SuffixWhitespace = "\n";
 WI.CSSStyleDeclarationTextEditor.StyleClassName = "css-style-text-editor";
 WI.CSSStyleDeclarationTextEditor.ReadOnlyStyleClassName = "read-only";

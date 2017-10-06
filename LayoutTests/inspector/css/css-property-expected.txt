@@ -50,3 +50,7 @@ PASS: "background-repeat-invalid" has the _text (private) "background-repeat-inv
 PASS: "background-repeat-y" has the text "background-repeat-y: repeat;".
 PASS: "background-repeat-y" has the _text (private) "".
 
+-- Running test case: CSSProperty.prototype.remove
+PASS: The removed property should no longer be in allProperties array.
+PASS: The second property should shift and become the first.
+

@@ -202,6 +202,28 @@ function test() {
         }
     });
 
+    suite.addTestCase({
+        name: "CSSProperty.prototype.remove",
+        description: "Ensure remove method removes a property from an array of properties.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                let propertiesLength = rule.style.allProperties.length;
+                let firstProperty = rule.style.allProperties[0];
+                let secondProperty = rule.style.allProperties[1];
+
+                rule.style.allProperties[0].remove();
+
+                InspectorTest.expectEqual(rule.style.allProperties.length, propertiesLength - 1, "The removed property should no longer be in allProperties array.");
+                InspectorTest.expectEqual(rule.style.allProperties[0], secondProperty, "The second property should shift and become the first.");
+            }
+
+            resolve();
+        }
+    });
+
     WI.domTreeManager.requestDocument((documentNode) => {
         WI.domTreeManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
             if (contentNodeId) {

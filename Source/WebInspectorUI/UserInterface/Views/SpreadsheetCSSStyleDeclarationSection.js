@@ -35,6 +35,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._delegate = delegate || null;
         this._style = style;
+        this._propertiesEditor = null;
         this._selectorElements = [];
     }
 
@@ -42,9 +43,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     get style() { return this._style; }
 
-    get selectorEditable()
+    get propertiesEditor() { return this._propertiesEditor; }
+
+    get editable()
     {
-        return this._style.editable && this._style.ownerRule;
+        return this._style.editable;
     }
 
     initialLayout()
@@ -60,12 +63,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._selectorElement = document.createElement("span");
         this._selectorElement.classList.add("selector");
+        this._selectorElement.tabIndex = 0;
         this._headerElement.append(this._selectorElement);
 
-        if (this.selectorEditable) {
-            this._selectorElement.tabIndex = 1;
+        if (this._style.selectorEditable)
             this._selectorTextField = new WI.SpreadsheetSelectorField(this, this._selectorElement);
-        }
 
         this._propertiesEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this, this._style);
         this._propertiesEditor.element.classList.add("properties");
@@ -97,28 +99,54 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._renderSelector();
     }
 
-    cssStyleDeclarationTextEditorFocused()
+    startEditingRuleSelector()
     {
-        if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionEditorFocused === "function")
-            this._delegate.cssStyleDeclarationSectionEditorFocused(this);
+        this._selectorElement.focus();
     }
 
-    spreadsheetSelectorFieldDidChange()
+    cssStyleDeclarationTextEditorStartEditingRuleSelector()
+    {
+        this.startEditingRuleSelector();
+    }
+
+    spreadsheetSelectorFieldDidChange(direction)
     {
         let selectorText = this._selectorElement.textContent.trim();
-        if (!selectorText || selectorText === this._style.ownerRule.selectorText) {
+
+        if (!selectorText || selectorText === this._style.ownerRule.selectorText)
             this._discardSelectorChange();
+        else {
+            this._style.ownerRule.singleFireEventListener(WI.CSSRule.Event.SelectorChanged, this._renderSelector, this);
+            this._style.ownerRule.selectorText = selectorText;
+        }
+
+        if (!direction) {
+            // Don't do anything when it's a blur event.
             return;
         }
 
-        this._style.ownerRule.singleFireEventListener(WI.CSSRule.Event.SelectorChanged, this._renderSelector, this);
-
-        this._style.ownerRule.selectorText = selectorText;
+        if (direction === "forward")
+            this._propertiesEditor.startEditingFirstProperty();
+        else if (direction === "backward") {
+            if (typeof this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule === "function")
+                this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule(this);
+        }
     }
 
     spreadsheetSelectorFieldDidDiscard()
     {
         this._discardSelectorChange();
+    }
+
+    cssStyleDeclarationEditorStartEditingAdjacentRule(toPreviousRule)
+    {
+        if (!this._delegate)
+            return;
+
+        if (toPreviousRule && typeof this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule === "function")
+            this._delegate.cssStyleDeclarationSectionStartEditingPreviousRule(this);
+        else if (!toPreviousRule && typeof this._delegate.cssStyleDeclarationSectionStartEditingNextRule === "function")
+            this._delegate.cssStyleDeclarationSectionStartEditingNextRule(this);
     }
 
     // Private
@@ -294,112 +322,3 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 };
 
 WI.SpreadsheetCSSStyleDeclarationSection.MatchedSelectorElementStyleClassName = "matched";
-
-WI.SpreadsheetSelectorField = class SpreadsheetSelectorField
-{
-    constructor(delegate, element)
-    {
-        this._delegate = delegate;
-        this._element = element;
-        this._element.classList.add("spreadsheet-selector-field");
-
-        this._element.addEventListener("click", this._handleClick.bind(this));
-        this._element.addEventListener("focus", this._handleFocus.bind(this));
-        this._element.addEventListener("blur", this._handleBlur.bind(this));
-        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
-
-        this._editing = false;
-    }
-
-    // Public
-
-    get editing() { return this._editing; }
-
-    startEditing()
-    {
-        if (this._editing)
-            return;
-
-        this._editing = true;
-
-        let element = this._element;
-        element.classList.add("editing");
-        element.contentEditable = "plaintext-only";
-        element.spellcheck = false;
-        element.scrollIntoViewIfNeeded(false);
-
-        // Disable syntax highlighting.
-        element.textContent = element.textContent;
-
-        let selection = window.getSelection();
-        let range = document.createRange();
-        range.selectNodeContents(element);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-
-    stopEditing()
-    {
-        if (!this._editing)
-            return;
-
-        this._editing = false;
-        this._element.classList.remove("editing");
-        this._element.contentEditable = false;
-    }
-
-    // Private
-
-    _handleClick(event)
-    {
-        this.startEditing();
-    }
-
-    _handleFocus(event)
-    {
-        this.startEditing();
-    }
-
-    _handleBlur(event)
-    {
-        this.stopEditing();
-
-        if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidChange === "function")
-            this._delegate.spreadsheetSelectorFieldDidChange();
-    }
-
-    _handleKeyDown(event)
-    {
-        if (event.key === "Enter" && !this._editing) {
-            event.stopImmediatePropagation();
-            event.preventDefault();
-
-            this.startEditing();
-            return;
-        }
-
-        if (event.key === "Enter" || event.key === "Tab") {
-            if (event.key === "Enter") {
-                event.stopImmediatePropagation();
-                event.preventDefault();
-            }
-
-            this.stopEditing();
-
-            if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidChange === "function")
-                this._delegate.spreadsheetSelectorFieldDidChange();
-
-            return;
-        }
-
-        if (event.key === "Escape") {
-            event.stopImmediatePropagation();
-            event.preventDefault();
-
-            this.stopEditing();
-
-            if (this._delegate && typeof this._delegate.spreadsheetSelectorFieldDidDiscard === "function")
-                this._delegate.spreadsheetSelectorFieldDidDiscard();
-        }
-    }
-};

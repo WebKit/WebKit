@@ -1,3 +1,150 @@
+2017-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Add support for keyboard navigation (Tab, Shift-Tab, Enter, Esc)
+        https://bugs.webkit.org/show_bug.cgi?id=177711
+
+        Reviewed by Joseph Pecoraro.
+
+        Enter, Tab, Shift-Tab should commit changes.
+        Escape should discard changes.
+
+        Tab and Enter should navigate forward (focus on the next field).
+        Shift-Tab should navigate backward (focus on the previous field).
+        Esc should not change the focus.
+
+        When navigating forward from:
+
+        - Selector: Focus on the first property name. If it doesn’t exist, create a blank property.
+
+        - Property name:
+          - If property name is blank, discard the property and focus on the next editable field (property name or selector of the next rule).
+          - If property is not blank, focus on the value.
+
+        - Property value:
+          - If the last value in the rule, create a blank property and focus on its name.
+          - If not the last value in the rule, focus on the next editable field (property name or selector of the next rule).
+
+        When navigating backward from:
+
+        - Selector: create a blank property on the previous editable rule and focus on its name.
+
+        - Property name:
+          - Focus on the rule's selector.
+
+        - Property value:
+          - Focus on the property name.
+
+        * UserInterface/Base/Utilities.js:
+        (Event.prototype.stop):
+        * UserInterface/Main.html:
+        Add new files. Keep one class per file.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.remove):
+        (WI.CSSProperty.prototype.set name):
+        (WI.CSSProperty.prototype.set rawValue):
+        (WI.CSSProperty.prototype.get editable):
+        (WI.CSSProperty.prototype._updateStyleText):
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        Update indices and ranges of properties following the edited one to prevent data corruption.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.get selectorEditable):
+        (WI.CSSStyleDeclaration.prototype.set text):
+        (WI.CSSStyleDeclaration.prototype.newBlankProperty):
+        (WI.CSSStyleDeclaration.prototype.shiftPropertiesAfter):
+        (WI.CSSStyleDeclaration.prototype._rangeAfterPropertyAtIndex):
+        Implement adding new blank properties.
+
+        * UserInterface/Models/TextRange.js:
+        (WI.TextRange.prototype.cloneAndModify):
+        Add an assert to catch negative number errors.
+
+        (WI.TextRange.prototype.collapseToEnd):
+        Add a utility function akin Selection.prototype.collapseToEnd.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WI.CSSStyleDeclarationTextEditor.prototype._handleShiftTabKey):
+        (WI.CSSStyleDeclarationTextEditor.prototype._handleTabKey):
+        (WI.CSSStyleDeclarationTextEditor.prototype._formattedContent):
+        Move PrefixWhitespace from a view to a model (WI.CSSStyleDeclaration.PrefixWhitespace),
+        since it's already used in the model.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor :matches(.name, .value).editing):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.startEditingFirstProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.startEditingLastProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetCSSStyleDeclarationEditorFocusMoved):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyRemoved):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get _propertiesToRender):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._addBlankProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._isFocused):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        Give SpreadsheetCSSStyleDeclarationEditor a delegate so that it can move focus to a CSS selector, or previous and next CSS rules.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get propertiesEditor):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get editable):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.startEditingRuleSelector):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.cssStyleDeclarationTextEditorStartEditingRuleSelector):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidChange):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.cssStyleDeclarationEditorStartEditingAdjacentRule):
+        Give SpreadsheetCSSStyleDeclarationSection a delegate so that it can move focus to previous and next CSS rules.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.refresh):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionStartEditingNextRule):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionStartEditingPreviousRule):
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        Implement focusing on the next and previous CSS rules.
+
+        * UserInterface/Views/SpreadsheetSelectorField.js: Added.
+        (WI.SpreadsheetSelectorField):
+        (WI.SpreadsheetSelectorField.prototype.get editing):
+        (WI.SpreadsheetSelectorField.prototype.startEditing):
+        (WI.SpreadsheetSelectorField.prototype.stopEditing):
+        (WI.SpreadsheetSelectorField.prototype._selectText):
+        (WI.SpreadsheetSelectorField.prototype._handleClick):
+        (WI.SpreadsheetSelectorField.prototype._handleFocus):
+        (WI.SpreadsheetSelectorField.prototype._handleBlur):
+        (WI.SpreadsheetSelectorField.prototype._handleKeyDown):
+        Move SpreadsheetSelectorField into its own file.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js: Added.
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.get element):
+        (WI.SpreadsheetStyleProperty.prototype.get nameTextField):
+        (WI.SpreadsheetStyleProperty.prototype.get valueTextField):
+        (WI.SpreadsheetStyleProperty.prototype._remove):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidChange):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        (WI.SpreadsheetStyleProperty.prototype._handleNameChange):
+        (WI.SpreadsheetStyleProperty.prototype._handleValueChange):
+        Move SpreadsheetStyleProperty into its own file.
+
+        * UserInterface/Views/SpreadsheetTextField.js: Added.
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype.get element):
+        (WI.SpreadsheetTextField.prototype.get editing):
+        (WI.SpreadsheetTextField.prototype.get value):
+        (WI.SpreadsheetTextField.prototype.set value):
+        (WI.SpreadsheetTextField.prototype.startEditing):
+        (WI.SpreadsheetTextField.prototype.stopEditing):
+        (WI.SpreadsheetTextField.prototype._selectText):
+        (WI.SpreadsheetTextField.prototype._discardChange):
+        (WI.SpreadsheetTextField.prototype._handleFocus):
+        (WI.SpreadsheetTextField.prototype._handleBlur):
+        (WI.SpreadsheetTextField.prototype._handleKeyDown):
+        (WI.SpreadsheetTextField.prototype._handleInput):
+        Introduce SpreadsheetTextField that is used for editing CSS property names and values.
+
 2017-10-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r222868): Web Inspector: Timeline ScopeBar Navigation Bar items too large

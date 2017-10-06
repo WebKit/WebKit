@@ -456,6 +456,15 @@ Object.defineProperty(DocumentFragment.prototype, "createChild",
     value: Element.prototype.createChild
 });
 
+Object.defineProperty(Event.prototype, "stop",
+{
+    value()
+    {
+        this.stopImmediatePropagation();
+        this.preventDefault();
+    }
+});
+
 Object.defineProperty(Array, "shallowEqual",
 {
     value(a, b)

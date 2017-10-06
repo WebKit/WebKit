@@ -118,6 +118,12 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             this.dispatchEventToListeners(WI.CSSProperty.Event.Changed);
     }
 
+    remove()
+    {
+        // Setting name or value to an empty string removes the entire CSSProperty.
+        this.name = "";
+    }
+
     commentOut(disabled)
     {
         console.assert(this._enabled === disabled, "CSS property is already " + (disabled ? "disabled" : "enabled"));
@@ -167,7 +173,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             return;
 
         this._name = name;
-        this._updateStyle();
+        this._updateStyleText();
     }
 
     get canonicalName()
@@ -201,7 +207,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         this._rawValue = value;
         this._value = undefined;
-        this._updateStyle();
+        this._updateStyleText();
     }
 
     get important()
@@ -258,7 +264,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     get editable()
     {
-        return this._styleSheetTextRange && this._ownerStyle && this._ownerStyle.styleSheetTextRange;
+        return !!(this._styleSheetTextRange && this._ownerStyle && this._ownerStyle.styleSheetTextRange);
     }
 
     get styleDeclarationTextRange()
@@ -319,15 +325,20 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     // Private
 
-    _updateStyle()
+    _updateStyleText()
     {
-        let text = this._name + ": " + this._rawValue + ";";
-        this._updateOwnerStyleText(this._text, text);
+        let text = "";
+
+        if (this._name && this._rawValue)
+            text = this._name + ": " + this._rawValue + ";";
+
+        let oldText = this._text;
+        this._text = text;
+        this._updateOwnerStyleText(oldText, this._text);
     }
 
     _updateOwnerStyleText(oldText, newText)
     {
-        console.assert(oldText !== newText, `Style text did not change ${oldText}`);
         if (oldText === newText)
             return;
 
@@ -338,9 +349,18 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         let range = this._styleSheetTextRange.relativeTo(this._ownerStyle.styleSheetTextRange.startLine, this._ownerStyle.styleSheetTextRange.startColumn);
         range.resolveOffsets(styleText);
 
+        console.assert(oldText === styleText.slice(range.startOffset, range.endOffset), "_styleSheetTextRange data is invalid.");
+
         let newStyleText = styleText.slice(0, range.startOffset) + newText + styleText.slice(range.endOffset);
-        this._styleSheetTextRange = this._styleSheetTextRange.cloneAndModify(0, 0, newText.lineCount - oldText.lineCount, newText.lastLine.length - oldText.lastLine.length);
+
+        let lineDelta = newText.lineCount - oldText.lineCount;
+        let columnDelta = newText.lastLine.length - oldText.lastLine.length;
+        this._styleSheetTextRange = this._styleSheetTextRange.cloneAndModify(0, 0, lineDelta, columnDelta);
+
         this._ownerStyle.text = newStyleText;
+
+        let propertyWasRemoved = !newText;
+        this._ownerStyle.shiftPropertiesAfter(this, lineDelta, columnDelta, propertyWasRemoved);
     }
 };
 
