@@ -33,6 +33,7 @@
     padding: 1px 8px 3px;
     margin: 0 2px;
 
+    height: initial;
     line-height: 11px;
     color: hsl(0, 0%, 18%);
     border: 1px solid transparent;

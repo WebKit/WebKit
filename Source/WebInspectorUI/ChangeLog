@@ -1,3 +1,14 @@
+2017-10-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r222868): Web Inspector: Timeline ScopeBar Navigation Bar items too large
+        https://bugs.webkit.org/show_bug.cgi?id=177979
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.text-only):
+        Make the height of text-only items the size of the text, not 100%.
+
 2017-10-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: When scrolled Network Table reduces the number of rows it may appear as blank
