@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <thread>
+#include <vector>
 
 #include "mbmalloc.h"
 
@@ -209,9 +210,10 @@ void benchmark_message_many(CommandLine& commandLine)
     const size_t quantum = 16;
 
     const size_t queueCount = cpuCount() - 1;
-    std::unique_ptr<WorkQueue> queues[queueCount];
+    std::vector<std::unique_ptr<WorkQueue>> queues;
+    queues.reserve(queueCount);
     for (size_t i = 0; i < queueCount; ++i)
-        queues[i] = std::make_unique<WorkQueue>();
+        queues.emplace_back(std::make_unique<WorkQueue>());
 
     for (size_t i = 0; i < times; i += quantum) {
         for (size_t j = 0; j < quantum; ++j) {

@@ -1,5 +1,16 @@
 2017-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, use std::vector instead of variable length array
+        https://bugs.webkit.org/show_bug.cgi?id=177856
+
+        This is OK because originally this code uses dispatch queue, which
+        should have allocation inside it too.
+
+        * MallocBench/MallocBench/message.cpp:
+        (benchmark_message_many):
+
+2017-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [Linux] Port MallocBench
         https://bugs.webkit.org/show_bug.cgi?id=177856
 
