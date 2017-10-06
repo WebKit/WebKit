@@ -137,7 +137,7 @@ MediaSourcePrivate::AddStatus PlaybackPipeline::addSourceBuffer(RefPtr<SourceBuf
     g_object_set(G_OBJECT(stream->appsrc), "block", FALSE, "min-percent", 20, "format", GST_FORMAT_TIME, nullptr);
 
     GST_OBJECT_LOCK(m_webKitMediaSrc.get());
-    priv->streams.prepend(stream);
+    priv->streams.append(stream);
     GST_OBJECT_UNLOCK(m_webKitMediaSrc.get());
 
     gst_bin_add(GST_BIN(m_webKitMediaSrc.get()), stream->appsrc);
@@ -153,17 +153,9 @@ void PlaybackPipeline::removeSourceBuffer(RefPtr<SourceBufferPrivateGStreamer> s
     GST_DEBUG_OBJECT(m_webKitMediaSrc.get(), "Element removed from MediaSource");
     GST_OBJECT_LOCK(m_webKitMediaSrc.get());
     WebKitMediaSrcPrivate* priv = m_webKitMediaSrc->priv;
-    Stream* stream = nullptr;
-    Deque<Stream*>::iterator streamPosition = priv->streams.begin();
-
-    for (; streamPosition != priv->streams.end(); ++streamPosition) {
-        if ((*streamPosition)->sourceBuffer == sourceBufferPrivate.get()) {
-            stream = *streamPosition;
-            break;
-        }
-    }
+    Stream* stream = getStreamBySourceBufferPrivate(m_webKitMediaSrc.get(), sourceBufferPrivate.get());
     if (stream)
-        priv->streams.remove(streamPosition);
+        priv->streams.removeFirst(stream);
     GST_OBJECT_UNLOCK(m_webKitMediaSrc.get());
 
     if (stream)
@@ -484,7 +476,10 @@ void PlaybackPipeline::enqueueSample(Ref<MediaSample>&& mediaSample)
         GST_TIME_ARGS(WebCore::toGstClockTime(mediaSample->presentationTime())),
         GST_TIME_ARGS(WebCore::toGstClockTime(mediaSample->duration())));
 
-    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(m_webKitMediaSrc.get()));
+    // No need to lock to access the Stream here because the only chance of conflict with this read and with the usage
+    // of the sample fields done in this method would be the deletion of the stream. However, that operation can only
+    // happen in the main thread, but we're already there. Therefore there's no conflict and locking would only cause
+    // a performance penalty on the readers working in other threads.
     Stream* stream = getStreamByTrackId(m_webKitMediaSrc.get(), trackId);
 
     if (!stream) {
@@ -497,7 +492,10 @@ void PlaybackPipeline::enqueueSample(Ref<MediaSample>&& mediaSample)
         return;
     }
 
+    // This field doesn't change after creation, no need to lock.
     GstElement* appsrc = stream->appsrc;
+
+    // Only modified by the main thread, no need to lock.
     MediaTime lastEnqueuedTime = stream->lastEnqueuedTime;
 
     GStreamerMediaSample* sample = static_cast<GStreamerMediaSample*>(mediaSample.ptr());

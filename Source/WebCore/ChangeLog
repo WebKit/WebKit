@@ -1,3 +1,33 @@
+2017-10-06  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][MSE] Likely race condition causes WTF::Deque to crash on debug
+        https://bugs.webkit.org/show_bug.cgi?id=177410
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Deque keeps a chain of iterators which is updated as iterators are
+        created/destroyed. This can cause problems when iterators are created
+        from multiple threads as they are now, sometimes without proper
+        locking because it's not actually needed.
+
+        For instance, the lock in PlaybackPipeline::enqueueSample() is not
+        needed because none of the accesses are actually risky. Locking there
+        just to make Deque happy would only cause a performance penalty on the
+        readers working in other threads.
+
+        No new tests.
+
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::addSourceBuffer): Use Vector instead of
+        Deque.
+        (WebCore::PlaybackPipeline::removeSourceBuffer): Ditto.
+        (WebCore::PlaybackPipeline::enqueueSample): Remove lock and explain
+        why it's not needed.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcFinalize): Use Vector.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h:
+        Use Vector.
+
 2017-10-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove dead code from Pattern

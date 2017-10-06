@@ -269,7 +269,7 @@ void webKitMediaSrcFinalize(GObject* object)
     WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(object);
     WebKitMediaSrcPrivate* priv = source->priv;
 
-    Deque<Stream*> oldStreams;
+    Vector<Stream*> oldStreams;
     source->priv->streams.swap(oldStreams);
 
     for (Stream* stream : oldStreams)

@@ -49,9 +49,11 @@ struct _Stream {
     // Fields filled when the Stream is created.
     WebKitMediaSrc* parent;
 
-    // AppSrc.
+    // AppSrc. Never modified after first assignment.
     GstElement* appsrc;
     GstPad* decodebinSinkPad;
+
+    // Never modified after first assignment.
     WebCore::SourceBufferPrivateGStreamer* sourceBuffer;
 
     // Fields filled when the track is attached.
@@ -59,6 +61,8 @@ struct _Stream {
     // Might be 0, e.g. for VP8/VP9.
     GstElement* parser;
     GRefPtr<GstCaps> caps;
+
+    // Only audio, video or nothing at a given time.
     RefPtr<WebCore::AudioTrackPrivateGStreamer> audioTrack;
     RefPtr<WebCore::VideoTrackPrivateGStreamer> videoTrack;
     WebCore::FloatSize presentationSize;
@@ -68,6 +72,7 @@ struct _Stream {
     bool appsrcNeedDataFlag;
 
     // Used to enforce continuity in the appended data and avoid breaking the decoder.
+    // Only used from the main thread.
     MediaTime lastEnqueuedTime;
 };
 
@@ -97,7 +102,9 @@ struct _WebKitMediaSrcPrivate {
     Lock streamLock;
     Condition streamCondition;
 
-    Deque<Stream*> streams;
+    // Streams are only added/removed in the main thread.
+    Vector<Stream*> streams;
+
     GUniquePtr<gchar> location;
     int numberOfAudioStreams;
     int numberOfVideoStreams;
