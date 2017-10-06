@@ -1,3 +1,16 @@
+2017-10-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add Canvas tab and CanvasOverviewContentView
+        https://bugs.webkit.org/show_bug.cgi?id=177604
+        <rdar://problem/34714650>
+
+        Reviewed by Devin Rousso.
+
+        Add test for new static function View.fromElement.
+
+        * inspector/view/basics-expected.txt:
+        * inspector/view/basics.html:
+
 2017-10-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         LayoutTest http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html is a flaky failure

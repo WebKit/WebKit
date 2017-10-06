@@ -33,7 +33,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
         this.element.classList.add("collection");
 
-        this._contentPlaceholder = new WI.TitleView(contentPlaceholderText || WI.CollectionContentView.titleForCollection(collection));
+        this._contentPlaceholderText = contentPlaceholderText || WI.CollectionContentView.titleForCollection(collection);
         this._contentViewConstructor = contentViewConstructor;
         this._contentViewMap = new Map;
         this._handleClickMap = new WeakMap;
@@ -86,6 +86,21 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             this._selectItem(null);
     }
 
+    setSelectedItem(item)
+    {
+        console.assert(this._selectionEnabled, "Attempted to set selected item when selection is disabled.");
+        if (!this._selectionEnabled)
+            return;
+
+        let contentView = this._contentViewMap.get(item);
+        console.assert(contentView, "Missing contet view for item.", item);
+        if (!contentView)
+            return;
+
+        this._selectItem(item);
+        contentView.element.scrollIntoViewIfNeeded();
+    }
+
     // Protected
 
     addContentViewForItem(item)
@@ -98,8 +113,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             return;
         }
 
-        if (this._contentPlaceholder.parentView)
-            this.removeSubview(this._contentPlaceholder);
+        this._hideContentPlaceholder();
 
         let contentView = new this._contentViewConstructor(item);
         console.assert(contentView instanceof WI.ContentView);
@@ -120,6 +134,8 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
         this.addSubview(contentView);
         this.contentViewAdded(contentView);
+
+        contentView.shown();
     }
 
     removeContentViewForItem(item)
@@ -132,9 +148,14 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
         if (!contentView)
             return;
 
+        if (this._selectedItem === item)
+            this._selectItem(null);
+
         this.removeSubview(contentView);
         this._contentViewMap.delete(item);
         this.contentViewRemoved(contentView);
+
+        contentView.hidden();
 
         contentView.removeEventListener(null, null, this);
 
@@ -146,11 +167,8 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             this._handleClickMap.delete(item);
         }
 
-        if (this._selectedItem === item)
-            this._selectItem(null);
-
         if (!this.subviews.length)
-            this.addSubview(this._contentPlaceholder);
+            this._showContentPlaceholder();
     }
 
     contentViewAdded(contentView)
@@ -167,7 +185,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
     {
         let items = this.representedObject.items;
         if (!items.size || !this._contentViewConstructor) {
-            this.addSubview(this._contentPlaceholder);
+            this._showContentPlaceholder();
             return;
         }
 
@@ -250,5 +268,22 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
         }
 
         this.dispatchEventToListeners(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange);
+    }
+
+    _showContentPlaceholder()
+    {
+        if (!this._contentPlaceholder)
+            this._contentPlaceholder = new WI.TitleView(this._contentPlaceholderText);
+
+        if (!this._contentPlaceholder.parentView)
+            this.debounce(250).addSubview(this._contentPlaceholder);
+    }
+
+    _hideContentPlaceholder()
+    {
+        this.addSubview.cancelDebounce();
+
+        if (this._contentPlaceholder && this._contentPlaceholder.parentView)
+            this.removeSubview(this._contentPlaceholder);
     }
 };

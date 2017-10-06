@@ -36,18 +36,23 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._previewContainerElement = null;
         this._previewImageElement = null;
         this._errorElement = null;
+        this._memoryCostElement = null;
+        this._pendingContent = null;
+        this._pixelSize = null;
+        this._pixelSizeElement = null;
+        this._canvasNode = null;
 
-        if (representedObject.contextType === WI.Canvas.ContextType.Canvas2D || representedObject.contextType === WI.Canvas.ContextType.WebGL) {
-            const toolTip = WI.UIString("Request recording of actions. Shift-click to record a single frame.");
-            const altToolTip = WI.UIString("Cancel recording");
-            this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("canvas-record", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
+        if (this.representedObject.contextType === WI.Canvas.ContextType.Canvas2D || this.representedObject.contextType === WI.Canvas.ContextType.WebGL) {
+            const toolTip = WI.UIString("Start recording canvas actions. Shift-click to record a single frame.");
+            const altToolTip = WI.UIString("Stop recording canvas actions");
+            this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
             this._recordButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
             this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
         }
 
-        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("canvas-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showPreview, this);
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.refresh, this);
 
         this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show Grid"), WI.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
@@ -55,7 +60,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
     }
 
-    // Protected
+    // Public
 
     get navigationItems()
     {
@@ -65,39 +70,145 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         return navigationItems;
     }
 
+    refresh()
+    {
+        this._pendingContent = null;
+
+        this.representedObject.requestContent().then((content) => {
+            this._pendingContent = content;
+            this.needsLayout();
+        })
+        .catch(() => {
+            this._showError();
+        });
+    }
+
+    // Protected
+
     initialLayout()
     {
         super.initialLayout();
 
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._recordingStarted, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingStopped, this);
+        let header = this.element.appendChild(document.createElement("header"));
+        let titles = header.appendChild(document.createElement("div"));
+        titles.className = "titles";
+
+        let title = titles.appendChild(document.createElement("span"));
+        title.className = "title";
+        title.textContent = this.representedObject.displayName;
+
+        let subtitle = titles.appendChild(document.createElement("span"));
+        subtitle.className = "subtitle";
+        subtitle.textContent = WI.Canvas.displayNameForContextType(this.representedObject.contextType);
+
+        let navigationBar = new WI.NavigationBar;
+        if (this._recordButtonNavigationItem) {
+            navigationBar.addNavigationItem(this._recordButtonNavigationItem);
+            navigationBar.addNavigationItem(new WI.DividerNavigationItem);
+        }
+        navigationBar.addNavigationItem(this._refreshButtonNavigationItem);
+
+        header.append(navigationBar.element);
+
+        this._previewContainerElement = this.element.appendChild(document.createElement("div"));
+        this._previewContainerElement.className = "preview";
+
+        let footer = this.element.appendChild(document.createElement("footer"));
+        let metrics = footer.appendChild(document.createElement("div"));
+        this._pixelSizeElement = metrics.appendChild(document.createElement("span"));
+        this._pixelSizeElement.className = "pixel-size";
+        this._memoryCostElement = metrics.appendChild(document.createElement("span"));
+        this._memoryCostElement.className = "memory-cost";
+    }
+
+    layout()
+    {
+        super.layout();
+
+        if (!this._pendingContent)
+            return;
+
+        if (this._errorElement) {
+            this._errorElement.remove();
+            this._errorElement = null;
+        }
+
+        if (!this._previewImageElement) {
+            this._previewImageElement = document.createElement("img");
+            this._previewImageElement.addEventListener("error", this._showError.bind(this));
+        }
+
+        this._previewImageElement.src = this._pendingContent;
+        this._pendingContent = null;
+
+        if (!this._previewImageElement.parentNode)
+            this._previewContainerElement.appendChild(this._previewImageElement);
+
+        this._updateImageGrid();
+
+        this._refreshPixelSize();
+        this._updateMemoryCost();
     }
 
     shown()
     {
         super.shown();
 
-        this._showPreview();
+        this.refresh();
+
         this._updateRecordNavigationItem();
+    }
+
+    attached()
+    {
+        super.attached();
+
+        this.representedObject.addEventListener(WI.Canvas.Event.MemoryChanged, this._updateMemoryCost, this);
+
+        this.representedObject.requestNode().then((node) => {
+            console.assert(!this._canvasNode || this._canvasNode === node);
+            if (this._canvasNode === node)
+                return;
+
+            this._canvasNode = node;
+            this._canvasNode.addEventListener(WI.DOMNode.Event.AttributeModified, this._refreshPixelSize, this);
+            this._canvasNode.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshPixelSize, this);
+        });
+
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._recordingStarted, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingStopped, this);
 
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
     }
 
-    hidden()
+    detached()
     {
-        WI.settings.showImageGrid.removeEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
+        this.representedObject.removeEventListener(null, null, this);
 
-        super.hidden();
-    }
+        if (this._canvasNode) {
+            this._canvasNode.removeEventListener(null, null, this);
+            this._canvasNode = null;
+        }
 
-    closed()
-    {
         WI.canvasManager.removeEventListener(null, null, this);
+        WI.settings.showImageGrid.removeEventListener(null, null, this);
 
-        super.closed();
+        super.detached();
     }
 
     // Private
+
+    _showError()
+    {
+        console.assert(!this._errorElement, "Error element already exists.");
+
+        if (this._previewImageElement)
+            this._previewImageElement.remove();
+
+        const isError = true;
+        this._errorElement = WI.createMessageTextView(WI.UIString("No Preview Available"), isError);
+        this._previewContainerElement.appendChild(this._errorElement);
+    }
 
     _toggleRecording(event)
     {
@@ -129,44 +240,56 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         WI.showRepresentedObject(event.data.recording);
     }
 
-    _showPreview()
+    _refreshPixelSize()
     {
-        let showError = () => {
-            if (this._previewContainerElement)
-                this._previewContainerElement.remove();
+        this._pixelSize = null;
 
-            if (!this._errorElement) {
-                const isError = true;
-                this._errorElement = WI.createMessageTextView(WI.UIString("No Preview Available"), isError);
-            }
-
-            this.element.appendChild(this._errorElement);
-        };
-
-        if (!this._previewContainerElement) {
-            this._previewContainerElement = this.element.appendChild(document.createElement("div"));
-            this._previewContainerElement.classList.add("preview");
-        }
-
-        this.representedObject.requestContent((content) => {
-            if (!content) {
-                showError();
-                return;
-            }
-
-            if (this._errorElement)
-                this._errorElement.remove();
-
-            if (!this._previewImageElement) {
-                this._previewImageElement = document.createElement("img");
-                this._previewImageElement.addEventListener("error", showError);
-            }
-
-            this._previewImageElement.src = content;
-            this._previewContainerElement.appendChild(this._previewImageElement);
-
-            this._updateImageGrid();
+        this.representedObject.requestSize().then((size) => {
+            this._pixelSize = size;
+            this._updatePixelSize();
+        }).catch((error) => {
+            this._updatePixelSize();
         });
+    }
+
+    _showGridButtonClicked()
+    {
+        WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
+    }
+
+    _updateImageGrid()
+    {
+        let activated = WI.settings.showImageGrid.value;
+        this._showGridButtonNavigationItem.activated = activated;
+
+        if (this._previewImageElement)
+            this._previewImageElement.classList.toggle("show-grid", activated);
+    }
+
+    _updateMemoryCost()
+    {
+        if (!this._memoryCostElement)
+            return;
+
+        let memoryCost = this.representedObject.memoryCost;
+        if (isNaN(memoryCost))
+            this._memoryCostElement.textContent = emDash;
+        else {
+            const higherResolution = false;
+            let bytesString = Number.bytesToString(memoryCost, higherResolution);
+            this._memoryCostElement.textContent = `(${bytesString})`;
+        }
+    }
+
+    _updatePixelSize()
+    {
+        if (!this._pixelSizeElement)
+            return;
+
+        if (this._pixelSize)
+            this._pixelSizeElement.textContent = `${this._pixelSize.width} ${multiplicationSign} ${this._pixelSize.height}`;
+        else
+            this._pixelSizeElement.textContent = emDash;
     }
 
     _updateRecordNavigationItem()
@@ -174,24 +297,10 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         if (!this._recordButtonNavigationItem)
             return;
 
-        this._recordButtonNavigationItem.enabled = this.representedObject.isRecording || !WI.canvasManager.recordingCanvas;
-        this._recordButtonNavigationItem.toggled = this.representedObject.isRecording;
-    }
+        let isRecording = this.representedObject.isRecording;
+        this._recordButtonNavigationItem.enabled = isRecording || !WI.canvasManager.recordingCanvas;
+        this._recordButtonNavigationItem.toggled = isRecording;
 
-    _updateImageGrid()
-    {
-        if (!this._previewImageElement)
-            return;
-
-        let activated = WI.settings.showImageGrid.value;
-        this._showGridButtonNavigationItem.activated = activated;
-        this._previewImageElement.classList.toggle("show-grid", activated);
-    }
-
-    _showGridButtonClicked(event)
-    {
-        WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
-
-        this._updateImageGrid();
+        this.element.classList.toggle("is-recording", isRecording);
     }
 };

@@ -23,29 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.canvas:not(.tab) {
-    background-color: hsl(0, 0%, 90%);
-}
+WI.CanvasCollection = class CanvasCollection extends WI.Collection
+{
+    constructor(canvases)
+    {
+        super((item) => item instanceof WI.Canvas);
 
-.content-view.canvas:not(.tab) > .preview {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-}
-
-.content-view.canvas:not(.tab) > .preview > img {
-    max-width: 100%;
-    max-height: 100%;
-}
-
-.content-view.canvas:not(.tab) > :matches(header, footer) {
-    display: none;
-}
-
-.navigation-bar > .item.canvas-record.disabled {
-    filter: grayscale();
-    opacity: 0.5;
-}
+        for (let canvas of canvases)
+            this.add(canvas);
+    }
+};

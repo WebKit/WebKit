@@ -1,3 +1,181 @@
+2017-10-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add Canvas tab and CanvasOverviewContentView
+        https://bugs.webkit.org/show_bug.cgi?id=177604
+        <rdar://problem/34714650>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds experimental feature support for the Canvas tab. Initially
+        the tab provides only an overview of the canvases in the page, and will
+        exist side-by-side with the existing experimental Canvas UI.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Base/Setting.js:
+
+        * UserInterface/Images/Canvas.svg: Added.
+        * UserInterface/Images/CanvasOverview.svg: Added.
+        * UserInterface/Main.html:
+        Add new art and canvas UI classes.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.requestNode):
+        (WI.Canvas.prototype.requestContent):
+        (WI.Canvas.prototype.requestCSSCanvasClientNodes):
+        (WI.Canvas.prototype.requestSize.calculateSize.getAttributeValue):
+        (WI.Canvas.prototype.requestSize.calculateSize):
+        (WI.Canvas.prototype.requestSize.getPropertyValue):
+        (WI.Canvas.prototype.requestSize):
+        Use promises to retrieve canvas data asynchronously.
+
+        * UserInterface/Models/CollectionTypes.js: Added.
+        (WI.CanvasCollection):
+        New location for concrete collection types. Having a class to type check
+        makes using a collection as a represented object a bit simpler.
+
+        * UserInterface/Views/CanvasContentView.css:
+        (.content-view.canvas:not(.tab)):
+        (.content-view.canvas:not(.tab) > .preview):
+        (.content-view.canvas:not(.tab) > .preview > img):
+        (.content-view.canvas:not(.tab) > :matches(header, footer)):
+        (.content-view.canvas): Deleted.
+        (.content-view.canvas > .preview): Deleted.
+        (.content-view.canvas > .preview > img): Deleted.
+        During the transition to the new Canvas tab, CanvasContentView needs to
+        support being shown as a full-size content view, and as an item in a
+        CollectionContentView. Hide header and footer elements by default.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.refresh):
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.layout):
+        (WI.CanvasContentView.prototype.shown):
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype.detached):
+        (WI.CanvasContentView.prototype._showError):
+        (WI.CanvasContentView.prototype._refreshPixelSize):
+        (WI.CanvasContentView.prototype._showGridButtonClicked):
+        (WI.CanvasContentView.prototype._updateImageGrid):
+        (WI.CanvasContentView.prototype._updateMemoryCost):
+        (WI.CanvasContentView.prototype._updatePixelSize):
+        (WI.CanvasContentView.prototype._updateRecordNavigationItem):
+        (WI.CanvasContentView.prototype.hidden): Deleted.
+        (WI.CanvasContentView.prototype.closed): Deleted.
+        (WI.CanvasContentView.prototype._showPreview): Deleted.
+        Added new UI for display in the Canvas overview. These elements are always
+        created, but only appear when the canvas is viewed as a "card".
+
+        Canvas previews are no longer shown as soon as they are available from
+        the backend. Instead, once the canvas content is ready a layout is scheduled.
+        This guarantees that refreshing all canvases at once causes no flicker,
+        and introduces no perceptible delay.
+
+        Finally, the "Cancel recording" tooltip has been renamed "Stop recording",
+        to match the behavior of the command.
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype._refreshSourceSection.this._canvas.requestNode.): Deleted.
+        Canvas.prototype.requestNode now returns a promise.
+
+        * UserInterface/Views/CanvasOverviewContentView.css: Added.
+        (.content-view.canvas-overview):
+        (.content-view.canvas-overview .content-view.canvas):
+        (.content-view.canvas-overview .content-view.canvas.selected:not(.is-recording)):
+        (.content-view.canvas-overview .content-view.canvas > :matches(header, footer)):
+        (.content-view.canvas-overview .content-view.canvas > header):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header):
+        (.content-view.canvas-overview .content-view.canvas > header > .titles,):
+        (.content-view.canvas-overview .content-view.canvas > header > .titles > .title):
+        (.content-view.canvas-overview .content-view.canvas > header > .titles > .subtitle,):
+        (.content-view.canvas-overview .content-view.canvas > header .subtitle::before):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .title):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .subtitle):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header > .navigation-bar > .item):
+        (.content-view.canvas-overview .content-view.canvas > header > .navigation-bar):
+        (.content-view.canvas-overview .content-view.canvas:not(:hover, .is-recording) > header > .navigation-bar):
+        (.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop.disabled):
+        (.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop):
+        (.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop:not(.disabled):hover):
+        (.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop:not(.disabled):active):
+        (.content-view.canvas-overview .content-view.canvas > .preview):
+        (.content-view.canvas-overview .content-view.canvas > .preview > img):
+        (.content-view.canvas-overview .content-view.canvas > .preview > .message-text-view):
+        (.content-view.canvas-overview .content-view.canvas > footer):
+        (.content-view.canvas-overview .content-view.canvas > footer .memory-cost):
+        Add header, navigation bar, and footer styles to CanvasContentView when
+        it is being shown as an item in a CollectionContentView.
+
+        * UserInterface/Views/CanvasOverviewContentView.js: Added.
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype.get navigationItems):
+        (WI.CanvasOverviewContentView.prototype.get selectionPathComponents):
+        (WI.CanvasOverviewContentView.prototype.hidden):
+        (WI.CanvasOverviewContentView.prototype.contentViewAdded):
+        (WI.CanvasOverviewContentView.prototype.contentViewRemoved):
+        (WI.CanvasOverviewContentView.prototype.attached):
+        (WI.CanvasOverviewContentView.prototype.detached):
+        (WI.CanvasOverviewContentView.prototype._refreshPreviews):
+        (WI.CanvasOverviewContentView.prototype._selectedPathComponentChanged):
+        (WI.CanvasOverviewContentView.prototype._showGridButtonClicked):
+        (WI.CanvasOverviewContentView.prototype._supplementalRepresentedObjectsDidChange.createCanvasPathComponent):
+        (WI.CanvasOverviewContentView.prototype._supplementalRepresentedObjectsDidChange):
+        (WI.CanvasOverviewContentView.prototype._updateNavigationItems):
+        (WI.CanvasOverviewContentView.prototype._updateShowImageGrid):
+        (WI.CanvasOverviewContentView.prototype._contentViewMouseEnter):
+        (WI.CanvasOverviewContentView.prototype._contentViewMouseLeave):
+        The overview extends CollectionContentView, adding buttons for global canvas actions
+        (refresh all and show/hide grid for all), and maintains a non-visible
+        outline of CanvasTreeElements to facilitate display of the hierarchical
+        path in the navigation bar.
+
+        * UserInterface/Views/CanvasTabContentView.css: Added.
+        (.content-view.tab.canvas .navigation-bar > .item > .hierarchical-path-component > .icon):
+        (.content-view.tab.canvas .navigation-bar > .item > .canvas-overview > .icon):
+        (.content-view.tab.canvas .navigation-bar > .item .canvas .icon):
+
+        * UserInterface/Views/CanvasTabContentView.js: Added.
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.tabInfo):
+        (WI.CanvasTabContentView.isTabAllowed):
+        (WI.CanvasTabContentView.prototype.get type):
+        (WI.CanvasTabContentView.prototype.get supportsSplitContentBrowser):
+        (WI.CanvasTabContentView.prototype.canShowRepresentedObject):
+        (WI.CanvasTabContentView.prototype.shown):
+        (WI.CanvasTabContentView.prototype.treeElementForRepresentedObject):
+        (WI.CanvasTabContentView.prototype.restoreFromCookie):
+        (WI.CanvasTabContentView.prototype.saveStateToCookie):
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype.detached):
+        (WI.CanvasTabContentView.prototype._canvasAdded):
+        (WI.CanvasTabContentView.prototype._canvasRemoved):
+        (WI.CanvasTabContentView.prototype._overviewPathComponentClicked):
+        (WI.CanvasTabContentView.prototype._mainResourceDidChange):
+
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView):
+        (WI.CollectionContentView.prototype.setSelectedItem):
+        (WI.CollectionContentView.prototype.addContentViewForItem):
+        (WI.CollectionContentView.prototype.removeContentViewForItem):
+        (WI.CollectionContentView.prototype.initialLayout):
+        (WI.CollectionContentView.prototype._showContentPlaceholder):
+        (WI.CollectionContentView.prototype._hideContentPlaceholder):
+        Placeholder content should be created lazily, and shown after a slight delay
+        to give represented objects a chance to load. Make sure to call the
+        shown or hidden method after adding or removing a content view.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (body.window-inactive *):
+
+        * UserInterface/Views/View.js:
+        (WI.View.fromElement):
+
 2017-10-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Tab - Headers Detail View

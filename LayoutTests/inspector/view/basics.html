@@ -148,6 +148,19 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "View.fromElement",
+        test() {
+            let view = new WI.View;
+            InspectorTest.expectEqual(WI.View.fromElement(view.element), view, "Should be able to lookup an existing view from its element.");
+            InspectorTest.expectNull(WI.View.fromElement(document.createElement("div")), "Should return null for an element not associated with any view.");
+            InspectorTest.expectNull(WI.View.fromElement({}), "Should return null for non-element.");
+            InspectorTest.expectNull(WI.View.fromElement(null), "Should return null for null element.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

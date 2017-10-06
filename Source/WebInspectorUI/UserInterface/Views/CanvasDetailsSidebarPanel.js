@@ -161,10 +161,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._heightRow.value = emDash;
         this._datachedRow.value = null;
 
-        this._canvas.requestNode((node) => {
-            if (!node)
-                return;
-
+        this._canvas.requestNode().then((node) => {
             if (node !== this._node) {
                 if (this._node) {
                     this._node.removeEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);

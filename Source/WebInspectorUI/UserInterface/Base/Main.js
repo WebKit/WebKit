@@ -427,6 +427,7 @@ WI.contentLoaded = function()
     // These tabs are always available for selecting, modulo isTabAllowed().
     // Other tabs may be engineering-only or toggled at runtime if incomplete.
     let productionTabClasses = [
+        WI.CanvasTabContentView,
         WI.ConsoleTabContentView,
         WI.DebuggerTabContentView,
         WI.ElementsTabContentView,
@@ -1105,6 +1106,9 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         representedObject instanceof WI.ApplicationCacheFrame || representedObject instanceof WI.IndexedDatabaseObjectStore ||
         representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
         return WI.ResourcesTabContentView;
+
+    if (representedObject instanceof WI.CanvasCollection)
+        return WI.CanvasTabContentView;
 
     if (representedObject instanceof WI.Recording)
         return WI.RecordingTabContentView;

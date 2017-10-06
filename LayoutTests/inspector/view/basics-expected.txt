@@ -50,3 +50,9 @@ PASS: View added to a detached parent should not be attached.
 PASS: Attaching a view to the root causes descendent views to be attached.
 PASS: Detaching a view from the root causes descendent views to be detached.
 
+-- Running test case: View.fromElement
+PASS: Should be able to lookup an existing view from its element.
+PASS: Should return null for an element not associated with any view.
+PASS: Should return null for non-element.
+PASS: Should return null for null element.
+

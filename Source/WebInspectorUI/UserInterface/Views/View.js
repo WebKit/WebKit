@@ -42,6 +42,16 @@ WI.View = class View extends WI.Object
 
     // Static
 
+    static fromElement(element)
+    {
+        if (!element || !(element instanceof HTMLElement))
+            return null;
+
+        if (element.__view instanceof WI.View)
+            return element.__view;
+        return null;
+    }
+
     static rootView()
     {
         if (!WI.View._rootView) {
