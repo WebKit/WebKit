@@ -1,3 +1,20 @@
+2017-10-06  Ms2ger  <Ms2ger@igalia.com>
+
+        Create bindings for WebGL2's versions of texImage2D.
+        https://bugs.webkit.org/show_bug.cgi?id=178006
+
+        Reviewed by Dean Jackson.
+
+        No new tests: not much point in adding tests now; this method doesn't
+        do anything anyway.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::texImage2D):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+
 2017-10-06  Brady Eidson  <beidson@apple.com>
 
         Add (entirely incorrect) fetching of ServiceWorker scripts.

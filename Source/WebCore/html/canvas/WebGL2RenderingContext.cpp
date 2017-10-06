@@ -479,6 +479,18 @@ void WebGL2RenderingContext::texStorage3D(GC3Denum, GC3Dsizei, GC3Denum, GC3Dsiz
 {
 }
 
+void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, GC3Dint64)
+{
+}
+
+void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, TexImageSource&&)
+{
+}
+
+void WebGL2RenderingContext::texImage2D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&, GC3Duint)
+{
+}
+
 void WebGL2RenderingContext::texImage3D(GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, RefPtr<ArrayBufferView>&&)
 {
 }

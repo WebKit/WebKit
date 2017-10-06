@@ -27,6 +27,13 @@ typedef unsigned long GLenum;
 typedef long GLint;
 typedef long GLsizei;
 
+// FIXME: Should allow ImageBitmap too.
+#ifdef ENABLE_VIDEO
+typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
+#else
+typedef (ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
+#endif
+
 [
     Conditional=WEBGL,
     JSCustomMarkFunction,
@@ -35,8 +42,12 @@ typedef long GLsizei;
     ExportMacro=WEBCORE_EXPORT,
     CallTracingCallback=recordCanvasAction,
 ] interface WebGLRenderingContext {
-    // This method is placed outside of WebGLRenderingContextBase to avoid
+    // These methods are placed outside of WebGLRenderingContextBase to avoid
     // conficts with overloads in WebGL2RenderingContext.
+
+    void texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
+    [MayThrowException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLenum format, GLenum type, TexImageSource? source);
+
     void compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, ArrayBufferView data);
 };
 
