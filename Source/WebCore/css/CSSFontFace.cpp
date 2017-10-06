@@ -661,13 +661,13 @@ void CSSFontFace::setStatus(Status newStatus)
     case Status::Loading:
         if (blockPeriodTimeout == 0_s)
             setStatus(Status::TimedOut);
-        else if (isfinite(blockPeriodTimeout.value()))
+        else if (std::isfinite(blockPeriodTimeout.value()))
             m_timeoutTimer.startOneShot(blockPeriodTimeout);
         break;
     case Status::TimedOut:
         if (swapPeriodTimeout == 0_s)
             setStatus(Status::Failure);
-        else if (isfinite(swapPeriodTimeout.value()))
+        else if (std::isfinite(swapPeriodTimeout.value()))
             m_timeoutTimer.startOneShot(swapPeriodTimeout);
         break;
     case Status::Success:
