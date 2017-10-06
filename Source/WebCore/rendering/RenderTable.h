@@ -326,7 +326,7 @@ private:
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
     mutable Vector<RenderTableCaption*> m_captions;
-    mutable Vector<RenderTableCol*> m_columnRenderers;
+    mutable Vector<WeakPtr<RenderTableCol>> m_columnRenderers;
 
     unsigned effectiveIndexOfColumn(const RenderTableCol&) const;
     typedef HashMap<const RenderTableCol*, unsigned> EffectiveColumnIndexMap;

@@ -1,5 +1,23 @@
 2017-10-06  Zalan Bujtas  <zalan@apple.com>
 
+        RenderTable should not hold a collection of raw pointers to RenderTableCol
+        https://bugs.webkit.org/show_bug.cgi?id=178030
+        <rdar://problem/34865236>
+
+        Reviewed by Simon Fraser.
+
+        In addition to the m_columnRenderersValid flag, this patch ensures that
+        we don't dereference stale column renderers even when the flag is out of sync.
+
+        Covered by existing tests.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateColumnCache const):
+        (WebCore::RenderTable::slowColElement const):
+        * rendering/RenderTable.h:
+
+2017-10-06  Zalan Bujtas  <zalan@apple.com>
+
         RootInlineBox should not hold a collection of raw pointers to RenderBox
         https://bugs.webkit.org/show_bug.cgi?id=178025
         <rdar://problem/34862488>
