@@ -33,27 +33,6 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-static gboolean checkTestFinished(gpointer userData)
-{
-    bool* done = static_cast<bool*>(userData);
-
-    if (*done)
-        gtk_main_quit();
-
-    return !*done;
-}
-
-void run(bool* done)
-{
-    g_idle_add(checkTestFinished, done);
-    gtk_main();
-}
-
-void sleep(double seconds)
-{
-    g_usleep(seconds * 1000000);
-}
-
 static char* getFilenameFromEnvironmentVariableAsUTF8(const char* variableName)
 {
     const char* value = g_getenv(variableName);

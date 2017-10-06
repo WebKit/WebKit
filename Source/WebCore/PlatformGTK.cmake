@@ -68,6 +68,7 @@ list(APPEND WebCore_SOURCES
     platform/geoclue/GeolocationProviderGeoclue.cpp
 
     platform/glib/EventLoopGlib.cpp
+    platform/glib/FileMonitorGLib.cpp
     platform/glib/FileSystemGlib.cpp
     platform/glib/KeyedDecoderGlib.cpp
     platform/glib/KeyedEncoderGlib.cpp

@@ -23,23 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#include "config.h"
 
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import "WTFStringUtilities.h"
-#import <WebCore/FileMonitor.h>
-#import <WebCore/FileSystem.h>
-#import <WebCore/ScopeGuard.h>
-#import <wtf/MainThread.h>
-#import <wtf/RunLoop.h>
-#import <wtf/StringExtras.h>
-#import <wtf/WorkQueue.h>
-#import <wtf/text/StringBuffer.h>
+#include "PlatformUtilities.h"
+#include "Test.h"
+#include "WTFStringUtilities.h"
+#include <WebCore/FileMonitor.h>
+#include <WebCore/FileSystem.h>
+#include <WebCore/ScopeGuard.h>
+#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
+#include <wtf/StringExtras.h>
+#include <wtf/WorkQueue.h>
+#include <wtf/text/StringBuffer.h>
 
-// Note: Currently, only a Cocoa implementation exists. This could probably be supported under GTK using g_file_monitor_file
 // Note: Disabling iOS since 'system' is not available on that platform.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
 
 using namespace WebCore;
 

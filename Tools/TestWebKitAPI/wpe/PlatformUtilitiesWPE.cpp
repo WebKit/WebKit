@@ -32,11 +32,6 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-void sleep(double seconds)
-{
-    g_usleep(seconds * 1000000);
-}
-
 static char* getFilenameFromEnvironmentVariableAsUTF8(const char* variableName)
 {
     const char* value = g_getenv(variableName);

@@ -1,3 +1,22 @@
+2017-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] All resource load statistics tests added in r212183 crash in GTK bots, timeout in GTK and WPE bots since r219049
+        https://bugs.webkit.org/show_bug.cgi?id=168171
+
+        Reviewed by Chris Dumez.
+
+        Add an implementation of FileMonitor for GLib based ports.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * platform/FileMonitor.cpp:
+        * platform/FileMonitor.h:
+        * platform/glib/FileMonitorGLib.cpp: Added.
+        (WebCore::FileMonitor::FileMonitor):
+        (WebCore::FileMonitor::~FileMonitor):
+        (WebCore::FileMonitor::fileChangedCallback):
+        (WebCore::FileMonitor::didChange):
+
 2017-10-05  Dean Jackson  <dino@apple.com>
 
         Lots of missing frames in YouTube360 when fullscreen on MacBook

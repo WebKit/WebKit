@@ -34,6 +34,11 @@
 #include <wtf/DispatchPtr.h>
 #endif
 
+#if USE(GLIB)
+#include <gio/gio.h>
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 namespace WebCore {
 
 class FileMonitor {
@@ -50,7 +55,14 @@ private:
 #if USE(COCOA_EVENT_LOOP)
     DispatchPtr<dispatch_source_t> m_platformMonitor;
 #endif
+#if USE(GLIB)
+    static void fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonitorEvent, FileMonitor*);
+    void didChange(FileChangeType);
+    Ref<WorkQueue> m_handlerQueue;
+    Function<void(FileChangeType)> m_modificationHandler;
+    GRefPtr<GFileMonitor> m_platformMonitor;
+    GRefPtr<GCancellable> m_cancellable;
+#endif
 };
 
 } // namespace WebCore
-

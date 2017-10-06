@@ -58,6 +58,7 @@
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKTextChecker.h>
 #include <WebKit/WKUserMediaPermissionCheck.h>
+#include <WebKit/WKWebsiteDataStoreRef.h>
 #include <algorithm>
 #include <cstdio>
 #include <ctype.h>
@@ -2273,6 +2274,8 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(context);
+    WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(dataStore, true);
     return context;
 }
 
@@ -2294,115 +2297,202 @@ void TestController::removeAllSessionCredentials()
 
 #if !PLATFORM(COCOA) || !WK_API_ENABLED
 
-void TestController::setStatisticsLastSeen(WKStringRef, double)
+void TestController::setStatisticsLastSeen(WKStringRef host, double seconds)
 {
-}
-    
-void TestController::setStatisticsPrevalentResource(WKStringRef, bool)
-{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsLastSeen(dataStore, host, seconds);
 }
 
-bool TestController::isStatisticsPrevalentResource(WKStringRef)
+void TestController::setStatisticsPrevalentResource(WKStringRef host, bool value)
 {
-    return false;
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsPrevalentResource(dataStore, host, value);
 }
 
-void TestController::setStatisticsHasHadUserInteraction(WKStringRef, bool)
+struct ResourceStatisticsCallbackContext {
+    explicit ResourceStatisticsCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    TestController& testController;
+    bool done { false };
+    bool result { false };
+};
+
+static void resourceStatisticsCallback(bool result, void* userData)
 {
+    auto* context = static_cast<ResourceStatisticsCallbackContext*>(userData);
+    context->result = result;
+    context->done = true;
+    context->testController.notifyDone();
 }
 
-bool TestController::isStatisticsHasHadUserInteraction(WKStringRef)
+bool TestController::isStatisticsPrevalentResource(WKStringRef host)
 {
-    return false;
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreIsStatisticsPrevalentResource(dataStore, host, &context, resourceStatisticsCallback);
+    if (!context.done)
+        runUntil(context.done, m_currentInvocation->shortTimeout());
+    return context.result;
 }
 
-void TestController::setStatisticsGrandfathered(WKStringRef, bool)
+void TestController::setStatisticsHasHadUserInteraction(WKStringRef host, bool value)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsHasHadUserInteraction(dataStore, host, value);
 }
 
-bool TestController::isStatisticsGrandfathered(WKStringRef)
+bool TestController::isStatisticsHasHadUserInteraction(WKStringRef host)
 {
-    return false;
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreIsStatisticsHasHadUserInteraction(dataStore, host, &context, resourceStatisticsCallback);
+    if (!context.done)
+        runUntil(context.done, m_currentInvocation->shortTimeout());
+    return context.result;
 }
 
-void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef, WKStringRef)
+void TestController::setStatisticsGrandfathered(WKStringRef host, bool value)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsGrandfathered(dataStore, host, value);
 }
 
-void TestController::setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef, WKStringRef)
+bool TestController::isStatisticsGrandfathered(WKStringRef host)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreIsStatisticsGrandfathered(dataStore, host, &context, resourceStatisticsCallback);
+    if (!context.done)
+        runUntil(context.done, m_currentInvocation->shortTimeout());
+    return context.result;
 }
 
-void TestController::setStatisticsSubresourceUniqueRedirectTo(WKStringRef, WKStringRef)
+void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef host, WKStringRef topFrameHost)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin(dataStore, host, topFrameHost);
 }
 
-void TestController::setStatisticsTimeToLiveUserInteraction(double)
+void TestController::setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef host, WKStringRef topFrameHost)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsSubresourceUnderTopFrameOrigin(dataStore, host, topFrameHost);
 }
 
-void TestController::setStatisticsTimeToLiveCookiePartitionFree(double)
+void TestController::setStatisticsSubresourceUniqueRedirectTo(WKStringRef host, WKStringRef hostRedirectedTo)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectTo(dataStore, host, hostRedirectedTo);
+}
+
+void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction(dataStore, seconds);
+}
+
+void TestController::setStatisticsTimeToLiveCookiePartitionFree(double seconds)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsTimeToLiveCookiePartitionFree(dataStore, seconds);
 }
 
 void TestController::statisticsProcessStatisticsAndDataRecords()
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(dataStore);
 }
 
 void TestController::statisticsUpdateCookiePartitioning()
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreStatisticsUpdateCookiePartitioning(dataStore);
 }
 
-void TestController::statisticsSetShouldPartitionCookiesForHost(WKStringRef, bool)
+void TestController::statisticsSetShouldPartitionCookiesForHost(WKStringRef host, bool value)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost(dataStore, host, value);
 }
 
 void TestController::statisticsSubmitTelemetry()
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreStatisticsSubmitTelemetry(dataStore);
 }
 
-void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool)
+void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(dataStore, value);
 }
 
-void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool)
+void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(dataStore, value);
 }
 
-void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool)
+void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsNotifyPagesWhenTelemetryWasCaptured(dataStore, value);
 }
 
-void TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double)
+void TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsMinimumTimeBetweenDataRecordsRemoval(dataStore, seconds);
 }
 
-void TestController::setStatisticsGrandfatheringTime(double)
+void TestController::setStatisticsGrandfatheringTime(double seconds)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsGrandfatheringTime(dataStore, seconds);
 }
 
-void TestController::setStatisticsMaxStatisticsEntries(unsigned)
+void TestController::setStatisticsMaxStatisticsEntries(unsigned entries)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsMaxStatisticsEntries(dataStore, entries);
 }
-    
-void TestController::setStatisticsPruneEntriesDownTo(unsigned)
+
+void TestController::setStatisticsPruneEntriesDownTo(unsigned entries)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsPruneEntriesDownTo(dataStore, entries);
 }
-    
+
 void TestController::statisticsClearInMemoryAndPersistentStore()
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(dataStore);
 }
 
-void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned)
+void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours(dataStore, hours);
+}
+
+void TestController::statisticsClearThroughWebsiteDataRemovalCallback(void* userData)
+{
+    static_cast<TestController*>(userData)->m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
 }
 
 void TestController::statisticsClearThroughWebsiteDataRemoval()
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(dataStore, this, statisticsClearThroughWebsiteDataRemovalCallback);
 }
 
 void TestController::statisticsResetToConsistentState()
 {
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreStatisticsResetToConsistentState(dataStore);
 }
 
 #endif

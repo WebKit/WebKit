@@ -1,3 +1,15 @@
+2017-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] All resource load statistics tests added in r212183 crash in GTK bots, timeout in GTK and WPE bots since r219049
+        https://bugs.webkit.org/show_bug.cgi?id=168171
+
+        Reviewed by Chris Dumez.
+
+        Unskip the tests.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: Add support for keyboard navigation (Tab, Shift-Tab, Enter, Esc)

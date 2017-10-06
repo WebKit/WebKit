@@ -32,11 +32,13 @@ set(test_main_SOURCES
 )
 
 set(bundle_harness_SOURCES
+    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/gtk/InjectedBundleControllerGtk.cpp
     ${TESTWEBKITAPI_DIR}/gtk/PlatformUtilitiesGtk.cpp
 )
 
 set(webkit_api_harness_SOURCES
+    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/gtk/PlatformUtilitiesGtk.cpp
     ${TESTWEBKITAPI_DIR}/gtk/PlatformWebViewGtk.cpp
 )
@@ -129,9 +131,11 @@ set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKI
 
 add_executable(TestWebCore
     ${test_main_SOURCES}
+    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/ComplexTextController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileMonitor.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/GridPosition.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
