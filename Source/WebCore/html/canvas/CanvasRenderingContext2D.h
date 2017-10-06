@@ -58,6 +58,7 @@ class GraphicsContext;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
+class ImageBitmap;
 class ImageData;
 class Path2D;
 class TextMetrics;
@@ -65,9 +66,9 @@ class TextMetrics;
 struct DOMMatrix2DInit;
 
 #if ENABLE(VIDEO)
-using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>>;
+using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>>;
 #else
-using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>>;
+using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>>;
 #endif
 
 class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPath {
@@ -333,6 +334,7 @@ private:
 #if ENABLE(VIDEO)
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, bool repeatX, bool repeatY);
 #endif
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(ImageBitmap&, bool repeatX, bool repeatY);
 
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
@@ -340,6 +342,7 @@ private:
 #if ENABLE(VIDEO)
     ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
+    ExceptionOr<void> drawImage(ImageBitmap&, const FloatRect& srcRect, const FloatRect& dstRect);
 
     void drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
 

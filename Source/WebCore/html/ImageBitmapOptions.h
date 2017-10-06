@@ -23,23 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This should include SVGImageElement and ImageBitmap.
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
-#else
-typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
-#endif
+#pragma once
 
-[
-    NoInterfaceObject,
-    Exposed=(Window,Worker)
-] interface CanvasFillStrokeStyles {
-    // colors and styles (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
-    attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle; // (default black)
-    attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle; // (default black)
+#include <wtf/Optional.h>
 
-    // FIXME: All the float parameters below should be doubles.
-    [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
-    [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
-    [MayThrowException] CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
+namespace WebCore {
+
+struct ImageBitmapOptions {
+    enum class Orientation { None, FlipY };
+    enum class PremultiplyAlpha { None, Premultiply, Default };
+    enum class ColorSpaceConversion { None, Default };
+    enum class ResizeQuality { Pixelated, Low, Medium, High };
+
+    Orientation imageOrientation { Orientation::None };
+    PremultiplyAlpha premultiplyAlpha { PremultiplyAlpha::Default };
+    ColorSpaceConversion colorSpaceConversion { ColorSpaceConversion::Default };
+    std::optional<unsigned> resizeWidth;
+    std::optional<unsigned> resizeHeight;
+    ResizeQuality resizeQuality { ResizeQuality::Low };
 };
+
+}

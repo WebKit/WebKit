@@ -823,6 +823,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Image').hasOwnProperty('get') is f
 PASS Object.getOwnPropertyDescriptor(global, 'Image').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Image').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Image').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').value is ImageBitmap
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ImageBitmap').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').value is ImageData
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('set') is false

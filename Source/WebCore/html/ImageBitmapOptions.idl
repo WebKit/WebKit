@@ -23,23 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This should include SVGImageElement and ImageBitmap.
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
-#else
-typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
-#endif
+enum ImageOrientation { "none", "flipY" };
+enum PremultiplyAlpha { "none", "premultiply", "default" };
+enum ColorSpaceConversion { "none", "default" };
+enum ResizeQuality { "pixelated", "low", "medium", "high" };
 
-[
-    NoInterfaceObject,
-    Exposed=(Window,Worker)
-] interface CanvasFillStrokeStyles {
-    // colors and styles (see also the CanvasPathDrawingStyles and CanvasTextDrawingStyles interfaces)
-    attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle; // (default black)
-    attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle; // (default black)
-
-    // FIXME: All the float parameters below should be doubles.
-    [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
-    [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
-    [MayThrowException] CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
+dictionary ImageBitmapOptions {
+    ImageOrientation imageOrientation = "none";
+    PremultiplyAlpha premultiplyAlpha = "default";
+    ColorSpaceConversion colorSpaceConversion = "default";
+    [EnforceRange] unsigned long resizeWidth;
+    [EnforceRange] unsigned long resizeHeight;
+    ResizeQuality resizeQuality = "low";
 };

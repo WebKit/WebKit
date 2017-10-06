@@ -1,3 +1,28 @@
+2017-10-05  Dean Jackson  <dino@apple.com>
+
+        ImageBitmap API stubs
+        https://bugs.webkit.org/show_bug.cgi?id=177984
+        <rdar://problem/34848023>
+
+        Patch by Sam and Dean.
+        Reviewed by Dean and Sam.
+
+        New global constructors, so go through the pain of updating all
+        the platform results :(
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-sierra-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-sierra/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-10-06  Brady Eidson  <beidson@apple.com>
 
         Add (entirely incorrect) fetching of ServiceWorker scripts.

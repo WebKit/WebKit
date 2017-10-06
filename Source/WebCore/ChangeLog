@@ -1,3 +1,47 @@
+2017-10-05  Dean Jackson  <dino@apple.com>
+
+        ImageBitmap API stubs
+        https://bugs.webkit.org/show_bug.cgi?id=177984
+        <rdar://problem/34848023>
+
+        Patch by Sam and Dean.
+        Reviewed by Dean and Sam.
+
+        Add the IDL for ImageBitmap and ImageBitmapOptions, plus some
+        stub implementations (complete with all the algorithms from
+        the HTML specification as comments).
+
+        * CMakeLists.txt: Add the new files.
+        * DerivedSources.make: Create the JS bindings for ImageBitmap and ImageBitmapOptions.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CallTracerTypes.h:
+        * html/ImageBitmap.cpp: Added.
+        (WebCore::ImageBitmap::create):
+        (WebCore::ImageBitmap::createPromise):
+        (WebCore::ImageBitmap::ImageBitmap):
+        (WebCore::ImageBitmap::~ImageBitmap):
+        (WebCore::ImageBitmap::width const):
+        (WebCore::ImageBitmap::height const):
+        (WebCore::ImageBitmap::close):
+        * html/ImageBitmap.h: Added.
+        (WebCore::ImageBitmap::isDetached const):
+        * html/ImageBitmap.idl: Copied from Source/WebCore/html/canvas/CanvasDrawImage.idl.
+        * html/ImageBitmapOptions.h: Copied from Source/WebCore/html/canvas/CanvasDrawImage.idl.
+        * html/ImageBitmapOptions.idl: Copied from Source/WebCore/html/canvas/CanvasDrawImage.idl.
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::indexForData):
+        (WebCore::InspectorCanvas::buildAction):
+        (WebCore::InspectorCanvas::buildArrayForImageBitmap):
+        * inspector/InspectorCanvas.h:
+        * inspector/RecordingSwizzleTypes.h:
+
 2017-10-06  Ms2ger  <Ms2ger@igalia.com>
 
         Create bindings for WebGL2's versions of texImage2D.

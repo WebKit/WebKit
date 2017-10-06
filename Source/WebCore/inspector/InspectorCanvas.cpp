@@ -39,6 +39,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "Image.h"
+#include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorDOMAgent.h"
@@ -344,6 +345,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&] (const CanvasGradient* canvasGradient) { item = buildArrayForCanvasGradient(*canvasGradient); },
         [&] (const CanvasPattern* canvasPattern) { item = buildArrayForCanvasPattern(*canvasPattern); },
         [&] (const ImageData* imageData) { item = buildArrayForImageData(*imageData); },
+        [&] (const ImageBitmap* imageBitmap) { item = buildArrayForImageBitmap(*imageBitmap); },
         [&] (const ScriptCallFrame& scriptCallFrame) {
             auto array = Inspector::Protocol::Array<double>::create();
             array->addItem(indexForData(scriptCallFrame.functionName()));
@@ -538,6 +540,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
 #if ENABLE(VIDEO)
             [&] (RefPtr<HTMLVideoElement>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::Image); },
 #endif
+            [&] (const RefPtr<ImageBitmap>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::ImageBitmap); },
             [&] (const RefPtr<ImageData>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::ImageData); },
             [&] (const RefPtr<Int32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
             [&] (const Vector<float>& value) { addParameter(buildArrayForVector(value), RecordingSwizzleTypes::Array); },
@@ -644,6 +647,15 @@ RefPtr<Inspector::Protocol::Array<InspectorValue>> InspectorCanvas::buildArrayFo
     array->addItem(WTFMove(data));
     array->addItem(imageData.width());
     array->addItem(imageData.height());
+    return array;
+}
+
+RefPtr<Inspector::Protocol::Array<InspectorValue>> InspectorCanvas::buildArrayForImageBitmap(const ImageBitmap& imageBitmap)
+{
+    // FIXME: Needs to include the data somehow.
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> array = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
+    array->addItem(static_cast<int>(imageBitmap.width()));
+    array->addItem(static_cast<int>(imageBitmap.height()));
     return array;
 }
 

@@ -43,6 +43,7 @@ class CanvasPattern;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
+class ImageBitmap;
 class ImageData;
 class InstrumentingAgents;
 
@@ -91,6 +92,7 @@ private:
         HTMLVideoElement*,
 #endif
         ImageData*,
+        ImageBitmap*,
         Inspector::ScriptCallFrame,
         String
     > DuplicateDataVariant;
@@ -101,6 +103,7 @@ private:
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasGradient(const CanvasGradient&);
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasPattern(const CanvasPattern&);
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForImageData(const ImageData&);
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForImageBitmap(const ImageBitmap&);
 
     String m_identifier;
     HTMLCanvasElement& m_canvas;

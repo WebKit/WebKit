@@ -33,6 +33,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageBitmap.h"
 #include "ImageData.h"
 #include "Path2D.h"
 #include <runtime/ArrayBuffer.h>
@@ -88,6 +89,7 @@ typedef Variant<
 #if ENABLE(VIDEO)
     RefPtr<HTMLVideoElement>,
 #endif
+    RefPtr<ImageBitmap>,
     RefPtr<ImageData>,
     RefPtr<Int32Array>,
     Vector<float>,

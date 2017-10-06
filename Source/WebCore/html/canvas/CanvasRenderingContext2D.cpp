@@ -47,6 +47,7 @@
 #include "FloatQuad.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "Path2D.h"
@@ -1421,6 +1422,11 @@ static inline FloatSize size(HTMLCanvasElement& canvasElement)
     return canvasElement.size();
 }
 
+static inline FloatSize size(ImageBitmap& imageBitmap)
+{
+    return FloatSize { static_cast<float>(imageBitmap.width()), static_cast<float>(imageBitmap.height()) };
+}
+
 #if ENABLE(VIDEO)
 
 static inline FloatSize size(HTMLVideoElement& video)
@@ -1662,6 +1668,12 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLVideoElement& video, c
 }
 
 #endif
+
+ExceptionOr<void> CanvasRenderingContext2D::drawImage(ImageBitmap&, const FloatRect&, const FloatRect&)
+{
+    // FIXME: Implement.
+    return Exception { TypeError };
+}
 
 void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement& imageElement, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, const String& compositeOperation)
 {
@@ -1922,6 +1934,12 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(HTMLV
 }
 
 #endif
+
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2D::createPattern(ImageBitmap&, bool, bool)
+{
+    // FIXME: Implement.
+    return Exception { TypeError };
+}
 
 void CanvasRenderingContext2D::didDrawEntireCanvas()
 {

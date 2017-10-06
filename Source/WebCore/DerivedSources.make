@@ -596,6 +596,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/HTMLUListElement.idl \
     $(WebCore)/html/HTMLUnknownElement.idl \
     $(WebCore)/html/HTMLVideoElement.idl \
+    $(WebCore)/html/ImageBitmap.idl \
+    $(WebCore)/html/ImageBitmapOptions.idl \
     $(WebCore)/html/ImageData.idl \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaEncryptedEvent.idl \

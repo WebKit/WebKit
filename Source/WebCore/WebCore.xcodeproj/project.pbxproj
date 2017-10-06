@@ -1561,6 +1561,9 @@
 		31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF3A0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h */; };
 		31C0FF3F0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF3B0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp */; };
 		31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF3C0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h */; };
+		31D26BC81F87063D008FF255 /* JSImageBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31D26BC61F86D269008FF255 /* JSImageBitmap.cpp */; };
+		31D26BCA1F870645008FF255 /* JSImageBitmapOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31D26BC41F86D266008FF255 /* JSImageBitmapOptions.cpp */; };
+		31D26BCB1F87065B008FF255 /* ImageBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31D26BC21F86D18C008FF255 /* ImageBitmap.cpp */; };
 		31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591B116697A6C00E6BF02 /* PlugInClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31DCDF431DA1C45400EA5B93 /* ExtendedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */; };
@@ -9368,6 +9371,15 @@
 		31C0FF3A0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitAnimationEvent.h; sourceTree = "<group>"; };
 		31C0FF3B0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitTransitionEvent.cpp; sourceTree = "<group>"; };
 		31C0FF3C0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitTransitionEvent.h; sourceTree = "<group>"; };
+		31D26BBD1F86D187008FF255 /* ImageBitmapOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImageBitmapOptions.idl; sourceTree = "<group>"; };
+		31D26BBF1F86D189008FF255 /* ImageBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBitmap.h; sourceTree = "<group>"; };
+		31D26BC01F86D18A008FF255 /* ImageBitmapOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBitmapOptions.h; sourceTree = "<group>"; };
+		31D26BC11F86D18B008FF255 /* ImageBitmap.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImageBitmap.idl; sourceTree = "<group>"; };
+		31D26BC21F86D18C008FF255 /* ImageBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBitmap.cpp; sourceTree = "<group>"; };
+		31D26BC31F86D265008FF255 /* JSImageBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageBitmap.h; sourceTree = "<group>"; };
+		31D26BC41F86D266008FF255 /* JSImageBitmapOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmapOptions.cpp; sourceTree = "<group>"; };
+		31D26BC51F86D268008FF255 /* JSImageBitmapOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapOptions.h; sourceTree = "<group>"; };
+		31D26BC61F86D269008FF255 /* JSImageBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmap.cpp; sourceTree = "<group>"; };
 		31D591B116697A6C00E6BF02 /* PlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInClient.h; sourceTree = "<group>"; };
 		31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationTrigger.h; sourceTree = "<group>"; };
 		31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedColor.cpp; sourceTree = "<group>"; };
@@ -21061,6 +21073,11 @@
 				E446139A0CD6331000FADA75 /* HTMLVideoElement.idl */,
 				839AAFEA1A0C0C8D00605F99 /* HTMLWBRElement.cpp */,
 				839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */,
+				31D26BC21F86D18C008FF255 /* ImageBitmap.cpp */,
+				31D26BBF1F86D189008FF255 /* ImageBitmap.h */,
+				31D26BC11F86D18B008FF255 /* ImageBitmap.idl */,
+				31D26BC01F86D18A008FF255 /* ImageBitmapOptions.h */,
+				31D26BBD1F86D187008FF255 /* ImageBitmapOptions.idl */,
 				A77979130D6B9D0C003851B9 /* ImageData.cpp */,
 				A77979140D6B9D0C003851B9 /* ImageData.h */,
 				A77979150D6B9D0C003851B9 /* ImageData.idl */,
@@ -22138,6 +22155,10 @@
 				6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */,
 				E446140E0CD6826900FADA75 /* JSHTMLVideoElement.cpp */,
 				E446140F0CD6826900FADA75 /* JSHTMLVideoElement.h */,
+				31D26BC61F86D269008FF255 /* JSImageBitmap.cpp */,
+				31D26BC31F86D265008FF255 /* JSImageBitmap.h */,
+				31D26BC41F86D266008FF255 /* JSImageBitmapOptions.cpp */,
+				31D26BC51F86D268008FF255 /* JSImageBitmapOptions.h */,
 				A77979240D6B9E64003851B9 /* JSImageData.cpp */,
 				A77979250D6B9E64003851B9 /* JSImageData.h */,
 				7C193BFB1F5E10C40088F3E6 /* JSImageSmoothingQuality.cpp */,
@@ -32350,6 +32371,7 @@
 				C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */,
 				C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
+				31D26BCB1F87065B008FF255 /* ImageBitmap.cpp in Sources */,
 				43D2597713C816F400608559 /* ImageBuffer.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
 				2292B27C1356669400CF11EF /* ImageBufferDataCG.cpp in Sources */,
@@ -32819,6 +32841,8 @@
 				51E269331DD3BC4E006B6A58 /* JSIDBTransactionCustom.cpp in Sources */,
 				838EF53B1DC14A7C008F0C39 /* JSIDBTransactionMode.cpp in Sources */,
 				511EF2CB17F0FD3500E4FA16 /* JSIDBVersionChangeEvent.cpp in Sources */,
+				31D26BC81F87063D008FF255 /* JSImageBitmap.cpp in Sources */,
+				31D26BCA1F870645008FF255 /* JSImageBitmapOptions.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
 				7C193C001F5E11050088F3E6 /* JSImageSmoothingQuality.cpp in Sources */,
