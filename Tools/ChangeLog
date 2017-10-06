@@ -1,3 +1,14 @@
+2017-10-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Implement TestController::platformContext() for WPE, returning the
+        m_context pointer as the GTK+ port does. This fixes the crashes on
+        the WPE testers.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformContext):
+
 2017-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to configure and enable resource load statistics
