@@ -36,13 +36,13 @@ RenderTableCaption::~RenderTableCaption()
 void RenderTableCaption::insertedIntoTree()
 {
     RenderBlockFlow::insertedIntoTree();
-    table()->addCaption(this);
+    table()->addCaption(*this);
 }
 
 void RenderTableCaption::willBeRemovedFromTree()
 {
     RenderBlockFlow::willBeRemovedFromTree();
-    table()->removeCaption(this);
+    table()->removeCaption(*this);
 }
 
 RenderTable* RenderTableCaption::table() const

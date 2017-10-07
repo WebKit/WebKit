@@ -218,15 +218,15 @@ void RenderTable::addChild(RenderPtr<RenderObject> child, RenderObject* beforeCh
     section.addChild(WTFMove(child));
 }
 
-void RenderTable::addCaption(const RenderTableCaption* caption)
+void RenderTable::addCaption(RenderTableCaption& caption)
 {
-    ASSERT(m_captions.find(caption) == notFound);
-    m_captions.append(const_cast<RenderTableCaption*>(caption));
+    ASSERT(m_captions.find(&caption) == notFound);
+    m_captions.append(makeWeakPtr(caption));
 }
 
-void RenderTable::removeCaption(const RenderTableCaption* oldCaption)
+void RenderTable::removeCaption(RenderTableCaption& oldCaption)
 {
-    bool removed = m_captions.removeFirst(oldCaption);
+    bool removed = m_captions.removeFirst(&oldCaption);
     ASSERT_UNUSED(removed, removed);
 }
 
@@ -686,7 +686,7 @@ void RenderTable::addOverflowFromChildren()
 
     // Add overflow from our caption.
     for (unsigned i = 0; i < m_captions.size(); i++) 
-        addOverflowFromChild(m_captions[i]);
+        addOverflowFromChild(m_captions[i].get());
 
     // Add overflow from our sections.
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))

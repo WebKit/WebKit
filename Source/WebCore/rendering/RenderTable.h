@@ -256,8 +256,8 @@ public:
     const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell&) const;
     const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell&) const;
 
-    void addCaption(const RenderTableCaption*);
-    void removeCaption(const RenderTableCaption*);
+    void addCaption(RenderTableCaption&);
+    void removeCaption(RenderTableCaption&);
     void addColumn(const RenderTableCol*);
     void removeColumn(const RenderTableCol*);
 
@@ -325,7 +325,7 @@ private:
 
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
-    mutable Vector<RenderTableCaption*> m_captions;
+    mutable Vector<WeakPtr<RenderTableCaption>> m_captions;
     mutable Vector<WeakPtr<RenderTableCol>> m_columnRenderers;
 
     unsigned effectiveIndexOfColumn(const RenderTableCol&) const;

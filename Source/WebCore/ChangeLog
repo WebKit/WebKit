@@ -1,3 +1,25 @@
+2017-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTable should not hold a collection of raw pointers to RenderTableCaption
+        https://bugs.webkit.org/show_bug.cgi?id=178026
+        <rdar://problem/34863090>
+
+        Reviewed by Simon Fraser.
+
+        Similar to sections, RenderTable should not store captions as raw pointers. Their lifetimes are
+        not guaranteed to be sync with the RenderTable's.
+
+        Covered by existing tests.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addCaption):
+        (WebCore::RenderTable::removeCaption):
+        (WebCore::RenderTable::addOverflowFromChildren):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::insertedIntoTree):
+        (WebCore::RenderTableCaption::willBeRemovedFromTree):
+
 2017-10-06  Daniel Bates  <dabates@apple.com>
 
         Spelling error annotation should encompass hyphen in misspelled word that wraps across multiple lines
