@@ -1,3 +1,46 @@
+2017-10-07  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement PaymentRequest.show() and PaymentRequest.hide()
+        https://bugs.webkit.org/show_bug.cgi?id=178043
+        <rdar://problem/34076639>
+
+        Reviewed by Tim Horton.
+
+        Tests: http/tests/paymentrequest/payment-request-abort-method.https.html
+               http/tests/paymentrequest/payment-request-show-method.https.html
+
+        * Modules/applepay/PaymentSession.h: Virtually inherited from PaymentSessionBase to
+        accommodate ApplePayPaymentHandler inheriting from both this and PaymentHandler.
+        (WebCore::PaymentSession::~PaymentSession): Deleted.
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::paymentCoordinator): Virtually inherited from PaymentSessionBase to accommodate
+        ApplePayPaymentHandler inheriting from both this and PaymentSession.
+        (WebCore::ApplePayPaymentHandler::hasActiveSession): Added. Calls PaymentCoordinator::hasActiveSession().
+        (WebCore::ApplePayPaymentHandler::show): Added. Calls PaymentCoordinator::beginPaymentSession().
+        (WebCore::ApplePayPaymentHandler::hide): Added. Calls PaymentCoordinator::abortPaymentSession().
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h: Inherited from PaymentSession in
+        addition to PaymentHandler so that this can be PaymentCoordinator active session.
+        * Modules/paymentrequest/PaymentHandler.cpp:
+        (WebCore::PaymentHandler::create):
+        (WebCore::PaymentHandler::hasActiveSession):
+        * Modules/paymentrequest/PaymentHandler.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::~PaymentRequest):
+        (WebCore::PaymentRequest::show): Rejected the promise if PaymentCoordinator has an active session.
+        (WebCore::PaymentRequest::abort): Called stop().
+        (WebCore::PaymentRequest::canSuspendForDocumentSuspension const): Returned true if state is
+        Interactive and there is an active handler showing.
+        (WebCore::PaymentRequest::stop): Hid the active session if it's showing, then set state to
+        Closed and rejected the show promise.
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentSessionBase.h: Added. Inherits from
+        RefCounted<PaymentSessionBase> and defines a virtual destructor. This allows subclasses to
+        virtually inherit a single ref-count to support multiple inheritance.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetGnuVTableOffsetForType): Added ApplePaySession to the list of classes that need a vtable
+        offset of 3.
+
 2017-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebContentReader::readHTML should be shared between macOS and iOS

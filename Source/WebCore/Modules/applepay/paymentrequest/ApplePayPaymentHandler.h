@@ -29,25 +29,35 @@
 
 #include "ApplePaySessionPaymentRequest.h"
 #include "PaymentHandler.h"
+#include "PaymentSession.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-class Document;
 class PaymentRequest;
 
-class ApplePayPaymentHandler final : public PaymentHandler {
-    WTF_MAKE_NONCOPYABLE(ApplePayPaymentHandler);
+class ApplePayPaymentHandler final : public PaymentHandler, public PaymentSession {
 public:
     static bool handlesIdentifier(const PaymentRequest::MethodIdentifier&);
+    static bool hasActiveSession(Document&);
 
 private:
-    friend std::unique_ptr<ApplePayPaymentHandler> std::make_unique<ApplePayPaymentHandler>(PaymentRequest&);
+    friend class PaymentHandler;
     explicit ApplePayPaymentHandler(PaymentRequest&);
 
+    // PaymentHandler
     ExceptionOr<void> convertData(JSC::ExecState&, JSC::JSValue&&) final;
-    void show() final;
+    void show(Document&) final;
+    void hide(Document&) final;
+
+    // PaymentSession
+    void validateMerchant(const URL&) final { }
+    void didAuthorizePayment(const Payment&) final { }
+    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) final { }
+    void didSelectShippingContact(const PaymentContact&) final { }
+    void didSelectPaymentMethod(const PaymentMethod&) final { }
+    void didCancelPaymentSession() final { }
 
     Ref<PaymentRequest> m_paymentRequest;
     std::optional<ApplePaySessionPaymentRequest> m_applePayRequest;

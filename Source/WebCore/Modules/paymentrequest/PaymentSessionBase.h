@@ -25,28 +25,16 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#if ENABLE(APPLE_PAY) || ENABLE(PAYMENT_REQUEST)
 
-#include "ApplePaySessionPaymentRequest.h"
-#include "PaymentSessionBase.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Payment;
-class PaymentContact;
-class PaymentMethod;
-class URL;
-
-class PaymentSession : public virtual PaymentSessionBase {
-public:
-    virtual void validateMerchant(const URL&) = 0;
-    virtual void didAuthorizePayment(const Payment&) = 0;
-    virtual void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
-    virtual void didSelectShippingContact(const PaymentContact&) = 0;
-    virtual void didSelectPaymentMethod(const PaymentMethod&) = 0;
-    virtual void didCancelPaymentSession() = 0;
+struct PaymentSessionBase : RefCounted<PaymentSessionBase> {
+    virtual ~PaymentSessionBase() = default;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY)
+#endif // ENABLE(APPLE_PAY) || ENABLE(PAYMENT_REQUEST)
