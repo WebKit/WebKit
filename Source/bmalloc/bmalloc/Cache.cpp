@@ -35,6 +35,8 @@ void Cache::scavenge(HeapKind heapKind)
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
         return;
+    if (!isActiveHeapKind(heapKind))
+        return;
 
     caches->at(heapKind).allocator().scavenge();
     caches->at(heapKind).deallocator().scavenge();
@@ -48,27 +50,27 @@ Cache::Cache(HeapKind heapKind)
 
 BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().tryAllocate(size);
+    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryAllocate(size);
 }
 
 BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().allocate(size);
+    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().allocate(size);
 }
 
 BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t alignment, size_t size)
 {
-    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().allocate(alignment, size);
+    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().allocate(alignment, size);
 }
 
 BNO_INLINE void Cache::deallocateSlowCaseNullCache(HeapKind heapKind, void* object)
 {
-    PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).deallocator().deallocate(object);
+    PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).deallocator().deallocate(object);
 }
 
 BNO_INLINE void* Cache::reallocateSlowCaseNullCache(HeapKind heapKind, void* object, size_t newSize)
 {
-    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().reallocate(object, newSize);
+    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().reallocate(object, newSize);
 }
 
 } // namespace bmalloc

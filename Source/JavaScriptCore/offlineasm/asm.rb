@@ -46,6 +46,8 @@ class Assembler
         @codeOrigin = nil
         @numLocalLabels = 0
         @numGlobalLabels = 0
+        @deferredActions = []
+        @count = 0
 
         @newlineSpacerState = :none
         @lastlabel = ""
@@ -73,8 +75,21 @@ class Assembler
             putsProcEndIfNeeded
         end
         putsLastComment
+        @deferredActions.each {
+            | action |
+            action.call()
+        }
         @outp.puts "OFFLINE_ASM_END" if !$emitWinAsm
         @state = :cpp
+    end
+    
+    def deferAction(&proc)
+        @deferredActions << proc
+    end
+    
+    def newUID
+        @count += 1
+        @count
     end
     
     def inAsm
