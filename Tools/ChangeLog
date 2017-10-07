@@ -1,3 +1,17 @@
+2017-10-06  Aishwarya Nirmal  <anirmal@apple.com>
+
+        [iOS] Respect the "caret-color" CSS property when editing
+        https://bugs.webkit.org/show_bug.cgi?id=177489
+        <rdar://problem/34600419>
+
+        Reviewed by Tim Horton.
+
+        Adds test for iOS caret color support.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2017-10-06  Alex Christensen  <achristensen@webkit.org>
 
         Add more infrastructure to apply custom header fields to same-origin requests

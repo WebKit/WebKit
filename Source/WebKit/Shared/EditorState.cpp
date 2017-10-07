@@ -128,6 +128,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << isStableStateUpdate;
     encoder << insideFixedPosition;
     encoder << hasPlainText;
+    encoder << caretColor;
 #endif
 #if PLATFORM(MAC)
     encoder << candidateRequestStartPosition;
@@ -178,6 +179,8 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.insideFixedPosition))
         return false;
     if (!decoder.decode(result.hasPlainText))
+        return false;
+    if (!decoder.decode(result.caretColor))
         return false;
 #endif
 #if PLATFORM(MAC)

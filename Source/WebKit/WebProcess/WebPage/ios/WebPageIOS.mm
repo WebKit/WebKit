@@ -228,8 +228,10 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     }
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
-        if (m_assistedNode && m_assistedNode->renderer())
+        if (m_assistedNode && m_assistedNode->renderer()) {
             postLayoutData.selectionClipRect = view->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
+            postLayoutData.caretColor = m_assistedNode->renderer()->style().caretColor();
+        }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
     }
 }

@@ -102,6 +102,7 @@ struct EditorState {
         bool isStableStateUpdate { false };
         bool insideFixedPosition { false };
         bool hasPlainText { false };
+        WebCore::Color caretColor;
 #endif
 #if PLATFORM(MAC)
         uint64_t candidateRequestStartPosition { 0 };

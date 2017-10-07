@@ -56,6 +56,7 @@ WTF_EXTERN_C_END
 @end
 
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
+@property (nonatomic, readonly) UIColor *insertionPointColor;
 @end
 
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>

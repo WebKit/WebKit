@@ -33,6 +33,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 
 #if PLATFORM(IOS)
+#import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
 #endif
 
@@ -298,6 +299,19 @@ TEST(EditorStateTests, ContentViewHasTextInTextarea)
     checkContentViewHasTextWithFailureDescription(webView.get(), NO, @"after losing focus");
 }
 
+TEST(EditorStateTests, CaretColorInContentEditable)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<body style=\"caret-color: red;\" contenteditable=\"true\"></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    UIView<UITextInputTraits_Private> *textInput = (UIView<UITextInputTraits_Private> *) [webView textInputContentView];
+    UIColor *insertionPointColor = textInput.insertionPointColor;
+    UIColor *redColor = [UIColor redColor];
+    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB));
+    auto cgInsertionPointColor = adoptCF(CGColorCreateCopyByMatchingToColorSpace(colorSpace.get(), kCGRenderingIntentDefault, insertionPointColor.CGColor, NULL));
+    auto cgRedColor = adoptCF(CGColorCreateCopyByMatchingToColorSpace(colorSpace.get(), kCGRenderingIntentDefault, redColor.CGColor, NULL));
+    EXPECT_TRUE(CGColorEqualToColor(cgInsertionPointColor.get(), cgRedColor.get()));
+}
 #endif
 
 } // namespace TestWebKitAPI
