@@ -1,3 +1,15 @@
+2017-10-06  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon][Cocoa] Beacon requests with BufferSource payload should not have a Content-Type HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=178027
+        <rdar://problem/34748470>
+
+        Reviewed by Youenn Fablet.
+
+        Add new CFNetwork SPI.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2017-10-05  Dean Jackson  <dino@apple.com>
 
         Lots of missing frames in YouTube360 when fullscreen on MacBook

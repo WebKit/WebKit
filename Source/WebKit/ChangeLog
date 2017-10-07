@@ -1,3 +1,22 @@
+2017-10-06  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon][Cocoa] Beacon requests with BufferSource payload should not have a Content-Type HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=178027
+        <rdar://problem/34748470>
+
+        Reviewed by Youenn Fablet.
+
+        Use new NSURLSessionConfiguration._suppressedAutoAddedHTTPHeaders CFNetwork SPI to
+        make sure that CFNetwork never adds a Content-Type HTTP headers to our requests
+        when we did not add one.
+
+        This is covered by the following tests on newer OSes:
+        - imported/w3c/web-platform-tests/beacon/headers/header-content-type.html
+        - http/tests/blink/sendbeacon/beacon-same-origin.html
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2017-10-06  Aishwarya Nirmal  <anirmal@apple.com>
 
         [iOS] Respect the "caret-color" CSS property when editing 
