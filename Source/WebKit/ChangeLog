@@ -1,3 +1,17 @@
+2017-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] API tests added in r222991 are failing in iOS 11 test runners
+        https://bugs.webkit.org/show_bug.cgi?id=178037
+
+        Reviewed by Tim Horton.
+
+        This patch carries out some minor cleanup around UIKitSPI.h in WebKit2, so that the internal SDK isn't required
+        to implement -[WKContentView insertTextSuggestion:].
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertTextSuggestion:]):
+
 2017-10-06  Chris Dumez  <cdumez@apple.com>
 
         [Beacon][Cocoa] Beacon requests with BufferSource payload should not have a Content-Type HTTP header

@@ -43,17 +43,6 @@
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboardIntl.h>
-#if __has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
-#import <UIKit/UIKeyboardLoginCredentialsSuggestion.h>
-#else
-#import <UIKit/UITextInput_Private.h>
-@interface UIKeyboardLoginCredentialsSuggestion : UITextSuggestion
-
-@property (nonatomic, assign) NSString *username;
-@property (nonatomic, assign) NSString *password;
-
-@end
-#endif
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
 #import <UIKit/UIPeripheralHost.h>
@@ -400,7 +389,8 @@ typedef enum {
 - (void)willStartScrollingOverflow;
 @end
 
-@class UITextSuggestion;
+@interface UITextSuggestion : NSObject
+@end
 
 @protocol UITextInputSuggestionDelegate <UITextInputDelegate>
 - (void)setSuggestions:(NSArray <UITextSuggestion*> *)suggestions;
@@ -963,6 +953,15 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
 @end
+
+#if __has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
+#import <UIKit/UIKeyboardLoginCredentialsSuggestion.h>
+#else
+@interface UIKeyboardLoginCredentialsSuggestion : UITextSuggestion
+@property (nonatomic, assign) NSString *username;
+@property (nonatomic, assign) NSString *password;
+@end
+#endif
 
 WTF_EXTERN_C_BEGIN
 
