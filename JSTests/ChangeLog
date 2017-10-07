@@ -1,3 +1,16 @@
+2017-10-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        `async` should be able to be used as an imported binding name
+        https://bugs.webkit.org/show_bug.cgi?id=176573
+
+        Reviewed by Darin Adler.
+
+        * modules/import-default-async.js: Added.
+        * modules/import-named-async-as.js: Added.
+        * modules/import-named-async.js: Added.
+        * modules/import-named-async/target.js: Added.
+        * modules/import-namespace-async.js: Added.
+
 2017-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS

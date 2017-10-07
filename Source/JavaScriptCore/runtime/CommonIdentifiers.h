@@ -79,6 +79,7 @@
     macro(arguments) \
     macro(as) \
     macro(assign) \
+    macro(async) \
     macro(back) \
     macro(bind) \
     macro(buffer) \
@@ -219,7 +220,6 @@
     macro(year)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
-    macro(async) \
     macro(await) \
     macro(break) \
     macro(case) \

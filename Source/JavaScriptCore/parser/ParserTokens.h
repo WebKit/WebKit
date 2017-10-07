@@ -93,10 +93,9 @@ enum JSTokenType {
     LET,
     YIELD,
     AWAIT,
-    ASYNC,
 
     FirstContextualKeywordToken = LET,
-    LastContextualKeywordToken = ASYNC,
+    LastContextualKeywordToken = AWAIT,
     FirstSafeContextualKeywordToken = AWAIT,
     LastSafeContextualKeywordToken = LastContextualKeywordToken,
 
