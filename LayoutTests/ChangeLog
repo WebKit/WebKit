@@ -1,3 +1,20 @@
+2017-10-06  Daniel Bates  <dabates@apple.com>
+
+        Spelling error annotation should encompass hyphen in misspelled word that wraps across multiple lines
+        https://bugs.webkit.org/show_bug.cgi?id=177980
+        <rdar://problem/34847454>
+
+        Reviewed by Simon Fraser.
+
+        Add a test to ensure that a spelling error decoration encompasses the hyphen for a misspelled
+        word that is hyphenated because it is broken across more than one line.
+
+        * editing/spelling/spelling-marker-includes-hyphen-expected.html: Added.
+        * editing/spelling/spelling-marker-includes-hyphen.html: Added.
+        * platform/ios/TestExpectations: Mark the test as WontFix as spelling and
+        grammar markers are not support on iOS.
+        * platform/mac-wk2/TestExpectations: Mark the test as a failure due to <https://bugs.webkit.org/show_bug.cgi?id=105616>.
+
 2017-10-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add Canvas tab and CanvasOverviewContentView

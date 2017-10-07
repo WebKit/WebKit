@@ -1,3 +1,29 @@
+2017-10-06  Daniel Bates  <dabates@apple.com>
+
+        Spelling error annotation should encompass hyphen in misspelled word that wraps across multiple lines
+        https://bugs.webkit.org/show_bug.cgi?id=177980
+        <rdar://problem/34847454>
+
+        Reviewed by Simon Fraser.
+
+        On macOS the spelling and grammar annotations for a word or word phrase encompass
+        hyphenations added because the word or word phrase wraps across more than one line.
+        The effect tends to be more aesthetically pleasing and consistent with how these
+        annotations would be pointed out by a person in conversation: by identify the word
+        or phrase that has a spelling or grammar issue regardless of whether that word or
+        phrase is broken into halves due to line wrapping. The same argument applies to
+        other annotations on macOS, including text matches. Therefore, we should always
+        include any hyphens encompassed by a marker that were added due to line wrapping
+        when painting the marker.
+
+        Test: editing/spelling/spelling-marker-includes-hyphen.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarker): Compute the text run including any
+        added hyphens. If a hyphen was added then the inline text box represents that text
+        up to the hyphen. Adjust the end position of the marker to be the length of the text
+        run if its greater than or equal to the length of the text box.
+
 2017-10-06  Zalan Bujtas  <zalan@apple.com>
 
         RenderTable should not hold a collection of raw pointers to RenderTableCol

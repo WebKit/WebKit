@@ -91,6 +91,9 @@ mhtml
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html
 
+# Spelling and grammar markers are not supported
+webkit.org/b/105616 editing/spelling/spelling-marker-includes-hyphen.html [ WontFix ]
+
 # Plugins are not supported on iOS
 plugins
 compositing/plugins

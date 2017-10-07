@@ -812,22 +812,21 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
     if (!markerSpansWholeBox) {
         unsigned startPosition = clampedOffset(subrange.startOffset);
         unsigned endPosition = clampedOffset(subrange.endOffset);
-        
+
         if (m_truncation != cNoTruncation)
             endPosition = std::min(endPosition, static_cast<unsigned>(m_truncation));
 
         // Calculate start & width
-        // FIXME: Adjust text run for combined text and hyphenation.
+        // FIXME: Adjust text run for combined text.
         bool ignoreCombinedText = true;
-        bool ignoreHyphen = true;
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        auto text = this->text(ignoreCombinedText, ignoreHyphen);
+        auto text = this->text(ignoreCombinedText);
         TextRun run = createTextRun(text);
 
         LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
-        lineFont().adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
+        lineFont().adjustSelectionRectForText(run, selectionRect, startPosition, endPosition >= len() ? run.length() : endPosition);
         IntRect markerRect = enclosingIntRect(selectionRect);
         start = markerRect.x() - startPoint.x();
         width = markerRect.width();
