@@ -838,7 +838,6 @@ scrollbars/scrollbar-miss-mousemove-disabled.html [ Failure ]
 
 # JavaScript tests that fail:
 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
-js/dom/global-constructors-attributes.html [ Failure ]
 
 # Page overlay tests that fail:
 pageoverlay/overlay-large-document-scrolled.html [ Failure ]
