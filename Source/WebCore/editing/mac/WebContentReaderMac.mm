@@ -79,30 +79,6 @@ bool WebContentReader::readFilenames(const Vector<String>& paths)
     return true;
 }
 
-bool WebContentReader::readHTML(const String& string)
-{
-    String stringOmittingMicrosoftPrefix = string;
-
-    // This code was added to make HTML paste from Microsoft Word on Mac work, back in 2004.
-    // It's a simple-minded way to ignore the CF_HTML clipboard format, just skipping over the
-    // description part and parsing the entire context plus fragment.
-    if (string.startsWith("Version:")) {
-        size_t location = string.findIgnoringCase("<html");
-        if (location != notFound)
-            stringOmittingMicrosoftPrefix = string.substring(location);
-    }
-
-    if (stringOmittingMicrosoftPrefix.isEmpty())
-        return false;
-
-    if (!frame.document())
-        return false;
-    Document& document = *frame.document();
-
-    fragment = createFragmentFromMarkup(document, stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent);
-    return fragment;
-}
-
 bool WebContentReader::readURL(const URL& url, const String& title)
 {
     if (url.string().isEmpty())
