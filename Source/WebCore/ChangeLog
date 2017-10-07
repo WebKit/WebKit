@@ -1,3 +1,37 @@
+2017-10-07  Darin Adler  <darin@apple.com>
+
+        Update Document.createEvent for recent DOM specification changes
+        https://bugs.webkit.org/show_bug.cgi?id=178052
+
+        Reviewed by Chris Dumez.
+
+        * dom/BeforeUnloadEvent.cpp:
+        (WebCore::BeforeUnloadEvent::BeforeUnloadEvent): Added a constructor for
+        createForBindings.
+        (WebCore::BeforeUnloadEvent::~BeforeUnloadEvent): Deleted. Just let the
+        compiler generate this.
+        * dom/BeforeUnloadEvent.h: Added createForBindings. Also made more things private.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent): Updated comments for clarity. Responding to
+        changes to the DOM specification, added support for "beforeunloadevent", "focusevent",
+        and "svgevents", moved "keyboardevents" and "popstateevent" into the list of strings
+        we should remove, and moved "compositionevent", "devicemotionevent",
+        "deviceorientationevent", "hashchangeevent", "storageevent", and "textevent" into
+        the list of strings we should keep.
+
+        * dom/Event.h: Added a virtual setRelatedTarget alongside the virtual relatedTarget
+        to allow us to clean up the code that manipulates it.
+
+        * dom/EventContext.cpp:
+        (WebCore::MouseOrFocusEventContext::handleLocalEvents const): Call the virtual
+        setRelatedTarget instead of doing a little type casting dance.
+
+        * dom/FocusEvent.h: Added createForBindings. Made more functions private and
+        changed setRelatedTarget into a private final override.
+
+        * dom/MouseEvent.h: Changed setRelatedTarget into a private final override.
+
 2017-10-07  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement PaymentRequest.show() and PaymentRequest.hide()

@@ -168,6 +168,7 @@ public:
     bool isBeingDispatched() const { return eventPhase(); }
 
     virtual EventTarget* relatedTarget() const { return nullptr; }
+    virtual void setRelatedTarget(EventTarget&) { }
 
 protected:
     Event(IsTrusted = IsTrusted::No);

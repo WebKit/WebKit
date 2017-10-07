@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,11 @@ public:
         return adoptRef(*new FocusEvent(type, canBubble, cancelable, view, detail, WTFMove(relatedTarget)));
     }
 
+    static Ref<FocusEvent> createForBindings()
+    {
+        return adoptRef(*new FocusEvent);
+    }
+
     struct Init : UIEventInit {
         RefPtr<EventTarget> relatedTarget;
     };
@@ -48,16 +54,17 @@ public:
         return adoptRef(*new FocusEvent(type, initializer, isTrusted));
     }
 
-    EventTarget* relatedTarget() const override { return m_relatedTarget.get(); }
-    void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) { m_relatedTarget = WTFMove(relatedTarget); }
-
-    EventInterface eventInterface() const override;
+    EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
 
 private:
+    FocusEvent() = default;
     FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*, int, RefPtr<EventTarget>&&);
     FocusEvent(const AtomicString& type, const Init&, IsTrusted);
 
-    bool isFocusEvent() const override;
+    EventInterface eventInterface() const final;
+    bool isFocusEvent() const final;
+
+    void setRelatedTarget(EventTarget& relatedTarget) final { m_relatedTarget = &relatedTarget; }
 
     RefPtr<EventTarget> m_relatedTarget;
 };

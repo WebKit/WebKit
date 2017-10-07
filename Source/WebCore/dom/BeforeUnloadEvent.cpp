@@ -32,13 +32,13 @@ BeforeUnloadEvent::BeforeUnloadEvent()
 {
 }
 
+BeforeUnloadEvent::BeforeUnloadEvent(ForBindingsFlag)
+{
+}
+
 bool BeforeUnloadEvent::isBeforeUnloadEvent() const
 {
     return true;
-}
-
-BeforeUnloadEvent::~BeforeUnloadEvent()
-{
 }
 
 } // namespace WebCore

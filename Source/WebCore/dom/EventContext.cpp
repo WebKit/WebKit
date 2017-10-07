@@ -75,13 +75,8 @@ MouseOrFocusEventContext::~MouseOrFocusEventContext()
 
 void MouseOrFocusEventContext::handleLocalEvents(Event& event) const
 {
-    ASSERT(is<MouseEvent>(event) || is<FocusEvent>(event));
-    if (m_relatedTarget) {
-        if (is<MouseEvent>(event))
-            downcast<MouseEvent>(event).setRelatedTarget(m_relatedTarget.get());
-        else if (is<FocusEvent>(event))
-            downcast<FocusEvent>(event).setRelatedTarget(m_relatedTarget.get());
-    }
+    if (m_relatedTarget)
+        event.setRelatedTarget(*m_relatedTarget);
     EventContext::handleLocalEvents(event);
 }
 

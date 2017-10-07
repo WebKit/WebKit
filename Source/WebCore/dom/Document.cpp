@@ -30,6 +30,7 @@
 
 #include "AXObjectCache.h"
 #include "Attr.h"
+#include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
 #include "CSSAnimationController.h"
 #include "CSSFontSelector.h"
@@ -64,6 +65,7 @@
 #include "EventHandler.h"
 #include "ExtensionStyleSheets.h"
 #include "FocusController.h"
+#include "FocusEvent.h"
 #include "FontFaceSet.h"
 #include "FormController.h"
 #include "FrameLoader.h"
@@ -4259,8 +4261,8 @@ void Document::enqueueOverflowEvent(Ref<Event>&& event)
 
 ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
 {
-    // Please do *not* add new event classes to this function unless they are
-    // required for compatibility of some actual legacy web content.
+    // Please do *not* add new event classes to this function unless they are required
+    // for compatibility with the DOM specification or some actual legacy web content.
 
     // This mechanism is superceded by use of event constructors.
     // That is what we should use for any new event classes.
@@ -4268,63 +4270,72 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
     // The following strings are the ones from the DOM specification
     // <https://dom.spec.whatwg.org/#dom-document-createevent>.
 
+    if (equalLettersIgnoringASCIICase(type, "beforeunloadevent"))
+        return Ref<Event> { BeforeUnloadEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "compositionevent"))
+        return Ref<Event> { CompositionEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "customevent"))
         return Ref<Event> { CustomEvent::create() };
-    if (equalLettersIgnoringASCIICase(type, "event") || equalLettersIgnoringASCIICase(type, "events") || equalLettersIgnoringASCIICase(type, "htmlevents"))
+    if (equalLettersIgnoringASCIICase(type, "event") || equalLettersIgnoringASCIICase(type, "events") || equalLettersIgnoringASCIICase(type, "htmlevents") || equalLettersIgnoringASCIICase(type, "svgevents"))
         return Event::createForBindings();
-    if (equalLettersIgnoringASCIICase(type, "keyboardevent") || equalLettersIgnoringASCIICase(type, "keyboardevents"))
+    if (equalLettersIgnoringASCIICase(type, "focusevent"))
+        return Ref<Event> { FocusEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "hashchangeevent"))
+        return Ref<Event> { HashChangeEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "keyboardevent"))
         return Ref<Event> { KeyboardEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "messageevent"))
         return Ref<Event> { MessageEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "mouseevent") || equalLettersIgnoringASCIICase(type, "mouseevents"))
-        return Ref<Event> { MouseEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "uievent") || equalLettersIgnoringASCIICase(type, "uievents"))
-        return Ref<Event> { UIEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "popstateevent"))
-        return Ref<Event> { PopStateEvent::createForBindings() };
-
-#if ENABLE(TOUCH_EVENTS)
-    if (equalLettersIgnoringASCIICase(type, "touchevent"))
-        return Ref<Event> { TouchEvent::createForBindings() };
-#endif
-
-    // The following string comes from the SVG specifications
-    // <http://www.w3.org/TR/SVG/script.html#InterfaceSVGZoomEvent>
-    // <http://www.w3.org/TR/SVG2/interact.html#InterfaceSVGZoomEvent>.
-    // However, since there is no provision for initializing the event once it is created,
-    // there is no practical value in this feature.
-
-    if (equalLettersIgnoringASCIICase(type, "svgzoomevents"))
-        return Ref<Event> { SVGZoomEvent::createForBindings() };
-
-    // The following strings are for event classes where WebKit supplies an init function.
-    // These strings are not part of the DOM specification and we would like to eliminate them.
-    // However, we currently include these because we have concerns about backward compatibility.
-
-    // FIXME: For each of the strings below, prove there is no content depending on it and remove
-    // both the string and the corresponding init function for that class.
-
-    if (equalLettersIgnoringASCIICase(type, "compositionevent"))
-        return Ref<Event> { CompositionEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "hashchangeevent"))
-        return Ref<Event> { HashChangeEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "mutationevent") || equalLettersIgnoringASCIICase(type, "mutationevents"))
-        return Ref<Event> { MutationEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "overflowevent"))
-        return Ref<Event> { OverflowEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "storageevent"))
         return Ref<Event> { StorageEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "mouseevent") || equalLettersIgnoringASCIICase(type, "mouseevents"))
+        return Ref<Event> { MouseEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "textevent"))
-        return Ref<Event> { TextEvent::createForBindings() };
-    if (equalLettersIgnoringASCIICase(type, "wheelevent"))
-        return Ref<Event> { WheelEvent::createForBindings() };
+        return Ref<Event> { TextEvent::createForBindings() }; // FIXME: HTML specification says this should create a CompositionEvent, not a TextEvent.
+    if (equalLettersIgnoringASCIICase(type, "uievent") || equalLettersIgnoringASCIICase(type, "uievents"))
+        return Ref<Event> { UIEvent::createForBindings() };
 
+    // FIXME: Consider including support for these event classes even when device orientation
+    // support is not enabled.
 #if ENABLE(DEVICE_ORIENTATION)
     if (equalLettersIgnoringASCIICase(type, "devicemotionevent"))
         return Ref<Event> { DeviceMotionEvent::createForBindings() };
     if (equalLettersIgnoringASCIICase(type, "deviceorientationevent"))
         return Ref<Event> { DeviceOrientationEvent::createForBindings() };
 #endif
+
+#if ENABLE(TOUCH_EVENTS)
+    if (equalLettersIgnoringASCIICase(type, "touchevent"))
+        return Ref<Event> { TouchEvent::createForBindings() };
+#endif
+
+    // FIXME: Add support for "dragevent", which the DOM specification calls for.
+
+    // The following string comes from the SVG specification
+    // <http://www.w3.org/TR/SVG/script.html#InterfaceSVGZoomEvent>
+    // However, since there is no provision for initializing the event once it is created,
+    // there is no practical value in this feature.
+    // FIXME: Confirm there is no content depending on this and remove it.
+
+    if (equalLettersIgnoringASCIICase(type, "svgzoomevents"))
+        return Ref<Event> { SVGZoomEvent::createForBindings() };
+
+    // The following strings are not part of the DOM specification and we would like to eliminate them.
+    // However, we currently include them until we resolve any issues with backward compatibility.
+    // FIXME: For each of the strings below, confirm that there is no content depending on it and remove
+    // the string, remove the createForBindings function, and also consider removing the corresponding
+    // init function for that class.
+
+    if (equalLettersIgnoringASCIICase(type, "keyboardevents"))
+        return Ref<Event> { KeyboardEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "mutationevent") || equalLettersIgnoringASCIICase(type, "mutationevents"))
+        return Ref<Event> { MutationEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "overflowevent"))
+        return Ref<Event> { OverflowEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "popstateevent"))
+        return Ref<Event> { PopStateEvent::createForBindings() };
+    if (equalLettersIgnoringASCIICase(type, "wheelevent"))
+        return Ref<Event> { WheelEvent::createForBindings() };
 
     return Exception { NotSupportedError };
 }

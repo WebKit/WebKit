@@ -1,3 +1,14 @@
+2017-10-07  Darin Adler  <darin@apple.com>
+
+        Update Document.createEvent for recent DOM specification changes
+        https://bugs.webkit.org/show_bug.cgi?id=178052
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt: Updated to expect more tests to pass.
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt: Ditto.
+        * web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-canceling-expected.txt: Ditto.
+
 2017-10-07  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement PaymentRequest.show() and PaymentRequest.hide()

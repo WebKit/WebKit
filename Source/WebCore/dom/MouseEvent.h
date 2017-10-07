@@ -57,7 +57,6 @@ public:
     unsigned short syntheticClickType() const { return m_syntheticClickType; }
     bool buttonDown() const { return m_buttonDown; }
     EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
-    void setRelatedTarget(EventTarget* relatedTarget) { m_relatedTarget = relatedTarget; }
     double force() const { return m_force; }
     void setForce(double force) { m_force = force; }
 
@@ -93,6 +92,8 @@ private:
     EventInterface eventInterface() const override;
 
     bool isDragEvent() const;
+
+    void setRelatedTarget(EventTarget& relatedTarget) final { m_relatedTarget = &relatedTarget; }
 
     unsigned short m_button { 0 };
     unsigned short m_syntheticClickType { 0 };
