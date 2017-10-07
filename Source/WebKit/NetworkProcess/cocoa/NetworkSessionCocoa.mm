@@ -54,6 +54,12 @@
 
 using namespace WebKit;
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@interface NSURLSessionConfiguration (WKStaging)
+@property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
+@end
+#endif
+
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
