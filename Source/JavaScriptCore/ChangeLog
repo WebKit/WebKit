@@ -1,3 +1,32 @@
+2017-10-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Octane/splay can leak memory due to stray pointers on the stack when run from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=178054
+
+        Reviewed by Saam Barati.
+        
+        This throws in a bunch of sanitize calls. It fixes the problem. It's also performance-neutral. In
+        most cases, calling the sanitize function is O(1), because it doesn't have anything to do if the stack
+        height stays relatively constant.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * ftl/FTLOSREntry.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::runCurrentPhase):
+        * heap/MarkedAllocatorInlines.h:
+        (JSC::MarkedAllocator::tryAllocate):
+        (JSC::MarkedAllocator::allocate):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::tryAllocateSlow):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::sanitizeStackInline):
+        * jit/ThunkGenerators.cpp:
+        (JSC::slowPathFor):
+        * runtime/VM.h:
+        (JSC::VM::addressOfLastStackTop):
+
 2017-10-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         `async` should be able to be used as an imported binding name

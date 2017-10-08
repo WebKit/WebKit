@@ -1092,6 +1092,9 @@ auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadSt
     checkConn(conn);
     m_currentThreadState = currentThreadState;
     
+    if (conn == GCConductor::Mutator)
+        sanitizeStackForVM(vm());
+    
     // If the collector transfers the conn to the mutator, it leaves us in between phases.
     if (!finishChangingPhase(conn)) {
         // A mischevious mutator could repeatedly relinquish the conn back to us. We try to avoid doing

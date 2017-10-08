@@ -898,6 +898,19 @@ void AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(GPRReg 
 #endif
 }
 
+void AssemblyHelpers::sanitizeStackInline(VM& vm, GPRReg scratch)
+{
+    loadPtr(vm.addressOfLastStackTop(), scratch);
+    Jump done = branchPtr(BelowOrEqual, stackPointerRegister, scratch);
+    Label loop = label();
+    storePtr(TrustedImmPtr(0), scratch);
+    addPtr(TrustedImmPtr(sizeof(void*)), scratch);
+    branchPtr(Above, stackPointerRegister, scratch).linkTo(loop, this);
+    done.link(this);
+    move(stackPointerRegister, scratch);
+    storePtr(scratch, vm.addressOfLastStackTop());
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

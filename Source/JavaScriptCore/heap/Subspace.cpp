@@ -207,6 +207,8 @@ void* Subspace::allocateSlow(GCDeferralContext* deferralContext, size_t size)
 
 void* Subspace::tryAllocateSlow(GCDeferralContext* deferralContext, size_t size)
 {
+    sanitizeStackForVM(m_space.heap()->vm());
+    
     if (MarkedAllocator* allocator = allocatorFor(size))
         return allocator->tryAllocate(deferralContext);
     

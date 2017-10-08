@@ -2540,6 +2540,8 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSR
     // really be profitable.
     DeferGCForAWhile deferGC(codeBlock->vm()->heap);
     
+    sanitizeStackForVM(codeBlock->vm());
+
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": Entered reoptimize\n");
     // We must be called with the baseline code block.
@@ -2665,6 +2667,8 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
     DeferGCForAWhile deferGC(vm->heap);
     CodeBlock* codeBlock = exec->codeBlock();
     
+    sanitizeStackForVM(vm);
+
     if (codeBlock->jitType() != JITCode::DFGJIT) {
         dataLog("Unexpected code block in DFG->FTL tier-up: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
@@ -2719,7 +2723,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
     // The following is only true for triggerTierUpNowInLoop, which can never
     // be an OSR entry.
     bool canOSRFromHere = originBytecodeIndex == osrEntryBytecodeIndex;
-
+    
     bool triggeredSlowPathToStartCompilation = false;
     auto tierUpEntryTriggers = jitCode->tierUpEntryTriggers.find(originBytecodeIndex);
     if (tierUpEntryTriggers != jitCode->tierUpEntryTriggers.end()) {
@@ -2899,6 +2903,8 @@ void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeInde
     DeferGCForAWhile deferGC(vm->heap);
     CodeBlock* codeBlock = exec->codeBlock();
 
+    sanitizeStackForVM(vm);
+
     if (codeBlock->jitType() != JITCode::DFGJIT) {
         dataLog("Unexpected code block in DFG->FTL tier-up: ", *codeBlock, "\n");
         RELEASE_ASSERT_NOT_REACHED();
@@ -2932,6 +2938,8 @@ char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
     NativeCallFrameTracer tracer(vm, exec);
     DeferGCForAWhile deferGC(vm->heap);
     CodeBlock* codeBlock = exec->codeBlock();
+
+    sanitizeStackForVM(vm);
 
     if (codeBlock->jitType() != JITCode::DFGJIT) {
         dataLog("Unexpected code block in DFG->FTL tier-up: ", *codeBlock, "\n");

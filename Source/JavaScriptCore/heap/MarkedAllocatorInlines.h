@@ -39,6 +39,7 @@ ALWAYS_INLINE void* MarkedAllocator::tryAllocate(GCDeferralContext* deferralCont
 {
     return m_freeList.allocate(
         [&] () -> HeapCell* {
+            sanitizeStackForVM(heap()->vm());
             return static_cast<HeapCell*>(tryAllocateSlowCase(deferralContext));
         });
 }
@@ -47,6 +48,7 @@ ALWAYS_INLINE void* MarkedAllocator::allocate(GCDeferralContext* deferralContext
 {
     return m_freeList.allocate(
         [&] () -> HeapCell* {
+            sanitizeStackForVM(heap()->vm());
             return static_cast<HeapCell*>(allocateSlowCase(deferralContext));
         });
 }

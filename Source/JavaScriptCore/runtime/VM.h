@@ -553,6 +553,7 @@ public:
         return isSafeToRecurse(m_stackLimit);
     }
 
+    void** addressOfLastStackTop() { return &m_lastStackTop; }
     void* lastStackTop() { return m_lastStackTop; }
     void setLastStackTop(void*);
     

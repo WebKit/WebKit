@@ -81,6 +81,7 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
 static void slowPathFor(
     CCallHelpers& jit, VM* vm, Sprt_JITOperation_ECli slowPathFunction)
 {
+    jit.sanitizeStackInline(*vm, GPRInfo::nonArgGPR0);
     jit.emitFunctionPrologue();
     jit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
 #if OS(WINDOWS) && CPU(X86_64)

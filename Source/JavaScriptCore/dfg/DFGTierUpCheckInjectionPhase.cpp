@@ -74,7 +74,7 @@ public:
 
         if (!ensureGlobalFTLWhitelist().contains(m_graph.m_profiledBlock))
             return false;
-
+        
 #if ENABLE(FTL_JIT)
         FTL::CapabilityLevel level = FTL::canCompile(m_graph);
         if (level == FTL::CannotCompile)
