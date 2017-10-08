@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,16 @@ namespace TestWebKitAPI {
 TEST(WTF, StringCreationFromLiteral)
 {
     String stringFromLiteral(ASCIILiteral("Explicit construction syntax"));
-    ASSERT_EQ(strlen("Explicit construction syntax"), stringFromLiteral.length());
-    ASSERT_TRUE(stringFromLiteral == "Explicit construction syntax");
-    ASSERT_TRUE(stringFromLiteral.is8Bit());
-    ASSERT_TRUE(String("Explicit construction syntax") == stringFromLiteral);
+    EXPECT_EQ(strlen("Explicit construction syntax"), stringFromLiteral.length());
+    EXPECT_EQ("Explicit construction syntax", stringFromLiteral);
+    EXPECT_TRUE(stringFromLiteral.is8Bit());
+    EXPECT_EQ(String("Explicit construction syntax"), stringFromLiteral);
 
     String stringWithTemplate("Template Literal", String::ConstructFromLiteral);
-    ASSERT_EQ(strlen("Template Literal"), stringWithTemplate.length());
-    ASSERT_TRUE(stringWithTemplate == "Template Literal");
-    ASSERT_TRUE(stringWithTemplate.is8Bit());
-    ASSERT_TRUE(String("Template Literal") == stringWithTemplate);
+    EXPECT_EQ(strlen("Template Literal"), stringWithTemplate.length());
+    EXPECT_EQ("Template Literal", stringWithTemplate);
+    EXPECT_TRUE(stringWithTemplate.is8Bit());
+    EXPECT_EQ(String("Template Literal"), stringWithTemplate);
 }
 
 TEST(WTF, StringASCII)
@@ -54,111 +54,209 @@ TEST(WTF, StringASCII)
 
     // Null String.
     output = String().ascii();
-    ASSERT_STREQ("", output.data());
+    EXPECT_STREQ("", output.data());
 
     // Empty String.
     output = emptyString().ascii();
-    ASSERT_STREQ("", output.data());
+    EXPECT_STREQ("", output.data());
 
     // Regular String.
     output = String(ASCIILiteral("foobar")).ascii();
-    ASSERT_STREQ("foobar", output.data());
+    EXPECT_STREQ("foobar", output.data());
 }
 
-static void testNumberToStringECMAScript(double number, const char* reference)
+static inline const char* testStringNumberFixedPrecision(double number)
 {
-    CString numberString = String::numberToStringECMAScript(number).latin1();
-    ASSERT_STREQ(reference, numberString.data());
+    static char testBuffer[100];
+    std::strncpy(testBuffer, String::number(number).utf8().data(), 100);
+    return testBuffer;
 }
 
-TEST(WTF, StringNumberToStringECMAScriptBoundaries)
+TEST(WTF, StringNumberFixedPrecision)
 {
-    typedef std::numeric_limits<double> Limits;
+    using Limits = std::numeric_limits<double>;
 
-    // Infinity.
-    testNumberToStringECMAScript(Limits::infinity(), "Infinity");
-    testNumberToStringECMAScript(-Limits::infinity(), "-Infinity");
+    EXPECT_STREQ("Infinity", testStringNumberFixedPrecision(Limits::infinity()));
+    EXPECT_STREQ("-Infinity", testStringNumberFixedPrecision(-Limits::infinity()));
 
-    // NaN.
-    testNumberToStringECMAScript(-Limits::quiet_NaN(), "NaN");
+    EXPECT_STREQ("NaN", testStringNumberFixedPrecision(-Limits::quiet_NaN()));
 
-    // Zeros.
-    testNumberToStringECMAScript(0, "0");
-    testNumberToStringECMAScript(-0, "0");
+    EXPECT_STREQ("0", testStringNumberFixedPrecision(0));
+    EXPECT_STREQ("0", testStringNumberFixedPrecision(-0));
 
-    // Min-Max.
-    testNumberToStringECMAScript(Limits::min(), "2.2250738585072014e-308");
-    testNumberToStringECMAScript(Limits::max(), "1.7976931348623157e+308");
+    EXPECT_STREQ("2.22507e-308", testStringNumberFixedPrecision(Limits::min()));
+    EXPECT_STREQ("-1.79769e+308", testStringNumberFixedPrecision(Limits::lowest()));
+    EXPECT_STREQ("1.79769e+308", testStringNumberFixedPrecision(Limits::max()));
+
+    EXPECT_STREQ("3.14159", testStringNumberFixedPrecision(piDouble));
+    EXPECT_STREQ("3.14159", testStringNumberFixedPrecision(piFloat));
+    EXPECT_STREQ("1.5708", testStringNumberFixedPrecision(piOverTwoDouble));
+    EXPECT_STREQ("1.5708", testStringNumberFixedPrecision(piOverTwoFloat));
+    EXPECT_STREQ("0.785398", testStringNumberFixedPrecision(piOverFourDouble));
+    EXPECT_STREQ("0.785398", testStringNumberFixedPrecision(piOverFourFloat));
+
+    EXPECT_STREQ("2.71828", testStringNumberFixedPrecision(2.71828182845904523536028747135266249775724709369995));
+
+    EXPECT_STREQ("2.99792e+8", testStringNumberFixedPrecision(299792458));
+
+    EXPECT_STREQ("1.61803", testStringNumberFixedPrecision(1.6180339887498948482));
+
+    EXPECT_STREQ("1000", testStringNumberFixedPrecision(1e3));
+    EXPECT_STREQ("1e+10", testStringNumberFixedPrecision(1e10));
+    EXPECT_STREQ("1e+20", testStringNumberFixedPrecision(1e20));
+    EXPECT_STREQ("1e+21", testStringNumberFixedPrecision(1e21));
+    EXPECT_STREQ("1e+30", testStringNumberFixedPrecision(1e30));
+
+    EXPECT_STREQ("1100", testStringNumberFixedPrecision(1.1e3));
+    EXPECT_STREQ("1.1e+10", testStringNumberFixedPrecision(1.1e10));
+    EXPECT_STREQ("1.1e+20", testStringNumberFixedPrecision(1.1e20));
+    EXPECT_STREQ("1.1e+21", testStringNumberFixedPrecision(1.1e21));
+    EXPECT_STREQ("1.1e+30", testStringNumberFixedPrecision(1.1e30));
 }
 
-TEST(WTF, StringNumberToStringECMAScriptRegularNumbers)
+static inline const char* testStringNumberFixedWidth(double number)
 {
-    // Pi.
-    testNumberToStringECMAScript(piDouble, "3.141592653589793");
-    testNumberToStringECMAScript(piFloat, "3.1415927410125732");
-    testNumberToStringECMAScript(piOverTwoDouble, "1.5707963267948966");
-    testNumberToStringECMAScript(piOverTwoFloat, "1.5707963705062866");
-    testNumberToStringECMAScript(piOverFourDouble, "0.7853981633974483");
-    testNumberToStringECMAScript(piOverFourFloat, "0.7853981852531433");
+    static char testBuffer[100];
+    std::strncpy(testBuffer, String::numberToStringFixedWidth(number, 6).utf8().data(), 100);
+    return testBuffer;
+}
 
-    // e.
-    const double e = 2.71828182845904523536028747135266249775724709369995;
-    testNumberToStringECMAScript(e, "2.718281828459045");
+TEST(WTF, StringNumberFixedWidth)
+{
+    using Limits = std::numeric_limits<double>;
 
-    // c, speed of light in m/s.
-    const double c = 299792458;
-    testNumberToStringECMAScript(c, "299792458");
+    EXPECT_STREQ("Infinity", testStringNumberFixedWidth(Limits::infinity()));
+    EXPECT_STREQ("-Infinity", testStringNumberFixedWidth(-Limits::infinity()));
 
-    // Golen ratio.
-    const double phi = 1.6180339887498948482;
-    testNumberToStringECMAScript(phi, "1.618033988749895");
+    EXPECT_STREQ("NaN", testStringNumberFixedWidth(-Limits::quiet_NaN()));
+
+    EXPECT_STREQ("0.000000", testStringNumberFixedWidth(0));
+    EXPECT_STREQ("0.000000", testStringNumberFixedWidth(-0));
+
+    EXPECT_STREQ("0.000000", testStringNumberFixedWidth(Limits::min()));
+    EXPECT_STREQ("", testStringNumberFixedWidth(Limits::lowest()));
+    EXPECT_STREQ("", testStringNumberFixedWidth(Limits::max()));
+
+    EXPECT_STREQ("3.141593", testStringNumberFixedWidth(piDouble));
+    EXPECT_STREQ("3.141593", testStringNumberFixedWidth(piFloat));
+    EXPECT_STREQ("1.570796", testStringNumberFixedWidth(piOverTwoDouble));
+    EXPECT_STREQ("1.570796", testStringNumberFixedWidth(piOverTwoFloat));
+    EXPECT_STREQ("0.785398", testStringNumberFixedWidth(piOverFourDouble));
+    EXPECT_STREQ("0.785398", testStringNumberFixedWidth(piOverFourFloat));
+
+    EXPECT_STREQ("2.718282", testStringNumberFixedWidth(2.71828182845904523536028747135266249775724709369995));
+
+    EXPECT_STREQ("299792458.000000", testStringNumberFixedWidth(299792458));
+
+    EXPECT_STREQ("1.618034", testStringNumberFixedWidth(1.6180339887498948482));
+
+    EXPECT_STREQ("1000.000000", testStringNumberFixedWidth(1e3));
+    EXPECT_STREQ("10000000000.000000", testStringNumberFixedWidth(1e10));
+    EXPECT_STREQ("100000000000000000000.000000", testStringNumberFixedWidth(1e20));
+    EXPECT_STREQ("1000000000000000000000.000000", testStringNumberFixedWidth(1e21));
+    EXPECT_STREQ("1000000000000000019884624838656.000000", testStringNumberFixedWidth(1e30));
+
+    EXPECT_STREQ("1100.000000", testStringNumberFixedWidth(1.1e3));
+    EXPECT_STREQ("11000000000.000000", testStringNumberFixedWidth(1.1e10));
+    EXPECT_STREQ("110000000000000000000.000000", testStringNumberFixedWidth(1.1e20));
+    EXPECT_STREQ("1100000000000000000000.000000", testStringNumberFixedWidth(1.1e21));
+    EXPECT_STREQ("1099999999999999993725589651456.000000", testStringNumberFixedWidth(1.1e30));
+}
+
+static inline const char* testStringNumber(double number)
+{
+    static char testBuffer[100];
+    std::strncpy(testBuffer, String::numberToStringECMAScript(number).utf8().data(), 100);
+    return testBuffer;
+}
+
+TEST(WTF, StringNumber)
+{
+    using Limits = std::numeric_limits<double>;
+
+    EXPECT_STREQ("Infinity", testStringNumber(Limits::infinity()));
+    EXPECT_STREQ("-Infinity", testStringNumber(-Limits::infinity()));
+
+    EXPECT_STREQ("NaN", testStringNumber(-Limits::quiet_NaN()));
+
+    EXPECT_STREQ("0", testStringNumber(0));
+    EXPECT_STREQ("0", testStringNumber(-0));
+
+    EXPECT_STREQ("2.2250738585072014e-308", testStringNumber(Limits::min()));
+    EXPECT_STREQ("-1.7976931348623157e+308", testStringNumber(Limits::lowest()));
+    EXPECT_STREQ("1.7976931348623157e+308", testStringNumber(Limits::max()));
+
+    EXPECT_STREQ("3.141592653589793", testStringNumber(piDouble));
+    EXPECT_STREQ("3.1415927410125732", testStringNumber(piFloat));
+    EXPECT_STREQ("1.5707963267948966", testStringNumber(piOverTwoDouble));
+    EXPECT_STREQ("1.5707963705062866", testStringNumber(piOverTwoFloat));
+    EXPECT_STREQ("0.7853981633974483", testStringNumber(piOverFourDouble));
+    EXPECT_STREQ("0.7853981852531433", testStringNumber(piOverFourFloat));
+
+    EXPECT_STREQ("2.718281828459045", testStringNumber(2.71828182845904523536028747135266249775724709369995));
+
+    EXPECT_STREQ("299792458", testStringNumber(299792458));
+
+    EXPECT_STREQ("1.618033988749895", testStringNumber(1.6180339887498948482));
+
+    EXPECT_STREQ("1000", testStringNumber(1e3));
+    EXPECT_STREQ("10000000000", testStringNumber(1e10));
+    EXPECT_STREQ("100000000000000000000", testStringNumber(1e20));
+    EXPECT_STREQ("1e+21", testStringNumber(1e21));
+    EXPECT_STREQ("1e+30", testStringNumber(1e30));
+
+    EXPECT_STREQ("1100", testStringNumber(1.1e3));
+    EXPECT_STREQ("11000000000", testStringNumber(1.1e10));
+    EXPECT_STREQ("110000000000000000000", testStringNumber(1.1e20));
+    EXPECT_STREQ("1.1e+21", testStringNumber(1.1e21));
+    EXPECT_STREQ("1.1e+30", testStringNumber(1.1e30));
 }
 
 TEST(WTF, StringReplaceWithLiteral)
 {
     // Cases for 8Bit source.
     String testString = "1224";
-    ASSERT_TRUE(testString.is8Bit());
+    EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('2', "");
-    ASSERT_STREQ("14", testString.utf8().data());
+    EXPECT_STREQ("14", testString.utf8().data());
 
     testString = "1224";
-    ASSERT_TRUE(testString.is8Bit());
+    EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('2', "3");
-    ASSERT_STREQ("1334", testString.utf8().data());
+    EXPECT_STREQ("1334", testString.utf8().data());
 
     testString = "1224";
-    ASSERT_TRUE(testString.is8Bit());
+    EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('2', "555");
-    ASSERT_STREQ("15555554", testString.utf8().data());
+    EXPECT_STREQ("15555554", testString.utf8().data());
 
     testString = "1224";
-    ASSERT_TRUE(testString.is8Bit());
+    EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('3', "NotFound");
-    ASSERT_STREQ("1224", testString.utf8().data());
+    EXPECT_STREQ("1224", testString.utf8().data());
 
     // Cases for 16Bit source.
     testString = String::fromUTF8("résumé");
-    ASSERT_FALSE(testString.is8Bit());
+    EXPECT_FALSE(testString.is8Bit());
     testString.replaceWithLiteral(UChar(0x00E9 /*U+00E9 is 'é'*/), "e");
-    ASSERT_STREQ("resume", testString.utf8().data());
+    EXPECT_STREQ("resume", testString.utf8().data());
 
     testString = String::fromUTF8("résumé");
-    ASSERT_FALSE(testString.is8Bit());
+    EXPECT_FALSE(testString.is8Bit());
     testString.replaceWithLiteral(UChar(0x00E9 /*U+00E9 is 'é'*/), "");
-    ASSERT_STREQ("rsum", testString.utf8().data());
+    EXPECT_STREQ("rsum", testString.utf8().data());
 
     testString = String::fromUTF8("résumé");
-    ASSERT_FALSE(testString.is8Bit());
+    EXPECT_FALSE(testString.is8Bit());
     testString.replaceWithLiteral('3', "NotFound");
-    ASSERT_STREQ("résumé", testString.utf8().data());
+    EXPECT_STREQ("résumé", testString.utf8().data());
 }
 
 TEST(WTF, StringIsolatedCopy)
 {
     String original = "1234";
     auto copy = WTFMove(original).isolatedCopy();
-    ASSERT_FALSE(original.impl() == copy.impl());
+    EXPECT_FALSE(original.impl() == copy.impl());
 }
 
 TEST(WTF, StringToInt)
@@ -285,33 +383,33 @@ TEST(WTF, StringhasInfixStartingAt)
 TEST(WTF, StringExistingHash)
 {
     String string1("Template Literal");
-    ASSERT_FALSE(string1.isNull());
-    ASSERT_FALSE(string1.impl()->hasHash());
+    EXPECT_FALSE(string1.isNull());
+    EXPECT_FALSE(string1.impl()->hasHash());
     string1.impl()->hash();
-    ASSERT_EQ(string1.existingHash(), string1.impl()->existingHash());
+    EXPECT_EQ(string1.existingHash(), string1.impl()->existingHash());
     String string2;
-    ASSERT_EQ(string2.existingHash(), 0u);
+    EXPECT_EQ(string2.existingHash(), 0u);
 }
 
 TEST(WTF, StringUnicodeEqualUCharArray)
 {
     String string1("abc");
-    ASSERT_FALSE(string1.isNull());
-    ASSERT_TRUE(string1.is8Bit());
+    EXPECT_FALSE(string1.isNull());
+    EXPECT_TRUE(string1.is8Bit());
     UChar ab[] = { 'a', 'b' };
     UChar abc[] = { 'a', 'b', 'c' };
     UChar abcd[] = { 'a', 'b', 'c', 'd' };
     UChar aBc[] = { 'a', 'B', 'c' };
-    ASSERT_FALSE(equal(string1, ab));
-    ASSERT_TRUE(equal(string1, abc));
-    ASSERT_FALSE(equal(string1, abcd));
-    ASSERT_FALSE(equal(string1, aBc));
+    EXPECT_FALSE(equal(string1, ab));
+    EXPECT_TRUE(equal(string1, abc));
+    EXPECT_FALSE(equal(string1, abcd));
+    EXPECT_FALSE(equal(string1, aBc));
 
     String string2(abc, 3);
-    ASSERT_FALSE(equal(string2, ab));
-    ASSERT_TRUE(equal(string2, abc));
-    ASSERT_FALSE(equal(string2, abcd));
-    ASSERT_FALSE(equal(string2, aBc));
+    EXPECT_FALSE(equal(string2, ab));
+    EXPECT_TRUE(equal(string2, abc));
+    EXPECT_FALSE(equal(string2, abcd));
+    EXPECT_FALSE(equal(string2, aBc));
 }
 
 TEST(WTF, StringRightBasic)

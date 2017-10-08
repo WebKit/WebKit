@@ -1,5 +1,15 @@
 2017-10-08  Darin Adler  <darin@apple.com>
 
+        Fix bugs related to setting reflected floating point DOM attributes
+        https://bugs.webkit.org/show_bug.cgi?id=178061
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        Updated to expect meter reflection tests to pass.
+
+2017-10-08  Darin Adler  <darin@apple.com>
+
         CustomElementRegistry.define was throwing a JavaScript syntax error instead of a DOM syntax error
         https://bugs.webkit.org/show_bug.cgi?id=178055
 

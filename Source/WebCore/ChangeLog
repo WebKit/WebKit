@@ -1,3 +1,28 @@
+2017-10-08  Darin Adler  <darin@apple.com>
+
+        Fix bugs related to setting reflected floating point DOM attributes
+        https://bugs.webkit.org/show_bug.cgi?id=178061
+
+        Reviewed by Sam Weinig.
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::setValue): Changed the semantics to match what
+        the HTML specification calls for. When a caller passes a negative number or
+        zero, the value does get set on the element. Negative numbers are not allowed
+        when you get the current value, but are allowed to be set.
+        (WebCore::HTMLProgressElement::setMax): Changed the semantics to match what
+        the HTML specification calls for. When a caller passes a negative number or
+        zero, this should leave the attribute unchanged.
+
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::MediaControlVolumeSliderElement::setVolume): Use
+        String::numberToStringECMAScript instead of String::number since that is what
+        we want any time we are setting an attribute value from a floating point value.
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::setPosition): Ditto.
+        (WebCore::MediaControlTimelineElement::setDuration): Removed unneeded check
+        of std::isfinite since the single caller already checks that.
+
 2017-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DataTransfer.items does not contain items for custom types supplied via add or setData

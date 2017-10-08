@@ -104,7 +104,7 @@ AtomicString AtomicString::number(unsigned long long number)
 AtomicString AtomicString::number(double number)
 {
     NumberToStringBuffer buffer;
-    return String(numberToFixedPrecisionString(number, 6, buffer, true));
+    return numberToString(number, buffer);
 }
 
 AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const char* charactersEnd)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,55 @@ TEST(WTF, AtomicStringExistingHash)
     ASSERT_EQ(string1.existingHash(), string1.impl()->existingHash());
     AtomicString string2;
     ASSERT_EQ(string2.existingHash(), 0u);
+}
+
+static inline const char* testAtomicStringNumber(double number)
+{
+    static char testBuffer[100];
+    std::strncpy(testBuffer, AtomicString::number(number).string().utf8().data(), 100);
+    return testBuffer;
+}
+
+TEST(WTF, AtomicStringNumberDouble)
+{
+    using Limits = std::numeric_limits<double>;
+
+    EXPECT_STREQ("Infinity", testAtomicStringNumber(Limits::infinity()));
+    EXPECT_STREQ("-Infinity", testAtomicStringNumber(-Limits::infinity()));
+
+    EXPECT_STREQ("NaN", testAtomicStringNumber(-Limits::quiet_NaN()));
+
+    EXPECT_STREQ("0", testAtomicStringNumber(0));
+    EXPECT_STREQ("0", testAtomicStringNumber(-0));
+
+    EXPECT_STREQ("2.2250738585072014e-308", testAtomicStringNumber(Limits::min()));
+    EXPECT_STREQ("-1.7976931348623157e+308", testAtomicStringNumber(Limits::lowest()));
+    EXPECT_STREQ("1.7976931348623157e+308", testAtomicStringNumber(Limits::max()));
+
+    EXPECT_STREQ("3.141592653589793", testAtomicStringNumber(piDouble));
+    EXPECT_STREQ("3.1415927410125732", testAtomicStringNumber(piFloat));
+    EXPECT_STREQ("1.5707963267948966", testAtomicStringNumber(piOverTwoDouble));
+    EXPECT_STREQ("1.5707963705062866", testAtomicStringNumber(piOverTwoFloat));
+    EXPECT_STREQ("0.7853981633974483", testAtomicStringNumber(piOverFourDouble));
+    EXPECT_STREQ("0.7853981852531433", testAtomicStringNumber(piOverFourFloat));
+
+    EXPECT_STREQ("2.718281828459045", testAtomicStringNumber(2.71828182845904523536028747135266249775724709369995));
+
+    EXPECT_STREQ("299792458", testAtomicStringNumber(299792458));
+
+    EXPECT_STREQ("1.618033988749895", testAtomicStringNumber(1.6180339887498948482));
+
+    EXPECT_STREQ("1000", testAtomicStringNumber(1e3));
+    EXPECT_STREQ("10000000000", testAtomicStringNumber(1e10));
+    EXPECT_STREQ("100000000000000000000", testAtomicStringNumber(1e20));
+    EXPECT_STREQ("1e+21", testAtomicStringNumber(1e21));
+    EXPECT_STREQ("1e+30", testAtomicStringNumber(1e30));
+
+    EXPECT_STREQ("1100", testAtomicStringNumber(1.1e3));
+    EXPECT_STREQ("11000000000", testAtomicStringNumber(1.1e10));
+    EXPECT_STREQ("110000000000000000000", testAtomicStringNumber(1.1e20));
+    EXPECT_STREQ("1.1e+21", testAtomicStringNumber(1.1e21));
+    EXPECT_STREQ("1.1e+30", testAtomicStringNumber(1.1e30));
 }
 
 } // namespace TestWebKitAPI

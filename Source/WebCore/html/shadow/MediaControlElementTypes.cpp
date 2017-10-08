@@ -234,7 +234,7 @@ bool MediaControlVolumeSliderElement::willRespondToMouseClickEvents()
 void MediaControlVolumeSliderElement::setVolume(double volume)
 {
     if (value().toDouble() != volume)
-        setValue(String::number(volume));
+        setValue(String::numberToStringECMAScript(volume));
 }
 
 void MediaControlVolumeSliderElement::setClearMutedOnUserInteraction(bool clearMute)

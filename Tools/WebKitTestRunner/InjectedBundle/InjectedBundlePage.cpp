@@ -752,9 +752,9 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, StringBuilder& strin
         stringBuilder.appendLiteral("' ");
     }
     stringBuilder.appendLiteral("scrolled to ");
-    stringBuilder.append(WTF::String::number(x));
+    stringBuilder.appendECMAScriptNumber(x);
     stringBuilder.append(',');
-    stringBuilder.append(WTF::String::number(y));
+    stringBuilder.appendECMAScriptNumber(y);
     stringBuilder.append('\n');
 }
 

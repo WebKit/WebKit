@@ -6996,50 +6996,50 @@ PASS meter.tabIndex: IDL set to 2147483647
 PASS meter.tabIndex: IDL set to -2147483648 
 PASS meter.value: typeof IDL attribute 
 PASS meter.value: IDL get with DOM attribute unset 
-FAIL meter.value: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.value: IDL set to -10000000000 
 PASS meter.value: IDL set to -1 
 PASS meter.value: IDL set to -0 
 PASS meter.value: IDL set to 0 
 PASS meter.value: IDL set to 1 
-FAIL meter.value: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.value: IDL set to 10000000000 
 PASS meter.min: typeof IDL attribute 
 PASS meter.min: IDL get with DOM attribute unset 
-FAIL meter.min: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.min: IDL set to -10000000000 
 PASS meter.min: IDL set to -1 
 PASS meter.min: IDL set to -0 
 PASS meter.min: IDL set to 0 
 PASS meter.min: IDL set to 1 
-FAIL meter.min: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.min: IDL set to 10000000000 
 PASS meter.max: typeof IDL attribute 
 FAIL meter.max: IDL get with DOM attribute unset assert_equals: expected 0 but got 1
-FAIL meter.max: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.max: IDL set to -10000000000 
 PASS meter.max: IDL set to -1 
 PASS meter.max: IDL set to -0 
 PASS meter.max: IDL set to 0 
 PASS meter.max: IDL set to 1 
-FAIL meter.max: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.max: IDL set to 10000000000 
 PASS meter.low: typeof IDL attribute 
 PASS meter.low: IDL get with DOM attribute unset 
-FAIL meter.low: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.low: IDL set to -10000000000 
 PASS meter.low: IDL set to -1 
 PASS meter.low: IDL set to -0 
 PASS meter.low: IDL set to 0 
 PASS meter.low: IDL set to 1 
-FAIL meter.low: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.low: IDL set to 10000000000 
 PASS meter.high: typeof IDL attribute 
 FAIL meter.high: IDL get with DOM attribute unset assert_equals: expected 0 but got 1
-FAIL meter.high: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.high: IDL set to -10000000000 
 PASS meter.high: IDL set to -1 
 PASS meter.high: IDL set to -0 
 PASS meter.high: IDL set to 0 
 PASS meter.high: IDL set to 1 
-FAIL meter.high: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.high: IDL set to 10000000000 
 PASS meter.optimum: typeof IDL attribute 
 FAIL meter.optimum: IDL get with DOM attribute unset assert_equals: expected 0 but got 0.5
-FAIL meter.optimum: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.optimum: IDL set to -10000000000 
 PASS meter.optimum: IDL set to -1 
 PASS meter.optimum: IDL set to -0 
 PASS meter.optimum: IDL set to 0 
 PASS meter.optimum: IDL set to 1 
-FAIL meter.optimum: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.optimum: IDL set to 10000000000 
 (Note: missing tests for types tokenlist, settable tokenlist, limited double.)

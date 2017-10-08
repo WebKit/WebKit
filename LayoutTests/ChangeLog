@@ -1,3 +1,17 @@
+2017-10-08  Darin Adler  <darin@apple.com>
+
+        Fix bugs related to setting reflected floating point DOM attributes
+        https://bugs.webkit.org/show_bug.cgi?id=178061
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/HTMLProgressElement/set-progress-properties-expected.txt: Updated test to expect
+        setting HTMLProgressElement.max to 0 to have no effect, rather than setting max to "1".
+        * fast/dom/HTMLProgressElement/set-progress-properties.html: Ditto.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        Updated to expect meter reflection tests to pass.
+
 2017-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DataTransfer.items does not contain items for custom types supplied via add or setData

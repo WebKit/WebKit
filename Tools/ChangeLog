@@ -1,3 +1,25 @@
+2017-10-08  Darin Adler  <darin@apple.com>
+
+        Fix bugs related to setting reflected floating point DOM attributes
+        https://bugs.webkit.org/show_bug.cgi?id=178061
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/AtomicString.cpp: Added a test of the
+        AtomicString::number function, based on the test cases we already
+        had for String::numberToStringECMAScript, and with some additional
+        cases with powers of 10 that check handling of trailng zeroes.
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp: Added test cases to the
+        existing tests of the String::numberToStringECMAScript function
+        as above. Also added tests for String::number and for
+        String::numberToStringFixedWidth. Also changed the tests to all use
+        EXPECT instead of ASSERT macros since these are all non-fatal.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpFrameScrollPosition): Use StringBuilder::appendECMAScriptNumber
+        instead of String::number.
+
 2017-10-08  Dean Jackson  <dino@apple.com>
 
         Make sort-Xcode-project file handle UnifiedSources

@@ -1,3 +1,38 @@
+2017-10-08  Darin Adler  <darin@apple.com>
+
+        Fix bugs related to setting reflected floating point DOM attributes
+        https://bugs.webkit.org/show_bug.cgi?id=178061
+
+        Reviewed by Sam Weinig.
+
+        * wtf/dtoa.cpp:
+        (WTF::formatStringTruncatingTrailingZerosIfNeeded): Fix a bug where
+        this function would remove trailing zeroes from the exponent if
+        present instead of from the mantissa. This meant that it would
+        format 1e10 as "1.00000e+1" instead of "1e+10". Added regression
+        tests for this to TestWebKitAPI.
+
+        * wtf/dtoa/utils.h:
+        (WTF::double_conversion::StringBuilder::RemoveCharacters): Added.
+        Used by the fix above.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::number): Note: This function is used by code
+        that sets the values of reflected floating point DOM attributes.
+        Changed the function to use the rules from numberToString rather
+        ones from numberToFixedPrecisionString. This is analogous to
+        String::numberToStringECMAScript, and in the future we should change
+        String and StringBuilder so this "ECMAScript" semantic is the default
+        way to convert a floating point number to a string, and rename the fixed
+        precision version that is currently called String::number. I audited
+        the small number of sites calling AtomicString::number, by temporarily
+        renaming it, and discovered that this is the correct behavior for all;
+        none needed fixed precision. Also, fixed a mistake where this explicitly
+        converted to String. That was defeating the purpose of having these
+        functions in AtomicString: It would allocate a new String and then
+        destroy it in the case where an equal string was already in the
+        AtomicString table.
+
 2017-10-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r222791 and r222873.

@@ -243,6 +243,16 @@ namespace double_conversion {
             }
         }
         
+        void RemoveCharacters(int start, int end)
+        {
+            ASSERT(start >= 0);
+            ASSERT(end >= 0);
+            ASSERT(start <= end);
+            ASSERT(end <= position_);
+            std::memmove(&buffer_[start], &buffer_[end], position_ - end);
+            position_ -= end - start;
+        }
+
         // Finalize the string by 0-terminating it and returning the buffer.
         char* Finalize() {
             ASSERT(!is_finalized() && position_ < buffer_.length());

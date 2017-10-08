@@ -885,12 +885,12 @@ bool MediaControlTimelineElement::willRespondToMouseClickEvents()
 
 void MediaControlTimelineElement::setPosition(double currentTime)
 {
-    setValue(String::number(currentTime));
+    setValue(String::numberToStringECMAScript(currentTime));
 }
 
 void MediaControlTimelineElement::setDuration(double duration)
 {
-    setAttribute(maxAttr, AtomicString::number(std::isfinite(duration) ? duration : 0));
+    setAttribute(maxAttr, AtomicString::number(duration));
 }
 
 // ----------------------------
