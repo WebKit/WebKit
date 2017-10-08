@@ -1,3 +1,18 @@
+2017-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        dragenter and dragleave shouldn't use the same data transfer object
+        https://bugs.webkit.org/show_bug.cgi?id=178056
+
+        Reviewed by Darin Adler.
+
+        Added a regression test for checking the uniqueness of dataTransfer object for dragenter and dragleave events.
+        Unfortunately, the test is only runnable in Mac WebKit1 port due to the lack of support in WebKitTestRunner.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave-expected.txt: Added.
+        * editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-08  Jer Noble  <jer.noble@apple.com>
 
         SourceBuffer remove throws out way more content than requested

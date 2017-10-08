@@ -32,6 +32,7 @@ namespace WebCore {
 
 class CachedImage;
 class DataTransferItemList;
+class Document;
 class DragData;
 class DragImageLoader;
 class Element;
@@ -83,7 +84,8 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     static Ref<DataTransfer> createForDrag();
     static Ref<DataTransfer> createForDragStartEvent();
-    static Ref<DataTransfer> createForDrop(StoreMode, const DragData&);
+    static Ref<DataTransfer> createForDrop(std::unique_ptr<Pasteboard>&&, DragOperation, bool draggingFiles);
+    static Ref<DataTransfer> createForUpdatingDropTarget(Document&, std::unique_ptr<Pasteboard>&&, DragOperation, bool draggingFiles);
 
     bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
 

@@ -75,6 +75,7 @@ class HitTestResult;
 class KeyboardEvent;
 class MouseEventWithHitTestResults;
 class Node;
+class Pasteboard;
 class PlatformGestureEvent;
 class PlatformKeyboardEvent;
 class PlatformTouchEvent;
@@ -155,9 +156,13 @@ public:
     WEBCORE_EXPORT void setCapturingMouseEventsElement(Element*);
 
 #if ENABLE(DRAG_SUPPORT)
-    bool updateDragAndDrop(const PlatformMouseEvent&, DataTransfer&);
-    void cancelDragAndDrop(const PlatformMouseEvent&, DataTransfer&);
-    bool performDragAndDrop(const PlatformMouseEvent&, DataTransfer&);
+    struct DragTargetResponse {
+        bool accept { false };
+        std::optional<DragOperation> operation;
+    };
+    DragTargetResponse updateDragAndDrop(const PlatformMouseEvent&, const std::function<std::unique_ptr<Pasteboard>()>&, DragOperation sourceOperation, bool draggingFiles);
+    void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, DragOperation, bool draggingFiles);
+    bool performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, DragOperation, bool draggingFiles);
     void updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement);
     RefPtr<Element> draggedElement() const;
 #endif
@@ -392,7 +397,8 @@ private:
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target, bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);
 
 #if ENABLE(DRAG_SUPPORT)
-    bool dispatchDragEvent(const AtomicString& eventType, Element& target, const PlatformMouseEvent&, DataTransfer*);
+    bool dispatchDragEvent(const AtomicString& eventType, Element& target, const PlatformMouseEvent&, DataTransfer&);
+    DragTargetResponse dispatchDragEnterOrDragOverEvent(const AtomicString& eventType, Element& target, const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&& , DragOperation, bool draggingFiles);
     void invalidateDataTransfer();
 
     bool handleDrag(const MouseEventWithHitTestResults&, CheckDragHysteresis);

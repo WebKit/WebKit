@@ -337,10 +337,25 @@ Ref<DataTransfer> DataTransfer::createForDragStartEvent()
     return adoptRef(*new DataTransfer(StoreMode::ReadWrite, std::make_unique<StaticPasteboard>(), Type::DragAndDropData));
 }
 
-Ref<DataTransfer> DataTransfer::createForDrop(StoreMode accessMode, const DragData& dragData)
+Ref<DataTransfer> DataTransfer::createForDrop(std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
 {
-    auto type = dragData.containsFiles() ? Type::DragAndDropFiles : Type::DragAndDropData;
-    return adoptRef(*new DataTransfer(accessMode, Pasteboard::createForDragAndDrop(dragData), type));
+    auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Readonly, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
+    dataTransfer->setSourceOperation(sourceOperation);
+    return dataTransfer;
+}
+
+Ref<DataTransfer> DataTransfer::createForUpdatingDropTarget(Document& document, std::unique_ptr<Pasteboard>&& pasteboard, DragOperation sourceOperation, bool draggingFiles)
+{
+    auto mode = DataTransfer::StoreMode::Protected;
+#if ENABLE(DASHBOARD_SUPPORT)
+    if (document.settings().usesDashboardBackwardCompatibilityMode() && document.securityOrigin().isLocal())
+        mode = DataTransfer::StoreMode::Readonly;
+#else
+    UNUSED_PARAM(document);
+#endif
+    auto dataTransfer = adoptRef(*new DataTransfer(mode, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
+    dataTransfer->setSourceOperation(sourceOperation);
+    return dataTransfer;
 }
 
 void DataTransfer::setDragImage(Element* element, int x, int y)

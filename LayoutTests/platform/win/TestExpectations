@@ -1155,6 +1155,7 @@ editing/pasteboard/paste-global-selection.html [ Skip ]
 webkit.org/b/116564 editing/pasteboard/copy-without-selection.html [ Skip ]
 editing/pasteboard/smart-paste-004.html [ Failure ]
 # TODO Drag & Drop doesn't work correctly in DRT <rdar://5621244>
+editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html [ Skip ]
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Skip ]
 editing/pasteboard/drag-image-in-about-blank-frame.html [ Skip ]
 editing/pasteboard/drop-file-svg.html [ Skip ]

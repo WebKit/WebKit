@@ -220,31 +220,11 @@ DragOperation DragController::dragEntered(const DragData& dragData)
     return dragEnteredOrUpdated(dragData);
 }
 
-static Ref<DataTransfer> createDataTransferToUpdateDrag(const DragData& dragData, const Settings& settings, RefPtr<Document>&& documentUnderMouse)
-{
-    auto accessMode = DataTransfer::StoreMode::Protected;
-
-#if ENABLE(DASHBOARD_SUPPORT)
-    if (settings.usesDashboardBackwardCompatibilityMode() && (!documentUnderMouse || documentUnderMouse->securityOrigin().isLocal()))
-        accessMode = DataTransfer::StoreMode::Readonly;
-#else
-    UNUSED_PARAM(settings);
-    UNUSED_PARAM(documentUnderMouse);
-#endif
-
-    auto dataTransfer = DataTransfer::createForDrop(accessMode, dragData);
-    dataTransfer->setSourceOperation(dragData.draggingSourceOperationMask());
-
-    return dataTransfer;
-}
-
 void DragController::dragExited(const DragData& dragData)
 {
-    if (RefPtr<FrameView> v = m_page.mainFrame().view()) {
-        auto dataTransfer = createDataTransferToUpdateDrag(dragData, m_page.mainFrame().settings(), m_documentUnderMouse.copyRef());
-        m_page.mainFrame().eventHandler().cancelDragAndDrop(createMouseEvent(dragData), dataTransfer);
-        dataTransfer->makeInvalidForSecurity();
-    }
+    auto& mainFrame = m_page.mainFrame();
+    if (mainFrame.view())
+        mainFrame.eventHandler().cancelDragAndDrop(createMouseEvent(dragData), Pasteboard::createForDragAndDrop(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
     mouseMovedIntoDocument(nullptr);
     if (m_fileInputElementUnderMouse)
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
@@ -282,13 +262,8 @@ bool DragController::performDragOperation(const DragData& dragData)
         m_client.willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
         Ref<MainFrame> mainFrame(m_page.mainFrame());
         bool preventedDefault = false;
-        if (mainFrame->view()) {
-            // Sending an event can result in the destruction of the view and part.
-            auto dataTransfer = DataTransfer::createForDrop(DataTransfer::StoreMode::Readonly, dragData);
-            dataTransfer->setSourceOperation(dragData.draggingSourceOperationMask());
-            preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), dataTransfer);
-            dataTransfer->makeInvalidForSecurity();
-        }
+        if (mainFrame->view())
+            preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), Pasteboard::createForDragAndDrop(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
         if (preventedDefault) {
             clearDragCaret();
             m_documentUnderMouse = nullptr;
@@ -709,24 +684,18 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& opera
     if (!viewProtector)
         return false;
 
-    auto dataTransfer = createDataTransferToUpdateDrag(dragData, mainFrame->settings(), m_documentUnderMouse.copyRef());
-
-    PlatformMouseEvent event = createMouseEvent(dragData);
-    if (!mainFrame->eventHandler().updateDragAndDrop(event, dataTransfer)) {
-        dataTransfer->makeInvalidForSecurity();
+    DragOperation sourceOperation = dragData.draggingSourceOperationMask();
+    auto targetResponse = mainFrame->eventHandler().updateDragAndDrop(createMouseEvent(dragData), [&dragData]() { return Pasteboard::createForDragAndDrop(dragData); }, sourceOperation, dragData.containsFiles());
+    if (!targetResponse.accept)
         return false;
-    }
 
-    operation = dataTransfer->destinationOperation();
-    DragOperation srcOpMask = dragData.draggingSourceOperationMask();
-    if (dataTransfer->dropEffectIsUninitialized())
-        operation = defaultOperationForDrag(srcOpMask);
-    else if (!(srcOpMask & operation)) {
-        // The element picked an operation which is not supported by the source
+    if (!targetResponse.operation)
+        operation = defaultOperationForDrag(sourceOperation);
+    else if (!(sourceOperation & targetResponse.operation.value())) // The element picked an operation which is not supported by the source
         operation = DragOperationNone;
-    }
+    else
+        operation = targetResponse.operation.value();
 
-    dataTransfer->makeInvalidForSecurity();
     return true;
 }
 

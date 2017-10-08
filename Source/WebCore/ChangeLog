@@ -1,3 +1,45 @@
+2017-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        dragenter and dragleave shouldn't use the same data transfer object
+        https://bugs.webkit.org/show_bug.cgi?id=178056
+
+        Reviewed by Darin Adler.
+
+        This patch fixes the bug that we were using a single DataTransfer to fire dragleave and dragenter events
+        when the drag target moves from one element to another.
+
+        It alos refactors DragController and EventHandler code so that the construction of DataTransfer object
+        happens in EventHandler instead of DragController, and extracts createForUpdatingDropTarget out of
+        createForDrop to have a better encapsulation over the data store mode.
+
+        drag related functions in EventHandler now takes std::unique_ptr<Pasteboard>&&, drag operation mask set
+        by the drag source, and a boolean indicating whether this drag & drop is for files or not. updateDragAndDrop
+        takes a closure which makes a pasteboard because it has to create two instances of DataTransfer one for
+        dragleave event and another one for dragenter event in some cases.
+
+        Test: editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::createForDrop): Now takes Pasteboard instead of DragData.
+        (WebCore::DataTransfer::createForUpdatingDropTarget): Extracted out of createForDrop. Moved the code to
+        use Readonly mode in dashboad here from createDataTransferToUpdateDrag in DragController.cpp.
+        * dom/DataTransfer.h:
+        * page/DragController.cpp:
+        (WebCore::createDataTransferToUpdateDrag): Deleted.
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::tryDHTMLDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent): Made this fucntion take DataTransfer& instead of DataTransfer*.
+        (WebCore::findDropZone): Ditto.
+        (WebCore::EventHandler::dispatchDragEnterOrDragOverEvent): Added.
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::cancelDragAndDrop):
+        (WebCore::EventHandler::performDragAndDrop):
+        (WebCore::EventHandler::dispatchDragSrcEvent):
+        (WebCore::EventHandler::dispatchDragStartEventOnSourceElement):
+        * page/EventHandler.h:
+
 2017-10-08  Jer Noble  <jer.noble@apple.com>
 
         SourceBuffer remove throws out way more content than requested
