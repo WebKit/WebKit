@@ -1,3 +1,15 @@
+2017-10-08  Tim Horton  <timothy_horton@apple.com>
+
+        mediaPlaybackRequiresUserAction API replacement annotation is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=178063
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        mediaPlaybackRequiresUserAction suggests that you should use 
+        requiresUserActionForMediaPlayback instead, but that is also deprecated.
+        Instead, follow the chain and suggest mediaTypesRequiringUserActionForPlayback.
+
 2017-10-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] API tests added in r222991 are failing in iOS 11 test runners
