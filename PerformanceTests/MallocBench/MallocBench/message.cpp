@@ -210,16 +210,12 @@ void benchmark_message_many(CommandLine& commandLine)
     const size_t quantum = 16;
 
     const size_t queueCount = cpuCount() - 1;
-    std::vector<std::unique_ptr<WorkQueue>> queues;
-    queues.reserve(queueCount);
-    for (size_t i = 0; i < queueCount; ++i)
-        queues.emplace_back(std::make_unique<WorkQueue>());
-
+    auto queues = std::make_unique<WorkQueue[]>(queueCount);
     for (size_t i = 0; i < times; i += quantum) {
         for (size_t j = 0; j < quantum; ++j) {
             for (size_t k = 0; k < queueCount; ++k) {
                 Message* message = new Message;
-                queues[k]->dispatchAsync([message] {
+                queues[k].dispatchAsync([message] {
                     size_t hash = message->hash();
                     if (hash)
                         abort();
@@ -229,9 +225,9 @@ void benchmark_message_many(CommandLine& commandLine)
         }
 
         for (size_t i = 0; i < queueCount; ++i)
-            queues[i]->dispatchSync([] { });
+            queues[i].dispatchSync([] { });
     }
 
     for (size_t i = 0; i < queueCount; ++i)
-        queues[i]->dispatchSync([] { });
+        queues[i].dispatchSync([] { });
 }

@@ -1,3 +1,23 @@
+2017-10-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for MallocBench in Linux 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=177856
+
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::Interpreter):
+        (Interpreter::readOps):
+        Suppress warnings in some GCC versions.
+
+        * MallocBench/MallocBench/big.cpp:
+        (benchmark_big):
+        * MallocBench/MallocBench/medium.cpp:
+        (benchmark_medium):
+        Build fix for Linux 32bit.
+
+        * MallocBench/MallocBench/message.cpp:
+        (benchmark_message_many):
+        Use more efficient WorkQueue allocation.
+
 2017-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, use std::vector instead of variable length array

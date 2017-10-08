@@ -42,6 +42,8 @@
 
 #include "mbmalloc.h"
 
+#define UNUSED_PARAM(variable) (void)variable
+
 Interpreter::Interpreter(const char* fileName, bool shouldFreeAllObjects, bool useThreadId)
     : m_shouldFreeAllObjects(shouldFreeAllObjects)
     , m_useThreadId(useThreadId)
@@ -68,7 +70,8 @@ Interpreter::Interpreter(const char* fileName, bool shouldFreeAllObjects, bool u
     while (remaining) {
         size_t bytes = std::min(remaining, ops.size() * sizeof(Op));
         remaining -= bytes;
-        read(m_fd, ops.data(), bytes);
+        auto ret = read(m_fd, ops.data(), bytes);
+        UNUSED_PARAM(ret);
 
         size_t opCount = bytes / sizeof(Op);
         for (size_t i = 0; i < opCount; ++i) {
@@ -124,7 +127,8 @@ bool Interpreter::readOps()
 
     size_t bytes = std::min(m_remaining, m_ops.size() * sizeof(Op));
     m_remaining -= bytes;
-    read(m_fd, m_ops.data(), bytes);
+    auto ret = read(m_fd, m_ops.data(), bytes);
+    UNUSED_PARAM(ret);
     m_opsCursor = 0;
     m_opsInBuffer = bytes / sizeof(Op);
     

@@ -58,7 +58,7 @@ void benchmark_medium(CommandLine& commandLine)
         bzero(objects, objectCount * sizeof(Object));
 
         for (size_t i = 0, remaining = vmSize; remaining > objectSizeMin; ++i) {
-            size_t size = min(remaining, max(objectSizeMin, random() % objectSizeMax));
+            size_t size = min<size_t>(remaining, max<size_t>(objectSizeMin, random() % objectSizeMax));
             objects[i] = { (double*)mbmalloc(size), size };
             bzero(objects[i].p, size);
             remaining -= size;
