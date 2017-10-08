@@ -1,3 +1,18 @@
+2017-10-08  Jer Noble  <jer.noble@apple.com>
+
+        SourceBuffer remove throws out way more content than requested
+        https://bugs.webkit.org/show_bug.cgi?id=177884
+        <rdar://problem/34817104>
+
+        Reviewed by Darin Adler.
+
+        Test: media/media-source/media-source-remove-too-much.html
+
+        The end parameter is exclusive, not inclusive, of the range to be removed.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeCodedFrames):
+
 2017-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         Nullptr deref in WebCore::Node::computeEditability

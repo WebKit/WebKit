@@ -1,3 +1,16 @@
+2017-10-08  Jer Noble  <jer.noble@apple.com>
+
+        SourceBuffer remove throws out way more content than requested
+        https://bugs.webkit.org/show_bug.cgi?id=177884
+        <rdar://problem/34817104>
+
+        Reviewed by Darin Adler.
+
+        * media/media-source/media-source-remove-decodeorder-crash-expected.txt:
+        * media/media-source/media-source-remove-decodeorder-crash.html:
+        * media/media-source/media-source-remove-too-much-expected.txt: Added.
+        * media/media-source/media-source-remove-too-much.html: Added.
+
 2017-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         Nullptr deref in WebCore::Node::computeEditability

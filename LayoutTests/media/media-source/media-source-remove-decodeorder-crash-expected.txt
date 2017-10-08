@@ -9,7 +9,7 @@ RUN(sourceBuffer.appendBuffer(samples))
 EVENT(updateend)
 RUN(sourceBuffer.remove(1.9, 2))
 EVENT(updateend)
-EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.length == '2') OK
 EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
 EXPECTED (sourceBuffer.buffered.end(0) == '1') OK
 END OF TEST
