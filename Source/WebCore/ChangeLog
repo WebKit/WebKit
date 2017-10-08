@@ -1,3 +1,52 @@
+2017-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        DataTransfer.items does not contain items for custom types supplied via add or setData
+        https://bugs.webkit.org/show_bug.cgi?id=178016
+
+        Reviewed by Darin Adler.
+
+        Minor tweaks to expose pasteboard types and data through DataTransfer's item list. This patch fixes two primary
+        issues: (1) custom pasteboard data is not exposed through the item list in any way, and (2) the "Files"
+        compatibility type is exposed as a separate data transfer item of kind 'string' when dropping or pasting files.
+
+        Tests: editing/pasteboard/data-transfer-items-add-custom-data.html
+               editing/pasteboard/data-transfer-items-drop-file.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::normalizeType):
+
+        Use stripLeadingAndTrailingHTMLSpaces instead of stripWhitespace.
+
+        (WebCore::shouldReadOrWriteTypeAsCustomData):
+        (WebCore::DataTransfer::getDataForItem const):
+        (WebCore::DataTransfer::getData const):
+
+        Add getDataForItem, a version of getData that does not normalize types before reading from the pasteboard. This
+        normalization step is only needed for backwards compatibility with legacy types (such as "text" and "url")
+        written to and read from using getData and setData; when using DataTransferItemList.add to set data, adding data
+        for these types should instead write as custom pasteboard data.
+
+        (WebCore::DataTransfer::setDataFromItemList):
+        (WebCore::DataTransfer::types const):
+        (WebCore::DataTransfer::typesForItemList const):
+
+        Add typesForItemList, which fetches the list of types to expose as items on the DataTransfer. Importantly, this
+        does not include the "Files" type added for compatibility when accessing DataTransfer.types, instead returning
+        an empty array. The actual files are added separately, by iterating over DataTransfer's files in ensureItems.
+
+        Note that when starting a drag or copying, we will still expose the full list of file and string types to
+        bindings and not just file-backed items. Since all of this information is supplied by the page in the first
+        place, we don't have to worry about exposing information, such as file paths, that may exist on the pasteboard.
+
+        * dom/DataTransfer.h:
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::getAsString const):
+        * dom/DataTransferItemList.cpp:
+        (WebCore::shouldExposeTypeInItemList):
+        (WebCore::DataTransferItemList::add):
+        (WebCore::DataTransferItemList::ensureItems const):
+        (WebCore::isSupportedType): Deleted.
+
 2017-10-08  Darin Adler  <darin@apple.com>
 
         CustomElementRegistry.define was throwing a JavaScript syntax error instead of a DOM syntax error

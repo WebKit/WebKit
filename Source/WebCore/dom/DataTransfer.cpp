@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
+#include "HTMLParserIdioms.h"
 #include "Image.h"
 #include "Pasteboard.h"
 #include "Settings.h"
@@ -109,7 +110,7 @@ static String normalizeType(const String& type)
     if (type.isNull())
         return type;
 
-    String lowercaseType = type.stripWhiteSpace().convertToASCIILowercase();
+    String lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
     if (lowercaseType == "text" || lowercaseType.startsWithIgnoringASCIICase("text/plain;"))
         return "text/plain";
     if (lowercaseType == "url" || lowercaseType.startsWithIgnoringASCIICase("text/uri-list;"))
@@ -118,6 +119,11 @@ static String normalizeType(const String& type)
         return "text/html";
 
     return lowercaseType;
+}
+
+static bool shouldReadOrWriteTypeAsCustomData(const String& type)
+{
+    return Settings::customPasteboardDataEnabled() && !Pasteboard::isSafeTypeForDOMToReadAndWrite(type);
 }
 
 void DataTransfer::clearData(const String& type)
@@ -134,7 +140,7 @@ void DataTransfer::clearData(const String& type)
         m_itemList->didClearStringData(normalizedType);
 }
 
-String DataTransfer::getData(const String& type) const
+String DataTransfer::getDataForItem(const String& type) const
 {
     if (!canReadData())
         return String();
@@ -142,10 +148,15 @@ String DataTransfer::getData(const String& type) const
     if ((forFileDrag() || Settings::customPasteboardDataEnabled()) && m_pasteboard->containsFiles())
         return { };
 
-    auto normalizedType = normalizeType(type);
-    if (Settings::customPasteboardDataEnabled() && !Pasteboard::isSafeTypeForDOMToReadAndWrite(normalizedType))
-        return m_pasteboard->readStringInCustomData(normalizedType);
-    return m_pasteboard->readString(normalizedType);
+    auto lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
+    if (shouldReadOrWriteTypeAsCustomData(lowercaseType))
+        return m_pasteboard->readStringInCustomData(lowercaseType);
+    return m_pasteboard->readString(lowercaseType);
+}
+
+String DataTransfer::getData(const String& type) const
+{
+    return getDataForItem(normalizeType(type));
 }
 
 void DataTransfer::setData(const String& type, const String& data)
@@ -167,7 +178,7 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
     ASSERT(canWriteData());
     RELEASE_ASSERT(is<StaticPasteboard>(*m_pasteboard));
 
-    if (Settings::customPasteboardDataEnabled() && !Pasteboard::isSafeTypeForDOMToReadAndWrite(type))
+    if (shouldReadOrWriteTypeAsCustomData(type))
         downcast<StaticPasteboard>(*m_pasteboard).writeStringInCustomData(type, data);
     else
         m_pasteboard->writeString(type, data);
@@ -200,23 +211,33 @@ DataTransferItemList& DataTransfer::items()
 
 Vector<String> DataTransfer::types() const
 {
+    return types(AddFilesType::Yes);
+}
+
+Vector<String> DataTransfer::typesForItemList() const
+{
+    return types(AddFilesType::No);
+}
+
+Vector<String> DataTransfer::types(AddFilesType addFilesType) const
+{
     if (!canReadTypes())
         return { };
     
     if (!Settings::customPasteboardDataEnabled()) {
         auto types = m_pasteboard->typesForLegacyUnsafeBindings();
         ASSERT(!types.contains("Files"));
-        if (m_pasteboard->containsFiles())
+        if (m_pasteboard->containsFiles() && addFilesType == AddFilesType::Yes)
             types.append("Files");
         return types;
     }
 
     if (m_itemList && m_itemList->hasItems() && m_itemList->items().findMatching([] (const auto& item) { return item->isFile(); }) != notFound)
-        return { ASCIILiteral("Files") };
+        return addFilesType == AddFilesType::Yes ? Vector<String> { ASCIILiteral("Files") } : Vector<String> { };
 
     if (m_pasteboard->containsFiles()) {
         ASSERT(!m_pasteboard->typesSafeForBindings().contains("Files"));
-        return { ASCIILiteral("Files") };
+        return addFilesType == AddFilesType::Yes ? Vector<String> { ASCIILiteral("Files") } : Vector<String> { };
     }
 
     auto types = m_pasteboard->typesSafeForBindings();

@@ -14,6 +14,7 @@ editing/pasteboard/data-transfer-get-data-on-drop-url.html [ Pass ]
 editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html [ Pass ]
 editing/pasteboard/drag-end-crash-accessing-item-list.html [ Pass ]
 editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Pass ]
+editing/pasteboard/data-transfer-items-drop-file.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

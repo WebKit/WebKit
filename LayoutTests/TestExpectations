@@ -76,6 +76,7 @@ editing/pasteboard/data-transfer-get-data-on-drop-url.html [ Skip ]
 editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html [ Skip ]
 editing/pasteboard/drag-end-crash-accessing-item-list.html [ Skip ]
 editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Skip ]
+editing/pasteboard/data-transfer-items-drop-file.html [ Skip ]
 
 # Only iOS supports QuickLook
 quicklook [ Skip ]

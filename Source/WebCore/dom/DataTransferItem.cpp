@@ -95,7 +95,7 @@ void DataTransferItem::getAsString(ScriptExecutionContext& context, RefPtr<Strin
         return;
 
     // FIXME: Make this async.
-    callback->scheduleCallback(context, dataTransfer.getData(m_type));
+    callback->scheduleCallback(context, dataTransfer.getDataForItem(m_type));
 }
 
 RefPtr<File> DataTransferItem::getAsFile() const

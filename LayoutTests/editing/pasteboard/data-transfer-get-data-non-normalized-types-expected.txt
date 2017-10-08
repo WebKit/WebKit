@@ -3,7 +3,7 @@ Rich text
     " text/plain; ": "",
     "text/uri-list; ": "http://www.apple.com/",
     "text/html; ": "<b style='color: green'></b>",
-    "\fcustom type\u000b": "custom data"
+    "\fcustom type\r": "custom data"
 }
 {
     "\tText": "",

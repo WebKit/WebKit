@@ -29,16 +29,9 @@
 #include "DataTransferItem.h"
 #include "FileList.h"
 #include "Pasteboard.h"
+#include "Settings.h"
 
 namespace WebCore {
-
-// FIXME: DataTransfer should filter types itself.
-static bool isSupportedType(const String& type)
-{
-    return type == "text/plain"
-        || type == "text/html"
-        || type == "text/uri-list";
-}
 
 DataTransferItemList::DataTransferItemList(DataTransfer& dataTransfer)
     : m_dataTransfer(dataTransfer)
@@ -62,6 +55,11 @@ RefPtr<DataTransferItem> DataTransferItemList::item(unsigned index)
     return items[index].copyRef();
 }
 
+static bool shouldExposeTypeInItemList(const String& type)
+{
+    return Settings::customPasteboardDataEnabled() || Pasteboard::isSafeTypeForDOMToReadAndWrite(type);
+}
+
 ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& data, const String& type)
 {
     if (!m_dataTransfer.canWriteData())
@@ -74,14 +72,13 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& da
 
     String lowercasedType = type.convertToASCIILowercase();
 
-    // FIXME: Allow writing & reading of any types to clipboard / drag data store.
-    if (!isSupportedType(lowercasedType))
+    if (!shouldExposeTypeInItemList(lowercasedType))
         return nullptr;
 
     m_dataTransfer.setDataFromItemList(lowercasedType, data);
     ASSERT(m_items);
     m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*this), lowercasedType));
-    return RefPtr<DataTransferItem> { m_items->last().copyRef() };
+    return m_items->last().ptr();
 }
 
 RefPtr<DataTransferItem> DataTransferItemList::add(Ref<File>&& file)
@@ -137,9 +134,9 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
         return *m_items;
 
     Vector<Ref<DataTransferItem>> items;
-    for (auto& type : m_dataTransfer.types()) {
+    for (auto& type : m_dataTransfer.typesForItemList()) {
         auto lowercasedType = type.convertToASCIILowercase();
-        if (isSupportedType(lowercasedType))
+        if (shouldExposeTypeInItemList(lowercasedType))
             items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*const_cast<DataTransferItemList*>(this)), lowercasedType));
     }
 

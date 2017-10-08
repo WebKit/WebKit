@@ -1,3 +1,24 @@
+2017-10-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        DataTransfer.items does not contain items for custom types supplied via add or setData
+        https://bugs.webkit.org/show_bug.cgi?id=178016
+
+        Reviewed by Darin Adler.
+
+        Adds new layout tests to check DataTransfer.items when dropping a file, and when copying and pasting with custom
+        pasteboard data types. Tweaks an existing test to adjust for normalizeType stripping HTML whitespace rather than
+        ASCII whitespace.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-get-data-non-normalized-types-expected.txt:
+        * editing/pasteboard/data-transfer-get-data-non-normalized-types.html:
+        * editing/pasteboard/data-transfer-items-add-custom-data-expected.txt: Added.
+        * editing/pasteboard/data-transfer-items-add-custom-data.html: Added.
+        * editing/pasteboard/data-transfer-items-drop-file-expected.txt: Added.
+        * editing/pasteboard/data-transfer-items-drop-file.html: Added.
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         dragenter and dragleave shouldn't use the same data transfer object

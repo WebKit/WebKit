@@ -53,7 +53,7 @@ function getDataWithTypesFromEvent(event, types) {
 }
 
 function handlePaste1(event) {
-    output.textContent += JSON.stringify(getDataWithTypesFromEvent(event, [" text/plain; ", "text/uri-list; ", "text/html; ", "\fcustom type\v"]), null, "    ") + "\n";
+    output.textContent += JSON.stringify(getDataWithTypesFromEvent(event, [" text/plain; ", "text/uri-list; ", "text/html; ", "\fcustom type\r"]), null, "    ") + "\n";
     event.preventDefault();
 }
 
