@@ -1,3 +1,13 @@
+2017-10-08  Darin Adler  <darin@apple.com>
+
+        CustomElementRegistry.define was throwing a JavaScript syntax error instead of a DOM syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=178055
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/custom-elements/custom-element-registry/define-expected.txt:
+        Updated to expect more tests to pass.
+
 2017-10-07  Darin Adler  <darin@apple.com>
 
         Update Document.createEvent for recent DOM specification changes

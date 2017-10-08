@@ -63,19 +63,19 @@ static bool validateCustomElementNameAndThrowIfNeeded(ExecState& state, const At
     case CustomElementNameValidationStatus::Valid:
         return true;
     case CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter:
-        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name must have a lowercase ASCII letter as its first character"));
+        throwDOMSyntaxError(state, scope, ASCIILiteral("Custom element name must have a lowercase ASCII letter as its first character"));
         return false;
     case CustomElementNameValidationStatus::ContainsUppercaseASCIILetter:
-        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot contain an uppercase ASCII letter"));
+        throwDOMSyntaxError(state, scope, ASCIILiteral("Custom element name cannot contain an uppercase ASCII letter"));
         return false;
     case CustomElementNameValidationStatus::ContainsNoHyphen:
-        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name must contain a hyphen"));
+        throwDOMSyntaxError(state, scope, ASCIILiteral("Custom element name must contain a hyphen"));
         return false;
     case CustomElementNameValidationStatus::ContainsDisallowedCharacter:
-        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name contains a character that is not allowed"));
+        throwDOMSyntaxError(state, scope, ASCIILiteral("Custom element name contains a character that is not allowed"));
         return false;
     case CustomElementNameValidationStatus::ConflictsWithStandardElementName:
-        throwSyntaxError(&state, scope, ASCIILiteral("Custom element name cannot be same as one of the standard elements"));
+        throwDOMSyntaxError(state, scope, ASCIILiteral("Custom element name cannot be same as one of the standard elements"));
         return false;
     }
     ASSERT_NOT_REACHED();

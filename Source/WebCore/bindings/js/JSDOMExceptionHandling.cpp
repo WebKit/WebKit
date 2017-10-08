@@ -189,32 +189,13 @@ static void appendArgumentMustBe(StringBuilder& builder, unsigned argumentIndex,
     builder.appendLiteral(" must be ");
 }
 
-JSC::EncodedJSValue reportDeprecatedGetterError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
-{
-    auto& context = *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Deprecated attempt to access property '", attributeName, "' on a non-", interfaceName, " object."));
-    return JSValue::encode(jsUndefined());
-}
-    
-void reportDeprecatedSetterError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
-{
-    auto& context = *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Deprecated attempt to set property '", attributeName, "' on a non-", interfaceName, " object."));
-}
-
-void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope)
-{
-    scope.assertNoException();
-    throwException(&state, scope, createDOMException(&state, NotSupportedError));
-}
-
-void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
+void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, NotSupportedError, message));
 }
 
-void throwInvalidStateError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
+void throwInvalidStateError(JSC::ExecState& state, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, InvalidStateError, message));
@@ -250,11 +231,6 @@ JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState& state, JSC::ThrowScop
     builder.appendLiteral("an instance of ");
     builder.append(expectedType);
     return throwVMTypeError(&state, scope, builder.toString());
-}
-
-void throwArrayElementTypeError(JSC::ExecState& state, JSC::ThrowScope& scope)
-{
-    throwTypeError(state, scope, ASCIILiteral("Invalid Array element type"));
 }
 
 void throwAttributeTypeError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* interfaceName, const char* attributeName, const char* expectedType)
@@ -331,28 +307,16 @@ JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::ExecState& state, const 
     return createRejectedPromiseWithTypeError(state, makeThisTypeErrorMessage(interfaceName, methodName));
 }
 
-void throwDOMSyntaxError(JSC::ExecState& state, JSC::ThrowScope& scope)
+void throwDOMSyntaxError(JSC::ExecState& state, JSC::ThrowScope& scope, ASCIILiteral message)
 {
     scope.assertNoException();
-    throwException(&state, scope, createDOMException(&state, SyntaxError));
+    throwException(&state, scope, createDOMException(&state, SyntaxError, message));
 }
 
 void throwDataCloneError(JSC::ExecState& state, JSC::ThrowScope& scope)
 {
     scope.assertNoException();
     throwException(&state, scope, createDOMException(&state, DataCloneError));
-}
-
-void throwIndexSizeError(JSC::ExecState& state, JSC::ThrowScope& scope)
-{
-    scope.assertNoException();
-    throwException(&state, scope, createDOMException(&state, IndexSizeError));
-}
-
-void throwTypeMismatchError(JSC::ExecState& state, JSC::ThrowScope& scope)
-{
-    scope.assertNoException();
-    throwException(&state, scope, createDOMException(&state, TypeMismatchError));
 }
 
 } // namespace WebCore

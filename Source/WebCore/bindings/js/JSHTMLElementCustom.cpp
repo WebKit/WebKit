@@ -89,7 +89,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
 
     Element* elementToUpgrade = elementInterface->lastElementInConstructionStack();
     if (!elementToUpgrade) {
-        throwInvalidStateError(exec, scope, ASCIILiteral("Cannot instantiate a custom element inside its own constrcutor during upgrades"));
+        throwInvalidStateError(exec, scope, ASCIILiteral("Cannot instantiate a custom element inside its own constructor during upgrades"));
         return JSValue::encode(jsUndefined());
     }
 

@@ -1,3 +1,38 @@
+2017-10-08  Darin Adler  <darin@apple.com>
+
+        CustomElementRegistry.define was throwing a JavaScript syntax error instead of a DOM syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=178055
+
+        Reviewed by Sam Weinig.
+
+        Both the JavaScript language and the DOM have "syntax error" exceptions, but
+        they are not the same thing.
+
+        Also, since the time a while back where we moved JavaScript error handling to
+        use WebCore::Exception and WebCore::ExceptionOr, there are a number of functions
+        that are no longer used and can be deleted.
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::validateCustomElementNameAndThrowIfNeeded): Call throwDOMSyntaxError
+        instead of throwSyntaxError.
+
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::reportDeprecatedGetterError): Deleted. Unused.
+        (WebCore::reportDeprecatedSetterError): Deleted. Unused.
+        (WebCore::throwNotSupportedError): Deleted the overload without an error message,
+        since it's unused. Changed the other overload to take an ASCIILiteral, since
+        that is what all the callers need.
+        (WebCore::throwInvalidStateError): Take ASCIILiteral as above.
+        (WebCore::throwArrayElementTypeError): Deleted. Unused.
+        (WebCore::throwDOMSyntaxError): Added an ASCIILiteral message argument. This
+        function was unused; it's now being used above, always with a literal message.
+        (WebCore::throwIndexSizeError): Deleted. Unused.
+        (WebCore::throwTypeMismatchError): Deleted. Unused.
+        * bindings/js/JSDOMExceptionHandling.h: Updated for the changes above.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement): Fixed a typo in the error message.
+
 2017-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         dragenter and dragleave shouldn't use the same data transfer object

@@ -16,78 +16,30 @@ PASS Element names: defining an element named a-.-_ should succeed
 PASS Element names: defining an element named a-0123456789 should succeed 
 PASS Element names: defining an element named a-漢字 should succeed 
 PASS Element names: defining an element named a-𠀋 should succeed 
-FAIL Element names: defining an element named undefined should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must contain a hyphen" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named null should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must contain a hyphen" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named  should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must have a lowercase ASCII letter as its first character" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named - should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must have a lowercase ASCII letter as its first character" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named a should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must contain a hyphen" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named input should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must contain a hyphen" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named mycustomelement should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must contain a hyphen" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named A should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must have a lowercase ASCII letter as its first character" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named A- should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must have a lowercase ASCII letter as its first character" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named 0- should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must have a lowercase ASCII letter as its first character" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named a-A should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot contain an uppercase ASCII letter" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named a-Z should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot contain an uppercase ASCII letter" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named A-a should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name must have a lowercase ASCII letter as its first character" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named a-a× should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name contains a character that is not allowed" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named a-a　 should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name contains a character that is not allowed" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named a-a󰀀 should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name contains a character that is not allowed" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named annotation-xml should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named color-profile should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named font-face should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named font-face-src should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named font-face-uri should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named font-face-format should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named font-face-name should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
-FAIL Element names: defining an element named missing-glyph should throw a SyntaxError assert_throws: function "() =>  {
-        customElements.define(name, class {});
-      }" threw object "SyntaxError: Custom element name cannot be same as one of the standard elements" that is not a DOMException SYNTAX_ERR: property "code" is equal to undefined, expected 12
+PASS Element names: defining an element named undefined should throw a SyntaxError 
+PASS Element names: defining an element named null should throw a SyntaxError 
+PASS Element names: defining an element named  should throw a SyntaxError 
+PASS Element names: defining an element named - should throw a SyntaxError 
+PASS Element names: defining an element named a should throw a SyntaxError 
+PASS Element names: defining an element named input should throw a SyntaxError 
+PASS Element names: defining an element named mycustomelement should throw a SyntaxError 
+PASS Element names: defining an element named A should throw a SyntaxError 
+PASS Element names: defining an element named A- should throw a SyntaxError 
+PASS Element names: defining an element named 0- should throw a SyntaxError 
+PASS Element names: defining an element named a-A should throw a SyntaxError 
+PASS Element names: defining an element named a-Z should throw a SyntaxError 
+PASS Element names: defining an element named A-a should throw a SyntaxError 
+PASS Element names: defining an element named a-a× should throw a SyntaxError 
+PASS Element names: defining an element named a-a　 should throw a SyntaxError 
+PASS Element names: defining an element named a-a󰀀 should throw a SyntaxError 
+PASS Element names: defining an element named annotation-xml should throw a SyntaxError 
+PASS Element names: defining an element named color-profile should throw a SyntaxError 
+PASS Element names: defining an element named font-face should throw a SyntaxError 
+PASS Element names: defining an element named font-face-src should throw a SyntaxError 
+PASS Element names: defining an element named font-face-uri should throw a SyntaxError 
+PASS Element names: defining an element named font-face-format should throw a SyntaxError 
+PASS Element names: defining an element named font-face-name should throw a SyntaxError 
+PASS Element names: defining an element named missing-glyph should throw a SyntaxError 
 PASS If the name is already defined, should throw a NotSupportedError 
 PASS If the constructor is already defined, should throw a NotSupportedError 
 FAIL If extends is a-, should throw a NotSupportedError assert_throws: function "() =>  {
