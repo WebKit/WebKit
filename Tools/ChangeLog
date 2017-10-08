@@ -1,3 +1,17 @@
+2017-10-08  Dean Jackson  <dino@apple.com>
+
+        Make sort-Xcode-project file handle UnifiedSources
+        https://bugs.webkit.org/show_bug.cgi?id=178042
+
+        Reviewed by Sam Weinig.
+
+        Sort the UnifiedSource(\d+) files by number rather
+        than alphabetically.
+
+        * Scripts/sort-Xcode-project-file:
+        (sortChildrenByFileName):
+        (sortFilesByFileName):
+
 2017-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS
