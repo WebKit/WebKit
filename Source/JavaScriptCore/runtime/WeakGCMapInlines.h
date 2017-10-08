@@ -35,9 +35,7 @@ template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTrait
 inline WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::WeakGCMap(VM& vm)
     : m_vm(vm)
 {
-    vm.heap.registerWeakGCMap(this, [this]() {
-        pruneStaleEntries();
-    });
+    vm.heap.registerWeakGCMap(this);
 }
 
 template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>

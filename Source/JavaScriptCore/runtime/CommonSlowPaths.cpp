@@ -249,7 +249,7 @@ SLOW_PATH_DECL(slow_path_create_this)
         if (structure->hasPolyProto()) {
             JSObject* prototype = constructor->prototypeForConstruction(vm, exec);
             result->putDirect(vm, structure->polyProtoOffset(), prototype);
-            vm.prototypeMap.addPrototype(prototype);
+            prototype->didBecomePrototype();
         }
     } else {
         // http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor

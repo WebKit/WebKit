@@ -44,7 +44,7 @@ void AsyncFromSyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* glob
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    vm.prototypeMap.addPrototype(this);
+    didBecomePrototype();
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("next", asyncFromSyncIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("return", asyncFromSyncIteratorPrototypeReturnCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));

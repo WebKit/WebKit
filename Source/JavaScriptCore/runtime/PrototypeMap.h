@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "IndexingType.h"
 #include "JSTypeInfo.h"
+#include "PrototypeKey.h"
 #include "WeakGCMap.h"
 #include <wtf/TriState.h>
 
@@ -41,23 +42,18 @@ class VM;
 class PrototypeMap {
 public:
     explicit PrototypeMap(VM& vm)
-        : m_prototypes(vm)
-        , m_structures(vm)
+        : m_structures(vm)
     {
     }
 
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false);
     JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*);
     void clearEmptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity);
-    ALWAYS_INLINE void addPrototype(JSObject*);
-    ALWAYS_INLINE TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
 
 private:
     Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure);
 
-    WeakGCMap<JSObject*, JSObject> m_prototypes;
-    // FIXME: make the key a struct.
-    using StructureMap = WeakGCMap<std::tuple<JSObject*, unsigned, const ClassInfo*, JSGlobalObject*>, Structure>;
+    using StructureMap = WeakGCMap<PrototypeKey, Structure>;
     StructureMap m_structures;
 };
 

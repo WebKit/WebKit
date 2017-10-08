@@ -249,7 +249,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
         if (structure->hasPolyProto()) {
             JSObject* prototype = jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec);
             result->putDirect(vm, structure->polyProtoOffset(), prototype);
-            vm.prototypeMap.addPrototype(prototype);
+            prototype->didBecomePrototype();
         }
         return result;
     }

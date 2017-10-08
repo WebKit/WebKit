@@ -84,6 +84,7 @@ class SpaceTimeMutatorScheduler;
 class StopIfNecessaryTimer;
 class SweepingScope;
 class VM;
+class WeakGCMapBase;
 struct CurrentThreadState;
 
 namespace DFG {
@@ -269,8 +270,8 @@ public:
     template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
 
-    JS_EXPORT_PRIVATE void registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback);
-    JS_EXPORT_PRIVATE void unregisterWeakGCMap(void* weakGCMap);
+    JS_EXPORT_PRIVATE void registerWeakGCMap(WeakGCMapBase* weakGCMap);
+    JS_EXPORT_PRIVATE void unregisterWeakGCMap(WeakGCMapBase* weakGCMap);
 
     void addLogicallyEmptyWeakBlock(WeakBlock*);
 
@@ -620,7 +621,7 @@ private:
     unsigned m_delayedReleaseRecursionCount;
 #endif
 
-    HashMap<void*, std::function<void()>> m_weakGCMaps;
+    HashSet<WeakGCMapBase*> m_weakGCMaps;
     
     Lock m_visitRaceLock;
 

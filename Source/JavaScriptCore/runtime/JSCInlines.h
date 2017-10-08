@@ -49,7 +49,6 @@
 #include "JSProxy.h"
 #include "JSString.h"
 #include "Operations.h"
-#include "PrototypeMapInlines.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include "ThrowScope.h"

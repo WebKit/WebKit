@@ -43,7 +43,6 @@
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
-#include "PrototypeMapInlines.h"
 #include "ProxyObject.h"
 #include "SlotVisitorInlines.h"
 #include "TypeError.h"
@@ -1005,7 +1004,7 @@ void JSObject::notifyPresenceOfIndexedAccessors(VM& vm)
     
     setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AddIndexedAccessors));
     
-    if (!vm.prototypeMap.isPrototype(this))
+    if (!mayBePrototype())
         return;
     
     globalObject(vm)->haveABadTime(vm);
@@ -1632,7 +1631,7 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
 {
     ASSERT(prototype);
     if (prototype.isObject())
-        vm.prototypeMap.addPrototype(asObject(prototype));
+        prototype.asCell()->didBecomePrototype();
     
     if (structure(vm)->hasMonoProto()) {
         Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype);
@@ -1643,7 +1642,7 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
     if (!anyObjectInChainMayInterceptIndexedAccesses())
         return;
     
-    if (vm.prototypeMap.isPrototype(this)) {
+    if (mayBePrototype()) {
         structure(vm)->globalObject()->haveABadTime(vm);
         return;
     }

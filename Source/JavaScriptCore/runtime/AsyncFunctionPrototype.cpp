@@ -51,7 +51,7 @@ void AsyncFunctionPrototype::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "AsyncFunction"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
-    vm.prototypeMap.addPrototype(this);
+    didBecomePrototype();
 }
 
 } // namespace JSC

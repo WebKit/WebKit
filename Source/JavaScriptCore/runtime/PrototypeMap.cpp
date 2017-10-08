@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "IndexingType.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
-#include "PrototypeMapInlines.h"
 
 namespace JSC {
 
@@ -37,18 +36,18 @@ inline Structure* PrototypeMap::createEmptyStructure(JSGlobalObject* globalObjec
 {
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
 
-    auto key = std::make_tuple(makePolyProtoStructure ? nullptr : prototype, inlineCapacity, classInfo, globalObject);
+    auto key = PrototypeKey(makePolyProtoStructure ? nullptr : prototype, inlineCapacity, classInfo, globalObject);
     if (Structure* structure = m_structures.get(key)) {
         if (makePolyProtoStructure) {
-            addPrototype(prototype);
+            prototype->didBecomePrototype();
             RELEASE_ASSERT(structure->hasPolyProto());
         } else
             RELEASE_ASSERT(structure->hasMonoProto());
-        ASSERT(isPrototype(prototype));
+        ASSERT(prototype->mayBePrototype());
         return structure;
     }
 
-    addPrototype(prototype);
+    prototype->didBecomePrototype();
 
     VM& vm = globalObject->vm();
     Structure* structure;
@@ -81,8 +80,8 @@ Structure* PrototypeMap::emptyObjectStructureForPrototype(JSGlobalObject* global
 
 void PrototypeMap::clearEmptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* object, unsigned inlineCapacity)
 {
-    m_structures.remove(std::make_tuple(object, inlineCapacity, JSFinalObject::info(), globalObject));
-    m_structures.remove(std::make_tuple(nullptr, inlineCapacity, JSFinalObject::info(), globalObject));
+    m_structures.remove(PrototypeKey(object, inlineCapacity, JSFinalObject::info(), globalObject));
+    m_structures.remove(PrototypeKey(nullptr, inlineCapacity, JSFinalObject::info(), globalObject));
 }
 
 } // namespace JSC

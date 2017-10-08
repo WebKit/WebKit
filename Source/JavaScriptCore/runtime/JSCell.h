@@ -132,6 +132,9 @@ public:
     void clearStructure() { m_structureID = 0; }
 
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
+    
+    bool mayBePrototype() const;
+    void didBecomePrototype();
 
     const char* className(VM&) const;
 

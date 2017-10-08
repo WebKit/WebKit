@@ -1,5 +1,116 @@
 2017-10-07  Filip Pizlo  <fpizlo@apple.com>
 
+        direct-construct-arity-mismatch.js can have GCs that take ~70ms if you force poly proto and disable generational GC
+        https://bugs.webkit.org/show_bug.cgi?id=178051
+
+        Reviewed by Saam Barati.
+        
+        After I studied the profile of this test, I found two pathologies in our code relating to
+        prototypes. I think that now that we support poly proto, it's more likely for these pathologies to
+        happen. Also, the fact that we force poly proto in some tests, it's possible for one of our tests
+        to trigger these pathologies.
+        
+        - WeakGCMap::m_prototoypes is the set of all prototypes. That's super dangerous. This patch turns
+          this into a bit in the JSCell header. It uses the last spare bit in indexingTypeAndMisc. Note
+          that we still have 6 spare bits in cellState, but those are a bit more annoying to get at.
+        
+        - WeakGCMap registers itself with GC using a std::function. That means allocating things in the
+          malloc heap. This changes it to a virtual method on WeakGCMap. I don't know for sure that this is
+          a problem area, but there are places where we could allocate a lot of WeakGCMaps, like if we have
+          a lot of transition tables. It's good to reduce the amount of memory those require.
+        
+        Also, I saw a FIXME about turning the std::tuple in PrototypeMap into a struct, so I did that while
+        I was at it. I initially thought that this would have to be part of my solution, but it turned out
+        not to be. I think it's worth landing anyway since it makes the code a lot more clear.
+        
+        This fixes the timeout in that test and probably reduces memory consumption.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOperations.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps):
+        (JSC::Heap::registerWeakGCMap):
+        (JSC::Heap::unregisterWeakGCMap):
+        * heap/Heap.h:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/AsyncFromSyncIteratorPrototype.cpp:
+        (JSC::AsyncFromSyncIteratorPrototype::finishCreation):
+        * runtime/AsyncFunctionPrototype.cpp:
+        (JSC::AsyncFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorFunctionPrototype.cpp:
+        (JSC::AsyncGeneratorFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorPrototype.cpp:
+        (JSC::AsyncGeneratorPrototype::finishCreation):
+        * runtime/AsyncIteratorPrototype.cpp:
+        (JSC::AsyncIteratorPrototype::finishCreation):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/GeneratorFunctionPrototype.cpp:
+        (JSC::GeneratorFunctionPrototype::finishCreation):
+        * runtime/GeneratorPrototype.cpp:
+        (JSC::GeneratorPrototype::finishCreation):
+        * runtime/IndexingType.h:
+        * runtime/IteratorPrototype.cpp:
+        (JSC::IteratorPrototype::finishCreation):
+        * runtime/JSCInlines.h:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::mayBePrototype const):
+        (JSC::JSCell::didBecomePrototype):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::setPrototypeDirect):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setTarget):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        * runtime/PrototypeKey.h: Added.
+        (JSC::PrototypeKey::PrototypeKey):
+        (JSC::PrototypeKey::prototype const):
+        (JSC::PrototypeKey::inlineCapacity const):
+        (JSC::PrototypeKey::classInfo const):
+        (JSC::PrototypeKey::globalObject const):
+        (JSC::PrototypeKey::operator== const):
+        (JSC::PrototypeKey::operator!= const):
+        (JSC::PrototypeKey::operator bool const):
+        (JSC::PrototypeKey::isHashTableDeletedValue const):
+        (JSC::PrototypeKey::hash const):
+        (JSC::PrototypeKeyHash::hash):
+        (JSC::PrototypeKeyHash::equal):
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::createEmptyStructure):
+        (JSC::PrototypeMap::clearEmptyObjectStructureForPrototype):
+        * runtime/PrototypeMap.h:
+        (JSC::PrototypeMap::PrototypeMap):
+        * runtime/PrototypeMapInlines.h: Removed.
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMapBase::~WeakGCMapBase):
+        * runtime/WeakGCMapInlines.h:
+        (JSC::KeyTraitsArg>::WeakGCMap):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+
+2017-10-07  Filip Pizlo  <fpizlo@apple.com>
+
         Octane/splay can leak memory due to stray pointers on the stack when run from the command line
         https://bugs.webkit.org/show_bug.cgi?id=178054
 

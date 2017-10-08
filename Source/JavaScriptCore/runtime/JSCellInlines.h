@@ -352,6 +352,16 @@ inline bool JSCell::isLocked() const
     return IndexingTypeLockAlgorithm::isLocked(*lock);
 }
 
+inline bool JSCell::mayBePrototype() const
+{
+    return m_indexingTypeAndMisc & IndexingTypeMayBePrototype;
+}
+
+inline void JSCell::didBecomePrototype()
+{
+    m_indexingTypeAndMisc |= IndexingTypeMayBePrototype;
+}
+
 inline JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 {
     if (isObject())

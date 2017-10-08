@@ -28,7 +28,6 @@
 
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
-#include "PrototypeMapInlines.h"
 
 namespace JSC {
 
@@ -53,7 +52,7 @@ void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
     setPrototypeDirect(vm, globalObject->getPrototypeDirect());
 
     PrototypeMap& prototypeMap = vm.prototypeMap;
-    if (!prototypeMap.isPrototype(this))
+    if (!mayBePrototype())
         return;
 
     // previousGlobalObject cannot be null because in order for this JSProxy to be used as a prototype
