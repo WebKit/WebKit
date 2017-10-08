@@ -1,3 +1,14 @@
+2017-10-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, disable Gigacage on ARM64 Linux
+        https://bugs.webkit.org/show_bug.cgi?id=177586
+
+        Gigacage's LLInt change breaks ARM64 Linux.
+        Currently we do not have maintainers for this.
+        Let's simply disable it.
+
+        * bmalloc/Gigacage.h:
+
 2017-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS
