@@ -1,3 +1,19 @@
+2017-10-09  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Third IOSurface buffer might be allocated with the wrong size
+        https://bugs.webkit.org/show_bug.cgi?id=178092
+        <rdar://problem/34893173>
+
+        Reviewed by Jer Noble.
+
+        If the WebGL canvas resizes after the third buffer was allocated, it
+        was never getting told that its backing store should be thrown away.
+
+        * platform/graphics/cocoa/WebGLLayer.mm: Allocate the third buffer at
+        the same time as the first two.
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+        (-[WebGLLayer bindFramebufferToNextAvailableSurface]):
+
 2017-10-09  Sam Weinig  <sam@webkit.org>
 
         Make HashMap::keys() and HashMap::values() work with WTF::map/WTF::copyToVector
