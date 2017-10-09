@@ -13,7 +13,6 @@ set(bmalloc_SOURCES
     bmalloc/Environment.cpp
     bmalloc/Gigacage.cpp
     bmalloc/Heap.cpp
-    bmalloc/HeapKind.cpp
     bmalloc/LargeMap.cpp
     bmalloc/Logging.cpp
     bmalloc/ObjectType.cpp

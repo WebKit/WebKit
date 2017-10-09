@@ -117,11 +117,8 @@ void Scavenger::schedule(size_t bytes)
 void Scavenger::scavenge()
 {
     std::lock_guard<StaticMutex> lock(Heap::mutex());
-    for (unsigned i = numHeaps; i--;) {
-        if (!isActiveHeapKind(static_cast<HeapKind>(i)))
-            continue;
+    for (unsigned i = numHeaps; i--;)
         PerProcess<PerHeapKind<Heap>>::get()->at(i).scavenge(lock);
-    }
 }
 
 void Scavenger::threadEntryPoint(Scavenger* scavenger)

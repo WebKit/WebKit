@@ -33,28 +33,11 @@
 #include <cstdio>
 #include <mutex>
 
-#if BCPU(ARM64)
-// FIXME: There is no good reason for ARM64 to be special.
-// https://bugs.webkit.org/show_bug.cgi?id=177605
-#define PRIMITIVE_GIGACAGE_RUNWAY 0
-#else
-// FIXME: Consider making this 32GB, in case unsigned 32-bit indices find their way into indexed accesses.
-// https://bugs.webkit.org/show_bug.cgi?id=175062
-#define PRIMITIVE_GIGACAGE_RUNWAY (16llu * 1024 * 1024 * 1024)
-#endif
-
-// FIXME: Reconsider this.
-// https://bugs.webkit.org/show_bug.cgi?id=175921
-#define JSVALUE_GIGACAGE_RUNWAY 0
-#define STRING_GIGACAGE_RUNWAY 0
-
 char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
 
 using namespace bmalloc;
 
 namespace Gigacage {
-
-bool g_wasEnabled;
 
 namespace {
 
@@ -86,6 +69,8 @@ public:
     }
 };
 
+} // anonymous namespce
+
 struct Callback {
     Callback() { }
     
@@ -105,8 +90,6 @@ struct PrimitiveDisableCallbacks {
     Vector<Callback> callbacks;
 };
 
-} // anonymous namespace
-
 void ensureGigacage()
 {
 #if GIGACAGE_ENABLED
@@ -117,20 +100,12 @@ void ensureGigacage()
             if (!shouldBeEnabled())
                 return;
             
-            bool ok = true;
-            
             forEachKind(
                 [&] (Kind kind) {
-                    if (!ok)
-                        return;
                     // FIXME: Randomize where this goes.
                     // https://bugs.webkit.org/show_bug.cgi?id=175245
                     basePtr(kind) = tryVMAllocate(alignment(kind), totalSize(kind));
                     if (!basePtr(kind)) {
-                        if (GIGACAGE_ALLOCATION_CAN_FAIL) {
-                            ok = false;
-                            return;
-                        }
                         fprintf(stderr, "FATAL: Could not allocate %s gigacage.\n", name(kind));
                         BCRASH();
                     }
@@ -138,42 +113,9 @@ void ensureGigacage()
                     vmDeallocatePhysicalPages(basePtr(kind), totalSize(kind));
                 });
             
-            if (!ok) {
-                forEachKind(
-                    [&] (Kind kind) {
-                        if (!basePtr(kind))
-                            return;
-                        
-                        vmDeallocate(basePtr(kind), totalSize(kind));
-                        
-                        basePtr(kind) = nullptr;
-                    });
-                return;
-            }
-            
             protectGigacageBasePtrs();
-            g_wasEnabled = true;
         });
 #endif // GIGACAGE_ENABLED
-}
-
-size_t runway(Kind kind)
-{
-    switch (kind) {
-    case Primitive:
-        return static_cast<size_t>(PRIMITIVE_GIGACAGE_RUNWAY);
-    case JSValue:
-        return static_cast<size_t>(JSVALUE_GIGACAGE_RUNWAY);
-    case String:
-        return static_cast<size_t>(STRING_GIGACAGE_RUNWAY);
-    }
-    BCRASH();
-    return 0;
-}
-
-size_t totalSize(Kind kind)
-{
-    return size(kind) + runway(kind);
 }
 
 void disablePrimitiveGigacage()
@@ -245,27 +187,7 @@ bool isDisablingPrimitiveGigacageDisabled()
 
 bool shouldBeEnabled()
 {
-    static std::once_flag onceFlag;
-    static bool cached;
-    std::call_once(
-        onceFlag,
-        [] {
-            bool result = GIGACAGE_ENABLED && !PerProcess<Environment>::get()->isDebugHeapEnabled();
-            if (!result)
-                return;
-            
-            if (char* gigacageEnabled = getenv("GIGACAGE_ENABLED")) {
-                if (!strcasecmp(gigacageEnabled, "no") || !strcasecmp(gigacageEnabled, "false") || !strcasecmp(gigacageEnabled, "0")) {
-                    fprintf(stderr, "Warning: disabling gigacage because GIGACAGE_ENABLED=%s!\n", gigacageEnabled);
-                    return;
-                } else if (strcasecmp(gigacageEnabled, "yes") && strcasecmp(gigacageEnabled, "true") && strcasecmp(gigacageEnabled, "1"))
-                    fprintf(stderr, "Warning: invalid argument to GIGACAGE_ENABLED: %s\n", gigacageEnabled);
-            }
-            
-            cached = true;
-        });
-    
-    return cached;
+    return GIGACAGE_ENABLED && !PerProcess<Environment>::get()->isDebugHeapEnabled();
 }
 
 } // namespace Gigacage
