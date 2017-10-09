@@ -301,6 +301,7 @@
     "web-platform-tests/tools/manifest": "import", 
     "web-platform-tests/tools/pywebsocket": "import", 
     "web-platform-tests/tools/serve": "import", 
+    "web-platform-tests/tools/six": "import", 
     "web-platform-tests/tools/sslutils": "import", 
     "web-platform-tests/tools/wptserve": "import", 
     "web-platform-tests/touch-events": "import", 
