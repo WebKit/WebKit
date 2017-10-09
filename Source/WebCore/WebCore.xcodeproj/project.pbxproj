@@ -4438,7 +4438,6 @@
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
 		A17D275E1EAC579800BF01E7 /* MediaSelectionOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A17D275D1EAC579800BF01E7 /* MediaSelectionOption.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A17FEE641F8893220021E811 /* PaymentSessionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A17FEE631F8893220021E811 /* PaymentSessionBase.h */; };
 		A182D5B71BE722670087A7CC /* SettingsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A182D5B61BE722620087A7CC /* SettingsCocoa.mm */; };
 		A185B4291E8211A100DC9118 /* PreviewLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = A185B4271E8211A100DC9118 /* PreviewLoader.mm */; };
 		A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A185B4281E8211A100DC9118 /* PreviewLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12923,7 +12922,6 @@
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
 		A17D275D1EAC579800BF01E7 /* MediaSelectionOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSelectionOption.h; sourceTree = "<group>"; };
-		A17FEE631F8893220021E811 /* PaymentSessionBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentSessionBase.h; sourceTree = "<group>"; };
 		A182D5B61BE722620087A7CC /* SettingsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsCocoa.mm; sourceTree = "<group>"; };
 		A185B4271E8211A100DC9118 /* PreviewLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewLoader.mm; sourceTree = "<group>"; };
 		A185B4281E8211A100DC9118 /* PreviewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoader.h; sourceTree = "<group>"; };
@@ -21766,7 +21764,6 @@
 				A1F76B3B1F44CF240014C318 /* PaymentResponse.cpp */,
 				A1F76B3A1F44CF240014C318 /* PaymentResponse.h */,
 				A1F76B3C1F44CF240014C318 /* PaymentResponse.idl */,
-				A17FEE631F8893220021E811 /* PaymentSessionBase.h */,
 				A1F76B521F44D2C70014C318 /* PaymentShippingOption.h */,
 				A1F76B541F44D2C70014C318 /* PaymentShippingOption.idl */,
 				A1F76B461F44D07A0014C318 /* PaymentShippingType.h */,
@@ -29661,7 +29658,6 @@
 				1A8A64681D19FDFF00D0E00F /* PaymentRequestValidator.h in Headers */,
 				A1F76B3D1F44CF240014C318 /* PaymentResponse.h in Headers */,
 				A1491DA31F859D870095F5D4 /* PaymentSession.h in Headers */,
-				A17FEE641F8893220021E811 /* PaymentSessionBase.h in Headers */,
 				A1F76B551F44D2C70014C318 /* PaymentShippingOption.h in Headers */,
 				A1F76B491F44D07A0014C318 /* PaymentShippingType.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,

@@ -34,7 +34,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "JSApplePayRequest.h"
-#include "LinkIconCollector.h"
 #include "MainFrame.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
@@ -49,16 +48,6 @@ bool ApplePayPaymentHandler::handlesIdentifier(const PaymentRequest::MethodIdent
 
     auto& url = WTF::get<URL>(identifier);
     return url.host() == "apple.com" && url.path() == "/apple-pay";
-}
-
-static inline PaymentCoordinator& paymentCoordinator(Document& document)
-{
-    return document.frame()->mainFrame().paymentCoordinator();
-}
-
-bool ApplePayPaymentHandler::hasActiveSession(Document& document)
-{
-    return paymentCoordinator(document).hasActiveSession();
 }
 
 ApplePayPaymentHandler::ApplePayPaymentHandler(PaymentRequest& paymentRequest)
@@ -158,18 +147,9 @@ ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::ExecState& execState,
     return { };
 }
 
-void ApplePayPaymentHandler::show(Document& document)
+void ApplePayPaymentHandler::show()
 {
-    Vector<URL> linkIconURLs;
-    for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
-        linkIconURLs.append(icon.url);
-
-    paymentCoordinator(document).beginPaymentSession(*this, document.url(), linkIconURLs, *m_applePayRequest);
-}
-
-void ApplePayPaymentHandler::hide(Document& document)
-{
-    paymentCoordinator(document).abortPaymentSession();
+    // FIXME: Call PaymentCoordinator::beginPaymentSession() with m_applePayRequest
 }
 
 } // namespace WebCore

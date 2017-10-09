@@ -40,7 +40,6 @@ namespace WebCore {
 
 class Document;
 class PaymentAddress;
-class PaymentHandler;
 class PaymentResponse;
 enum class PaymentShippingType;
 struct PaymentMethodData;
@@ -86,8 +85,8 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "PaymentRequest"; }
-    bool canSuspendForDocumentSuspension() const final;
-    void stop() final;
+    bool canSuspendForDocumentSuspension() const final { return true; }
+    void stop() final { }
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return PaymentRequestEventTargetInterfaceType; }
@@ -103,8 +102,8 @@ private:
     RefPtr<PaymentAddress> m_shippingAddress;
     State m_state { State::Created };
     std::optional<ShowPromise> m_showPromise;
+    std::optional<AbortPromise> m_abortPromise;
     std::optional<CanMakePaymentPromise> m_canMakePaymentPromise;
-    RefPtr<PaymentHandler> m_activePaymentHandler;
 };
 
 std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier);

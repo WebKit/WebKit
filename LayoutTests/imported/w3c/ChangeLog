@@ -1,3 +1,16 @@
+2017-10-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r223021.
+
+        LayoutTests added with this change are failing.
+
+        Reverted changeset:
+
+        "[Payment Request] Implement PaymentRequest.show() and
+        PaymentRequest.hide()"
+        https://bugs.webkit.org/show_bug.cgi?id=178043
+        http://trac.webkit.org/changeset/223021
+
 2017-10-07  Darin Adler  <darin@apple.com>
 
         Update HTMLOListElement.start to behavior from latest HTML specification

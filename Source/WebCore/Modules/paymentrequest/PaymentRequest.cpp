@@ -336,7 +336,6 @@ PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, Pay
 
 PaymentRequest::~PaymentRequest()
 {
-    ASSERT(!m_activePaymentHandler);
 }
 
 // https://www.w3.org/TR/payment-request/#show()-method
@@ -350,20 +349,16 @@ void PaymentRequest::show(ShowPromise&& promise)
         return;
     }
 
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    if (PaymentHandler::hasActiveSession(document)) {
-        promise.reject(Exception { AbortError });
-        return;
-    }
+    // FIXME: Reject promise with AbortError if PaymentCoordinator already has an active session.
 
     m_state = State::Interactive;
     ASSERT(!m_showPromise);
     m_showPromise = WTFMove(promise);
 
-    RefPtr<PaymentHandler> selectedPaymentHandler;
+    std::unique_ptr<PaymentHandler> selectedPaymentHandler;
     for (auto& paymentMethod : m_serializedMethodData) {
-        auto scope = DECLARE_THROW_SCOPE(document.vm());
-        JSC::JSValue data = JSONParse(document.execState(), paymentMethod.serializedData);
+        auto scope = DECLARE_THROW_SCOPE(scriptExecutionContext()->vm());
+        JSC::JSValue data = JSONParse(scriptExecutionContext()->execState(), paymentMethod.serializedData);
         if (scope.exception()) {
             m_showPromise->reject(Exception { ExistingExceptionError });
             return;
@@ -373,7 +368,7 @@ void PaymentRequest::show(ShowPromise&& promise)
         if (!handler)
             continue;
 
-        auto result = handler->convertData(*document.execState(), WTFMove(data));
+        auto result = handler->convertData(*scriptExecutionContext()->execState(), WTFMove(data));
         if (result.hasException()) {
             m_showPromise->reject(result.releaseException());
             return;
@@ -388,11 +383,7 @@ void PaymentRequest::show(ShowPromise&& promise)
         return;
     }
 
-    ASSERT(!m_activePaymentHandler);
-    m_activePaymentHandler = WTFMove(selectedPaymentHandler);
-
-    m_activePaymentHandler->show(document);
-    setPendingActivity(this);
+    selectedPaymentHandler->show();
 }
 
 // https://www.w3.org/TR/payment-request/#abort()-method
@@ -401,7 +392,9 @@ ExceptionOr<void> PaymentRequest::abort(AbortPromise&& promise)
     if (m_state != State::Interactive)
         return Exception { InvalidStateError };
 
-    stop();
+    m_state = State::Closed;
+    ASSERT(m_showPromise);
+    m_showPromise->reject(Exception { AbortError });
     promise.resolve();
     return { };
 }
@@ -428,33 +421,6 @@ std::optional<PaymentShippingType> PaymentRequest::shippingType() const
     if (m_options.requestShipping)
         return m_options.shippingType;
     return std::nullopt;
-}
-
-bool PaymentRequest::canSuspendForDocumentSuspension() const
-{
-    switch (m_state) {
-    case State::Created:
-    case State::Closed:
-        ASSERT(!m_activePaymentHandler);
-        return true;
-    case State::Interactive:
-        return !m_activePaymentHandler;
-    }
-}
-
-void PaymentRequest::stop()
-{
-    if (m_state != State::Interactive)
-        return;
-
-    if (auto paymentHandler = std::exchange(m_activePaymentHandler, nullptr)) {
-        unsetPendingActivity(this);
-        paymentHandler->hide(downcast<Document>(*scriptExecutionContext()));
-    }
-
-    ASSERT(m_state == State::Interactive);
-    m_state = State::Closed;
-    m_showPromise->reject(Exception { AbortError });
 }
 
 } // namespace WebCore

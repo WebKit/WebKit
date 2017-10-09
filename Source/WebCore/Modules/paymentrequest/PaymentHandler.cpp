@@ -34,27 +34,17 @@
 
 namespace WebCore {
 
-RefPtr<PaymentHandler> PaymentHandler::create(PaymentRequest& paymentRequest, const PaymentRequest::MethodIdentifier& identifier)
+std::unique_ptr<PaymentHandler> PaymentHandler::create(PaymentRequest& paymentRequest, const PaymentRequest::MethodIdentifier& identifier)
 {
 #if ENABLE(APPLE_PAY)
     if (ApplePayPaymentHandler::handlesIdentifier(identifier))
-        return adoptRef(new ApplePayPaymentHandler(paymentRequest));
+        return std::make_unique<ApplePayPaymentHandler>(paymentRequest);
 #else
     UNUSED_PARAM(paymentRequest);
     UNUSED_PARAM(identifier);
 #endif
 
     return nullptr;
-}
-
-bool PaymentHandler::hasActiveSession(Document& document)
-{
-#if ENABLE(APPLE_PAY)
-    return ApplePayPaymentHandler::hasActiveSession(document);
-#else
-    UNUSED_PARAM(document);
-    return false;
-#endif
 }
 
 } // namespace WebCore
