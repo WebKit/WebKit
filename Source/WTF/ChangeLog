@@ -1,5 +1,11 @@
 2017-10-08  Sam Weinig  <sam@webkit.org>
 
+        Address additional feedback from Darin for r223039 and sort the using declarations.
+
+        * wtf/Vector.h:
+
+2017-10-08  Sam Weinig  <sam@webkit.org>
+
         There should be a version of copyToVector that returns a Vector, rather than using an out parameter
         https://bugs.webkit.org/show_bug.cgi?id=177732
 

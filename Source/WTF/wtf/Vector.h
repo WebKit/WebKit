@@ -1626,10 +1626,10 @@ inline auto copyToVector(const Collection& collection) -> Vector<typename CopyTo
 
 } // namespace WTF
 
-using WTF::Vector;
 using WTF::UnsafeVectorOverflow;
-using WTF::removeRepeatedElements;
+using WTF::Vector;
 using WTF::copyToVector;
 using WTF::copyToVectorOf;
+using WTF::removeRepeatedElements;
 
 #endif // WTF_Vector_h
