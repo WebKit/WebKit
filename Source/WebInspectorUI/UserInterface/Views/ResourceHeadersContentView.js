@@ -296,7 +296,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         if (protocol.startsWith("http/1")) {
             // HTTP/1.1 request line:
             // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
-            let requestLine = `${this._resource.requestMethod} ${urlComponents.path} ${protocol.toUpperCase()}`
+            let requestLine = `${this._resource.requestMethod} ${urlComponents.path} ${protocol.toUpperCase()}`;
             this._appendKeyValuePair(detailsElement, requestLine, null, "h1-status");
         } else if (protocol === "h2") {
             // HTTP/2 Request pseudo headers:
