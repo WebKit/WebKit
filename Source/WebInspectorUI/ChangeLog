@@ -1,3 +1,13 @@
+2017-10-08  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: add autocompletion for min/max within a CSS calc
+        https://bugs.webkit.org/show_bug.cgi?id=178068
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forFunction):
+
 2017-10-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add Canvas tab and CanvasOverviewContentView

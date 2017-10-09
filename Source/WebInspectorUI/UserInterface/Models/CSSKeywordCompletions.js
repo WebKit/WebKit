@@ -68,6 +68,8 @@ WI.CSSKeywordCompletions.forFunction = function(functionName)
 
     if (functionName === "var")
         suggestions = [];
+    else if (functionName === "calc" || functionName === "min" || functionName === "max")
+        suggestions = suggestions.concat(["calc()", "min()", "max()"]);
     else if (functionName == "env")
         suggestions = suggestions.concat(["safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left"]);
     else if (functionName === "image-set")
