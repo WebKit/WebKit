@@ -1000,6 +1000,7 @@ yarr/YarrInterpreter.cpp
 yarr/YarrJIT.cpp
 yarr/YarrPattern.cpp
 yarr/YarrSyntaxChecker.cpp
+yarr/YarrUnicodeProperties.cpp
 
 # Derived Sources
 yarr/YarrCanonicalizeUnicode.cpp

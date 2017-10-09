@@ -1,3 +1,16 @@
+2017-10-09  Michael Saboff  <msaboff@apple.com>
+
+        Implement RegExp Unicode property escapes
+        https://bugs.webkit.org/show_bug.cgi?id=172069
+
+        Reviewed by JF Bastien.
+
+        New test.
+
+        * js/regexp-unicode-properties-expected.txt: Added.
+        * js/regexp-unicode-properties.html: Added.
+        * js/script-tests/regexp-unicode-properties.js: Added.
+
 2017-10-09  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement PaymentRequest.show() and PaymentRequest.hide()

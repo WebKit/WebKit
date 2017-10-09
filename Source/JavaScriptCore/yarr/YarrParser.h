@@ -27,6 +27,7 @@
 
 #include "Yarr.h"
 #include "YarrPattern.h"
+#include "YarrUnicodeProperties.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
@@ -34,13 +35,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
-
-enum BuiltInCharacterClassID {
-    DigitClassID,
-    SpaceClassID,
-    WordClassID,
-    DotClassID,
-};
 
 // The Parser class should not be used directly - only via the Yarr::parse() method.
 template<class Delegate, typename CharType>
@@ -302,27 +296,27 @@ private:
         // CharacterClassEscape
         case 'd':
             consume();
-            delegate.atomBuiltInCharacterClass(DigitClassID, false);
+            delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::DigitClassID, false);
             break;
         case 's':
             consume();
-            delegate.atomBuiltInCharacterClass(SpaceClassID, false);
+            delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::SpaceClassID, false);
             break;
         case 'w':
             consume();
-            delegate.atomBuiltInCharacterClass(WordClassID, false);
+            delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::WordClassID, false);
             break;
         case 'D':
             consume();
-            delegate.atomBuiltInCharacterClass(DigitClassID, true);
+            delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::DigitClassID, true);
             break;
         case 'S':
             consume();
-            delegate.atomBuiltInCharacterClass(SpaceClassID, true);
+            delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::SpaceClassID, true);
             break;
         case 'W':
             consume();
-            delegate.atomBuiltInCharacterClass(WordClassID, true);
+            delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::WordClassID, true);
             break;
 
         // DecimalEscape
@@ -442,6 +436,31 @@ private:
             }
             restoreState(state);
             delegate.atomPatternCharacter('k');
+            break;
+        }
+
+        // Unicode property escapes
+        case 'p':
+        case 'P': {
+            int escapeChar = consume();
+
+            if (!m_isUnicode) {
+                if (isIdentityEscapeAnError(escapeChar))
+                    break;
+                delegate.atomPatternCharacter(escapeChar);
+                break;
+            }
+
+            if (!atEndOfPattern() && peek() == '{') {
+                consume();
+                auto optClassID = tryConsumeUnicodePropertyExpression();
+                if (!optClassID) {
+                    // tryConsumeUnicodePropertyExpression() will set m_err for a malformed property expression
+                    break;
+                }
+                delegate.atomBuiltInCharacterClass(optClassID.value(), escapeChar == 'P');
+            } else
+                m_err = YarrPattern::InvalidUnicodePropertyExpression;
             break;
         }
 
@@ -734,7 +753,7 @@ private:
 
             case '.':
                 consume();
-                m_delegate.atomBuiltInCharacterClass(DotClassID, false);
+                m_delegate.atomBuiltInCharacterClass(BuiltInCharacterClassID::DotClassID, false);
                 lastTokenWasAnAtom = true;
                 break;
 
@@ -940,6 +959,11 @@ private:
         return (WTF::isASCII(ch) && (WTF::isASCIIAlpha(ch) || ch == '_' || ch == '$')) || (U_GET_GC_MASK(ch) & (U_GC_L_MASK | U_GC_MN_MASK | U_GC_MC_MASK | U_GC_ND_MASK | U_GC_PC_MASK)) || ch == 0x200C || ch == 0x200D;
     }
 
+    bool isUnicodePropertyValueExpressionChar(int ch)
+    {
+        return WTF::isASCIIAlphanumeric(ch) || ch == '_' || ch == '=';
+    }
+
     int consume()
     {
         ASSERT(m_index < m_size);
@@ -1023,6 +1047,60 @@ private:
 
         restoreState(state);
 
+        return std::nullopt;
+    }
+
+    std::optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
+    {
+        if (atEndOfPattern() || !isUnicodePropertyValueExpressionChar(peek())) {
+            m_err = YarrPattern::InvalidUnicodePropertyExpression;
+            return std::nullopt;
+        }
+
+        StringBuilder expressionBuilder;
+        String unicodePropertyName;
+        bool foundEquals = false;
+        unsigned errors = 0;
+
+        expressionBuilder.append(consume());
+
+        while (!atEndOfPattern()) {
+            int ch = peek();
+            if (ch == '}') {
+                consume();
+                if (errors) {
+                    m_err = YarrPattern::InvalidUnicodePropertyExpression;
+                    return std::nullopt;
+                }
+
+                if (foundEquals) {
+                    auto result = unicodeMatchPropertyValue(unicodePropertyName, expressionBuilder.toString());
+                    if (!result)
+                        m_err = YarrPattern::InvalidUnicodePropertyExpression;
+                    return result;
+                }
+
+                auto result = unicodeMatchProperty(expressionBuilder.toString());
+                if (!result)
+                    m_err = YarrPattern::InvalidUnicodePropertyExpression;
+                return result;
+            }
+
+            consume();
+            if (ch == '=') {
+                if (!foundEquals) {
+                    foundEquals = true;
+                    unicodePropertyName = expressionBuilder.toString();
+                    expressionBuilder.clear();
+                } else
+                    errors++;
+            } else if (!isUnicodePropertyValueExpressionChar(ch))
+                errors++;
+            else
+                expressionBuilder.append(ch);
+        }
+
+        m_err = YarrPattern::InvalidUnicodePropertyExpression;
         return std::nullopt;
     }
 

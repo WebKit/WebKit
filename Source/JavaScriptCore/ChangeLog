@@ -1,3 +1,130 @@
+2017-10-09  Michael Saboff  <msaboff@apple.com>
+
+        Implement RegExp Unicode property escapes
+        https://bugs.webkit.org/show_bug.cgi?id=172069
+
+        Reviewed by JF Bastien.
+
+        Added Unicode Properties by extending the existing CharacterClass processing.
+
+        Introduced a new Python script, generateYarrUnicodePropertyTables.py, that parses
+        Unicode Database files to create character class data.  The result is a set of functions
+        that return character classes, one for each of the required Unicode properties.
+        There are many cases where many properties are handled by one function, primarily due to
+        property aliases, but also due to Script_Extension properties that are the same as the
+        Script property for the same script value.
+
+        Extended the BuiltInCharacterClassID enum so it can be used also for Unicode property
+        character classes.  Unicode properties are the enum value BaseUnicodePropertyID plus a
+        zero based value, that value being the index to the corrensponding character class
+        function.  The generation script also creates static hashing tables similar to what we
+        use for the generated .lut.h lookup table files.  These hashing tables map property
+        names to the function index.  Using these hashing tables, we can lookup a property
+        name and if present convert it to a function index.  We add that index to
+        BaseUnicodePropertyID to create a BuiltInCharacterClassID.
+
+        When we do syntax parsing, we convert the property to its corresponding BuiltInCharacterClassID.
+        When doing real parsing we takes the returned BuiltInCharacterClassID and use it to get
+        the actual character class by calling the corresponding generated function.
+
+        Added a new CharacterClass constructor that can take literal arrays for ranges and matches
+        to make the creation of large static character classes more efficent.
+
+        Since the Unicode character classes typically have more matches and ranges, the character
+        class matching in the interpreter has been updated to use binary searching for matches and
+        ranges with more than 6 entries.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/generateYarrUnicodePropertyTables.py: Added.
+        (openOrExit):
+        (openUCDFileOrExit):
+        (verifyUCDFilesExist):
+        (ceilingToPowerOf2):
+        (Aliases):
+        (Aliases.__init__):
+        (Aliases.parsePropertyAliasesFile):
+        (Aliases.parsePropertyValueAliasesFile):
+        (Aliases.globalAliasesFor):
+        (Aliases.generalCategoryAliasesFor):
+        (Aliases.generalCategoryForAlias):
+        (Aliases.scriptAliasesFor):
+        (Aliases.scriptNameForAlias):
+        (PropertyData):
+        (PropertyData.__init__):
+        (PropertyData.setAliases):
+        (PropertyData.makeCopy):
+        (PropertyData.getIndex):
+        (PropertyData.getCreateFuncName):
+        (PropertyData.addMatch):
+        (PropertyData.addRange):
+        (PropertyData.addMatchUnorderedForMatchesAndRanges):
+        (PropertyData.addRangeUnorderedForMatchesAndRanges):
+        (PropertyData.addMatchUnordered):
+        (PropertyData.addRangeUnordered):
+        (PropertyData.removeMatchFromRanges):
+        (PropertyData.removeMatch):
+        (PropertyData.dumpMatchData):
+        (PropertyData.dump):
+        (PropertyData.dumpAll):
+        (PropertyData.dumpAll.std):
+        (PropertyData.createAndDumpHashTable):
+        (Scripts):
+        (Scripts.__init__):
+        (Scripts.parseScriptsFile):
+        (Scripts.parseScriptExtensionsFile):
+        (Scripts.dump):
+        (GeneralCategory):
+        (GeneralCategory.__init__):
+        (GeneralCategory.createSpecialPropertyData):
+        (GeneralCategory.findPropertyGroupFor):
+        (GeneralCategory.addNextCodePoints):
+        (GeneralCategory.parse):
+        (GeneralCategory.dump):
+        (BinaryProperty):
+        (BinaryProperty.__init__):
+        (BinaryProperty.parsePropertyFile):
+        (BinaryProperty.dump):
+        * Scripts/hasher.py: Added.
+        (stringHash):
+        * Sources.txt:
+        * ucd/DerivedBinaryProperties.txt: Added.
+        * ucd/DerivedCoreProperties.txt: Added.
+        * ucd/DerivedNormalizationProps.txt: Added.
+        * ucd/PropList.txt: Added.
+        * ucd/PropertyAliases.txt: Added.
+        * ucd/PropertyValueAliases.txt: Added.
+        * ucd/ScriptExtensions.txt: Added.
+        * ucd/Scripts.txt: Added.
+        * ucd/UnicodeData.txt: Added.
+        * ucd/emoji-data.txt: Added.
+        * yarr/Yarr.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::testCharacterClass):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseTokens):
+        (JSC::Yarr::Parser::isUnicodePropertyValueExpressionChar):
+        (JSC::Yarr::Parser::tryConsumeUnicodePropertyExpression):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::appendInverted):
+        (JSC::Yarr::YarrPatternConstructor::atomBuiltInCharacterClass):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassBuiltIn):
+        (JSC::Yarr::YarrPattern::errorMessage):
+        (JSC::Yarr::PatternTerm::dump):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::CharacterRange::CharacterRange):
+        (JSC::Yarr::CharacterClass::CharacterClass):
+        (JSC::Yarr::YarrPattern::reset):
+        (JSC::Yarr::YarrPattern::unicodeCharacterClassFor):
+        * yarr/YarrUnicodeProperties.cpp: Added.
+        (JSC::Yarr::HashTable::entry const):
+        (JSC::Yarr::unicodeMatchPropertyValue):
+        (JSC::Yarr::unicodeMatchProperty):
+        (JSC::Yarr::createUnicodeCharacterClassFor):
+        * yarr/YarrUnicodeProperties.h: Added.
+
 2017-10-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r223015 and r223025.

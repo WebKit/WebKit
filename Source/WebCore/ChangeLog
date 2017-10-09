@@ -1,3 +1,15 @@
+2017-10-09  Michael Saboff  <msaboff@apple.com>
+
+        Implement RegExp Unicode property escapes
+        https://bugs.webkit.org/show_bug.cgi?id=172069
+
+        Reviewed by JF Bastien.
+
+        Refactoring change - Added BuiltInCharacterClassID:: prefix to uses of the enum.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::PatternParser::atomBuiltInCharacterClass):
+
 2017-10-09  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement PaymentRequest.show() and PaymentRequest.hide()

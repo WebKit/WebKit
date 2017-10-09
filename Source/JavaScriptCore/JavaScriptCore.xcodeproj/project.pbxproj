@@ -1024,6 +1024,7 @@
 		657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 657CF45719BF6662004ACBF2 /* JSCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 658824AE1E5CFDB000FB7359 /* ConfigFile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 658D3A5519638268003C45D6 /* VMEntryRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		659CDA5B1F6753F200D3E53F /* YarrUnicodeProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 659CDA5A1F67509800D3E53F /* YarrUnicodeProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B8392C1BACA92A0044E824 /* CachedRecovery.h */; };
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
 		6A38CFAA1E32B5AB0060206F /* AsyncStackTrace.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A38CFA81E32B58B0060206F /* AsyncStackTrace.h */; };
@@ -3417,6 +3418,8 @@
 		658D3A5519638268003C45D6 /* VMEntryRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = VMEntryRecord.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		65987F2C167FE84B003C2F8D /* DFGOSRExitCompilationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitCompilationInfo.h; path = dfg/DFGOSRExitCompilationInfo.h; sourceTree = "<group>"; };
 		65987F2F16828A7E003C2F8D /* UnusedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedPointer.h; sourceTree = "<group>"; };
+		659CDA591F67509800D3E53F /* YarrUnicodeProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrUnicodeProperties.cpp; path = yarr/YarrUnicodeProperties.cpp; sourceTree = "<group>"; };
+		659CDA5A1F67509800D3E53F /* YarrUnicodeProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrUnicodeProperties.h; path = yarr/YarrUnicodeProperties.h; sourceTree = "<group>"; };
 		65A946131C8E9F2000A7209A /* generateYarrCanonicalizeUnicode */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generateYarrCanonicalizeUnicode; path = yarr/generateYarrCanonicalizeUnicode; sourceTree = "<group>"; };
 		65A946141C8E9F6F00A7209A /* YarrCanonicalizeUnicode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YarrCanonicalizeUnicode.cpp; sourceTree = "<group>"; };
 		65B8392C1BACA92A0044E824 /* CachedRecovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRecovery.h; sourceTree = "<group>"; };
@@ -3427,6 +3430,7 @@
 		65C02FBB0637462A003E7EE6 /* Protect.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Protect.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
 		65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWrapperObject.h; sourceTree = "<group>"; };
+		65DA90461F87052A009BC546 /* generateYarrUnicodePropertyTables.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generateYarrUnicodePropertyTables.py; path = Scripts/generateYarrUnicodePropertyTables.py; sourceTree = "<group>"; };
 		65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProvider.h; sourceTree = "<group>"; };
 		65EA4C99092AF9E20093D800 /* JSLock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLock.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65EA4C9A092AF9E20093D800 /* JSLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSLock.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -6796,6 +6800,7 @@
 			children = (
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				65A946131C8E9F2000A7209A /* generateYarrCanonicalizeUnicode */,
+				65DA90461F87052A009BC546 /* generateYarrUnicodePropertyTables.py */,
 				A57D23EB1891B5540031C7FA /* RegularExpression.cpp */,
 				A57D23EC1891B5540031C7FA /* RegularExpression.h */,
 				451539B812DC994500EF7AC4 /* Yarr.h */,
@@ -6811,6 +6816,8 @@
 				86704B8312DBA33700A9FE7B /* YarrPattern.h */,
 				86704B4012DB8A8100A9FE7B /* YarrSyntaxChecker.cpp */,
 				86704B4112DB8A8100A9FE7B /* YarrSyntaxChecker.h */,
+				659CDA591F67509800D3E53F /* YarrUnicodeProperties.cpp */,
+				659CDA5A1F67509800D3E53F /* YarrUnicodeProperties.h */,
 			);
 			name = yarr;
 			sourceTree = "<group>";
@@ -9229,6 +9236,7 @@
 				86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */,
 				86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */,
 				86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */,
+				659CDA5B1F6753F200D3E53F /* YarrUnicodeProperties.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

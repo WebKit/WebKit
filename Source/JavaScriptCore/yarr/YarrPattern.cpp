@@ -73,6 +73,61 @@ public:
             addSortedRange(m_rangesUnicode, other->m_rangesUnicode[i].begin, other->m_rangesUnicode[i].end);
     }
 
+    void appendInverted(const CharacterClass* other)
+    {
+        auto addSortedInverted = [this, &other](UChar32 min, UChar32 max,
+            const Vector<UChar32>& srcMatches, const Vector<CharacterRange>& srcRanges,
+            Vector<UChar32>& destMatches, Vector<CharacterRange>& destRanges) {
+
+            auto addSortedMatchOrRange = [&](UChar32 lo, UChar32 hiPlusOne) {
+                if (lo < hiPlusOne) {
+                    if (lo + 1 == hiPlusOne)
+                        addSorted(destMatches, lo);
+                    else
+                        addSortedRange(destRanges, lo, hiPlusOne - 1);
+                }
+            };
+
+            UChar32 lo = min;
+            size_t matchesIndex = 0;
+            size_t rangesIndex = 0;
+            bool matchesRemaining = matchesIndex < srcMatches.size();
+            bool rangesRemaining = rangesIndex < srcRanges.size();
+
+            if (!matchesRemaining && !rangesRemaining) {
+                addSortedMatchOrRange(min, max + 1);
+                return;
+            }
+
+            while (matchesRemaining || rangesRemaining) {
+                UChar32 hiPlusOne;
+                UChar32 nextLo;
+
+                if (matchesRemaining
+                    && (!rangesRemaining || srcMatches[matchesIndex] < srcRanges[rangesIndex].begin)) {
+                    hiPlusOne = srcMatches[matchesIndex];
+                    nextLo = hiPlusOne + 1;
+                    ++matchesIndex;
+                    matchesRemaining = matchesIndex < srcMatches.size();
+                } else {
+                    hiPlusOne = srcRanges[rangesIndex].begin;
+                    nextLo = srcRanges[rangesIndex].end + 1;
+                    ++rangesIndex;
+                    rangesRemaining = rangesIndex < srcRanges.size();
+                }
+
+                addSortedMatchOrRange(lo, hiPlusOne);
+
+                lo = nextLo;
+            }
+
+            addSortedMatchOrRange(lo, max + 1);
+        };
+
+        addSortedInverted(0, 0x7f, other->m_matches, other->m_ranges, m_matches, m_ranges);
+        addSortedInverted(0x80, 0x10ffff, other->m_matchesUnicode, other->m_rangesUnicode, m_matchesUnicode, m_rangesUnicode);
+    }
+
     void putChar(UChar32 ch)
     {
         if (!m_isCaseInsensitive) {
@@ -363,24 +418,27 @@ public:
     void atomBuiltInCharacterClass(BuiltInCharacterClassID classID, bool invert)
     {
         switch (classID) {
-        case DigitClassID:
+        case BuiltInCharacterClassID::DigitClassID:
             m_alternative->m_terms.append(PatternTerm(m_pattern.digitsCharacterClass(), invert));
             break;
-        case SpaceClassID:
+        case BuiltInCharacterClassID::SpaceClassID:
             m_alternative->m_terms.append(PatternTerm(m_pattern.spacesCharacterClass(), invert));
             break;
-        case WordClassID:
+        case BuiltInCharacterClassID::WordClassID:
             if (m_pattern.unicode() && m_pattern.ignoreCase())
                 m_alternative->m_terms.append(PatternTerm(m_pattern.wordUnicodeIgnoreCaseCharCharacterClass(), invert));
             else
                 m_alternative->m_terms.append(PatternTerm(m_pattern.wordcharCharacterClass(), invert));
             break;
-        case DotClassID:
+        case BuiltInCharacterClassID::DotClassID:
             ASSERT(!invert);
             if (m_pattern.dotAll())
                 m_alternative->m_terms.append(PatternTerm(m_pattern.anyCharacterClass(), false));
             else
                 m_alternative->m_terms.append(PatternTerm(m_pattern.newlineCharacterClass(), true));
+            break;
+        default:
+            m_alternative->m_terms.append(PatternTerm(m_pattern.unicodeCharacterClassFor(classID), invert));
             break;
         }
     }
@@ -402,18 +460,18 @@ public:
 
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
     {
-        ASSERT(classID != DotClassID);
+        ASSERT(classID != BuiltInCharacterClassID::DotClassID);
 
         switch (classID) {
-        case DigitClassID:
+        case BuiltInCharacterClassID::DigitClassID:
             m_characterClassConstructor.append(invert ? m_pattern.nondigitsCharacterClass() : m_pattern.digitsCharacterClass());
             break;
         
-        case SpaceClassID:
+        case BuiltInCharacterClassID::SpaceClassID:
             m_characterClassConstructor.append(invert ? m_pattern.nonspacesCharacterClass() : m_pattern.spacesCharacterClass());
             break;
         
-        case WordClassID:
+        case BuiltInCharacterClassID::WordClassID:
             if (m_pattern.unicode() && m_pattern.ignoreCase())
                 m_characterClassConstructor.append(invert ? m_pattern.nonwordUnicodeIgnoreCaseCharCharacterClass() : m_pattern.wordUnicodeIgnoreCaseCharCharacterClass());
             else
@@ -421,7 +479,10 @@ public:
             break;
         
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            if (!invert)
+                m_characterClassConstructor.append(m_pattern.unicodeCharacterClassFor(classID));
+            else
+                m_characterClassConstructor.appendInverted(m_pattern.unicodeCharacterClassFor(classID));
         }
     }
 
@@ -962,6 +1023,7 @@ const char* YarrPattern::errorMessage(YarrPattern::ErrorCode error)
         REGEXP_ERROR_PREFIX "invalid unicode {} escape",                      // InvalidUnicodeEscape
         REGEXP_ERROR_PREFIX "invalid backreference for unicode pattern",      // InvalidBackreference
         REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern",  // InvalidIdentityEscape
+        REGEXP_ERROR_PREFIX "invalid property expression",                    // InvalidUnicodePropertyExpression
         REGEXP_ERROR_PREFIX "too many nested disjunctions",                   // TooManyDisjunctions
         REGEXP_ERROR_PREFIX "pattern exceeds string length limits",           // OffsetTooLarge
         REGEXP_ERROR_PREFIX "invalid flags"                                   // InvalidRegularExpressionFlags
@@ -1165,7 +1227,7 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
                         out.print(",");
                     needMatchesRangesSeperator = true;
 
-                    out.print(prefix, "ranges:(");
+                    out.print(prefix, " ranges:(");
                     for (size_t i = 0; i < rangeSize; ++i) {
                         if (i)
                             out.print(",");
@@ -1324,4 +1386,4 @@ std::unique_ptr<CharacterClass> anycharCreate()
     return characterClass;
 }
 
-} }
+} } // namespace JSC::Yarr

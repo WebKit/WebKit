@@ -293,20 +293,98 @@ public:
 
     bool testCharacterClass(CharacterClass* characterClass, int ch)
     {
+        auto linearSearchMatches = [&ch](const Vector<UChar32>& matches) {
+            for (unsigned i = 0; i < matches.size(); ++i) {
+                if (ch == matches[i])
+                    return true;
+            }
+
+            return false;
+        };
+
+        auto binarySearchMatches = [&ch](const Vector<UChar32>& matches) {
+            size_t low = 0;
+            size_t high = matches.size() - 1;
+
+            while (low <= high) {
+                size_t mid = low + (high - low) / 2;
+                int diff = ch - matches[mid];
+                if (!diff)
+                    return true;
+
+                if (diff < 0) {
+                    if (mid == low)
+                        return false;
+                    high = mid - 1;
+                } else
+                    low = mid + 1;
+            }
+            return false;
+        };
+
+        auto linearSearchRanges = [&ch](const Vector<CharacterRange>& ranges) {
+            for (unsigned i = 0; i < ranges.size(); ++i) {
+                if ((ch >= ranges[i].begin) && (ch <= ranges[i].end))
+                    return true;
+            }
+
+            return false;
+        };
+
+        auto binarySearchRanges = [&ch](const Vector<CharacterRange>& ranges) {
+            size_t low = 0;
+            size_t high = ranges.size() - 1;
+
+            while (low <= high) {
+                size_t mid = low + (high - low) / 2;
+                int rangeBeginDiff = ch - ranges[mid].begin;
+                if (rangeBeginDiff >= 0 && ch <= ranges[mid].end)
+                    return true;
+
+                if (rangeBeginDiff < 0) {
+                    if (mid == low)
+                        return false;
+                    high = mid - 1;
+                } else
+                    low = mid + 1;
+            }
+            return false;
+        };
+
+        const size_t thresholdForBinarySearch = 6;
+
         if (!isASCII(ch)) {
-            for (unsigned i = 0; i < characterClass->m_matchesUnicode.size(); ++i)
-                if (ch == characterClass->m_matchesUnicode[i])
+            if (characterClass->m_matchesUnicode.size()) {
+                if (characterClass->m_matchesUnicode.size() > thresholdForBinarySearch) {
+                    if (binarySearchMatches(characterClass->m_matchesUnicode))
+                        return true;
+                } else if (linearSearchMatches(characterClass->m_matchesUnicode))
                     return true;
-            for (unsigned i = 0; i < characterClass->m_rangesUnicode.size(); ++i)
-                if ((ch >= characterClass->m_rangesUnicode[i].begin) && (ch <= characterClass->m_rangesUnicode[i].end))
+            }
+
+            if (characterClass->m_rangesUnicode.size()) {
+                if (characterClass->m_rangesUnicode.size() > thresholdForBinarySearch) {
+                    if (binarySearchRanges(characterClass->m_rangesUnicode))
+                        return true;
+                } else if (linearSearchRanges(characterClass->m_rangesUnicode))
                     return true;
+            }
         } else {
-            for (unsigned i = 0; i < characterClass->m_matches.size(); ++i)
-                if (ch == characterClass->m_matches[i])
+            if (characterClass->m_matches.size()) {
+                if (characterClass->m_matches.size() > thresholdForBinarySearch) {
+                    if (binarySearchMatches(characterClass->m_matches))
+                        return true;
+                } else if (linearSearchMatches(characterClass->m_matches))
                     return true;
-            for (unsigned i = 0; i < characterClass->m_ranges.size(); ++i)
-                if ((ch >= characterClass->m_ranges[i].begin) && (ch <= characterClass->m_ranges[i].end))
+            }
+
+            if (characterClass->m_ranges.size()) {
+                if (characterClass->m_ranges.size() > thresholdForBinarySearch) {
+                    if (binarySearchRanges(characterClass->m_ranges))
+                        return true;
+                } else if (linearSearchRanges(characterClass->m_ranges))
                     return true;
+            }
         }
 
         return false;

@@ -27,6 +27,7 @@
 #pragma once
 
 #include "RegExpKey.h"
+#include "YarrUnicodeProperties.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
@@ -39,8 +40,8 @@ struct YarrPattern;
 struct PatternDisjunction;
 
 struct CharacterRange {
-    UChar32 begin;
-    UChar32 end;
+    UChar32 begin { 0 };
+    UChar32 end { 0x10ffff };
 
     CharacterRange(UChar32 begin, UChar32 end)
         : begin(begin)
@@ -66,6 +67,17 @@ public:
         , m_hasNonBMPCharacters(false)
     {
     }
+    CharacterClass(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode)
+        : m_matches(matches)
+        , m_ranges(ranges)
+        , m_matchesUnicode(matchesUnicode)
+        , m_rangesUnicode(rangesUnicode)
+        , m_table(0)
+        , m_tableInverted(false)
+        , m_hasNonBMPCharacters(false)
+    {
+    }
+
     Vector<UChar32> m_matches;
     Vector<CharacterRange> m_ranges;
     Vector<UChar32> m_matchesUnicode;
@@ -348,6 +360,7 @@ struct YarrPattern {
         InvalidUnicodeEscape,
         InvalidBackreference,
         InvalidIdentityEscape,
+        InvalidUnicodePropertyExpression,
         TooManyDisjunctions,
         OffsetTooLarge,
         InvalidRegularExpressionFlags,
@@ -378,6 +391,7 @@ struct YarrPattern {
         nonspacesCached = 0;
         nonwordcharCached = 0;
         nonwordUnicodeIgnoreCasecharCached = 0;
+        unicodePropertiesCached.clear();
 
         m_disjunctions.clear();
         m_userCharacterClasses.clear();
@@ -474,6 +488,21 @@ struct YarrPattern {
         }
         return nonwordUnicodeIgnoreCasecharCached;
     }
+    CharacterClass* unicodeCharacterClassFor(BuiltInCharacterClassID unicodeClassID)
+    {
+        ASSERT(unicodeClassID >= BuiltInCharacterClassID::BaseUnicodePropertyID);
+
+        unsigned classID = static_cast<unsigned>(unicodeClassID);
+
+        if (unicodePropertiesCached.find(classID) == unicodePropertiesCached.end()) {
+            m_userCharacterClasses.append(createUnicodeCharacterClassFor(unicodeClassID));
+            CharacterClass* result = m_userCharacterClasses.last().get();
+            unicodePropertiesCached.add(classID, result);
+            return result;
+        }
+
+        return unicodePropertiesCached.get(classID);
+    }
 
     void dumpPattern(const String& pattern);
     void dumpPattern(PrintStream& out, const String& pattern);
@@ -513,6 +542,7 @@ private:
     CharacterClass* nonspacesCached;
     CharacterClass* nonwordcharCached;
     CharacterClass* nonwordUnicodeIgnoreCasecharCached;
+    HashMap<unsigned, CharacterClass*> unicodePropertiesCached;
 };
 
     struct BackTrackInfoPatternCharacter {

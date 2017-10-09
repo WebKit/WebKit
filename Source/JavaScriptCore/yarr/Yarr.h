@@ -62,6 +62,14 @@ enum YarrCharSize {
     Char16
 };
 
+enum class BuiltInCharacterClassID : unsigned {
+    DigitClassID,
+    SpaceClassID,
+    WordClassID,
+    DotClassID,
+    BaseUnicodePropertyID
+};
+
 struct BytecodePattern;
 
 } } // namespace JSC::Yarr
