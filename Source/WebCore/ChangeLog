@@ -1,3 +1,12 @@
+2017-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, another build fix attempt after r223031
+
+        The default constructor of DragTargetResponse is also invoked via initializer list in EventHandler.cpp, so we'll
+        need to explicitly declare this constructor in the header.
+
+        * page/EventHandler.h:
+
 2017-10-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223021.
