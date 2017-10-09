@@ -7,6 +7,7 @@ true		TRUETOKEN
 false		FALSETOKEN
 
 # Keywords.
+async       ASYNC
 await       AWAIT
 break		BREAK
 case		CASE

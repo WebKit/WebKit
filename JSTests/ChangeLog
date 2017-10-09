@@ -1,3 +1,16 @@
+2017-10-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r223022.
+
+        This change introduced 18 test262 failures.
+
+        Reverted changeset:
+
+        "`async` should be able to be used as an imported binding
+        name"
+        https://bugs.webkit.org/show_bug.cgi?id=176573
+        http://trac.webkit.org/changeset/223022
+
 2017-10-09  Saam Barati  <sbarati@apple.com>
 
         3 poly-proto JSC tests timing out on debug after r222827
