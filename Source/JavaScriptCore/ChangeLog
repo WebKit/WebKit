@@ -1,3 +1,9 @@
+2017-10-09  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, sort unified sources again now that they are numbered numerically rather than lexicographically.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2017-10-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223022.
