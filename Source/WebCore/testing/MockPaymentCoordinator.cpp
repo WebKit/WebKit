@@ -23,29 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MockPaymentCoordinator.h"
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
-#include "PaymentSessionBase.h"
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-class Payment;
-class PaymentContact;
-class PaymentMethod;
-class URL;
+bool MockPaymentCoordinator::supportsVersion(unsigned version)
+{
+    ASSERT(version > 0);
 
-class PaymentSession : public virtual PaymentSessionBase {
-public:
-    virtual void validateMerchant(const URL&) = 0;
-    virtual void didAuthorizePayment(const Payment&) = 0;
-    virtual void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
-    virtual void didSelectShippingContact(const PaymentContact&) = 0;
-    virtual void didSelectPaymentMethod(const PaymentMethod&) = 0;
-    virtual void didCancelPaymentSession() = 0;
-};
+#if !ENABLE(APPLE_PAY_SESSION_V3)
+    static const unsigned currentVersion = 2;
+#else
+    static const unsigned currentVersion = 3;
+#endif
+
+    return version <= currentVersion;
+}
+
+bool MockPaymentCoordinator::canMakePayments()
+{
+    return true;
+}
+
+void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void(bool)>&& completionHandler)
+{
+    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() {
+        completionHandler(true);
+    });
+}
+
+void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, WTF::Function<void(bool)>&& completionHandler)
+{
+    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() {
+        completionHandler(true);
+    });
+}
+
+bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&)
+{
+    return true;
+}
+
+void MockPaymentCoordinator::paymentCoordinatorDestroyed()
+{
+    delete this;
+}
 
 } // namespace WebCore
 

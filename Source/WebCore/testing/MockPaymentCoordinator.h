@@ -27,24 +27,25 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePaySessionPaymentRequest.h"
-#include "PaymentSessionBase.h"
+#include "PaymentCoordinatorClient.h"
 
 namespace WebCore {
 
-class Payment;
-class PaymentContact;
-class PaymentMethod;
-class URL;
-
-class PaymentSession : public virtual PaymentSessionBase {
-public:
-    virtual void validateMerchant(const URL&) = 0;
-    virtual void didAuthorizePayment(const Payment&) = 0;
-    virtual void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) = 0;
-    virtual void didSelectShippingContact(const PaymentContact&) = 0;
-    virtual void didSelectPaymentMethod(const PaymentMethod&) = 0;
-    virtual void didCancelPaymentSession() = 0;
+class MockPaymentCoordinator final : public PaymentCoordinatorClient {
+private:
+    bool supportsVersion(unsigned) final;
+    bool canMakePayments() final;
+    void canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void(bool)>&&);
+    void openPaymentSetup(const String&, const String&, WTF::Function<void(bool)>&&);
+    bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
+    void completeMerchantValidation(const PaymentMerchantSession&) final { }
+    void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&) final { }
+    void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) final { }
+    void completePaymentMethodSelection(std::optional<PaymentMethodUpdate>&&) final { }
+    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final { }
+    void abortPaymentSession() final { }
+    void cancelPaymentSession() final { }
+    void paymentCoordinatorDestroyed() final;
 };
 
 } // namespace WebCore

@@ -1,3 +1,23 @@
+2017-10-09  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement PaymentRequest.show() and PaymentRequest.hide()
+        https://bugs.webkit.org/show_bug.cgi?id=178043
+        <rdar://problem/34076639>
+
+        Reviewed by Tim Horton.
+
+        Copied payment-request-abort-method.https.html and payment-request-show-method.https.html
+        from web-platform-tests/payment-request/ and changed the payment method from basic-card to
+        Apple Pay. This needs to eventually be upstreamed back to WPT.
+
+        * TestExpectations:
+        * http/tests/paymentrequest/payment-request-abort-method.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-request-abort-method.https.html: Added.
+        * http/tests/paymentrequest/payment-request-show-method.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-request-show-method.https.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2017-10-09  Youenn Fablet  <youenn@apple.com>
 
         Add quota to cache API

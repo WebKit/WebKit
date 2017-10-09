@@ -1,6 +1,0 @@
-
-PASS Must be possible to construct a payment request 
-FAIL Throws if the promise [[state]] is not "created" assert_throws: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
-FAIL If the user agent's "payment request is showing" boolean is true, then return a promise rejected with an "AbortError" DOMException. assert_throws: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
-PASS If payment method consultation produces no supported method of payment, then return a promise rejected with a "NotSupportedError" DOMException. 
-

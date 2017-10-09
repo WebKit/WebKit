@@ -1,3 +1,14 @@
+2017-10-09  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement PaymentRequest.show() and PaymentRequest.hide()
+        https://bugs.webkit.org/show_bug.cgi?id=178043
+        <rdar://problem/34076639>
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/payment-request/payment-request-abort-method.https-expected.txt: Removed.
+        * web-platform-tests/payment-request/payment-request-show-method.https-expected.txt: Removed.
+
 2017-10-09  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: Some bots fail to run LayoutTests due to a WPT Server error

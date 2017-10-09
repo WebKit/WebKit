@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,7 @@ public:
 
 #if ENABLE(APPLE_PAY)
     PaymentCoordinator& paymentCoordinator() const { return *m_paymentCoordinator; }
+    WEBCORE_EXPORT void setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&&);
 #endif
 
     PerformanceLogging& performanceLogging() const { return *m_performanceLogging; }

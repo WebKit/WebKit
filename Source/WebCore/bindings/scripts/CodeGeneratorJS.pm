@@ -3522,7 +3522,8 @@ sub GetGnuMangledNameForInterface
 sub GetGnuVTableOffsetForType
 {
     my $typename = shift;
-    if ($typename eq "SVGAElement"
+    if ($typename eq "ApplePaySession"
+        || $typename eq "SVGAElement"
         || $typename eq "SVGCircleElement"
         || $typename eq "SVGClipPathElement"
         || $typename eq "SVGDefsElement"

@@ -2347,7 +2347,6 @@
 		517A534E1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A534B1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.cpp */; };
 		517A534F1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B61C89912600A7E715 /* FetchLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517A535A1F5889EF00DCDC0A /* FetchLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B51C89912600A7E715 /* FetchLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A535B1F588A4C00DCDC0A /* FetchBodyConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A535C1F5899F200DCDC0A /* ServiceWorkerFetchResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */; };
@@ -4438,6 +4437,7 @@
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
 		A17D275E1EAC579800BF01E7 /* MediaSelectionOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A17D275D1EAC579800BF01E7 /* MediaSelectionOption.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A17FEE641F8893220021E811 /* PaymentSessionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A17FEE631F8893220021E811 /* PaymentSessionBase.h */; };
 		A182D5B71BE722670087A7CC /* SettingsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A182D5B61BE722620087A7CC /* SettingsCocoa.mm */; };
 		A185B4291E8211A100DC9118 /* PreviewLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = A185B4271E8211A100DC9118 /* PreviewLoader.mm */; };
 		A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A185B4281E8211A100DC9118 /* PreviewLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4449,6 +4449,8 @@
 		A19D934A1AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A19D93481AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm */; };
 		A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */; };
 		A1AA9AB91D23911500FEADB3 /* ContentFilterBlockedPage.html in Resources */ = {isa = PBXBuildFile; fileRef = A1AA9AB81D23911500FEADB3 /* ContentFilterBlockedPage.html */; };
+		A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */; };
+		A1AFEDE71F8BFF6D0087013F /* MockPaymentCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */; };
 		A1B5B29E1AAA846E008B6042 /* MockContentFilterSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */; };
 		A1B5B29F1AAA846F008B6042 /* MockContentFilterSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1BF6B821AA96C7D00AF4A8A /* MockContentFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1BF6B801AA96C7D00AF4A8A /* MockContentFilter.cpp */; };
@@ -12922,6 +12924,7 @@
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
 		A17D275D1EAC579800BF01E7 /* MediaSelectionOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSelectionOption.h; sourceTree = "<group>"; };
+		A17FEE631F8893220021E811 /* PaymentSessionBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentSessionBase.h; sourceTree = "<group>"; };
 		A182D5B61BE722620087A7CC /* SettingsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsCocoa.mm; sourceTree = "<group>"; };
 		A185B4271E8211A100DC9118 /* PreviewLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewLoader.mm; sourceTree = "<group>"; };
 		A185B4281E8211A100DC9118 /* PreviewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoader.h; sourceTree = "<group>"; };
@@ -12934,6 +12937,8 @@
 		A19D93481AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkExtensionContentFilter.mm; sourceTree = "<group>"; };
 		A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkExtensionContentFilter.h; sourceTree = "<group>"; };
 		A1AA9AB81D23911500FEADB3 /* ContentFilterBlockedPage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContentFilterBlockedPage.html; sourceTree = "<group>"; };
+		A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPaymentCoordinator.h; sourceTree = "<group>"; };
+		A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockPaymentCoordinator.cpp; sourceTree = "<group>"; };
 		A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilterSettings.cpp; sourceTree = "<group>"; };
 		A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilterSettings.h; sourceTree = "<group>"; };
 		A1BF6B801AA96C7D00AF4A8A /* MockContentFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilter.cpp; sourceTree = "<group>"; };
@@ -18226,6 +18231,8 @@
 				2D6F3E8C1C1ECB1C0061DBD4 /* MockPageOverlay.idl */,
 				2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */,
 				2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */,
+				A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */,
+				A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */,
 				A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */,
 				A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */,
 				EB081CD81696084400553730 /* TypeConversions.h */,
@@ -21764,6 +21771,7 @@
 				A1F76B3B1F44CF240014C318 /* PaymentResponse.cpp */,
 				A1F76B3A1F44CF240014C318 /* PaymentResponse.h */,
 				A1F76B3C1F44CF240014C318 /* PaymentResponse.idl */,
+				A17FEE631F8893220021E811 /* PaymentSessionBase.h */,
 				A1F76B521F44D2C70014C318 /* PaymentShippingOption.h */,
 				A1F76B541F44D2C70014C318 /* PaymentShippingOption.idl */,
 				A1F76B461F44D07A0014C318 /* PaymentShippingType.h */,
@@ -22171,12 +22179,12 @@
 				6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */,
 				E446140E0CD6826900FADA75 /* JSHTMLVideoElement.cpp */,
 				E446140F0CD6826900FADA75 /* JSHTMLVideoElement.h */,
-				7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */,
-				7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */,
 				31D26BC61F86D269008FF255 /* JSImageBitmap.cpp */,
 				31D26BC31F86D265008FF255 /* JSImageBitmap.h */,
 				31D26BC41F86D266008FF255 /* JSImageBitmapOptions.cpp */,
 				31D26BC51F86D268008FF255 /* JSImageBitmapOptions.h */,
+				7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */,
+				7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */,
 				A77979240D6B9E64003851B9 /* JSImageData.cpp */,
 				A77979250D6B9E64003851B9 /* JSImageData.h */,
 				7C193BFB1F5E10C40088F3E6 /* JSImageSmoothingQuality.cpp */,
@@ -27142,6 +27150,7 @@
 				4157EBFB1E3AB67F00AC9FE9 /* MockLibWebRTCPeerConnection.h in Headers */,
 				2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */,
 				2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */,
+				A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */,
 				A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
 				A1763F3F1E205234001D58DE /* WebArchiveDumpSupport.h in Headers */,
@@ -27971,8 +27980,10 @@
 				84730D851248F0B300D3A9C9 /* FEMorphology.h in Headers */,
 				84730D871248F0B300D3A9C9 /* FEOffset.h in Headers */,
 				84730D891248F0B300D3A9C9 /* FESpecularLighting.h in Headers */,
+				517A535B1F588A4C00DCDC0A /* FetchBodyConsumer.h in Headers */,
 				4129C9971F59B963009D7403 /* FetchBodySource.h in Headers */,
 				41D129DB1F3D143800D15E47 /* FetchHeaders.h in Headers */,
+				517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */,
 				41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */,
 				7CE1914D1F2A9AFB00272F78 /* FetchReferrerPolicy.h in Headers */,
 				7CE1915A1F2A9B3400272F78 /* FetchRequestCache.h in Headers */,
@@ -28190,7 +28201,6 @@
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
-				517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */,
 				A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */,
 				977B37241228721700B81FF8 /* HTMLElementStack.h in Headers */,
 				B562DB6017D3CD630010AF96 /* HTMLElementTypeHelpers.h in Headers */,
@@ -28818,6 +28828,7 @@
 				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
 				838EF53C1DC14A7C008F0C39 /* JSIDBTransactionMode.h in Headers */,
 				269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */,
+				7C7761AA1F878AA500F869FC /* JSImageBitmapRenderingContext.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,
@@ -29368,7 +29379,6 @@
 				FA654A6C1108ABED002626F1 /* MathMLUnderOverElement.h in Headers */,
 				37C738EF1EDBD71B003F2B0B /* MathMLUnknownElement.h in Headers */,
 				439046EA12DA25E812AF80AC /* MathOperator.h in Headers */,
-				517A535B1F588A4C00DCDC0A /* FetchBodyConsumer.h in Headers */,
 				49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */,
 				49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */,
 				5CBC8DAD1AAA302200E1C803 /* MediaAccessibilitySoftLink.h in Headers */,
@@ -29442,7 +29452,6 @@
 				CDC8B5A7180474F70016E685 /* MediaSourcePrivateAVFObjC.h in Headers */,
 				CDDC1E7A18A952F30027A9D4 /* MediaSourcePrivateClient.h in Headers */,
 				CD61FE681794AADB004101EB /* MediaSourceRegistry.h in Headers */,
-				7C7761AA1F878AA500F869FC /* JSImageBitmapRenderingContext.h in Headers */,
 				078E091517D14D1C00420AA1 /* MediaStream.h in Headers */,
 				078E094C17D1709600420AA1 /* MediaStreamAudioDestinationNode.h in Headers */,
 				0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */,
@@ -29525,7 +29534,6 @@
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
 				A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */,
 				628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */,
-				517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */,
 				8A81BF8511DCFD9000DA2B98 /* NetworkLoadMetrics.h in Headers */,
 				59C27F07138D28CF0079B7E2 /* NetworkResourcesData.h in Headers */,
 				1A7FA6190DDA3B3A0028F8A5 /* NetworkStateNotifier.h in Headers */,
@@ -29658,6 +29666,7 @@
 				1A8A64681D19FDFF00D0E00F /* PaymentRequestValidator.h in Headers */,
 				A1F76B3D1F44CF240014C318 /* PaymentResponse.h in Headers */,
 				A1491DA31F859D870095F5D4 /* PaymentSession.h in Headers */,
+				A17FEE641F8893220021E811 /* PaymentSessionBase.h in Headers */,
 				A1F76B551F44D2C70014C318 /* PaymentShippingOption.h in Headers */,
 				A1F76B491F44D07A0014C318 /* PaymentShippingType.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
@@ -30143,6 +30152,7 @@
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				51F1755D1F3EBC8300C74950 /* ServiceWorker.h in Headers */,
 				51F1755F1F3EBC8300C74950 /* ServiceWorkerContainer.h in Headers */,
+				517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */,
 				51F175611F3EBC8300C74950 /* ServiceWorkerGlobalScope.h in Headers */,
 				51F175631F3EBC8300C74950 /* ServiceWorkerJob.h in Headers */,
 				51F175641F3EBC8300C74950 /* ServiceWorkerJobClient.h in Headers */,
@@ -31340,6 +31350,7 @@
 				4157EBFA1E3AB67900AC9FE9 /* MockLibWebRTCPeerConnection.cpp in Sources */,
 				2D6F3E901C1ECB270061DBD4 /* MockPageOverlay.cpp in Sources */,
 				2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */,
+				A1AFEDE71F8BFF6D0087013F /* MockPaymentCoordinator.cpp in Sources */,
 				A140618B1E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp in Sources */,
 				AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */,
 				A1763F3E1E205234001D58DE /* WebArchiveDumpSupport.mm in Sources */,
@@ -31749,7 +31760,6 @@
 				4A6E9FC313C17D1D0046A7F8 /* CSSFontFeatureValue.cpp in Sources */,
 				BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */,
 				C2E38F011E84573500CA3ADF /* CSSFontStyleRangeValue.cpp in Sources */,
-				7C7761A81F878A8B00F869FC /* JSImageBitmapRenderingContext.cpp in Sources */,
 				C2E38EFD1E8396FD00CA3ADF /* CSSFontStyleValue.cpp in Sources */,
 				A80E6CF10A1989CA007FB8C5 /* CSSFontValue.cpp in Sources */,
 				C21DF2E91D9E4E9900F5B24C /* CSSFontVariationValue.cpp in Sources */,
@@ -32392,8 +32402,8 @@
 				C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */,
 				C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
-				7C7903B41F86F95C00463A70 /* ImageBitmapRenderingContext.cpp in Sources */,
 				31D26BCB1F87065B008FF255 /* ImageBitmap.cpp in Sources */,
+				7C7903B41F86F95C00463A70 /* ImageBitmapRenderingContext.cpp in Sources */,
 				43D2597713C816F400608559 /* ImageBuffer.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
 				2292B27C1356669400CF11EF /* ImageBufferDataCG.cpp in Sources */,
@@ -32865,6 +32875,7 @@
 				511EF2CB17F0FD3500E4FA16 /* JSIDBVersionChangeEvent.cpp in Sources */,
 				31D26BC81F87063D008FF255 /* JSImageBitmap.cpp in Sources */,
 				31D26BCA1F870645008FF255 /* JSImageBitmapOptions.cpp in Sources */,
+				7C7761A81F878A8B00F869FC /* JSImageBitmapRenderingContext.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
 				7C193C001F5E11050088F3E6 /* JSImageSmoothingQuality.cpp in Sources */,

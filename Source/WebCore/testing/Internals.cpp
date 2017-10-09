@@ -241,6 +241,11 @@
 #include "PreviewLoader.h"
 #endif
 
+#if ENABLE(APPLE_PAY)
+#include "MockPaymentCoordinator.h"
+#include "PaymentCoordinator.h"
+#endif
+
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
@@ -500,6 +505,10 @@ Internals::Internals(Document& document)
     }
 
     setConsoleMessageListener(nullptr);
+
+#if ENABLE(APPLE_PAY)
+    document.frame()->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*new MockPaymentCoordinator()));
+#endif
 }
 
 Document* Internals::contextDocument() const
