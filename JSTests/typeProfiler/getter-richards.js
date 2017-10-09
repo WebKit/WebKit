@@ -1,3 +1,5 @@
+//@ skip if $buildType == "debug"
+
 // Copyright 2006-2008 the V8 project authors. All rights reserved.
 // Copyright 2014 Apple Inc.
 // Redistribution and use in source and binary forms, with or without
@@ -589,5 +591,5 @@ Packet.prototype.toString = function () {
   return "Packet";
 };
 
-for (var i = 0; i < 60; ++i)
+for (var i = 0; i < 150; ++i)
   runRichards();
