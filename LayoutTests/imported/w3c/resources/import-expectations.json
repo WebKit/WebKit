@@ -233,7 +233,7 @@
     "web-platform-tests/html/webappapis/the-windoworworkerglobalscope-mixin": "import", 
     "web-platform-tests/http": "skip", 
     "web-platform-tests/image-decodes": "skip", 
-    "web-platform-tests/imagebitmap-renderingcontext": "skip", 
+    "web-platform-tests/imagebitmap-renderingcontext": "import", 
     "web-platform-tests/infrastructure": "skip", 
     "web-platform-tests/innerText": "import", 
     "web-platform-tests/input-events": "skip", 
