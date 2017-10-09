@@ -8,6 +8,7 @@
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
       <dep package="brotli"/>
+      <dep package="woff2"/>
       <dep package="cairo"/>
       <dep package="fonts"/>
       <dep package="dicts"/>
@@ -82,6 +83,13 @@
 
   <cmake id="brotli">
     <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.1"/>
+  </cmake>
+
+  <cmake id="woff2">
+    <branch repo="github.com" module="google/woff2.git" checkoutdir="woff2" tag="v1.0.1"/>
+    <dependencies>
+      <dep package="brotli"/>
+    </dependencies>
   </cmake>
 
   <autotools id="cairo"

@@ -1,5 +1,46 @@
 2017-10-05  Frederic Wang  <fwang@igalia.com>
 
+        Remove WOFF2 from Source/ThirdParty.
+        https://bugs.webkit.org/show_bug.cgi?id=177862
+
+        Reviewed by Michael Catanzaro.
+
+        * woff2/CMakeLists.txt: Removed.
+        * woff2/LICENSE: Removed.
+        * woff2/README.webkit: Removed.
+        * woff2/include/woff2/decode.h: Removed.
+        * woff2/include/woff2/encode.h: Removed.
+        * woff2/include/woff2/output.h: Removed.
+        * woff2/src/buffer.h: Removed.
+        * woff2/src/convert_woff2ttf_*.cc: Removed.
+        * woff2/src/file.h: Removed.
+        * woff2/src/font.cc: Removed.
+        * woff2/src/font.h: Removed.
+        * woff2/src/glyph.cc: Removed.
+        * woff2/src/glyph.h: Removed.
+        * woff2/src/normalize.cc: Removed.
+        * woff2/src/normalize.h: Removed.
+        * woff2/src/port.h: Removed.
+        * woff2/src/round.h: Removed.
+        * woff2/src/store_bytes.h: Removed.
+        * woff2/src/table_tags.cc: Removed.
+        * woff2/src/table_tags.h: Removed.
+        * woff2/src/transform.cc: Removed.
+        * woff2/src/transform.h: Removed.
+        * woff2/src/variable_length.cc: Removed.
+        * woff2/src/variable_length.h: Removed.
+        * woff2/src/woff2_common.cc: Removed.
+        * woff2/src/woff2_common.h: Removed.
+        * woff2/src/woff2_compress.cc: Removed.
+        * woff2/src/woff2_dec.cc: Removed.
+        * woff2/src/woff2_decompress.cc: Removed.
+        * woff2/src/woff2_enc.cc: Removed.
+        * woff2/src/woff2_info.cc: Removed.
+        * woff2/src/woff2_out.cc: Removed.
+        * woff2/update.sh: Removed.
+
+2017-10-05  Frederic Wang  <fwang@igalia.com>
+
         Update Source/ThirdParty/woff2 to 22c256bc457777744ba14b7325a6e8e0e7dec91c
         https://bugs.webkit.org/show_bug.cgi?id=177994
 

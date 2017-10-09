@@ -387,6 +387,10 @@ if (USE_WOFF2)
     if (NOT BROTLIDEC_FOUND)
        message(FATAL_ERROR "librotlidec is needed for USE_WOFF2.")
     endif ()
+    find_package(WOFF2Dec 1.0.1)
+    if (NOT WOFF2DEC_FOUND)
+       message(FATAL_ERROR "liwoff2dec is needed for USE_WOFF2.")
+    endif ()
 endif ()
 
 # Override the cached variables, gtk-doc and gobject-introspection do not really work when cross-building.

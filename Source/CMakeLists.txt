@@ -17,10 +17,6 @@ if (ENABLE_API_TESTS)
     add_subdirectory(ThirdParty/gtest)
 endif ()
 
-if (USE_WOFF2)
-    add_subdirectory(ThirdParty/woff2)
-endif ()
-
 if (USE_XDGMIME)
     add_subdirectory(ThirdParty/xdgmime)
 endif ()

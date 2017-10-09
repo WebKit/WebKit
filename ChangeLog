@@ -1,3 +1,14 @@
+2017-10-05  Frederic Wang  <fwang@igalia.com>
+
+        Remove WOFF2 from Source/ThirdParty.
+        https://bugs.webkit.org/show_bug.cgi?id=177862
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/CMakeLists.txt: Do not build the woff2 source.
+        * Source/cmake/FindWOFF2Dec.cmake: Added. New cmake module for woff2.
+        * Source/cmake/OptionsGTK.cmake: Load the woff2 package.
+
 2017-10-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Generate a compile error if release is built without compiler optimizations
