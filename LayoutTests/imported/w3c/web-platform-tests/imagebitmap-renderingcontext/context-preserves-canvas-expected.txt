@@ -1,3 +1,3 @@
 
-FAIL Test that ctx.canvas on a ImageBitmapRenderingContext returns the original canvas null is not an object (evaluating 'ctx.canvas')
+PASS Test that ctx.canvas on a ImageBitmapRenderingContext returns the original canvas 
 
