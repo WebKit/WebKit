@@ -447,7 +447,7 @@ list(APPEND WebKitLegacy_LIBRARIES
     PRIVATE Usp10
     PRIVATE Version
     PRIVATE Winmm
-    PRIVATE WebKitLegacyGUID${DEBUG_SUFFIX}
+    PRIVATE WebKitGUID${DEBUG_SUFFIX}
     PRIVATE WebCoreDerivedSources${DEBUG_SUFFIX}
     PRIVATE WindowsCodecs
 )
