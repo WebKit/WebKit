@@ -60,6 +60,13 @@ static IntRect inlineVideoFrame(HTMLVideoElement& element)
     auto* renderer = element.renderer();
     if (!renderer)
         return { };
+
+    if (renderer->hasLayer() && renderer->enclosingLayer()->isComposited()) {
+        FloatQuad contentsBox = static_cast<FloatRect>(renderer->enclosingLayer()->backing()->contentsBox());
+        contentsBox = renderer->localToAbsoluteQuad(contentsBox);
+        return element.document().view()->contentsToRootView(contentsBox.enclosingBoundingBox());
+    }
+
     auto rect = renderer->videoBox();
     rect.moveBy(renderer->absoluteBoundingBoxRect().location());
     return element.document().view()->contentsToRootView(rect);

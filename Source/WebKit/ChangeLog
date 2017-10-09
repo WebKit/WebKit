@@ -1,3 +1,18 @@
+2017-10-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Incorrect fullscreen animation when element has a transform.
+        https://bugs.webkit.org/show_bug.cgi?id=177558
+        rdar://problem/29603741
+
+        Reviewed by Jer Noble.
+
+        Use a bit of code from element fullscreen to do this correctly for video fullscreen.
+        The key is to get the absolute quad from the renderer. This will work for scaling,
+        But since we still take the bounding box, it won't work for rotations.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::inlineVideoFrame):
+
 2017-10-09  Robin Morisset  <rmorisset@apple.com>
 
         Make the names of the options consistent
