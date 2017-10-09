@@ -1770,3 +1770,5 @@ webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-cred
 
 webkit.org/b/177388 inspector/canvas/shaderProgram-add-remove-webgl.html [ Pass Failure ]
 
+webkit.org/b/177826 inspector/dom/csp-big5-hash.html [ Pass Timeout ]
+
