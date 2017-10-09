@@ -2588,6 +2588,10 @@ AccessibilityObject* AccessibilityObject::focusedUIElement() const
     
 AccessibilitySortDirection AccessibilityObject::sortDirection() const
 {
+    AccessibilityRole role = roleValue();
+    if (role != RowHeaderRole && role != ColumnHeaderRole)
+        return SortDirectionInvalid;
+
     const AtomicString& sortAttribute = getAttribute(aria_sortAttr);
     if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"))
         return SortDirectionAscending;

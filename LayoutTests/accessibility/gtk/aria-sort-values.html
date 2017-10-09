@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+  <div id="content">
+    <div role="grid">
+      <div role="row">
+        <div role="columnheader" id="test1">content</div>
+        <div role="columnheader" id="test2" aria-sort="ascending">content</div>
+        <div role="columnheader" id="test3" aria-sort="descending">content</div>
+        <div role="columnheader" id="test4" aria-sort="other">content</div>
+        <div role="columnheader" id="test5" aria-sort="none">content</div>
+        <div role="columnheader" id="test6" aria-sort="foo">content</div>
+        <div role="columnheader" id="test7" aria-sort="">content</div>
+        <div role="gridcell" id="test8" aria-sort="other">content</div>
+      </div>
+    </div>
+  </div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function sortAttribute(axElement) {
+        var allAttributes = axElement.allAttributes();
+        var index = allAttributes.search("sort:");
+        if (index == -1)
+            return "(sort attribute not exposed)";
+        string = allAttributes.substring(index);
+        return string.substring(0, string.search(","));
+    }
+
+    description("This verifies that explicitly-set values of aria-sort are exposed.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 8; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("test" + i + " " + axElement.role + " " + sortAttribute(axElement));
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

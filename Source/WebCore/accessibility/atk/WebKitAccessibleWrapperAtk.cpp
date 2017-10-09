@@ -508,11 +508,23 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (coreObject->supportsARIACurrent())
         attributeSet = addToAtkAttributeSet(attributeSet, "current", coreObject->ariaCurrentValue().utf8().data());
 
-    AccessibilitySortDirection sortDirection = coreObject->sortDirection();
-    if (sortDirection != SortDirectionNone) {
-        // WAI-ARIA spec says to translate the value as is from the attribute.
-        const AtomicString& sortAttribute = coreObject->getAttribute(HTMLNames::aria_sortAttr);
-        attributeSet = addToAtkAttributeSet(attributeSet, "sort", sortAttribute.string().utf8().data());
+    // The Core AAM states that an explicitly-set value should be exposed, including "none".
+    if (coreObject->hasAttribute(HTMLNames::aria_sortAttr)) {
+        switch (coreObject->sortDirection()) {
+        case SortDirectionInvalid:
+            break;
+        case SortDirectionAscending:
+            attributeSet = addToAtkAttributeSet(attributeSet, "sort", "ascending");
+            break;
+        case SortDirectionDescending:
+            attributeSet = addToAtkAttributeSet(attributeSet, "sort", "descending");
+            break;
+        case SortDirectionOther:
+            attributeSet = addToAtkAttributeSet(attributeSet, "sort", "other");
+            break;
+        default:
+            attributeSet = addToAtkAttributeSet(attributeSet, "sort", "none");
+        }
     }
 
     if (coreObject->supportsARIAPosInSet())

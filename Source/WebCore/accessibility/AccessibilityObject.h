@@ -334,7 +334,8 @@ enum AccessibilitySortDirection {
     SortDirectionNone,
     SortDirectionAscending,
     SortDirectionDescending,
-    SortDirectionOther
+    SortDirectionOther,
+    SortDirectionInvalid
 };
 
 enum AccessibilitySearchDirection {
