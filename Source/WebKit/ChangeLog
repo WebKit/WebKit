@@ -1,3 +1,25 @@
+2017-10-09  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] Tiles outsides the viewport are sometimes missing after relaunching a crashes WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=178095
+        <rdar://problem/34415016>
+
+        Reviewed by Simon Fraser.
+
+        Make sure we reset WKWebView._hasScheduledVisibleRectUpdate to NO in WKWebView._processDidExit.
+        _scheduleVisibleContentRectUpdateAfterScrollInView would otherwise return early because
+        WKWebView._hasScheduledVisibleRectUpdate is always YES. Normally,
+        _addUpdateVisibleContentRectPreCommitHandler sets a CATransaction commit handler that
+        resets _hasScheduledVisibleRectUpdate to NO, but it does not do so when ![webView _isValid]
+        (which is true when the WebProcess has crashed.
+
+        Also reset WKWebView._commitDidRestoreScrollPosition to NO in WKWebView._processDidExit even
+        though it does not seem to be the cause of this bug. It seems to make sense to reset this member
+        when the process crashes.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+
 2017-10-09  Youenn Fablet  <youenn@apple.com>
 
         Add quota to cache API

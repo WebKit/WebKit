@@ -1520,6 +1520,9 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _firstTransactionIDAfterPageRestore = 0;
     _resizeAnimationTransformTransactionID = std::nullopt;
 
+    _hasScheduledVisibleRectUpdate = NO;
+    _commitDidRestoreScrollPosition = NO;
+
     _avoidsUnsafeArea = YES;
 }
 
