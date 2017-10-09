@@ -1127,7 +1127,12 @@ private:
     void platformPreferencesDidChange(const WebPreferencesStore&);
     void updatePreferences(const WebPreferencesStore&);
 
+#if PLATFORM(MAC)
     void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, const DownloadID&);
+#else
+    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, const DownloadID&, WebsitePolicies&&);
+#endif
+
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);
     void suspendActiveDOMObjectsAndAnimations();
