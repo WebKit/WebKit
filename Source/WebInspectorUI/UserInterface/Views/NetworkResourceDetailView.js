@@ -161,9 +161,8 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
             this._contentBrowser.showContentView(this._headersContentView);
             break;
         case "cookies":
-            // FIXME: Provide a Resource Cookies View.
             if (!this._cookiesContentView)
-                this._cookiesContentView = new WI.DebugContentView("Cookies");
+                this._cookiesContentView = new WI.ResourceCookiesContentView(this._resource);
             this._contentBrowser.showContentView(this._cookiesContentView);
             break;
         case "timing":

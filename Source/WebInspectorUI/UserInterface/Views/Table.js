@@ -44,7 +44,7 @@ WI.Table = class Table extends WI.View
         // synchronized scrolling between multiple elements, or making `position: sticky`
         // respect different vertical / horizontal scroll containers.
 
-        this.element.classList.add("table");
+        this.element.classList.add("table", identifier);
         this.element.tabIndex = 0;
         this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
 
@@ -334,7 +334,7 @@ WI.Table = class Table extends WI.View
         if (!column.hidden)
             return;
 
-        column.setHidden(false);
+        column.hidden = false;
 
         let columnIndex = this._hiddenColumns.indexOf(column);
         this._hiddenColumns.splice(columnIndex, 1);
@@ -388,10 +388,14 @@ WI.Table = class Table extends WI.View
         if (column.locked)
             return;
 
+        console.assert(column.hideable, "Column is not hideable so should always be shown.");
+        if (!column.hideable)
+            return;
+
         if (column.hidden)
             return;
 
-        column.setHidden(true);
+        column.hidden = true;
 
         this._hiddenColumns.push(column);
 
@@ -1173,6 +1177,8 @@ WI.Table = class Table extends WI.View
 
         for (let [columnIdentifier, column] of this._columnSpecs) {
             if (column.locked)
+                continue;
+            if (!column.hideable)
                 continue;
 
             let checked = !column.hidden;

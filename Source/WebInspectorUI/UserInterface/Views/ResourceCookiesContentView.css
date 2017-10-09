@@ -23,51 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.network .network-table .icon {
-    position: relative;
-    width: 16px;
-    height: 16px;
-    bottom: 1px;
-    vertical-align: middle;
-    -webkit-margin-end: 4px;
+.resource-cookies.resource-details > section > .details.has-table {
+    border-left: none;
 }
 
-.network-table li:not(.filler) .cell.name {
-    cursor: pointer;
+.resource-cookies .table {
+    border: 1px solid var(--border-color);
 }
 
-.network-table .cache-type {
-    color: var(--text-color-gray-medium);
-}
-
-.network-table .error {
-    color: var(--error-text-color);
-}
-
-body[dir=ltr] .network-table .cell.name > .status {
-    float: right;
-    margin-left: 4px;
-}
-
-body[dir=rtl] .network-table .cell.name > .status {
-    float: left;
-    margin-right: 4px;
-}
-
-.network-table .cell.name > .status .indeterminate-progress-spinner {
-    margin-top: 3px;
-    width: 14px;
-    height: 14px;
-}
-
-.showing-detail .network-table .cell:not(.name) {
-    display: none;
-}
-
-.showing-detail .network-table .resizer:not(:first-of-type) {
-    display: none;
-}
-
-.network-table :not(.header) .cell:first-of-type {
-    background: rgba(0, 0, 0, 0.07);
+.resource-cookies .table > .header {
+    -webkit-user-select: none;
 }

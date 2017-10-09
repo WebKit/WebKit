@@ -1,5 +1,93 @@
 2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab - Cookies Detail View
+        https://bugs.webkit.org/show_bug.cgi?id=177988
+        <rdar://problem/34071927>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New strings and resources.
+
+        * UserInterface/Models/Cookie.js: Added.
+        (WI.Cookie):
+        (WI.Cookie.parseCookieRequestHeader):
+        (WI.Cookie.parseSetCookieResponseHeader):
+        Encapsulation for Cookie attributes.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.get requestCookies):
+        (WI.Resource.prototype.get responseCookies):
+        (WI.Resource.prototype.updateForRedirectResponse):
+        (WI.Resource.prototype.updateForResponse):
+        (WI.Resource.prototype.updateWithMetrics):
+        New computed accessors for requestCookies and responseCookies.
+
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView.prototype._showContentViewForNavigationItem):
+        Show the new Cookie View.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network .network-table .icon):
+        (.network-table li:not(.filler) .cell.name):
+        (.network-table .cache-type):
+        (.network-table .error):
+        (body[dir=ltr] .network-table .cell.name > .status):
+        (body[dir=rtl] .network-table .cell.name > .status):
+        (.network-table .cell.name > .status .indeterminate-progress-spinner):
+        (.showing-detail .network-table .cell:not(.name)):
+        (.showing-detail .network-table .resizer:not(:first-of-type)):
+        (.network-table :not(.header) .cell:first-of-type):
+        Rework these styles to be specific to the .network-table.
+
+        * UserInterface/Views/Table.css:
+        (.table :not(.header) .cell:first-of-type): Deleted.
+        Move this to the network table styles, it shouldn't apply to all tables. 
+
+        * UserInterface/Views/ResourceCookiesContentView.css:
+        (.resource-cookies > section > .details.has-table):
+        (.resource-cookies .table):
+        (.resource-cookies .table > .header):
+        Styles for Cookies view and table.
+
+        * UserInterface/Views/ResourceCookiesContentView.js: Added.
+        (WI.ResourceCookiesContentView):
+        (WI.ResourceCookiesContentView.prototype.tableNumberOfRows):
+        (WI.ResourceCookiesContentView.prototype.tableSortChanged):
+        (WI.ResourceCookiesContentView.prototype.tablePopulateCell):
+        (WI.ResourceCookiesContentView.prototype.initialLayout):
+        (WI.ResourceCookiesContentView.prototype._incompleteSectionWithMessage):
+        (WI.ResourceCookiesContentView.prototype._incompleteSectionWithLoadingIndicator):
+        (WI.ResourceCookiesContentView.prototype._dataSourceForTable):
+        (WI.ResourceCookiesContentView.prototype._generateSortComparator):
+        (WI.ResourceCookiesContentView.prototype._refreshRequestCookiesSection):
+        (WI.ResourceCookiesContentView.prototype._refreshResponseCookiesSection):
+        (WI.ResourceCookiesContentView.prototype._sizeForTable):
+        (WI.ResourceCookiesContentView.prototype._resourceRequestHeadersDidChange):
+        (WI.ResourceCookiesContentView.prototype._resourceResponseReceived):
+        Tables for Request and Response cookies. They are simliar with slightly different columns.
+        Handle simple display and sorting for the tables.
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._refreshResponseHeadersSection):
+        Break out Set-Cookie headers as multiple headers. THey should never be combined.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.showColumn):
+        (WI.Table.prototype.hideColumn):
+        (WI.Table.prototype._handleHeaderContextMenu):
+        * UserInterface/Views/TableColumn.js:
+        (WI.TableColumn.prototype.get hideable):
+        (WI.TableColumn.prototype.set hidden):
+        (WI.TableColumn):
+        (WI.TableColumn.prototype.setHidden): Deleted.
+        Make it so some columns can not be hidden. For example the "value" column
+        in the Cookie tables.
+
+2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab - Search Headers Detail View
         https://bugs.webkit.org/show_bug.cgi?id=177981
 

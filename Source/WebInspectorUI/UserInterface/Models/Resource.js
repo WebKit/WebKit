@@ -46,6 +46,8 @@ WI.Resource = class Resource extends WI.SourceCode
         this._requestData = requestData || null;
         this._requestHeaders = requestHeaders || {};
         this._responseHeaders = {};
+        this._requestCookies = null;
+        this._responseCookies = null;
         this._parentFrame = null;
         this._initiatorSourceCodeLocation = initiatorSourceCodeLocation || null;
         this._initiatedResources = [];
@@ -423,6 +425,36 @@ WI.Resource = class Resource extends WI.SourceCode
         return this._responseHeaders;
     }
 
+    get requestCookies()
+    {
+        if (!this._requestCookies)
+            this._requestCookies = WI.Cookie.parseCookieRequestHeader(this._requestHeaders.valueForCaseInsensitiveKey("Cookie"));
+
+        return this._requestCookies;
+    }
+
+    get responseCookies()
+    {
+        if (!this._responseCookies) {
+            // FIXME: The backend sends multiple "Set-Cookie" headers in one "Set-Cookie" with multiple values
+            // separated by ", ". This doesn't allow us to safely distinguish between a ", " that separates
+            // multiple headers or one that may be valid part of a Cookie's value or attribute, such as the
+            // ", " in the the date format "Expires=Tue, 03-Oct-2017 04:39:21 GMT". To improve heuristics
+            // we do a negative lookahead for numbers, but we can still fail on cookie values containing ", ".
+            let rawCombinedHeader = this._responseHeaders.valueForCaseInsensitiveKey("Set-Cookie") || "";
+            let setCookieHeaders = rawCombinedHeader.split(/, (?![0-9])/);
+            let cookies = [];
+            for (let header of setCookieHeaders) {
+                let cookie = WI.Cookie.parseSetCookieResponseHeader(header);
+                if (cookie)
+                    cookies.push(cookie);
+            }
+            this._responseCookies = cookies;
+        }
+
+        return this._responseCookies;
+    }
+
     get requestSentTimestamp()
     {
         return this._requestSentTimestamp;
@@ -605,6 +637,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
         this._url = url;
         this._requestHeaders = requestHeaders || {};
+        this._requestCookies = null;
         this._lastRedirectReceivedTimestamp = elapsedTime || NaN;
 
         if (oldURL !== url) {
@@ -642,6 +675,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._statusCode = statusCode;
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};
+        this._responseCookies = null;
         this._responseReceivedTimestamp = elapsedTime || NaN;
         this._timingData = WI.ResourceTimingData.fromPayload(timingData, this);
 
@@ -702,6 +736,7 @@ WI.Resource = class Resource extends WI.SourceCode
             this._connectionIdentifier = WI.Resource.connectionIdentifierFromPayload(metrics.connectionIdentifier);
         if (metrics.requestHeaders) {
             this._requestHeaders = metrics.requestHeaders;
+            this._requestCookies = null;
             this.dispatchEventToListeners(WI.Resource.Event.RequestHeadersDidChange);
         }
 

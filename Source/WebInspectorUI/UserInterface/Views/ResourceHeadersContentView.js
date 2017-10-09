@@ -201,7 +201,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
     // Private
 
-    _incompleteSectionWithMessage(section, message)
+    _markIncompleteSectionWithMessage(section, message)
     {
         section.toggleIncomplete(true);
 
@@ -209,7 +209,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         p.textContent = message;
     }
 
-    _incompleteSectionWithLoadingIndicator(section)
+    _markIncompleteSectionWithLoadingIndicator(section)
     {
         section.toggleIncomplete(true);
 
@@ -282,11 +282,11 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         // A revalidation request still sends a request even though we served from cache, so show the request.
         if (this._resource.statusCode !== 304) {
             if (this._resource.responseSource === WI.Resource.ResponseSource.MemoryCache) {
-                this._incompleteSectionWithMessage(this._requestHeadersSection, WI.UIString("No request, served from the memory cache."));
+                this._markIncompleteSectionWithMessage(this._requestHeadersSection, WI.UIString("No request, served from the memory cache."));
                 return;
             }
             if (this._resource.responseSource === WI.Resource.ResponseSource.DiskCache) {
-                this._incompleteSectionWithMessage(this._requestHeadersSection, WI.UIString("No request, served from the disk cache."));
+                this._markIncompleteSectionWithMessage(this._requestHeadersSection, WI.UIString("No request, served from the disk cache."));
                 return;
             }
         }
@@ -312,7 +312,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             this._appendKeyValuePair(detailsElement, key, requestHeaders[key], "header");
 
         if (!detailsElement.firstChild)
-            this._incompleteSectionWithMessage(this._requestHeadersSection, WI.UIString("No request headers"));
+            this._markIncompleteSectionWithMessage(this._requestHeadersSection, WI.UIString("No request headers"));
     }
 
     _refreshResponseHeadersSection()
@@ -321,7 +321,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         detailsElement.removeChildren();
 
         if (!this._resource.hasResponse()) {
-            this._incompleteSectionWithLoadingIndicator(this._responseHeadersSection);
+            this._markIncompleteSectionWithLoadingIndicator(this._responseHeadersSection);
             return;
         }
 
@@ -340,11 +340,21 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         }
 
         let responseHeaders = this._resource.responseHeaders;
-        for (let key in responseHeaders)
+        for (let key in responseHeaders) {
+            // Split multiple Set-Cookie response headers out into their multiple headers instead of as a combined value.
+            if (key.toLowerCase() === "set-cookie") {
+                let responseCookies = this._resource.responseCookies;
+                console.assert(responseCookies.length > 0);
+                for (let cookie of responseCookies)
+                    this._appendKeyValuePair(detailsElement, key, cookie.rawHeader, "header");
+                continue;
+            }
+
             this._appendKeyValuePair(detailsElement, key, responseHeaders[key], "header");
+        }
 
         if (!detailsElement.firstChild)
-            this._incompleteSectionWithMessage(this._responseHeadersSection, WI.UIString("No response headers"));
+            this._markIncompleteSectionWithMessage(this._responseHeadersSection, WI.UIString("No response headers"));
     }
 
     _refreshQueryStringSection()

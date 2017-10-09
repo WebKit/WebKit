@@ -1,3 +1,14 @@
+2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Cookies Detail View
+        https://bugs.webkit.org/show_bug.cgi?id=177988
+        <rdar://problem/34071927>
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/cookie-expected.txt: Added.
+        * inspector/unit-tests/cookie.html: Added.
+
 2017-10-09  Matt Lewis  <jlewis3@apple.com>
 
         Marked inspector/dom/csp-big5-hash.html as flaky.

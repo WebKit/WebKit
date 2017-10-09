@@ -160,10 +160,6 @@ body[dir=rtl] .table .cell:first-child {
     border-right: var(--table-column-border-start);
 }
 
-.table :not(.header) .cell:first-of-type {
-    background: rgba(0, 0, 0, 0.07);
-}
-
 .table .cell.align-right {
     text-align: right;
 }
