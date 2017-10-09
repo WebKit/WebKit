@@ -30,6 +30,10 @@
 find_package(PkgConfig)
 pkg_check_modules(PC_LIBEPOXY QUIET epoxy)
 
+if (PC_LIBEPOXY_FOUND)
+    set(LIBEPOXY_DEFINITIONS ${PC_LIBEPOXY_CFLAGS_OTHER})
+endif ()
+
 find_path(LIBEPOXY_INCLUDE_DIRS
     NAMES epoxy/gl.h
     PATHS ${PC_LIBEPOXY_INCLUDEDIR} ${PC_LIBEPOXY_INCLUDE_DIRS}

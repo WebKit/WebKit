@@ -736,6 +736,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         list(APPEND WebKit_LIBRARIES
             ${LIBEPOXY_LIBRARIES}
         )
+        add_definitions(${LIBEPOXY_DEFINITIONS})
     else ()
         if (USE_OPENGL)
             list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
