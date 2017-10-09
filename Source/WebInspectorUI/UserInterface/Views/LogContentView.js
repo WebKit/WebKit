@@ -950,7 +950,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     performSearch(searchQuery)
     {
         if (!isEmptyObject(this._searchHighlightDOMChanges))
-            WI.revertDomChanges(this._searchHighlightDOMChanges);
+            WI.revertDOMChanges(this._searchHighlightDOMChanges);
 
         this._currentSearchQuery = searchQuery;
         this._searchHighlightDOMChanges = [];

@@ -1,3 +1,32 @@
+2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Search Headers Detail View
+        https://bugs.webkit.org/show_bug.cgi?id=177981
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.performSearch):
+        Rename "Dom" to "DOM" in utility function.
+
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (.resource-headers.showing-find-banner .search-highlight):
+        Search highlight styles.
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype.get supportsSearch):
+        (WI.ResourceHeadersContentView.prototype.get numberOfSearchResults):
+        (WI.ResourceHeadersContentView.prototype.get hasPerformedSearch):
+        (WI.ResourceHeadersContentView.prototype.set automaticallyRevealFirstSearchResult):
+        (WI.ResourceHeadersContentView.prototype.performSearch):
+        (WI.ResourceHeadersContentView.prototype.searchCleared):
+        (WI.ResourceHeadersContentView.prototype.revealPreviousSearchResult):
+        (WI.ResourceHeadersContentView.prototype.revealNextSearchResult):
+        (WI.ResourceHeadersContentView.prototype._perfomSearchOnKeyValuePairs):
+        (WI.ResourceHeadersContentView.prototype._revealSearchResult):
+        Implement ContentView search behavior.
+
 2017-10-08  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add autocompletion for min/max within a CSS calc

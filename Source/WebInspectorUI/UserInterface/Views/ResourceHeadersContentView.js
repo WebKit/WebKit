@@ -38,7 +38,15 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         this._delegate = delegate || null;
 
+        this._searchQuery = null;
+        this._searchResults = null;
+        this._searchDOMChanges = [];
+        this._searchIndex = -1;
+        this._automaticallyRevealFirstSearchResult = false;
+        this._bouncyHighlightElement = null;
+
         this.element.classList.add("resource-details", "resource-headers");
+        this.element.tabIndex = 0;
 
         this._needsSummaryRefresh = false;
         this._needsRequestHeadersRefresh = false;
@@ -107,6 +115,88 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._resource.removeEventListener(null, null, this);
 
         super.closed();
+    }
+
+    get supportsSearch()
+    {
+        return true;
+    }
+
+    get numberOfSearchResults()
+    {
+        return this._searchResults ? this._searchResults.length : null;
+    }
+
+    get hasPerformedSearch()
+    {
+        return this._searchResults !== null;
+    }
+
+    set automaticallyRevealFirstSearchResult(reveal)
+    {
+        this._automaticallyRevealFirstSearchResult = reveal;
+
+        // If we haven't shown a search result yet, reveal one now.
+        if (this._automaticallyRevealFirstSearchResult && this.numberOfSearchResults > 0) {
+            if (this._searchIndex === -1)
+                this.revealNextSearchResult();
+        }
+    }
+
+    performSearch(query)
+    {
+        if (query === this._searchQuery)
+            return;
+
+        WI.revertDOMChanges(this._searchDOMChanges);
+
+        this._searchQuery = query;
+        this._searchResults = [];
+        this._searchDOMChanges = [];
+        this._searchIndex = -1;
+
+        this._perfomSearchOnKeyValuePairs();
+
+        this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
+
+        if (this._automaticallyRevealFirstSearchResult && this._searchResults.length > 0)
+            this.revealNextSearchResult();
+    }
+
+    searchCleared()
+    {
+        WI.revertDOMChanges(this._searchDOMChanges);
+
+        this._searchQuery = null;
+        this._searchResults = null;
+        this._searchDOMChanges = [];
+        this._searchIndex = -1;
+    }
+
+    revealPreviousSearchResult(changeFocus)
+    {
+        if (!this.numberOfSearchResults)
+            return;
+
+        if (this._searchIndex > 0)
+            --this._searchIndex;
+        else
+            this._searchIndex = this._searchResults.length - 1;
+
+        this._revealSearchResult(this._searchIndex, changeFocus);
+    }
+
+    revealNextSearchResult(changeFocus)
+    {
+        if (!this.numberOfSearchResults)
+            return;
+
+        if (this._searchIndex + 1 < this._searchResults.length)
+            ++this._searchIndex;
+        else
+            this._searchIndex = 0;
+
+        this._revealSearchResult(this._searchIndex, changeFocus);
     }
 
     // Private
@@ -312,6 +402,57 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._needsRequestHeadersRefresh = true;
         this._needsResponseHeadersRefresh = true;
         this.needsLayout();
+    }
+
+    _perfomSearchOnKeyValuePairs()
+    {
+        let searchRegex = new RegExp(this._searchQuery.escapeForRegExp(), "gi");
+
+        let elements = this.element.querySelectorAll(".key, .value");
+        for (let element of elements) {
+            let matchRanges = [];
+            let text = element.textContent;
+            let match;
+            while (match = searchRegex.exec(text))
+                matchRanges.push({offset: match.index, length: match[0].length});
+
+            if (matchRanges.length) {
+                let highlightedNodes = WI.highlightRangesWithStyleClass(element, matchRanges, "search-highlight", this._searchDOMChanges);
+                this._searchResults = this._searchResults.concat(highlightedNodes);
+            }
+        }
+    }
+
+    _revealSearchResult(index, changeFocus)
+    {
+        let highlightElement = this._searchResults[index];
+        if (!highlightElement)
+            return;
+
+        highlightElement.scrollIntoViewIfNeeded();
+
+        if (!this._bouncyHighlightElement) {
+            this._bouncyHighlightElement = document.createElement("div");
+            this._bouncyHighlightElement.className = "bouncy-highlight";
+            this._bouncyHighlightElement.addEventListener("animationend", (event) => {
+                this._bouncyHighlightElement.remove();
+            });
+        }
+
+        this._bouncyHighlightElement.remove();
+
+        let computedStyles = window.getComputedStyle(highlightElement);
+        let highlightElementRect = highlightElement.getBoundingClientRect();
+        let contentViewRect = this.element.getBoundingClientRect();
+        let contentViewScrollTop = this.element.scrollTop;
+        let contentViewScrollLeft = this.element.scrollLeft;
+
+        this._bouncyHighlightElement.textContent = highlightElement.textContent;
+        this._bouncyHighlightElement.style.top = (highlightElementRect.top - contentViewRect.top + contentViewScrollTop) + "px";
+        this._bouncyHighlightElement.style.left = (highlightElementRect.left - contentViewRect.left + contentViewScrollLeft) + "px";
+        this._bouncyHighlightElement.style.fontWeight = computedStyles.fontWeight;
+
+        this.element.appendChild(this._bouncyHighlightElement);
     }
 
     _resourceRequestHeadersDidChange(event)

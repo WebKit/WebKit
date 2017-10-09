@@ -2551,7 +2551,7 @@ WI.highlightRangesWithStyleClass = function(element, resultRanges, styleClass, c
     return highlightNodes;
 };
 
-WI.revertDomChanges = function(domChanges)
+WI.revertDOMChanges = function(domChanges)
 {
     for (var i = domChanges.length - 1; i >= 0; --i) {
         var entry = domChanges[i];
