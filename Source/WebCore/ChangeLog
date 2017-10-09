@@ -1,3 +1,12 @@
+2017-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the Windows build after r223031
+
+        Speculative build fix; no change in behavior.
+
+        * page/EventHandler.h:
+        (WebCore::EventHandler::DragTargetResponse::DragTargetResponse):
+
 2017-10-09  Alex Christensen  <achristensen@webkit.org>
 
         Reduce includes in Document.h

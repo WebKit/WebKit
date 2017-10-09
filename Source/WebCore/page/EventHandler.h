@@ -157,6 +157,13 @@ public:
 
 #if ENABLE(DRAG_SUPPORT)
     struct DragTargetResponse {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
+        DragTargetResponse(bool accept, std::optional<DragOperation> operation)
+            : accept(accept)
+            , operation(operation)
+        {
+        }
+#endif
         bool accept { false };
         std::optional<DragOperation> operation;
     };
