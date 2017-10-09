@@ -107,6 +107,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     if (!parameters.cacheStorageDirectory.isNull()) {
         m_cacheStorageDirectory = parameters.cacheStorageDirectory;
+        m_cacheStoragePerOriginQuota = parameters.cacheStoragePerOriginQuota;
         SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
     }
 

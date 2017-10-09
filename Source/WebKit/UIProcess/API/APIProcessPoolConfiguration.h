@@ -69,6 +69,7 @@ public:
 
     const WTF::String& cacheStorageDirectory() const { return m_cacheStorageDirectory; }
     void setCacheStorageDirectory(WTF::String&& cacheStorageDirectory) { m_cacheStorageDirectory = WTFMove(cacheStorageDirectory); }
+    uint64_t cacheStoragePerOriginQuota() const { return m_cacheStoragePerOriginQuota; }
 
     const WTF::String& diskCacheDirectory() const { return m_diskCacheDirectory; }
     void setDiskCacheDirectory(const WTF::String& diskCacheDirectory) { m_diskCacheDirectory = diskCacheDirectory; }
@@ -152,6 +153,7 @@ private:
     WTF::String m_applicationCacheDirectory;
     WTF::String m_applicationCacheFlatFileSubdirectoryName;
     WTF::String m_cacheStorageDirectory;
+    uint64_t m_cacheStoragePerOriginQuota { 400 * 1024 };
     WTF::String m_diskCacheDirectory;
     WTF::String m_mediaCacheDirectory;
     WTF::String m_indexedDBDatabaseDirectory;

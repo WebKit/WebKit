@@ -51,10 +51,11 @@ static inline String cachesListFilename(const String& cachesRootPath)
     return WebCore::pathByAppendingComponent(cachesRootPath, ASCIILiteral("cacheslist"));
 }
 
-Caches::Caches(Engine& engine, String&& origin)
+Caches::Caches(Engine& engine, String&& origin, uint64_t quota)
     : m_engine(&engine)
     , m_origin(WTFMove(origin))
     , m_rootPath(cachesRootPath(engine, m_origin))
+    , m_quota(quota)
 {
 }
 
@@ -84,7 +85,7 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
     }
     m_storage = storage.releaseNonNull();
     m_storage->writeWithoutWaiting();
-    readCachesFromDisk([this, callback = WTFMove(callback)](Expected<Vector<Cache>, Error>&& result) {
+    readCachesFromDisk([this, callback = WTFMove(callback)](Expected<Vector<Cache>, Error>&& result) mutable {
         makeDirty();
 
         if (!result.hasValue()) {
@@ -96,12 +97,28 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
             return;
         }
         m_caches = WTFMove(result.value());
-        m_isInitialized = true;
-        callback(std::nullopt);
+        initializeSize(WTFMove(callback));
+    });
+}
 
-        auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
-        for (auto& callback : pendingCallbacks)
+void Caches::initializeSize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
+{
+    uint64_t size = 0;
+    m_storage->traverse({ }, 0, [protectedThis = makeRef(*this), this, protectedStorage = makeRef(*m_storage), callback = WTFMove(callback), size](const auto* storage, const auto& information) mutable {
+        if (!storage) {
+            m_size = size;
+            m_isInitialized = true;
             callback(std::nullopt);
+
+            auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
+            for (auto& callback : pendingCallbacks)
+                callback(std::nullopt);
+
+            return;
+        }
+        auto decoded = Cache::decodeRecordHeader(*storage);
+        if (decoded)
+            size += decoded->size;
     });
 }
 
@@ -299,11 +316,23 @@ void Caches::readRecordsList(Cache& cache, NetworkCache::Storage::TraverseHandle
     });
 }
 
-void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInformation, Record&& record, CompletionCallback&& callback)
+void Caches::requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::CompletionCallback&& callback)
+{
+    // FIXME: Implement quota increase request.
+    ASSERT(m_quota < m_size + spaceRequired);
+    callback(Error::QuotaExceeded);
+}
+
+void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInformation, Record&& record, uint64_t previousRecordSize, CompletionCallback&& callback)
 {
     ASSERT(m_isInitialized);
 
-    // FIXME: Check for storage quota.
+    ASSERT(m_size >= previousRecordSize);
+    m_size += recordInformation.size;
+    m_size -= previousRecordSize;
+
+    ASSERT(m_size <= m_quota);
+
     if (!shouldPersist()) {
         m_volatileStorage.set(recordInformation.key, WTFMove(record));
         return;
@@ -345,7 +374,16 @@ void Caches::readRecord(const NetworkCache::Key& key, WTF::Function<void(Expecte
     });
 }
 
-void Caches::removeRecord(const NetworkCache::Key& key)
+void Caches::removeRecord(const RecordInformation& record)
+{
+    ASSERT(m_isInitialized);
+
+    ASSERT(m_size >= record.size);
+    m_size -= record.size;
+    removeCacheEntry(record.key);
+}
+
+void Caches::removeCacheEntry(const NetworkCache::Key& key)
 {
     ASSERT(m_isInitialized);
 

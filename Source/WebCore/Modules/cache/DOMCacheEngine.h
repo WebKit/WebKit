@@ -42,6 +42,7 @@ enum class Error {
     NotImplemented,
     ReadDisk,
     WriteDisk,
+    QuotaExceeded,
     Internal
 };
 
@@ -68,6 +69,7 @@ struct Record {
     FetchHeaders::Guard responseHeadersGuard;
     ResourceResponse response;
     ResponseBody responseBody;
+    uint64_t responseBodySize;
 };
 
 struct CacheInfo {
@@ -121,12 +123,12 @@ template<class Decoder> inline std::optional<CacheInfos> CacheInfos::decode(Deco
     decoder >> infos;
     if (!infos)
         return std::nullopt;
-    
+
     std::optional<uint64_t> updateCounter;
     decoder >> updateCounter;
     if (!updateCounter)
         return std::nullopt;
-    
+
     return {{ WTFMove(*infos), WTFMove(*updateCounter) }};
 }
 
@@ -142,7 +144,7 @@ template<class Decoder> inline std::optional<CacheIdentifierOperationResult> Cac
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
-    
+
     std::optional<bool> hadStorageError;
     decoder >> hadStorageError;
     if (!hadStorageError)
@@ -161,6 +163,7 @@ template<> struct EnumTraits<WebCore::DOMCacheEngine::Error> {
         WebCore::DOMCacheEngine::Error::NotImplemented,
         WebCore::DOMCacheEngine::Error::ReadDisk,
         WebCore::DOMCacheEngine::Error::WriteDisk,
+        WebCore::DOMCacheEngine::Error::QuotaExceeded,
         WebCore::DOMCacheEngine::Error::Internal
     >;
 };

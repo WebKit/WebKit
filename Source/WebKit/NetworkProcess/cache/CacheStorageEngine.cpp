@@ -190,7 +190,7 @@ void Engine::readCachesFromDisk(const String& origin, CachesCallback&& callback)
 {
     initialize([this, origin, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
         auto& caches = m_caches.ensure(origin, [&origin, this] {
-            return Caches::create(*this, String { origin });
+            return Caches::create(*this, String { origin }, NetworkProcess::singleton().cacheStoragePerOriginQuota());
         }).iterator->value;
 
         if (caches->isInitialized()) {

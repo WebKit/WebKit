@@ -261,6 +261,7 @@ void ArgumentCoder<DOMCacheEngine::Record>::encode(Encoder& encoder, const DOMCa
     encoder << record.responseHeadersGuard;
     encoder << record.response;
     encoder << record.updateResponseCounter;
+    encoder << record.responseBodySize;
 
     WTF::switchOn(record.responseBody, [&](const Ref<SharedBuffer>& buffer) {
         encoder << true;
@@ -309,6 +310,10 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
     if (!decoder.decode(updateResponseCounter))
         return std::nullopt;
 
+    uint64_t responseBodySize;
+    if (!decoder.decode(responseBodySize))
+        return std::nullopt;
+
     WebCore::DOMCacheEngine::ResponseBody responseBody;
     bool hasSharedBufferBody;
     if (!decoder.decode(hasSharedBufferBody))
@@ -332,7 +337,7 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
         }
     }
 
-    return {{ WTFMove(identifier), WTFMove(updateResponseCounter), WTFMove(requestHeadersGuard), WTFMove(request), WTFMove(options), WTFMove(referrer), WTFMove(responseHeadersGuard), WTFMove(response), WTFMove(responseBody) }};
+    return {{ WTFMove(identifier), WTFMove(updateResponseCounter), WTFMove(requestHeadersGuard), WTFMove(request), WTFMove(options), WTFMove(referrer), WTFMove(responseHeadersGuard), WTFMove(response), WTFMove(responseBody), responseBodySize }};
 }
 
 void ArgumentCoder<EventTrackingRegions>::encode(Encoder& encoder, const EventTrackingRegions& eventTrackingRegions)

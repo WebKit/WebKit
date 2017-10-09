@@ -1,3 +1,47 @@
+2017-10-09  Youenn Fablet  <youenn@apple.com>
+
+        Add quota to cache API
+        https://bugs.webkit.org/show_bug.cgi?id=177552
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/wpt/cache-storage/cache-quota.any.html
+
+        Storing padded opaque response body sizes within FetchResponse and CacheStorageConnection.
+        See https://github.com/whatwg/storage/issues/31 for the rationale about this padding.
+        Storing in CacheStorageConnection is needed for handling cloned network fetched created responses.
+        Storing in FetchResponse is needed for handling cloned cache-storage created opaque responses.
+
+        Adding internals to query and set the fuzzed size of a response.
+
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::computeRealBodySize):
+        (WebCore::CacheStorageConnection::computeRecordBodySize):
+        (WebCore::CacheStorageConnection::setResponseBodySizeWithPadding):
+        (WebCore::CacheStorageConnection::responseBodySizeWithPadding const):
+        * Modules/cache/CacheStorageConnection.h:
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::toConnectionRecord):
+        (WebCore::DOMCache::updateRecords):
+        * Modules/cache/DOMCache.h:
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::errorToException):
+        (WebCore::DOMCacheEngine::Record::copy const):
+        * Modules/cache/DOMCacheEngine.h:
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::toCrossThreadRecordData):
+        (WebCore::fromCrossThreadRecordData):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone):
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setResponseSizeWithPadding):
+        (WebCore::Internals::responseSizeWithPadding const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-10-09  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant RenderObject::virtualContinuation

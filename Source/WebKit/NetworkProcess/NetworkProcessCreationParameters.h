@@ -56,6 +56,7 @@ struct NetworkProcessCreationParameters {
     bool canHandleHTTPSServerTrustEvaluation { true };
 
     String cacheStorageDirectory;
+    uint64_t cacheStoragePerOriginQuota;
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;

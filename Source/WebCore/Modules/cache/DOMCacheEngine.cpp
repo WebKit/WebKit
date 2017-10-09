@@ -44,6 +44,8 @@ Exception errorToException(Error error)
         return Exception { TypeError, ASCIILiteral("Failed reading data from the file system") };
     case Error::WriteDisk:
         return Exception { TypeError, ASCIILiteral("Failed writing data to the file system") };
+    case Error::QuotaExceeded:
+        return Exception { QuotaExceededError, ASCIILiteral("Quota exceeded") };
     default:
         return Exception { TypeError, ASCIILiteral("Internal error") };
     }
@@ -135,7 +137,7 @@ ResponseBody copyResponseBody(const ResponseBody& body)
 
 Record Record::copy() const
 {
-    return Record { identifier, updateResponseCounter, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody) };
+    return Record { identifier, updateResponseCounter, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody), responseBodySize };
 }
 
 static inline CacheInfo isolateCacheInfo(const CacheInfo& info)

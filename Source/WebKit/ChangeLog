@@ -1,3 +1,73 @@
+2017-10-09  Youenn Fablet  <youenn@apple.com>
+
+        Add quota to cache API
+        https://bugs.webkit.org/show_bug.cgi?id=177552
+
+        Reviewed by Alex Christensen.
+
+        Adding support for quota checking in CacheStorage::Caches.
+        It is passed to NetworkProcess at creation time.
+        Default quota size is configured to 400Ko by origin per default.
+        This value is suitable for testing.
+        Future patch should raise this default value and allows configuring it.
+
+        Quota is computed based on the response body size.
+        This size is padded at WebCore for opaque responses.
+        Size is stored persistently as opaque response padded size should remain stable.
+        See https://github.com/whatwg/storage/issues/31 for the rationale about this padding.
+
+        In case of putting several records at the same time, the size of all records
+        is computed so that all records will be written or rejected together.
+
+        Sending QuotaExceeded error when quota is exceeded.
+        Future effort should allow asking UIProcess for quota extension.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::cacheStoragePerOriginQuota const):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::toRecordInformation):
+        (WebKit::CacheStorage::isolatedCopy):
+        (WebKit::CacheStorage::Cache::open):
+        (WebKit::CacheStorage::Cache::storeRecords):
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::writeRecordToDisk):
+        (WebKit::CacheStorage::Cache::updateRecordToDisk):
+        (WebKit::CacheStorage::Cache::removeRecordFromDisk):
+        (WebKit::CacheStorage::Cache::encode):
+        (WebKit::CacheStorage::Cache::decodeRecordHeader):
+        (WebKit::CacheStorage::Cache::decode):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::initialize):
+        (WebKit::CacheStorage::Caches::initializeSize):
+        (WebKit::CacheStorage::Caches::requestSpace):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        (WebKit::CacheStorage::Caches::removeRecord):
+        (WebKit::CacheStorage::Caches::removeCacheEntry):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::create):
+        (WebKit::CacheStorage::Caches::hasEnoughSpace const):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::traverse):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DOMCacheEngine::Record>::encode):
+        (IPC::ArgumentCoder<DOMCacheEngine::Record>::decode):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2017-10-09  Sam Weinig  <sam@webkit.org>
 
         Make HashMap::keys() and HashMap::values() work with WTF::map/WTF::copyToVector

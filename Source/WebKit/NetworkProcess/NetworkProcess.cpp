@@ -766,6 +766,11 @@ void NetworkProcess::preconnectTo(const WebCore::URL& url, WebCore::StoredCreden
 #endif
 }
 
+uint64_t NetworkProcess::cacheStoragePerOriginQuota() const
+{
+    return m_cacheStoragePerOriginQuota;
+}
+
 #if !PLATFORM(COCOA)
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {

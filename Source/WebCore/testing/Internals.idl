@@ -547,6 +547,8 @@ enum EventThrottlingBehavior {
 
     Promise<void> clearCacheStorageMemoryRepresentation();
     Promise<DOMString> cacheStorageEngineRepresentation();
+    void setResponseSizeWithPadding(FetchResponse response, unsigned long long size);
+    unsigned long long responseSizeWithPadding(FetchResponse response);
 
     void setConsoleMessageListener(StringCallback callback);
 

@@ -111,7 +111,8 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
     copy->m_applicationCacheFlatFileSubdirectoryName = this->m_applicationCacheFlatFileSubdirectoryName;
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
-    copy->m_diskCacheDirectory = this->m_diskCacheDirectory;
+    copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
+    copy->m_cacheStoragePerOriginQuota = this->m_cacheStoragePerOriginQuota;
     copy->m_mediaCacheDirectory = this->m_mediaCacheDirectory;
     copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
     copy->m_injectedBundlePath = this->m_injectedBundlePath;

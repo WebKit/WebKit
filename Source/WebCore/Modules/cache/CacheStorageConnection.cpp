@@ -27,6 +27,9 @@
 #include "config.h"
 #include "CacheStorageConnection.h"
 
+#include "FetchResponse.h"
+#include <wtf/RandomNumber.h>
+
 using namespace WebCore::DOMCacheEngine;
 
 namespace WebCore {
@@ -69,6 +72,37 @@ void CacheStorageConnection::batchDeleteOperation(uint64_t cacheIdentifier, cons
     m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
 
     doBatchDeleteOperation(requestIdentifier, cacheIdentifier, request, WTFMove(options));
+}
+
+static inline uint64_t computeRealBodySize(const DOMCacheEngine::ResponseBody& body)
+{
+    uint64_t result = 0;
+    WTF::switchOn(body, [&] (const Ref<WebCore::FormData>& formData) {
+        result = formData->lengthInBytes();
+    }, [&] (const Ref<WebCore::SharedBuffer>& buffer) {
+        result = buffer->size();
+    }, [] (const std::nullptr_t&) {
+    });
+    return result;
+}
+
+uint64_t CacheStorageConnection::computeRecordBodySize(const FetchResponse& response, const DOMCacheEngine::ResponseBody& body, ResourceResponse::Tainting tainting)
+{
+    if (!response.opaqueLoadIdentifier()) {
+        ASSERT_UNUSED(tainting, tainting != ResourceResponse::Tainting::Opaque);
+        return computeRealBodySize(body);
+    }
+
+    return m_opaqueResponseToSizeWithPaddingMap.ensure(response.opaqueLoadIdentifier(), [&] () {
+        uint64_t realSize = computeRealBodySize(body);
+
+        // Padding the size as per https://github.com/whatwg/storage/issues/31.
+        uint64_t sizeWithPadding = realSize + static_cast<uint64_t>(randomNumber() * 128000);
+        sizeWithPadding = ((sizeWithPadding / 32000) + 1) * 32000;
+
+        m_opaqueResponseToSizeWithPaddingMap.set(response.opaqueLoadIdentifier(), sizeWithPadding);
+        return sizeWithPadding;
+    }).iterator->value;
 }
 
 void CacheStorageConnection::batchPutOperation(uint64_t cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)

@@ -861,7 +861,7 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
 
     ioQueue().dispatch([this, &traverseOperation] {
         traverseRecordsFiles(recordsPath(), traverseOperation.type, [this, &traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
-            ASSERT(type == traverseOperation.type);
+            ASSERT(type == traverseOperation.type || traverseOperation.type.isEmpty());
             if (isBlob)
                 return;
 

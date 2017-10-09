@@ -43,6 +43,8 @@ struct RecordInformation {
     uint64_t identifier { 0 };
     uint64_t updateResponseCounter { 0 };
 
+    uint64_t size { 0 };
+
     WebCore::URL url;
     bool hasVaryStar { false };
     HashMap<String, String> varyHeaders;
@@ -78,10 +80,25 @@ public:
     static std::optional<WebCore::DOMCacheEngine::Record> decode(const NetworkCache::Storage::Record&);
     static NetworkCache::Storage::Record encode(const RecordInformation&, const WebCore::DOMCacheEngine::Record&);
 
+    struct DecodedRecord {
+        DecodedRecord(double insertionTime, uint64_t size, WebCore::DOMCacheEngine::Record&& record)
+            : insertionTime(insertionTime)
+            , size(size)
+            , record(WTFMove(record))
+        { }
+
+        double insertionTime { 0 };
+        uint64_t size { 0 };
+        WebCore::DOMCacheEngine::Record record;
+    };
+    static std::optional<DecodedRecord> decodeRecordHeader(const NetworkCache::Storage::Record&);
+
 private:
     Vector<RecordInformation>* recordsFromURL(const WebCore::URL&);
     const Vector<RecordInformation>* recordsFromURL(const WebCore::URL&) const;
     RecordInformation& addRecord(Vector<RecordInformation>*, const WebCore::DOMCacheEngine::Record&);
+
+    void storeRecords(Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
     RecordInformation toRecordInformation(const WebCore::DOMCacheEngine::Record&);
 
@@ -89,7 +106,7 @@ private:
     void retrieveRecord(const RecordInformation&, Ref<ReadRecordTaskCounter>&&);
 
     void readRecordsList(WebCore::DOMCacheEngine::CompletionCallback&&);
-    void writeRecordToDisk(const RecordInformation&, WebCore::DOMCacheEngine::Record&&, Ref<AsynchronousPutTaskCounter>&&);
+    void writeRecordToDisk(const RecordInformation&, WebCore::DOMCacheEngine::Record&&, Ref<AsynchronousPutTaskCounter>&&, uint64_t previousRecordSize);
     void updateRecordToDisk(RecordInformation&, WebCore::DOMCacheEngine::Record&&, Ref<AsynchronousPutTaskCounter>&&);
     void removeRecordFromDisk(const RecordInformation&);
     void readRecordFromDisk(const RecordInformation&, WTF::Function<void(Expected<WebCore::DOMCacheEngine::Record, WebCore::DOMCacheEngine::Error>&&)>&&);

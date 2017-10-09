@@ -87,7 +87,7 @@ public:
 
     using ResponseData = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
     ResponseData consumeBody();
-    void setBodyData(ResponseData&&);
+    void setBodyData(ResponseData&&, uint64_t bodySizeWithPadding);
 
     bool isLoading() const { return !!m_bodyLoader; }
 
@@ -96,6 +96,10 @@ public:
     void consumeBodyFromReadableStream(ConsumeDataCallback&&);
 
     const ResourceResponse& resourceResponse() const { return m_response; }
+
+    uint64_t bodySizeWithPadding() const { return m_bodySizeWithPadding; }
+    void setBodySizeWithPadding(uint64_t size) { m_bodySizeWithPadding = size; }
+    uint64_t opaqueLoadIdentifier() const { return m_opaqueLoadIdentifier; }
 
 private:
     FetchResponse(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
@@ -138,6 +142,9 @@ private:
     ResourceResponse m_response;
     std::optional<BodyLoader> m_bodyLoader;
     mutable String m_responseURL;
+    // Opaque responses will padd their body size when used with Cache API.
+    uint64_t m_bodySizeWithPadding { 0 };
+    uint64_t m_opaqueLoadIdentifier { 0 };
 };
 
 inline Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)

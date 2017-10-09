@@ -159,6 +159,8 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
     clone->cloneBody(*this);
     if (isBodyOpaque())
         clone->setBodyAsOpaque();
+    clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
+    clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
     return WTFMove(clone);
 }
 
@@ -239,11 +241,14 @@ FetchResponse::BodyLoader::~BodyLoader()
     m_response.unsetPendingActivity(&m_response);
 }
 
+static uint64_t nextOpaqueLoadIdentifier { 0 };
 void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resourceResponse)
 {
     m_response.m_response = ResourceResponseBase::filter(resourceResponse);
-    if (resourceResponse.tainting() == ResourceResponse::Tainting::Opaque)
+    if (resourceResponse.tainting() == ResourceResponse::Tainting::Opaque) {
+        m_response.m_opaqueLoadIdentifier = ++nextOpaqueLoadIdentifier;
         m_response.setBodyAsOpaque();
+    }
 
     m_response.m_headers->filterAndFill(m_response.m_response.httpHeaderFields(), FetchHeaders::Guard::Response);
     m_response.updateContentType();
@@ -326,8 +331,9 @@ void FetchResponse::consumeBodyWhenLoaded(ConsumeDataCallback&& callback)
     m_bodyLoader->setConsumeDataCallback(WTFMove(callback));
 }
 
-void FetchResponse::setBodyData(ResponseData&& data)
+void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPadding)
 {
+    m_bodySizeWithPadding = bodySizeWithPadding;
     WTF::switchOn(data,
         [this](Ref<FormData>& formData) {
             if (isBodyNull())

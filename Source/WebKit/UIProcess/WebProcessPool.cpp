@@ -434,6 +434,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 
     parameters.cacheStorageDirectory = m_configuration->cacheStorageDirectory();
+    parameters.cacheStoragePerOriginQuota = m_configuration->cacheStoragePerOriginQuota();
     if (!parameters.cacheStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
 

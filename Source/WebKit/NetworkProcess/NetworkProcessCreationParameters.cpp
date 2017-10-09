@@ -46,6 +46,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << diskCacheSizeOverride;
     encoder << canHandleHTTPSServerTrustEvaluation;
     encoder << cacheStorageDirectory;
+    encoder << cacheStoragePerOriginQuota;
     encoder << cacheStorageDirectoryExtensionHandle;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
@@ -115,6 +116,8 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.canHandleHTTPSServerTrustEvaluation))
         return false;
     if (!decoder.decode(result.cacheStorageDirectory))
+        return false;
+    if (!decoder.decode(result.cacheStoragePerOriginQuota))
         return false;
     if (!decoder.decode(result.cacheStorageDirectoryExtensionHandle))
         return false;

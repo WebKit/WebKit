@@ -145,6 +145,7 @@ public:
 
     Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }
     String cacheStorageDirectory(PAL::SessionID) const;
+    uint64_t cacheStoragePerOriginQuota() const;
 
     void preconnectTo(const WebCore::URL&, WebCore::StoredCredentialsPolicy);
 
@@ -237,6 +238,7 @@ private:
     Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
     String m_cacheStorageDirectory;
+    uint64_t m_cacheStoragePerOriginQuota { 0 };
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;

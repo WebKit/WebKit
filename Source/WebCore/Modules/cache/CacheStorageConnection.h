@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class FetchResponse;
+
 class CacheStorageConnection : public ThreadSafeRefCounted<CacheStorageConnection> {
 public:
     static Ref<CacheStorageConnection> create() { return adoptRef(*new CacheStorageConnection()); }
@@ -44,6 +46,7 @@ public:
     void retrieveRecords(uint64_t cacheIdentifier, const URL&, DOMCacheEngine::RecordsCallback&&);
     void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&);
     void batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&);
+    uint64_t computeRecordBodySize(const FetchResponse&, const DOMCacheEngine::ResponseBody&, ResourceResponse::Tainting);
 
     virtual void reference(uint64_t /* cacheIdentifier */) { }
     virtual void dereference(uint64_t /* cacheIdentifier */) { }
@@ -78,6 +81,7 @@ private:
     HashMap<uint64_t, DOMCacheEngine::CacheInfosCallback> m_retrieveCachesPendingRequests;
     HashMap<uint64_t, DOMCacheEngine::RecordsCallback> m_retrieveRecordsPendingRequests;
     HashMap<uint64_t, DOMCacheEngine::RecordIdentifiersCallback> m_batchDeleteAndPutPendingRequests;
+    HashMap<uint64_t, uint64_t> m_opaqueResponseToSizeWithPaddingMap;
 
     uint64_t m_lastRequestIdentifier { 0 };
 };

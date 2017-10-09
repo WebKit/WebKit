@@ -43,6 +43,7 @@ dictionary FetchResponseInit {
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorMayThrowException,
     EnabledAtRuntime=FetchAPI,
+    ExportToWrappedFunction,
     Exposed=(Window,Worker),
     InterfaceName=Response,
 ] interface FetchResponse {

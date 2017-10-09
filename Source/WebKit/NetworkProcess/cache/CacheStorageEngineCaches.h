@@ -36,7 +36,7 @@ class Engine;
 
 class Caches : public RefCounted<Caches> {
 public:
-    static Ref<Caches> create(Engine& engine, String&& origin) { return adoptRef(*new Caches { engine, WTFMove(origin) }); }
+    static Ref<Caches> create(Engine& engine, String&& origin, uint64_t quota) { return adoptRef(*new Caches { engine, WTFMove(origin), quota }); }
 
     void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void open(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
@@ -54,16 +54,22 @@ public:
 
     void readRecordsList(Cache&, NetworkCache::Storage::TraverseHandler&&);
     void readRecord(const NetworkCache::Key&, WTF::Function<void(Expected<WebCore::DOMCacheEngine::Record, WebCore::DOMCacheEngine::Error>&&)>&&);
-    void writeRecord(const Cache&, const RecordInformation&, WebCore::DOMCacheEngine::Record&&, WebCore::DOMCacheEngine::CompletionCallback&&);
-    void removeRecord(const NetworkCache::Key&);
+
+    bool hasEnoughSpace(uint64_t spaceRequired) const { return m_quota >= m_size + spaceRequired; }
+    void requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::CompletionCallback&&);
+    void writeRecord(const Cache&, const RecordInformation&, WebCore::DOMCacheEngine::Record&&, uint64_t previousRecordSize, WebCore::DOMCacheEngine::CompletionCallback&&);
+
+    void removeCacheEntry(const NetworkCache::Key&);
+    void removeRecord(const RecordInformation&);
 
     const NetworkCache::Salt& salt() const;
 
     bool shouldPersist() const { return !m_rootPath.isNull(); }
 
 private:
-    Caches(Engine&, String&& origin);
+    Caches(Engine&, String&& origin, uint64_t quota);
 
+    void initializeSize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
 
@@ -77,6 +83,8 @@ private:
     uint64_t m_updateCounter { 0 };
     String m_origin;
     String m_rootPath;
+    uint64_t m_quota { 0 };
+    uint64_t m_size { 0 };
     Vector<Cache> m_caches;
     Vector<Cache> m_removedCaches;
     RefPtr<NetworkCache::Storage> m_storage;

@@ -50,6 +50,7 @@ class DOMURL;
 class DOMWindow;
 class Document;
 class Element;
+class FetchResponse;
 class File;
 class Frame;
 class GCObservation;
@@ -600,6 +601,8 @@ public:
 
     void clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&&);
     void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);
+    void setResponseSizeWithPadding(FetchResponse&, uint64_t size);
+    uint64_t responseSizeWithPadding(FetchResponse&) const;
 
     void setConsoleMessageListener(RefPtr<StringCallback>&&);
 

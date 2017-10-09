@@ -58,6 +58,7 @@
 #include "Element.h"
 #include "EventHandler.h"
 #include "ExtensionStyleSheets.h"
+#include "FetchResponse.h"
 #include "File.h"
 #include "FontCache.h"
 #include "FormController.h"
@@ -4172,6 +4173,16 @@ void Internals::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
         return;
 
     contextDocument()->setConsoleMessageListener(WTFMove(listener));
+}
+
+void Internals::setResponseSizeWithPadding(FetchResponse& response, uint64_t size)
+{
+    response.setBodySizeWithPadding(size);
+}
+
+uint64_t Internals::responseSizeWithPadding(FetchResponse& response) const
+{
+    return response.bodySizeWithPadding();
 }
 
 } // namespace WebCore
