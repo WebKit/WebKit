@@ -1,3 +1,19 @@
+2017-10-09  Jeremy Jones  <jeremyj@apple.com>
+
+        Blurry captions on retina screens.
+        https://bugs.webkit.org/show_bug.cgi?id=177560
+        rdar://problem/17913388
+
+        Reviewed by Jer Noble.
+
+        No new tests because the contents scale of the captions layer is not exposed to the DOM.
+
+        The captions layer contents scale needs to take into account the device screen scale to get the correct resolution for captions.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateTextTrackRepresentation):
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+
 2017-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Windows build after r223031
