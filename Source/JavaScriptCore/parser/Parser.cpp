@@ -4448,6 +4448,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case AWAIT:
         if (m_parserState.functionParsePhase == FunctionParsePhase::Parameters)
             failIfFalse(m_parserState.allowAwait, "Cannot use await expression within parameters");
+        else if (currentFunctionScope()->isAsyncFunctionBoundary())
+            return parseAwaitExpression(context);
+
         goto identifierExpression;
     case IDENT: {
         if (UNLIKELY(*m_token.m_data.ident == m_vm->propertyNames->async)) {
