@@ -360,7 +360,7 @@ int ViewportConfiguration::layoutWidth() const
             double maximumScale = this->maximumScale();
             double maximumContentWidthInViewportCoordinate = maximumScale * m_configuration.width;
             if (maximumContentWidthInViewportCoordinate < minimumLayoutSize.width()) {
-                // The content zoomed to maxScale does not fit the the view. Return the minimum width
+                // The content zoomed to maxScale does not fit the view. Return the minimum width
                 // satisfying the constraint maximumScale.
                 return std::round(minimumLayoutSize.width() / maximumScale);
             }
@@ -396,7 +396,7 @@ int ViewportConfiguration::layoutHeight() const
             double maximumScale = this->maximumScale();
             double maximumContentHeightInViewportCoordinate = maximumScale * m_configuration.height;
             if (maximumContentHeightInViewportCoordinate < minimumLayoutSize.height()) {
-                // The content zoomed to maxScale does not fit the the view. Return the minimum height that
+                // The content zoomed to maxScale does not fit the view. Return the minimum height that
                 // satisfy the constraint maximumScale.
                 return std::round(minimumLayoutSize.height() / maximumScale);
             }

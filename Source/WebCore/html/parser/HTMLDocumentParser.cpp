@@ -402,7 +402,7 @@ void HTMLDocumentParser::end()
     ASSERT(!isDetached());
     ASSERT(!isScheduledForResume());
 
-    // Informs the the rest of WebCore that parsing is really finished (and deletes this).
+    // Informs the rest of WebCore that parsing is really finished (and deletes this).
     m_treeBuilder->finished();
 }
 

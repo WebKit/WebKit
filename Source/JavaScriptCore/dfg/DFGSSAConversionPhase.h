@@ -33,7 +33,7 @@ class Graph;
 
 // Convert ThreadedCPS form into SSA form. This results in a form that has:
 //
-// - Minimal Phi's. We use the the Cytron et al (TOPLAS'91) algorithm for
+// - Minimal Phi's. We use the Cytron et al (TOPLAS'91) algorithm for
 //   Phi insertion. Most of the algorithm is implemented in SSACalculator
 //   and Dominators.
 //

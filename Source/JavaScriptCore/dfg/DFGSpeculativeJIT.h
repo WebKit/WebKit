@@ -778,7 +778,7 @@ public:
     // a child, and as such will use the same GeneratioInfo).
     void useChildren(Node*);
 
-    // These method called to initialize the the GenerationInfo
+    // These method called to initialize the GenerationInfo
     // to describe the result of an operation.
     void int32Result(GPRReg reg, Node* node, DataFormat format = DataFormatInt32, UseChildrenMode mode = CallUseChildren)
     {

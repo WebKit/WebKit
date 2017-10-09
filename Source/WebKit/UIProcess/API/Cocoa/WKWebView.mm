@@ -2693,7 +2693,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 {
     // Ignore keyboard will hide notifications sent during rotation. They're just there for
     // backwards compatibility reasons and processing the will hide notification would
-    // temporarily screw up the the unobscured view area.
+    // temporarily screw up the unobscured view area.
     if ([[UIPeripheralHost sharedInstance] rotationState])
         return;
 

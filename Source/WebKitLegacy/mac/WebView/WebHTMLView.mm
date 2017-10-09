@@ -6697,7 +6697,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
         LOG(TextInput, "    ReplacementRange: %@", rangeString);
         // The AppKit adds a 'secret' property to the string that contains the replacement range.
-        // The replacement range is the range of the the text that should be replaced with the new string.
+        // The replacement range is the range of the text that should be replaced with the new string.
         if (rangeString)
             replacementRange = NSRangeFromString(rangeString);
 

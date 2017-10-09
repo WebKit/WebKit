@@ -1004,7 +1004,7 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
     bool beforeQuirk = child ? hasMarginBeforeQuirk(*child) : false;
     bool afterQuirk = child ? hasMarginAfterQuirk(*child) : false;
     
-    // The child discards the before margin when the the after margin has discard in the case of a self collapsing block.
+    // The child discards the before margin when the after margin has discarded in the case of a self collapsing block.
     childDiscardMarginBefore = childDiscardMarginBefore || (childDiscardMarginAfter && childIsSelfCollapsing);
     
     // Get the four margin values for the child and cache them.

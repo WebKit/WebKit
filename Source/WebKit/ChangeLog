@@ -1,3 +1,22 @@
+2017-10-09  Robin Morisset  <rmorisset@apple.com>
+
+        Make the names of the options consistent
+        https://bugs.webkit.org/show_bug.cgi?id=177933
+
+        Reviewed by Saam Barati.
+
+        * NetworkProcess/capture/json.hpp:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::connectionDidClose):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _keyboardWillHide:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runModal):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+
 2017-10-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Propagate libepoxy compiler flags obtained from pkg-config

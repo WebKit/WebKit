@@ -560,7 +560,7 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         CGFloat inspectorWidth = InspectorFrontendClientLocal::constrainedAttachedWindowWidth(currentDimension, parentWidth);
 
         // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
-        // top position for the inspector view since the banners only stretch as wide as the the inspected view.
+        // top position for the inspector view since the banners only stretch as wide as the inspected view.
         inspectedViewFrame = NSMakeRect(0, 0, parentWidth - inspectorWidth, inspectedViewTop);
         CGFloat insetExcludingBanners = 0;
         if ([inspectedView isKindOfClass:[WKView class]])
@@ -577,7 +577,7 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         CGFloat inspectorWidth = InspectorFrontendClientLocal::constrainedAttachedWindowWidth(currentDimension, parentWidth);
 
         // Preserve the top position of the inspected view so banners in Safari still work. But don't use that
-        // top position for the inspector view since the banners only stretch as wide as the the inspected view.
+        // top position for the inspector view since the banners only stretch as wide as the inspected view.
         inspectedViewFrame = NSMakeRect(inspectorWidth, 0, parentWidth - inspectorWidth, inspectedViewTop);
         CGFloat insetExcludingBanners = 0;
         if ([inspectedView isKindOfClass:[WKView class]])

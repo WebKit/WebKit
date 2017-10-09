@@ -141,7 +141,7 @@ extern NSString *WebViewProgressFinishedNotification;
 
 /*!
      @method canShowMIMETypeAsHTML:
-     @abstract Checks if the the MIME type is a type that the WebKit will interpret as HTML.
+     @abstract Checks if the MIME type is a type that the WebKit will interpret as HTML.
      @param MIMEType The MIME type to check.
      @result YES if the MIMEtype in an HTML type.
 */

@@ -1048,7 +1048,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     }
 
     // If the inherited value of justify-items includes the 'legacy' keyword,
-    // 'auto' computes to the the inherited value. Otherwise, 'auto' computes to
+    // 'auto' computes to the inherited value. Otherwise, 'auto' computes to
     // 'normal'.
     if (style.justifyItems().position() == ItemPositionAuto) {
         if (parentBoxStyle->justifyItems().positionType() == LegacyPosition)

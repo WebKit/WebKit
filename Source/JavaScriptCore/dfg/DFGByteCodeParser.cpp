@@ -752,7 +752,7 @@ private:
     
     Node* addToGraph(Node* node)
     {
-        if (Options::verboseDFGByteCodeParsing())
+        if (Options::verboseDFGBytecodeParsing())
             dataLog("        appended ", node, " ", Graph::opName(node->op()), "\n");
         m_currentBlock->append(node);
         if (clobbersExitState(m_graph, node))
@@ -1296,7 +1296,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
 
     refineStatically(callLinkStatus, callTarget);
     
-    if (Options::verboseDFGByteCodeParsing())
+    if (Options::verboseDFGBytecodeParsing())
         dataLog("    Handling call at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
     
     if (!callLinkStatus.canOptimize()) {
@@ -1346,7 +1346,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, N
         m_inlineStackTop->m_callLinkInfos, m_callContextMap);
     refineStatically(callLinkStatus, callTarget);
     
-    if (Options::verboseDFGByteCodeParsing())
+    if (Options::verboseDFGBytecodeParsing())
         dataLog("    Varargs call link status at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
     
     if (callLinkStatus.canOptimize()
@@ -1685,7 +1685,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
     // If there was a return, but no early returns, then we're done. We allow parsing of
     // the caller to continue in whatever basic block we're in right now.
     if (!inlineStackEntry.m_didEarlyReturn && inlineStackEntry.m_didReturn) {
-        if (Options::verboseDFGByteCodeParsing())
+        if (Options::verboseDFGBytecodeParsing())
             dataLog("    Allowing parsing to continue in last inlined block.\n");
         
         ASSERT(lastBlock->isEmpty() || !lastBlock->terminal());
@@ -1696,7 +1696,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
             // For debugging purposes, set the bytecodeBegin. Note that this doesn't matter
             // for release builds because this block will never serve as a potential target
             // in the linker's binary search.
-            if (Options::verboseDFGByteCodeParsing())
+            if (Options::verboseDFGBytecodeParsing())
                 dataLog("        Repurposing last block from ", lastBlock->bytecodeBegin, " to ", m_currentIndex, "\n");
             lastBlock->bytecodeBegin = m_currentIndex;
             if (callerLinkability == CallerDoesNormalLinking) {
@@ -1710,7 +1710,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
         return;
     }
 
-    if (Options::verboseDFGByteCodeParsing())
+    if (Options::verboseDFGBytecodeParsing())
         dataLog("    Creating new block after inlining.\n");
 
     // If we get to this point then all blocks must end in some sort of terminals.
@@ -2229,7 +2229,7 @@ bool ByteCodeParser::handleMinMax(int resultOperand, NodeType op, int registerOf
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
-    if (Options::verboseDFGByteCodeParsing())
+    if (Options::verboseDFGBytecodeParsing())
         dataLog("       The intrinsic is ", intrinsic, "\n");
     
     // It so happens that the code below doesn't handle the invalid result case. We could fix that, but
@@ -3323,7 +3323,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
     Node* callTargetNode, int resultOperand, InternalFunction* function, int registerOffset,
     int argumentCountIncludingThis, CodeSpecializationKind kind, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
-    if (Options::verboseDFGByteCodeParsing())
+    if (Options::verboseDFGBytecodeParsing())
         dataLog("    Handling constant internal function ", JSValue(function), "\n");
     
     // It so happens that the code below assumes that the result operand is valid. It's extremely
@@ -4282,7 +4282,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         m_currentInstruction = currentInstruction; // Some methods want to use this, and we'd rather not thread it through calls.
         OpcodeID opcodeID = Interpreter::getOpcodeID(currentInstruction->u.opcode);
         
-        if (Options::verboseDFGByteCodeParsing())
+        if (Options::verboseDFGBytecodeParsing())
             dataLog("    parsing ", currentCodeOrigin(), ": ", opcodeID, "\n");
         
         if (UNLIKELY(m_graph.compilation())) {
@@ -6044,9 +6044,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 op = NewFunction;
             }
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
-            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_generator_func), "The length of op_new_func should eqaual to one of op_new_generator_func");
-            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_func), "The length of op_new_func should eqaual to one of op_new_async_func");
-            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_generator_func), "The length of op_new_func should eqaual to one of op_new_async_generator_func");
+            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_generator_func), "The length of op_new_func should be equal to one of op_new_generator_func");
+            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_func), "The length of op_new_func should be equal to one of op_new_async_func");
+            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_generator_func), "The length of op_new_func should be equal to one of op_new_async_generator_func");
             NEXT_OPCODE(op_new_func);
         }
 
@@ -6072,9 +6072,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
     
-            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_generator_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_generator_func_exp");
-            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_async_func_exp");
-            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_generator_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_async_func_exp");
+            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_generator_func_exp), "The length of op_new_func_exp should be equal to one of op_new_generator_func_exp");
+            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_func_exp), "The length of op_new_func_exp should be equal to one of op_new_async_func_exp");
+            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_generator_func_exp), "The length of op_new_func_exp should be equal to one of op_new_async_func_exp");
             NEXT_OPCODE(op_new_func_exp);
         }
 
@@ -6488,7 +6488,7 @@ void ByteCodeParser::parseCodeBlock()
             ASSERT(m_currentBlock->isEmpty() || m_currentBlock->terminal() || (m_currentIndex == codeBlock->instructions().size() && inlineCallFrame()) || !shouldContinueParsing);
 
             if (!shouldContinueParsing) {
-                if (Options::verboseDFGByteCodeParsing())
+                if (Options::verboseDFGBytecodeParsing())
                     dataLog("Done parsing ", *codeBlock, "\n");
                 return;
             }
@@ -6500,7 +6500,7 @@ void ByteCodeParser::parseCodeBlock()
     // Should have reached the end of the instructions.
     ASSERT(m_currentIndex == codeBlock->instructions().size());
     
-    if (Options::verboseDFGByteCodeParsing())
+    if (Options::verboseDFGBytecodeParsing())
         dataLog("Done parsing ", *codeBlock, " (fell off end)\n");
 }
 
@@ -6509,7 +6509,7 @@ bool ByteCodeParser::parse()
     // Set during construction.
     ASSERT(!m_currentIndex);
     
-    if (Options::verboseDFGByteCodeParsing())
+    if (Options::verboseDFGBytecodeParsing())
         dataLog("Parsing ", *m_codeBlock, "\n");
     
     m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock;

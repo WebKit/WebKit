@@ -1313,7 +1313,7 @@ Color RenderTheme::disabledTextColor(const Color& textColor, const Color& backgr
     
     // If there's not very much contrast between the disabled color and the background color,
     // just leave the text color alone. We don't want to change a good contrast color scheme so that it has really bad contrast.
-    // If the the contrast was already poor, then it doesn't do any good to change it to a different poor contrast color scheme.
+    // If the contrast was already poor, then it doesn't do any good to change it to a different poor contrast color scheme.
     if (differenceSquared(disabledColor, backgroundColor) < minColorContrastValue)
         return textColor;
     

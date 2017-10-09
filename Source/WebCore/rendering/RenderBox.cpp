@@ -4017,7 +4017,7 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
     const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, nullptr, false);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
-    // instead of the the container block's.
+    // instead of the container block's.
     TextDirection containerDirection = containerBlock.style().direction();
 
     // Variables to solve.

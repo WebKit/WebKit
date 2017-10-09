@@ -353,7 +353,7 @@ public:
 
         // Make sure everything is decorated. This does a bunch of deferred decorating. This has
         // to happen last because our abstract heaps are generated lazily. They have to be
-        // generated lazily because we have an infiniten number of numbered, indexed, and
+        // generated lazily because we have an infinite number of numbered, indexed, and
         // absolute heaps. We only become aware of the ones we actually mention while lowering.
         m_heaps.computeRangesAndDecorateInstructions();
 

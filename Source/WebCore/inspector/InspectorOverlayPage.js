@@ -172,7 +172,7 @@ function reset(resetData)
     canvas.style.height = viewportSize.height + "px";
     context.scale(deviceScaleFactor, deviceScaleFactor);
 
-    // We avoid getting the the context for the paint rects canvas until we need to paint, to avoid backing store allocation.
+    // We avoid getting the context for the paint rects canvas until we need to paint, to avoid backing store allocation.
     paintRectsCanvas.width = deviceScaleFactor * viewportSize.width;
     paintRectsCanvas.height = deviceScaleFactor * viewportSize.height;
     paintRectsCanvas.style.width = viewportSize.width + "px";

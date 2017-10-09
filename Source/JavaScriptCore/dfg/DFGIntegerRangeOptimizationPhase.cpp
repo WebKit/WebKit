@@ -799,7 +799,7 @@ private:
         // all possible inequalities between variables and constants, but we focus mainly on cheap
         // cases for now.
 
-        // Here are some of the the arrangements we can merge usefully assuming @c < @d:
+        // Here are some of the arrangements we can merge usefully assuming @c < @d:
         //
         //     @x == @c || @x == @d   =>   @x >= c && @x <= @d
         //     @x >= @c || @x <= @d   =>   TOP

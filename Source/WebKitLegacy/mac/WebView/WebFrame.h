@@ -123,7 +123,7 @@
     @abstract Loads a page to display as a substitute for a URL that could not be reached.
     @discussion This allows clients to display page-loading errors in the webview itself.
     This is typically called while processing the WebFrameLoadDelegate method
-    -webView:didFailProvisionalLoadWithError:forFrame: or one of the the WebPolicyDelegate methods
+    -webView:didFailProvisionalLoadWithError:forFrame: or one of the WebPolicyDelegate methods
     -webView:decidePolicyForMIMEType:request:frame:decisionListener: or
     -webView:unableToImplementPolicyWithError:frame:. If it is called from within one of those
     three delegate methods then the back/forward list will be maintained appropriately.

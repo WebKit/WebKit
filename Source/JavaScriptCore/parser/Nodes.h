@@ -102,7 +102,7 @@ namespace JSC {
 
     class ParserArenaFreeable {
     public:
-        // ParserArenaFreeable objects are are freed when the arena is deleted.
+        // ParserArenaFreeable objects are freed when the arena is deleted.
         // Destructors are not called. Clients must not call delete on such objects.
         void* operator new(size_t, ParserArena&);
     };

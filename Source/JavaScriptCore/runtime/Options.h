@@ -167,7 +167,7 @@ typedef const char* optionString;
     v(bool, dumpDFGFTLGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase of DFG compilation when compiling FTL code") \
     v(bool, dumpB3GraphAtEachPhase, false, Normal, "dumps the B3 graph at each phase of compilation") \
     v(bool, dumpAirGraphAtEachPhase, false, Normal, "dumps the Air graph at each phase of compilation") \
-    v(bool, verboseDFGByteCodeParsing, false, Normal, nullptr) \
+    v(bool, verboseDFGBytecodeParsing, false, Normal, nullptr) \
     v(bool, safepointBeforeEachPhase, true, Normal, nullptr) \
     v(bool, verboseCompilation, false, Normal, nullptr) \
     v(bool, verboseFTLCompilation, false, Normal, nullptr) \
@@ -514,6 +514,7 @@ enum OptionEquivalence {
     v(enableDollarVM, useDollarVM, SameOption) \
     v(enableWebAssembly, useWebAssembly, SameOption) \
     v(enableAsyncIterator, useAsyncIterator, SameOption) \
+    v(verboseDFGByteCodeParsing, verboseDFGBytecodeParsing, SameOption) \
 
 
 class Options {

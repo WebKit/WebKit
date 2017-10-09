@@ -608,7 +608,7 @@ void Scope::didChangeStyleSheetEnvironment()
 {
     if (!m_shadowRoot) {
         for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots()) {
-            // Stylesheets is author shadow roots are are potentially affected.
+            // Stylesheets is author shadow roots are potentially affected.
             if (descendantShadowRoot->mode() != ShadowRootMode::UserAgent)
                 descendantShadowRoot->styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
         }

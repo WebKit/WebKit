@@ -74,7 +74,7 @@ static ClassChangeVector computeClassChange(const SpaceSplitString& oldClasses, 
         changedClasses.append(newClasses[i].impl());
     }
     for (unsigned i = 0; i < oldSize; ++i) {
-        // If the bit is not set the the corresponding class has been removed.
+        // If the bit is not set the corresponding class has been removed.
         if (remainingClassBits.quickGet(i))
             continue;
         changedClasses.append(oldClasses[i].impl());

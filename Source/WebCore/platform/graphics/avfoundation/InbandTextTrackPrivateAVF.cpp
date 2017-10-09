@@ -88,7 +88,7 @@ static bool makeRGBA32FromARGBCFArray(CFArrayRef colorArray, RGBA32& color)
 
 void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString, GenericCueData& cueData)
 {
-    // Some of the attributes we translate into per-cue WebVTT settings are are repeated on each part of an attributed string so only
+    // Some of the attributes we translate into per-cue WebVTT settings are repeated on each part of an attributed string so only
     // process the first instance of each.
     enum AttributeFlags {
         Line = 1 << 0,

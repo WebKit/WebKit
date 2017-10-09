@@ -794,7 +794,7 @@ void Connection::connectionDidClose()
 
     RunLoop::main().dispatch([protectedThis = makeRef(*this)]() mutable {
         // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
-        // then the the connection will be invalid here.
+        // then the connection will be invalid here.
         if (!protectedThis->isValid())
             return;
 

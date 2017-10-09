@@ -762,7 +762,7 @@ private:
             return true;
 
         // The use count might be 1 if the variable is live around a loop. We can guarantee that we
-        // pick the the variable that is least likely to suffer this problem if we pick the one that
+        // pick the variable that is least likely to suffer this problem if we pick the one that
         // is closest to us in an idom walk. By convention, we slightly bias this in favor of
         // returning true.
 

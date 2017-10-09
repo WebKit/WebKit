@@ -75,7 +75,7 @@ void BreakBlockquoteCommand::doApply()
     bool isLastVisPosInNode = isLastVisiblePositionInNode(visiblePos, topBlockquote);
 
     // If the position is at the beginning of the top quoted content, we don't need to break the quote.
-    // Instead, insert the break before the blockquote, unless the position is as the end of the the quoted content.
+    // Instead, insert the break before the blockquote, unless the position is as the end of the quoted content.
     if (isFirstVisiblePositionInNode(visiblePos, topBlockquote) && !isLastVisPosInNode) {
         insertNodeBefore(breakNode.copyRef(), *topBlockquote);
         setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.ptr()), DOWNSTREAM, endingSelection().isDirectional()));

@@ -3472,7 +3472,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             semanticFailIfTrue(hasKeywordForLocalBindings, "Cannot use keyword as exported variable name");
             // Since this export declaration does not have module specifier part, it exports the local bindings.
             // While the export declaration with module specifier does not have any effect on the current module's scope,
-            // the export named declaration without module specifier references the the local binding names.
+            // the export named declaration without module specifier references the local binding names.
             // For example,
             //   export { A, B, C as D } from "mod"
             // does not have effect on the current module's scope. But,

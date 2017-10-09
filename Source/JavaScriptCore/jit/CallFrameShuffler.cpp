@@ -384,7 +384,7 @@ void CallFrameShuffler::prepareForTailCall()
     // manually
     m_newFrameOffset = 0;
 #elif CPU(ARM) || CPU(MIPS)
-    // We load the the frame pointer and link register
+    // We load the frame pointer and link register
     // manually. We could ask the algorithm to load them for us,
     // and it would allow us to use the link register as an extra
     // temporary - but it'd mean that the frame pointer can also

@@ -207,7 +207,7 @@ foreach my $idlFile (@supplementedIdlFiles) {
                 push(@{$targetDataNode->constants}, $constant);
             }
         } else {
-            die "$idlFile is not a supplemental dependency of $targetIdlFile. There maybe a bug in the the supplemental dependency generator (preprocess-idls.pl).\n";
+            die "$idlFile is not a supplemental dependency of $targetIdlFile. There maybe a bug in the supplemental dependency generator (preprocess-idls.pl).\n";
         }
     }
 }

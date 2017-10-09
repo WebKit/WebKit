@@ -60,7 +60,7 @@ namespace WebCore {
 
 static void safeRemoveFromSuperview(NSView *view)
 {
-    // If the the view is the first responder, then set the window's first responder to nil so
+    // If the view is the first responder, then set the window's first responder to nil so
     // we don't leave the window pointing to a view that's no longer in it.
     NSWindow *window = [view window];
     NSResponder *firstResponder = [window firstResponder];

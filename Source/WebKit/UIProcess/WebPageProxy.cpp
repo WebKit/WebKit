@@ -6010,7 +6010,7 @@ void WebPageProxy::runModal()
     m_process->responsivenessTimer().stop();
 
     // Our Connection's run loop might have more messages waiting to be handled after this RunModal message.
-    // To make sure they are handled inside of the the nested modal run loop we must first signal the Connection's
+    // To make sure they are handled inside of the nested modal run loop we must first signal the Connection's
     // run loop so we're guaranteed that it has a chance to wake up.
     // See http://webkit.org/b/89590 for more discussion.
     m_process->connection()->wakeUpRunLoop();

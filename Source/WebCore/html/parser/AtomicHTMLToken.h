@@ -78,7 +78,7 @@ private:
 
     String m_data; // Comment
 
-    // We don't want to copy the the characters out of the HTMLToken, so we keep a pointer to its buffer instead.
+    // We don't want to copy the characters out of the HTMLToken, so we keep a pointer to its buffer instead.
     // This buffer is owned by the HTMLToken and causes a lifetime dependence between these objects.
     // FIXME: Add a mechanism for "internalizing" the characters when the HTMLToken is destroyed.
     const UChar* m_externalCharacters; // Character

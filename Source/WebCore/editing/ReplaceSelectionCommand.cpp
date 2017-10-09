@@ -1192,7 +1192,7 @@ void ReplaceSelectionCommand::doApply()
         if (m_shouldMergeEnd && destinationNode != enclosingInline(destinationNode) && enclosingInline(destinationNode)->nextSibling())
             insertNodeBefore(HTMLBRElement::create(document()), *refNode);
         
-        // Merging the the first paragraph of inserted content with the content that came
+        // Merging the first paragraph of inserted content with the content that came
         // before the selection that was pasted into would also move content after 
         // the selection that was pasted into if: only one paragraph was being pasted, 
         // and it was not wrapped in a block, the selection that was pasted into ended 

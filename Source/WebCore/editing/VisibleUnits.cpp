@@ -1971,7 +1971,7 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
 {
     VisiblePosition result;
 
-    // move the the position at the end of the word
+    // move the position at the end of the word
     if (atBoundaryOfGranularity(position, LineGranularity, DirectionForward)) {
         // Don't cross line boundaries.
         result = position;
