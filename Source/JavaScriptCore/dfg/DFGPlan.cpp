@@ -247,11 +247,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     }
     
     Graph dfg(*vm, *this);
-    
-    if (!parse(dfg)) {
-        finalizer = std::make_unique<FailedFinalizer>(*this);
-        return FailPath;
-    }
+    parse(dfg);
 
     codeBlock->setCalleeSaveRegisters(RegisterSet::dfgCalleeSaveRegisters());
 

@@ -251,21 +251,6 @@ private:
 };
 
 typedef Vector<BasicBlock*, 5> BlockList;
-
-struct UnlinkedBlock {
-    BasicBlock* m_block;
-    bool m_needsNormalLinking;
-    bool m_needsEarlyReturnLinking;
-    
-    UnlinkedBlock() { }
-    
-    explicit UnlinkedBlock(BasicBlock* block)
-        : m_block(block)
-        , m_needsNormalLinking(true)
-        , m_needsEarlyReturnLinking(false)
-    {
-    }
-};
     
 static inline unsigned getBytecodeBeginForBlock(BasicBlock** basicBlock)
 {

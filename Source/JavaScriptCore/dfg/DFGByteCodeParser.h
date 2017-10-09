@@ -31,7 +31,7 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-bool parse(Graph&);
+void parse(Graph&);
 
 } } // namespace JSC::DFG
 

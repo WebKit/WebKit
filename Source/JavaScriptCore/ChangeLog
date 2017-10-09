@@ -1,3 +1,49 @@
+2017-10-09  Robin Morisset  <rmorisset@apple.com>
+
+        Refactor the inliner to simplify block linking
+        https://bugs.webkit.org/show_bug.cgi?id=177922
+
+        Reviewed by Saam Barati.
+
+        The biggest refactor changes the way blocks are linked. In DFGByteCodeParser, most terminals (such as Jump or Branch) jump to nullptr initially, and have
+        some metadata indicating the bytecode index corresponding to their targets. They are later linked to the right basic block using two fields of InlineStackEntry:
+        - m_unlinkedBlocks is just a worklist of blocks with a terminal that needs to be linked
+        - m_linkingTargets is a dictionary from bytecode indices to BasicBlock*
+        Before refactoring, every block was automatically added to both of these fields, for the InlineStackEntry of whatever function allocated it.
+        This created a significant number of corner cases, such as blocks allocated in a caller, with a terminal written by an inlined callee and pointing to a block in the callee,
+        or blocks allocated in an inline callee, with a terminal written by the caller after it returns and pointing to a block in the caller, or blocks with a manually linked
+        terminal that needs to be taken off m_unlinkedBlocks.
+        I changed things so that blocks are only added to m_unlinkedBlocks when their terminal gets written (see the LAST_OPCODE macro) making it a lot easier to be in the "right" InlineStackEntry,
+        that is the one that holds their target in its m_linkingTargets field.
+
+        There are a few much smaller refactors in this patch:
+        - parse() is now of type void insted of bool (it was always returning true)
+        - The 7 and 8 arguments of handleCall were inlined in its 3 arguments version for readability
+        - The 9 argument version was cleaned up and simplified
+        - I made separate allocateBlock routines because the little dance with adoptRef(* new BasicBlock(...)) was being repeated in lots of places, and typos in that were a major source of bugs during other refactorings
+        - Jumps are now created with explicit addJumpTo() functions, providing some sanity checking through asserts and didLink()
+        - Blocks are only added to m_unlinkedBlocks if they end in a terminal that linkBlock works with (see LAST_OPCODE)
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::refineStatically):
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        (JSC::DFG::parse):
+        (JSC::DFG::ByteCodeParser::cancelLinkingForBlock): Deleted.
+        * dfg/DFGByteCodeParser.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+
 2017-10-09  Michael Saboff  <msaboff@apple.com>
 
         Implement RegExp Unicode property escapes

@@ -817,7 +817,8 @@ void Graph::killUnreachableBlocks()
             continue;
         if (block->isReachable)
             continue;
-        
+
+        dataLogIf(Options::verboseDFGBytecodeParsing(), "Basic block #", blockIndex, " was killed because it was unreachable\n");
         killBlockAndItsContents(block);
     }
 }
