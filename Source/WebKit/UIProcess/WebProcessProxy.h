@@ -98,7 +98,7 @@ public:
     void addExistingWebPage(WebPageProxy&, uint64_t pageID);
     void removeWebPage(WebPageProxy&, uint64_t pageID);
 
-    WTF::IteratorRange<WebPageProxyMap::const_iterator::Values> pages() const { return m_pageMap.values(); }
+    typename WebPageProxyMap::ValuesConstIteratorRange pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 

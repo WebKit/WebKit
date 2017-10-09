@@ -36,8 +36,8 @@ template<typename KeyArg, typename MappedArg, typename HashArg = typename Defaul
 class HashMap final {
     WTF_MAKE_FAST_ALLOCATED;
 private:
-    typedef KeyTraitsArg KeyTraits;
-    typedef MappedTraitsArg MappedTraits;
+    using KeyTraits = KeyTraitsArg;
+    using MappedTraits = MappedTraitsArg;
 
     struct KeyValuePairTraits : KeyValuePairHashTraits<KeyTraits, MappedTraits> {
         static const bool hasIsEmptyValueFunction = true;
@@ -48,18 +48,17 @@ private:
     };
 
 public:
-    typedef typename KeyTraits::TraitType KeyType;
-    typedef typename MappedTraits::TraitType MappedType;
-    typedef typename KeyValuePairTraits::TraitType KeyValuePairType;
+    using KeyType = typename KeyTraits::TraitType;
+    using MappedType = typename MappedTraits::TraitType;
+    using KeyValuePairType = typename KeyValuePairTraits::TraitType;
 
 private:
-    typedef typename MappedTraits::PeekType MappedPeekType;
-    typedef typename MappedTraits::TakeType MappedTakeType;
+    using MappedPeekType = typename MappedTraits::PeekType;
+    using MappedTakeType = typename MappedTraits::TakeType;
 
-    typedef HashArg HashFunctions;
+    using HashFunctions = HashArg;
 
-    typedef HashTable<KeyType, KeyValuePairType, KeyValuePairKeyExtractor<KeyValuePairType>,
-        HashFunctions, KeyValuePairTraits, KeyTraits> HashTableType;
+    using HashTableType = HashTable<KeyType, KeyValuePairType, KeyValuePairKeyExtractor<KeyValuePairType>, HashFunctions, KeyValuePairTraits, KeyTraits>;
 
     class HashMapKeysProxy;
     class HashMapValuesProxy;
@@ -67,9 +66,15 @@ private:
     using IdentityTranslatorType = typename HashTableType::IdentityTranslatorType;
 
 public:
-    typedef HashTableIteratorAdapter<HashTableType, KeyValuePairType> iterator;
-    typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePairType> const_iterator;
-    typedef typename HashTableType::AddResult AddResult;
+    using iterator = HashTableIteratorAdapter<HashTableType, KeyValuePairType>;
+    using const_iterator = HashTableConstIteratorAdapter<HashTableType, KeyValuePairType>;
+
+    using KeysIteratorRange = SizedIteratorRange<HashMap, typename iterator::Keys>;
+    using KeysConstIteratorRange = SizedIteratorRange<HashMap, typename const_iterator::Keys>;
+    using ValuesIteratorRange = SizedIteratorRange<HashMap, typename iterator::Values>;
+    using ValuesConstIteratorRange = SizedIteratorRange<HashMap, typename const_iterator::Values>;
+
+    using AddResult = typename HashTableType::AddResult;
 
 public:
     HashMap()
@@ -93,12 +98,12 @@ public:
     iterator end();
     const_iterator begin() const;
     const_iterator end() const;
+    
+    KeysIteratorRange keys() { return makeSizedIteratorRange(*this, begin().keys(), end().keys()); }
+    const KeysConstIteratorRange keys() const { return makeSizedIteratorRange(*this, begin().keys(), end().keys()); }
 
-    IteratorRange<typename iterator::Keys> keys() { return makeIteratorRange(begin().keys(), end().keys()); }
-    const IteratorRange<typename const_iterator::Keys> keys() const { return makeIteratorRange(begin().keys(), end().keys()); }
-
-    IteratorRange<typename iterator::Values> values() { return makeIteratorRange(begin().values(), end().values()); }
-    const IteratorRange<typename const_iterator::Values> values() const { return makeIteratorRange(begin().values(), end().values()); }
+    ValuesIteratorRange values() { return makeSizedIteratorRange(*this, begin().values(), end().values()); }
+    const ValuesConstIteratorRange values() const { return makeSizedIteratorRange(*this, begin().values(), end().values()); }
 
     iterator find(const KeyType&);
     const_iterator find(const KeyType&) const;

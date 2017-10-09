@@ -1,3 +1,15 @@
+2017-10-09  Sam Weinig  <sam@webkit.org>
+
+        Make HashMap::keys() and HashMap::values() work with WTF::map/WTF::copyToVector
+        https://bugs.webkit.org/show_bug.cgi?id=178072
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h:
+        (WebCore::MediaSelectionGroupAVFObjC::options):
+        
+            Update for type change for HashMap::values().
+            
 2017-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, another build fix attempt after r223031

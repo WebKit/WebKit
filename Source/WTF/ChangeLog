@@ -1,3 +1,29 @@
+2017-10-09  Sam Weinig  <sam@webkit.org>
+
+        Make HashMap::keys() and HashMap::values() work with WTF::map/WTF::copyToVector
+        https://bugs.webkit.org/show_bug.cgi?id=178072
+
+        Reviewed by Darin Adler.
+
+        Introduce SizedIteratorRange, a variant of IteratorRange that includes
+        a reference to a backing container in order to get the size of container.
+        This is useful for algorithms like WTF::map and WTF::copyToVector, that
+        can use the size to efficiently allocate things of the correct size.
+
+        The main beneficiary are HashMap's keys() and values() functions which
+        used to return IteratorRanges and now return SizedIteratorRange. This
+        allows us to remove (in a future change) copyKeysToVector() and
+        copyValuesToVector() by replacing them with copyToVector(map.keys()) and
+        copyToVector(map.values()) respectively.
+
+        * wtf/HashMap.h:
+        * wtf/IteratorRange.h:
+        (WTF::SizedIteratorRange::SizedIteratorRange):
+        (WTF::SizedIteratorRange::size const):
+        (WTF::SizedIteratorRange::begin const):
+        (WTF::SizedIteratorRange::end const):
+        (WTF::makeSizedIteratorRange):
+
 2017-10-08  Sam Weinig  <sam@webkit.org>
 
         It should be possible to create a ListHashSet with a std::initializer_list.

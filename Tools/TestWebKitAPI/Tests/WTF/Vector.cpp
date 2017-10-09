@@ -818,4 +818,29 @@ TEST(WTF_Vector, CopyToVectorOf)
     EXPECT_FLOAT_EQ(3, vector[2]);
 }
 
+TEST(WTF_Vector, CopyToVectorSizeRangeIterator)
+{
+    HashMap<int, float> map {
+        { 1, 9 },
+        { 2, 8 },
+        { 3, 7 }
+    };
+
+    auto keysVector = copyToVector(map.keys());
+    EXPECT_EQ(3U, keysVector.size());
+
+    std::sort(keysVector.begin(), keysVector.end());
+    EXPECT_EQ(1, keysVector[0]);
+    EXPECT_EQ(2, keysVector[1]);
+    EXPECT_EQ(3, keysVector[2]);
+
+    auto valuesVector = copyToVector(map.values());
+    EXPECT_EQ(3U, valuesVector.size());
+
+    std::sort(valuesVector.begin(), valuesVector.end());
+    EXPECT_FLOAT_EQ(7, valuesVector[0]);
+    EXPECT_FLOAT_EQ(8, valuesVector[1]);
+    EXPECT_FLOAT_EQ(9, valuesVector[2]);
+}
+
 } // namespace TestWebKitAPI

@@ -76,8 +76,8 @@ public:
 
     void updateOptions(const Vector<String>& characteristics);
 
-    typedef HashMap<AVMediaSelectionOption*, RefPtr<MediaSelectionOptionAVFObjC>> OptionContainer;
-    WTF::IteratorRange<OptionContainer::iterator::Values> options() { return m_options.values(); }
+    using OptionContainer = HashMap<AVMediaSelectionOption*, RefPtr<MediaSelectionOptionAVFObjC>>;
+    typename OptionContainer::ValuesIteratorRange options() { return m_options.values(); }
 
     AVMediaSelectionGroup *avMediaSelectionGroup() const { return m_mediaSelectionGroup.get(); }
 

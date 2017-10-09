@@ -1,3 +1,15 @@
+2017-10-09  Sam Weinig  <sam@webkit.org>
+
+        Make HashMap::keys() and HashMap::values() work with WTF::map/WTF::copyToVector
+        https://bugs.webkit.org/show_bug.cgi?id=178072
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+        
+            Add tests for HashMap::keys() and HashMap::values() working with copyToVector.
+
 2017-10-05  Frederic Wang  <fwang@igalia.com>
 
         Remove WOFF2 from Source/ThirdParty.
