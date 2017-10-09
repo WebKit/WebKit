@@ -1562,8 +1562,8 @@ size_t removeRepeatedElements(Vector<T, inlineCapacity, OverflowHandler, minCapa
     return removeRepeatedElements(vector, [] (T& a, T& b) { return a == b; });
 }
 
-template<typename MapFunction, typename SourceType>
-struct MapFunctionInspector {
+template<typename SourceType>
+struct CollectionInspector {
     using RealSourceType = typename std::remove_reference<SourceType>::type;
     using IteratorType = decltype(std::begin(std::declval<RealSourceType>()));
     using SourceItemType = typename std::iterator_traits<IteratorType>::value_type;
@@ -1571,7 +1571,7 @@ struct MapFunctionInspector {
 
 template<typename MapFunction, typename SourceType, typename Enable = void>
 struct Mapper {
-    using SourceItemType = typename MapFunctionInspector<MapFunction, SourceType>::SourceItemType;
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
 
     static Vector<DestinationItemType> map(SourceType source, const MapFunction& mapFunction)
@@ -1587,7 +1587,7 @@ struct Mapper {
 
 template<typename MapFunction, typename SourceType>
 struct Mapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
-    using SourceItemType = typename MapFunctionInspector<MapFunction, SourceType>::SourceItemType;
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&&)>::type;
 
     static Vector<DestinationItemType> map(SourceType&& source, const MapFunction& mapFunction)
@@ -1607,10 +1607,29 @@ Vector<typename Mapper<MapFunction, SourceType>::DestinationItemType> map(Source
     return Mapper<MapFunction, SourceType>::map(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
 }
 
+template<typename DestinationItemType, typename Collection>
+inline auto copyToVectorOf(const Collection& collection) -> Vector<DestinationItemType>
+{
+    return WTF::map(collection, [] (const auto& v) -> DestinationItemType { return v; });
+}
+
+template<typename Collection>
+struct CopyToVectorResult {
+    using Type = typename std::remove_cv<typename CollectionInspector<Collection>::SourceItemType>::type;
+};
+
+template<typename Collection>
+inline auto copyToVector(const Collection& collection) -> Vector<typename CopyToVectorResult<Collection>::Type>
+{
+    return copyToVectorOf<typename CopyToVectorResult<Collection>::Type>(collection);
+}
+
 } // namespace WTF
 
 using WTF::Vector;
 using WTF::UnsafeVectorOverflow;
 using WTF::removeRepeatedElements;
+using WTF::copyToVector;
+using WTF::copyToVectorOf;
 
 #endif // WTF_Vector_h

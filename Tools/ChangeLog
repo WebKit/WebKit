@@ -1,3 +1,14 @@
+2017-10-08  Sam Weinig  <sam@webkit.org>
+
+        There should be a version of copyToVector that returns a Vector, rather than using an out parameter
+        https://bugs.webkit.org/show_bug.cgi?id=177732
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests for the new copyToVector and copyToVectorOf functions.
+
 2017-10-08  Darin Adler  <darin@apple.com>
 
         Fix bugs related to setting reflected floating point DOM attributes

@@ -1,3 +1,23 @@
+2017-10-08  Sam Weinig  <sam@webkit.org>
+
+        There should be a version of copyToVector that returns a Vector, rather than using an out parameter
+        https://bugs.webkit.org/show_bug.cgi?id=177732
+
+        Reviewed by Saam Barati.
+
+        Add two new helper functions, copyToVector and copyToVectorOf, which will be able to
+        replace the existing out parameter taking copyToVector. Like it's ancestral namesake,
+        copyToVector takes an object that is both iterable (supports begin() and end()) and
+        has a size, and returns a Vector with a copy of all the items iterated. The copyToVectorOf
+        variant allow the user to specify a type to convert to, so if you have a HashSet<int>
+        but want those as floats in a Vector, you can do:
+        
+            auto floatVector = copyToVectorOf<float>(intSet);
+
+        * wtf/Vector.h:
+        (WTF::copyToVector):
+        (WTF::copyToVectorOf):
+
 2017-10-08  Darin Adler  <darin@apple.com>
 
         Fix bugs related to setting reflected floating point DOM attributes

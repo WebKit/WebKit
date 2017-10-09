@@ -27,6 +27,8 @@
 
 #include "MoveOnly.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -773,6 +775,47 @@ TEST(WTF_Vector, MapFromHashMap)
     EXPECT_TRUE(map.get("k2").isNull());
     EXPECT_TRUE(map.get("k3").isNull());
 
+}
+
+TEST(WTF_Vector, CopyToVector)
+{
+    HashSet<int> intSet { 1, 2, 3 };
+
+    auto vector = copyToVector(intSet);
+    EXPECT_EQ(3U, vector.size());
+
+    std::sort(vector.begin(), vector.end());
+    EXPECT_EQ(1, vector[0]);
+    EXPECT_EQ(2, vector[1]);
+    EXPECT_EQ(3, vector[2]);
+}
+
+TEST(WTF_Vector, CopyToVectorOrderPreserving)
+{
+    ListHashSet<int> orderedIntSet;
+    orderedIntSet.add(1);
+    orderedIntSet.add(2);
+    orderedIntSet.add(3);
+
+    auto vector = copyToVector(orderedIntSet);
+    EXPECT_EQ(3U, vector.size());
+
+    EXPECT_EQ(1, vector[0]);
+    EXPECT_EQ(2, vector[1]);
+    EXPECT_EQ(3, vector[2]);
+}
+
+TEST(WTF_Vector, CopyToVectorOf)
+{
+    HashSet<int> intSet { 1, 2, 3 };
+
+    Vector<float> vector = copyToVectorOf<float>(intSet);
+    EXPECT_EQ(3U, vector.size());
+
+    std::sort(vector.begin(), vector.end());
+    EXPECT_FLOAT_EQ(1, vector[0]);
+    EXPECT_FLOAT_EQ(2, vector[1]);
+    EXPECT_FLOAT_EQ(3, vector[2]);
 }
 
 } // namespace TestWebKitAPI
