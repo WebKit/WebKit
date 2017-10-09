@@ -1,5 +1,16 @@
 2017-10-08  Sam Weinig  <sam@webkit.org>
 
+        It should be possible to create a ListHashSet with a std::initializer_list.
+        https://bugs.webkit.org/show_bug.cgi?id=178070
+
+        Reviewed by Darin Adler.
+
+        * wtf/ListHashSet.h:
+        (WTF::U>::ListHashSet):
+        Add a constructor that takes a std::initializer_list.
+
+2017-10-08  Sam Weinig  <sam@webkit.org>
+
         Address additional feedback from Darin for r223039 and sort the using declarations.
 
         * wtf/Vector.h:

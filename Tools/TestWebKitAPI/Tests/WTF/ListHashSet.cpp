@@ -348,4 +348,29 @@ TEST(WTF_ListHashSet, MoveAssignment)
     ++iterator;
 }
 
+TEST(WTF_ListHashSet, InitializerListConstuctor)
+{
+    ListHashSet<int> set { 1, 2, 3 };
+    ASSERT_EQ(3U, set.size());
+    auto iterator = set.begin();
+    ASSERT_EQ(1, *iterator);
+    ++iterator;
+    ASSERT_EQ(2, *iterator);
+    ++iterator;
+    ASSERT_EQ(3, *iterator);
+    ++iterator;
+
+    set = { 4, 5, 6, 7 };
+    ASSERT_EQ(4U, set.size());
+    iterator = set.begin();
+    ASSERT_EQ(4, *iterator);
+    ++iterator;
+    ASSERT_EQ(5, *iterator);
+    ++iterator;
+    ASSERT_EQ(6, *iterator);
+    ++iterator;
+    ASSERT_EQ(7, *iterator);
+    ++iterator;
+}
+
 } // namespace TestWebKitAPI

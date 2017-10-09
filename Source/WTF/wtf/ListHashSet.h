@@ -69,6 +69,7 @@ public:
     typedef HashTableAddResult<iterator> AddResult;
 
     ListHashSet() = default;
+    ListHashSet(std::initializer_list<ValueType>);
     ListHashSet(const ListHashSet&);
     ListHashSet(ListHashSet&&);
     ListHashSet& operator=(const ListHashSet&);
@@ -304,6 +305,14 @@ struct ListHashSetTranslator {
         location = new T(std::forward<U>(key));
     }
 };
+
+
+template<typename T, typename U>
+inline ListHashSet<T, U>::ListHashSet(std::initializer_list<T> initializerList)
+{
+    for (const auto& value : initializerList)
+        add(value);
+}
 
 template<typename T, typename U>
 inline ListHashSet<T, U>::ListHashSet(const ListHashSet& other)

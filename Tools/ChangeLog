@@ -1,5 +1,16 @@
 2017-10-08  Sam Weinig  <sam@webkit.org>
 
+        It should be possible to create a ListHashSet with a std::initializer_list.
+        https://bugs.webkit.org/show_bug.cgi?id=178070
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test for using std::initializer_list with ListHashSet.
+
+2017-10-08  Sam Weinig  <sam@webkit.org>
+
         There should be a version of copyToVector that returns a Vector, rather than using an out parameter
         https://bugs.webkit.org/show_bug.cgi?id=177732
 
