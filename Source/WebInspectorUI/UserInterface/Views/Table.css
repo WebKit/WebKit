@@ -42,6 +42,7 @@
     border-bottom: 1px solid var(--border-color);
     background: white;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 .table > .header > .sortable:active {
@@ -123,6 +124,7 @@ body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::af
     height: 20px;
     line-height: 20px;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 .table > .data-container > .data-list > li.selected {

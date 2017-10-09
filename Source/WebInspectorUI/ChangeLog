@@ -1,5 +1,18 @@
 2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab: Row wrapping (waterfall displaying behind next row's name)
+        https://bugs.webkit.org/show_bug.cgi?id=178015
+        <rdar://problem/34858720>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Table.css:
+        (.table > .header):
+        (.table > .data-container > .data-list > li):
+        Disallow wrapping.
+
+2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab - Cookies Detail View
         https://bugs.webkit.org/show_bug.cgi?id=177988
         <rdar://problem/34071927>
