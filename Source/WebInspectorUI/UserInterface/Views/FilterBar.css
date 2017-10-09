@@ -90,3 +90,18 @@ body[dir=rtl] .filter-bar > .navigation-bar > .item {
 
     -webkit-appearance: none;
 }
+
+.filter-bar.active > input[type="search"]::-webkit-search-decoration {
+    background-image: url(../Images/FilterFieldActiveGlyph.svg);
+}
+
+.filter-bar.indicating-progress > input[type="search"]::-webkit-search-decoration {
+    background-image: url(../Images/IndeterminateProgressSpinner1.svg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+    animation-name: discrete-spinner;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: step-start;
+}

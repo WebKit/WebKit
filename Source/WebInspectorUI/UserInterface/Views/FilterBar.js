@@ -42,7 +42,8 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._inputField.placeholder = WI.UIString("Filter");
         this._inputField.spellcheck = false;
         this._inputField.incremental = true;
-        this._inputField.addEventListener("search", this._handleFilterChanged.bind(this), false);
+        this._inputField.addEventListener("search", this._handleFilterChanged.bind(this));
+        this._inputField.addEventListener("input", this._handleFilterInputEvent.bind(this));
         this._element.appendChild(this._inputField);
 
         this._lastFilterValue = this.filters;
@@ -55,19 +56,29 @@ WI.FilterBar = class FilterBar extends WI.Object
         return this._element;
     }
 
+    get inputField()
+    {
+        return this._inputField;
+    }
+
     get placeholder()
     {
-        return this._inputField.getAttribute("placeholder");
+        return this._inputField.placeholder;
     }
 
     set placeholder(text)
     {
-        this._inputField.setAttribute("placeholder", text);
+        this._inputField.placeholder = text;
     }
 
-    get inputField()
+    get incremental()
     {
-        return this._inputField;
+        return this._inputField.incremental;
+    }
+
+    set incremental(incremental)
+    {
+        this._inputField.incremental = incremental;
     }
 
     get filters()
@@ -83,6 +94,33 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._inputField.value = filters.text || "";
         if (oldTextValue !== this._inputField.value)
             this._handleFilterChanged();
+    }
+
+    get indicatingProgress()
+    {
+        return this._element.classList.contains("indicating-progress");
+    }
+
+    set indicatingProgress(progress)
+    {
+        this._element.classList.toggle("indicating-progress", !!progress);
+    }
+
+    get indicatingActive()
+    {
+        return this._element.classList.contains("active");
+    }
+
+    set indicatingActive(active)
+    {
+        this._element.classList.toggle("active", !!active);
+    }
+
+    clear()
+    {
+        this._inputField.value = "";
+        this._inputField.value = null; // Get the placeholder to show again.
+        this._lastFilterValue = this.filters;
     }
 
     addFilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight)
@@ -141,6 +179,17 @@ WI.FilterBar = class FilterBar extends WI.Object
             this._lastFilterValue = this.filters;
             this.dispatchEventToListeners(WI.FilterBar.Event.FilterDidChange);
         }
+    }
+
+    _handleFilterInputEvent(event)
+    {
+        // When not incremental we still want to detect if the field becomes empty.
+
+        if (this.incremental)
+            return;
+
+        if (!this._inputField.value)
+            this._handleFilterChanged();
     }
 };
 

@@ -65,6 +65,11 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         return this._frameIdentifierMap.get(frameId) || null;
     }
 
+    resourceForRequestIdentifier(requestIdentifier)
+    {
+        return this._resourceRequestIdentifierMap.get(requestIdentifier) || null;
+    }
+
     frameDidNavigate(framePayload)
     {
         // Called from WI.PageObserver.

@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.content-view.network .navigation-bar .filter-bar {
+    background: none;
+}
+
 .content-view.network .network-table .icon {
     position: relative;
     width: 16px;
@@ -70,4 +74,39 @@ body[dir=rtl] .network-table .cell.name > .status {
 
 .network-table :not(.header) .cell:first-of-type {
     background: rgba(0, 0, 0, 0.07);
+}
+
+.content-view.network .empty-content-placeholder {
+    position: absolute;
+    top: var(--navigation-bar-height);
+    bottom: 0;
+    padding: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: var(--odd-zebra-stripe-row-background-color);
+    --empty-content-placeholder-start: 0;
+}
+
+body[dir=ltr] .content-view.network .empty-content-placeholder {
+    left: var(--empty-content-placeholder-start);
+}
+
+body[dir=rtl] .content-view.network .empty-content-placeholder {
+    right: var(--empty-content-placeholder-start);
+}
+
+.content-view.network .empty-content-placeholder > .message {
+    display: inline-block;
+    white-space: nowrap;
+
+    font-size: var(--sidebar-no-results-message-font-size);
+    color: var(--text-color-gray-medium);
+
+    padding: 5px 15px 6px;
+    line-height: 25px;
+    text-align: center;
 }

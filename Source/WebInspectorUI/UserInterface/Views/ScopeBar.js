@@ -89,6 +89,19 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
         return this._items.some((item) => item.selected && item !== this._defaultItem);
     }
 
+    resetToDefault()
+    {
+        let selectedItems = this.selectedItems;
+        if (selectedItems.length === 1 && selectedItems[0] === this._defaultItem)
+            return;
+
+        for (let item of this._items)
+            item.selected = false;
+        this._defaultItem.selected = true;
+
+        this.dispatchEventToListeners(WI.ScopeBar.Event.SelectionChanged);
+    }
+
     // Private
 
     _populate()

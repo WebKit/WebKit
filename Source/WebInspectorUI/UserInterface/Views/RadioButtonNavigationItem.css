@@ -43,7 +43,7 @@
 
 .navigation-bar .item.radio.button.text-only:active {
     color: var(--selected-foreground-color);
-    background-color: hsla(212, 92%, 54%, 0.55);
+    background-color: var(--selected-background-color-active);
 }
 
 .navigation-bar .item.radio.button.text-only.selected:active {

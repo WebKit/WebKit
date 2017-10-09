@@ -1,5 +1,97 @@
 2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab - Filter resources based on URL / Text Content
+        https://bugs.webkit.org/show_bug.cgi?id=178071
+        <rdar://problem/34071562>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar.active > input[type="search"]::-webkit-search-decoration):
+        (.filter-bar.indicating-progress > input[type="search"]::-webkit-search-decoration):
+        New icon for progress / active states.
+
+        * UserInterface/Views/FilterBar.js:
+        (WI.FilterBar.prototype.get inputField):
+        (WI.FilterBar.prototype.get placeholder):
+        (WI.FilterBar.prototype.set placeholder):
+        (WI.FilterBar.prototype.get incremental):
+        (WI.FilterBar.prototype.set incremental):
+        (WI.FilterBar.prototype.get indicatingProgress):
+        (WI.FilterBar.prototype.set indicatingProgress):
+        (WI.FilterBar.prototype.get indicatingActive):
+        (WI.FilterBar.prototype.set indicatingActive):
+        (WI.FilterBar.prototype._handleFilterInputEvent):
+        When incremental is set to false on the FilterBar still dispatch an
+        event when the textfield clears.
+
+        * UserInterface/Images/FilterFieldActiveGlyph.svg: Added.
+        * UserInterface/Images/gtk/FilterFieldActiveGlyph.svg: Added.
+        New blue icon for active state.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WI.FrameResourceManager.prototype.resourceForIdentifier):
+        Accessor for arbitrary resource.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network .navigation-bar .filter-bar):
+        (.content-view.network .warning-banner):
+        (body[dir=ltr] .content-view.network .warning-banner):
+        (body[dir=rtl] .content-view.network .warning-banner):
+        (.content-view.network .warning-banner > a):
+        Warning banner when the filter produces no results. This matches the
+        warning in the Debugger tab when breakpoints are disabled.
+
+        * UserInterface/Views/ScopeBar.js:
+        (WI.ScopeBar.prototype.resetToDefault):
+        Provide a way to easily reset a scope bar to the default item.
+
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only:active):
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li:active):
+        Cleanup some styles that should be using a variable.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get filterNavigationItems):
+        (WI.NetworkTableContentView.prototype.layout):
+        (WI.NetworkTableContentView.prototype._processPendingEntries):
+        (WI.NetworkTableContentView.prototype._checkTextFilterAgainstFinishedResource):
+        (WI.NetworkTableContentView.prototype._checkTextFilterAgainstFailedResource):
+        (WI.NetworkTableContentView.prototype._updateTextFilterActiveIndicator):
+        (WI.NetworkTableContentView.prototype._updateEmptyFilterResultsWarning):
+        (WI.NetworkTableContentView.prototype._showEmptyFilterResultsWarning):
+        (WI.NetworkTableContentView.prototype._hideEmptyFilterResultsWarning):
+        (WI.NetworkTableContentView.prototype._positionEmptyFilterMessage):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFinish):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFail):
+        (WI.NetworkTableContentView.prototype._networkTimelineRecordAdded):
+        (WI.NetworkTableContentView.prototype._insertResourceAndReloadTable):
+        (WI.NetworkTableContentView.prototype._hasTypeFilter):
+        (WI.NetworkTableContentView.prototype._hasTextFilter):
+        (WI.NetworkTableContentView.prototype._hasActiveFilter):
+        (WI.NetworkTableContentView.prototype._passTypeFilter):
+        (WI.NetworkTableContentView.prototype._passTextFilter):
+        (WI.NetworkTableContentView.prototype._passFilter):
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._resetFilters):
+        (WI.NetworkTableContentView.prototype._textFilterDidChange):
+        (WI.NetworkTableContentView.prototype._tableNameColumnDidChangeWidth):
+        There are now two filters.
+
+          - FilterBar - Filters URL and Full Text Content
+          - ScopeBar  - Filters Resource Type
+
+        The text content filter is asynchronous. We reuse the existing Search
+        functionality when filtering on text. We need to defer text content
+        filtering until the resource finishes loading.
+
+2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab: Row wrapping (waterfall displaying behind next row's name)
         https://bugs.webkit.org/show_bug.cgi?id=178015
         <rdar://problem/34858720>
