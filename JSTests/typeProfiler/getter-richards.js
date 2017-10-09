@@ -589,5 +589,5 @@ Packet.prototype.toString = function () {
   return "Packet";
 };
 
-for (var i = 0; i < 150; ++i)
+for (var i = 0; i < 60; ++i)
   runRichards();

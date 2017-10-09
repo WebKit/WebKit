@@ -866,5 +866,5 @@ function deltaBlue() {
   projectionTest(50);
 }
 
-for (var i = 0; i < 35; ++i)
+for (var i = 0; i < 15; ++i)
     deltaBlue();
