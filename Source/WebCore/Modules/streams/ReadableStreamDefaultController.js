@@ -32,11 +32,8 @@ function enqueue(chunk)
     if (!@isReadableStreamDefaultController(this))
         throw @makeThisTypeError("ReadableStreamDefaultController", "enqueue");
 
-    if (this.@closeRequested)
-        @throwTypeError("ReadableStreamDefaultController is requested to close");
-
-    if (this.@controlledReadableStream.@state !== @streamReadable)
-        @throwTypeError("ReadableStream is not readable");
+    if (!@readableStreamDefaultControllerCanCloseOrEnqueue(this))
+        @throwTypeError("ReadableStreamDefaultController is not in a state where chunk can be enqueued");
 
     return @readableStreamDefaultControllerEnqueue(this, chunk);
 }
@@ -61,11 +58,8 @@ function close()
     if (!@isReadableStreamDefaultController(this))
         throw @makeThisTypeError("ReadableStreamDefaultController", "close");
 
-    if (this.@closeRequested)
-        @throwTypeError("ReadableStreamDefaultController is already requested to close");
-
-    if (this.@controlledReadableStream.@state !== @streamReadable)
-        @throwTypeError("ReadableStream is not readable");
+    if (!@readableStreamDefaultControllerCanCloseOrEnqueue(this))
+        @throwTypeError("ReadableStreamDefaultController is not in a state where it can be closed");
 
     @readableStreamDefaultControllerClose(this);
 }

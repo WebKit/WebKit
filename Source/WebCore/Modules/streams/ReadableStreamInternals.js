@@ -319,9 +319,7 @@ function readableStreamDefaultControllerCallPullIfNeeded(controller)
 
     const stream = controller.@controlledReadableStream;
 
-    if (stream.@state === @streamClosed || stream.@state === @streamErrored)
-        return;
-    if (controller.@closeRequested)
+    if (!@readableStreamDefaultControllerCanCloseOrEnqueue(controller))
         return;
     if (!controller.@started)
         return;
@@ -423,12 +421,10 @@ function readableStreamDefaultControllerClose(controller)
 {
     "use strict";
 
-    const stream = controller.@controlledReadableStream;
-    @assert(!controller.@closeRequested);
-    @assert(stream.@state === @streamReadable);
+    @assert(@readableStreamDefaultControllerCanCloseOrEnqueue(controller));
     controller.@closeRequested = true;
     if (controller.@queue.content.length === 0)
-        @readableStreamClose(stream);
+        @readableStreamClose(controller.@controlledReadableStream);
 }
 
 function readableStreamClose(stream)
@@ -464,8 +460,7 @@ function readableStreamDefaultControllerEnqueue(controller, chunk)
     "use strict";
 
     const stream = controller.@controlledReadableStream;
-    @assert(!controller.@closeRequested);
-    @assert(stream.@state === @streamReadable);
+    @assert(@readableStreamDefaultControllerCanCloseOrEnqueue(controller));
 
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
         @readableStreamFulfillReadRequest(stream, chunk, false);
@@ -540,4 +535,11 @@ function readableStreamReaderGenericRelease(reader)
     reader.@closedPromiseCapability.@promise.@promiseIsHandled = true;
     reader.@ownerReadableStream.@reader = @undefined;
     reader.@ownerReadableStream = @undefined;
+}
+
+function readableStreamDefaultControllerCanCloseOrEnqueue(controller)
+{
+    "use strict";
+
+    return !controller.@closeRequested && controller.@controlledReadableStream.@state === @streamReadable;
 }
