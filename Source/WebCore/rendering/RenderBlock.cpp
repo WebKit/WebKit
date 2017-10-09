@@ -788,7 +788,12 @@ static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
 
 static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObject* previous, RenderObject* next)
 {
-    if (oldChild.renderTreeBeingDestroyed() || oldChild.isInline() || oldChild.virtualContinuation())
+    ASSERT(!oldChild.renderTreeBeingDestroyed());
+
+    if (oldChild.isInline())
+        return false;
+
+    if (is<RenderBoxModelObject>(oldChild) && downcast<RenderBoxModelObject>(oldChild).continuation())
         return false;
 
     if (previous) {
@@ -915,19 +920,17 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
             while (containingBlockIgnoringAnonymous && containingBlockIgnoringAnonymous->isAnonymousBlock())
                 containingBlockIgnoringAnonymous = containingBlockIgnoringAnonymous->containingBlock();
             for (RenderObject* current = this; current; current = current->previousInPreOrder(containingBlockIgnoringAnonymous)) {
-                if (current->virtualContinuation() != this)
+                if (!is<RenderBoxModelObject>(current) || downcast<RenderBoxModelObject>(*current).continuation() != this)
                     continue;
-
                 // Found our previous continuation. We just need to point it to
                 // |this|'s next continuation.
-                RenderBoxModelObject* nextContinuation = continuation();
+                auto* nextContinuation = continuation();
                 if (is<RenderInline>(*current))
                     downcast<RenderInline>(*current).setContinuation(nextContinuation);
                 else if (is<RenderBlock>(*current))
                     downcast<RenderBlock>(*current).setContinuation(nextContinuation);
                 else
                     ASSERT_NOT_REACHED();
-
                 break;
             }
             setContinuation(nullptr);

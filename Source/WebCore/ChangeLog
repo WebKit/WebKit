@@ -1,3 +1,24 @@
+2017-10-09  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant RenderObject::virtualContinuation
+        https://bugs.webkit.org/show_bug.cgi?id=178091
+        <rdar://problem/34892906>
+
+        Reviewed by Antti Koivisto.
+ 
+        virtualContinuation sounds like a feature of continuation, while it's just a (not super useful)helper override.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        (WebCore::RenderBlock::takeChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isBlockElementContinuation const):
+        (WebCore::RenderObject::virtualContinuation const): Deleted.
+
 2017-10-09  Dean Jackson  <dino@apple.com>
 
         [WebGL] Third IOSurface buffer might be allocated with the wrong size

@@ -78,7 +78,6 @@ public:
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
 #endif
 
-    RenderBoxModelObject* virtualContinuation() const final { return continuation(); }
     RenderInline* inlineElementContinuation() const;
 
     void updateDragState(bool dragOn) final;
