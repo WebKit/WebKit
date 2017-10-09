@@ -1,5 +1,36 @@
 2017-10-08  Darin Adler  <darin@apple.com>
 
+        Update HTMLOListElement.start to behavior from latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=178057
+
+        Reviewed by Chris Dumez.
+
+        * html/HTMLOListElement.cpp:
+        (optionalValue): Added. Helper function that we can put into Expected.h later
+        if we like; makes it easier to turn Expected into std::optional.
+        (WebCore::HTMLOListElement::HTMLOListElement): Moved data member initialization
+        into class definition so it doesn't have to be done here.
+        (WebCore::HTMLOListElement::parseAttribute): Simplified using the new
+        optionalValue function. Moved the call to update values in here since it's
+        a trivial one-liner (albeit done twice).
+        (WebCore::HTMLOListElement::updateItemValues): Deleted. Moved this into the
+        parseAttribute function.
+        (WebCore::HTMLOListElement::itemCount): Updated to use std::optional instead
+        of a separate m_shouldRecalculateItemCount flag. Also inlined the
+        recalculateItemCount function since it's a trivial one-liner.
+        (WebCore::HTMLOListElement::itemCountAfterLayout): Deleted. The only use of
+        this was to implement the now-obsolete behavior of the start attribute.
+        (WebCore::HTMLOListElement::recalculateItemCount): Deleted. Moved this into
+        the itemCount function.
+
+        * html/HTMLOListElement.h: Changed startForBindings to return 1 when start
+        is not specified; this what the HTML specification now calls for. Updated
+        for the changes above. Merged m_itemCount and m_shouldRecalculateItemCount
+        into a single optional m_itemCount, and made it mutable so it can be
+        computed as a side effect of calling the const member function start.
+
+2017-10-08  Darin Adler  <darin@apple.com>
+
         Fix bugs related to setting reflected floating point DOM attributes
         https://bugs.webkit.org/show_bug.cgi?id=178061
 

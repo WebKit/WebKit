@@ -1,3 +1,14 @@
+2017-10-07  Darin Adler  <darin@apple.com>
+
+        Update HTMLOListElement.start to behavior from latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=178057
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-expected.txt:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/ol.start-reflection-2-expected.txt:
+        Updated to expect more tests to pass.
+
 2017-10-08  Darin Adler  <darin@apple.com>
 
         Fix bugs related to setting reflected floating point DOM attributes

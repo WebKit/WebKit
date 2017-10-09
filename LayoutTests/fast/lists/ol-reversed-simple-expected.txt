@@ -41,6 +41,6 @@ This tests that reversed lists with a negative start value render properly.
 -8 Minus Eight
 -9 Minus Nine
 
-This tests that reversed lists have the start attribute equals the number of list items when no start value is specified.
+This tests that reversed lists have a start attribute of 1 when no start value is specified.
 
-Value of start attribute of the list is : 5
+Value of start attribute of the list is : 1
