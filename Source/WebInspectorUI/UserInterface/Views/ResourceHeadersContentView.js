@@ -272,6 +272,9 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         let source = this._responseSourceDisplayString(this._resource.responseSource) || emDash;
         this._appendKeyValuePair(detailsElement, WI.UIString("Source"), source);
+
+        if (this._resource.remoteAddress)
+            this._appendKeyValuePair(detailsElement, WI.UIString("Address"), this._resource.remoteAddress);
     }
 
     _refreshRequestHeadersSection()
@@ -407,13 +410,6 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._appendKeyValuePair(detailsElement, WI.UIString("Request Data"), goToButton);
     }
 
-    _resourceMetricsDidChange(event)
-    {
-        this._needsRequestHeadersRefresh = true;
-        this._needsResponseHeadersRefresh = true;
-        this.needsLayout();
-    }
-
     _perfomSearchOnKeyValuePairs()
     {
         let searchRegex = new RegExp(this._searchQuery.escapeForRegExp(), "gi");
@@ -463,6 +459,14 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._bouncyHighlightElement.style.fontWeight = computedStyles.fontWeight;
 
         this.element.appendChild(this._bouncyHighlightElement);
+    }
+
+    _resourceMetricsDidChange(event)
+    {
+        this._needsSummaryRefresh = true;
+        this._needsRequestHeadersRefresh = true;
+        this._needsResponseHeadersRefresh = true;
+        this.needsLayout();
     }
 
     _resourceRequestHeadersDidChange(event)

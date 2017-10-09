@@ -78,6 +78,7 @@ localizedStrings["Add new rule"] = "Add new rule";
 localizedStrings["Add probe expression"] = "Add probe expression";
 localizedStrings["Add watch expression"] = "Add watch expression";
 localizedStrings["Additions"] = "Additions";
+localizedStrings["Address"] = "Address";
 localizedStrings["Align"] = "Align";
 localizedStrings["Alignment"] = "Alignment";
 localizedStrings["All"] = "All";

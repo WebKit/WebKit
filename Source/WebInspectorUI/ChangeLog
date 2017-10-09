@@ -1,5 +1,18 @@
 2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab - Include remote address in the Headers view
+        https://bugs.webkit.org/show_bug.cgi?id=178094
+        <rdar://problem/34895221>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._refreshSummarySection):
+        (WI.ResourceHeadersContentView.prototype._resourceMetricsDidChange):
+
+2017-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed, minified WebInspector opens blank.
         <rdar://problem/34892307>
 
