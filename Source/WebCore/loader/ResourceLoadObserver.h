@@ -33,6 +33,7 @@
 namespace WTF {
 class Lock;
 class WorkQueue;
+class WallTime;
 }
 
 namespace WebCore {
@@ -62,6 +63,7 @@ public:
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
 
+    WEBCORE_EXPORT void clearState();
 private:
     ResourceLoadObserver();
 
@@ -69,13 +71,13 @@ private:
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
 
     void scheduleNotificationIfNeeded();
-    void notificationTimerFired();
+    void notifyObserver();
     Vector<ResourceLoadStatistics> takeStatistics();
 
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
+    HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     Timer m_notificationTimer;
-    bool m_shouldThrottleNotifications { true };
 };
     
 } // namespace WebCore

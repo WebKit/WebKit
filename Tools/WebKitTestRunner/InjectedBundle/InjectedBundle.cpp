@@ -367,6 +367,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleClearAllDatabases(m_bundle);
     WKBundlePageClearApplicationCache(page()->page());
     WKBundleResetOriginAccessWhitelists(m_bundle);
+    WKBundleClearResourceLoadStatistics(m_bundle);
 
     // [WK2] REGRESSION(r128623): It made layout tests extremely slow
     // https://bugs.webkit.org/show_bug.cgi?id=96862
