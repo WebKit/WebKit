@@ -465,7 +465,7 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
 #if USE(LIBWEBRTC)
-    WebCore::useRealRTCPeerConnectionFactory();
+    WebCore::useRealRTCPeerConnectionFactory(page.libWebRTCProvider());
 #endif
 
     printContextForTesting() = nullptr;

@@ -1,3 +1,26 @@
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222478. rdar://problem/34771020
+
+    2017-09-25  Youenn Fablet  <youenn@apple.com>
+
+            WebRTC video does not resume receiving when switching back to Safari 11 on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=175472
+            <rdar://problem/33860863>
+
+            Reviewed by Darin Adler.
+
+            Adding a method to disable any decoding/encoding task.
+            When reenabling the decoder, the decoder will request an I frame after failing the first initial decoding task.
+
+            * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/decoder.h:
+            (webrtc::H264VideoToolboxDecoder::SetActive):
+            * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/decoder.mm:
+            (webrtc::H264VideoToolboxDecoder::Decode):
+            * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.h:
+            * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.mm:
+            (webrtc::H264VideoToolboxEncoder::Encode):
+
 2017-07-03  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add an experimental setting to build with ccache

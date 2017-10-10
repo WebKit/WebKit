@@ -29,13 +29,13 @@
 #if USE(LIBWEBRTC)
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
+#include "VideoToolBoxDecoderFactory.h"
 #include "VideoToolBoxEncoderFactory.h"
 #include <dlfcn.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/base/physicalsocketserver.h>
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
-#include <webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/darwin/WeakLinking.h>
@@ -45,29 +45,60 @@ namespace WebCore {
 
 #if USE(LIBWEBRTC)
 struct PeerConnectionFactoryAndThreads : public rtc::MessageHandler {
-    std::unique_ptr<LibWebRTCAudioModule> audioDeviceModule;
     std::unique_ptr<rtc::Thread> networkThread;
     std::unique_ptr<rtc::Thread> signalingThread;
-    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> factory;
     bool networkThreadWithSocketServer { false };
-    Function<std::unique_ptr<cricket::WebRtcVideoEncoderFactory>()> encoderFactoryGetter;
-    Function<std::unique_ptr<cricket::WebRtcVideoDecoderFactory>()> decoderFactoryGetter;
+    std::unique_ptr<LibWebRTCAudioModule> audioDeviceModule;
 
 private:
     void OnMessage(rtc::Message*);
 };
 
+static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndThreads& factoryAndThreads)
+{
+    ASSERT(!factoryAndThreads.networkThread);
+
+#if defined(NDEBUG)
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_NONE : rtc::LS_INFO);
+#else
+    rtc::LogMessage::LogToDebug(rtc::LS_NONE);
+#endif
+#else
+    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_WARNING : rtc::LS_INFO);
+#endif
+
+    factoryAndThreads.networkThread = factoryAndThreads.networkThreadWithSocketServer ? rtc::Thread::CreateWithSocketServer() : rtc::Thread::Create();
+    factoryAndThreads.networkThread->SetName("WebKitWebRTCNetwork", nullptr);
+    bool result = factoryAndThreads.networkThread->Start();
+    ASSERT_UNUSED(result, result);
+
+    factoryAndThreads.signalingThread = rtc::Thread::Create();
+    factoryAndThreads.signalingThread->SetName("WebKitWebRTCSignaling", nullptr);
+
+    result = factoryAndThreads.signalingThread->Start();
+    ASSERT(result);
+
+    factoryAndThreads.audioDeviceModule = std::make_unique<LibWebRTCAudioModule>();
+}
+
 static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
 {
     static NeverDestroyed<PeerConnectionFactoryAndThreads> factoryAndThreads;
-#if PLATFORM(COCOA)
-    static std::once_flag once;
-    std::call_once(once, [] {
-        factoryAndThreads.get().encoderFactoryGetter = []() -> std::unique_ptr<cricket::WebRtcVideoEncoderFactory> { return std::make_unique<VideoToolboxVideoEncoderFactory>(); };
-        factoryAndThreads.get().decoderFactoryGetter = []() -> std::unique_ptr<cricket::WebRtcVideoDecoderFactory> { return std::make_unique<webrtc::VideoToolboxVideoDecoderFactory>(); };
-    });
-#endif
     return factoryAndThreads.get();
+}
+
+static inline PeerConnectionFactoryAndThreads& getStaticFactoryAndThreads(bool useNetworkThreadWithSocketServer)
+{
+    auto& factoryAndThreads = staticFactoryAndThreads();
+
+    ASSERT(!factoryAndThreads.networkThread || factoryAndThreads.networkThreadWithSocketServer == useNetworkThreadWithSocketServer);
+
+    if (!factoryAndThreads.networkThread) {
+        factoryAndThreads.networkThreadWithSocketServer = useNetworkThreadWithSocketServer;
+        initializePeerConnectionFactoryAndThreads(factoryAndThreads);
+    }
+    return factoryAndThreads;
 }
 
 struct ThreadMessageData : public rtc::MessageData {
@@ -97,117 +128,77 @@ void LibWebRTCProvider::callOnWebRTCSignalingThread(Function<void()>&& callback)
     threads.signalingThread->Post(RTC_FROM_HERE, &threads, 1, new ThreadMessageData(WTFMove(callback)));
 }
 
-static void initializePeerConnectionFactoryAndThreads()
-{
-#if defined(NDEBUG)
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_NONE : rtc::LS_INFO);
-#else
-    rtc::LogMessage::LogToDebug(rtc::LS_NONE);
-#endif
-#else
-    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_WARNING : rtc::LS_INFO);
-#endif
-    auto& factoryAndThreads = staticFactoryAndThreads();
-
-    ASSERT(!factoryAndThreads.factory);
-
-    factoryAndThreads.networkThread = factoryAndThreads.networkThreadWithSocketServer ? rtc::Thread::CreateWithSocketServer() : rtc::Thread::Create();
-    factoryAndThreads.networkThread->SetName("WebKitWebRTCNetwork", nullptr);
-    bool result = factoryAndThreads.networkThread->Start();
-    ASSERT_UNUSED(result, result);
-
-    factoryAndThreads.signalingThread = rtc::Thread::Create();
-    factoryAndThreads.signalingThread->SetName("WebKitWebRTCSignaling", nullptr);
-    
-    result = factoryAndThreads.signalingThread->Start();
-    ASSERT(result);
-
-    factoryAndThreads.audioDeviceModule = std::make_unique<LibWebRTCAudioModule>();
-
-    std::unique_ptr<cricket::WebRtcVideoEncoderFactory> encoderFactory = factoryAndThreads.encoderFactoryGetter ? factoryAndThreads.encoderFactoryGetter() : nullptr;
-    std::unique_ptr<cricket::WebRtcVideoDecoderFactory> decoderFactory = factoryAndThreads.decoderFactoryGetter ? factoryAndThreads.decoderFactoryGetter() : nullptr;
-
-    factoryAndThreads.factory = webrtc::CreatePeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get(), factoryAndThreads.signalingThread.get(), factoryAndThreads.audioDeviceModule.get(), encoderFactory.release(), decoderFactory.release());
-
-    ASSERT(factoryAndThreads.factory);
-}
-
 webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
 {
+    if (m_factory)
+        return m_factory.get();
+
     if (!webRTCAvailable())
         return nullptr;
-    if (!staticFactoryAndThreads().factory) {
-        staticFactoryAndThreads().networkThreadWithSocketServer = m_useNetworkThreadWithSocketServer;
-        initializePeerConnectionFactoryAndThreads();
-    }
-    return staticFactoryAndThreads().factory;
-}
 
-void LibWebRTCProvider::setDecoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoDecoderFactory>()>&& getter)
-{
-    if (!staticFactoryAndThreads().factory)
-        initializePeerConnectionFactoryAndThreads();
+    auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
-    staticFactoryAndThreads().decoderFactoryGetter = WTFMove(getter);
-}
+    auto decoderFactory = std::make_unique<VideoToolboxVideoDecoderFactory>();
+    auto encoderFactory = std::make_unique<VideoToolboxVideoEncoderFactory>();
 
-void LibWebRTCProvider::setEncoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoEncoderFactory>()>&& getter)
-{
-    if (!staticFactoryAndThreads().factory)
-        initializePeerConnectionFactoryAndThreads();
+    m_decoderFactory = decoderFactory.get();
+    m_encoderFactory = encoderFactory.get();
 
-    staticFactoryAndThreads().encoderFactoryGetter = WTFMove(getter);
+    m_factory = webrtc::CreatePeerConnectionFactory(factoryAndThreads.networkThread.get(), factoryAndThreads.networkThread.get(), factoryAndThreads.signalingThread.get(), factoryAndThreads.audioDeviceModule.get(), encoderFactory.release(), decoderFactory.release());
+
+    return m_factory;
 }
 
 void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)
 {
-    if (!staticFactoryAndThreads().factory)
-        initializePeerConnectionFactoryAndThreads();
-
-    staticFactoryAndThreads().factory = webrtc::PeerConnectionFactoryProxy::Create(staticFactoryAndThreads().signalingThread.get(), WTFMove(factory));
-}
-
-static rtc::scoped_refptr<webrtc::PeerConnectionInterface> createActualPeerConnection(webrtc::PeerConnectionObserver& observer, std::unique_ptr<cricket::BasicPortAllocator>&& portAllocator, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
-{
-    ASSERT(staticFactoryAndThreads().factory);
-
-    return staticFactoryAndThreads().factory->CreatePeerConnection(configuration, WTFMove(portAllocator), nullptr, &observer);
+    m_factory = webrtc::PeerConnectionFactoryProxy::Create(getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer).signalingThread.get(), WTFMove(factory));
 }
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
     // Default WK1 implementation.
-    auto& factoryAndThreads = staticFactoryAndThreads();
-    if (!factoryAndThreads.factory) {
-        staticFactoryAndThreads().networkThreadWithSocketServer = true;
-        initializePeerConnectionFactoryAndThreads();
-    }
-    ASSERT(staticFactoryAndThreads().networkThreadWithSocketServer);
+    ASSERT(m_useNetworkThreadWithSocketServer);
+    auto* factory = this->factory();
+    if (!factory)
+        return nullptr;
 
-    return createActualPeerConnection(observer, nullptr, WTFMove(configuration));
+    return m_factory->CreatePeerConnection(configuration, nullptr, nullptr, &observer);
 }
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
-    ASSERT(!staticFactoryAndThreads().networkThreadWithSocketServer);
+    ASSERT(!m_useNetworkThreadWithSocketServer);
 
-    auto& factoryAndThreads = staticFactoryAndThreads();
-    if (!factoryAndThreads.factory)
-        initializePeerConnectionFactoryAndThreads();
+    auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
 
     std::unique_ptr<cricket::BasicPortAllocator> portAllocator;
-    staticFactoryAndThreads().signalingThread->Invoke<void>(RTC_FROM_HERE, [&]() {
+    factoryAndThreads.signalingThread->Invoke<void>(RTC_FROM_HERE, [&]() {
         auto basicPortAllocator = std::make_unique<cricket::BasicPortAllocator>(&networkManager, &packetSocketFactory);
         if (!m_enableEnumeratingAllNetworkInterfaces)
             basicPortAllocator->set_flags(basicPortAllocator->flags() | cricket::PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION);
         portAllocator = WTFMove(basicPortAllocator);
     });
 
-    return createActualPeerConnection(observer, WTFMove(portAllocator), WTFMove(configuration));
+    auto* factory = this->factory();
+    if (!factory)
+        return nullptr;
+
+    return m_factory->CreatePeerConnection(configuration, WTFMove(portAllocator), nullptr, &observer);
 }
 
 #endif // USE(LIBWEBRTC)
+
+void LibWebRTCProvider::setActive(bool value)
+{
+#if USE(LIBWEBRTC)
+    if (m_decoderFactory)
+        m_decoderFactory->setActive(value);
+    if (m_encoderFactory)
+        m_encoderFactory->setActive(value);
+#else
+    UNUSED_PARAM(value);
+#endif
+}
 
 bool LibWebRTCProvider::webRTCAvailable()
 {
