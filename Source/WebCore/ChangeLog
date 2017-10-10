@@ -1,5 +1,26 @@
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222995. rdar://problem/34891302
+
+    2017-10-06  Jer Noble  <jer.noble@apple.com>
+
+            Netflix playback fails with S7353 error
+            https://bugs.webkit.org/show_bug.cgi?id=178023
+
+            Reviewed by Dean Jackson.
+
+            On certain platforms, WebCoreDecompressionSession will fail to produce CVImageBuffers when presented with
+            encrypted content. On those platforms, the seek() command will fail, because frames at the destination time
+            cannot be decoded. This occurs for Netflix because the <video> element is not in the DOM at decode time.
+
+            Only create a WebCoreDecompressionSession in MediaPlayerPrivateMediaSourceAVFObjC when we have explicitly
+            been asked to paint into a WebGL canvas.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged):
+
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222786. rdar://problem/34820881
 
     2017-10-03  Brent Fulgham  <bfulgham@apple.com>
