@@ -311,14 +311,20 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample,
     if (m_timebase)
         CMTimebaseSetTimerDispatchSourceToFireImmediately(m_timebase.get(), m_timerSource.get());
 
-    if (m_hasAvailableFrameCallback) {
-        std::function<void()> callback { m_hasAvailableFrameCallback };
-        m_hasAvailableFrameCallback = nullptr;
-        RefPtr<WebCoreDecompressionSession> protectedThis { this };
-        dispatch_async(dispatch_get_main_queue(), [protectedThis, callback] {
-            callback();
-        });
+    if (!m_hasAvailableFrameCallback)
+        return;
+
+    if (m_timebase) {
+        auto currentTime = toMediaTime(CMTimebaseGetTime(m_timebase.get()));
+        auto presentationStartTime = toMediaTime(CMSampleBufferGetPresentationTimeStamp(sample));
+        auto presentationEndTime = presentationStartTime + toMediaTime(CMSampleBufferGetDuration(sample));
+        if (currentTime < presentationStartTime || currentTime >= presentationEndTime)
+            return;
     }
+
+    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), callback = WTFMove(m_hasAvailableFrameCallback)] {
+        callback();
+    });
 }
 
 bool WebCoreDecompressionSession::isReadyForMoreMediaData() const

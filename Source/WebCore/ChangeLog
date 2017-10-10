@@ -1,5 +1,24 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221116. rdar://problem/34771068
+
+    2017-08-23  Jer Noble  <jer.noble@apple.com>
+
+            [EME] WebCoreDecompressionSession should only report having an available frame if it has one for the current time.
+            https://bugs.webkit.org/show_bug.cgi?id=175901
+
+            Reviewed by Eric Carlson.
+
+            The WebCoreDecompressionSession will trigger the hasAvailableFrame callback whenever a frame is decoded,
+            regardless of its presentation time. For formats which have out-of-order decoding, the newly decoded frame could
+            have a presentation time far in the future. Instead, only fire the callback if the decoded frame's presentation
+            times contains the timebase's current time.
+
+            * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+            (WebCore::WebCoreDecompressionSession::enqueueDecodedSample):
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220718. rdar://problem/34771041
 
     2017-08-14  Andy Estes  <aestes@apple.com>
