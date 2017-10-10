@@ -35,6 +35,7 @@
 #include <memory>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -44,14 +45,16 @@ enum CalcOperator {
     CalcAdd = '+',
     CalcSubtract = '-',
     CalcMultiply = '*',
-    CalcDivide = '/'
+    CalcDivide = '/',
+    CalcMin = 0,
+    CalcMax = 1,
 };
 
 enum CalcExpressionNodeType {
     CalcExpressionNodeUndefined,
     CalcExpressionNodeNumber,
     CalcExpressionNodeLength,
-    CalcExpressionNodeBinaryOperation,
+    CalcExpressionNodeOperation,
     CalcExpressionNodeBlendLength,
 };
 
@@ -99,21 +102,20 @@ private:
     Length m_length;
 };
 
-class CalcExpressionBinaryOperation final : public CalcExpressionNode {
+class CalcExpressionOperation final : public CalcExpressionNode {
 public:
-    CalcExpressionBinaryOperation(std::unique_ptr<CalcExpressionNode> leftSide, std::unique_ptr<CalcExpressionNode> rightSide, CalcOperator);
+    CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator);
 
-    const CalcExpressionNode& leftSide() const { return *m_leftSide; }
-    const CalcExpressionNode& rightSide() const { return *m_rightSide; }
     CalcOperator getOperator() const { return m_operator; }
+
+    const Vector<std::unique_ptr<CalcExpressionNode>>& children() const { return m_children; }
 
 private:
     float evaluate(float maxValue) const override;
     bool operator==(const CalcExpressionNode&) const override;
     void dump(TextStream&) const override;
 
-    std::unique_ptr<CalcExpressionNode> m_leftSide;
-    std::unique_ptr<CalcExpressionNode> m_rightSide;
+    Vector<std::unique_ptr<CalcExpressionNode>> m_children;
     CalcOperator m_operator;
 };
 
@@ -200,23 +202,22 @@ inline const CalcExpressionLength& toCalcExpressionLength(const CalcExpressionNo
     return static_cast<const CalcExpressionLength&>(value);
 }
 
-inline CalcExpressionBinaryOperation::CalcExpressionBinaryOperation(std::unique_ptr<CalcExpressionNode> leftSide, std::unique_ptr<CalcExpressionNode> rightSide, CalcOperator op)
-    : CalcExpressionNode(CalcExpressionNodeBinaryOperation)
-    , m_leftSide(WTFMove(leftSide))
-    , m_rightSide(WTFMove(rightSide))
+inline CalcExpressionOperation::CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator op)
+    : CalcExpressionNode(CalcExpressionNodeOperation)
+    , m_children(WTFMove(children))
     , m_operator(op)
 {
 }
 
-inline bool operator==(const CalcExpressionBinaryOperation& a, const CalcExpressionBinaryOperation& b)
+inline bool operator==(const CalcExpressionOperation& a, const CalcExpressionOperation& b)
 {
-    return a.getOperator() == b.getOperator() && a.leftSide() == b.leftSide() && a.rightSide() == b.rightSide();
+    return a.getOperator() == b.getOperator() && a.children() == b.children();
 }
 
-inline const CalcExpressionBinaryOperation& toCalcExpressionBinaryOperation(const CalcExpressionNode& value)
+inline const CalcExpressionOperation& toCalcExpressionOperation(const CalcExpressionNode& value)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeBinaryOperation);
-    return static_cast<const CalcExpressionBinaryOperation&>(value);
+    ASSERT_WITH_SECURITY_IMPLICATION(value.type() == CalcExpressionNodeOperation);
+    return static_cast<const CalcExpressionOperation&>(value);
 }
 
 inline CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, float progress)

@@ -1,5 +1,25 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222190. rdar://problem/34771470
+
+    2017-09-18  Tim Horton  <timothy_horton@apple.com>
+
+            Support min() and max() in calc()
+            https://bugs.webkit.org/show_bug.cgi?id=167000
+            <rdar://problem/30153481>
+
+            Reviewed by David Hyatt.
+            Patch originally by Myles Maxfield.
+
+            * css3/calc/minmax-errors-expected.txt:
+            * css3/calc/minmax-errors.html:
+            * css3/calc/simple-minmax-expected.txt:
+            * css3/calc/simple-minmax.html:
+            Revive previously-unused tests for an earlier never-implemented version
+            of this feature, and add a bunch more interesting test cases from reading the spec.
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221016. rdar://problem/34770830
 
     2017-08-22  Jer Noble  <jer.noble@apple.com>
