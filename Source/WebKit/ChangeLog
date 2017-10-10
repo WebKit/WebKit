@@ -1,3 +1,16 @@
+2017-10-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r223136.
+
+        Forgot to update GTK API header
+
+        Reverted changeset:
+
+        "[WPE] Header cairo.h is used in GLib API headers but cannot
+        be found"
+        https://bugs.webkit.org/show_bug.cgi?id=178100
+        http://trac.webkit.org/changeset/223136
+
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Header cairo.h is used in GLib API headers but cannot be found

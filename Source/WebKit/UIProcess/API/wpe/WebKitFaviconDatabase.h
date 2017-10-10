@@ -24,13 +24,12 @@
 #ifndef WebKitFaviconDatabase_h
 #define WebKitFaviconDatabase_h
 
+#include <cairo.h>
 #include <gio/gio.h>
 #include <glib-object.h>
 #include <wpe/WebKitDefines.h>
 
 G_BEGIN_DECLS
-
-typedef struct _cairo_surface cairo_surface_t;
 
 #define WEBKIT_TYPE_FAVICON_DATABASE            (webkit_favicon_database_get_type())
 #define WEBKIT_FAVICON_DATABASE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabase))
