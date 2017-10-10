@@ -75,7 +75,7 @@ public:
 
     void appendInverted(const CharacterClass* other)
     {
-        auto addSortedInverted = [this, &other](UChar32 min, UChar32 max,
+        auto addSortedInverted = [&](UChar32 min, UChar32 max,
             const Vector<UChar32>& srcMatches, const Vector<CharacterRange>& srcRanges,
             Vector<UChar32>& destMatches, Vector<CharacterRange>& destRanges) {
 
