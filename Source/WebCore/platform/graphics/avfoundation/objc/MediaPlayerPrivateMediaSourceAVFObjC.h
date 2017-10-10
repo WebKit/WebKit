@@ -208,10 +208,7 @@ private:
 
     size_t extraMemoryCost() const override;
 
-    unsigned long totalVideoFrames() override;
-    unsigned long droppedVideoFrames() override;
-    unsigned long corruptedVideoFrames() override;
-    MediaTime totalFrameDelay() override;
+    std::optional<PlatformVideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool isCurrentPlaybackTargetWireless() const override;

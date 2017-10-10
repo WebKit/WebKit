@@ -264,10 +264,7 @@ public:
     virtual bool ended() const { return false; }
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual unsigned long totalVideoFrames() { return 0; }
-    virtual unsigned long droppedVideoFrames() { return 0; }
-    virtual unsigned long corruptedVideoFrames() { return 0; }
-    virtual MediaTime totalFrameDelay() { return MediaTime::zeroTime(); }
+    virtual std::optional<PlatformVideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() { return std::nullopt; }
 #endif
 
 #if ENABLE(AVF_CAPTIONS)

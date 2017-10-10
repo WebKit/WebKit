@@ -679,24 +679,19 @@ size_t MediaPlayerPrivateMediaSourceAVFObjC::extraMemoryCost() const
     return 0;
 }
 
-unsigned long MediaPlayerPrivateMediaSourceAVFObjC::totalVideoFrames()
+std::optional<PlatformVideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics()
 {
-    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] totalNumberOfVideoFrames];
-}
 
-unsigned long MediaPlayerPrivateMediaSourceAVFObjC::droppedVideoFrames()
-{
-    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] numberOfDroppedVideoFrames];
-}
+    auto metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics];
+    if (!metrics)
+        return std::nullopt;
 
-unsigned long MediaPlayerPrivateMediaSourceAVFObjC::corruptedVideoFrames()
-{
-    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] numberOfCorruptedVideoFrames];
-}
-
-MediaTime MediaPlayerPrivateMediaSourceAVFObjC::totalFrameDelay()
-{
-    return MediaTime::createWithDouble([[m_sampleBufferDisplayLayer videoPerformanceMetrics] totalFrameDelay]);
+    return PlatformVideoPlaybackQualityMetrics(
+        [metrics totalNumberOfVideoFrames],
+        [metrics numberOfDroppedVideoFrames],
+        [metrics numberOfCorruptedVideoFrames],
+        [metrics totalFrameDelay]
+    );
 }
 
 #pragma mark -

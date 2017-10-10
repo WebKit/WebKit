@@ -1391,36 +1391,12 @@ bool MediaPlayer::ended() const
 }
 
 #if ENABLE(MEDIA_SOURCE)
-unsigned long MediaPlayer::totalVideoFrames()
+std::optional<PlatformVideoPlaybackQualityMetrics> MediaPlayer::videoPlaybackQualityMetrics()
 {
     if (!m_private)
-        return 0;
+        return std::nullopt;
 
-    return m_private->totalVideoFrames();
-}
-
-unsigned long MediaPlayer::droppedVideoFrames()
-{
-    if (!m_private)
-        return 0;
-
-    return m_private->droppedVideoFrames();
-}
-
-unsigned long MediaPlayer::corruptedVideoFrames()
-{
-    if (!m_private)
-        return 0;
-
-    return m_private->corruptedVideoFrames();
-}
-
-MediaTime MediaPlayer::totalFrameDelay()
-{
-    if (!m_private)
-        return MediaTime::zeroTime();
-
-    return m_private->totalFrameDelay();
+    return m_private->videoPlaybackQualityMetrics();
 }
 #endif
 
