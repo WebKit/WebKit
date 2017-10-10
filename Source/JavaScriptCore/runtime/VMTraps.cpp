@@ -211,6 +211,10 @@ public:
                     return SignalAction::NotHandled;
 
                 CodeBlock* currentCodeBlock = DFG::codeBlockForVMTrapPC(context.trapPC);
+                if (!currentCodeBlock) {
+                    // Either we trapped for some other reason, e.g. Wasm OOB, or we didn't properly monitor the PC. Regardless, we can't do much now...
+                    return SignalAction::NotHandled;
+                }
                 ASSERT(currentCodeBlock->hasInstalledVMTrapBreakpoints());
                 VM& vm = *currentCodeBlock->vm();
                 ASSERT(vm.traps().needTrapHandling()); // We should have already jettisoned this code block when we handled the trap.
