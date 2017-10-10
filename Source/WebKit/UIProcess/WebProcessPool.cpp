@@ -1120,6 +1120,11 @@ void WebProcessPool::setResourceLoadStatisticsEnabled(bool enabled)
     sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(enabled));
 }
 
+void WebProcessPool::clearResourceLoadStatistics()
+{
+    sendToAllProcesses(Messages::WebProcess::ClearResourceLoadStatistics());
+}
+
 void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
     m_schemesToRegisterAsEmptyDocument.add(urlScheme);

@@ -261,6 +261,7 @@ private:
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
     void setResourceLoadStatisticsEnabled(bool);
+    void clearResourceLoadStatistics();
     void userPreferredLanguagesChanged(const Vector<String>&) const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
