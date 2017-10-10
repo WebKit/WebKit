@@ -31,14 +31,18 @@ function runTest() {
     eventSender.mouseDown();
     eventSender.leapForward(1000);
     
-    e = document.getElementById("frame");
-    x = e.offsetLeft + e.offsetWidth / 2;
-    y = e.offsetTop + e.offsetHeight / 2;
+    const frame = document.getElementById("frame");
+    x = frame.offsetLeft + frame.offsetWidth / 2;
+    y = frame.offsetTop + frame.offsetHeight / 2;
     
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
-    
-    testRunner.notifyDone();
+
+    const img = frame.contentDocument.querySelector('img');
+    if (img.complete)
+        testRunner.notifyDone();
+    else
+        img.onload = () => testRunner.notifyDone();
 }
 
 window.onload = runTest;

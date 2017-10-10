@@ -1,3 +1,21 @@
+2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Loading should be disabled while constructing the fragment in WebContentReader::readWebArchive
+        https://bugs.webkit.org/show_bug.cgi?id=178118
+
+        Reviewed by Antti Koivisto.
+
+        Updated the existing tests to wait for images to load in each step explicitly instead of relying on
+        them being loaded synchronously or that it's loaded within 100-200ms.
+
+        * editing/pasteboard/4641033.html:
+        * editing/pasteboard/4947130.html:
+        * editing/pasteboard/4989774.html:
+        * editing/pasteboard/drag-selected-image-to-contenteditable.html:
+        * editing/selection/drag-to-contenteditable-iframe.html:
+        * platform/ios/TestExpectations: Skipped editing/selection/drag-to-contenteditable-iframe.html on iOS
+        since we don't support testing drag & drop on iOS. Also added [ Skip ] to other entires there.
+
 2017-10-10  Chris Dumez  <cdumez@apple.com>
 
         Entries API should recognize path starting with 2 slashes as valid absolute path

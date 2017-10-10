@@ -19,14 +19,9 @@ function log(message) {
 function runTest() {
     if (window.testRunner)
         testRunner.waitUntilDone();
-    // Let the subframe come into being.
-    window.setTimeout(step2, 100);
     e = document.getElementById("dragme");
     setSelectionCommand(e, 0, e, 1);
-}
 
-function step2() 
-{
     if (!window.testRunner) {
         log("This test uses the eventSender.  To run it manually, drag the selected image into the editable div and drop it.  It should appear inside the editable div.");
         return;
@@ -46,9 +41,14 @@ function step2()
     
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
-    
-    testRunner.notifyDone();
+
+    Promise.all(Array.from(document.querySelectorAll('img')).map((img) => {
+        if (img.complete)
+            return;
+        return new Promise((resolve) => img.onload = resolve);
+    })).then(() => testRunner.notifyDone());
 }
+
 </script>
 </head>
 

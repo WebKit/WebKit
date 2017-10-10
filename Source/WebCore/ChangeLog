@@ -1,3 +1,28 @@
+2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Loading should be disabled while constructing the fragment in WebContentReader::readWebArchive
+        https://bugs.webkit.org/show_bug.cgi?id=178118
+
+        Reviewed by Antti Koivisto.
+
+        Disable image loading while constructing the document fragment in WebContentReader::readWebArchive
+        as we do in createFragmentAndAddResources for RTF/RTFD. This refactoring is needed to start using
+        blob URL in the pasted document fragment for webkit.org/b/124391.
+
+        Also modified WebContentReader::readWebArchive to take a reference to SharedBuffer instead of a pointer.
+
+        No new tests since existing tests have been updated to cover this behavior change.
+
+        * editing/WebContentReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readWebArchive): Use DeferredLoadingScope to disable the loader and images
+        while constructing the document fragment.
+        * platform/Pasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::readPasteboardWebContentDataForType):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::read):
+
 2017-10-10  Antti Koivisto  <antti@apple.com>
 
         Layers should be destroyed by RenderLayerModelObject

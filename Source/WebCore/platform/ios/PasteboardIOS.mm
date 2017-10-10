@@ -165,8 +165,8 @@ static NSArray* supportedImageTypes()
 static bool readPasteboardWebContentDataForType(PasteboardWebContentReader& reader, PasteboardStrategy& strategy, NSString *type, int itemIndex, const String& pasteboardName)
 {
     if ([type isEqualToString:WebArchivePboardType]) {
-        RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(itemIndex, WebArchivePboardType, pasteboardName);
-        return reader.readWebArchive(buffer.get());
+        auto buffer = strategy.readBufferFromPasteboard(itemIndex, WebArchivePboardType, pasteboardName);
+        return buffer && reader.readWebArchive(*buffer);
     }
 
     if ([type isEqualToString:(NSString *)kUTTypeHTML]) {

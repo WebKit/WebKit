@@ -12,21 +12,27 @@ if (window.testRunner)
 function runTest() {
     var start = document.getElementById("start");
     var end = document.getElementById("end");
-    
+
     var s = window.getSelection();
     s.setBaseAndExtent(start, 0, end, end.childNodes.length);
-    
+
     document.execCommand("Copy");
-    
+
     s.setPosition(document.getElementById("paste"), 0);
     document.execCommand("Paste");
-    
+
+    const pastedImageElement = document.querySelector('#paste img');
+    if (pastedImageElement.complete)
+        finish();
+    else
+        pastedImageElement.onload = finish;
+}
+function finish() {
     if (window.testRunner)
-        window.testRunner.notifyDone();    
-    
+        window.testRunner.notifyDone();
 }
 if (window.testRunner)
     window.testRunner.waitUntilDone();
-window.setTimeout(runTest, 100);
+window.onload = runTest;
 
 </script>

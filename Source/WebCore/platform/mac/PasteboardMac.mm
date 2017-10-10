@@ -333,8 +333,8 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
     strategy.getTypes(types, m_pasteboardName);
 
     if (types.contains(WebArchivePboardType)) {
-        if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(WebArchivePboardType, m_pasteboardName)) {
-            if (reader.readWebArchive(buffer.get()))
+        if (auto buffer = strategy.bufferForType(WebArchivePboardType, m_pasteboardName)) {
+            if (reader.readWebArchive(*buffer))
                 return;
         }
     }

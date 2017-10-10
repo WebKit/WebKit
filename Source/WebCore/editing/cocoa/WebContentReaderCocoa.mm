@@ -179,18 +179,12 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
     return WTFMove(fragmentAndResources.fragment);
 }
 
-bool WebContentReader::readWebArchive(SharedBuffer* buffer)
+bool WebContentReader::readWebArchive(SharedBuffer& buffer)
 {
-    if (frame.settings().preferMIMETypeForImages())
+    if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
 
-    if (!frame.document())
-        return false;
-
-    if (!buffer)
-        return false;
-
-    auto archive = LegacyWebArchive::create(URL(), *buffer);
+    auto archive = LegacyWebArchive::create(URL(), buffer);
     if (!archive)
         return false;
 
@@ -202,12 +196,13 @@ bool WebContentReader::readWebArchive(SharedBuffer* buffer)
     if (!frame.loader().client().canShowMIMETypeAsHTML(type))
         return false;
 
-    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+    DeferredLoadingScope scope(frame);
+    auto markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
+    addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
+
     if (DocumentLoader* loader = frame.loader().documentLoader())
         loader->addAllArchiveResources(*archive);
 
-    auto markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
-    addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
     return true;
 }
 

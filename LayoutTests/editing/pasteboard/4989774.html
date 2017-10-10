@@ -1,7 +1,8 @@
 <body style="font-weight: bold;" id="div" contenteditable="true"><img src="../resources/abe.png"></body>
 
 <script>
-function partTwo() {
+function runTest()
+{
     sel.setBaseAndExtent(body, 0, body, body.childNodes.length);
     document.execCommand("Copy");
     sel.setPosition(body, body.childNodes.length);
@@ -9,7 +10,11 @@ function partTwo() {
     document.execCommand("Paste");
     document.execCommand("InsertLineBreak");
     document.execCommand("InsertText", false, "This tests for a bug where an images pasted on the same line would appear on different lines.  You should see several pictures above all in the same line/paragraph.");
-    window.testRunner.notifyDone();    
+    Promise.all(Array.from(document.querySelectorAll('img')).map((img) => {
+        if (img.complete)
+            return;
+        return new Promise((resolve) => img.onload = resolve);
+    })).then(() => testRunner.notifyDone());
 }
 
 var body = document.body;
@@ -17,7 +22,7 @@ var sel = window.getSelection();
 if (window.testRunner) {
     window.testRunner.waitUntilDone();
     
-    window.setTimeout(partTwo, 200);
+    window.onload = runTest;
 } else {
     document.execCommand("SelectAll")
     document.execCommand("InsertText", false, "This tests for a bug where an images pasted on the same line would appear on different lines. To run it manually, Undo, then select the image, Copy, put the caret after the image, then Paste twice. All three images should be in separate paragraphs.");    

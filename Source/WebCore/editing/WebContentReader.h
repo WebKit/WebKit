@@ -54,7 +54,7 @@ public:
 
 private:
 #if PLATFORM(COCOA)
-    bool readWebArchive(SharedBuffer*) override;
+    bool readWebArchive(SharedBuffer&) override;
     bool readFilenames(const Vector<String>&) override;
     bool readHTML(const String&) override;
     bool readRTFD(SharedBuffer&) override;

@@ -130,7 +130,7 @@ public:
     virtual ~PasteboardWebContentReader() { }
 
 #if !(PLATFORM(GTK) || PLATFORM(WIN))
-    virtual bool readWebArchive(SharedBuffer*) = 0;
+    virtual bool readWebArchive(SharedBuffer&) = 0;
     virtual bool readFilenames(const Vector<String>&) = 0;
     virtual bool readHTML(const String&) = 0;
     virtual bool readRTFD(SharedBuffer&) = 0;

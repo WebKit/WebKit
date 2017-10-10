@@ -5,23 +5,19 @@ xxxxxxxxxx<img id="img" src="../resources/abe.png">
 
 <script>
 
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 function runTest() {
     if (!window.testRunner)
         return;
-    
-    window.testRunner.waitUntilDone();  
-    
-    window.setTimeout(step2, 200);
-}
-
-function step2() {
 
     var img = document.getElementById("img");
     var left = img.offsetLeft;
     var top = img.offsetTop;
     var x = left + img.offsetWidth / 2;
     var y = top + img.offsetHeight / 2;
-    
+
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.leapForward(1300);
@@ -29,8 +25,11 @@ function step2() {
     eventSender.mouseMoveTo(left - 28, y);
     eventSender.mouseUp();
 
-    window.testRunner.notifyDone();
+    if (img.complete)
+        testRunner.notifyDone();
+    else
+        img.onload = () => testRunner.notifyDone();
 }
 
-runTest();
+window.onload = runTest;
 </script>

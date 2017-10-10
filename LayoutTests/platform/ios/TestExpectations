@@ -236,60 +236,61 @@ fast/canvas/canvas-toDataURL-webp.html
 fast/images/animated-webp-expected.html
 
 # Drag-and-drop is not supported:
-editing/pasteboard/datatransfer-items-drop-plaintext-file.html
-editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html
-fast/events/bogus-dropEffect-effectAllowed.html
-fast/events/clear-drag-state.html
-fast/events/clear-edit-drag-state.html
-fast/events/content-changed-during-drop.html
-fast/events/crash-on-mutate-during-drop.html
-fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html
-fast/events/drag-and-drop-link-containing-block.html
-fast/events/drag-and-drop-autoscroll-inner-frame.html
-fast/events/drag-and-drop-autoscroll.html
-fast/events/drag-and-drop-dataTransfer-types-nocrash.html
-fast/events/drag-and-drop-fire-drag-dragover.html
-fast/events/drag-and-drop-set-drag-data-arguments.html
-fast/events/drag-and-drop-subframe-dataTransfer.html
-fast/events/drag-and-drop.html
-fast/events/drag-customData.html
-fast/events/drag-dataTransferItemList-file-handling.html
-fast/events/drag-dataTransferItemList.html
-fast/events/drag-display-none-element.html
-fast/events/drag-file-crash.html
-fast/events/drag-image-filename.html
-fast/events/drag-in-frames.html
-fast/events/drag-and-drop-link.html
-fast/events/drag-and-drop-link-into-focused-contenteditable.html
-fast/events/drag-outside-window.html
-fast/events/drag-parent-node.html
-fast/events/drag-selects-image.html
-fast/events/drag-to-navigate.html
-fast/events/draggable-div-nodata.html
-fast/events/draggable-div-customdata.html
-fast/events/drop-handler-should-not-stop-navigate.html
-fast/events/drop-with-file-paths.html
-fast/events/dropzone-001.html
-fast/events/dropzone-002.html
-fast/events/dropzone-003.html
-fast/events/dropzone-004.html
-fast/events/dropzone-005.html
-fast/events/file-input-hidden-in-ondrop.html
-fast/events/input-element-display-none-in-dragleave-crash.html
-fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
-fast/events/moving-text-should-fire-drop-and-dragend-events.html
-fast/events/only-valid-drop-targets-receive-file-drop.html
-fast/events/prevent-drag-to-navigate.html
-fast/events/standalone-image-drag-to-editable.html
-fast/files/local-file-drag-security.html
+editing/pasteboard/datatransfer-items-drop-plaintext-file.html [ Skip ]
+editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html [ Skip ]
+editing/selection/drag-to-contenteditable-iframe.html [ Skip ]
+fast/events/bogus-dropEffect-effectAllowed.html [ Skip ]
+fast/events/clear-drag-state.html [ Skip ]
+fast/events/clear-edit-drag-state.html [ Skip ]
+fast/events/content-changed-during-drop.html [ Skip ]
+fast/events/crash-on-mutate-during-drop.html [ Skip ]
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ]
+fast/events/drag-and-drop-link-containing-block.html [ Skip ]
+fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
+fast/events/drag-and-drop-autoscroll.html [ Skip ]
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Skip ]
+fast/events/drag-and-drop-fire-drag-dragover.html [ Skip ]
+fast/events/drag-and-drop-set-drag-data-arguments.html [ Skip ]
+fast/events/drag-and-drop-subframe-dataTransfer.html [ Skip ]
+fast/events/drag-and-drop.html [ Skip ]
+fast/events/drag-customData.html [ Skip ]
+fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
+fast/events/drag-dataTransferItemList.html [ Skip ]
+fast/events/drag-display-none-element.html [ Skip ]
+fast/events/drag-file-crash.html [ Skip ]
+fast/events/drag-image-filename.html [ Skip ]
+fast/events/drag-in-frames.html [ Skip ]
+fast/events/drag-and-drop-link.html [ Skip ]
+fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Skip ]
+fast/events/drag-outside-window.html [ Skip ]
+fast/events/drag-parent-node.html [ Skip ]
+fast/events/drag-selects-image.html [ Skip ]
+fast/events/drag-to-navigate.html [ Skip ]
+fast/events/draggable-div-nodata.html [ Skip ]
+fast/events/draggable-div-customdata.html [ Skip ]
+fast/events/drop-handler-should-not-stop-navigate.html [ Skip ]
+fast/events/drop-with-file-paths.html [ Skip ]
+fast/events/dropzone-001.html [ Skip ]
+fast/events/dropzone-002.html [ Skip ]
+fast/events/dropzone-003.html [ Skip ]
+fast/events/dropzone-004.html [ Skip ]
+fast/events/dropzone-005.html [ Skip ]
+fast/events/file-input-hidden-in-ondrop.html [ Skip ]
+fast/events/input-element-display-none-in-dragleave-crash.html [ Skip ]
+fast/events/moving-text-should-fire-drop-and-dragend-events-2.html [ Skip ]
+fast/events/moving-text-should-fire-drop-and-dragend-events.html [ Skip ]
+fast/events/only-valid-drop-targets-receive-file-drop.html [ Skip ]
+fast/events/prevent-drag-to-navigate.html [ Skip ]
+fast/events/standalone-image-drag-to-editable.html [ Skip ]
+fast/files/local-file-drag-security.html [ Skip ]
 fast/history/page-cache-createObjectURL.html [ Skip ]
-http/tests/local/drag-over-remote-content.html
-http/tests/local/fileapi/send-dragged-file.html
-http/tests/local/fileapi/send-sliced-dragged-file.html
-http/tests/misc/bubble-drag-events.html
-http/tests/security/drag-drop-local-file.html
-http/tests/security/drag-drop-same-unique-origin.html
-http/tests/security/drag-over-remote-content-iframe.html
+http/tests/local/drag-over-remote-content.html [ Skip ]
+http/tests/local/fileapi/send-dragged-file.html [ Skip ]
+http/tests/local/fileapi/send-sliced-dragged-file.html [ Skip ]
+http/tests/misc/bubble-drag-events.html [ Skip ]
+http/tests/security/drag-drop-local-file.html [ Skip ]
+http/tests/security/drag-drop-same-unique-origin.html [ Skip ]
+http/tests/security/drag-over-remote-content-iframe.html [ Skip ]
 
 # No support for force events
 fast/events/force-click-link-selection-behavior.html [ Skip ]
