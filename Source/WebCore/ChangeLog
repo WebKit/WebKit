@@ -1,5 +1,15 @@
 2017-10-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, really fix the build with certain SDKs.
+
+        Follow-up to r223154, which fixed the wrong lambda.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::getEntry):
+        (WebCore::DOMFileSystem::getFile):
+
+2017-10-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix build with certain SDKs.
 
         Stop capturing |this| unnecessarily in lambda.

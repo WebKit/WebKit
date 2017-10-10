@@ -304,7 +304,7 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
     ASSERT(resolvedVirtualPath[0] == '/');
     auto fullPath = evaluatePath(resolvedVirtualPath);
     if (fullPath == m_rootPath) {
-        callOnMainThread([context = makeRef(context), completionCallback = WTFMove(completionCallback)]() mutable {
+        callOnMainThread([this, context = makeRef(context), completionCallback = WTFMove(completionCallback)]() mutable {
             completionCallback(Ref<FileSystemEntry> { root(context) });
         });
         return;
@@ -338,7 +338,7 @@ void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemFileEntry
     auto fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
         auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::Type::File);
-        callOnMainThread([this, context = WTFMove(context), fullPath = crossThreadCopy(fullPath), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+        callOnMainThread([context = WTFMove(context), fullPath = crossThreadCopy(fullPath), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
             if (validatedVirtualPath.hasException())
                 completionCallback(validatedVirtualPath.releaseException());
             else
