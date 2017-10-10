@@ -1,3 +1,16 @@
+2017-10-10  Matt Rajca  <mrajca@apple.com>
+
+        Respect audio rate change restrictions in HTMLMediaElement::setVolume.
+        https://bugs.webkit.org/show_bug.cgi?id=178140
+
+        Reviewed by Eric Carlson.
+
+        * media/audio-playback-volume-changes-with-restrictions-and-user-gestures-expected.txt: Added.
+        * media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html: Added.
+        * media/audio-playback-volume-changes-with-restrictions-expected.txt: Added.
+        * media/audio-playback-volume-changes-with-restrictions.html: Added.
+        * platform/ios/TestExpectations:
+
 2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Loading should be disabled while constructing the fragment in WebContentReader::readWebArchive
