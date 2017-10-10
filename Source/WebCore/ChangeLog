@@ -1,5 +1,16 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221100. rdar://problem/34771028
+
+    2017-08-23  Jer Noble  <jer.noble@apple.com>
+
+            Build fix for 32-bit Mac after r221098. Make sure constant used in WebCoreDecompressionSession is SoftLinked.
+
+            * platform/cf/CoreMediaSoftLink.cpp:
+            * platform/cf/CoreMediaSoftLink.h:
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221016. rdar://problem/34770830
 
     2017-08-22  Jer Noble  <jer.noble@apple.com>
