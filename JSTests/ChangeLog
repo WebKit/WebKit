@@ -1,5 +1,21 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222598. rdar://problem/34771434
+
+    2017-09-27  Mark Lam  <mark.lam@apple.com>
+
+            JSArray::canFastCopy() should fail if the source and destination arrays are the same.
+            https://bugs.webkit.org/show_bug.cgi?id=177584
+            <rdar://problem/34463903>
+
+            Reviewed by Saam Barati.
+
+            * stress/regress-177584.js: Added.
+            (assertEqual):
+            (Array.prototype.Symbol.species):
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221400. rdar://problem/34771396
 
     2017-08-30  Saam Barati  <sbarati@apple.com>
