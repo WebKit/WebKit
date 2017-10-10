@@ -1,3 +1,22 @@
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220496. rdar://problem/34770816
+
+    2017-08-09  Jeremy Jones  <jeremyj@apple.com>
+
+            Use MPAVRoutingController instead of deprecated versions.
+            https://bugs.webkit.org/show_bug.cgi?id=175063
+
+            Reviewed by Tim Horton.
+
+            No new tests because no behavior change. This uses a different platform class to present
+            an interface.
+
+            Remove deprecated MPAudioVideoRoutingPopoverController and MPAVRoutingSheet
+            Add MPMediaControlsViewController.
+
+            * platform/spi/ios/MediaPlayerSPI.h:
+
 2017-10-04  Kocsen Chung  <kocsen_chung@apple.com>
 
         Revert r222779. rdar://problem/34706688

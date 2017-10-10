@@ -25,6 +25,18 @@
 
 #if PLATFORM(IOS)
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
+#import <Foundation/Foundation.h>
+
+@class UIView;
+
+@interface WKAirPlayRoutePicker : NSObject
+- (void)showFromView:(UIView *)view;
+@end
+
+#else
+
 #import <UIKit/UIPopoverController.h>
 
 @class WKContentView;
@@ -33,6 +45,8 @@
 - (instancetype)initWithView:(WKContentView *)view;
 - (void)show:(BOOL)hasVideo fromRect:(CGRect)elementRect;
 @end
+
+#endif
 
 #endif // PLATFORM(IOS)
 

@@ -29,12 +29,14 @@
 #if PLATFORM(IOS)
 
 #import "UIKitSPI.h"
-#import "WKContentView.h"
-#import "WKContentViewInteraction.h"
-#import "WebPageProxy.h"
 #import <WebCore/MediaPlayerSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 110000 || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
+#import "WKContentView.h"
+#import "WKContentViewInteraction.h"
+#import "WebPageProxy.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -158,5 +160,44 @@ using namespace WebKit;
 @end
 
 #pragma clang diagnostic pop
+
+#else 
+
+SOFT_LINK_FRAMEWORK(MediaPlayer)
+SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
+SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
+
+@implementation WKAirPlayRoutePicker {
+    RetainPtr<MPMediaControlsViewController> _actionSheet;
+}
+
+- (void)dealloc
+{
+    [_actionSheet dismissViewControllerAnimated:0 completion:nil];
+    [super dealloc];
+}
+
+- (void)showFromView:(UIView *)view
+{
+    if (_actionSheet)
+        return;
+
+    __block RetainPtr<MPAVRoutingController> routingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebKit - HTML media element showing AirPlay route picker"]);
+    [routingController setDiscoveryMode:MPRouteDiscoveryModeDetailed];
+
+    _actionSheet = adoptNS([allocMPMediaControlsViewControllerInstance() init]);
+    _actionSheet.get().didDismissHandler = ^ {
+        [routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
+        routingController = nil;
+        _actionSheet = nil;
+    };
+
+    UIViewController *viewControllerForPresentation = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
+    [viewControllerForPresentation presentViewController:_actionSheet.get() animated:YES completion:nil];
+}
+
+@end
+
+#endif
 
 #endif // PLATFORM(IOS)
