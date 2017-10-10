@@ -281,9 +281,7 @@ Ref<DOMWrapperWorld> ScriptController::createWorld()
 
 Vector<JSC::Strong<JSDOMWindowProxy>> ScriptController::windowProxies()
 {
-    Vector<JSC::Strong<JSDOMWindowProxy>> windowProxies;
-    copyValuesToVector(m_windowProxies, windowProxies);
-    return windowProxies;
+    return copyToVector(m_windowProxies.values());
 }
 
 void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)

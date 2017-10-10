@@ -163,9 +163,7 @@ typedef GenericCallback<const ShareableBitmap::Handle&> ImageCallback;
 template<typename T>
 void invalidateCallbackMap(HashMap<uint64_t, T>& callbackMap, CallbackBase::Error error)
 {
-    Vector<T> callbacks;
-    copyValuesToVector(callbackMap, callbacks);
-    for (auto& callback : callbacks)
+    for (auto& callback : copyToVector(callbackMap.values()))
         callback->invalidate(error);
 
     callbackMap.clear();

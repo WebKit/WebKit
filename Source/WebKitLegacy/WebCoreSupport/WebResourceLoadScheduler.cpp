@@ -222,10 +222,7 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimum
     
     servePendingRequests(m_nonHTTPProtocolHost, minimumPriority);
 
-    Vector<HostInformation*> hostsToServe;
-    copyValuesToVector(m_hosts, hostsToServe);
-
-    for (auto* host : hostsToServe) {
+    for (auto* host : copyToVector(m_hosts.values())) {
         if (host->hasRequests())
             servePendingRequests(host, minimumPriority);
         else

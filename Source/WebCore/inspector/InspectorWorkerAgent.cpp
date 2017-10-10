@@ -145,9 +145,7 @@ void InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage()
 
 void InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies()
 {
-    Vector<WorkerInspectorProxy*> proxies;
-    copyValuesToVector(m_connectedProxies, proxies);
-    for (auto* proxy : proxies)
+    for (auto* proxy : copyToVector(m_connectedProxies.values()))
         proxy->disconnectFromWorkerInspectorController();
 
     m_connectedProxies.clear();

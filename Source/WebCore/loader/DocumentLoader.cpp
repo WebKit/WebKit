@@ -100,25 +100,19 @@ namespace WebCore {
 
 static void cancelAll(const ResourceLoaderMap& loaders)
 {
-    Vector<RefPtr<ResourceLoader>> loadersCopy;
-    copyValuesToVector(loaders, loadersCopy);
-    for (auto& loader : loadersCopy)
+    for (auto& loader : copyToVector(loaders.values()))
         loader->cancel();
 }
 
 static void setAllDefersLoading(const ResourceLoaderMap& loaders, bool defers)
 {
-    Vector<RefPtr<ResourceLoader>> loadersCopy;
-    copyValuesToVector(loaders, loadersCopy);
-    for (auto& loader : loadersCopy)
+    for (auto& loader : copyToVector(loaders.values()))
         loader->setDefersLoading(defers);
 }
 
 static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderMap& loaders)
 {
-    Vector<RefPtr<ResourceLoader>> loadersCopy;
-    copyValuesToVector(loaders, loadersCopy);
-    for (auto& loader : loadersCopy) {
+    for (auto& loader : copyToVector(loaders.values())) {
         if (!loader->frameLoader() || !loader->frameLoader()->frame().page())
             return false;
 

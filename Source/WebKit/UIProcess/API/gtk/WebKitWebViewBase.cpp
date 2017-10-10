@@ -475,9 +475,7 @@ static void webkitWebViewBaseContainerForall(GtkContainer* container, gboolean i
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
     WebKitWebViewBasePrivate* priv = webView->priv;
 
-    Vector<GtkWidget*> children;
-    copyKeysToVector(priv->children, children);
-    for (const auto& child : children) {
+    for (const auto& child : copyToVector(priv->children.keys())) {
         if (priv->children.contains(child))
             (*callback)(child, callbackData);
     }

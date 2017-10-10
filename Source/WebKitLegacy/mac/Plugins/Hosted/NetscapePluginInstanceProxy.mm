@@ -293,10 +293,8 @@ void NetscapePluginInstanceProxy::layerHostingModeChanged(bool hostsLayersInWind
 
 void NetscapePluginInstanceProxy::stopAllStreams()
 {
-    Vector<RefPtr<HostedNetscapePluginStream>> streamsCopy;
-    copyValuesToVector(m_streams, streamsCopy);
-    for (size_t i = 0; i < streamsCopy.size(); i++)
-        streamsCopy[i]->stop();
+    for (auto& stream : copyToVector(m_streams.values()))
+        stream->stop();
 }
 
 void NetscapePluginInstanceProxy::cleanup()

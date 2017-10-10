@@ -126,9 +126,7 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);
     m_currentTransaction = nullptr;
 
-    Vector<RemoteLayerTreeTransaction::LayerCreationProperties> createdLayerProperties;
-    copyValuesToVector(m_createdLayers, createdLayerProperties);
-    transaction.setCreatedLayers(WTFMove(createdLayerProperties));
+    transaction.setCreatedLayers(copyToVector(m_createdLayers.values()));
     transaction.setDestroyedLayerIDs(WTFMove(m_destroyedLayers));
     
     m_createdLayers.clear();

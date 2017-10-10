@@ -4095,9 +4095,8 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     const auto& customProperties = style->customProperties();
     if (index >= customProperties.size())
         return String();
-    
-    Vector<String, 4> results;
-    copyKeysToVector(customProperties, results);
+
+    auto results = copyToVector(customProperties.keys());
     return results.at(index);
 }
 

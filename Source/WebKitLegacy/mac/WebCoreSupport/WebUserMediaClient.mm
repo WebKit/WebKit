@@ -109,8 +109,7 @@ WebUserMediaClient::~WebUserMediaClient()
 void WebUserMediaClient::pageDestroyed()
 {
     auto& requestsMap = userMediaRequestsMap();
-    Vector<RetainPtr<WebUserMediaPolicyListener>> pendingRequests;
-    copyValuesToVector(requestsMap, pendingRequests);
+    auto pendingRequests = copyToVector(requestsMap.values());
     requestsMap.clear();
 
     for (auto& request : pendingRequests)
@@ -119,8 +118,7 @@ void WebUserMediaClient::pageDestroyed()
     ASSERT(userMediaRequestsMap().isEmpty());
 
     auto& checkMap = userMediaCheckMap();
-    Vector<RetainPtr<WebUserMediaPolicyCheckerListener>> pendingChecks;
-    copyValuesToVector(checkMap, pendingChecks);
+    auto pendingChecks = copyToVector(checkMap.values());
     checkMap.clear();
 
     for (auto& check : pendingChecks)

@@ -572,7 +572,7 @@ void DocumentMarkerController::removeMarkers(Node* node, OptionSet<DocumentMarke
         return;
     ASSERT(!m_markers.isEmpty());
     
-    MarkerMap::iterator iterator = m_markers.find(node);
+    auto iterator = m_markers.find(node);
     if (iterator != m_markers.end())
         removeMarkersFromList(iterator, markerTypes);
 }
@@ -583,9 +583,7 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::MarkerTyp
         return;
     ASSERT(!m_markers.isEmpty());
 
-    Vector<RefPtr<Node>> nodesWithMarkers;
-    copyKeysToVector(m_markers, nodesWithMarkers);
-    for (auto& node : nodesWithMarkers) {
+    for (auto& node : copyToVector(m_markers.keys())) {
         auto iterator = m_markers.find(node);
         if (iterator != m_markers.end())
             removeMarkersFromList(iterator, markerTypes);

@@ -589,32 +589,6 @@ inline void copyToVector(const HashMap<T, U, V, W, X>& collection, Y& vector)
         vector[i] = { (*it).key, (*it).value };
 }
 
-template<typename T, typename U, typename V, typename W, typename X, typename Y>
-inline void copyKeysToVector(const HashMap<T, U, V, W, X>& collection, Y& vector)
-{
-    typedef typename HashMap<T, U, V, W, X>::const_iterator::Keys iterator;
-    
-    vector.resize(collection.size());
-    
-    iterator it = collection.begin().keys();
-    iterator end = collection.end().keys();
-    for (unsigned i = 0; it != end; ++it, ++i)
-        vector[i] = *it;
-}  
-
-template<typename T, typename U, typename V, typename W, typename X, typename Y>
-inline void copyValuesToVector(const HashMap<T, U, V, W, X>& collection, Y& vector)
-{
-    typedef typename HashMap<T, U, V, W, X>::const_iterator::Values iterator;
-    
-    vector.resize(collection.size());
-    
-    iterator it = collection.begin().values();
-    iterator end = collection.end().values();
-    for (unsigned i = 0; it != end; ++it, ++i)
-        vector[i] = *it;
-}   
-
 } // namespace WTF
 
 using WTF::HashMap;

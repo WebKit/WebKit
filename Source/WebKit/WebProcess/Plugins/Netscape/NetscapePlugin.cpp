@@ -568,11 +568,8 @@ NetscapePluginStream* NetscapePlugin::streamFromID(uint64_t streamID)
 
 void NetscapePlugin::stopAllStreams()
 {
-    Vector<RefPtr<NetscapePluginStream>> streams;
-    copyValuesToVector(m_streams, streams);
-
-    for (size_t i = 0; i < streams.size(); ++i)
-        streams[i]->stop(NPRES_USER_BREAK);
+    for (auto& stream : copyToVector(m_streams.values()))
+        stream->stop(NPRES_USER_BREAK);
 }
 
 bool NetscapePlugin::allowPopups() const

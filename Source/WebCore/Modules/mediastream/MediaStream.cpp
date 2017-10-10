@@ -177,11 +177,7 @@ MediaStreamTrackVector MediaStream::getVideoTracks() const
 
 MediaStreamTrackVector MediaStream::getTracks() const
 {
-    MediaStreamTrackVector tracks;
-    tracks.reserveCapacity(m_trackSet.size());
-    copyValuesToVector(m_trackSet, tracks);
-
-    return tracks;
+    return copyToVector(m_trackSet.values());
 }
 
 void MediaStream::trackDidEnd()

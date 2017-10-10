@@ -89,9 +89,7 @@ using namespace WebKit;
 
 - (Vector<String>)_mimeTypesWithCustomContentProviders
 {
-    Vector<String> mimeTypes;
-    copyKeysToVector(_contentProviderForMIMEType, mimeTypes);
-    return mimeTypes;
+    return copyToVector(_contentProviderForMIMEType.keys());
 }
 
 @end

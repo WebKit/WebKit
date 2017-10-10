@@ -1,3 +1,47 @@
+2017-10-10  Sam Weinig  <sam@webkit.org>
+
+        Replace copyKeysToVector/copyValuesToVector with copyToVector(map.keys())/copyToVector(map.values())
+        https://bugs.webkit.org/show_bug.cgi?id=178102
+
+        Reviewed by Tim Horton.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::Watchers::getNotifiersVector const):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::connectionClosedFromServer):
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::connectionToServerLost):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::getTracks const):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::windowProxies):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::item const):
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::removeMarkers):
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies):
+        * inspector/NetworkResourcesData.cpp:
+        * loader/DocumentLoader.cpp:
+        (WebCore::cancelAll):
+        (WebCore::setAllDefersLoading):
+        (WebCore::areAllLoadersPageCacheAcceptable):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::forEachSessionResource):
+        * loader/mac/DocumentLoaderMac.cpp:
+        (WebCore::scheduleAll):
+        (WebCore::unscheduleAll):
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::notifyObservers):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::tracks const):
+
+            Replace copyKeysToVector / copyValuesToVector with copyToVector(map.keys()) / copyToVector(map.values())
+
 2017-10-10  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         Fix MSVC build with ENCRYPTED_MEDIA enabled

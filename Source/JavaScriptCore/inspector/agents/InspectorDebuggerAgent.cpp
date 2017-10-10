@@ -1071,9 +1071,7 @@ void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason bre
 void InspectorDebuggerAgent::clearInspectorBreakpointState()
 {
     ErrorString dummyError;
-    Vector<String> breakpointIdentifiers;
-    copyKeysToVector(m_breakpointIdentifierToDebugServerBreakpointIDs, breakpointIdentifiers);
-    for (const String& identifier : breakpointIdentifiers)
+    for (const String& identifier : copyToVector(m_breakpointIdentifierToDebugServerBreakpointIDs.keys()))
         removeBreakpoint(dummyError, identifier);
 
     m_javaScriptBreakpoints.clear();

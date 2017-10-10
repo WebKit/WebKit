@@ -181,18 +181,15 @@ void WebProcessProxy::shutDown()
     m_backgroundResponsivenessTimer.invalidate();
     m_tokenForHoldingLockedFiles = nullptr;
 
-    Vector<RefPtr<WebFrameProxy>> frames;
-    copyValuesToVector(m_frameMap, frames);
-
-    for (size_t i = 0, size = frames.size(); i < size; ++i)
-        frames[i]->webProcessWillShutDown();
+    for (auto& frame : copyToVector(m_frameMap.values()))
+        frame->webProcessWillShutDown();
     m_frameMap.clear();
 
-    for (VisitedLinkStore* visitedLinkStore : m_visitedLinkStores)
+    for (auto* visitedLinkStore : m_visitedLinkStores)
         visitedLinkStore->removeProcess(*this);
     m_visitedLinkStores.clear();
 
-    for (WebUserContentControllerProxy* webUserContentControllerProxy : m_webUserContentControllerProxies)
+    for (auto* webUserContentControllerProxy : m_webUserContentControllerProxies)
         webUserContentControllerProxy->removeProcess(*this);
     m_webUserContentControllerProxies.clear();
 
@@ -625,13 +622,12 @@ void WebProcessProxy::didClose(IPC::Connection&)
 
     webConnection()->didClose();
 
-    Vector<RefPtr<WebPageProxy>> pages;
-    copyValuesToVector(m_pageMap, pages);
+    auto pages = copyToVector(m_pageMap.values());
 
     shutDown();
 
-    for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidTerminate(ProcessTerminationReason::Crash);
+    for (auto& page : pages)
+        page->processDidTerminate(ProcessTerminationReason::Crash);
 
 }
 
@@ -653,12 +649,9 @@ void WebProcessProxy::didBecomeUnresponsive()
 {
     m_isResponsive = NoOrMaybe::No;
 
-    Vector<RefPtr<WebPageProxy>> pages;
-    copyValuesToVector(m_pageMap, pages);
-
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
 
-    for (auto& page : pages)
+    for (auto& page : copyToVector(m_pageMap.values()))
         page->processDidBecomeUnresponsive();
 
     bool isWebProcessResponsive = false;
@@ -670,25 +663,19 @@ void WebProcessProxy::didBecomeResponsive()
 {
     m_isResponsive = NoOrMaybe::Maybe;
 
-    Vector<RefPtr<WebPageProxy>> pages;
-    copyValuesToVector(m_pageMap, pages);
-    for (auto& page : pages)
+    for (auto& page : copyToVector(m_pageMap.values()))
         page->processDidBecomeResponsive();
 }
 
 void WebProcessProxy::willChangeIsResponsive()
 {
-    Vector<RefPtr<WebPageProxy>> pages;
-    copyValuesToVector(m_pageMap, pages);
-    for (auto& page : pages)
+    for (auto& page : copyToVector(m_pageMap.values()))
         page->willChangeProcessIsResponsive();
 }
 
 void WebProcessProxy::didChangeIsResponsive()
 {
-    Vector<RefPtr<WebPageProxy>> pages;
-    copyValuesToVector(m_pageMap, pages);
-    for (auto& page : pages)
+    for (auto& page : copyToVector(m_pageMap.values()))
         page->didChangeProcessIsResponsive();
 }
 
@@ -748,19 +735,17 @@ void WebProcessProxy::didDestroyFrame(uint64_t frameID)
 
 void WebProcessProxy::disconnectFramesFromPage(WebPageProxy* page)
 {
-    Vector<RefPtr<WebFrameProxy>> frames;
-    copyValuesToVector(m_frameMap, frames);
-    for (size_t i = 0, size = frames.size(); i < size; ++i) {
-        if (frames[i]->page() == page)
-            frames[i]->webProcessWillShutDown();
+    for (auto& frame : copyToVector(m_frameMap.values())) {
+        if (frame->page() == page)
+            frame->webProcessWillShutDown();
     }
 }
 
 size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
 {
     size_t result = 0;
-    for (HashMap<uint64_t, RefPtr<WebFrameProxy>>::const_iterator iter = m_frameMap.begin(); iter != m_frameMap.end(); ++iter) {
-        if (iter->value->page() == page)
+    for (auto& frame : m_frameMap.values()) {
+        if (frame->page() == page)
             ++result;
     }
     return result;
@@ -888,13 +873,12 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
     if (webConnection())
         webConnection()->didClose();
 
-    Vector<RefPtr<WebPageProxy>> pages;
-    copyValuesToVector(m_pageMap, pages);
+    auto pages = copyToVector(m_pageMap.values());
 
     shutDown();
 
-    for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidTerminate(reason);
+    for (auto& page : pages)
+        page->processDidTerminate(reason);
 }
 
 void WebProcessProxy::stopResponsivenessTimer()

@@ -1,3 +1,16 @@
+2017-10-10  Sam Weinig  <sam@webkit.org>
+
+        Replace copyKeysToVector/copyValuesToVector with copyToVector(map.keys())/copyToVector(map.values())
+        https://bugs.webkit.org/show_bug.cgi?id=178102
+
+        Reviewed by Tim Horton.
+
+        * wtf/HashMap.h:
+        (WTF::copyKeysToVector): Deleted.
+        (WTF::copyValuesToVector): Deleted.
+        
+            Remove copyKeysToVector and copyValuesToVector which are no longer used.
+
 2017-10-09  Youenn Fablet  <youenn@apple.com>
 
         Vector should be able to easily create from a list of movable only items

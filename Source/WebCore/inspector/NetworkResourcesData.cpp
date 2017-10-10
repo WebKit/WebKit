@@ -262,9 +262,7 @@ void NetworkResourcesData::clear(const String& preservedLoaderId)
 
 Vector<NetworkResourcesData::ResourceData*> NetworkResourcesData::resources()
 {
-    Vector<NetworkResourcesData::ResourceData*> resources;
-    copyValuesToVector(m_requestIdToResourceDataMap, resources);
-    return resources;
+    return copyToVector(m_requestIdToResourceDataMap.values());
 }
 
 NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequestId(const String& requestId)

@@ -278,10 +278,7 @@ void MemoryCache::forEachSessionResource(PAL::SessionID sessionID, const WTF::Fu
     if (it == m_sessionResources.end())
         return;
 
-    Vector<CachedResourceHandle<CachedResource>> resourcesForSession;
-    copyValuesToVector(*it->value, resourcesForSession);
-
-    for (auto& resource : resourcesForSession)
+    for (auto& resource : copyToVector(it->value->values()))
         function(*resource);
 }
 

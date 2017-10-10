@@ -1,3 +1,43 @@
+2017-10-10  Sam Weinig  <sam@webkit.org>
+
+        Replace copyKeysToVector/copyValuesToVector with copyToVector(map.keys())/copyToVector(map.values())
+        https://bugs.webkit.org/show_bug.cgi?id=178102
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::dumpChangedLayers):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextInvalidateCustomProtocolRequests):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerForall):
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry _mimeTypesWithCustomContentProviders]):
+        * UIProcess/GenericCallback.h:
+        (WebKit::invalidateCallbackMap):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didBecomeResponsive):
+        (WebKit::WebProcessProxy::willChangeIsResponsive):
+        (WebKit::WebProcessProxy::didChangeIsResponsive):
+        (WebKit::WebProcessProxy::disconnectFramesFromPage):
+        (WebKit::WebProcessProxy::frameCountInPage const):
+        (WebKit::WebProcessProxy::requestTermination):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::invalidate):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::stopAllStreams):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::cancelAllStreams):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::buildTransaction):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose):
+
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Header cairo.h is used in GLib API headers but cannot be found

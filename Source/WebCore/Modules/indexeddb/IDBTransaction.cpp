@@ -1368,9 +1368,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
 
     abortInProgressOperations(error);
 
-    Vector<RefPtr<IDBClient::TransactionOperation>> operations;
-    copyValuesToVector(m_transactionOperationMap, operations);
-
+    auto operations = copyToVector(m_transactionOperationMap.values());
     for (auto& operation : operations) {
         m_currentlyCompletingRequest = nullptr;
         m_transactionOperationsInProgressQueue.append(operation.get());

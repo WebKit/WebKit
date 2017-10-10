@@ -2338,9 +2338,7 @@ void Document::prepareForDestruction()
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (!m_clientToIDMap.isEmpty() && page()) {
-        Vector<WebCore::MediaPlaybackTargetClient*> clients;
-        copyKeysToVector(m_clientToIDMap, clients);
-        for (auto* client : clients)
+        for (auto* client : copyToVector(m_clientToIDMap.keys()))
             removePlaybackTargetPickerClient(*client);
     }
 #endif

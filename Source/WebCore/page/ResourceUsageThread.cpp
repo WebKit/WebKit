@@ -86,7 +86,7 @@ void ResourceUsageThread::notifyObservers(ResourceUsageData&& data)
         {
             auto& resourceUsageThread = ResourceUsageThread::singleton();
             LockHolder locker(resourceUsageThread.m_lock);
-            copyValuesToVector(resourceUsageThread.m_observers, functions);
+            functions = copyToVector(resourceUsageThread.m_observers.values());
         }
 
         for (auto& function : functions)

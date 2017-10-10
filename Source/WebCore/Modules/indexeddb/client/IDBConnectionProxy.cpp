@@ -422,7 +422,7 @@ void IDBConnectionProxy::connectionToServerLost(const IDBError& error)
     Vector<uint64_t> databaseConnectionIdentifiers;
     {
         Locker<Lock> locker(m_databaseConnectionMapLock);
-        copyKeysToVector(m_databaseConnectionMap, databaseConnectionIdentifiers);
+        databaseConnectionIdentifiers = copyToVector(m_databaseConnectionMap.keys());
     }
 
     for (auto connectionIdentifier : databaseConnectionIdentifiers) {
@@ -441,7 +441,7 @@ void IDBConnectionProxy::connectionToServerLost(const IDBError& error)
     Vector<IDBResourceIdentifier> openDBRequestIdentifiers;
     {
         Locker<Lock> locker(m_openDBRequestMapLock);
-        copyKeysToVector(m_openDBRequestMap, openDBRequestIdentifiers);
+        openDBRequestIdentifiers = copyToVector(m_openDBRequestMap.keys());
     }
 
     for (auto& requestIdentifier : openDBRequestIdentifiers) {

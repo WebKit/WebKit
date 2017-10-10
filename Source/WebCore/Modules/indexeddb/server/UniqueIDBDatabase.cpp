@@ -1813,9 +1813,7 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     ASSERT(isMainThread());
 
     // Error out all transactions
-    Vector<IDBResourceIdentifier> inProgressIdentifiers;
-    copyKeysToVector(m_inProgressTransactions, inProgressIdentifiers);
-    for (auto& identifier : inProgressIdentifiers)
+    for (auto& identifier : copyToVector(m_inProgressTransactions.keys()))
         m_inProgressTransactions.get(identifier)->abortWithoutCallback();
 
     ASSERT(m_inProgressTransactions.isEmpty());
@@ -1825,28 +1823,20 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     m_objectStoreWriteTransactions.clear();
 
     // Error out all pending callbacks
-    Vector<uint64_t> callbackIdentifiers;
     IDBError error = IDBError::userDeleteError();
     IDBKeyData keyData;
     IDBGetResult getResult;
 
-    copyKeysToVector(m_errorCallbacks, callbackIdentifiers);
-    for (auto identifier : callbackIdentifiers)
+    for (auto identifier : copyToVector(m_errorCallbacks.keys()))
         performErrorCallback(identifier, error);
 
-    callbackIdentifiers.clear();
-    copyKeysToVector(m_keyDataCallbacks, callbackIdentifiers);
-    for (auto identifier : callbackIdentifiers)
+    for (auto identifier : copyToVector(m_keyDataCallbacks.keys()))
         performKeyDataCallback(identifier, error, keyData);
 
-    callbackIdentifiers.clear();
-    copyKeysToVector(m_getResultCallbacks, callbackIdentifiers);
-    for (auto identifier : callbackIdentifiers)
+    for (auto identifier : copyToVector(m_getResultCallbacks.keys()))
         performGetResultCallback(identifier, error, getResult);
 
-    callbackIdentifiers.clear();
-    copyKeysToVector(m_countCallbacks, callbackIdentifiers);
-    for (auto identifier : callbackIdentifiers)
+    for (auto identifier : copyToVector(m_countCallbacks.keys()))
         performCountCallback(identifier, error, 0);
 
     // Error out all IDBOpenDBRequests
@@ -1861,7 +1851,7 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     m_pendingOpenDBRequests.clear();
 
     // Close all open connections
-    ListHashSet<RefPtr<UniqueIDBDatabaseConnection>> openDatabaseConnections = m_openDatabaseConnections;
+    auto openDatabaseConnections = m_openDatabaseConnections;
     for (auto& connection : openDatabaseConnections)
         connectionClosedFromServer(*connection);
 

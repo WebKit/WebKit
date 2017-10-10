@@ -36,9 +36,7 @@ namespace WebDriver {
 void SessionHost::inspectorDisconnected()
 {
     // Browser closed or crashed, finish all pending commands with error.
-    Vector<long> messages;
-    copyKeysToVector(m_commandRequests, messages);
-    for (auto messageID : messages) {
+    for (auto messageID : copyToVector(m_commandRequests.keys())) {
         auto responseHandler = m_commandRequests.take(messageID);
         responseHandler({ nullptr, true });
     }

@@ -665,12 +665,8 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 void WebProcess::didClose(IPC::Connection&)
 {
 #ifndef NDEBUG
-    // Close all the live pages.
-    Vector<RefPtr<WebPage>> pages;
-    copyValuesToVector(m_pageMap, pages);
-    for (auto& page : pages)
+    for (auto& page : copyToVector(m_pageMap.values()))
         page->close();
-    pages.clear();
 
     GCController::singleton().garbageCollectSoon();
     FontCache::singleton().invalidate();

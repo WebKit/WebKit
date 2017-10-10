@@ -168,9 +168,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection&)
     // Protect ourself as we might be otherwise be deleted during this function.
     Ref<NetworkConnectionToWebProcess> protector(*this);
 
-    Vector<RefPtr<NetworkResourceLoader>> loaders;
-    copyValuesToVector(m_networkResourceLoaders, loaders);
-    for (auto& loader : loaders)
+    for (auto& loader : copyToVector(m_networkResourceLoaders.values()))
         loader->abort();
     ASSERT(m_networkResourceLoaders.isEmpty());
 

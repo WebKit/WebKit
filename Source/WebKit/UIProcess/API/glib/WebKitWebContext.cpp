@@ -1618,9 +1618,7 @@ void webkitWebContextStopLoadingCustomProtocol(WebKitWebContext* context, uint64
 
 void webkitWebContextInvalidateCustomProtocolRequests(WebKitWebContext* context, LegacyCustomProtocolManagerProxy& manager)
 {
-    Vector<GRefPtr<WebKitURISchemeRequest>> requests;
-    copyValuesToVector(context->priv->uriSchemeRequests, requests);
-    for (auto& request : requests) {
+    for (auto& request : copyToVector(context->priv->uriSchemeRequests.values())) {
         if (webkitURISchemeRequestGetManager(request.get()) == &manager)
             webkitURISchemeRequestInvalidate(request.get());
     }

@@ -1284,11 +1284,8 @@ void PluginView::removeStream(Stream* stream)
 
 void PluginView::cancelAllStreams()
 {
-    Vector<RefPtr<Stream>> streams;
-    copyValuesToVector(m_streams, streams);
-    
-    for (size_t i = 0; i < streams.size(); ++i)
-        streams[i]->cancel();
+    for (auto& stream : copyToVector(m_streams.values()))
+        stream->cancel();
 
     // Cancelling a stream removes it from the m_streams map, so if we cancel all streams the map should be empty.
     ASSERT(m_streams.isEmpty());

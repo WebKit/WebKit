@@ -127,7 +127,7 @@ bool Geolocation::Watchers::isEmpty() const
 
 void Geolocation::Watchers::getNotifiersVector(GeoNotifierVector& copy) const
 {
-    copyValuesToVector(m_idToNotifierMap, copy);
+    copy = copyToVector(m_idToNotifierMap.values());
 }
 
 Ref<Geolocation> Geolocation::create(ScriptExecutionContext* context)

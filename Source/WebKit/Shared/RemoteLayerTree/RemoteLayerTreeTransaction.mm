@@ -744,8 +744,7 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
     ts << "changed-layers";
 
     // Dump the layer properties sorted by layer ID.
-    Vector<GraphicsLayer::PlatformLayerID> layerIDs;
-    copyKeysToVector(changedLayerProperties, layerIDs);
+    auto layerIDs = copyToVector(changedLayerProperties.keys());
     std::sort(layerIDs.begin(), layerIDs.end());
 
     for (auto& layerID : layerIDs) {

@@ -366,8 +366,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 {
     // We clear all the values to present a consistent state when sending the notifications.
     // We keep a reference to the entries for rebuilding the history after the notification.
-    Vector <RetainPtr<NSMutableArray>> entryArrays;
-    copyValuesToVector(*_entriesByDate, entryArrays);
+    auto entryArrays = copyToVector(_entriesByDate->values());
     _entriesByDate->clear();
     
     NSMutableDictionary *entriesByURL = _entriesByURL;
