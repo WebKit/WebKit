@@ -159,6 +159,30 @@ function test13() {
     });
 }
 
+function test14() {
+    debug("* Edge case: calling getFile() with absolute path starting with 2 slashes");
+    return getFileAsPromise(directoryEntry, "//testFiles/file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('//testFiles/file1.txt') should succeed");
+    });
+}
+
+function test15() {
+    debug("* Edge case: calling getFile() with absolute path starting with 2 slashes and containing 2 following slashes");
+    return getFileAsPromise(directoryEntry, "//testFiles//file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('//testFiles//file1.txt') should succeed");
+    });
+}
+
 var dropzone = document.getElementById('dropzone');
 dropzone.ondrop = function(e) {
     e.preventDefault();
@@ -180,6 +204,8 @@ dropzone.ondrop = function(e) {
     .then(test11)
     .then(test12)
     .then(test13)
+    .then(test14)
+    .then(test15)
     .then(finishJSTest);
 };
 

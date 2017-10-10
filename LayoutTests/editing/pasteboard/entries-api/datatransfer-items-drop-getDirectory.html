@@ -203,6 +203,32 @@ function test16() {
     });
 }
 
+function test17() {
+    debug("* Edge case: calling getDirectory() with path starting with 2 slashes");
+    return getDirectoryAsPromise(directoryEntry, '//testFiles/subfolder1', {}).then(entry => {
+        testFilesEntry = entry;
+        shouldBeFalse("testFilesEntry.isFile");
+        shouldBeTrue("testFilesEntry.isDirectory");
+        shouldBeEqualToString("testFilesEntry.name", "subfolder1");
+        shouldBeEqualToString("testFilesEntry.fullPath", "/testFiles/subfolder1");
+    }, e => {
+        testFailed("getDirectory('//testFiles/subfolder1') should succeed");
+    });
+}
+
+function test18() {
+    debug("* Edge case: calling getDirectory() with path starting with 2 slashes and containing 2 following slashes");
+    return getDirectoryAsPromise(directoryEntry, '//testFiles//subfolder1', {}).then(entry => {
+        testFilesEntry = entry;
+        shouldBeFalse("testFilesEntry.isFile");
+        shouldBeTrue("testFilesEntry.isDirectory");
+        shouldBeEqualToString("testFilesEntry.name", "subfolder1");
+        shouldBeEqualToString("testFilesEntry.fullPath", "/testFiles/subfolder1");
+    }, e => {
+        testFailed("getDirectory('//testFiles//subfolder1') should succeed");
+    });
+}
+
 var dropzone = document.getElementById('dropzone');
 dropzone.ondrop = function(e) {
     e.preventDefault();
@@ -227,6 +253,8 @@ dropzone.ondrop = function(e) {
     .then(test14)
     .then(test15)
     .then(test16)
+    .then(test17)
+    .then(test18)
     .then(finishJSTest);
 };
 

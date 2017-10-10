@@ -1,3 +1,17 @@
+2017-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Entries API should recognize path starting with 2 slashes as valid absolute path
+        https://bugs.webkit.org/show_bug.cgi?id=178135
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getDirectory-expected.txt:
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getDirectory.html:
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getFile-expected.txt:
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getFile.html:
+
 2017-10-10  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r223110.

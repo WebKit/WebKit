@@ -62,6 +62,16 @@ PASS testFilesEntry.isFile is false
 PASS testFilesEntry.isDirectory is true
 PASS testFilesEntry.name is "testFiles"
 PASS testFilesEntry.fullPath is "/testFiles"
+* Edge case: calling getDirectory() with path starting with 2 slashes
+PASS testFilesEntry.isFile is false
+PASS testFilesEntry.isDirectory is true
+PASS testFilesEntry.name is "subfolder1"
+PASS testFilesEntry.fullPath is "/testFiles/subfolder1"
+* Edge case: calling getDirectory() with path starting with 2 slashes and containing 2 following slashes
+PASS testFilesEntry.isFile is false
+PASS testFilesEntry.isDirectory is true
+PASS testFilesEntry.name is "subfolder1"
+PASS testFilesEntry.fullPath is "/testFiles/subfolder1"
 PASS successfullyParsed is true
 
 TEST COMPLETE

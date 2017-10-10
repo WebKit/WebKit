@@ -96,12 +96,21 @@ static bool isValidPathNameCharacter(UChar c)
 // https://wicg.github.io/entries-api/#path-segment
 static bool isValidPathSegment(StringView segment)
 {
-    ASSERT(!segment.isEmpty());
-    if (segment == "." || segment == "..")
+    if (segment.isEmpty() || segment == "." || segment == "..")
         return true;
 
     for (unsigned i = 0; i < segment.length(); ++i) {
         if (!isValidPathNameCharacter(segment[i]))
+            return false;
+    }
+    return true;
+}
+
+static bool isZeroOrMorePathSegmentsSeparatedBySlashes(StringView string)
+{
+    auto segments = string.split('/');
+    for (auto segment : segments) {
+        if (!isValidPathSegment(segment))
             return false;
     }
     return true;
@@ -116,12 +125,7 @@ static bool isValidRelativeVirtualPath(StringView virtualPath)
     if (virtualPath[0] == '/')
         return false;
 
-    auto segments = virtualPath.split('/');
-    for (auto segment : segments) {
-        if (!isValidPathSegment(segment))
-            return false;
-    }
-    return true;
+    return isZeroOrMorePathSegmentsSeparatedBySlashes(virtualPath);
 }
 
 // https://wicg.github.io/entries-api/#valid-path
@@ -129,8 +133,10 @@ static bool isValidVirtualPath(StringView virtualPath)
 {
     if (virtualPath.isEmpty())
         return true;
-    if (virtualPath[0] == '/')
-        return virtualPath.length() == 1 || isValidRelativeVirtualPath(virtualPath.substring(1));
+    if (virtualPath[0] == '/') {
+        // An absolute path is a string consisting of '/' (U+002F SOLIDUS) followed by one or more path segments joined by '/' (U+002F SOLIDUS).
+        return isZeroOrMorePathSegmentsSeparatedBySlashes(virtualPath.substring(1));
+    }
     return isValidRelativeVirtualPath(virtualPath);
 }
 

@@ -1,3 +1,23 @@
+2017-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Entries API should recognize path starting with 2 slashes as valid absolute path
+        https://bugs.webkit.org/show_bug.cgi?id=178135
+
+        Reviewed by Ryosuke Niwa.
+
+        Entries API should recognize paths starting with 2 slashes as valid absolute paths to match Chrome's behavior.
+        See https://github.com/WICG/entries-api/commit/990454758005a6039655835503d551015e346d9d
+
+        This was causing us to fail some manual web-platform-tests.
+
+        No new tests, updated existing tests.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::isValidPathSegment):
+        (WebCore::isZeroOrMorePathSegmentsSeparatedBySlashes):
+        (WebCore::isValidRelativeVirtualPath):
+        (WebCore::isValidVirtualPath):
+
 2017-10-10  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r223110.
