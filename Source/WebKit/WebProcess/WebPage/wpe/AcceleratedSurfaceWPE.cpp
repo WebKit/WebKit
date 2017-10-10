@@ -75,8 +75,7 @@ void AcceleratedSurfaceWPE::finalize()
 uint64_t AcceleratedSurfaceWPE::window() const
 {
     ASSERT(m_backend);
-    static_assert(sizeof(EGLNativeWindowType) <= sizeof(uint64_t), "EGLNativeWindowType must not be longer than 64 bits.");
-    return static_cast<uint64_t>(wpe_renderer_backend_egl_target_get_native_window(m_backend));
+    return reinterpret_cast<uint64_t>(wpe_renderer_backend_egl_target_get_native_window(m_backend));
 }
 
 uint64_t AcceleratedSurfaceWPE::surfaceID() const
