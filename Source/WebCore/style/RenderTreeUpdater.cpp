@@ -520,7 +520,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             element.clearStyleDerivedDataBeforeDetachingRenderer();
 
             if (auto* renderer = element.renderer()) {
-                renderer->destroyAndCleanupAnonymousWrappers();
+                renderer->removeFromParentAndDestroyCleaningUpAnonymousWrappers();
                 element.setRenderer(nullptr);
             }
             if (element.hasCustomStyleResolveCallbacks())
@@ -550,7 +550,7 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     auto* renderer = text.renderer();
     if (!renderer)
         return;
-    renderer->destroyAndCleanupAnonymousWrappers();
+    renderer->removeFromParentAndDestroyCleaningUpAnonymousWrappers();
     text.setRenderer(nullptr);
 }
 

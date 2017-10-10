@@ -116,7 +116,7 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
 
         // If current parent is an anonymous block that has lost all its children, destroy it.
         if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
-            currentParent->destroy();
+            currentParent->removeFromParentAndDestroy();
     }
 }
 

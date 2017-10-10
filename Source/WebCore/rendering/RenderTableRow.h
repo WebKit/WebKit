@@ -62,7 +62,7 @@ public:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    void destroyAndCollapseAnonymousSiblingRows();
+    void collapseAndDestroyAnonymousSiblingRows();
 
 private:
     static RenderPtr<RenderTableRow> createTableRowWithStyle(Document&, const RenderStyle&);

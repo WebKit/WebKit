@@ -764,15 +764,15 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
             child->nextSibling()->setPreviousSibling(child->previousSibling());
     }
 
-    child->setFirstChild(0);
-    child->m_next = 0;
+    child->setFirstChild(nullptr);
+    child->m_next = nullptr;
 
     // Remove all the information in the flow thread associated with the leftover anonymous block.
     child->resetFragmentedFlowStateOnRemoval();
 
-    child->setParent(0);
-    child->setPreviousSibling(0);
-    child->setNextSibling(0);
+    child->setParent(nullptr);
+    child->setPreviousSibling(nullptr);
+    child->setNextSibling(nullptr);
 
     child->destroy();
 }
@@ -875,7 +875,7 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
             
             // Delete the now-empty block's lines and nuke it.
             nextBlock.deleteLines();
-            nextBlock.destroy();
+            nextBlock.removeFromParentAndDestroy();
             next = nullptr;
         }
     }
@@ -934,7 +934,8 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
                 break;
             }
             setContinuation(nullptr);
-            destroy();
+            // FIXME: This is dangerous.
+            removeFromParentAndDestroy();
         }
     }
     return takenChild;

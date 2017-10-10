@@ -1,3 +1,14 @@
+2017-10-10  Antti Koivisto  <antti@apple.com>
+
+        RenderObject::destroy() should only be invoked after renderer has been removed from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=178075
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/mac/textbox-role-reports-notifications.html:
+
+        This passed because spurious AXValueChanged notifications. Force layout to prevent coalescing between mutations.
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] STATE_CHECKABLE should be removed from radio buttons in radiogroups with aria-readonly="true"

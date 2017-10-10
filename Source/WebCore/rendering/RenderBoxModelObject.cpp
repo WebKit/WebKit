@@ -188,7 +188,7 @@ RenderBoxModelObject::~RenderBoxModelObject()
 void RenderBoxModelObject::willBeDestroyed()
 {
     if (hasContinuation()) {
-        continuation()->destroy();
+        continuation()->removeFromParentAndDestroy();
         setContinuation(nullptr);
     }
 

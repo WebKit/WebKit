@@ -369,6 +369,9 @@ RenderLayer::~RenderLayer()
     if (m_reflection)
         removeReflection();
 
+    clearScrollCorner();
+    clearResizer();
+
     FilterInfo::remove(*this);
 
     // Child layers will be deleted by their corresponding render objects, so
@@ -6663,16 +6666,25 @@ void RenderLayer::updateScrollCornerStyle()
     auto corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &actualRenderer->style()) : nullptr;
 
     if (!corner) {
-        m_scrollCorner = nullptr;
+        clearScrollCorner();
         return;
     }
 
     if (!m_scrollCorner) {
         m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(*corner));
+        // FIXME: A renderer should be a child of its parent!
         m_scrollCorner->setParent(&renderer());
         m_scrollCorner->initializeStyle();
     } else
         m_scrollCorner->setStyle(WTFMove(*corner));
+}
+
+void RenderLayer::clearScrollCorner()
+{
+    if (!m_scrollCorner)
+        return;
+    m_scrollCorner->setParent(nullptr);
+    m_scrollCorner = nullptr;
 }
 
 void RenderLayer::updateResizerStyle()
@@ -6681,16 +6693,25 @@ void RenderLayer::updateResizerStyle()
     auto resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(RESIZER), &actualRenderer->style()) : nullptr;
 
     if (!resizer) {
-        m_resizer = nullptr;
+        clearResizer();
         return;
     }
 
     if (!m_resizer) {
         m_resizer = createRenderer<RenderScrollbarPart>(renderer().document(), WTFMove(*resizer));
+        // FIXME: A renderer should be a child of its parent!
         m_resizer->setParent(&renderer());
         m_resizer->initializeStyle();
     } else
         m_resizer->setStyle(WTFMove(*resizer));
+}
+
+void RenderLayer::clearResizer()
+{
+    if (!m_resizer)
+        return;
+    m_resizer->setParent(nullptr);
+    m_resizer = nullptr;
 }
 
 RenderLayer* RenderLayer::reflectionLayer() const
@@ -6702,6 +6723,7 @@ void RenderLayer::createReflection()
 {
     ASSERT(!m_reflection);
     m_reflection = createRenderer<RenderReplica>(renderer().document(), createReflectionStyle());
+    // FIXME: A renderer should be a child of its parent!
     m_reflection->setParent(&renderer()); // We create a 1-way connection.
     m_reflection->initializeStyle();
 }

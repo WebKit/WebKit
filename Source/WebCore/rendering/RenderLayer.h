@@ -978,7 +978,9 @@ private:
 
     void positionOverflowControls(const IntSize&);
     void updateScrollCornerStyle();
+    void clearScrollCorner();
     void updateResizerStyle();
+    void clearResizer();
 
     void drawPlatformResizerImage(GraphicsContext&, const LayoutRect& resizerCornerRect);
 

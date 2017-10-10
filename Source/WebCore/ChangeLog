@@ -1,3 +1,52 @@
+2017-10-10  Antti Koivisto  <antti@apple.com>
+
+        RenderObject::destroy() should only be invoked after renderer has been removed from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=178075
+
+        Reviewed by Zalan Bujtas.
+
+        This patch fixes the remaining cases where the renderer is still in the tree while destroy()
+        is called and adds the assert.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeLeftoverAnonymousBlock):
+        (WebCore::RenderBlock::takeChild):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+
+            Null the parent pointers for m_scrollCorner/m_resizer.
+
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+        (WebCore::RenderObject::destroy):
+
+            Use RELEASE_ASSERT as these are cheap and important checks.
+            Also turn isBeingDestroyed test into RELEASE_ASSERT.
+            Remove AX call that no longer does anything.
+
+        (WebCore::RenderObject::destroyAndCleanupAnonymousWrappers): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveBlockChildren):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::collapseAndDestroyAnonymousSiblingRows):
+        (WebCore::RenderTableRow::destroyAndCollapseAnonymousSiblingRows): Deleted.
+
+            Renamed and made this no longer destroy itself. The caller now takes care of that.
+            Removed an unnecessary lambda.
+
+        * rendering/RenderTableRow.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        (WebCore::RenderTreeUpdater::tearDownRenderer):
+        * style/RenderTreeUpdaterListItem.cpp:
+        (WebCore::RenderTreeUpdater::ListItem::updateMarker):
+
 2017-10-09  Antti Koivisto  <antti@apple.com>
 
         Add isContinuation bit
