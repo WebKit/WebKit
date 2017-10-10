@@ -773,6 +773,10 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case FooterRole:
         return ATK_ROLE_FOOTER;
     case FormRole:
+#if ATK_CHECK_VERSION(2, 11, 3)
+        if (coreObject->ariaRoleAttribute() != UnknownRole)
+            return ATK_ROLE_LANDMARK;
+#endif
         return ATK_ROLE_FORM;
     case CanvasRole:
         return ATK_ROLE_CANVAS;

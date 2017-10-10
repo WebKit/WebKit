@@ -125,6 +125,7 @@ const String attributesMap[][2] = {
 const char* landmarkStringBanner = "AXLandmarkBanner";
 const char* landmarkStringComplementary = "AXLandmarkComplementary";
 const char* landmarkStringContentinfo = "AXLandmarkContentInfo";
+const char* landmarkStringForm = "AXLandmarkForm";
 const char* landmarkStringMain = "AXLandmarkMain";
 const char* landmarkStringNavigation = "AXLandmarkNavigation";
 const char* landmarkStringRegion = "AXLandmarkRegion";
@@ -394,6 +395,8 @@ const gchar* roleToString(AtkObject* object)
             return landmarkStringRegion;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "doc-toc"))
             return landmarkStringRegion;
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "form"))
+            return landmarkStringForm;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "main"))
             return landmarkStringMain;
         if (equalLettersIgnoringASCIICase(xmlRolesValue, "navigation"))

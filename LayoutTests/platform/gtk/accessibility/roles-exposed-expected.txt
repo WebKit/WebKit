@@ -647,7 +647,7 @@ div[role=figure]
       AXRole: AXGroup
       
 div[role=form]
-      AXRole: AXForm
+      AXRole: AXLandmarkForm
       
 div[role=grid]
       AXRole: AXTable
