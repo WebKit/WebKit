@@ -27,6 +27,7 @@
 #include "StorageToWebProcessConnection.h"
 
 #include "Logging.h"
+#include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToClient.h"
 #include "WebIDBConnectionToClientMessages.h"
@@ -136,13 +137,8 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
     LOG(ServiceWorker, "StorageToWebProcessConnection::establishSWServerConnection - %" PRIu64, serverConnectionIdentifier);
     ASSERT(!m_swConnections.contains(serverConnectionIdentifier));
 
-    auto result = m_swServers.add(sessionID, nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = std::make_unique<SWServer>();
-
-    ASSERT(result.iterator->value);
-
-    m_swConnections.set(serverConnectionIdentifier, std::make_unique<WebSWServerConnection>(*result.iterator->value, m_connection.get(), serverConnectionIdentifier, sessionID));
+    auto& server = StorageProcess::singleton().swServerForSession(sessionID);
+    m_swConnections.set(serverConnectionIdentifier, std::make_unique<WebSWServerConnection>(server, m_connection.get(), serverConnectionIdentifier, sessionID));
 }
 
 void StorageToWebProcessConnection::removeSWServerConnection(uint64_t serverConnectionIdentifier)

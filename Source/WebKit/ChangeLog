@@ -1,3 +1,23 @@
+2017-10-10  Brady Eidson  <beidson@apple.com>
+
+        Random StorageProcess and SWServer cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=178141
+
+        Reviewed by Andy Estes.
+
+        -StorageProcess should own the set of SWServers
+        -Some renaming and cleanup
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::createStorageToWebProcessConnection):
+        (WebKit::StorageProcess::swServerForSession):
+        * StorageProcess/StorageProcess.h:
+        (WebKit::StorageProcess::queue):
+
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+        * StorageProcess/StorageToWebProcessConnection.h:
+
 2017-10-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r223136.

@@ -35,6 +35,7 @@
 #include <wtf/Function.h>
 
 namespace WebCore {
+class SWServer;
 struct SecurityOriginData;
 }
 
@@ -55,15 +56,12 @@ public:
     static StorageProcess& singleton();
     ~StorageProcess();
 
-#if ENABLE(INDEXED_DATABASE)
-    WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
-#endif
-
     WorkQueue& queue() { return m_queue.get(); }
-
     void postStorageTask(CrossThreadTask&&);
 
 #if ENABLE(INDEXED_DATABASE)
+    WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
+
     // WebCore::IDBServer::IDBBackingStoreFileHandler
     void prepareForAccessToTemporaryFile(const String& path) final;
     void accessToTemporaryFileComplete(const String& path) final;
@@ -71,6 +69,10 @@ public:
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler);
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    WebCore::SWServer& swServerForSession(PAL::SessionID);
 #endif
 
 private:
@@ -108,7 +110,7 @@ private:
     void performNextStorageTask();
     void ensurePathExists(const String&);
 
-    Vector<RefPtr<StorageToWebProcessConnection>> m_databaseToWebProcessConnections;
+    Vector<RefPtr<StorageToWebProcessConnection>> m_storageToWebProcessConnections;
 
     Ref<WorkQueue> m_queue;
 
@@ -121,6 +123,10 @@ private:
 
     Deque<CrossThreadTask> m_storageTasks;
     Lock m_storageTaskMutex;
+    
+#if ENABLE(SERVICE_WORKER)
+    HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
+#endif
 };
 
 } // namespace WebKit

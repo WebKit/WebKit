@@ -164,7 +164,7 @@ void StorageProcess::createStorageToWebProcessConnection()
 {
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-    m_databaseToWebProcessConnections.append(StorageToWebProcessConnection::create(socketPair.server));
+    m_storageToWebProcessConnections.append(StorageToWebProcessConnection::create(socketPair.server));
     parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateStorageToWebProcessConnection(IPC::Attachment(socketPair.client)), 0);
 #elif OS(DARWIN)
     // Create the listening port.
@@ -172,7 +172,7 @@ void StorageProcess::createStorageToWebProcessConnection()
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
     // Create a listening connection.
-    m_databaseToWebProcessConnections.append(StorageToWebProcessConnection::create(IPC::Connection::Identifier(listeningPort)));
+    m_storageToWebProcessConnections.append(StorageToWebProcessConnection::create(IPC::Connection::Identifier(listeningPort)));
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateStorageToWebProcessConnection(clientPort), 0);
@@ -303,6 +303,18 @@ void StorageProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, San
 {
     if (auto handler = m_sandboxExtensionForBlobsCompletionHandlers.take(requestID))
         handler(WTFMove(handles));
+}
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
+{
+    auto result = m_swServers.add(sessionID, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = std::make_unique<SWServer>();
+
+    ASSERT(result.iterator->value);
+    return *result.iterator->value;
 }
 #endif
 
