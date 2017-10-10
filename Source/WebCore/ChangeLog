@@ -1,5 +1,23 @@
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222779. rdar://problem/34820881
+
+    2017-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac] Use safer decoding practices for NSKeyedUnarchiver
+            https://bugs.webkit.org/show_bug.cgi?id=175887
+            <rdar://problem/33435281>
+
+            Reviewed by Daniel Bates.
+
+            * loader/archive/cf/LegacyWebArchiveMac.mm:
+            (WebCore::LegacyWebArchive::createResourceResponseFromMacArchivedData): Use NSSecureCoding to unarchive.
+            (WebCore::LegacyWebArchive::createPropertyListRepresentation): Ditto for archiving.
+            * testing/cocoa/WebArchiveDumpSupport.mm:
+            (WebCoreTestSupport::createCFURLResponseFromResponseData): Update to use NSSecureCoding if possible.
+
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221098. rdar://problem/34771028
 
     2017-08-23  Jer Noble  <jer.noble@apple.com>
