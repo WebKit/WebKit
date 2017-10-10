@@ -25,6 +25,7 @@
 
 #include "Gigacage.h"
 
+#include "CryptoRandom.h"
 #include "Environment.h"
 #include "PerProcess.h"
 #include "VMAllocate.h"
@@ -36,17 +37,12 @@
 #if BCPU(ARM64)
 // FIXME: There is no good reason for ARM64 to be special.
 // https://bugs.webkit.org/show_bug.cgi?id=177605
-#define PRIMITIVE_GIGACAGE_RUNWAY 0
+#define GIGACAGE_RUNWAY 0
 #else
 // FIXME: Consider making this 32GB, in case unsigned 32-bit indices find their way into indexed accesses.
 // https://bugs.webkit.org/show_bug.cgi?id=175062
-#define PRIMITIVE_GIGACAGE_RUNWAY (16llu * 1024 * 1024 * 1024)
+#define GIGACAGE_RUNWAY (16llu * 1024 * 1024 * 1024)
 #endif
-
-// FIXME: Reconsider this.
-// https://bugs.webkit.org/show_bug.cgi?id=175921
-#define JSVALUE_GIGACAGE_RUNWAY 0
-#define STRING_GIGACAGE_RUNWAY 0
 
 char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
 
@@ -117,63 +113,63 @@ void ensureGigacage()
             if (!shouldBeEnabled())
                 return;
             
-            bool ok = true;
+            Kind shuffledKinds[numKinds];
+            for (unsigned i = 0; i < numKinds; ++i)
+                shuffledKinds[i] = static_cast<Kind>(i);
             
-            forEachKind(
-                [&] (Kind kind) {
-                    if (!ok)
-                        return;
-                    // FIXME: Randomize where this goes.
-                    // https://bugs.webkit.org/show_bug.cgi?id=175245
-                    basePtr(kind) = tryVMAllocate(alignment(kind), totalSize(kind));
-                    if (!basePtr(kind)) {
-                        if (GIGACAGE_ALLOCATION_CAN_FAIL) {
-                            ok = false;
-                            return;
-                        }
-                        fprintf(stderr, "FATAL: Could not allocate %s gigacage.\n", name(kind));
-                        BCRASH();
-                    }
-                    
-                    vmDeallocatePhysicalPages(basePtr(kind), totalSize(kind));
-                });
+            // We just go ahead and assume that 64 bits is enough randomness. That's trivially true right
+            // now, but would stop being true if we went crazy with gigacages. Based on my math, 21 is the
+            // largest value of n so that n! <= 2^64.
+            static_assert(numKinds <= 21, "too many kinds");
+            uint64_t random;
+            cryptoRandom(reinterpret_cast<unsigned char*>(&random), sizeof(random));
+            for (unsigned i = numKinds; i--;) {
+                unsigned limit = i + 1;
+                unsigned j = static_cast<unsigned>(random % limit);
+                random /= limit;
+                std::swap(shuffledKinds[i], shuffledKinds[j]);
+            }
+
+            auto alignTo = [] (Kind kind, size_t totalSize) -> size_t {
+                return roundUpToMultipleOf(alignment(kind), totalSize);
+            };
+            auto bump = [] (Kind kind, size_t totalSize) -> size_t {
+                return totalSize + size(kind);
+            };
             
-            if (!ok) {
-                forEachKind(
-                    [&] (Kind kind) {
-                        if (!basePtr(kind))
-                            return;
-                        
-                        vmDeallocate(basePtr(kind), totalSize(kind));
-                        
-                        basePtr(kind) = nullptr;
-                    });
-                return;
+            size_t totalSize = 0;
+            size_t maxAlignment = 0;
+            
+            for (Kind kind : shuffledKinds) {
+                totalSize = bump(kind, alignTo(kind, totalSize));
+                maxAlignment = std::max(maxAlignment, alignment(kind));
+            }
+            totalSize += GIGACAGE_RUNWAY;
+            
+            // FIXME: Randomize where this goes.
+            // https://bugs.webkit.org/show_bug.cgi?id=175245
+            void* base = tryVMAllocate(maxAlignment, totalSize);
+            if (!base) {
+                if (GIGACAGE_ALLOCATION_CAN_FAIL) {
+                    vmDeallocate(base, totalSize);
+                    return;
+                }
+                fprintf(stderr, "FATAL: Could not allocate gigacage memory with maxAlignment = %lu, totalSize = %lu.\n", maxAlignment, totalSize);
+                BCRASH();
+            }
+            vmDeallocatePhysicalPages(base, totalSize);
+            
+            size_t nextCage = 0;
+            for (Kind kind : shuffledKinds) {
+                nextCage = alignTo(kind, nextCage);
+                basePtr(kind) = reinterpret_cast<char*>(base) + nextCage;
+                nextCage = bump(kind, nextCage);
             }
             
             protectGigacageBasePtrs();
             g_wasEnabled = true;
         });
 #endif // GIGACAGE_ENABLED
-}
-
-size_t runway(Kind kind)
-{
-    switch (kind) {
-    case Primitive:
-        return static_cast<size_t>(PRIMITIVE_GIGACAGE_RUNWAY);
-    case JSValue:
-        return static_cast<size_t>(JSVALUE_GIGACAGE_RUNWAY);
-    case String:
-        return static_cast<size_t>(STRING_GIGACAGE_RUNWAY);
-    }
-    BCRASH();
-    return 0;
-}
-
-size_t totalSize(Kind kind)
-{
-    return size(kind) + runway(kind);
 }
 
 void disablePrimitiveGigacage()

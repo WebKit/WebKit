@@ -83,6 +83,8 @@ enum Kind {
     String
 };
 
+static constexpr unsigned numKinds = 3;
+
 BEXPORT void ensureGigacage();
 
 BEXPORT void disablePrimitiveGigacage();
@@ -163,9 +165,6 @@ BINLINE size_t mask(Kind kind)
 {
     return GIGACAGE_SIZE_TO_MASK(size(kind));
 }
-
-size_t runway(Kind kind);
-size_t totalSize(Kind kind);
 
 template<typename Func>
 void forEachKind(const Func& func)

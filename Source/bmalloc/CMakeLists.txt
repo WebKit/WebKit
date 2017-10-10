@@ -8,6 +8,7 @@ set(bmalloc_SOURCES
     bmalloc/Allocator.cpp
     bmalloc/AvailableMemory.cpp
     bmalloc/Cache.cpp
+    bmalloc/CryptoRandom.cpp
     bmalloc/Deallocator.cpp
     bmalloc/DebugHeap.cpp
     bmalloc/Environment.cpp
