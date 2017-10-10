@@ -260,6 +260,31 @@ def arm64LowerMalformedLoadStoreAddresses(list)
     newList
 end
 
+def arm64LowerLabelReferences(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "loadi", "loadis", "loadp", "loadq", "loadb", "loadbs", "loadh", "loadhs"
+                labelRef = node.operands[0]
+                if labelRef.is_a? LabelReference
+                    tmp = Tmp.new(node.codeOrigin, :gpr)
+                    newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), tmp])
+                    newList << Instruction.new(codeOrigin, node.opcode, [Address.new(node.codeOrigin, tmp, Immediate.new(node.codeOrigin, labelRef.offset)), node.operands[1]])
+                else
+                    newList << node
+                end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
 # Workaround for Cortex-A53 erratum (835769)
 def arm64CortexA53Fix835769(list)
     newList = []
@@ -296,6 +321,7 @@ class Sequence
         result = riscLowerHardBranchOps64(result)
         result = riscLowerShiftOps(result)
         result = arm64LowerMalformedLoadStoreAddresses(result)
+        result = arm64LowerLabelReferences(result)
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             case node.opcode
@@ -904,6 +930,15 @@ class Instruction
             $asm.putStr("#if CPU(ARM64_CORTEXA53)")
             $asm.puts "nop"
             $asm.putStr("#endif")
+        when "globaladdr"
+            uid = $asm.newUID
+            $asm.puts "L_offlineasm_loh_adrp_#{uid}:"
+            $asm.puts "adrp #{operands[1].arm64Operand(:ptr)}, #{operands[0].asmLabel}@GOTPAGE"
+            $asm.puts "L_offlineasm_loh_ldr_#{uid}:"
+            $asm.puts "ldr #{operands[1].arm64Operand(:ptr)}, [#{operands[1].arm64Operand(:ptr)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
+            $asm.deferAction {
+                $asm.puts ".loh AdrpLdrGot L_offlineasm_loh_adrp_#{uid}, L_offlineasm_loh_ldr_#{uid}"
+            }
         else
             lowerDefault
         end

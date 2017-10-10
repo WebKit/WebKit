@@ -68,7 +68,7 @@ inline void* Cache::tryAllocate(HeapKind heapKind, size_t size)
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
         return tryAllocateSlowCaseNullCache(heapKind, size);
-    return caches->at(heapKind).allocator().tryAllocate(size);
+    return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().tryAllocate(size);
 }
 
 inline void* Cache::allocate(HeapKind heapKind, size_t size)
@@ -76,7 +76,7 @@ inline void* Cache::allocate(HeapKind heapKind, size_t size)
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
         return allocateSlowCaseNullCache(heapKind, size);
-    return caches->at(heapKind).allocator().allocate(size);
+    return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().allocate(size);
 }
 
 inline void* Cache::tryAllocate(HeapKind heapKind, size_t alignment, size_t size)
@@ -84,7 +84,7 @@ inline void* Cache::tryAllocate(HeapKind heapKind, size_t alignment, size_t size
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
         return allocateSlowCaseNullCache(heapKind, alignment, size);
-    return caches->at(heapKind).allocator().tryAllocate(alignment, size);
+    return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().tryAllocate(alignment, size);
 }
 
 inline void* Cache::allocate(HeapKind heapKind, size_t alignment, size_t size)
@@ -92,7 +92,7 @@ inline void* Cache::allocate(HeapKind heapKind, size_t alignment, size_t size)
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
         return allocateSlowCaseNullCache(heapKind, alignment, size);
-    return caches->at(heapKind).allocator().allocate(alignment, size);
+    return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().allocate(alignment, size);
 }
 
 inline void Cache::deallocate(HeapKind heapKind, void* object)
@@ -100,7 +100,7 @@ inline void Cache::deallocate(HeapKind heapKind, void* object)
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
         return deallocateSlowCaseNullCache(heapKind, object);
-    return caches->at(heapKind).deallocator().deallocate(object);
+    return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).deallocator().deallocate(object);
 }
 
 inline void* Cache::reallocate(HeapKind heapKind, void* object, size_t newSize)
@@ -108,7 +108,7 @@ inline void* Cache::reallocate(HeapKind heapKind, void* object, size_t newSize)
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
         return reallocateSlowCaseNullCache(heapKind, object, newSize);
-    return caches->at(heapKind).allocator().reallocate(object, newSize);
+    return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().reallocate(object, newSize);
 }
 
 } // namespace bmalloc

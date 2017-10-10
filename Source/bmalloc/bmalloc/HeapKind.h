@@ -85,5 +85,37 @@ BINLINE HeapKind heapKind(Gigacage::Kind kind)
     return HeapKind::Primary;
 }
 
+BINLINE bool isActiveHeapKindAfterEnsuringGigacage(HeapKind kind)
+{
+    switch (kind) {
+    case HeapKind::PrimitiveGigacage:
+    case HeapKind::JSValueGigacage:
+    case HeapKind::StringGigacage:
+        if (Gigacage::wasEnabled())
+            return true;
+        return false;
+    default:
+        return true;
+    }
+}
+
+BEXPORT bool isActiveHeapKind(HeapKind);
+
+BINLINE HeapKind mapToActiveHeapKindAfterEnsuringGigacage(HeapKind kind)
+{
+    switch (kind) {
+    case HeapKind::PrimitiveGigacage:
+    case HeapKind::JSValueGigacage:
+    case HeapKind::StringGigacage:
+        if (Gigacage::wasEnabled())
+            return kind;
+        return HeapKind::Primary;
+    default:
+        return kind;
+    }
+}
+
+BEXPORT HeapKind mapToActiveHeapKind(HeapKind);
+
 } // namespace bmalloc
 

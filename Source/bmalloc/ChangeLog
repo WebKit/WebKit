@@ -1,3 +1,52 @@
+2017-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Enable gigacage on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=177586
+
+        Reviewed by JF Bastien.
+        
+        Introduce the ability to disable gigacage at runtime if allocation fails. If any step of gigacage
+        allocation fails, we free all of the gigacages and turn off gigacage support.
+        
+        Reland this after confirming that the 20% Kraken regression was a one-bot fluke. Local testing on the
+        same kind of system did not show the regression. Saam and I both tried independently.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::scavenge):
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::tryAllocate):
+        (bmalloc::Cache::allocate):
+        (bmalloc::Cache::deallocate):
+        (bmalloc::Cache::reallocate):
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::runway):
+        (Gigacage::totalSize):
+        (Gigacage::shouldBeEnabled):
+        (): Deleted.
+        (Gigacage::Callback::Callback): Deleted.
+        (Gigacage::Callback::function): Deleted.
+        (Gigacage::PrimitiveDisableCallbacks::PrimitiveDisableCallbacks): Deleted.
+        * bmalloc/Gigacage.h:
+        (Gigacage::wasEnabled):
+        (Gigacage::isEnabled):
+        (Gigacage::runway): Deleted.
+        (Gigacage::totalSize): Deleted.
+        * bmalloc/HeapKind.cpp: Added.
+        (bmalloc::isActiveHeapKind):
+        (bmalloc::mapToActiveHeapKind):
+        * bmalloc/HeapKind.h:
+        (bmalloc::isActiveHeapKindAfterEnsuringGigacage):
+        (bmalloc::mapToActiveHeapKindAfterEnsuringGigacage):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::scavenge):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::tryLargeMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::isEnabled):
+
 2017-10-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r223015 and r223025.
