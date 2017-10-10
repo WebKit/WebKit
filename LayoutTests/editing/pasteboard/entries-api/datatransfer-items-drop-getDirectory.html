@@ -152,12 +152,54 @@ function test12() {
 }
 
 function test13() {
-    debug("* Error case: calling getDirectory() with empty path");
+    debug("* Edge case: calling getDirectory() with empty path");
     return getDirectoryAsPromise(directoryEntry, "", {}).then(entry => {
-        testFailed("Should fail when path is invalid");
+        testFilesEntry = entry;
+        shouldBeFalse("testFilesEntry.isFile");
+        shouldBeTrue("testFilesEntry.isDirectory");
+        shouldBeEqualToString("testFilesEntry.name", "testFiles");
+        shouldBeEqualToString("testFilesEntry.fullPath", "/testFiles");
     }, e => {
-        ex = e;
-        shouldBeEqualToString("ex.name", "TypeMismatchError");
+        testFailed("getDirectory('') should succeed");
+    });
+}
+
+function test14() {
+    debug("* Edge case: calling getDirectory() with null path");
+    return getDirectoryAsPromise(directoryEntry, null, {}).then(entry => {
+        testFilesEntry = entry;
+        shouldBeFalse("testFilesEntry.isFile");
+        shouldBeTrue("testFilesEntry.isDirectory");
+        shouldBeEqualToString("testFilesEntry.name", "testFiles");
+        shouldBeEqualToString("testFilesEntry.fullPath", "/testFiles");
+    }, e => {
+        testFailed("getDirectory(null) should succeed");
+    });
+}
+
+function test15() {
+    debug("* Edge case: calling getDirectory() with undefined path");
+    return getDirectoryAsPromise(directoryEntry, undefined, {}).then(entry => {
+        testFilesEntry = entry;
+        shouldBeFalse("testFilesEntry.isFile");
+        shouldBeTrue("testFilesEntry.isDirectory");
+        shouldBeEqualToString("testFilesEntry.name", "testFiles");
+        shouldBeEqualToString("testFilesEntry.fullPath", "/testFiles");
+    }, e => {
+        testFailed("getDirectory(undefined) should succeed");
+    });
+}
+
+function test16() {
+    debug("* Edge case: calling getDirectory() with path '.'");
+    return getDirectoryAsPromise(directoryEntry, '.', {}).then(entry => {
+        testFilesEntry = entry;
+        shouldBeFalse("testFilesEntry.isFile");
+        shouldBeTrue("testFilesEntry.isDirectory");
+        shouldBeEqualToString("testFilesEntry.name", "testFiles");
+        shouldBeEqualToString("testFilesEntry.fullPath", "/testFiles");
+    }, e => {
+        testFailed("getDirectory('.') should succeed");
     });
 }
 
@@ -182,6 +224,9 @@ dropzone.ondrop = function(e) {
     .then(test11)
     .then(test12)
     .then(test13)
+    .then(test14)
+    .then(test15)
+    .then(test16)
     .then(finishJSTest);
 };
 

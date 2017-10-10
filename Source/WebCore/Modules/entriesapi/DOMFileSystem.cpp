@@ -128,7 +128,7 @@ static bool isValidRelativeVirtualPath(StringView virtualPath)
 static bool isValidVirtualPath(StringView virtualPath)
 {
     if (virtualPath.isEmpty())
-        return false;
+        return true;
     if (virtualPath[0] == '/')
         return virtualPath.length() == 1 || isValidRelativeVirtualPath(virtualPath.substring(1));
     return isValidRelativeVirtualPath(virtualPath);
@@ -185,7 +185,7 @@ static std::optional<FileMetadata::Type> fileType(const String& fullPath)
 static String resolveRelativeVirtualPath(StringView baseVirtualPath, StringView relativeVirtualPath)
 {
     ASSERT(baseVirtualPath[0] == '/');
-    if (relativeVirtualPath[0] == '/')
+    if (!relativeVirtualPath.isEmpty() && relativeVirtualPath[0] == '/')
         return relativeVirtualPath.length() == 1 ? relativeVirtualPath.toString() : resolveRelativeVirtualPath("/", relativeVirtualPath.substring(1));
 
     Vector<StringView> virtualPathSegments;

@@ -42,8 +42,26 @@ PASS subfolder1Entry.isDirectory is true
 PASS subfolder1Entry.name is "subfolder1"
 PASS subfolder1Entry.fullPath is "/testFiles/subfolder1"
 PASS subfolder1Entry.isDirectory is true
-* Error case: calling getDirectory() with empty path
-PASS ex.name is "TypeMismatchError"
+* Edge case: calling getDirectory() with empty path
+PASS testFilesEntry.isFile is false
+PASS testFilesEntry.isDirectory is true
+PASS testFilesEntry.name is "testFiles"
+PASS testFilesEntry.fullPath is "/testFiles"
+* Edge case: calling getDirectory() with null path
+PASS testFilesEntry.isFile is false
+PASS testFilesEntry.isDirectory is true
+PASS testFilesEntry.name is "testFiles"
+PASS testFilesEntry.fullPath is "/testFiles"
+* Edge case: calling getDirectory() with undefined path
+PASS testFilesEntry.isFile is false
+PASS testFilesEntry.isDirectory is true
+PASS testFilesEntry.name is "testFiles"
+PASS testFilesEntry.fullPath is "/testFiles"
+* Edge case: calling getDirectory() with path '.'
+PASS testFilesEntry.isFile is false
+PASS testFilesEntry.isDirectory is true
+PASS testFilesEntry.name is "testFiles"
+PASS testFilesEntry.fullPath is "/testFiles"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,15 @@
+2017-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Calling fileSystemDirectoryEntry.getDirectory() with empty path should not fail
+        https://bugs.webkit.org/show_bug.cgi?id=178114
+
+        Reviewed by Ryosuke Niwa.
+
+        Extend layout test coverage.
+
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getDirectory-expected.txt:
+        * editing/pasteboard/entries-api/datatransfer-items-drop-getDirectory.html:
+
 2017-10-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/paymentrequest/payment-request-abort-method.https.html as flaky.
