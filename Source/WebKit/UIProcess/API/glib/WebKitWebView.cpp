@@ -85,6 +85,8 @@
 #include "WPEView.h"
 #endif
 
+#include <cairo.h>
+
 #if USE(LIBNOTIFY)
 #include <libnotify/notify.h>
 #endif

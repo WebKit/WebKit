@@ -1,5 +1,19 @@
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [WPE] Header cairo.h is used in GLib API headers but cannot be found
+        https://bugs.webkit.org/show_bug.cgi?id=178100
+
+        Reviewed by Žan Doberšek.
+
+        Instead of including <cairo.h>, it is better to forward-declare cairo_surface_t,
+        which is the one and only Cairo declaration needed by the WPE API header.
+
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp: Add inclusion of <cairo.h>.
+        * UIProcess/API/glib/WebKitWebView.cpp: Add inclusion of <cairo.h>.
+        * UIProcess/API/wpe/WebKitFaviconDatabase.h: Add forward declaration of cairo_surface_t.
+
+2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
         [WPE] Cannot link against libWPEWebkit due to wrong contents of wpe-webkit.pc
         https://bugs.webkit.org/show_bug.cgi?id=178133
 
