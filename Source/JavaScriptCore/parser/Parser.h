@@ -1370,7 +1370,7 @@ private:
     
     ALWAYS_INLINE bool matchContextualKeyword(const Identifier& identifier)
     {
-        return m_token.m_type == IDENT && *m_token.m_data.ident == identifier;
+        return m_token.m_type == IDENT && *m_token.m_data.ident == identifier && !m_token.m_data.escaped;
     }
 
     ALWAYS_INLINE bool matchIdentifierOrKeyword()

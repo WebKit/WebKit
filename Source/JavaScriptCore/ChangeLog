@@ -1,3 +1,45 @@
+2017-10-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        `async` should be able to be used as an imported binding name
+        https://bugs.webkit.org/show_bug.cgi?id=176573
+
+        Reviewed by Saam Barati.
+
+        Previously, we have ASYNC keyword in the parser. This is introduced only for performance,
+        and ECMA262 spec does not categorize "async" to keyword. This makes parser code complicated,
+        since ASYNC should be handled as IDENT. If we missed this ASYNC keyword, we cause a bug.
+        For example, import declaration failed to bind imported binding to the name "async" because
+        the parser considered ASYNC as keyword.
+
+        This patch removes ASYNC keyword from the parser. By carefully handling ASYNC, we can keep
+        the current performance without using this ASYNC keyword.
+
+        We also add `escaped` field to token data since contextual keyword is valid only if it does
+        not contain any escape sequences. We fix bunch of contextual keyword use with this fix too
+        e.g. `of in for-of`. This improves test262 score.
+
+        * parser/Keywords.table:
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        (JSC::Lexer<CharacterType>::parseIdentifierSlowCase):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::maybeParseAsyncFunctionDeclarationStatement):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::printUnexpectedTokenText):
+        * parser/Parser.h:
+        (JSC::Parser::matchContextualKeyword):
+        * parser/ParserTokens.h:
+        * runtime/CommonIdentifiers.h:
+
 2017-10-09  Saam Barati  <sbarati@apple.com>
 
         We don't need to clearEmptyObjectStructureForPrototype because JSGlobalObject* is part of the cache's key

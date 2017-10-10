@@ -935,6 +935,7 @@ bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
 template <>
 template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::parseIdentifier(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
 {
+    tokenData->escaped = false;
     const ptrdiff_t remaining = m_codeEnd - m_code;
     if ((remaining >= maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) {
         JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(tokenData);
@@ -959,7 +960,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
         return parseIdentifierSlowCase<shouldCreateIdentifier>(tokenData, lexerFlags, strictMode);
     }
 
-    const Identifier* ident = 0;
+    const Identifier* ident = nullptr;
     
     if (shouldCreateIdentifier || m_parsingBuiltinFunction) {
         int identifierLength = currentSourcePtr() - identifierStart;
@@ -978,7 +979,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
         }
         tokenData->ident = ident;
     } else
-        tokenData->ident = 0;
+        tokenData->ident = nullptr;
 
     if (UNLIKELY((remaining < maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) && !isPrivateName) {
         ASSERT(shouldCreateIdentifier);
@@ -999,6 +1000,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
 template <>
 template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::parseIdentifier(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
 {
+    tokenData->escaped = false;
     const ptrdiff_t remaining = m_codeEnd - m_code;
     if ((remaining >= maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) {
         JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(tokenData);
@@ -1033,7 +1035,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     if (!(orAllChars & ~0xff))
         isAll8Bit = true;
 
-    const Identifier* ident = 0;
+    const Identifier* ident = nullptr;
     
     if (shouldCreateIdentifier || m_parsingBuiltinFunction) {
         int identifierLength = currentSourcePtr() - identifierStart;
@@ -1055,7 +1057,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
         }
         tokenData->ident = ident;
     } else
-        tokenData->ident = 0;
+        tokenData->ident = nullptr;
     
     if (UNLIKELY((remaining < maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) && !isPrivateName) {
         ASSERT(shouldCreateIdentifier);
@@ -1075,6 +1077,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
 
 template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
 {
+    tokenData->escaped = true;
     auto identifierStart = currentSourcePtr();
     bool bufferRequired = false;
 

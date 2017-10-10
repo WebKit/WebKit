@@ -93,10 +93,9 @@ enum JSTokenType {
     LET,
     YIELD,
     AWAIT,
-    ASYNC,
 
     FirstContextualKeywordToken = LET,
-    LastContextualKeywordToken = ASYNC,
+    LastContextualKeywordToken = AWAIT,
     FirstSafeContextualKeywordToken = AWAIT,
     LastSafeContextualKeywordToken = LastContextualKeywordToken,
 
@@ -214,7 +213,10 @@ union JSTokenData {
         uint32_t lineStartOffset;
     };
     double doubleValue;
-    const Identifier* ident;
+    struct {
+        const Identifier* ident;
+        bool escaped;
+    };
     struct {
         const Identifier* cooked;
         const Identifier* raw;
