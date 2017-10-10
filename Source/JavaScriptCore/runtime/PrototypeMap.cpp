@@ -78,10 +78,4 @@ Structure* PrototypeMap::emptyObjectStructureForPrototype(JSGlobalObject* global
     return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity, makePolyProtoStructure);
 }
 
-void PrototypeMap::clearEmptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* object, unsigned inlineCapacity)
-{
-    m_structures.remove(PrototypeKey(object, inlineCapacity, JSFinalObject::info(), globalObject));
-    m_structures.remove(PrototypeKey(nullptr, inlineCapacity, JSFinalObject::info(), globalObject));
-}
-
 } // namespace JSC

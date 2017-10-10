@@ -45,25 +45,8 @@ void JSProxy::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
 {
-    ASSERT_ARG(globalObject, globalObject);
-    JSGlobalObject* previousGlobalObject = jsCast<JSGlobalObject*>(m_target.get());
-
     m_target.set(vm, this, globalObject);
     setPrototypeDirect(vm, globalObject->getPrototypeDirect());
-
-    PrototypeMap& prototypeMap = vm.prototypeMap;
-    if (!mayBePrototype())
-        return;
-
-    // previousGlobalObject cannot be null because in order for this JSProxy to be used as a prototype
-    // of an object, we must have previously called setTarget() and associated it with a JSGlobalObject.
-    RELEASE_ASSERT(previousGlobalObject);
-
-    // This is slow but constant time. We think it's very rare for a proxy
-    // to be a prototype, and reasonably rare to retarget a proxy,
-    // so slow constant time is OK.
-    for (size_t i = 0; i <= JSFinalObject::maxInlineCapacity(); ++i)
-        prototypeMap.clearEmptyObjectStructureForPrototype(previousGlobalObject, this, i);
 }
 
 String JSProxy::className(const JSObject* object)
