@@ -99,6 +99,51 @@ TEST(WTF_Vector, InitializerList)
     EXPECT_EQ(4, vector[3]);
 }
 
+TEST(WTF_Vector, ConstructWithFrom)
+{
+    auto vector = Vector<int>::from(1, 2, 3, 4, 5);
+    EXPECT_EQ(5U, vector.size());
+    EXPECT_EQ(5U, vector.capacity());
+
+    EXPECT_EQ(1, vector[0]);
+    EXPECT_EQ(2, vector[1]);
+    EXPECT_EQ(3, vector[2]);
+    EXPECT_EQ(4, vector[3]);
+    EXPECT_EQ(5, vector[4]);
+}
+
+TEST(WTF_Vector, ConstructWithFromString)
+{
+    String s1 = "s1";
+    String s2 = "s2";
+    String s3 = s1;
+    auto vector = Vector<String>::from(s1, s2, WTFMove(s3));
+    EXPECT_EQ(3U, vector.size());
+    EXPECT_EQ(3U, vector.capacity());
+
+    EXPECT_TRUE(s1 == vector[0]);
+    EXPECT_TRUE(s2 == vector[1]);
+    EXPECT_TRUE(s1 == vector[2]);
+    EXPECT_TRUE(s3.isNull());
+}
+
+TEST(WTF_Vector, ConstructWithFromMoveOnly)
+{
+    auto vector1 = Vector<MoveOnly>::from(MoveOnly(1));
+    auto vector3 = Vector<MoveOnly>::from(MoveOnly(1), MoveOnly(2), MoveOnly(3));
+
+    EXPECT_EQ(1U, vector1.size());
+    EXPECT_EQ(1U, vector1.capacity());
+
+    EXPECT_EQ(3U, vector3.size());
+    EXPECT_EQ(3U, vector3.capacity());
+
+    EXPECT_EQ(1U, vector1[0].value());
+    EXPECT_EQ(1U, vector3[0].value());
+    EXPECT_EQ(2U, vector3[1].value());
+    EXPECT_EQ(3U, vector3[2].value());
+}
+
 TEST(WTF_Vector, InitializeFromOtherInitialCapacity)
 {
     Vector<int, 3> vector = { 1, 3, 2, 4 };
@@ -350,16 +395,16 @@ TEST(WTF_Vector, VectorOfVectorsOfVectorsInlineCapacitySwap)
 
     EXPECT_EQ(1U, x.size());
     EXPECT_EQ(42, x[0]);
-    
+
     Vector<Vector<int, 1>, 1> y;
     y.append(x);
-    
+
     EXPECT_EQ(1U, x.size());
     EXPECT_EQ(42, x[0]);
     EXPECT_EQ(1U, y.size());
     EXPECT_EQ(1U, y[0].size());
     EXPECT_EQ(42, y[0][0]);
-    
+
     a.append(y);
 
     EXPECT_EQ(1U, x.size());
@@ -371,7 +416,7 @@ TEST(WTF_Vector, VectorOfVectorsOfVectorsInlineCapacitySwap)
     EXPECT_EQ(1U, a[0].size());
     EXPECT_EQ(1U, a[0][0].size());
     EXPECT_EQ(42, a[0][0][0]);
-    
+
     a.swap(b);
 
     EXPECT_EQ(0U, a.size());
@@ -384,7 +429,7 @@ TEST(WTF_Vector, VectorOfVectorsOfVectorsInlineCapacitySwap)
     EXPECT_EQ(1U, b[0].size());
     EXPECT_EQ(1U, b[0][0].size());
     EXPECT_EQ(42, b[0][0][0]);
-    
+
     b.swap(c);
 
     EXPECT_EQ(0U, a.size());
@@ -398,7 +443,7 @@ TEST(WTF_Vector, VectorOfVectorsOfVectorsInlineCapacitySwap)
     EXPECT_EQ(1U, c[0].size());
     EXPECT_EQ(1U, c[0][0].size());
     EXPECT_EQ(42, c[0][0][0]);
-    
+
     y[0][0] = 24;
 
     EXPECT_EQ(1U, x.size());
@@ -406,7 +451,7 @@ TEST(WTF_Vector, VectorOfVectorsOfVectorsInlineCapacitySwap)
     EXPECT_EQ(1U, y.size());
     EXPECT_EQ(1U, y[0].size());
     EXPECT_EQ(24, y[0][0]);
-    
+
     a.append(y);
 
     EXPECT_EQ(1U, x.size());

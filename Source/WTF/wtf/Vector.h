@@ -625,6 +625,20 @@ public:
             uncheckedAppend(element);
     }
 
+    template<typename... Items>
+    static Vector from(Items&&... items)
+    {
+        Vector result;
+        auto size = sizeof...(items);
+
+        result.reserveInitialCapacity(size);
+        result.asanSetInitialBufferSizeTo(size);
+        result.m_size = size;
+
+        result.uncheckedInitialize<0>(std::forward<Items>(items)...);
+        return result;
+    }
+
     ~Vector()
     {
         if (m_size)
@@ -792,6 +806,20 @@ private:
     template<typename U> void appendSlowCase(U&&);
     template<typename... Args> void constructAndAppendSlowCase(Args&&...);
     template<typename... Args> bool tryConstructAndAppendSlowCase(Args&&...);
+
+    template<size_t position, typename U, typename... Items>
+    void uncheckedInitialize(U&& item, Items&&... items)
+    {
+        uncheckedInitialize<position>(std::forward<U>(item));
+        uncheckedInitialize<position + 1>(std::forward<Items>(items)...);
+    }
+    template<size_t position, typename U>
+    void uncheckedInitialize(U&& value)
+    {
+        ASSERT(position < size());
+        ASSERT(position < capacity());
+        new (NotNull, begin() + position) T(std::forward<U>(value));
+    }
 
     void asanSetInitialBufferSizeTo(size_t);
     void asanSetBufferSizeToFullCapacity(size_t);
@@ -1327,8 +1355,7 @@ ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
 
     asanBufferSizeWillChangeTo(m_size + 1);
 
-    auto ptr = std::addressof(value);
-    new (NotNull, end()) T(std::forward<U>(*ptr));
+    new (NotNull, end()) T(std::forward<U>(value));
     ++m_size;
 }
 

@@ -1,3 +1,19 @@
+2017-10-09  Youenn Fablet  <youenn@apple.com>
+
+        Vector should be able to easily create from a list of movable only items
+        https://bugs.webkit.org/show_bug.cgi?id=176432
+
+        Reviewed by Darin Adler.
+
+        Adding static from method to construct a Vector from movable-only items.
+        This may also be used instead of initializer list constructor for types that would benefit of being moved.
+
+        * wtf/Vector.h:
+        (WTF::Vector::Vector):
+        (WTF::Vector::from):
+        (WTF::Vector::uncheckedInitialize): Introduced as an optimization to set the vector size once.
+        (WTF::Malloc>::reserveInitialCapacity):
+
 2017-10-09  Tim Horton  <timothy_horton@apple.com>
 
         Disable INPUT_TYPE_COLOR in FeatureDefines.h
