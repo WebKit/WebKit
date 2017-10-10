@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,7 +257,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, Vector<S
     return WTFMove(supportedNetworks);
 }
 
-static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(Vector<ApplePayPaymentRequest::ContactField>&& contactFields)
+static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(unsigned version, Vector<ApplePayPaymentRequest::ContactField>&& contactFields)
 {
     PaymentRequest::ContactFields result;
 
@@ -268,6 +268,11 @@ static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(Vector<Appl
             break;
         case ApplePayPaymentRequest::ContactField::Name:
             result.name = true;
+            break;
+        case ApplePayPaymentRequest::ContactField::PhoneticName:
+            if (version < 3)
+                return Exception { TypeError, "\"phoneticName\" is not a valid contact field." };
+            result.phoneticName = true;
             break;
         case ApplePayPaymentRequest::ContactField::Phone:
             result.phone = true;
@@ -339,24 +344,24 @@ static ExceptionOr<PaymentRequest> convertAndValidate(unsigned version, ApplePay
     result.setSupportedNetworks(supportedNetworks.releaseReturnValue());
 
     if (paymentRequest.requiredBillingContactFields) {
-        auto requiredBillingContactFields = convertAndValidate(WTFMove(*paymentRequest.requiredBillingContactFields));
+        auto requiredBillingContactFields = convertAndValidate(version, WTFMove(*paymentRequest.requiredBillingContactFields));
         if (requiredBillingContactFields.hasException())
             return requiredBillingContactFields.releaseException();
         result.setRequiredBillingContactFields(requiredBillingContactFields.releaseReturnValue());
     }
 
     if (paymentRequest.billingContact)
-        result.setBillingContact(PaymentContact::fromApplePayPaymentContact(paymentRequest.billingContact.value()));
+        result.setBillingContact(PaymentContact::fromApplePayPaymentContact(version, paymentRequest.billingContact.value()));
 
     if (paymentRequest.requiredShippingContactFields) {
-        auto requiredShippingContactFields = convertAndValidate(WTFMove(*paymentRequest.requiredShippingContactFields));
+        auto requiredShippingContactFields = convertAndValidate(version, WTFMove(*paymentRequest.requiredShippingContactFields));
         if (requiredShippingContactFields.hasException())
             return requiredShippingContactFields.releaseException();
         result.setRequiredShippingContactFields(requiredShippingContactFields.releaseReturnValue());
     }
 
     if (paymentRequest.shippingContact)
-        result.setShippingContact(PaymentContact::fromApplePayPaymentContact(paymentRequest.shippingContact.value()));
+        result.setShippingContact(PaymentContact::fromApplePayPaymentContact(version, paymentRequest.shippingContact.value()));
 
     result.setShippingType(paymentRequest.shippingType);
 

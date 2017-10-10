@@ -38,6 +38,7 @@
     "phoneNumber",
     "emailAddress",
     "name",
+    "phoneticName",
     "postalAddress",
     "addressLines",
     "locality",

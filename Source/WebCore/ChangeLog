@@ -1,5 +1,35 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220718. rdar://problem/34771041
+
+    2017-08-14  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Add support for phonetic contact names
+            https://bugs.webkit.org/show_bug.cgi?id=175537
+            <rdar://problem/32002644>
+
+            Reviewed by Tim Horton.
+
+            * Modules/applepay/ApplePayError.idl: Defined "phoneticName" in ApplePayErrorContactField.
+            * Modules/applepay/ApplePayPaymentContact.h: Defined phoneticGivenName and phoneticFamilyName
+            in ApplePayPaymentContact.
+            * Modules/applepay/ApplePayPaymentContact.idl: Ditto.
+            * Modules/applepay/ApplePayPaymentRequest.h: Defined PhoneticName in
+            ApplePayPaymentRequest::ContactField.
+            * Modules/applepay/ApplePayPaymentRequest.idl: Defined "phoneticName" in ApplePayContactField.
+            * Modules/applepay/ApplePaySession.cpp:
+            (WebCore::convertAndValidate): Added a version parameter. Added code to convert
+            ContactField::PhoneticName, throwing an exception if version is less than 3.
+            * Modules/applepay/PaymentContact.h: Added a version parameter to fromApplePayPaymentContact().
+            * Modules/applepay/PaymentRequest.h: Defined phoneticName in PaymentRequest::ContactFields
+            and defined PhoneticName in PaymentError::ContactField.
+            * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+            (WebCore::convert): Added a version parameter. Set a phoneticRepresentation on the
+            PKContact's name if there are non-empty phonetic names and version is 3 or greater.
+            (WebCore::PaymentContact::fromApplePayPaymentContact): Passed version to convert().
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220496. rdar://problem/34770816
 
     2017-08-09  Jeremy Jones  <jeremyj@apple.com>
