@@ -1,5 +1,17 @@
 2017-10-09  Chris Dumez  <cdumez@apple.com>
 
+        It should not be possible to submit a form that is disconnected
+        https://bugs.webkit.org/show_bug.cgi?id=178099
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline several WPT tests now that more checks are passing.
+
+        * web-platform-tests/dom/events/Event-dispatch-click-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-button-element/button-click-submits-expected.txt:
+
+2017-10-09  Chris Dumez  <cdumez@apple.com>
+
         usemap-casing.html test passes in browser, fails in LayoutTests because it is taller than 600px
         https://bugs.webkit.org/show_bug.cgi?id=178053
 

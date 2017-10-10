@@ -257,6 +257,9 @@ bool HTMLFormElement::validateInteractively()
 
 void HTMLFormElement::prepareForSubmission(Event& event)
 {
+    if (!isConnected())
+        return;
+
     Frame* frame = document().frame();
     if (m_isSubmittingOrPreparingForSubmission || !frame)
         return;

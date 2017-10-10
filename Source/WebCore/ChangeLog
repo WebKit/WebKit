@@ -1,3 +1,24 @@
+2017-10-09  Chris Dumez  <cdumez@apple.com>
+
+        It should not be possible to submit a form that is disconnected
+        https://bugs.webkit.org/show_bug.cgi?id=178099
+
+        Reviewed by Sam Weinig.
+
+        It should not be possible to submit a form that is disconnected. Both Firefox and Chrome agree with the specification.
+
+        This is as per:
+        https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#form-submission-algorithm (step 1)
+        which refers to:
+        https://html.spec.whatwg.org/multipage/links.html#cannot-navigate
+
+        Form cannot navigate when it is disconnected.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareForSubmission):
+
 2017-10-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete button doesn't fully delete certain emoji
