@@ -1,3 +1,12 @@
+2017-10-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Expose ENABLE_XSLT option
+        https://bugs.webkit.org/show_bug.cgi?id=177857
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2017-10-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Propagate libepoxy compiler flags obtained from pkg-config
