@@ -111,6 +111,15 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
         this.needsLayout();
     }
 
+    closed()
+    {
+        WI.runtimeManager.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(null, null, this);
+        WI.debuggerManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     // Protected
 
     layout()

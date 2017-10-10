@@ -84,6 +84,13 @@ WI.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends WI.DetailsS
         return !!this._inspectedProbeSets.length;
     }
 
+    closed()
+    {
+        WI.probeManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     // Protected
 
     initialLayout()

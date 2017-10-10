@@ -362,6 +362,13 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             overviewGraph.hidden();
     }
 
+    closed()
+    {
+        WI.timelineManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     reset()
     {
         for (let overviewGraph of this._overviewGraphsByTypeMap.values())

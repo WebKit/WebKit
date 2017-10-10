@@ -142,6 +142,14 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._logViewController.renderPendingMessages();
     }
 
+    closed()
+    {
+        WI.logManager.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     didAppendConsoleMessageView(messageView)
     {
         console.assert(messageView instanceof WI.ConsoleMessageView || messageView instanceof WI.ConsoleCommandView);

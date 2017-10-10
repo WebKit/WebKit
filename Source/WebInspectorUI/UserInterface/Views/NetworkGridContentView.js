@@ -209,6 +209,8 @@ WI.NetworkGridContentView = class NetworkGridContentView extends WI.ContentView
         super.closed();
 
         this._dataGrid.closed();
+
+        WI.Frame.removeEventListener(null, null, this);
     }
 
     reset()

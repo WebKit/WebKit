@@ -56,6 +56,15 @@ WI.DebuggerDashboardView = class DebuggerDashboardView extends WI.DashboardView
         this._rebuildLocation();
     }
 
+    // Public
+
+    closed()
+    {
+        WI.debuggerManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     // Private
 
     _rebuildLocation()

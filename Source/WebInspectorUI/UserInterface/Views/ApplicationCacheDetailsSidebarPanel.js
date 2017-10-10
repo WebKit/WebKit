@@ -72,6 +72,13 @@ WI.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetailsSidebarPan
         this.needsLayout();
     }
 
+    closed()
+    {
+        WI.applicationCacheManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     // Protected
 
     initialLayout()

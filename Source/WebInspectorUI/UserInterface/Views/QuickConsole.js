@@ -98,6 +98,18 @@ WI.QuickConsole = class QuickConsole extends WI.View
         WI.runtimeManager.activeExecutionContext = executionContext;
     }
 
+    closed()
+    {
+        WI.Frame.removeEventListener(null, null, this);
+        WI.debuggerManager.removeEventListener(null, null, this);
+        WI.runtimeManager.removeEventListener(null, null, this);
+        WI.targetManager.removeEventListener(null, null, this);
+        WI.consoleDrawer.removeEventListener(null, null, this);
+        WI.TabBrowser.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     // Protected
 
     layout()

@@ -38,6 +38,13 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
     // Public
 
+    closed()
+    {
+        WI.domTreeManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     addEventListeners()
     {
         this.domNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
