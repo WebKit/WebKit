@@ -282,6 +282,7 @@ interface TestRunner {
     void setStatisticsPruneEntriesDownTo(unsigned long entries);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours);
+    void statisticsClearThroughWebsiteDataRemoval(object callback);
     void statisticsResetToConsistentState();
 
     // Open panel

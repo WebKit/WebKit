@@ -1,3 +1,35 @@
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220412. rdar://problem/34771061
+
+    2017-08-08  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Clear web processes' state on history removal
+            https://bugs.webkit.org/show_bug.cgi?id=175271
+            <rdar://problem/33756560>
+
+            Reviewed by Chris Dumez.
+
+            Test infrastructure for asynchronous tests of website data
+            removal for _WKWebsiteDataTypeResourceLoadStatistics.
+
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+            (WTR::InjectedBundle::didReceiveMessageToPage):
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::statisticsClearThroughWebsiteDataRemoval):
+            (WTR::TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::statisticsClearThroughWebsiteDataRemoval):
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp:
+            (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+            (WTR::TestInvocation::didClearStatisticsThroughWebsiteDataRemoval):
+            * WebKitTestRunner/TestInvocation.h:
+            * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+            (WTR::TestController::statisticsClearThroughWebsiteDataRemoval):
+
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220302. rdar://problem/34770803

@@ -1,3 +1,31 @@
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220412. rdar://problem/34771061
+
+    2017-08-08  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Clear web processes' state on history removal
+            https://bugs.webkit.org/show_bug.cgi?id=175271
+            <rdar://problem/33756560>
+
+            Reviewed by Chris Dumez.
+
+            https://bugs.webkit.org/show_bug.cgi?id=175090 introduced state
+            in the web process and that state needs to be cleared when the
+            UI process' statistics are cleared as part of history removal.
+
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::clearResourceLoadStatistics):
+            * UIProcess/WebProcessPool.h:
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::removeData):
+            (WebKit::WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses):
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::clearResourceLoadStatistics):
+            * WebProcess/WebProcess.h:
+            * WebProcess/WebProcess.messages.in:
+
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221036. rdar://problem/34771044

@@ -722,3 +722,4 @@ webkit.org/b/172397 [ Sierra Debug ] animations/needs-layout.html [ Pass ImageOn
 # Move to general wk2 expectations once webkit.org/b/175170 is resolved.
 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Pass ]
+http/tests/loading/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
