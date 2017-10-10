@@ -85,17 +85,12 @@ void WebCoreDecompressionSession::setTimebase(CMTimebaseRef timebase)
     }
 }
 
-void WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaDataCallback(void* refcon, CMBufferQueueTriggerToken)
-{
-    WebCoreDecompressionSession* session = static_cast<WebCoreDecompressionSession*>(refcon);
-    session->maybeBecomeReadyForMoreMediaData();
-}
-
 void WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData()
 {
-    LOG(Media, "WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData(%p) - isReadyForMoreMediaData(%d), hasCallback(%d)", this, isReadyForMoreMediaData(), !!m_notificationCallback);
     if (!isReadyForMoreMediaData() || !m_notificationCallback)
         return;
+
+    LOG(Media, "WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData(%p) - isReadyForMoreMediaData(%d), hasCallback(%d)", this, isReadyForMoreMediaData(), !!m_notificationCallback);
 
     if (isMainThread()) {
         m_notificationCallback();
@@ -148,8 +143,6 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
 #pragma pack(pop)
         CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
         m_producerQueue = adoptCF(outQueue);
-
-        CMBufferQueueInstallTriggerWithIntegerThreshold(m_producerQueue.get(), maybeBecomeReadyForMoreMediaDataCallback, this, kCMBufferQueueTrigger_WhenBufferCountBecomesLessThan, kLowWaterMark, &m_didBecomeReadyTrigger);
     }
 
     if (!m_consumerQueue) {
@@ -242,6 +235,8 @@ void WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
     if (!shouldDecodeSample(sample, displaying)) {
         ++m_totalVideoFrames;
         ++m_droppedVideoFrames;
+        --m_framesBeingDecoded;
+        maybeBecomeReadyForMoreMediaData();
         return;
     }
 
@@ -264,6 +259,8 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
     CMVideoFormatDescriptionRef rawImageBufferDescription = nullptr;
     if (status != noErr || noErr != CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, rawImageBuffer, &rawImageBufferDescription)) {
         ++m_corruptedVideoFrames;
+        --m_framesBeingDecoded;
+        maybeBecomeReadyForMoreMediaData();
         return;
     }
     RetainPtr<CMVideoFormatDescriptionRef> imageBufferDescription = adoptCF(rawImageBufferDescription);
@@ -277,6 +274,8 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
     CMSampleBufferRef rawImageSampleBuffer = nullptr;
     if (noErr != CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, rawImageBuffer, imageBufferDescription.get(), &imageBufferTiming, &rawImageSampleBuffer)) {
         ++m_corruptedVideoFrames;
+        --m_framesBeingDecoded;
+        maybeBecomeReadyForMoreMediaData();
         return;
     }
 
@@ -298,6 +297,9 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::getFirstVideoFrame()
     RetainPtr<CMSampleBufferRef> currentSample = adoptCF((CMSampleBufferRef)CMBufferQueueDequeueAndRetain(m_producerQueue.get()));
     RetainPtr<CVPixelBufferRef> imageBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(currentSample.get());
     ASSERT(CFGetTypeID(imageBuffer.get()) == CVPixelBufferGetTypeID());
+
+    maybeBecomeReadyForMoreMediaData();
+
     return imageBuffer;
 }
 
@@ -309,12 +311,16 @@ void WebCoreDecompressionSession::automaticDequeue()
     auto time = toMediaTime(CMTimebaseGetTime(m_timebase.get()));
     LOG(Media, "WebCoreDecompressionSession::automaticDequeue(%p) - purging all samples before time(%s)", this, toString(time).utf8().data());
 
+    MediaTime nextFireTime = MediaTime::positiveInfiniteTime();
+    bool releasedImageBuffers = false;
+
     while (CMSampleBufferRef firstSample = (CMSampleBufferRef)CMBufferQueueGetHead(m_producerQueue.get())) {
         MediaTime presentationTimestamp = toMediaTime(CMSampleBufferGetPresentationTimeStamp(firstSample));
         MediaTime duration = toMediaTime(CMSampleBufferGetDuration(firstSample));
         MediaTime presentationEndTimestamp = presentationTimestamp + duration;
         if (time > presentationEndTimestamp) {
             CFRelease(CMBufferQueueDequeueAndRetain(m_producerQueue.get()));
+            releasedImageBuffers = true;
             continue;
         }
 
@@ -323,12 +329,16 @@ void WebCoreDecompressionSession::automaticDequeue()
         auto end = toMediaTime(CMBufferQueueGetEndPresentationTimeStamp(m_producerQueue.get()));
         LOG(Media, "WebCoreDecompressionSession::automaticDequeue(%p) - queue(%s -> %s)", this, toString(begin).utf8().data(), toString(end).utf8().data());
 #endif
-        CMTimebaseSetTimerDispatchSourceNextFireTime(m_timebase.get(), m_timerSource.get(), toCMTime(presentationEndTimestamp), 0);
-        return;
+
+        nextFireTime = presentationEndTimestamp;
+        break;
     }
 
+    if (releasedImageBuffers)
+        maybeBecomeReadyForMoreMediaData();
+
     LOG(Media, "WebCoreDecompressionSession::automaticDequeue(%p) - queue empty", this, toString(time).utf8().data());
-    CMTimebaseSetTimerDispatchSourceNextFireTime(m_timebase.get(), m_timerSource.get(), kCMTimePositiveInfinity, 0);
+    CMTimebaseSetTimerDispatchSourceNextFireTime(m_timebase.get(), m_timerSource.get(), toCMTime(nextFireTime), 0);
 }
 
 void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample, bool displaying)
@@ -425,6 +435,8 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
         return nullptr;
     }
 
+    bool releasedImageBuffers = false;
+
     while (CMSampleBufferRef firstSample = (CMSampleBufferRef)CMBufferQueueGetHead(m_producerQueue.get())) {
         MediaTime presentationTimestamp = toMediaTime(CMSampleBufferGetPresentationTimeStamp(firstSample));
         MediaTime duration = toMediaTime(CMSampleBufferGetDuration(firstSample));
@@ -433,6 +445,7 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
             return nullptr;
         if (!allowEarlier && presentationEndTimestamp < time) {
             CFRelease(CMBufferQueueDequeueAndRetain(m_producerQueue.get()));
+            releasedImageBuffers = true;
             continue;
         }
 
@@ -443,12 +456,17 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
         if (m_timebase)
             CMTimebaseSetTimerDispatchSourceToFireImmediately(m_timebase.get(), m_timerSource.get());
 
+        maybeBecomeReadyForMoreMediaData();
+
         LOG(Media, "WebCoreDecompressionSession::imageForTime(%p) - found sample for time(%s) in queue(%s -> %s)", this, toString(time).utf8().data(), toString(startTime).utf8().data(), toString(endTime).utf8().data());
         return imageBuffer;
     }
 
     if (m_timebase)
         CMTimebaseSetTimerDispatchSourceToFireImmediately(m_timebase.get(), m_timerSource.get());
+
+    if (releasedImageBuffers)
+        maybeBecomeReadyForMoreMediaData();
 
     LOG(Media, "WebCoreDecompressionSession::imageForTime(%p) - no matching sample for time(%s) in queue(%s -> %s)", this, toString(time).utf8().data(), toString(startTime).utf8().data(), toString(endTime).utf8().data());
     return nullptr;
