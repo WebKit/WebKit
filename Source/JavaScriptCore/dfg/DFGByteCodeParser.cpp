@@ -303,7 +303,7 @@ private:
     void clearCaches();
 
     // Parse a single basic block of bytecode instructions.
-    bool parseBlock(unsigned limit);
+    void parseBlock(unsigned limit);
     // Link block successors.
     void linkBlock(BasicBlock*, Vector<BasicBlock*>& possibleTargets);
     void linkBlocks(Vector<BasicBlock*>& unlinkedBlocks, Vector<BasicBlock*>& possibleTargets);
@@ -4086,11 +4086,11 @@ static uint64_t makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutI
         WTF_CONCAT(NEXT_OPCODE_, __LINE__): \
     continue
 
-#define LAST_OPCODE_LINKED(name) \
-    return \
-        m_currentIndex += OPCODE_LENGTH(name), \
-        m_exitOK = false, \
-        shouldContinueParsing
+#define LAST_OPCODE_LINKED(name) do { \
+        m_currentIndex += OPCODE_LENGTH(name); \
+        m_exitOK = false; \
+        return; \
+    } while (false)
 
 #define LAST_OPCODE(name) \
     do { \
@@ -4108,10 +4108,8 @@ static uint64_t makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutI
         LAST_OPCODE_LINKED(name); \
     } while (false)
 
-bool ByteCodeParser::parseBlock(unsigned limit)
+void ByteCodeParser::parseBlock(unsigned limit)
 {
-    bool shouldContinueParsing = true;
-
     Instruction* instructionsBegin = m_inlineStackTop->m_codeBlock->instructions().begin();
     unsigned blockBegin = m_currentIndex;
 
@@ -4160,7 +4158,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             if (!m_currentBlock->isEmpty())
                 addJumpTo(m_currentIndex);
-            return shouldContinueParsing;
+            return;
         }
         
         // Switch on the current bytecode opcode.
@@ -5176,17 +5174,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 setDirect(m_inlineStackTop->m_returnValue, get(VirtualRegister(currentInstruction[1].u.operand)), ImmediateSetWithFlush);
 
             if (!m_inlineStackTop->m_continuationBlock && m_currentIndex + OPCODE_LENGTH(op_ret) != m_inlineStackTop->m_codeBlock->instructions().size()) {
-                if (m_inlineStackTop->m_entryBlock == m_currentBlock) {
-                    // This is a rather weird case: we are returning from the first block in the function, so all the rest of the function is dead code.
-                    // So we treat this as a normal return instead of an early return, and signal to skip the rest of the function.
-                    // FIXME https://bugs.webkit.org/show_bug.cgi?id=177925: evaluate whether that optimization is useful, it seems like a really weird corner case.
-                    shouldContinueParsing = false;
-                } else {
-                    // This is an early return from an inlined function and we do not have a continuation block, so we must allocate one.
-                    // It is untargetable, because we do not know the appropriate index.
-                    // If this block turns out to be a jump target, parseCodeBlock will fix its bytecodeIndex before putting it in m_blockLinkingTargets
-                    m_inlineStackTop->m_continuationBlock = allocateUntargetableBlock();
-                }
+                // This is an early return from an inlined function and we do not have a continuation block, so we must allocate one.
+                // It is untargetable, because we do not know the appropriate index.
+                // If this block turns out to be a jump target, parseCodeBlock will fix its bytecodeIndex before putting it in m_blockLinkingTargets
+                m_inlineStackTop->m_continuationBlock = allocateUntargetableBlock();
             }
 
             if (m_inlineStackTop->m_continuationBlock)
@@ -6104,7 +6095,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // Parse failed! This should not happen because the capabilities checker
             // should have caught it.
             RELEASE_ASSERT_NOT_REACHED();
-            return false;
+            return;
         }
     }
 }
@@ -6327,15 +6318,10 @@ void ByteCodeParser::parseCodeBlock()
                 prepareToParseBlock();
             }
 
-            bool shouldContinueParsing = parseBlock(limit);
+            parseBlock(limit);
 
             // We should not have gone beyond the limit.
             ASSERT(m_currentIndex <= limit);
-
-            if (!shouldContinueParsing) {
-                VERBOSE_LOG("Done parsing ", *codeBlock, "\n");
-                return;
-            }
 
             if (m_currentBlock->isEmpty()) {
                 // This case only happens if the last instruction was an inlined call with early returns

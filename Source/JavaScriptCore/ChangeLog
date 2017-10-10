@@ -1,5 +1,20 @@
 2017-10-09  Robin Morisset  <rmorisset@apple.com>
 
+        Evaluate the benefit of skipping dead code in the DFGByteCodeParser when a function returns in its first block
+        https://bugs.webkit.org/show_bug.cgi?id=177925
+
+        Reviewed by Saam Barati.
+
+        We used to do a rather weird "optimisation" in the bytecode parser: when a function would return in its first block,
+        the rest of the function was skipped. Since it has no actual impact on any benchmarks from what I could see, I removed
+        that code. It allows some changes to parseBlock(), since it now returns void and no-longer bool (it was returning a boolean that said whether that case happened or not).
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+
+2017-10-09  Robin Morisset  <rmorisset@apple.com>
+
         Refactor the inliner to simplify block linking
         https://bugs.webkit.org/show_bug.cgi?id=177922
 
