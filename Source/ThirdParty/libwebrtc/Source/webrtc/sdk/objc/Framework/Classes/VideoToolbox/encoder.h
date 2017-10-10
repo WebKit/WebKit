@@ -69,6 +69,8 @@ class WEBRTC_DYLIB_EXPORT H264VideoToolboxEncoder : public H264Encoder {
 
   ScalingSettings GetScalingSettings() const override;
 
+  void SetActive(bool is_active) { is_active_ = is_active; }
+
  protected:
   virtual int CreateCompressionSession(VTCompressionSessionRef&, VTCompressionOutputCallback, int32_t width, int32_t height, bool useHardwareEncoder = true);
   void DestroyCompressionSession();
@@ -94,6 +96,7 @@ class WEBRTC_DYLIB_EXPORT H264VideoToolboxEncoder : public H264Encoder {
 
   H264BitstreamParser h264_bitstream_parser_;
   std::vector<uint8_t> nv12_scale_buffer_;
+  bool is_active_ { true };
 };  // H264VideoToolboxEncoder
 
 }  // namespace webrtc

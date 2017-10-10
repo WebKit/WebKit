@@ -23,41 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "VideoToolBoxEncoderFactory.h"
+#pragma once
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#include "H264VideoToolBoxEncoder.h"
+#include "LibWebRTCMacros.h"
+#include <webrtc/sdk/objc/Framework/Classes/VideoToolbox/decoder.h>
+#include <webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-void VideoToolboxVideoEncoderFactory::setActive(bool isActive)
-{
-    if (m_isActive == isActive)
-        return;
+class VideoToolboxVideoDecoderFactory final : public webrtc::VideoToolboxVideoDecoderFactory {
+public:
+    VideoToolboxVideoDecoderFactory() = default;
 
-    m_isActive = isActive;
-    for (H264VideoToolboxEncoder& encoder : m_encoders)
-        encoder.SetActive(isActive);
-}
+    void setActive(bool isActive);
 
-webrtc::VideoEncoder* VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder(const cricket::VideoCodec& codec)
-{
-    auto* encoder = new H264VideoToolboxEncoder(codec);
-    m_encoders.append(*encoder);
+private:
+    webrtc::VideoDecoder* CreateVideoDecoder(webrtc::VideoCodecType) final;
+    void DestroyVideoDecoder(webrtc::VideoDecoder*) final;
 
-    return encoder;
-}
-
-void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(webrtc::VideoEncoder* encoder)
-{
-    m_encoders.removeFirstMatching([&] (const auto& item) {
-        return &item.get() == encoder;
-    });
-
-    delete encoder;
-}
+    Vector<std::reference_wrapper<webrtc::H264VideoToolboxDecoder>> m_decoders;
+    bool m_isActive { true };
+};
 
 }
+
 #endif

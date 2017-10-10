@@ -1,3 +1,50 @@
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222478. rdar://problem/34771020
+
+    2017-09-25  Youenn Fablet  <youenn@apple.com>
+
+            WebRTC video does not resume receiving when switching back to Safari 11 on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=175472
+            <rdar://problem/33860863>
+
+            Reviewed by Darin Adler.
+
+            Test: webrtc/video-interruption.html and manual testing.
+
+            Using new SetActive method from libwebrtc encoder/decoder to enable/disable them based on interuptions.
+            For that purpose, LibWebRTCProvider is now storing the peer connection factory and keeping track of the encoder/decoder factories.
+            LibWebRTCProvider is then notified by WebPage when backgrounded/foregrounded.
+
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+            (WebCore::staticFactoryAndThreads):
+            (WebCore::initializePeerConnectionFactoryAndThreads):
+            (WebCore::LibWebRTCProvider::factory):
+            (WebCore::LibWebRTCProvider::setPeerConnectionFactory):
+            (WebCore::LibWebRTCProvider::createPeerConnection):
+            (WebCore::LibWebRTCProvider::setActive):
+            (WebCore::LibWebRTCProvider::webRTCAvailable):
+            (WebCore::LibWebRTCProvider::mayResumePlayback): Deleted.
+            (WebCore::LibWebRTCProvider::suspendPlayback): Deleted.
+            * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+            * platform/mediastream/libwebrtc/VideoToolBoxDecoderFactory.cpp: Copied from Source/WebCore/platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.cpp.
+            (WebCore::VideoToolboxVideoDecoderFactory::setActive):
+            (WebCore::VideoToolboxVideoDecoderFactory::CreateVideoDecoder):
+            (WebCore::VideoToolboxVideoDecoderFactory::DestroyVideoDecoder):
+            * platform/mediastream/libwebrtc/VideoToolBoxDecoderFactory.h: Copied from Source/WebCore/platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.h.
+            * platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.cpp:
+            (WebCore::VideoToolboxVideoEncoderFactory::setActive):
+            (WebCore::VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder):
+            (WebCore::VideoToolboxVideoEncoderFactory::DestroyVideoEncoder):
+            * platform/mediastream/libwebrtc/VideoToolBoxEncoderFactory.h:
+            * testing/Internals.cpp:
+            (WebCore::Internals::resetToConsistentState):
+            * testing/MockLibWebRTCPeerConnection.cpp:
+            (WebCore::useRealRTCPeerConnectionFactory):
+            (WebCore::useMockRTCPeerConnectionFactory):
+            * testing/MockLibWebRTCPeerConnection.h:
+
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221430. rdar://problem/34770998

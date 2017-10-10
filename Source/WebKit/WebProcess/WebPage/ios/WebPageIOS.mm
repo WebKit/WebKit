@@ -86,6 +86,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MediaSessionManagerIOS.h>
 #import <WebCore/Node.h>
@@ -3122,6 +3123,8 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
 
     m_isSuspendedUnderLock = isSuspendedUnderLock;
     setLayerTreeStateIsFrozen(true);
+
+    m_page->libWebRTCProvider().setActive(false);
 }
 
 void WebPage::applicationDidFinishSnapshottingAfterEnteringBackground()
@@ -3136,6 +3139,8 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
     setLayerTreeStateIsFrozen(false);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
+
+    m_page->libWebRTCProvider().setActive(true);
 }
 
 void WebPage::applicationDidBecomeActive()
