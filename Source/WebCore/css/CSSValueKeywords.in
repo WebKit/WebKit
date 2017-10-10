@@ -1258,6 +1258,8 @@ path
 
 calc
 -webkit-calc
+min
+max
 
 #if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
 from-image

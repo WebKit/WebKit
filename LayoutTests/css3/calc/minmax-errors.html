@@ -12,26 +12,47 @@
 
 <div id="test">
 
-MIN
-<div style="width: 100px; width: -webkit-min(">unclosed min</div>
-<div style="width: 100px; width: -webkit-min( bob">unclosed min with garbage</div>
-<div style="width: 100px; width: -webkit-min( bob );">garbage</div>
-<div style="width: 100px; width: -webkit-min(20px,);">extra trailing comma</div>
-<div style="width: 100px; width: -webkit-min(,20px);">leading comma</div>
-<div style="width: 100px; width: -webkit-min(20px, bob);">trailing garbage</div>
-<div style="width: 100px; width: -webmit-min(20px, 10px + flim);">bad expression</div>
-<div style="width: 100px; width: -webkit-min(256px, 120);">mix length and number</div>
-<div style="width: 100px; width: -webkit-min(256, 120px);">mix number and length</div>
-<div style="width: 100px; width: -webkit-min(50%, 150);">mix percent and number</div>
-<div style="width: 100px; width: -webkit-min(150, 50%);">mix number and percent</div>
+Bare min()
+<div style="width: 100px; width: min(">unclosed min</div>
+<div style="width: 100px; width: min( bob">unclosed min with garbage</div>
+<div style="width: 100px; width: min( bob );">garbage</div>
+<div style="width: 100px; width: min(20px,);">extra trailing comma</div>
+<div style="width: 100px; width: min(,20px);">leading comma</div>
+<div style="width: 100px; width: min(20px, bob);">trailing garbage</div>
+<div style="width: 100px; width: min(20px, 10px + flim);">bad expression</div>
+<div style="width: 100px; width: min(256px, 120);">mix length and number</div>
+<div style="width: 100px; width: min(256, 120px);">mix number and length</div>
+<div style="width: 100px; width: min(50%, 150);">mix percent and number</div>
+<div style="width: 100px; width: min(150, 50%);">mix number and percent</div>
 
-MAX
-<div style="width: 100px; width: -webkit-max(">unclosed max</div>
-<div style="width: 100px; width: -webkit-max( bob">unclosed max with garbage</div>
-<div style="width: 100px; width: -webkit-max(256px, 120);">mix length and number</div>
-<div style="width: 100px; width: -webkit-max(256, 120px);">mix number and length</div>
-<div style="width: 100px; width: -webkit-max(50%, 150);">mix percent and number</div>
-<div style="width: 100px; width: -webkit-max(150, 50%);">mix number and percent</div>
+<br/><br/>min() inside calc()
+<div style="width: 100px; width: calc(min(">unclosed min</div>
+<div style="width: 100px; width: calc(min( bob">unclosed min with garbage</div>
+<div style="width: 100px; width: calc(min( bob ));">garbage</div>
+<div style="width: 100px; width: calc(min(20px,));">extra trailing comma</div>
+<div style="width: 100px; width: calc(min(,20px));">leading comma</div>
+<div style="width: 100px; width: calc(min(20px, bob));">trailing garbage</div>
+<div style="width: 100px; width: calc(min(20px, 10px + flim));">bad expression</div>
+<div style="width: 100px; width: calc(min(256px, 120));">mix length and number</div>
+<div style="width: 100px; width: calc(min(256, 120px));">mix number and length</div>
+<div style="width: 100px; width: calc(min(50%, 150));">mix percent and number</div>
+<div style="width: 100px; width: calc(min(150, 50%));">mix number and percent</div>
+
+<br/><br/>Bare max()
+<div style="width: 100px; width: max(">unclosed max</div>
+<div style="width: 100px; width: max( bob">unclosed max with garbage</div>
+<div style="width: 100px; width: max(256px, 120);">mix length and number</div>
+<div style="width: 100px; width: max(256, 120px);">mix number and length</div>
+<div style="width: 100px; width: max(50%, 150);">mix percent and number</div>
+<div style="width: 100px; width: max(150, 50%);">mix number and percent</div>
+
+<br/><br/>max() inside calc
+<div style="width: 100px; width: calc(max(">unclosed max</div>
+<div style="width: 100px; width: calc(max( bob">unclosed max with garbage</div>
+<div style="width: 100px; width: calc(max(256px, 120));">mix length and number</div>
+<div style="width: 100px; width: calc(max(256, 120px));">mix number and length</div>
+<div style="width: 100px; width: calc(max(50%, 150));">mix percent and number</div>
+<div style="width: 100px; width: calc(max(150, 50%));">mix number and percent</div>
 
 </div>
 

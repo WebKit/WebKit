@@ -322,9 +322,11 @@ inline Length StyleBuilderConverter::convertTo100PercentMinusLength(const Length
         return Length(100 - length.value(), Percent);
     
     // Turn this into a calc expression: calc(100% - length)
-    auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
-    auto rhs = std::make_unique<CalcExpressionLength>(length);
-    auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
+    Vector<std::unique_ptr<CalcExpressionNode>> lengths;
+    lengths.reserveInitialCapacity(2);
+    lengths.uncheckedAppend(std::make_unique<CalcExpressionLength>(Length(100, Percent)));
+    lengths.uncheckedAppend(std::make_unique<CalcExpressionLength>(length));
+    auto op = std::make_unique<CalcExpressionOperation>(WTFMove(lengths), CalcSubtract);
     return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
 }
 

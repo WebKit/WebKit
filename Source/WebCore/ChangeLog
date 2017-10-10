@@ -1,5 +1,137 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222190. rdar://problem/34771470
+
+    2017-09-18  Tim Horton  <timothy_horton@apple.com>
+
+            Support min() and max() in calc()
+            https://bugs.webkit.org/show_bug.cgi?id=167000
+            <rdar://problem/30153481>
+
+            Reviewed by David Hyatt.
+            Patch originally by Myles Maxfield.
+
+            Add two new toplevel functions to CSS, min() and max(), which take an
+            arbirary number of arguments and resolve to the minimum and maximum of
+            the resolved value of the arguments, respectively. It is also possible
+            to use min() and max() inside calc(), and to use calc()-like math
+            inside min() and max().
+
+            * css/CSSCalculationValue.cpp:
+            (WebCore::determineCategory):
+            min and max operators don't use determineCategory; we have a specific
+            implementation for them in createMinOrMax.
+
+            (WebCore::resolvedTypeForMinOrMax):
+            The spec says that min() and max() should be marked as invalid if they
+            have values of more than one type, but that percentages should resolve
+            against the destination type before making this determination. So,
+            if the destination type is length, percent turns into percent-length,
+            and similarly for number.
+
+            (WebCore::isIntegerResult):
+            Add an n-way implementation of isIntegerResult.
+
+            (WebCore::isSamePair):
+            (WebCore::CSSCalcOperation::createMinOrMax): Create a min() or max()
+            operation, as long as the types of arguments are all the same. Allow
+            lengths to upgrade the whole operation to percent-length, and numbers
+            to percent-number, which will cause us to use CalculationValue and friends
+            in order to do proper resolution of all of the parameters instead of
+            just comparing their numeric values.
+
+            (WebCore::CSSCalcOperation::createCalcExpression):
+            (WebCore::CSSCalcOperation::doubleValue):
+            (WebCore::CSSCalcOperation::computeLengthPx):
+            (WebCore::CSSCalcOperation::customCSSText):
+            (WebCore::CSSCalcOperation::primitiveType):
+            (WebCore::CSSCalcOperation::CSSCalcOperation):
+            (WebCore::CSSCalcOperation::evaluate):
+            (WebCore::CSSCalcOperation::evaluateOperator):
+            Adapt to child counts greater than two.
+
+            (WebCore::CSSCalcOperation::buildCssText):
+            Add support for min() and max().
+
+            (WebCore::CSSCalcExpressionNodeParser::parseCalc):
+            parseCalc now accepts a CSSValueID parameter indicating which calc function
+            it should parse (calc, webkit-calc, min, or max), and delegates to either
+            parseValueExpression or parseMinMaxExpression.
+
+            (WebCore::CSSCalcExpressionNodeParser::operatorValue):
+            (WebCore::CSSCalcExpressionNodeParser::parseValue):
+            If min() or max() are found while parsing a value (i.e. nested inside
+            either calc or themselves), use parseMinMaxExpression on that subtree.
+
+            (WebCore::CSSCalcExpressionNodeParser::parseValueTerm):
+            (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+            (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression):
+            Adjust to the CSSCalcBinaryOperation->CSSCalcOperation rename.
+
+            (WebCore::CSSCalcExpressionNodeParser::parseMinMaxExpression):
+            Added. Parse an arbitrary number of comma-and-whitespace-separated children.
+
+            (WebCore::createBlendHalf):
+            Adjust to the CSSCalcBinaryOperation->CSSCalcOperation rename.
+
+            (WebCore::createCSS):
+            Build the CSSCalcOperation for the platform-independent min and max operations.
+
+            (WebCore::CSSCalcValue::create):
+            Pass the function being parsed and the destination calc category for the
+            property being parsed for into create, and then into the parser so that
+            it can know which function it is parsing for, and what kind of result it
+            needs (as previously mentioned above in resolvedTypeForMinOrMax).
+
+            * css/CSSCalculationValue.h:
+            * css/CSSValueKeywords.in:
+            Add min and max functions as CSS keywords.
+
+            * css/StyleBuilderConverter.h:
+            (WebCore::StyleBuilderConverter::convertLength):
+            (WebCore::StyleBuilderConverter::convertTo100PercentMinusLength):
+            * platform/Length.cpp:
+            (WebCore::convertTo100PercentMinusLength):
+            Adapt to the CalcExpressionOperation constructor taking a vector of
+            arguments instead of two.
+
+            * css/parser/CSSPropertyParserHelpers.cpp:
+            (WebCore::CSSPropertyParserHelpers::CalcParser::CalcParser):
+            Store and pass the specific function being parsed down into CSSCalcValue.
+
+            (WebCore::CSSPropertyParserHelpers::consumeInteger):
+            (WebCore::CSSPropertyParserHelpers::consumePositiveIntegerRaw):
+            (WebCore::CSSPropertyParserHelpers::consumeNumberRaw):
+            (WebCore::CSSPropertyParserHelpers::consumeNumber):
+            (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+            (WebCore::CSSPropertyParserHelpers::consumeLength):
+            (WebCore::CSSPropertyParserHelpers::consumePercent):
+            (WebCore::CSSPropertyParserHelpers::consumeLengthOrPercent):
+            (WebCore::CSSPropertyParserHelpers::consumeAngle):
+            (WebCore::CSSPropertyParserHelpers::consumeTime):
+            Pass the destination type into each calc parser.
+
+            * platform/CalculationValue.cpp:
+            (WebCore::CalcExpressionOperation::evaluate const):
+            (WebCore::CalcExpressionOperation::operator== const):
+            (WebCore::CalcExpressionOperation::dump const):
+            (WebCore::operator<<):
+            (WebCore::CalcExpressionBinaryOperation::evaluate const): Deleted.
+            (WebCore::CalcExpressionBinaryOperation::operator== const): Deleted.
+            (WebCore::CalcExpressionBinaryOperation::dump const): Deleted.
+            * platform/CalculationValue.h:
+            (WebCore::CalcExpressionOperation::CalcExpressionOperation):
+            (WebCore::operator==):
+            (WebCore::toCalcExpressionOperation):
+            (WebCore::CalcExpressionBinaryOperation::CalcExpressionBinaryOperation): Deleted.
+            (WebCore::toCalcExpressionBinaryOperation): Deleted.
+            Adjust to the CSSCalcBinaryOperation->CSSCalcOperation rename.
+            Adjust to having n>2 children.
+            Support min() and max() operators in various places.
+
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221100. rdar://problem/34771028
 
     2017-08-23  Jer Noble  <jer.noble@apple.com>
