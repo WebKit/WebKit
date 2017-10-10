@@ -274,24 +274,9 @@ void MockMediaPlayerMediaSource::seekCompleted()
         });
 }
 
-unsigned long MockMediaPlayerMediaSource::totalVideoFrames()
+std::optional<PlatformVideoPlaybackQualityMetrics> MockMediaPlayerMediaSource::videoPlaybackQualityMetrics()
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->totalVideoFrames() : 0;
-}
-
-unsigned long MockMediaPlayerMediaSource::droppedVideoFrames()
-{
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->droppedVideoFrames() : 0;
-}
-
-unsigned long MockMediaPlayerMediaSource::corruptedVideoFrames()
-{
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->corruptedVideoFrames() : 0;
-}
-
-MediaTime MockMediaPlayerMediaSource::totalFrameDelay()
-{
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->totalFrameDelay() : MediaTime::zeroTime();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->videoPlaybackQualityMetrics() : std::nullopt;
 }
 
 }

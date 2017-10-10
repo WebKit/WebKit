@@ -1,5 +1,55 @@
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221046. rdar://problem/34891067
+
+    2017-08-22  Jer Noble  <jer.noble@apple.com>
+
+            Refactor videoPerformanceQuality() MediaPlayer methods into single call.
+            https://bugs.webkit.org/show_bug.cgi?id=175830
+
+            Reviewed by Eric Carlson.
+
+            Allow MediaPlayerPrivate subclasses to return all the metrics required for VideoPerformanceQuality in
+            a single call. For clients which incur significant overhead to request this data, this reduces the cost
+            of requesting data by the number of calls removed.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::getVideoPlaybackQuality):
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::videoPlaybackQualityMetrics):
+            (WebCore::MediaPlayer::totalVideoFrames): Deleted.
+            (WebCore::MediaPlayer::droppedVideoFrames): Deleted.
+            (WebCore::MediaPlayer::corruptedVideoFrames): Deleted.
+            (WebCore::MediaPlayer::totalFrameDelay): Deleted.
+            * platform/graphics/MediaPlayer.h:
+            (WebCore::PlatformVideoPlaybackQualityMetrics::PlatformVideoPlaybackQualityMetrics):
+            * platform/graphics/MediaPlayerPrivate.h:
+            (WebCore::MediaPlayerPrivateInterface::videoPlaybackQualityMetrics):
+            (WebCore::MediaPlayerPrivateInterface::totalVideoFrames): Deleted.
+            (WebCore::MediaPlayerPrivateInterface::droppedVideoFrames): Deleted.
+            (WebCore::MediaPlayerPrivateInterface::corruptedVideoFrames): Deleted.
+            (WebCore::MediaPlayerPrivateInterface::totalFrameDelay): Deleted.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::totalVideoFrames): Deleted.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::droppedVideoFrames): Deleted.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::corruptedVideoFrames): Deleted.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::totalFrameDelay): Deleted.
+            * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+            * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+            (WebCore::MockMediaPlayerMediaSource::videoPlaybackQualityMetrics):
+            (WebCore::MockMediaPlayerMediaSource::totalVideoFrames): Deleted.
+            (WebCore::MockMediaPlayerMediaSource::droppedVideoFrames): Deleted.
+            (WebCore::MockMediaPlayerMediaSource::corruptedVideoFrames): Deleted.
+            (WebCore::MockMediaPlayerMediaSource::totalFrameDelay): Deleted.
+            * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+            * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+            (WebCore::MockMediaSourcePrivate::videoPlaybackQualityMetrics):
+            * platform/mock/mediasource/MockMediaSourcePrivate.h:
+
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222402. rdar://problem/34770839
 
     2017-09-22  Tim Horton  <timothy_horton@apple.com>

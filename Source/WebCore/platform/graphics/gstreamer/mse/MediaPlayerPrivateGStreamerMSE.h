@@ -101,10 +101,7 @@ private:
     void asyncStateChangeDone() override;
 
     // FIXME: Implement.
-    unsigned long totalVideoFrames() override { return 0; }
-    unsigned long droppedVideoFrames() override { return 0; }
-    unsigned long corruptedVideoFrames() override { return 0; }
-    MediaTime totalFrameDelay() override { return MediaTime::zeroTime(); }
+    std::optional<PlatformVideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override { return std::nullopt; }
     bool isTimeBuffered(const MediaTime&) const;
 
     bool isMediaSource() const override { return true; }

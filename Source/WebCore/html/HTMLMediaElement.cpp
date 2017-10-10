@@ -6743,14 +6743,15 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
     DOMWindow* domWindow = document().domWindow();
     double timestamp = domWindow ? 1000 * domWindow->nowTimestamp() : 0;
 
-    if (!m_player)
+    auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : std::nullopt;
+    if (!metrics)
         return VideoPlaybackQuality::create(timestamp, 0, 0, 0, 0);
 
     return VideoPlaybackQuality::create(timestamp,
-        m_droppedVideoFrames + m_player->totalVideoFrames(),
-        m_droppedVideoFrames + m_player->droppedVideoFrames(),
-        m_player->corruptedVideoFrames(),
-        m_player->totalFrameDelay().toDouble());
+        metrics.value().totalVideoFrames + m_droppedVideoFrames,
+        metrics.value().droppedVideoFrames + m_droppedVideoFrames,
+        metrics.value().corruptedVideoFrames,
+        metrics.value().totalFrameDelay);
 }
 #endif
 
