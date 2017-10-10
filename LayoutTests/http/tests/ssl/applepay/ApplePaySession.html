@@ -134,6 +134,7 @@ function go() {
     logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = [undefined];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = [{}];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = ['invalid'];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = ['phoneticName'];", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.requiredBillingContactFields = ['email', 'name', 'phone', 'postalAddress'];", "new ApplePaySession(2, request)")
     // FIXME: Should duplicate contactFields be allowed?
     logAndShouldNotThrow("request = validRequest(); request.requiredBillingContactFields = ['email', 'email'];", "new ApplePaySession(2, request)")
@@ -159,6 +160,7 @@ function go() {
     logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = [undefined];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = [{}];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = ['invalid'];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = ['phoneticName'];", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.requiredShippingContactFields = ['email', 'name', 'phone', 'postalAddress'];", "new ApplePaySession(2, request)")
     // FIXME: Should duplicate contactFields be allowed?
     logAndShouldNotThrow("request = validRequest(); request.requiredShippingContactFields = ['email', 'email'];", "new ApplePaySession(2, request)")

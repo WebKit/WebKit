@@ -228,6 +228,9 @@ PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 SETUP: request = validRequest(); request.requiredBillingContactFields = ['invalid'];
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
+SETUP: request = validRequest(); request.requiredBillingContactFields = ['phoneticName'];
+PASS new ApplePaySession(2, request) threw exception TypeError: "phoneticName" is not a valid contact field..
+
 SETUP: request = validRequest(); request.requiredBillingContactFields = ['email', 'name', 'phone', 'postalAddress'];
 PASS new ApplePaySession(2, request) did not throw exception.
 
@@ -285,6 +288,9 @@ PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
 SETUP: request = validRequest(); request.requiredShippingContactFields = ['invalid'];
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = ['phoneticName'];
+PASS new ApplePaySession(2, request) threw exception TypeError: "phoneticName" is not a valid contact field..
 
 SETUP: request = validRequest(); request.requiredShippingContactFields = ['email', 'name', 'phone', 'postalAddress'];
 PASS new ApplePaySession(2, request) did not throw exception.
