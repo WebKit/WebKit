@@ -1,5 +1,37 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221016. rdar://problem/34770830
+
+    2017-08-22  Jer Noble  <jer.noble@apple.com>
+
+            Autoplay Muted Videos Don't Play When Outside Viewport
+            https://bugs.webkit.org/show_bug.cgi?id=175748
+            <rdar://problem/33974383>
+
+            Reviewed by Eric Carlson.
+
+            Test: media/video-restricted-invisible-autoplay-not-allowed-source.html
+
+            The media session is notified that its client (the media element) will begin autoplaying inside
+            prepareForLoad(), where the m_autoplaying flag is also set. But loading via <source> elements does not go
+            through prepareForLoad(); the HTML standard states that the <source> element loading path does not trigger the
+            "media element load algorithm" which is implemented in prepareForLoad(). Since the m_autoplaying flag is
+            initially set to true, notify the media session that the element will begin autoplaying inside the element's
+            constructor.
+
+            Drive-by fix: Doing the above causes other tests to crash, as purturbing play state during style change can cause
+            re-entrancy in the native controls code, or fail, since we will transition from autoplay -> play even if there's
+            not yet a src or source to the media element. Add a task queue for updating the autoplay state and check the ready
+            state before allowing autoplay to transition to play.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::HTMLMediaElement):
+            (WebCore::HTMLMediaElement::~HTMLMediaElement):
+            (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay const):
+            (WebCore::HTMLMediaElement::isVisibleInViewportChanged):
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220484. rdar://problem/34770810
 
     2017-08-09  Commit Queue  <commit-queue@webkit.org>
