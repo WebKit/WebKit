@@ -127,8 +127,8 @@ static BOOL sendingDelegateMessage;
 
 static CFRunLoopObserverRef mainRunLoopAutoUnlockObserver;
 
-static pthread_mutex_t startupLock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t startupCondition = PTHREAD_COND_INITIALIZER;
+static StaticLock startupLock;
+static StaticCondition startupCondition;
 
 static WebThreadContext *webThreadContext;
 static pthread_key_t threadContextKey;
@@ -681,14 +681,10 @@ void *RunWebThread(void *arg)
     WebThreadReleaseSource = CFRunLoopSourceCreate(NULL, -1, &ReleaseSourceContext);
     CFRunLoopAddSource(webThreadRunLoop, WebThreadReleaseSource, kCFRunLoopDefaultMode);
 
-    int result = pthread_mutex_lock(&startupLock);
-    ASSERT_WITH_MESSAGE(result == 0, "startup lock failed with code:%d", result);
-
-    result = pthread_cond_signal(&startupCondition);
-    ASSERT_WITH_MESSAGE(result == 0, "startup signal failed with code:%d", result);
-
-    result = pthread_mutex_unlock(&startupLock);
-    ASSERT_WITH_MESSAGE(result == 0, "startup unlock failed with code:%d", result);
+    {
+        LockHolder locker(startupLock);
+        startupCondition.notifyOne();
+    }
 
     while (1)
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, DistantFuture, true);
@@ -701,6 +697,9 @@ void *RunWebThread(void *arg)
 static void StartWebThread()
 {
     webThreadStarted = TRUE;
+
+    // ThreadGlobalData touches AtomicString, which requires Threading initialization.
+    WTF::initializeThreading();
 
     // Initialize ThreadGlobalData on the main UI thread so that the WebCore thread
     // can later set it's thread-specific data to point to the same objects.
@@ -755,20 +754,17 @@ static void StartWebThread()
     pthread_attr_setschedparam(&tattr, &param);
 
     // Wait for the web thread to startup completely before we continue.
-    int result = pthread_mutex_lock(&startupLock);
-    ASSERT_WITH_MESSAGE(result == 0, "startup lock failed with code:%d", result);
+    {
+        LockHolder locker(startupLock);
 
-    // Propagate the mainThread's fenv to workers & the web thread.
-    FloatingPointEnvironment::singleton().saveMainThreadEnvironment();
+        // Propagate the mainThread's fenv to workers & the web thread.
+        FloatingPointEnvironment::singleton().saveMainThreadEnvironment();
 
-    pthread_create(&webThread, &tattr, RunWebThread, NULL);
-    pthread_attr_destroy(&tattr);
+        pthread_create(&webThread, &tattr, RunWebThread, NULL);
+        pthread_attr_destroy(&tattr);
 
-    result = pthread_cond_wait(&startupCondition, &startupLock);
-    ASSERT_WITH_MESSAGE(result == 0, "startup wait failed with code:%d", result);
-
-    result = pthread_mutex_unlock(&startupLock);
-    ASSERT_WITH_MESSAGE(result == 0, "startup unlock failed with code:%d", result);
+        startupCondition.wait(startupLock);
+    }
 
     initializeApplicationUIThreadIdentifier();
 }
