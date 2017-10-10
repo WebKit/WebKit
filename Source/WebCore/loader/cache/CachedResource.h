@@ -102,8 +102,8 @@ public:
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
     virtual const TextResourceDecoder* textResourceDecoder() const { return nullptr; }
-    virtual void addDataBuffer(SharedBuffer&);
-    virtual void addData(const char* data, unsigned length);
+    virtual void updateBuffer(SharedBuffer&);
+    virtual void updateData(const char* data, unsigned length);
     virtual void finishLoading(SharedBuffer*);
     virtual void error(CachedResource::Status);
 

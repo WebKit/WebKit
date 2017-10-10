@@ -121,12 +121,6 @@ private:
 
     std::optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 
-#if PLATFORM(IOS)
-    // FIXME: We should expose a setting to enable/disable progressive loading so that we can remove the PLATFORM(IOS)-guard.
-    double m_progressiveLoadChunkTime { 0 };
-    uint16_t m_progressiveLoadChunkCount { 0 };
-#endif
-
     AlphaOption m_alphaOption { AlphaOption::Premultiplied };
     GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileOption::Applied };
 };

@@ -403,9 +403,9 @@ void SubresourceLoader::didReceiveDataOrBuffer(const char* data, int length, Ref
 
     if (!m_loadingMultipartContent) {
         if (auto* resourceData = this->resourceData())
-            m_resource->addDataBuffer(*resourceData);
+            m_resource->updateBuffer(*resourceData);
         else
-            m_resource->addData(buffer ? buffer->data() : data, buffer ? buffer->size() : length);
+            m_resource->updateData(buffer ? buffer->data() : data, buffer ? buffer->size() : length);
     }
 }
 

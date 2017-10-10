@@ -135,7 +135,7 @@ void ImageDocument::updateDuringParsing()
         createDocumentStructure();
 
     if (RefPtr<SharedBuffer> buffer = loader()->mainResourceData())
-        m_imageElement->cachedImage()->addDataBuffer(*buffer);
+        m_imageElement->cachedImage()->updateBuffer(*buffer);
 
     imageUpdated();
 }

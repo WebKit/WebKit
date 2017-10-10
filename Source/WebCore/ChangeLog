@@ -1,3 +1,83 @@
+2017-10-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Image data should be coalesced if it comes in small chunks before updating the ImageSource
+        https://bugs.webkit.org/show_bug.cgi?id=175890
+
+        Reviewed by Simon Fraser.
+
+        Coalesce the updates, which an Image makes when receiving encoded data in
+        small chunks, for all platforms. Ensure the clients of the CachedImage
+        won't be notified unless an update in the ImageSource happens.
+
+        I need to change some functions' names to better implement this patch. 
+        The names of these functions have been confusing:
+            CachedImage::addData(SharedBuffer&)
+            CachedImage::addDataBuffer(const char* data, unsigned)
+            CachedImage::addIncrementalDataBuffer(SharedBuffer&)
+
+        The image data is not buffered incrementally into the CachedImage. When
+        new data is received, SubresourceLoader calls CachedImage to "update" its
+        m_data with either a SharedBuffer or a data pointer. In either case the
+        SharedBuffer or the pointer contains all the loaded data. SubresourceLoader
+        calls CachedImage to update its m_data, to ensure its m_image is created 
+        and to notify its clients with the new data.
+
+        The verb "add" in the functions' name is misleading. I am suggesting the
+        following names instead:
+            CachedImage::updateBuffer(SharedBuffer&)
+            CachedImage::updateData(const char*, unsigned)
+            CachedImage::doUpdateBuffer(SharedBuffer&)
+
+        The first two are the virtual ones. They are called form SubresourceLoader.
+        The third one is the internal implementation to update the m_data member.
+        The same names will be used in the following classes:
+            CachedResource which is the base class of CachedImage
+            CachedRawResource which is derived from CachedResource
+            CachedTextTrack which is derived from CachedResource
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::updateDuringParsing):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveDataOrBuffer):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::clearImage): Reset the update back off members.
+        (WebCore::CachedImage::doUpdateBuffer): Don't update CachedImage with
+        the new data if it comes in small chunks with fast rate.
+        (WebCore::CachedImage::shouldDeferUpdateImageData const): This code is moved 
+        from ImageSource::dataChanged().
+        (WebCore::CachedImage::didUpdateImageData): Ditto.
+        (WebCore::CachedImage::updateImageData):
+        (WebCore::CachedImage::updateBuffer):
+        (WebCore::CachedImage::updateData):
+        (WebCore::CachedImage::finishLoading):
+        (WebCore::CachedImage::addIncrementalDataBuffer): Deleted.
+        (WebCore::CachedImage::setImageDataBuffer): Deleted.
+        (WebCore::CachedImage::addDataBuffer): Deleted.
+        (WebCore::CachedImage::addData): Deleted.
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::updateBuffer):
+        (WebCore::CachedRawResource::updateData):
+        (WebCore::CachedRawResource::addDataBuffer): Deleted.
+        (WebCore::CachedRawResource::addData): Deleted.
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::updateBuffer):
+        (WebCore::CachedResource::updateData):
+        (WebCore::CachedResource::addDataBuffer): Deleted.
+        (WebCore::CachedResource::addData): Deleted.
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::doUpdateBuffer): Rename updateData() to doUpdateBuffer().
+        (WebCore::CachedTextTrack::updateBuffer): Rename addDataBuffer() to updateBuffer().
+        (WebCore::CachedTextTrack::finishLoading): Call the internal function doUpdateBuffer().
+        (WebCore::CachedTextTrack::updateData): Deleted.
+        (WebCore::CachedTextTrack::addDataBuffer): Deleted.
+        * loader/cache/CachedTextTrack.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::dataChanged): Move the update back off code to CachedImage::updateData().
+        * platform/graphics/ImageSource.h:
+
 2017-10-09  Michael Saboff  <msaboff@apple.com>
 
         Implement RegExp Unicode property escapes

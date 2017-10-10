@@ -404,18 +404,25 @@ inline void CachedImage::clearImage()
     }
 
     m_image = nullptr;
+    m_lastUpdateImageDataTime = { };
+    m_updateImageDataCount = 0;
 }
 
-void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
+void CachedImage::updateBufferInternal(SharedBuffer& data)
 {
     m_data = &data;
-
     createImage();
+    setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
 
-    // Have the image update its data from its internal buffer.
-    // It will not do anything now, but will delay decoding until
-    // queried for info (like size or specific image frames).
-    EncodedDataStatus encodedDataStatus = setImageDataBuffer(&data, false);
+    // Don't update the image with the new buffer very often. Changing the decoder
+    // internal data and repainting the observers sometimes are very expensive operations.
+    if (shouldDeferUpdateImageData())
+        return;
+    
+    // Have the image update its data from its internal buffer. Decoding the image data
+    // will be delayed until info (like size or specific image frames) are queried which
+    // usually happens when the observers are repainted.
+    EncodedDataStatus encodedDataStatus = updateImageData(&data, false);
     if (encodedDataStatus > EncodedDataStatus::Error && encodedDataStatus < EncodedDataStatus::SizeAvailable)
         return;
 
@@ -430,31 +437,46 @@ void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
     }
 
     // Tell our observers to try to draw.
-    // Each chunk from the network causes observers to repaint, which will force that chunk to decode.
-    // It would be nice to only redraw the decoded band of the image, but with the current design
-    // (decoding delayed until painting) that seems hard.
     notifyObservers();
-
-    setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
 }
 
-EncodedDataStatus CachedImage::setImageDataBuffer(SharedBuffer* data, bool allDataReceived)
+bool CachedImage::shouldDeferUpdateImageData() const
 {
-    return m_image ? m_image->setData(data, allDataReceived) : EncodedDataStatus::Error;
+    static const double updateImageDataBackoffIntervals[] = { 0, 1, 3, 6, 15 };
+    unsigned interval = std::min<unsigned>(m_updateImageDataCount, 4);
+
+    // The first time through, the chunk time will be 0 and the image will get an update.
+    return (MonotonicTime::now() - m_lastUpdateImageDataTime).seconds() < updateImageDataBackoffIntervals[interval];
 }
 
-void CachedImage::addDataBuffer(SharedBuffer& data)
+void CachedImage::didUpdateImageData()
+{
+    m_lastUpdateImageDataTime = MonotonicTime::now();
+    ASSERT(m_updateImageDataCount < std::numeric_limits<unsigned>::max());
+    ++m_updateImageDataCount;
+}
+
+EncodedDataStatus CachedImage::updateImageData(SharedBuffer* data, bool allDataReceived)
+{
+    if (!m_image)
+        return EncodedDataStatus::Error;
+    EncodedDataStatus result = m_image->setData(data, allDataReceived);
+    didUpdateImageData();
+    return result;
+}
+
+void CachedImage::updateBuffer(SharedBuffer& data)
 {
     ASSERT(dataBufferingPolicy() == BufferData);
-    addIncrementalDataBuffer(data);
-    CachedResource::addDataBuffer(data);
+    updateBufferInternal(data);
+    CachedResource::updateBuffer(data);
 }
 
-void CachedImage::addData(const char* data, unsigned length)
+void CachedImage::updateData(const char* data, unsigned length)
 {
     ASSERT(dataBufferingPolicy() == DoNotBufferData);
-    addIncrementalDataBuffer(SharedBuffer::create(data, length));
-    CachedResource::addData(data, length);
+    updateBufferInternal(SharedBuffer::create(data, length));
+    CachedResource::updateData(data, length);
 }
 
 void CachedImage::finishLoading(SharedBuffer* data)
@@ -463,7 +485,7 @@ void CachedImage::finishLoading(SharedBuffer* data)
     if (!m_image && data)
         createImage();
 
-    EncodedDataStatus encodedDataStatus = setImageDataBuffer(data, true);
+    EncodedDataStatus encodedDataStatus = updateImageData(data, true);
 
     if (encodedDataStatus == EncodedDataStatus::Error || m_image->isNull()) {
         // Image decoding failed; the image data is malformed.

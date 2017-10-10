@@ -68,7 +68,7 @@ public:
     bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
     bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
 
-    void addDataBuffer(SharedBuffer&) override;
+    void updateBuffer(SharedBuffer&) override;
     void finishLoading(SharedBuffer*) override;
 
     enum SizeType {
@@ -109,8 +109,10 @@ private:
     void allClientsRemoved() override;
     void destroyDecodedData() override;
 
-    EncodedDataStatus setImageDataBuffer(SharedBuffer*, bool allDataReceived);
-    void addData(const char* data, unsigned length) override;
+    bool shouldDeferUpdateImageData() const;
+    void didUpdateImageData();
+    EncodedDataStatus updateImageData(SharedBuffer*, bool allDataReceived);
+    void updateData(const char* data, unsigned length) override;
     void error(CachedResource::Status) override;
     void responseReceived(const ResourceResponse&) override;
 
@@ -149,7 +151,7 @@ private:
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid);
     void changedInRect(const Image&, const IntRect*);
 
-    void addIncrementalDataBuffer(SharedBuffer&);
+    void updateBufferInternal(SharedBuffer&);
 
     void didReplaceSharedBufferContents() override;
 
@@ -166,6 +168,9 @@ private:
 
     RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;
+    MonotonicTime m_lastUpdateImageDataTime;
+    unsigned m_updateImageDataCount { 0 };
+
     std::unique_ptr<SVGImageCache> m_svgImageCache;
     bool m_isManuallyCached { false };
     bool m_shouldPaintBrokenImage { true };

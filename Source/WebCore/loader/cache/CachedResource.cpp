@@ -342,12 +342,12 @@ void CachedResource::checkNotify()
         client->notifyFinished(*this);
 }
 
-void CachedResource::addDataBuffer(SharedBuffer&)
+void CachedResource::updateBuffer(SharedBuffer&)
 {
     ASSERT(dataBufferingPolicy() == BufferData);
 }
 
-void CachedResource::addData(const char*, unsigned)
+void CachedResource::updateData(const char*, unsigned)
 {
     ASSERT(dataBufferingPolicy() == DoNotBufferData);
 }

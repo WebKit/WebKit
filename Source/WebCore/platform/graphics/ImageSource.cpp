@@ -113,34 +113,13 @@ void ImageSource::resetData(SharedBuffer* data)
 
 EncodedDataStatus ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
 {
-#if PLATFORM(IOS)
-    // FIXME: We should expose a setting to enable/disable progressive loading and make this
-    // code conditional on it. Then we can remove the PLATFORM(IOS)-guard.
-    static const double chunkLoadIntervals[] = {0, 1, 3, 6, 15};
-    double interval = chunkLoadIntervals[std::min(m_progressiveLoadChunkCount, static_cast<uint16_t>(4))];
-
-    bool needsUpdate = false;
-
-    // The first time through, the chunk time will be 0 and the image will get an update.
-    if (currentTime() - m_progressiveLoadChunkTime > interval) {
-        needsUpdate = true;
-        m_progressiveLoadChunkTime = currentTime();
-        ASSERT(m_progressiveLoadChunkCount <= std::numeric_limits<uint16_t>::max());
-        ++m_progressiveLoadChunkCount;
-    }
-
-    if (needsUpdate || allDataReceived)
-        setData(data, allDataReceived);
-#else
     setData(data, allDataReceived);
-#endif
-
     m_frameCache->clearMetadata();
-    EncodedDataStatus status = encodedDataStatus();
-    if (status < EncodedDataStatus::SizeAvailable)
-        return status;
 
-    m_frameCache->growFrames();
+    EncodedDataStatus status = encodedDataStatus();
+    if (status >= EncodedDataStatus::SizeAvailable)
+        m_frameCache->growFrames();
+
     return status;
 }
 

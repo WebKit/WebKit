@@ -55,8 +55,8 @@ public:
 
 private:
     void didAddClient(CachedResourceClient&) final;
-    void addDataBuffer(SharedBuffer&) final;
-    void addData(const char* data, unsigned length) final;
+    void updateBuffer(SharedBuffer&) final;
+    void updateData(const char* data, unsigned length) final;
     void finishLoading(SharedBuffer*) final;
 
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }

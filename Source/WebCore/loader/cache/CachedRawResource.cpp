@@ -52,7 +52,7 @@ std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataC
     return data->getSomeData(previousDataLength);
 }
 
-void CachedRawResource::addDataBuffer(SharedBuffer& data)
+void CachedRawResource::updateBuffer(SharedBuffer& data)
 {
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     ASSERT(dataBufferingPolicy() == BufferData);
@@ -69,14 +69,14 @@ void CachedRawResource::addDataBuffer(SharedBuffer& data)
         return;
     }
 
-    CachedResource::addDataBuffer(data);
+    CachedResource::updateBuffer(data);
 }
 
-void CachedRawResource::addData(const char* data, unsigned length)
+void CachedRawResource::updateData(const char* data, unsigned length)
 {
     ASSERT(dataBufferingPolicy() == DoNotBufferData);
     notifyClientsDataWasReceived(data, length);
-    CachedResource::addData(data, length);
+    CachedResource::updateData(data, length);
 }
 
 void CachedRawResource::finishLoading(SharedBuffer* data)
