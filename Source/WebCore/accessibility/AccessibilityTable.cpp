@@ -386,7 +386,7 @@ void AccessibilityTable::addChildren()
     ASSERT(!m_haveChildren); 
     
     m_haveChildren = true;
-    if (!is<RenderTable>(m_renderer))
+    if (!is<RenderTable>(renderer()))
         return;
     
     RenderTable& table = downcast<RenderTable>(*m_renderer);

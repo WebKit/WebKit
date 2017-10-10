@@ -30,6 +30,7 @@
 
 #include "AccessibilityNodeObject.h"
 #include "LayoutRect.h"
+#include "RenderObject.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -114,7 +115,7 @@ public:
     IntPoint clickPoint() override;
     
     void setRenderer(RenderObject*);
-    RenderObject* renderer() const override { return m_renderer; }
+    RenderObject* renderer() const override { return m_renderer.get(); }
     RenderBoxModelObject* renderBoxModelObject() const;
     Node* node() const override;
 
@@ -204,7 +205,6 @@ public:
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);
-    void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     ScrollableArea* getScrollableAreaIfScrollable() const override;
     void scrollTo(const IntPoint&) const override;
     
@@ -217,7 +217,7 @@ protected:
     virtual bool isIgnoredElementWithinMathTree() const;
 #endif
 
-    RenderObject* m_renderer;
+    WeakPtr<RenderObject> m_renderer;
 
 private:
     WeakPtrFactory<AccessibilityRenderObject> m_weakPtrFactory;

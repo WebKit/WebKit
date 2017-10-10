@@ -108,7 +108,7 @@ using namespace HTMLNames;
 
 AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     : AccessibilityNodeObject(renderer->node())
-    , m_renderer(renderer)
+    , m_renderer(makeWeakPtr(renderer))
 {
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
@@ -145,14 +145,14 @@ void AccessibilityRenderObject::detach(AccessibilityDetachmentType detachmentTyp
 
 RenderBoxModelObject* AccessibilityRenderObject::renderBoxModelObject() const
 {
-    if (!is<RenderBoxModelObject>(m_renderer))
+    if (!is<RenderBoxModelObject>(renderer()))
         return nullptr;
-    return downcast<RenderBoxModelObject>(m_renderer);
+    return downcast<RenderBoxModelObject>(renderer());
 }
 
 void AccessibilityRenderObject::setRenderer(RenderObject* renderer)
 {
-    m_renderer = renderer;
+    m_renderer = makeWeakPtr(renderer);
     setNode(renderer->node());
 }
 
@@ -324,7 +324,7 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
     // last child is our previous sibling (or further back in the continuation chain)
     RenderInline* startOfConts;
     if (is<RenderBox>(*m_renderer) && (startOfConts = startOfContinuations(*m_renderer)))
-        previousSibling = childBeforeConsideringContinuations(startOfConts, m_renderer);
+        previousSibling = childBeforeConsideringContinuations(startOfConts, renderer());
 
     // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
     // the parent of the start, since everything in between will be linked up via the continuation.
@@ -561,7 +561,7 @@ Element* AccessibilityRenderObject::anchorElement() const
     RenderObject* currentRenderer;
     
     // Search up the render tree for a RenderObject with a DOM node.  Defer to an earlier continuation, though.
-    for (currentRenderer = m_renderer; currentRenderer && !currentRenderer->node(); currentRenderer = currentRenderer->parent()) {
+    for (currentRenderer = renderer(); currentRenderer && !currentRenderer->node(); currentRenderer = currentRenderer->parent()) {
         if (currentRenderer->isAnonymousBlock()) {
             if (RenderObject* continuation = downcast<RenderBlock>(*currentRenderer).continuation())
                 return cache->getOrCreate(continuation)->anchorElement();
@@ -596,7 +596,7 @@ String AccessibilityRenderObject::helpText() const
         return describedBy;
     
     String description = accessibilityDescription();
-    for (RenderObject* ancestor = m_renderer; ancestor; ancestor = ancestor->parent()) {
+    for (RenderObject* ancestor = renderer(); ancestor; ancestor = ancestor->parent()) {
         if (is<HTMLElement>(ancestor->node())) {
             HTMLElement& element = downcast<HTMLElement>(*ancestor->node());
             const AtomicString& summary = element.getAttribute(summaryAttr);
@@ -823,7 +823,7 @@ void AccessibilityRenderObject::offsetBoundingBoxForRemoteSVGElement(LayoutRect&
     
 LayoutRect AccessibilityRenderObject::boundingBoxRect() const
 {
-    RenderObject* obj = m_renderer;
+    RenderObject* obj = renderer();
     
     if (!obj)
         return LayoutRect();
@@ -885,12 +885,12 @@ LayoutRect AccessibilityRenderObject::elementRect() const
     
 bool AccessibilityRenderObject::supportsPath() const
 {
-    return is<RenderSVGShape>(m_renderer);
+    return is<RenderSVGShape>(renderer());
 }
 
 Path AccessibilityRenderObject::elementPath() const
 {
-    if (is<RenderSVGShape>(m_renderer) && downcast<RenderSVGShape>(*m_renderer).hasPath()) {
+    if (is<RenderSVGShape>(renderer()) && downcast<RenderSVGShape>(*m_renderer).hasPath()) {
         Path path = downcast<RenderSVGShape>(*m_renderer).path();
         
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
@@ -1195,9 +1195,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return true;
     
     // WebAreas should be ignored if their iframe container is marked as presentational.
-    if (webAreaIsPresentational(m_renderer))
+    if (webAreaIsPresentational(renderer()))
         return true;
-        
+
     // An ARIA tree can only have tree items and static text as children.
     if (!isAllowedChildOfTree())
         return true;
@@ -1332,7 +1332,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
         // However, if this is not a native image, fallback to the attribute on the Element.
         AccessibilityObjectInclusion altTextInclusion = DefaultBehavior;
-        bool isRenderImage = is<RenderImage>(m_renderer);
+        bool isRenderImage = is<RenderImage>(renderer());
         if (isRenderImage)
             altTextInclusion = objectInclusionFromAltText(downcast<RenderImage>(*m_renderer).altText());
         else
@@ -2197,7 +2197,7 @@ int AccessibilityRenderObject::index(const VisiblePosition& position) const
     if (position.isNull() || !isTextControl())
         return -1;
 
-    if (renderObjectContainsPosition(m_renderer, position.deepEquivalent()))
+    if (renderObjectContainsPosition(renderer(), position.deepEquivalent()))
         return indexForVisiblePosition(position);
     
     return -1;
@@ -2510,7 +2510,7 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
         return;
 
     if (activeDescendant() && shouldNotifyActiveDescendant())
-        renderer()->document().axObjectCache()->postNotification(m_renderer, AXObjectCache::AXActiveDescendantChanged);
+        renderer()->document().axObjectCache()->postNotification(renderer(), AXObjectCache::AXActiveDescendantChanged);
 }
 
 AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElement() const
@@ -2573,7 +2573,7 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
 AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
     // Find the object going up the parent chain that is used in accessibility to monitor certain notifications.
-    for (RenderObject* renderer = m_renderer; renderer && renderer->node(); renderer = renderer->parent()) {
+    for (RenderObject* renderer = this->renderer(); renderer && renderer->node(); renderer = renderer->parent()) {
         if (renderObjectIsObservable(*renderer)) {
             if (AXObjectCache* cache = axObjectCache())
                 return cache->getOrCreate(renderer);
@@ -2727,7 +2727,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     
     // This return value is what will be used if AccessibilityTableCell determines
     // the cell should not be treated as a cell (e.g. because it is a layout table.
-    if (is<RenderTableCell>(m_renderer))
+    if (is<RenderTableCell>(renderer()))
         return TextGroupRole;
 
     // Table sections should be ignored.
@@ -2959,7 +2959,7 @@ void AccessibilityRenderObject::textChanged()
     if (!cache)
         return;
     
-    for (RenderObject* renderParent = m_renderer; renderParent; renderParent = renderParent->parent()) {
+    for (RenderObject* renderParent = renderer(); renderParent; renderParent = renderParent->parent()) {
         AccessibilityObject* parent = cache->get(renderParent);
         if (!parent)
             continue;
@@ -3046,7 +3046,7 @@ void AccessibilityRenderObject::detachRemoteSVGRoot()
 
 AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationChoice createIfNecessary) const
 {
-    if (!is<RenderImage>(m_renderer))
+    if (!is<RenderImage>(renderer()))
         return nullptr;
     
     CachedImage* cachedImage = downcast<RenderImage>(*m_renderer).cachedImage();
@@ -3666,7 +3666,7 @@ AccessibilityRole AccessibilityRenderObject::roleValueForMSAA() const
     if (m_roleForMSAA != UnknownRole)
         return m_roleForMSAA;
 
-    m_roleForMSAA = msaaRoleForRenderer(m_renderer);
+    m_roleForMSAA = msaaRoleForRenderer(renderer());
 
     if (m_roleForMSAA == UnknownRole)
         m_roleForMSAA = roleValue();
@@ -3696,7 +3696,7 @@ ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
     if (parentObject() && parentObject()->isAccessibilityScrollView())
         return nullptr;
 
-    if (!is<RenderBox>(m_renderer))
+    if (!is<RenderBox>(renderer()))
         return nullptr;
 
     auto& box = downcast<RenderBox>(*m_renderer);
@@ -3708,7 +3708,7 @@ ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
 
 void AccessibilityRenderObject::scrollTo(const IntPoint& point) const
 {
-    if (!is<RenderBox>(m_renderer))
+    if (!is<RenderBox>(renderer()))
         return;
 
     auto& box = downcast<RenderBox>(*m_renderer);

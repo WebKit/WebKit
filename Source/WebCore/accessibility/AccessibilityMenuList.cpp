@@ -45,7 +45,7 @@ Ref<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* rendere
 bool AccessibilityMenuList::press()
 {
 #if !PLATFORM(IOS)
-    RenderMenuList* menuList = static_cast<RenderMenuList*>(m_renderer);
+    RenderMenuList* menuList = static_cast<RenderMenuList*>(renderer());
     if (menuList->popupIsVisible())
         menuList->hidePopup();
     else
@@ -93,7 +93,7 @@ void AccessibilityMenuList::childrenChanged()
 bool AccessibilityMenuList::isCollapsed() const
 {
 #if !PLATFORM(IOS)
-    return !static_cast<RenderMenuList*>(m_renderer)->popupIsVisible();
+    return !static_cast<RenderMenuList*>(renderer())->popupIsVisible();
 #else
     return true;
 #endif

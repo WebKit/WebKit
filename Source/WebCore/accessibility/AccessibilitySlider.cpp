@@ -108,7 +108,7 @@ AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntP
             return m_children[0].get();
     }
     
-    return axObjectCache()->getOrCreate(m_renderer);
+    return axObjectCache()->getOrCreate(renderer());
 }
 
 float AccessibilitySlider::valueForRange() const

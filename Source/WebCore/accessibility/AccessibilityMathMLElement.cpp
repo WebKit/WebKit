@@ -153,7 +153,7 @@ bool AccessibilityMathMLElement::isAnonymousMathOperator() const
 
 bool AccessibilityMathMLElement::isMathFenceOperator() const
 {
-    if (!is<RenderMathMLOperator>(m_renderer))
+    if (!is<RenderMathMLOperator>(renderer()))
         return false;
 
     return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Fence);
@@ -161,7 +161,7 @@ bool AccessibilityMathMLElement::isMathFenceOperator() const
 
 bool AccessibilityMathMLElement::isMathSeparatorOperator() const
 {
-    if (!is<RenderMathMLOperator>(m_renderer))
+    if (!is<RenderMathMLOperator>(renderer()))
         return false;
 
     return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Separator);
@@ -445,7 +445,7 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
 
 int AccessibilityMathMLElement::mathLineThickness() const
 {
-    if (!is<RenderMathMLFraction>(m_renderer))
+    if (!is<RenderMathMLFraction>(renderer()))
         return -1;
 
     return downcast<RenderMathMLFraction>(*m_renderer).relativeLineThickness();

@@ -1,3 +1,57 @@
+2017-10-10  Zalan Bujtas  <zalan@apple.com>
+
+        AccessibilityRenderObject should not hold a raw pointer to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=178144
+        <rdar://problem/34919287>
+
+        Reviewed by Chris Fleizach.
+
+        m_renderer's lifetime is not directly tied to the AX wrapper object's lifetime.
+
+        Covered by existing tests.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::elementAccessibilityHitTest const):
+        * accessibility/AccessibilityMathMLElement.cpp:
+        (WebCore::AccessibilityMathMLElement::isMathFenceOperator const):
+        (WebCore::AccessibilityMathMLElement::isMathSeparatorOperator const):
+        (WebCore::AccessibilityMathMLElement::mathLineThickness const):
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::press):
+        (WebCore::AccessibilityMenuList::isCollapsed const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::renderBoxModelObject const):
+        (WebCore::AccessibilityRenderObject::setRenderer):
+        (WebCore::AccessibilityRenderObject::previousSibling const):
+        (WebCore::AccessibilityRenderObject::anchorElement const):
+        (WebCore::AccessibilityRenderObject::helpText const):
+        (WebCore::AccessibilityRenderObject::boundingBoxRect const):
+        (WebCore::AccessibilityRenderObject::supportsPath const):
+        (WebCore::AccessibilityRenderObject::elementPath const):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityRenderObject::index const):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::AccessibilityRenderObject::observableObject const):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::textChanged):
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement const):
+        (WebCore::AccessibilityRenderObject::roleValueForMSAA const):
+        (WebCore::AccessibilityRenderObject::getScrollableAreaIfScrollable const):
+        (WebCore::AccessibilityRenderObject::scrollTo const):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::setRenderObject):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::elementAccessibilityHitTest const):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityTableCell::parentTable const):
+        (WebCore::AccessibilityTableCell::rowIndexRange const):
+        (WebCore::AccessibilityTableCell::columnIndexRange const):
+        (WebCore::AccessibilityTableCell::titleUIElement const):
+
 2017-10-10  Sam Weinig  <sam@webkit.org>
 
         Replace copyKeysToVector/copyValuesToVector with copyToVector(map.keys())/copyToVector(map.values())

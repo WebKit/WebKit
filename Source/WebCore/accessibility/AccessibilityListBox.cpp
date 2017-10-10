@@ -172,7 +172,7 @@ AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const Int
     if (listBoxOption && !listBoxOption->accessibilityIsIgnored())
         return listBoxOption;
     
-    return axObjectCache()->getOrCreate(m_renderer);
+    return axObjectCache()->getOrCreate(renderer());
 }
 
 } // namespace WebCore

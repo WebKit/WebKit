@@ -66,7 +66,7 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
         return true;
     
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
-    RenderObject* renderTable = is<RenderTableCell>(m_renderer) ? downcast<RenderTableCell>(*m_renderer).table() : nullptr;
+    RenderObject* renderTable = is<RenderTableCell>(renderer()) ? downcast<RenderTableCell>(*m_renderer).table() : nullptr;
     bool inTable = renderTable && renderTable->node() && (renderTable->node()->hasTagName(tableTag) || nodeHasRole(renderTable->node(), "grid"));
     if (!node() && !inTable)
         return true;
@@ -79,7 +79,7 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
 
 AccessibilityTable* AccessibilityTableCell::parentTable() const
 {
-    if (!is<RenderTableCell>(m_renderer))
+    if (!is<RenderTableCell>(renderer()))
         return nullptr;
 
     // If the document no longer exists, we might not have an axObjectCache.
@@ -314,7 +314,7 @@ AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 
 void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const
 {
-    if (!is<RenderTableCell>(m_renderer))
+    if (!is<RenderTableCell>(renderer()))
         return;
     
     RenderTableCell& renderCell = downcast<RenderTableCell>(*m_renderer);
@@ -332,7 +332,7 @@ void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRan
     
 void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const
 {
-    if (!is<RenderTableCell>(m_renderer))
+    if (!is<RenderTableCell>(renderer()))
         return;
     
     const RenderTableCell& cell = downcast<RenderTableCell>(*m_renderer);
@@ -353,7 +353,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     // Try to find if the first cell in this row is a <th>. If it is,
     // then it can act as the title ui element. (This is only in the
     // case when the table is not appearing as an AXTable.)
-    if (isTableCell() || !is<RenderTableCell>(m_renderer))
+    if (isTableCell() || !is<RenderTableCell>(renderer()))
         return nullptr;
 
     // Table cells that are th cannot have title ui elements, since by definition
