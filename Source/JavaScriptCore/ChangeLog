@@ -1,3 +1,26 @@
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221400. rdar://problem/34771396
+
+    2017-08-30  Saam Barati  <sbarati@apple.com>
+
+            semicolon is being interpreted as an = in the LiteralParser
+            https://bugs.webkit.org/show_bug.cgi?id=176114
+
+            Reviewed by Oliver Hunt.
+
+            When lexing a semicolon in the LiteralParser, we were properly
+            setting the TokenType on the current token, however, we were
+            *returning* the wrong TokenType. The lex function both returns
+            the TokenType and sets it on the current token. Semicolon was
+            setting the TokenType to semicolon, but returning the TokenType
+            for '='. This caused programs like `x;123` to be interpreted as
+            `x=123`.
+
+            * runtime/LiteralParser.cpp:
+            (JSC::LiteralParser<CharType>::Lexer::lex):
+            (JSC::LiteralParser<CharType>::Lexer::next):
+
 2017-09-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221711. rdar://problem/34404472

@@ -1,3 +1,17 @@
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221400. rdar://problem/34771396
+
+    2017-08-30  Saam Barati  <sbarati@apple.com>
+
+            semicolon is being interpreted as an = in the LiteralParser
+            https://bugs.webkit.org/show_bug.cgi?id=176114
+
+            Reviewed by Oliver Hunt.
+
+            * stress/jsonp-literal-parser-semicolon-is-not-assignment.js: Added.
+            * stress/resources/literal-parser-test-case.js: Added.
+
 2017-09-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221711. rdar://problem/34404472
