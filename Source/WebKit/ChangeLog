@@ -1,5 +1,16 @@
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [WPE] Build failure due to invalid cast of EGLNativeWindowType when targetting 64-bit ARM
+        https://bugs.webkit.org/show_bug.cgi?id=178090
+
+        Reviewed by Žan Doberšek.
+
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp:
+        (WebKit::AcceleratedSurfaceWPE::window const): Use static_cast instead of reinterpret_cast,
+        this way extending values of EGLNativeWindowType to 64 bits is allowed.
+
+2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
         [WPE] GLib API headers WebKitScriptDialog.h and WebKitFileChooserRequest.h are not installed
         https://bugs.webkit.org/show_bug.cgi?id=178104
 
