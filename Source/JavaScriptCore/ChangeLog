@@ -1,3 +1,16 @@
+2017-10-09  Filip Pizlo  <fpizlo@apple.com>
+
+        JSCell::didBecomePrototype is racy
+        https://bugs.webkit.org/show_bug.cgi?id=178110
+
+        Reviewed by Saam Barati.
+        
+        The indexing type can be modified by any thread using CAS. So, we need to use atomics when
+        modifying it. We don't need to use atomics when reading it though (since it's just one field).
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::didBecomePrototype):
+
 2017-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS

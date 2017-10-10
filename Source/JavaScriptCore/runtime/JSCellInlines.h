@@ -359,7 +359,9 @@ inline bool JSCell::mayBePrototype() const
 
 inline void JSCell::didBecomePrototype()
 {
-    m_indexingTypeAndMisc |= IndexingTypeMayBePrototype;
+    if (mayBePrototype())
+        return;
+    WTF::atomicExchangeOr(&m_indexingTypeAndMisc, IndexingTypeMayBePrototype);
 }
 
 inline JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
