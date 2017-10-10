@@ -1,3 +1,24 @@
+2017-10-10  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        Fix MSVC build with ENCRYPTED_MEDIA enabled
+        https://bugs.webkit.org/show_bug.cgi?id=177803
+
+        Reviewed by Alex Christensen.
+
+        As a workaround for MSVC, a weak pointer of "this" is captured
+        at the outermost lambda expression.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::load):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::close):
+        (WebCore::MediaKeySession::remove):
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::updateLicense):
+        (WebCore::CDMInstanceClearKey::loadSession):
+        (WebCore::CDMInstanceClearKey::removeSessionData):
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM

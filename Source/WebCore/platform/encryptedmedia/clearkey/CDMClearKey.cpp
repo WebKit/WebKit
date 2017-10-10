@@ -354,9 +354,9 @@ void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, co
     // Use a helper functor that schedules the callback dispatch, avoiding
     // duplicated callOnMainThread() calls.
     auto dispatchCallback =
-        [this, &callback](bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
+        [this, weakThis = m_weakPtrFactory.createWeakPtr(*this), &callback](bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
             callOnMainThread(
-                [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), sessionWasClosed, changedKeys = WTFMove(changedKeys), succeeded] () mutable {
+                [weakThis, callback = WTFMove(callback), sessionWasClosed, changedKeys = WTFMove(changedKeys), succeeded] () mutable {
                     if (!weakThis)
                         return;
 
@@ -458,9 +458,9 @@ void CDMInstanceClearKey::loadSession(LicenseType, const String& sessionId, cons
 {
     // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
     auto dispatchCallback =
-        [this, &callback](std::optional<KeyStatusVector>&& existingKeys, SuccessValue success, SessionLoadFailure loadFailure) {
+        [this, weakThis = m_weakPtrFactory.createWeakPtr(*this), &callback](std::optional<KeyStatusVector>&& existingKeys, SuccessValue success, SessionLoadFailure loadFailure) {
             callOnMainThread(
-                [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), existingKeys = WTFMove(existingKeys), success, loadFailure]() mutable {
+                [weakThis, callback = WTFMove(callback), existingKeys = WTFMove(existingKeys), success, loadFailure]() mutable {
                     if (!weakThis)
                         return;
 
@@ -502,9 +502,9 @@ void CDMInstanceClearKey::removeSessionData(const String& sessionId, LicenseType
 {
     // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
     auto dispatchCallback =
-        [this, &callback](KeyStatusVector&& keyStatusVector, std::optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
+        [this, weakThis = m_weakPtrFactory.createWeakPtr(*this), &callback](KeyStatusVector&& keyStatusVector, std::optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
             callOnMainThread(
-                [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), keyStatusVector = WTFMove(keyStatusVector), message = WTFMove(message), success]() mutable {
+                [weakThis, callback = WTFMove(callback), keyStatusVector = WTFMove(keyStatusVector), message = WTFMove(message), success]() mutable {
                     if (!weakThis)
                         return;
 
