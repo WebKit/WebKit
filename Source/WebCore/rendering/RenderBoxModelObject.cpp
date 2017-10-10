@@ -2454,6 +2454,7 @@ RenderBoxModelObject* RenderBoxModelObject::continuation() const
 
 void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
 {
+    ASSERT(!continuation || continuation->isContinuation());
     if (continuation)
         continuationMap().set(this, makeWeakPtr(continuation));
     else if (hasContinuation())

@@ -411,9 +411,6 @@ public:
 #endif
             ;
     }
-    bool isElementContinuation() const { return node() && node()->renderer() != this; }
-    bool isInlineElementContinuation() const { return isElementContinuation() && isInline(); }
-    bool isBlockElementContinuation() const { return isElementContinuation() && !isInline(); }
 
     bool isFloating() const { return m_bitfields.floating(); }
 

@@ -204,7 +204,6 @@ public:
     void drawLineForBoxSide(GraphicsContext&, const FloatRect&, BoxSide, Color, EBorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false) const;
 
     bool childRequiresTable(const RenderObject& child) const;
-    bool hasContinuation() const { return m_hasContinuation; }
 
 #if ENABLE(TEXT_AUTOSIZING)
     void adjustComputedFontSizesOnBlocks(float size, float visibleWidth);
@@ -221,6 +220,12 @@ public:
     // Called before anonymousChild.setStyle(). Override to set custom styles for
     // the child.
     virtual void updateAnonymousChildStyle(const RenderObject&, RenderStyle&) const { };
+
+    bool hasContinuation() const { return m_hasContinuation; }
+    bool isContinuation() const { return m_isContinuation; }
+    void setIsContinuation() { m_isContinuation = true; }
+    bool isElementContinuation() const { return isContinuation() && !isAnonymous(); }
+    bool isInlineElementContinuation() const { return isElementContinuation() && isInline(); }
 
 protected:
     enum BaseTypeFlag {
@@ -332,6 +337,7 @@ private:
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuation : 1;
+    unsigned m_isContinuation : 1;
     mutable unsigned m_hasValidCachedFirstLineStyle : 1;
 
     unsigned m_renderBlockHasMarginBeforeQuirk : 1;

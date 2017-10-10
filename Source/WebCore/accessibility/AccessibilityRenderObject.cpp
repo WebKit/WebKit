@@ -183,7 +183,7 @@ static inline RenderObject* firstChildConsideringContinuation(RenderObject& rend
     // We don't want to include the end of a continuation as the firstChild of the
     // anonymous parent, because everything has already been linked up via continuation.
     // CSS first-letter selector is an example of this case.
-    if (renderer.isAnonymous() && firstChild && firstChild->isInlineElementContinuation())
+    if (renderer.isAnonymous() && is<RenderElement>(firstChild) && downcast<RenderElement>(*firstChild).isInlineElementContinuation())
         firstChild = nullptr;
     
     if (!firstChild && isInlineWithContinuation(renderer))
@@ -248,12 +248,15 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
 
 static inline RenderInline* startOfContinuations(RenderObject& renderer)
 {
-    if (renderer.isInlineElementContinuation() && is<RenderInline>(renderer.node()->renderer()))
+    if (!is<RenderElement>(renderer))
+        return nullptr;
+    auto& renderElement = downcast<RenderElement>(renderer);
+    if (renderElement.isInlineElementContinuation() && is<RenderInline>(renderElement.element()->renderer()))
         return downcast<RenderInline>(renderer.node()->renderer());
 
     // Blocks with a previous continuation always have a next continuation
-    if (is<RenderBlock>(renderer) && downcast<RenderBlock>(renderer).inlineElementContinuation())
-        return downcast<RenderInline>(downcast<RenderBlock>(renderer).inlineElementContinuation()->element()->renderer());
+    if (is<RenderBlock>(renderElement) && downcast<RenderBlock>(renderElement).inlineElementContinuation())
+        return downcast<RenderInline>(downcast<RenderBlock>(renderElement).inlineElementContinuation()->element()->renderer());
 
     return nullptr;
 }
@@ -307,7 +310,7 @@ static inline RenderObject* childBeforeConsideringContinuations(RenderInline* re
 static inline bool firstChildIsInlineContinuation(RenderElement& renderer)
 {
     RenderObject* child = renderer.firstChild();
-    return child && child->isInlineElementContinuation();
+    return is<RenderElement>(child) && downcast<RenderElement>(*child).isInlineElementContinuation();
 }
 
 AccessibilityObject* AccessibilityRenderObject::previousSibling() const
@@ -1246,6 +1249,8 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
                 return true;
             if (altTextInclusion == IncludeObject)
                 return false;
+            if (downcast<RenderTextFragment>(renderText).firstLetter())
+                return true;
         }
 
         // text elements that are just empty whitespace should not be returned

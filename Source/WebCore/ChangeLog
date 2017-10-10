@@ -1,3 +1,56 @@
+2017-10-09  Antti Koivisto  <antti@apple.com>
+
+        Add isContinuation bit
+        https://bugs.webkit.org/show_bug.cgi?id=178084
+
+        Reviewed by Zalan Bujtas.
+
+        Currently continuations are identified indirectly by comparing renderer pointer with the element renderer pointer.
+        This is bug prone and fails to cover anonymous continuations.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::firstChildConsideringContinuation):
+        (WebCore::startOfContinuations):
+        (WebCore::firstChildIsInlineContinuation):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+
+            Ignore first-letter fragment. This worked before because first-letter renderers
+            were mistakenly considered inline element continuations (see below).
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::setContinuation):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasContinuation const):
+        (WebCore::RenderElement::isContinuation const):
+        (WebCore::RenderElement::setIsContinuation):
+
+            The new bit.
+
+        (WebCore::RenderElement::isElementContinuation const):
+        (WebCore::RenderElement::isInlineElementContinuation const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::cloneAsContinuation const):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::childBecameNonInline):
+        (WebCore::RenderInline::clone const): Deleted.
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock const):
+        (WebCore::RenderObject::isElementContinuation const): Deleted.
+
+            The old continuation test was 'node() && node()->renderer() != this'
+            This was fragile as nulling the renderer will make it fail.
+            It was also wrong for first-letter renderers (isElementContinuation was true for them).
+
+        (WebCore::RenderObject::isInlineElementContinuation const): Deleted.
+
+            Move to RenderElement.
+
+        (WebCore::RenderObject::isBlockElementContinuation const): Deleted.
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] STATE_CHECKABLE should be removed from radio buttons in radiogroups with aria-readonly="true"
