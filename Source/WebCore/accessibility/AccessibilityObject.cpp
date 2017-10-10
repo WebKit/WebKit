@@ -3314,6 +3314,13 @@ AccessibilityObject* AccessibilityObject::highestEditableAncestor()
     return previousEditableAncestor;
 }
 
+AccessibilityObject* AccessibilityObject::radioGroupAncestor() const
+{
+    return const_cast<AccessibilityObject*>(AccessibilityObject::matchedParent(*this, false, [] (const AccessibilityObject& object) {
+        return object.isRadioGroup();
+    }));
+}
+
 bool AccessibilityObject::isStyleFormatGroup() const
 {
     Node* node = this->node();

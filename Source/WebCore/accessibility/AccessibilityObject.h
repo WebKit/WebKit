@@ -1162,6 +1162,8 @@ protected:
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
 
+    AccessibilityObject* radioGroupAncestor() const;
+
 #if PLATFORM(GTK) && HAVE(ACCESSIBILITY)
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
