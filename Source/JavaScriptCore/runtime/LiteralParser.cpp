@@ -272,7 +272,7 @@ template <ParserMode mode> TokenType LiteralParser<CharType>::Lexer::lex(Literal
         if (*m_ptr == ';') {
             token.type = TokSemi;
             token.end = ++m_ptr;
-            return TokAssign;
+            return TokSemi;
         }
         if (isASCIIAlpha(*m_ptr) || *m_ptr == '_' || *m_ptr == '$')
             return lexIdentifier(token);
@@ -317,11 +317,15 @@ ALWAYS_INLINE TokenType LiteralParser<UChar>::Lexer::lexIdentifier(LiteralParser
 template <typename CharType>
 TokenType LiteralParser<CharType>::Lexer::next()
 {
+    TokenType result;
     if (m_mode == NonStrictJSON)
-        return lex<NonStrictJSON>(m_currentToken);
-    if (m_mode == JSONP)
-        return lex<JSONP>(m_currentToken);
-    return lex<StrictJSON>(m_currentToken);
+        result = lex<NonStrictJSON>(m_currentToken);
+    else if (m_mode == JSONP)
+        result = lex<JSONP>(m_currentToken);
+    else
+        result = lex<StrictJSON>(m_currentToken);
+    ASSERT(m_currentToken.type == result);
+    return result;
 }
 
 template <>
