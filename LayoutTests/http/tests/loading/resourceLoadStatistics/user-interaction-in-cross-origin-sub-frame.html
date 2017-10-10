@@ -25,10 +25,8 @@ function finishTest() {
 }
 
 onload = function() {
-    if (internals) {
+    if (internals)
         internals.setResourceLoadStatisticsEnabled(true);
-        internals.setResourceLoadStatisticsShouldThrottleObserverNotifications(false);
-    }
 
     if (testRunner) {
         testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);

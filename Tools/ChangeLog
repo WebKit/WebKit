@@ -1,3 +1,19 @@
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220302. rdar://problem/34770803
+
+    2017-08-04  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Report user interaction immediately, but only when needed
+            https://bugs.webkit.org/show_bug.cgi?id=175090
+            <rdar://problem/33685546>
+
+            Reviewed by Chris Dumez.
+
+            * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+            (WTR::InjectedBundle::beginTesting):
+                Now calls WebCore::ResourceLoadObserver::clearState().
+
 2017-10-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Revert r222431. rdar://problem/34826998
