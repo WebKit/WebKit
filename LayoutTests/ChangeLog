@@ -1,5 +1,24 @@
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222779. rdar://problem/34820881
+
+    2017-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac] Use safer decoding practices for NSKeyedUnarchiver
+            https://bugs.webkit.org/show_bug.cgi?id=175887
+            <rdar://problem/33435281>
+
+            Reviewed by Daniel Bates.
+
+            Mark two tests as flaky for now, until the relevant CFNetwork changes are available on the test systems.
+            1. webarchive/loading/cache-expired-subresource.html
+            2. webarchive/loading/test-loading-archive-subresource-null-mimetype.html
+
+            * platform/ios/TestExpectations:
+            * platform/mac/TestExpectations:
+
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220412. rdar://problem/34771061
 
     2017-08-08  John Wilander  <wilander@apple.com>
@@ -1891,6 +1910,22 @@
 
         * platform/wpe/TestExpectations:
         Enable EMEv3 tests under media/encrypted-media/, all of them passing.
+
+2017-07-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Reset cookie partitioning state after network process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=174306
+        <rdar://problem/33171605>
+
+        Reviewed by Daniel Bates.
+
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-network-process-crash-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-network-process-crash.html: Added.
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion-expected.txt: Rebaselined.
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout-expected.txt: Rebaselined.
+        * http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction-expected.txt: Rebaselined.
+        * http/tests/loading/resourceLoadStatistics/resources/get-cookies.php:
+        * http/tests/loading/resourceLoadStatistics/resources/set-cookie.php:
 
 2017-07-10  Brent Fulgham  <bfulgham@apple.com>
 

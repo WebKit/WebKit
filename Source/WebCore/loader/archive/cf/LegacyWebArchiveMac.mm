@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,12 +43,20 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
     
     NSURLResponse *response = nil;
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData];
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
+    // Because of <rdar://problem/34063313> we can't use this for decoding in older OS's.
+    [unarchiver setRequiresSecureCoding:YES];
+    @try {
+        response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:LegacyWebArchiveResourceResponseKey];
+#else
     @try {
         id responseObject = [unarchiver decodeObjectForKey:LegacyWebArchiveResourceResponseKey];
         if ([responseObject isKindOfClass:[NSURLResponse class]])
             response = responseObject;
+#endif
         [unarchiver finishDecoding];
-    } @catch(id) {
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to decode NS(HTTP)URLResponse: %@", exception);
         response = nil;
     }
     [unarchiver release];
@@ -66,6 +74,10 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
     CFMutableDataRef responseData = CFDataCreateMutable(0, 0);
 
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:(NSMutableData *)responseData];
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
+    // Because of <rdar://problem/34063313> we can't use this for encoding in older OS's.
+    [archiver setRequiresSecureCoding:YES];
+#endif
     [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
     [archiver finishEncoding];
     [archiver release];
