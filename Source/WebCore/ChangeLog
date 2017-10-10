@@ -1,5 +1,22 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220484. rdar://problem/34770810
+
+    2017-08-09  Commit Queue  <commit-queue@webkit.org>
+
+            Unreviewed, rolling out r219334.
+            https://bugs.webkit.org/show_bug.cgi?id=175398
+
+            Caused bug 175023 (Requested by ap on #webkit).
+
+            Reverted changeset:
+
+            "[SVG] Leak in SVGAnimatedListPropertyTearOff"
+            https://bugs.webkit.org/show_bug.cgi?id=172545
+            http://trac.webkit.org/changeset/219334
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220302. rdar://problem/34770803
 
     2017-08-04  John Wilander  <wilander@apple.com>
