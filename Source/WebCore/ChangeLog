@@ -1,5 +1,33 @@
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221128. rdar://problem/34771005
+
+    2017-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            DeleteSelectionCommand should be robust when starting and ending editable positions cannot be found
+            https://bugs.webkit.org/show_bug.cgi?id=175914
+            <rdar://problem/29792688>
+
+            Reviewed by Ryosuke Niwa.
+
+            DeleteSelectionCommand can cause a null dereference if editable start and end positions are not found. This can
+            happen when attempting to delete after selecting the contents within a canvas or output element with `read-write`
+            `-webkit-user-modify` style. To fix this, we make the initialization step of the DeleteSelectionCommand robust
+            when editable start and end positions are missing.
+
+            Test: editing/execCommand/forward-delete-read-write-canvas.html
+
+            * editing/DeleteSelectionCommand.cpp:
+            (WebCore::DeleteSelectionCommand::initializePositionData):
+
+            Make this initialization helper indicate failure via a bool return value. DeleteSelectionCommand::doApply bails
+            early if initializePositionData returned false.
+
+            (WebCore::DeleteSelectionCommand::doApply):
+            * editing/DeleteSelectionCommand.h:
+
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221116. rdar://problem/34771068
 
     2017-08-23  Jer Noble  <jer.noble@apple.com>

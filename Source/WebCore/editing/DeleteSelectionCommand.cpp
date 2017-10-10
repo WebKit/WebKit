@@ -172,7 +172,7 @@ void DeleteSelectionCommand::setStartingSelectionOnSmartDelete(const Position& s
     setStartingSelection(VisibleSelection(newBase, newExtent, startingSelection().isDirectional())); 
 }
     
-void DeleteSelectionCommand::initializePositionData()
+bool DeleteSelectionCommand::initializePositionData()
 {
     Position start, end;
     initializeStartEnd(start, end);
@@ -181,6 +181,9 @@ void DeleteSelectionCommand::initializePositionData()
         start = firstEditablePositionAfterPositionInRoot(start, highestEditableRoot(start));
     if (!isEditablePosition(end, ContentIsEditable))
         end = lastEditablePositionBeforePositionInRoot(end, highestEditableRoot(start));
+
+    if (start.isNull() || end.isNull())
+        return false;
 
     m_upstreamStart = start.upstream();
     m_downstreamStart = start.downstream();
@@ -272,6 +275,8 @@ void DeleteSelectionCommand::initializePositionData()
     // node.  This was done to match existing behavior, but it seems wrong.
     m_startBlock = enclosingNodeOfType(m_downstreamStart.parentAnchoredEquivalent(), &isBlock, CanCrossEditingBoundary);
     m_endBlock = enclosingNodeOfType(m_upstreamEnd.parentAnchoredEquivalent(), &isBlock, CanCrossEditingBoundary);
+
+    return true;
 }
 
 void DeleteSelectionCommand::saveTypingStyleState()
@@ -857,7 +862,8 @@ void DeleteSelectionCommand::doApply()
         
     
     // set up our state
-    initializePositionData();
+    if (!initializePositionData())
+        return;
 
     // Delete any text that may hinder our ability to fixup whitespace after the delete
     deleteInsignificantTextDownstream(m_trailingWhitespace);    
