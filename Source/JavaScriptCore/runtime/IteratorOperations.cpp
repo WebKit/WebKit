@@ -137,7 +137,7 @@ static const PropertyOffset valuePropertyOffset = 1;
 
 Structure* createIteratorResultObjectStructure(VM& vm, JSGlobalObject& globalObject)
 {
-    Structure* iteratorResultStructure = vm.prototypeMap.emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity());
+    Structure* iteratorResultStructure = vm.structureCache.emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity());
     PropertyOffset offset;
     iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->done, 0, offset);
     RELEASE_ASSERT(offset == donePropertyOffset);

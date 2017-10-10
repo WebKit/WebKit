@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PrototypeMap.h"
+#include "StructureCache.h"
 
 #include "IndexingType.h"
 #include "JSGlobalObject.h"
@@ -32,11 +32,11 @@
 
 namespace JSC {
 
-inline Structure* PrototypeMap::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity, bool makePolyProtoStructure)
+inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObject, JSObject* prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable)
 {
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
 
-    auto key = PrototypeKey(makePolyProtoStructure ? nullptr : prototype, inlineCapacity, classInfo, globalObject);
+    PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo, globalObject };
     if (Structure* structure = m_structures.get(key)) {
         if (makePolyProtoStructure) {
             prototype->didBecomePrototype();
@@ -58,24 +58,24 @@ inline Structure* PrototypeMap::createEmptyStructure(JSGlobalObject* globalObjec
         structure = Structure::create(
             vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
     }
-    m_structures.set(key, Weak<Structure>(structure));
+    m_structures.set(key, structure);
 
     return structure;
 }
 
-Structure* PrototypeMap::emptyStructureForPrototypeFromBaseStructure(JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure)
+Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure)
 {
     // We currently do not have inline capacity static analysis for subclasses and all internal function constructors have a default inline capacity of 0.
     IndexingType indexingType = baseStructure->indexingType();
     if (prototype->anyObjectInChainMayInterceptIndexedAccesses() && hasIndexedProperties(indexingType))
         indexingType = (indexingType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
 
-    return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfo(), indexingType, 0, false);
+    return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfo(), indexingType, 0, false, nullptr);
 }
 
-Structure* PrototypeMap::emptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity, bool makePolyProtoStructure)
+Structure* StructureCache::emptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable)
 {
-    return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity, makePolyProtoStructure);
+    return createEmptyStructure(globalObject, prototype, JSFinalObject::typeInfo(), JSFinalObject::info(), JSFinalObject::defaultIndexingType, inlineCapacity, makePolyProtoStructure, executable);
 }
 
 } // namespace JSC

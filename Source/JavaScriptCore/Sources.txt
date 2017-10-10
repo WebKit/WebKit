@@ -858,7 +858,6 @@ runtime/PromiseDeferredTimer.cpp
 runtime/PropertyDescriptor.cpp
 runtime/PropertySlot.cpp
 runtime/PropertyTable.cpp
-runtime/PrototypeMap.cpp
 runtime/ProxyConstructor.cpp
 runtime/ProxyObject.cpp
 runtime/ProxyRevoke.cpp
@@ -891,6 +890,7 @@ runtime/StringObject.cpp
 runtime/StringPrototype.cpp
 runtime/StringRecursionChecker.cpp
 runtime/Structure.cpp
+runtime/StructureCache.cpp
 runtime/StructureChain.cpp
 runtime/StructureIDTable.cpp
 runtime/StructureRareData.cpp

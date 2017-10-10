@@ -33,8 +33,9 @@ class PrototypeKey {
 public:
     PrototypeKey() { }
     
-    PrototypeKey(JSObject* prototype, unsigned inlineCapacity, const ClassInfo* classInfo, JSGlobalObject* globalObject)
+    PrototypeKey(JSObject* prototype, FunctionExecutable* executable, unsigned inlineCapacity, const ClassInfo* classInfo, JSGlobalObject* globalObject)
         : m_prototype(prototype)
+        , m_executable(executable)
         , m_inlineCapacity(inlineCapacity)
         , m_classInfo(classInfo)
         , m_globalObject(globalObject)
@@ -47,6 +48,7 @@ public:
     }
     
     JSObject* prototype() const { return m_prototype; }
+    FunctionExecutable* executable() const { return m_executable; }
     unsigned inlineCapacity() const { return m_inlineCapacity; }
     const ClassInfo* classInfo() const { return m_classInfo; }
     JSGlobalObject* globalObject() const { return m_globalObject; }
@@ -54,6 +56,7 @@ public:
     bool operator==(const PrototypeKey& other) const
     {
         return m_prototype == other.m_prototype
+            && m_executable == other.m_executable
             && m_inlineCapacity == other.m_inlineCapacity
             && m_classInfo == other.m_classInfo
             && m_globalObject == other.m_globalObject;
@@ -65,13 +68,14 @@ public:
     
     unsigned hash() const
     {
-        return WTF::IntHash<uintptr_t>::hash(bitwise_cast<uintptr_t>(m_prototype) ^ bitwise_cast<uintptr_t>(m_classInfo) ^ bitwise_cast<uintptr_t>(m_globalObject)) + m_inlineCapacity;
+        return WTF::IntHash<uintptr_t>::hash(bitwise_cast<uintptr_t>(m_prototype) ^ bitwise_cast<uintptr_t>(m_executable) ^ bitwise_cast<uintptr_t>(m_classInfo) ^ bitwise_cast<uintptr_t>(m_globalObject)) + m_inlineCapacity;
     }
     
 private:
     // WARNING: We require all of these default values to be zero. Otherwise, you'll need to add
     // "static const bool emptyValueIsZero = false;" to the HashTraits at the bottom of this file.
-    JSObject* m_prototype { nullptr };
+    JSObject* m_prototype { nullptr }; 
+    FunctionExecutable* m_executable { nullptr }; 
     unsigned m_inlineCapacity { 0 };
     const ClassInfo* m_classInfo { nullptr };
     JSGlobalObject* m_globalObject { nullptr };

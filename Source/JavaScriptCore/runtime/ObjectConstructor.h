@@ -70,8 +70,8 @@ inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)
 inline JSObject* constructEmptyObject(ExecState* exec, JSObject* prototype, unsigned inlineCapacity)
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    PrototypeMap& prototypeMap = globalObject->vm().prototypeMap;
-    Structure* structure = prototypeMap.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity);
+    StructureCache& structureCache = globalObject->vm().structureCache;
+    Structure* structure = structureCache.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity);
     return constructEmptyObject(exec, structure);
 }
 

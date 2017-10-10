@@ -1,3 +1,20 @@
+2017-10-10  Saam Barati  <sbarati@apple.com>
+
+        The prototype cache should be aware of the Executable it generates a Structure for
+        https://bugs.webkit.org/show_bug.cgi?id=177907
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/dont-confuse-structures-from-different-executable-as-poly-proto.js: Added.
+        (assert):
+        (foo.C):
+        (foo):
+        (bar.C):
+        (bar):
+        (access):
+        (makeLongChain):
+        (accessY):
+
 2017-10-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         `async` should be able to be used as an imported binding name

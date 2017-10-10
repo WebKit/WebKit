@@ -48,9 +48,9 @@
 #include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
 #include "NumericStrings.h"
-#include "PrototypeMap.h"
 #include "SmallStrings.h"
 #include "Strong.h"
+#include "StructureCache.h"
 #include "Subspace.h"
 #include "TemplateRegistryKeyTable.h"
 #include "VMEntryRecord.h"
@@ -464,7 +464,7 @@ public:
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();
 
-    PrototypeMap prototypeMap;
+    StructureCache structureCache;
 
     typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;

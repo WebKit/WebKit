@@ -1,3 +1,69 @@
+2017-10-10  Saam Barati  <sbarati@apple.com>
+
+        The prototype cache should be aware of the Executable it generates a Structure for
+        https://bugs.webkit.org/show_bug.cgi?id=177907
+
+        Reviewed by Filip Pizlo.
+
+        This patch renames PrototypeMap to StructureCache because
+        it is no longer a map of the prototypes in the VM. It's
+        only used to cache Structures during object construction.
+        
+        The main change of this patch is to guarantee that Structures generated
+        by the create_this originating from different two different Executables'
+        bytecode won't hash-cons to the same thing. Previously, we could hash-cons
+        them depending on the JSObject* prototype pointer. This would cause the last
+        thing that hash-consed to overwrite the Structure's poly proto watchpoint. This
+        happened because when we initialize a JSFunction's ObjectAllocationProfile,
+        we set the resulting Structure's poly proto watchpoint. This could cause a Structure
+        generating from some Executable e1 to end up with the poly proto watchpoint
+        for another Executable e2 simply because JSFunctions backed by e1 and e2
+        shared the same prototype. Then, based on profiling information, we may fire the
+        wrong Executable's poly proto watchpoint. This patch fixes this bug by
+        guaranteeing that Structures generating from create_this for different
+        Executables are unique even if they share the same prototype by adding
+        the FunctionExecutable* as another field in PrototypeKey.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+        * bytecode/ObjectAllocationProfile.cpp:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructureSlow):
+        * runtime/IteratorOperations.cpp:
+        (JSC::createIteratorResultObjectStructure):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::getBoundFunctionStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject):
+        * runtime/PrototypeKey.h:
+        (JSC::PrototypeKey::PrototypeKey):
+        (JSC::PrototypeKey::executable const):
+        (JSC::PrototypeKey::operator== const):
+        (JSC::PrototypeKey::hash const):
+        * runtime/PrototypeMap.cpp: Removed.
+        * runtime/PrototypeMap.h: Removed.
+        * runtime/StructureCache.cpp: Copied from Source/JavaScriptCore/runtime/PrototypeMap.cpp.
+        (JSC::StructureCache::createEmptyStructure):
+        (JSC::StructureCache::emptyStructureForPrototypeFromBaseStructure):
+        (JSC::StructureCache::emptyObjectStructureForPrototype):
+        (JSC::PrototypeMap::createEmptyStructure): Deleted.
+        (JSC::PrototypeMap::emptyStructureForPrototypeFromBaseStructure): Deleted.
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype): Deleted.
+        * runtime/StructureCache.h: Copied from Source/JavaScriptCore/runtime/PrototypeMap.h.
+        (JSC::StructureCache::StructureCache):
+        (JSC::PrototypeMap::PrototypeMap): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-10-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         `async` should be able to be used as an imported binding name

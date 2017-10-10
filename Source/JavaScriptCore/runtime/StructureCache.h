@@ -39,18 +39,18 @@ class Structure;
 class VM;
 
 // Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
-class PrototypeMap {
+class StructureCache {
 public:
-    explicit PrototypeMap(VM& vm)
+    explicit StructureCache(VM& vm)
         : m_structures(vm)
     {
     }
 
-    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false);
+    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false, FunctionExecutable* = nullptr);
     JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*);
 
 private:
-    Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure);
+    Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable*);
 
     using StructureMap = WeakGCMap<PrototypeKey, Structure>;
     StructureMap m_structures;

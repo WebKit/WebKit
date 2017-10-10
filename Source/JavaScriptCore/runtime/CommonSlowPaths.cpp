@@ -250,6 +250,7 @@ SLOW_PATH_DECL(slow_path_create_this)
             JSObject* prototype = constructor->prototypeForConstruction(vm, exec);
             result->putDirect(vm, structure->polyProtoOffset(), prototype);
             prototype->didBecomePrototype();
+            ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
         }
     } else {
         // http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor

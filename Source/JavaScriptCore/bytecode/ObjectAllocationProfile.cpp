@@ -50,21 +50,20 @@ void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalObject* globalOb
         // https://bugs.webkit.org/show_bug.cgi?id=177792
 
         executable = constructor->jsExecutable();
+
+        if (Structure* structure = executable->cachedPolyProtoStructure()) {
+            RELEASE_ASSERT(structure->typeInfo().type() == FinalObjectType);
+            m_allocator = nullptr;
+            m_structure.set(vm, owner, structure);
+            m_inlineCapacity = structure->inlineCapacity();
+            return;
+        }
+
         isPolyProto = false;
         if (Options::forcePolyProto())
             isPolyProto = true;
         else
             isPolyProto = executable->ensurePolyProtoWatchpoint().hasBeenInvalidated() && executable->singletonFunction()->hasBeenInvalidated();
-
-        if (isPolyProto) {
-            if (Structure* structure = executable->cachedPolyProtoStructure()) {
-                RELEASE_ASSERT(structure->typeInfo().type() == FinalObjectType);
-                m_allocator = nullptr;
-                m_structure.set(vm, owner, structure);
-                m_inlineCapacity = structure->inlineCapacity();
-                return;
-            }
-        }
     }
 
     unsigned inlineCapacity = 0;
@@ -110,7 +109,7 @@ void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalObject* globalOb
             inlineCapacity = JSFinalObject::maxInlineCapacity();
     }
 
-    Structure* structure = vm.prototypeMap.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto);
+    Structure* structure = vm.structureCache.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto, executable);
 
     if (isPolyProto) {
         ASSERT(structure->hasPolyProto());
