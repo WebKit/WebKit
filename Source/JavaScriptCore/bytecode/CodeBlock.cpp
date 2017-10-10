@@ -2320,6 +2320,7 @@ bool CodeBlock::checkIfOptimizationThresholdReached()
     return m_jitExecuteCounter.checkIfThresholdCrossedAndSet(this);
 }
 
+#if ENABLE(DFG_JIT)
 auto CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize(DFG::OSRExitState& exitState) -> OptimizeAction
 {
     DFG::OSRExitBase& exit = exitState.exit;
@@ -2366,6 +2367,7 @@ auto CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize(DFG::OSRExitState
     baselineCodeBlock->m_jitExecuteCounter.setNewThresholdForOSRExit(exitState.activeThreshold, exitState.memoryUsageAdjustedThreshold);
     return OptimizeAction::None;
 }
+#endif
 
 void CodeBlock::optimizeNextInvocation()
 {

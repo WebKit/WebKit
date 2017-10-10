@@ -1,3 +1,14 @@
+2017-10-10  Guillaume Emont  <guijemont@igalia.com>
+
+        Fix compilation when MASM_PROBE (and therefore DFG) are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=178134
+
+        Reviewed by Saam Barati.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        Disable some code when building without DFG_JIT.
+
 2017-10-10  Sam Weinig  <sam@webkit.org>
 
         Replace copyKeysToVector/copyValuesToVector with copyToVector(map.keys())/copyToVector(map.values())

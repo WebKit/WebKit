@@ -77,9 +77,11 @@
 
 namespace JSC {
 
+#if ENABLE(DFG_JIT)
 namespace DFG {
 struct OSRExitState;
 } // namespace DFG
+#endif
 
 class BytecodeLivenessAnalysis;
 class CodeBlockSet;
@@ -767,7 +769,9 @@ public:
     void countOSRExit() { m_osrExitCounter++; }
 
     enum class OptimizeAction { None, ReoptimizeNow };
+#if ENABLE(DFG_JIT)
     OptimizeAction updateOSRExitCounterAndCheckIfNeedToReoptimize(DFG::OSRExitState&);
+#endif
 
     static ptrdiff_t offsetOfOSRExitCounter() { return OBJECT_OFFSETOF(CodeBlock, m_osrExitCounter); }
 
