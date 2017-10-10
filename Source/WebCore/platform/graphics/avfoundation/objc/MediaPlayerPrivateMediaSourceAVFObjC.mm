@@ -681,6 +681,14 @@ size_t MediaPlayerPrivateMediaSourceAVFObjC::extraMemoryCost() const
 
 std::optional<PlatformVideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics()
 {
+    if (m_decompressionSession) {
+        return PlatformVideoPlaybackQualityMetrics(
+            m_decompressionSession->totalVideoFrames(),
+            m_decompressionSession->droppedVideoFrames(),
+            m_decompressionSession->corruptedVideoFrames(),
+            m_decompressionSession->totalFrameDelay().toDouble()
+        );
+    }
 
     auto metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics];
     if (!metrics)
