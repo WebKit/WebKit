@@ -1,3 +1,19 @@
+2017-10-10  Antti Koivisto  <antti@apple.com>
+
+        Layers should be destroyed by RenderLayerModelObject
+        https://bugs.webkit.org/show_bug.cgi?id=178139
+
+        Reviewed by Simon Fraser.
+
+        Clean up some FIXMEs.
+
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::willBeDestroyed):
+        (WebCore::RenderLayerModelObject::destroyLayer):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+
 2017-10-10  Chris Dumez  <cdumez@apple.com>
 
         Entries API should recognize path starting with 2 slashes as valid absolute path

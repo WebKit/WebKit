@@ -1434,14 +1434,6 @@ void RenderObject::willBeDestroyed()
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->remove(this);
 
-    // FIXME: Would like to do this in RenderBoxModelObject, but the timing is so complicated that this can't easily
-    // be moved into RenderLayerModelObject::willBeDestroyed().
-    // FIXME: Is this still true?
-    if (hasLayer()) {
-        setHasLayer(false);
-        downcast<RenderLayerModelObject>(*this).destroyLayer();
-    }
-
     removeRareData();
 }
 

@@ -69,18 +69,19 @@ void RenderLayerModelObject::willBeDestroyed()
             view().frameView().removeViewportConstrainedObject(this);
     }
 
+    if (hasLayer()) {
+        setHasLayer(false);
+        destroyLayer();
+    }
+
     RenderElement::willBeDestroyed();
     
     clearRepaintLayoutRects();
-    
-    // Our layer should have been destroyed and cleared by now
-    ASSERT(!hasLayer());
-    ASSERT(!m_layer);
 }
 
 void RenderLayerModelObject::destroyLayer()
 {
-    ASSERT(!hasLayer()); // Callers should have already called setHasLayer(false)
+    ASSERT(!hasLayer());
     ASSERT(m_layer);
     if (m_layer->isSelfPaintingLayer())
         clearRepaintLayoutRects();

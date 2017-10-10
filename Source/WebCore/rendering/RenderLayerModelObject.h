@@ -40,7 +40,6 @@ class RenderLayerModelObject : public RenderElement {
 public:
     virtual ~RenderLayerModelObject();
 
-    // Called by RenderObject::willBeDestroyed() and is the only way layers should ever be destroyed
     void destroyLayer();
 
     bool hasSelfPaintingLayer() const;
