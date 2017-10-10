@@ -37,7 +37,6 @@
 
 typedef CFTypeRef CMBufferRef;
 typedef struct opaqueCMBufferQueue *CMBufferQueueRef;
-typedef struct opaqueCMBufferQueueTriggerToken *CMBufferQueueTriggerToken;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
 typedef signed long CMItemCount;
@@ -90,7 +89,6 @@ private:
     static CMTime getPresentationTime(CMBufferRef, void* refcon);
     static CMTime getDuration(CMBufferRef, void* refcon);
     static CFComparisonResult compareBuffers(CMBufferRef buf1, CMBufferRef buf2, void* refcon);
-    static void maybeBecomeReadyForMoreMediaDataCallback(void* refcon, CMBufferQueueTriggerToken);
     void maybeBecomeReadyForMoreMediaData();
 
     static const CMItemCount kMaximumCapacity = 120;
@@ -107,7 +105,6 @@ private:
     OSObjectPtr<dispatch_source_t> m_timerSource;
     std::function<void()> m_notificationCallback;
     std::function<void()> m_hasAvailableFrameCallback;
-    CMBufferQueueTriggerToken m_didBecomeReadyTrigger { nullptr };
 
     bool m_invalidated { false };
     int m_framesBeingDecoded { 0 };

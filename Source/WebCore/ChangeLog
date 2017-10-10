@@ -1,5 +1,33 @@
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221430. rdar://problem/34770998
+
+    2017-08-31  Jer Noble  <jer.noble@apple.com>
+
+            MSE-to-Canvas painting can become "stuck" during heavy workloads
+            https://bugs.webkit.org/show_bug.cgi?id=176170
+
+            Reviewed by Eric Carlson.
+
+            During heavy workloads, the trigger from CMBufferQueue notifying us that we have dipped below
+            the "low-water mark" of decoded (and decoding) frames will not fire. Instead of using a trigger
+            (since it will not fire when the number of "frames being decoded" changes, just the number of
+            decoded frames), just call maybeBecomeReadyForMoreMediaData() whenever the number of frames in
+            the decoded queue decreases, or when the number of frames being decoded decreases.
+
+            * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+            * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+            (WebCore::WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData):
+            (WebCore::WebCoreDecompressionSession::enqueueSample):
+            (WebCore::WebCoreDecompressionSession::decodeSample):
+            (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+            (WebCore::WebCoreDecompressionSession::getFirstVideoFrame):
+            (WebCore::WebCoreDecompressionSession::automaticDequeue):
+            (WebCore::WebCoreDecompressionSession::imageForTime):
+            (WebCore::WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaDataCallback): Deleted.
+
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222995. rdar://problem/34891302
 
     2017-10-06  Jer Noble  <jer.noble@apple.com>
