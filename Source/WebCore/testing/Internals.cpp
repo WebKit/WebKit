@@ -507,7 +507,8 @@ Internals::Internals(Document& document)
     setConsoleMessageListener(nullptr);
 
 #if ENABLE(APPLE_PAY)
-    document.frame()->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*new MockPaymentCoordinator()));
+    if (auto frame = document.frame())
+        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*new MockPaymentCoordinator()));
 #endif
 }
 
