@@ -1,3 +1,29 @@
+2017-10-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220496. rdar://problem/34770816
+
+    2017-08-09  Jeremy Jones  <jeremyj@apple.com>
+
+            Use MPAVRoutingController instead of deprecated versions.
+            https://bugs.webkit.org/show_bug.cgi?id=175063
+            rdar://problem/33301230
+
+            Reviewed by Tim Horton.
+
+            Remove dependence on deprecated classes MPAVRoutingSheet and MPAudioVideoRoutingPopoverController.
+
+            * UIProcess/ios/forms/WKAirPlayRoutePicker.h:
+            * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+            (-[WKAirPlayRoutePicker dealloc]):
+            (-[WKAirPlayRoutePicker show:fromRect:]):
+            (-[WKAirPlayRoutePicker popoverControllerDidDismissPopover:]): Deleted.
+            (-[WKAirPlayRoutePicker _presentAirPlayPopoverAnimated:fromRect:]): Deleted.
+            (-[WKAirPlayRoutePicker _windowWillRotate:]): Deleted.
+            (-[WKAirPlayRoutePicker _windowDidRotate:]): Deleted.
+            (-[WKAirPlayRoutePicker _dismissAirPlayRoutePickerIPad]): Deleted.
+            (-[WKAirPlayRoutePicker showAirPlayPickerIPad:fromRect:]): Deleted.
+            (-[WKAirPlayRoutePicker showAirPlayPickerIPhone:]): Deleted.
+
 2017-10-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Revert r222431. rdar://problem/34826998

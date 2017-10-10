@@ -4000,9 +4000,15 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const IntRect&)elementRect
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+    if (!_airPlayRoutePicker)
+        _airPlayRoutePicker = adoptNS([[WKAirPlayRoutePicker alloc] init]);
+    [_airPlayRoutePicker showFromView:self];
+#else
     if (!_airPlayRoutePicker)
         _airPlayRoutePicker = adoptNS([[WKAirPlayRoutePicker alloc] initWithView:self]);
     [_airPlayRoutePicker show:hasVideo fromRect:elementRect];
+#endif
 }
 
 - (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters resultListener:(WebOpenPanelResultListenerProxy*)listener
