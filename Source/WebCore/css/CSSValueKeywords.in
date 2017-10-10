@@ -847,9 +847,10 @@ var
 -internal-variable-value
 
 //
-// UA Constants
+// Environment Variables
 //
 constant
+env
 
 //
 // CSS_PROP_BREAK_BEFORE/AFTER/INSIDE

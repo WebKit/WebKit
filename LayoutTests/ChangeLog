@@ -1,3 +1,18 @@
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222402. rdar://problem/34770839
+
+    2017-09-22  Tim Horton  <timothy_horton@apple.com>
+
+            Add env() as an alias of constant()
+            https://bugs.webkit.org/show_bug.cgi?id=177371
+
+            Reviewed by Simon Fraser.
+
+            * TestExpectations:
+            * platform/ios-11/TestExpectations:
+            Duplicated constant() tests with env() instead.
+
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222190. rdar://problem/34771470
