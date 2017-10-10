@@ -1,3 +1,24 @@
+2017-10-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Set column initial widths to try allow waterfall column to expand more by default
+        https://bugs.webkit.org/show_bug.cgi?id=178142
+        <rdar://problem/34918233>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.initialLayout):
+        Provide initial widths for many columns where the max could fit
+        but we'd prefer a smaller than max initial width in wide cases.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype._resizeColumnsAndFiller):
+        When auto sizing all columns use the preferred initial widths.
+
+        * UserInterface/Views/TableColumn.js:
+        (WI.TableColumn.prototype.get preferredInitialWidth):
+        Save the initial width.
+
 2017-10-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Views should explicitly remove event listeners from managers/Frame

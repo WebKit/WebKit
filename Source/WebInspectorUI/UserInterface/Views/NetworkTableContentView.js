@@ -477,9 +477,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     initialLayout()
     {
         this._nameColumn = new WI.TableColumn("name", WI.UIString("Name"), {
-            initialWidth: this._nameColumnWidthSetting.value,
             minWidth: WI.Sidebar.AbsoluteMinimumWidth,
             maxWidth: 500,
+            initialWidth: this._nameColumnWidthSetting.value,
             resizeType: WI.TableColumn.ResizeType.Locked,
         });
 
@@ -488,29 +488,34 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._domainColumn = new WI.TableColumn("domain", WI.UIString("Domain"), {
             minWidth: 120,
             maxWidth: 200,
+            initialWidth: 150,
         });
 
         this._typeColumn = new WI.TableColumn("type", WI.UIString("Type"), {
             minWidth: 70,
             maxWidth: 120,
+            initialWidth: 90,
         });
 
         this._mimeTypeColumn = new WI.TableColumn("mimeType", WI.UIString("MIME Type"), {
             hidden: true,
             minWidth: 100,
             maxWidth: 150,
+            initialWidth: 120,
         });
 
         this._methodColumn = new WI.TableColumn("method", WI.UIString("Method"), {
             hidden: true,
             minWidth: 55,
             maxWidth: 80,
+            initialWidth: 65,
         });
 
         this._schemeColumn = new WI.TableColumn("scheme", WI.UIString("Scheme"), {
             hidden: true,
             minWidth: 55,
             maxWidth: 80,
+            initialWidth: 65,
         });
 
         this._statusColumn = new WI.TableColumn("status", WI.UIString("Status"), {
@@ -524,12 +529,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             hidden: true,
             minWidth: 65,
             maxWidth: 80,
+            initialWidth: 75,
         });
 
         this._priorityColumn = new WI.TableColumn("priority", WI.UIString("Priority"), {
             hidden: true,
             minWidth: 65,
             maxWidth: 80,
+            initialWidth: 70,
         });
 
         this._remoteAddressColumn = new WI.TableColumn("remoteAddress", WI.UIString("IP Address"), {
@@ -541,6 +548,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             hidden: true,
             minWidth: 50,
             maxWidth: 120,
+            initialWidth: 80,
             align: "right",
         });
 
@@ -548,18 +556,21 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             hidden: true,
             minWidth: 80,
             maxWidth: 100,
+            initialWidth: 80,
             align: "right",
         });
 
         this._transferSizeColumn = new WI.TableColumn("transferSize", WI.UIString("Transfer Size"), {
             minWidth: 100,
             maxWidth: 150,
+            initialWidth: 100,
             align: "right",
         });
 
         this._timeColumn = new WI.TableColumn("time", WI.UIString("Time"), {
             minWidth: 65,
             maxWidth: 90,
+            initialWidth: 65,
             align: "right",
         });
 

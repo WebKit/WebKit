@@ -820,6 +820,13 @@ WI.Table = class Table extends WI.View
                     this._columnWidths[i] = column.width;
             }
 
+            // Best fit with the preferred initial width for flexible columns.
+            bestFit.call(this, (column, width) => {
+                if (!column.preferredInitialWidth || width <= column.preferredInitialWidth)
+                    return -1;
+                return column.preferredInitialWidth;
+            });
+
             // Best fit max size flexible columns. May make more pixels available for other columns.
             bestFit.call(this, (column, width) => {
                 if (!column.maxWidth || width <= column.maxWidth)

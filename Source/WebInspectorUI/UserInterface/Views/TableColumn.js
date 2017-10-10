@@ -41,6 +41,7 @@ WI.TableColumn = class TableColumn extends WI.Object
         this._width = initialWidth || NaN;
         this._minWidth = minWidth || 50;
         this._maxWidth = maxWidth || 0;
+        this._initialWidth = initialWidth || NaN;
         this._hidden = hidden || false;
         this._defaultHidden = hidden || false;
         this._sortable = typeof sortable === "boolean" ? sortable : true;
@@ -59,6 +60,7 @@ WI.TableColumn = class TableColumn extends WI.Object
     get name() { return this._name; }
     get minWidth() { return this._minWidth; }
     get maxWidth() { return this._maxWidth; }
+    get preferredInitialWidth() { return this._initialWidth; }
     get defaultHidden() { return this._defaultHidden; }
     get sortable() { return this._sortable; }
     get hideable() { return this._hideable; }
