@@ -460,8 +460,7 @@ class Manager(object):
             self._filesystem.remove(results_json_path)
 
     def upload_results(self, results_json_path, start_time, end_time):
-        hostname = self._options.results_server_host
-        if not hostname:
+        if not self._options.results_server_host:
             return
         master_name = self._options.master_name
         builder_name = self._options.builder_name
@@ -478,44 +477,45 @@ class Manager(object):
             revision = scm.native_revision(path)
             revisions[name] = {'revision': revision, 'timestamp': scm.timestamp_of_native_revision(path, revision)}
 
-        _log.info("Uploading JSON files for master: %s builder: %s build: %s slave: %s to %s", master_name, builder_name, build_number, build_slave, hostname)
+        for hostname in self._options.results_server_host:
+            _log.info("Uploading JSON files for master: %s builder: %s build: %s slave: %s to %s", master_name, builder_name, build_number, build_slave, hostname)
 
-        attrs = [
-            ('master', 'build.webkit.org' if master_name == 'webkit.org' else master_name),  # FIXME: Pass in build.webkit.org.
-            ('builder_name', builder_name),
-            ('build_number', build_number),
-            ('build_slave', build_slave),
-            ('revisions', json.dumps(revisions)),
-            ('start_time', str(start_time)),
-            ('end_time', str(end_time)),
-        ]
+            attrs = [
+                ('master', 'build.webkit.org' if master_name == 'webkit.org' else master_name),  # FIXME: Pass in build.webkit.org.
+                ('builder_name', builder_name),
+                ('build_number', build_number),
+                ('build_slave', build_slave),
+                ('revisions', json.dumps(revisions)),
+                ('start_time', str(start_time)),
+                ('end_time', str(end_time)),
+            ]
 
-        uploader = FileUploader("http://%s/api/report" % hostname, 360)
-        try:
-            response = uploader.upload_as_multipart_form_data(self._filesystem, [('results.json', results_json_path)], attrs)
-            if not response:
-                _log.error("JSON upload failed; no response returned")
-                return
-
-            if response.code != 200:
-                _log.error("JSON upload failed, %d: '%s'" % (response.code, response.read()))
-                return
-
-            response_text = response.read()
+            uploader = FileUploader("http://%s/api/report" % hostname, 360)
             try:
-                response_json = json.loads(response_text)
-            except ValueError, error:
-                _log.error("JSON upload failed; failed to parse the response: %s", response_text)
-                return
+                response = uploader.upload_as_multipart_form_data(self._filesystem, [('results.json', results_json_path)], attrs)
+                if not response:
+                    _log.error("JSON upload failed; no response returned")
+                    continue
 
-            if response_json['status'] != 'OK':
-                _log.error("JSON upload failed, %s: %s", response_json['status'], response_text)
-                return
+                if response.code != 200:
+                    _log.error("JSON upload failed, %d: '%s'" % (response.code, response.read()))
+                    continue
 
-            _log.info("JSON uploaded.")
-        except Exception, error:
-            _log.error("Upload failed: %s" % error)
-            return
+                response_text = response.read()
+                try:
+                    response_json = json.loads(response_text)
+                except ValueError, error:
+                    _log.error("JSON upload failed; failed to parse the response: %s", response_text)
+                    continue
+
+                if response_json['status'] != 'OK':
+                    _log.error("JSON upload failed, %s: %s", response_json['status'], response_text)
+                    continue
+
+                _log.info("JSON uploaded.")
+            except Exception, error:
+                _log.error("Upload failed: %s" % error)
+                continue
 
     def _copy_results_html_file(self, destination_path):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')

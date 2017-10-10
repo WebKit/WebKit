@@ -1,3 +1,28 @@
+2017-10-10  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests: upload test results to multiple servers
+        https://bugs.webkit.org/show_bug.cgi?id=178012
+        <rdar://problem/34856501>
+
+        Reviewed by Lucas Forschler.
+
+        Allowing uploading of results to multiple servers makes developing new results
+        databases much easier, and does not complicate uploading logic.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.upload_results): Iterate through the list of results server hosts and
+        send results to each one.
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator.__init__): Accept a list of test results servers.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGenerator.__init__): Accept a list of test results servers.
+        (JSONResultsGenerator.get_json): Pick which server to download from by index.
+        (JSONResultsGenerator.upload_json_files): Upload the JSON to each results server.
+        (JSONResultsGenerator._get_archived_json_results): Pick which server to download from.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Allow multiple test-results-servers and results-server-hosts to be
+        passed to run-webkit-tests. 
+
 2017-10-09  Youenn Fablet  <youenn@apple.com>
 
         Vector should be able to easily create from a list of movable only items
