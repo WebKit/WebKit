@@ -1,5 +1,39 @@
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221098. rdar://problem/34771028
+
+    2017-08-23  Jer Noble  <jer.noble@apple.com>
+
+            Track VideoPlaybackQuality metrics when using WebCoreDecompressionSession.
+            https://bugs.webkit.org/show_bug.cgi?id=175835
+            <rdar://problem/34022234>
+
+            Reviewed by Eric Carlson.
+
+            Test: platform/mac/media/media-source/videoplaybackquality-decompressionsession.html
+
+            Track the total number of frames decoded, dropped, & corrupted, as well as the total
+            delay imposed by decoding in the WebCoreDecompressionSession.
+
+            Drive-by fix: implement frame dropping by skipping frames whose presentation times are
+            before the video's current time and which aren't depended upon by other frames.
+
+            * platform/cf/CoreMediaSoftLink.cpp:
+            * platform/cf/CoreMediaSoftLink.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics):
+            * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+            (WebCore::WebCoreDecompressionSession::totalVideoFrames):
+            (WebCore::WebCoreDecompressionSession::droppedVideoFrames):
+            (WebCore::WebCoreDecompressionSession::corruptedVideoFrames):
+            (WebCore::WebCoreDecompressionSession::totalFrameDelay):
+            * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+            (WebCore::WebCoreDecompressionSession::shouldDecodeSample):
+            (WebCore::WebCoreDecompressionSession::decodeSample):
+            (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+
+2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221046. rdar://problem/34891067
 
     2017-08-22  Jer Noble  <jer.noble@apple.com>

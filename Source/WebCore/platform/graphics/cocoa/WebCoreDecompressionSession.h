@@ -69,6 +69,11 @@ public:
     RetainPtr<CVPixelBufferRef> imageForTime(const MediaTime&, ImageForTimeFlags = ExactTime);
     void flush();
 
+    unsigned long totalVideoFrames() { return m_totalVideoFrames; }
+    unsigned long droppedVideoFrames() { return m_droppedVideoFrames; }
+    unsigned long corruptedVideoFrames() { return m_corruptedVideoFrames; }
+    MediaTime totalFrameDelay() { return m_totalFrameDelay; }
+
 private:
     WebCoreDecompressionSession();
 
@@ -78,6 +83,7 @@ private:
     RetainPtr<CVPixelBufferRef> getFirstVideoFrame();
     void resetAutomaticDequeueTimer();
     void automaticDequeue();
+    bool shouldDecodeSample(CMSampleBufferRef, bool displaying);
 
     static void decompressionOutputCallback(void* decompressionOutputRefCon, void* sourceFrameRefCon, OSStatus, VTDecodeInfoFlags, CVImageBufferRef, CMTime presentationTimeStamp, CMTime presentationDuration);
     static CMTime getDecodeTime(CMBufferRef, void* refcon);
@@ -105,6 +111,10 @@ private:
 
     bool m_invalidated { false };
     int m_framesBeingDecoded { 0 };
+    unsigned long m_totalVideoFrames { 0 };
+    unsigned long m_droppedVideoFrames { 0 };
+    unsigned long m_corruptedVideoFrames { 0 };
+    MediaTime m_totalFrameDelay;
 };
 
 }
