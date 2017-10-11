@@ -1,5 +1,47 @@
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221831. rdar://problem/34891283
+
+    2017-09-08  Dean Jackson  <dino@apple.com>
+
+            gl.detachShader breaks shader program
+            https://bugs.webkit.org/show_bug.cgi?id=137689
+            <rdar://problem/34025056>
+
+            Reviewed by Sam Weinig.
+
+            It should be possible to compile shaders, attach them to a program,
+            link the program, detach the shaders, delete the shaders, and then
+            ask for the uniform and attribute locations. That is, once you've
+            linked, the shaders can be thrown away.
+
+            We were using the attached shaders to look up uniform locations, so
+            we now keep around a separate map that remembers what shaders were
+            attached when the program links.
+
+            This fixes the bug, but the whole area is still a bit messy. For one,
+            we're keeping around all the shader information even after it is
+            no longer used.
+            See https://bugs.webkit.org/show_bug.cgi?id=98204
+
+            Test: fast/canvas/webgl/detachShader-before-accessing-uniform.html
+
+            * platform/graphics/GraphicsContext3D.h: Add another map to remember
+            what shaders were used when a program was linked.
+            * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+            (WebCore::GraphicsContext3D::mappedSymbolInShaderSourceMap): New helper
+            to look up a name in our source maps.
+            (WebCore::GraphicsContext3D::mappedSymbolName): Use the helper, and look
+            at linked shaders if there are no attached shaders.
+            (WebCore::GraphicsContext3D::originalSymbolInShaderSourceMap): Does the
+            reverse of the above.
+            (WebCore::GraphicsContext3D::originalSymbolName):
+            (WebCore::GraphicsContext3D::linkProgram): Add to the new map.
+            (WebCore::GraphicsContext3D::deleteProgram): Delete the program from
+            our shader entries.
+
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222478. rdar://problem/34771020
 
     2017-09-25  Youenn Fablet  <youenn@apple.com>
