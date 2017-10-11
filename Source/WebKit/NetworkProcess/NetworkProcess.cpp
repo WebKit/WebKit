@@ -50,6 +50,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
+#include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include "WebsiteDataType.h"
 #include <WebCore/DNS.h>
@@ -238,7 +239,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
-        RemoteNetworkingContext::ensurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }, { }, { }});
+        RemoteNetworkingContext::ensurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }});
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();

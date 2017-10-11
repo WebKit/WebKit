@@ -231,6 +231,26 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->websiteDataStore().setResourceLoadStatisticsEnabled(enabled);
 }
 
+- (NSUInteger)_cacheStoragePerOriginQuota
+{
+    return _websiteDataStore->websiteDataStore().cacheStoragePerOriginQuota();
+}
+
+- (void)_setCacheStoragePerOriginQuota:(NSUInteger)size
+{
+    _websiteDataStore->websiteDataStore().setCacheStoragePerOriginQuota(size);
+}
+
+- (NSString *)_cacheStorageDirectory
+{
+    return _websiteDataStore->websiteDataStore().cacheStorageDirectory();
+}
+
+- (void)_setCacheStorageDirectory:(NSString *)directory
+{
+    _websiteDataStore->websiteDataStore().setCacheStorageDirectory(directory);
+}
+
 - (void)_resourceLoadStatisticsSetLastSeen:(double)seconds forHost:(NSString *)host
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();

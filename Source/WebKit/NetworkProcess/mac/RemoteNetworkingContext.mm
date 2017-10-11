@@ -131,6 +131,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     if (!parameters.cacheStorageDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
         session->setCacheStorageDirectory(WTFMove(parameters.cacheStorageDirectory));
+        session->setCacheStoragePerOriginQuota(parameters.cacheStoragePerOriginQuota);
     }
 
 #if USE(NETWORK_SESSION)

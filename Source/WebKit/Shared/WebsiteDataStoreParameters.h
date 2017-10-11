@@ -51,6 +51,7 @@ struct WebsiteDataStoreParameters {
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     Vector<WebCore::Cookie> pendingCookies;
     String cacheStorageDirectory;
+    uint64_t cacheStoragePerOriginQuota { 0 };
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
 };
 

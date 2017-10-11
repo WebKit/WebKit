@@ -69,7 +69,7 @@ class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessL
 public:
     struct Configuration {
         String cacheStorageDirectory;
-        String cacheStorageSubdirectoryName;
+        uint64_t cacheStoragePerOriginQuota;
         String networkCacheDirectory;
         String applicationCacheDirectory;
         String applicationCacheFlatFileSubdirectoryName;
@@ -87,11 +87,19 @@ public:
     static Ref<WebsiteDataStore> create(Configuration, PAL::SessionID);
     virtual ~WebsiteDataStore();
 
+    constexpr static uint64_t defaultCacheStoragePerOriginQuota = 20 * 1024 * 1024;
+
     bool isPersistent() const { return !m_sessionID.isEphemeral(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
+
+    uint64_t cacheStoragePerOriginQuota() const { return m_resolvedConfiguration.cacheStoragePerOriginQuota; }
+    void setCacheStoragePerOriginQuota(uint64_t quota) { m_resolvedConfiguration.cacheStoragePerOriginQuota = quota; }
+    const String& cacheStorageDirectory() const { return m_resolvedConfiguration.cacheStorageDirectory; }
+    void setCacheStorageDirectory(String&& directory) { m_resolvedConfiguration.cacheStorageDirectory = WTFMove(directory); }
+
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void clearResourceLoadStatisticsInWebProcesses();
 

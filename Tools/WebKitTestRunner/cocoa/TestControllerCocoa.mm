@@ -79,6 +79,13 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     WKCookieManagerSetCookieStoragePartitioningEnabled(WKContextGetCookieManager(context), true);
 #endif
 
+    WKWebsiteDataStore* poolWebsiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore((WKContextRef)globalWebViewConfiguration.processPool);
+    [poolWebsiteDataStore _setCacheStoragePerOriginQuota: 400 * 1024];
+    if (libraryPath) {
+        String cacheStorageDirectory = String(libraryPath) + '/' + "CacheStorage";
+        [poolWebsiteDataStore _setCacheStorageDirectory: cacheStorageDirectory];
+    }
+
     [globalWebViewConfiguration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldSubmitTelemetry:NO];
 

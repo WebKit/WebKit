@@ -388,7 +388,6 @@ public:
     static String legacyPlatformDefaultMediaKeysStorageDirectory();
     static String legacyPlatformDefaultMediaCacheDirectory();
     static String legacyPlatformDefaultApplicationCacheDirectory();
-    static String legacyPlatformDefaultCacheStorageDirectory();
     static String legacyPlatformDefaultNetworkCacheDirectory();
     static String legacyPlatformDefaultJavaScriptConfigurationDirectory();
     static bool isNetworkCacheEnabled();

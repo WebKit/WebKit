@@ -45,6 +45,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (void)_fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler;
 
 @property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+@property (nonatomic, setter=_setCacheStoragePerOriginQuota:) NSUInteger _cacheStoragePerOriginQuota WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_MAC_TBA));
+@property (nonatomic, setter=_setCacheStorageDirectory:) NSString* _cacheStorageDirectory WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_MAC_TBA));
 
 // ResourceLoadStatistics SPI for testing.
 - (void)_resourceLoadStatisticsSetLastSeen:(double)seconds forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));

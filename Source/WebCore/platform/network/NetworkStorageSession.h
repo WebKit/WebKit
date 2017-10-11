@@ -79,6 +79,8 @@ public:
 
     const String& cacheStorageDirectory() const { return m_cacheStorageDirectory; }
     void setCacheStorageDirectory(String&& path) { m_cacheStorageDirectory = WTFMove(path); }
+    uint64_t cacheStoragePerOriginQuota() const { return m_cacheStoragePerOriginQuota; }
+    void setCacheStoragePerOriginQuota(uint64_t quota) { m_cacheStoragePerOriginQuota = quota; }
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     WEBCORE_EXPORT static void ensureSession(PAL::SessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&&);
@@ -146,6 +148,7 @@ private:
     CredentialStorage m_credentialStorage;
 
     String m_cacheStorageDirectory;
+    uint64_t m_cacheStoragePerOriginQuota { 0 };
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     bool shouldPartitionCookies(const String& topPrivatelyControlledDomain) const;

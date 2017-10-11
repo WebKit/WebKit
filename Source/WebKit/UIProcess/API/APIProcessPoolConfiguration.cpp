@@ -46,9 +46,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
 
     configuration->m_applicationCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory();
     configuration->m_applicationCacheFlatFileSubdirectoryName = "ApplicationCache";
-#if PLATFORM(COCOA)
-    configuration->m_cacheStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultCacheStorageDirectory();
-#endif
     configuration->m_diskCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory();
     configuration->m_mediaCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory();
     configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
@@ -66,7 +63,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
 
     configuration->m_applicationCacheDirectory = legacyConfiguration.applicationCacheDirectory;
     configuration->m_applicationCacheFlatFileSubdirectoryName = legacyConfiguration.applicationCacheFlatFileSubdirectoryName;
-    configuration->m_cacheStorageDirectory = legacyConfiguration.cacheStorageDirectory;
     configuration->m_diskCacheDirectory = legacyConfiguration.networkCacheDirectory;
     configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory;
     configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
@@ -81,9 +77,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
 ProcessPoolConfiguration::ProcessPoolConfiguration()
     : m_applicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory())
     , m_applicationCacheFlatFileSubdirectoryName("Files")
-#if PLATFORM(COCOA)
-    , m_cacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory())
-#endif
     , m_diskCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory())
     , m_mediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory())
     , m_indexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory())
@@ -110,9 +103,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_diskCacheSizeOverride = this->m_diskCacheSizeOverride;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
     copy->m_applicationCacheFlatFileSubdirectoryName = this->m_applicationCacheFlatFileSubdirectoryName;
-    copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
-    copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
-    copy->m_cacheStoragePerOriginQuota = this->m_cacheStoragePerOriginQuota;
     copy->m_mediaCacheDirectory = this->m_mediaCacheDirectory;
     copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
     copy->m_injectedBundlePath = this->m_injectedBundlePath;
@@ -137,7 +127,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_ctDataConnectionServiceType = this->m_ctDataConnectionServiceType;
 #endif
     copy->m_presentingApplicationPID = this->m_presentingApplicationPID;
-    
+
     return copy;
 }
 
