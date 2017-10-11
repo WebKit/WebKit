@@ -1,3 +1,22 @@
+2017-10-11  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222963. rdar://problem/34891307
+
+    2017-10-05  Dean Jackson  <dino@apple.com>
+
+            [WebGL] Safari performance is slow due to high MSAA usage
+            https://bugs.webkit.org/show_bug.cgi?id=177949
+            <rdar://problem/34835619>
+
+            Reviewed by Sam Weinig.
+
+            On some hardware, typically integrated GPUs, using MSAA with a sample
+            count above 4 produces bad performance. Limit the number of samples to
+            4 universally.
+
+            * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+            (WebCore::GraphicsContext3D::reshapeFBOs):
+
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222788. rdar://problem/34771440
