@@ -11994,7 +11994,7 @@ private:
     
     LValue caged(Gigacage::Kind kind, LValue ptr)
     {
-        if (!Gigacage::isEnabled(kind))
+        if (!Gigacage::shouldBeEnabled())
             return ptr;
         
         if (kind == Gigacage::Primitive && Gigacage::canPrimitiveGigacageBeDisabled()) {

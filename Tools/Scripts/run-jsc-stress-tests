@@ -513,7 +513,7 @@ def baseOutputName(kind)
     "#{$collectionName}/#{$benchmark}.#{kind}"
 end
 
-def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
+def addRunCommand(kind, command, outputHandler, errorHandler)
     $didAddRunCommand = true
     name = baseOutputName(kind)
     if $filter and name !~ $filter
@@ -522,7 +522,6 @@ def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
     plan = Plan.new(
         $benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}", name, outputHandler,
         errorHandler)
-    plan.additionalEnv.push(*additionalEnv)
     if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
         $runlist.unshift plan
     else
@@ -1308,16 +1307,8 @@ def defaultRunMozillaTest(mode, *extraFiles)
     end
 end
 
-def runNoisyTestImpl(kind, options, additionalEnv)
-    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
-end
-
 def runNoisyTest(kind, *options)
-    runNoisyTestImpl(kind, options, [])
-end
-
-def runNoisyTestWithEnv(kind, *additionalEnv)
-    runNoisyTestImpl(kind, [], additionalEnv)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler)
 end
 
 def runNoisyTestDefault

@@ -1,3 +1,22 @@
+2017-10-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r223113 and r223121.
+        https://bugs.webkit.org/show_bug.cgi?id=178182
+
+        Reintroduced 20% regression on Kraken (Requested by rniwa on
+        #webkit).
+
+        Reverted changesets:
+
+        "Enable gigacage on iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=177586
+        https://trac.webkit.org/changeset/223113
+
+        "Use one virtual allocation for all gigacages and their
+        runways"
+        https://bugs.webkit.org/show_bug.cgi?id=178050
+        https://trac.webkit.org/changeset/223121
+
 2017-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         Use one virtual allocation for all gigacages and their runways

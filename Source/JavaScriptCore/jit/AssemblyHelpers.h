@@ -1314,7 +1314,7 @@ public:
     void cage(Gigacage::Kind kind, GPRReg storage)
     {
 #if GIGACAGE_ENABLED
-        if (!Gigacage::isEnabled(kind))
+        if (!Gigacage::shouldBeEnabled())
             return;
         
         andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
@@ -1328,7 +1328,7 @@ public:
     void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg scratch)
     {
 #if GIGACAGE_ENABLED
-        if (!Gigacage::isEnabled(kind))
+        if (!Gigacage::shouldBeEnabled())
             return;
         
         if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageDisabled())
