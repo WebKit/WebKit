@@ -35,6 +35,7 @@ WebKitAnimationEvent
 WebKitTransitionEvent
 WheelEvent
 XMLHttpRequestProgressEvent
+ApplePayMerchantValidationEvent conditional=APPLE_PAY
 ApplePayPaymentAuthorizedEvent conditional=APPLE_PAY
 ApplePayPaymentMethodSelectedEvent conditional=APPLE_PAY
 ApplePayShippingContactSelectedEvent conditional=APPLE_PAY

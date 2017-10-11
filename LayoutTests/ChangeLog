@@ -1,3 +1,13 @@
+2017-10-11  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement Apple Pay merchant validation
+        https://bugs.webkit.org/show_bug.cgi?id=178159
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/ssl/applepay/ApplePayMerchantValidationEvent.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayMerchantValidationEvent.https.html: Added.
+
 2017-10-11  Brady Eidson  <beidson@apple.com>
 
         Add a SW context process (where SW scripts will actually execute).

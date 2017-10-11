@@ -30,8 +30,13 @@
 #include "PaymentCoordinatorClient.h"
 
 namespace WebCore {
+    
+class MainFrame;
 
 class MockPaymentCoordinator final : public PaymentCoordinatorClient {
+public:
+    explicit MockPaymentCoordinator(MainFrame&);
+
 private:
     bool supportsVersion(unsigned) final;
     bool canMakePayments() final;
@@ -46,6 +51,8 @@ private:
     void abortPaymentSession() final { }
     void cancelPaymentSession() final { }
     void paymentCoordinatorDestroyed() final;
+
+    MainFrame& m_mainFrame;
 };
 
 } // namespace WebCore

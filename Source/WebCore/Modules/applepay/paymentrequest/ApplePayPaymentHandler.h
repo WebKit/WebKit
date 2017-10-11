@@ -53,7 +53,7 @@ private:
     void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) final;
 
     // PaymentSession
-    void validateMerchant(const URL&) final { }
+    void validateMerchant(const URL&) final;
     void didAuthorizePayment(const Payment&) final { }
     void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) final { }
     void didSelectShippingContact(const PaymentContact&) final { }

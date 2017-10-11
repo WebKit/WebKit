@@ -30,8 +30,10 @@
 
 #include "ApplePayContactField.h"
 #include "ApplePayMerchantCapability.h"
+#include "ApplePayMerchantValidationEvent.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "JSApplePayRequest.h"
 #include "LinkIconCollector.h"
 #include "MainFrame.h"
@@ -230,6 +232,12 @@ void ApplePayPaymentHandler::canMakePayment(Document& document, WTF::Function<vo
     }
 
     paymentCoordinator(document).canMakePaymentsWithActiveCard(m_applePayRequest->merchantIdentifier, document.domain(), WTFMove(completionHandler));
+}
+
+void ApplePayPaymentHandler::validateMerchant(const URL& validationURL)
+{
+    if (validationURL.isValid())
+        m_paymentRequest->dispatchEvent(ApplePayMerchantValidationEvent::create(eventNames().applepayvalidatemerchantEvent, validationURL).get());
 }
 
 } // namespace WebCore

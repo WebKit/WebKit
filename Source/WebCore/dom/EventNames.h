@@ -53,6 +53,7 @@ namespace WebCore {
     macro(animationend) \
     macro(animationiteration) \
     macro(animationstart) \
+    macro(applepayvalidatemerchant) \
     macro(audioend) \
     macro(audioprocess) \
     macro(audiostart) \

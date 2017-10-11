@@ -28,9 +28,17 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "MainFrame.h"
+#include "PaymentCoordinator.h"
+#include "URL.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
+
+MockPaymentCoordinator::MockPaymentCoordinator(MainFrame& mainFrame)
+    : m_mainFrame { mainFrame }
+{
+}
 
 bool MockPaymentCoordinator::supportsVersion(unsigned version)
 {
@@ -66,6 +74,9 @@ void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, WTF:
 
 bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&)
 {
+    RunLoop::main().dispatch([mainFrame = makeRef(m_mainFrame)]() {
+        mainFrame->paymentCoordinator().validateMerchant({ URL(), ASCIILiteral("https://webkit.org/") });
+    });
     return true;
 }
 
