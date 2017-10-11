@@ -334,25 +334,25 @@ class BuildBotTest(unittest.TestCase):
       </tr>
       <tr class="alt">
         <td>Jan 10 15:49</td>
-        <td><span class="revision" title="Revision 104643"><a href="http://trac.webkit.org/changeset/104643">104643</a></span></td>
+        <td><span class="revision" title="Revision 104643"><a href="https://trac.webkit.org/changeset/104643">104643</a></span></td>
         <td class="success">failure</td>    <td><a href=".../37604">#37604</a></td>
         <td class="left">Build successful</td>
       </tr>
       <tr class="">
         <td>Jan 10 15:32</td>
-        <td><span class="revision" title="Revision 104636"><a href="http://trac.webkit.org/changeset/104636">104636</a></span></td>
+        <td><span class="revision" title="Revision 104636"><a href="https://trac.webkit.org/changeset/104636">104636</a></span></td>
         <td class="success">failure</td>    <td><a href=".../37603">#37603</a></td>
         <td class="left">Build successful</td>
       </tr>
       <tr class="alt">
         <td>Jan 10 15:18</td>
-        <td><span class="revision" title="Revision 104635"><a href="http://trac.webkit.org/changeset/104635">104635</a></span></td>
+        <td><span class="revision" title="Revision 104635"><a href="https://trac.webkit.org/changeset/104635">104635</a></span></td>
         <td class="success">success</td>    <td><a href=".../37602">#37602</a></td>
         <td class="left">Build successful</td>
       </tr>
       <tr class="">
         <td>Jan 10 14:51</td>
-        <td><span class="revision" title="Revision 104633"><a href="http://trac.webkit.org/changeset/104633">104633</a></span></td>
+        <td><span class="revision" title="Revision 104633"><a href="https://trac.webkit.org/changeset/104633">104633</a></span></td>
         <td class="failure">failure</td>    <td><a href=".../37601">#37601</a></td>
         <td class="left">Failed compile-webkit</td>
       </tr>
@@ -363,27 +363,27 @@ class BuildBotTest(unittest.TestCase):
     <table>
       <tr class="alt">
         <td>Jan 10 15:49</td>
-        <td><span class="revision" title="Revision 104643"><a href="http://trac.webkit.org/changeset/104643">104643</a></span></td>
+        <td><span class="revision" title="Revision 104643"><a href="https://trac.webkit.org/changeset/104643">104643</a></span></td>
         <td class="success">failure</td>
       </tr>
       <tr class="">
         <td>Jan 10 15:32</td>
-        <td><span class="revision" title="Revision 104636"><a href="http://trac.webkit.org/changeset/104636">104636</a></span></td>
+        <td><span class="revision" title="Revision 104636"><a href="https://trac.webkit.org/changeset/104636">104636</a></span></td>
         <td class="success">failure</td>
       </tr>
       <tr class="alt">
         <td>Jan 10 15:18</td>
-        <td><span class="revision" title="Revision 104635"><a href="http://trac.webkit.org/changeset/104635">104635</a></span></td>
+        <td><span class="revision" title="Revision 104635"><a href="https://trac.webkit.org/changeset/104635">104635</a></span></td>
         <td class="success">failure</td>
       </tr>
       <tr class="">
           <td>Jan 10 11:58</td>
-          <td><span class="revision" title="Revision ??"><a href="http://trac.webkit.org/changeset/%3F%3F">??</a></span></td>
+          <td><span class="revision" title="Revision ??"><a href="https://trac.webkit.org/changeset/%3F%3F">??</a></span></td>
           <td class="retry">retry</td>
         </tr>
       <tr class="">
         <td>Jan 10 14:51</td>
-        <td><span class="revision" title="Revision 104633"><a href="http://trac.webkit.org/changeset/104633">104633</a></span></td>
+        <td><span class="revision" title="Revision 104633"><a href="https://trac.webkit.org/changeset/104633">104633</a></span></td>
         <td class="failure">failure</td>
       </tr>
     </table>

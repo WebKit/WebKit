@@ -36,7 +36,7 @@ class CommitterValidatorTest(unittest.TestCase):
     def test_flag_permission_rejection_message(self):
         validator = CommitterValidator(MockHost())
         self.assertEqual(validator._contributors_json_path(), "Tools/Scripts/webkitpy/common/config/contributors.json")
-        expected_messsage = """foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/contributors.json.
+        expected_messsage = """foo@foo.com does not have review permissions according to https://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/contributors.json.
 
 - If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 

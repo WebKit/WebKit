@@ -1,3 +1,56 @@
+2017-10-11  Tomas Popela  <tpopela@redhat.com>
+
+        Use https for trac changeset and browser links
+        https://bugs.webkit.org/show_bug.cgi?id=178167
+
+        Reviewed by Alexey Proskuryakov.
+
+        Switch the http://trac.webkit.org/changeset and
+        http://trac.webkit.org/browser links that are printed by webkitpy to
+        https. Also update the test expectations.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/config/committervalidator_unittest.py:
+        (CommitterValidatorTest.test_flag_permission_rejection_message):
+        * Scripts/webkitpy/common/config/urls.py:
+        (view_source_url):
+        (view_revision_url):
+        * Scripts/webkitpy/common/net/bugzilla/bug_unittest.py:
+        (BugTest.test_commit_revision):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (MainTest):
+        (MainTest.test_run_with_upload_json_should_generate_perf_webkit_json):
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py:
+        (ChangeLogCheckerTest.test_missing_bug_number):
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_rollout):
+        (IRCBotTest.test_revert):
+        (IRCBotTest.test_multi_rollout):
+        (IRCBotTest.test_rollout_with_r_in_svn_revision):
+        (IRCBotTest.test_multi_rollout_with_r_in_svn_revision):
+        (IRCBotTest.test_rollout_invalidate_reason):
+        (test_multi_rollout_invalidate_reason):
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/newcommitbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (SuggestNominations._count_commit):
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/servers/data/rebaselineserver/util.js:
+        (getTracUrl):
+        (getSortedKeys):
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        (CloseBugForLandDiffTest.test_empty_state):
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        (CommitTest._test_check_test_expectations):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+        (UpdateChangeLogsForRevertTest):
+
 2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable custom pasteboard data in DumpRenderTree and WebKitTestRunner

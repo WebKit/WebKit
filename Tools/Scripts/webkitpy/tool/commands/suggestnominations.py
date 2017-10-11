@@ -202,7 +202,7 @@ class SuggestNominations(AbstractCommitLogCommand):
         counter['count'] = counter.get('count', 0) + 1
 
         if revision.isdigit():
-            revision = "http://trac.webkit.org/changeset/" + revision
+            revision = "https://trac.webkit.org/changeset/" + revision
         counter['commits'] += "  commit: %s on %s by %s (%s)\n" % (revision, commit_date, author_name, author_email)
 
     def _count_recent_patches(self):

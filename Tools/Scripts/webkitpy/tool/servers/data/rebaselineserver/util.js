@@ -90,7 +90,7 @@ function toggle(id)
 
 function getTracUrl(layoutTestPath)
 {
-  return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + layoutTestPath;
+  return 'https://trac.webkit.org/browser/trunk/LayoutTests/' + layoutTestPath;
 }
 
 function getSortedKeys(obj)

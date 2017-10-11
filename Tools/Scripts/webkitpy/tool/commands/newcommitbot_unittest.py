@@ -88,7 +88,7 @@ Reviewed by Sam Weinig.
 r143104 | commit-queue@webkit.org | 2013-02-16 09:09:01 -0800 (Sat, 16 Feb 2013) | 27 lines
 
 Unreviewed, rolling out r142734.
-http://trac.webkit.org/changeset/142734
+https://trac.webkit.org/changeset/142734
 https://bugs.webkit.org/show_bug.cgi?id=110018
 
 "Triggered crashes on lots of websites" (Requested by ggaren
@@ -124,8 +124,8 @@ Reverting 139877. It made a couple of API tests fail.
 r135487 | commit-queue@webkit.org | 2012-11-22 00:09:25 -0800 (Thu, 22 Nov 2012) | 52 lines
 
 Unreviewed, rolling out r134927 and r134944.
-http://trac.webkit.org/changeset/134927
-http://trac.webkit.org/changeset/134944
+https://trac.webkit.org/changeset/134927
+https://trac.webkit.org/changeset/134944
 https://bugs.webkit.org/show_bug.cgi?id=103028
 
 Reverting the reverts after merging. (Requested by vsevik on

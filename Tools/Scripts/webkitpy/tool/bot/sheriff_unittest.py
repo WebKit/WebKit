@@ -67,19 +67,19 @@ class SheriffTest(unittest.TestCase):
 
         expected_logs = u"""MOCK bug comment: bug_id=1234, cc=['watcher@example.com']
 --- Begin comment ---
-http://trac.webkit.org/changeset/4321 might have broken Foo and Bar
+https://trac.webkit.org/changeset/4321 might have broken Foo and Bar
 --- End comment ---
 
 MOCK bug comment: bug_id=1234, cc=['watcher@example.com']
 --- Begin comment ---
-http://trac.webkit.org/changeset/4321 might have broken Foo and Bar
+https://trac.webkit.org/changeset/4321 might have broken Foo and Bar
 The following tests are not passing:
 mock-test-1
 --- End comment ---
 
 MOCK bug comment: bug_id=1234, cc=['watcher@example.com']
 --- Begin comment ---
-http://trac.webkit.org/changeset/4321 might have broken Foo and Bar
+https://trac.webkit.org/changeset/4321 might have broken Foo and Bar
 The following tests are not passing:
 mock-test-1
 mock-test-2

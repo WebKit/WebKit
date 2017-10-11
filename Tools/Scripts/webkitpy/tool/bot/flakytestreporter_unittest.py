@@ -76,7 +76,7 @@ bug_description: This is an automatically generated bug from the dummy-queue.
 foo/bar.html has been flaky on the dummy-queue.
 
 foo/bar.html was authored by test@test.com.
-http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
+https://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
 FLAKE_MESSAGE
 
@@ -112,7 +112,7 @@ bug_description: This is an automatically generated bug from the dummy-queue.
 foo/bar.html has been flaky on the dummy-queue.
 
 foo/bar.html was authored by abarth@webkit.org.
-http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
+https://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
 The dummy-queue just saw foo/bar.html flake (text diff) while processing attachment 10000 on bug 50000.
 Bot: mock-bot-id  Port: MockPort  Platform: MockPlatform 1.0

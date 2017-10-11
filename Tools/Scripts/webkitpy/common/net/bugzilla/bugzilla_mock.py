@@ -181,7 +181,7 @@ _bug2 = {
     "bug_status": "ASSIGNED",
     "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Message1.\nCommitted r35: <http://trac.webkit.org/changeset/35>",
+                  "text": "Message1.\nCommitted r35: <https://trac.webkit.org/changeset/35>",
                   },
                  ],
 }
@@ -197,11 +197,11 @@ _bug3 = {
     "bug_status": "NEW",
     "comments":  [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                    "comment_email": "bar@foo.com",
-                   "text": "Committed r30: <http://trac.webkit.org/changeset/30>",
+                   "text": "Committed r30: <https://trac.webkit.org/changeset/30>",
                    },
                   {"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                    "comment_email": "bar@foo.com",
-                   "text": "Committed r31: <http://trac.webkit.org/changeset/31>",
+                   "text": "Committed r31: <https://trac.webkit.org/changeset/31>",
                    },
                   ],
 }
@@ -217,11 +217,11 @@ _bug4 = {
     "bug_status": "REOPENED",
     "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Committed r25: <http://trac.webkit.org/changeset/30>",
+                  "text": "Committed r25: <https://trac.webkit.org/changeset/30>",
                   },
                  {"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Rolled out in <http://trac.webkit.org/changeset/26",
+                  "text": "Rolled out in <https://trac.webkit.org/changeset/26",
                   },
                  ],
 }
@@ -238,7 +238,7 @@ _bug5 = {
     "dup_id": 50002,
     "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Committed r15: <http://trac.webkit.org/changeset/15>",
+                  "text": "Committed r15: <https://trac.webkit.org/changeset/15>",
                   },
                  ],
 
@@ -255,7 +255,7 @@ _bug6 = {
     "bug_status": "RESOLVED",
     "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Committed r95: <http://trac.webkit.org/changeset/95>",
+                  "text": "Committed r95: <https://trac.webkit.org/changeset/95>",
                   },
                  ],
 
@@ -272,7 +272,7 @@ _bug7 = {
     "bug_status": "RESOLVED",
     "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Message1.\nCommitted r105: <http://trac.webkit.org/changeset/105>",
+                  "text": "Message1.\nCommitted r105: <https://trac.webkit.org/changeset/105>",
                   },
                  ],
 }

@@ -37,5 +37,5 @@ class CloseBugForLandDiffTest(unittest.TestCase):
     def test_empty_state(self):
         capture = OutputCapture()
         step = CloseBugForLandDiff(MockTool(), MockOptions())
-        expected_logs = "Committed r49824: <http://trac.webkit.org/changeset/49824>\nNo bug id provided.\n"
+        expected_logs = "Committed r49824: <https://trac.webkit.org/changeset/49824>\nNo bug id provided.\n"
         capture.assert_outputs(self, step.run, [{"commit_text": "Mock commit text"}], expected_logs=expected_logs)

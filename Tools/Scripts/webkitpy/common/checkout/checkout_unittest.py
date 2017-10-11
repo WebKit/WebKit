@@ -121,11 +121,11 @@ _changelog6 = u"""2014-06-23  Daniel Bates  <dabates@apple.com>
         Reverted changesets:
 
         "[Win] Build fix after r134209"
-        http://trac.webkit.org/changeset/170340
+        https://trac.webkit.org/changeset/170340
 
         "[Win] Clean up and refactor WinLauncher"
         https://bugs.webkit.org/show_bug.cgi?id=134209
-        http://trac.webkit.org/changeset/170339
+        https://trac.webkit.org/changeset/170339
 """
 
 
@@ -286,11 +286,11 @@ Changeset r170339 broke the Apple Windows Debug and Release builds.
 Reverted changesets:
 
 "[Win] Build fix after r134209"
-http://trac.webkit.org/changeset/170340
+https://trac.webkit.org/changeset/170340
 
 "[Win] Clean up and refactor WinLauncher"
 https://bugs.webkit.org/show_bug.cgi?id=134209
-http://trac.webkit.org/changeset/170339
+https://trac.webkit.org/changeset/170339
 
 Patch by Daniel Bates <dabates@apple.com> on 2014-06-23
 """
@@ -312,11 +312,11 @@ Changeset r170339 broke the Apple Windows Debug and Release builds.
 Reverted changesets:
 
 "[Win] Build fix after r134209"
-http://trac.webkit.org/changeset/170340
+https://trac.webkit.org/changeset/170340
 
 "[Win] Clean up and refactor WinLauncher"
 https://bugs.webkit.org/show_bug.cgi?id=134209
-http://trac.webkit.org/changeset/170339
+https://trac.webkit.org/changeset/170339
 
 Patch by Daniel Bates <dabates@apple.com> on 2014-06-23
 """

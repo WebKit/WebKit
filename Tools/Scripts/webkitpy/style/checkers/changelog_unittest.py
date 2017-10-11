@@ -86,7 +86,7 @@ class ChangeLogCheckerTest(unittest.TestCase):
                           '\n'
                           '        Example bug'
                           '\n'
-                          '        http://trac.webkit.org/changeset/12345\n')
+                          '        https://trac.webkit.org/changeset/12345\n')
         self.assert_error(2, range(2, 5), 'changelog/bugnumber',
                           '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
                           '        Example bug\n'
