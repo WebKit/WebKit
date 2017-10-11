@@ -84,7 +84,7 @@ static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidate(c
     lineItem.amount = item.amount.value;
     lineItem.type = item.pending ? ApplePaySessionPaymentRequest::LineItem::Type::Pending : ApplePaySessionPaymentRequest::LineItem::Type::Final;
     lineItem.label = item.label;
-    return lineItem;
+    return { WTFMove(lineItem) };
 }
 
 static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndValidate(const Vector<PaymentItem>& lineItems, const String& expectedCurrency)
@@ -97,7 +97,7 @@ static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndVa
             return convertedLineItem.releaseException();
         result.uncheckedAppend(convertedLineItem.releaseReturnValue());
     }
-    return result;
+    return { WTFMove(result) };
 }
 
 static ApplePaySessionPaymentRequest::ContactFields convert(const PaymentOptions& options)
@@ -135,7 +135,7 @@ static ExceptionOr<ApplePaySessionPaymentRequest::ShippingMethod> convertAndVali
     result.amount = shippingOption.amount.value;
     result.label = shippingOption.label;
     result.identifier = shippingOption.id;
-    return result;
+    return { WTFMove(result) };
 }
 
 ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::ExecState& execState, JSC::JSValue&& data)
