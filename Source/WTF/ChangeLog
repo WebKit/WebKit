@@ -1,3 +1,21 @@
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223111. rdar://problem/34920353
+
+    2017-10-09  Tim Horton  <timothy_horton@apple.com>
+
+            Disable INPUT_TYPE_COLOR in FeatureDefines.h
+            https://bugs.webkit.org/show_bug.cgi?id=178103
+            <rdar://problem/34872127>
+
+            Reviewed by Simon Fraser.
+
+            * wtf/FeatureDefines.h:
+            Because FeatureDefines.h overrides features that are not enabled in
+            FeatureDefines.xcconfig, you currently have to turn INPUT_TYPE_COLOR
+            off in two places. Since we only ever want it on for Mac, it's OK
+            to depend on the xcconfig defining it.
+
 2017-09-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221917. rdar://problem/34404461
