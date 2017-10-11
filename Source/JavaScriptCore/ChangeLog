@@ -1,3 +1,12 @@
+2017-10-11  Michael Saboff  <msaboff@apple.com>
+
+        Update JavaScriptCore/ucd/CaseFolding.txt to Unicode database 10.0
+        https://bugs.webkit.org/show_bug.cgi?id=178106
+
+        Reviewed by Keith Miller.
+
+        * ucd/CaseFolding.txt:
+
 2017-10-11  Caio Lima  <ticaiolima@gmail.com>
 
         Object properties are undefined in super.call() but not in this.call()
