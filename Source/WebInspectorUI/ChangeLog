@@ -1,3 +1,19 @@
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222762. rdar://problem/34771420
+
+    2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Escape more characters in posix string conversion
+            https://bugs.webkit.org/show_bug.cgi?id=177761
+            <rdar://problem/34506832>
+
+            Reviewed by Brian Burg.
+
+            * UserInterface/Models/Resource.js:
+            (WI.Resource.prototype.generateCURLCommand.escapeStringPosix):
+            Escape '!' to '\041' in posix strings ($'...') since '!' may have special behavior at times.
+
 2017-07-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused and untested Page domain commands
