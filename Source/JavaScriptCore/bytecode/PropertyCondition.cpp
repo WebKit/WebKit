@@ -122,15 +122,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             return false;
         }
 
-        JSObject* currentPrototype;
-        if (structure->hasMonoProto())
-            currentPrototype = structure->storedPrototypeObject();
-        else {
-            RELEASE_ASSERT(base);
-            currentPrototype = jsDynamicCast<JSObject*>(*structure->vm(), base->getPrototypeDirect());
-        }
-
-        if (currentPrototype != prototype()) {
+        if (structure->storedPrototypeObject() != prototype()) {
             if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the prototype is ", structure->storedPrototype(), " even though "

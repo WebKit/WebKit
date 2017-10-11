@@ -1634,7 +1634,8 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
         prototype.asCell()->didBecomePrototype();
     
     if (structure(vm)->hasMonoProto()) {
-        Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype);
+        DeferredStructureTransitionWatchpointFire deferred;
+        Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype, deferred);
         setStructure(vm, newStructure);
     } else
         putDirect(vm, structure(vm)->polyProtoOffset(), prototype);

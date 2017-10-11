@@ -1,3 +1,33 @@
+2017-10-10  Saam Barati  <sbarati@apple.com>
+
+        Prototype structure transition should be a deferred transition
+        https://bugs.webkit.org/show_bug.cgi?id=177734
+
+        Reviewed by Keith Miller.
+
+        Absence ObjectPropertyConditions work by verifying both that the Structure 
+        does not have a particular property and that its prototype has
+        remained constant. However, the prototype transition was firing
+        the transition watchpoint before setting the object's structure.
+        This meant that isValid for Absence would never return false because
+        the prototype changed. Clearly this is wrong. The reason this didn't
+        break OPCs in general is that we'd also check if we could still watch
+        the OPC. In this case, we can't still watch it because we're inspecting
+        a structure with an invalidated transition watchpoint. To fix
+        this weird quirk of the code, I'm making it so that doing a prototype
+        transition uses the DeferredStructureTransitionWatchpointFire machinery.
+        
+        This patch also fixes some dead code that I left in regarding
+        poly proto in OPC.
+
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeDirect):
+        * runtime/Structure.cpp:
+        (JSC::Structure::changePrototypeTransition):
+        * runtime/Structure.h:
+
 2017-10-10  Robin Morisset  <rmorisset@apple.com>
 
         Avoid allocating useless landingBlocks in DFGByteCodeParser::handleInlining()

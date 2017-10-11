@@ -545,12 +545,12 @@ Structure* Structure::removePropertyTransition(VM& vm, Structure* structure, Pro
     return transition;
 }
 
-Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JSValue prototype)
+Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JSValue prototype, DeferredStructureTransitionWatchpointFire& deferred)
 {
     ASSERT(prototype.isObject() || prototype.isNull());
 
     DeferGC deferGC(vm.heap);
-    Structure* transition = create(vm, structure);
+    Structure* transition = create(vm, structure, &deferred);
 
     transition->m_prototype.set(vm, transition, prototype);
 
