@@ -54,9 +54,9 @@ public:
     static ExceptionOr<Ref<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
     ~PaymentRequest();
 
-    void show(ShowPromise&&);
+    void show(Document&, ShowPromise&&);
     ExceptionOr<void> abort(AbortPromise&&);
-    void canMakePayment(CanMakePaymentPromise&&);
+    void canMakePayment(Document&, CanMakePaymentPromise&&);
 
     const String& id() const;
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
@@ -103,7 +103,6 @@ private:
     RefPtr<PaymentAddress> m_shippingAddress;
     State m_state { State::Created };
     std::optional<ShowPromise> m_showPromise;
-    std::optional<CanMakePaymentPromise> m_canMakePaymentPromise;
     RefPtr<PaymentHandler> m_activePaymentHandler;
 };
 

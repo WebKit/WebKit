@@ -340,8 +340,17 @@ PaymentRequest::~PaymentRequest()
     ASSERT(!m_activePaymentHandler);
 }
 
+static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const String& string)
+{
+    auto scope = DECLARE_THROW_SCOPE(context.vm());
+    JSC::JSValue data = JSONParse(context.execState(), string);
+    if (scope.exception())
+        return Exception { ExistingExceptionError };
+    return WTFMove(data);
+}
+
 // https://www.w3.org/TR/payment-request/#show()-method
-void PaymentRequest::show(ShowPromise&& promise)
+void PaymentRequest::show(Document& document, ShowPromise&& promise)
 {
     // FIXME: Reject promise with SecurityError if show() was not triggered by a user gesture.
     // Find a way to do this without breaking the payment-request web platform tests.
@@ -351,7 +360,6 @@ void PaymentRequest::show(ShowPromise&& promise)
         return;
     }
 
-    auto& document = downcast<Document>(*scriptExecutionContext());
     if (PaymentHandler::hasActiveSession(document)) {
         promise.reject(Exception { AbortError });
         return;
@@ -363,10 +371,9 @@ void PaymentRequest::show(ShowPromise&& promise)
 
     RefPtr<PaymentHandler> selectedPaymentHandler;
     for (auto& paymentMethod : m_serializedMethodData) {
-        auto scope = DECLARE_THROW_SCOPE(document.vm());
-        JSC::JSValue data = JSONParse(document.execState(), paymentMethod.serializedData);
-        if (scope.exception()) {
-            m_showPromise->reject(Exception { ExistingExceptionError });
+        auto data = parse(document, paymentMethod.serializedData);
+        if (data.hasException()) {
+            m_showPromise->reject(data.releaseException());
             return;
         }
 
@@ -374,7 +381,7 @@ void PaymentRequest::show(ShowPromise&& promise)
         if (!handler)
             continue;
 
-        auto result = handler->convertData(*document.execState(), WTFMove(data));
+        auto result = handler->convertData(*document.execState(), data.releaseReturnValue());
         if (result.hasException()) {
             m_showPromise->reject(result.releaseException());
             return;
@@ -389,11 +396,30 @@ void PaymentRequest::show(ShowPromise&& promise)
         return;
     }
 
+    auto exception = selectedPaymentHandler->show(document);
+    if (exception.hasException()) {
+        m_showPromise->reject(exception.releaseException());
+        return;
+    }
+
     ASSERT(!m_activePaymentHandler);
     m_activePaymentHandler = WTFMove(selectedPaymentHandler);
+    setPendingActivity(this); // unsetPendingActivity() is called below in stop()
+}
 
-    m_activePaymentHandler->show(document);
-    setPendingActivity(this);
+void PaymentRequest::stop()
+{
+    if (m_state != State::Interactive)
+        return;
+
+    if (auto paymentHandler = std::exchange(m_activePaymentHandler, nullptr)) {
+        unsetPendingActivity(this);
+        paymentHandler->hide(downcast<Document>(*scriptExecutionContext()));
+    }
+
+    ASSERT(m_state == State::Interactive);
+    m_state = State::Closed;
+    m_showPromise->reject(Exception { AbortError });
 }
 
 // https://www.w3.org/TR/payment-request/#abort()-method
@@ -408,14 +434,32 @@ ExceptionOr<void> PaymentRequest::abort(AbortPromise&& promise)
 }
 
 // https://www.w3.org/TR/payment-request/#canmakepayment()-method
-void PaymentRequest::canMakePayment(CanMakePaymentPromise&& promise)
+void PaymentRequest::canMakePayment(Document& document, CanMakePaymentPromise&& promise)
 {
     if (m_state != State::Created) {
         promise.reject(Exception { InvalidStateError });
         return;
     }
 
-    // FIXME: Resolve the promise with true if we can support any of the payment methods in m_serializedMethodData.
+    for (auto& paymentMethod : m_serializedMethodData) {
+        auto data = parse(document, paymentMethod.serializedData);
+        if (data.hasException())
+            continue;
+
+        auto handler = PaymentHandler::create(*this, paymentMethod.identifier);
+        if (!handler)
+            continue;
+
+        auto exception = handler->convertData(*document.execState(), data.releaseReturnValue());
+        if (exception.hasException())
+            continue;
+
+        handler->canMakePayment(document, [promise = WTFMove(promise)](bool canMakePayment) mutable {
+            promise.resolve(canMakePayment);
+        });
+        return;
+    }
+
     promise.resolve(false);
 }
 
@@ -441,21 +485,6 @@ bool PaymentRequest::canSuspendForDocumentSuspension() const
     case State::Interactive:
         return !m_activePaymentHandler;
     }
-}
-
-void PaymentRequest::stop()
-{
-    if (m_state != State::Interactive)
-        return;
-
-    if (auto paymentHandler = std::exchange(m_activePaymentHandler, nullptr)) {
-        unsetPendingActivity(this);
-        paymentHandler->hide(downcast<Document>(*scriptExecutionContext()));
-    }
-
-    ASSERT(m_state == State::Interactive);
-    m_state = State::Closed;
-    m_showPromise->reject(Exception { AbortError });
 }
 
 } // namespace WebCore

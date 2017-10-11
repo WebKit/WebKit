@@ -1,3 +1,16 @@
+2017-10-10  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement PaymentRequest.canMakePayment()
+        https://bugs.webkit.org/show_bug.cgi?id=178048
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https.html: Added.
+        * http/tests/ssl/applepay/PaymentRequest.https.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM

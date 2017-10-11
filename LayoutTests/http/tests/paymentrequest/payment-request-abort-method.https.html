@@ -18,6 +18,7 @@ const applePay = Object.freeze({
     supportedMethods: "https://apple.com/apple-pay",
     data: {
         version: 2,
+        merchantIdentifier: '',
         merchantCapabilities: ['supports3DS'],
         supportedNetworks: ['visa', 'masterCard'],
         countryCode: 'US',

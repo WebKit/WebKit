@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
 
-#include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayRequest.h"
 #include "PaymentHandler.h"
 #include "PaymentSession.h"
 #include <wtf/Noncopyable.h>
@@ -48,8 +48,9 @@ private:
 
     // PaymentHandler
     ExceptionOr<void> convertData(JSC::ExecState&, JSC::JSValue&&) final;
-    void show(Document&) final;
+    ExceptionOr<void> show(Document&) final;
     void hide(Document&) final;
+    void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) final;
 
     // PaymentSession
     void validateMerchant(const URL&) final { }
@@ -60,7 +61,7 @@ private:
     void didCancelPaymentSession() final { }
 
     Ref<PaymentRequest> m_paymentRequest;
-    std::optional<ApplePaySessionPaymentRequest> m_applePayRequest;
+    std::optional<ApplePayRequest> m_applePayRequest;
 };
 
 } // namespace WebCore

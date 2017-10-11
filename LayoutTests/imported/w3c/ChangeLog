@@ -1,3 +1,12 @@
+2017-10-10  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement PaymentRequest.canMakePayment()
+        https://bugs.webkit.org/show_bug.cgi?id=178048
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method.https-expected.txt: Removed.
+
 2017-10-09  Chris Dumez  <cdumez@apple.com>
 
         It should not be possible to submit a form that is disconnected

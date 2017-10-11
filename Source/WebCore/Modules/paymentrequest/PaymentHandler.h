@@ -29,6 +29,7 @@
 
 #include "PaymentRequest.h"
 #include "PaymentSessionBase.h"
+#include <wtf/Function.h>
 
 namespace JSC {
 class ExecState;
@@ -45,8 +46,9 @@ public:
     static bool hasActiveSession(Document&);
 
     virtual ExceptionOr<void> convertData(JSC::ExecState&, JSC::JSValue&&) = 0;
-    virtual void show(Document&) = 0;
+    virtual ExceptionOr<void> show(Document&) = 0;
     virtual void hide(Document&) = 0;
+    virtual void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) = 0;
 };
 
 } // namespace WebCore

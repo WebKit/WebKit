@@ -33,6 +33,7 @@ namespace WebCore {
 
 struct ApplePayRequest : public ApplePayRequestBase {
     unsigned long version;
+    String merchantIdentifier;
 };
 
 } // namespace WebCore

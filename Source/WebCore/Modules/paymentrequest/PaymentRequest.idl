@@ -32,9 +32,9 @@
     EnabledBySetting=PaymentRequest,
     SecureContext
 ] interface PaymentRequest : EventTarget {
-    Promise<PaymentResponse> show();
+    [CallWith=Document] Promise<PaymentResponse> show();
     [MayThrowException] Promise<void> abort();
-    Promise<boolean> canMakePayment();
+    [CallWith=Document] Promise<boolean> canMakePayment();
 
     readonly attribute DOMString id;
     readonly attribute PaymentAddress? shippingAddress;

@@ -32,13 +32,14 @@
 #include "ApplePayMerchantCapability.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "Document.h"
-#include "Frame.h"
 #include "JSApplePayRequest.h"
 #include "LinkIconCollector.h"
 #include "MainFrame.h"
+#include "Page.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
 #include "PaymentRequestValidator.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -108,7 +109,7 @@ static ApplePaySessionPaymentRequest::ShippingType convert(PaymentShippingType t
     ASSERT_NOT_REACHED();
     return ApplePaySessionPaymentRequest::ShippingType::Shipping;
 }
-    
+
 static ApplePaySessionPaymentRequest::ShippingMethod convert(const PaymentShippingOption& shippingOption)
 {
     ApplePaySessionPaymentRequest::ShippingMethod result;
@@ -125,7 +126,13 @@ ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::ExecState& execState,
     if (throwScope.exception())
         return Exception { ExistingExceptionError };
 
-    auto validatedRequest = convertAndValidate(applePayRequest.version, applePayRequest);
+    m_applePayRequest = WTFMove(applePayRequest);
+    return { };
+}
+
+ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
+{
+    auto validatedRequest = convertAndValidate(m_applePayRequest->version, *m_applePayRequest);
     if (validatedRequest.hasException())
         return validatedRequest.releaseException();
 
@@ -154,22 +161,36 @@ ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::ExecState& execState,
     if (exception.hasException())
         return exception.releaseException();
 
-    m_applePayRequest = WTFMove(request);
-    return { };
-}
-
-void ApplePayPaymentHandler::show(Document& document)
-{
     Vector<URL> linkIconURLs;
     for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
         linkIconURLs.append(icon.url);
 
-    paymentCoordinator(document).beginPaymentSession(*this, document.url(), linkIconURLs, *m_applePayRequest);
+    paymentCoordinator(document).beginPaymentSession(*this, document.url(), linkIconURLs, request);
+    return { };
 }
 
 void ApplePayPaymentHandler::hide(Document& document)
 {
     paymentCoordinator(document).abortPaymentSession();
+}
+
+static bool shouldDiscloseApplePayCapability(Document& document)
+{
+    auto* page = document.page();
+    if (!page || page->usesEphemeralSession())
+        return false;
+
+    return document.settings().applePayCapabilityDisclosureAllowed();
+}
+
+void ApplePayPaymentHandler::canMakePayment(Document& document, WTF::Function<void(bool)>&& completionHandler)
+{
+    if (!shouldDiscloseApplePayCapability(document)) {
+        completionHandler(paymentCoordinator(document).canMakePayments());
+        return;
+    }
+
+    paymentCoordinator(document).canMakePaymentsWithActiveCard(m_applePayRequest->merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
 
 } // namespace WebCore
