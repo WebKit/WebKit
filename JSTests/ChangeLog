@@ -1,3 +1,18 @@
+2017-10-11  Michael Saboff  <msaboff@apple.com>
+
+        Disable test262 named capture group tests with direct unicode names and with references before definitions
+        https://bugs.webkit.org/show_bug.cgi?id=178177
+
+        Reviewed by Keith Miller.
+
+        Bugs to track fixing these test are:
+        https://bugs.webkit.org/show_bug.cgi?id=178174 -
+            "Add support in named capture group identifiers for direct surrogate pairs"
+        https://bugs.webkit.org/show_bug.cgi?id=178175 -
+            "Test262 failure with Named Capture Groups - using a reference before the group is defined"
+
+        * test262.yaml:
+
 2017-10-11  Caio Lima  <ticaiolima@gmail.com>
 
         Object properties are undefined in super.call() but not in this.call()
