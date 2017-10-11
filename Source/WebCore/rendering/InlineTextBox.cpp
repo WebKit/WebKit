@@ -588,30 +588,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (paintInfo.phase == PaintPhaseForeground) {
         paintDocumentMarkers(context, boxOrigin, false);
 
-        if (useCustomUnderlines) {
-            const Vector<CompositionUnderline>& underlines = renderer().frame().editor().customCompositionUnderlines();
-            size_t numUnderlines = underlines.size();
-
-            for (size_t index = 0; index < numUnderlines; ++index) {
-                const CompositionUnderline& underline = underlines[index];
-
-                if (underline.endOffset <= start())
-                    // underline is completely before this run.  This might be an underline that sits
-                    // before the first run we draw, or underlines that were within runs we skipped 
-                    // due to truncation.
-                    continue;
-                
-                if (underline.startOffset <= end()) {
-                    // underline intersects this run.  Paint it.
-                    paintCompositionUnderline(context, boxOrigin, underline);
-                    if (underline.endOffset > end() + 1)
-                        // underline also runs into the next run. Bail now, no more marker advancement.
-                        break;
-                } else
-                    // underline is completely after this run, bail.  A later run will paint it.
-                    break;
-            }
-        }
+        if (useCustomUnderlines)
+            paintCompositionUnderlines(context, boxOrigin);
     }
     
     if (shouldRotate)
@@ -963,7 +941,31 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPo
     }
 }
 
-void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const FloatPoint& boxOrigin, const CompositionUnderline& underline)
+void InlineTextBox::paintCompositionUnderlines(GraphicsContext& context, const FloatPoint& boxOrigin) const
+{
+    if (m_truncation == cFullTruncation)
+        return;
+
+    for (auto& underline : renderer().frame().editor().customCompositionUnderlines()) {
+        if (underline.endOffset <= m_start) {
+            // Underline is completely before this run. This might be an underline that sits
+            // before the first run we draw, or underlines that were within runs we skipped
+            // due to truncation.
+            continue;
+        }
+
+        if (underline.startOffset > end())
+            break; // Underline is completely after this run, bail. A later run will paint it.
+
+        // Underline intersects this run. Paint it.
+        paintCompositionUnderline(context, boxOrigin, underline);
+
+        if (underline.endOffset > end() + 1)
+            break; // Underline also runs into the next run. Bail now, no more marker advancement.
+    }
+}
+
+void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const FloatPoint& boxOrigin, const CompositionUnderline& underline) const
 {
     if (m_truncation == cFullTruncation)
         return;
