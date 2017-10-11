@@ -34,13 +34,16 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
         this._layers = [];
+        this._layerGroupsById = new Map;
+        this._selectedLayerGroup = null;
         this._layersChangedWhileHidden = false;
+
         this._renderer = null;
         this._camera = null;
         this._controls = null;
-        this._boundsGroup = null;
-        this._compositedBoundsGroup = null;
         this._scene = null;
+        this._raycaster = null;
+        this._mouse = null;
         this._animationFrameRequestId = null;
     }
 
@@ -79,6 +82,12 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         super.closed();
     }
 
+    selectLayerById(layerId)
+    {
+        let layerGroup = this._layerGroupsById.get(layerId);
+        this._updateLayerGroupSelection(layerGroup);
+    }
+
     // Protected
 
     initialLayout()
@@ -100,13 +109,12 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._controls.minAzimuthAngle = -Math.PI / 2;
         this._controls.maxAzimuthAngle = Math.PI / 2;
 
-        this._boundsGroup = new THREE.Group();
-        this._compositedBoundsGroup = new THREE.Group();
-
-        this._scene = new THREE.Scene();
+        this._scene = new THREE.Scene;
         this._scene.position.set(-this.element.offsetWidth / 2, this.element.offsetHeight / 2, 0);
-        this._scene.add(this._boundsGroup);
-        this._scene.add(this._compositedBoundsGroup);
+
+        this._raycaster = new THREE.Raycaster;
+        this._mouse = new THREE.Vector2;
+        this._renderer.domElement.addEventListener("mousedown", this._canvasMouseDown.bind(this));
 
         this.element.appendChild(this._renderer.domElement);
 
@@ -120,11 +128,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         WI.domTreeManager.requestDocument((node) => {
             WI.layerTreeManager.layersForNode(node, (layerForNode, childLayers) => {
-                this._clearLayers();
-                for (let i = 0; i < childLayers.length; i++)
-                    this._addLayer(childLayers[i], i);
-
-                this._layers = childLayers;
+                this._updateLayers(childLayers);
                 this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
             });
         });
@@ -166,30 +170,58 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._animationFrameRequestId = null;
     }
 
-    _clearLayers()
+    _updateLayers(newLayers)
     {
-        this._boundsGroup.children.length = 0;
-        this._compositedBoundsGroup.children.length = 0;
+        // FIXME: This should be made into the basic usage of the manager, if not the agent itself.
+        //        At that point, we can remove this duplication from the visualization and sidebar.
+        let {removals, additions, preserved} = WI.layerTreeManager.layerTreeMutations(this._layers, newLayers);
+
+        for (let layer of removals) {
+            let layerGroup = this._layerGroupsById.get(layer.layerId);
+            this._scene.remove(layerGroup);
+            this._layerGroupsById.delete(layer.layerId);
+        }
+
+        if (this._selectedLayerGroup && !this._layerGroupsById.get(this._selectedLayerGroup.userData.layerId))
+            this.selectedLayerGroup = null;
+
+        additions.forEach(this._addLayerGroup, this);
+        preserved.forEach(this._updateLayerGroupPosition, this);
+
+        this._layers = newLayers;
     }
 
-    _addLayer(layer, index)
+    _addLayerGroup(layer, index)
     {
-        this._boundsGroup.add(this._createLayerMesh(layer.bounds, index));
-        this._compositedBoundsGroup.add(this._createLayerMesh(layer.compositedBounds, index, true));
+        let layerGroup = new THREE.Group;
+        layerGroup.userData.layerId = layer.layerId;
+        layerGroup.add(this._createLayerMesh(layer.bounds));
+        layerGroup.add(this._createLayerMesh(layer.compositedBounds, true));
+
+        this._layerGroupsById.set(layer.layerId, layerGroup);
+        this._updateLayerGroupPosition(layer, index);
+
+        this._scene.add(layerGroup);
     }
 
-    _createLayerMesh(rect, index, isOutline = false)
-    {
+    _updateLayerGroupPosition(layer, index) {
+        let layerGroup = this._layerGroupsById.get(layer.layerId);
+        console.assert(layerGroup);
+
         const zInterval = 25;
+        layerGroup.position.set(layer.bounds.x, -layer.bounds.y, index * zInterval);
+    }
 
-        let geometry = new THREE.Geometry();
-        geometry.vertices.push(new THREE.Vector3(rect.x,              -rect.y,               index * zInterval));
-        geometry.vertices.push(new THREE.Vector3(rect.x + rect.width, -rect.y,               index * zInterval));
-        geometry.vertices.push(new THREE.Vector3(rect.x + rect.width, -rect.y - rect.height, index * zInterval));
-        geometry.vertices.push(new THREE.Vector3(rect.x,              -rect.y - rect.height, index * zInterval));
+    _createLayerMesh({width, height}, isOutline = false)
+    {
+        let geometry = new THREE.Geometry;
+        geometry.vertices.push(new THREE.Vector3(0,     0,       0));
+        geometry.vertices.push(new THREE.Vector3(width, 0,       0));
+        geometry.vertices.push(new THREE.Vector3(width, -height, 0));
+        geometry.vertices.push(new THREE.Vector3(0,     -height, 0));
 
         if (isOutline) {
-            let material = new THREE.LineBasicMaterial({color: "hsl(79, 45%, 50%)"});
+            let material = new THREE.LineBasicMaterial({color: WI.Layers3DContentView._layerColor.stroke});
             return new THREE.LineLoop(geometry, material);
         }
 
@@ -197,7 +229,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         geometry.faces.push(new THREE.Face3(1, 2, 3));
 
         let material = new THREE.MeshBasicMaterial({
-            color: "hsl(76, 49%, 75%)",
+            color: WI.Layers3DContentView._layerColor.fill,
             transparent: true,
             opacity: 0.4,
             side: THREE.DoubleSide,
@@ -205,4 +237,57 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         return new THREE.Mesh(geometry, material);
     }
+
+    _canvasMouseDown(event)
+    {
+        this._mouse.x = (event.offsetX / event.target.width) * 2 - 1;
+        this._mouse.y = -(event.offsetY / event.target.height) * 2 + 1;
+        this._raycaster.setFromCamera(this._mouse, this._camera);
+
+        const recursive = true;
+        let intersects = this._raycaster.intersectObjects(this._scene.children, recursive);
+        let selection = intersects.length ? intersects[0].object.parent : null;
+        if (selection && selection === this._selectedLayerGroup) {
+            if (!event.metaKey)
+                return;
+
+            selection = null;
+        }
+
+        this._updateLayerGroupSelection(selection);
+
+        let layerId = selection ? selection.userData.layerId : null;
+        this.dispatchEventToListeners(WI.Layers3DContentView.Event.SelectedLayerChanged, {layerId});
+    }
+
+    _updateLayerGroupSelection(layerGroup)
+    {
+        let setColor = ({fill, stroke}) => {
+            let [plane, outline] = this._selectedLayerGroup.children;
+            plane.material.color.set(fill);
+            outline.material.color.set(stroke);
+        };
+
+        if (this._selectedLayerGroup)
+            setColor(WI.Layers3DContentView._layerColor);
+
+        this._selectedLayerGroup = layerGroup;
+
+        if (this._selectedLayerGroup)
+            setColor(WI.Layers3DContentView._selectedLayerColor);
+    }
+};
+
+WI.Layers3DContentView._layerColor = {
+    fill: "hsl(76, 49%, 75%)",
+    stroke: "hsl(79, 45%, 50%)"
+};
+
+WI.Layers3DContentView._selectedLayerColor = {
+    fill: "hsl(208, 66%, 79%)",
+    stroke: "hsl(202, 57%, 68%)"
+};
+
+WI.Layers3DContentView.Event = {
+    SelectedLayerChanged: "selected-layer-changed"
 };

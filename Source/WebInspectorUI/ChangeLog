@@ -1,3 +1,51 @@
+2017-10-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Make 3D objects selectable in Layers visualization
+        https://bugs.webkit.org/show_bug.cgi?id=178136
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.initialLayout):
+        (WI.Layers3DContentView.prototype._canvasMouseDown):
+        (WI.Layers3DContentView.prototype._updateLayerGroupSelection):
+        Implement selection of 3D layer objects.
+        
+        (WI.Layers3DContentView.prototype._addLayerGroup): Renamed from _addLayer.
+        (WI.Layers3DContentView.prototype._updateLayerGroupPosition):
+        (WI.Layers3DContentView.prototype._createLayerMesh):
+        Refactor -- one group per layer (visible plane and composited outline), not groups by shape.
+
+        (WI.Layers3DContentView.prototype.layout):
+        (WI.Layers3DContentView.prototype._updateLayers):
+        (WI.Layers3DContentView.prototype._clearLayers): Deleted.
+        Don't destroy all 3D objects on every LayerTreeDidChange; make use of layerTreeMutations.
+        (Not only a performance improvement, but also necessary to properly preserve highlighting.) 
+        
+        (WI.Layers3DContentView.prototype.selectLayerById):
+        Allow selection to be updated from the outside.
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel.prototype.selectNodeByLayerId):
+        (WI.LayerDetailsSidebarPanel.prototype._buildDataGrid):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridSelectedNodeChanged):
+        Allow selection to be updated from the outside.
+
+        (WI.LayerDetailsSidebarPanel.prototype.inspect):
+        (WI.LayerDetailsSidebarPanel.prototype._updateLayers): Renamed from _updateDisplayWithLayers.
+        (WI.LayerDetailsSidebarPanel.prototype._updateDataGrid):
+        (WI.LayerDetailsSidebarPanel.prototype._updateBottomBar):
+        (WI.LayerDetailsSidebarPanel.prototype._contentForPopover):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridNodeForLayer): Deleted.
+        Cleanup.
+        
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView):
+        (WI.LayersTabContentView.prototype._detailsSidebarSelectedLayerChanged):
+        (WI.LayersTabContentView.prototype._contentViewSelectedLayerChanged):
+        Orchestrate communication of selection state between visualization and sidebar.
+
 2017-10-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Avoid "100.00ms" vs "100.0ms" jitter in TimelineRuler labels
