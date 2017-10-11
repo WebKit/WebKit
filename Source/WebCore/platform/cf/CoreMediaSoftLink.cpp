@@ -102,6 +102,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMSampleBufferGetTotalSampleSi
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStringRef key, CFTypeRef value, CMAttachmentMode attachmentMode), (target, key, value, attachmentMode))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimebaseCreateWithMasterClock, OSStatus, (CFAllocatorRef allocator, CMClockRef masterClock, CMTimebaseRef *timebaseOut), (allocator, masterClock, timebaseOut))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimebaseGetRate, Float64, (CMTimebaseRef timebase), (timebase))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimebaseSetRate, OSStatus, (CMTimebaseRef timebase, Float64 rate), (timebase, rate))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimebaseSetTime, OSStatus, (CMTimebaseRef timebase, CMTime time), (timebase, time))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMTimebaseGetEffectiveRate, Float64, (CMTimebaseRef timebase), (timebase))

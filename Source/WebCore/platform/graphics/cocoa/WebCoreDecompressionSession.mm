@@ -279,9 +279,12 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
         return;
     }
 
-    auto currentTime = CMTimebaseGetTime(m_timebase.get());
-    if (m_timebase && CMTimeCompare(presentationTimeStamp, currentTime) < 0)
-        m_totalFrameDelay += toMediaTime(CMTimeSubtract(currentTime, presentationTimeStamp));
+    if (displaying && m_timebase) {
+        auto currentTime = CMTimebaseGetTime(m_timebase.get());
+        auto currentRate = CMTimebaseGetRate(m_timebase.get());
+        if (currentRate > 0 && CMTimeCompare(presentationTimeStamp, currentTime) < 0)
+            m_totalFrameDelay += toMediaTime(CMTimeSubtract(currentTime, presentationTimeStamp));
+    }
 
     dispatch_async(m_enqueingQueue.get(), [protectedThis = makeRefPtr(this), status, imageSampleBuffer = adoptCF(rawImageSampleBuffer), infoFlags, displaying] {
         UNUSED_PARAM(infoFlags);
