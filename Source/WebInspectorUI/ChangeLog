@@ -1,5 +1,17 @@
 2017-10-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Avoid "100.00ms" vs "100.0ms" jitter in TimelineRuler labels
+        https://bugs.webkit.org/show_bug.cgi?id=178143
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Utilities.js:
+        Allow a small slop factor that wouldn't have changed the display value's
+        significant figures anyways. This addresses cases where 100.0000000000001
+        were being treated slightly differently from 100.0.
+
+2017-10-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab - Show initially loaded resources even if network info not logged
         https://bugs.webkit.org/show_bug.cgi?id=178098
         <rdar://problem/34073529>

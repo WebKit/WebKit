@@ -1089,19 +1089,21 @@ Object.defineProperty(Number, "secondsToString",
         if (!ms)
             return WI.UIString("%.0fms").format(0);
 
-        if (Math.abs(ms) < 10) {
+        const epsilon = 0.0001;
+
+        if (Math.abs(ms) < (10 + epsilon)) {
             if (higherResolution)
                 return WI.UIString("%.3fms").format(ms);
             return WI.UIString("%.2fms").format(ms);
         }
 
-        if (Math.abs(ms) < 100) {
+        if (Math.abs(ms) < (100 + epsilon)) {
             if (higherResolution)
                 return WI.UIString("%.2fms").format(ms);
             return WI.UIString("%.1fms").format(ms);
         }
 
-        if (Math.abs(ms) < 1000) {
+        if (Math.abs(ms) < (1000 + epsilon)) {
             if (higherResolution)
                 return WI.UIString("%.1fms").format(ms);
             return WI.UIString("%.0fms").format(ms);
