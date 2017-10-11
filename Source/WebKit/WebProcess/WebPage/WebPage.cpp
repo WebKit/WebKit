@@ -2723,12 +2723,20 @@ void WebPage::setSessionID(SessionID sessionID)
     m_page->setSessionID(sessionID);
 }
 
+#if PLATFORM(MAC)
 void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, const DownloadID& downloadID)
+#else
+void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, const DownloadID& downloadID, WebsitePolicies&& websitePolicies)
+#endif
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
+#if PLATFORM(MAC)
     frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), navigationID, downloadID);
+#else
+    frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), navigationID, downloadID, websitePolicies);
+#endif
 }
 
 void WebPage::didStartPageTransition()

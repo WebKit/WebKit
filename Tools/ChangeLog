@@ -1,3 +1,29 @@
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223084. rdar://problem/34857469
+
+    2017-10-09  Jason Marcell  <jmarcell@apple.com>
+
+            Apply patch. rdar://problem/34857459
+
+        Apply patch. rdar://problem/34857459
+
+        2017-10-06  Alex Christensen  <achristensen@webkit.org>
+
+                REGRESSION(r214201): WebProcess hangs during policy decisions
+                https://bugs.webkit.org/show_bug.cgi?id=177411
+                <rdar://problem/34815986>
+
+                Original patch reviewed by Geoffrey Garen, this is a modification that doesn't change Mac.
+
+                * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+                * TestWebKitAPI/Tests/WebKit2Cocoa/JavaScriptDuringNavigation.mm: Added.
+                (-[JSNavigationDelegate webView:didFinishNavigation:]):
+                (-[JSNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+                (-[JSNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+                (-[JSNavigationDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+                (TEST):
+
 2017-10-09  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220412. rdar://problem/34771061
