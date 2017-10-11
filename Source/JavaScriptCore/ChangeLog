@@ -1,3 +1,21 @@
+2017-10-10  Robin Morisset  <rmorisset@apple.com>
+
+        Avoid allocating useless landingBlocks in DFGByteCodeParser::handleInlining()
+        https://bugs.webkit.org/show_bug.cgi?id=177926
+
+        Reviewed by Saam Barati.
+
+        When doing polyvariant inlining, there used to be a landing block for each callee, each of which was then linked to a continuation block.
+        With this change, we allocate the continuation block first, and pass it to the inlining routine so that op_ret in the callee link directly to it.
+        The only subtlety is that when inlining an intrinsic we must do the jump by hand, and also remember to call processSetLocalQueue with nextOffset before it.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2017-10-10  Guillaume Emont  <guijemont@igalia.com>
 
         Fix compilation when MASM_PROBE (and therefore DFG) are disabled
