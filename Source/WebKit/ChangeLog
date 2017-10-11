@@ -1,3 +1,59 @@
+2017-10-11  Youenn Fablet  <youenn@apple.com>
+
+        Add API to clean CacheStorage data
+        https://bugs.webkit.org/show_bug.cgi?id=178034
+
+        Reviewed by Chris Dumez.
+
+        Introducing a new website data type for DOMCache.
+        Adding API to delete DOMCache for a given origin or for all origins.
+        This is added to WKWebsiteDataStore.
+
+        Cleaning a CacheStorage will remove all data in the Cache object but the object will stay live
+        for the duration of the NetworkProcess.
+        This allows ensuring that once a cache is cleaned, WebProcess will update to this new state.
+
+        Fetching of WebsiteData for DOMCache is not implemented yet since we do not keep a list of all origins for which we have data.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDOMCacheEntries):
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::cachesRootPath):
+        (WebKit::CacheStorage::Engine::fetchEntries):
+        (WebKit::CacheStorage::ClearTasksHandler::ClearTasksHandler):
+        (WebKit::CacheStorage::ClearTasksHandler::~ClearTasksHandler):
+        (WebKit::CacheStorage::Engine::clearEngines):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigins):
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        (WebKit::CacheStorage::deleteFolder):
+        (WebKit::CacheStorage::Engine::clearCaches):
+        (WebKit::CacheStorage::Engine::unlock): Removing the assertion as Cache objects are removed when clearing data.
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::clear):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::create):
+        * Shared/WebsiteData/WebsiteDataType.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveAllDOMCaches):
+        (WKWebsiteDataStoreRemoveDOMCacheForOrigin):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataType):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore allWebsiteDataTypes]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessTypeForDataFetch):
+        (WebKit::computeNetworkProcessAccessTypeForDataRemoval):
+
 2017-10-11  Chris Dumez  <cdumez@apple.com>
 
         [Geolocation] Expose Coordinates.floorLevel

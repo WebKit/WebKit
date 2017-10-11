@@ -161,6 +161,9 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataFetch(OptionSet<W
     if (dataTypes.contains(WebsiteDataType::DiskCache) && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
+    if (dataTypes.contains(WebsiteDataType::DOMCache))
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+
     return processAccessType;
 }
 
@@ -567,6 +570,9 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
     if (dataTypes.contains(WebsiteDataType::Credentials))
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+
+    if (dataTypes.contains(WebsiteDataType::DOMCache))
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
     return processAccessType;

@@ -66,6 +66,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/URLParser.h>
 #include <pal/SessionID.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/AtomicString.h>
@@ -407,6 +408,12 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             callbackAggregator->m_websiteData.entries.appendVector(entries);
         });
     }
+
+    if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
+        CacheStorage::Engine::fetchEntries(sessionID, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
+            callbackAggregator->m_websiteData.entries.appendVector(entries);
+        });
+    }
 }
 
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
@@ -427,17 +434,16 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         if (NetworkStorageSession::storageSession(sessionID))
             NetworkStorageSession::storageSession(sessionID)->credentialStorage().clearCredentials();
     }
-    
-    auto completionHandler = [this, callbackID] {
+
+    auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteData(callbackID), 0);
-    };
+    });
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
-        clearDiskCache(modifiedSince, WTFMove(completionHandler));
-        return;
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::DOMCache))
+        CacheStorage::Engine::clearAllEngines([clearTasksHandler = clearTasksHandler.copyRef()] { });
 
-    completionHandler();
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
+        clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
 }
 
 static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Function<void ()>&& completionHandler)
@@ -465,23 +471,26 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Fun
     RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
-void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
+void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& originDatas, const Vector<String>& cookieHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
             deleteCookiesForHostnames(*networkStorageSession, cookieHostNames);
     }
 
-    auto completionHandler = [this, callbackID] {
+    auto clearTasksHandler = WTF::CallbackAggregator::create([this, callbackID] {
         parentProcessConnection()->send(Messages::NetworkProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
-    };
+    });
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
-        clearDiskCacheEntries(origins, WTFMove(completionHandler));
-        return;
+    if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
+        auto origins = WTF::map(originDatas, [] (auto& originData) {
+            return originData.securityOrigin()->toString();
+        });
+        CacheStorage::Engine::clearEnginesForOrigins(origins, [clearTasksHandler = clearTasksHandler.copyRef()] { });
     }
 
-    completionHandler();
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
+        clearDiskCacheEntries(originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
 }
 
 void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedFilename)

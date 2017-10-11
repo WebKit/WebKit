@@ -27,6 +27,7 @@
 #include "CacheStorageEngine.h"
 
 #include "NetworkCacheCoders.h"
+#include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -37,24 +38,15 @@ namespace WebKit {
 
 namespace CacheStorage {
 
-static inline String cachesRootPath(Engine& engine, const String& origin)
-{
-    if (!engine.shouldPersist())
-        return { };
-
-    Key key(origin, { }, { }, { }, engine.salt());
-    return WebCore::pathByAppendingComponent(engine.rootPath(), key.partitionHashAsString());
-}
-
 static inline String cachesListFilename(const String& cachesRootPath)
 {
     return WebCore::pathByAppendingComponent(cachesRootPath, ASCIILiteral("cacheslist"));
 }
 
-Caches::Caches(Engine& engine, String&& origin, uint64_t quota)
+Caches::Caches(Engine& engine, String&& origin, String&& rootPath, uint64_t quota)
     : m_engine(&engine)
     , m_origin(WTFMove(origin))
-    , m_rootPath(cachesRootPath(engine, m_origin))
+    , m_rootPath(WTFMove(rootPath))
     , m_quota(quota)
 {
 }
@@ -126,6 +118,22 @@ void Caches::detach()
 {
     m_engine = nullptr;
     m_rootPath = { };
+}
+
+void Caches::clear(CompletionHandler<void()>&& completionHandler)
+{
+    if (m_engine)
+        m_engine->removeFile(cachesListFilename(m_rootPath));
+    if (m_storage) {
+        m_storage->clear(String { }, std::chrono::system_clock::time_point::min(), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+            ASSERT(RunLoop::isMain());
+            protectedThis->clearMemoryRepresentation();
+            completionHandler();
+        });
+        return;
+    }
+    clearMemoryRepresentation();
+    completionHandler();
 }
 
 Cache* Caches::find(const String& name)

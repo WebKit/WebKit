@@ -1,0 +1,5 @@
+
+PASS Cleaning existing caches 
+PASS Clearing disk cache of a given origin 
+PASS Clearing all disk cache 
+

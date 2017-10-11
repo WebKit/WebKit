@@ -27,6 +27,7 @@
 
 #include "CacheStorageEngineCache.h"
 #include "NetworkCacheStorage.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
@@ -36,12 +37,11 @@ class Engine;
 
 class Caches : public RefCounted<Caches> {
 public:
-    static Ref<Caches> create(Engine& engine, String&& origin, uint64_t quota) { return adoptRef(*new Caches { engine, WTFMove(origin), quota }); }
+    static Ref<Caches> create(Engine& engine, String&& origin, String&& rootPath, uint64_t quota) { return adoptRef(*new Caches { engine, WTFMove(origin), WTFMove(rootPath), quota }); }
 
     void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void open(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void remove(uint64_t identifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void clearMemoryRepresentation();
     void dispose(Cache&);
 
     void detach();
@@ -66,8 +66,11 @@ public:
 
     bool shouldPersist() const { return !m_rootPath.isNull(); }
 
+    void clear(WTF::CompletionHandler<void()>&&);
+    void clearMemoryRepresentation();
+
 private:
-    Caches(Engine&, String&& origin, uint64_t quota);
+    Caches(Engine&, String&& origin, String&& rootPath, uint64_t quota);
 
     void initializeSize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);

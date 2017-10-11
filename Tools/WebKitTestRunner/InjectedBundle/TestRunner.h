@@ -164,6 +164,8 @@ public:
     bool shouldDisallowIncreaseForApplicationCacheQuota() { return m_disallowIncreaseForApplicationCacheQuota; }
     JSValueRef originsWithApplicationCache();
 
+    void clearDOMCache(JSStringRef origin);
+
     // Failed load condition testing
     void forceImmediateCompletion();
 

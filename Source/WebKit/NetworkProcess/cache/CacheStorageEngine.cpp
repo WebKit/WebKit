@@ -26,11 +26,13 @@
 #include "config.h"
 #include "CacheStorageEngine.h"
 
+#include "NetworkCacheFileSystem.h"
 #include "NetworkCacheIOChannel.h"
 #include "NetworkProcess.h"
 #include <WebCore/CacheQueryOptions.h>
+#include <WebCore/NotImplemented.h>
 #include <pal/SessionID.h>
-#include <wtf/MainThread.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
@@ -47,6 +49,15 @@ static HashMap<PAL::SessionID, RefPtr<Engine>>& globalEngineMap()
     static NeverDestroyed<HashMap<PAL::SessionID, RefPtr<Engine>>> map;
 
     return map;
+}
+
+String Engine::cachesRootPath(const String& origin)
+{
+    if (!shouldPersist())
+        return { };
+
+    Key key(origin, { }, { }, { }, salt());
+    return WebCore::pathByAppendingComponent(rootPath(), key.partitionHashAsString());
 }
 
 Engine::~Engine()
@@ -67,6 +78,29 @@ void Engine::destroyEngine(PAL::SessionID sessionID)
 {
     ASSERT(sessionID != PAL::SessionID::defaultSessionID());
     globalEngineMap().remove(sessionID);
+}
+
+void Engine::fetchEntries(PAL::SessionID sessionID, bool shouldComputeSize, WTF::Function<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+{
+    // FIXME: Support fetching entries
+    notImplemented();
+    completionHandler({ });
+}
+
+void Engine::clearAllEngines(WTF::Function<void()>&& completionHandler)
+{
+    auto clearTaskHandler = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& engine : globalEngineMap().values())
+        engine->clearAllCaches(clearTaskHandler.get());
+}
+
+void Engine::clearEnginesForOrigins(const Vector<String>& origins, WTF::Function<void()>&& completionHandler)
+{
+    auto clearTaskHandler = CallbackAggregator::create(WTFMove(completionHandler));
+    for (auto& engine : globalEngineMap().values()) {
+        for (auto& origin : origins)
+            engine->clearCachesForOrigin(origin, clearTaskHandler.get());
+    }
 }
 
 Engine& Engine::defaultEngine()
@@ -190,7 +224,7 @@ void Engine::readCachesFromDisk(const String& origin, CachesCallback&& callback)
 {
     initialize([this, origin, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
         auto& caches = m_caches.ensure(origin, [&origin, this] {
-            return Caches::create(*this, String { origin }, NetworkProcess::singleton().cacheStoragePerOriginQuota());
+            return Caches::create(*this, String { origin }, cachesRootPath(origin), NetworkProcess::singleton().cacheStoragePerOriginQuota());
         }).iterator->value;
 
         if (caches->isInitialized()) {
@@ -311,6 +345,34 @@ void Engine::removeCaches(const String& origin)
     m_caches.remove(origin);
 }
 
+void Engine::clearAllCaches(CallbackAggregator& taskHandler)
+{
+    for (auto& caches : m_caches.values())
+        caches->clear([taskHandler = makeRef(taskHandler)] { });
+
+    if (!shouldPersist())
+        return;
+
+    m_ioQueue->dispatch([filename = m_rootPath.isolatedCopy(), taskHandler = makeRef(taskHandler)] {
+        deleteDirectoryRecursively(filename);
+    });
+}
+
+void Engine::clearCachesForOrigin(const String& origin, CallbackAggregator& taskHandler)
+{
+    if (auto caches = m_caches.get(origin)) {
+        caches->clear([taskHandler = makeRef(taskHandler)] { });
+        return;
+    }
+
+    if (!shouldPersist())
+        return;
+
+    m_ioQueue->dispatch([filename = cachesRootPath(origin), taskHandler = makeRef(taskHandler)] {
+        deleteDirectoryRecursively(filename);
+    });
+}
+
 void Engine::clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
     readCachesFromDisk(origin, [callback = WTFMove(callback)](CachesOrError&& result) {
@@ -335,7 +397,6 @@ void Engine::lock(uint64_t cacheIdentifier)
 void Engine::unlock(uint64_t cacheIdentifier)
 {
     auto lockCount = m_cacheLocks.find(cacheIdentifier);
-    ASSERT(lockCount != m_cacheLocks.end());
     if (lockCount == m_cacheLocks.end())
         return;
 

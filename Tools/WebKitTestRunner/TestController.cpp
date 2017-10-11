@@ -2295,6 +2295,21 @@ void TestController::removeAllSessionCredentials()
 
 #endif
 
+void TestController::clearDOMCache(WKStringRef origin)
+{
+#if WK_API_ENABLED
+    auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
+
+    if (WKStringIsEmpty(origin)) {
+        WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore);
+        return;
+    }
+
+    auto cacheOrigin = adoptWK(WKSecurityOriginCreateFromString(origin));
+    WKWebsiteDataStoreRemoveFetchCacheForOrigin(websiteDataStore, cacheOrigin.get());
+#endif
+}
+
 #if !PLATFORM(COCOA) || !WK_API_ENABLED
 
 void TestController::setStatisticsLastSeen(WKStringRef host, double seconds)

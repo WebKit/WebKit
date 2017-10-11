@@ -30,6 +30,7 @@
 
 #import "_WKWebsiteDataSizeInternal.h"
 
+NSString * const WKWebsiteDataTypeFetchCache = @"WKWebsiteDataTypeFetchCache";
 NSString * const WKWebsiteDataTypeDiskCache = @"WKWebsiteDataTypeDiskCache";
 NSString * const WKWebsiteDataTypeMemoryCache = @"WKWebsiteDataTypeMemoryCache";
 NSString * const WKWebsiteDataTypeOfflineWebApplicationCache = @"WKWebsiteDataTypeOfflineWebApplicationCache";
@@ -67,6 +68,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
 
     if ([dataTypes containsObject:WKWebsiteDataTypeDiskCache])
         [array addObject:@"Disk Cache"];
+    if ([dataTypes containsObject:WKWebsiteDataTypeFetchCache])
+        [array addObject:@"Fetch Cache"];
     if ([dataTypes containsObject:WKWebsiteDataTypeMemoryCache])
         [array addObject:@"Memory Cache"];
     if ([dataTypes containsObject:WKWebsiteDataTypeOfflineWebApplicationCache])

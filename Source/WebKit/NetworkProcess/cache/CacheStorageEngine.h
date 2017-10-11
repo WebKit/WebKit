@@ -27,6 +27,7 @@
 
 #include "CacheStorageEngineCaches.h"
 #include "NetworkCacheData.h"
+#include "WebsiteData.h"
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
@@ -38,6 +39,10 @@ class Connection;
 namespace WebCore {
 class SessionID;
 }
+
+namespace WTF {
+class CallbackAggregator;
+};
 
 namespace WebKit {
 
@@ -52,6 +57,10 @@ public:
 
     static Engine& from(PAL::SessionID);
     static void destroyEngine(PAL::SessionID);
+    static void clearAllEngines(WTF::Function<void()>&&);
+    static void clearEnginesForOrigins(const Vector<String>& origins, WTF::Function<void()>&&);
+    static void fetchEntries(PAL::SessionID, bool shouldComputeSize, WTF::Function<void(Vector<WebsiteData::Entry>)>&&);
+
     static Ref<Engine> create(String&& rootPath) { return adoptRef(*new Engine(WTFMove(rootPath))); }
 
     bool shouldPersist() const { return !!m_ioQueue;}
@@ -84,7 +93,11 @@ private:
     static Engine& defaultEngine();
     explicit Engine(String&& rootPath);
 
-    void initialize(Function<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
+    String cachesRootPath(const String& origin);
+
+    void initialize(WTF::Function<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
+    void clearAllCaches(WTF::CallbackAggregator&);
+    void clearCachesForOrigin(const String& origin, WTF::CallbackAggregator&);
 
     using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCacheEngine::Error>;
     using CachesCallback = WTF::Function<void(CachesOrError&&)>;

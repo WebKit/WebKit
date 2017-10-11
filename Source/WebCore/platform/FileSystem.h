@@ -104,7 +104,7 @@ WEBCORE_EXPORT bool getFileModificationTime(const String&, time_t& result);
 WEBCORE_EXPORT bool getFileCreationTime(const String&, time_t& result); // Not all platforms store file creation time.
 WEBCORE_EXPORT std::optional<FileMetadata> fileMetadata(const String& path);
 WEBCORE_EXPORT std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
-bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
+WEBCORE_EXPORT bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
 WEBCORE_EXPORT String pathByAppendingComponent(const String& path, const String& component);
 String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
 String lastComponentOfPathIgnoringTrailingSlash(const String& path);

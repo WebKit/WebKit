@@ -187,6 +187,7 @@ public:
     void terminateNetworkProcess();
 
     void removeAllSessionCredentials();
+    void clearDOMCache(WKStringRef origin);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);

@@ -1777,4 +1777,11 @@ void TestRunner::callDidRemoveAllSessionCredentialsCallback()
     callTestRunnerCallback(DidRemoveAllSessionCredentialsCallbackID);
 }
 
+void TestRunner::clearDOMCache(JSStringRef origin)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ClearDOMCache"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(origin));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
 } // namespace WTR

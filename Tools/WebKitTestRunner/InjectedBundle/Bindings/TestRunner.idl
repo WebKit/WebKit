@@ -57,6 +57,8 @@ interface TestRunner {
     void dumpDOMAsWebArchive();
     void dumpPolicyDelegateCallbacks();
 
+    void clearDOMCache(DOMString origin);
+
     // Special options.
     void keepWebHistory();
     void setAcceptsEditing(boolean value);

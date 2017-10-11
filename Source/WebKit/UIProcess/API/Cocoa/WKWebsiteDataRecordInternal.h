@@ -44,6 +44,8 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
 {
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeCookies])
         return WebsiteDataType::Cookies;
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeFetchCache])
+        return WebsiteDataType::DOMCache;
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeDiskCache])
         return WebsiteDataType::DiskCache;
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeMemoryCache])
@@ -99,6 +101,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeCookies];
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache))
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeDiskCache];
+    if (websiteDataTypes.contains(WebsiteDataType::DOMCache))
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeFetchCache];
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache))
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeMemoryCache];
     if (websiteDataTypes.contains(WebsiteDataType::OfflineWebApplicationCache))

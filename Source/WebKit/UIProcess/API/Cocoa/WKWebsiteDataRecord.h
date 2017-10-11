@@ -31,6 +31,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*! @constant WKWebsiteDataTypeFetchCache On-disk Fetch caches. */
+WK_EXTERN NSString * const WKWebsiteDataTypeFetchCache WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_MAC_TBA));
+
 /*! @constant WKWebsiteDataTypeDiskCache On-disk caches. */
 WK_EXTERN NSString * const WKWebsiteDataTypeDiskCache WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 

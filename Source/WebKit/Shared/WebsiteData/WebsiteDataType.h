@@ -48,6 +48,7 @@ enum class WebsiteDataType {
 #if ENABLE(SERVICE_WORKER)
     ServiceWorkerRegistrations = 1 << 14,
 #endif
+    DOMCache = 1 << 14,
 };
 
 };

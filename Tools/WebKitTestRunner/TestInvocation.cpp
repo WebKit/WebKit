@@ -763,6 +763,14 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearDOMCache")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef origin = static_cast<WKStringRef>(messageBody);
+
+        TestController::singleton().clearDOMCache(origin);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
