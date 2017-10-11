@@ -33,8 +33,6 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(NETWORK_CACHE)
-
 namespace WebKit {
 namespace NetworkCache {
 
@@ -244,5 +242,3 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
 
 }
 }
-
-#endif

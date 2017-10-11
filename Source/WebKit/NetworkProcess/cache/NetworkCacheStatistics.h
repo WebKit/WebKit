@@ -26,8 +26,6 @@
 #ifndef NetworkCacheStatistics_h
 #define NetworkCacheStatistics_h
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "NetworkCache.h"
 #include "NetworkCacheKey.h"
 #include <WebCore/SQLiteDatabase.h>
@@ -91,7 +89,5 @@ private:
 
 }
 }
-
-#endif // ENABLE(NETWORK_CACHE)
 
 #endif // NetworkCacheStatistics_h

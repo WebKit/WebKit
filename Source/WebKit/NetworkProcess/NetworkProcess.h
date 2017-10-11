@@ -100,9 +100,7 @@ public:
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
 
-#if ENABLE(NETWORK_CACHE)
     NetworkCache::Cache* cache() { return m_cache.get(); }
-#endif
 
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
@@ -248,9 +246,7 @@ private:
     bool m_canHandleHTTPSServerTrustEvaluation;
     Seconds m_loadThrottleLatency;
 
-#if ENABLE(NETWORK_CACHE)
     RefPtr<NetworkCache::Cache> m_cache;
-#endif
 
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;

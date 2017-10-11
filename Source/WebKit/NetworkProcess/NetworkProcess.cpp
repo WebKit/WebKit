@@ -74,10 +74,8 @@
 #include "SecItemShim.h"
 #endif
 
-#if ENABLE(NETWORK_CACHE)
 #include "NetworkCache.h"
 #include "NetworkCacheCoders.h"
-#endif
 
 #if ENABLE(NETWORK_CAPTURE)
 #include "NetworkCaptureManager.h"
@@ -337,7 +335,6 @@ void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vect
 
 static void fetchDiskCacheEntries(PAL::SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void (Vector<WebsiteData::Entry>)>&& completionHandler)
 {
-#if ENABLE(NETWORK_CACHE)
     if (auto* cache = NetworkProcess::singleton().cache()) {
         HashMap<SecurityOriginData, uint64_t> originsAndSizes;
         cache->traverse([fetchOptions, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
@@ -363,7 +360,6 @@ static void fetchDiskCacheEntries(PAL::SessionID sessionID, OptionSet<WebsiteDat
 
         return;
     }
-#endif
 
     RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
         completionHandler({ });
@@ -445,7 +441,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
 static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Function<void ()>&& completionHandler)
 {
-#if ENABLE(NETWORK_CACHE)
     if (auto* cache = NetworkProcess::singleton().cache()) {
         HashSet<RefPtr<SecurityOrigin>> originsToDelete;
         for (auto& origin : origins)
@@ -465,7 +460,6 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Fun
 
         return;
     }
-#endif
 
     RunLoop::main().dispatch(WTFMove(completionHandler));
 }
@@ -608,12 +602,10 @@ void NetworkProcess::setCacheModel(uint32_t cm)
     if (m_diskCacheSizeOverride >= 0)
         urlCacheDiskCapacity = m_diskCacheSizeOverride;
 
-#if ENABLE(NETWORK_CACHE)
     if (m_cache) {
         m_cache->setCapacity(urlCacheDiskCapacity);
         return;
     }
-#endif
 
     platformSetURLCacheSize(urlCacheMemoryCapacity, urlCacheDiskCapacity);
 }

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheKey.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "NetworkCacheCoders.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/persistence/PersistentDecoder.h>
@@ -182,5 +180,3 @@ bool Key::decode(WTF::Persistence::Decoder& decoder, Key& key)
 
 }
 }
-
-#endif

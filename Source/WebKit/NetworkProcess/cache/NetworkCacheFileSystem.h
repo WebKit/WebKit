@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(NETWORK_CACHE)
-
 #include <WebCore/FileSystem.h>
 #include <chrono>
 
@@ -49,5 +47,3 @@ bool canUseSharedMemoryForPath(const String& path);
 
 }
 }
-
-#endif 

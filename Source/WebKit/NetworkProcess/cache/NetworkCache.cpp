@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCache.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "Logging.h"
 #include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkCacheStatistics.h"
@@ -648,5 +646,3 @@ void Cache::storeData(const DataKey& dataKey, const uint8_t* data, size_t size)
 
 }
 }
-
-#endif

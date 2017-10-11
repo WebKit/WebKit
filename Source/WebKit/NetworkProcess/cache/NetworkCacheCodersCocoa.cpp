@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheCoders.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #if PLATFORM(COCOA)
 #include <Security/SecCertificate.h>
 #include <Security/SecTrust.h>
@@ -190,5 +188,3 @@ bool Coder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::Certific
 
 }
 }
-
-#endif

@@ -78,10 +78,8 @@ NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaul
 static NSString * const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
 static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
 
-#if ENABLE(NETWORK_CACHE)
 static NSString * const WebKitNetworkCacheEnabledDefaultsKey = @"WebKitNetworkCacheEnabled";
 static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"WebKitNetworkCacheEfficacyLoggingEnabled";
-#endif
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey = @"WebKitNetworkLoadThrottleLatencyMilliseconds";
@@ -108,10 +106,8 @@ static void registerUserDefaultsIfNeeded()
     [registrationDictionary setObject:@YES forKey:WebKitJSCJITEnabledDefaultsKey];
     [registrationDictionary setObject:@YES forKey:WebKitJSCFTLJITEnabledDefaultsKey];
 
-#if ENABLE(NETWORK_CACHE)
     [registrationDictionary setObject:@YES forKey:WebKitNetworkCacheEnabledDefaultsKey];
     [registrationDictionary setObject:@NO forKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
-#endif
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
 }
@@ -281,10 +277,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.httpsProxy = [defaults stringForKey:WebKit2HTTPSProxyDefaultsKey];
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
-#if ENABLE(NETWORK_CACHE)
     parameters.shouldEnableNetworkCache = isNetworkCacheEnabled();
     parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
-#endif
 
     parameters.sourceApplicationBundleIdentifier = m_configuration->sourceApplicationBundleIdentifier();
     parameters.sourceApplicationSecondaryIdentifier = m_configuration->sourceApplicationSecondaryIdentifier();
@@ -467,10 +461,8 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
     if (!cachePath)
         cachePath = @"~/Library/Caches/com.apple.WebKit.WebProcess";
 
-#if ENABLE(NETWORK_CACHE)
     if (isNetworkCacheEnabled())
         cachePath = [cachePath stringByAppendingPathComponent:@"WebKitCache"];
-#endif
 
     return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
@@ -504,7 +496,6 @@ void WebProcessPool::setJavaScriptConfigurationFileEnabledFromDefaults()
 
 bool WebProcessPool::isNetworkCacheEnabled()
 {
-#if ENABLE(NETWORK_CACHE)
     registerUserDefaultsIfNeeded();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -512,9 +503,6 @@ bool WebProcessPool::isNetworkCacheEnabled()
     bool networkCacheEnabledByDefaults = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey];
 
     return networkCacheEnabledByDefaults && linkedOnOrAfter(SDKVersion::FirstWithNetworkCache);
-#else
-    return false;
-#endif
 }
 
 bool WebProcessPool::omitPDFSupport()

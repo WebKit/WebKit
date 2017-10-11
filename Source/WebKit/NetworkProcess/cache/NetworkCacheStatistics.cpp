@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(NETWORK_CACHE)
 #include "NetworkCacheStatistics.h"
 
 #include "Logging.h"
@@ -452,5 +451,3 @@ void Statistics::addStoreDecisionsToDatabase(const HashMap<String, NetworkCache:
 
 }
 }
-
-#endif // ENABLE(NETWORK_CACHE)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheCoders.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 namespace WTF {
 namespace Persistence {
 
@@ -90,5 +88,3 @@ bool Coder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::Certific
 
 }
 }
-
-#endif

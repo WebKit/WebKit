@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheStorage.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheFileSystem.h"
@@ -1100,5 +1098,3 @@ void Storage::deleteOldVersions()
 
 }
 }
-
-#endif

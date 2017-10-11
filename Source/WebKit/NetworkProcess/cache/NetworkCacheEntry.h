@@ -26,8 +26,6 @@
 #ifndef NetworkCacheEntry_h
 #define NetworkCacheEntry_h
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
 #include <WebCore/ResourceRequest.h>
@@ -95,5 +93,4 @@ private:
 }
 }
 
-#endif
 #endif

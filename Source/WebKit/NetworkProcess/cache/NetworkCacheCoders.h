@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(NETWORK_CACHE)
-
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <utility>
@@ -54,4 +52,3 @@ template<> struct Coder<WebCore::HTTPHeaderMap> {
 
 }
 }
-#endif

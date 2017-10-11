@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheFileSystem.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "Logging.h"
 #include <WebCore/FileSystem.h>
 #include <dirent.h>
@@ -166,5 +164,3 @@ bool canUseSharedMemoryForPath(const String& path)
 
 }
 }
-
-#endif // ENABLE(NETWORK_CACHE)

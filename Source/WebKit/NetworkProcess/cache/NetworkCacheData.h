@@ -26,8 +26,6 @@
 #ifndef NetworkCacheData_h
 #define NetworkCacheData_h
 
-#if ENABLE(NETWORK_CACHE)
-
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/SHA1.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -111,5 +109,4 @@ SHA1::Digest computeSHA1(const Data&, const Salt&);
 }
 }
 
-#endif
 #endif

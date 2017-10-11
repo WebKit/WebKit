@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheBlobStorage.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "Logging.h"
 #include "NetworkCacheFileSystem.h"
 #include <WebCore/FileSystem.h>
@@ -149,5 +147,3 @@ unsigned BlobStorage::shareCount(const String& path)
 
 }
 }
-
-#endif

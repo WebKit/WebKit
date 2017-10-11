@@ -26,8 +26,6 @@
 #ifndef NetworkCacheBlobStorage_h
 #define NetworkCacheBlobStorage_h
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "NetworkCacheData.h"
 #include "NetworkCacheKey.h"
 #include <wtf/SHA1.h>
@@ -71,5 +69,4 @@ private:
 }
 }
 
-#endif
 #endif

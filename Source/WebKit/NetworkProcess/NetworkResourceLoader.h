@@ -109,7 +109,6 @@ private:
     IPC::Connection* messageSenderConnection() override;
     uint64_t messageSenderDestinationID() override { return m_parameters.identifier; }
 
-#if ENABLE(NETWORK_CACHE)
     bool canUseCache(const WebCore::ResourceRequest&) const;
     bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;
 
@@ -119,7 +118,6 @@ private:
     void sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
-#endif
 
     void startNetworkLoad(const WebCore::ResourceRequest&);
     void continueDidReceiveResponse();
@@ -159,12 +157,10 @@ private:
     unsigned m_retrievedDerivedDataCount { 0 };
 
     WebCore::Timer m_bufferingTimer;
-#if ENABLE(NETWORK_CACHE)
     RefPtr<NetworkCache::Cache> m_cache;
     RefPtr<WebCore::SharedBuffer> m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
-#endif
 };
 
 } // namespace WebKit

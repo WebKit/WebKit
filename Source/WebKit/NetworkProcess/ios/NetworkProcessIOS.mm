@@ -78,10 +78,8 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
     if (resourceCachesToClear == InMemoryResourceCachesOnly)
         return;
-#if ENABLE(NETWORK_CACHE)
     if (m_cache)
         m_cache->clear();
-#endif
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)

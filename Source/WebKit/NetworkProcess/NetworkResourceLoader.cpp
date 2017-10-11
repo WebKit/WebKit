@@ -86,9 +86,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_connection(connection)
     , m_defersLoading(parameters.defersLoading)
     , m_bufferingTimer(*this, &NetworkResourceLoader::bufferingTimerFired)
-#if ENABLE(NETWORK_CACHE)
     , m_cache(sessionID().isEphemeral() ? nullptr : NetworkProcess::singleton().cache())
-#endif
 {
     ASSERT(RunLoop::isMain());
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
@@ -121,7 +119,6 @@ NetworkResourceLoader::~NetworkResourceLoader()
     ASSERT(!isSynchronous() || !m_synchronousLoadData->delayedReply);
 }
 
-#if ENABLE(NETWORK_CACHE)
 bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
 {
     if (!m_cache)
@@ -148,7 +145,6 @@ bool NetworkResourceLoader::canUseCachedRedirect(const ResourceRequest& request)
 
     return true;
 }
-#endif
 
 bool NetworkResourceLoader::isSynchronous() const
 {
@@ -167,18 +163,15 @@ void NetworkResourceLoader::start()
     ASSERT(!m_wasStarted);
     m_wasStarted = true;
 
-#if ENABLE(NETWORK_CACHE)
     if (canUseCache(originalRequest())) {
         RELEASE_LOG_IF_ALLOWED("start: Checking cache for resource (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
         retrieveCacheEntry(originalRequest());
         return;
     }
-#endif
 
     startNetworkLoad(originalRequest());
 }
 
-#if ENABLE(NETWORK_CACHE)
 void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
 {
     ASSERT(canUseCache(request));
@@ -213,7 +206,6 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         loader->didRetrieveCacheEntry(WTFMove(entry));
     });
 }
-#endif
 
 void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
 {
@@ -224,10 +216,8 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
     if (isSynchronous() || m_parameters.maximumBufferingTime > 0_s)
         m_bufferedData = SharedBuffer::create();
 
-#if ENABLE(NETWORK_CACHE)
     if (canUseCache(request))
         m_bufferedDataForCache = SharedBuffer::create();
-#endif
 
     NetworkLoadParameters parameters = m_parameters;
     parameters.defersLoading = m_defersLoading;
@@ -306,13 +296,11 @@ void NetworkResourceLoader::abort()
         m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 
     if (m_networkLoad) {
-#if ENABLE(NETWORK_CACHE)
         if (canUseCache(m_networkLoad->currentRequest())) {
             // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.
             if (!m_response.isNull())
                 m_cache->remove(m_networkLoad->currentRequest());
         }
-#endif
         m_networkLoad->cancel();
     }
 
@@ -329,8 +317,6 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (!isSynchronous() && m_response.isMultipart())
         m_bufferedData = nullptr;
 
-    bool shouldSendDidReceiveResponse = true;
-#if ENABLE(NETWORK_CACHE)
     if (m_response.isMultipart())
         m_bufferedDataForCache = nullptr;
 
@@ -344,8 +330,7 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         } else
             m_cacheEntryForValidation = nullptr;
     }
-    shouldSendDidReceiveResponse = !m_cacheEntryForValidation;
-#endif
+    bool shouldSendDidReceiveResponse = !m_cacheEntryForValidation;
 
     bool shouldWaitContinueDidReceiveResponse = isMainResource();
     if (shouldSendDidReceiveResponse) {
@@ -356,10 +341,7 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     }
 
     // For main resources, the web process is responsible for sending back a NetworkResourceLoader::ContinueDidReceiveResponse message.
-    bool shouldContinueDidReceiveResponse = !shouldWaitContinueDidReceiveResponse;
-#if ENABLE(NETWORK_CACHE)
-    shouldContinueDidReceiveResponse = shouldContinueDidReceiveResponse || m_cacheEntryForValidation;
-#endif
+    bool shouldContinueDidReceiveResponse = !shouldWaitContinueDidReceiveResponse || m_cacheEntryForValidation;
 
     if (shouldContinueDidReceiveResponse) {
         RELEASE_LOG_IF_ALLOWED("didReceiveResponse: Should not wait for message from WebContent process before continuing resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
@@ -377,7 +359,6 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
     }
     m_numBytesReceived += buffer->size();
 
-#if ENABLE(NETWORK_CACHE)
     ASSERT(!m_cacheEntryForValidation);
 
     if (m_bufferedDataForCache) {
@@ -388,7 +369,6 @@ void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int rep
         else
             m_bufferedDataForCache = nullptr;
     }
-#endif
     // FIXME: At least on OS X Yosemite we always get -1 from the resource handle.
     unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer->size();
 
@@ -406,7 +386,6 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 {
     RELEASE_LOG_IF_ALLOWED("didFinishLoading: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", length = %zd)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, m_numBytesReceived);
 
-#if ENABLE(NETWORK_CACHE)
     if (m_cacheEntryForValidation) {
         // 304 Not Modified
         ASSERT(m_response.httpStatusCode() == 304);
@@ -414,7 +393,6 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         didRetrieveCacheEntry(WTFMove(m_cacheEntryForValidation));
         return;
     }
-#endif
 
     if (isSynchronous())
         sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get());
@@ -426,9 +404,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
     }
 
-#if ENABLE(NETWORK_CACHE)
     tryStoreAsCacheEntry();
-#endif
 
     cleanup();
 }
@@ -439,9 +415,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 
     ASSERT(!error.isNull());
 
-#if ENABLE(NETWORK_CACHE)
     m_cacheEntryForValidation = nullptr;
-#endif
 
     if (isSynchronous()) {
         m_synchronousLoadData->error = error;
@@ -471,12 +445,8 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     }
     send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, redirectResponse));
 
-#if ENABLE(NETWORK_CACHE)
     if (canUseCachedRedirect(request))
         m_cache->storeRedirect(request, redirectResponse, redirectRequest);
-#else
-    UNUSED_PARAM(request);
-#endif
 }
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest)
@@ -487,7 +457,6 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
     newRequest.setCachePolicy(originalRequest().cachePolicy());
     newRequest.setCachePartition(originalRequest().cachePartition());
 
-#if ENABLE(NETWORK_CACHE)
     if (m_isWaitingContinueWillSendRequestForCachedRedirect) {
         m_isWaitingContinueWillSendRequestForCachedRedirect = false;
 
@@ -500,7 +469,6 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
         return;
     }
-#endif
 
     if (m_networkLoad)
         m_networkLoad->continueWillSendRequest(WTFMove(newRequest));
@@ -554,7 +522,6 @@ void NetworkResourceLoader::sendBuffer(SharedBuffer& buffer, size_t encodedDataL
     send(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 
-#if ENABLE(NETWORK_CACHE)
 void NetworkResourceLoader::tryStoreAsCacheEntry()
 {
     if (!canUseCache(m_networkLoad->currentRequest()))
@@ -668,7 +635,6 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr
     send(Messages::WebResourceLoader::WillSendRequest(*entry->redirectRequest(), entry->response()));
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
 }
-#endif
 
 IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 {

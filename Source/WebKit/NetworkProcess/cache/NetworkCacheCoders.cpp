@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheCoders.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 namespace WTF {
 namespace Persistence {
 
@@ -61,5 +59,3 @@ bool Coder<WebCore::HTTPHeaderMap>::decode(Decoder& decoder, WebCore::HTTPHeader
 
 }
 }
-
-#endif

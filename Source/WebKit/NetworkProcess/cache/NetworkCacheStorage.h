@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "NetworkCacheBlobStorage.h"
 #include "NetworkCacheData.h"
 #include "NetworkCacheKey.h"
@@ -196,4 +194,3 @@ void traverseRecordsFiles(const String& recordsPath, const String& type, const R
 
 }
 }
-#endif

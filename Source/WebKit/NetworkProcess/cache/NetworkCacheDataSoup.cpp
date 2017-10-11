@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheData.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "SharedMemory.h"
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -138,5 +136,3 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
 
 } // namespace NetworkCache
 } // namespace WebKit
-
-#endif

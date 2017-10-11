@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCacheIOChannel.h"
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "NetworkCacheFileSystem.h"
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -282,5 +280,3 @@ void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, Functio
 
 } // namespace NetworkCache
 } // namespace WebKit
-
-#endif

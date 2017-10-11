@@ -26,8 +26,6 @@
 #ifndef NetworkCacheIOChannel_h
 #define NetworkCacheIOChannel_h
 
-#if ENABLE(NETWORK_CACHE)
-
 #include "NetworkCacheData.h"
 #include <wtf/Function.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -83,5 +81,4 @@ private:
 }
 }
 
-#endif
 #endif
