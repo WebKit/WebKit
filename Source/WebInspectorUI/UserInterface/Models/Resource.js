@@ -949,6 +949,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
                                  .replace(/'/g, "\\'")
                                  .replace(/\n/g, "\\n")
                                  .replace(/\r/g, "\\r")
+                                 .replace(/!/g, "\\041")
                                  .replace(/[^\x20-\x7E]/g, escapeCharacter) + "'";
             } else {
                 // Use single quote syntax.
