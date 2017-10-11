@@ -129,15 +129,9 @@ LayoutUnit InlineTextBox::selectionHeight() const
     return root().selectionHeight();
 }
 
-bool InlineTextBox::isSelected(unsigned startPos, unsigned endPos) const
+bool InlineTextBox::isSelected(unsigned startPosition, unsigned endPosition) const
 {
-    int sPos = clampedOffset(startPos);
-    int ePos = clampedOffset(endPos);
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160786
-    // We should only be checking if sPos >= ePos here, because those are the
-    // indices used to actually generate the selection rect. Allowing us past this guard
-    // on any other condition creates zero-width selection rects.
-    return sPos < ePos || (startPos == endPos && startPos >= start() && startPos <= (start() + len()));
+    return clampedOffset(startPosition) < clampedOffset(endPosition);
 }
 
 RenderObject::SelectionState InlineTextBox::selectionState()
@@ -197,12 +191,8 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
     unsigned sPos = clampedOffset(startPos);
     unsigned ePos = clampedOffset(endPos);
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=160786
-    // We should only be checking if sPos >= ePos here, because those are the
-    // indices used to actually generate the selection rect. Allowing us past this guard
-    // on any other condition creates zero-width selection rects.
     if (sPos >= ePos && !(startPos == endPos && startPos >= start() && startPos <= (start() + len())))
-        return LayoutRect();
+        return { };
 
     LayoutUnit selectionTop = this->selectionTop();
     LayoutUnit selectionHeight = this->selectionHeight();
