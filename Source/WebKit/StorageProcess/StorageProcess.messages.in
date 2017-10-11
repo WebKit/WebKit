@@ -34,4 +34,9 @@ messages -> StorageProcess LegacyReceiver {
     GrantSandboxExtensionsForBlobs(Vector<String> paths, WebKit::SandboxExtension::HandleArray extensions)
     DidGetSandboxExtensionsForBlobFiles(uint64_t requestID, WebKit::SandboxExtension::HandleArray extensions)
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+    DidGetWorkerContextProcessConnection(IPC::Attachment connectionHandle)
+    ServiceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerRegistrationKey registrationKey, String workerID, String message)
+#endif
 }

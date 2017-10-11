@@ -71,6 +71,10 @@ class UserGestureToken;
 struct PluginInfo;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
+
+#if ENABLE(SERVICE_WORKER)
+struct ServiceWorkerContextData;
+#endif
 }
 
 namespace WebKit {
@@ -290,9 +294,13 @@ private:
     void gamepadConnected(const GamepadData&);
     void gamepadDisconnected(unsigned index);
 #endif
-
 #if USE(SOUP)
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
+#endif
+#if ENABLE(SERVICE_WORKER)
+    void getWorkerContextConnection();
+    void startServiceWorkerContext(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
+    RefPtr<IPC::Connection> m_workerContextConnection;
 #endif
 
     void releasePageCache();

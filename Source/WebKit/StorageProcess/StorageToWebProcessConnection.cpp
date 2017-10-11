@@ -55,6 +55,11 @@ StorageToWebProcessConnection::StorageToWebProcessConnection(IPC::Connection::Id
 StorageToWebProcessConnection::~StorageToWebProcessConnection()
 {
     m_connection->invalidate();
+
+#if ENABLE(SERVICE_WORKER)
+    for (auto& connection : m_swConnections.values())
+        StorageProcess::singleton().unregisterSWServerConnection(*connection);
+#endif
 }
 
 void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -138,7 +143,15 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
     ASSERT(!m_swConnections.contains(serverConnectionIdentifier));
 
     auto& server = StorageProcess::singleton().swServerForSession(sessionID);
-    m_swConnections.set(serverConnectionIdentifier, std::make_unique<WebSWServerConnection>(server, m_connection.get(), serverConnectionIdentifier, sessionID));
+    auto connectionResult = m_swConnections.add(serverConnectionIdentifier, std::make_unique<WebSWServerConnection>(server, m_connection.get(), serverConnectionIdentifier, sessionID));
+    ASSERT(connectionResult.isNewEntry);
+
+    StorageProcess::singleton().registerSWServerConnection(*(connectionResult.iterator->value));
+
+    if (auto* connection = StorageProcess::singleton().workerContextProcessConnection())
+        connectionResult.iterator->value->setContextConnection(connection);
+    else
+        StorageProcess::singleton().createWorkerContextProcessConnection();
 }
 
 void StorageToWebProcessConnection::removeSWServerConnection(uint64_t serverConnectionIdentifier)
@@ -146,7 +159,17 @@ void StorageToWebProcessConnection::removeSWServerConnection(uint64_t serverConn
     ASSERT(m_swConnections.contains(serverConnectionIdentifier));
 
     auto connection = m_swConnections.take(serverConnectionIdentifier);
+    StorageProcess::singleton().unregisterSWServerConnection(*connection);
     connection->disconnectedFromWebProcess();
+}
+
+void StorageToWebProcessConnection::workerContextProcessConnectionCreated()
+{
+    auto* ipcConnection = StorageProcess::singleton().workerContextProcessConnection();
+    ASSERT(ipcConnection);
+
+    for (auto& swConnection : m_swConnections.values())
+        swConnection->setContextConnection(ipcConnection);
 }
 #endif
 
@@ -168,6 +191,5 @@ void StorageToWebProcessConnection::removeIDBConnectionToServer(uint64_t serverC
     connection->disconnectedFromWebProcess();
 }
 #endif
-
 
 } // namespace WebKit

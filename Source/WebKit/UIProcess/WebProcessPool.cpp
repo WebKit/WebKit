@@ -545,7 +545,7 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
         }
 #endif
 
-        m_storageProcess = StorageProcessProxy::create(this);
+        m_storageProcess = StorageProcessProxy::create(*this);
         m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(parameters), 0);
     }
 
@@ -573,6 +573,29 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
     m_client.storageProcessDidCrash(this);
     m_storageProcess = nullptr;
 }
+
+#if ENABLE(SERVICE_WORKER)
+void WebProcessPool::getWorkerContextProcessConnection(StorageProcessProxy& proxy)
+{
+    ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
+    
+    if (!m_workerContextProcess) {
+        if (!m_websiteDataStore)
+            m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
+        auto& newProcess = createNewWebProcess(m_websiteDataStore->websiteDataStore());
+        m_workerContextProcess = &newProcess;
+    }
+    
+    m_workerContextProcess->send(Messages::WebProcess::GetWorkerContextConnection(), 0);
+}
+
+void WebProcessPool::didGetWorkerContextProcessConnection(const IPC::Attachment& connection)
+{
+    if (!m_storageProcess)
+        return;
+    m_storageProcess->didGetWorkerContextProcessConnection(connection);
+}
+#endif
 
 void WebProcessPool::willStartUsingPrivateBrowsing()
 {
@@ -882,6 +905,10 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     RefPtr<WebProcessProxy> protect(process);
     if (m_processWithPageCache == process)
         m_processWithPageCache = nullptr;
+#if ENABLE(SERVICE_WORKER)
+    if (m_workerContextProcess == process)
+        m_workerContextProcess = nullptr;
+#endif
 
     static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
 
@@ -959,6 +986,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         process = &pageConfiguration->relatedPage()->process();
     } else
         process = &createNewWebProcessRespectingProcessCountLimit(pageConfiguration->websiteDataStore()->websiteDataStore());
+
+    ASSERT(process.get() != m_workerContextProcess);
 
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }

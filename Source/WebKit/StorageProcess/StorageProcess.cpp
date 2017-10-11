@@ -31,6 +31,7 @@
 #include "StorageProcessProxyMessages.h"
 #include "StorageToWebProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebSWServerConnection.h"
 #include "WebsiteData.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBKeyData.h>
@@ -328,6 +329,63 @@ SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
 
     ASSERT(result.iterator->value);
     return *result.iterator->value;
+}
+
+IPC::Connection* StorageProcess::workerContextProcessConnection()
+{
+    return m_workerContextProcessConnection.get();
+}
+
+void StorageProcess::createWorkerContextProcessConnection()
+{
+    if (m_waitingForWorkerContextProcessConnection)
+        return;
+    
+    m_waitingForWorkerContextProcessConnection = true;
+    parentProcessConnection()->send(Messages::StorageProcessProxy::GetWorkerContextProcessConnection(), 0);
+}
+
+void StorageProcess::didGetWorkerContextProcessConnection(const IPC::Attachment& encodedConnectionIdentifier)
+{
+    ASSERT(m_waitingForWorkerContextProcessConnection);
+    m_waitingForWorkerContextProcessConnection = false;
+
+#if USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
+#elif OS(DARWIN)
+    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
+#else
+    ASSERT_NOT_REACHED();
+#endif
+
+    if (IPC::Connection::identifierIsNull(connectionIdentifier)) {
+        LOG_ERROR("StorageProcess::didGetWorkerContextProcessConnection - Received null connection identifier");
+        return;
+    }
+
+    m_workerContextProcessConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
+    m_workerContextProcessConnection->open();
+    
+    for (auto& connection : m_storageToWebProcessConnections)
+        connection->workerContextProcessConnectionCreated();
+}
+
+void StorageProcess::serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
+{
+    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
+        connection->scriptContextFailedToStart(registrationKey, workerID, message);
+}
+
+void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)
+{
+    ASSERT(!m_swServerConnections.contains(connection.identifier()));
+    m_swServerConnections.add(connection.identifier(), &connection);
+}
+
+void StorageProcess::unregisterSWServerConnection(WebSWServerConnection& connection)
+{
+    ASSERT(m_swServerConnections.get(connection.identifier()) == &connection);
+    m_swServerConnections.remove(connection.identifier());
 }
 #endif
 

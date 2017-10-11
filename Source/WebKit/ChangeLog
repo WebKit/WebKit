@@ -1,3 +1,72 @@
+2017-10-11  Brady Eidson  <beidson@apple.com>
+
+        Add a SW context process (where SW scripts will actually execute).
+        https://bugs.webkit.org/show_bug.cgi?id=178156
+
+        Reviewed by Andy Estes.
+
+        This patch adds an auxiliary "ServiceWorker context" WebProcess to a WebProcessPool.
+
+        This process is where ServiceWorker scripts will execute, separate from the client WebProcess
+        hosting the page(s) they are serving.
+
+        This patch also adds all of the plumbing to pass along a fetched service worker script to this
+        context WebProcess, as well as message back failure to actually start the script so we can test.
+
+        Touches lots of code sites but is basically just a lot of plumbing.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::WebSWServerConnection):
+        (WebKit::WebSWServerConnection::startServiceWorkerContext):
+        (WebKit::WebSWServerConnection::sendToContextProcess):
+        (WebKit::WebSWServerConnection::setContextConnection):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::workerContextProcessConnection):
+        (WebKit::StorageProcess::createWorkerContextProcessConnection):
+        (WebKit::StorageProcess::didGetWorkerContextProcessConnection):
+        (WebKit::StorageProcess::serviceWorkerContextFailedToStart):
+        (WebKit::StorageProcess::registerSWServerConnection):
+        (WebKit::StorageProcess::unregisterSWServerConnection):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::~StorageToWebProcessConnection):
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+        (WebKit::StorageToWebProcessConnection::removeSWServerConnection):
+        (WebKit::StorageToWebProcessConnection::workerContextProcessConnectionCreated):
+        * StorageProcess/StorageToWebProcessConnection.h:
+
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::create):
+        (WebKit::StorageProcessProxy::StorageProcessProxy):
+        (WebKit::StorageProcessProxy::didClose):
+        (WebKit::StorageProcessProxy::getWorkerContextProcessConnection):
+        (WebKit::StorageProcessProxy::didGetWorkerContextProcessConnection):
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.messages.in:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::getWorkerContextProcessConnection):
+        (WebKit::WebProcessPool::didGetWorkerContextProcessConnection):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didGetWorkerContextConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWorkerContextConnection):
+        (WebKit::WebProcess::startServiceWorkerContext):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-10-11  Don Olmstead  <don.olmstead@sony.com>
 
         Remove ENABLE_NETWORK_CACHE

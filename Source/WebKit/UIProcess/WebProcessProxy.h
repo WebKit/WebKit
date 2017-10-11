@@ -181,6 +181,10 @@ public:
     bool isUnderMemoryPressure() const { return m_isUnderMemoryPressure; }
     void didExceedInactiveMemoryLimitWhileActive();
 
+#if ENABLE(SERVICE_WORKER)
+    void didGetWorkerContextConnection(const IPC::Attachment& connection);
+#endif
+
     void processTerminated();
 
     void didExceedCPULimit();

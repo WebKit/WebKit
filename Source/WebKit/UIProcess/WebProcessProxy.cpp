@@ -1217,4 +1217,11 @@ const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+void WebProcessProxy::didGetWorkerContextConnection(const IPC::Attachment& connection)
+{
+    m_processPool->didGetWorkerContextProcessConnection(connection);
+}
+#endif
+
 } // namespace WebKit

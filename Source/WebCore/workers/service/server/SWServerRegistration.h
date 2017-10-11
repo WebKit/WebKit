@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SWServer.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "Timer.h"
@@ -47,8 +48,9 @@ public:
     ~SWServerRegistration();
 
     void enqueueJob(const ServiceWorkerJobData&);
-    void scriptFetchFinished(const ServiceWorkerFetchResult&);
-
+    void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
+    void scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message);
+    
     ServiceWorkerRegistrationData data() const;
 
 private:
@@ -77,6 +79,8 @@ private:
     std::unique_ptr<SWServerWorker> m_activeWorker;
     URL m_scopeURL;
     std::optional<ServiceWorkerUpdateViaCache> m_updateViaCache;
+    
+    double m_lastUpdateTime { 0 };
 
     Timer m_jobTimer;
     SWServer& m_server;

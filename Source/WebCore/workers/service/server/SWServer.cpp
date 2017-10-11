@@ -32,8 +32,11 @@
 #include "ExceptionData.h"
 #include "Logging.h"
 #include "SWServerRegistration.h"
+#include "SWServerWorker.h"
+#include "ServiceWorkerContextData.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
+#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -75,7 +78,12 @@ void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobDa
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
 {
-    m_server.scriptFetchFinished(result);
+    m_server.scriptFetchFinished(*this, result);
+}
+
+void SWServer::Connection::scriptContextFailedToStart(const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
+{
+    m_server.scriptContextFailedToStart(*this, registrationKey, workerID, message);
 }
 
 SWServer::SWServer()
@@ -128,7 +136,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData)
     connection->startScriptFetchInClient(jobData.identifier());
 }
 
-void SWServer::scriptFetchFinished(const ServiceWorkerFetchResult& result)
+void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)
 {
     LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %" PRIu64 "-%" PRIu64 " in client", result.connectionIdentifier, result.jobIdentifier);
 
@@ -138,7 +146,27 @@ void SWServer::scriptFetchFinished(const ServiceWorkerFetchResult& result)
     if (!registration)
         return;
 
-    registration->scriptFetchFinished(result);
+    registration->scriptFetchFinished(connection, result);
+}
+
+void SWServer::scriptContextFailedToStart(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
+{
+    ASSERT(m_connections.contains(connection.identifier()));
+    
+    if (auto* registration = m_registrations.get(registrationKey))
+        registration->scriptContextFailedToStart(connection, workerID, message);
+}
+
+Ref<SWServerWorker> SWServer::createWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
+{
+    String workerID = createCanonicalUUIDString();
+    
+    auto result = m_workersByID.add(workerID, SWServerWorker::create(registrationKey, url, script, type, workerID));
+    ASSERT(result.isNewEntry);
+    
+    connection.startServiceWorkerContext({ registrationKey, workerID, script });
+    
+    return result.iterator->value.get();
 }
 
 void SWServer::taskThreadEntryPoint()

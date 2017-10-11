@@ -27,7 +27,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SWServerRegistration.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include <wtf/CrossThreadQueue.h>
@@ -42,7 +41,9 @@
 namespace WebCore {
 
 class SWServerRegistration;
+class SWServerWorker;
 struct ExceptionData;
+struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
 
@@ -53,6 +54,8 @@ public:
     public:
         WEBCORE_EXPORT virtual ~Connection();
 
+        WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
+
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
         SWServer& server() { return m_server; }
@@ -61,9 +64,13 @@ public:
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
 
     private:
+        // Messages to the client WebProcess
         virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
         virtual void resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&) = 0;
         virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
+
+        // Messages to the SW host WebProcess
+        virtual void startServiceWorkerContext(const ServiceWorkerContextData&) = 0;
 
         SWServer& m_server;
     };
@@ -79,6 +86,8 @@ public:
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);
 
+    Ref<SWServerWorker> createWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
+    
 private:
     void registerConnection(Connection&);
     void unregisterConnection(Connection&);
@@ -86,10 +95,13 @@ private:
     void taskThreadEntryPoint();
     void handleTaskRepliesOnMainThread();
 
-    void scriptFetchFinished(const ServiceWorkerFetchResult&);
+    void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
+    void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
 
     HashMap<uint64_t, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
+
+    HashMap<String, Ref<SWServerWorker>> m_workersByID;
 
     RefPtr<Thread> m_taskThread;
     Lock m_taskThreadLock;

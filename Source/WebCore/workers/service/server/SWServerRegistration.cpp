@@ -64,18 +64,32 @@ void SWServerRegistration::enqueueJob(const ServiceWorkerJobData& jobData)
         m_jobTimer.startOneShot(0_s);
 }
 
-void SWServerRegistration::scriptFetchFinished(const ServiceWorkerFetchResult& result)
+void SWServerRegistration::scriptFetchFinished(SWServer::Connection& connection, const ServiceWorkerFetchResult& result)
 {
     ASSERT(m_currentJob && m_currentJob->identifier() == result.jobIdentifier);
 
-    // FIXME: We fetched the script contents but don't do anything with them yet.
-    // These errors are for testing the current state of the feature.
+    if (!result.scriptError.isNull()) {
+        rejectCurrentJob(ExceptionData { UnknownError, makeString("Script URL ", m_currentJob->scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
+        
+        // If newestWorker is null, invoke Clear Registration algorithm passing this registration as its argument.
+        // FIXME: We don't have "clear registration" yet.
 
-    String message;
-    if (result.scriptError.isNull())
-        message = makeString("Script URL ", m_currentJob->scriptURL.string(), " fetched with ", String::number(result.script.length()), " characters, but we're not using the result yet");
-    else
-        message = makeString("Script URL ", m_currentJob->scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription());
+        return;
+    }
+
+    m_lastUpdateTime = currentTime();
+    
+    // FIXME: If the script data matches byte-for-byte with the existing newestWorker,
+    // then resolve and finish the job without doing anything further.
+
+    // FIXME: Support the proper worker type (classic vs module)
+    m_server.createWorker(connection, m_registrationKey, m_currentJob->scriptURL, result.script, WorkerType::Classic);
+}
+
+void SWServerRegistration::scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message)
+{
+    ASSERT(m_currentJob);
+    UNUSED_PARAM(workerID);
 
     rejectCurrentJob(ExceptionData { UnknownError, message });
 }

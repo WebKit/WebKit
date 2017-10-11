@@ -37,11 +37,13 @@
 namespace WebCore {
 class SWServer;
 struct SecurityOriginData;
+struct ServiceWorkerRegistrationKey;
 }
 
 namespace WebKit {
 
 class StorageToWebProcessConnection;
+class WebSWServerConnection;
 enum class WebsiteDataType;
 struct StorageProcessCreationParameters;
 
@@ -67,12 +69,19 @@ public:
     void accessToTemporaryFileComplete(const String& path) final;
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    IPC::Connection* workerContextProcessConnection();
+    void createWorkerContextProcessConnection();
+#endif
+
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler);
 #endif
 
 #if ENABLE(SERVICE_WORKER)
     WebCore::SWServer& swServerForSession(PAL::SessionID);
+    void registerSWServerConnection(WebSWServerConnection&);
+    void unregisterSWServerConnection(WebSWServerConnection&);
 #endif
 
 private:
@@ -101,7 +110,10 @@ private:
     void grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray&);
     void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
 #endif
-
+#if ENABLE(SERVICE_WORKER)
+    void didGetWorkerContextProcessConnection(const IPC::Attachment& encodedConnectionIdentifier);
+    void serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
+#endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
 #endif
@@ -125,7 +137,12 @@ private:
     Lock m_storageTaskMutex;
     
 #if ENABLE(SERVICE_WORKER)
+    void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
+
+    RefPtr<IPC::Connection> m_workerContextProcessConnection;
+    bool m_waitingForWorkerContextProcessConnection { false };
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
+    HashMap<uint64_t, WebSWServerConnection*> m_swServerConnections;
 #endif
 };
 

@@ -44,13 +44,13 @@ static uint64_t generateCallbackID()
     return ++callbackID;
 }
 
-Ref<StorageProcessProxy> StorageProcessProxy::create(WebProcessPool* processPool)
+Ref<StorageProcessProxy> StorageProcessProxy::create(WebProcessPool& processPool)
 {
     return adoptRef(*new StorageProcessProxy(processPool));
 }
 
-StorageProcessProxy::StorageProcessProxy(WebProcessPool* processPool)
-    : ChildProcessProxy(processPool->alwaysRunsAtBackgroundPriority())
+StorageProcessProxy::StorageProcessProxy(WebProcessPool& processPool)
+    : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
 {
@@ -151,7 +151,7 @@ void StorageProcessProxy::didClose(IPC::Connection&)
     m_pendingDeleteWebsiteDataForOriginsCallbacks.clear();
 
     // Tell ProcessPool to forget about this storage process. This may cause us to be deleted.
-    m_processPool->storageProcessCrashed(this);
+    m_processPool.storageProcessCrashed(this);
 }
 
 void StorageProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
@@ -219,5 +219,21 @@ void StorageProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     
     m_numPendingConnectionRequests = 0;
 }
+
+#if ENABLE(SERVICE_WORKER)
+void StorageProcessProxy::getWorkerContextProcessConnection()
+{
+    ASSERT(!m_waitingOnWorkerContextProcessConnection);
+    m_waitingOnWorkerContextProcessConnection = true;
+    
+    m_processPool.getWorkerContextProcessConnection(*this);
+}
+
+void StorageProcessProxy::didGetWorkerContextProcessConnection(const IPC::Attachment& connection)
+{
+    send(Messages::StorageProcess::DidGetWorkerContextProcessConnection(connection), 0);
+}
+
+#endif
 
 } // namespace WebKit

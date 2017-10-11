@@ -48,7 +48,7 @@ struct WebsiteData;
 
 class StorageProcessProxy : public ChildProcessProxy {
 public:
-    static Ref<StorageProcessProxy> create(WebProcessPool*);
+    static Ref<StorageProcessProxy> create(WebProcessPool&);
     ~StorageProcessProxy();
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WTF::Function<void(WebsiteData)>&& completionHandler);
@@ -57,8 +57,12 @@ public:
 
     void getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
 
+#if ENABLE(SERVICE_WORKER)
+    void didGetWorkerContextProcessConnection(const IPC::Attachment& connection);
+#endif
+
 private:
-    StorageProcessProxy(WebProcessPool*);
+    StorageProcessProxy(WebProcessPool&);
 
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
@@ -79,11 +83,15 @@ private:
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths);
 #endif
+#if ENABLE(SERVICE_WORKER)
+    void getWorkerContextProcessConnection();
+    bool m_waitingOnWorkerContextProcessConnection { false };
+#endif
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
-    WebProcessPool* m_processPool;
+    WebProcessPool& m_processPool;
 
     unsigned m_numPendingConnectionRequests;
     Deque<Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>> m_pendingConnectionReplies;

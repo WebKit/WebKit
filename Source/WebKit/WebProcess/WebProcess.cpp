@@ -42,6 +42,7 @@
 #include "PluginProcessConnectionManager.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
+#include "StorageProcessMessages.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
 #include "WebCacheStorageProvider.h"
@@ -105,6 +106,7 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Settings.h>
 #include <WebCore/URLParser.h>
 #include <WebCore/UserGestureIndicator.h>
@@ -1612,6 +1614,46 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
         m_libWebRTCNetwork = std::make_unique<LibWebRTCNetwork>();
     return *m_libWebRTCNetwork;
 }
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+void WebProcess::getWorkerContextConnection()
+{
+    ASSERT(!m_workerContextConnection);
+
+#if USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
+    IPC::Connection::Identifier connectionIdentifier(socketPair.server);
+    IPC::Attachment connectionClientPort(socketPair.client);
+#elif OS(DARWIN)
+    mach_port_t listeningPort;
+    if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort) != KERN_SUCCESS)
+        CRASH();
+
+    if (mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND) != KERN_SUCCESS)
+        CRASH();
+
+    IPC::Connection::Identifier connectionIdentifier(listeningPort);
+    IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MOVE_SEND);
+#else
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
+
+    m_workerContextConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
+    m_workerContextConnection->open();
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidGetWorkerContextConnection(connectionClientPort), 0);
+}
+
+void WebProcess::startServiceWorkerContext(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
+{
+    // FIXME: Here is where we will actually start the script.
+    // For now we bounce back a failure message to the requesting process for test coverage.
+
+    auto message = makeString("Failed to start service worker script of length ", String::number(data.script.length()));
+    m_workerContextConnection->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(serverConnectionIdentifier, data.registrationKey, data.workerID, message), 0);
+}
+
 #endif
 
 } // namespace WebKit

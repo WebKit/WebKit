@@ -32,12 +32,15 @@
 #include "Logging.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebProcess.h"
+#include "WebProcessMessages.h"
 #include "WebSWClientConnectionMessages.h"
 #include "WebSWServerConnectionMessages.h"
 #include "WebToStorageProcessConnection.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
 #include <wtf/MainThread.h>
 
 using namespace PAL;
@@ -48,7 +51,7 @@ namespace WebKit {
 WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, const SessionID& sessionID)
     : SWServer::Connection(server, connectionIdentifier)
     , m_sessionID(sessionID)
-    , m_connection(connection)
+    , m_contentConnection(connection)
 {
 }
 
@@ -76,6 +79,33 @@ void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
     send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier));
 }
 
+void WebSWServerConnection::startServiceWorkerContext(const ServiceWorkerContextData& data)
+{
+    if (sendToContextProcess(Messages::WebProcess::StartServiceWorkerContext(identifier(), data)))
+        return;
+
+    m_pendingContextDatas.append(data);
+}
+
+template<typename U> bool WebSWServerConnection::sendToContextProcess(U&& message)
+{
+    if (!m_contextConnection)
+        return false;
+
+    return m_contextConnection->send<U>(WTFMove(message), 0);
+}
+
+void WebSWServerConnection::setContextConnection(IPC::Connection* connection)
+{
+    m_contextConnection = connection;
+
+    // We can now start any pending service worker contexts.
+    for (auto& pendingContextData : m_pendingContextDatas)
+        startServiceWorkerContext(pendingContextData);
+    
+    m_pendingContextDatas.clear();
+}
+    
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

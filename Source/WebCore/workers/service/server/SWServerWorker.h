@@ -27,19 +27,37 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerRegistrationKey.h"
 #include "URL.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class SWServerWorker {
+enum class WorkerType;
+
+class SWServerWorker : public ThreadSafeRefCounted<SWServerWorker> {
 public:
-    SWServerWorker(const URL&);
+    static Ref<SWServerWorker> create(const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type, const String& workerID)
+    {
+        return adoptRef(*new SWServerWorker(registrationKey, url, script, type, workerID));
+    }
+    
     SWServerWorker(const SWServerWorker&) = delete;
     ~SWServerWorker();
-    const URL& scriptURL() const { return m_scriptURL; }
 
+    const URL& scriptURL() const { return m_scriptURL; }
+    const String& script() const { return m_script; }
+    WorkerType type() const { return m_type; }
+    const String& workerID() const { return m_workerID; }
+    
 private:
+    SWServerWorker(const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType, const String& workerID);
+
+    ServiceWorkerRegistrationKey m_registrationKey;
     URL m_scriptURL;
+    String m_script;
+    String m_workerID;
+    WorkerType m_type;
 };
 
 } // namespace WebCore

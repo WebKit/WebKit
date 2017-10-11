@@ -34,6 +34,7 @@
 
 namespace WebCore {
 struct ExceptionData;
+struct ServiceWorkerRegistrationKey;
 }
 
 namespace WebKit {
@@ -45,20 +46,29 @@ public:
     ~WebSWServerConnection() final;
 
     void disconnectedFromWebProcess();
+    void setContextConnection(IPC::Connection*);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
-    // Implement SWServer::Connection
+    // Implement SWServer::Connection (Messages to the client WebProcess)
     void rejectJobInClient(uint64_t jobIdentifier, const WebCore::ExceptionData&) final;
     void resolveJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&) final;
     void startScriptFetchInClient(uint64_t jobIdentifier) final;
 
-    IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
+    // Messages to the SW context WebProcess
+    void startServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
+    
+    IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier(); }
 
+    template<typename U> bool sendToContextProcess(U&& message);
+    
     PAL::SessionID m_sessionID;
 
-    Ref<IPC::Connection> m_connection;
+    Ref<IPC::Connection> m_contentConnection;
+    RefPtr<IPC::Connection> m_contextConnection;
+    
+    Deque<WebCore::ServiceWorkerContextData> m_pendingContextDatas;
 }; // class WebSWServerConnection
 
 } // namespace WebKit
