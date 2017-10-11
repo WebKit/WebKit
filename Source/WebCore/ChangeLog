@@ -1,5 +1,42 @@
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221872. rdar://problem/34891288
+
+    2017-09-11  Dean Jackson  <dino@apple.com>
+
+            [WebGL macOS] No need to multisample when blitting into WebGLLayer
+            https://bugs.webkit.org/show_bug.cgi?id=176666
+            <rdar://problem/27774626>
+
+            Reviewed by Sam Weinig.
+
+            We were seeing performance profiles suggesting WebGL was
+            doing 8x MSAA, even though we explicitly set it to only
+            use 4 samples in the GLPixelFormatObj used to create
+            the WebGL CGLContextObj. However, that same CGLPixelFormatObj
+            was also used for the WebGLLayer's CGLContextObj, meaning the
+            blit of the WebGL FBO into the WebGLLayer's backing store was
+            multisampling as well -- so an extra 4 samples on top of the
+            original 4, making it look like we were doing 8x.
+
+            This was obviously unnecessary, since we already have the
+            multisampled FBO and just want to copy it, as is, into the layer.
+
+            Now, instead of copying the CGLPixelFormatObj, we create
+            a new one and copy most of the attributes, leaving out
+            the multisample flags (and the depth buffer, since we're
+            only doing 2d blits).
+
+            Covered by existing WebGL tests, since there should be no
+            visible change.
+
+            * platform/graphics/cocoa/WebGLLayer.mm:
+            (-[WebGLLayer copyCGLPixelFormatForDisplayMask:]): Create a new
+            CGLPixelFormatObj that copies most of the values from
+            the corresponding object on the WebGL's backing CGLContextObj.
+
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221831. rdar://problem/34891283
 
     2017-09-08  Dean Jackson  <dino@apple.com>
