@@ -209,7 +209,11 @@ void WebFrame::invalidate()
     m_coreFrame = 0;
 }
 
+#if PLATFORM(MAC)
 uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction)
+#else
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
+#endif
 {
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
 
@@ -217,6 +221,9 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
 
     m_policyListenerID = generateListenerID();
     m_policyFunction = WTFMove(policyFunction);
+#if !PLATFORM(MAC)
+    m_policyFunctionForNavigationAction = forNavigationAction;
+#endif
     return m_policyListenerID;
 }
 
@@ -228,9 +235,16 @@ void WebFrame::invalidatePolicyListener()
     m_policyDownloadID = { };
     m_policyListenerID = 0;
     m_policyFunction = nullptr;
+#if !PLATFORM(MAC)
+    m_policyFunctionForNavigationAction = ForNavigationAction::No;
+#endif
 }
 
+#if PLATFORM(MAC)
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID)
+#else
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID, const WebsitePolicies& websitePolicies)
+#endif
 {
     if (!m_coreFrame)
         return;
@@ -244,9 +258,17 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     ASSERT(m_policyFunction);
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
+#if !PLATFORM(MAC)
+    bool forNavigationAction = m_policyFunctionForNavigationAction == ForNavigationAction::Yes;
+#endif
 
     invalidatePolicyListener();
 
+#if !PLATFORM(MAC)
+    if (forNavigationAction && m_frameLoaderClient)
+        m_frameLoaderClient->applyToDocumentLoader(websitePolicies);
+#endif
+    
     m_policyDownloadID = downloadID;
     if (navigationID) {
         if (WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(m_coreFrame->loader().policyDocumentLoader()))

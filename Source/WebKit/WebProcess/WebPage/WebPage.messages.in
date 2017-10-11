@@ -150,7 +150,12 @@ messages -> WebPage LegacyReceiver {
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
 
     UpdateWebsitePolicies(struct WebKit::WebsitePolicies websitePolicies)
+#if PLATFORM(MAC)
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, WebKit::DownloadID downloadID)
+#endif
+#if !PLATFORM(MAC)
+    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, struct WebKit::WebsitePolicies websitePolicies)
+#endif
 
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()
