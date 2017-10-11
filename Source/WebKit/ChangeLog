@@ -1,3 +1,20 @@
+2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable custom pasteboard data in DumpRenderTree and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=178154
+
+        Reviewed by Wenson Hsieh.
+
+        Plumbed customPasteboardDataEnabled flag to be used in WebKitTestRunner.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCustomPasteboardDataEnabled):
+        (WKPreferencesGetCustomPasteboardDataEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Remove the possibility of installing the old WebKit2 C API

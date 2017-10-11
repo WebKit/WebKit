@@ -3066,6 +3066,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     [WAKView _setInterpolationQuality:[preferences _interpolationQuality]];
 #endif
 
+    settings.setCustomPasteboardDataEnabled([preferences customPasteboardDataEnabled]);
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     settings.setMediaKeysStorageDirectory([preferences mediaKeysStorageDirectory]);
 #endif

@@ -42,6 +42,7 @@
 #import <wtf/RetainPtr.h>
 
 @interface LocalPasteboard : NSPasteboard {
+    RetainPtr<id> _owner;
     RetainPtr<NSString> _pasteboardName;
     NSInteger _changeCount;
 
@@ -140,12 +141,9 @@ static RetainPtr<NSString> toUTI(NSString *type)
 
 - (NSInteger)addTypes:(NSArray *)newTypes owner:(id)newOwner
 {
-    for (NSString *type in newTypes) {
+    _owner = newOwner;
+    for (NSString *type in newTypes)
         _types.add(toUTI(type));
-
-        if (newOwner && [newOwner respondsToSelector:@selector(pasteboard:provideDataForType:)])
-            [newOwner pasteboard:self provideDataForType:type];
-    }
 
     return ++_changeCount;
 }
@@ -194,6 +192,12 @@ static RetainPtr<NSString> toUTI(NSString *type)
 
 - (NSData *)dataForType:(NSString *)dataType
 {
+    if (NSData *data = _data.get(toUTI(dataType)).get())
+        return data;
+
+    if (_owner && [_owner respondsToSelector:@selector(pasteboard:provideDataForType:)])
+        [_owner pasteboard:self provideDataForType:dataType];
+
     return _data.get(toUTI(dataType)).get();
 }
 

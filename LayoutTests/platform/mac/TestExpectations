@@ -276,9 +276,6 @@ webkit.org/b/81289 canvas/philip/tests/2d.line.cap.round.html [ Failure ]
 
 webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
-# Has failed since its introduction in r105826.
-webkit.org/b/61630 fast/events/dropzone-005.html [ Failure ]
-
 # Spelling tests that are flakey.
 webkit.org/b/82555 editing/spelling/spellcheck-async-mutation.html [ Pass Failure ]
 

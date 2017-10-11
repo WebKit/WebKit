@@ -1,3 +1,21 @@
+2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable custom pasteboard data in DumpRenderTree and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=178154
+
+        Reviewed by Wenson Hsieh.
+
+        Enable custom pasteboard data by default.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences customPasteboardDataEnabled]): Added.
+        (-[WebPreferences setCustomPasteboardDataEnabled:]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-10-10  Sam Weinig  <sam@webkit.org>
 
         Replace copyKeysToVector/copyValuesToVector with copyToVector(map.keys())/copyToVector(map.values())

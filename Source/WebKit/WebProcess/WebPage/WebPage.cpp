@@ -3336,6 +3336,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     RuntimeEnabledFeatures::sharedFeatures().setDataTransferItemsEnabled(store.getBoolValueForKey(WebPreferencesKey::dataTransferItemsEnabledKey()));
 
+    settings.setCustomPasteboardDataEnabled(store.getBoolValueForKey(WebPreferencesKey::customPasteboardDataEnabledKey()));
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     RuntimeEnabledFeatures::sharedFeatures().setAttachmentElementEnabled(store.getBoolValueForKey(WebPreferencesKey::attachmentElementEnabledKey()));
 #endif

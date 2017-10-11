@@ -1680,6 +1680,16 @@ bool WKPreferencesGetDataTransferItemsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->dataTransferItemsEnabled();
 }
 
+void WKPreferencesSetCustomPasteboardDataEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCustomPasteboardDataEnabled(flag);
+}
+
+bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->customPasteboardDataEnabled();
+}
+
 void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setDownloadAttributeEnabled(flag);

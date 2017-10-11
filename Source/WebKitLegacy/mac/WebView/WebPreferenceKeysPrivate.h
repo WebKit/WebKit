@@ -171,6 +171,7 @@
 #define WebKitShadowDOMEnabledPreferenceKey @"WebKitShadowDOMEnabled"
 #define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"
 #define WebKitDataTransferItemsEnabledPreferenceKey @"WebKitDataTransferItemsEnabled"
+#define WebKitCustomPasteboardDataEnabledPreferenceKey @"WebKitCustomPasteboardDataEnabled"
 #define WebKitCacheAPIEnabledPreferenceKey @"WebKitCacheAPIEnabled"
 #define WebKitFetchAPIEnabledPreferenceKey @"WebKitFetchAPIEnabled"
 #define WebKitWritableStreamAPIEnabledPreferenceKey @"WebKitWritableStreamAPIEnabled"

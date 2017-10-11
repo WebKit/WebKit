@@ -304,7 +304,8 @@ public:
 #endif
 
     static void setCustomPasteboardDataEnabled(bool enabled) { gCustomPasteboardDataEnabled = enabled; }
-    WEBCORE_EXPORT static bool customPasteboardDataEnabled();
+    static bool customPasteboardDataEnabled() { return gCustomPasteboardDataEnabled; }
+    WEBCORE_EXPORT static bool defaultCustomPasteboardDataEnabled();
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void setMediaKeysStorageDirectory(const String& directory) { m_mediaKeysStorageDirectory = directory; }

@@ -1,3 +1,15 @@
+2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable custom pasteboard data in DumpRenderTree and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=178154
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/pasteboard/dataTransfer-setData-getData-expected.txt: Rebaselined. One more test case is passing now.
+        * fast/events/dropzone-002.html: Fixed the test to accept an image since we no longer drop URLs when dropping
+        an image avoid leaking local file paths.
+        * platform/mac/TestExpectations: Enabled dropzone-005.html since it started passing after fixing LocalPasteboard.
+
 2017-10-10  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Validate that all PaymentCurrencyAmounts use the same currency code when using Apple Pay

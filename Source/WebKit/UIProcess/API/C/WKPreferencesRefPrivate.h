@@ -474,6 +474,10 @@ WK_EXPORT void WKPreferencesSetDataTransferItemsEnabled(WKPreferencesRef, bool f
 WK_EXPORT bool WKPreferencesGetDataTransferItemsEnabled(WKPreferencesRef);
 
 // Defaults to false
+WK_EXPORT void WKPreferencesSetCustomPasteboardDataEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef);
+
+// Defaults to false
 WK_EXPORT void WKPreferencesSetUserTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef);
 

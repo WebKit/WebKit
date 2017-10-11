@@ -195,7 +195,7 @@ void Pasteboard::read(PasteboardFileReader& reader)
         const char* mimeType = imageTypeToMIMEType(imageType);
         if (!mimeType)
             continue;
-        if (!existingMIMEs.add(mimeType).isNewEntry)
+        if (existingMIMEs.contains(mimeType))
             continue;
         auto buffer = readBufferForTypeWithSecurityCheck(cocoaType);
 #if PLATFORM(MAC)
@@ -204,6 +204,7 @@ void Pasteboard::read(PasteboardFileReader& reader)
 #endif
         if (!buffer)
             continue;
+        existingMIMEs.add(mimeType);
         reader.readBuffer(imageTypeToFakeFilename(imageType), mimeType, buffer.releaseNonNull());
     }
 }

@@ -952,6 +952,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setCustomElementsEnabled:YES];
 
     [preferences setDataTransferItemsEnabled:YES];
+    [preferences setCustomPasteboardDataEnabled:YES];
 
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];

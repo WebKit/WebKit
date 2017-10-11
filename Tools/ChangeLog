@@ -1,3 +1,24 @@
+2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable custom pasteboard data in DumpRenderTree and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=178154
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the bug that LocalPasteboard would fail to load the promise type if data is set after declaring types
+        by delaying the call to provideDataForType until when dataForType is called.
+
+        Without this fix, fast/events/dropzone-002.html would start failing after enabling custom pasteboard data.
+        With this fix, fast/events/dropzone-005.html also starts passing.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (-[LocalPasteboard addTypes:owner:]):
+        (-[LocalPasteboard dataForType:]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM
