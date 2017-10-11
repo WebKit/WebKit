@@ -50,6 +50,7 @@ public:
 
     void handleNeedContextSyncMessage(GstMessage*);
     void handleApplicationMessage(GstMessage*);
+    void handleStateChangeMessage(GstMessage*);
 #if ENABLE(ENCRYPTED_MEDIA)
     void handleElementMessage(GstMessage*);
 #endif

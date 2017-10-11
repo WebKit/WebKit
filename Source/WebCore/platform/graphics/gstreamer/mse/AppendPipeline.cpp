@@ -100,6 +100,11 @@ static void appendPipelineElementMessageCallback(GstBus*, GstMessage* message, A
 }
 #endif
 
+static void appendPipelineStateChangeMessageCallback(GstBus*, GstMessage* message, AppendPipeline* appendPipeline)
+{
+    appendPipeline->handleStateChangeMessage(message);
+}
+
 AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceClient, Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate, MediaPlayerPrivateGStreamerMSE& playerPrivate)
     : m_mediaSourceClient(mediaSourceClient.get())
     , m_sourceBufferPrivate(sourceBufferPrivate.get())
@@ -129,6 +134,7 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
 #if ENABLE(ENCRYPTED_MEDIA)
     g_signal_connect(m_bus.get(), "message::element", G_CALLBACK(appendPipelineElementMessageCallback), this);
 #endif
+    g_signal_connect(m_bus.get(), "message::state-changed", G_CALLBACK(appendPipelineStateChangeMessageCallback), this);
 
     // We assign the created instances here instead of adoptRef() because gst_bin_add_many()
     // below will already take the initial reference and we need an additional one for us.
@@ -341,6 +347,24 @@ void AppendPipeline::handleElementMessage(GstMessage* message)
     }
 }
 #endif
+
+void AppendPipeline::handleStateChangeMessage(GstMessage* message)
+{
+    ASSERT(WTF::isMainThread());
+
+    if (GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_pipeline.get())) {
+        GstState currentState, newState;
+        gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
+        CString sourceBufferType = String(m_sourceBufferPrivate->type().raw())
+            .replace("/", "_").replace(" ", "_")
+            .replace("\"", "").replace("\'", "").utf8();
+        CString dotFileName = String::format("webkit-append-%s-%s_%s",
+            sourceBufferType.data(),
+            gst_element_state_get_name(currentState),
+            gst_element_state_get_name(newState)).utf8();
+        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.data());
+    }
+}
 
 void AppendPipeline::handleAppsrcNeedDataReceived()
 {
