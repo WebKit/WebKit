@@ -1,3 +1,25 @@
+2017-10-11  Caio Lima  <ticaiolima@gmail.com>
+
+        Object properties are undefined in super.call() but not in this.call()
+        https://bugs.webkit.org/show_bug.cgi?id=177230
+
+        Reviewed by Saam Barati.
+
+        Bytecode generation for "super.call(...)" or "super.apply(...)"
+        shouldn't be considered as CallFunctionCallDotNode or
+        ApplyFunctionCallDotNode because they should be considered as common
+        super property access as any other function. According to spec[1],
+        "super" is not refering to parent constructor.
+
+        [1] - https://tc39.github.io/ecma262/#sec-super-keyword-runtime-semantics-evaluation
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::makeFunctionCallNode):
+
 2017-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop Instantiate hook in ES6 module loader

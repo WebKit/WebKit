@@ -4647,6 +4647,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     }
 
     bool baseIsSuper = match(SUPER);
+    bool previousBaseWasSuper = false;
     bool baseIsImport = match(IMPORT);
     semanticFailIfTrue((baseIsSuper || baseIsImport) && newCount, "Cannot use new with ", getToken());
 
@@ -4788,7 +4789,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     if (currentScope()->isArrowFunction())
                         functionScope->setInnerArrowFunctionUsesSuperCall();
                 }
-                base = context.makeFunctionCallNode(startLocation, base, arguments, expressionStart,
+                base = context.makeFunctionCallNode(startLocation, base, previousBaseWasSuper, arguments, expressionStart,
                     expressionEnd, lastTokenEndPosition(), callOrApplyDepthScope ? callOrApplyDepthScope->distanceToInnermostChild() : 0);
             }
             m_parserState.nonLHSCount = nonLHSCount;
@@ -4818,6 +4819,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         default:
             goto endMemberExpression;
         }
+        previousBaseWasSuper = baseIsSuper;
         baseIsSuper = false;
     }
 endMemberExpression:
