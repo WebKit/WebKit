@@ -601,6 +601,11 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     else if (coreObject->supportsARIADragging())
         attributeSet = addToAtkAttributeSet(attributeSet, "grabbed", "false");
 
+    // The Core AAM states the author-provided value should be exposed as-is.
+    const AtomicString& keyShortcuts = coreObject->ariaKeyShortcutsValue();
+    if (!keyShortcuts.isEmpty())
+        attributeSet = addToAtkAttributeSet(attributeSet, "keyshortcuts", keyShortcuts.string().utf8().data());
+
     return attributeSet;
 }
 
