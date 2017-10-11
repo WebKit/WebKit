@@ -653,7 +653,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     hasResponse()
     {
-        return !isNaN(this._statusCode);
+        return !isNaN(this._statusCode) || this._finished;
     }
 
     updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime, timingData, source)

@@ -102,7 +102,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
+        WI.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WI.timelineManager.persistentNetworkTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+
+        this._needsInitialPopulate = true;
     }
 
     // Static
@@ -190,6 +193,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         WI.Frame.removeEventListener(null, null, this);
         WI.Resource.removeEventListener(null, null, this);
+        WI.frameResourceManager.removeEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
         WI.timelineManager.persistentNetworkTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         super.closed();
@@ -647,6 +651,33 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._table.reloadData();
     }
 
+    _populateWithInitialResourcesIfNeeded()
+    {
+        if (!this._needsInitialPopulate)
+            return;
+
+        this._needsInitialPopulate = false;
+
+        console.assert(WI.frameResourceManager.mainFrame);
+
+        let populateFrameResources = (frame) => {
+            if (frame.provisionalMainResource)
+                this._pendingInsertions.push(frame.provisionalMainResource);
+            else if (frame.mainResource)
+                this._pendingInsertions.push(frame.mainResource);
+
+            for (let resource of frame.resourceCollection.items)
+                this._pendingInsertions.push(resource);
+
+            for (let childFrame of frame.childFrameCollection.items)
+                populateFrameResources(childFrame);
+        };
+
+        populateFrameResources(WI.frameResourceManager.mainFrame);
+
+        this.needsLayout();
+    }
+
     _checkTextFilterAgainstFinishedResource(resource)
     {
         let frame = resource.parentFrame;
@@ -828,6 +859,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._insertResourceAndReloadTable(frame.mainResource);
     }
 
+    _mainFrameDidChange()
+    {
+        this._populateWithInitialResourcesIfNeeded();
+    }
+
     _resourceLoadingDidFinish(event)
     {
         let resource = event.target;
@@ -894,15 +930,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _insertResourceAndReloadTable(resource)
     {
-        if (!(WI.tabBrowser.selectedTabContentView instanceof WI.NetworkTabContentView)) {
+        if (!this._table || !(WI.tabBrowser.selectedTabContentView instanceof WI.NetworkTabContentView)) {
             this._pendingInsertions.push(resource);
             this.needsLayout();
             return;
         }
-
-        console.assert(this._table);
-        if (!this._table)
-            return;
 
         let entry = this._entryForResource(resource);
 

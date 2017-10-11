@@ -266,7 +266,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._appendKeyValuePair(detailsElement, WI.UIString("URL"), this._resource.url.insertWordBreakCharacters());
 
         let status = emDash;
-        if (this._resource.hasResponse())
+        if (!isNaN(this._resource.statusCode))
             status = this._resource.statusCode + (this._resource.statusText ? " " + this._resource.statusText : "");
         this._appendKeyValuePair(detailsElement, WI.UIString("Status"), status);
 

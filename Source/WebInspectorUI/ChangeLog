@@ -1,3 +1,31 @@
+2017-10-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Show initially loaded resources even if network info not logged
+        https://bugs.webkit.org/show_bug.cgi?id=178098
+        <rdar://problem/34073529>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.hasResponse):
+        Resources loaded by Page.getFrameTree have a response but no status code data.
+        So include finished resources as having a resource.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype._populateWithInitialResourcesIfNeeded):
+        (WI.NetworkTableContentView.prototype._mainFrameDidChange):
+        Listen for the first main frame change to perform an initial population.
+
+        (WI.NetworkTableContentView.prototype._insertResourceAndReloadTable):
+        This path is not currently taken when table is null, but change the code so
+        that if it is reached without the table it would behave gracefully.
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._refreshSummarySection):
+        On first open none of the resources have a statusCode. Show an emDash.
+
 2017-10-10  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Quick Open: source mapped files are not shown as search results
