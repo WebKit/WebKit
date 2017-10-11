@@ -81,7 +81,7 @@ private:
     WebCore::URL url(const String& pasteboardName) override;
 
     long writeCustomData(const WebCore::PasteboardCustomData&, const String& pasteboardName) override;
-    Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName) override;
+    Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin) override;
 
     long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
     long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;

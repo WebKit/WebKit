@@ -107,13 +107,15 @@ static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     return nullptr;
 }
 
-Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
+Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& origin) const
 {
     ListHashSet<String> domPasteboardTypes;
     if (NSData *serializedCustomData = [m_pasteboard dataForType:@(PasteboardCustomData::cocoaType())]) {
-        auto buffer = SharedBuffer::create(serializedCustomData);
-        for (auto& type : PasteboardCustomData::fromSharedBuffer(buffer.get()).orderedTypes)
-            domPasteboardTypes.add(type);
+        auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
+        if (data.origin == origin) {
+            for (auto& type : data.orderedTypes)
+                domPasteboardTypes.add(type);
+        }
     }
 
     NSArray<NSString *> *allTypes = [m_pasteboard types];

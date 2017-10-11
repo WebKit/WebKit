@@ -255,7 +255,7 @@ bool Pasteboard::hasData()
     return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage() || m_selectionData->hasUnknownTypeData();
 }
 
-Vector<String> Pasteboard::typesSafeForBindings()
+Vector<String> Pasteboard::typesSafeForBindings(const String&)
 {
     notImplemented(); // webkit.org/b/177633: [GTK] Move to new Pasteboard API
     return { };
@@ -284,6 +284,12 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
         types.append(key);
 
     return types;
+}
+
+String Pasteboard::readOrigin()
+{
+    notImplemented(); // webkit.org/b/177633: [GTK] Move to new Pasteboard API
+    return { };
 }
 
 String Pasteboard::readString(const String& type)

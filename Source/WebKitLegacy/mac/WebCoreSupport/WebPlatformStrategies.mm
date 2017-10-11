@@ -178,9 +178,9 @@ int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
     return PlatformPasteboard(pasteboardName).numberOfFiles();
 }
 
-Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName)
+Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin)
 {
-    return PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite();
+    return PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin);
 }
 
 long WebPlatformStrategies::writeCustomData(const WebCore::PasteboardCustomData& data, const String& pasteboardName)

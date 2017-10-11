@@ -36,13 +36,14 @@ class StaticPasteboard final : public Pasteboard {
 public:
     StaticPasteboard();
 
-    void commitToPasteboard(Pasteboard&);
+    PasteboardCustomData takeCustomData();
 
     bool isStatic() const final { return true; }
 
     bool hasData() final;
-    Vector<String> typesSafeForBindings() final { return m_types; }
+    Vector<String> typesSafeForBindings(const String&) final { return m_types; }
     Vector<String> typesForLegacyUnsafeBindings() final { return m_types; }
+    String readOrigin() final { return { }; }
     String readString(const String& type) final;
     String readStringInCustomData(const String& type) final;
 
@@ -57,6 +58,8 @@ public:
     void write(const PasteboardURL&) final { }
     void write(const PasteboardImage&) final { }
     void write(const PasteboardWebContent&) final { }
+
+    void writeCustomData(const PasteboardCustomData&) final { }
 
     bool containsFiles() final { return false; }
     bool canSmartReplace() final { return false; }

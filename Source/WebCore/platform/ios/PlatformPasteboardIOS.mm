@@ -343,7 +343,10 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     return nullptr;
 }
 
-Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
+static const char originKeyForTeamData[] = "com.apple.WebKit.drag-and-drop-team-data.origin";
+static const char customTypesKeyForTeamData[] = "com.apple.WebKit.drag-and-drop-team-data.custom-types";
+
+Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& origin) const
 {
     ListHashSet<String> domPasteboardTypes;
     for (NSItemProvider *provider in [m_pasteboard itemProviders]) {
@@ -354,7 +357,13 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
         if (!teamDataObject || ![teamDataObject isKindOfClass:[NSDictionary class]])
             continue;
 
-        id customTypes = [(NSDictionary *)teamDataObject objectForKey:@(PasteboardCustomData::cocoaType())];
+        id originInTeamData = [(NSDictionary *)teamDataObject objectForKey:@(originKeyForTeamData)];
+        if (![originInTeamData isKindOfClass:[NSString class]])
+            continue;
+        if (String((NSString *)originInTeamData) != origin)
+            continue;
+
+        id customTypes = [(NSDictionary *)teamDataObject objectForKey:@(customTypesKeyForTeamData)];
         if (![customTypes isKindOfClass:[NSArray class]])
             continue;
 
@@ -363,9 +372,11 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
     }
 
     if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
-        auto buffer = SharedBuffer::create(serializedCustomData);
-        for (auto& type : PasteboardCustomData::fromSharedBuffer(buffer.get()).orderedTypes)
-            domPasteboardTypes.add(type);
+        auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
+        if (data.origin == origin) {
+            for (auto& type : data.orderedTypes)
+                domPasteboardTypes.add(type);
+        }
     }
 
     for (NSString *type in [m_pasteboard pasteboardTypes]) {
@@ -402,7 +413,8 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
             NSMutableArray<NSString *> *typesAsNSArray = [NSMutableArray array];
             for (auto& type : data.orderedTypes)
                 [typesAsNSArray addObject:type];
-            [representationsToRegister setTeamData:[NSKeyedArchiver archivedDataWithRootObject:@{ @(PasteboardCustomData::cocoaType()) : typesAsNSArray }]];
+            [representationsToRegister setTeamData:[NSKeyedArchiver archivedDataWithRootObject:@{
+                @(originKeyForTeamData) : data.origin, @(customTypesKeyForTeamData) : typesAsNSArray }]];
             [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
         }
     }
@@ -448,7 +460,7 @@ void PlatformPasteboard::write(const PasteboardURL&)
 {
 }
 
-Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
+Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) const
 {
     return { };
 }
@@ -516,27 +528,41 @@ String PlatformPasteboard::readString(int index, const String& type)
 URL PlatformPasteboard::readURL(int index, const String& type, String& title)
 {
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
-
     RetainPtr<NSArray> pasteboardItem = [m_pasteboard valuesForPasteboardType:type inItemSet:indexSet];
 
     if (![pasteboardItem count])
-        return URL();
+        return { };
 
     id value = [pasteboardItem objectAtIndex:0];
-    ASSERT([value isKindOfClass:[NSURL class]]);
-    if (![value isKindOfClass:[NSURL class]])
-        return URL();
+    NSURL *url = nil;
+    if ([value isKindOfClass:[NSData class]]) {
+        id plist = [NSPropertyListSerialization propertyListWithData:(NSData *)value options:NSPropertyListImmutable format:NULL error:NULL];
+        if (![plist isKindOfClass:[NSArray class]])
+            return { };
+        NSArray *plistArray = (NSArray *)plist;
+        if (plistArray.count < 2)
+            return { };
+        if (plistArray.count == 2)
+            url = [NSURL URLWithString:plistArray[0]];
+        else // The first string is the relative URL.
+            url = [NSURL URLWithString:plistArray[0] relativeToURL:[NSURL URLWithString:plistArray[1]]];
+    } else {
+        ASSERT([value isKindOfClass:[NSURL class]]);
+        if (![value isKindOfClass:[NSURL class]])
+            return { };
+        url = (NSURL *)value;
+    }
 
-    if (!allowReadingURLAtIndex((NSURL *)value, index))
+    if (!allowReadingURLAtIndex(url, index))
         return { };
 
 #if PLATFORM(IOS) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV))
-    title = [value _title];
+    title = [url _title];
 #else
     UNUSED_PARAM(title);
 #endif
 
-    return (NSURL *)value;
+    return url;
 }
 
 void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& types)

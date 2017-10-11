@@ -63,7 +63,7 @@ void WebPasteboardProxy::removeWebProcessProxy(WebProcessProxy& webProcessProxy)
 
 #if !PLATFORM(COCOA)
 
-void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String&, Vector<String>& types)
+void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String&, const String&, Vector<String>& types)
 {
     types = { };
 }

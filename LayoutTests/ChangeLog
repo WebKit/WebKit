@@ -1,3 +1,35 @@
+2017-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sanitize URL in pasteboard for other applications and cross origin content
+        https://bugs.webkit.org/show_bug.cgi?id=178060
+        <rdar://problem/34874518>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests for copying & pasting URLs. URLs should be %-escaped and any invalid URL should be stripped away and
+        invisible to a cross-origin content or a null origin document but the same origin content should have access to
+        its original form.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-get-data-on-copying-pasting-malformed-url-in-same-document-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-copying-pasting-malformed-url-in-same-document.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-custom-expected.txt: Rebaselined. We no longer normalize
+        "https://www.apple.com" into "https://www.apple.com/" by NSURL / UIPasteboard within the same origin content.
+        * editing/pasteboard/data-transfer-get-data-on-paste-custom-expected.txt: Ditto.
+        * editing/pasteboard/data-transfer-set-data-ignore-copied-walformed-url-in-null-expected.txt: Added.
+        * editing/pasteboard/data-transfer-set-data-ignore-copied-walformed-url-in-null-origin-expected.txt: Added.
+        * editing/pasteboard/data-transfer-set-data-ignore-copied-walformed-url-in-null-origin.html: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitlize-url-when-copying-in-null-origin-expected.txt: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitlize-url-when-copying-in-null-origin.html: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitlize-url-when-dragging-in-null-origin-expected.txt: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitlize-url-when-dragging-in-null-origin.html: Added.
+        * editing/pasteboard/dataTransfer-setData-getData-expected.txt: Rebaselined. More test cases are passing.
+        * editing/pasteboard/dataTransfer-setData-getData.html: Updated expectations as the original URL is now preserved.
+        * http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url-expected.txt: Added.
+        * http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html: Added.
+        * http/tests/security/clipboard/resources/copy.html: Added.
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-11  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement Apple Pay merchant validation

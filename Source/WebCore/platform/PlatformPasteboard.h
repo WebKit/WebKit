@@ -95,7 +95,7 @@ public:
     WEBCORE_EXPORT int numberOfFiles() const;
 
     WEBCORE_EXPORT long write(const PasteboardCustomData&);
-    WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite() const;
+    WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite(const String& origin) const;
 
 #if PLATFORM(GTK)
     WEBCORE_EXPORT void writeToClipboard(const SelectionData&, WTF::Function<void()>&& primarySelectionCleared);

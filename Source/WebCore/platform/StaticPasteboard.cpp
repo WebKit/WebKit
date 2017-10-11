@@ -26,9 +26,6 @@
 #include "config.h"
 #include "StaticPasteboard.h"
 
-#include "Settings.h"
-#include "SharedBuffer.h"
-
 namespace WebCore {
 
 StaticPasteboard::StaticPasteboard()
@@ -85,20 +82,9 @@ void StaticPasteboard::clear(const String& type)
     ASSERT(!m_types.contains(type));
 }
 
-void StaticPasteboard::commitToPasteboard(Pasteboard& pasteboard)
+PasteboardCustomData StaticPasteboard::takeCustomData()
 {
-    if (m_platformData.isEmpty() && m_customData.isEmpty())
-        return;
-
-    if (Settings::customPasteboardDataEnabled()) {
-        pasteboard.writeCustomData({ { }, WTFMove(m_types), WTFMove(m_platformData), WTFMove(m_customData) });
-        return;
-    }
-
-    for (auto& entry : m_platformData)
-        pasteboard.writeString(entry.key, entry.value);
-    for (auto& entry : m_customData)
-        pasteboard.writeString(entry.key, entry.value);
+    return { { }, WTFMove(m_types), WTFMove(m_platformData), WTFMove(m_customData) };
 }
 
 }

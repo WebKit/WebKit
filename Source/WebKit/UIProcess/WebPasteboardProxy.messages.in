@@ -36,7 +36,7 @@ messages -> WebPasteboardProxy {
 #endif
 
     WriteCustomData(struct WebCore::PasteboardCustomData data, String pasteboardName) -> (uint64_t changeCount)
-    TypesSafeForDOMToReadAndWrite(String pasteboardName) -> (Vector<String> types)
+    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types)
 
 #if PLATFORM(COCOA)
     # Pasteboard messages.

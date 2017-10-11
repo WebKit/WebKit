@@ -159,9 +159,9 @@ void WebPasteboardProxy::getNumberOfFiles(const String& pasteboardName, uint64_t
     numberOfFiles = PlatformPasteboard(pasteboardName).numberOfFiles();
 }
 
-void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String& pasteboardName, Vector<String>& types)
+void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, Vector<String>& types)
 {
-    types = PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite();
+    types = PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin);
 }
 
 void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData& data, const String& pasteboardName, uint64_t& newChangeCount)

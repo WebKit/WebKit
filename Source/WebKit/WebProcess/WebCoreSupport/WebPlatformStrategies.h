@@ -97,7 +97,7 @@ private:
     void writeToPasteboard(const String& pasteboardType, const String&) override;
 #endif
 
-    Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName) override;
+    Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin) override;
     long writeCustomData(const WebCore::PasteboardCustomData&, const String&) override;
 };
 

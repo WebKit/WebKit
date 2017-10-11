@@ -99,7 +99,7 @@ private:
 #endif
 
     void writeCustomData(const WebCore::PasteboardCustomData&, const String& pasteboardName, uint64_t& newChangeCount);
-    void typesSafeForDOMToReadAndWrite(const String& pasteboardName, Vector<String>& types);
+    void typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, Vector<String>& types);
 
 #if PLATFORM(GTK)
     void writeToClipboard(const String& pasteboardName, const WebSelectionData&);

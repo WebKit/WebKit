@@ -85,11 +85,11 @@ function runTest()
 {
     debug("--- Test set/get 'URL':");
     test("URL", "http://test.com", 
-         "URL", "http://test.com/");
+         "URL", "http://test.com");
 
     debug("--- Test set/get 'URL' with multiple URLs:");
     test("URL", "http://test.com\r\nhttp://check.com", 
-         "URL", "http://test.com/");
+         "URL", "http://test.com");
 
     debug("--- Test set/get 'text/uri-list':");
     test("text/uri-list", "http://test.com\r\nhttp://check.com", 
@@ -101,7 +101,7 @@ function runTest()
 
     debug("--- Test set 'text/uri-list', get 'URL':");
     test("text/uri-list", "http://test.com\r\nhttp://check.com", 
-         "URL", "http://test.com/");
+         "URL", "http://test.com");
 
     debug("--- Test set 'URL', get 'text/uri-list':");
     test("URL", "http://test.com\r\nhttp://check.com", 
@@ -109,7 +109,7 @@ function runTest()
 
     debug("--- Test set 'text/uri-list', get 'URL', using only '\\n':");
     test("text/uri-list", "http://test.com\nhttp://check.com",
-         "URL", "http://test.com/");
+         "URL", "http://test.com");
 
     debug("--- Test set/get 'text/uri-list' with comments:");
     test("text/uri-list", "# comment\r\nhttp://test.com\r\nhttp://check.com", 
@@ -117,7 +117,7 @@ function runTest()
 
     debug("--- Test set 'text/uri-list', get 'URL' with comments:");
     test("text/uri-list", "# comment\r\nhttp://test.com\r\nhttp://check.com", 
-         "URL", "http://test.com/");
+         "URL", "http://test.com");
 
     debug("--- Test set 'text/uri-list', get 'URL' with only comments:");
     test("text/uri-list", "# comment\r\n# comment 2\r\n# comment 3", 

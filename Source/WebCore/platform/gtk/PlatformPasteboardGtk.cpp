@@ -46,7 +46,7 @@ Ref<SelectionData> PlatformPasteboard::readFromClipboard()
     return selection;
 }
 
-Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
+Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) const
 {
     return { };
 }

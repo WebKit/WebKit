@@ -2389,7 +2389,7 @@ bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, std::uniq
         if (targetFrame)
             preventedDefault = targetFrame->eventHandler().performDragAndDrop(event, WTFMove(pasteboard), sourceOperation, draggingFiles);
     } else if (m_dragTarget) {
-        auto dataTransfer = DataTransfer::createForDrop(WTFMove(pasteboard), sourceOperation, draggingFiles);
+        auto dataTransfer = DataTransfer::createForDrop(m_dragTarget->document(), WTFMove(pasteboard), sourceOperation, draggingFiles);
         preventedDefault = dispatchDragEvent(eventNames().dropEvent, *m_dragTarget, event, dataTransfer);
         dataTransfer->makeInvalidForSecurity();
     }
@@ -3640,7 +3640,8 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     
     if (!m_mouseDownMayStartDrag)
         return !mouseDownMayStartSelect() && !m_mouseDownMayStartAutoscroll;
-    
+    ASSERT(dragState().source);
+
     if (!ExactlyOneBitSet(dragState().type)) {
         ASSERT((dragState().type & DragSourceActionSelection));
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -3677,7 +3678,8 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     HasNonDefaultPasteboardData hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::No;
     
     if (dragState().shouldDispatchEvents) {
-        auto dragStartDataTransfer = DataTransfer::createForDragStartEvent();
+        ASSERT(dragState().source);
+        auto dragStartDataTransfer = DataTransfer::createForDragStartEvent(dragState().source->document());
         m_mouseDownMayStartDrag = dispatchDragStartEventOnSourceElement(dragStartDataTransfer);
         hasNonDefaultPasteboardData = dragStartDataTransfer->pasteboard().hasData() ? HasNonDefaultPasteboardData::Yes : HasNonDefaultPasteboardData::No;
         dragState().dataTransfer->moveDragState(WTFMove(dragStartDataTransfer));

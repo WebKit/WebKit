@@ -14,7 +14,7 @@ Rich text
         "foo/🤔👌🙃": "🤔👌🙃",
         "text/html": "<b>年年年</b>",
         "bar/מקור השם עברית": "<i>מקור השם עברית</i>",
-        "text/uri-list": "https://www.apple.com/",
+        "text/uri-list": "https://www.apple.com",
         "baz/年年年": "https://www.webkit.org",
         "text/rtf": "AAAAAAAAAAA"
     }

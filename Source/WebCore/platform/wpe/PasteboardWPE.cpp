@@ -49,7 +49,7 @@ bool Pasteboard::hasData()
     return !types.isEmpty();
 }
 
-Vector<String> Pasteboard::typesSafeForBindings()
+Vector<String> Pasteboard::typesSafeForBindings(const String&)
 {
     notImplemented();
     return { };
@@ -60,6 +60,12 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types);
     return types;
+}
+
+String Pasteboard::readOrigin()
+{
+    notImplemented(); // webkit.org/b/177633: [GTK] Move to new Pasteboard API
+    return { };
 }
 
 String Pasteboard::readString(const String& type)

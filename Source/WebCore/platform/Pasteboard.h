@@ -193,8 +193,9 @@ public:
     virtual bool isStatic() const { return false; }
 
     virtual bool hasData();
-    virtual Vector<String> typesSafeForBindings();
+    virtual Vector<String> typesSafeForBindings(const String& origin);
     virtual Vector<String> typesForLegacyUnsafeBindings();
+    virtual String readOrigin();
     virtual String readString(const String& type);
     virtual String readStringInCustomData(const String& type);
 
@@ -210,6 +211,8 @@ public:
     virtual void writeTrustworthyWebURLsPboardType(const PasteboardURL&);
     virtual void write(const PasteboardImage&);
     virtual void write(const PasteboardWebContent&);
+
+    virtual void writeCustomData(const PasteboardCustomData&);
 
     virtual bool containsFiles();
     virtual bool canSmartReplace();
@@ -250,6 +253,7 @@ public:
     WEBCORE_EXPORT static NSArray *supportedFileUploadPasteboardTypes();
     const String& name() const { return m_pasteboardName; }
     long changeCount() const;
+    const PasteboardCustomData& readCustomData();
 #endif
 
 #if PLATFORM(WIN)
@@ -260,8 +264,6 @@ public:
     COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
     void writeImageToDataObject(Element&, const URL&); // FIXME: Layering violation.
 #endif
-
-    void writeCustomData(const PasteboardCustomData&);
 
 private:
 #if PLATFORM(IOS)
@@ -295,6 +297,7 @@ private:
 #if PLATFORM(COCOA)
     String m_pasteboardName;
     long m_changeCount;
+    std::optional<PasteboardCustomData> m_customDataCache;
 #endif
 
 #if PLATFORM(WIN)

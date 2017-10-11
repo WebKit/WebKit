@@ -237,7 +237,7 @@ static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC&
         results.add("text/plain");
 }
 
-Vector<String> Pasteboard::typesSafeForBindings()
+Vector<String> Pasteboard::typesSafeForBindings(const String&)
 {
     notImplemented();
     return { };
@@ -275,6 +275,12 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     Vector<String> vector;
     copyToVector(results, vector);
     return vector;
+}
+
+String Pasteboard::readOrigin()
+{
+    notImplemented();
+    return { };
 }
 
 String Pasteboard::readString(const String& type)

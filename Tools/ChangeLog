@@ -1,3 +1,24 @@
+2017-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Sanitize URL in pasteboard for other applications and cross origin content
+        https://bugs.webkit.org/show_bug.cgi?id=178060
+        <rdar://problem/34874518>
+
+        Reviewed by Wenson Hsieh.
+
+        Added API tests for sanitizing URLs copied from web content, and that the original URL is exposed to the web content.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyURL.mm: Added.
+        (readURLFromPasteboard): A helper function.
+        * TestWebKitAPI/Tests/WebKitCocoa/copy-url.html: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (DataInteractionTests.DataTransferGetDataWhenDroppingCustomData): Rebaselined. https://www.apple.com is no longer
+        normalized to https://www.apple.com/ by NSURL / UIPasteboard as expected.
+        (DataInteractionTests.DataTransferSetDataValidURL): Added.
+        (DataInteractionTests.DataTransferSetDataUnescapedURL): Added.
+        (DataInteractionTests.qDataTransferSetDataInvalidURL): Added.
+
 2017-10-11  Chris Dumez  <cdumez@apple.com>
 
         Modernize Geolocation code

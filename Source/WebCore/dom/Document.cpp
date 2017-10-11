@@ -213,6 +213,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringBuffer.h>
 #include <yarr/RegularExpression.h>
 
@@ -5302,6 +5303,13 @@ bool Document::isTelephoneNumberParsingAllowed() const
 }
 
 #endif
+
+String Document::uniqueIdentifier()
+{
+    if (!m_uniqueIdentifier)
+        m_uniqueIdentifier = "null:" + createCanonicalUUIDString();
+    return m_uniqueIdentifier;
+}
 
 ExceptionOr<Ref<XPathExpression>> Document::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver)
 {
