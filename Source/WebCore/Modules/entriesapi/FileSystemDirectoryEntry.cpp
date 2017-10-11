@@ -51,7 +51,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
     if (!successCallback && !errorCallback)
         return;
 
-    filesystem().getEntry(context, *this, path, flags, [this, pendingActivity = makePendingActivity(*this), matches = WTFMove(matches), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
+    filesystem().getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTFMove(matches), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
         if (result.hasException()) {
             if (errorCallback)
                 errorCallback->handleEvent(DOMException::create(result.releaseException()));
