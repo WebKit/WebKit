@@ -41,6 +41,18 @@
 
 namespace WebCore {
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
+inline uint8_t* castDataArgumentToCCRSACryptorCreateFromDataIfNeeded(const uint8_t* value)
+{
+    return const_cast<uint8_t*>(value);
+}
+#else
+inline const uint8_t* castDataArgumentToCCRSACryptorCreateFromDataIfNeeded(const uint8_t* value)
+{
+    return value;
+}
+#endif
+
 // OID rsaEncryption: 1.2.840.113549.1.1.1. Per https://tools.ietf.org/html/rfc3279#section-2.3.1
 static const unsigned char RSAOIDHeader[] = {0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00};
 
@@ -136,10 +148,10 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
     // See <rdar://problem/15452324>.
     CCCryptorStatus status = CCRSACryptorCreateFromData(
         keyData.type() == CryptoKeyRSAComponents::Type::Public ? ccRSAKeyPublic : ccRSAKeyPrivate,
-        (uint8_t*)keyData.modulus().data(), keyData.modulus().size(),
-        (uint8_t*)keyData.exponent().data(), keyData.exponent().size(),
-        (uint8_t*)keyData.firstPrimeInfo().primeFactor.data(), keyData.firstPrimeInfo().primeFactor.size(),
-        (uint8_t*)keyData.secondPrimeInfo().primeFactor.data(), keyData.secondPrimeInfo().primeFactor.size(),
+        castDataArgumentToCCRSACryptorCreateFromDataIfNeeded(keyData.modulus().data()), keyData.modulus().size(),
+        castDataArgumentToCCRSACryptorCreateFromDataIfNeeded(keyData.exponent().data()), keyData.exponent().size(),
+        castDataArgumentToCCRSACryptorCreateFromDataIfNeeded(keyData.firstPrimeInfo().primeFactor.data()), keyData.firstPrimeInfo().primeFactor.size(),
+        castDataArgumentToCCRSACryptorCreateFromDataIfNeeded(keyData.secondPrimeInfo().primeFactor.data()), keyData.secondPrimeInfo().primeFactor.size(),
         &cryptor);
 
     if (status) {

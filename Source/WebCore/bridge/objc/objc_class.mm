@@ -50,7 +50,7 @@ ObjcClass* ObjcClass::classForIsA(ClassStructPtr isa)
 {
     _createClassesByIsAIfNecessary();
 
-    ObjcClass* aClass = (ObjcClass*)CFDictionaryGetValue(classesByIsA, isa);
+    ObjcClass* aClass = reinterpret_cast<ObjcClass*>(const_cast<void*>(CFDictionaryGetValue(classesByIsA, isa)));
     if (!aClass) {
         aClass = new ObjcClass(isa);
         CFDictionaryAddValue(classesByIsA, isa, aClass);

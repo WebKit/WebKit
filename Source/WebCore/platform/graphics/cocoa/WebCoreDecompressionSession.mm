@@ -313,8 +313,7 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
         return;
     }
 
-    dispatch_async(m_enqueingQueue.get(), [protectedThis = makeRefPtr(this), status, imageSampleBuffer = adoptCF(rawImageSampleBuffer), infoFlags, displaying] {
-        UNUSED_PARAM(infoFlags);
+    dispatch_async(m_enqueingQueue.get(), [protectedThis = makeRefPtr(this), imageSampleBuffer = adoptCF(rawImageSampleBuffer), displaying] {
         protectedThis->enqueueDecodedSample(imageSampleBuffer.get(), displaying);
     });
 }
