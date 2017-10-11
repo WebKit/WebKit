@@ -334,6 +334,8 @@ public:
     WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
     bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
 
+    WEBCORE_EXPORT FrameFlattening effectiveFrameFlattening();
+
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
     static bool allowsAnySSLCertificate();
 

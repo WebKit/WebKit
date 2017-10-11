@@ -568,7 +568,7 @@ void FrameView::setMarginHeight(LayoutUnit h)
 
 bool FrameView::frameFlatteningEnabled() const
 {
-    return frame().settings().frameFlattening() != FrameFlatteningDisabled;
+    return frame().settings().effectiveFrameFlattening() != FrameFlatteningDisabled;
 }
 
 bool FrameView::isFrameFlatteningValidForThisFrame() const

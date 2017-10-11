@@ -1,3 +1,15 @@
+2017-09-27  Frederic Wang  <fwang@igalia.com>
+
+        [iOS] Do not flatten frames when async frame scrolling is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=173704
+
+        Reviewed by Simon Fraser.
+
+        Add an iOS test to verify that frame flattening is disabled when async frame scrolling is enabled.
+
+        * platform/ios/fast/frames/flattening/iframe-flattening-with-async-frame-scrolling-expected.txt: Added.
+        * platform/ios/fast/frames/flattening/iframe-flattening-with-async-frame-scrolling.html: Added.
+
 2017-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable custom pasteboard data in DumpRenderTree and WebKitTestRunner

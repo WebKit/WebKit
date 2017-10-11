@@ -441,6 +441,18 @@ void Settings::setForcePendingWebGLPolicy(bool forced)
     m_forcePendingWebGLPolicy = forced;
 }
 
+FrameFlattening Settings::effectiveFrameFlattening()
+{
+#if PLATFORM(IOS)
+    // On iOS when async frame scrolling is enabled, it does not make sense to use full frame flattening.
+    // In that case, we just consider that frame flattening is disabled. This allows people to test
+    // frame scrolling on iOS by enabling "Async Frame Scrolling" via the Safari menu.
+    if (asyncFrameScrollingEnabled() && frameFlattening() == FrameFlatteningFullyEnabled)
+        return FrameFlatteningDisabled;
+#endif
+    return frameFlattening();
+}
+
 void Settings::setPluginsEnabled(bool arePluginsEnabled)
 {
     if (m_arePluginsEnabled == arePluginsEnabled)

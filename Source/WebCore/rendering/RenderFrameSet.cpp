@@ -651,7 +651,7 @@ void RenderFrameSet::positionFramesWithFlattening()
 
 bool RenderFrameSet::flattenFrameSet() const
 {
-    return settings().frameFlattening() != FrameFlatteningDisabled;
+    return settings().effectiveFrameFlattening() != FrameFlatteningDisabled;
 }
 
 void RenderFrameSet::startResizing(GridAxis& axis, int position)

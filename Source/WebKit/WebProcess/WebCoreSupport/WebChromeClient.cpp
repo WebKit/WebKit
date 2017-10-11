@@ -566,7 +566,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 
 void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) const
 {
-    if (m_page.corePage()->settings().frameFlattening() == FrameFlatteningDisabled) {
+    if (m_page.corePage()->settings().effectiveFrameFlattening() == FrameFlatteningDisabled) {
         WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
         if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
             m_cachedFrameSetLargestFrame = largestFrame;

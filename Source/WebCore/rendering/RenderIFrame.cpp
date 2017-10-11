@@ -78,7 +78,7 @@ bool RenderIFrame::isFullScreenIFrame() const
 
 bool RenderIFrame::flattenFrame() const
 {
-    if (settings().frameFlattening() == FrameFlatteningDisabled)
+    if (settings().effectiveFrameFlattening() == FrameFlatteningDisabled)
         return false;
 
     if (style().width().isFixed() && style().height().isFixed()) {
@@ -89,7 +89,7 @@ bool RenderIFrame::flattenFrame() const
         if (style().width().value() <= 0 || style().height().value() <= 0)
             return false;
         // Do not flatten "fullscreen" iframes or they could become larger than the viewport.
-        if (settings().frameFlattening() <= FrameFlatteningEnabledForNonFullScreenIFrames && isFullScreenIFrame())
+        if (settings().effectiveFrameFlattening() <= FrameFlatteningEnabledForNonFullScreenIFrames && isFullScreenIFrame())
             return false;
     }
 
