@@ -324,3 +324,13 @@ void WKWebsiteDataStoreRemoveAllIndexedDatabases(WKWebsiteDataStoreRef dataStore
     OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::IndexedDBDatabases;
     WebKit::toImpl(dataStoreRef)->websiteDataStore().removeData(dataTypes, std::chrono::system_clock::time_point::min(), [] { });
 }
+
+void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDataStoreRef dataStoreRef)
+{
+#if ENABLE(SERVICE_WORKER)
+    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::ServiceWorkerRegistrations;
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().removeData(dataTypes, std::chrono::system_clock::time_point::min(), [] { });
+#else
+    UNUSED_PARAM(dataStoreRef);
+#endif
+}

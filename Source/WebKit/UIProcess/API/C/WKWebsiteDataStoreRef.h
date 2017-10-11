@@ -71,6 +71,7 @@ typedef void (*WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemovalFunctio
 WK_EXPORT void WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemovalFunction callback);
 WK_EXPORT void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef dataStoreRef);
 WK_EXPORT void WKWebsiteDataStoreRemoveAllIndexedDatabases(WKWebsiteDataStoreRef dataStoreRef);
+WK_EXPORT void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDataStoreRef dataStoreRef);
 
 #ifdef __cplusplus
 }

@@ -58,6 +58,10 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
         return WebsiteDataType::WebSQLDatabases;
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeIndexedDBDatabases])
         return WebsiteDataType::IndexedDBDatabases;
+#if ENABLE(SERVICE_WORKER)
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeServiceWorkerRegistrations])
+        return WebsiteDataType::ServiceWorkerRegistrations;
+#endif
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeHSTSCache])
         return WebsiteDataType::HSTSCache;
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeMediaKeys])
@@ -107,6 +111,10 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeWebSQLDatabases];
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeIndexedDBDatabases];
+#if ENABLE(SERVICE_WORKER)
+    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeServiceWorkerRegistrations];
+#endif
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeHSTSCache];
     if (websiteDataTypes.contains(WebsiteDataType::MediaKeys))

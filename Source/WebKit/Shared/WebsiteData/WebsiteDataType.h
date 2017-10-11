@@ -45,6 +45,9 @@ enum class WebsiteDataType {
 #endif
     ResourceLoadStatistics = 1 << 12,
     Credentials = 1 << 13,
+#if ENABLE(SERVICE_WORKER)
+    ServiceWorkerRegistrations = 1 << 14,
+#endif
 };
 
 };

@@ -183,18 +183,18 @@ void StorageProcess::createStorageToWebProcessConnection()
 
 void StorageProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
 {
-#if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID](const WebsiteData& websiteData) {
         parentProcessConnection()->send(Messages::StorageProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
     };
 
-    String path = m_idbDatabasePaths.get(sessionID);
-    if (path.isEmpty() || !websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        completionHandler({ });
-        return;
-    }
+#if ENABLE(SERVICE_WORKER)
+    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
+        notImplemented();
+#endif
 
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+#if ENABLE(INDEXED_DATABASE)
+    String path = m_idbDatabasePaths.get(sessionID);
+    if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         // FIXME: Pick the right database store based on the session ID.
         postStorageTask(CrossThreadTask([this, completionHandler = WTFMove(completionHandler), path = WTFMove(path)]() mutable {
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), securityOrigins = indexedDatabaseOrigins(path)] {
@@ -205,40 +205,53 @@ void StorageProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
                 completionHandler(websiteData);
             });
         }));
+        return;
     }
 #endif
+
+    completionHandler({ });
 }
 
 void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
-#if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::StorageProcessProxy::DidDeleteWebsiteData(callbackID), 0);
     };
 
-    if (!websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        completionHandler();
+#if ENABLE(SERVICE_WORKER)
+    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
+        notImplemented();
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+        idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
         return;
     }
-
-    idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
 #endif
+
+    completionHandler();
 }
 
 void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
 {
-#if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {
         parentProcessConnection()->send(Messages::StorageProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
     };
 
+#if ENABLE(SERVICE_WORKER)
+    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
+        notImplemented();
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
     if (!websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        completionHandler();
+        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
         return;
     }
-
-    idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
 #endif
+
+    completionHandler();
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)

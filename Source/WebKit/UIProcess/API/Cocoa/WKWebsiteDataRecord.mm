@@ -40,6 +40,7 @@ NSString * const WKWebsiteDataTypeSessionStorage = @"WKWebsiteDataTypeSessionSto
 NSString * const WKWebsiteDataTypeLocalStorage = @"WKWebsiteDataTypeLocalStorage";
 NSString * const WKWebsiteDataTypeWebSQLDatabases = @"WKWebsiteDataTypeWebSQLDatabases";
 NSString * const WKWebsiteDataTypeIndexedDBDatabases = @"WKWebsiteDataTypeIndexedDBDatabases";
+NSString * const WKWebsiteDataTypeServiceWorkerRegistrations = @"WKWebsiteDataTypeServiceWorkerRegistrations";
 
 NSString * const _WKWebsiteDataTypeMediaKeys = @"_WKWebsiteDataTypeMediaKeys";
 NSString * const _WKWebsiteDataTypeHSTSCache = @"_WKWebsiteDataTypeHSTSCache";
@@ -80,6 +81,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Web SQL"];
     if ([dataTypes containsObject:WKWebsiteDataTypeIndexedDBDatabases])
         [array addObject:@"IndexedDB"];
+    if ([dataTypes containsObject:WKWebsiteDataTypeServiceWorkerRegistrations])
+        [array addObject:@"Service Worker Registrations"];
     if ([dataTypes containsObject:_WKWebsiteDataTypeHSTSCache])
         [array addObject:@"HSTS Cache"];
     if ([dataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
