@@ -2585,9 +2585,6 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
 
 void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
 {
-#if !ASSERT_DISABLED
-    SetForScope<bool> reparentingChild(m_reparentingChild, true);
-#endif
     // We assume that callers have cleared their positioned objects list for child moves (!fullRemoveInsert) so the
     // positioned renderer maps don't become stale. It would be too slow to do the map lookup on each call.
     ASSERT(!fullRemoveInsert || !is<RenderBlock>(*this) || !downcast<RenderBlock>(*this).hasPositionedObjects());

@@ -358,11 +358,6 @@ private:
     // Store state between styleWillChange and styleDidChange
     static bool s_affectsParentBlock;
     static bool s_noLongerAffectsParentBlock;
-
-protected:
-#if !ASSERT_DISABLED
-    bool m_reparentingChild { false };
-#endif
 };
 
 inline void RenderElement::setAncestorLineBoxDirty(bool f)

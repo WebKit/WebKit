@@ -234,9 +234,6 @@ void RenderListItem::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-#if !ASSERT_DISABLED
-    SetForScope<bool> inListItemLayout(m_inLayout, true);
-#endif
     RenderBlockFlow::layout();
 }
 

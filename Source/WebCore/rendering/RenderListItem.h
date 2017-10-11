@@ -59,10 +59,6 @@ public:
     RenderListMarker* markerRenderer() const { return m_marker.get(); }
     void setMarkerRenderer(RenderListMarker& marker) { m_marker = makeWeakPtr(marker); }
 
-#if !ASSERT_DISABLED
-    bool inLayout() const { return m_inLayout; }
-#endif
-
 private:
     void willBeDestroyed() override;
 
@@ -90,9 +86,6 @@ private:
     int m_explicitValue;
     WeakPtr<RenderListMarker> m_marker;
     mutable int m_value;
-#if !ASSERT_DISABLED
-    bool m_inLayout { false };
-#endif
     bool m_hasExplicitValue : 1;
     mutable bool m_isValueUpToDate : 1;
     bool m_notInList : 1;

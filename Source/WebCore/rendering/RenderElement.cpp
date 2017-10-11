@@ -85,9 +85,6 @@ struct SameSizeAsRenderElement : public RenderObject {
     void* firstChild;
     void* lastChild;
     RenderStyle style;
-#if !ASSERT_DISABLED
-    bool reparentingChild;
-#endif
 };
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
@@ -634,11 +631,6 @@ RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild,
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
-#if !ASSERT_DISABLED
-    // Check if the marker gets detached while laying out the list item.
-    if (is<RenderListMarker>(oldChild))
-        ASSERT(m_reparentingChild || !downcast<RenderListMarker>(oldChild).listItem().inLayout());
-#endif
 
     return RenderPtr<RenderObject>(&oldChild);
 }
