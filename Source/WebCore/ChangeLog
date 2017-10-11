@@ -1,5 +1,26 @@
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221937. rdar://problem/34893195
+
+    2017-09-12  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Don't increase the reported totalFrameDelay for non-displayed frames (or frames coming in while paused).
+            https://bugs.webkit.org/show_bug.cgi?id=175900
+
+            Reviewed by Eric Carlson.
+
+            When seeking to a specific time, the decompression session necessarily needs to be fed samples from before that
+            time (i.e., all samples from the previous I-frame forward). These shouldn't contribute to the "total frame
+            delay" metric. Neither should samples delivered when the video is paused (like, during seeking), as a frame can't
+            be "late" if time is not moving forward.
+
+            * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+            (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+            * platform/cf/CoreMediaSoftLink.cpp:
+            * platform/cf/CoreMediaSoftLink.h:
+
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221872. rdar://problem/34891288
 
     2017-09-11  Dean Jackson  <dino@apple.com>
