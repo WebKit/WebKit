@@ -1,0 +1,9 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that the MediaStream object returned by the success callback in getUserMedia has a correct id.
+
+
+PASS Tests that a MediaStream with a correct id is returned 
+

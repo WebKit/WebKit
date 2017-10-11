@@ -1,0 +1,9 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that setting an optional constraint in getUserMedia is handled as optional
+
+
+PASS Tests that setting an optional constraint in getUserMedia is handled as optional 
+

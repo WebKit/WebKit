@@ -1,0 +1,7 @@
+Description
+
+This test checks that getUserMedia with an unknown value in the constraints parameter rejects with a TypeError.
+
+
+PASS Tests that getUserMedia is rejected with a TypeError when used with an unknown constraint 
+

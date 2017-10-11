@@ -96,6 +96,7 @@ fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 
 # Media Stream API testing is not supported for WK1 yet.
 fast/mediastream
+imported/w3c/web-platform-tests/mediacapture-streams
 http/tests/media/media-stream
 http/tests/ssl/media-stream
 

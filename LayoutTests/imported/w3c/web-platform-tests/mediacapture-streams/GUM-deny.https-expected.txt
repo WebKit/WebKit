@@ -1,0 +1,9 @@
+When prompted, please deny access to the video stream.
+
+Description
+
+This test checks that the error callback is triggered when user denies access to the video stream.
+
+
+FAIL Tests that the error callback is triggered when permission is denied assert_unreached: The success callback should not be triggered since access is to be denied Reached unreachable code
+

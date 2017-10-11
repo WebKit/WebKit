@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 49: SyntaxError: Unexpected token ')'
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that a disabled video track in a MediaStream is rendered as blackness.
+
+
+
+FAIL A disabled video track is rendered as blackness SyntaxError: Unexpected token ')'
+

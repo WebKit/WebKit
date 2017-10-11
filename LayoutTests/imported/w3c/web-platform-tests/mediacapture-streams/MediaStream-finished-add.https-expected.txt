@@ -1,0 +1,9 @@
+When prompted, accept to share your audio stream, then your video stream.
+
+Description
+
+This test checks that adding a track to an inactive MediaStream is allowed.
+
+
+FAIL Tests that adding a track to an inactive MediaStream is allowed assert_false: audio stream is inactive after stopping its only audio track expected false got true
+

@@ -1,3 +1,86 @@
+2017-10-11  Youenn Fablet  <youenn@apple.com>
+
+        Import media capture WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=178138
+
+        Reviewed by Eric Carlson.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/feature-policy/resources/feature-policy-payment.html: Added.
+        * web-platform-tests/feature-policy/resources/feature-policy-usb.html: Added.
+        * web-platform-tests/feature-policy/resources/feature-policy-webvr.html: Added.
+        * web-platform-tests/feature-policy/resources/featurepolicy.js: Added.
+        (test_feature_availability):
+        (expect_feature_available_default):
+        (expect_feature_unavailable_default):
+        (test_result):
+        (test_feature_availability_with_post_message_result):
+        (run_all_fp_tests_allow_self):
+        * web-platform-tests/feature-policy/resources/redirect-on-load.html: Added.
+        * web-platform-tests/feature-policy/resources/w3c-import.log: Added.
+        * web-platform-tests/mediacapture-streams/GUM-api.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/GUM-api.https.html: Added.
+        * web-platform-tests/mediacapture-streams/GUM-deny.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/GUM-deny.https.html: Added.
+        * web-platform-tests/mediacapture-streams/GUM-empty-option-param.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/GUM-empty-option-param.https.html: Added.
+        * web-platform-tests/mediacapture-streams/GUM-impossible-constraint.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/GUM-impossible-constraint.https.html: Added.
+        * web-platform-tests/mediacapture-streams/GUM-optional-constraint.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html: Added.
+        * web-platform-tests/mediacapture-streams/GUM-trivial-constraint.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/GUM-trivial-constraint.https.html: Added.
+        * web-platform-tests/mediacapture-streams/GUM-unknownkey-option-param.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/GUM-unknownkey-option-param.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-all-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-all.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-enumerateDevices-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-enumerateDevices.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-enumerateDevices.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-enumerateDevices.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-getUserMedia.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-getUserMedia.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-add-audio-track.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-add-audio-track.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-audio-only.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-audio-only.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.sub-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.sub.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-finished-add.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-finished-add.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-gettrackid.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-gettrackid.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-id-manual.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-id-manual.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-idl.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-idl.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-removetrack.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-video-only.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStream-video-only.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-id.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-id.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-init.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrack-init.https.html: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrackEvent-constructor.https-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/MediaStreamTrackEvent-constructor.https.html: Added.
+        * web-platform-tests/mediacapture-streams/OWNERS: Added.
+        * web-platform-tests/mediacapture-streams/historical-expected.txt: Added.
+        * web-platform-tests/mediacapture-streams/historical.html: Added.
+        * web-platform-tests/mediacapture-streams/w3c-import.log: Added.
+
 2017-10-10  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement PaymentRequest.canMakePayment()

@@ -1,3 +1,16 @@
+2017-10-11  Youenn Fablet  <youenn@apple.com>
+
+        Import media capture WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=178138
+
+        Reviewed by Eric Carlson.
+
+        Skipping tests for ports not supporting getUserMedia.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-10-11  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GStreamer] Many media source tests crashing with GStreamer-CRITICAL **: _gst_util_uint64_scale: assertion 'denom != 0' failed in gst_qtdemux_configure_stream()
