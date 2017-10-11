@@ -26,24 +26,24 @@
 #import "WebGeolocationPosition.h"
 
 #import "WebGeolocationPositionInternal.h"
-#import <wtf/RefPtr.h>
-
 #import <WebCore/GeolocationPosition.h>
+#import <wtf/Optional.h>
+#import <wtf/RefPtr.h>
 
 using namespace WebCore;
 
 @interface WebGeolocationPositionInternal : NSObject
 {
 @public
-    RefPtr<GeolocationPosition> _position;
+    GeolocationPosition _position;
 }
 
-- (id)initWithCoreGeolocationPosition:(RefPtr<GeolocationPosition>&&)coreGeolocationPosition;
+- (id)initWithCoreGeolocationPosition:(GeolocationPosition&&)coreGeolocationPosition;
 @end
 
 @implementation WebGeolocationPositionInternal
 
-- (id)initWithCoreGeolocationPosition:(RefPtr<GeolocationPosition>&&)coreGeolocationPosition
+- (id)initWithCoreGeolocationPosition:(GeolocationPosition&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)
@@ -56,9 +56,11 @@ using namespace WebCore;
 
 @implementation WebGeolocationPosition
 
-GeolocationPosition* core(WebGeolocationPosition *position)
+std::optional<GeolocationPosition> core(WebGeolocationPosition *position)
 {
-    return position ? position->_internal->_position.get() : 0;
+    if (!position)
+        return std::nullopt;
+    return position->_internal->_position;
 }
 
 - (id)initWithTimestamp:(double)timestamp latitude:(double)latitude longitude:(double)longitude accuracy:(double)accuracy
@@ -66,11 +68,11 @@ GeolocationPosition* core(WebGeolocationPosition *position)
     self = [super init];
     if (!self)
         return nil;
-    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:GeolocationPosition::create(timestamp, latitude, longitude, accuracy)];
+    _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:GeolocationPosition { timestamp, latitude, longitude, accuracy }];
     return self;
 }
 
-- (id)initWithGeolocationPosition:(RefPtr<GeolocationPosition>&&)coreGeolocationPosition
+- (id)initWithGeolocationPosition:(GeolocationPosition&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)

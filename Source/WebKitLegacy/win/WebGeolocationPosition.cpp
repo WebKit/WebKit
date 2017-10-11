@@ -81,18 +81,18 @@ ULONG WebGeolocationPosition::Release()
 
 HRESULT WebGeolocationPosition::initWithTimestamp(double timestamp, double latitude, double longitude, double accuracy)
 {
-    m_position = GeolocationPosition::create(timestamp, latitude, longitude, accuracy);
+    m_position = GeolocationPosition { timestamp, latitude, longitude, accuracy };
     return S_OK;
 }
 
-GeolocationPosition* core(IWebGeolocationPosition* position)
+std::optional<GeolocationPosition> core(IWebGeolocationPosition* position)
 {
     if (!position)
-        return 0;
+        return std::nullopt;
 
     COMPtr<WebGeolocationPosition> webGeolocationPosition(Query, position);
     if (!webGeolocationPosition)
-        return 0;
+        return std::nullopt;
 
     return webGeolocationPosition->impl();
 }

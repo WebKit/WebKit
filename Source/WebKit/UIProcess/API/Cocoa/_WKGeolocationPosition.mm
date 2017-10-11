@@ -39,29 +39,7 @@ using namespace WebKit;
     if (!location)
         return nil;
 
-    bool canProvideAltitude = true;
-    bool canProvideAltitudeAccuracy = true;
-    double altitude = location.altitude;
-    double altitudeAccuracy = location.verticalAccuracy;
-    if (altitudeAccuracy < 0.0) {
-        canProvideAltitude = false;
-        canProvideAltitudeAccuracy = false;
-    }
-
-    bool canProvideSpeed = true;
-    double speed = location.speed;
-    if (speed < 0.0)
-        canProvideSpeed = false;
-
-    bool canProvideHeading = true;
-    double heading = location.course;
-    if (heading < 0.0)
-        canProvideHeading = false;
-
-    CLLocationCoordinate2D coordinate = location.coordinate;
-    double timestamp = location.timestamp.timeIntervalSince1970;
-
-    return [wrapper(WebGeolocationPosition::create(timestamp, coordinate.latitude, coordinate.longitude, location.horizontalAccuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading, canProvideSpeed, speed).leakRef()) autorelease];
+    return [wrapper(WebGeolocationPosition::create(WebCore::GeolocationPosition { location }).leakRef()) autorelease];
 }
 
 - (void)dealloc

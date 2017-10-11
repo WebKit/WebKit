@@ -165,29 +165,7 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
 
 - (void)sendLocation:(CLLocation *)newLocation
 {
-    // Normalize.
-    bool canProvideAltitude = true;
-    bool canProvideAltitudeAccuracy = true;
-    double altitude = newLocation.altitude;
-    double altitudeAccuracy = newLocation.verticalAccuracy;
-    if (altitudeAccuracy < 0.0) {
-        canProvideAltitude = false;
-        canProvideAltitudeAccuracy = false;
-    }
-
-    bool canProvideSpeed = true;
-    double speed = newLocation.speed;
-    if (speed < 0.0)
-        canProvideSpeed = false;
-
-    bool canProvideHeading = true;
-    double heading = newLocation.course;
-    if (heading < 0.0)
-        canProvideHeading = false;
-
-    double timestamp = [newLocation.timestamp timeIntervalSince1970];
-    RefPtr<GeolocationPosition> geolocationPosition = GeolocationPosition::create(timestamp, newLocation.coordinate.latitude, newLocation.coordinate.longitude, newLocation.horizontalAccuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading, canProvideSpeed, speed);
-    [_positionListener positionChanged:geolocationPosition.get()];
+    [_positionListener positionChanged:GeolocationPosition { newLocation }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations

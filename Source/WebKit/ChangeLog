@@ -1,3 +1,42 @@
+2017-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Modernize Geolocation code
+        https://bugs.webkit.org/show_bug.cgi?id=178148
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebGeolocationPosition.cpp:
+        (WebKit::WebGeolocationPosition::create):
+        (WebKit::WebGeolocationPosition::~WebGeolocationPosition):
+        * Shared/WebGeolocationPosition.h:
+        (WebKit::WebGeolocationPosition::timestamp const):
+        (WebKit::WebGeolocationPosition::latitude const):
+        (WebKit::WebGeolocationPosition::longitude const):
+        (WebKit::WebGeolocationPosition::accuracy const):
+        (WebKit::WebGeolocationPosition::altitude const):
+        (WebKit::WebGeolocationPosition::altitudeAccuracy const):
+        (WebKit::WebGeolocationPosition::heading const):
+        (WebKit::WebGeolocationPosition::speed const):
+        (WebKit::WebGeolocationPosition::corePosition const):
+        (WebKit::WebGeolocationPosition::WebGeolocationPosition):
+        * UIProcess/API/C/WKGeolocationPosition.cpp:
+        (WKGeolocationPositionCreate_b):
+        * UIProcess/API/Cocoa/_WKGeolocationPosition.mm:
+        (WebKit::wrapper):
+        * UIProcess/API/glib/WebKitGeolocationProvider.cpp:
+        (WebKit::WebKitGeolocationProvider::notifyPositionChanged):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::providerDidChangePosition):
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKLegacyCoreLocationProvider positionChanged:]):
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::didChangePosition):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        (WebKit::WebGeolocationClient::lastPosition):
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+
 2017-10-11  Brady Eidson  <beidson@apple.com>
 
         Add a SW context process (where SW scripts will actually execute).

@@ -1,3 +1,16 @@
+2017-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Modernize Geolocation code
+        https://bugs.webkit.org/show_bug.cgi?id=178148
+
+        Reviewed by Ryosuke Niwa.
+
+        * Misc/WebGeolocationCoreLocationProvider.h:
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider sendLocation:]):
+        * Misc/WebGeolocationProviderIOS.mm:
+        (-[_WebCoreLocationUpdateThreadingProxy positionChanged:]):
+
 2017-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebCoreSystemInterface

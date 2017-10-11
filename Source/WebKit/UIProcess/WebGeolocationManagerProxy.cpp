@@ -29,6 +29,7 @@
 #include "APIGeolocationProvider.h"
 #include "WebGeolocationManagerMessages.h"
 #include "WebGeolocationManagerProxyMessages.h"
+#include "WebGeolocationPosition.h"
 #include "WebProcessPool.h"
 
 namespace WebKit {
@@ -90,7 +91,7 @@ void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPositio
     if (!processPool())
         return;
 
-    processPool()->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->data()));
+    processPool()->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->corePosition()));
 }
 
 void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)

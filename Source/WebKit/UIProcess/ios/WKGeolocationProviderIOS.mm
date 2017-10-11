@@ -74,11 +74,6 @@ namespace WebKit {
 void decidePolicyForGeolocationRequestFromOrigin(SecurityOrigin*, const String& urlString, id<WebAllowDenyPolicyListener>, UIWindow*);
 };
 
-static inline Ref<WebGeolocationPosition> kit(WebCore::GeolocationPosition *position)
-{
-    return WebGeolocationPosition::create(position->timestamp(), position->latitude(), position->longitude(), position->accuracy(), position->canProvideAltitude(), position->altitude(), position->canProvideAltitudeAccuracy(), position->altitudeAccuracy(), position->canProvideHeading(), position->heading(), position->canProvideSpeed(), position->speed());
-}
-
 struct GeolocationRequestData {
     RefPtr<SecurityOrigin> origin;
     RefPtr<WebFrameProxy> frame;
@@ -304,10 +299,10 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     [_listener geolocationAuthorizationDenied];
 }
 
-- (void)positionChanged:(WebCore::GeolocationPosition *)corePosition
+- (void)positionChanged:(WebCore::GeolocationPosition&&)corePosition
 {
     ASSERT(_listener);
-    auto position = kit(corePosition);
+    auto position = WebGeolocationPosition::create(WTFMove(corePosition));
     [_listener positionChanged:wrapper(position.get())];
 }
 

@@ -81,7 +81,10 @@ void WebKitGeolocationProvider::stopUpdating()
 
 void WebKitGeolocationProvider::notifyPositionChanged(int timestamp, double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy)
 {
-    RefPtr<WebGeolocationPosition> position = WebGeolocationPosition::create(timestamp, latitude, longitude, accuracy, true, altitude, true, altitudeAccuracy, false, 0, false, 0);
+    WebCore::GeolocationPosition corePosition { static_cast<double>(timestamp), latitude, longitude, accuracy };
+    corePosition.altitude = altitude;
+    corePosition.altitudeAccuracy = altitudeAccuracy;
+    RefPtr<WebGeolocationPosition> position = WebGeolocationPosition::create(WTFMove(corePosition));
     m_geolocationManager->providerDidChangePosition(position.get());
 }
 

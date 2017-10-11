@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebGeolocationManager {
-    DidChangePosition(WebKit::WebGeolocationPosition::Data position);
+    DidChangePosition(WebCore::GeolocationPosition position);
     DidFailToDeterminePosition(String errorMessage);
 #if PLATFORM(IOS)
     ResetPermissions();

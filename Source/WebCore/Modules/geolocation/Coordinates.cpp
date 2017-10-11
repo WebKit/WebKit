@@ -28,32 +28,10 @@
 
 namespace WebCore {
 
-std::optional<double> Coordinates::altitude() const
+Coordinates::Coordinates(GeolocationPosition&& position)
+    : m_position(WTFMove(position))
 {
-    if (!m_canProvideAltitude)
-        return std::nullopt;
-    return m_altitude;
+    ASSERT(m_position.isValid());
 }
 
-std::optional<double> Coordinates::altitudeAccuracy() const
-{
-    if (!m_canProvideAltitudeAccuracy)
-        return std::nullopt;
-    return m_altitudeAccuracy;
-}
-
-std::optional<double> Coordinates::heading() const
-{
-    if (!m_canProvideHeading)
-        return std::nullopt;
-    return m_heading;
-}
-
-std::optional<double> Coordinates::speed() const
-{
-    if (!m_canProvideSpeed)
-        return std::nullopt;
-    return m_speed;
-}
-    
 } // namespace WebCore

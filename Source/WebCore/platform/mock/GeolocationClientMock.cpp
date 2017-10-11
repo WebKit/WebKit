@@ -61,7 +61,7 @@ void GeolocationClientMock::setController(GeolocationController *controller)
     m_controller = controller;
 }
 
-void GeolocationClientMock::setPosition(RefPtr<GeolocationPosition>&& position)
+void GeolocationClientMock::setPosition(GeolocationPosition&& position)
 {
     m_lastPosition = WTFMove(position);
     clearError();
@@ -72,7 +72,7 @@ void GeolocationClientMock::setPositionUnavailableError(const String& errorMessa
 {
     m_hasError = true;
     m_errorMessage = errorMessage;
-    m_lastPosition = nullptr;
+    m_lastPosition = std::nullopt;
     asyncUpdateController();
 }
 
@@ -126,7 +126,7 @@ void GeolocationClientMock::permissionTimerFired()
 
 void GeolocationClientMock::reset()
 {
-    m_lastPosition = nullptr;
+    m_lastPosition = std::nullopt;
     clearError();
     m_permissionState = PermissionStateUnset;
 }
@@ -156,9 +156,9 @@ void GeolocationClientMock::setEnableHighAccuracy(bool)
     // See https://bugs.webkit.org/show_bug.cgi?id=49438
 }
 
-GeolocationPosition* GeolocationClientMock::lastPosition()
+std::optional<GeolocationPosition> GeolocationClientMock::lastPosition()
 {
-    return m_lastPosition.get();
+    return m_lastPosition;
 }
 
 void GeolocationClientMock::asyncUpdateController()
@@ -172,9 +172,9 @@ void GeolocationClientMock::controllerTimerFired()
 {
     ASSERT(m_controller);
 
-    if (m_lastPosition.get()) {
+    if (m_lastPosition) {
         ASSERT(!m_hasError);
-        m_controller->positionChanged(m_lastPosition.get());
+        m_controller->positionChanged(*m_lastPosition);
     } else if (m_hasError) {
         auto geolocatioError = GeolocationError::create(GeolocationError::PositionUnavailable, m_errorMessage);
         m_controller->errorOccurred(geolocatioError.get());

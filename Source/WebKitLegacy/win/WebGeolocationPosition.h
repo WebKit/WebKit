@@ -27,10 +27,7 @@
 
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
-
-namespace WebCore {
-    class GeolocationPosition;
-};
+#include <WebCore/GeolocationPosition.h>
 
 class WebGeolocationPosition : public IWebGeolocationPosition {
 public:
@@ -48,13 +45,13 @@ public:
     // IWebGeolocationPosition
     virtual HRESULT STDMETHODCALLTYPE initWithTimestamp(double timestamp, double latitude, double longitude, double accuracy);
 
-    WebCore::GeolocationPosition* impl() const { return m_position.get(); }
+    const std::optional<WebCore::GeolocationPosition>& impl() const { return m_position; }
 
 private:
     ULONG m_refCount { 0 };
-    RefPtr<WebCore::GeolocationPosition> m_position;
+    std::optional<WebCore::GeolocationPosition> m_position;
 };
 
-WebCore::GeolocationPosition* core(IWebGeolocationPosition*);
+std::optional<WebCore::GeolocationPosition> core(IWebGeolocationPosition*);
 
 #endif // WebGeolocationPosition_h

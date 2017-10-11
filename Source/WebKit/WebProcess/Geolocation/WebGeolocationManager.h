@@ -35,6 +35,7 @@
 
 namespace WebCore {
 class Geolocation;
+class GeolocationPosition;
 }
 
 namespace WebKit {
@@ -62,7 +63,7 @@ private:
     bool isUpdating() const { return !m_pageSet.isEmpty(); }
     bool isHighAccuracyEnabled() const { return !m_highAccuracyPageSet.isEmpty(); }
 
-    void didChangePosition(const WebGeolocationPosition::Data&);
+    void didChangePosition(const WebCore::GeolocationPosition&);
     void didFailToDeterminePosition(const String& errorMessage);
 #if PLATFORM(IOS)
     void resetPermissions();

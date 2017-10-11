@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GeolocationPosition.h"
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -33,49 +34,28 @@ namespace WebCore {
 
 class Coordinates : public RefCounted<Coordinates> {
 public:
-    static Ref<Coordinates> create(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed) { return adoptRef(*new Coordinates(latitude, longitude, providesAltitude, altitude, accuracy, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed)); }
+    static Ref<Coordinates> create(GeolocationPosition&& position)
+    {
+        return adoptRef(*new Coordinates(WTFMove(position)));
+    }
 
     Ref<Coordinates> isolatedCopy() const
     {
-        return Coordinates::create(m_latitude, m_longitude, m_canProvideAltitude, m_altitude, m_accuracy, m_canProvideAltitudeAccuracy, m_altitudeAccuracy, m_canProvideHeading, m_heading, m_canProvideSpeed, m_speed);
+        return Coordinates::create( GeolocationPosition { m_position });
     }
 
-    double latitude() const { return m_latitude; }
-    double longitude() const { return m_longitude; }
-    std::optional<double> altitude() const;
-    double accuracy() const { return m_accuracy; }
-    std::optional<double> altitudeAccuracy() const;
-    std::optional<double> heading() const;
-    std::optional<double> speed() const;
+    double latitude() const { return m_position.latitude; }
+    double longitude() const { return m_position.longitude; }
+    std::optional<double> altitude() const { return m_position.altitude; }
+    double accuracy() const { return m_position.accuracy; }
+    std::optional<double> altitudeAccuracy() const { return m_position.altitudeAccuracy; }
+    std::optional<double> heading() const { return m_position.heading; }
+    std::optional<double> speed() const { return m_position.speed; }
     
 private:
-    Coordinates(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
-        : m_latitude(latitude)
-        , m_longitude(longitude)
-        , m_altitude(altitude)
-        , m_accuracy(accuracy)
-        , m_altitudeAccuracy(altitudeAccuracy)
-        , m_heading(heading)
-        , m_speed(speed)
-        , m_canProvideAltitude(providesAltitude)
-        , m_canProvideAltitudeAccuracy(providesAltitudeAccuracy)
-        , m_canProvideHeading(providesHeading)
-        , m_canProvideSpeed(providesSpeed)
-    {
-    }
+    explicit Coordinates(GeolocationPosition&&);
 
-    double m_latitude;
-    double m_longitude;
-    double m_altitude;
-    double m_accuracy;
-    double m_altitudeAccuracy;
-    double m_heading;
-    double m_speed;
-    
-    bool m_canProvideAltitude;
-    bool m_canProvideAltitudeAccuracy;
-    bool m_canProvideHeading;
-    bool m_canProvideSpeed;
+    GeolocationPosition m_position;
 };
     
 } // namespace WebCore

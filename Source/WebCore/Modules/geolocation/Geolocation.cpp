@@ -53,16 +53,13 @@ static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocat
 static const char framelessDocumentErrorMessage[] = "Geolocation cannot be used in frameless documents";
 static const char originCannotRequestGeolocationErrorMessage[] = "Origin does not have permission to use Geolocation service";
 
-static RefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
+static RefPtr<Geoposition> createGeoposition(std::optional<GeolocationPosition>&& position)
 {
     if (!position)
         return nullptr;
     
-    auto coordinates = Coordinates::create(position->latitude(), position->longitude(), position->canProvideAltitude(), position->altitude(), 
-        position->accuracy(), position->canProvideAltitudeAccuracy(), position->altitudeAccuracy(),
-        position->canProvideHeading(), position->heading(), position->canProvideSpeed(), position->speed());
-
-    return Geoposition::create(WTFMove(coordinates), convertSecondsToDOMTimeStamp(position->timestamp()));
+    DOMTimeStamp timestamp = convertSecondsToDOMTimeStamp(position->timestamp);
+    return Geoposition::create(Coordinates::create(WTFMove(position.value())), timestamp);
 }
 
 static Ref<PositionError> createPositionError(GeolocationError& error)
@@ -296,7 +293,7 @@ Geoposition* Geolocation::lastPosition()
 {
     Page* page = this->page();
     if (!page)
-        return 0;
+        return nullptr;
 
     m_lastPosition = createGeoposition(GeolocationController::from(page)->lastPosition());
 

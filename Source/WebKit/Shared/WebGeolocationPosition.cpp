@@ -30,34 +30,15 @@
 
 namespace WebKit {
 
-WebGeolocationPosition::WebGeolocationPosition(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
+using namespace WebCore;
+
+Ref<WebGeolocationPosition> WebGeolocationPosition::create(GeolocationPosition&& geolocationPosition)
 {
-    m_data.timestamp = timestamp;
-    m_data.latitude = latitude;
-    m_data.longitude = longitude;
-    m_data.accuracy = accuracy;
-    m_data.canProvideAltitude = providesAltitude;
-    m_data.altitude = altitude;
-    m_data.canProvideAltitudeAccuracy = providesAltitudeAccuracy;
-    m_data.altitudeAccuracy = altitudeAccuracy;
-    m_data.canProvideHeading = providesHeading;
-    m_data.heading = heading;
-    m_data.canProvideSpeed = providesSpeed;
-    m_data.speed = speed;
+    return adoptRef(*new WebGeolocationPosition(WTFMove(geolocationPosition)));
 }
 
 WebGeolocationPosition::~WebGeolocationPosition()
 {
-}
-
-void WebGeolocationPosition::Data::encode(IPC::Encoder& encoder) const
-{
-    IPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::encode(encoder, *this);
-}
-
-bool WebGeolocationPosition::Data::decode(IPC::Decoder& decoder, Data& data)
-{
-    return IPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::decode(decoder, data);
 }
 
 } // namespace WebKit

@@ -47,7 +47,7 @@ private:
     void stopUpdating() override;
     void setEnableHighAccuracy(bool) override;
 
-    WebCore::GeolocationPosition* lastPosition() override;
+    std::optional<WebCore::GeolocationPosition> lastPosition() override;
 
     void requestPermission(WebCore::Geolocation&) override;
     void cancelPermissionRequest(WebCore::Geolocation&) override;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/NSObject.h>
+#include "config.h"
+#include "GeolocationPosition.h"
 
-@class CLLocationManager;
-@class NSString;
+#if PLATFORM(IOS)
+
+#import <CoreLocation/CLLocation.h>
 
 namespace WebCore {
-class GeolocationPosition;
+
+GeolocationPosition::GeolocationPosition(CLLocation* location)
+    : timestamp(location.timestamp.timeIntervalSince1970)
+    , latitude(location.coordinate.latitude)
+    , longitude(location.coordinate.longitude)
+    , accuracy(location.horizontalAccuracy)
+{
+    if (location.verticalAccuracy >= 0.0) {
+        altitude = location.altitude;
+        altitudeAccuracy = location.verticalAccuracy;
+    }
+    if (location.speed >= 0.0)
+        speed = location.speed;
+    if (location.course >= 0.0)
+        heading = location.course;
 }
 
-// WebGeolocationCoreLocationDelegate abstracts the location services of CoreLocation.
-// All the results come back through the protocol GeolocationUpdateListener. Those callback can
-// be done synchronously and asynchronously in responses to calls made on WebGeolocationCoreLocationDelegate.
+}
 
-// All calls to WebGeolocationCoreLocationDelegate must be on the main thread, all callbacks are done on the
-// main thread.
-
-@protocol WebGeolocationCoreLocationUpdateListener
-- (void)geolocationAuthorizationGranted;
-- (void)geolocationAuthorizationDenied;
-
-- (void)positionChanged:(WebCore::GeolocationPosition&&)position;
-- (void)errorOccurred:(NSString *)errorMessage;
-- (void)resetGeolocation;
-@end
-
-
-@interface WebGeolocationCoreLocationProvider : NSObject
-- (id)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener;
-
-- (void)requestGeolocationAuthorization;
-
-- (void)start;
-- (void)stop;
-
-- (void)setEnableHighAccuracy:(BOOL)flag;
-@end
+#endif

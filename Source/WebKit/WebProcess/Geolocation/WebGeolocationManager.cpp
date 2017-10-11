@@ -91,19 +91,17 @@ void WebGeolocationManager::setEnableHighAccuracyForPage(WebPage& page, bool ena
         m_process.parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(highAccuracyShouldBeEnabled), 0);
 }
 
-void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data& data)
+void WebGeolocationManager::didChangePosition(const GeolocationPosition& position)
 {
 #if ENABLE(GEOLOCATION)
-    RefPtr<GeolocationPosition> position = GeolocationPosition::create(data.timestamp, data.latitude, data.longitude, data.accuracy, data.canProvideAltitude, data.altitude, data.canProvideAltitudeAccuracy, data.altitudeAccuracy, data.canProvideHeading, data.heading, data.canProvideSpeed, data.speed);
-
     Vector<RefPtr<WebPage>> webPageCopy;
     copyToVector(m_pageSet, webPageCopy);
     for (auto& page : webPageCopy) {
         if (page->corePage())
-            GeolocationController::from(page->corePage())->positionChanged(position.get());
+            GeolocationController::from(page->corePage())->positionChanged(position);
     }
 #else
-    UNUSED_PARAM(data);
+    UNUSED_PARAM(position);
 #endif // ENABLE(GEOLOCATION)
 }
 

@@ -3551,6 +3551,7 @@
 		8372DB311A6780A800C697C5 /* DiagnosticLoggingResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB301A6780A800C697C5 /* DiagnosticLoggingResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837609CA1F54CC18000C122D /* ErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 837609C81F54CC13000C122D /* ErrorCallback.cpp */; };
 		83765F951DAC522F00C06537 /* MouseEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83765F941DAC521800C06537 /* MouseEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		837964CF1F8DB69D00218EA0 /* GeolocationPositionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */; };
 		837A80131E1E127300026B9F /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 837A80111E1E127300026B9F /* Localizable.stringsdict */; };
 		837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */; };
 		8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */; };
@@ -11875,6 +11876,7 @@
 		837609C81F54CC13000C122D /* ErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorCallback.cpp; sourceTree = "<group>"; };
 		83765F931DAC521800C06537 /* MouseEventInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MouseEventInit.idl; sourceTree = "<group>"; };
 		83765F941DAC521800C06537 /* MouseEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseEventInit.h; sourceTree = "<group>"; };
+		837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GeolocationPositionIOS.mm; path = Modules/geolocation/ios/GeolocationPositionIOS.mm; sourceTree = SOURCE_ROOT; };
 		837A80121E1E127300026B9F /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = English; path = English.lproj/Localizable.stringsdict; sourceTree = SOURCE_ROOT; };
 		837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ValidationBubbleIOS.mm; sourceTree = "<group>"; };
 		837DFB341EBFEA7000601385 /* ElementCSSInlineStyle.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementCSSInlineStyle.idl; sourceTree = "<group>"; };
@@ -20441,6 +20443,15 @@
 			path = beacon;
 			sourceTree = "<group>";
 		};
+		837964CC1F8DB67D00218EA0 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */,
+			);
+			name = ios;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		83FB33651F508A1700986E54 /* entriesapi */ = {
 			isa = PBXGroup;
 			children = (
@@ -21304,6 +21315,7 @@
 		971145FF14EF007900674FD9 /* geolocation */ = {
 			isa = PBXGroup;
 			children = (
+				837964CC1F8DB67D00218EA0 /* ios */,
 				9746AF1114F4DDE6003E7A72 /* Coordinates.cpp */,
 				9746AF1114F4DDE6003E7A70 /* Coordinates.h */,
 				9746AF1214F4DDE6003E7A70 /* Coordinates.idl */,
@@ -32158,6 +32170,7 @@
 				CD4BE52A1CE136EF009D87DA /* GenericTaskQueue.cpp in Sources */,
 				9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */,
 				9746AF2614F4DDE6003E7A70 /* GeolocationController.cpp in Sources */,
+				837964CF1F8DB69D00218EA0 /* GeolocationPositionIOS.mm in Sources */,
 				0FB6252E18DE1B1500A07C05 /* GeometryUtilities.cpp in Sources */,
 				46C83EFD1A9BBE2900A79A41 /* GeoNotifier.cpp in Sources */,
 				2D5036681BCDDDC400E20BB3 /* GestureEvents.cpp in Sources */,

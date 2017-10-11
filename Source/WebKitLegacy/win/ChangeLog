@@ -1,3 +1,19 @@
+2017-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Modernize Geolocation code
+        https://bugs.webkit.org/show_bug.cgi?id=178148
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/WebGeolocationClient.cpp:
+        (WebGeolocationClient::lastPosition):
+        * WebCoreSupport/WebGeolocationClient.h:
+        * WebGeolocationPosition.cpp:
+        (WebGeolocationPosition::initWithTimestamp):
+        (core):
+        * WebGeolocationPosition.h:
+        (WebGeolocationPosition::impl const):
+
 2017-10-05  Chris Dumez  <cdumez@apple.com>
 
         Drop unused parameters for CookiesStrategy::cookiesEnabled()

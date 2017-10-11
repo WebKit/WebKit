@@ -24,10 +24,11 @@
  */
 
 #import "WebGeolocationPosition.h"
+#import <wtf/Optional.h>
 
 namespace WebCore {
     class GeolocationPosition;
 }
 
-WebCore::GeolocationPosition* core(WebGeolocationPosition *);
+std::optional<WebCore::GeolocationPosition> core(WebGeolocationPosition *);
 

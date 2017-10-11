@@ -27,6 +27,7 @@
 #define WebGeolocationPosition_h
 
 #include "APIObject.h"
+#include <WebCore/GeolocationPosition.h>
 #include <wtf/RefPtr.h>
 
 namespace IPC {
@@ -38,56 +39,28 @@ namespace WebKit {
 
 class WebGeolocationPosition : public API::ObjectImpl<API::Object::Type::GeolocationPosition> {
 public:
-    struct Data {
-        void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, Data&);
-
-        double timestamp;
-        double latitude;
-        double longitude;
-        double accuracy;
-
-        double altitude;
-        double altitudeAccuracy;
-        double heading;
-        double speed;
-
-        bool canProvideAltitude;
-        bool canProvideAltitudeAccuracy;
-        bool canProvideHeading;
-        bool canProvideSpeed;
-    };
-
-    static Ref<WebGeolocationPosition> create(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
-    {
-        return adoptRef(*new WebGeolocationPosition(timestamp, latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed));
-    }
+    static Ref<WebGeolocationPosition> create(WebCore::GeolocationPosition&&);
 
     virtual ~WebGeolocationPosition();
 
-    double timestamp() const { return m_data.timestamp; }
-    double latitude() const { return m_data.latitude; }
-    double longitude() const { return m_data.longitude; }
-    double accuracy() const { return m_data.accuracy; }
+    double timestamp() const { return m_corePosition.timestamp; }
+    double latitude() const { return m_corePosition.latitude; }
+    double longitude() const { return m_corePosition.longitude; }
+    double accuracy() const { return m_corePosition.accuracy; }
+    std::optional<double> altitude() const { return m_corePosition.altitude; }
+    std::optional<double> altitudeAccuracy() const { return m_corePosition.altitudeAccuracy; }
+    std::optional<double> heading() const { return m_corePosition.heading; }
+    std::optional<double> speed() const { return m_corePosition.speed; }
 
-    bool canProvideAltitude() const { return m_data.canProvideAltitude; }
-    double altitude() const { return m_data.altitude; }
-
-    bool canProvideAltitudeAccuracy() const { return m_data.canProvideAltitudeAccuracy; }
-    double altitudeAccuracy() const { return m_data.altitudeAccuracy; }
-
-    bool canProvideHeading() const { return m_data.canProvideHeading; }
-    double heading() const { return m_data.heading; }
-
-    bool canProvideSpeed() const { return m_data.canProvideSpeed; }
-    double speed() const { return m_data.speed; }
-
-    const Data& data() const { return m_data; }
+    const WebCore::GeolocationPosition& corePosition() const { return m_corePosition; }
 
 private:
-    WebGeolocationPosition(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
+    explicit WebGeolocationPosition(WebCore::GeolocationPosition&& geolocationPosition)
+        : m_corePosition(WTFMove(geolocationPosition))
+    {
+    }
 
-    Data m_data;
+    WebCore::GeolocationPosition m_corePosition;
 };
 
 } // namespace WebKit
