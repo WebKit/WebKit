@@ -1,3 +1,16 @@
+2017-10-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r223146.
+
+        Better to not expose cairo in the WPE API
+
+        Reverted changeset:
+
+        "[WPE] Header cairo.h is used in GLib API headers but cannot
+        be found"
+        https://bugs.webkit.org/show_bug.cgi?id=178100
+        http://trac.webkit.org/changeset/223146
+
 2017-09-27  Frederic Wang  <fwang@igalia.com>
 
         [iOS] Do not flatten frames when async frame scrolling is enabled
