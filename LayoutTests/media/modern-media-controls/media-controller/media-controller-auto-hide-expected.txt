@@ -3,9 +3,9 @@ Testing the controls bar fades out as expected after the auto-hide delay expires
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS !!shadowRoot.querySelector('.controls-bar') became true
-PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became false
-PASS shadowRoot.querySelector('.controls-bar').classList.contains('faded') became true
+PASS !!shadowRoot.querySelector('.media-controls') became true
+PASS shadowRoot.querySelector('.media-controls').classList.contains('faded') became false
+PASS shadowRoot.querySelector('.media-controls').classList.contains('faded') became true
 
 PASS successfullyParsed is true
 

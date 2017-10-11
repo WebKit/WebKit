@@ -12,21 +12,21 @@ const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
 
 media.addEventListener("play", (event) => {
-    shouldBecomeEqual("!!shadowRoot.querySelector('.controls-bar')", "true", () => {
+    shouldBecomeEqual("!!shadowRoot.querySelector('.media-controls')", "true", () => {
         debug("");
         debug("Video started playing, controls bar should become visible by default.");
-        shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "false", () => {
+        shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "false", () => {
             debug("");
             debug("Controls bar should become faded when the auto-hide timer elapses.");
-            shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "true", () => {
+            shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "true", () => {
                 eventSender.mouseMoveTo(100, 100);
                 debug("");
                 debug("Mouse moved over the media, controls bar should become visible again.");
-                shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "false", () => {
+                shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "false", () => {
                     eventSender.mouseMoveTo(400, 400);
                     debug("");
                     debug("Mouse moved out of the media, controls bar should become faded.");
-                    shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "true", () => {
+                    shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "true", () => {
                         debug("");
                         media.remove();
                         finishJSTest();

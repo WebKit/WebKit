@@ -12,9 +12,9 @@ const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
 
 media.addEventListener("play", (event) => {
-    shouldBecomeEqual("!!shadowRoot.querySelector('.controls-bar')", "true", () => {
-        shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "false", () => {
-            shouldBecomeEqual("shadowRoot.querySelector('.controls-bar').classList.contains('faded')", "true", () => {
+    shouldBecomeEqual("!!shadowRoot.querySelector('.media-controls')", "true", () => {
+        shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "false", () => {
+            shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "true", () => {
                 debug("");
                 media.remove();
                 finishJSTest();

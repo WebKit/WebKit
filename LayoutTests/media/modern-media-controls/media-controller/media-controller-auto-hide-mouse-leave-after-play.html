@@ -8,7 +8,7 @@ window.jsTestIsAsync = true;
 
 description("Testing the controls bar appears when the mouse enters and disappears when the mouse leaves the media.");
 
-let controlsBar;
+let mediaControls;
 
 const media = document.querySelector("video");
 media.addEventListener("play", mediaStartedPlaying);
@@ -17,12 +17,12 @@ function mediaStartedPlaying()
 {
     media.removeEventListener("play", mediaStartedPlaying);
     baseTime = Date.now();
-    controlsBar = window.internals.shadowRoot(media).querySelector(".controls-bar");
+    mediaControls = window.internals.shadowRoot(media).querySelector(".media-controls");
     
     window.requestAnimationFrame(() => {
 
         debug("Video started playing, controls bar is visible by default.");
-        shouldBeFalse("controlsBar.classList.contains('faded')");
+        shouldBeFalse("mediaControls.classList.contains('faded')");
 
         debug("");
         debug("Pausing media.");
@@ -57,7 +57,7 @@ function mediaResumedPlaying()
             window.requestAnimationFrame(() => {
                 debug("");
                 debug("The initial auto-hide timer started when we resumed playback should not have expired or be overriden by the mouse entering and leaving the media, the controls should remain visible.");
-                shouldBeFalse("controlsBar.classList.contains('faded')");
+                shouldBeFalse("mediaControls.classList.contains('faded')");
             });
         }, 50);
     }, 50);
@@ -65,7 +65,7 @@ function mediaResumedPlaying()
     setTimeout(() => {
         debug("");
         debug("The initial auto-hide timer started when we resumed playback should now have expired and the controls should be faded.");
-        shouldBeTrue("controlsBar.classList.contains('faded')");
+        shouldBeTrue("mediaControls.classList.contains('faded')");
 
         debug("");
         media.remove();

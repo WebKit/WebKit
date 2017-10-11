@@ -14,6 +14,7 @@ const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
 const button = document.body.appendChild(document.createElement("button"));
+button.textContent = "Enter Fullscreen";
 
 function enterFullscreen()
 {
@@ -46,7 +47,7 @@ media.addEventListener("webkitfullscreenchange", function() {
         media.webkitExitFullscreen()
     } else {
         debug("Media exited fullscreen");
-        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Compact");
+        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Inline");
         shouldBeTrue("mediaController.controls instanceof MacOSInlineMediaControls");
 
         debug("");

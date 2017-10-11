@@ -1,3 +1,43 @@
+2017-10-11  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline tests at media/modern-media-controls/media-controller
+        https://bugs.webkit.org/show_bug.cgi?id=178129
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline a series of tests to work with the current modern-media-controls codebase. For the most part, this is accounting
+        for metrics changes and the refactoring of the auto-hide controller code.
+
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-pause-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html:
+        * media/modern-media-controls/media-controller/media-controller-auto-hide.html:
+        * media/modern-media-controls/media-controller/media-controller-click-on-video-controls-should-not-pause.html:
+        * media/modern-media-controls/media-controller/media-controller-compact-expected.txt: Removed.
+        * media/modern-media-controls/media-controller/media-controller-compact.html: Removed.
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-change-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-change.html:
+        * media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-ios-do-not-hide-controls-when-tapping-button.html:
+        * media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-ios-only-enable-tap-gesture-recognizer-with-fades-when-idle.html:
+        * media/modern-media-controls/media-controller/media-controller-scale-factor-audio-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-scale-factor-audio.html:
+        * media/modern-media-controls/media-controller/media-controller-scale-factor-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-scale-factor.html:
+        * media/modern-media-controls/media-controller/media-controller-tight-padding-expected.txt: Removed.
+        * media/modern-media-controls/media-controller/media-controller-tight-padding.html: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-elcapitan/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-09-27  Frederic Wang  <fwang@igalia.com>
 
         [iOS] Do not flatten frames when async frame scrolling is enabled

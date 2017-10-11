@@ -1508,6 +1508,7 @@ media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-med
 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-mute-button-in-bottom-or-top-right-controls-bar.html [ Pass ]
 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-top-right-controls-bar-hidden-when-mute-button-disabled.html [ Pass ]
 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html [ Pass ]
+media/modern-media-controls/media-controller [ Pass ]
 media/modern-media-controls/media-controls/media-controls-display-above-captions.html [ Pass ]
 media/modern-media-controls/media-documents [ Pass ]
 media/modern-media-controls/mute-button [ Pass ]
@@ -1542,10 +1543,21 @@ media/modern-media-controls/volume-up-support [ Pass ]
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
+media/modern-media-controls/media-controller/ios [ Skip ]
 media/modern-media-controls/media-documents/ipad [ Skip ]
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Skip ]
 media/modern-media-controls/scrubber-support/ipad [ Skip ]
+
+# These tests are timing-related and can fail due to performance issues on bots
+media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Pass Failure ]
+media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html [ Pass Failure ]
+media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html [ Pass Failure ]
+media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html [ Pass Failure ]
+media/modern-media-controls/media-controller/media-controller-auto-hide.html [ Pass Failure ]
+
+webkit.org/b/178126 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Skip ]
+webkit.org/b/178127 media/modern-media-controls/media-controller/media-controller-video-with-only-audio.html [ Skip ]
 
 # This test relies on the control overlay not being visible in the top left. But the test now fails on Mac because
 # the image is dumped after the video is loaded and the control overlay is displayed. It seems the test still works

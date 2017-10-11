@@ -16,7 +16,7 @@ media.addEventListener("play", () => {
     const bounds = media.getBoundingClientRect();
     debug("");
     debug("Clicking on video controls");
-    eventSender.mouseMoveTo(bounds.left + 5, bounds.bottom - 5);
+    eventSender.mouseMoveTo(bounds.left + 10, bounds.bottom - 10);
     eventSender.mouseDown();
     eventSender.mouseUp();
 
