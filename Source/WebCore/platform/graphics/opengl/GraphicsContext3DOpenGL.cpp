@@ -137,9 +137,9 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     if (m_attrs.antialias) {
         GLint maxSampleCount;
         ::glGetIntegerv(GL_MAX_SAMPLES_EXT, &maxSampleCount);
-        GLint sampleCount = std::min(8, maxSampleCount);
-        if (sampleCount > maxSampleCount)
-            sampleCount = maxSampleCount;
+        // Using more than 4 samples is slow on some hardware and is unlikely to
+        // produce a significantly better result.
+        GLint sampleCount = std::min(4, maxSampleCount);
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
 #if PLATFORM(IOS)
