@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#pragma once
 
-#include <WebCore/LogMacros.h>
+#include <pal/LogMacros.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
@@ -84,4 +83,3 @@ WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#endif // Logging_h

@@ -1,3 +1,24 @@
+2017-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow PAL to log messages
+        https://bugs.webkit.org/show_bug.cgi?id=171523
+
+        Reviewed by Alex Christensen.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        * pal/LogInitialization.h: Copied from Source/WebCore/platform/LogMacros.h.
+        * pal/LogMacros.h: Copied from Source/WebCore/platform/LogMacros.h.
+        * pal/Logging.cpp: Copied from Source/WebCore/platform/Logging.cpp.
+        (PAL::isLogChannelEnabled):
+        (PAL::setLogChannelToAccumulate):
+        (PAL::initializeLogChannelsIfNecessary):
+        (PAL::registerNotifyCallback):
+        * pal/Logging.h: Copied from Source/WebCore/platform/LogMacros.h.
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/LoggingCocoa.mm: Renamed from Source/WebCore/platform/LogMacros.h.
+        (PAL::logLevelString):
+
 2017-10-06  Chris Dumez  <cdumez@apple.com>
 
         [Beacon][Cocoa] Beacon requests with BufferSource payload should not have a Content-Type HTTP header

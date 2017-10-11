@@ -3,6 +3,8 @@ list(APPEND PAL_SOURCES
 
     cf/CoreMediaSoftLink.cpp
 
+    cocoa/LoggingCocoa.mm
+
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
     system/cocoa/SleepDisablerCocoa.cpp

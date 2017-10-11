@@ -53,6 +53,7 @@
 #include "SimpleLineLayoutTextFragmentIterator.h"
 #include "Text.h"
 #include "TextPaintStyle.h"
+#include <pal/Logging.h>
 
 namespace WebCore {
 namespace SimpleLineLayout {
@@ -254,9 +255,9 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
 #ifndef NDEBUG
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutCoverage", WTF::Function<void()> { printSimpleLineLayoutCoverage });
-        registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutReasons", WTF::Function<void()> { printSimpleLineLayoutBlockList });
-        registerNotifyCallback("com.apple.WebKit.toggleSimpleLineLayout", WTF::Function<void()> { toggleSimpleLineLayout });
+        PAL::registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutCoverage", WTF::Function<void()> { printSimpleLineLayoutCoverage });
+        PAL::registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutReasons", WTF::Function<void()> { printSimpleLineLayoutBlockList });
+        PAL::registerNotifyCallback("com.apple.WebKit.toggleSimpleLineLayout", WTF::Function<void()> { toggleSimpleLineLayout });
     });
 #endif
     AvoidanceReasonFlags reasons = { };

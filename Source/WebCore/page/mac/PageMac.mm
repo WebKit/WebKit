@@ -35,6 +35,7 @@
 #import "Logging.h"
 #import "MainFrame.h"
 #import "RenderObject.h"
+#import <pal/Logging.h>
 
 #if PLATFORM(IOS)
 #import "WebCoreThreadInternal.h"
@@ -61,8 +62,8 @@ void Page::platformInitialize()
 #if ENABLE(TREE_DEBUGGING)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
-        registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
     });
 #endif
 }

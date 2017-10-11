@@ -80,21 +80,6 @@ void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, enabledChannelsString.utf8().data());
 }
 
-#ifndef NDEBUG
-void registerNotifyCallback(const String& notifyID, WTF::Function<void()>&& callback)
-{
-#if PLATFORM(COCOA)
-    int token;
-    notify_register_dispatch(notifyID.utf8().data(), &token, dispatch_get_main_queue(), BlockPtr<void (int)>::fromCallable([callback = WTFMove(callback)] (int) {
-        callback();
-    }).get());
-#else
-    UNUSED_PARAM(notifyID);
-    UNUSED_PARAM(callback);
-#endif
-}
-#endif
-
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 } // namespace WebCore
