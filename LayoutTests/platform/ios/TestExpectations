@@ -3111,3 +3111,5 @@ fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 http/tests/multipart/load-last-non-html-frame.php [ Failure  ]
 
 webkit.org/b/177366 http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-1.html [ Pass Timeout ]
+
+webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]
