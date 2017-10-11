@@ -1,3 +1,16 @@
+2017-10-10  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Quick Open: source mapped files are not shown as search results
+        https://bugs.webkit.org/show_bug.cgi?id=178151
+        <rdar://problem/31561718>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._addResource):
+        Also consider matching the query string against SourceMapResources
+        attached to a resource's source maps.
+
 2017-10-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Tab - Set column initial widths to try allow waterfall column to expand more by default
