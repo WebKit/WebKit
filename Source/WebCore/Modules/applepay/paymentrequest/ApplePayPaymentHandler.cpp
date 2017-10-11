@@ -67,8 +67,19 @@ ApplePayPaymentHandler::ApplePayPaymentHandler(PaymentRequest& paymentRequest)
 {
 }
 
-static ApplePaySessionPaymentRequest::LineItem convert(const PaymentItem& item)
+static ExceptionOr<void> validate(const PaymentCurrencyAmount& amount, const String& expectedCurrency)
 {
+    if (amount.currency != expectedCurrency)
+        return Exception { TypeError, makeString("\"", amount.currency, "\" does not match the expected currency of \"", expectedCurrency, "\". Apple Pay requires all PaymentCurrencyAmounts to use the same currency code.") };
+    return { };
+}
+
+static ExceptionOr<ApplePaySessionPaymentRequest::LineItem> convertAndValidate(const PaymentItem& item, const String& expectedCurrency)
+{
+    auto exception = validate(item.amount, expectedCurrency);
+    if (exception.hasException())
+        return exception.releaseException();
+
     ApplePaySessionPaymentRequest::LineItem lineItem;
     lineItem.amount = item.amount.value;
     lineItem.type = item.pending ? ApplePaySessionPaymentRequest::LineItem::Type::Pending : ApplePaySessionPaymentRequest::LineItem::Type::Final;
@@ -76,12 +87,16 @@ static ApplePaySessionPaymentRequest::LineItem convert(const PaymentItem& item)
     return lineItem;
 }
 
-static Vector<ApplePaySessionPaymentRequest::LineItem> convert(const Vector<PaymentItem>& lineItems)
+static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndValidate(const Vector<PaymentItem>& lineItems, const String& expectedCurrency)
 {
     Vector<ApplePaySessionPaymentRequest::LineItem> result;
     result.reserveInitialCapacity(lineItems.size());
-    for (auto& lineItem : lineItems)
-        result.uncheckedAppend(convert(lineItem));
+    for (auto& lineItem : lineItems) {
+        auto convertedLineItem = convertAndValidate(lineItem, expectedCurrency);
+        if (convertedLineItem.hasException())
+            return convertedLineItem.releaseException();
+        result.uncheckedAppend(convertedLineItem.releaseReturnValue());
+    }
     return result;
 }
 
@@ -110,8 +125,12 @@ static ApplePaySessionPaymentRequest::ShippingType convert(PaymentShippingType t
     return ApplePaySessionPaymentRequest::ShippingType::Shipping;
 }
 
-static ApplePaySessionPaymentRequest::ShippingMethod convert(const PaymentShippingOption& shippingOption)
+static ExceptionOr<ApplePaySessionPaymentRequest::ShippingMethod> convertAndValidate(const PaymentShippingOption& shippingOption, const String& expectedCurrency)
 {
+    auto exception = validate(shippingOption.amount, expectedCurrency);
+    if (exception.hasException())
+        return exception.releaseException();
+
     ApplePaySessionPaymentRequest::ShippingMethod result;
     result.amount = shippingOption.amount.value;
     result.label = shippingOption.label;
@@ -137,13 +156,29 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
         return validatedRequest.releaseException();
 
     ApplePaySessionPaymentRequest request = validatedRequest.releaseReturnValue();
-    request.setTotal(convert(m_paymentRequest->paymentDetails().total));
 
-    auto lineItems = convert(m_paymentRequest->paymentDetails().displayItems);
+    String expectedCurrency = m_paymentRequest->paymentDetails().total.amount.currency;
+    request.setCurrencyCode(expectedCurrency);
+
+    auto total = convertAndValidate(m_paymentRequest->paymentDetails().total, expectedCurrency);
+    ASSERT(!total.hasException());
+    request.setTotal(total.releaseReturnValue());
+
+    auto convertedLineItems = convertAndValidate(m_paymentRequest->paymentDetails().displayItems, expectedCurrency);
+    if (convertedLineItems.hasException())
+        return convertedLineItems.releaseException();
+
+    auto lineItems = convertedLineItems.releaseReturnValue();
     for (auto& modifier : m_paymentRequest->paymentDetails().modifiers) {
         auto convertedIdentifier = convertAndValidatePaymentMethodIdentifier(modifier.supportedMethods);
-        if (convertedIdentifier && handlesIdentifier(*convertedIdentifier))
-            lineItems.appendVector(convert(modifier.additionalDisplayItems));
+        if (!convertedIdentifier || !handlesIdentifier(*convertedIdentifier))
+            continue;
+
+        auto additionalDisplayItems = convertAndValidate(modifier.additionalDisplayItems, expectedCurrency);
+        if (additionalDisplayItems.hasException())
+            return additionalDisplayItems.releaseException();
+
+        lineItems.appendVector(additionalDisplayItems.releaseReturnValue());
     }
     request.setLineItems(lineItems);
 
@@ -153,8 +188,12 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 
     Vector<ApplePaySessionPaymentRequest::ShippingMethod> shippingMethods;
     shippingMethods.reserveInitialCapacity(m_paymentRequest->paymentDetails().shippingOptions.size());
-    for (auto& shippingOption : m_paymentRequest->paymentDetails().shippingOptions)
-        shippingMethods.uncheckedAppend(convert(shippingOption));
+    for (auto& shippingOption : m_paymentRequest->paymentDetails().shippingOptions) {
+        auto convertedShippingOption = convertAndValidate(shippingOption, expectedCurrency);
+        if (convertedShippingOption.hasException())
+            return convertedShippingOption.releaseException();
+        shippingMethods.uncheckedAppend(convertedShippingOption.releaseReturnValue());
+    }
     request.setShippingMethods(shippingMethods);
 
     auto exception = PaymentRequestValidator::validate(request);

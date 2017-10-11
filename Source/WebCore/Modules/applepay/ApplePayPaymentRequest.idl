@@ -38,6 +38,8 @@
     required ApplePayLineItem total;
     sequence<ApplePayLineItem> lineItems;
 
+    required DOMString currencyCode;
+
     sequence<ApplePayContactField> requiredShippingContactFields;
     ApplePayPaymentContact shippingContact;
 

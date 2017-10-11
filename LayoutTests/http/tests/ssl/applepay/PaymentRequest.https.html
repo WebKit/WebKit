@@ -18,7 +18,6 @@ function validPaymentMethod() {
             version: 2,
             merchantIdentifier: '',
             countryCode: 'US',
-            currencyCode: 'USD',
             supportedNetworks: ['visa', 'masterCard'],
             merchantCapabilities: ['supports3DS'],
         },
@@ -71,21 +70,6 @@ async function go() {
     await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = undefined;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
     debug("")
     await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = 7;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
-    debug("")
-
-    debug("Testing ApplePayRequest.currencyCode")
-    debug("")
-    await logAndShouldReject("paymentMethod = validPaymentMethod(); delete paymentMethod.data.currencyCode;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
-    debug("")
-    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = 'invalid';", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
-    debug("")
-    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = '';", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
-    debug("")
-    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = null;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
-    debug("")
-    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = undefined;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
-    debug("")
-    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = 7;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
     debug("")
 
     debug("Testing ApplePayRequest.supportedNetworks")
@@ -190,7 +174,8 @@ async function go() {
     logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    
+    await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: { currency: 'EUR', value: '10.00' } }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+
     debug("Testing PaymentDetails.shippingOptions")
     debug("");
     logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = '';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
@@ -204,6 +189,7 @@ async function go() {
     logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '-1', detail: '', identifier: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: { currency: 'EUR', value: '10.00' }, id: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
 
     debug("Testing PaymentOptions")
     debug("");

@@ -1,5 +1,18 @@
 2017-10-10  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] Validate that all PaymentCurrencyAmounts use the same currency code when using Apple Pay
+        https://bugs.webkit.org/show_bug.cgi?id=178150
+
+        Reviewed by Tim Horton.
+
+        * http/tests/paymentrequest/payment-request-abort-method.https.html:
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https.html:
+        * http/tests/paymentrequest/payment-request-show-method.https.html:
+        * http/tests/ssl/applepay/PaymentRequest.https-expected.txt:
+        * http/tests/ssl/applepay/PaymentRequest.https.html:
+
+2017-10-10  Andy Estes  <aestes@apple.com>
+
         [Payment Request] Implement PaymentRequest.canMakePayment()
         https://bugs.webkit.org/show_bug.cgi?id=178048
 

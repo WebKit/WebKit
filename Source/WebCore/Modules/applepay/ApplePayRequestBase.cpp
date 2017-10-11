@@ -46,9 +46,7 @@ static ExceptionOr<void> validate(unsigned version, const Vector<String>& suppor
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayRequestBase& request)
 {
     ApplePaySessionPaymentRequest result;
-
     result.setCountryCode(request.countryCode);
-    result.setCurrencyCode(request.currencyCode);
 
     auto merchantCapabilities = convertAndValidate(request.merchantCapabilities);
     if (merchantCapabilities.hasException())

@@ -37,7 +37,6 @@ struct ApplePayRequestBase {
     Vector<ApplePayMerchantCapability> merchantCapabilities;
     Vector<String> supportedNetworks;
     String countryCode;
-    String currencyCode;
 
     std::optional<Vector<ApplePayContactField>> requiredBillingContactFields;
     std::optional<ApplePayPaymentContact> billingContact;

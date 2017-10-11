@@ -28,26 +28,6 @@ PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); reque
 SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = 7;
 PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: "7" is not a valid country code..
 
-Testing ApplePayRequest.currencyCode
-
-SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.currencyCode;
-PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Member ApplePayRequest.currencyCode is required and must be an instance of DOMString.
-
-SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = 'invalid';
-PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: "invalid" is not a valid currency code..
-
-SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = '';
-PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: "" is not a valid currency code..
-
-SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = null;
-PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: "null" is not a valid currency code..
-
-SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = undefined;
-PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Member ApplePayRequest.currencyCode is required and must be an instance of DOMString.
-
-SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.currencyCode = 7;
-PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: "7" is not a valid currency code..
-
 Testing ApplePayRequest.supportedNetworks
 
 SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.supportedNetworks;
@@ -218,6 +198,8 @@ PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); reque
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];
 PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show() threw exception TypeError: Type error.
 
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: { currency: 'EUR', value: '10.00' } }];
+PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show() rejected promise  with TypeError: "EUR" does not match the expected currency of "USD". Apple Pay requires all PaymentCurrencyAmounts to use the same currency code..
 Testing PaymentDetails.shippingOptions
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = '';
@@ -253,6 +235,8 @@ PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); reque
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '-1', detail: '', identifier: '', label: '' }];
 PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show() threw exception TypeError: Type error.
 
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: { currency: 'EUR', value: '10.00' }, id: '', label: '' }];
+PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show() rejected promise  with TypeError: "EUR" does not match the expected currency of "USD". Apple Pay requires all PaymentCurrencyAmounts to use the same currency code..
 Testing PaymentOptions
 
 SETUP: paymentOptions = {}; paymentOptions.shippingType = '';
