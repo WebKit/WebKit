@@ -1,3 +1,16 @@
+2017-10-11  Chris Dumez  <cdumez@apple.com>
+
+        [Geolocation] Expose Coordinates.floorLevel
+        https://bugs.webkit.org/show_bug.cgi?id=178173
+        <rdar://problem/34918936>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/dom/Geolocation/floorLevel-expected.txt: Added.
+        * fast/dom/Geolocation/floorLevel.html: Added.
+
 2017-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid triggering layout from style change

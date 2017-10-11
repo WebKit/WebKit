@@ -886,7 +886,7 @@ bool TestRunner::isGeolocationProviderActive()
     return InjectedBundle::singleton().isGeolocationProviderActive();
 }
 
-void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef jsAltitude, JSValueRef jsAltitudeAccuracy, JSValueRef jsHeading, JSValueRef jsSpeed)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef jsAltitude, JSValueRef jsAltitudeAccuracy, JSValueRef jsHeading, JSValueRef jsSpeed, JSValueRef jsFloorLevel)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
@@ -920,7 +920,14 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
         speed = JSValueToNumber(context, jsSpeed, 0);
     }
 
-    injectedBundle.setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
+    bool providesFloorLevel = false;
+    double floorLevel = 0.;
+    if (!JSValueIsUndefined(context, jsFloorLevel)) {
+        providesFloorLevel = true;
+        floorLevel = JSValueToNumber(context, jsFloorLevel, 0);
+    }
+
+    injectedBundle.setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed, providesFloorLevel, floorLevel);
 }
 
 void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)

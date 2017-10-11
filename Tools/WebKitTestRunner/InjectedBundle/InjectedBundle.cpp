@@ -538,7 +538,7 @@ void InjectedBundle::setGeolocationPermission(bool enabled)
     WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
 }
 
-void InjectedBundle::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
+void InjectedBundle::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMockGeolocationPosition"));
 
@@ -587,6 +587,14 @@ void InjectedBundle::setMockGeolocationPosition(double latitude, double longitud
     WKRetainPtr<WKStringRef> speedKeyWK(AdoptWK, WKStringCreateWithUTF8CString("speed"));
     WKRetainPtr<WKDoubleRef> speedWK(AdoptWK, WKDoubleCreate(speed));
     WKDictionarySetItem(messageBody.get(), speedKeyWK.get(), speedWK.get());
+
+    WKRetainPtr<WKStringRef> providesFloorLevelKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesFloorLevel"));
+    WKRetainPtr<WKBooleanRef> providesFloorLevelWK(AdoptWK, WKBooleanCreate(providesFloorLevel));
+    WKDictionarySetItem(messageBody.get(), providesFloorLevelKeyWK.get(), providesFloorLevelWK.get());
+
+    WKRetainPtr<WKStringRef> floorLevelKeyWK(AdoptWK, WKStringCreateWithUTF8CString("floorLevel"));
+    WKRetainPtr<WKDoubleRef> floorLevelWK(AdoptWK, WKDoubleCreate(floorLevel));
+    WKDictionarySetItem(messageBody.get(), floorLevelKeyWK.get(), floorLevelWK.get());
 
     WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
 }

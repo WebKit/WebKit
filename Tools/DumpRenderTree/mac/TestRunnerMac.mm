@@ -442,7 +442,7 @@ void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bo
     [orientation release];
 }
 
-void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel)
 {
     WebGeolocationPosition *position = nil;
     if (!providesAltitude && !providesAltitudeAccuracy && !providesHeading && !providesSpeed) {
@@ -458,6 +458,8 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
             geolocationPosition.heading = heading;
         if (providesSpeed)
             geolocationPosition.speed = speed;
+        if (providesFloorLevel)
+            geolocationPosition.floorLevel = floorLevel;
         position = [[WebGeolocationPosition alloc] initWithGeolocationPosition:(WTFMove(geolocationPosition))];
     }
     [[MockGeolocationProvider shared] setPosition:position];

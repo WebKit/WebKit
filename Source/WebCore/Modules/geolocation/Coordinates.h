@@ -51,6 +51,7 @@ public:
     std::optional<double> altitudeAccuracy() const { return m_position.altitudeAccuracy; }
     std::optional<double> heading() const { return m_position.heading; }
     std::optional<double> speed() const { return m_position.speed; }
+    std::optional<double> floorLevel() const { return m_position.floorLevel; }
     
 private:
     explicit Coordinates(GeolocationPosition&&);

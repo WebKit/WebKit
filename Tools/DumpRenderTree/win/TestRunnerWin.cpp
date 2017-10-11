@@ -473,7 +473,7 @@ void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bo
     fprintf(testResult, "ERROR: TestRunner::setMockDeviceOrientation() not implemented\n");
 }
 
-void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.

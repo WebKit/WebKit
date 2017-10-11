@@ -289,7 +289,7 @@ public:
 
     // Geolocation.
     void setGeolocationPermission(bool);
-    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef altitude, JSValueRef altitudeAccuracy, JSValueRef heading, JSValueRef speed);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef altitude, JSValueRef altitudeAccuracy, JSValueRef heading, JSValueRef speed, JSValueRef floorLevel);
     void setMockGeolocationPositionUnavailableError(JSStringRef message);
     bool isGeolocationProviderActive();
 

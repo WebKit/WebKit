@@ -1,3 +1,36 @@
+2017-10-11  Chris Dumez  <cdumez@apple.com>
+
+        [Geolocation] Expose Coordinates.floorLevel
+        https://bugs.webkit.org/show_bug.cgi?id=178173
+        <rdar://problem/34918936>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test infrastructure for testing Coordinates.floorLevel.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setMockGeolocationPositionCallback):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setMockGeolocationPosition):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setMockGeolocationPosition):
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (WTR::GeolocationProviderMock::setPosition):
+        * WebKitTestRunner/GeolocationProviderMock.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setMockGeolocationPosition):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setMockGeolocationPosition):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setMockGeolocationPosition):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2017-10-11  Youenn Fablet  <youenn@apple.com>
 
         Bump default cache storage quota to 20MB

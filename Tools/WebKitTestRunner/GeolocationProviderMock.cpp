@@ -63,9 +63,9 @@ GeolocationProviderMock::~GeolocationProviderMock()
     WKGeolocationManagerSetProvider(m_geolocationManager, 0);
 }
 
-void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
+void GeolocationProviderMock::setPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel)
 {
-    m_position.adopt(WKGeolocationPositionCreate_b(currentTime(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed));
+    m_position.adopt(WKGeolocationPositionCreate_c(currentTime(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed, providesFloorLevel, floorLevel));
 
     m_hasError = false;
     m_errorMessage.clear();

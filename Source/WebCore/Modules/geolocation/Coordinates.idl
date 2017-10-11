@@ -35,4 +35,5 @@
     readonly attribute unrestricted double? altitudeAccuracy;
     readonly attribute unrestricted double? heading;
     readonly attribute unrestricted double? speed;
+    [EnabledBySetting=GeolocationFloorLevel] readonly attribute unrestricted double? floorLevel;
 };

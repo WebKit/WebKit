@@ -488,7 +488,15 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKDoubleRef speedWK = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, speedKeyWK.get()));
         double speed = WKDoubleGetValue(speedWK);
 
-        TestController::singleton().setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
+        WKRetainPtr<WKStringRef> providesFloorLevelKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesFloorLevel"));
+        WKBooleanRef providesFloorLevelWK = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, providesFloorLevelKeyWK.get()));
+        bool providesFloorLevel = WKBooleanGetValue(providesFloorLevelWK);
+
+        WKRetainPtr<WKStringRef> floorLevelKeyWK(AdoptWK, WKStringCreateWithUTF8CString("floorLevel"));
+        WKDoubleRef floorLevelWK = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, floorLevelKeyWK.get()));
+        double floorLevel = WKDoubleGetValue(floorLevelWK);
+
+        TestController::singleton().setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed, providesFloorLevel, floorLevel);
         return;
     }
 

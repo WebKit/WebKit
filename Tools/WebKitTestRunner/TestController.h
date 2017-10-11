@@ -94,7 +94,7 @@ public:
 
     // Geolocation.
     void setGeolocationPermission(bool);
-    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel);
     void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
     void handleGeolocationPermissionRequest(WKGeolocationPermissionRequestRef);
     bool isGeolocationProviderActive() const;

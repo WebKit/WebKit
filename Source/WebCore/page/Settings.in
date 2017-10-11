@@ -295,6 +295,8 @@ linkPreconnectEnabled initial=false
 
 beaconAPIEnabled initial=false
 
+geolocationFloorLevelEnabled initial=true
+
 constantPropertiesEnabled initial=false
 
 viewportFitEnabled initial=false

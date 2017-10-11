@@ -36,6 +36,7 @@ WK_EXPORT WKTypeID WKGeolocationPositionGetTypeID();
 
 WK_EXPORT WKGeolocationPositionRef WKGeolocationPositionCreate(double timestamp, double latitude, double longitude, double accuracy);
 WK_EXPORT WKGeolocationPositionRef WKGeolocationPositionCreate_b(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
+WK_EXPORT WKGeolocationPositionRef WKGeolocationPositionCreate_c(double timestamp, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, bool providesFloorLevel, double floorLevel);
 
 #ifdef __cplusplus
 }

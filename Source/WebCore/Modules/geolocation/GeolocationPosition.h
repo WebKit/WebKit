@@ -62,6 +62,7 @@ public:
     std::optional<double> altitudeAccuracy;
     std::optional<double> heading;
     std::optional<double> speed;
+    std::optional<double> floorLevel;
 
     bool isValid() const;
 
@@ -80,6 +81,7 @@ void GeolocationPosition::encode(Encoder& encoder) const
     encoder << altitudeAccuracy;
     encoder << heading;
     encoder << speed;
+    encoder << floorLevel;
 }
 
 template<class Decoder>
@@ -100,6 +102,8 @@ bool GeolocationPosition::decode(Decoder& decoder, GeolocationPosition& position
     if (!decoder.decode(position.heading))
         return false;
     if (!decoder.decode(position.speed))
+        return false;
+    if (!decoder.decode(position.floorLevel))
         return false;
 
     return true;

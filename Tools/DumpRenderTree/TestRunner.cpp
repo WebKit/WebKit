@@ -1019,8 +1019,15 @@ static JSValueRef setMockGeolocationPositionCallback(JSContextRef context, JSObj
         speed = JSValueToNumber(context, arguments[6], 0);
     }
 
+    bool canProvideFloorLevel = false;
+    double floorLevel = 0.;
+    if (argumentCount > 7 && !JSValueIsUndefined(context, arguments[7])) {
+        canProvideFloorLevel = true;
+        floorLevel = JSValueToNumber(context, arguments[7], 0);
+    }
+
     TestRunner* controller = reinterpret_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setMockGeolocationPosition(latitude, longitude, accuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading, canProvideSpeed, speed);
+    controller->setMockGeolocationPosition(latitude, longitude, accuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading, canProvideSpeed, speed, canProvideFloorLevel, floorLevel);
 
     return JSValueMakeUndefined(context);
 }
