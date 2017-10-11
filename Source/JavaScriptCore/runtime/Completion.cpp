@@ -187,7 +187,7 @@ JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const SourceCode& sour
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
-    globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source);
+    globalObject->moduleLoader()->provideFetch(exec, key, source);
     RETURN_IF_EXCEPTION(scope, rejectPromise(exec, globalObject));
 
     return loadAndEvaluateModule(lock, exec, globalObject, key, jsUndefined(), scriptFetcher);
@@ -227,7 +227,7 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source, JSValue
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     // FIXME: Introduce JSSourceCode object to wrap around this source.
-    globalObject->moduleLoader()->provide(exec, key, JSModuleLoader::Status::Fetch, source);
+    globalObject->moduleLoader()->provideFetch(exec, key, source);
     RETURN_IF_EXCEPTION(scope, rejectPromise(exec, globalObject));
 
     return loadModule(lock, exec, globalObject, key, jsUndefined(), scriptFetcher);

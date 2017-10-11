@@ -63,7 +63,7 @@ public:
     }
 
     // APIs to control the module loader.
-    JSValue provide(ExecState*, JSValue key, Status, const SourceCode&);
+    JSValue provideFetch(ExecState*, JSValue key, const SourceCode&);
     JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue scriptFetcher);
     JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue scriptFetcher);
     JSValue linkAndEvaluateModule(ExecState*, JSValue moduleKey, JSValue scriptFetcher);
@@ -73,7 +73,6 @@ public:
     JSInternalPromise* importModule(ExecState*, JSString* moduleName, const SourceOrigin& referrer);
     JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer, JSValue scriptFetcher);
     JSInternalPromise* fetch(ExecState*, JSValue key, JSValue scriptFetcher);
-    JSInternalPromise* instantiate(ExecState*, JSValue key, JSValue source, JSValue scriptFetcher);
     JSObject* createImportMetaProperties(ExecState*, JSValue key, JSModuleRecord*, JSValue scriptFetcher);
 
     // Additional platform dependent hooked APIs.

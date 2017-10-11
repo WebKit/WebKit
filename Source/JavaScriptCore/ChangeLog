@@ -1,3 +1,52 @@
+2017-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop Instantiate hook in ES6 module loader
+        https://bugs.webkit.org/show_bug.cgi?id=178162
+
+        Reviewed by Sam Weinig.
+
+        This patch is a part of patch series for module loader refactoring to adopt
+        integrity="" parameters and introduce new whatwg module import mechanism.
+
+        In this patch, we drop instantiate hook in module loader. This hook is originally
+        introduced because it is defined in whatwg/loader spec. But this hook is not
+        used in our implementation, and this hook won't be used since (1) whatwg/loader
+        spec is abandoned, and (2) this type of hooks should be done in Service Workers.
+
+        In addition, this patch applies some cleaning up of our module loader JS code
+        to simplify things. This change paves the way to more efficient loader implementation
+        with great flexibility to adopt integrity="" parameters.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (requestInstantiate):
+        (provideFetch):
+        provide is changed to provideFetch since we only used this function with Fetch stage parameter.
+
+        (fulfillInstantiate): Deleted.
+        (commitInstantiated): Deleted.
+        (instantiation): Deleted.
+        They are merged into requestInstantiate code. This is simpler.
+
+        (provide): Deleted.
+        * jsc.cpp:
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::provideFetch):
+        (JSC::JSModuleLoader::provide): Deleted.
+        Changed to provideFetch.
+
+        (JSC::JSModuleLoader::instantiate): Deleted.
+        Drop this hook.
+
+        * runtime/JSModuleLoader.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeInstantiate): Deleted.
+        Drop this hook.
+
 2017-10-10  Saam Barati  <sbarati@apple.com>
 
         Prototype structure transition should be a deferred transition

@@ -30,7 +30,6 @@
 // Currently, there are 4 hooks.
 //    1. Loader.resolve
 //    2. Loader.fetch
-//    3. Loader.instantiate
 
 @globalPrivate
 function setStateToMax(entry, newState)
@@ -139,69 +138,6 @@ function fulfillFetch(entry, source)
     @setStateToMax(entry, @ModuleInstantiate);
 }
 
-function fulfillInstantiate(entry, optionalInstance, source)
-{
-    // https://whatwg.github.io/loader/#fulfill-instantiate
-
-    "use strict";
-
-    if (!entry.instantiate)
-        entry.instantiate = @newPromiseCapability(@InternalPromise).@promise;
-    this.commitInstantiated(entry, optionalInstance, source);
-
-    // FIXME: The draft fulfills the promise in the CommitInstantiated operation.
-    // But it CommitInstantiated is also used in the requestInstantiate and
-    // we should not "force fulfill" there.
-    // So we separate "force fulfill" operation from the CommitInstantiated operation.
-    // https://github.com/whatwg/loader/pull/67
-    this.forceFulfillPromise(entry.instantiate, entry);
-}
-
-function commitInstantiated(entry, optionalInstance, source)
-{
-    // https://whatwg.github.io/loader/#commit-instantiated
-
-    "use strict";
-
-    var moduleRecord = this.instantiation(optionalInstance, source, entry);
-
-    // FIXME: Described in the draft,
-    //   4. Fulfill entry.[[Instantiate]] with instance.
-    // But, instantiate promise should be fulfilled with the entry.
-    // We remove this statement because instantiate promise will be
-    // fulfilled without this "force fulfill" operation.
-    // https://github.com/whatwg/loader/pull/67
-
-    var dependencies = [];
-    var dependenciesMap = moduleRecord.dependenciesMap;
-    moduleRecord.registryEntry = entry;
-    var requestedModules = this.requestedModules(moduleRecord);
-    for (var i = 0, length = requestedModules.length; i < length; ++i) {
-        var depKey = requestedModules[i];
-        var pair = {
-            key: depKey,
-            value: @undefined
-        };
-        @putByValDirect(dependencies, dependencies.length, pair);
-        dependenciesMap.@set(depKey, pair);
-    }
-    entry.dependencies = dependencies;
-    entry.dependenciesMap = dependenciesMap;
-    entry.module = moduleRecord;
-    @setStateToMax(entry, @ModuleSatisfy);
-}
-
-function instantiation(result, source, entry)
-{
-    // https://whatwg.github.io/loader/#instantiation
-    // FIXME: Current implementation does not support optionalInstance.
-    // https://bugs.webkit.org/show_bug.cgi?id=148171
-
-    "use strict";
-
-    return this.parseModule(entry.key, source);
-}
-
 // Loader.
 
 function requestFetch(key, fetcher)
@@ -239,17 +175,33 @@ function requestInstantiate(key, fetcher)
         return entry.instantiate;
 
     var instantiatePromise = this.requestFetch(key, fetcher).then((source) => {
-        // Hook point.
-        // 3. Loader.instantiate
-        //     https://whatwg.github.io/loader/#browser-instantiate
-        //     Take the key and the fetched source code, and instantiate the module record
-        //     by parsing the module source code.
-        //     It has the chance to provide the optional module instance that is different from
-        //     the ordinary one.
-        return this.instantiate(key, source, fetcher).then((optionalInstance) => {
-            this.commitInstantiated(entry, optionalInstance, source);
-            return entry;
-        });
+        var moduleRecord = this.parseModule(entry.key, source);
+
+        // FIXME: Described in the draft,
+        //   4. Fulfill entry.[[Instantiate]] with instance.
+        // But, instantiate promise should be fulfilled with the entry.
+        // We remove this statement because instantiate promise will be
+        // fulfilled without this "force fulfill" operation.
+        // https://github.com/whatwg/loader/pull/67
+
+        var dependencies = [];
+        var dependenciesMap = moduleRecord.dependenciesMap;
+        moduleRecord.registryEntry = entry;
+        var requestedModules = this.requestedModules(moduleRecord);
+        for (var i = 0, length = requestedModules.length; i < length; ++i) {
+            var depKey = requestedModules[i];
+            var pair = {
+                key: depKey,
+                value: @undefined
+            };
+            @putByValDirect(dependencies, dependencies.length, pair);
+            dependenciesMap.@set(depKey, pair);
+        }
+        entry.dependencies = dependencies;
+        entry.dependenciesMap = dependenciesMap;
+        entry.module = moduleRecord;
+        @setStateToMax(entry, @ModuleSatisfy);
+        return entry;
     });
     entry.instantiate = instantiatePromise;
     return instantiatePromise;
@@ -400,30 +352,15 @@ function moduleEvaluation(moduleRecord, fetcher)
 
 // APIs to control the module loader.
 
-function provide(key, stage, value)
+function provideFetch(key, value)
 {
     "use strict";
 
     var entry = this.ensureRegistered(key);
 
-    if (stage === @ModuleFetch) {
-        if (entry.state > @ModuleFetch)
-            @throwTypeError("Requested module is already fetched.");
-        this.fulfillFetch(entry, value);
-        return;
-    }
-
-    if (stage === @ModuleInstantiate) {
-        if (entry.state > @ModuleInstantiate)
-            @throwTypeError("Requested module is already instantiated.");
-        this.fulfillFetch(entry, @undefined);
-        entry.fetch.then((source) => {
-            this.fulfillInstantiate(entry, value, source);
-        });
-        return;
-    }
-
-    @throwTypeError("Requested module is already ready to be executed.");
+    if (entry.state > @ModuleFetch)
+        @throwTypeError("Requested module is already fetched.");
+    this.fulfillFetch(entry, value);
 }
 
 function loadAndEvaluateModule(moduleName, referrer, fetcher)

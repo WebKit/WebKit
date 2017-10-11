@@ -79,12 +79,12 @@ static String printableModuleKey(ExecState* exec, JSValue key)
     return vm.propertyNames->emptyIdentifier.impl();
 }
 
-JSValue JSModuleLoader::provide(ExecState* exec, JSValue key, Status status, const SourceCode& sourceCode)
+JSValue JSModuleLoader::provideFetch(ExecState* exec, JSValue key, const SourceCode& sourceCode)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().providePublicName()));
+    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().provideFetchPublicName()));
     RETURN_IF_EXCEPTION(scope, { });
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
@@ -93,7 +93,6 @@ JSValue JSModuleLoader::provide(ExecState* exec, JSValue key, Status status, con
     SourceCode source { sourceCode };
     MarkedArgumentBuffer arguments;
     arguments.append(key);
-    arguments.append(jsNumber(status));
     arguments.append(JSSourceCode::create(vm, WTFMove(source)));
 
     scope.release();
@@ -234,19 +233,6 @@ JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue s
         return deferred->promise();
     }
     deferred->reject(exec, createError(exec, makeString("Could not open the module '", moduleKey, "'.")));
-    return deferred->promise();
-}
-
-JSInternalPromise* JSModuleLoader::instantiate(ExecState* exec, JSValue key, JSValue source, JSValue scriptFetcher)
-{
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [instantiate] ", printableModuleKey(exec, key), "\n");
-
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    if (globalObject->globalObjectMethodTable()->moduleLoaderInstantiate)
-        return globalObject->globalObjectMethodTable()->moduleLoaderInstantiate(globalObject, exec, this, key, source, scriptFetcher);
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
-    deferred->resolve(exec, jsUndefined());
     return deferred->promise();
 }
 
