@@ -1,5 +1,18 @@
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222450. rdar://problem/34920294
+
+    2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Mark imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html as flaky on iOS.
+            https://bugs.webkit.org/show_bug.cgi?id=177323
+
+            Unreviewed test gardening.
+
+            * platform/ios/TestExpectations:
+
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222478. rdar://problem/34771020
 
     2017-09-25  Youenn Fablet  <youenn@apple.com>
