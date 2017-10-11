@@ -1,5 +1,21 @@
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222788. rdar://problem/34771440
+
+    2017-10-03  Daniel Bates  <dabates@apple.com>
+
+            [CSP] Check policy before opening a new window to a JavaScript URL
+            https://bugs.webkit.org/show_bug.cgi?id=176815
+            <rdar://problem/34400057>
+
+            Reviewed by Brent Fulgham.
+
+            * http/tests/security/contentSecurityPolicy/resources/window-open-javascript-url-blocked.js: Added.
+            * http/tests/security/contentSecurityPolicy/window-open-javascript-url-blocked-expected.txt: Added.
+            * http/tests/security/contentSecurityPolicy/window-open-javascript-url-blocked.html: Added.
+
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221831. rdar://problem/34891283
 
     2017-09-08  Dean Jackson  <dino@apple.com>

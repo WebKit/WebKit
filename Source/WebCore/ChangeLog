@@ -1,5 +1,25 @@
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222788. rdar://problem/34771440
+
+    2017-10-03  Daniel Bates  <dabates@apple.com>
+
+            [CSP] Check policy before opening a new window to a JavaScript URL
+            https://bugs.webkit.org/show_bug.cgi?id=176815
+            <rdar://problem/34400057>
+
+            Reviewed by Brent Fulgham.
+
+            Ensure that the Content Security Policy of the page allows navigation to a JavaScript URL
+            before opening a new window to it.
+
+            Test: http/tests/security/contentSecurityPolicy/window-open-javascript-url-blocked.html
+
+            * loader/FrameLoader.cpp:
+            (WebCore::createWindow):
+
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221937. rdar://problem/34893195
 
     2017-09-12  Jer Noble  <jer.noble@apple.com>
