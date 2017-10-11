@@ -1,5 +1,29 @@
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222826. rdar://problem/34792131
+
+    2017-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct nullptr dereference during shutdown
+            https://bugs.webkit.org/show_bug.cgi?id=177845
+            <rdar://problem/33651405>
+
+            Reviewed by Chris Dumez.
+
+            It looks like the ResourceLoadStatisticsPersistentStorage destructor is calling code that attempts
+            to use member variables in its owning class (WebResourceLoadStatisticsStore). Since these may have
+            already been destroyed, they are in an invalid state when accessed.
+
+            * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+            (WebKit::ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorage): Do not call
+            finishAllPendingWorkSynchronously() in the destructor, since it relies on the m_memoryStore to be
+            a reference to completely valid object.
+            * UIProcess/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore): Instead, call
+            'finishAllPendingWorkSynchronously' here, when the object is still in a known valid state.
+
+2017-10-10  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223084. rdar://problem/34857469
 
     2017-10-09  Jason Marcell  <jmarcell@apple.com>

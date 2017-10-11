@@ -173,6 +173,7 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
 
 WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
+    m_persistentStorage.finishAllPendingWorkSynchronously();
 }
     
 void WebResourceLoadStatisticsStore::removeDataRecords()
