@@ -1,3 +1,18 @@
+2017-10-11  Dewei Zhu  <dewei_zhu@apple.com>
+
+        run-benchmark script should set '__XPC_DYLD_FRAMEWORK_PATH' while launching local-built Safari on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=178199
+
+        Reviewed by Saam Barati.
+
+        '__XPC_DYLD_FRAMEWORK_PATH' should be set while launching Safari on run-benchmark script.
+        'force_remove' function should support both file and directory.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (force_remove):
+
 2017-10-11  Saam Barati  <sbarati@apple.com>
 
         Runtime disable poly proto because it may be a 3-4% Speedometer regression

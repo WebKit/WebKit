@@ -39,7 +39,10 @@ def get_path_from_project_root(relative_path_to_project_root):
 
 def force_remove(path):
     try:
-        shutil.rmtree(path)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)
     except Exception as error:
         # Directory/file does not exist or privilege issue, just ignore it
         _log.info("Error removing %s: %s" % (path, error))
