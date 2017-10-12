@@ -32,6 +32,7 @@
 #include "LibWebRTCSocketFactory.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkRTCSocketMessages.h"
+#include "RTCPacketOptions.h"
 #include "WebProcess.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
@@ -113,13 +114,6 @@ void LibWebRTCSocket::signalNewConnection(rtc::AsyncPacketSocket* newConnectionS
     SignalNewConnection(this, newConnectionSocket);
 }
 
-static inline String authKey(const rtc::PacketOptions& options)
-{
-    if (options.packet_time_params.srtp_auth_key.size() <= 0)
-        return { };
-    return String(options.packet_time_params.srtp_auth_key.data(), options.packet_time_params.srtp_auth_key.size());
-}
-
 bool LibWebRTCSocket::willSend(size_t size)
 {
     if (size > m_availableSendingBytes) {
@@ -142,10 +136,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
 
     sendOnMainThread([identifier, buffer = WTFMove(buffer), address, options](IPC::Connection& connection) {
         IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
-        String srtpAuthKey = authKey(options);
-        RTCNetwork::SocketAddress socketAddress(address);
-        Messages::NetworkRTCSocket::SendTo message(data, socketAddress, options.packet_id, options.packet_time_params.rtp_sendtime_extension_id, srtpAuthKey, options.packet_time_params.srtp_packet_index, options.dscp);
-        connection.send(WTFMove(message), identifier);
+        connection.send(Messages::NetworkRTCSocket::SendTo { data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, identifier);
     });
     return size;
 }

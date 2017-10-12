@@ -23,48 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NetworkRTCSocket.h"
+#pragma once
 
 #if USE(LIBWEBRTC)
 
-#include "DataReference.h"
-#include "LibWebRTCSocketClient.h"
-#include "NetworkRTCProvider.h"
-#include "RTCPacketOptions.h"
-#include <WebCore/SharedBuffer.h>
-#include <wtf/Function.h>
+#include <WebCore/LibWebRTCMacros.h>
+#include <webrtc/base/asyncpacketsocket.h>
+#include <wtf/Optional.h>
+
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
 namespace WebKit {
 
-NetworkRTCSocket::NetworkRTCSocket(uint64_t identifier, NetworkRTCProvider& rtcProvider)
-    : m_identifier(identifier)
-    , m_rtcProvider(rtcProvider)
-{
-}
+struct RTCPacketOptions {
+    void encode(IPC::Encoder&) const;
+    static bool decode(IPC::Decoder&, RTCPacketOptions&);
 
-void NetworkRTCSocket::sendTo(const IPC::DataReference& data, RTCNetwork::SocketAddress&& socketAddress, RTCPacketOptions&& options)
-{
-    auto buffer = WebCore::SharedBuffer::create(data.data(), data.size());
-    m_rtcProvider.callSocket(m_identifier, [buffer = WTFMove(buffer), socketAddress = WTFMove(socketAddress), options = WTFMove(options.options)](LibWebRTCSocketClient& client) {
-        client.sendTo(buffer.get(), socketAddress.value, options);
-    });
-}
+    rtc::PacketOptions options;
+};
 
-void NetworkRTCSocket::close()
-{
-    m_rtcProvider.callSocket(m_identifier, [](LibWebRTCSocketClient& socket) {
-        socket.close();
-    });
 }
-    
-void NetworkRTCSocket::setOption(int option, int value)
-{
-    m_rtcProvider.callSocket(m_identifier, [option, value](LibWebRTCSocketClient& socket) {
-        socket.setOption(option, value);
-    });
-}
-
-} // namespace WebKit
 
 #endif // USE(LIBWEBRTC)

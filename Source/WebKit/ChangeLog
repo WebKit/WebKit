@@ -1,3 +1,39 @@
+2017-10-11  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/34920294
+
+    Apply patch. rdar://problem/34920294
+
+    2017-10-11  Youenn Fablet  <youenn@apple.com>
+
+            rtc::PacketOptions should have its own IPC encoding/decoding routines
+            https://bugs.webkit.org/show_bug.cgi?id=177812
+
+            Reviewed by Alex Christensen.
+
+            Replacing rtc::PacketOptions IPC encoding/decoding from passing the structure as individual parameters to the structure as a parameter.
+            Introducing WebKit::RTCPacketOptions as a wrapper around it for which encode/decode routines are added.
+            Updating code using rtc::PacketOptions accordingly.
+
+            * NetworkProcess/webrtc/NetworkRTCSocket.cpp:
+            (WebKit::NetworkRTCSocket::sendTo):
+            * NetworkProcess/webrtc/NetworkRTCSocket.h:
+            * NetworkProcess/webrtc/NetworkRTCSocket.messages.in:
+            * Platform/IPC/Decoder.cpp:
+            (IPC::Decoder::operator>>):
+            (IPC::Decoder::decode):
+            * Platform/IPC/Decoder.h:
+            * Platform/IPC/Encoder.cpp:
+            (IPC::Encoder::encode):
+            * Platform/IPC/Encoder.h:
+            * Shared/RTCPacketOptions.cpp: Added.
+            (WebKit::RTCPacketOptions::encode const):
+            (WebKit::RTCPacketOptions::decode):
+            * Shared/RTCPacketOptions.h: Added.
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+            (WebKit::LibWebRTCSocket::SendTo):
+
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222826. rdar://problem/34792131

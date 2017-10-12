@@ -23,7 +23,7 @@
 #if USE(LIBWEBRTC)
 
 messages -> NetworkRTCSocket {
-    void SendTo(IPC::DataReference data, WebKit::RTCNetwork::SocketAddress address, int packetID, int rtpSendtimeExtensionID, String srtpAuth, int64_t srtpPacketIndex, int dscp)
+    void SendTo(IPC::DataReference data, WebKit::RTCNetwork::SocketAddress address, struct WebKit::RTCPacketOptions options)
     void Close()
     void SetOption(int option, int value)
 }
