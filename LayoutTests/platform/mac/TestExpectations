@@ -1616,3 +1616,6 @@ webkit.org/b/173565 [ ElCapitan Release ] media/media-source/media-source-paint-
 webkit.org/b/173068 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html [ Pass Failure ]
 
 webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.html [ Crash ]
+
+# <rdar://problem/34507977>
+webkit.org/b/177119 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
