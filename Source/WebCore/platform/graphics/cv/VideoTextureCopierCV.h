@@ -28,7 +28,7 @@
 
 #import "GraphicsContext3D.h"
 
-typedef struct  __CVBuffer* CVImageBufferRef;
+typedef struct __CVBuffer* CVImageBufferRef;
 typedef CVImageBufferRef CVOpenGLTextureRef;
 typedef CVImageBufferRef CVOpenGLESTextureRef;
 
@@ -50,8 +50,31 @@ public:
     GraphicsContext3D& context() { return m_context.get(); }
 
 private:
+    class GC3DStateSaver {
+    public:
+        GC3DStateSaver(GraphicsContext3D*);
+        ~GC3DStateSaver();
+
+    private:
+        GraphicsContext3D* m_context;
+        GC3Dint m_texture { 0 };
+        GC3Dint m_framebuffer { 0 };
+        GC3Dint m_program { 0 };
+        GC3Dint m_arrayBuffer { 0 };
+        GC3Dint m_viewport[4] { 0, 0, 0, 0 };
+    };
+
+    bool initializeContextObjects();
+
     Ref<GraphicsContext3D> m_context;
-    Platform3DObject m_readFramebuffer;
+    Platform3DObject m_framebuffer { 0 };
+    Platform3DObject m_program { 0 };
+    Platform3DObject m_vertexBuffer { 0 };
+    GC3Dint m_textureUniformLocation { -1 };
+    GC3Dint m_textureDimensionsUniformLocation { -1 };
+    GC3Dint m_flipYUniformLocation { -1 };
+    GC3Dint m_premultiplyUniformLocation { -1 };
+    GC3Dint m_positionAttributeLocation { -1 };
 };
 
 }

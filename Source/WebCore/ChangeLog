@@ -1,3 +1,57 @@
+2017-10-12  Dean Jackson  <dino@apple.com>
+
+        [WebGL] accelerated texImage2D for video doesn't respect flipY
+        https://bugs.webkit.org/show_bug.cgi?id=176491
+        <rdar://problem/33833511>
+
+        Reviewed by Jer Noble.
+
+        (Take 3 - this was rolled out due to a test failure)
+
+        Previously, if UNPACK_FLIP_Y_WEBGL was set to true, we'd either fall
+        back to software or fail to upload texture data. Fix this by intercepting
+        the texImage2D call, checking the orientation of the video, and running
+        a small shader program to flip it if necessary.
+
+        While there, implement UNPACK_PREMULTIPLY_ALPHA_WEBGL as well, although
+        none of our media decoders support video with alpha, so unfortunately
+        this will have no visible change.
+
+        Tests: fast/canvas/webgl/texImage2D-video-flipY-false.html
+               fast/canvas/webgl/texImage2D-video-flipY-true.html
+
+        * platform/cocoa/CoreVideoSoftLink.cpp: Add link to CVOpenGL(ES)TextureGetCleanTexCoords,
+        which is used to check the orientation of the source video.
+        * platform/cocoa/CoreVideoSoftLink.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture): We can
+        now handle flipped or premultiplied requests.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture): Ditto.
+
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::VideoTextureCopierCV::VideoTextureCopierCV): Rename readFramebuffer to
+        simply framebuffer.
+        (WebCore::VideoTextureCopierCV::~VideoTextureCopierCV): Delete the program and buffer
+        if they were created.
+        (WebCore::VideoTextureCopierCV::initializeContextObjects): Sets up the shader program
+        and the vertex buffer for drawing. Also records the location of the uniforms.
+        (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture): Create a new
+        framebuffer object, and render the video texture into that framebuffer using a
+        shader that can flip the coordinates.
+        (WebCore::VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver): Helper to restore
+        the state of the user's GraphicsContext3D while we're intercepting calls.
+        (WebCore::VideoTextureCopierCV::GC3DStateSaver::~GC3DStateSaver):
+        * platform/graphics/cv/VideoTextureCopierCV.h:
+
+        * platform/graphics/GraphicsContext3D.h: Add two new entry points, for direct shader
+        compilation and attribute access. This avoids going through ANGLE.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::compileShaderDirect):
+        (WebCore::GraphicsContext3D::getAttribLocationDirect):
+
 2017-10-11  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222963. rdar://problem/34891307

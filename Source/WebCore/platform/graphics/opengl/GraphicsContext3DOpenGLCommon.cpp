@@ -658,9 +658,9 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     
     ::glCompileShader(shader);
     
-    int GLCompileSuccess;
+    int compileStatus;
     
-    ::glGetShaderiv(shader, COMPILE_STATUS, &GLCompileSuccess);
+    ::glGetShaderiv(shader, COMPILE_STATUS, &compileStatus);
 
     ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
     GraphicsContext3D::ShaderSourceEntry& entry = result->value;
@@ -678,9 +678,44 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
         entry.log = getUnmangledInfoLog(shaders, 1, String(info.get()));
     }
 
-    if (GLCompileSuccess != GL_TRUE) {
+    if (compileStatus != GL_TRUE) {
         entry.isValid = false;
         LOG(WebGL, "Error: shader translator produced a shader that OpenGL would not compile.");
+    }
+}
+
+void GraphicsContext3D::compileShaderDirect(Platform3DObject shader)
+{
+    ASSERT(shader);
+    makeContextCurrent();
+
+    HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
+
+    if (result == m_shaderSourceMap.end())
+        return;
+
+    ShaderSourceEntry& entry = result->value;
+
+    const CString& shaderSourceCString = entry.source.utf8();
+    const char* shaderSourcePtr = shaderSourceCString.data();
+    int shaderSourceLength = shaderSourceCString.length();
+
+    LOG(WebGL, "--- begin direct shader source ---\n%s\n--- end direct shader source ---\n", shaderSourcePtr);
+
+    ::glShaderSource(shader, 1, &shaderSourcePtr, &shaderSourceLength);
+
+    ::glCompileShader(shader);
+
+    int compileStatus;
+
+    ::glGetShaderiv(shader, COMPILE_STATUS, &compileStatus);
+
+    if (compileStatus == GL_TRUE) {
+        entry.isValid = true;
+        LOG(WebGL, "Direct compilation of shader succeeded.");
+    } else {
+        entry.isValid = false;
+        LOG(WebGL, "Error: direct compilation of shader failed.");
     }
 }
 
@@ -1058,6 +1093,16 @@ int GraphicsContext3D::getAttribLocation(Platform3DObject program, const String&
     String mappedName = mappedSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, name);
     LOG(WebGL, "::glGetAttribLocation is mapping %s to %s", name.utf8().data(), mappedName.utf8().data());
     return ::glGetAttribLocation(program, mappedName.utf8().data());
+}
+
+int GraphicsContext3D::getAttribLocationDirect(Platform3DObject program, const String& name)
+{
+    if (!program)
+        return -1;
+
+    makeContextCurrent();
+
+    return ::glGetAttribLocation(program, name.utf8().data());
 }
 
 GraphicsContext3DAttributes GraphicsContext3D::getContextAttributes()

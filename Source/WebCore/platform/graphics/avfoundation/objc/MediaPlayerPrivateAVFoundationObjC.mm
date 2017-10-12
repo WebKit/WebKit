@@ -2487,9 +2487,6 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastOpenGLImage()
 
 bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
 {
-    if (flipY || premultiplyAlpha)
-        return false;
-
     ASSERT(context);
 
     if (!m_openGLVideoOutput)
