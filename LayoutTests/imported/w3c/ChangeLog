@@ -1,5 +1,16 @@
 2017-10-11  Chris Dumez  <cdumez@apple.com>
 
+        XMLHttpRequest: do not sniff text/html, and do not sniff XML when responseType is set to "text"
+        https://bugs.webkit.org/show_bug.cgi?id=168724
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline web-platform-tests now that all checks are passing.
+
+        * web-platform-tests/XMLHttpRequest/responsetext-decoding-expected.txt:
+
+2017-10-11  Chris Dumez  <cdumez@apple.com>
+
         Re-sync XMLHttpRequests Web-Platform-Tests
         https://bugs.webkit.org/show_bug.cgi?id=178172
 

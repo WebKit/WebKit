@@ -1047,6 +1047,39 @@ static inline bool shouldDecodeResponse(XMLHttpRequest::ResponseType type)
     return true;
 }
 
+Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
+{
+    if (!m_responseEncoding.isEmpty())
+        return TextResourceDecoder::create("text/plain", m_responseEncoding);
+
+    switch (m_responseType) {
+    case ResponseType::EmptyString:
+        if (responseIsXML()) {
+            auto decoder = TextResourceDecoder::create("application/xml");
+            // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
+            decoder->useLenientXMLDecoding();
+            return decoder;
+        }
+        FALLTHROUGH;
+    case ResponseType::Text:
+    case ResponseType::Json:
+        return TextResourceDecoder::create("text/plain", "UTF-8");
+    case ResponseType::Document: {
+        if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"))
+            return TextResourceDecoder::create("text/html", "UTF-8");
+        auto decoder = TextResourceDecoder::create("application/xml");
+        // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
+        decoder->useLenientXMLDecoding();
+        return decoder;
+    }
+    case ResponseType::Arraybuffer:
+    case ResponseType::Blob:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return TextResourceDecoder::create("text/plain", "UTF-8");
+}
+
 void XMLHttpRequest::didReceiveData(const char* data, int len)
 {
     if (m_error)
@@ -1063,19 +1096,8 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
     bool useDecoder = shouldDecodeResponse(m_responseType);
 
-    if (useDecoder && !m_decoder) {
-        if (!m_responseEncoding.isEmpty())
-            m_decoder = TextResourceDecoder::create("text/plain", m_responseEncoding);
-        // allow TextResourceDecoder to look inside the m_response if it's XML or HTML
-        else if (responseIsXML()) {
-            m_decoder = TextResourceDecoder::create("application/xml");
-            // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
-            m_decoder->useLenientXMLDecoding();
-        } else if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"))
-            m_decoder = TextResourceDecoder::create("text/html", "UTF-8");
-        else
-            m_decoder = TextResourceDecoder::create("text/plain", "UTF-8");
-    }
+    if (useDecoder && !m_decoder)
+        m_decoder = createDecoder();
 
     if (!len)
         return;

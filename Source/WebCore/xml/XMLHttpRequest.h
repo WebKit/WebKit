@@ -180,6 +180,7 @@ private:
     void dispatchErrorEvents(const AtomicString&);
 
     void resumeTimerFired();
+    Ref<TextResourceDecoder> createDecoder() const;
 
     std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
