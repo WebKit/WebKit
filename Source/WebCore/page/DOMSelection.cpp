@@ -393,6 +393,8 @@ bool DOMSelection::containsNode(Node& node, bool allowPartial) const
 
     Ref<Node> protectedNode(node);
     auto selectedRange = selection.selection().toNormalizedRange();
+    if (!selectedRange)
+        return false;
 
     ContainerNode* parentNode = node.parentNode();
     if (!parentNode || !parentNode->isConnected())

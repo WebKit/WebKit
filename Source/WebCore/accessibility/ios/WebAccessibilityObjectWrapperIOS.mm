@@ -2449,6 +2449,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
     
     RefPtr<Range> range = selection.toNormalizedRange();
+    if (!range)
+        return nil;
+
     CharacterOffset start = cache->startOrEndCharacterOffsetForRange(range, true);
     CharacterOffset end = cache->startOrEndCharacterOffsetForRange(range, false);
 
