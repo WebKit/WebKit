@@ -45,8 +45,6 @@ sub copyMissingXSLTHeadersToSDKIfNeeded($);
 sub createLegacyXcodeSpecificationFilesForSDKIfNeeded($);
 sub mergeXcodeSpecificationWithSpecificationAndId($$$);
 sub readXcodeSpecificationById($$);
-sub sdkDirectory($);
-sub sdkPlatformDirectory($);
 sub updateXcode7SpecificationFile($);
 sub updateXcodeSpecificationFilesForSDKIfNeeded($);
 sub xcodeSDKSpecificationsPath($);
@@ -210,22 +208,6 @@ sub createLegacyXcodeSpecificationFilesForSDKIfNeeded($)
         mergeXcodeSpecificationWithSpecificationAndId($productTypesForWebKitDevelopmentPath, $productTypesForMacOSXPath, COMMAND_LINE_PRODUCT_TYPE);
         print "Successfully created '$productTypesForWebKitDevelopmentPath'.\n";
     }
-}
-
-sub sdkDirectory($)
-{
-    my ($sdkName) = @_;
-    chomp(my $sdkDirectory = `xcrun --sdk '$sdkName' --show-sdk-path`);
-    die "Failed to get SDK path from xcrun: $!" if exitStatus($?);
-    return $sdkDirectory;
-}
-
-sub sdkPlatformDirectory($)
-{
-    my ($sdkName) = @_;
-    chomp(my $sdkPlatformDirectory = `xcrun --sdk '$sdkName' --show-sdk-platform-path`);
-    die "Failed to get SDK platform path from xcrun: $!" if exitStatus($?);
-    return $sdkPlatformDirectory;
 }
 
 sub writeXcodeSpecification($$)

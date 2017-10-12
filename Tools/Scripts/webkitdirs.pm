@@ -71,6 +71,7 @@ BEGIN {
        &extractNonHostConfiguration
        &findOrCreateSimulatorForIOSDevice
        &iosSimulatorDeviceByName
+       &iosVersion
        &nmPath
        &passedConfiguration
        &prependToEnvironmentVariableList
@@ -82,7 +83,8 @@ BEGIN {
        &runIOSWebKitApp
        &runMacWebKitApp
        &safariPath
-       &iosVersion
+       &sdkDirectory
+       &sdkPlatformDirectory
        &setConfiguration
        &setupMacWebKitEnvironment
        &sharedCommandLineOptions
@@ -164,6 +166,22 @@ sub exitStatus($);
 
 sub findMatchingArguments($$);
 sub hasArgument($$);
+
+sub sdkDirectory($)
+{
+    my ($sdkName) = @_;
+    chomp(my $sdkDirectory = `xcrun --sdk '$sdkName' --show-sdk-path`);
+    die "Failed to get SDK path from xcrun: $!" if exitStatus($?);
+    return $sdkDirectory;
+}
+
+sub sdkPlatformDirectory($)
+{
+    my ($sdkName) = @_;
+    chomp(my $sdkPlatformDirectory = `xcrun --sdk '$sdkName' --show-sdk-platform-path`);
+    die "Failed to get SDK platform path from xcrun: $!" if exitStatus($?);
+    return $sdkPlatformDirectory;
+}
 
 sub determineSourceDir
 {
@@ -540,12 +558,7 @@ sub XcodeSDKPath
     determineXcodeSDK();
 
     die "Can't find the SDK path because no Xcode SDK was specified" if not $xcodeSDK;
-
-    my $sdkPath = `xcrun --sdk $xcodeSDK --show-sdk-path` if $xcodeSDK;
-    die 'Failed to get SDK path from xcrun' if $?;
-    chomp $sdkPath;
-
-    return $sdkPath;
+    return sdkDirectory($xcodeSDK);
 }
 
 sub xcodeSDKVersion
@@ -2310,7 +2323,13 @@ sub setupIOSWebKitEnvironment($)
 
 sub iosSimulatorApplicationsPath()
 {
-    return File::Spec->catdir(XcodeSDKPath(), "Applications");
+    determineXcodeVersion();
+    if (eval "v$xcodeVersion" lt v9.0) {
+        return File::Spec->catdir(XcodeSDKPath(), "Applications");
+    }
+
+    my $iphoneOSPlatformPath = sdkPlatformDirectory("iphoneos");
+    return File::Spec->catdir($iphoneOSPlatformPath, "Developer", "Library", "CoreSimulator", "Profiles", "Runtimes", "iOS.simruntime", "Contents", "Resources", "RuntimeRoot", "Applications");
 }
 
 sub installedMobileSafariBundle()
