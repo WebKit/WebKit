@@ -1,5 +1,32 @@
 2017-10-12  Dean Jackson  <dino@apple.com>
 
+        [WebGL] VideoTextureCopierCV doesn't correctly restore vertex attribute state
+        https://bugs.webkit.org/show_bug.cgi?id=176771
+        <rdar://problem/34386621>
+
+        Reviewed by Antoine Quint.
+
+        The OpenGL context in VideoTextureCopierCV wasn't being restored to
+        the state it had before rendering a video to a texture. Specifically
+        the vertex attribute values were never recorded by the state saver.
+
+        Update the existing test of VideoTextureCopierCV so that it is
+        explicitly doing something different from the WebCore code, which
+        means that state will have to be correctly restored for the test
+        to pass.
+
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture): Make sure
+        to record the vertex attribute state once we know the location of the position attribute.
+        (WebCore::VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver):
+        (WebCore::VideoTextureCopierCV::GC3DStateSaver::~GC3DStateSaver):
+        (WebCore::VideoTextureCopierCV::GC3DStateSaver::saveVertexAttribState): Save all the
+        applicable vertex attribute state information.
+        * platform/graphics/cv/VideoTextureCopierCV.h: GC3DStateSaver can use a reference
+        to the GC3D rather than a pointer.
+
+2017-10-12  Dean Jackson  <dino@apple.com>
+
         [WebGL] accelerated texImage2D for video doesn't respect flipY
         https://bugs.webkit.org/show_bug.cgi?id=176491
         <rdar://problem/33833511>

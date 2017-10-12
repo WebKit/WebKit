@@ -1,5 +1,19 @@
 2017-10-12  Dean Jackson  <dino@apple.com>
 
+        [WebGL] VideoTextureCopierCV doesn't correctly restore vertex attribute state
+        https://bugs.webkit.org/show_bug.cgi?id=176771
+        <rdar://problem/34386621>
+
+        Reviewed by Antoine Quint.
+
+        Tweak this test to make sure it does something different from
+        the code in WebCore to render a video into a texture, thus
+        ensuring that we're testing state is correctly restored.
+
+        * fast/canvas/webgl/texImage2D-video-flipY-true.html:
+
+2017-10-12  Dean Jackson  <dino@apple.com>
+
         [WebGL] accelerated texImage2D for video doesn't respect flipY
         https://bugs.webkit.org/show_bug.cgi?id=176491
         <rdar://problem/33833511>
