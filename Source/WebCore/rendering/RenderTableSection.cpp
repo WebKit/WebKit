@@ -1312,8 +1312,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 #endif
 
             // To make sure we properly repaint the section, we repaint all the overflowing cells that we collected.
-            Vector<RenderTableCell*> cells;
-            copyToVector(m_overflowingCells, cells);
+            auto cells = copyToVector(m_overflowingCells);
 
             HashSet<RenderTableCell*> spanningCells;
 

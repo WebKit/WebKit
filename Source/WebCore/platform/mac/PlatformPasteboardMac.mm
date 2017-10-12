@@ -129,9 +129,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
             domPasteboardTypes.add(String::fromUTF8(domType));
     }
 
-    Vector<String> result;
-    copyToVector(domPasteboardTypes, result);
-    return result;
+    return copyToVector(domPasteboardTypes);
 }
 
 long PlatformPasteboard::write(const PasteboardCustomData& data)

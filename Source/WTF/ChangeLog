@@ -1,3 +1,24 @@
+2017-10-11  Sam Weinig  <sam@webkit.org>
+
+        Remove out-parameter variants of copyToVector
+        https://bugs.webkit.org/show_bug.cgi?id=178155
+
+        Reviewed by Tim Horton.
+
+        * wtf/HashMap.h:
+        (WTF::copyToVector): Deleted.
+        * wtf/HashSet.h:
+        (WTF::copyToVector): Deleted.
+        
+            Remove copyToVector.
+        
+        * wtf/Vector.h:
+        (WTF::copyToVectorSpecialization):
+        
+            Add another version of copyToVector, called copyToVectorSpecialization, that allows
+            you to specify the entire specialization for the Vector you want to copy to. This
+            can be useful if you want your resulting Vector to have an inline capacity. 
+
 2017-10-12  Sam Weinig  <sam@webkit.org>
 
         It should be possible to iterate just the values (and not the counts) of a HashCountedSet

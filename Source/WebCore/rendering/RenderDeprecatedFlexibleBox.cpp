@@ -83,7 +83,7 @@ public:
 
                     // Only copy+sort the values once per layout even if the iterator is reset.
                     if (static_cast<size_t>(m_ordinalValues.size()) != m_sortedOrdinalValues.size()) {
-                        copyToVector(m_ordinalValues, m_sortedOrdinalValues);
+                        m_sortedOrdinalValues = copyToVector(m_ordinalValues);
                         std::sort(m_sortedOrdinalValues.begin(), m_sortedOrdinalValues.end());
                     }
                     m_currentOrdinal = m_forward ? m_sortedOrdinalValues[m_ordinalIteration - 1] : m_sortedOrdinalValues[m_sortedOrdinalValues.size() - m_ordinalIteration];

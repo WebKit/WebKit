@@ -271,9 +271,7 @@ void Performance::queueEntry(PerformanceEntry& entry)
         return;
 
     m_performanceTimelineTaskQueue.enqueueTask([this] () {
-        Vector<RefPtr<PerformanceObserver>> observers;
-        copyToVector(m_observers, observers);
-        for (auto& observer : observers)
+        for (auto& observer : copyToVector(m_observers))
             observer->deliver();
     });
 }

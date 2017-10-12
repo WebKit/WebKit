@@ -482,9 +482,7 @@ void DOMWindow::willDestroyCachedFrame()
 {
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInCachedFrame.
-    Vector<DOMWindowProperty*> properties;
-    copyToVector(m_properties, properties);
-    for (auto& property : properties)
+    for (auto& property : copyToVector(m_properties))
         property->willDestroyGlobalObjectInCachedFrame();
 }
 
@@ -492,9 +490,7 @@ void DOMWindow::willDestroyDocumentInFrame()
 {
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInFrame.
-    Vector<DOMWindowProperty*> properties;
-    copyToVector(m_properties, properties);
-    for (auto& property : properties)
+    for (auto& property : copyToVector(m_properties))
         property->willDestroyGlobalObjectInFrame();
 }
 
@@ -502,9 +498,7 @@ void DOMWindow::willDetachDocumentFromFrame()
 {
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
-    Vector<DOMWindowProperty*> properties;
-    copyToVector(m_properties, properties);
-    for (auto& property : properties)
+    for (auto& property : copyToVector(m_properties))
         property->willDetachGlobalObjectFromFrame();
 
     if (m_performance)
@@ -563,9 +557,7 @@ void DOMWindow::disconnectDOMWindowProperties()
 {
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to disconnectFrameForDocumentSuspension.
-    Vector<DOMWindowProperty*> properties;
-    copyToVector(m_properties, properties);
-    for (auto& property : properties)
+    for (auto& property : copyToVector(m_properties))
         property->disconnectFrameForDocumentSuspension();
 }
 
@@ -574,9 +566,7 @@ void DOMWindow::reconnectDOMWindowProperties()
     ASSERT(m_suspendedForDocumentSuspension);
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to reconnectFromPageCache.
-    Vector<DOMWindowProperty*> properties;
-    copyToVector(m_properties, properties);
-    for (auto& property : properties)
+    for (auto& property : copyToVector(m_properties))
         property->reconnectFrameFromDocumentSuspension(m_frame);
 }
 

@@ -576,19 +576,6 @@ inline bool operator!=(const HashMap<T, U, V, W, X>& a, const HashMap<T, U, V, W
     return !(a == b);
 }
 
-template<typename T, typename U, typename V, typename W, typename X, typename Y>
-inline void copyToVector(const HashMap<T, U, V, W, X>& collection, Y& vector)
-{
-    typedef typename HashMap<T, U, V, W, X>::const_iterator iterator;
-
-    vector.resize(collection.size());
-
-    iterator it = collection.begin();
-    iterator end = collection.end();
-    for (unsigned i = 0; it != end; ++it, ++i)
-        vector[i] = { (*it).key, (*it).value };
-}
-
 } // namespace WTF
 
 using WTF::HashMap;

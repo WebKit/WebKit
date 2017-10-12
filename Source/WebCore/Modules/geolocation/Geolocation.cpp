@@ -543,9 +543,7 @@ void Geolocation::stopTimer(GeoNotifierVector& notifiers)
 
 void Geolocation::stopTimersForOneShots()
 {
-    GeoNotifierVector copy;
-    copyToVector(m_oneShots, copy);
-    
+    auto copy = copyToVector(m_oneShots);
     stopTimer(copy);
 }
 
@@ -571,8 +569,7 @@ void Geolocation::cancelRequests(GeoNotifierVector& notifiers)
 
 void Geolocation::cancelAllRequests()
 {
-    GeoNotifierVector copy;
-    copyToVector(m_oneShots, copy);
+    auto copy = copyToVector(m_oneShots);
     cancelRequests(copy);
     m_watchers.getNotifiersVector(copy);
     cancelRequests(copy);
@@ -599,8 +596,7 @@ void Geolocation::copyToSet(const GeoNotifierVector& src, GeoNotifierSet& dest)
 
 void Geolocation::handleError(PositionError& error)
 {
-    GeoNotifierVector oneShotsCopy;
-    copyToVector(m_oneShots, oneShotsCopy);
+    auto oneShotsCopy = copyToVector(m_oneShots);
 
     GeoNotifierVector watchersCopy;
     m_watchers.getNotifiersVector(watchersCopy);
@@ -651,8 +647,7 @@ void Geolocation::makeSuccessCallbacks(Geoposition& position)
     ASSERT(lastPosition());
     ASSERT(isAllowed());
     
-    GeoNotifierVector oneShotsCopy;
-    copyToVector(m_oneShots, oneShotsCopy);
+    auto oneShotsCopy = copyToVector(m_oneShots);
     
     GeoNotifierVector watchersCopy;
     m_watchers.getNotifiersVector(watchersCopy);

@@ -203,7 +203,7 @@ NS_ASSUME_NONNULL_END
     Vector<RetainPtr<WebCoreNSURLSessionDataTask>> tasksCopy;
     {
         Locker<Lock> locker(_dataTasksLock);
-        copyToVector(_dataTasks, tasksCopy);
+        tasksCopy = copyToVector(_dataTasks);
     }
 
     for (auto& task : tasksCopy)

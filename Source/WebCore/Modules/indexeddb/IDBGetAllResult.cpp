@@ -107,10 +107,7 @@ Vector<String> IDBGetAllResult::allBlobFilePaths() const
             pathSet.add(path);
     }
 
-    Vector<String> paths;
-    copyToVector(pathSet, paths);
-
-    return paths;
+    return copyToVector(pathSet);
 }
 
 } // namespace WebCore

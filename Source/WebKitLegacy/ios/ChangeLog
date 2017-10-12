@@ -1,3 +1,18 @@
+2017-10-11  Sam Weinig  <sam@webkit.org>
+
+        Remove out-parameter variants of copyToVector
+        https://bugs.webkit.org/show_bug.cgi?id=178155
+
+        Reviewed by Tim Horton.
+
+        * Misc/WebGeolocationProviderIOS.mm:
+        (-[WebGeolocationProviderIOS _handlePendingInitialPosition:]):
+        (-[WebGeolocationProviderIOS positionChanged:]):
+        (-[WebGeolocationProviderIOS errorOccurred:]):
+        (-[WebGeolocationProviderIOS resetGeolocation]):
+
+            Replace out-parameter based copyToVector, with one that returns a Vector.
+
 2017-10-11  Chris Dumez  <cdumez@apple.com>
 
         Modernize Geolocation code

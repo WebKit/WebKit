@@ -142,7 +142,7 @@ void stopJavaScriptThreads()
     Vector<RefPtr<Thread>, javaScriptThreadsCount> threads;
     {
         LockHolder locker(javaScriptThreadsMutex());
-        copyToVector(javaScriptThreads(), threads);
+        threads = copyToVector(javaScriptThreads());
         ASSERT(threads.size() == javaScriptThreadsCount);
     }
 

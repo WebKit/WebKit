@@ -94,9 +94,7 @@ void WebGeolocationManager::setEnableHighAccuracyForPage(WebPage& page, bool ena
 void WebGeolocationManager::didChangePosition(const GeolocationPosition& position)
 {
 #if ENABLE(GEOLOCATION)
-    Vector<RefPtr<WebPage>> webPageCopy;
-    copyToVector(m_pageSet, webPageCopy);
-    for (auto& page : webPageCopy) {
+    for (auto& page : copyToVector(m_pageSet)) {
         if (page->corePage())
             GeolocationController::from(page->corePage())->positionChanged(position);
     }
@@ -111,9 +109,7 @@ void WebGeolocationManager::didFailToDeterminePosition(const String& errorMessag
     // FIXME: Add localized error string.
     auto error = GeolocationError::create(GeolocationError::PositionUnavailable, errorMessage);
 
-    Vector<RefPtr<WebPage>> webPageCopy;
-    copyToVector(m_pageSet, webPageCopy);
-    for (auto& page : webPageCopy) {
+    for (auto& page : copyToVector(m_pageSet)) {
         if (page->corePage())
             GeolocationController::from(page->corePage())->errorOccurred(error.get());
     }

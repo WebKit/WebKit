@@ -66,8 +66,7 @@ inline bool RadioButtonGroup::isValid() const
 
 Vector<HTMLInputElement*> RadioButtonGroup::members() const
 {
-    Vector<HTMLInputElement*> members;
-    copyToVector(m_members, members);
+    auto members = copyToVector(m_members);
     std::sort(members.begin(), members.end(), documentOrderComparator);
     return members;
 }

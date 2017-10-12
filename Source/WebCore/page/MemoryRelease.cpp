@@ -83,9 +83,7 @@ static void releaseCriticalMemory(Synchronous synchronous)
 
     CSSValuePool::singleton().drain();
 
-    Vector<RefPtr<Document>> documents;
-    copyToVector(Document::allDocuments(), documents);
-    for (auto& document : documents) {
+    for (auto& document : copyToVectorOf<RefPtr<Document>>(Document::allDocuments())) {
         document->styleScope().clearResolver();
         document->fontSelector().emptyCaches();
     }

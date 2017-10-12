@@ -223,10 +223,8 @@ static const double kGravity = 9.80665;
     WebThreadRun(^{
         CMAcceleration accel = newAcceleration.acceleration;
 
-        Vector<WebCore::DeviceMotionClientIOS*> clients;
-        copyToVector(m_deviceMotionClients, clients);
-        for (size_t i = 0; i < clients.size(); ++i)
-            clients[i]->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, 0, 0, 0);
+        for (auto& client : copyToVector(m_deviceMotionClients))
+            client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, 0, 0, 0);
     });
 }
 
@@ -243,18 +241,12 @@ static const double kGravity = 9.80665;
 
         CMRotationRate rotationRate = newMotion.rotationRate;
 
-        Vector<WebCore::DeviceMotionClientIOS*> motionClients;
-        copyToVector(m_deviceMotionClients, motionClients);
-        for (size_t i = 0; i < motionClients.size(); ++i) {
-            motionClients[i]->motionChanged(userAccel.x * kGravity, userAccel.y * kGravity, userAccel.z * kGravity,
-                                            totalAccel.x * kGravity, totalAccel.y * kGravity, totalAccel.z * kGravity,
-                                            rad2deg(rotationRate.x), rad2deg(rotationRate.y), rad2deg(rotationRate.z));
-        }
+        for (auto& client : copyToVector(m_deviceMotionClients))
+            client->motionChanged(userAccel.x * kGravity, userAccel.y * kGravity, userAccel.z * kGravity, totalAccel.x * kGravity, totalAccel.y * kGravity, totalAccel.z * kGravity, rad2deg(rotationRate.x), rad2deg(rotationRate.y), rad2deg(rotationRate.z));
 
         CMAttitude* attitude = newMotion.attitude;
 
-        Vector<WebCore::DeviceOrientationClientIOS*> orientationClients;
-        copyToVector(m_deviceOrientationClients, orientationClients);
+        auto orientationClients = copyToVector(m_deviceOrientationClients);
 
         // Compose the raw motion data to an intermediate ZXY-based 3x3 rotation
         // matrix (R) where [z=attitude.yaw, x=attitude.pitch, y=attitude.roll]

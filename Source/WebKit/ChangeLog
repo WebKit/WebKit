@@ -1,3 +1,34 @@
+2017-10-11  Sam Weinig  <sam@webkit.org>
+
+        Remove out-parameter variants of copyToVector
+        https://bugs.webkit.org/show_bug.cgi?id=178155
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (-[_WKRemoteObjectInterface debugDescription]):
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::dump):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::pendingCookies const):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _notifyClientsOfImminentSuspension]):
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::didChangePosition):
+        (WebKit::WebGeolocationManager::didFailToDeterminePosition):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::internallyFailedLoadTimerFired):
+
+            Replace out-parameter based copyToVector, with one that returns a Vector.
+
 2017-10-11  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Fix debug build

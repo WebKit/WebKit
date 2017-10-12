@@ -5344,9 +5344,7 @@ void FrameView::willRemoveWidgetFromRenderTree(Widget& widget)
 
 static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<Widget*>& set)
 {
-    Vector<RefPtr<Widget>> widgets;
-    copyToVector(set, widgets);
-    return widgets;
+    return copyToVectorOf<RefPtr<Widget>>(set);
 }
 
 void FrameView::updateWidgetPositions()

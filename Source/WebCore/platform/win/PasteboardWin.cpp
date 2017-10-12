@@ -272,9 +272,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
         }
     }
 
-    Vector<String> vector;
-    copyToVector(results, vector);
-    return vector;
+    return copyToVector(results);
 }
 
 String Pasteboard::readOrigin()

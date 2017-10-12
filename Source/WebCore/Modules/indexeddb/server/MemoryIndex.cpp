@@ -79,17 +79,13 @@ void MemoryIndex::objectStoreCleared()
 
 void MemoryIndex::notifyCursorsOfValueChange(const IDBKeyData& indexKey, const IDBKeyData& primaryKey)
 {
-    Vector<MemoryIndexCursor*> cursors;
-    copyToVector(m_cleanCursors, cursors);
-    for (auto* cursor : cursors)
+    for (auto* cursor : copyToVector(m_cleanCursors))
         cursor->indexValueChanged(indexKey, primaryKey);
 }
 
 void MemoryIndex::notifyCursorsOfAllRecordsChanged()
 {
-    Vector<MemoryIndexCursor*> cursors;
-    copyToVector(m_cleanCursors, cursors);
-    for (auto* cursor : cursors)
+    for (auto* cursor : copyToVector(m_cleanCursors))
         cursor->indexRecordsAllChanged();
 
     ASSERT(m_cleanCursors.isEmpty());

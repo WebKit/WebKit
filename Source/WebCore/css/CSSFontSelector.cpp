@@ -239,10 +239,8 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
 {
     ++m_version;
 
-    Vector<FontSelectorClient*> clients;
-    copyToVector(m_clients, clients);
-    for (size_t i = 0; i < clients.size(); ++i)
-        clients[i]->fontsNeedUpdate(*this);
+    for (auto& client : copyToVector(m_clients))
+        client->fontsNeedUpdate(*this);
 }
 
 void CSSFontSelector::fontLoaded()

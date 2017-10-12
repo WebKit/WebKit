@@ -531,7 +531,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
         ASSERT(run->box()->behavesLikeText());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<InlineTextBox>(run->box()), std::make_pair(Vector<const Font*>(), GlyphOverflow())).iterator;
         ASSERT(it->value.first.isEmpty());
-        copyToVector(fallbackFonts, it->value.first);
+        it->value.first = copyToVector(fallbackFonts);
         run->box()->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
 

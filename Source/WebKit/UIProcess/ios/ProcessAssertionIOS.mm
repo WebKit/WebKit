@@ -96,9 +96,8 @@ using WebKit::ProcessAssertionClient;
 - (void)_notifyClientsOfImminentSuspension
 {
     ASSERT(RunLoop::isMain());
-    Vector<ProcessAssertionClient*> clientsToNotify;
-    copyToVector(_clients, clientsToNotify);
-    for (auto* client : clientsToNotify)
+
+    for (auto* client : copyToVector(_clients))
         client->assertionWillExpireImminently();
 }
 

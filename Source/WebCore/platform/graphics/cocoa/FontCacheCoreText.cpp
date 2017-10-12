@@ -748,9 +748,7 @@ Vector<String> FontCache::systemFontFamilies()
             visited.add(familyName.get());
     }
 
-    Vector<String> result;
-    copyToVector(visited, result);
-    return result;
+    return copyToVector(visited);
 }
 
 static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription)

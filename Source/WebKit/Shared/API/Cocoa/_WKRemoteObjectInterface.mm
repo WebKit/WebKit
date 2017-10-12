@@ -213,9 +213,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
         auto descriptionForArgument = [](auto& allowedArgumentClasses) {
             auto result = adoptNS([[NSMutableString alloc] initWithString:@"{"]);
 
-            Vector<Class> orderedArgumentClasses;
-            copyToVector(allowedArgumentClasses, orderedArgumentClasses);
-
+            auto orderedArgumentClasses = copyToVector(allowedArgumentClasses);
             std::sort(orderedArgumentClasses.begin(), orderedArgumentClasses.end(), [](Class a, Class b) {
                 return CString(class_getName(a)) < CString(class_getName(b));
             });

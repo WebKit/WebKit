@@ -599,11 +599,8 @@ static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool chang
     if (stateTree.rootStateNode())
         recursiveDumpNodes(ts, *stateTree.rootStateNode(), changedPropertiesOnly);
 
-    if (!stateTree.removedNodes().isEmpty()) {
-        Vector<ScrollingNodeID> removedNodes;
-        copyToVector(stateTree.removedNodes(), removedNodes);
-        ts.dumpProperty<Vector<ScrollingNodeID>>("removed-nodes", removedNodes);
-    }
+    if (!stateTree.removedNodes().isEmpty())
+        ts.dumpProperty<Vector<ScrollingNodeID>>("removed-nodes", copyToVector(stateTree.removedNodes()));
 }
 
 WTF::CString RemoteScrollingCoordinatorTransaction::description() const

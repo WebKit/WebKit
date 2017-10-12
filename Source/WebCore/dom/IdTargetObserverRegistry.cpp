@@ -63,9 +63,7 @@ void IdTargetObserverRegistry::notifyObserversInternal(const AtomicStringImpl& i
     if (!m_notifyingObserversInSet)
         return;
 
-    Vector<IdTargetObserver*> copy;
-    copyToVector(*m_notifyingObserversInSet, copy);
-    for (auto& observer : copy) {
+    for (auto& observer : copyToVector(*m_notifyingObserversInSet)) {
         if (m_notifyingObserversInSet->contains(observer))
             observer->idTargetChanged();
     }

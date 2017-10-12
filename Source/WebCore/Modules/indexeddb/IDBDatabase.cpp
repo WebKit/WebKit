@@ -191,8 +191,7 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
     for (auto& objectStore : objectStores)
         objectStoreSet.add(objectStore);
 
-    objectStores.clear();
-    copyToVector(objectStoreSet, objectStores);
+    objectStores = copyToVector(objectStoreSet);
 
     for (auto& objectStoreName : objectStores) {
         if (m_info.hasObjectStore(objectStoreName))

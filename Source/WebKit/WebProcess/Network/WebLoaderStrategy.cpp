@@ -258,11 +258,8 @@ void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader& re
 
 void WebLoaderStrategy::internallyFailedLoadTimerFired()
 {
-    Vector<RefPtr<ResourceLoader>> internallyFailedResourceLoaders;
-    copyToVector(m_internallyFailedResourceLoaders, internallyFailedResourceLoaders);
-    
-    for (size_t i = 0; i < internallyFailedResourceLoaders.size(); ++i)
-        internallyFailedResourceLoaders[i]->didFail(internalError(internallyFailedResourceLoaders[i]->url()));
+    for (auto& resourceLoader : copyToVector(m_internallyFailedResourceLoaders))
+        resourceLoader->didFail(internalError(resourceLoader->url()));
 }
 
 void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)

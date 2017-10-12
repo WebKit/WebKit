@@ -930,9 +930,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             // some other cache in this group. They are not associated with the failed new cache.
 
             // Need to copy loaders, because the cache group may be destroyed at the end of iteration.
-            Vector<DocumentLoader*> loaders;
-            copyToVector(m_pendingMasterResourceLoaders, loaders);
-            for (auto& loader : loaders)
+            for (auto& loader : copyToVector(m_pendingMasterResourceLoaders))
                 disassociateDocumentLoader(*loader); // This can delete this group.
 
             // Reinstate the oldNewestCache, if there was one.
@@ -979,8 +977,7 @@ void ApplicationCacheGroup::startLoadingEntry()
 void ApplicationCacheGroup::deliverDelayedMainResources()
 {
     // Need to copy loaders, because the cache group may be destroyed at the end of iteration.
-    Vector<DocumentLoader*> loaders;
-    copyToVector(m_pendingMasterResourceLoaders, loaders);
+    auto loaders = copyToVector(m_pendingMasterResourceLoaders);
     for (auto* loader : loaders) {
         if (loader->isLoadingMainResource())
             continue;

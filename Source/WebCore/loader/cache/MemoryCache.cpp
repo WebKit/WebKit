@@ -265,9 +265,7 @@ void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveReso
 void MemoryCache::forEachResource(const WTF::Function<void(CachedResource&)>& function)
 {
     for (auto& unprotectedLRUList : m_allResources) {
-        Vector<CachedResourceHandle<CachedResource>> lruList;
-        copyToVector(*unprotectedLRUList, lruList);
-        for (auto& resource : lruList)
+        for (auto& resource : copyToVector(*unprotectedLRUList))
             function(*resource);
     }
 }
@@ -363,8 +361,7 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
     for (int i = m_allResources.size() - 1; i >= 0; i--) {
         // Make a copy of the LRUList first (and ref the resources) as calling
         // destroyDecodedData() can alter the LRUList.
-        Vector<CachedResourceHandle<CachedResource>> lruList;
-        copyToVector(*m_allResources[i], lruList);
+        auto lruList = copyToVector(*m_allResources[i]);
 
         // First flush all the decoded data in this queue.
         // Remove from the head, since this is the least frequently accessed of the objects.

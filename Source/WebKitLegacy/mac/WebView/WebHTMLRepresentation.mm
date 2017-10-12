@@ -89,8 +89,7 @@ using JSC::Yarr::RegularExpression;
 
 static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseInsensitiveHash>& set)
 {
-    Vector<NSString *> vector;
-    copyToVector(set, vector);
+    auto vector = copyToVectorOf<NSString *>(set);
     return adoptNS([[NSArray alloc] initWithObjects:vector.data() count:vector.size()]);
 }
 

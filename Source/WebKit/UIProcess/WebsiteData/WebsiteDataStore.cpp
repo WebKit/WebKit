@@ -1370,9 +1370,7 @@ StorageProcessCreationParameters WebsiteDataStore::storageProcessParameters()
 
 Vector<WebCore::Cookie> WebsiteDataStore::pendingCookies() const
 {
-    Vector<WebCore::Cookie> cookies;
-    copyToVector(m_pendingCookies, cookies);
-    return cookies;
+    return copyToVector(m_pendingCookies);
 }
 
 void WebsiteDataStore::addPendingCookie(const WebCore::Cookie& cookie)

@@ -143,9 +143,7 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
     m_willProcessMessagePortMessagesSoon = false;
 
     // Make a frozen copy of the ports so we can iterate while new ones might be added or destroyed.
-    Vector<MessagePort*> possibleMessagePorts;
-    copyToVector(m_messagePorts, possibleMessagePorts);
-    for (auto* messagePort : possibleMessagePorts) {
+    for (auto* messagePort : copyToVector(m_messagePorts)) {
         // The port may be destroyed, and another one created at the same address,
         // but this is harmless. The worst that can happen as a result is that
         // dispatchMessages() will be called needlessly.
@@ -279,8 +277,7 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     m_activeDOMObjectsAreStopped = true;
 
     // Make a frozen copy of the objects so we can iterate while new ones might be destroyed.
-    Vector<ActiveDOMObject*> possibleActiveDOMObjects;
-    copyToVector(m_activeDOMObjects, possibleActiveDOMObjects);
+    auto possibleActiveDOMObjects = copyToVector(m_activeDOMObjects);
 
     m_activeDOMObjectAdditionForbidden = true;
 

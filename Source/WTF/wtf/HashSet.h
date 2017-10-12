@@ -355,13 +355,6 @@ namespace WTF {
         return true;
     }
 
-    template<typename C, typename W>
-    inline void copyToVector(const C& collection, W& vector)
-    {
-        vector.resize(collection.size());
-        std::copy(collection.begin(), collection.end(), vector.begin());
-    }
-
     template<typename T, typename U, typename V>
     template<typename OtherCollection>
     inline bool HashSet<T, U, V>::operator==(const OtherCollection& otherCollection) const

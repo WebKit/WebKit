@@ -60,10 +60,7 @@ void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, Callbac
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         WebCore::getHostnamesWithCookies(*storageSession, hostnames);
 
-    Vector<String> hostnameList;
-    copyToVector(hostnames, hostnameList);
-
-    m_process.send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(hostnameList, callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(copyToVector(hostnames), callbackID), 0);
 }
 
 void WebCookieManager::deleteCookiesForHostname(PAL::SessionID sessionID, const String& hostname)

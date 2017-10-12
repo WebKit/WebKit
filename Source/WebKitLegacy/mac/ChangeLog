@@ -1,3 +1,17 @@
+2017-10-11  Sam Weinig  <sam@webkit.org>
+
+        Remove out-parameter variants of copyToVector
+        https://bugs.webkit.org/show_bug.cgi?id=178155
+
+        Reviewed by Tim Horton.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView destroyPlugin]):
+        * WebView/WebHTMLRepresentation.mm:
+        (newArrayWithStrings):
+
+            Replace out-parameter based copyToVector, with one that returns a Vector.
+
 2017-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Sanitize URL in pasteboard for other applications and cross origin content

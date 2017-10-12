@@ -4037,9 +4037,7 @@ void Document::detachNodeIterator(NodeIterator* ni)
 
 void Document::moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
 {
-    Vector<NodeIterator*> nodeIterators;
-    copyToVector(m_nodeIterators, nodeIterators);
-    for (auto* it : nodeIterators) {
+    for (auto* it : copyToVector(m_nodeIterators)) {
         if (&it->root() == &node) {
             detachNodeIterator(it);
             newDocument.attachNodeIterator(it);
@@ -4827,9 +4825,7 @@ void Document::resume(ActiveDOMObject::ReasonForSuspension reason)
     if (!m_isSuspended)
         return;
 
-    Vector<Element*> elements;
-    copyToVector(m_documentSuspensionCallbackElements, elements);
-    for (auto* element : elements)
+    for (auto* element : copyToVector(m_documentSuspensionCallbackElements))
         element->resumeFromDocumentSuspension();
 
     if (renderView())
@@ -6869,10 +6865,7 @@ void Document::didAssociateFormControlsTimerFired()
     if (!frame() || !frame()->page())
         return;
 
-    Vector<RefPtr<Element>> associatedFormControls;
-    copyToVector(m_associatedFormControls, associatedFormControls);
-
-    frame()->page()->chrome().client().didAssociateFormControls(associatedFormControls);
+    frame()->page()->chrome().client().didAssociateFormControls(copyToVector(m_associatedFormControls));
     m_associatedFormControls.clear();
 }
 

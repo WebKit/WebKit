@@ -1634,6 +1634,17 @@ Vector<typename Mapper<MapFunction, SourceType>::DestinationItemType> map(Source
     return Mapper<MapFunction, SourceType>::map(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
 }
 
+template<typename DestinationVector, typename Collection>
+inline auto copyToVectorSpecialization(const Collection& collection) -> DestinationVector
+{
+    DestinationVector result;
+    // FIXME: Use std::size when available on all compilers.
+    result.reserveInitialCapacity(collection.size());
+    for (auto& item : collection)
+        result.uncheckedAppend(item);
+    return result;
+}
+
 template<typename DestinationItemType, typename Collection>
 inline auto copyToVectorOf(const Collection& collection) -> Vector<DestinationItemType>
 {
@@ -1657,6 +1668,7 @@ using WTF::UnsafeVectorOverflow;
 using WTF::Vector;
 using WTF::copyToVector;
 using WTF::copyToVectorOf;
+using WTF::copyToVectorSpecialization;
 using WTF::removeRepeatedElements;
 
 #endif // WTF_Vector_h

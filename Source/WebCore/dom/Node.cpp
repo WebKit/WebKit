@@ -853,14 +853,10 @@ inline bool Document::shouldInvalidateNodeListAndCollectionCachesForAttribute(co
 template <typename InvalidationFunction>
 void Document::invalidateNodeListAndCollectionCaches(InvalidationFunction invalidate)
 {
-    Vector<LiveNodeList*, 8> lists;
-    copyToVector(m_listsInvalidatedAtDocument, lists);
-    for (auto* list : lists)
+    for (auto* list : copyToVectorSpecialization<Vector<LiveNodeList*, 8>>(m_listsInvalidatedAtDocument))
         invalidate(*list);
 
-    Vector<HTMLCollection*, 8> collections;
-    copyToVector(m_collectionsInvalidatedAtDocument, collections);
-    for (auto* collection : collections)
+    for (auto* collection : copyToVectorSpecialization<Vector<HTMLCollection*, 8>>(m_collectionsInvalidatedAtDocument))
         invalidate(*collection);
 }
 

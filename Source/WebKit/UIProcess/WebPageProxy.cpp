@@ -5614,11 +5614,11 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_callbacks.invalidate(error);
     m_loadDependentStringCallbackIDs.clear();
 
-    Vector<WebEditCommandProxy*> editCommandVector;
-    copyToVector(m_editCommandSet, editCommandVector);
+    auto editCommandVector = copyToVector(m_editCommandSet);
     m_editCommandSet.clear();
-    for (size_t i = 0, size = editCommandVector.size(); i < size; ++i)
-        editCommandVector[i]->invalidate();
+
+    for (auto& editCommand : editCommandVector)
+        editCommand->invalidate();
 
     m_activePopupMenu = nullptr;
     m_mediaState = MediaProducer::IsNotPlaying;

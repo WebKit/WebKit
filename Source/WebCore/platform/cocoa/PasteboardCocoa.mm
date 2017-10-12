@@ -165,9 +165,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     for (auto& cocoaType : cocoaTypes)
         addHTMLClipboardTypesForCocoaType(result, cocoaType);
 
-    Vector<String> types;
-    copyToVector(result, types);
-    return types;
+    return copyToVector(result);
 }
 
 #if PLATFORM(MAC)

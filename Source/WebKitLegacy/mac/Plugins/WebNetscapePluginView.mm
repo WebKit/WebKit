@@ -1173,9 +1173,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // To stop active streams it's necessary to invoke stop() on a copy 
     // of streams. This is because calling WebNetscapePluginStream::stop() also has the side effect
     // of removing a stream from this hash set.
-    Vector<RefPtr<WebNetscapePluginStream>> streamsCopy;
-    copyToVector(streams, streamsCopy);
-    for (auto& stream: streamsCopy)
+    for (auto& stream : copyToVector(streams))
         stream->stop();
 
     for (WebFrame *frame in [_pendingFrameLoads keyEnumerator])
