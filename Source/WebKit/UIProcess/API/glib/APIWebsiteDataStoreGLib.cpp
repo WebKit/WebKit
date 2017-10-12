@@ -48,6 +48,11 @@ String WebsiteDataStore::defaultNetworkCacheDirectory()
     return cacheDirectoryFileSystemRepresentation(WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(g_get_prgname()), "WebKitCache"));
 }
 
+String WebsiteDataStore::defaultCacheStorageDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation(WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(g_get_prgname()), "CacheStorage"));
+}
+
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "databases" G_DIR_SEPARATOR_S "indexeddb");

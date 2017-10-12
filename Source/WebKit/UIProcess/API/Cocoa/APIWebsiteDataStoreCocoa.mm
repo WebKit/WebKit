@@ -54,7 +54,7 @@ String WebsiteDataStore::defaultApplicationCacheDirectory()
 
 String WebsiteDataStore::defaultCacheStorageDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("CacheStorage");
+    return cacheDirectoryFileSystemRepresentation("CacheStorage");
 }
 
 String WebsiteDataStore::defaultNetworkCacheDirectory()
@@ -188,6 +188,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
 
     configuration.applicationCacheDirectory = defaultApplicationCacheDirectory();
     configuration.applicationCacheFlatFileSubdirectoryName = "Files";
+    configuration.cacheStorageDirectory = defaultCacheStorageDirectory();
     configuration.networkCacheDirectory = defaultNetworkCacheDirectory();
     configuration.mediaCacheDirectory = defaultMediaCacheDirectory();
 
