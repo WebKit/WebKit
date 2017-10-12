@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body onload="reportBackLoadedToTopFrame()">
+<script>
+    function reportBackLoadedToTopFrame() {
+        top.postMessage("PASS Frame loaded.", "http:127.0.0.1:8000");
+    }
+</script>
+</body>
+</html>

@@ -1,3 +1,22 @@
+2017-10-12  John Wilander  <wilander@apple.com>
+
+        ResourceLoadObserver::logFrameNavigation() should use redirectResponse.url()
+        https://bugs.webkit.org/show_bug.cgi?id=175257
+        <rdar://problem/33359866>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsRegisteredAsSubFrameUnder:topFrameHost:completionHandler:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsRegisteredAsRedirectingTo:hostRedirectedTo:completionHandler:]):
+            Test infrastructure.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo):
+            Test infrastructure.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2017-10-12  Andy Estes  <aestes@apple.com>
 
         [iOS] Conditionally rename DatabaseProcess to StorageProcess when building for iOS devices

@@ -2357,6 +2357,16 @@ bool TestController::isStatisticsPrevalentResource(WKStringRef host)
     return context.result;
 }
 
+bool TestController::isStatisticsRegisteredAsSubFrameUnder(WKStringRef, WKStringRef)
+{
+    return false;
+}
+
+bool TestController::isStatisticsRegisteredAsRedirectingTo(WKStringRef, WKStringRef)
+{
+    return false;
+}
+
 void TestController::setStatisticsHasHadUserInteraction(WKStringRef host, bool value)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
