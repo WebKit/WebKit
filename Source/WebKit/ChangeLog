@@ -1,3 +1,62 @@
+2017-10-12  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] add WebProcess files for wincairo webkit
+        https://bugs.webkit.org/show_bug.cgi?id=178024
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake:
+        * WebProcess/Cookies/curl/WebCookieManagerCurl.cpp: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp: Added.
+        (WebKit::InjectedBundle::initialize):
+        (WebKit::InjectedBundle::setBundleParameter):
+        (WebKit::InjectedBundle::setBundleParameters):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        * WebProcess/Plugins/Netscape/win/PluginProxyWin.cpp: Added.
+        (WebKit::PluginProxy::needsBackingStore const):
+        * WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp: Added.
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        (WebKit::WebContextMenuClient::isSpeaking):
+        (WebKit::WebContextMenuClient::speak):
+        (WebKit::WebContextMenuClient::stopSpeaking):
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.cpp: Added.
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        (WebKit::WebFrameNetworkingContext::storageSession const):
+        (WebKit::WebFrameNetworkingContext::webFrameLoaderClient const):
+        (WebKit::WebFrameNetworkingContext::blockedError const):
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.h: Added.
+        (WebKit::WebFrameNetworkingContext::create):
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp: Added.
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebPage/win/WebInspectorUIWin.cpp: Added.
+        (WebKit::WebInspectorUI::canSave):
+        (WebKit::WebInspectorUI::localizedStringsURL):
+        (WebKit::RemoteWebInspectorUI::localizedStringsURL):
+        * WebProcess/WebPage/win/WebPageWin.cpp: Added.
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::platformDetach):
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::platformPreferencesDidChange):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        (WebKit::WebPage::platformHasLocalDataForURL):
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        (WebKit::WebPage::platformCanHandleRequest):
+        (WebKit::WebPage::cachedSuggestedFilenameForURL):
+        (WebKit::WebPage::cachedResponseDataForURL):
+        (WebKit::WebPage::platformUserAgent const):
+        (WebKit::WebPage::interpretKeyEvent):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection):
+        * WebProcess/win/WebProcessWin.cpp: Added.
+        (loadResourceIntoBuffer):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformTerminate):
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2017-10-12  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix -Wunused-lambda-capture warnings in WebCore/WebKit with new clang compiler

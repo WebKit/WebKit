@@ -39,6 +39,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectPrototype.h>
 #include <WebCore/CommonVM.h>
+#include <WebCore/DOMWindow.h>
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/JSDOMWindowBase.h>
 #include <wtf/Assertions.h>
