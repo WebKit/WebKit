@@ -1,3 +1,20 @@
+2017-10-12  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix -Wunused-lambda-capture warnings in WebCore/WebKit with new clang compiler
+        <https://webkit.org/b/178226>
+
+        Reviewed by Chris Fleizach.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:withFlags:]):
+        - Remove unused lambda variable 'touch' which was also passed as
+          an argument.
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        - Remove unused lambda variable 'gestureState' which was also
+          passed as an argument.
+        (-[WKContentView _simulateLongPressActionAtLocation:]):
+        - Remove unused lambda variable 'location'.
+
 2017-10-12  John Wilander  <wilander@apple.com>
 
         ResourceLoadObserver::logFrameNavigation() should use redirectResponse.url()
