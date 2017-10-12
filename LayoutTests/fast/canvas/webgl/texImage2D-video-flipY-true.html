@@ -123,18 +123,16 @@ function init() {
     let positionAttribute = gl.getAttribLocation(program, "a_position");
     gl.enableVertexAttribArray(positionAttribute);
 
-    let vertices = new Float32Array([
-       -1, -1,
-       1, -1,
-       1, 1,
-       1, 1,
-       -1, 1,
-       -1, -1
-    ]);
+    // Unlike the corresponding texImage2D-video-flipY-false test, draw a quad using
+    // four points in a triangle strip, with 3 floats per point. This way we're doing
+    // something different from the WebCore code that renders the video into a texture,
+    // ensuring that state restoration is correctly restored.
+    let vertices = new Float32Array([-1.0, -1.0, 0.0, 1.0, -1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 1.0, 0.0]);
 
     let buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
 
     let updateTexture = function (texture, data) {
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -188,9 +186,8 @@ function init() {
         gl.uniform1i(textureUniform, 0);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
 
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
         animationFrame = requestAnimationFrame(drawFunction);
     };
