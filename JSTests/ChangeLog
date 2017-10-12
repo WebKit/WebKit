@@ -1,3 +1,14 @@
+2017-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        import.meta should not be assignable
+        https://bugs.webkit.org/show_bug.cgi?id=178202
+
+        Reviewed by Saam Barati.
+
+        * modules/import-meta-assignment.js: Added.
+        (shouldThrow):
+        (SyntaxError.import.meta.can.shouldThrow):
+
 2017-10-11  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Actually skip certain type profiler tests in debug.

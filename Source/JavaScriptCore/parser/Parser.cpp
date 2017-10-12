@@ -3585,6 +3585,18 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     ExpressionErrorClassifier classifier(this);
     return parseAssignmentExpression(context, classifier);
 }
+
+
+template <typename LexerType>
+template <typename TreeBuilder> NEVER_INLINE const char* Parser<LexerType>::metaPropertyName(TreeBuilder& context, TreeExpression expr)
+{
+    if (context.isNewTarget(expr))
+        return "new.target";
+    if (context.isImportMeta(expr))
+        return "import.meta";
+    RELEASE_ASSERT_NOT_REACHED();
+    return "error";
+}
     
 template <typename LexerType>
 template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpression(TreeBuilder& context, ExpressionErrorClassifier& classifier)
@@ -3690,8 +3702,8 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         }
         m_parserState.nonTrivialExpressionCount++;
         hadAssignment = true;
-        if (UNLIKELY(context.isNewTarget(lhs)))
-            internalFailWithMessage(false, "new.target can't be the left hand side of an assignment expression");
+        if (UNLIKELY(context.isMetaProperty(lhs)))
+            internalFailWithMessage(false, metaPropertyName(context, lhs), " can't be the left hand side of an assignment expression");
         context.assignmentStackAppend(assignmentStack, lhs, start, tokenStartPosition(), m_parserState.assignmentCount, op);
         start = tokenStartPosition();
         m_parserState.assignmentCount++;
@@ -4698,7 +4710,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 semanticFailIfFalse(m_scriptMode == JSParserScriptMode::Module, "import.meta is only valid inside modules");
 
                 JSTokenLocation location(tokenLocation());
-                base = createResolveAndUseVariable(context, &m_vm->propertyNames->builtinNames().metaPrivateName(), false, expressionStart, location);
+                base = context.createImportMetaExpr(location, createResolveAndUseVariable(context, &m_vm->propertyNames->builtinNames().metaPrivateName(), false, expressionStart, location));
                 next();
             } else {
                 failIfTrue(match(IDENT), "\"import.\" can only followed with meta");
@@ -4924,8 +4936,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
             failWithMessage("Cannot parse subexpression of ", operatorString(true, lastOperator), "operator");
         failWithMessage("Cannot parse member expression");
     }
-    if (UNLIKELY(isUpdateOp(static_cast<JSTokenType>(lastOperator)) && context.isNewTarget(expr)))
-        internalFailWithMessage(false, "new.target can't come after a prefix operator");
+    if (UNLIKELY(isUpdateOp(static_cast<JSTokenType>(lastOperator)) && context.isMetaProperty(expr)))
+        internalFailWithMessage(false, metaPropertyName(context, expr), " can't come after a prefix operator");
     bool isEvalOrArguments = false;
     if (strictMode() && !m_syntaxAlreadyValidated) {
         if (context.isResolve(expr))
@@ -4934,8 +4946,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     failIfTrueIfStrict(isEvalOrArguments && modifiesExpr, "Cannot modify '", m_parserState.lastIdentifier->impl(), "' in strict mode");
     switch (m_token.m_type) {
     case PLUSPLUS:
-        if (UNLIKELY(context.isNewTarget(expr)))
-            internalFailWithMessage(false, "new.target can't come before a postfix operator");
+        if (UNLIKELY(context.isMetaProperty(expr)))
+            internalFailWithMessage(false, metaPropertyName(context, expr), " can't come before a postfix operator");
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpPlusPlus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
@@ -4946,8 +4958,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         next();
         break;
     case MINUSMINUS:
-        if (UNLIKELY(context.isNewTarget(expr)))
-            internalFailWithMessage(false, "new.target can't come before a postfix operator");
+        if (UNLIKELY(context.isMetaProperty(expr)))
+            internalFailWithMessage(false, metaPropertyName(context, expr), " can't come before a postfix operator");
         m_parserState.nonTrivialExpressionCount++;
         m_parserState.nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpMinusMinus, subExprStart, lastTokenEndPosition(), tokenEndPosition());

@@ -1,3 +1,38 @@
+2017-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        import.meta should not be assignable
+        https://bugs.webkit.org/show_bug.cgi?id=178202
+
+        Reviewed by Saam Barati.
+
+        `import.meta` cannot be used for LHS. This patch adds MetaPropertyNode
+        and make NewTargetNode and ImportMetaNode as derived classes of MetaPropertyNode.
+        We change the parser not to allow assignments for MetaPropertyNode.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ImportMetaNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createImportMetaExpr):
+        (JSC::ASTBuilder::isMetaProperty):
+        (JSC::ASTBuilder::isImportMeta):
+        * parser/NodeConstructors.h:
+        (JSC::MetaPropertyNode::MetaPropertyNode):
+        (JSC::NewTargetNode::NewTargetNode):
+        (JSC::ImportMetaNode::ImportMetaNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isMetaProperty const):
+        (JSC::ExpressionNode::isImportMeta const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::metaPropertyName):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createImportMetaExpr):
+        (JSC::SyntaxChecker::isMetaProperty):
+        (JSC::SyntaxChecker::isImportMeta):
+
 2017-10-11  Saam Barati  <sbarati@apple.com>
 
         Runtime disable poly proto because it may be a 3-4% Speedometer regression
