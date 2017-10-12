@@ -473,7 +473,7 @@ WSL is a type-safe language based on C syntax. It eliminates some C features, li
 The following additional limitations may be placed on a WSL program:
 
 - `device`, `constant`, and `threadgroup` pointers cannot point to data that may have pointers in it. This safety check is not done as part of the normal type system checks. It's performed only after instantiation.
-- Pointers and array references (collectively, *references*) may be restricted to support compiling to SPIR-V *logical mode*. In this mode, references may never point to data structures that have references in them. References must be initialized upon declaration and never reassigned. Functions that return references must have one return point. Ternary expressions may not return references.
+- Pointers and array references (collectively, *references*) may be restricted to support compiling to SPIR-V *logical mode*. In this mode, arrays must not transitively hold references. References must be initialized upon declaration and never reassigned. Functions that return references must have one return point. Ternary expressions may not return references.
 - Graphics entry points must transitively never refer to the `threadgroup` memory space.
 
 

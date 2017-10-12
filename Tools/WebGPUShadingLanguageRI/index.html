@@ -300,8 +300,8 @@ function doCompilePresentShaderSource() {
     program = result;
     availableVertexShaders = [];
     availableFragmentShaders = [];
-    for (functionNames of program.functions.values()) {
-        for (func of functionNames) {
+    for (let functionNames of program.functions.values()) {
+        for (let func of functionNames) {
             if (func.shaderType == "vertex")
                 availableVertexShaders.push(func);
             if (func.shaderType == "fragment")

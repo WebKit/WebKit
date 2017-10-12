@@ -1,3 +1,96 @@
+2017-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Emit SPIR-V from WSL compiler (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=177998
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements the first half of a SPIR-V codegen phase for WSL.
+        This includes all the operations which aren't actually emitting the contents
+        of functions themselves. For example, this includes things like representing
+        WSL types with SPIR-V types, and declaring shaders' inputs and outputs. A
+        future patch will actually emit the contents of functions.
+
+        There are two helper visitors here: SPIRVTypeAnalyzer which generates SPIR-V
+        types from WSL types, and SPIRVPrimitiveVariableAnalyzer which identifies
+        input and output variables from a shader (and assigns location values to
+        each one).
+
+        This patch is currently pursuing the "logical mode" detailed in
+        https://bugs.webkit.org/show_bug.cgi?id=176967. In this mode, each pointer and
+        array reference operation can be statically traced to the variable or array it
+        is operating on.
+
+        This has the interesting property where accessing a pointer inside an array is
+        forbidden, because the array index may be computed at runtime, so the compiler
+        can't know at compile time which variable the pointer operation will be
+        accessing. However, this isn't true for structs; the program must statically
+        state which struct member it is accessing. Therefore, pointers or array
+        references must not transitively appear within an array, but they may appear
+        within a struct. The same logic applies to array references; those get lowered
+        to just two indexes in SPIR-V (a lower bound and an upper bound).
+
+        So, outside of an array, SPIR-V types don't need to include any pointers because
+        any operation with the pointer doesn't need access to the runtime value of the
+        pointer. Inside of an array, pointers are forbidden. Therefore, SPIR-V types
+        will never include any pointers.
+
+        This means that, for example, WSL can represent a linked list in logical mode.
+        However, a WSL program cannot iterate across the list, because that would require
+        assigning to a pointer. So instead, a program using a linked list could only say
+        something like "list.ptr->ptr->ptr->value".
+
+        * WebGPUShadingLanguageRI/LateChecker.js:
+        (LateChecker.prototype._checkShaderType):
+        * WebGPUShadingLanguageRI/SPIR-V.js:
+        (SPIRV.OperandChecker.prototype._isStar):
+        (SPIRV.OperandChecker.prototype.nextComparisonType):
+        (SPIRV.OperandChecker.prototype.finalize):
+        (SPIRV.OperandChecker):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/SPIRVCodegen.js: Added.
+        (findEntryPoints):
+        (emitTypes.doEmitTypes):
+        (emitTypes):
+        (ConstantFinder.prototype.visitGenericLiteralType):
+        (ConstantFinder):
+        (generateSPIRV):
+        * WebGPUShadingLanguageRI/SPIRVTypeAnalyzer.js: Added.
+        (SPIRVTypeAnalyzer):
+        (SPIRVTypeAnalyzer.prototype.get program):
+        (SPIRVTypeAnalyzer.prototype.get typeMap):
+        (SPIRVTypeAnalyzer.prototype.get currentId):
+        (SPIRVTypeAnalyzer.prototype.get stack):
+        (SPIRVTypeAnalyzer.prototype.visitTypeRef):
+        (SPIRVTypeAnalyzer.prototype._encounterType):
+        (SPIRVTypeAnalyzer.prototype.visitNullType):
+        (SPIRVTypeAnalyzer.prototype.visitGenericLiteralType):
+        (SPIRVTypeAnalyzer.prototype.visitNativeType):
+        (SPIRVTypeAnalyzer.prototype.visitEnumType):
+        (SPIRVTypeAnalyzer.prototype.visitPtrType):
+        (SPIRVTypeAnalyzer.prototype.visitArrayRefType):
+        (SPIRVTypeAnalyzer.prototype.visitArrayType):
+        (SPIRVTypeAnalyzer.prototype.visitStructType):
+        * WebGPUShadingLanguageRI/SPIRVVariableAnalyzer.js: Added.
+        (SPIRVPrimitiveVariableAnalyzer):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.get program):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.get typeMap):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.get currentId):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.get currentLocation):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.get nameComponents):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.get result):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitTypeRef):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitNullType):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitGenericLiteralType):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitNativeType):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitEnumType):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitPtrType):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitArrayRefType):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitArrayType):
+        (SPIRVPrimitiveVariableAnalyzer.prototype.visitStructType):
+        * WebGPUShadingLanguageRI/WSL.md:
+        * WebGPUShadingLanguageRI/index.html:
+
 2017-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS

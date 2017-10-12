@@ -36,6 +36,7 @@ class LateChecker extends Visitor {
     
     _checkShaderType(node)
     {
+        // FIXME: Tighten these checks. For now, we should only accept int32, uint32, float32, and float64.
         let assertPrimitive = type => {
             if (!type.isPrimitive)
                 throw new WTypeError(node.origin.originString, "Shader signature cannot include non-primitive type: " + type);

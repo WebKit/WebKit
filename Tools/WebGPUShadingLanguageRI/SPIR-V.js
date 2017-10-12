@@ -38,7 +38,7 @@ function SPIRV(json) {
         switch (kind.category) {
         case "BitEnum":
         case "ValueEnum":
-            let enumerants = {};
+            let enumerants = { category: kind.category };
             for (let enumerant of kind.enumerants) {
                 enumerants[enumerant.enumerant] = enumerant;
             }
@@ -112,20 +112,24 @@ function SPIRV(json) {
             this._parameters = [];
         }
 
+        _isStar(operandInfo)
+        {
+            switch (operandInfo.kind) {
+                case "LiteralContextDependentNumber":
+                case "LiteralSpecConstantOpInteger":
+                    // These types can be any width.
+                    return true;
+            }
+            return operandInfo.quantifier && operandInfo.quantifier == "*";
+        }
+
         nextComparisonType(operand)
         {
             if (this._operandInfoIndex >= this._operandInfos.length)
                 throw new Error("Specified operand does not correspond to any that the instruction expects.");
             let operandInfo = this._operandInfos[this._operandInfoIndex];
 
-            let isStar = operandInfo.quantifier && operandInfo.quantifier == "*";
-            switch (operandInfo.kind) {
-                case "LiteralContextDependentNumber":
-                case "LiteralSpecConstantOpInteger":
-                    // These types can be any width.
-                    isStar = true;
-                    break;
-            }
+            let isStar = this._isStar(operandInfo);
 
             if (this._parameters.length != 0) {
                 let result = this._parameters[0];
@@ -176,8 +180,9 @@ function SPIRV(json) {
             if (this._parameters.length != 0)
                 throw new Error("Operand not specified for parameter.");
             for (let i = this._operandInfoIndex; i < this._operandInfos.length; ++i) {
-                let quantifier = this._operandInfos[i].quantifier;
-                if (quantifier != "?" && quantifier != "*")
+                let operandInfo = this._operandInfos[i];
+                let quantifier = operandInfo.quantifier;
+                if (quantifier != "?" && !this._isStar(operandInfo))
                     throw new Error("Did not specify operand " + i + " to instruction.");
             }
         }
@@ -190,7 +195,6 @@ function SPIRV(json) {
         result.ops[attributeName] = class {
             constructor(...operands)
             {
-                // FIXME: Handle OpConstant, OpSpecConstant, OpSpecConstantOp specially.
                 let operandChecker = new OperandChecker(instruction.operands);
                 for (let operand of operands)
                     operandChecker.check(operand);
