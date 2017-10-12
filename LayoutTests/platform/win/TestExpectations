@@ -3786,3 +3786,9 @@ webkit.org/b/177964 fast/text/loading-failure-nofinish.html [ Pass ImageOnlyFail
 webkit.org/b/177964 fast/text/loading-swap-nofinish.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/178200 http/tests/cache-storage/cache-clearing.https.html [ Failure ]
+
+# xhtml tests are failing on some of the EWS bots.
+webkit.org/b/178230 fast/xmlhttprequest/xmlhttprequest-get.xhtml [ Failure ]
+webkit.org/b/178230 dom/xhtml/level3/core/documentgetinputencoding03.xhtml [ ImageOnlyFailure ]
+webkit.org/b/178230 dom/xhtml/level3/core/entitygetinputencoding02.xhtml [ ImageOnlyFailure ]
+webkit.org/b/178230 dom/xhtml/level3/core/entitygetxmlversion02.xhtml [ ImageOnlyFailure ]
