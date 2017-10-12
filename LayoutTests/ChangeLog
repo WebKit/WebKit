@@ -1,5 +1,14 @@
 2017-10-12  Matt Lewis  <jlewis3@apple.com>
 
+        Marked imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html as flaky on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=177547
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2017-10-12  Matt Lewis  <jlewis3@apple.com>
+
         Edited expectations for http/tests/media/video-buffered-range-contains-currentTime.html.
         https://bugs.webkit.org/show_bug.cgi?id=177616
 
