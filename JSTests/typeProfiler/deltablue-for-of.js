@@ -1,4 +1,4 @@
-//@ skip if $buildType == "debug"
+//@ if $buildType == "debug" then skip else runTypeProfiler end
 
 // Copyright 2008 the V8 project authors. All rights reserved.
 // Copyright 1996 John Maloney and Mario Wolczko.
