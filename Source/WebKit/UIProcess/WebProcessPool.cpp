@@ -987,7 +987,9 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     } else
         process = &createNewWebProcessRespectingProcessCountLimit(pageConfiguration->websiteDataStore()->websiteDataStore());
 
+#if ENABLE(SERVICE_WORKER)
     ASSERT(process.get() != m_workerContextProcess);
+#endif
 
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }

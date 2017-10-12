@@ -1,3 +1,14 @@
+2017-10-11  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Fix debug build
+
+        Unreviewed.
+
+        Add ENABLE(SERVICE_WORKER) guard.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2017-10-11  Youenn Fablet  <youenn@apple.com>
 
         Add API to clean CacheStorage data
