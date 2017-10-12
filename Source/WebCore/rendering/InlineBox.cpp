@@ -288,39 +288,38 @@ void InlineBox::clearKnownToHaveNoOverflow()
         parent()->clearKnownToHaveNoOverflow();
 }
 
-FloatPoint InlineBox::locationIncludingFlipping()
+FloatPoint InlineBox::locationIncludingFlipping() const
 {
     if (!m_renderer.style().isFlippedBlocksWritingMode())
-        return FloatPoint(x(), y());
+        return topLeft();
     RenderBlockFlow& block = root().blockFlow();
     if (block.style().isHorizontalWritingMode())
-        return FloatPoint(x(), block.height() - height() - y());
-    else
-        return FloatPoint(block.width() - width() - x(), y());
+        return { x(), block.height() - height() - y() };
+    return { block.width() - width() - x(), y() };
 }
 
-void InlineBox::flipForWritingMode(FloatRect& rect)
+void InlineBox::flipForWritingMode(FloatRect& rect) const
 {
     if (!m_renderer.style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
-FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point)
+FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point) const
 {
     if (!m_renderer.style().isFlippedBlocksWritingMode())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }
 
-void InlineBox::flipForWritingMode(LayoutRect& rect)
+void InlineBox::flipForWritingMode(LayoutRect& rect) const
 {
     if (!m_renderer.style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
-LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
+LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point) const
 {
     if (!m_renderer.style().isFlippedBlocksWritingMode())
         return point;
