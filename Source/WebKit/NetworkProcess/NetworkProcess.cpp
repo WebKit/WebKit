@@ -403,14 +403,14 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             callbackAggregator->m_websiteData.originsWithCredentials = NetworkStorageSession::storageSession(sessionID)->credentialStorage().originsWithCredentials();
     }
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        fetchDiskCacheEntries(sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
+    if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
+        CacheStorage::Engine::fetchEntries(sessionID, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator = callbackAggregator.copyRef()](auto entries) mutable {
             callbackAggregator->m_websiteData.entries.appendVector(entries);
         });
     }
 
-    if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
-        CacheStorage::Engine::fetchEntries(sessionID, fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
+        fetchDiskCacheEntries(sessionID, fetchOptions, [callbackAggregator = WTFMove(callbackAggregator)](auto entries) mutable {
             callbackAggregator->m_websiteData.entries.appendVector(entries);
         });
     }
