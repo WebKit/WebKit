@@ -38,4 +38,4 @@ public:
 
 } // namespace WebCore
 
-#endif ENABLE(VIDEO) && PLATFORM(WIN) && USE(CG)
+#endif // ENABLE(VIDEO) && PLATFORM(WIN) && USE(CG)
