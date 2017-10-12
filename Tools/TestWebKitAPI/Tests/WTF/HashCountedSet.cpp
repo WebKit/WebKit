@@ -469,4 +469,17 @@ TEST(WTF_HashCountedSet, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
+TEST(WTF_HashCountedSet, Values)
+{
+    HashCountedSet<int> set { 1, 1, 2, 3, 3 };
+    
+    auto vector = copyToVector(set.values());
+    EXPECT_EQ(3U, vector.size());
+
+    std::sort(vector.begin(), vector.end());
+    EXPECT_EQ(1, vector[0]);
+    EXPECT_EQ(2, vector[1]);
+    EXPECT_EQ(3, vector[2]);
+}
+
 } // namespace TestWebKitAPI

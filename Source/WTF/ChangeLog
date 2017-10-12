@@ -1,3 +1,16 @@
+2017-10-12  Sam Weinig  <sam@webkit.org>
+
+        It should be possible to iterate just the values (and not the counts) of a HashCountedSet
+        https://bugs.webkit.org/show_bug.cgi?id=178169
+
+        Reviewed by Daniel Bates.
+
+        Cleanup (fix indentation, simplify type names, adopt using), and add a values() range to
+        HashCountedSet. This will allow getting a Vector of all the values (and not the counts)
+        using the new copyToVector. 
+
+        * wtf/HashCountedSet.h:
+
 2017-10-11  Michael Saboff  <msaboff@apple.com>
 
         [JSC] Add ability to build with ARMV8 ILP32 ABI
