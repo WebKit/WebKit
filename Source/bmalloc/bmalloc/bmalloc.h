@@ -68,6 +68,7 @@ inline void* realloc(void* object, size_t newSize, HeapKind kind = HeapKind::Pri
 // Returns null for failure
 inline void* tryLargeMemalignVirtual(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
 {
+    kind = mapToActiveHeapKind(kind);
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
     std::lock_guard<StaticMutex> lock(Heap::mutex());
     return heap.allocateLarge(lock, alignment, size, AllocationKind::Virtual);
@@ -80,6 +81,7 @@ inline void free(void* object, HeapKind kind = HeapKind::Primary)
 
 inline void freeLargeVirtual(void* object, HeapKind kind = HeapKind::Primary)
 {
+    kind = mapToActiveHeapKind(kind);
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
     std::lock_guard<StaticMutex> lock(Heap::mutex());
     heap.deallocateLarge(lock, object, AllocationKind::Virtual);
@@ -100,6 +102,7 @@ inline void scavenge()
 
 inline bool isEnabled(HeapKind kind = HeapKind::Primary)
 {
+    kind = mapToActiveHeapKind(kind);
     std::unique_lock<StaticMutex> lock(Heap::mutex());
     return !PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).debugHeap();
 }

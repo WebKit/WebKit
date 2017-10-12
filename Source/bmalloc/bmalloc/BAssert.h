@@ -56,14 +56,14 @@
 
 #define BCRASH() do { \
     *(int*)0xbbadbeef = 0; \
-} while (0);
+} while (0)
 
 #endif // defined(NDEBUG) && BOS(DARWIN)
 
 #define BASSERT_IMPL(x) do { \
     if (!(x)) \
         BCRASH(); \
-} while (0);
+} while (0)
 
 #define RELEASE_BASSERT(x) BASSERT_IMPL(x)
 
@@ -82,7 +82,7 @@
         BLOG_ERROR("ASSERTION FAILED: " #x " :: " format, ##__VA_ARGS__); \
         BCRASH(); \
     } \
-} while (0);
+} while (0)
 #endif
 
 #define UNUSED(x) ((void)x)

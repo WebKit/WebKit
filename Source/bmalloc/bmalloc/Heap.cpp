@@ -177,6 +177,8 @@ void Heap::deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache& lineCac
 
 void Heap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageClass)
 {
+    RELEASE_BASSERT(isActiveHeapKind(m_kind));
+    
     size_t pageSize = bmalloc::pageSize(pageClass);
 
     Chunk* chunk = [&]() {
@@ -221,6 +223,8 @@ void Heap::deallocateSmallChunk(Chunk* chunk, size_t pageClass)
 
 SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass, LineCache& lineCache)
 {
+    RELEASE_BASSERT(isActiveHeapKind(m_kind));
+
     if (!lineCache[sizeClass].isEmpty())
         return lineCache[sizeClass].popFront();
 
@@ -300,6 +304,8 @@ void Heap::allocateSmallBumpRangesByMetadata(
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache)
 {
+    RELEASE_BASSERT(isActiveHeapKind(m_kind));
+
     SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache);
     SmallLine* lines = page->begin();
     BASSERT(page->hasFreeLines(lock));
@@ -362,6 +368,8 @@ void Heap::allocateSmallBumpRangesByObject(
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache)
 {
+    RELEASE_BASSERT(isActiveHeapKind(m_kind));
+
     size_t size = allocator.size();
     SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache);
     BASSERT(page->hasFreeLines(lock));
@@ -414,6 +422,8 @@ void Heap::allocateSmallBumpRangesByObject(
 
 LargeRange Heap::splitAndAllocate(LargeRange& range, size_t alignment, size_t size, AllocationKind allocationKind)
 {
+    RELEASE_BASSERT(isActiveHeapKind(m_kind));
+
     LargeRange prev;
     LargeRange next;
 
@@ -461,6 +471,8 @@ LargeRange Heap::splitAndAllocate(LargeRange& range, size_t alignment, size_t si
 
 void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size, AllocationKind allocationKind)
 {
+    RELEASE_BASSERT(isActiveHeapKind(m_kind));
+
     BASSERT(isPowerOfTwo(alignment));
     
     if (m_debugHeap)
