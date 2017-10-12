@@ -712,7 +712,7 @@
 #if (CPU(X86_64) && !defined(__ILP32__) && (OS(UNIX) || OS(WINDOWS))) \
     || (CPU(IA64) && !CPU(IA64_32)) \
     || CPU(ALPHA) \
-    || CPU(ARM64) \
+    || (CPU(ARM64) && !defined(__ILP32__)) \
     || CPU(S390X) \
     || CPU(MIPS64) \
     || CPU(PPC64) \
@@ -725,7 +725,7 @@
 
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms except ARMv7k. */
 #if !defined(ENABLE_JIT) \
-    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
+    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || (CPU(ARM64) && !defined(__ILP32__)) || CPU(MIPS)) \
     && !CPU(APPLE_ARMV7K) \
     && !CPU(ARM64E)
 #define ENABLE_JIT 1
