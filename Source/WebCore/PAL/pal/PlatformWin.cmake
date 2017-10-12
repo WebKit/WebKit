@@ -6,6 +6,8 @@ list(APPEND PAL_SOURCES
     system/win/SoundWin.cpp
 
     text/KillRing.cpp
+
+    win/LoggingWin.cpp
 )
 
 list(APPEND PAL_INCLUDE_DIRECTORIES
