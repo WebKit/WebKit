@@ -153,8 +153,10 @@ static void freeData(void *, const void *data, size_t /* size */)
     _usingAlpha = usingAlpha;
     _contentsBuffer = WebCore::IOSurface::create(size, sRGBColorSpaceRef());
     _drawingBuffer = WebCore::IOSurface::create(size, sRGBColorSpaceRef());
+    _spareBuffer = WebCore::IOSurface::create(size, sRGBColorSpaceRef());
     ASSERT(_contentsBuffer);
     ASSERT(_drawingBuffer);
+    ASSERT(_spareBuffer);
 }
 
 - (void)bindFramebufferToNextAvailableSurface
@@ -162,11 +164,8 @@ static void freeData(void *, const void *data, size_t /* size */)
     GC3Denum texture = _context->platformTexture();
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
 
-    if (_drawingBuffer && _drawingBuffer->isInUse()) {
-        if (!_spareBuffer)
-            _spareBuffer = WebCore::IOSurface::create(_bufferSize, sRGBColorSpaceRef());
+    if (_drawingBuffer && _drawingBuffer->isInUse())
         std::swap(_drawingBuffer, _spareBuffer);
-    }
 
     IOSurfaceRef ioSurface = _drawingBuffer->surface();
     GC3Denum internalFormat = _usingAlpha ? GL_RGBA : GL_RGB;
