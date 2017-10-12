@@ -1,3 +1,11 @@
+2017-10-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/scrolling/adjust-scroll-offset-on-zoom.html for iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios/fast/scrolling/adjust-scroll-offset-on-zoom-expected.txt: Added.
+
 2017-10-11  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequest: do not sniff text/html, and do not sniff XML when responseType is set to "text"
