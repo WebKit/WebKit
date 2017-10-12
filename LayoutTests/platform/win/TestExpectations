@@ -3784,3 +3784,5 @@ webkit.org/b/177964 fast/text/loading-block-nofinish.html [ Pass ImageOnlyFailur
 webkit.org/b/177964 fast/text/loading-failure-finish.html [ Pass ImageOnlyFailure ]
 webkit.org/b/177964 fast/text/loading-failure-nofinish.html [ Pass ImageOnlyFailure ]
 webkit.org/b/177964 fast/text/loading-swap-nofinish.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/178200 http/tests/cache-storage/cache-clearing.https.html [ Failure ]
