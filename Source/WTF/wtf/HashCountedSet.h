@@ -22,12 +22,13 @@
 
 #include <initializer_list>
 #include <wtf/Assertions.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
 
-template<typename Value, typename HashFunctions = typename DefaultHash<Value>::Hash, typename Traits = HashTraits<Value>>
+template<typename Value, typename HashFunctions, typename Traits>
 class HashCountedSet final {
     WTF_MAKE_FAST_ALLOCATED;
 private:

@@ -31,16 +31,21 @@ namespace WTF {
 struct FastMalloc;
 class CrashOnOverflow;
 
-template<typename T> class Function;
-template<typename T> class LazyNeverDestroyed;
-template<typename T> class NeverDestroyed;
-template<typename T> class OptionSet;
-template<typename T> class Ref;
-template<typename T> class RefPtr;
-template<typename T> class StringBuffer;
+template<typename> class CompletionHandler;
+template<typename> class Function;
+template<typename> class LazyNeverDestroyed;
+template<typename> class NeverDestroyed;
+template<typename> class OptionSet;
+template<typename> class Ref;
+template<typename> class RefPtr;
+template<typename> class StringBuffer;
 
-template<typename... T> class Variant;
-template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename Malloc = FastMalloc> class Vector;
+template<typename> struct DefaultHash { using Hash = void; };
+template<typename> struct HashTraits;
+
+template<typename...> class Variant;
+template<typename, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename Malloc = FastMalloc> class Vector;
+template<typename Value, typename HashFunctions = typename DefaultHash<Value>::Hash, typename Traits = HashTraits<Value>> class HashCountedSet;
 
 class AtomicString;
 class AtomicStringImpl;
@@ -60,9 +65,11 @@ class TextPosition;
 using WTF::AtomicString;
 using WTF::AtomicStringImpl;
 using WTF::BinarySemaphore;
+using WTF::CompletionHandler;
 using WTF::CString;
 using WTF::Function;
 using WTF::FunctionDispatcher;
+using WTF::HashCountedSet;
 using WTF::LazyNeverDestroyed;
 using WTF::NeverDestroyed;
 using WTF::OptionSet;
