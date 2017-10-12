@@ -1657,9 +1657,9 @@ protected:
         putDirect(vm, identifier, JSFunction::create(vm, this, arguments, identifier.string(), function, NoIntrinsic, function));
     }
 
-    static JSInternalPromise* moduleLoaderImportModule(JSGlobalObject*, ExecState*, JSModuleLoader*, JSString*, const SourceOrigin&);
+    static JSInternalPromise* moduleLoaderImportModule(JSGlobalObject*, ExecState*, JSModuleLoader*, JSString*, JSValue, const SourceOrigin&);
     static JSInternalPromise* moduleLoaderResolve(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
-    static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue);
+    static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
 };
 
@@ -1811,7 +1811,7 @@ static String absolutePath(const String& fileName)
     return resolvePath(directoryName.value(), ModuleName(fileName.impl()));
 }
 
-JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSString* moduleNameValue, const SourceOrigin& sourceOrigin)
+JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSString* moduleNameValue, JSValue parameters, const SourceOrigin& sourceOrigin)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -1835,7 +1835,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     if (!directoryName)
         return rejectPromise(createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
 
-    auto result = JSC::importModule(exec, Identifier::fromString(&vm, resolvePath(directoryName.value(), ModuleName(moduleName))), jsUndefined());
+    auto result = JSC::importModule(exec, Identifier::fromString(&vm, resolvePath(directoryName.value(), ModuleName(moduleName))), parameters, jsUndefined());
     scope.releaseAssertNoException();
     return result;
 }
@@ -1985,7 +1985,7 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector<char>&
     return result;
 }
 
-JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSValue)
+JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSValue, JSValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -3273,7 +3273,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("Could not open file."))));
 
-    JSInternalPromise* promise = loadAndEvaluateModule(exec, fileName);
+    JSInternalPromise* promise = loadAndEvaluateModule(exec, fileName, jsUndefined(), jsUndefined());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue error;
@@ -3660,7 +3660,7 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
                 scriptBuffer.append("\"use strict\";\n", strlen("\"use strict\";\n"));
 
             if (isModule) {
-                promise = loadAndEvaluateModule(globalObject->globalExec(), fileName);
+                promise = loadAndEvaluateModule(globalObject->globalExec(), fileName, jsUndefined(), jsUndefined());
                 scope.releaseAssertNoException();
             } else {
                 if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer))
@@ -3676,7 +3676,7 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
         bool isLastFile = i == scripts.size() - 1;
         if (isModule) {
             if (!promise)
-                promise = loadAndEvaluateModule(globalObject->globalExec(), makeSource(stringFromUTF(scriptBuffer), SourceOrigin { absolutePath(fileName) }, fileName, TextPosition(), SourceProviderSourceType::Module));
+                promise = loadAndEvaluateModule(globalObject->globalExec(), makeSource(stringFromUTF(scriptBuffer), SourceOrigin { absolutePath(fileName) }, fileName, TextPosition(), SourceProviderSourceType::Module), jsUndefined());
             scope.clearException();
 
             JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, isLastFile](ExecState* exec) {

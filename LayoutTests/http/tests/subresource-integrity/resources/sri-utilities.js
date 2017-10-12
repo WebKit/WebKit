@@ -6,7 +6,7 @@ SRITests.execute = function() {
 }
 
 add_result_callback(function(res) {
-    if (res.name.startsWith("Script: ") || res.name.startsWith("Style: ")) {
+    if (res.name.startsWith("Script: ") || res.name.startsWith("Style: ") || res.name.startsWith("Module: ")) {
       SRITests.execute();
     }
 });
@@ -106,4 +106,41 @@ SRIStyleTest.prototype.execute = function() {
     container.appendChild(div);
     container.appendChild(e);
     this.customCallback(e, container);
+};
+
+var SRIModuleURLCounter = 0;
+var SRIModuleTest = function(pass, name, src, integrityValue, crossoriginValue) {
+    this.pass = pass;
+    this.name = "Module: " + name;
+    this.src = src;
+    this.integrityValue = integrityValue;
+    this.crossoriginValue = crossoriginValue;
+
+    this.test = async_test(this.name);
+
+    this.queue = SRITests;
+    this.queue.push(this);
+}
+
+SRIModuleTest.prototype.execute = function() {
+    var test = this.test;
+    var e = document.createElement("script");
+    e.type = "module";
+    e.src = this.src + "#" + (SRIModuleURLCounter++);
+    e.setAttribute("integrity", this.integrityValue);
+    if(this.crossoriginValue) {
+        e.setAttribute("crossorigin", this.crossoriginValue);
+    }
+    if(this.pass) {
+        e.addEventListener("load", function() {test.done()});
+        e.addEventListener("error", function() {
+            test.step(function(){ assert_unreached("Good load fired error handler.") })
+        });
+    } else {
+       e.addEventListener("load", function() {
+            test.step(function() { assert_unreached("Bad load succeeded.") })
+        });
+       e.addEventListener("error", function() {test.done()});
+    }
+    document.body.appendChild(e);
 };

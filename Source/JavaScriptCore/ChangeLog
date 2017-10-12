@@ -1,3 +1,107 @@
+2017-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Support integrity="" on module scripts
+        https://bugs.webkit.org/show_bug.cgi?id=177959
+
+        Reviewed by Sam Weinig.
+
+        This patch adds Subresource Integrity check for module scripts. Currently,
+        only top-level module can be verified with integrity parameter since there
+        is no way to perform integrity check onto the imported modules.
+
+        In JSC side, we add `parameters` to the entry point of the module loader
+        pipeline. This is fetching parameters and used when fetching modules.
+
+        We separately pass this parameters to the pipeline along with the script fetcher.
+        The script fetcher is only one for module graph since this is the initiator of
+        this module graph loading. On the other hand, this parameters is for each
+        module fetching. While setting "integrity" parameters to this script fetcher is
+        sufficient to pass parameters to top-level-module's fetching, it is not enough
+        for the future extension.
+
+        In the future, we will investigate a way to pass parameters to each non-top-level
+        module. At that time, this `parameters` should be per-module. This is because
+        "integrity" value should be different for each module. For example, we will accept
+        some form of syntax to add parameters to `import`. Some proposed syntax is like
+        https://discourse.wicg.io/t/specifying-nonce-or-integrity-when-importing-modules/1861
+
+        import "./xxx.js" integrity "xxxxxxx"
+
+        In this case, this `parameters` will be passed to "./xxx.js" module fetching. This
+        `parameters` should be different from the one of top-level-module's one. That's why
+        we need per-module `parameters` and why this patch adds `parameters` to the module pipeline.
+
+        On the other hand, we also want to keep script fetcher. This `per-module-graph` thing
+        is important to offer module-graph-wide information. For example, import.meta would
+        have `import.meta.scriptElement`, which is the script element fetching the module graph
+        including this. So, we keep the both, script fetcher and parameters.
+        https://github.com/tc39/proposal-import-meta
+
+        This parameters will be finally used by pipeline's fetch hook, and WebCore side
+        can use this parameters to fetch modules.
+
+        We also further clean up the module pipeline by dropping unnecessary features.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/ModuleLoaderPrototype.js:
+        (requestFetch):
+        (requestInstantiate):
+        (requestSatisfy):
+        (loadModule):
+        (loadAndEvaluateModule):
+        This loadAndEvaluateModule should be implemented by just calling loadModule and
+        linkAndEvaluateModule. We can drop requestReady and requestLink.
+
+        (requestLink): Deleted.
+        (requestImportModule): Deleted.
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        import and fetch hook takes parameters. Currently, we always pass `undefined` for
+        import hook. When dynamic `import()` is extended to accept additional parameters
+        like integrity, this parameters will be replaced with the actual value.
+
+        (functionLoadModule):
+        (runWithOptions):
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        (JSC::importModule):
+        * runtime/Completion.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncImportModule):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::requestImportModule):
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::fetch):
+        * runtime/JSModuleLoader.h:
+        * runtime/JSScriptFetchParameters.cpp: Added.
+        (JSC::JSScriptFetchParameters::destroy):
+        * runtime/JSScriptFetchParameters.h: Added.
+        (JSC::JSScriptFetchParameters::createStructure):
+        (JSC::JSScriptFetchParameters::create):
+        (JSC::JSScriptFetchParameters::parameters const):
+        (JSC::JSScriptFetchParameters::JSScriptFetchParameters):
+        Add ScriptFetchParameters' JSCell wrapper, JSScriptFetchParameters.
+        It is used in the module pipeline.
+
+        * runtime/JSType.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeFetch):
+        * runtime/ScriptFetchParameters.h: Added.
+        (JSC::ScriptFetchParameters::~ScriptFetchParameters):
+        Add ScriptFetchParameters. We can define our own custom ScriptFetchParameters
+        by inheriting this class. WebCore creates ModuleFetchParameters by inheriting
+        this.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         import.meta should not be assignable

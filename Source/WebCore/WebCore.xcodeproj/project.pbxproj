@@ -6829,6 +6829,7 @@
 		E3150EA61DA7219000194012 /* JSNodeDOMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */; };
 		E3150EA71DA7219300194012 /* DOMJITHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E3150EA51DA7218D00194012 /* DOMJITHelpers.h */; };
 		E318039D1DC40099009932C2 /* JSDynamicDowncast.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A5872E1DC3F52600F607A6 /* JSDynamicDowncast.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3201C1A1F8E82130076A032 /* ModuleFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D06091F8E811900649CF2 /* ModuleFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E323CFFA1E5AF6AF00F0B4A0 /* JSDOMConvertPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3565B7B1DC2D6C900217DBD /* JSEventCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35802B61DC8435D00A9773C /* DOMJITIDLTypeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E35802B51DC8435800A9773C /* DOMJITIDLTypeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15687,6 +15688,7 @@
 		E37C864F1EB63E2D0087C6CA /* JSDOMPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromise.h; sourceTree = "<group>"; };
 		E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptModuleLoader.cpp; sourceTree = "<group>"; };
 		E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptModuleLoader.h; sourceTree = "<group>"; };
+		E38D06091F8E811900649CF2 /* ModuleFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleFetchParameters.h; sourceTree = "<group>"; };
 		E3975B761EC9AF3900847717 /* JSDocumentFragmentDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentDOMJIT.cpp; sourceTree = "<group>"; };
 		E3975B771EC9AF3900847717 /* JSElementDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSElementDOMJIT.cpp; sourceTree = "<group>"; };
 		E3975B781EC9AF3900847717 /* JSEventDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventDOMJIT.cpp; sourceTree = "<group>"; };
@@ -26540,6 +26542,7 @@
 				41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */,
 				CB8CF0151A934B43000D510B /* Microtasks.cpp */,
 				53B895AD19DC7C37009CAA93 /* Microtasks.h */,
+				E38D06091F8E811900649CF2 /* ModuleFetchParameters.h */,
 				85031B2F0A44EFC700F992E0 /* MouseEvent.cpp */,
 				85031B300A44EFC700F992E0 /* MouseEvent.h */,
 				141B94E509EC4223000E9413 /* MouseEvent.idl */,
@@ -29526,6 +29529,7 @@
 				CDF2B0191820540700F2B424 /* MockTracks.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
+				E3201C1A1F8E82130076A032 /* ModuleFetchParameters.h in Headers */,
 				F55B3DC61251F12D003EF269 /* MonthInputType.h in Headers */,
 				85031B460A44EFC700F992E0 /* MouseEvent.h in Headers */,
 				83765F951DAC522F00C06537 /* MouseEventInit.h in Headers */,

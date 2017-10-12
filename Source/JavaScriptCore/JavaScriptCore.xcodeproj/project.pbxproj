@@ -1632,6 +1632,8 @@
 		E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618101EC5FE080006A218 /* DOMAnnotation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3201C1D1F8E82360076A032 /* JSScriptFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3201C1E1F8E824C0076A032 /* ScriptFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E322E5A31DA64439006E7709 /* DFGSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A11DA64435006E7709 /* DFGSnippetParams.h */; };
 		E322E5A71DA644A8006E7709 /* FTLSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A51DA644A4006E7709 /* FTLSnippetParams.h */; };
 		E328C6C71DA4304500D255FD /* MaxFrameExtentForSlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4419,6 +4421,9 @@
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
+		E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetchParameters.h; sourceTree = "<group>"; };
+		E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetchParameters.h; sourceTree = "<group>"; };
+		E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptFetchParameters.cpp; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E39D9D841D39000600667282 /* InterpreterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterpreterInlines.h; sourceTree = "<group>"; };
 		E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleRecord.cpp; sourceTree = "<group>"; };
@@ -6479,6 +6484,8 @@
 				14874AE215EBDE4A002E3587 /* JSScope.h */,
 				11C197C2624848EDA84CED7F /* JSScriptFetcher.cpp */,
 				6BA93C9590484C5BAD9316EA /* JSScriptFetcher.h */,
+				E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */,
+				E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */,
 				0F919D0E157F3327004A4E7D /* JSSegmentedVariableObject.cpp */,
 				0F919D0F157F3327004A4E7D /* JSSegmentedVariableObject.h */,
 				0F4F82851E2FFDDB0075184C /* JSSegmentedVariableObjectSubspace.cpp */,
@@ -6649,6 +6656,7 @@
 				147341E01DC2CE9600AA29BA /* ScriptExecutable.cpp */,
 				147341CD1DC02D7900AA29BA /* ScriptExecutable.h */,
 				8852151A9C3842389B3215B7 /* ScriptFetcher.h */,
+				E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */,
 				A7299DA317D12858005F5FF9 /* SetConstructor.cpp */,
 				A7299DA417D12858005F5FF9 /* SetConstructor.h */,
 				A790DD67182F499700588807 /* SetIteratorPrototype.cpp */,
@@ -8732,6 +8740,7 @@
 				534638711E70CF3D00F12AC1 /* JSRunLoopTimer.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
 				9064337DD4B0402BAF34A592 /* JSScriptFetcher.h in Headers */,
+				E3201C1D1F8E82360076A032 /* JSScriptFetchParameters.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
 				0F4F82881E2FFDE00075184C /* JSSegmentedVariableObjectSubspace.h in Headers */,
@@ -8955,7 +8964,6 @@
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 				0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */,
-				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,
 				E33637A61B63220200EE0840 /* ReflectObject.h in Headers */,
 				996B73231BDA08EF00331B84 /* ReflectObject.lut.h in Headers */,
 				0FA7A8EC18B413C80052371D /* Reg.h in Headers */,
@@ -9004,6 +9012,7 @@
 				A503FA26188EFFFD00110F14 /* ScriptDebugServer.h in Headers */,
 				147341CE1DC02D7900AA29BA /* ScriptExecutable.h in Headers */,
 				CEAE7D7B889B477BA93ABA6C /* ScriptFetcher.h in Headers */,
+				E3201C1E1F8E824C0076A032 /* ScriptFetchParameters.h in Headers */,
 				A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */,
 				A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */,
 				A55165D51BDF135A003B75C1 /* ScriptProfilingScope.h in Headers */,
@@ -9055,6 +9064,7 @@
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
+				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,

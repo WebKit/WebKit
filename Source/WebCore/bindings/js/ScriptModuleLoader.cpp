@@ -35,13 +35,16 @@
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
 #include "ModuleFetchFailureKind.h"
+#include "ModuleFetchParameters.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "SubresourceIntegrity.h"
 #include "WebCoreJSClientData.h"
 #include <runtime/Completion.h>
 #include <runtime/JSInternalPromise.h>
 #include <runtime/JSInternalPromiseDeferred.h>
 #include <runtime/JSModuleRecord.h>
+#include <runtime/JSScriptFetchParameters.h>
 #include <runtime/JSScriptFetcher.h>
 #include <runtime/JSSourceCode.h>
 #include <runtime/JSString.h>
@@ -139,9 +142,10 @@ static void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetch
     });
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue scriptFetcher)
+JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
 {
-    ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(exec->vm(), scriptFetcher));
+    JSC::VM& vm = exec->vm();
+    ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(vm, scriptFetcher));
 
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
     auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(exec, &globalObject);
@@ -164,7 +168,11 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
         return jsPromise.promise();
     }
 
-    auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()));
+    RefPtr<ModuleFetchParameters> topLevelFetchParameters;
+    if (auto* scriptFetchParameters = JSC::jsDynamicCast<JSC::JSScriptFetchParameters*>(vm, parameters))
+        topLevelFetchParameters = static_cast<ModuleFetchParameters*>(&scriptFetchParameters->parameters());
+
+    auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(topLevelFetchParameters));
     m_loaders.add(loader.copyRef());
     if (!loader->load(m_document, completedURL)) {
         loader->clearClient();
@@ -212,7 +220,7 @@ static JSC::JSInternalPromise* rejectPromise(JSC::ExecState& state, JSDOMGlobalO
     return jsPromise.promise();
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSString* moduleName, const JSC::SourceOrigin& sourceOrigin)
+JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
 {
     auto& state = *exec;
     JSC::VM& vm = exec->vm();
@@ -248,7 +256,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     if (!result)
         return rejectPromise(state, globalObject, TypeError, result.error());
 
-    return JSC::importModule(exec, JSC::Identifier::fromString(&vm, result->string()), JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher) ));
+    return JSC::importModule(exec, JSC::Identifier::fromString(&vm, result->string()), parameters, JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher) ));
 }
 
 void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr<DeferredPromise> promise)
@@ -282,6 +290,13 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
         // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
         promise->reject(TypeError, makeString("'", cachedScript.response().mimeType(), "' is not a valid JavaScript MIME type."));
         return;
+    }
+
+    if (auto* parameters = loader.parameters()) {
+        if (!matchIntegrityMetadata(cachedScript, parameters->integrity())) {
+            promise->reject(TypeError, makeString("Cannot load script ", cachedScript.url().stringCenterEllipsizedToLength(), ". Failed integrity metadata check."));
+            return;
+        }
     }
 
     m_requestURLToResponseURLMap.add(cachedScript.url(), cachedScript.response().url());

@@ -41,6 +41,7 @@
 #include "LoadableModuleScript.h"
 #include "MainFrame.h"
 #include "ModuleFetchFailureKind.h"
+#include "ModuleFetchParameters.h"
 #include "NP_jsobject.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
@@ -62,6 +63,7 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSModuleRecord.h>
 #include <runtime/JSNativeStdFunction.h>
+#include <runtime/JSScriptFetchParameters.h>
 #include <runtime/JSScriptFetcher.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
@@ -190,20 +192,20 @@ JSValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, Exception
     return evaluateInWorld(sourceCode, mainThreadNormalWorld(), exceptionDetails);
 }
 
-void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const String& moduleName, DOMWrapperWorld& world)
+void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const String& moduleName, Ref<ModuleFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
 {
     JSLockHolder lock(world.vm());
 
     auto& proxy = *windowProxy(world);
     auto& state = *proxy.window()->globalExec();
 
-    auto& promise = JSMainThreadExecState::loadModule(state, moduleName, JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
+    auto& promise = JSMainThreadExecState::loadModule(state, moduleName, JSC::JSScriptFetchParameters::create(state.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
     setupModuleScriptHandlers(moduleScript, promise, world);
 }
 
-void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const String& moduleName)
+void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const String& moduleName, Ref<ModuleFetchParameters>&& topLevelFetchParameters)
 {
-    loadModuleScriptInWorld(moduleScript, moduleName, mainThreadNormalWorld());
+    loadModuleScriptInWorld(moduleScript, moduleName, WTFMove(topLevelFetchParameters), mainThreadNormalWorld());
 }
 
 void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)

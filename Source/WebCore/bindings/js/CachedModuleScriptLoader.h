@@ -39,11 +39,12 @@ class CachedScriptFetcher;
 class DeferredPromise;
 class Document;
 class JSDOMGlobalObject;
+class ModuleFetchParameters;
 class URL;
 
 class CachedModuleScriptLoader final : public RefCounted<CachedModuleScriptLoader>, private CachedResourceClient {
 public:
-    static Ref<CachedModuleScriptLoader> create(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&);
+    static Ref<CachedModuleScriptLoader> create(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
 
     virtual ~CachedModuleScriptLoader();
 
@@ -51,6 +52,7 @@ public:
 
     CachedScriptFetcher& scriptFetcher() { return m_scriptFetcher.get(); }
     CachedScript* cachedScript() { return m_cachedScript.get(); }
+    ModuleFetchParameters* parameters() { return m_parameters.get(); }
 
     void clearClient()
     {
@@ -59,13 +61,14 @@ public:
     }
 
 private:
-    CachedModuleScriptLoader(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&);
+    CachedModuleScriptLoader(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
 
     void notifyFinished(CachedResource&) final;
 
     CachedModuleScriptLoaderClient* m_client { nullptr };
     RefPtr<DeferredPromise> m_promise;
     Ref<CachedScriptFetcher> m_scriptFetcher;
+    RefPtr<ModuleFetchParameters> m_parameters;
     CachedResourceHandle<CachedScript> m_cachedScript;
 };
 

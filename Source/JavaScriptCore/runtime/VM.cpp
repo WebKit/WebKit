@@ -73,6 +73,7 @@
 #include "JSMapIterator.h"
 #include "JSPromiseDeferred.h"
 #include "JSPropertyNameEnumerator.h"
+#include "JSScriptFetchParameters.h"
 #include "JSScriptFetcher.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
@@ -253,6 +254,7 @@ VM::VM(VMType vmType, HeapType heapType)
     fixedArrayStructure.set(*this, JSFixedArray::createStructure(*this, 0, jsNull()));
     sourceCodeStructure.set(*this, JSSourceCode::createStructure(*this, 0, jsNull()));
     scriptFetcherStructure.set(*this, JSScriptFetcher::createStructure(*this, 0, jsNull()));
+    scriptFetchParametersStructure.set(*this, JSScriptFetchParameters::createStructure(*this, 0, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
     sparseArrayValueMapStructure.set(*this, SparseArrayValueMap::createStructure(*this, 0, jsNull()));
     templateRegistryKeyStructure.set(*this, JSTemplateRegistryKey::createStructure(*this, 0, jsNull()));

@@ -797,7 +797,10 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
         return JSValue::encode(promise->promise());
     }
 
-    auto* internalPromise = globalObject->moduleLoader()->importModule(exec, specifier, sourceOrigin);
+    // We always specify parameters as undefined. Once dynamic import() starts accepting fetching parameters,
+    // we should retrieve this from the arguments.
+    JSValue parameters = jsUndefined();
+    auto* internalPromise = globalObject->moduleLoader()->importModule(exec, specifier, parameters, sourceOrigin);
     if (Exception* exception = catchScope.exception()) {
         catchScope.clearException();
         promise->reject(exec, exception->value());

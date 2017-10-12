@@ -361,6 +361,7 @@ public:
     Strong<Structure> fixedArrayStructure;
     Strong<Structure> sourceCodeStructure;
     Strong<Structure> scriptFetcherStructure;
+    Strong<Structure> scriptFetchParametersStructure;
     Strong<Structure> structureChainStructure;
     Strong<Structure> sparseArrayValueMapStructure;
     Strong<Structure> templateRegistryKeyStructure;

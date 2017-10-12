@@ -56,6 +56,7 @@ class Frame;
 class HTMLDocument;
 class HTMLPlugInElement;
 class LoadableModuleScript;
+class ModuleFetchParameters;
 class ScriptSourceCode;
 class SecurityOrigin;
 class URL;
@@ -115,8 +116,8 @@ public:
     JSC::JSValue evaluate(const ScriptSourceCode&, ExceptionDetails* = nullptr);
     JSC::JSValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&, ExceptionDetails* = nullptr);
 
-    void loadModuleScriptInWorld(LoadableModuleScript&, const String& moduleName, DOMWrapperWorld&);
-    void loadModuleScript(LoadableModuleScript&, const String& moduleName);
+    void loadModuleScriptInWorld(LoadableModuleScript&, const String& moduleName, Ref<ModuleFetchParameters>&&, DOMWrapperWorld&);
+    void loadModuleScript(LoadableModuleScript&, const String& moduleName, Ref<ModuleFetchParameters>&&);
     void loadModuleScriptInWorld(LoadableModuleScript&, const ScriptSourceCode&, DOMWrapperWorld&);
     void loadModuleScript(LoadableModuleScript&, const ScriptSourceCode&);
 

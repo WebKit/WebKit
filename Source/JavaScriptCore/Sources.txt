@@ -807,6 +807,7 @@ runtime/JSProxy.cpp
 runtime/JSRunLoopTimer.cpp
 runtime/JSScope.cpp
 runtime/JSScriptFetcher.cpp
+runtime/JSScriptFetchParameters.cpp
 runtime/JSSegmentedVariableObject.cpp
 runtime/JSSegmentedVariableObjectSubspace.cpp
 runtime/JSSet.cpp

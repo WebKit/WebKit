@@ -1,0 +1,3 @@
+
+PASS Non top level module script should work even with integrity 
+

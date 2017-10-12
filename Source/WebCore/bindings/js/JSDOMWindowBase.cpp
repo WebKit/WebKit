@@ -373,11 +373,11 @@ JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderResolve(JSC::JSGlobalObject
     return deferred->reject(exec, jsUndefined());
 }
 
-JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSValue scriptFetcher)
+JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
 {
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
-        return document->moduleLoader()->fetch(globalObject, exec, moduleLoader, moduleKey, scriptFetcher);
+        return document->moduleLoader()->fetch(globalObject, exec, moduleLoader, moduleKey, parameters, scriptFetcher);
     JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
     return deferred->reject(exec, jsUndefined());
 }
@@ -390,11 +390,11 @@ JSC::JSValue JSDOMWindowBase::moduleLoaderEvaluate(JSC::JSGlobalObject* globalOb
     return JSC::jsUndefined();
 }
 
-JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderImportModule(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSString* moduleName, const JSC::SourceOrigin& sourceOrigin)
+JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderImportModule(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
 {
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
-        return document->moduleLoader()->importModule(globalObject, exec, moduleLoader, moduleName, sourceOrigin);
+        return document->moduleLoader()->importModule(globalObject, exec, moduleLoader, moduleName, parameters, sourceOrigin);
     JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
     return deferred->reject(exec, jsUndefined());
 }

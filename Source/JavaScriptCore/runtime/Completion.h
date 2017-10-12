@@ -57,16 +57,16 @@ inline JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const S
 JS_EXPORT_PRIVATE JSValue evaluateWithScopeExtension(ExecState*, const SourceCode&, JSObject* scopeExtension, NakedPtr<Exception>& returnedException);
 
 // Load the module source and evaluate it.
-JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const String& moduleName, JSValue scriptFetcher = jsUndefined());
-JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const SourceCode&, JSValue scriptFetcher = jsUndefined());
+JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const String& moduleName, JSValue parameters, JSValue scriptFetcher);
+JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const SourceCode&, JSValue scriptFetcher);
 
 // Fetch the module source, and instantiate the module record.
-JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const String& moduleName, JSValue scriptFetcher = jsUndefined());
-JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const SourceCode&, JSValue scriptFetcher = jsUndefined());
+JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const String& moduleName, JSValue parameters, JSValue scriptFetcher);
+JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const SourceCode&, JSValue scriptFetcher);
 
 // Link and evaluate the already linked module. This function is called in a sync manner.
-JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(ExecState*, const Identifier& moduleKey, JSValue scriptFetcher = jsUndefined());
+JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(ExecState*, const Identifier& moduleKey, JSValue scriptFetcher);
 
-JS_EXPORT_PRIVATE JSInternalPromise* importModule(ExecState*, const Identifier& moduleKey, JSValue scriptFetcher);
+JS_EXPORT_PRIVATE JSInternalPromise* importModule(ExecState*, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher);
 
 } // namespace JSC
