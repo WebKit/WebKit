@@ -1,3 +1,14 @@
+2017-10-11  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add subLocality and subAdministrativeArea to ApplePayPaymentContact
+        https://bugs.webkit.org/show_bug.cgi?id=178191
+        <rdar://problem/34906367>
+
+        Reviewed by Tim Horton.
+
+        * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+        * http/tests/ssl/applepay/ApplePaySession.html:
+
 2017-10-11  Youenn Fablet  <youenn@apple.com>
 
         Add API to clean CacheStorage data
