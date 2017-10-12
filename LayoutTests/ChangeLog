@@ -1,3 +1,14 @@
+2017-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't assert if mix-blend-mode is set to a non-separable blend mode on a composited layer
+        https://bugs.webkit.org/show_bug.cgi?id=178196
+        rdar://problem/34942337
+
+        Reviewed by Dan Bates.
+
+        * compositing/filters/blend-mode-saturation-expected.txt: Added.
+        * compositing/filters/blend-mode-saturation.html: Added.
+
 2017-10-12  John Wilander  <wilander@apple.com>
 
         ResourceLoadObserver::logFrameNavigation() should use redirectResponse.url()
