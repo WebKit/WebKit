@@ -1,3 +1,15 @@
+2017-10-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win64] JSC compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=178213
+
+        Reviewed by Alex Christensen.
+
+        Add static cast from int64 to uintptr_t.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+
 2017-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS

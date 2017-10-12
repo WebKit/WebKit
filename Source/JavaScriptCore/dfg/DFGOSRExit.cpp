@@ -668,8 +668,8 @@ void OSRExit::executeOSRExit(Context& context)
     saveCalleeSavesFor(context, baselineCodeBlock);
 
 #if USE(JSVALUE64)
-    cpu.gpr(GPRInfo::tagTypeNumberRegister) = TagTypeNumber;
-    cpu.gpr(GPRInfo::tagMaskRegister) = TagTypeNumber | TagBitTypeOther;
+    cpu.gpr(GPRInfo::tagTypeNumberRegister) = static_cast<uintptr_t>(TagTypeNumber);
+    cpu.gpr(GPRInfo::tagMaskRegister) = static_cast<uintptr_t>(TagTypeNumber | TagBitTypeOther);
 #endif
 
     if (exit.isExceptionHandler())
