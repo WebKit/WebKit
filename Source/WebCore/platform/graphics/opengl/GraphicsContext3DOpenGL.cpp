@@ -29,16 +29,15 @@
 #if ENABLE(GRAPHICS_CONTEXT_3D)
 
 #include "GraphicsContext3D.h"
+
 #if PLATFORM(IOS)
 #include "GraphicsContext3DIOS.h"
 #endif
-
 #include "Extensions3DOpenGL.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include "TemporaryOpenGLSetting.h"
-
 #include <algorithm>
 #include <cstring>
 #include <wtf/MainThread.h>
@@ -70,6 +69,17 @@ void GraphicsContext3D::releaseShaderCompiler()
     notImplemented();
 }
 
+#if PLATFORM(MAC)
+static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
+{
+    // We can assume this doesn't overflow because the calling functions
+    // use checked arithmetic.
+    int totalBytes = width * height * 4;
+    for (int i = 0; i < totalBytes; i += 4)
+        pixels[i + 3] = 255;
+}
+#endif
+
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
     // NVIDIA drivers have a bug where calling readPixels in BGRA can return the wrong values for the alpha channel when the alpha is off for the context.
@@ -98,6 +108,11 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
 #endif
     } else
         ::glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
+
+#if PLATFORM(MAC)
+    if (!m_attrs.alpha)
+        wipeAlphaChannelFromPixels(width, height, pixels);
+#endif
 }
 
 void GraphicsContext3D::validateAttributes()
@@ -170,6 +185,10 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     ::glBindRenderbuffer(GL_RENDERBUFFER, m_texture);
     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_texture);
     setRenderbufferStorageFromDrawable(m_currentWidth, m_currentHeight);
+#elif PLATFORM(MAC)
+    allocateIOSurfaceBackingStore(IntSize(width, height));
+    updateFramebufferTextureBackingStoreFromLayer();
+    ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, m_texture, 0);
 #else
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
@@ -442,6 +461,11 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     ::glReadPixels(x, y, width, height, format, type, data);
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+
+#if PLATFORM(MAC)
+    if (!m_attrs.alpha && (format == GraphicsContext3D::RGBA || format == GraphicsContext3D::BGRA) && (m_state.boundFBO == m_fbo || (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)))
+        wipeAlphaChannelFromPixels(width, height, static_cast<unsigned char*>(data));
+#endif
 }
 
 }

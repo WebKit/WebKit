@@ -1,83 +1,81 @@
-2017-10-12  Dean Jackson  <dino@apple.com>
+2017-10-13  Dean Jackson  <dino@apple.com>
 
-        [WebGL] VideoTextureCopierCV doesn't correctly restore vertex attribute state
-        https://bugs.webkit.org/show_bug.cgi?id=176771
-        <rdar://problem/34386621>
+        Cherry-pick r222961. rdar://problem/34891070
 
-        Reviewed by Antoine Quint.
+    2017-10-05  Dean Jackson  <dino@apple.com>
 
-        The OpenGL context in VideoTextureCopierCV wasn't being restored to
-        the state it had before rendering a video to a texture. Specifically
-        the vertex attribute values were never recorded by the state saver.
+            Lots of missing frames in YouTube360 when fullscreen on MacBook
+            https://bugs.webkit.org/show_bug.cgi?id=177903
+            <rdar://problem/33273300>
 
-        Update the existing test of VideoTextureCopierCV so that it is
-        explicitly doing something different from the WebCore code, which
-        means that state will have to be correctly restored for the test
-        to pass.
+            Reviewed by Sam Weinig.
 
-        * platform/graphics/cv/VideoTextureCopierCV.cpp:
-        (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture): Make sure
-        to record the vertex attribute state once we know the location of the position attribute.
-        (WebCore::VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver):
-        (WebCore::VideoTextureCopierCV::GC3DStateSaver::~GC3DStateSaver):
-        (WebCore::VideoTextureCopierCV::GC3DStateSaver::saveVertexAttribState): Save all the
-        applicable vertex attribute state information.
-        * platform/graphics/cv/VideoTextureCopierCV.h: GC3DStateSaver can use a reference
-        to the GC3D rather than a pointer.
+            Our compositing path for WebGL on macOS was too slow, requiring a copy
+            of the framebuffer into another GL context. Replace this by having
+            WebGL render into a texture that is backed by an IOSurface, and then
+            set the WebGLLayer to use the IOSurface as contents.
 
-2017-10-12  Dean Jackson  <dino@apple.com>
+            Covered by the existing WebGL tests.
 
-        [WebGL] accelerated texImage2D for video doesn't respect flipY
-        https://bugs.webkit.org/show_bug.cgi?id=176491
-        <rdar://problem/33833511>
+            * platform/graphics/GraphicsContext3D.h:
+            (WebCore::GraphicsContext3D::platformTexture const): We no longer use the
+            framebuffer object outside the class, so change this to return the GL texture
+            that the framebuffer is rendering in to. It was kind-of strange that it was
+            named this way originally.
+            Also make endPaint available on macOS, and add the definitions for
+            createIOSurfaceBackingStore and updateFramebufferTextureBackingStoreFromLayer.
 
-        Reviewed by Jer Noble.
+            * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+            (WebCore::GraphicsContext3D::GraphicsContext3D): Now that we're using an IOSurface,
+            we're binding to a new attachment point, GL_TEXTURE_RECTANGLE.
+            (WebCore::GraphicsContext3D::endPaint): This is now being called on macOS and iOS,
+            so add a comment that explains the extra work that iOS needs to do. At some future
+            point it would be nice to make this slightly cleaner, so that iOS and macOS are
+            more similar.
+            (WebCore::GraphicsContext3D::allocateIOSurfaceBackingStore): New function that calls
+            into the corresponding WebGLLayer function.
+            (WebCore::GraphicsContext3D::updateFramebufferTextureBackingStoreFromLayer): Ditto.
 
-        (Take 3 - this was rolled out due to a test failure)
+            * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+            (WebCore::wipeAlphaChannelFromPixels): Both readPixels and drawing a WebGL context
+            into another buffer need to fill out the alpha channel if this context was
+            created without one, otherwise the IOSurface backing store will happily provide
+            what might be non-zero values.
+            (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary): Call the helper above.
+            (WebCore::GraphicsContext3D::reshapeFBOs): Add more code to call into the macOS-specific
+            function to use an IOSurface as the framebuffer texture.
+            (WebCore::GraphicsContext3D::readPixels): Call the helper above.
 
-        Previously, if UNPACK_FLIP_Y_WEBGL was set to true, we'd either fall
-        back to software or fail to upload texture data. Fix this by intercepting
-        the texImage2D call, checking the orientation of the video, and running
-        a small shader program to flip it if necessary.
+            * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+            (PlatformCALayerCocoa::copyContentsFromLayer): Replace the use of the
+            deprecated setContentsChanged with reloadValueForKeyPath.
 
-        While there, implement UNPACK_PREMULTIPLY_ALPHA_WEBGL as well, although
-        none of our media decoders support video with alpha, so unfortunately
-        this will have no visible change.
+            * platform/graphics/cocoa/WebGLLayer.h: The macOS implementation now
+            inherits from CALayer directly rather than CAOpenGLLayer. It also adds
+            a few member variables to handle the IOSurfaces used for triple buffering.
 
-        Tests: fast/canvas/webgl/texImage2D-video-flipY-false.html
-               fast/canvas/webgl/texImage2D-video-flipY-true.html
+            * platform/graphics/cocoa/WebGLLayer.mm:
+            (-[WebGLLayer initWithGraphicsContext3D:]): If we were created without an
+            alpha channel, tell CA that we're an opaque layer. Also set the layer's transform
+            to identity, so that it calls into the code below to flip the contents.
+            (-[WebGLLayer setTransform:]): Because an IOSurface is used for the layer contents,
+            we don't get a chance to flip the drawing the way we do via the drawInContext delegate.
+            Instead we have to apply a scale(1, -1) transform on top of the layer transform to
+            make sure the layer is rendered right-way up.
+            (-[WebGLLayer setAnchorPoint:]): Ditto, except we have to assume the anchor point is
+            at the bottom of the layer, so flip the Y value.
+            (-[WebGLLayer display]): Swap between the drawing buffer and the contents buffer, and
+            then get a new buffer ready for display.
+            (createAppropriateIOSurface): Helper.
+            (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]): Initializes the
+            IOSurfaces used for drawing buffers.
+            (-[WebGLLayer bindFramebufferToNextAvailableSurface]): Take the next available IOSurface and
+            make it the drawing buffer (binding in to WebGL at the same time).
+            (-[WebGLLayer copyCGLPixelFormatForDisplayMask:]): Deleted.
+            (-[WebGLLayer copyCGLContextForPixelFormat:]): Deleted.
+            (-[WebGLLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]): Deleted.
 
-        * platform/cocoa/CoreVideoSoftLink.cpp: Add link to CVOpenGL(ES)TextureGetCleanTexCoords,
-        which is used to check the orientation of the source video.
-        * platform/cocoa/CoreVideoSoftLink.h:
-
-        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
-        (WebCore::MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture): We can
-        now handle flipped or premultiplied requests.
-        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
-        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture): Ditto.
-
-        * platform/graphics/cv/VideoTextureCopierCV.cpp:
-        (WebCore::VideoTextureCopierCV::VideoTextureCopierCV): Rename readFramebuffer to
-        simply framebuffer.
-        (WebCore::VideoTextureCopierCV::~VideoTextureCopierCV): Delete the program and buffer
-        if they were created.
-        (WebCore::VideoTextureCopierCV::initializeContextObjects): Sets up the shader program
-        and the vertex buffer for drawing. Also records the location of the uniforms.
-        (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture): Create a new
-        framebuffer object, and render the video texture into that framebuffer using a
-        shader that can flip the coordinates.
-        (WebCore::VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver): Helper to restore
-        the state of the user's GraphicsContext3D while we're intercepting calls.
-        (WebCore::VideoTextureCopierCV::GC3DStateSaver::~GC3DStateSaver):
-        * platform/graphics/cv/VideoTextureCopierCV.h:
-
-        * platform/graphics/GraphicsContext3D.h: Add two new entry points, for direct shader
-        compilation and attribute access. This avoids going through ANGLE.
-        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
-        (WebCore::GraphicsContext3D::compileShader):
-        (WebCore::GraphicsContext3D::compileShaderDirect):
-        (WebCore::GraphicsContext3D::getAttribLocationDirect):
+            * platform/graphics/mac/WebLayer.mm: Remove the definition of reloadValueForKeyPath.
 
 2017-10-11  Jason Marcell  <jmarcell@apple.com>
 
