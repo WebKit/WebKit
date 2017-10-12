@@ -1,3 +1,12 @@
+2017-10-12  Matt Lewis  <jlewis3@apple.com>
+
+        Edited expectations for http/tests/media/video-buffered-range-contains-currentTime.html.
+        https://bugs.webkit.org/show_bug.cgi?id=177616
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Support integrity="" on module scripts
