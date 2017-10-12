@@ -100,14 +100,10 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
         // FIXME: StringBuilder should hava a toNSString() function to avoid the extra String allocation.
         [address setStreet:builder.toString()];
 
-        if (!contact.subLocality.isEmpty())
-            [address setSubLocality:contact.subLocality];
         if (!contact.locality.isEmpty())
             [address setCity:contact.locality];
         if (!contact.postalCode.isEmpty())
             [address setPostalCode:contact.postalCode];
-        if (!contact.subAdministrativeArea.isEmpty())
-            [address setSubAdministrativeArea:contact.subAdministrativeArea];
         if (!contact.administrativeArea.isEmpty())
             [address setState:contact.administrativeArea];
         if (!contact.country.isEmpty())
@@ -144,10 +140,8 @@ static ApplePayPaymentContact convert(PKContact *contact)
         String(postalAddress.street).split("\n", addressLines);
         result.addressLines = WTFMove(addressLines);
     }
-    result.subLocality = postalAddress.subLocality;
     result.locality = postalAddress.city;
     result.postalCode = postalAddress.postalCode;
-    result.subAdministrativeArea = postalAddress.subAdministrativeArea;
     result.administrativeArea = postalAddress.state;
     result.country = postalAddress.country;
     result.countryCode = postalAddress.ISOCountryCode;
