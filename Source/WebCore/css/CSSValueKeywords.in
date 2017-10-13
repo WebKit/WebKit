@@ -849,7 +849,6 @@ var
 //
 // Environment Variables
 //
-constant
 env
 
 //

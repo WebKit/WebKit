@@ -481,7 +481,6 @@ crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
 fast/viewport/ios/viewport-fit-contain.html [ Pass ]
 fast/viewport/ios/viewport-fit-cover.html [ Pass ]
 fast/viewport/ios/viewport-fit-auto.html [ Pass ]
-fast/css/variables/constants/ios [ Pass ]
 fast/css/variables/env/ios [ Pass ]
 
 # This test relies on APIs not available on iOS

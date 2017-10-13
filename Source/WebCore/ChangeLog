@@ -1,3 +1,24 @@
+2017-10-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222627. rdar://problem/34938437
+
+    2017-09-28  Tim Horton  <timothy_horton@apple.com>
+
+            Remove constant() in favor of env()
+            https://bugs.webkit.org/show_bug.cgi?id=177581
+            <rdar://problem/34701321>
+
+            Reviewed by Dean Jackson.
+
+            No new tests, removing a feature.
+
+            * css/CSSValueKeywords.in:
+            * css/CSSVariableData.cpp:
+            (WebCore::CSSVariableData::checkVariablesForCyclesWithRange const):
+            (WebCore::CSSVariableData::resolveTokenRange const):
+            * css/parser/CSSVariableParser.cpp:
+            (WebCore::classifyBlock):
+
 2017-10-13  Dean Jackson  <dino@apple.com>
 
         Cherry-pick r223063. rdar://problem/34921832
