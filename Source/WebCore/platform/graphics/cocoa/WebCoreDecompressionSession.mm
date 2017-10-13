@@ -44,8 +44,9 @@
 
 namespace WebCore {
 
-WebCoreDecompressionSession::WebCoreDecompressionSession()
-    : m_decompressionQueue(adoptOSObject(dispatch_queue_create("WebCoreDecompressionSession Decompression Queue", DISPATCH_QUEUE_SERIAL)))
+WebCoreDecompressionSession::WebCoreDecompressionSession(Mode mode)
+    : m_mode(mode)
+    , m_decompressionQueue(adoptOSObject(dispatch_queue_create("WebCoreDecompressionSession Decompression Queue", DISPATCH_QUEUE_SERIAL)))
     , m_enqueingQueue(adoptOSObject(dispatch_queue_create("WebCoreDecompressionSession Enqueueing Queue", DISPATCH_QUEUE_SERIAL)))
     , m_hasAvailableImageSemaphore(adoptOSObject(dispatch_semaphore_create(0)))
 {
@@ -200,7 +201,7 @@ bool WebCoreDecompressionSession::shouldDecodeSample(CMSampleBufferRef sample, b
     return true;
 }
 
-void WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool displaying)
+void WebCoreDecompressionSession::ensureDecompressionSessionForSample(CMSampleBufferRef sample)
 {
     if (isInvalidated())
         return;
@@ -214,19 +215,30 @@ void WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
     if (!m_decompressionSession) {
         CMVideoFormatDescriptionRef videoFormatDescription = CMSampleBufferGetFormatDescription(sample);
         NSDictionary* videoDecoderSpecification = @{ (NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @YES };
+
+        NSDictionary *attributes;
+        if (m_mode == OpenGL) {
 #if PLATFORM(IOS)
-        NSDictionary* attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey: @YES};
+            attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey: @YES};
 #else
-        NSDictionary* attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey: @YES};
+            attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey: @YES};
 #endif
+        } else {
+            ASSERT(m_mode == RGB);
+            attributes = @{(NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
+        }
         VTDecompressionSessionRef decompressionSessionOut = nullptr;
-        VTDecompressionOutputCallbackRecord callback {
-            &decompressionOutputCallback,
-            this,
-        };
-        if (noErr == VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (CFDictionaryRef)videoDecoderSpecification, (CFDictionaryRef)attributes, &callback, &decompressionSessionOut))
+        if (noErr == VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (CFDictionaryRef)videoDecoderSpecification, (CFDictionaryRef)attributes, nullptr, &decompressionSessionOut))
             m_decompressionSession = adoptCF(decompressionSessionOut);
     }
+}
+
+void WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool displaying)
+{
+    if (isInvalidated())
+        return;
+
+    ensureDecompressionSessionForSample(sample);
 
     VTDecodeInfoFlags flags { kVTDecodeFrame_EnableTemporalProcessing };
     if (!displaying)
@@ -240,14 +252,25 @@ void WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
         return;
     }
 
-    VTDecompressionSessionDecodeFrame(m_decompressionSession.get(), sample, flags, reinterpret_cast<void*>(displaying), nullptr);
+    VTDecompressionSessionDecodeFrameWithOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, [this, displaying] (OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration) {
+        handleDecompressionOutput(displaying, status, infoFlags, imageBuffer, presentationTimeStamp, presentationDuration);
+    });
 }
 
-void WebCoreDecompressionSession::decompressionOutputCallback(void* decompressionOutputRefCon, void* sourceFrameRefCon, OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration)
+RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::decodeSampleSync(CMSampleBufferRef sample)
 {
-    WebCoreDecompressionSession* session = static_cast<WebCoreDecompressionSession*>(decompressionOutputRefCon);
-    bool displaying = sourceFrameRefCon;
-    session->handleDecompressionOutput(displaying, status, infoFlags, imageBuffer, presentationTimeStamp, presentationDuration);
+    if (isInvalidated())
+        return nullptr;
+
+    ensureDecompressionSessionForSample(sample);
+
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    VTDecodeInfoFlags flags { 0 };
+    VTDecompressionSessionDecodeFrameWithOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, [&] (OSStatus, VTDecodeInfoFlags, CVImageBufferRef imageBuffer, CMTime, CMTime) mutable {
+        if (imageBuffer && CFGetTypeID(imageBuffer) == CVPixelBufferGetTypeID())
+            pixelBuffer = (CVPixelBufferRef)imageBuffer;
+    });
+    return pixelBuffer;
 }
 
 void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef rawImageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration)

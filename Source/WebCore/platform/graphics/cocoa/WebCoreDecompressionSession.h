@@ -50,7 +50,8 @@ namespace WebCore {
 
 class WebCoreDecompressionSession : public ThreadSafeRefCounted<WebCoreDecompressionSession> {
 public:
-    static Ref<WebCoreDecompressionSession> create() { return adoptRef(*new WebCoreDecompressionSession()); }
+    static Ref<WebCoreDecompressionSession> createOpenGL() { return adoptRef(*new WebCoreDecompressionSession(OpenGL)); }
+    static Ref<WebCoreDecompressionSession> createRGB() { return adoptRef(*new WebCoreDecompressionSession(RGB)); }
 
     void invalidate();
     bool isInvalidated() const { return m_invalidated; }
@@ -60,6 +61,8 @@ public:
     void requestMediaDataWhenReady(std::function<void()>);
     void stopRequestingMediaData();
     void notifyWhenHasAvailableVideoFrame(std::function<void()>);
+
+    RetainPtr<CVPixelBufferRef> decodeSampleSync(CMSampleBufferRef);
 
     void setTimebase(CMTimebaseRef);
     CMTimebaseRef timebase() const { return m_timebase.get(); }
@@ -74,7 +77,13 @@ public:
     MediaTime totalFrameDelay() { return m_totalFrameDelay; }
 
 private:
-    WebCoreDecompressionSession();
+    enum Mode {
+        OpenGL,
+        RGB,
+    };
+    WebCoreDecompressionSession(Mode);
+
+    void ensureDecompressionSessionForSample(CMSampleBufferRef);
 
     void decodeSample(CMSampleBufferRef, bool displaying);
     void enqueueDecodedSample(CMSampleBufferRef, bool displaying);
@@ -84,7 +93,6 @@ private:
     void automaticDequeue();
     bool shouldDecodeSample(CMSampleBufferRef, bool displaying);
 
-    static void decompressionOutputCallback(void* decompressionOutputRefCon, void* sourceFrameRefCon, OSStatus, VTDecodeInfoFlags, CVImageBufferRef, CMTime presentationTimeStamp, CMTime presentationDuration);
     static CMTime getDecodeTime(CMBufferRef, void* refcon);
     static CMTime getPresentationTime(CMBufferRef, void* refcon);
     static CMTime getDuration(CMBufferRef, void* refcon);
@@ -95,6 +103,7 @@ private:
     static const CMItemCount kHighWaterMark = 60;
     static const CMItemCount kLowWaterMark = 15;
 
+    Mode m_mode;
     RetainPtr<VTDecompressionSessionRef> m_decompressionSession;
     RetainPtr<CMBufferQueueRef> m_producerQueue;
     RetainPtr<CMBufferQueueRef> m_consumerQueue;
