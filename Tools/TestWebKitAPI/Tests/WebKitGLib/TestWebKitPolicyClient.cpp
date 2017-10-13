@@ -121,6 +121,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(webkit_navigation_action_get_navigation_type(navigationAction), ==, WEBKIT_NAVIGATION_TYPE_OTHER);
     g_assert_cmpint(webkit_navigation_action_get_mouse_button(navigationAction), ==, 0);
     g_assert_cmpint(webkit_navigation_action_get_modifiers(navigationAction), ==, 0);
+    g_assert_false(webkit_navigation_action_is_redirect(navigationAction));
     g_assert(!webkit_navigation_policy_decision_get_frame_name(decision));
     WebKitURIRequest* request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, "http://webkitgtk.org/");
@@ -130,6 +131,19 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     test->loadHtml("<html/>", "http://webkitgtk.org/");
     test->waitUntilLoadFinished();
     g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+
+    test->m_policyDecisionResponse = PolicyClientTest::Use;
+    test->m_respondToPolicyDecisionAsynchronously = false;
+    test->loadURI(kServer->getURIForPath("/redirect").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 4);
+
+    decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
+    navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
+    g_assert_true(webkit_navigation_action_is_redirect(navigationAction));
+    g_assert(!webkit_navigation_policy_decision_get_frame_name(decision));
+    request = webkit_navigation_action_get_request(navigationAction);
+    g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/").data());
 
     // If we are waiting until load completion, it will never complete if we ignore the
     // navigation. So we tell the main loop to quit sometime later.
@@ -248,6 +262,9 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_set_status(message, SOUP_STATUS_OK);
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
         soup_message_body_complete(message->response_body);
+    } else if (g_str_equal(path, "/redirect")) {
+        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+        soup_message_headers_append(message->response_headers, "Location", "/");
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 }

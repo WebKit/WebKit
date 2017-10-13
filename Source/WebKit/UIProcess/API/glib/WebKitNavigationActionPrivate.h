@@ -30,6 +30,7 @@ struct _WebKitNavigationAction {
         , mouseButton(toWebKitMouseButton(navigationActionData.mouseButton))
         , modifiers(toPlatformModifiers(navigationActionData.modifiers))
         , isUserGesture(navigationActionData.userGestureTokenIdentifier)
+        , isRedirect(navigationActionData.isRedirect)
         , request(uriRequest)
     {
     }
@@ -47,6 +48,7 @@ struct _WebKitNavigationAction {
     unsigned mouseButton;
     unsigned modifiers;
     bool isUserGesture : 1;
+    bool isRedirect : 1;
     GRefPtr<WebKitURIRequest> request;
 };
 

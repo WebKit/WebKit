@@ -150,3 +150,19 @@ gboolean webkit_navigation_action_is_user_gesture(WebKitNavigationAction* naviga
     g_return_val_if_fail(navigation, FALSE);
     return navigation->isUserGesture;
 }
+
+/**
+ * webkit_navigation_action_is_redirect:
+ * @navigation: a #WebKitNavigationAction
+ *
+ * Returns whether the @navigation was redirected.
+ *
+ * Returns: %TRUE if the original navigation was redirected, %FALSE otherwise.
+ *
+ * Since: 2.20
+ */
+gboolean webkit_navigation_action_is_redirect(WebKitNavigationAction* navigation)
+{
+    g_return_val_if_fail(navigation, FALSE);
+    return navigation->isRedirect;
+}

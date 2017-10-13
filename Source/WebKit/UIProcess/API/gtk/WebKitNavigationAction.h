@@ -79,6 +79,9 @@ webkit_navigation_action_get_request         (WebKitNavigationAction *navigation
 WEBKIT_API gboolean
 webkit_navigation_action_is_user_gesture     (WebKitNavigationAction *navigation);
 
+WEBKIT_API gboolean
+webkit_navigation_action_is_redirect         (WebKitNavigationAction *navigation);
+
 G_END_DECLS
 
 #endif

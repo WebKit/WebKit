@@ -649,6 +649,7 @@ webkit_navigation_action_get_mouse_button
 webkit_navigation_action_get_modifiers
 webkit_navigation_action_get_request
 webkit_navigation_action_is_user_gesture
+webkit_navigation_action_is_redirect
 
 <SUBSECTION Standard>
 WEBKIT_TYPE_NAVIGATION_ACTION

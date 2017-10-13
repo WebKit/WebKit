@@ -1,3 +1,16 @@
+2017-10-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GLib] WebKitNavigationAction should tell whether it is a redirect
+        https://bugs.webkit.org/show_bug.cgi?id=178178
+
+        Test that WebKitNavigationAction properly reports being a redirect.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp:
+        (testNavigationPolicy): test that loading /redirect leads to a redirect WebKitNavigationAction.
+        (serverCallback): add a /redirect path to the server, which causes a redirect.
+
 2017-10-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix webkitpy failure after r223273

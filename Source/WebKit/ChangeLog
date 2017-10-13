@@ -1,3 +1,22 @@
+2017-10-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GLib] WebKitNavigationAction should tell whether it is a redirect
+        https://bugs.webkit.org/show_bug.cgi?id=178178
+
+        There is no good way to know whether a given navigation action has been caused
+        by a redirect through the glib API. This is necessary to implement some app mode
+        heuristics for Epiphany.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitNavigationAction.cpp:
+        (webkit_navigation_action_is_redirect): returns whether the navigation action is a redirect.
+        * UIProcess/API/glib/WebKitNavigationActionPrivate.h: add isRedirect to the wrapper object.
+        (_WebKitNavigationAction::_WebKitNavigationAction):
+        * UIProcess/API/gtk/WebKitNavigationAction.h: add the new API.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: ditto.
+        * UIProcess/API/wpe/WebKitNavigationAction.h: ditto.
+
 2017-10-12  Brady Eidson  <beidson@apple.com>
 
         SW "Hello world".
