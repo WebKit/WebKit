@@ -107,7 +107,9 @@
             hash="sha256:a3c603ed84c3c2495f9c9331fe6bba3bb0ee65e06ec331e0a0fb52158291b40b"/>
   </autotools>
 
-  <autotools id="fontconfig" autogen-sh="configure">
+  <autotools id="fontconfig" autogen-sh="configure"
+             autogenargs="--disable-docs"
+             supports-non-srcdir-builds="no">
     <dependencies>
       <dep package="freetype6"/>
     </dependencies>

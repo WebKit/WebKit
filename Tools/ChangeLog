@@ -1,3 +1,13 @@
+2017-10-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Fontconfig fails build in JHBuild with “error: conflicting types for ‘FcObjectTypeHash’”
+        https://bugs.webkit.org/show_bug.cgi?id=178283
+
+        Reviewed by Žan Doberšek.
+
+        * wpe/jhbuild.modules: Flag Fontconfig to be built inside the source directory, otherwise
+        compilation fails. While at it, pass "--disable-docs" to cut a bit on build time.
+
 2017-10-13  Youenn Fablet  <youenn@apple.com>
 
         Implement listing origins for which CacheStorage is storing data
