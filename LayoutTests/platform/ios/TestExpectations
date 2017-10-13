@@ -380,6 +380,8 @@ http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.htm
 media/audio-dealloc-crash.html [ Skip ]
 media/restricted-audio-playback-with-document-gesture.html [ Skip ]
 media/restricted-audio-playback-with-multiple-settimeouts.html [ Skip ]
+media/audio-playback-volume-changes-with-restrictions.html [ Skip ]
+media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html [ Skip ]
 storage/domstorage/sessionstorage/set-item-synchronous-keydown.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown

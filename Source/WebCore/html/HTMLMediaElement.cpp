@@ -3378,10 +3378,18 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     if (m_volume == volume)
         return { };
 
+    if (volume && processingUserGestureForMedia())
+        removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
+
     m_volume = volume;
     m_volumeInitialized = true;
     updateVolume();
     scheduleEvent(eventNames().volumechangeEvent);
+
+    if (isPlaying() && !m_mediaSession->playbackPermitted(*this)) {
+        pauseInternal();
+        setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::Prevented);
+    }
 #endif
     return { };
 }
