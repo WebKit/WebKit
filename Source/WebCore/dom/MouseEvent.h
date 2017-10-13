@@ -37,11 +37,11 @@ public:
 #if ENABLE(POINTER_LOCK)
         int movementX, int movementY,
 #endif
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, bool isSimulated = false);
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, bool isSimulated = false);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, DOMWindow*, const PlatformMouseEvent&, int detail, Node* relatedTarget);
 
-    static Ref<MouseEvent> create(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow*, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, EventTarget* relatedTarget);
+    static Ref<MouseEvent> create(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow*, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget);
 
     static Ref<MouseEvent> createForBindings() { return adoptRef(*new MouseEvent); }
 
@@ -54,6 +54,7 @@ public:
     // WinIE uses 1,4,2 for left/middle/right but not for click (just for mousedown/up, maybe others),
     // but we will match the standard DOM.
     unsigned short button() const { return m_button; }
+    unsigned short buttons() const { return m_buttons; }
     unsigned short syntheticClickType() const { return m_syntheticClickType; }
     bool buttonDown() const { return m_buttonDown; }
     EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
@@ -75,13 +76,13 @@ protected:
 #if ENABLE(POINTER_LOCK)
         const IntPoint& movementDelta,
 #endif
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons,
         EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer*, bool isSimulated);
 
     MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow*,
         int detail, const IntPoint& screenLocation, const IntPoint& clientLocation,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        unsigned short button, unsigned short syntheticClickType, EventTarget* relatedTarget);
+        unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget);
 
     MouseEvent(const AtomicString& type, const MouseEventInit&, IsTrusted);
 
@@ -96,6 +97,7 @@ private:
     void setRelatedTarget(EventTarget& relatedTarget) final { m_relatedTarget = &relatedTarget; }
 
     unsigned short m_button { 0 };
+    unsigned short m_buttons { 0 };
     unsigned short m_syntheticClickType { 0 };
     bool m_buttonDown { false };
     RefPtr<EventTarget> m_relatedTarget;

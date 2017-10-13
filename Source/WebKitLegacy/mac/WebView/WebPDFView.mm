@@ -1033,7 +1033,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
             [nsEvent modifierFlags] & NSEventModifierFlagOption,
             [nsEvent modifierFlags] & NSEventModifierFlagShift,
             [nsEvent modifierFlags] & NSEventModifierFlagCommand,
-            button, 0, WebCore::ForceAtClick, 0, 0, true);
+            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, nullptr, true);
     }
 
     // Call to the frame loader because this is where our security checks are made.

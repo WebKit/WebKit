@@ -1,3 +1,31 @@
+2017-10-12  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Add support for MouseEvent.buttons
+        https://bugs.webkit.org/show_bug.cgi?id=178214
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::buttons const):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode const):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::currentlyPressedMouseButtons):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showContextMenuAtPoint):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createWebEvent const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPage::simulateMouseDown):
+        (WebKit::WebPage::simulateMouseUp):
+        (WebKit::WebPage::simulateMouseMotion):
+
 2017-10-12  Youenn Fablet  <youenn@apple.com>
 
         Add API to clean CacheStorage data

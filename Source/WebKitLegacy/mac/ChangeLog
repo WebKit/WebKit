@@ -1,3 +1,13 @@
+2017-10-12  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Add support for MouseEvent.buttons
+        https://bugs.webkit.org/show_bug.cgi?id=178214
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2017-10-11  Sam Weinig  <sam@webkit.org>
 
         Remove out-parameter variants of copyToVector

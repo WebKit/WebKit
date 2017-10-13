@@ -129,6 +129,11 @@ static MouseButton mouseButtonForEvent(NSEvent *event)
     }
 }
 
+static unsigned short currentlyPressedMouseButtons()
+{
+    return static_cast<unsigned short>([NSEvent pressedMouseButtons]);
+}
+
 static PlatformEvent::Type mouseEventTypeForEvent(NSEvent* event)
 {
     switch ([event type]) {
@@ -740,6 +745,7 @@ public:
         m_position = pointForEvent(event, windowView);
         m_globalPosition = IntPoint(globalPointForEvent(event));
         m_button = mouseButtonForEvent(event);
+        m_buttons = currentlyPressedMouseButtons();
         m_clickCount = clickCountForEvent(event);
 #if ENABLE(POINTER_LOCK)
         m_movementDelta = IntPoint(event.deltaX, event.deltaY);

@@ -128,7 +128,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
     // FIXME: Proper button support. Modifiers. deltaX/Y/Z. Click count.
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
-    return WebMouseEvent(type, button, position, position,
+    return WebMouseEvent(type, button, 0, position, position,
         0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(0), wallTimeForEventTime(event->time));
 }
 

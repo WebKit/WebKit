@@ -99,6 +99,8 @@ public:
             ASSERT_NOT_REACHED();
         }
 
+        m_buttons = webEvent.buttons();
+
         m_position = webEvent.position();
 #if ENABLE(POINTER_LOCK)
         m_movementDelta = WebCore::IntPoint(webEvent.deltaX(), webEvent.deltaY());

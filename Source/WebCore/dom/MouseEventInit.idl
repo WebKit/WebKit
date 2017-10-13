@@ -29,6 +29,7 @@ dictionary MouseEventInit : EventModifierInit {
     long clientX = 0;
     long clientY = 0;
     unsigned short button = 0;
+    unsigned short buttons = 0;
 
     // FIXME: We need to support the following member.
     // unsigned short buttons = 0;

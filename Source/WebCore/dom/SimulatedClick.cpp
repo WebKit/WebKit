@@ -50,7 +50,7 @@ private:
 #if ENABLE(POINTER_LOCK)
             { },
 #endif
-            false, false, false, false, 0, 0, 0, 0, 0, true)
+            false, false, false, false, 0, 0, nullptr, 0, 0, nullptr, true)
     {
         if (source == SimulatedClickSource::Bindings)
             setUntrusted();

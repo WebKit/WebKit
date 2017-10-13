@@ -17,18 +17,18 @@ PASS FocusEvent constructor (null argument)
 PASS FocusEvent constructor (empty argument) 
 PASS FocusEvent constructor (argument with default values) 
 PASS FocusEvent constructor (argument with non-default values) 
-FAIL MouseEvent constructor (no argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
-FAIL MouseEvent constructor (undefined argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
-FAIL MouseEvent constructor (null argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
-FAIL MouseEvent constructor (empty argument) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
-FAIL MouseEvent constructor (argument with default values) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
-FAIL MouseEvent constructor (argument with non-default values) assert_true: Event object "[object MouseEvent]" should have a buttons property expected true got false
-FAIL WheelEvent constructor (no argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
-FAIL WheelEvent constructor (undefined argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
-FAIL WheelEvent constructor (null argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
-FAIL WheelEvent constructor (empty argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
-FAIL WheelEvent constructor (argument with default values) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
-FAIL WheelEvent constructor (argument with non-default values) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
+PASS MouseEvent constructor (no argument) 
+PASS MouseEvent constructor (undefined argument) 
+PASS MouseEvent constructor (null argument) 
+PASS MouseEvent constructor (empty argument) 
+PASS MouseEvent constructor (argument with default values) 
+PASS MouseEvent constructor (argument with non-default values) 
+PASS WheelEvent constructor (no argument) 
+PASS WheelEvent constructor (undefined argument) 
+PASS WheelEvent constructor (null argument) 
+PASS WheelEvent constructor (empty argument) 
+PASS WheelEvent constructor (argument with default values) 
+PASS WheelEvent constructor (argument with non-default values) 
 PASS KeyboardEvent constructor (no argument) 
 PASS KeyboardEvent constructor (undefined argument) 
 PASS KeyboardEvent constructor (null argument) 

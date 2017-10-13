@@ -134,6 +134,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
 
     return WebMouseEvent(type,
         buttonForEvent(event),
+        0,
         IntPoint(x, y),
         IntPoint(xRoot, yRoot),
         0 /* deltaX */,

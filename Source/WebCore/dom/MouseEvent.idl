@@ -33,6 +33,7 @@
     readonly attribute boolean altKey;
     readonly attribute boolean metaKey;
     readonly attribute unsigned short button;
+    readonly attribute unsigned short buttons;
     readonly attribute EventTarget? relatedTarget;
     [Conditional=POINTER_LOCK] readonly attribute long movementX;
     [Conditional=POINTER_LOCK] readonly attribute long movementY;

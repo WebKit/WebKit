@@ -55,7 +55,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, DOMWindow* vie
 #if ENABLE(POINTER_LOCK)
         event.movementDelta().x(), event.movementDelta().y(),
 #endif
-        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
+        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(), event.buttons(),
         relatedTarget, event.force(), event.syntheticClickType());
 }
 
@@ -63,19 +63,19 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, boo
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
 #endif
-    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, bool isSimulated)
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, bool isSimulated)
 {
     return adoptRef(*new MouseEvent(type, canBubble, cancelable, timestamp, view,
         detail, { screenX, screenY }, { pageX, pageY },
 #if ENABLE(POINTER_LOCK)
         { movementX, movementY },
 #endif
-        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated));
+        ctrlKey, altKey, shiftKey, metaKey, button, buttons, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated));
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, EventTarget* relatedTarget)
+Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
 {
-    return adoptRef(*new MouseEvent(eventType, canBubble, cancelable, view, detail, { screenX, screenY }, { clientX, clientY }, ctrlKey, altKey, shiftKey, metaKey, button, syntheticClickType, relatedTarget));
+    return adoptRef(*new MouseEvent(eventType, canBubble, cancelable, view, detail, { screenX, screenY }, { clientX, clientY }, ctrlKey, altKey, shiftKey, metaKey, button, buttons, syntheticClickType, relatedTarget));
 }
 
 MouseEvent::MouseEvent()
@@ -86,13 +86,14 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 #if ENABLE(POINTER_LOCK)
         const IntPoint& movementDelta,
 #endif
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, bool isSimulated)
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, bool isSimulated)
     : MouseRelatedEvent(eventType, canBubble, cancelable, timestamp, view, detail, screenLocation, windowLocation,
 #if ENABLE(POINTER_LOCK)
         movementDelta,
 #endif
         ctrlKey, altKey, shiftKey, metaKey, isSimulated)
     , m_button(button == (unsigned short)-1 ? 0 : button)
+    , m_buttons(buttons)
     , m_syntheticClickType(button == (unsigned short)-1 ? 0 : syntheticClickType)
     , m_buttonDown(button != (unsigned short)-1)
     , m_relatedTarget(relatedTarget)
@@ -101,13 +102,14 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, EventTarget* relatedTarget)
+MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
     : MouseRelatedEvent(eventType, canBubble, cancelable, MonotonicTime::now(), view, detail, screenLocation, { },
 #if ENABLE(POINTER_LOCK)
         { },
 #endif
         ctrlKey, altKey, shiftKey, metaKey, false)
     , m_button(button == (unsigned short)-1 ? 0 : button)
+    , m_buttons(buttons)
     , m_syntheticClickType(button == (unsigned short)-1 ? 0 : syntheticClickType)
     , m_buttonDown(button != (unsigned short)-1)
     , m_relatedTarget(relatedTarget)
@@ -118,6 +120,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& initializer, IsTrusted isTrusted)
     : MouseRelatedEvent(eventType, initializer, isTrusted)
     , m_button(initializer.button == (unsigned short)-1 ? 0 : initializer.button)
+    , m_buttons(initializer.buttons)
     , m_buttonDown(initializer.button != (unsigned short)-1)
     , m_relatedTarget(initializer.relatedTarget)
 {
