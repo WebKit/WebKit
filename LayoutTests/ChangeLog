@@ -1,3 +1,16 @@
+2017-10-13  Youenn Fablet  <youenn@apple.com>
+
+        Modernize LayoutTests/http/tests/cache-storage/cache-clearing-*.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=178245
+
+        Reviewed by Chris Dumez.
+
+        Using await/async to improve the testing.
+        Taking benefit of clearDOMCache to wait for completion to simplify both tests as well.
+
+        * http/tests/cache-storage/cache-clearing-all.https.html:
+        * http/tests/cache-storage/cache-clearing-origin.https.html:
+
 2017-10-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         "text/html" data is not exposed when dragging and dropping across origins
