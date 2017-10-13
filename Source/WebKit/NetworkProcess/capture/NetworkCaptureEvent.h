@@ -28,10 +28,9 @@
 #if ENABLE(NETWORK_CAPTURE)
 
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
-#include <wtf/Variant.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 class ResourceError;

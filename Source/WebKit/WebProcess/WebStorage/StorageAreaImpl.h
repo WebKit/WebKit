@@ -27,7 +27,6 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/StorageArea.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

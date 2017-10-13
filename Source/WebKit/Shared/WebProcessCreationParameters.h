@@ -30,6 +30,7 @@
 #include "TextCheckerState.h"
 #include "UserData.h"
 #include <pal/SessionID.h>
+#include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -37,7 +38,6 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include "MachPort.h"
 #include <WebCore/MachSendRight.h>
 #endif
 

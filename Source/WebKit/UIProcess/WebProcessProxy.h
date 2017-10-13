@@ -43,6 +43,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

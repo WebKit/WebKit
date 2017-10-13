@@ -113,7 +113,6 @@
 #include <WebCore/UserGestureIndicator.h>
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/Language.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
