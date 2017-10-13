@@ -36,6 +36,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 typedef CFTypeRef CMBufferRef;
+typedef const struct __CFArray * CFArrayRef;
 typedef struct opaqueCMBufferQueue *CMBufferQueueRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
@@ -99,6 +100,11 @@ private:
     static CFComparisonResult compareBuffers(CMBufferRef buf1, CMBufferRef buf2, void* refcon);
     void maybeBecomeReadyForMoreMediaData();
 
+    void resetQosTier();
+    void increaseQosTier();
+    void decreaseQosTier();
+    void updateQosWithDecodeTimeStatistics(double ratio);
+
     static const CMItemCount kMaximumCapacity = 120;
     static const CMItemCount kHighWaterMark = 60;
     static const CMItemCount kLowWaterMark = 15;
@@ -114,6 +120,10 @@ private:
     OSObjectPtr<dispatch_source_t> m_timerSource;
     std::function<void()> m_notificationCallback;
     std::function<void()> m_hasAvailableFrameCallback;
+    RetainPtr<CFArrayRef> m_qosTiers;
+    long m_currentQosTier { 0 };
+    unsigned long m_framesSinceLastQosCheck { 0 };
+    double m_decodeRatioMovingAverage { 0 };
 
     bool m_invalidated { false };
     int m_framesBeingDecoded { 0 };

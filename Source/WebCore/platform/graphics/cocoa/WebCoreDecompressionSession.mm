@@ -33,6 +33,8 @@
 #import "PixelBufferConformerCV.h"
 #import <CoreMedia/CMBufferQueue.h>
 #import <CoreMedia/CMFormatDescription.h>
+#import <MediaTimeAVFoundation.h>
+#import <wtf/CurrentTime.h>
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/StringPrintStream.h>
@@ -228,8 +230,14 @@ void WebCoreDecompressionSession::ensureDecompressionSessionForSample(CMSampleBu
             attributes = @{(NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
         }
         VTDecompressionSessionRef decompressionSessionOut = nullptr;
-        if (noErr == VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (CFDictionaryRef)videoDecoderSpecification, (CFDictionaryRef)attributes, nullptr, &decompressionSessionOut))
+        if (noErr == VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (CFDictionaryRef)videoDecoderSpecification, (CFDictionaryRef)attributes, nullptr, &decompressionSessionOut)) {
             m_decompressionSession = adoptCF(decompressionSessionOut);
+            CFArrayRef rawSuggestedQualityOfServiceTiers = nullptr;
+            VTSessionCopyProperty(decompressionSessionOut, kVTDecompressionPropertyKey_SuggestedQualityOfServiceTiers, kCFAllocatorDefault, &rawSuggestedQualityOfServiceTiers);
+            m_qosTiers = adoptCF(rawSuggestedQualityOfServiceTiers);
+            m_currentQosTier = 0;
+            resetQosTier();
+        }
     }
 }
 
@@ -252,7 +260,11 @@ void WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
         return;
     }
 
-    VTDecompressionSessionDecodeFrameWithOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, [this, displaying] (OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration) {
+    double startTime = monotonicallyIncreasingTime();
+    VTDecompressionSessionDecodeFrameWithOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, [this, displaying, startTime](OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration) {
+        double deltaRatio = (monotonicallyIncreasingTime() - startTime) / CMTimeGetSeconds(presentationDuration);
+
+        updateQosWithDecodeTimeStatistics(deltaRatio);
         handleDecompressionOutput(displaying, status, infoFlags, imageBuffer, presentationTimeStamp, presentationDuration);
     });
 }
@@ -300,13 +312,6 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
         --m_framesBeingDecoded;
         maybeBecomeReadyForMoreMediaData();
         return;
-    }
-
-    if (displaying && m_timebase) {
-        auto currentTime = CMTimebaseGetTime(m_timebase.get());
-        auto currentRate = CMTimebaseGetRate(m_timebase.get());
-        if (currentRate > 0 && CMTimeCompare(presentationTimeStamp, currentTime) < 0)
-            m_totalFrameDelay += toMediaTime(CMTimeSubtract(currentTime, presentationTimeStamp));
     }
 
     dispatch_async(m_enqueingQueue.get(), [protectedThis = makeRefPtr(this), status, imageSampleBuffer = adoptCF(rawImageSampleBuffer), infoFlags, displaying] {
@@ -379,6 +384,27 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample,
         return;
     }
 
+    bool shouldNotify = true;
+
+    if (displaying && m_timebase) {
+        auto currentRate = CMTimebaseGetRate(m_timebase.get());
+        auto currentTime = toMediaTime(CMTimebaseGetTime(m_timebase.get()));
+        auto presentationStartTime = toMediaTime(CMSampleBufferGetPresentationTimeStamp(sample));
+        auto presentationEndTime = presentationStartTime + toMediaTime(CMSampleBufferGetDuration(sample));
+        if (currentTime < presentationStartTime || currentTime >= presentationEndTime)
+            shouldNotify = false;
+
+        if (currentRate > 0 && presentationEndTime < currentTime) {
+#if !LOG_DISABLED
+            auto begin = toMediaTime(CMBufferQueueGetFirstPresentationTimeStamp(m_producerQueue.get()));
+            auto end = toMediaTime(CMBufferQueueGetEndPresentationTimeStamp(m_producerQueue.get()));
+            LOG(Media, "WebCoreDecompressionSession::enqueueDecodedSample(%p) - dropping frame late by %s, framesBeingDecoded(%d), producerQueue(%s -> %s)", this, toString(presentationEndTime - currentTime).utf8().data(), m_framesBeingDecoded, toString(begin).utf8().data(), toString(end).utf8().data());
+#endif
+            ++m_droppedVideoFrames;
+            return;
+        }
+    }
+
     CMBufferQueueEnqueue(m_producerQueue.get(), sample);
 
 #if !LOG_DISABLED
@@ -394,13 +420,8 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample,
     if (!m_hasAvailableFrameCallback)
         return;
 
-    if (m_timebase) {
-        auto currentTime = toMediaTime(CMTimebaseGetTime(m_timebase.get()));
-        auto presentationStartTime = toMediaTime(CMSampleBufferGetPresentationTimeStamp(sample));
-        auto presentationEndTime = presentationStartTime + toMediaTime(CMSampleBufferGetDuration(sample));
-        if (currentTime < presentationStartTime || currentTime >= presentationEndTime)
-            return;
-    }
+    if (!shouldNotify)
+        return;
 
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), callback = WTFMove(m_hasAvailableFrameCallback)] {
         callback();
@@ -504,6 +525,9 @@ void WebCoreDecompressionSession::flush()
         CMBufferQueueReset(protectedThis->m_producerQueue.get());
         dispatch_sync(protectedThis->m_enqueingQueue.get(), [protectedThis] {
             CMBufferQueueReset(protectedThis->m_consumerQueue.get());
+            protectedThis->m_framesSinceLastQosCheck = 0;
+            protectedThis->m_currentQosTier = 0;
+            protectedThis->resetQosTier();
         });
     });
 }
@@ -532,6 +556,71 @@ CMTime WebCoreDecompressionSession::getDuration(CMBufferRef buf, void*)
 CFComparisonResult WebCoreDecompressionSession::compareBuffers(CMBufferRef buf1, CMBufferRef buf2, void* refcon)
 {
     return (CFComparisonResult)CMTimeCompare(getPresentationTime(buf1, refcon), getPresentationTime(buf2, refcon));
+}
+
+void WebCoreDecompressionSession::resetQosTier()
+{
+    if (!m_qosTiers || !m_decompressionSession)
+        return;
+
+    if (m_currentQosTier < 0 || m_currentQosTier >= CFArrayGetCount(m_qosTiers.get()))
+        return;
+
+    auto tier = (CFDictionaryRef)CFArrayGetValueAtIndex(m_qosTiers.get(), m_currentQosTier);
+    LOG(Media, "WebCoreDecompressionSession::resetQosTier(%p) - currentQosTier(%ld), tier(%@)", this, m_currentQosTier, [(NSDictionary *)tier description]);
+
+    VTSessionSetProperties(m_decompressionSession.get(), tier);
+    m_framesSinceLastQosCheck = 0;
+}
+
+void WebCoreDecompressionSession::increaseQosTier()
+{
+    if (!m_qosTiers)
+        return;
+
+    if (m_currentQosTier + 1 >= CFArrayGetCount(m_qosTiers.get()))
+        return;
+
+    ++m_currentQosTier;
+    resetQosTier();
+}
+
+void WebCoreDecompressionSession::decreaseQosTier()
+{
+    if (!m_qosTiers)
+        return;
+
+    if (m_currentQosTier <= 0)
+        return;
+
+    --m_currentQosTier;
+    resetQosTier();
+}
+
+void WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics(double ratio)
+{
+    static const double kMovingAverageAlphaValue = 0.1;
+    static const unsigned kNumberOfFramesBeforeSwitchingTiers = 60;
+    static const double kHighWaterDecodeRatio = 1.;
+    static const double kLowWaterDecodeRatio = 0.5;
+
+    if (!m_timebase)
+        return;
+
+    double rate = CMTimebaseGetRate(m_timebase.get());
+    if (!rate)
+        rate = 1;
+
+    m_decodeRatioMovingAverage += kMovingAverageAlphaValue * (ratio - m_decodeRatioMovingAverage) * rate;
+    if (++m_framesSinceLastQosCheck < kNumberOfFramesBeforeSwitchingTiers)
+        return;
+
+    LOG(Media, "WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics(%p) - framesSinceLastQosCheck(%ld), decodeRatioMovingAverage(%g)", this, m_framesSinceLastQosCheck, m_decodeRatioMovingAverage);
+    if (m_decodeRatioMovingAverage > kHighWaterDecodeRatio)
+        increaseQosTier();
+    else if (m_decodeRatioMovingAverage < kLowWaterDecodeRatio)
+        decreaseQosTier();
+    m_framesSinceLastQosCheck = 0;
 }
 
 }

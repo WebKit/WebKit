@@ -2,6 +2,72 @@
 
         Apply patch. rdar://problem/34891297
 
+    Cherry-pick of r222803 <rdar://problem/34745579>
+    
+        2017-10-03  Jer Noble  <jer.noble@apple.com>
+    
+        Implement quality-of-service tiers in WebCoreDecompressionSession
+        https://bugs.webkit.org/show_bug.cgi?id=177769
+    
+        Reviewed by Dean Jackson.
+    
+        VTDecompressionSession will suggest quality-of-service tiers to be used when decompression
+        can't keep up with playback speed. Use a simple exponential-moving-average heuristic to
+        determine when to move up and down the tiers.
+    
+        Drive-by fix: When frames are so late that they miss the display deadline, mark them as
+        dropped rather than just delayed.
+    
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+        (WebCore::WebCoreDecompressionSession::decodeSample):
+        (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+        (WebCore::WebCoreDecompressionSession::automaticDequeue):
+        (WebCore::WebCoreDecompressionSession::enqueueDecodedSample):
+        (WebCore::WebCoreDecompressionSession::resetQosTier):
+        (WebCore::WebCoreDecompressionSession::increaseQosTier):
+        (WebCore::WebCoreDecompressionSession::decreaseQosTier):
+        (WebCore::WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics):
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+
+    2017-10-12  Jer Noble  <jer.noble@apple.com>
+
+            Cherry-pick of r222803 <rdar://problem/34745579>
+
+        2017-10-03  Jer Noble  <jer.noble@apple.com>
+
+                Implement quality-of-service tiers in WebCoreDecompressionSession
+                https://bugs.webkit.org/show_bug.cgi?id=177769
+
+                Reviewed by Dean Jackson.
+
+                VTDecompressionSession will suggest quality-of-service tiers to be used when decompression
+                can't keep up with playback speed. Use a simple exponential-moving-average heuristic to
+                determine when to move up and down the tiers.
+
+                Drive-by fix: When frames are so late that they miss the display deadline, mark them as
+                dropped rather than just delayed.
+
+                * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+                * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+                (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+                (WebCore::WebCoreDecompressionSession::decodeSample):
+                (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+                (WebCore::WebCoreDecompressionSession::automaticDequeue):
+                (WebCore::WebCoreDecompressionSession::enqueueDecodedSample):
+                (WebCore::WebCoreDecompressionSession::resetQosTier):
+                (WebCore::WebCoreDecompressionSession::increaseQosTier):
+                (WebCore::WebCoreDecompressionSession::decreaseQosTier):
+                (WebCore::WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics):
+                * platform/cocoa/VideoToolboxSoftLink.cpp:
+                * platform/cocoa/VideoToolboxSoftLink.h:
+
+2017-10-12  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/34891297
+
     Partial cherry-pick of r222225 <rdar://problem/34745579>, only the changes to WebCoreDecompressionSession.
     
         2017-09-19  Jer Noble  <jer.noble@apple.com>
