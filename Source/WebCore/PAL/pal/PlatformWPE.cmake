@@ -5,6 +5,8 @@ list(APPEND PAL_SOURCES
     system/Sound.cpp
 
     text/KillRing.cpp
+
+    unix/LoggingUnix.cpp
 )
 
 if (ENABLE_SUBTLE_CRYPTO)

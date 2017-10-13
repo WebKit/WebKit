@@ -1,3 +1,19 @@
+2017-10-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Provide an implementation of PAL::logLevelString()
+        https://bugs.webkit.org/show_bug.cgi?id=178263
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Provide an implementation of PAL::logLevelString() which picks the value from the
+        WEBCORE_DEBUG environment variable. Logging of notImplemented() calls is always enabled,
+        which is the same behavior as in WebCore::logLevelString().
+
+        * pal/PlatformGTK.cmake: Add LoggingUnix.cpp to the list of sources.
+        * pal/PlatformWPE.cmake: Add LoggingUnix.cpp to the list of sources.
+        * pal/unix/LoggingUnix.cpp: Added.
+        (PAL::logLevelString):
+
 2017-10-13  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; add definitions for IOSurface methods missing on some platforms.
