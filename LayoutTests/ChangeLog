@@ -1,3 +1,24 @@
+2017-10-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222627. rdar://problem/34938437
+
+    2017-09-28  Tim Horton  <timothy_horton@apple.com>
+
+            Remove constant() in favor of env()
+            https://bugs.webkit.org/show_bug.cgi?id=177581
+            <rdar://problem/34701321>
+
+            Reviewed by Dean Jackson.
+
+            * fast/css/variables/constants/invalid-constant-name-fallback-expected.html: Removed.
+            * fast/css/variables/constants/invalid-constant-name-fallback.html: Removed.
+            * fast/css/variables/constants/ios/safe-area-inset-set-expected.html: Removed.
+            * fast/css/variables/constants/ios/safe-area-inset-set.html: Removed.
+            * fast/css/variables/constants/safe-area-inset-cannot-override-expected.html: Removed.
+            * fast/css/variables/constants/safe-area-inset-cannot-override.html: Removed.
+            * fast/css/variables/constants/safe-area-inset-zero-expected.html: Removed.
+            * fast/css/variables/constants/safe-area-inset-zero.html: Removed.
+
 2017-10-12  Dean Jackson  <dino@apple.com>
 
         [WebGL] VideoTextureCopierCV doesn't correctly restore vertex attribute state

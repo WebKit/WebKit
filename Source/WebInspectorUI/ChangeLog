@@ -1,3 +1,20 @@
+2017-10-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222627. rdar://problem/34938437
+
+    2017-09-28  Tim Horton  <timothy_horton@apple.com>
+
+            Remove constant() in favor of env()
+            https://bugs.webkit.org/show_bug.cgi?id=177581
+            <rdar://problem/34701321>
+
+            Reviewed by Dean Jackson.
+
+            * UserInterface/Models/CSSCompletions.js:
+            * UserInterface/Models/CSSKeywordCompletions.js:
+            (WI.CSSKeywordCompletions.forProperty):
+            (WI.CSSKeywordCompletions.forFunction):
+
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222762. rdar://problem/34771420

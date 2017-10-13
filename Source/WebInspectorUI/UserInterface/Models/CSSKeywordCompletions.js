@@ -62,6 +62,26 @@ WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
     return new WebInspector.CSSCompletions(acceptedKeywords, true);
 };
 
+WebInspector.CSSKeywordCompletions.forFunction = function(functionName)
+{
+    let suggestions = ["var()"];
+
+    if (functionName === "var")
+        suggestions = [];
+    else if (functionName == "env")
+        suggestions = suggestions.concat(["safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left"]);
+    else if (functionName === "image-set")
+        suggestions.push("url()");
+    else if (functionName === "repeat")
+        suggestions = suggestions.concat(["auto", "auto-fill", "auto-fit", "min-content", "max-content"]);
+    else if (functionName.endsWith("gradient")) {
+        suggestions = suggestions.concat(["to", "left", "right", "top", "bottom"]);
+        suggestions = suggestions.concat(WebInspector.CSSKeywordCompletions._colors);
+    }
+
+    return new WebInspector.CSSCompletions(suggestions, true);
+}
+
 WebInspector.CSSKeywordCompletions.addCustomCompletions = function(properties)
 {
     for (var property of properties) {
