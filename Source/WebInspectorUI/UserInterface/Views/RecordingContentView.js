@@ -199,7 +199,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                         snapshot.context[name](...snapshot.state[name]);
                     else
                         snapshot.context[name] = snapshot.state[name];
-                } catch (e) {
+                } catch {
                     delete snapshot.state[name];
                 }
             }

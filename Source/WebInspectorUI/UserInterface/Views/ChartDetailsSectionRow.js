@@ -54,7 +54,7 @@ WI.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WI.DetailsSecti
         this._items = new Map;
         this._title = "";
         this._chartSize = chartSize;
-        this._radius = (this._chartSize / 2) - 1;   // Subtract one to accomodate chart stroke width.
+        this._radius = (this._chartSize / 2) - 1; // Subtract one to accomodate chart stroke width.
         this._innerRadius = innerRadiusRatio ? Math.floor(this._radius * innerRadiusRatio) : 0;
         this._total = 0;
 

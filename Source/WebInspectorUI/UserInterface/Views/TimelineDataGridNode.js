@@ -325,8 +325,8 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
     displayName()
     {
         // Can be overridden by subclasses.
-        const includeDetails = true;
-        return WI.TimelineTabContentView.displayNameForRecord(this.record, true);
+        const includeDetailsInMainTitle = true;
+        return WI.TimelineTabContentView.displayNameForRecord(this.record, includeDetailsInMainTitle);
     }
 
     iconClassNames()

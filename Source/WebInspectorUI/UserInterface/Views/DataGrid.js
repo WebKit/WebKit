@@ -641,10 +641,10 @@ WI.DataGrid = class DataGrid extends WI.View
         for (var identifier of this.columns.keys()) {
             var width = Math.round(100 * widths[identifier] / totalColumnWidths);
             if (minPercent && width < minPercent) {
-                recoupPercent += (minPercent - width);
+                recoupPercent += minPercent - width;
                 width = minPercent;
             } else if (maxPercent && width > maxPercent) {
-                recoupPercent -= (width - maxPercent);
+                recoupPercent -= width - maxPercent;
                 width = maxPercent;
             }
             widths[identifier] = width;

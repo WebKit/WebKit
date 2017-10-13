@@ -186,7 +186,7 @@ TestHarness = class TestHarness extends WI.Object
         if (message instanceof Element)
             return message.textContent;
 
-        return (typeof message !== "string") ? JSON.stringify(message) : message;
+        return typeof message !== "string" ? JSON.stringify(message) : message;
     }
 
     static sanitizeURL(url)
@@ -195,7 +195,7 @@ TestHarness = class TestHarness extends WI.Object
             return "(unknown)";
 
         let lastPathSeparator = Math.max(url.lastIndexOf("/"), url.lastIndexOf("\\"));
-        let location = (lastPathSeparator > 0) ? url.substr(lastPathSeparator + 1) : url;
+        let location = lastPathSeparator > 0 ? url.substr(lastPathSeparator + 1) : url;
         if (!location.length)
             location = "(unknown)";
 
@@ -211,10 +211,10 @@ TestHarness = class TestHarness extends WI.Object
         // Most frames are of the form "functionName@file:///foo/bar/File.js:345".
         // But, some frames do not have a functionName. Get rid of the file path.
         let nameAndURLSeparator = frame.indexOf("@");
-        let frameName = (nameAndURLSeparator > 0) ? frame.substr(0, nameAndURLSeparator) : "(anonymous)";
+        let frameName = nameAndURLSeparator > 0 ? frame.substr(0, nameAndURLSeparator) : "(anonymous)";
 
         let lastPathSeparator = Math.max(frame.lastIndexOf("/"), frame.lastIndexOf("\\"));
-        let frameLocation = (lastPathSeparator > 0) ? frame.substr(lastPathSeparator + 1) : frame;
+        let frameLocation = lastPathSeparator > 0 ? frame.substr(lastPathSeparator + 1) : frame;
         if (!frameLocation.length)
             frameLocation = "unknown";
 
@@ -282,14 +282,14 @@ TestHarness = class TestHarness extends WI.Object
             let valueString = JSON.stringify(value);
             if (valueString.length <= maximumValueStringLength)
                 return valueString;
-        } catch (e) {}
+        } catch { }
 
         try {
             let valueString = String(value);
             if (valueString === defaultValueString && value.constructor && value.constructor.name !== "Object")
                 return value.constructor.name + " instance " + instanceIdentifier(value);
             return valueString;
-        } catch (e) {
+        } catch {
             return defaultValueString;
         }
     }

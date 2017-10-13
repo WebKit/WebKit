@@ -227,7 +227,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         // Don't include a colon if no value.
         console.assert(typeof key === "string");
-        let displayKey = key + (!!value ? ": " : "");
+        let displayKey = key + (value ? ": " : "");
 
         let keyElement = p.appendChild(document.createElement("span"));
         keyElement.className = "key";
@@ -388,7 +388,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         if (requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i)) {
             // Simple form data that should be parsable like a query string.
             this._appendKeyValuePair(detailsElement, WI.UIString("MIME Type"), requestDataContentType);
-            let queryStringPairs = parseQueryString(requestData, true)
+            let queryStringPairs = parseQueryString(requestData, true);
             for (let {name, value} of queryStringPairs)
                 this._appendKeyValuePair(detailsElement, name, value);
             return;

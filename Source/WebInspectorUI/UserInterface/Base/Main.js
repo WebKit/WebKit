@@ -375,7 +375,6 @@ WI.contentLoaded = function()
         reloadToolTip = WI.UIString("Restart (%s)").format(this._reloadPageKeyboardShortcut.displayName);
     else
         reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(this._reloadPageKeyboardShortcut.displayName, this._reloadPageFromOriginKeyboardShortcut.displayName);
-  
     this._reloadToolbarButton = new WI.ButtonToolbarItem("reload", reloadToolTip, "Images/ReloadToolbar.svg");
     this._reloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._reloadToolbarButtonClicked, this);
 
@@ -720,7 +719,7 @@ WI.updateWindowTitle = function()
     var lastPathComponent;
     try {
         lastPathComponent = decodeURIComponent(urlComponents.lastPathComponent || "");
-    } catch (e) {
+    } catch {
         lastPathComponent = urlComponents.lastPathComponent;
     }
 
@@ -992,8 +991,8 @@ WI.showNetworkTab = function()
     let tabContentView;
     if (WI.settings.experimentalEnableNewNetworkTab.value) {
         tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.NetworkTabContentView);
-        if (!tabBrowser)
-            tabBrowser = new WI.NetworkTabContentView;
+        if (!tabContentView)
+            tabContentView = new WI.NetworkTabContentView;
     } else {
         tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.LegacyNetworkTabContentView);
         if (!tabContentView)
@@ -1865,7 +1864,7 @@ WI._updateInspectModeToolbarButton = function()
     }
 
     this._inspectModeToolbarButton.hidden = false;
-}
+};
 
 WI._toggleInspectMode = function(event)
 {
@@ -2030,7 +2029,7 @@ WI._populateFind = function(event)
         return;
 
     contentBrowser.handlePopulateFindShortcut();
-}
+};
 
 WI._findNext = function(event)
 {
@@ -2048,7 +2047,7 @@ WI._findNext = function(event)
         return;
 
     contentBrowser.handleFindNextShortcut();
-}
+};
 
 WI._findPrevious = function(event)
 {
@@ -2066,7 +2065,7 @@ WI._findPrevious = function(event)
         return;
 
     contentBrowser.handleFindPreviousShortcut();
-}
+};
 
 WI._copy = function(event)
 {
@@ -2207,7 +2206,7 @@ WI._enableControlFlowProfilerSettingChanged = function(event)
 WI._resourceCachingDisabledSettingChanged = function(event)
 {
     NetworkAgent.setResourceCachingDisabled(this.resourceCachingDisabledSetting.value);
-}
+};
 
 WI.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)
 {
@@ -2359,7 +2358,7 @@ WI.linkifyURLAsNode = function(url, linkText, classes)
     if (!linkText)
         linkText = url;
 
-    classes = (classes ? classes + " " : "");
+    classes = classes ? classes + " " : "";
 
     var a = document.createElement("a");
     a.href = url;
@@ -2634,13 +2633,13 @@ WI._sharedWindowKeydownListener = function(event)
     }
 };
 
-WI.reportInternalError = function(errorOrString, details={})
+WI.reportInternalError = function(errorOrString, details = {})
 {
     // The 'details' object includes additional information from the caller as free-form string keys and values.
     // Each key and value will be shown in the uncaught exception reporter, console error message, or in
     // a pre-filled bug report generated for this internal error.
 
-    let error = (errorOrString instanceof Error) ? errorOrString : new Error(errorOrString);
+    let error = errorOrString instanceof Error ? errorOrString : new Error(errorOrString);
     error.details = details;
 
     // The error will be displayed in the Uncaught Exception Reporter sheet if DebugUI is enabled.

@@ -54,4 +54,4 @@ WI.DebugContentView = class DebugContentView extends WI.ContentView
         console.debug(`closed: ${this._string}`);
         super.closed();
     }
-}
+};

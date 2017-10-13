@@ -192,7 +192,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (!child)
             return;
 
-        var previousChild = (index > 0 ? this.children[index - 1] : null);
+        var previousChild = index > 0 ? this.children[index - 1] : null;
         if (previousChild) {
             previousChild.nextSibling = child;
             child.previousSibling = previousChild;

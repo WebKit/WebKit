@@ -389,7 +389,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
             return zeroWidthSpace; // Zero width space to keep the cell from collapsing.
 
         let data = this.data[columnIdentifier];
-        return (typeof data === "number") ? data.maxDecimals(2).toLocaleString() : data;
+        return typeof data === "number" ? data.maxDecimals(2).toLocaleString() : data;
     }
 
     elementWithColumnIdentifier(columnIdentifier)
@@ -634,7 +634,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         while (node && ((!skipHidden || (node.revealed && node.expanded)) ? node.children.lastValue : null)) {
             if (!dontPopulate && node.hasChildren)
                 node.dispatchEventToListeners("populate");
-            node = ((!skipHidden || (node.revealed && node.expanded)) ? node.children.lastValue : null);
+            node = (!skipHidden || (node.revealed && node.expanded)) ? node.children.lastValue : null;
         }
 
         if (node)

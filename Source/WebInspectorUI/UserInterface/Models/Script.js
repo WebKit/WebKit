@@ -274,9 +274,7 @@ WI.Script = class Script extends WI.SourceCode
                 if (resource)
                     return resource;
             }
-        } catch (e) {
-            // Ignore possible URIErrors.
-        }
+        } catch { }
 
         return null;
     }

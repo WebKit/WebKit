@@ -262,7 +262,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         domBreakpointNodeIdentifierMap.delete(nodeIdentifier);
 
         if (!domBreakpointNodeIdentifierMap.size)
-            this._domBreakpointFrameIdentifierMap.delete(frameIdentifier)
+            this._domBreakpointFrameIdentifierMap.delete(frameIdentifier);
     }
 
     _detachBreakpointsForFrame(frame)

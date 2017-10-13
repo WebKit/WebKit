@@ -102,7 +102,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
 
         this._numberOfResults = numberOfResults;
 
-        this._previousResultButton.disabled = this._nextResultButton.disabled = (numberOfResults <= 0);
+        this._previousResultButton.disabled = this._nextResultButton.disabled = numberOfResults <= 0;
 
         if (numberOfResults === null)
             this._resultCountLabel.textContent = "";

@@ -61,7 +61,7 @@ WI.Setting = class Setting extends WI.Object
         if (!window.InspectorTest && window.localStorage && this._localStorageKey in window.localStorage) {
             try {
                 this._value = JSON.parse(window.localStorage[this._localStorageKey]);
-            } catch (e) {
+            } catch {
                 delete window.localStorage[this._localStorageKey];
             }
         }
@@ -83,7 +83,7 @@ WI.Setting = class Setting extends WI.Object
                     delete window.localStorage[this._localStorageKey];
                 else
                     window.localStorage[this._localStorageKey] = JSON.stringify(this._value);
-            } catch (e) {
+            } catch {
                 console.error("Error saving setting with name: " + this._name);
             }
         }

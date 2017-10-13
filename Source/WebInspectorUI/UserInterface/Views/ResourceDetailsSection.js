@@ -56,4 +56,4 @@ WI.ResourceDetailsSection = class ResourceDetailsSection
         console.assert(typeof isError === "boolean");
         this.element.classList.toggle("error", isError);
     }
-}
+};

@@ -144,9 +144,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                             for (var i = 0; i < names.length; ++i)
                                 resultSet[names[i]] = true;
                         }
-                    } catch (e) {
-                        // Ignore
-                    }
+                    } catch { }
                 }
 
                 if (arrayLength)
@@ -175,9 +173,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                         var names = Object.getOwnPropertyNames(o);
                         for (var i = 0; i < names.length; ++i)
                             resultSet[names[i]] = true;
-                    } catch (e) {
-                        // Ignore
-                    }
+                    } catch { }
                 }
 
                 return resultSet;

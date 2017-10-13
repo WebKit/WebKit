@@ -256,7 +256,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             this._commitCompletionHint();
 
             // The clicked hint marker causes the editor to loose focus. Restore it so the user can keep typing.
-            setTimeout(() => { this._codeMirror.focus() }, 0);
+            setTimeout(() => { this._codeMirror.focus(); }, 0);
         });
 
         this._completionHintMarker = this._codeMirror.setUniqueBookmark(position, {widget: container, insertLeft: true});
@@ -563,7 +563,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             }
 
             return this._codeMirror.getTokenAt({line: lineNumber, ch: token.start ? token.start : Number.MAX_VALUE});
-        }
+        };
 
         // Inside a function, determine the function name.
         if (token.state.state === "parens") {

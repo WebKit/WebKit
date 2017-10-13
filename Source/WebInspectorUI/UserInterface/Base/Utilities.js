@@ -281,7 +281,7 @@ Object.defineProperty(Node.prototype, "rangeOfWord",
                 }
 
                 if (node.nodeType === Node.TEXT_NODE) {
-                    var start = (node === this ? (offset - 1) : (node.nodeValue.length - 1));
+                    let start = node === this ? (offset - 1) : (node.nodeValue.length - 1);
                     for (var i = start; i >= 0; --i) {
                         if (stopCharacters.indexOf(node.nodeValue[i]) !== -1) {
                             startNode = node;
@@ -316,7 +316,7 @@ Object.defineProperty(Node.prototype, "rangeOfWord",
                 }
 
                 if (node.nodeType === Node.TEXT_NODE) {
-                    var start = (node === this ? offset : 0);
+                    let start = node === this ? offset : 0;
                     for (var i = start; i < node.nodeValue.length; ++i) {
                         if (stopCharacters.indexOf(node.nodeValue[i]) !== -1) {
                             endNode = node;
@@ -1572,7 +1572,7 @@ function insertObjectIntoSortedArray(object, array, comparator)
 
 function decodeBase64ToBlob(base64Data, mimeType)
 {
-    mimeType = mimeType || '';
+    mimeType = mimeType || "";
 
     const sliceSize = 1024;
     var byteCharacters = atob(base64Data);
@@ -1585,7 +1585,7 @@ function decodeBase64ToBlob(base64Data, mimeType)
         var end = Math.min(begin + sliceSize, bytesLength);
 
         var bytes = new Array(end - begin);
-        for (var offset = begin, i = 0 ; offset < end; ++i, ++offset)
+        for (var offset = begin, i = 0; offset < end; ++i, ++offset)
             bytes[i] = byteCharacters[offset].charCodeAt(0);
 
         byteArrays[sliceIndex] = new Uint8Array(bytes);

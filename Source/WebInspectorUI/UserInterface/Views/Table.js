@@ -272,7 +272,7 @@ WI.Table = class Table extends WI.View
 
         this._selectedRowIndex = rowIndex;
 
-        let newSelectedRow = this._cachedRows.get(this._selectedRowIndex)
+        let newSelectedRow = this._cachedRows.get(this._selectedRowIndex);
         if (newSelectedRow)
             newSelectedRow.classList.add("selected");
 

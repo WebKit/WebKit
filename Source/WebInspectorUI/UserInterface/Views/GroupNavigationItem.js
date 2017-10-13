@@ -42,7 +42,7 @@ WI.GroupNavigationItem = class GroupNavigationItem extends WI.NavigationItem
     {
         return this._navigationItems;
     }
-    
+
     set navigationItems(items)
     {
         this._navigationItems = items;
@@ -107,4 +107,4 @@ WI.GroupNavigationItem = class GroupNavigationItem extends WI.NavigationItem
             this.element.appendChild(item.element);
         }
     }
-}
+};

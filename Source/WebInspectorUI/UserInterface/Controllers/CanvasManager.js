@@ -158,7 +158,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!canvas)
             return;
 
-        let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload) : null
+        let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload) : null;
         if (recording)
             recording.source = canvas;
 

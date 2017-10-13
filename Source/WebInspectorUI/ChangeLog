@@ -1,3 +1,82 @@
+2017-10-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: fix ESLint errors
+        https://bugs.webkit.org/show_bug.cgi?id=175065
+
+        Reviewed by Joseph Pecoraro.
+
+        Removed trailing whitespace, extra parenthesis, and some unnecessary escape characters.
+        Added missing semicolons, spacing around default values for parameters, and changed `==` to
+        `===` where applicable.
+
+        Specific changes to each file were removed for brevity.
+
+        * .eslintrc:
+        Alphabetize each list of global variables and add some missing utility functions.
+
+        * UserInterface/Base/EventListener.js:
+        * UserInterface/Base/EventListenerSet.js:
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Base/TextUtilities.js:
+        * UserInterface/Base/URLUtilities.js:
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Base/YieldableTask.js:
+        * UserInterface/Controllers/AppControllerBase.js:
+        * UserInterface/Controllers/CanvasManager.js:
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        * UserInterface/Controllers/RuntimeManager.js:
+        * UserInterface/Controllers/SourceMapManager.js:
+        * UserInterface/Debug/DebugContentView.js:
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        * UserInterface/Models/KeyboardShortcut.js:
+        * UserInterface/Models/ProfileNode.js:
+        * UserInterface/Models/Resource.js:
+        * UserInterface/Models/ResourceCollection.js:
+        * UserInterface/Models/Script.js:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Protocol/Connection.js:
+        * UserInterface/Test/FrontendTestHarness.js:
+        * UserInterface/Test/TestHarness.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        * UserInterface/Views/CodeMirrorRegexMode.js:
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        * UserInterface/Views/DataGrid.js:
+        * UserInterface/Views/DataGridNode.js:
+        * UserInterface/Views/FindBanner.js:
+        * UserInterface/Views/GroupNavigationItem.js:
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        * UserInterface/Views/NetworkTableContentView.js:
+        * UserInterface/Views/NetworkTimelineView.js:
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        * UserInterface/Views/ObjectTreeView.js:
+        * UserInterface/Views/RecordingContentView.js:
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        * UserInterface/Views/ResourceCookiesContentView.js:
+        * UserInterface/Views/ResourceDetailsSection.js:
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        * UserInterface/Views/SettingEditor.js:
+        * UserInterface/Views/Sidebar.js:
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        * UserInterface/Views/Table.js:
+        * UserInterface/Views/TextEditor.js:
+        * UserInterface/Views/TimelineDataGridNode.js:
+        * UserInterface/Views/TreeElement.js:
+        * UserInterface/Views/TreeOutline.js:
+        * UserInterface/Views/WebSocketDataGridNode.js:
+        * UserInterface/Workers/Formatter/EsprimaFormatter.js:
+        * UserInterface/Workers/Formatter/FormatterWorker.js:
+
 2017-10-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: hook up autocompletion to property names and values

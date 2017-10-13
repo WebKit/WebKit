@@ -70,7 +70,7 @@ WI.CSSKeywordCompletions.forFunction = function(functionName)
         suggestions = [];
     else if (functionName === "calc" || functionName === "min" || functionName === "max")
         suggestions = suggestions.concat(["calc()", "min()", "max()"]);
-    else if (functionName == "env")
+    else if (functionName === "env")
         suggestions = suggestions.concat(["safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left"]);
     else if (functionName === "image-set")
         suggestions.push("url()");
@@ -82,7 +82,7 @@ WI.CSSKeywordCompletions.forFunction = function(functionName)
     }
 
     return new WI.CSSCompletions(suggestions, true);
-}
+};
 
 WI.CSSKeywordCompletions.addCustomCompletions = function(properties)
 {

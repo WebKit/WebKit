@@ -168,7 +168,7 @@ WI.ProfileNode = class ProfileNode
                 endTime: this._endTime,
                 selfTime: this._selfTime,
                 totalTime: this._totalTime,
-                averageTime: (this._selfTime / this._callCount),
+                averageTime: this._selfTime / this._callCount,
             };
         }
 

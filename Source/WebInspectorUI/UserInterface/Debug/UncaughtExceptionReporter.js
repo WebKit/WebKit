@@ -182,7 +182,7 @@ function createErrorSheet() {
     let inspectedPageURL = null;
     try {
         inspectedPageURL = WI.frameResourceManager.mainFrame.url;
-    } catch (e) { }
+    } catch { }
 
     let topLevelItems = [
         `Inspected URL:        ${inspectedPageURL || "(unknown)"}`,

@@ -57,7 +57,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
             return Math.max(previousValue, currentValue.duration);
         }, 0);
 
-        this._graphHeightSeconds = maximumFrameDuration * 1.1;  // Add 10% margin above frames.
+        this._graphHeightSeconds = maximumFrameDuration * 1.1; // Add 10% margin above frames.
         this._graphHeightSeconds = Math.min(this._graphHeightSeconds, WI.RenderingFrameTimelineOverviewGraph.MaximumGraphHeightSeconds);
         this._graphHeightSeconds = Math.max(this._graphHeightSeconds, WI.RenderingFrameTimelineOverviewGraph.MinimumGraphHeightSeconds);
         return this._graphHeightSeconds;
@@ -222,7 +222,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
             return;
         }
 
-        var frameWidth = (1 / this.timelineOverview.secondsPerPixel);
+        var frameWidth = 1 / this.timelineOverview.secondsPerPixel;
         this._selectedFrameMarker.style.width = frameWidth + "px";
 
         var markerLeftPosition = this.selectedRecord.frameIndex - this.startTime;

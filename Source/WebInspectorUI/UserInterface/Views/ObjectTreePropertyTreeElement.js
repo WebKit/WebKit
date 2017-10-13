@@ -90,7 +90,7 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
     _updateHasChildren()
     {
         var resolvedValue = this.resolvedValue();
-        var valueHasChildren = (resolvedValue && resolvedValue.hasChildren);
+        var valueHasChildren = resolvedValue && resolvedValue.hasChildren;
         var wasThrown = this.hadError();
 
         if (this._mode === WI.ObjectTreeView.Mode.Properties)

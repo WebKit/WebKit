@@ -160,13 +160,13 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
                 if (isNaN(bValue))
                     return -1;
                 return aValue - bValue;
-            }
+            };
             break;
 
         case "httpOnly":
         case "secure":
             // Boolean.
-            comparator = (a, b) => (a[sortColumnIdentifier] - b[sortColumnIdentifier]);
+            comparator = (a, b) => a[sortColumnIdentifier] - b[sortColumnIdentifier];
             break;
 
         case "expires":
@@ -179,7 +179,7 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
                 if (!bExpires)
                     return -1;
                 return aExpires.getTime() - bExpires.getTime();
-            }
+            };
             break;
 
         default:

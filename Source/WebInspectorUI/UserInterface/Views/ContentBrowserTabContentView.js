@@ -51,7 +51,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         if (navigationSidebarPanelConstructor) {
             let showToolTip = WI.UIString("Show the navigation sidebar (%s)").format(WI.navigationSidebarKeyboardShortcut.displayName);
             let hideToolTip = WI.UIString("Hide the navigation sidebar (%s)").format(WI.navigationSidebarKeyboardShortcut.displayName);
-            let image = WI.resolvedLayoutDirection() == WI.LayoutDirection.RTL ? "Images/ToggleRightSidebar.svg" : "Images/ToggleLeftSidebar.svg";
+            let image = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/ToggleRightSidebar.svg" : "Images/ToggleLeftSidebar.svg";
 
             this._showNavigationSidebarItem = new WI.ActivateButtonNavigationItem("toggle-navigation-sidebar", showToolTip, hideToolTip, image, 16, 16);
             this._showNavigationSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleNavigationSidebar, WI);
@@ -67,7 +67,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         if (detailsSidebarPanelConstructors && detailsSidebarPanelConstructors.length) {
             let showToolTip = WI.UIString("Show the details sidebar (%s)").format(WI.detailsSidebarKeyboardShortcut.displayName);
             let hideToolTip = WI.UIString("Hide the details sidebar (%s)").format(WI.detailsSidebarKeyboardShortcut.displayName);
-            let image = WI.resolvedLayoutDirection() == WI.LayoutDirection.RTL ? "Images/ToggleLeftSidebar.svg" : "Images/ToggleRightSidebar.svg";
+            let image = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/ToggleLeftSidebar.svg" : "Images/ToggleRightSidebar.svg";
 
             this._showDetailsSidebarItem = new WI.ActivateButtonNavigationItem("toggle-details-sidebar", showToolTip, hideToolTip, image, 16, 16);
             this._showDetailsSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleDetailsSidebar, WI);

@@ -150,7 +150,7 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
                         return chunkb.length - chunka.length;
                 }
             } else if (chunka !== chunkb)
-                return (chunka < chunkb) ? -1 : 1;
+                return chunka < chunkb ? -1 : 1;
             a = a.substring(chunka.length);
             b = b.substring(chunkb.length);
         }

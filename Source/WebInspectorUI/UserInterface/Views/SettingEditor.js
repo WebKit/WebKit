@@ -88,7 +88,7 @@ WI.SettingEditor = class SettingEditor extends WI.Object
         let oldValue = this._value;
         this._value = value;
 
-        if (this._type == WI.SettingEditor.Type.Checkbox)
+        if (this._type === WI.SettingEditor.Type.Checkbox)
             this._editorElement.checked = !!this._value;
         else
             this._editorElement.value = this._value;

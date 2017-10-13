@@ -263,5 +263,5 @@ WI.KeyboardShortcut.Key = {
     LeftCurlyBrace: new WI.Key(219, "{"),
     Backslash: new WI.Key(220, "\\"),
     RightCurlyBrace: new WI.Key(221, "}"),
-    SingleQuote: new WI.Key(222, "\'")
+    SingleQuote: new WI.Key(222, "'")
 };

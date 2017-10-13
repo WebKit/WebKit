@@ -197,7 +197,7 @@ WI.ResourceCollection.TypeVerifier = {
     Stylesheet: (object) => {
         if (WI.Collection.TypeVerifier.CSSStyleSheet(object))
             return true;
-        return WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Stylesheet
+        return WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Stylesheet;
     },
     Image: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Image,
     Font: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Font,

@@ -386,7 +386,7 @@
 
     CodeMirror.defineExtension("hasLineClass", function(line, where, className) {
         // This matches the arguments to addLineClass and removeLineClass.
-        var classProperty = (where === "text" ? "textClass" : (where === "background" ? "bgClass" : "wrapClass"));
+        var classProperty = where === "text" ? "textClass" : (where === "background" ? "bgClass" : "wrapClass");
         var lineInfo = this.lineInfo(line);
         if (!lineInfo)
             return false;

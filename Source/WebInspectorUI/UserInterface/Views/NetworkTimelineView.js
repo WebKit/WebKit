@@ -192,8 +192,8 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
     {
         if (sortColumnIdentifier === "priority")
             return WI.Resource.comparePriority(node1.data.priority, node2.data.priority) * sortDirection;
-        
-        if (sortColumnIdentifier == "name") {
+
+        if (sortColumnIdentifier === "name") {
             let displayName1 = node1.displayName();
             let displayName2 = node2.displayName();
 

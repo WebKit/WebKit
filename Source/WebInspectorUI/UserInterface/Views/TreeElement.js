@@ -433,7 +433,7 @@ WI.TreeElement = class TreeElement extends WI.Object
         while (item) {
             if (depth < maxDepth)
                 item.expand();
-            item = item.traverseNextTreeElement(false, this, (depth >= maxDepth), info);
+            item = item.traverseNextTreeElement(false, this, depth >= maxDepth, info);
             depth += info.depthChange;
         }
     }

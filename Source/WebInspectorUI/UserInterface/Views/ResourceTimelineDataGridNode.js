@@ -314,7 +314,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             if (!this._spinner)
                 this._spinner = new WI.IndeterminateProgressSpinner;
             let contentElement = cell.firstChild;
-            contentElement.appendChild(this._spinner.element);            
+            contentElement.appendChild(this._spinner.element);
         } else {
             if (this._spinner)
                 this._spinner.element.remove();

@@ -257,7 +257,7 @@ WI.Sidebar = class Sidebar extends WI.View
 
         var newWidth = positionDelta + this._widthBeforeResize;
         this.width = newWidth;
-        this.collapsed = (newWidth < (this.minimumWidth / 2));
+        this.collapsed = newWidth < (this.minimumWidth / 2);
     }
 
     resizerDragEnded(resizer)

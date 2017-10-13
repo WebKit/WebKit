@@ -588,7 +588,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         id = CSS.escape(id);
         if (/[\s'"]/.test(id))
-            return `[id=\"${id}\"]`;
+            return `[id="${id}"]`;
 
         return `#${id}`;
     }

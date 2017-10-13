@@ -63,7 +63,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
     dispatch(message)
     {
-        let messageObject = (typeof message === "string") ? JSON.parse(message) : message;
+        let messageObject = typeof message === "string" ? JSON.parse(message) : message;
 
         if ("id" in messageObject)
             this._dispatchResponse(messageObject);

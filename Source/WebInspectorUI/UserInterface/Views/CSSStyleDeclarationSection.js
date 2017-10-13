@@ -230,9 +230,9 @@ WI.CSSStyleDeclarationSection = class CSSStyleDeclarationSection extends WI.Obje
         case WI.CSSStyleDeclaration.Type.Rule:
             console.assert(this._style.ownerRule);
 
-            let selectors = this._style.ownerRule.selectors;
-            let matchedSelectorIndices = this._style.ownerRule.matchedSelectorIndices;
-            let alwaysMatch = !matchedSelectorIndices.length;
+            var selectors = this._style.ownerRule.selectors;
+            var matchedSelectorIndices = this._style.ownerRule.matchedSelectorIndices;
+            var alwaysMatch = !matchedSelectorIndices.length;
             if (selectors.length) {
                 let hasMatchingPseudoElementSelector = false;
                 for (let i = 0; i < selectors.length; ++i) {
@@ -452,7 +452,7 @@ WI.CSSStyleDeclarationSection = class CSSStyleDeclarationSection extends WI.Obje
 
         function parseTextForRule(text)
         {
-            let containsBraces = /[\{\}]/;
+            let containsBraces = /[{}]/;
             if (!containsBraces.test(text))
                 return [];
 

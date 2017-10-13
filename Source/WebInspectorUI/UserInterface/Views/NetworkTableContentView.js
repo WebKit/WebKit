@@ -62,7 +62,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         ];
         for (let [key, checker] of uniqueTypes) {
             let type = WI.Resource.Type[key];
-            let scopeBarItem = new WI.ScopeBarItem("network-type-filter-" + key, WI.NetworkTableContentView.shortDisplayNameForResourceType(type))
+            let scopeBarItem = new WI.ScopeBarItem("network-type-filter-" + key, WI.NetworkTableContentView.shortDisplayNameForResourceType(type));
             scopeBarItem.__checker = checker;
             typeFilterScopeBarItems.push(scopeBarItem);
         }
@@ -420,7 +420,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 if (isNaN(bValue))
                     return -1;
                 return aValue - bValue;
-            }
+            };
             break;
 
         case "priority":

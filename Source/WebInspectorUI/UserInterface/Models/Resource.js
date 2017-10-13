@@ -544,7 +544,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     get estimatedNetworkEncodedSize()
     {
-        let exact = this.networkEncodedSize; 
+        let exact = this.networkEncodedSize;
         if (!isNaN(exact))
             return exact;
 

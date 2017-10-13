@@ -120,7 +120,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
             this.completeTest();
     }
 
-    reloadPage(options={})
+    reloadPage(options = {})
     {
         console.assert(!this._testPageIsReloading);
         console.assert(!this._testPageReloadedOnce);

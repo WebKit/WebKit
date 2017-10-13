@@ -202,7 +202,7 @@ function parseQueryString(queryString, arrayResult)
         try {
             // Replace "+" with " " then decode percent encoded values.
             return decodeURIComponent(string.replace(/\+/g, " "));
-        } catch (e) {
+        } catch {
             return string;
         }
     }
@@ -231,7 +231,7 @@ WI.displayNameForURL = function(url, urlComponents)
     var displayName;
     try {
         displayName = decodeURIComponent(urlComponents.lastPathComponent || "");
-    } catch (e) {
+    } catch {
         displayName = urlComponents.lastPathComponent;
     }
 

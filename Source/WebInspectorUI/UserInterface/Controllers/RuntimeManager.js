@@ -174,12 +174,12 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         try {
             esprima.parse(originalExpression);
             return originalExpression;
-        } catch (error) { }
+        } catch { }
 
         // Do not transform if the async function version does not parse.
         try {
             esprimaSyntaxTree = esprima.parse("(async function(){" + originalExpression + "})");
-        } catch (error) {
+        } catch {
             return originalExpression;
         }
 

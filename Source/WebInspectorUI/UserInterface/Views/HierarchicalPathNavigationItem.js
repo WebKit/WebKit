@@ -168,7 +168,7 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
             // Since components have a minimum width, we need to see how much was actually
             // removed and subtract that from what remans to be removed.
             componentWidths[i] = Math.max(this._components[i].minimumWidth, forcedWidth);
-            widthToRemove -= (componentWidth - componentWidths[i]);
+            widthToRemove -= componentWidth - componentWidths[i];
 
             // If there is nothing else to remove, then we can stop.
             if (widthToRemove <= 0)

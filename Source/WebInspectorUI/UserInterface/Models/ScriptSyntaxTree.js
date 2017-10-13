@@ -843,7 +843,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
                 computed: node.computed
             };
             if (result.kind === "get" || result.kind === "set" || result.method)
-                result.value.typeProfilingReturnDivot = node.range[0];  // "g" in "get" or "s" in "set" or "[" in "['computed']" method or "m" in "methodName".
+                result.value.typeProfilingReturnDivot = node.range[0]; // "g" in "get" or "s" in "set" or "[" in "['computed']" method or "m" in "methodName".
             break;
         case "RestElement":
             result = {

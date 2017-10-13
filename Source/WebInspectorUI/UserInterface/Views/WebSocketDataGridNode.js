@@ -82,7 +82,7 @@ WI.WebSocketDataGridNode = class WebSocketDataGridNode extends WI.DataGridNode
                     let expression = "(" + this._data.data + ")";
                     WI.runtimeManager.evaluateInInspectedWindow(expression, options, logResult);
                 });
-            } catch (error) { }
+            } catch { }
 
             contextMenu.appendSeparator();
         }

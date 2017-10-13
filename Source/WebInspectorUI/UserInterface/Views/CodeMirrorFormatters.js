@@ -63,7 +63,7 @@ CodeMirror.extendMode("javascript", {
 
     shouldHaveSpaceAfterLastToken: function(lastToken, lastContent, token, state, content, isComment)
     {
-        if (lastToken && /\bkeyword\b/.test(lastToken)) {  // Most keywords require spaces after them, unless a '{' or ';' can come after it.
+        if (lastToken && /\bkeyword\b/.test(lastToken)) { // Most keywords require spaces after them, unless a '{' or ';' can come after it.
             if (lastContent === "else")
                 return true;
             if (lastContent === "catch")
@@ -302,7 +302,7 @@ CodeMirror.extendMode("javascript", {
 
         // Signal for when we will be entering an if.
         if (token && state.lexical.type === "form" && state.lexical.prev && state.lexical.prev !== "form" && /\bkeyword\b/.test(token))
-            state._jsPrettyPrint.enteringIf = (content === "if");
+            state._jsPrettyPrint.enteringIf = content === "if";
     },
 
     modifyStateForTokenPost: function(lastToken, lastContent, token, state, content, isComment)
@@ -522,7 +522,7 @@ CodeMirror.extendMode("css-rule", {
 
         // Add new line before a regular property like `display`.
         if (/\bproperty\b/.test(token))
-            return !(/\bmeta\b/.test(lastToken));
+            return !/\bmeta\b/.test(lastToken);
 
         // Add new line before a CSS variable like `--foo`.
         if (state.state === "maybeprop" && /\bvariable-2\b/.test(token))

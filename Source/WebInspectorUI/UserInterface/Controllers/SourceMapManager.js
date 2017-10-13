@@ -113,7 +113,7 @@ WI.SourceMapManager = class SourceMapManager extends WI.Object
                 var baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
                 var sourceMap = new WI.SourceMap(baseURL, payload, originalSourceCode);
                 this._loadAndParseSucceeded(sourceMapURL, sourceMap);
-            } catch (e) {
+            } catch {
                 this._loadAndParseFailed(sourceMapURL);
             }
         }

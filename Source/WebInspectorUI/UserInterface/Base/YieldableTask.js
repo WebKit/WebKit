@@ -25,7 +25,7 @@
 
 WI.YieldableTask = class YieldableTask
 {
-    constructor(delegate, items, options={})
+    constructor(delegate, items, options = {})
     {
         let {workInterval, idleInterval} = options;
         console.assert(!workInterval || workInterval > 0, workInterval);
