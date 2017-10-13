@@ -1,5 +1,59 @@
 2017-10-12  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/34891297
+
+    Partial cherry-pick of r222225 <rdar://problem/34745579>, only the changes to WebCoreDecompressionSession.
+    
+        2017-09-19  Jer Noble  <jer.noble@apple.com>
+    
+        [Cocoa] Add an ImageDecoder subclass backed by AVFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=176825
+    
+        Reviewed by Eric Carlson.
+    
+        Modify WebCoreDecompressionSession so that it can emit frames which have been converted from
+        YUV -> RGB as part of the decode operation. Also, add a synchronous decoding operation
+        method, for use in ImageDecoderAVFObjC.
+    
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+        (WebCore::WebCoreDecompressionSession::createOpenGL):
+        (WebCore::WebCoreDecompressionSession::createRGB):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::WebCoreDecompressionSession):
+        (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+        (WebCore::WebCoreDecompressionSession::decodeSample):
+        (WebCore::WebCoreDecompressionSession::decodeSampleSync):
+
+    2017-10-12  Jer Noble  <jer.noble@apple.com>
+
+            Partial cherry-pick of r222225 <rdar://problem/34745579>, only the changes to WebCoreDecompressionSession.
+
+        2017-09-19  Jer Noble  <jer.noble@apple.com>
+
+                [Cocoa] Add an ImageDecoder subclass backed by AVFoundation
+                https://bugs.webkit.org/show_bug.cgi?id=176825
+
+                Reviewed by Eric Carlson.
+
+                Modify WebCoreDecompressionSession so that it can emit frames which have been converted from
+                YUV -> RGB as part of the decode operation. Also, add a synchronous decoding operation
+                method, for use in ImageDecoderAVFObjC.
+
+                * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+                (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession):
+                * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+                (WebCore::WebCoreDecompressionSession::createOpenGL):
+                (WebCore::WebCoreDecompressionSession::createRGB):
+                * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+                (WebCore::WebCoreDecompressionSession::WebCoreDecompressionSession):
+                (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+                (WebCore::WebCoreDecompressionSession::decodeSample):
+                (WebCore::WebCoreDecompressionSession::decodeSampleSync):
+
+2017-10-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223144. rdar://problem/34958765
 
     2017-10-10  Matt Rajca  <mrajca@apple.com>

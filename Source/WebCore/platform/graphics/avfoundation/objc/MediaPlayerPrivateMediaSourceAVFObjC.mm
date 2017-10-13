@@ -746,7 +746,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
     if (m_decompressionSession)
         return;
 
-    m_decompressionSession = WebCoreDecompressionSession::create();
+    m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase([m_synchronizer timebase]);
 
     if (m_mediaSourcePrivate)
