@@ -22,6 +22,7 @@
 #define WTF_HashMap_h
 
 #include <initializer_list>
+#include <wtf/Forward.h>
 #include <wtf/HashTable.h>
 #include <wtf/IteratorRange.h>
 
@@ -31,8 +32,7 @@ template<typename T> struct KeyValuePairKeyExtractor {
     static const typename T::KeyType& extract(const T& p) { return p.key; }
 };
 
-template<typename KeyArg, typename MappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
-    typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg>>
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 class HashMap final {
     WTF_MAKE_FAST_ALLOCATED;
 private:

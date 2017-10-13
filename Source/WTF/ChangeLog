@@ -1,5 +1,18 @@
 2017-10-12  Alex Christensen  <achristensen@webkit.org>
 
+        Add Expected, HashMap, HashSet, and SHA1 to wtf/Forward.h
+        https://bugs.webkit.org/show_bug.cgi?id=178243
+
+        Reviewed by Tim Horton.
+
+        * wtf/Forward.h:
+        * wtf/HashMap.h:
+        Move default parameters to Forward.h like we did with Vector.
+        * wtf/HashSet.h:
+        Also fix indentation.
+
+2017-10-12  Alex Christensen  <achristensen@webkit.org>
+
         Add CompletionHandler and HashCountedSet to wtf/Forward.h
         https://bugs.webkit.org/show_bug.cgi?id=178231
 
