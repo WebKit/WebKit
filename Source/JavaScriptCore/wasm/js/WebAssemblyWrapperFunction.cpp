@@ -79,7 +79,7 @@ void WebAssemblyWrapperFunction::finishCreation(VM& vm, NativeExecutable* execut
 Structure* WebAssemblyWrapperFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     ASSERT(globalObject);
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
 void WebAssemblyWrapperFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

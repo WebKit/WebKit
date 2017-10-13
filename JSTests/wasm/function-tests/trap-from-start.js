@@ -61,8 +61,8 @@ const tableInfo = { element: "anyfunc", initial: 8 };
 
     for (let i = 0; i < table.length; ++i) {
         switch (i) {
-        case 4:  assert.isObject(table.get(i)); break;
-        case 5:  assert.isObject(table.get(i)); break;
+        case 4:  assert.isFunction(table.get(i)); break;
+        case 5:  assert.isFunction(table.get(i)); break;
         default: assert.eq(table.get(i), null); break;
         }
     }

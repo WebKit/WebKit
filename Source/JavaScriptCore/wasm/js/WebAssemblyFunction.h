@@ -41,11 +41,11 @@ namespace B3 {
 class Compilation;
 }
 
-class WebAssemblyFunction : public WebAssemblyFunctionBase {
+class WebAssemblyFunction final : public WebAssemblyFunctionBase {
 public:
     using Base = WebAssemblyFunctionBase;
 
-    const static unsigned StructureFlags = Base::StructureFlags;
+    const static unsigned StructureFlags = Base::StructureFlags | TypeOfShouldCallGetCallData;
 
     DECLARE_EXPORT_INFO;
 

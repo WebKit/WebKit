@@ -48,6 +48,11 @@ function exportImport(type) {
         assert.throws(() => new WebAssembly.Instance(module, {imp: {f: instance.exports.func}}), WebAssembly.LinkError, "imported function imp:f signature doesn't match the provided WebAssembly function's signature");
     }
 
+    {
+        assert.truthy(typeof instance.exports.func === "function", "is_function bytecode should handle wrapper function.");
+        let value = typeof instance.exports.func;
+        assert.eq(value, "function", "the result of typeof should be 'function'");
+    }
 }
 
 {

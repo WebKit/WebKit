@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-class WebAssemblyWrapperFunction : public WebAssemblyFunctionBase {
+class WebAssemblyWrapperFunction final : public WebAssemblyFunctionBase {
 public:
     using Base = WebAssemblyFunctionBase;
 

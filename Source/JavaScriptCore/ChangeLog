@@ -1,3 +1,43 @@
+2017-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WebAssembly: Wasm functions should have either JSFunctionType or TypeOfShouldCallGetCallData
+        https://bugs.webkit.org/show_bug.cgi?id=178210
+
+        Reviewed by Saam Barati.
+
+        In Wasm, we have two JS functions exposed to users: WebAssemblyFunction and WebAssemblyWrapperFunction.
+        The former is an exported wasm function and the latter is an imported & exported function. Since they
+        have [[Call]], they should be categorized into "function" in typeof operation.
+
+        However, these functions do not implement our function protocol correctly. They inherit JSFunction.
+        But JSType of WebAssemblyFunction is WebAssemblyFunctionType, and one of WebAssemblyWrapperFunction is
+        ObjectType. Since both do not have TypeOfShouldCallGetCallData, they return "object" when performing
+        typeof operation.
+
+        In this patch, we address the above issue by the following 2 fixes.
+
+        1. We add TypeOfShouldCallGetCallData to WebAssemblyFunction. This is the same way how we implement
+        InternalFunction. Since WebAssemblyFunction requires WebAssemblyFunctionType for fast checking in Wasm
+        implementation, we cannot make this JSFunctionType.
+
+        2. On the other hand, WebAssemblyWrapperFunction does not require a specific JSType. So this patch
+        changes JSType of WebAssemblyWrapperFunction to JSFunctionType. JSFunctionType can be usable for derived
+        classes of JSFunction (e.g. JSCustomGetterSetterFunction).
+
+        * wasm/js/WebAssemblyFunction.h:
+        (JSC::WebAssemblyFunction::signatureIndex const): Deleted.
+        (JSC::WebAssemblyFunction::wasmEntrypointLoadLocation const): Deleted.
+        (JSC::WebAssemblyFunction::callableFunction const): Deleted.
+        (JSC::WebAssemblyFunction::jsEntrypoint): Deleted.
+        (JSC::WebAssemblyFunction::offsetOfWasmEntrypointLoadLocation): Deleted.
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::createStructure):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+        (JSC::WebAssemblyWrapperFunction::signatureIndex const): Deleted.
+        (JSC::WebAssemblyWrapperFunction::wasmEntrypointLoadLocation const): Deleted.
+        (JSC::WebAssemblyWrapperFunction::callableFunction const): Deleted.
+        (JSC::WebAssemblyWrapperFunction::function): Deleted.
+
 2017-10-12  Per Arne Vollan  <pvollan@apple.com>
 
         [Win64] JSC compile error.

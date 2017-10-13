@@ -18,3 +18,8 @@ const module = new WebAssembly.Module(bin);
 const instance = new WebAssembly.Instance(module);
 
 assert.eq(Object.getPrototypeOf(instance.exports.foo), Function.prototype);
+{
+    assert.truthy(typeof instance.exports.foo === "function", "is_function bytecode should handle wasm function.");
+    let value = typeof instance.exports.foo;
+    assert.eq(value, "function", "the result of typeof should be 'function'");
+}
