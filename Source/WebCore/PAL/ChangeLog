@@ -1,3 +1,9 @@
+2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; add definitions for IOSurface methods missing on some platforms.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
 2017-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] Build fix after r223206
