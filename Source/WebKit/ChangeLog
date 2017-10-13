@@ -1,3 +1,12 @@
+2017-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Add API to clean CacheStorage data
+        https://bugs.webkit.org/show_bug.cgi?id=178034
+
+        Unreviewed.
+
+        * Shared/WebsiteData/WebsiteDataType.h: fixing the DOMCache value. 
+
 2017-10-12  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] add WebProcess files for wincairo webkit
