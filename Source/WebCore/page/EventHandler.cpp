@@ -78,6 +78,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ResourceLoadObserver.h"
 #include "RuntimeApplicationChecks.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
@@ -3125,8 +3126,12 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
     bool wasHandled = internalKeyEvent(keyEvent);
 
     // If the key event was not handled, do not treat it as user interaction with the page.
-    if (topDocument && !wasHandled)
-        topDocument->setUserDidInteractWithPage(savedUserDidInteractWithPage);
+    if (topDocument) {
+        if (!wasHandled)
+            topDocument->setUserDidInteractWithPage(savedUserDidInteractWithPage);
+        else
+            ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(topDocument->topDocument());
+    }
 
     return wasHandled;
 }
@@ -3191,7 +3196,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE)
         gestureType = UserGestureType::EscapeKey;
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), gestureType);
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed);
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
     if (FrameView* view = m_frame.view())

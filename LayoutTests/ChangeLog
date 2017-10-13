@@ -1,3 +1,20 @@
+2017-10-13  Brent Fulgham  <bfulgham@apple.com>
+
+        CMD+R / CMD+Q keyboard shortcuts are treated as user interaction with page
+        https://bugs.webkit.org/show_bug.cgi?id=178183
+        <rdar://problem/33327730>
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html: Added.
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html: Added.
+        * http/tests/resourceLoadStatistics/resources: Added.
+        * http/tests/resourceLoadStatistics/resources/onclick.html: Added.
+        * platform/ios/TestExpectations: Skip tests that require 'keyDown' support, since this is not
+          available on iOS.
+
 2017-10-13  Matt Lewis  <jlewis3@apple.com>
 
         Marked http/tests/inspector/network/resource-sizes-memory-cache.html as flaky.
