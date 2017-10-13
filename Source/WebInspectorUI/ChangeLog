@@ -1,3 +1,23 @@
+2017-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Switch Clear navigation item back to the Trash icon (Console, Timelines, Network)
+        https://bugs.webkit.org/show_bug.cgi?id=178244
+        <rdar://problem/34966525>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Images/NavigationItemClear.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemClear.svg: Removed.
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WI.NetworkGridContentView):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        Many users found the new Clear icon confusing. Revert to the Trash icon.
+
 2017-10-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Make 3D objects selectable in Layers visualization
