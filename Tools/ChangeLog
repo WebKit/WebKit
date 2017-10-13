@@ -1,3 +1,10 @@
+2017-10-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix webkitpy failure after r223273
+
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_harnesslinks_conversion):
+
 2017-10-12  Chris Dumez  <cdumez@apple.com>
 
         import-w3c-tests modifies test sources and sometimes causes them to fail

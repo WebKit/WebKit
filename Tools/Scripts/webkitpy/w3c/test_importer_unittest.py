@@ -148,6 +148,7 @@ class TestImporterTest(unittest.TestCase):
     def test_harnesslinks_conversion(self):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
             '/mock-checkout/Source/WebCore/css/CSSProperties.json': '',
             '/mock-checkout/Source/WebCore/css/CSSValueKeywords.in': '',
@@ -156,10 +157,10 @@ class TestImporterTest(unittest.TestCase):
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
 
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/t/test.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
-        self.assertTrue('src="../' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test.html'))
+        self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/t/test.html'))
 
     def test_submodules_generation(self):
         FAKE_FILES = {
