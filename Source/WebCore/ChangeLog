@@ -1,5 +1,30 @@
 2017-10-12  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223144. rdar://problem/34958765
+
+    2017-10-10  Matt Rajca  <mrajca@apple.com>
+
+            Respect audio rate change restrictions in HTMLMediaElement::setVolume.
+            https://bugs.webkit.org/show_bug.cgi?id=178140
+
+            Reviewed by Eric Carlson.
+
+            Tests: media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html
+                   media/audio-playback-volume-changes-with-restrictions.html
+
+            It's currently possible for a website to start auto-playing media with a zero volume and then
+            programmatically set the volume to a non-zero value without a user gesture. This code path didn't
+            have to be considered previously because volume changes are not supported on iOS.
+
+            We currently pause media when an audio track comes in after an element has already started playing silently
+            in mediaPlayerDidAddAudioTrack. This patch does the same when a non-zero volume is set after a media
+            element already began playing silently and there is an audio rate change restriction.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::setVolume):
+
+2017-10-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222627. rdar://problem/34938437
 
     2017-09-28  Tim Horton  <timothy_horton@apple.com>

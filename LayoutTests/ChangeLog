@@ -1,5 +1,22 @@
 2017-10-12  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223144. rdar://problem/34958765
+
+    2017-10-10  Matt Rajca  <mrajca@apple.com>
+
+            Respect audio rate change restrictions in HTMLMediaElement::setVolume.
+            https://bugs.webkit.org/show_bug.cgi?id=178140
+
+            Reviewed by Eric Carlson.
+
+            * media/audio-playback-volume-changes-with-restrictions-and-user-gestures-expected.txt: Added.
+            * media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html: Added.
+            * media/audio-playback-volume-changes-with-restrictions-expected.txt: Added.
+            * media/audio-playback-volume-changes-with-restrictions.html: Added.
+            * platform/ios/TestExpectations:
+
+2017-10-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222627. rdar://problem/34938437
 
     2017-09-28  Tim Horton  <timothy_horton@apple.com>
