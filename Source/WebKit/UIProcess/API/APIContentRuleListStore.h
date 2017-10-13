@@ -52,6 +52,7 @@ public:
     // to prevent crashing while loading old data.
     // Also update ContentRuleListStore::getContentRuleListSource to be able to find the original JSON
     // source from old versions.
+    // Update ContentRuleListStore::getContentRuleListSource with this.
     const static uint32_t CurrentContentRuleListFileVersion = 10;
 
     static ContentRuleListStore& defaultStore(bool legacyFilename);
