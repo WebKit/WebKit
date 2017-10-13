@@ -28,15 +28,34 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerThread.h"
+
 namespace WebCore {
+
+ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, const URL& url, const String& identifier, const String& userAgent, ServiceWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
+    : WorkerGlobalScope(url, identifier, userAgent, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
+    , m_serverConnectionIdentifier(serverConnectionIdentifier)
+    , m_contextData(crossThreadCopy(data))
+{
+}
+
+ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope()
+{
+}
 
 ServiceWorkerRegistration& ServiceWorkerGlobalScope::registration()
 {
-    return m_registration;
+    // FIXME: Is this method still needed?
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&&)
 {
+}
+
+EventTargetInterface ServiceWorkerGlobalScope::eventTargetInterface() const
+{
+    return ServiceWorkerGlobalScopeEventTargetInterfaceType;
 }
 
 } // namespace WebCore

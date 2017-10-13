@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ServiceWorkerRegistrationKey.h"
+#include "URL.h"
 
 #if ENABLE(SERVICE_WORKER)
 
@@ -35,15 +36,18 @@ struct ServiceWorkerContextData {
     ServiceWorkerRegistrationKey registrationKey;
     String workerID;
     String script;
+    URL scriptURL;
     
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
+    
+    ServiceWorkerContextData isolatedCopy() const;
 };
 
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << registrationKey << workerID << script;
+    encoder << registrationKey << workerID << script << scriptURL;
 }
 
 template<class Decoder>
@@ -61,7 +65,11 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!decoder.decode(script))
         return std::nullopt;
     
-    return {{ WTFMove(*registrationKey), WTFMove(workerID), WTFMove(script) }};
+    URL scriptURL;
+    if (!decoder.decode(scriptURL))
+        return std::nullopt;
+
+    return {{ WTFMove(*registrationKey), WTFMove(workerID), WTFMove(script), WTFMove(scriptURL) }};
 }
 
 } // namespace WebCore

@@ -164,7 +164,7 @@ Ref<SWServerWorker> SWServer::createWorker(Connection& connection, const Service
     auto result = m_workersByID.add(workerID, SWServerWorker::create(registrationKey, url, script, type, workerID));
     ASSERT(result.isNewEntry);
     
-    connection.startServiceWorkerContext({ registrationKey, workerID, script });
+    connection.startServiceWorkerContext({ registrationKey, workerID, script, url });
     
     return result.iterator->value.get();
 }

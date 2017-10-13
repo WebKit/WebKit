@@ -27,22 +27,39 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
 class DeferredPromise;
-class ServiceWorkerRegistration;
+class ServiceWorkerThread;
 
 class ServiceWorkerGlobalScope : public WorkerGlobalScope {
 public:
+    template<typename... Args> static Ref<ServiceWorkerGlobalScope> create(Args&&... args)
+    {
+        return adoptRef(*new ServiceWorkerGlobalScope(std::forward<Args>(args)...));
+    }
+
+    virtual ~ServiceWorkerGlobalScope();
+
+    bool isServiceWorkerGlobalScope() const final { return true; }
+
     ServiceWorkerRegistration& registration();
+    
+    uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
 
     void skipWaiting(Ref<DeferredPromise>&&);
 
+    EventTargetInterface eventTargetInterface() const final;
+
 private:
-    ServiceWorkerRegistration m_registration;
+    ServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, const URL&, const String& identifier, const String& userAgent, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
+
+    uint64_t m_serverConnectionIdentifier;
+    ServiceWorkerContextData m_contextData;
 };
 
 } // namespace WebCore

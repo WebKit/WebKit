@@ -30,6 +30,7 @@
 #include "JSDOMBinding.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSEventTarget.h"
+#include "JSServiceWorkerGlobalScope.h"
 #include "ScriptSourceCode.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerConsoleClient.h"
@@ -92,7 +93,26 @@ void WorkerScriptController::initScript()
 
         proxy->setTarget(*m_vm, m_workerGlobalScopeWrapper.get());
         proxy->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
+#if ENABLE(SERVICE_WORKER)
+    } else if (m_workerGlobalScope->isServiceWorkerGlobalScope()) {
+        Structure* contextPrototypeStructure = JSServiceWorkerGlobalScopePrototype::createStructure(*m_vm, nullptr, jsNull());
+        Strong<JSServiceWorkerGlobalScopePrototype> contextPrototype(*m_vm, JSServiceWorkerGlobalScopePrototype::create(*m_vm, nullptr, contextPrototypeStructure));
+        Structure* structure = JSServiceWorkerGlobalScope::createStructure(*m_vm, nullptr, contextPrototype.get());
+        auto* proxyStructure = JSProxy::createStructure(*m_vm, nullptr, jsNull(), PureForwardingProxyType);
+        auto* proxy = JSProxy::create(*m_vm, proxyStructure);
+    
+        m_workerGlobalScopeWrapper.set(*m_vm, JSServiceWorkerGlobalScope::create(*m_vm, structure, static_cast<ServiceWorkerGlobalScope&>(*m_workerGlobalScope), proxy));
+        contextPrototypeStructure->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
+        ASSERT(structure->globalObject() == m_workerGlobalScopeWrapper);
+        ASSERT(m_workerGlobalScopeWrapper->structure()->globalObject() == m_workerGlobalScopeWrapper);
+        contextPrototype->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
+        contextPrototype->structure()->setPrototypeWithoutTransition(*m_vm, JSWorkerGlobalScope::prototype(*m_vm, *m_workerGlobalScopeWrapper.get()));
+
+        proxy->setTarget(*m_vm, m_workerGlobalScopeWrapper.get());
+        proxy->structure()->setGlobalObject(*m_vm, m_workerGlobalScopeWrapper.get());
+#endif
     }
+    
     ASSERT(m_workerGlobalScopeWrapper->globalObject() == m_workerGlobalScopeWrapper);
     ASSERT(asObject(m_workerGlobalScopeWrapper->getPrototypeDirect())->globalObject() == m_workerGlobalScopeWrapper);
 

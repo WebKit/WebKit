@@ -1,3 +1,13 @@
+2017-10-12  Brady Eidson  <beidson@apple.com>
+
+        SW "Hello world".
+        https://bugs.webkit.org/show_bug.cgi?id=178187
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::startServiceWorkerContext):
+
 2017-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove unnecessary includes in WebKit

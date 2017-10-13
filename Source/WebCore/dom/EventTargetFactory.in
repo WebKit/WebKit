@@ -32,6 +32,7 @@ RTCDTMFSender conditional=WEB_RTC_DTMF
 RTCPeerConnection conditional=WEB_RTC
 ServiceWorker conditional=SERVICE_WORKER
 ServiceWorkerContainer conditional=SERVICE_WORKER
+ServiceWorkerGlobalScope conditional=SERVICE_WORKER
 ServiceWorkerRegistration conditional=SERVICE_WORKER
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE

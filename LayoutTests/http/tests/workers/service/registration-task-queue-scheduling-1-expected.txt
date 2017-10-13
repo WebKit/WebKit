@@ -1,2 +1,2 @@
-ALERT: Unexpected error received from server: UnknownError: Failed to start service worker script of length 41
+ALERT: Unexpected error received from server: UnknownError: Worker script successfully started, but it has no way to communicate yet
 

@@ -105,6 +105,7 @@
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/SWContextManager.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerContextData.h>
@@ -1649,11 +1650,10 @@ void WebProcess::getWorkerContextConnection()
 
 void WebProcess::startServiceWorkerContext(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
 {
-    // FIXME: Here is where we will actually start the script.
-    // For now we bounce back a failure message to the requesting process for test coverage.
-
-    auto message = makeString("Failed to start service worker script of length ", String::number(data.script.length()));
-    m_workerContextConnection->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(serverConnectionIdentifier, data.registrationKey, data.workerID, message), 0);
+    auto contextResult = SWContextManager::singleton().startServiceWorkerContext(serverConnectionIdentifier, data);
+    
+    if (contextResult.hasException())
+        m_workerContextConnection->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(serverConnectionIdentifier, data.registrationKey, data.workerID, contextResult.exception().message()), 0);
 }
 
 #endif

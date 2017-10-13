@@ -2352,6 +2352,9 @@
 		517A63C61B74319200E7DCDC /* KeyedEncoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517B25A91CC82B2A0061C011 /* IDBConnectionProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517B25A71CC820320061C011 /* IDBConnectionProxy.cpp */; };
 		517B25AA1CC82B2A0061C011 /* IDBConnectionProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B25A81CC820320061C011 /* IDBConnectionProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517C870A1F8EBB2500EB8076 /* SWContextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517C87081F8EB9BF00EB8076 /* SWContextManager.cpp */; };
+		517C870B1F8EBB2500EB8076 /* SWContextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517C87091F8EB9C000EB8076 /* SWContextManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517C87181F8FD4D900EB8076 /* ServiceWorkerContextData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517C87161F8FD4D300EB8076 /* ServiceWorkerContextData.cpp */; };
 		517DEEE51DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */; };
 		517DEEE81DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */; };
@@ -2454,6 +2457,8 @@
 		51BA4ACA1BBC5BD900DF3D6D /* MemoryIDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */; };
 		51BA4ACB1BBC5BD900DF3D6D /* MemoryIDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */; };
 		51BA4ACC1BBC5BDD00DF3D6D /* IDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC71BBC5AD600DF3D6D /* IDBBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51BCCE2F1F8F1795006BA0ED /* ServiceWorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517C87111F8EE72F00EB8076 /* ServiceWorkerThread.cpp */; };
+		51BCCE301F8F179E006BA0ED /* ServiceWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */; };
@@ -10287,6 +10292,11 @@
 		517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedEncoderCF.h; sourceTree = "<group>"; };
 		517B25A71CC820320061C011 /* IDBConnectionProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBConnectionProxy.cpp; sourceTree = "<group>"; };
 		517B25A81CC820320061C011 /* IDBConnectionProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBConnectionProxy.h; sourceTree = "<group>"; };
+		517C87081F8EB9BF00EB8076 /* SWContextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SWContextManager.cpp; path = workers/service/context/SWContextManager.cpp; sourceTree = SOURCE_ROOT; };
+		517C87091F8EB9C000EB8076 /* SWContextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SWContextManager.h; path = workers/service/context/SWContextManager.h; sourceTree = SOURCE_ROOT; };
+		517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServiceWorkerThread.h; path = workers/service/context/ServiceWorkerThread.h; sourceTree = SOURCE_ROOT; };
+		517C87111F8EE72F00EB8076 /* ServiceWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServiceWorkerThread.cpp; path = workers/service/context/ServiceWorkerThread.cpp; sourceTree = SOURCE_ROOT; };
+		517C87161F8FD4D300EB8076 /* ServiceWorkerContextData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerContextData.cpp; sourceTree = "<group>"; };
 		517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingMomentumCalculatorMac.mm; sourceTree = "<group>"; };
 		517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingMomentumCalculatorMac.h; sourceTree = "<group>"; };
 		517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtension.cpp; sourceTree = "<group>"; };
@@ -19132,6 +19142,17 @@
 			path = server;
 			sourceTree = "<group>";
 		};
+		517C87071F8E8FF200EB8076 /* context */ = {
+			isa = PBXGroup;
+			children = (
+				517C87081F8EB9BF00EB8076 /* SWContextManager.cpp */,
+				517C87091F8EB9C000EB8076 /* SWContextManager.h */,
+				517C87111F8EE72F00EB8076 /* ServiceWorkerThread.cpp */,
+				517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */,
+			);
+			path = context;
+			sourceTree = "<group>";
+		};
 		5182C24C1F3142090059BA7C /* ServiceWorkers */ = {
 			isa = PBXGroup;
 			children = (
@@ -19212,6 +19233,7 @@
 		51F175441F3EBBF200C74950 /* service */ = {
 			isa = PBXGroup;
 			children = (
+				517C87071F8E8FF200EB8076 /* context */,
 				517A52EC1F47532D00DCDC0A /* server */,
 				51F1755B1F3EBC0C00C74950 /* ServiceWorker.cpp */,
 				51F1755A1F3EBC0C00C74950 /* ServiceWorker.h */,
@@ -19219,6 +19241,7 @@
 				51F175581F3EBC0C00C74950 /* ServiceWorkerContainer.cpp */,
 				51F175571F3EBC0C00C74950 /* ServiceWorkerContainer.h */,
 				51F175561F3EBC0C00C74950 /* ServiceWorkerContainer.idl */,
+				517C87161F8FD4D300EB8076 /* ServiceWorkerContextData.cpp */,
 				51CA7EE71F8832E0003D3131 /* ServiceWorkerContextData.h */,
 				517A535C1F5899F200DCDC0A /* ServiceWorkerFetchResult.h */,
 				51F175551F3EBC0C00C74950 /* ServiceWorkerGlobalScope.cpp */,
@@ -28627,6 +28650,7 @@
 				7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */,
 				413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */,
 				930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */,
+				517C870B1F8EBB2500EB8076 /* SWContextManager.h in Headers */,
 				7C8E34AD1E4A33AF0054CE23 /* JSDOMConvertAny.h in Headers */,
 				7C8E34AE1E4A33AF0054CE23 /* JSDOMConvertBase.h in Headers */,
 				7C8E34AF1E4A33AF0054CE23 /* JSDOMConvertBoolean.h in Headers */,
@@ -30413,6 +30437,7 @@
 				B22279C50D00BF220071B782 /* SVGExternalResourcesRequired.h in Headers */,
 				B22279C80D00BF220071B782 /* SVGFEBlendElement.h in Headers */,
 				B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */,
+				51BCCE301F8F179E006BA0ED /* ServiceWorkerThread.h in Headers */,
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,
 				B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */,
 				1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */,
@@ -31589,6 +31614,7 @@
 				41D129CF1F3D0EFE00D15E47 /* CacheStorageConnection.cpp in Sources */,
 				E43AF8E61AC5B7E800CA717E /* CacheValidation.cpp in Sources */,
 				49AE2D96134EE5F90072920A /* CalculationValue.cpp in Sources */,
+				517C87181F8FD4D900EB8076 /* ServiceWorkerContextData.cpp in Sources */,
 				952076041F2675FE007D2AAB /* CallTracer.cpp in Sources */,
 				415CDAF41E6B8F87004F11EE /* CanvasCaptureMediaStreamTrack.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
@@ -32231,6 +32257,7 @@
 				96ABA42314BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp in Sources */,
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
 				B277B4040B22F37C0004BEC6 /* GraphicsContextCocoa.mm in Sources */,
+				51BCCE2F1F8F1795006BA0ED /* ServiceWorkerThread.cpp in Sources */,
 				0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */,
 				499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */,
 				0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */,
@@ -33544,6 +33571,7 @@
 				C96F5EC61B5872260091EA9D /* MediaSessionInterruptionProviderMac.mm in Sources */,
 				C90F65551B2253B1002163A1 /* MediaSessionManager.cpp in Sources */,
 				CD669D681D23364B004D1866 /* MediaSessionManagerCocoa.cpp in Sources */,
+				517C870A1F8EBB2500EB8076 /* SWContextManager.cpp in Sources */,
 				07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */,
 				07EDC3EE1AACB75D00983EB5 /* MediaSessionManagerMac.mm in Sources */,
 				CD3A495E17A9D01B00274E42 /* MediaSource.cpp in Sources */,
