@@ -59,7 +59,7 @@ public:
     static void destroyEngine(PAL::SessionID);
     static void clearAllEngines(WTF::Function<void()>&&);
     static void clearEnginesForOrigins(const Vector<String>& origins, WTF::Function<void()>&&);
-    static void fetchEntries(PAL::SessionID, bool shouldComputeSize, WTF::Function<void(Vector<WebsiteData::Entry>)>&&);
+    static void fetchEntries(PAL::SessionID, bool shouldComputeSize, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
 
     static Ref<Engine> create(String&& rootPath) { return adoptRef(*new Engine(WTFMove(rootPath))); }
 
@@ -94,6 +94,8 @@ private:
     explicit Engine(String&& rootPath);
 
     String cachesRootPath(const String& origin);
+
+    void fetchEntries(bool /* shouldComputeSize */, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
 
     void initialize(WTF::Function<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
     void clearAllCaches(WTF::CallbackAggregator&);

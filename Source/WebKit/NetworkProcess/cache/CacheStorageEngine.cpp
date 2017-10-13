@@ -29,8 +29,9 @@
 #include "NetworkCacheFileSystem.h"
 #include "NetworkCacheIOChannel.h"
 #include "NetworkProcess.h"
+#include "WebsiteDataType.h"
 #include <WebCore/CacheQueryOptions.h>
-#include <WebCore/NotImplemented.h>
+#include <WebCore/SecurityOrigin.h>
 #include <pal/SessionID.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
@@ -80,11 +81,9 @@ void Engine::destroyEngine(PAL::SessionID sessionID)
     globalEngineMap().remove(sessionID);
 }
 
-void Engine::fetchEntries(PAL::SessionID sessionID, bool shouldComputeSize, WTF::Function<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+void Engine::fetchEntries(PAL::SessionID sessionID, bool shouldComputeSize, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
 {
-    // FIXME: Support fetching entries
-    notImplemented();
-    completionHandler({ });
+    from(sessionID).fetchEntries(shouldComputeSize, WTFMove(completionHandler));
 }
 
 void Engine::clearAllEngines(WTF::Function<void()>&& completionHandler)
@@ -343,6 +342,54 @@ void Engine::removeCaches(const String& origin)
 {
     ASSERT(m_caches.contains(origin));
     m_caches.remove(origin);
+}
+
+class ReadOriginsTaskCounter : public RefCounted<ReadOriginsTaskCounter> {
+public:
+    static Ref<ReadOriginsTaskCounter> create(WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& callback)
+    {
+        return adoptRef(*new ReadOriginsTaskCounter(WTFMove(callback)));}
+
+    ~ReadOriginsTaskCounter()
+    {
+        m_callback(WTFMove(m_entries));
+    }
+
+    void addOrigin(WebCore::SecurityOriginData&& origin)
+    {
+        m_entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::DOMCache, 0 });
+    }
+
+private:
+    explicit ReadOriginsTaskCounter(WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& callback)
+        : m_callback(WTFMove(callback))
+    {
+    }
+
+    WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)> m_callback;
+    Vector<WebsiteData::Entry> m_entries;
+};
+
+void Engine::fetchEntries(bool /* shouldComputeSize */, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+{
+    if (!shouldPersist()) {
+        auto entries = WTF::map(m_caches, [] (auto& pair) {
+            return WebsiteData::Entry { pair.value->origin(), WebsiteDataType::DOMCache, 0 };
+        });
+        completionHandler(WTFMove(entries));
+        return;
+    }
+
+    auto taskCounter = ReadOriginsTaskCounter::create(WTFMove(completionHandler));
+    for (auto& folderPath : WebCore::listDirectory(m_rootPath, "*")) {
+        if (!WebCore::fileIsDirectory(folderPath, WebCore::ShouldFollowSymbolicLinks::No))
+            continue;
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [taskCounter = taskCounter.copyRef()] (std::optional<WebCore::SecurityOriginData>&& origin) mutable {
+            ASSERT(RunLoop::isMain());
+            if (origin)
+                taskCounter->addOrigin(WTFMove(origin.value()));
+        });
+    }
 }
 
 void Engine::clearAllCaches(CallbackAggregator& taskHandler)

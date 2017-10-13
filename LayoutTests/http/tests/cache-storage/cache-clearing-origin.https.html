@@ -22,12 +22,18 @@ promise_test(async test => {
 
     if (!window.testRunner)
         return Promise.reject("test runner needed");
+
+    assert_false(testRunner.hasDOMCache('https://localhost:80'), 'hasDOMCache with fake origin');
+    assert_true(testRunner.hasDOMCache(window.location.origin), "hasDOMCache with actual origin");
+
     testRunner.clearDOMCache('https://localhost:80');
 
     var keys = await self.caches.keys();
     assert_not_equals(keys.length, 0, "keys should not be empty");
 
     testRunner.clearDOMCache(window.location.origin);
+    assert_false(testRunner.hasDOMCache(window.location.origin), "Actual origin cache is cleared");
+
     keys = await self.caches.keys();
     assert_equals(keys.length, 0, "keys should be empty");
 

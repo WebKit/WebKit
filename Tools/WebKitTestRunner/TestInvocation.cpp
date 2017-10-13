@@ -1210,6 +1210,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "HasDOMCache")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef origin = static_cast<WKStringRef>(messageBody);
+
+        bool hasDOMCache = TestController::singleton().hasDOMCache(origin);
+        WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(hasDOMCache));
+        return result;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

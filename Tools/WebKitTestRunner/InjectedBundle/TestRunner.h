@@ -165,6 +165,7 @@ public:
     JSValueRef originsWithApplicationCache();
 
     void clearDOMCache(JSStringRef origin);
+    bool hasDOMCache(JSStringRef origin);
 
     // Failed load condition testing
     void forceImmediateCompletion();

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKWebsiteDataStoreRef.h"
 
+#include "APIArray.h"
 #include "APIWebsiteDataStore.h"
 #include "WKAPICast.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -354,4 +355,16 @@ void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDataStoreRef
 #else
     UNUSED_PARAM(dataStoreRef);
 #endif
+}
+
+void WKWebsiteDataStoreGetFetchCacheOrigins(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreGetFetchCacheOriginsFunction callback)
+{
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().fetchData(WebKit::WebsiteDataType::DOMCache, { }, [context, callback] (auto dataRecords) {
+        Vector<RefPtr<API::Object>> securityOrigins;
+        for (const auto& dataRecord : dataRecords) {
+            for (const auto& origin : dataRecord.origins)
+                securityOrigins.append(API::SecurityOrigin::create(origin.securityOrigin()));
+        }
+        callback(WebKit::toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), context);
+    });
 }

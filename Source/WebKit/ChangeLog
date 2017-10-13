@@ -1,3 +1,39 @@
+2017-10-13  Youenn Fablet  <youenn@apple.com>
+
+        Implement listing origins for which CacheStorage is storing data
+        https://bugs.webkit.org/show_bug.cgi?id=178236
+
+        Reviewed by Chris Dumez.
+
+        Cache storage is split on per-origin folders which name is obfuscated through salting.
+        To retrieve the origin for each folder, an origin file is now stored within each folder.
+        This file contains the actual origin.
+
+        Adding support to get the list of origin by iterating through each folder and
+        getting the actual origin by reading the content of the 'origin' file.
+
+        Adding C API for WebKitTestRunner.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::fetchEntries):
+        (WebKit::CacheStorage::ReadOriginsTaskCounter::create):
+        (WebKit::CacheStorage::ReadOriginsTaskCounter::~ReadOriginsTaskCounter):
+        (WebKit::CacheStorage::ReadOriginsTaskCounter::addOrigin):
+        (WebKit::CacheStorage::ReadOriginsTaskCounter::ReadOriginsTaskCounter):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::cachesOriginFilename):
+        (WebKit::CacheStorage::Caches::retrieveOriginFromDirectory):
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::storeOrigin):
+        (WebKit::CacheStorage::Caches::readOrigin):
+        (WebKit::CacheStorage::Caches::initialize):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::origin const):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreGetFetchCacheOrigins):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2017-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix API tests after r223269.

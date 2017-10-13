@@ -27,6 +27,8 @@
 #include "CacheStorageEngine.h"
 
 #include "NetworkCacheCoders.h"
+#include "NetworkCacheIOChannel.h"
+#include <WebCore/SecurityOrigin.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
@@ -43,12 +45,65 @@ static inline String cachesListFilename(const String& cachesRootPath)
     return WebCore::pathByAppendingComponent(cachesRootPath, ASCIILiteral("cacheslist"));
 }
 
+static inline String cachesOriginFilename(const String& cachesRootPath)
+{
+    return WebCore::pathByAppendingComponent(cachesRootPath, ASCIILiteral("origin"));
+}
+
+void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(std::optional<WebCore::SecurityOriginData>&&)>&& completionHandler)
+{
+    queue.dispatch([completionHandler = WTFMove(completionHandler), folderPath = folderPath.isolatedCopy()]() mutable {
+        if (!WebCore::fileExists(cachesListFilename(folderPath))) {
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(std::nullopt);
+            });
+            return;
+        }
+
+        auto channel = IOChannel::open(cachesOriginFilename(folderPath), IOChannel::Type::Read);
+        channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [completionHandler = WTFMove(completionHandler)](const Data& data, int error) mutable {
+            ASSERT(RunLoop::isMain());
+            if (error) {
+                completionHandler(std::nullopt);
+                return;
+            }
+            completionHandler(readOrigin(data));
+        });
+    });
+}
+
 Caches::Caches(Engine& engine, String&& origin, String&& rootPath, uint64_t quota)
     : m_engine(&engine)
-    , m_origin(WTFMove(origin))
+    , m_origin(WebCore::SecurityOriginData::fromSecurityOrigin(WebCore::SecurityOrigin::createFromString(origin)))
     , m_rootPath(WTFMove(rootPath))
     , m_quota(quota)
 {
+}
+
+void Caches::storeOrigin(CompletionCallback&& completionHandler)
+{
+    WTF::Persistence::Encoder encoder;
+    encoder << m_origin.protocol;
+    encoder << m_origin.host;
+    encoder << m_origin.port;
+    m_engine->writeFile(cachesOriginFilename(m_rootPath), Data { encoder.buffer(), encoder.bufferSize() }, [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (std::optional<Error>&& error) mutable {
+        completionHandler(WTFMove(error));
+    });
+}
+
+std::optional<WebCore::SecurityOriginData> Caches::readOrigin(const Data& data)
+{
+    // FIXME: We should be able to use modern decoders for persistent data.
+    WebCore::SecurityOriginData origin;
+    WTF::Persistence::Decoder decoder(data.data(), data.size());
+
+    if (!decoder.decode(origin.protocol))
+        return std::nullopt;
+    if (!decoder.decode(origin.host))
+        return std::nullopt;
+    if (!decoder.decode(origin.port))
+        return std::nullopt;
+    return WTFMove(origin);
 }
 
 void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
@@ -77,19 +132,28 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
     }
     m_storage = storage.releaseNonNull();
     m_storage->writeWithoutWaiting();
-    readCachesFromDisk([this, callback = WTFMove(callback)](Expected<Vector<Cache>, Error>&& result) mutable {
-        makeDirty();
 
-        if (!result.hasValue()) {
-            callback(result.error());
-
-            auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
-            for (auto& callback : pendingCallbacks)
-                callback(result.error());
+    storeOrigin([this, callback = WTFMove(callback)] (std::optional<Error>&& error) mutable {
+        if (error) {
+            callback(Error::WriteDisk);
             return;
         }
-        m_caches = WTFMove(result.value());
-        initializeSize(WTFMove(callback));
+
+        readCachesFromDisk([this, callback = WTFMove(callback)](Expected<Vector<Cache>, Error>&& result) mutable {
+            makeDirty();
+
+            if (!result.hasValue()) {
+                callback(result.error());
+
+                auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
+                for (auto& callback : pendingCallbacks)
+                    callback(result.error());
+                return;
+            }
+            m_caches = WTFMove(result.value());
+
+            initializeSize(WTFMove(callback));
+        });
     });
 }
 

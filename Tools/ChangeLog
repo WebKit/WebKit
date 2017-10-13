@@ -1,3 +1,24 @@
+2017-10-13  Youenn Fablet  <youenn@apple.com>
+
+        Implement listing origins for which CacheStorage is storing data
+        https://bugs.webkit.org/show_bug.cgi?id=178236
+
+        Reviewed by Chris Dumez.
+
+        Adding hasDOMCache API for checking whether origin is storing data through Cache API.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::hasDOMCache):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::FetchCacheOriginsCallbackContext::FetchCacheOriginsCallbackContext):
+        (WTR::fetchCacheOriginsCallback):
+        (WTR::TestController::hasDOMCache):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove Editor::simplifyMarkup

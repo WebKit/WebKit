@@ -58,6 +58,7 @@ interface TestRunner {
     void dumpPolicyDelegateCallbacks();
 
     void clearDOMCache(DOMString origin);
+    boolean hasDOMCache(DOMString origin);
 
     // Special options.
     void keepWebHistory();
