@@ -2299,18 +2299,39 @@ void TestController::removeAllSessionCredentials()
 
 #endif
 
+#if WK_API_ENABLED
+struct ClearDOMCacheCallbackContext {
+    explicit ClearDOMCacheCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    TestController& testController;
+    bool done { false };
+};
+
+static void clearDOMCacheCallback(void* userData)
+{
+    auto* context = static_cast<ClearDOMCacheCallbackContext*>(userData);
+    context->done = true;
+    context->testController.notifyDone();
+}
+#endif
+
 void TestController::clearDOMCache(WKStringRef origin)
 {
 #if WK_API_ENABLED
     auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
+    ClearDOMCacheCallbackContext context(*this);
 
-    if (WKStringIsEmpty(origin)) {
-        WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore);
-        return;
+    if (WKStringIsEmpty(origin))
+        WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore, &context, clearDOMCacheCallback);
+    else {
+        auto cacheOrigin = adoptWK(WKSecurityOriginCreateFromString(origin));
+        WKWebsiteDataStoreRemoveFetchCacheForOrigin(websiteDataStore, cacheOrigin.get(), &context, clearDOMCacheCallback);
     }
-
-    auto cacheOrigin = adoptWK(WKSecurityOriginCreateFromString(origin));
-    WKWebsiteDataStoreRemoveFetchCacheForOrigin(websiteDataStore, cacheOrigin.get());
+    if (!context.done)
+        runUntil(context.done, m_currentInvocation->shortTimeout());
 #endif
 }
 

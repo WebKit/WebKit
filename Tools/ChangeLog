@@ -1,3 +1,23 @@
+2017-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test http/tests/cache-storage/cache-clearing.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=178200
+
+        Reviewed by Chris Dumez.
+
+        Making clearDOMCache wait for removal completion to exit.
+        This removes the risk to interact with the cache while deleting it which will end up be racy in tests.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::clearDOMCache):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::ClearDOMCacheCallbackContext::ClearDOMCacheCallbackContext):
+        (WTR::clearDOMCacheCallback):
+        (WTR::TestController::clearDOMCache):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-10-12  John Wilander  <wilander@apple.com>
 
         ResourceLoadObserver::logFrameNavigation() should use redirectResponse.url()

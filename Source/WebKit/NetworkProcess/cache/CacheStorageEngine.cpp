@@ -353,8 +353,11 @@ void Engine::clearAllCaches(CallbackAggregator& taskHandler)
     if (!shouldPersist())
         return;
 
-    m_ioQueue->dispatch([filename = m_rootPath.isolatedCopy(), taskHandler = makeRef(taskHandler)] {
-        deleteDirectoryRecursively(filename);
+    m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), taskHandler = makeRef(taskHandler)] {
+        for (auto& filename : WebCore::listDirectory(path, "*")) {
+            if (WebCore::fileIsDirectory(filename, WebCore::ShouldFollowSymbolicLinks::No))
+                deleteDirectoryRecursively(filename);
+        }
     });
 }
 

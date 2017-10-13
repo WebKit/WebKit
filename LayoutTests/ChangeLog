@@ -1,3 +1,20 @@
+2017-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test http/tests/cache-storage/cache-clearing.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=178200
+
+        Reviewed by Chris Dumez.
+
+        Splitting cache-clearing.https.html in two sub tests and marking them as Pass/Timeout for the moment.
+
+        * platform/win/TestExpectations: Skipping cache/sw tests.
+        * TestExpectations:
+        * http/tests/cache-storage/cache-clearing.https.html: Removed.
+        * http/tests/cache-storage/cache-clearing-all.https-expected.txt: Added.
+        * http/tests/cache-storage/cache-clearing-all.https.html: Added.
+        * http/tests/cache-storage/cache-clearing-origin.https-expected.txt: Added.
+        * http/tests/cache-storage/cache-clearing-origin.https.html: Added.
+
 2017-10-12  Per Arne Vollan  <pvollan@apple.com>
 
         Mark some xhtml tests as failing on Windows.

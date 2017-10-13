@@ -3626,17 +3626,6 @@ js/dom/builtin-getter-name.html [ Failure ]
 fast/text/variations/font-selection-font-weight.html [ ImageOnlyFailure ]
 fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Skip ]
 
-# Failing cache storage tests
-webkit.org/b/176999 http/tests/cache-storage/cache-origins.https.html [ Skip ]
-webkit.org/b/176999 http/tests/cache-storage/cache-persistency.https.html [ Skip ]
-webkit.org/b/176999 http/tests/cache-storage/cache-records-persistency.https.html [ Failure ]
-webkit.org/b/176999 http/tests/cache-storage/cache-representation.https.html [ Skip ]
-webkit.org/b/176999 http/wpt/cache-storage/cache-put-keys.https.any.html [ Failure ]
-webkit.org/b/176999 http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Failure ]
-webkit.org/b/176999 http/wpt/cache-storage/cache-put-stream.https.any.html [ Failure ]
-webkit.org/b/176999 http/wpt/cache-storage/cache-put-stream.https.any.worker.html [ Failure ]
-webkit.org/b/176999 http/wpt/cache-storage/cache-remove-twice.html [ Failure ]
-
 # html/syntax web platform tests are failing on Windows.
 webkit.org/b/162415 imported/w3c/web-platform-tests/html/syntax [ Skip ]
 
@@ -3709,6 +3698,9 @@ imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-or
 imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
+http/tests/cache-storage [ Skip ]
+http/wpt/cache-storage [ Skip ]
+
 
 # Flaky tests on Windows:
 webkit.org/b/176564 http/tests/misc/delete-frame-during-readystatechange.html [ Pass Crash ]
@@ -3778,14 +3770,10 @@ webkit.org/b/177626 fast/dom/HTMLLinkElement/preconnect-support.html  [ Skip ]
 webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-http.html [ Skip ]
 webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-https.html [ Skip ]
 
-webkit.org/b/177891 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
-
 webkit.org/b/177964 fast/text/loading-block-nofinish.html [ Pass ImageOnlyFailure ]
 webkit.org/b/177964 fast/text/loading-failure-finish.html [ Pass ImageOnlyFailure ]
 webkit.org/b/177964 fast/text/loading-failure-nofinish.html [ Pass ImageOnlyFailure ]
 webkit.org/b/177964 fast/text/loading-swap-nofinish.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/178200 http/tests/cache-storage/cache-clearing.https.html [ Failure ]
 
 # xhtml tests are failing on some of the EWS bots.
 webkit.org/b/178230 fast/xmlhttprequest/xmlhttprequest-get.xhtml [ Failure ]

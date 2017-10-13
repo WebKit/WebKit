@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: testing Cache persistency</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+promise_test(test => {
+    return self.caches.keys().then(keys => {
+        var pending = [];
+        for (key of keys)
+            pending.push(self.caches.delete(keys[0]));
+        return Promise.all(pending);
+    });
+}, "Cleaning existing caches");
+
+function waitFor(delay)
+{
+    return new Promise(resolve => {
+        setTimeout(resolve, delay);
+    });
+}
+
+async function validateCachesEmptyness(expected, counter)
+{
+    var keys = await self.caches.keys();
+
+    var isEmpty = keys.length === 0;
+    if (isEmpty === expected)
+        return true;
+
+    if (counter > 10)
+        return false;
+
+    await waitFor(100);
+    if (!counter)
+        counter = 0;
+    return validateCachesEmptyness(expected, ++counter);
+}
+
+promise_test(() => {
+    var test_url = 'https://example.com/foo';
+    var cache;
+    var cache_keys;
+    var first_response = new Response("Old body", { statusText: 'Old status' });
+    var alternate_response = new Response("New body", { statusText: 'New status' });
+    return self.caches.open("test-cache-records-persistency").then(c => {
+        cache = c;
+    }).then(() => {
+        return cache.put(test_url, first_response);
+    }).then(() => {
+        if (!window.testRunner)
+            return Promise.reject("test runner needed");
+        testRunner.clearDOMCache('https://localhost:80');
+        return validateCachesEmptyness(false);
+    }).then(result => {
+        assert_true(result, "caches should not be empty");
+        testRunner.clearDOMCache(window.location.origin);
+        return validateCachesEmptyness(true);
+    }).then(result => {
+        assert_true(result, "caches should be empty");
+        return self.caches.open("test-cache-records-persistency");
+    }).then(cache => {
+        return cache.keys();
+    }).then(keys => {
+        assert_equals(keys.length, 0, "records should be empty");
+    });
+}, 'Clearing disk cache of a given origin');
+    </script>
+</body>
+</html>
