@@ -1245,7 +1245,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 // FIXME: This returns an autoreleased object. Should it really be prefixed 'create'?
 - (NSWindow *)createFullScreenWindow
 {
-    return _data->_impl->createFullScreenWindow();
+    return _data->_impl->fullScreenWindow();
 }
 
 - (void)beginDeferringViewInWindowChanges

@@ -26,7 +26,6 @@
 #if !TARGET_OS_IPHONE
 
 #import <WebKit/WKBase.h>
-#import <WebKit/WKImmediateActionTypes.h>
 #import <WebKit/WKLayoutMode.h>
 #import <WebKit/WKView.h>
 #import <WebKit/_WKOverlayScrollbarStyle.h>

@@ -282,7 +282,7 @@ public:
     void closeFullScreenWindowController();
 #endif
     NSView *fullScreenPlaceholderView();
-    NSWindow *createFullScreenWindow();
+    NSWindow *fullScreenWindow();
 
     bool isEditable() const;
     bool executeSavedCommandBySelector(SEL);

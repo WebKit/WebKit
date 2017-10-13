@@ -1,3 +1,45 @@
+2017-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Expose some of WKView's WebViewImpl accessors through WKWebViewPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=178240
+        <rdar://problem/34962720>
+
+        Reviewed by Tim Horton.
+        
+        Also renamed createFullScreenWindow to fullScreenWindow to reflect the fact that it returns
+        an autoreleased NSWindow so we don't make the same naming mistake in the WKWebView SPI.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _dismissContentRelativeChildWindows]):
+        (-[WKWebView _setFrame:andScrollBy:]):
+        (-[WKWebView _setTotalHeightOfBanners:]):
+        (-[WKWebView _totalHeightOfBanners]):
+        (-[WKWebView _beginDeferringViewInWindowChanges]):
+        (-[WKWebView _endDeferringViewInWindowChanges]):
+        (-[WKWebView _endDeferringViewInWindowChangesSync]):
+        (-[WKWebView _gestureEventWasNotHandledByWebCore:]):
+        (-[WKWebView _setIgnoresNonWheelEvents:]):
+        (-[WKWebView _ignoresNonWheelEvents]):
+        (-[WKWebView _setCustomSwipeViews:]):
+        (-[WKWebView _setCustomSwipeViewsTopContentInset:]):
+        (-[WKWebView _tryToSwipeWithEvent:ignoringPinnedState:]):
+        (-[WKWebView _setDidMoveSwipeSnapshotCallback:]):
+        (-[WKWebView _fullScreenPlaceholderView]):
+        (-[WKWebView _fullScreenWindow]):
+        (-[WKWebView _disableFrameSizeUpdates]):
+        (-[WKWebView _enableFrameSizeUpdates]):
+        (-[WKWebView _canChangeFrameLayout:]):
+        (-[WKWebView _underlayColor]):
+        (-[WKWebView _setUnderlayColor:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView createFullScreenWindow]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::fullScreenWindowController):
+        (WebKit::WebViewImpl::fullScreenWindow):
+        (WebKit::WebViewImpl::createFullScreenWindow): Deleted.
+
 2017-10-12  Youenn Fablet  <youenn@apple.com>
 
         Layout Test http/tests/cache-storage/cache-clearing.https.html is failing
