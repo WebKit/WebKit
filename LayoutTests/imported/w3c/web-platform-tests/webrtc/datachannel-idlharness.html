@@ -1,7 +1,7 @@
 <!doctype html>
-<!-- 
+<!--
 This test creates a data channel object and compares it with the WebIDL defined interface
- -->
+-->
 
 <html>
 <head>
@@ -12,12 +12,12 @@ This test creates a data channel object and compares it with the WebIDL defined 
 </head>
 <body>
   <div id="log"></div>
-  <!--  These files are in place when executing on W3C.  -->
+  <!-- These files are in place when executing on W3C. -->
   <script src="/resources/testharness.js"></script>
   <script src="/resources/testharnessreport.js"></script>
   <script src=/resources/WebIDLParser.js></script>
   <script src=/resources/idlharness.js></script>
-  <!--  The IDL is copied from https://w3c.github.io/webrtc-pc/archives/20161219/webrtc.html  -->
+  <!-- The IDL is copied from https://w3c.github.io/webrtc-pc/archives/20161219/webrtc.html -->
   <script type="text/plain">
 interface RTCDataChannel : EventTarget {
     readonly attribute USVString           label;

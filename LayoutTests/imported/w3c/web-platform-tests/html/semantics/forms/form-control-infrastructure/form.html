@@ -14,7 +14,7 @@
 <p><select id="select"><option>select</option></select>
 <p><textarea id="textarea">textarea</textarea>
 
-<!--  label is special: label.form is an alias for label.control.form  -->
+<!-- label is special: label.form is an alias for label.control.form -->
 <p><label id="label">label</label>
 <p><label id="label-form" form="form">label-form</label>
 <p><label id="label-form-form2" form="form2">label-form-form2</label>
@@ -30,14 +30,14 @@
  <input id="input-with-form-attr" form="form2">
  <label id="label-for-control-form" for="input-with-form-attr">label-for-control-form</label>
 </p>
-<!--  misnested tags where form-association is set by the HTML parser  -->
+<!-- misnested tags where form-association is set by the HTML parser -->
 <table>
- <form id="form3"><!--  self-closes but sets the form element pointer  -->
+ <form id="form3"><!-- self-closes but sets the form element pointer -->
  <tr>
   <td><label id="label-in-table">label-in-table</label>
   <td><label id="label-in-table-with-control">label-in-table <input></label>
   <td><label id="label-in-table-for" for="input-in-table">label-in-table-for</label>
-  <td><input id="input-in-table"><!--  is associated with form3  -->
+  <td><input id="input-in-table"><!-- is associated with form3 -->
  </tr>
  </form>
 </table>

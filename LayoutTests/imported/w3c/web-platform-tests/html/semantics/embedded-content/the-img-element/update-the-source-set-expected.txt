@@ -4,7 +4,7 @@ FAIL <img src="" data-expect=""> assert_equals: expected "" but got "http://loca
 PASS <img src="data:,a" data-expect="data:,a"> 
 PASS <img srcset="" src="data:,a" data-expect="data:,a"> 
 PASS <img srcset="data:,b" src="data:,a" data-expect="data:,b"> 
-PASS <img src="data:,a" srcset="data:,b" data-expect="data:,b"><!--  srcset after src  --> 
+PASS <img src="data:,a" srcset="data:,b" data-expect="data:,b"><!-- srcset after src --> 
 PASS <img src="data:,a" srcset="data:,b 1x" data-expect="data:,b"> 
 PASS <img src="data:,a" srcset="data:,b 1.0x" data-expect="data:,b"> 
 PASS <img src="data:,a" srcset="data:,b 1e0x" data-expect="data:,b"> 
@@ -16,7 +16,7 @@ PASS <img src="data:,a" srcset="data:,b 1w, data:,c 0.0001x" sizes="10000px" dat
 PASS <img src="data:,a" srcset="data:,b 0.0001x, data:,c 1w" sizes="10000px" data-expect="data:,b"> 
 PASS <img srcset="data:,a" data-expect="data:,a"> 
 PASS <picture>foo<img src="data:,a" data-expect="data:,a"></picture> 
-PASS <picture><!-- foo --><img src="data:,a" data-expect="data:,a"></picture> 
+PASS <picture><!--foo--><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><br><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><p></p><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><video><source srcset="data:,b"></video><img src="data:,a" data-expect="data:,a"></picture> 
@@ -24,7 +24,7 @@ PASS <picture><span><source srcset="data:,b"></span><img src="data:,a" data-expe
 PASS <picture><svg><source srcset="data:,b"></source></svg><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><svg></svg><source srcset="data:,b"><img src="data:,a" data-expect="data:,b"></picture> 
 PASS <picture><svg><font></font><source srcset="data:,b"></source></svg><img src="data:,a" data-expect="data:,a"></picture> 
-PASS <picture><svg><!-- <font face> tag breaks out of svg --></svg><font face=""></font><source srcset="data:,b"><img src="data:,a" data-expect="data:,b"></picture> 
+PASS <picture><svg><!--<font face> tag breaks out of svg--></svg><font face=""></font><source srcset="data:,b"><img src="data:,a" data-expect="data:,b"></picture> 
 PASS <picture><img src="data:,a"><img src="data:,b" data-expect="data:,b"></picture> 
 PASS <picture><source><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><source src="data:,b"><img src="data:,a" data-expect="data:,a"></picture> 
@@ -79,7 +79,7 @@ PASS <picture><source srcset="data:,b" type="image/gif image/png"><img src="data
 PASS <picture><source srcset="data:,b" type="image/foobarbaz"><img src="data:,a" data-expect="data:,a"></picture> 
 PASS <picture><img src="data:,a" data-expect="data:,a">foo</picture> 
 PASS <picture><img src="data:,a" data-expect="data:,a"><br></picture> 
-PASS <picture><img src="data:,a" data-expect="data:,a"><!-- foo --></picture> 
+PASS <picture><img src="data:,a" data-expect="data:,a"><!--foo--></picture> 
 PASS <picture><img src="data:,a" data-expect="data:,a"><img src="data:,b"></picture> 
 PASS <picture><img data-expect=""><img src="data:,b"></picture> 
 PASS <picture><img src="data:,a" data-expect="data:,a"><source srcset="data:,b"></picture> 

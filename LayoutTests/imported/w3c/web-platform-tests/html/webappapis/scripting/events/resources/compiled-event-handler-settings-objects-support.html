@@ -8,5 +8,5 @@ window.name = "iframe";
 
 <body onbeforeunload="return { toString: parent.postMessage.bind(parent, 'PASS', '*') };">
 
-<!--  window.open() uses the entry settings object to determine how the URL will be parsed  -->
+<!-- window.open() uses the entry settings object to determine how the URL will be parsed -->
 <button onclick="var w = window.open('open-window.html'); w.onload = () => { parent.onWindowLoaded(w.document.URL); };">This will be clicked</button>

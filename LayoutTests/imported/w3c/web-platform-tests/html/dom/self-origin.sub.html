@@ -4,14 +4,14 @@
 <script src="/resources/testharnessreport.js"></script>
 <div id=log></div>
 <iframe></iframe>
-<iframe id="blob-test"></iframe> <!--  will get blob: URI  -->
+<iframe id="blob-test"></iframe> <!-- will get blob: URI -->
 <iframe src="javascript:'javascript'"></iframe>
 <iframe srcdoc="srcdoc"></iframe>
-<!--  Use the non-default HTTP port so we can make sure it gets included in
-     self.origin  -->
+<!-- Use the non-default HTTP port so we can make sure it gets included in
+     self.origin -->
 <iframe src="http://{{domains[www1]}}:{{ports[http][1]}}{{location[path]}}/../resources/self-origin-subframe.html"></iframe>
-<!--  Using the Unicode version on purpose, we expect to get back the Punycode
-     version in self.origin  -->
+<!-- Using the Unicode version on purpose, we expect to get back the Punycode
+     version in self.origin -->
 <iframe src="http://élève.{{domains[]}}:{{ports[http][1]}}{{location[path]}}/../resources/self-origin-subframe.html"></iframe>
 <iframe src="resources/self-origin-subframe.html" sandbox="allow-scripts"></iframe>
 <script type="application/javascript">

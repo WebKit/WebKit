@@ -7,12 +7,12 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 
-<!--  Setup  -->
+<!-- Setup -->
 <script>
 window.run1 = window.run2 = window.run3 = false;
 </script>
 
-<!--  Systems under test  -->
+<!-- Systems under test -->
 <script type="text/javascript;charset=UTF-8">
 window.run1 = true;
 </script>
@@ -25,7 +25,7 @@ window.run2 = true;
 window.run3 = true;
 </script>
 
-<!--  Asserts  -->
+<!-- Asserts -->
 <script>
 test(() => {
   assert_false(window.run1);

@@ -23,7 +23,7 @@ FAIL innerHTML 20 <iframe><&></iframe> assert_equals: expected "<iframe><&></ifr
 FAIL innerHTML 21 <noembed><&></noembed> assert_equals: expected "<noembed><&></noembed>" but got "<noembed>&lt;&amp;&gt;</noembed>"
 FAIL innerHTML 22 <noframes><&></noframes> assert_equals: expected "<noframes><&></noframes>" but got "<noframes>&lt;&amp;&gt;</noframes>"
 FAIL innerHTML 23 <noscript><&></noscript> assert_equals: expected "<noscript><&></noscript>" but got "<noscript>&lt;&amp;&gt;</noscript>"
-FAIL innerHTML 24 <!--data--> assert_equals: expected "<!--data-->" but got "<!-- data -->"
+PASS innerHTML 24 <!--data--> 
 PASS innerHTML 25 <a><b><c></c></b><d>e</d><f><g>h</g></f></a> 
 PASS innerHTML 26  
 PASS outerHTML 0 <span></span> 
@@ -50,7 +50,7 @@ FAIL outerHTML 20 <span><iframe><&></iframe></span> assert_equals: expected "<sp
 FAIL outerHTML 21 <span><noembed><&></noembed></span> assert_equals: expected "<span><noembed><&></noembed></span>" but got "<span><noembed>&lt;&amp;&gt;</noembed></span>"
 FAIL outerHTML 22 <span><noframes><&></noframes></span> assert_equals: expected "<span><noframes><&></noframes></span>" but got "<span><noframes>&lt;&amp;&gt;</noframes></span>"
 FAIL outerHTML 23 <span><noscript><&></noscript></span> assert_equals: expected "<span><noscript><&></noscript></span>" but got "<span><noscript>&lt;&amp;&gt;</noscript></span>"
-FAIL outerHTML 24 <span><!--data--></span> assert_equals: expected "<span><!--data--></span>" but got "<span><!-- data --></span>"
+PASS outerHTML 24 <span><!--data--></span> 
 PASS outerHTML 25 <span><a><b><c></c></b><d>e</d><f><g>h</g></f></a></span> 
 PASS outerHTML 26 <span b="c"></span> 
 PASS innerHTML Attribute in the XML namespace 

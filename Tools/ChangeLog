@@ -1,3 +1,16 @@
+2017-10-12  Chris Dumez  <cdumez@apple.com>
+
+        import-w3c-tests modifies test sources and sometimes causes them to fail
+        https://bugs.webkit.org/show_bug.cgi?id=178234
+
+        Reviewed by Ryosuke Niwa.
+
+        Update import-w3c-tests to stop rewriting tests as this is causing some tests
+        to fail unexpectedly.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.import_tests):
+
 2017-10-12  Youenn Fablet  <youenn@apple.com>
 
         Layout Test http/tests/cache-storage/cache-clearing.https.html is failing

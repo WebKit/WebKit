@@ -18,7 +18,7 @@
 <div class='test'><div id='box' class='ýäè'>&#xA0;</div></div>
 
 
-<!-- Notes:
+<!--Notes:
 
 The HTTP header attempts to set the character encoding to ISO 8859-15. The page starts with a UTF-8 signature.
 
@@ -26,7 +26,7 @@ The test contains a div with a class name that contains the following sequence o
 
 If the test is unsuccessful, the characters &#x00EF;&#x00BB;&#x00BF; should appear at the top of the page.  These represent the bytes that make up the UTF-8 signature when encountered in the ISO 8859-15 encoding.
 
- -->
+-->
 <script>
 test(function() {
 assert_equals(document.getElementById('box').offsetWidth, 100);

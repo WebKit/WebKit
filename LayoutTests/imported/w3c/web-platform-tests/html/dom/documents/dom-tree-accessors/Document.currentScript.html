@@ -65,7 +65,7 @@ function finish(id) {
 
 </script>
 
-<!--  Test parser inserted scripts  -->
+<!-- Test parser inserted scripts -->
 <script id="parse-inline">
 verify('parse-inline');
 finish('parse-inline')
@@ -73,7 +73,7 @@ finish('parse-inline')
 <script id="parse-ext" src="data:text/plain,verify('parse-ext')"></script>
 <script>finish('parse-ext');</script>
 
-<!--  Test DOM inserted scripts  -->
+<!-- Test DOM inserted scripts -->
 <script>
 var s = document.createElement("script");
 s.textContent = "verify('dom-inline');";
@@ -90,7 +90,7 @@ s.onload = function() {
 document.body.appendChild(s);
 </script>
 
-<!--  Test Nested scripts  -->
+<!-- Test Nested scripts -->
 <script id="nested-outer">
  verify("nested");
  var s = document.createElement("script");
@@ -101,7 +101,7 @@ document.body.appendChild(s);
  finish('nested');
 </script>
 
-<!--  Test script load error event listener  -->
+<!-- Test script load error event listener -->
 <script>
 function testLoadFail() {
   verify('script-load-error');
@@ -112,7 +112,7 @@ function testLoadFail() {
 <script src="http://some.nonexistant.test/fail" id="script-load-error" onerror="testLoadFail()">
 </script>
 
-<!--  Test for runtime and compile time errors  -->
+<!-- Test for runtime and compile time errors -->
 <script>
   window.onerror = function() {
     verify('script-window-error');
@@ -135,7 +135,7 @@ function testLoadFail() {
   finish('script-window-error');
 </script>
 
-<!--  Verify in setTimeout  -->
+<!-- Verify in setTimeout -->
 <script>
   setTimeout(function() {
     verify('timeout');
@@ -143,13 +143,13 @@ function testLoadFail() {
   },0);
 </script>
 
-<!--  Verify in eval  -->
+<!-- Verify in eval -->
 <script id="eval">
   eval('verify("eval")');
   finish("eval");
 </script>
 
-<!--  Verify in synchronous xhr  -->
+<!-- Verify in synchronous xhr -->
 <script id="xhr-test">
   var request = new XMLHttpRequest();
   request.open('GET','/',false);
@@ -161,7 +161,7 @@ function testLoadFail() {
   }
 </script>
 
-<!--  Testing script within svg  -->
+<!-- Testing script within svg -->
 <svg>
   <script id="script-svg">
     verify('script-svg');
@@ -169,12 +169,12 @@ function testLoadFail() {
   </script>
 </svg>
 
-<!--  Test script async and defer  -->
+<!-- Test script async and defer -->
 <script id='script-async' async src='data:text/plain,verify("script-async"),finish("script-async")'></script>
 
 <script id='script-defer' defer src='data:text/plain,verify("script-defer"),finish("script-defer")'></script>
 
-<!--  Test async = false dynamic script loading  -->
+<!-- Test async = false dynamic script loading -->
 <script>
   var s = document.createElement("script");
   s.id = "script-async-false";
@@ -186,12 +186,12 @@ function testLoadFail() {
   document.body.appendChild(s);
 </script>
 
-<!--  Verify in iframe javascript uri scheme  -->
+<!-- Verify in iframe javascript uri scheme -->
 <iframe src="javascript:parent.verify('iframe-src'),parent.finish('iframe-src')"
         style="visibility:hidden;display:none">
 </iframe>
 
-<!--  Testing cross origin script  -->
+<!-- Testing cross origin script -->
 <script>
 var s = document.createElement("script");
 s.id = "cross-origin";
@@ -204,7 +204,7 @@ document.body.appendChild(s);
 
 </script>
 
-<!--  Testing document.write  -->
+<!-- Testing document.write -->
 <script>
 document.write('<script id="document-write">verify("document-write"); finish("document-write");</' + 'script>');
 </script>

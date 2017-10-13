@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<!--  Using windows-1252 to ensure that new Document() doesn't inherit utf-8
-     from the parent document.  -->
+<!-- Using windows-1252 to ensure that new Document() doesn't inherit utf-8
+     from the parent document. -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Document constructor</title>

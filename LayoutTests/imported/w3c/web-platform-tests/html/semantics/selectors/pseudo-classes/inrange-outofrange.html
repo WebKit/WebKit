@@ -35,7 +35,7 @@
 <input type="datetime-local" min="2008-03-12T23:59:59" max="2015-02-13T23:59:59" value="2008-03-01T23:59:59" id="datetimelocalunder">
 <input type="datetime-local" min="2008-03-12T23:59:59" max="2015-02-13T23:59:59" value="2016-01-01T23:59:59" id="datetimelocalover">
 
-<!--  None of the following have range limitations since they have neither min nor max attributes  -->
+<!-- None of the following have range limitations since they have neither min nor max attributes -->
 <input type="number" value="0" id="numbernolimit">
 <input type="date" value="2010-10-10" id="datenolimit">
 <input type="time" value="02:00:00" id="timenolimit">
@@ -43,15 +43,15 @@
 <input type="month" value="2000-06" id="monthnolimit">
 <input type="datetime-local" value="2012-11-28T23:59:59" id="datetimelocalnolimit">
 
-<!--  range inputs have default minimum of 0 and default maximum of 100  -->
+<!-- range inputs have default minimum of 0 and default maximum of 100 -->
 <input type="range" value="50" id="range0">
 
-<!--  range input's value gets immediately clamped to the nearest boundary point  -->
+<!-- range input's value gets immediately clamped to the nearest boundary point -->
 <input type="range" min="2" max="7" value="5" id="range1">
 <input type="range" min="2" max="7" value="1" id="range2">
 <input type="range" min="2" max="7" value="9" id="range3">
 
-<!--  None of the following input types can have range limitations  -->
+<!-- None of the following input types can have range limitations -->
 <input min="1" value="0" type="text">
 <input min="1" value="0" type="search">
 <input min="1" value="0" type="url">
@@ -64,7 +64,7 @@
 <input min="1" value="0" type="file">
 <input min="1" value="0" type="submit">
 <input min="1" value="0" type="image">
-<!--  The following types are also barred from constraint validation  -->
+<!-- The following types are also barred from constraint validation -->
 <input min="1" value="0" type="hidden">
 <input min="1" value="0" type="button">
 <input min="1" value="0" type="reset">

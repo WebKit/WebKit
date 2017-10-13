@@ -30,7 +30,7 @@ onload = function() {
 <div><img src='data:,a' data-expect='data:,a'></div>
 <div><img srcset src='data:,a' data-expect='data:,a'></div>
 <div><img srcset='data:,b' src='data:,a' data-expect='data:,b'></div>
-<div><img src='data:,a' srcset='data:,b' data-expect='data:,b'><!--  srcset after src  --></div>
+<div><img src='data:,a' srcset='data:,b' data-expect='data:,b'><!-- srcset after src --></div>
 <div><img src='data:,a' srcset='data:,b 1x' data-expect='data:,b'></div>
 <div><img src='data:,a' srcset='data:,b 1.0x' data-expect='data:,b'></div>
 <div><img src='data:,a' srcset='data:,b 1e0x' data-expect='data:,b'></div>
@@ -42,10 +42,10 @@ onload = function() {
 <div><img src='data:,a' srcset='data:,b 0.0001x, data:,c 1w' sizes='10000px' data-expect='data:,b'></div>
 <div><img srcset='data:,a' data-expect='data:,a'></div>
 
-<!--  child is not a <source>  -->
+<!-- child is not a <source> -->
 
 <div><picture>foo<img src='data:,a' data-expect='data:,a'></picture></div>
-<div><picture><!-- foo --><img src='data:,a' data-expect='data:,a'></picture></div>
+<div><picture><!--foo--><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><br><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><p></p><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><video><source srcset='data:,b'></video><img src='data:,a' data-expect='data:,a'></picture></div>
@@ -53,21 +53,21 @@ onload = function() {
 <div><picture><svg><source srcset='data:,b'/></svg><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><svg/><source srcset='data:,b'/><img src='data:,a' data-expect='data:,b'></picture></div>
 <div><picture><svg><font/><source srcset='data:,b'/></svg><img src='data:,a' data-expect='data:,a'></picture></div>
-<div><picture><svg><!-- <font face> tag breaks out of svg --><font face></font><source srcset='data:,b'/></svg><img src='data:,a' data-expect='data:,b'></picture></div>
+<div><picture><svg><!--<font face> tag breaks out of svg--><font face></font><source srcset='data:,b'/></svg><img src='data:,a' data-expect='data:,b'></picture></div>
 <div><picture><img src='data:,a'><img src='data:,b' data-expect='data:,b'></picture></div>
 
-<!--  <source> has no srcset  -->
+<!-- <source> has no srcset -->
 
 <div><picture><source><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><source src='data:,b'><img src='data:,a' data-expect='data:,a'></picture></div>
 
-<!--  <source srcset> has zero candidates  -->
+<!-- <source srcset> has zero candidates -->
 
 <div><picture><source srcset><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><source srcset=', ,'><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><source srcset='data:,b 1x 1x'><img src='data:,a' data-expect='data:,a'></picture></div>
 
-<!--  <source media>  -->
+<!-- <source media> -->
 
 <div><picture><source srcset='data:,b' media><img src='data:,a' data-expect='data:,b'></picture></div>
 <div><picture><source srcset='data:,b' media='all'><img src='data:,a' data-expect='data:,b'></picture></div>
@@ -83,7 +83,7 @@ onload = function() {
 <div><picture><source srcset='data:,b' media=','><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><source srcset='data:,b' media=', all'><img src='data:,a' data-expect='data:,b'></picture></div>
 
-<!--  <source type> assume support for gif, png, jpg, svg, ico  -->
+<!-- <source type> assume support for gif, png, jpg, svg, ico -->
 
 <div><picture><source srcset='data:,b' type><img src='data:,a' data-expect='data:,b'></picture></div>
 <div><picture><source srcset='data:,b' type=' '><img src='data:,a' data-expect='data:,b'></picture></div>
@@ -119,22 +119,22 @@ onload = function() {
 <div><picture><source srcset='data:,b' type='image/gif image/png'><img src='data:,a' data-expect='data:,a'></picture></div>
 <div><picture><source srcset='data:,b' type='image/foobarbaz'><img src='data:,a' data-expect='data:,a'></picture></div>
 
-<!--  trailing garbage  -->
+<!-- trailing garbage -->
 
 <div><picture><img src='data:,a' data-expect='data:,a'>foo</picture></div>
 <div><picture><img src='data:,a' data-expect='data:,a'><br></picture></div>
-<div><picture><img src='data:,a' data-expect='data:,a'><!-- foo --></picture></div>
+<div><picture><img src='data:,a' data-expect='data:,a'><!--foo--></picture></div>
 <div><picture><img src='data:,a' data-expect='data:,a'><img src='data:,b'></picture></div>
 <div><picture><img data-expect=''><img src='data:,b'></picture></div>
 <div><picture><img src='data:,a' data-expect='data:,a'><source srcset='data:,b'></picture></div>
 <div><picture><img data-expect=''><source srcset='data:,b'></picture></div>
 
-<!--  parent not picture  -->
+<!-- parent not picture -->
 
 <div><picture><span><source srcset='data:,b'><img data-expect=''></span></picture></div>
 <div><picture><span><source srcset='data:,b'><img src='data:,a' data-expect='data:,a'></span></picture></div>
 <div><picture><source srcset='data:,b'><span><img src='data:,a' data-expect='data:,a'></span></picture></div>
 
-<!--  no src  -->
+<!-- no src -->
 
 <div><picture><source srcset='data:,b'><img data-expect='data:,b'></picture></div>

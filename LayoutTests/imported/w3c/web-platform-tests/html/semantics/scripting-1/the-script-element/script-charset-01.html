@@ -8,10 +8,10 @@
   <script src="/resources/testharnessreport.js"></script>
   <div id="log"></div>
 
-  <!--  "Step1" tests  -->
-  <!--  charset is set incorrectly via Content Type "text/javascript;charset=utf-8" in response
+  <!-- "Step1" tests -->
+  <!-- charset is set incorrectly via Content Type "text/javascript;charset=utf-8" in response
       which has priority before a correct setting in "charset" attribute of script tag.
-    -->
+   -->
   <script type="text/javascript"
     src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript%3Bcharset=utf-8" charset="windows-1250">
   </script>
@@ -21,9 +21,9 @@
     assert_not_equals(window.getSomeString(), "śćążź");
   });
   </script>
-  <!--  charset is set correctly via Content Type "text/javascript;charset=utf-8" in response
+  <!-- charset is set correctly via Content Type "text/javascript;charset=utf-8" in response
       which has priority before a incorrect setting in "charset" attribute of script tag.
-    -->
+   -->
 
   <script type="text/javascript"
     src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript%3Bcharset=windows-1250" charset="utf-8">
@@ -35,9 +35,9 @@
   });
   </script>
 
-  <!--  end of step1 tests, now step2 tests  -->
-  <!--  in this case, the response's Content Type does not bring charset information.
-  Second step takes block character encoding if available. -->
+  <!-- end of step1 tests, now step2 tests -->
+  <!-- in this case, the response's Content Type does not bring charset information.
+  Second step takes block character encoding if available.-->
   <script type="text/javascript"
     src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript" charset="utf-8">
   </script>
@@ -47,9 +47,9 @@
     assert_not_equals(window.getSomeString(), "śćążź");
   });
   </script>
-  <!--  charset is set correctly via Content Type "text/javascript;charset=utf-8" in response
+  <!-- charset is set correctly via Content Type "text/javascript;charset=utf-8" in response
       which has priority before a incorrect setting in "charset" attribute of script tag.
-    -->
+   -->
 
   <script type="text/javascript"
     src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript" charset="windows-1250">
@@ -61,9 +61,9 @@
   });
   </script>
 
-  <!--  end of step2 tests, now step3 tests  -->
-  <!--  in this case, neither response's Content Type nor charset attribute bring correct charset information.
-  Third step takes this document's character encoding (declared correctly as UTF-8). -->
+  <!-- end of step2 tests, now step3 tests -->
+  <!-- in this case, neither response's Content Type nor charset attribute bring correct charset information.
+  Third step takes this document's character encoding (declared correctly as UTF-8).-->
   <script type="text/javascript"
     src="serve-with-content-type.py?fn=external-script-windows1250.js&ct=text/javascript">
   </script>

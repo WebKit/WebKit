@@ -4,7 +4,7 @@
 <script src="/resources/testharnessreport.js"></script>
 <script src=common.js></script>
 <div id=log></div>
-<!--  splitting loop  -->
+<!-- splitting loop -->
 <img srcset='' data-expect=''>
 <img srcset=',' data-expect=''>
 <img srcset=',,,' data-expect=''>
@@ -29,7 +29,7 @@
 <img srcset=' , ,,data:,a' data-expect='data:,a'>
 <img srcset='&nbsp;data:,a' data-expect='&nbsp;data:,a' data-resolve>
 <img srcset='data:,a&nbsp;' data-expect='data:,a&nbsp;' data-resolve>
-<!--  descriptor tokenizer  -->
+<!-- descriptor tokenizer -->
 <img srcset='data:,a 1x' data-expect='data:,a'>
 <img srcset='data:,a 1x ' data-expect='data:,a'>
 <img srcset='data:,a 1x,' data-expect='data:,a'>
@@ -47,7 +47,7 @@
 <img srcset='data:,a (, data:,b' data-expect=''>
 <img srcset='data:,a /*, data:,b, data:,c */' data-expect='data:,b'>
 <img srcset='data:,a //, data:,b' data-expect='data:,b'>
-<!--  descriptor parser  -->
+<!-- descriptor parser -->
 <img srcset='data:,a foo' data-expect=''>
 <img srcset='data:,a foo foo' data-expect=''>
 <img srcset='data:,a foo 1x' data-expect=''>
@@ -58,13 +58,13 @@
 <img srcset='data:,a 1w 1w' data-expect=''>
 <img srcset='data:,a 1w 1x' data-expect=''>
 <img srcset='data:,a 1x 1w' data-expect=''>
-<img srcset='data:,a 1w 1h' data-expect='data:,a'><!--  should fail for x-only impl  -->
-<img srcset='data:,a 1h 1w' data-expect='data:,a'><!--  should fail for x-only impl  -->
+<img srcset='data:,a 1w 1h' data-expect='data:,a'><!-- should fail for x-only impl -->
+<img srcset='data:,a 1h 1w' data-expect='data:,a'><!-- should fail for x-only impl -->
 <img srcset='data:,a 1h 1h' data-expect=''>
 <img srcset='data:,a 1h 1x' data-expect=''>
 <img srcset='data:,a 1h 1w 1x' data-expect=''>
 <img srcset='data:,a 1x 1w 1h' data-expect=''>
-<img srcset='data:,a 1w' data-expect='data:,a'><!--  should fail for x-only impl  -->
+<img srcset='data:,a 1w' data-expect='data:,a'><!-- should fail for x-only impl -->
 <img srcset='data:,a 1h' data-expect=''>
 <img srcset='data:,a 1h foo' data-expect=''>
 <img srcset='data:,a foo 1h' data-expect=''>

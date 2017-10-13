@@ -3,31 +3,31 @@
 <title></title>
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
-<!--  We want to use a tag name that will not interact with our test harness,
-     so just make one up.  "foo" is a good one  -->
+<!-- We want to use a tag name that will not interact with our test harness,
+     so just make one up.  "foo" is a good one -->
 
-<!--  Ids that look like negative indices.  These should come first, so we can
-     assert that lookups for nonnegative indices find these by index  -->
+<!-- Ids that look like negative indices.  These should come first, so we can
+     assert that lookups for nonnegative indices find these by index -->
 <foo id="-2"></foo>
 <foo id="-1"></foo>
 
-<!--  Ids that look like nonnegative indices  -->
+<!-- Ids that look like nonnegative indices -->
 <foo id="0"></foo>
 <foo id="1"></foo>
 
-<!--  Ids that look like nonnegative indices near 2^31 = 2147483648  -->
-<foo id="2147483645"></foo> <!--  2^31 - 3  -->
-<foo id="2147483646"></foo> <!--  2^31 - 2  -->
-<foo id="2147483647"></foo> <!--  2^31 - 1  -->
-<foo id="2147483648"></foo> <!--  2^31  -->
-<foo id="2147483649"></foo> <!--  2^31 + 1  -->
+<!-- Ids that look like nonnegative indices near 2^31 = 2147483648 -->
+<foo id="2147483645"></foo> <!-- 2^31 - 3 -->
+<foo id="2147483646"></foo> <!-- 2^31 - 2 -->
+<foo id="2147483647"></foo> <!-- 2^31 - 1 -->
+<foo id="2147483648"></foo> <!-- 2^31 -->
+<foo id="2147483649"></foo> <!-- 2^31 + 1 -->
 
-<!--  Ids that look like nonnegative indices near 2^32 = 4294967296  -->
-<foo id="4294967293"></foo> <!--  2^32 - 3  -->
-<foo id="4294967294"></foo> <!--  2^32 - 2  -->
-<foo id="4294967295"></foo> <!--  2^32 - 1  -->
-<foo id="4294967296"></foo> <!--  2^32  -->
-<foo id="4294967297"></foo> <!--  2^32 + 1  -->
+<!-- Ids that look like nonnegative indices near 2^32 = 4294967296 -->
+<foo id="4294967293"></foo> <!-- 2^32 - 3 -->
+<foo id="4294967294"></foo> <!-- 2^32 - 2 -->
+<foo id="4294967295"></foo> <!-- 2^32 - 1 -->
+<foo id="4294967296"></foo> <!-- 2^32 -->
+<foo id="4294967297"></foo> <!-- 2^32 + 1 -->
 
 <script>
 test(function() {

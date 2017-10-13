@@ -7,8 +7,8 @@
 
 <iframe id="i" src="navigation-unload-same-origin-fragment-1.html"></iframe>
 
-<!--  a timeout indicates that setting i.contentWindow.location.hash (a second navigation) aborted the first navigation,
-    and so it stayed on a.html and finishedLoading was never called  -->
+<!-- a timeout indicates that setting i.contentWindow.location.hash (a second navigation) aborted the first navigation,
+    and so it stayed on a.html and finishedLoading was never called -->
 
 <script>
 var test = async_test('Tests that a fragment navigation in the unload handler will not block the initial navigation');

@@ -7,26 +7,26 @@
 
 <table border=1>
   <tr><td colspan=500>a<td colspan=500 id=a1>a
-  <!--  This cell must span the previous two  -->
+  <!-- This cell must span the previous two -->
   <tr><td colspan=1000 id=a2>a
 </table>
 
 <table border=1>
   <tr><td colspan=1000 id=b1>a<td>a
-  <!--  This cell must span only the first cell in the previous row  -->
+  <!-- This cell must span only the first cell in the previous row -->
   <tr><td colspan=1001 id=b2>a
 </table>
 
 <table border=1 style="float:left">
-  <!--  The first column must go all the way down to the bottom  -->
+  <!-- The first column must go all the way down to the bottom -->
   <tr><td rowspan=65534 id=c1>a<td>
-  <!--  We'll add another 65533 rows later  -->
+  <!-- We'll add another 65533 rows later -->
 </table>
 
 <table border=1>
-  <!--  The first column must go one cell below the bottom  -->
+  <!-- The first column must go one cell below the bottom -->
   <tr><td rowspan=65535 id=d1>a<td>
-  <!--  We'll add another 65534 rows later  -->
+  <!-- We'll add another 65534 rows later -->
 </table>
 
 <script>
