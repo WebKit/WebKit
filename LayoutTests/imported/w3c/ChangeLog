@@ -1,3 +1,15 @@
+2017-10-13  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Align queue with spec for ReadableStreamDefaultController
+        https://bugs.webkit.org/show_bug.cgi?id=178082
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Updated test expectations for tests that were previously failing but now pass.
+
+        * web-platform-tests/streams/readable-streams/floating-point-total-queue-size-expected.txt:
+        * web-platform-tests/streams/readable-streams/floating-point-total-queue-size.dedicatedworker-expected.txt:
+
 2017-10-12  Chris Dumez  <cdumez@apple.com>
 
         import-w3c-tests modifies test sources and sometimes causes them to fail

@@ -59,8 +59,7 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
     this.@pullAgain = false;
     this.@pulling = false;
     @readableByteStreamControllerClearPendingPullIntos(this);
-    this.@queue = [];
-    this.@totalQueuedBytes = 0;
+    this.@queue = @newQueue();
     this.@started = false;
     this.@closeRequested = false;
 
@@ -137,8 +136,7 @@ function readableByteStreamControllerCancel(controller, reason)
 
     if (controller.@pendingPullIntos.length > 0)
         controller.@pendingPullIntos[0].bytesFilled = 0;
-    controller.@queue = [];
-    controller.@totalQueuedBytes = 0;
+    controller.@queue = @newQueue();
     return @promiseInvokeOrNoop(controller.@underlyingByteSource, "cancel", [reason]);
 }
 
@@ -148,7 +146,7 @@ function readableByteStreamControllerError(controller, e)
 
     @assert(controller.@controlledReadableStream.@state === @streamReadable);
     @readableByteStreamControllerClearPendingPullIntos(controller);
-    controller.@queue = [];
+    controller.@queue = @newQueue();
     @readableStreamError(controller.@controlledReadableStream, e);
 }
 
@@ -159,7 +157,7 @@ function readableByteStreamControllerClose(controller)
     @assert(!controller.@closeRequested);
     @assert(controller.@controlledReadableStream.@state === @streamReadable);
 
-    if (controller.@totalQueuedBytes > 0) {
+    if (controller.@queue.size > 0) {
         controller.@closeRequested = true;
         return;
     }
@@ -194,7 +192,7 @@ function readableByteStreamControllerGetDesiredSize(controller)
    if (stream.@state === @streamClosed)
        return 0;
 
-   return controller.@strategyHWM - controller.@totalQueuedBytes;
+   return controller.@strategyHWM - controller.@queue.size;
 }
 
 function readableStreamHasBYOBReader(stream)
@@ -216,7 +214,7 @@ function readableByteStreamControllerHandleQueueDrain(controller) {
     "use strict";
 
     @assert(controller.@controlledReadableStream.@state === @streamReadable);
-    if (!controller.@totalQueuedBytes && controller.@closeRequested)
+    if (!controller.@queue.size && controller.@closeRequested)
         @readableStreamClose(controller.@controlledReadableStream);
     else
         @readableByteStreamControllerCallPullIfNeeded(controller);
@@ -229,10 +227,10 @@ function readableByteStreamControllerPull(controller)
     const stream = controller.@controlledReadableStream;
     @assert(@readableStreamHasDefaultReader(stream));
 
-    if (controller.@totalQueuedBytes > 0) {
+    if (controller.@queue.size > 0) {
         @assert(stream.@reader.@readRequests.length === 0);
-        const entry = controller.@queue.@shift();
-        controller.@totalQueuedBytes -= entry.byteLength;
+        const entry = controller.@queue.content.@shift();
+        controller.@queue.size -= entry.byteLength;
         @readableByteStreamControllerHandleQueueDrain(controller);
         let view;
         try {
@@ -341,7 +339,7 @@ function readableByteStreamControllerEnqueue(controller, chunk)
         if (!stream.@reader.@readRequests.length)
             @readableByteStreamControllerEnqueueChunk(controller, transferredBuffer, byteOffset, byteLength);
         else {
-            @assert(!controller.@queue.length);
+            @assert(!controller.@queue.content.length);
             let transferredView = new @Uint8Array(transferredBuffer, byteOffset, byteLength);
             @readableStreamFulfillReadRequest(stream, transferredView, false);
         }
@@ -363,12 +361,12 @@ function readableByteStreamControllerEnqueueChunk(controller, buffer, byteOffset
 {
     "use strict";
 
-    controller.@queue.@push({
+    controller.@queue.content.@push({
         buffer: buffer,
         byteOffset: byteOffset,
         byteLength: byteLength
     });
-    controller.@totalQueuedBytes += byteLength;
+    controller.@queue.size += byteLength;
 }
 
 function readableByteStreamControllerRespondWithNewView(controller, view)
@@ -471,7 +469,7 @@ function readableByteStreamControllerProcessPullDescriptors(controller)
 
     @assert(!controller.@closeRequested);
     while (controller.@pendingPullIntos.length > 0) {
-        if (controller.@totalQueuedBytes === 0)
+        if (controller.@queue.size === 0)
             return;
         let pullIntoDescriptor = controller.@pendingPullIntos[0];
         if (@readableByteStreamControllerFillDescriptorFromQueue(controller, pullIntoDescriptor)) {
@@ -487,8 +485,8 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
     "use strict";
 
     const currentAlignedBytes = pullIntoDescriptor.bytesFilled - (pullIntoDescriptor.bytesFilled % pullIntoDescriptor.elementSize);
-    const maxBytesToCopy = controller.@totalQueuedBytes < pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled ?
-                controller.@totalQueuedBytes : pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled;
+    const maxBytesToCopy = controller.@queue.size < pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled ?
+                controller.@queue.size : pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled;
     const maxBytesFilled = pullIntoDescriptor.bytesFilled + maxBytesToCopy;
     const maxAlignedBytes = maxBytesFilled - (maxBytesFilled % pullIntoDescriptor.elementSize);
     let totalBytesToCopyRemaining = maxBytesToCopy;
@@ -500,7 +498,7 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
     }
 
     while (totalBytesToCopyRemaining > 0) {
-        let headOfQueue = controller.@queue[0];
+        let headOfQueue = controller.@queue.content[0];
         const bytesToCopy = totalBytesToCopyRemaining < headOfQueue.byteLength ? totalBytesToCopyRemaining : headOfQueue.byteLength;
         // Copy appropriate part of pullIntoDescriptor.buffer to headOfQueue.buffer.
         // Remark: this implementation is not completely aligned on the definition of CopyDataBlockBytes
@@ -516,13 +514,13 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
         }
 
         if (headOfQueue.byteLength === bytesToCopy)
-            controller.@queue.@shift();
+            controller.@queue.content.@shift();
         else {
             headOfQueue.byteOffset += bytesToCopy;
             headOfQueue.byteLength -= bytesToCopy;
         }
 
-        controller.@totalQueuedBytes -= bytesToCopy;
+        controller.@queue.size -= bytesToCopy;
         @assert(controller.@pendingPullIntos.length === 0 || controller.@pendingPullIntos[0] === pullIntoDescriptor);
         @readableByteStreamControllerInvalidateBYOBRequest(controller);
         pullIntoDescriptor.bytesFilled += bytesToCopy;
@@ -530,7 +528,7 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
     }
 
     if (!ready) {
-        @assert(controller.@totalQueuedBytes === 0);
+        @assert(controller.@queue.size === 0);
         @assert(pullIntoDescriptor.bytesFilled > 0);
         @assert(pullIntoDescriptor.bytesFilled < pullIntoDescriptor.elementSize);
     }
@@ -659,7 +657,7 @@ function readableByteStreamControllerPullInto(controller, view)
         return @Promise.@resolve({ value: emptyView, done: true });
     }
 
-    if (controller.@totalQueuedBytes > 0) {
+    if (controller.@queue.size > 0) {
         if (@readableByteStreamControllerFillDescriptorFromQueue(controller, pullIntoDescriptor)) {
             const filledView = @readableByteStreamControllerConvertDescriptor(pullIntoDescriptor);
             @readableByteStreamControllerHandleQueueDrain(controller);

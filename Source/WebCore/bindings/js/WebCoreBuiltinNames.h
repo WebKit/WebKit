@@ -266,7 +266,6 @@ namespace WebCore {
     macro(structuredCloneArrayBuffer) \
     macro(structuredCloneArrayBufferView) \
     macro(top) \
-    macro(totalQueuedBytes) \
     macro(underlyingByteSource) \
     macro(underlyingSink) \
     macro(underlyingSource) \
