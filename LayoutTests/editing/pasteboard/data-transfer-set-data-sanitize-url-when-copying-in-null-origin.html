@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests calling setData with a malformed URL in a null origin document. The malformed value should not be readable in another document');
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setCustomPasteboardDataEnabled(true);
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+iframe.src = `data:text/html;charset=utf-8,<!DOCTYPE html>
+<button onclick="runTest()">1. Copy</button>
+<div><br></div>
+<div id="source" oncopy="copy(event)" contenteditable>http://webkit.org/b/&#x1F914;?x=8 + 6<</div>
+<div id="destination" onpaste="paste(event)" contenteditable>2. Paste here</div>
+<script>
+
+const originalURL = document.getElementById('source').textContent;
+function copy(event) {
+    event.clipboardData.setData('url', originalURL);
+    event.clipboardData.setData('text/html', 'testing');
+    event.preventDefault();
+}
+
+function paste(event) {
+    parent.postMessage({
+        originalURL,
+        url: event.clipboardData.getData('url'),
+        html: event.clipboardData.getData('text/html'),
+        types: event.clipboardData.types,
+        items: Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})),
+    }, '*');
+}
+
+function runTest() {
+    document.body.getBoundingClientRect();
+    document.getElementById('source').focus();
+    document.execCommand('selectAll');
+    document.execCommand('copy');
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+}
+
+if (window.testRunner)
+    runTest();
+
+</scri` + 'pt>';
+
+onmessage = (event) => {
+    originalURL = event.data.originalURL;
+    urlReadInSameDocument = event.data.url;
+    shouldBeEqualToString('urlReadInSameDocument', originalURL);
+    htmlReadInSameDocument = event.data.html;
+    shouldBeEqualToString('htmlReadInSameDocument', "testing");
+    typesInSameDocument = event.data.types;
+    shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/uri-list","text/html"]');
+    itemsInSameDocument = event.data.items;
+    shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+}
+
+function doPaste(event) {
+    shouldBeEqualToString('event.clipboardData.getData("url")', (new URL(originalURL)).href);
+    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["text/uri-list","text/html"]');
+    shouldBeEqualToString('JSON.stringify(Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})))',
+        '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
+    document.getElementById('destination').remove();
+    finishJSTest();
+}
+
+</script>
+<div id="destination" onpaste="doPaste(event)" contenteditable>3. Paste here</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

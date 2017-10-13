@@ -213,7 +213,7 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
         auto url = URLParser(data).result();
         if (url.isValid())
             sanitizedData = url.string();
-    } else if (type == "text/plain")
+    } else if (type == "text/plain" || type == "text/html")
         sanitizedData = data; // Nothing to sanitize.
 
     if (sanitizedData != data)

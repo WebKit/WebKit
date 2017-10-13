@@ -1,3 +1,24 @@
+2017-10-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        "text/html" data is not exposed when dragging and dropping across origins
+        https://bugs.webkit.org/show_bug.cgi?id=178253
+        <rdar://problem/34971203>
+
+        Reviewed by Ryosuke Niwa.
+
+        Renames some existing layout tests, and also augments two tests to verify that "text/html" is preserved when
+        copying and dragging across origins that don't match.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-set-data-ignore-copied-malformed-url-in-null-expected.txt: Renamed from LayoutTests/editing/pasteboard/data-transfer-set-data-ignore-copied-walformed-url-in-null-expected.txt.
+        * editing/pasteboard/data-transfer-set-data-ignore-copied-malformed-url-in-null-origin-expected.txt: Renamed from LayoutTests/editing/pasteboard/data-transfer-set-data-ignore-copied-walformed-url-in-null-origin-expected.txt.
+        * editing/pasteboard/data-transfer-set-data-ignore-copied-malformed-url-in-null-origin.html: Renamed from LayoutTests/editing/pasteboard/data-transfer-set-data-ignore-copied-walformed-url-in-null-origin.html.
+        * editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin-expected.txt: Renamed from LayoutTests/editing/pasteboard/data-transfer-set-data-sanitlize-url-when-copying-in-null-origin-expected.txt.
+        * editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html: Renamed from LayoutTests/editing/pasteboard/data-transfer-set-data-sanitlize-url-when-copying-in-null-origin.html.
+        * editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin-expected.txt: Renamed from LayoutTests/editing/pasteboard/data-transfer-set-data-sanitlize-url-when-dragging-in-null-origin-expected.txt.
+        * editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html: Renamed from LayoutTests/editing/pasteboard/data-transfer-set-data-sanitlize-url-when-dragging-in-null-origin.html.
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-12  Brady Eidson  <beidson@apple.com>
 
         SW "Hello world".
