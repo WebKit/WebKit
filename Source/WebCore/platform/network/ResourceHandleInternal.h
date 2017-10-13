@@ -80,7 +80,6 @@ public:
         , m_partition(request.cachePartition())
         , m_defersLoading(defersLoading)
         , m_shouldContentSniff(shouldContentSniff)
-        , m_usesAsyncCallbacks(client && client->usesAsyncCallbacks())
 #if USE(CFURLCONNECTION)
         , m_currentRequest(request)
 #endif
@@ -115,7 +114,6 @@ public:
 
     bool m_defersLoading;
     bool m_shouldContentSniff;
-    bool m_usesAsyncCallbacks;
 #if USE(CFURLCONNECTION)
     RetainPtr<CFURLConnectionRef> m_connection;
     ResourceRequest m_currentRequest;

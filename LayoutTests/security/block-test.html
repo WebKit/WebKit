@@ -67,12 +67,19 @@
             setTimeout("testRunner.notifyDone()", 0); 
         }
     }
+
+    function makeImage() {
+        var image = document.createElement("img");
+        image.onerror=nextBlockedPortTest;
+        image.src="http://255.255.255.255:1/test.jpg";
+        image.id="testIMG";
+        document.body.appendChild(image);
+    }
 </script>
-<body>
+<body onload="makeImage()">
 <p>This test attempts to change the src of an IMG tag to all black listed ports to confirm that WebKit returns the
 correct error for them - blocked instead of cannot find.  It also tries the FTP ports for exemptions.  Due to the 
 nature of this test, the results can only be processed automatically via DumpRenderTree
 </p>
-<img id="testIMG" src="http://255.255.255.255:1/test.jpg" onError="nextBlockedPortTest();"></img>
 </body>
 </html>

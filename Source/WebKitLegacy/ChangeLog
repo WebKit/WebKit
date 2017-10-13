@@ -1,3 +1,13 @@
+2017-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Use asynchronous ResourceHandleClient calls for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=160677
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::createPingHandle):
+
 2017-10-10  Sam Weinig  <sam@webkit.org>
 
         Replace copyKeysToVector/copyValuesToVector with copyToVector(map.keys())/copyToVector(map.values())

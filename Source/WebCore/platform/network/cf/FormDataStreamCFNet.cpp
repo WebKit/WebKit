@@ -303,8 +303,8 @@ static CFTypeRef formCopyProperty(CFReadStreamRef, CFStringRef propertyName, voi
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
     if (kCFCompareEqualTo == CFStringCompare(propertyName, formDataPointerPropertyName, 0)) {
-        long formDataAsNumber = static_cast<long>(reinterpret_cast<intptr_t>(form->formData.get()));
-        return CFNumberCreate(0, kCFNumberLongType, &formDataAsNumber);
+        long long formDataAsNumber = static_cast<long long>(reinterpret_cast<intptr_t>(form->formData.get()));
+        return CFNumberCreate(0, kCFNumberLongLongType, &formDataAsNumber);
     }
 
     if (kCFCompareEqualTo == CFStringCompare(propertyName, formDataStreamLengthPropertyName(), 0))

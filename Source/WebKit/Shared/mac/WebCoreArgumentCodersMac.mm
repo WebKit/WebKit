@@ -173,20 +173,6 @@ static RetainPtr<CFURLRequestRef> createCFURLRequestFromSerializableRepresentati
     return WTFMove(cfRequest);
 }
 
-static RetainPtr<CFDictionaryRef> createSerializableRepresentation(NSURLRequest *request, CFTypeRef tokenNull)
-{
-    return createSerializableRepresentation([request _CFURLRequest], tokenNull);
-}
-
-static RetainPtr<NSURLRequest> createNSURLRequestFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull)
-{
-    auto cfRequest = createCFURLRequestFromSerializableRepresentation(representation, tokenNull);
-    if (!cfRequest)
-        return nullptr;
-
-    return adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
-}
-
 #if USE(CFURLCONNECTION)
 void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
@@ -217,7 +203,23 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const 
     encoder.encodeEnum(resourceRequest.requester());
     encoder.encodeEnum(resourceRequest.cachePolicy());
 }
+
 #else
+
+static RetainPtr<CFDictionaryRef> createSerializableRepresentation(NSURLRequest *request, CFTypeRef tokenNull)
+{
+    return createSerializableRepresentation([request _CFURLRequest], tokenNull);
+}
+
+static RetainPtr<NSURLRequest> createNSURLRequestFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull)
+{
+    auto cfRequest = createCFURLRequestFromSerializableRepresentation(representation, tokenNull);
+    if (!cfRequest)
+        return nullptr;
+    
+    return adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
+}
+    
 void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
     RetainPtr<NSURLRequest> requestToSerialize = resourceRequest.nsURLRequest(DoNotUpdateHTTPBody);

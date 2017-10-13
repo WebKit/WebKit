@@ -485,13 +485,14 @@ RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& ur
     return handle;
 }
 
-void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, ResourceResponse&& response)
+void ApplicationCacheGroup::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response)
 {
     ASSERT(m_frame);
     InspectorInstrumentation::didReceiveResourceResponse(*m_frame, m_currentResourceIdentifier, m_frame->loader().documentLoader(), response, nullptr);
 
     if (handle == m_manifestHandle) {
         didReceiveManifestResponse(response);
+        handle->continueDidReceiveResponse();
         return;
     }
 
@@ -518,6 +519,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, ResourceR
             m_currentHandle = nullptr;
             // Load the next resource, if any.
             startLoadingEntry();
+            handle->continueDidReceiveResponse();
             return;
         }
         // The server could return 304 for an unconditional request - in this case, we handle the response as a normal error.
@@ -549,11 +551,25 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, ResourceR
             // Load the next resource, if any.
             startLoadingEntry();
         }
+        handle->continueDidReceiveResponse();
         return;
     }
     
     m_currentResource = ApplicationCacheResource::create(url, response, type);
+    handle->continueDidReceiveResponse();
 }
+
+void ApplicationCacheGroup::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&)
+{
+    handle->continueWillSendRequest(WTFMove(request));
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+void ApplicationCacheGroup::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace&)
+{
+    handle->continueCanAuthenticateAgainstProtectionSpace(false);
+}
+#endif
 
 void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, unsigned length, int encodedDataLength)
 {

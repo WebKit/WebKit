@@ -44,7 +44,6 @@
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
 #import "SynchronousLoaderClient.h"
-#import "WebCoreResourceHandleAsDelegate.h"
 #import "WebCoreResourceHandleAsOperationQueueDelegate.h"
 #import "WebCoreURLResponse.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -248,48 +247,21 @@ bool ResourceHandle::start()
 
 #if !PLATFORM(IOS)
     createNSURLConnection(
-        ResourceHandle::makeDelegate(shouldUseCredentialStorage),
+        ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
         schedulingBehavior);
 #else
     createNSURLConnection(
-        ResourceHandle::makeDelegate(shouldUseCredentialStorage),
+        ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
         schedulingBehavior,
         (NSDictionary *)client()->connectionProperties(this).get());
 #endif
 
-    bool scheduled = false;
-    if (SchedulePairHashSet* scheduledPairs = d->m_context->scheduledRunLoopPairs()) {
-        SchedulePairHashSet::iterator end = scheduledPairs->end();
-        for (SchedulePairHashSet::iterator it = scheduledPairs->begin(); it != end; ++it) {
-            if (NSRunLoop *runLoop = (*it)->nsRunLoop()) {
-                [connection() scheduleInRunLoop:runLoop forMode:(NSString *)(*it)->mode()];
-                scheduled = true;
-            }
-        }
-    }
-
-    if (d->m_usesAsyncCallbacks) {
-        ASSERT(!scheduled);
-        [connection() setDelegateQueue:operationQueueForAsyncClients()];
-        scheduled = true;
-    }
-#if PLATFORM(IOS)
-    else {
-        [connection() scheduleInRunLoop:WebThreadNSRunLoop() forMode:NSDefaultRunLoopMode];
-        scheduled = true;
-    }
-#endif
-
-    // Start the connection if we did schedule with at least one runloop.
-    // We can't start the connection until we have one runloop scheduled.
-    if (scheduled)
-        [connection() start];
-    else
-        d->m_startWhenScheduled = true;
+    [connection() setDelegateQueue:operationQueueForAsyncClients()];
+    [connection() start];
 
     LOG(Network, "Handle %p starting connection %p for %@", this, connection(), firstRequest().nsURLRequest(DoNotUpdateHTTPBody));
     
@@ -330,10 +302,6 @@ void ResourceHandle::schedule(SchedulePair& pair)
     if (!runLoop)
         return;
     [d->m_connection.get() scheduleInRunLoop:runLoop forMode:(NSString *)pair.mode()];
-    if (d->m_startWhenScheduled) {
-        [d->m_connection.get() start];
-        d->m_startWhenScheduled = false;
-    }
 }
 
 void ResourceHandle::unschedule(SchedulePair& pair)
@@ -344,18 +312,15 @@ void ResourceHandle::unschedule(SchedulePair& pair)
 
 #endif
 
-id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage)
+id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage, MessageQueue<Function<void()>>* queue)
 {
     ASSERT(!d->m_delegate);
 
     id <NSURLConnectionDelegate> delegate;
-    if (d->m_usesAsyncCallbacks) {
-        if (shouldUseCredentialStorage)
-            delegate = [[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this];
-        else
-            delegate = [[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate alloc] initWithHandle:this];
-    } else
-        delegate = [[WebCoreResourceHandleAsDelegate alloc] initWithHandle:this];
+    if (shouldUseCredentialStorage)
+        delegate = [[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:queue];
+    else
+        delegate = [[WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate alloc] initWithHandle:this messageQueue:queue];
 
     d->m_delegate = delegate;
     [delegate release];
@@ -366,7 +331,7 @@ id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage)
 id ResourceHandle::delegate()
 {
     if (!d->m_delegate)
-        return makeDelegate(false);
+        return makeDelegate(false, nullptr);
     return d->m_delegate.get();
 }
 
@@ -409,24 +374,26 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     bool shouldUseCredentialStorage = storedCredentialsPolicy == StoredCredentialsPolicy::Use;
 #if !PLATFORM(IOS)
     handle->createNSURLConnection(
-        handle->makeDelegate(shouldUseCredentialStorage),
+        handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue()),
         shouldUseCredentialStorage,
         handle->shouldContentSniff() || context->localFileContentSniffingEnabled(),
         SchedulingBehavior::Synchronous);
 #else
     handle->createNSURLConnection(
-        handle->makeDelegate(shouldUseCredentialStorage), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
+        handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue()), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
         shouldUseCredentialStorage,
         handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()),
         SchedulingBehavior::Synchronous,
         (NSDictionary *)handle->client()->connectionProperties(handle.get()).get());
 #endif
 
-    [handle->connection() scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:(NSString *)synchronousLoadRunLoopMode()];
+    [handle->connection() setDelegateQueue:operationQueueForAsyncClients()];
     [handle->connection() start];
     
-    while (!client.isDone())
-        [[NSRunLoop currentRunLoop] runMode:(NSString *)synchronousLoadRunLoopMode() beforeDate:[NSDate distantFuture]];
+    do {
+        if (auto task = client.messageQueue().waitForMessage())
+            (*task)();
+    } while (!client.messageQueue().killed());
 
     error = client.error();
     
@@ -486,24 +453,12 @@ ResourceRequest ResourceHandle::willSendRequest(ResourceRequest&& request, Resou
         }
     }
 
-    if (d->m_usesAsyncCallbacks) {
-        client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse));
-        return { };
-    }
-
-    Ref<ResourceHandle> protectedThis(*this);
-    auto newRequest = client()->willSendRequest(this, WTFMove(request), WTFMove(redirectResponse));
-
-    // Client call may not preserve the session, especially if the request is sent over IPC.
-    if (!newRequest.isNull())
-        newRequest.setStorageSession(d->m_storageSession.get());
-    return newRequest;
+    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse));
+    return { };
 }
 
 void ResourceHandle::continueWillSendRequest(ResourceRequest&& newRequest)
 {
-    ASSERT(d->m_usesAsyncCallbacks);
-
     // Client call may not preserve the session, especially if the request is sent over IPC.
     if (!newRequest.isNull())
         newRequest.setStorageSession(d->m_storageSession.get());
@@ -512,15 +467,7 @@ void ResourceHandle::continueWillSendRequest(ResourceRequest&& newRequest)
 
 void ResourceHandle::continueDidReceiveResponse()
 {
-    ASSERT(d->m_usesAsyncCallbacks);
-
     [delegate() continueDidReceiveResponse];
-}
-
-bool ResourceHandle::shouldUseCredentialStorage()
-{
-    ASSERT(!d->m_usesAsyncCallbacks);
-    return client() && client()->shouldUseCredentialStorage(this);
 }
 
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
@@ -618,22 +565,15 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
-    ResourceHandleClient* client = this->client();
-    if (d->m_usesAsyncCallbacks) {
-        if (client)
-            client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
-        else
-            continueCanAuthenticateAgainstProtectionSpace(false);
-        return false; // Ignored by caller.
-    }
-
-    return client && client->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+    if (ResourceHandleClient* client = this->client())
+        client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
+    else
+        continueCanAuthenticateAgainstProtectionSpace(false);
+    return false; // Ignored by caller.
 }
 
 void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
-    ASSERT(d->m_usesAsyncCallbacks);
-
     [(id)delegate() continueCanAuthenticateAgainstProtectionSpace:result];
 }
 #endif
@@ -719,8 +659,6 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& c
 
 void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 {
-    ASSERT(d->m_usesAsyncCallbacks);
-
     [(id)delegate() continueWillCacheResponse:response];
 }
 

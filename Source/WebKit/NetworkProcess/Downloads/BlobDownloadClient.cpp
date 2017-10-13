@@ -71,6 +71,18 @@ void BlobDownloadClient::didDecideDownloadDestination(const String& destinationP
     m_download.continueDidReceiveResponse();
 }
 
+void BlobDownloadClient::willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+void BlobDownloadClient::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif
+
 void BlobDownloadClient::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffer, int)
 {
     writeToFile(m_destinationFile, buffer->data(), buffer->size());
