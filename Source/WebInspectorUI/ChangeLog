@@ -1,3 +1,66 @@
+2017-10-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: hook up autocompletion to property names and values
+        https://bugs.webkit.org/show_bug.cgi?id=177313
+        <rdar://problem/34577057>
+
+        Reviewed by Joseph Pecoraro.
+
+        - Arrow Right accept the current completion item and places the text caret after it.
+        - Arrow Left hides the completion popover.
+        - Arrow Up selects the previous completion item.
+        - Arrow Down selects the next completion item.
+        - Enter and Tab accept the current completion item and navigate to the next focusable item.
+        - Escape hides the completion popover, if there is one.
+
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WI.CompletionSuggestionsView):
+        (WI.CompletionSuggestionsView.prototype._mouseDown):
+        Add a preventBlur option so clicking on an completion item doesn't change the focus and
+        doesn't cause "blur" event on the target text field.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .completion-hint):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.detached):
+        Call detached on every SpreadsheetTextField to hide CompletionSuggestionsView once
+        SpreadsheetCSSStyleDeclarationEditor is removed from the DOM.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._addBlankProperty):
+        Remove index argument since it is no longer used.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.detached):
+        (WI.SpreadsheetStyleProperty.prototype._remove):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype._nameCompletionDataProvider):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+        Add an extra parameter to SpreadsheetTextField to pass a completion data provider.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype.get suggestionHint):
+        (WI.SpreadsheetTextField.prototype.set suggestionHint):
+        (WI.SpreadsheetTextField.prototype.startEditing):
+        (WI.SpreadsheetTextField.prototype.stopEditing):
+        (WI.SpreadsheetTextField.prototype.detached):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsSelectedCompletion):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsClickedCompletion):
+        (WI.SpreadsheetTextField.prototype._getPrefix):
+        (WI.SpreadsheetTextField.prototype._handleBlur):
+        (WI.SpreadsheetTextField.prototype._handleKeyDown):
+        (WI.SpreadsheetTextField.prototype._handleKeyDownForSuggestionView):
+        (WI.SpreadsheetTextField.prototype._handleInput):
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        (WI.SpreadsheetTextField.prototype._getCaretRect):
+        (WI.SpreadsheetTextField.prototype._getCompletionPrefix):
+        (WI.SpreadsheetTextField.prototype._applyCompletionHint):
+        (WI.SpreadsheetTextField.prototype._hideCompletions):
+        Provide text completion based on the existing CompletionSuggestionsView when completionProvider is passed to SpreadsheetTextField.
+
 2017-10-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Switch Clear navigation item back to the Trash icon (Console, Timelines, Network)

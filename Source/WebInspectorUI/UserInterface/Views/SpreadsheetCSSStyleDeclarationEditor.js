@@ -33,6 +33,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
         this._delegate = delegate;
         this.style = style;
+        this._propertyViews = [];
     }
 
     // Public
@@ -49,10 +50,16 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._propertyViews = [];
         for (let index = 0; index < properties.length; index++) {
             let property = properties[index];
-            let propertyView = new WI.SpreadsheetStyleProperty(this, property, index);
+            let propertyView = new WI.SpreadsheetStyleProperty(this, property);
             this.element.append(propertyView.element);
             this._propertyViews.push(propertyView);
         }
+    }
+
+    detached()
+    {
+        for (let propertyView of this._propertyViews)
+            propertyView.detached();
     }
 
     get style()
@@ -155,7 +162,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
     {
         let blankProperty = this._style.newBlankProperty(afterIndex);
         const newlyAdded = true;
-        let propertyView = new WI.SpreadsheetStyleProperty(this, blankProperty, blankProperty.index, newlyAdded);
+        let propertyView = new WI.SpreadsheetStyleProperty(this, blankProperty, newlyAdded);
         this.element.append(propertyView.element);
         this._propertyViews.push(propertyView);
         propertyView.nameTextField.startEditing();

@@ -25,11 +25,12 @@
 
 WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
 {
-    constructor(delegate)
+    constructor(delegate, {preventBlur} = {})
     {
         super();
 
         this._delegate = delegate || null;
+        this._preventBlur = preventBlur || false;
 
         this._selectedIndex = NaN;
 
@@ -197,6 +198,10 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
     {
         if (event.button !== 0)
             return;
+
+        if (this._preventBlur)
+            event.preventDefault();
+
         this._mouseIsDown = true;
     }
 

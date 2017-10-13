@@ -25,13 +25,15 @@
 
 WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 {
-    constructor(delegate, property, index, newlyAdded)
+    constructor(delegate, property, newlyAdded = false)
     {
         super();
 
+        console.assert(property instanceof WI.CSSProperty);
+
         this._delegate = delegate || null;
         this._property = property;
-        this._newlyAdded = newlyAdded || false;
+        this._newlyAdded = newlyAdded;
         this._element = document.createElement("div");
 
         this._nameElement = null;
@@ -50,12 +52,22 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     get nameTextField() { return this._nameTextField; }
     get valueTextField() { return this._valueTextField; }
 
+    detached()
+    {
+        if (this._nameTextField)
+            this._nameTextField.detached();
+
+        if (this._valueTextField)
+            this._valueTextField.detached();
+    }
+
     // Private
 
     _remove()
     {
         this.element.remove();
         this._property.remove();
+        this.detached();
 
         if (this._delegate && typeof this._delegate.spreadsheetStylePropertyRemoved === "function")
             this._delegate.spreadsheetStylePropertyRemoved(this);
@@ -134,10 +146,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (this._property.editable && this._property.enabled) {
             this._nameElement.tabIndex = 0;
-            this._nameTextField = new WI.SpreadsheetTextField(this, this._nameElement);
+            this._nameTextField = new WI.SpreadsheetTextField(this, this._nameElement, this._nameCompletionDataProvider.bind(this));
 
             this._valueElement.tabIndex = 0;
-            this._valueTextField = new WI.SpreadsheetTextField(this, this._valueElement);
+            this._valueTextField = new WI.SpreadsheetTextField(this, this._valueElement, this._valueCompletionDataProvider.bind(this));
         }
 
         this.element.append(";");
@@ -208,6 +220,16 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     _handleValueChange()
     {
         this._property.rawValue = this._valueElement.textContent.trim();
+    }
+
+    _nameCompletionDataProvider(prefix)
+    {
+        return WI.CSSCompletions.cssNameCompletions.startsWith(prefix);
+    }
+
+    _valueCompletionDataProvider(prefix)
+    {
+        return WI.CSSKeywordCompletions.forProperty(this._property.name).startsWith(prefix);
     }
 };
 

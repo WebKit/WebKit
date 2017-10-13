@@ -44,6 +44,11 @@
     padding-bottom: 0 !important;
 }
 
+.spreadsheet-style-declaration-editor .value.editing {
+    display: inline-block;
+    margin-right: 3px;
+}
+
 .spreadsheet-style-declaration-editor.no-properties {
     display: none;
 }
@@ -78,4 +83,8 @@
 
 .spreadsheet-style-declaration-editor .property.not-inherited {
     opacity: 0.5;
+}
+
+.spreadsheet-style-declaration-editor .completion-hint {
+    color: hsl(0, 0%, 50%) !important;
 }
