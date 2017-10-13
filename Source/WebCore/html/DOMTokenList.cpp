@@ -248,6 +248,9 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
 {
     ASSERT(!m_tokensNeedUpdating);
 
+    if (!m_element.hasAttribute(m_attributeName) && tokens().isEmpty())
+        return;
+
     // https://dom.spec.whatwg.org/#concept-ordered-set-serializer
     StringBuilder builder;
     for (auto& token : tokens()) {
