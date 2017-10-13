@@ -1,5 +1,18 @@
 2017-10-12  Alex Christensen  <achristensen@webkit.org>
 
+        Increment ContentRuleListStore::CurrentContentRuleListFileVersion
+        https://bugs.webkit.org/show_bug.cgi?id=178246
+        <rdar://problem/34890057>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIContentRuleListStore.h:
+        Things are crashing.  Something isn't binary reverse compatible.
+        Probably something related to r222602.
+        This is why we have a version number to update.
+
+2017-10-12  Alex Christensen  <achristensen@webkit.org>
+
         Expose some of WKView's WebViewImpl accessors through WKWebViewPrivate
         https://bugs.webkit.org/show_bug.cgi?id=178240
         <rdar://problem/34962720>
