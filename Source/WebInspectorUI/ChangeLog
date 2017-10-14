@@ -1,5 +1,20 @@
 2017-10-13  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: make split console full width of view
+        https://bugs.webkit.org/show_bug.cgi?id=176635
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/Main.css:
+        (#main):
+        (#content):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container)):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container):
+
+2017-10-13  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: fix ESLint errors
         https://bugs.webkit.org/show_bug.cgi?id=175065
 

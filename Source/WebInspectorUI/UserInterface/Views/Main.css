@@ -131,6 +131,7 @@ input[type=range]::-webkit-slider-runnable-track {
     bottom: 0;
 
     display: flex;
+    flex-direction: column;
 
     background-color: white;
 
@@ -149,9 +150,6 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
 
 #content {
     display: flex;
-    flex-direction: column;
-    flex: 1;
-
     height: 100%; /* This reduces paint areas when typing in the console. http://webkit.org/b/145324 */
 }
 
