@@ -3637,9 +3637,7 @@ media/document-level-media-user-gesture-quirk.html [ Skip ]
 # webrtc not supported
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
-http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
-http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Skip ]
-http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Skip ]
+http/tests/webrtc [ Skip ]
 
 # Resource Timing Metrics not available.
 http/wpt/resource-timing/rt-nextHopProtocol.html [ Skip ]

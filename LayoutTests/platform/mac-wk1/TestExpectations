@@ -111,7 +111,6 @@ imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
 http/tests/webrtc [ Skip ]
 webrtc/datachannel [ Pass ]
-webrtc/captureCanvas-webrtc.html [ Failure Pass ]
 
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
@@ -416,8 +415,6 @@ webkit.org/b/175345 fast/images/animated-gif-scrolling-crash.html [ Pass Timeout
 webkit.org/b/175554 [ Sierra ] fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
 
 webkit.org/b/174218 svg/animations/smil-leak-list-property-instances.svg [ Pass Failure ]
-
-webkit.org/b/172334 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 
 webkit.org/b/172877 svg/as-image/svg-image-with-data-uri-background.html [ Pass ImageOnlyFailure ]
 

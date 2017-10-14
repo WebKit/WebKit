@@ -2895,9 +2895,6 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
-webrtc/video-mute.html [ Failure ]
-webrtc/video-replace-track.html [ Failure ]
-webrtc/video-rotation.html [ Failure ]
 
 # <rdar://problem/34209038>
 webgl/1.0.2/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]

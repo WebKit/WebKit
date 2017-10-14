@@ -590,9 +590,7 @@ fast/mediastream [ Pass ]
 # Skipping until backend is implemented
 webrtc [ Skip ]
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
-http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Timeout ]
-http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Timeout ]
-http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Timeout ]
+http/tests/webrtc [ Skip ]
 # The MediaStream implementation is also still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
