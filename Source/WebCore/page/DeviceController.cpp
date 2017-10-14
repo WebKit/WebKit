@@ -72,9 +72,7 @@ void DeviceController::removeAllDeviceEventListeners(DOMWindow* window)
 
 void DeviceController::dispatchDeviceEvent(Event& event)
 {
-    Vector<RefPtr<DOMWindow>> listenerVector;
-    copyToVector(m_listeners, listenerVector);
-    for (auto& listener : listenerVector) {
+    for (auto& listener : copyToVector(m_listeners.values())) {
         auto document = listener->document();
         if (document && !document->activeDOMObjectsAreSuspended() && !document->activeDOMObjectsAreStopped())
             listener->dispatchEvent(event);
@@ -86,8 +84,7 @@ void DeviceController::fireDeviceEvent()
     ASSERT(hasLastData());
 
     m_timer.stop();
-    Vector<RefPtr<DOMWindow>> listenerVector;
-    copyToVector(m_lastEventListeners, listenerVector);
+    auto listenerVector = copyToVector(m_lastEventListeners.values());
     m_lastEventListeners.clear();
     for (auto& listener : listenerVector) {
         auto document = listener->document();

@@ -309,34 +309,6 @@ inline auto HashCountedSet<Value, HashFunctions, Traits>::remove(typename GetPtr
     return remove(find(value));
 }
 
-template<typename Value, typename HashFunctions, typename Traits, typename VectorType>
-inline void copyToVector(const HashCountedSet<Value, HashFunctions, Traits>& collection, VectorType& vector)
-{
-    typedef typename HashCountedSet<Value, HashFunctions, Traits>::const_iterator iterator;
-
-    vector.resize(collection.size());
-
-    iterator it = collection.begin();
-    iterator end = collection.end();
-    for (unsigned i = 0; it != end; ++it, ++i)
-        vector[i] = *it;
-}
-
-template<typename Value, typename HashFunctions, typename Traits>
-inline void copyToVector(const HashCountedSet<Value, HashFunctions, Traits>& collection, Vector<Value>& vector)
-{
-    typedef typename HashCountedSet<Value, HashFunctions, Traits>::const_iterator iterator;
-
-    vector.resize(collection.size());
-
-    iterator it = collection.begin();
-    iterator end = collection.end();
-    for (unsigned i = 0; it != end; ++it, ++i)
-        vector[i] = (*it).key;
-}
-
 } // namespace WTF
 
 using WTF::HashCountedSet;
-
-
