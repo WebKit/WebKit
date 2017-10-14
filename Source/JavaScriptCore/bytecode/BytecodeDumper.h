@@ -67,6 +67,7 @@ private:
     void printUnaryOp(PrintStream& out, int location, const Instruction*& it, const char* op);
     void printBinaryOp(PrintStream& out, int location, const Instruction*& it, const char* op);
     void printConditionalJump(PrintStream& out, const Instruction*, const Instruction*& it, int location, const char* op);
+    void printCompareJump(PrintStream& out, const Instruction*, const Instruction*& it, int location, const char* op);
     void printGetByIdOp(PrintStream& out, int location, const Instruction*& it);
     void printGetByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);
     void printPutByIdCacheStatus(PrintStream& out, int location, const StubInfoMap&);

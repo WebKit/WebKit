@@ -142,7 +142,6 @@ private:
                 node->setArithMode(Arith::CheckOverflow);
             else {
                 node->setArithMode(Arith::DoOverflow);
-                node->clearFlags(NodeMustGenerate);
                 node->setResult(enableInt52() ? NodeResultInt52 : NodeResultDouble);
             }
             break;
@@ -1594,6 +1593,13 @@ private:
 
         case GetTypedArrayByteOffset: {
             fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
+
+        case CompareBelow:
+        case CompareBelowEq: {
+            fixEdge<Int32Use>(node->child1());
+            fixEdge<Int32Use>(node->child2());
             break;
         }
 

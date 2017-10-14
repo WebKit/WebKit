@@ -1,3 +1,31 @@
+2017-10-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Reland "Add Above/Below comparisons for UInt32 patterns"
+        https://bugs.webkit.org/show_bug.cgi?id=177281
+
+        Reviewed by Saam Barati.
+
+        * stress/uint32-comparison-jump.js: Added.
+        (shouldBe):
+        (above):
+        (aboveOrEqual):
+        (below):
+        (belowOrEqual):
+        (notAbove):
+        (notAboveOrEqual):
+        (notBelow):
+        (notBelowOrEqual):
+        * stress/uint32-comparison.js: Added.
+        (shouldBe):
+        (above):
+        (aboveOrEqual):
+        (below):
+        (belowOrEqual):
+        (aboveTest):
+        (aboveOrEqualTest):
+        (belowTest):
+        (belowOrEqualTest):
+
 2017-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WebAssembly: Wasm functions should have either JSFunctionType or TypeOfShouldCallGetCallData

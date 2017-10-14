@@ -197,6 +197,40 @@ void JIT::emitSlow_op_jngreatereq(Instruction* currentInstruction, Vector<SlowCa
     emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrUnordered, operationCompareGreaterEq, true, iter);
 }
 
+void JIT::emit_op_below(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int op1 = currentInstruction[2].u.operand;
+    int op2 = currentInstruction[3].u.operand;
+    emit_compareUnsigned(dst, op1, op2, Below);
+}
+
+void JIT::emit_op_beloweq(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int op1 = currentInstruction[2].u.operand;
+    int op2 = currentInstruction[3].u.operand;
+    emit_compareUnsigned(dst, op1, op2, BelowOrEqual);
+}
+
+void JIT::emit_op_jbelow(Instruction* currentInstruction)
+{
+    int op1 = currentInstruction[1].u.operand;
+    int op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareUnsignedAndJump(op1, op2, target, Below);
+}
+
+void JIT::emit_op_jbeloweq(Instruction* currentInstruction)
+{
+    int op1 = currentInstruction[1].u.operand;
+    int op2 = currentInstruction[2].u.operand;
+    unsigned target = currentInstruction[3].u.operand;
+
+    emit_compareUnsignedAndJump(op1, op2, target, BelowOrEqual);
+}
+
 #if USE(JSVALUE64)
 
 void JIT::emit_op_unsigned(Instruction* currentInstruction)
@@ -262,6 +296,40 @@ void JIT::emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, Relat
 
         addJump(branch32(condition, regT0, regT1), target);
     }
+}
+
+void JIT::emit_compareUnsignedAndJump(int op1, int op2, unsigned target, RelationalCondition condition)
+{
+    if (isOperandConstantInt(op2)) {
+        emitGetVirtualRegister(op1, regT0);
+        int32_t op2imm = getOperandConstantInt(op2);
+        addJump(branch32(condition, regT0, Imm32(op2imm)), target);
+    } else if (isOperandConstantInt(op1)) {
+        emitGetVirtualRegister(op2, regT1);
+        int32_t op1imm = getOperandConstantInt(op1);
+        addJump(branch32(commute(condition), regT1, Imm32(op1imm)), target);
+    } else {
+        emitGetVirtualRegisters(op1, regT0, op2, regT1);
+        addJump(branch32(condition, regT0, regT1), target);
+    }
+}
+
+void JIT::emit_compareUnsigned(int dst, int op1, int op2, RelationalCondition condition)
+{
+    if (isOperandConstantInt(op2)) {
+        emitGetVirtualRegister(op1, regT0);
+        int32_t op2imm = getOperandConstantInt(op2);
+        compare32(condition, regT0, Imm32(op2imm), regT0);
+    } else if (isOperandConstantInt(op1)) {
+        emitGetVirtualRegister(op2, regT0);
+        int32_t op1imm = getOperandConstantInt(op1);
+        compare32(commute(condition), regT0, Imm32(op1imm), regT0);
+    } else {
+        emitGetVirtualRegisters(op1, regT0, op2, regT1);
+        compare32(condition, regT0, regT1, regT0);
+    }
+    emitTagBool(regT0);
+    emitPutVirtualRegister(dst);
 }
 
 void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition condition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
