@@ -1,3 +1,14 @@
+2017-10-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r223310): Web Inspector: Class list container is transparent and unreadable
+        https://bugs.webkit.org/show_bug.cgi?id=178311
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container):
+        Fix 1px hole below the class container.
+
 2017-10-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas tab: recordings should have a unique name

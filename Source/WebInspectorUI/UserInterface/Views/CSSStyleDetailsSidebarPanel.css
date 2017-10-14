@@ -142,9 +142,10 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-containe
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container {
     flex-wrap: wrap;
-    bottom: var(--console-prompt-min-height);
+    bottom: calc(var(--console-prompt-min-height) - 1px);
     max-height: 75px;
     padding: 3px 2px;
+    background-color: var(--panel-background-color);
     overflow-y: scroll;
 }
 
