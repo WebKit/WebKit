@@ -58,6 +58,7 @@ public:
 
     AtomicString(AtomicStringImpl*);
     AtomicString(RefPtr<AtomicStringImpl>&&);
+    AtomicString(const StaticStringImpl*);
     ATOMICSTRING_CONVERSION AtomicString(StringImpl*);
     ATOMICSTRING_CONVERSION AtomicString(const String&);
     AtomicString(StringImpl* baseString, unsigned start, unsigned length);
@@ -264,6 +265,11 @@ inline AtomicString::AtomicString(RefPtr<AtomicStringImpl>&& imp)
 }
 
 inline AtomicString::AtomicString(StringImpl* imp)
+    : m_string(AtomicStringImpl::add(imp))
+{
+}
+
+inline AtomicString::AtomicString(const StaticStringImpl* imp)
     : m_string(AtomicStringImpl::add(imp))
 {
 }

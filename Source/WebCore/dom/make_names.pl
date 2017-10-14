@@ -138,7 +138,7 @@ if (length($fontNamesIn)) {
         # FIXME: Would like to use static_cast here, but there are differences in const
         # depending on whether SKIP_STATIC_CONSTRUCTORS_ON_GCC is used, so stick with a
         # C-style cast for now.
-        print F "    new (NotNull, (void*)&$name) AtomicString(reinterpret_cast<StringImpl*>(&${name}Data));\n";
+        print F "    new (NotNull, (void*)&$name) AtomicString(&${name}Data);\n";
     }
 
     print F "}\n}\n}\n";
@@ -902,14 +902,14 @@ print F <<END
 
     struct ${capitalizedType}TableEntry {
         void* targetAddress;
-        StringImpl& name;
+        const StaticStringImpl& name;
     };
 
     static const ${capitalizedType}TableEntry ${type}Table[] = {
 END
 ;
     for my $name (sort keys %$namesRef) {
-        print F "        { (void*)&$name$shortCamelType, *reinterpret_cast<StringImpl*>(&${name}Data) },\n";
+        print F "        { (void*)&$name$shortCamelType, *(&${name}Data) },\n";
     }
 
 print F <<END

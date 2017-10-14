@@ -398,7 +398,7 @@ static inline Ref<AtomicStringImpl> addSymbol(StringImpl& base)
     return addSymbol(locker, stringTable(), base);
 }
 
-static Ref<AtomicStringImpl> addStatic(AtomicStringTableLocker& locker, StringTableImpl& atomicStringTable, StringImpl& base)
+static Ref<AtomicStringImpl> addStatic(AtomicStringTableLocker& locker, StringTableImpl& atomicStringTable, const StringImpl& base)
 {
     ASSERT(base.length());
     ASSERT(base.isStatic());
@@ -411,10 +411,17 @@ static Ref<AtomicStringImpl> addStatic(AtomicStringTableLocker& locker, StringTa
     return addToStringTable<UCharBuffer, BufferFromStaticDataTranslator<UChar>>(locker, atomicStringTable, buffer);
 }
 
-static inline Ref<AtomicStringImpl> addStatic(StringImpl& base)
+static inline Ref<AtomicStringImpl> addStatic(const StringImpl& base)
 {
     AtomicStringTableLocker locker;
     return addStatic(locker, stringTable(), base);
+}
+
+RefPtr<AtomicStringImpl> AtomicStringImpl::add(const StaticStringImpl* string)
+{
+    auto s = reinterpret_cast<const StringImpl*>(string);
+    ASSERT(s->isStatic());
+    return addStatic(*s);
 }
 
 Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(StringImpl& string)
