@@ -1,3 +1,43 @@
+2017-10-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas tab: recordings should have a unique name
+        https://bugs.webkit.org/show_bug.cgi?id=178188
+        <rdar://problem/34943364>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New format string "Recording %d".
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.loadDataFromFile):
+        Pass chosen filename to callback.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.recordingFinished):
+        Create a unique name for the recording.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+        (WI.Recording.fromPayload):
+        (WI.Recording.prototype.get displayName):
+        (WI.Recording.prototype.createDisplayName):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype.get saveData):
+        Use encodeURI so that special characters can be used in filenames, and
+        to be consistent with other `saveData` implementations.
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.prototype.set recording):
+        (WI.RecordingNavigationSidebarPanel.prototype._importNavigationItemClicked):
+        Drive-by fix: wait until actions are resolved before updating UI.
+
+        * UserInterface/Views/RecordingTabContentView.js:
+        (WI.RecordingTabContentView.prototype._navigationSidebarImport):
+        Try to use the imported filename as the recording name. If the name
+        collides with that of another imported recording, append a unique suffix.
+
 2017-10-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: provide a way to enable/disable event listeners

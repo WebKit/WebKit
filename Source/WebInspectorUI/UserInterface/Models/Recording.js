@@ -32,6 +32,7 @@ WI.Recording = class Recording
         this._initialState = initialState;
         this._frames = frames;
         this._data = data;
+        this._displayName = WI.UIString("Recording");
 
         this._swizzle = [];
         this._source = null;
@@ -63,12 +64,10 @@ WI.Recording = class Recording
         });
     }
 
-    // Static
-
     static fromPayload(payload)
     {
         if (typeof payload !== "object" || payload === null)
-            payload = {};
+            return null;
 
         if (isNaN(payload.version) || payload.version <= 0)
             return null;
@@ -165,6 +164,7 @@ WI.Recording = class Recording
 
     // Public
 
+    get displayName() { return this._displayName; }
     get type() { return this._type; }
     get initialState() { return this._initialState; }
     get frames() { return this._frames; }
@@ -174,6 +174,33 @@ WI.Recording = class Recording
 
     get source() { return this._source; }
     set source(source) { this._source = source; }
+
+    createDisplayName(suggestedName)
+    {
+        let recordingNameSet;
+        if (this._source) {
+            recordingNameSet = this._source[WI.Recording.CanvasRecordingNamesSymbol];
+            if (!recordingNameSet)
+                this._source[WI.Recording.CanvasRecordingNamesSymbol] = recordingNameSet = new Set;
+        } else
+            recordingNameSet = WI.Recording._importedRecordingNameSet;
+
+        let name;
+        if (suggestedName) {
+            name = suggestedName;
+            let duplicateNumber = 2;
+            while (recordingNameSet.has(name))
+                name = `${suggestedName} (${duplicateNumber++})`;
+        } else {
+            let recordingNumber = 1;
+            do {
+                name = WI.UIString("Recording %d").format(recordingNumber++);
+            } while (recordingNameSet.has(name));
+        }
+
+        recordingNameSet.add(name);
+        this._displayName = name;
+    }
 
     async swizzle(index, type)
     {
@@ -281,6 +308,10 @@ WI.Recording = class Recording
         };
     }
 };
+
+WI.Recording._importedRecordingNameSet = new Set;
+
+WI.Recording.CanvasRecordingNamesSymbol = Symbol("canvas-recording-names");
 
 WI.Recording.Type = {
     Canvas2D: "canvas-2d",

@@ -162,11 +162,18 @@ WI.RecordingTabContentView = class RecordingTabContentView extends WI.ContentBro
 
     _navigationSidebarImport(event)
     {
-        let recording = WI.Recording.fromPayload(event.data.payload);
+        let {filename, payload} = event.data;
+        let recording = WI.Recording.fromPayload(payload);
         if (!recording) {
             WI.Recording.synthesizeError(WI.UIString("unsupported version."));
             return;
         }
+
+        let extensionStart = filename.lastIndexOf(".");
+        if (extensionStart !== -1)
+            filename = filename.substring(0, extensionStart);
+
+        recording.createDisplayName(filename);
 
         this.showRepresentedObject(recording);
     }

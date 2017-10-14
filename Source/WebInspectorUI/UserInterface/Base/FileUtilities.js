@@ -76,11 +76,12 @@ WI.loadDataFromFile = function(callback)
             return;
         }
 
+        let file = inputElement.files[0];
         let reader = new FileReader;
         reader.addEventListener("loadend", (event) => {
-            callback(reader.result);
+            callback(reader.result, file.name);
         });
-        reader.readAsText(inputElement.files[0]);
+        reader.readAsText(file);
     });
     inputElement.click();
 };

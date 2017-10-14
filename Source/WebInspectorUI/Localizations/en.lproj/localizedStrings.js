@@ -708,6 +708,7 @@ localizedStrings["Readonly"] = "Readonly";
 localizedStrings["Reasons for compositing:"] = "Reasons for compositing:";
 localizedStrings["Recently Closed Tabs"] = "Recently Closed Tabs";
 localizedStrings["Recording"] = "Recording";
+localizedStrings["Recording %d"] = "Recording %d";
 localizedStrings["Recording Timeline Data"] = "Recording Timeline Data";
 localizedStrings["Recording error: %s"] = "Recording error: %s";
 localizedStrings["Reference Issue"] = "Reference Issue";
