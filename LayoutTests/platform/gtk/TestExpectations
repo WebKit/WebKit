@@ -1134,18 +1134,12 @@ fast/scrolling/scrolling-tree-includes-frame.html [ Skip ]
 # This test assumes that color on sliders is not reversed for RTL, so failing is good.
 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
+webkit.org/b/178316 imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
+webkit.org/b/178316 http/wpt/cache-storage [ Skip ]
+webkit.org/b/178316 http/tests/cache-storage [ Skip ]
+
 # Service-workers implementation is not complete yet
 webkit.org/b/175419 http/tests/workers/service [ Skip ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html [ Skip ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-delete.https.html [ Crash ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-keys.https.html [ Crash ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-matchAll.https.html [ Crash ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-put.https.html [ Crash ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-delete.https.html [ Crash ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-keys.https.html [ Crash ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-matchAll.https.html [ Crash ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-put.https.html [ Crash ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-service-worker.https.html [ Failure ]
@@ -1282,12 +1276,6 @@ webkit.org/b/172952 fast/frames/sandboxed-iframe-navigation-top-denied.html [ Cr
 webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
 
 webkit.org/b/173916 webaudio/silent-audio-interrupted-in-background.html [ Skip ]
-
-webkit.org/b/175874 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-match.https.html [ Crash ]
-webkit.org/b/175874 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-match.https.html [ Crash ]
-
-webkit.org/b/175875 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html [ Crash ]
-webkit.org/b/175875 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Crash ]
 
 webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Pass ]
 
@@ -3315,9 +3303,6 @@ webkit.org/b/176648 fast/text/mark-matches-broken-line-rendering.html [ ImageOnl
 webkit.org/b/176648 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
-
-webkit.org/b/176652 http/tests/cache-storage/cache-origins.https.html [ Failure ]
-webkit.org/b/176652 http/tests/cache-storage/cache-records-persistency.https.html [ Failure ]
 
 webkit.org/b/177294 platform/gtk/fonts/fontconfig-aliasing-settings.html [ Failure ]
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]

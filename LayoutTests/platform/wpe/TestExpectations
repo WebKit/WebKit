@@ -891,8 +891,9 @@ webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-she
 
 webkit.org/b/175419 http/tests/workers/service [ Skip ]
 
-webkit.org/b/176652 http/tests/cache-storage/cache-origins.https.html [ Failure ]
-webkit.org/b/176652 http/tests/cache-storage/cache-records-persistency.https.html [ Failure ]
+webkit.org/b/178316 imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
+webkit.org/b/178316 http/wpt/cache-storage [ Skip ]
+webkit.org/b/178316 http/tests/cache-storage [ Skip ]
 
 http/tests/dom/document-attributes-null-handling [ Failure ]
 

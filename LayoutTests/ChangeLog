@@ -1,5 +1,17 @@
 2017-10-14  Youenn Fablet  <youenn@apple.com>
 
+        Implement Cache API support for WPE/GTK
+        https://bugs.webkit.org/show_bug.cgi?id=178316
+
+        Unreviewed.
+
+        Skip tests until feature is implemented.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2017-10-14  Youenn Fablet  <youenn@apple.com>
+
         WebRTC test gardening
         https://bugs.webkit.org/show_bug.cgi?id=178317
 
