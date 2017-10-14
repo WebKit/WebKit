@@ -526,6 +526,11 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         DOMAgent.setInspectedNode(node.id, callback);
     }
 
+    setEventListenerDisabled(eventListenerId, disabled)
+    {
+        DOMAgent.setEventListenerDisabled(eventListenerId, disabled);
+    }
+
     _buildHighlightConfig(mode = "all")
     {
         let highlightConfig = {showInfo: mode === "all"};

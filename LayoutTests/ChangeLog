@@ -1,3 +1,13 @@
+2017-10-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: provide a way to enable/disable event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=177451
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/dom/setEventListenerDisabled-expected.txt: Added.
+        * inspector/dom/setEventListenerDisabled.html: Added.
+
 2017-10-14  Per Arne Vollan  <pvollan@apple.com>
 
         Mark fast/frames/frame-unload-navigate-and-setTimeout-assert-fail.html as a flaky crash on Windows.
