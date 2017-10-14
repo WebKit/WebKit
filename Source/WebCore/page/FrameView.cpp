@@ -4568,6 +4568,9 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     // FIXME: We should find an approach that does not require a loop at all.
     const unsigned maxUpdatePasses = 25;
 
+    // Style updates can trigger script, which can cause this FrameView to be destroyed.
+    Ref<FrameView> protectedThis(*this);
+
     AnimationUpdateBlock animationUpdateBlock(&frame().animation());
 
     using DescendantsDeque = Deque<Ref<FrameView>, 16>;
