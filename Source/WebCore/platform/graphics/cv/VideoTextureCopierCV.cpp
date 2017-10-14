@@ -516,6 +516,17 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     if (!surface)
         return false;
 
+    auto newSurfaceSeed = IOSurfaceGetSeed(surface);
+    auto newTextureSeed = m_context->textureSeed(outputTexture);
+    if (flipY == m_lastFlipY
+        && surface == m_lastSurface 
+        && newSurfaceSeed == m_lastSurfaceSeed
+        && lastTextureSeed(outputTexture) == newTextureSeed) {
+        // If the texture hasn't been modified since the last time we copied to it, and the
+        // image hasn't been modified since the last time it was copied, this is a no-op.
+        return true;
+    }
+
     GC3DStateSaver stateSaver(m_context.get());
 
     if (!m_yuvProgram) {
@@ -605,6 +616,11 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     m_context->deleteTexture(yTexture);
     m_context->deleteTexture(uvTexture);
     m_context->bindTexture(videoTextureTarget, 0);
+
+    m_lastSurface = surface;
+    m_lastSurfaceSeed = newSurfaceSeed;
+    m_lastTextureSeed.set(outputTexture, newTextureSeed);
+    m_lastFlipY = flipY;
 
     return true;
 #else
