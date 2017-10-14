@@ -48,25 +48,25 @@ template<typename HashArg> struct ListHashSetTranslator;
 template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet {
     WTF_MAKE_FAST_ALLOCATED;
 private:
-    typedef ListHashSetNode<ValueArg> Node;
+    using Node = ListHashSetNode<ValueArg>;
 
-    typedef HashTraits<Node*> NodeTraits;
-    typedef ListHashSetNodeHashFunctions<HashArg> NodeHash;
-    typedef ListHashSetTranslator<HashArg> BaseTranslator;
+    using NodeTraits = HashTraits<Node*>;
+    using NodeHash = ListHashSetNodeHashFunctions<HashArg>;
+    using BaseTranslator = ListHashSetTranslator<HashArg>;
 
-    typedef HashArg HashFunctions;
+    using HashFunctions = HashArg;
 
 public:
-    typedef ValueArg ValueType;
+    using ValueType = ValueArg;
 
-    typedef ListHashSetIterator<ValueType, HashArg> iterator;
-    typedef ListHashSetConstIterator<ValueType, HashArg> const_iterator;
+    using iterator = ListHashSetIterator<ValueType, HashArg>;
+    using const_iterator = ListHashSetConstIterator<ValueType, HashArg>;
     friend class ListHashSetConstIterator<ValueType, HashArg>;
 
-    typedef std::reverse_iterator<iterator> reverse_iterator;
-    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-    typedef HashTableAddResult<iterator> AddResult;
+    using AddResult = HashTableAddResult<iterator>;
 
     ListHashSet() = default;
     ListHashSet(std::initializer_list<ValueType>);
@@ -177,22 +177,22 @@ template<typename HashArg> struct ListHashSetNodeHashFunctions {
 
 template<typename ValueArg, typename HashArg> class ListHashSetIterator {
 private:
-    typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
-    typedef ListHashSetIterator<ValueArg, HashArg> iterator;
-    typedef ListHashSetConstIterator<ValueArg, HashArg> const_iterator;
-    typedef ListHashSetNode<ValueArg> Node;
-    typedef ValueArg ValueType;
+    using ListHashSetType = ListHashSet<ValueArg, HashArg>;
+    using iterator = ListHashSetIterator<ValueArg, HashArg>;
+    using const_iterator = ListHashSetConstIterator<ValueArg, HashArg>;
+    using Node = ListHashSetNode<ValueArg>;
+    using ValueType = ValueArg;
 
     friend class ListHashSet<ValueArg, HashArg>;
 
     ListHashSetIterator(const ListHashSetType* set, Node* position) : m_iterator(set, position) { }
 
 public:
-    typedef ptrdiff_t difference_type;
-    typedef ValueType value_type;
-    typedef ValueType* pointer;
-    typedef ValueType& reference;
-    typedef std::bidirectional_iterator_tag iterator_category;
+    using difference_type = ptrdiff_t;
+    using value_type = ValueType;
+    using pointer = ValueType*;
+    using reference = ValueType&;
+    using iterator_category = std::bidirectional_iterator_tag;
 
     ListHashSetIterator() { }
 
@@ -224,11 +224,11 @@ private:
 
 template<typename ValueArg, typename HashArg> class ListHashSetConstIterator {
 private:
-    typedef ListHashSet<ValueArg, HashArg> ListHashSetType;
-    typedef ListHashSetIterator<ValueArg, HashArg> iterator;
-    typedef ListHashSetConstIterator<ValueArg, HashArg> const_iterator;
-    typedef ListHashSetNode<ValueArg> Node;
-    typedef ValueArg ValueType;
+    using ListHashSetType = ListHashSet<ValueArg, HashArg>;
+    using iterator = ListHashSetIterator<ValueArg, HashArg>;
+    using const_iterator = ListHashSetConstIterator<ValueArg, HashArg>;
+    using Node = ListHashSetNode<ValueArg>;
+    using ValueType = ValueArg;
 
     friend class ListHashSet<ValueArg, HashArg>;
     friend class ListHashSetIterator<ValueArg, HashArg>;
@@ -240,11 +240,11 @@ private:
     }
 
 public:
-    typedef ptrdiff_t difference_type;
-    typedef const ValueType value_type;
-    typedef const ValueType* pointer;
-    typedef const ValueType& reference;
-    typedef std::bidirectional_iterator_tag iterator_category;
+    using difference_type = ptrdiff_t;
+    using value_type = const ValueType;
+    using pointer = const ValueType*;
+    using reference = const ValueType&;
+    using iterator_category = std::bidirectional_iterator_tag;
 
     ListHashSetConstIterator()
     {

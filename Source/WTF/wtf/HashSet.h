@@ -34,21 +34,20 @@ template<typename ValueArg, typename HashArg, typename TraitsArg>
 class HashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 private:
-    typedef HashArg HashFunctions;
-    typedef TraitsArg ValueTraits;
-    typedef typename ValueTraits::TakeType TakeType;
+    using HashFunctions = HashArg;
+    using ValueTraits = TraitsArg;
+    using TakeType = typename ValueTraits::TakeType;
 
 public:
-    typedef typename ValueTraits::TraitType ValueType;
+    using ValueType = typename ValueTraits::TraitType;
 
 private:
-    typedef HashTable<ValueType, ValueType, IdentityExtractor,
-        HashFunctions, ValueTraits, ValueTraits> HashTableType;
+    using HashTableType = HashTable<ValueType, ValueType, IdentityExtractor, HashFunctions, ValueTraits, ValueTraits>;
 
 public:
-    typedef HashTableConstIteratorAdapter<HashTableType, ValueType> iterator;
-    typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
-    typedef typename HashTableType::AddResult AddResult;
+    using iterator = HashTableConstIteratorAdapter<HashTableType, ValueType>;
+    using const_iterator = HashTableConstIteratorAdapter<HashTableType, ValueType>;
+    using AddResult= typename HashTableType::AddResult;
 
     HashSet()
     {
@@ -113,10 +112,10 @@ public:
     TakeType takeAny();
 
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(typename GetPtrHelper<V>::PtrType);
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type take(typename GetPtrHelper<V>::PtrType);
+    template<typename V = ValueType> std::enable_if_t<IsSmartPtr<V>::value, iterator> find(typename GetPtrHelper<V>::PtrType) const;
+    template<typename V = ValueType> std::enable_if_t<IsSmartPtr<V>::value, bool> contains(typename GetPtrHelper<V>::PtrType) const;
+    template<typename V = ValueType> std::enable_if_t<IsSmartPtr<V>::value, bool> remove(typename GetPtrHelper<V>::PtrType);
+    template<typename V = ValueType> std::enable_if_t<IsSmartPtr<V>::value, TakeType> take(typename GetPtrHelper<V>::PtrType);
 
     static bool isValidValue(const ValueType&);
 
@@ -311,28 +310,28 @@ inline auto HashSet<T, U, V>::takeAny() -> TakeType
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits>::find(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type
+inline auto HashSet<Value, HashFunctions, Traits>::find(typename GetPtrHelper<V>::PtrType value) const -> std::enable_if_t<IsSmartPtr<V>::value, iterator>
 {
     return m_impl.template find<HashSetTranslator<Traits, HashFunctions>>(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits>::contains(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+inline auto HashSet<Value, HashFunctions, Traits>::contains(typename GetPtrHelper<V>::PtrType value) const -> std::enable_if_t<IsSmartPtr<V>::value, bool>
 {
     return m_impl.template contains<HashSetTranslator<Traits, HashFunctions>>(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits>::remove(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+inline auto HashSet<Value, HashFunctions, Traits>::remove(typename GetPtrHelper<V>::PtrType value) -> std::enable_if_t<IsSmartPtr<V>::value, bool>
 {
     return remove(find(value));
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits>::take(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type
+inline auto HashSet<Value, HashFunctions, Traits>::take(typename GetPtrHelper<V>::PtrType value) -> std::enable_if_t<IsSmartPtr<V>::value, TakeType>
 {
     return take(find(value));
 }

@@ -1,3 +1,41 @@
+2017-10-13  Sam Weinig  <sam@webkit.org>
+
+        Adopt type trait template aliases everywhere in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=178299
+
+        Reviewed by Yusuke Suzuki.
+
+        Adopt type trait template aliases (e.g. replace 'typename std::make_unsigned<Source>::type'
+        with 'std::make_unsigned_t<Source>'). Also adopt using over typedef consistently.
+
+        * wtf/Atomics.h:
+        * wtf/CagedUniquePtr.h:
+        * wtf/CheckedArithmetic.h:
+        * wtf/CompletionHandler.h:
+        * wtf/Function.h:
+        * wtf/HashCountedSet.h:
+        * wtf/HashFunctions.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.h:
+        * wtf/HashTraits.h:
+        * wtf/IndexedContainerIterator.h:
+        * wtf/IteratorAdaptors.h:
+        * wtf/KeyValuePair.h:
+        * wtf/LEBDecoder.h:
+        * wtf/ListHashSet.h:
+        * wtf/MathExtras.h:
+        * wtf/NeverDestroyed.h:
+        * wtf/OptionSet.h:
+        * wtf/RetainPtr.h:
+        * wtf/SizeLimits.cpp:
+        * wtf/StdLibExtras.h:
+        * wtf/SystemFree.h:
+        * wtf/ThreadSpecific.h:
+        * wtf/TypeCasts.h:
+        * wtf/Vector.h:
+        * wtf/text/IntegerToStringConversion.h:
+
 2017-10-13  Jer Noble  <jer.noble@apple.com>
 
         Performance: Skip texture upload if source image and destination texture haven't changed

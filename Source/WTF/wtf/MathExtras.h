@@ -209,7 +209,7 @@ template<typename T> inline bool hasTwoOrMoreBitsSet(T value)
 
 template <typename T> inline unsigned getLSBSet(T value)
 {
-    typedef typename std::make_unsigned<T>::type UnsignedT;
+    typedef std::make_unsigned_t<T> UnsignedT;
     unsigned result = 0;
 
     UnsignedT unsignedValue = static_cast<UnsignedT>(value);
@@ -373,7 +373,7 @@ inline unsigned fastLog2(uint64_t value)
 }
 
 template <typename T>
-inline typename std::enable_if<std::is_floating_point<T>::value, T>::type safeFPDivision(T u, T v)
+inline std::enable_if_t<std::is_floating_point<T>::value, T> safeFPDivision(T u, T v)
 {
     // Protect against overflow / underflow.
     if (v < 1 && u > v * std::numeric_limits<T>::max())
@@ -390,7 +390,7 @@ inline typename std::enable_if<std::is_floating_point<T>::value, T>::type safeFP
 //     Boston: Addison-Wesley, 1998. 229-45.
 // [2] http://www.boost.org/doc/libs/1_34_0/libs/test/doc/components/test_tools/floating_point_comparison.html
 template <typename T>
-inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type areEssentiallyEqual(T u, T v, T epsilon = std::numeric_limits<T>::epsilon())
+inline std::enable_if_t<std::is_floating_point<T>::value, bool> areEssentiallyEqual(T u, T v, T epsilon = std::numeric_limits<T>::epsilon())
 {
     if (u == v)
         return true;
@@ -401,14 +401,14 @@ inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type are
 
 // Match behavior of Math.min, where NaN is returned if either argument is NaN.
 template <typename T>
-inline typename std::enable_if<std::is_floating_point<T>::value, T>::type nanPropagatingMin(T a, T b)
+inline std::enable_if_t<std::is_floating_point<T>::value, T> nanPropagatingMin(T a, T b)
 {
     return std::isnan(a) || std::isnan(b) ? std::numeric_limits<T>::quiet_NaN() : std::min(a, b);
 }
 
 // Match behavior of Math.max, where NaN is returned if either argument is NaN.
 template <typename T>
-inline typename std::enable_if<std::is_floating_point<T>::value, T>::type nanPropagatingMax(T a, T b)
+inline std::enable_if_t<std::is_floating_point<T>::value, T> nanPropagatingMax(T a, T b)
 {
     return std::isnan(a) || std::isnan(b) ? std::numeric_limits<T>::quiet_NaN() : std::max(a, b);
 }

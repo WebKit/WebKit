@@ -62,13 +62,13 @@ public:
     const T& get() const { return *storagePointer(); }
 
 private:
-    using PointerType = typename std::remove_const<T>::type*;
+    using PointerType = std::remove_const_t<T>*;
 
     PointerType storagePointer() const { return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage)); }
 
     // FIXME: Investigate whether we should allocate a hunk of virtual memory
     // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
+    std::aligned_storage_t<sizeof(T), std::alignment_of<T>::value> m_storage;
 
     template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
         explicit MaybeRelax(PtrType*) { }
@@ -116,7 +116,7 @@ public:
 #endif
 
 private:
-    using PointerType = typename std::remove_const<T>::type*;
+    using PointerType = std::remove_const_t<T>*;
 
     PointerType storagePointer() const
     {
@@ -126,7 +126,7 @@ private:
 
     // FIXME: Investigate whether we should allocate a hunk of virtual memory
     // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
+    std::aligned_storage_t<sizeof(T), std::alignment_of<T>::value> m_storage;
 
     template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
         explicit MaybeRelax(PtrType*) { }

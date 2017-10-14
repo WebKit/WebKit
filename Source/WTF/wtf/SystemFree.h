@@ -33,7 +33,7 @@ template<typename T>
 struct SystemFree {
     void operator()(T* pointer) const
     {
-        free(const_cast<typename std::remove_cv<T>::type*>(pointer));
+        free(const_cast<std::remove_cv_t<T>*>(pointer));
     }
 };
 
@@ -41,7 +41,7 @@ template<typename T>
 struct SystemFree<T[]> {
     void operator()(T* pointer) const
     {
-        free(const_cast<typename std::remove_cv<T>::type*>(pointer));
+        free(const_cast<std::remove_cv_t<T>*>(pointer));
     }
 
 };

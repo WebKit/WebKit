@@ -52,7 +52,7 @@ public:
         return *this;
     }
 
-    const typename std::remove_const<decltype(*std::declval<Iterator>())>::type operator*() const
+    const std::remove_const_t<decltype(*std::declval<Iterator>())> operator*() const
     {
         ASSERT(m_iter != m_end);
         ASSERT(m_pred(*m_iter));
@@ -89,7 +89,7 @@ public:
         return *this;
     }
 
-    const typename std::remove_const<decltype(std::declval<Transform>()(*std::declval<Iterator>()))>::type operator*() const
+    const std::remove_const_t<decltype(std::declval<Transform>()(*std::declval<Iterator>()))> operator*() const
     {
         return m_transform(*m_iter);
     }

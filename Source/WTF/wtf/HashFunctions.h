@@ -178,30 +178,30 @@ namespace WTF {
     template<typename... Types>
     struct TupleHash {
         template<size_t I = 0>
-        static typename std::enable_if<I < sizeof...(Types) - 1, unsigned>::type hash(const std::tuple<Types...>& t)
+        static std::enable_if_t<I < sizeof...(Types) - 1, unsigned> hash(const std::tuple<Types...>& t)
         {
-            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            using IthTupleElementType = std::tuple_element_t<I, typename std::tuple<Types...>>;
             return pairIntHash(DefaultHash<IthTupleElementType>::Hash::hash(std::get<I>(t)), hash<I + 1>(t));
         }
 
         template<size_t I = 0>
-        static typename std::enable_if<I == sizeof...(Types) - 1, unsigned>::type hash(const std::tuple<Types...>& t)
+        static std::enable_if_t<I == sizeof...(Types) - 1, unsigned> hash(const std::tuple<Types...>& t)
         {
-            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            using IthTupleElementType = std::tuple_element_t<I, typename std::tuple<Types...>>;
             return DefaultHash<IthTupleElementType>::Hash::hash(std::get<I>(t));
         }
 
         template<size_t I = 0>
-        static typename std::enable_if<I < sizeof...(Types) - 1, bool>::type equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
+        static std::enable_if_t<I < sizeof...(Types) - 1, bool> equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
         {
-            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            using IthTupleElementType = std::tuple_element_t<I, typename std::tuple<Types...>>;
             return DefaultHash<IthTupleElementType>::Hash::equal(std::get<I>(a), std::get<I>(b)) && equal<I + 1>(a, b);
         }
 
         template<size_t I = 0>
-        static typename std::enable_if<I == sizeof...(Types) - 1, bool>::type equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
+        static std::enable_if_t<I == sizeof...(Types) - 1, bool> equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
         {
-            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            using IthTupleElementType = std::tuple_element_t<I, typename std::tuple<Types...>>;
             return DefaultHash<IthTupleElementType>::Hash::equal(std::get<I>(a), std::get<I>(b));
         }
 

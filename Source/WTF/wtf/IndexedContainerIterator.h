@@ -44,7 +44,7 @@ public:
     {
     }
 
-    auto operator*() -> typename std::result_of<decltype(&Container::at)(const Container, unsigned)>::type
+    auto operator*() -> std::result_of_t<decltype(&Container::at)(const Container, unsigned)>
     {
         return m_container->at(m_index);
     }

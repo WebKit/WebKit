@@ -563,9 +563,9 @@ private:
     // FIXME: Add a redzone before the buffer to catch off by one accesses. We don't need a guard after, because the buffer is the last member variable.
     static const size_t asanInlineBufferAlignment = std::alignment_of<T>::value >= 8 ? std::alignment_of<T>::value : 8;
     static const size_t asanAdjustedInlineCapacity = ((sizeof(T) * inlineCapacity + 7) & ~7) / sizeof(T);
-    typename std::aligned_storage<sizeof(T), asanInlineBufferAlignment>::type m_inlineBuffer[asanAdjustedInlineCapacity];
+    std::aligned_storage_t<sizeof(T), asanInlineBufferAlignment> m_inlineBuffer[asanAdjustedInlineCapacity];
 #else
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_inlineBuffer[inlineCapacity];
+    std::aligned_storage_t<sizeof(T), std::alignment_of<T>::value> m_inlineBuffer[inlineCapacity];
 #endif
 };
 
@@ -795,7 +795,7 @@ public:
 
     void checkConsistency();
 
-    template<typename MapFunction, typename R = typename std::result_of<MapFunction(const T&)>::type> Vector<R> map(MapFunction) const;
+    template<typename MapFunction, typename R = std::result_of_t<MapFunction(const T&)>> Vector<R> map(MapFunction) const;
 
 private:
     void expandCapacity(size_t newMinCapacity);
@@ -1305,7 +1305,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendSlow
 {
     ASSERT(size() == capacity());
 
-    auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
+    auto ptr = const_cast<std::remove_const_t<std::remove_reference_t<U>>*>(std::addressof(value));
     ptr = expandCapacity(size() + 1, ptr);
     ASSERT(begin());
 
@@ -1391,7 +1391,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::ins
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
 
-    auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
+    auto ptr = const_cast<std::remove_const_t<std::remove_reference_t<U>>*>(std::addressof(value));
     if (size() == capacity()) {
         ptr = expandCapacity(size() + 1, ptr);
         ASSERT(begin());
@@ -1591,7 +1591,7 @@ size_t removeRepeatedElements(Vector<T, inlineCapacity, OverflowHandler, minCapa
 
 template<typename SourceType>
 struct CollectionInspector {
-    using RealSourceType = typename std::remove_reference<SourceType>::type;
+    using RealSourceType = std::remove_reference_t<SourceType>;
     using IteratorType = decltype(std::begin(std::declval<RealSourceType>()));
     using SourceItemType = typename std::iterator_traits<IteratorType>::value_type;
 };
@@ -1599,7 +1599,7 @@ struct CollectionInspector {
 template<typename MapFunction, typename SourceType, typename Enable = void>
 struct Mapper {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
+    using DestinationItemType = std::result_of_t<MapFunction(SourceItemType&)>;
 
     static Vector<DestinationItemType> map(SourceType source, const MapFunction& mapFunction)
     {
@@ -1613,9 +1613,9 @@ struct Mapper {
 };
 
 template<typename MapFunction, typename SourceType>
-struct Mapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
+struct Mapper<MapFunction, SourceType, std::enable_if_t<std::is_rvalue_reference<SourceType&&>::value>> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
-    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&&)>::type;
+    using DestinationItemType = std::result_of_t<MapFunction(SourceItemType&&)>;
 
     static Vector<DestinationItemType> map(SourceType&& source, const MapFunction& mapFunction)
     {
@@ -1653,7 +1653,7 @@ inline auto copyToVectorOf(const Collection& collection) -> Vector<DestinationIt
 
 template<typename Collection>
 struct CopyToVectorResult {
-    using Type = typename std::remove_cv<typename CollectionInspector<Collection>::SourceItemType>::type;
+    using Type = std::remove_cv_t<typename CollectionInspector<Collection>::SourceItemType>;
 };
 
 template<typename Collection>

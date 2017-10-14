@@ -37,7 +37,7 @@ class CompletionHandler<Out(In...)> {
 public:
     CompletionHandler() = default;
 
-    template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
+    template<typename CallableType, class = std::enable_if_t<std::is_rvalue_reference<CallableType&&>::value>>
     CompletionHandler(CallableType&& callable)
         : m_function(WTFMove(callable))
     {
