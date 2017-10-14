@@ -3781,3 +3781,5 @@ webkit.org/b/178230 dom/xhtml/level3/core/entitygetinputencoding02.xhtml [ Image
 webkit.org/b/178230 dom/xhtml/level3/core/entitygetxmlversion02.xhtml [ ImageOnlyFailure ]
 
 webkit.org/b/178307 fast/images/animated-gif-scrolling-crash.html [ Timeout Crash Pass ]
+
+webkit.org/b/178309 fast/frames/frame-unload-navigate-and-setTimeout-assert-fail.html [ Pass Crash ]
