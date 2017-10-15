@@ -7,7 +7,6 @@ PASS RequestInit's referrer is invalid
 PASS RequestInit's method is invalid 
 PASS RequestInit's method is forbidden 
 PASS RequestInit's mode is no-cors and method is not simple 
-PASS RequestInit's mode is no-cors and integrity is not empty 
 PASS RequestInit's cache mode is only-if-cached and mode is not same-origin 
 PASS Request with cache mode: only-if-cached and fetch mode cors 
 PASS Request with cache mode: only-if-cached and fetch mode no-cors 

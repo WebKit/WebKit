@@ -209,6 +209,9 @@ imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Fa
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Skip ]
 
+# Not supported
+imported/w3c/web-platform-tests/background-fetch [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -480,6 +483,9 @@ webkit.org/b/178034 http/tests/cache-storage/cache-clearing-origin.https.html [ 
 webkit.org/b/178266  http/tests/cache-storage/cache-origins.https.html [ Pass Timeout ]
 
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
+
+webkit.org/b/178241 imported/w3c/web-platform-tests/fetch/api/basic/integrity.html [ Pass Failure ]
+webkit.org/b/178241 imported/w3c/web-platform-tests/fetch/api/basic/integrity-worker.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional-cors.htm [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure ]

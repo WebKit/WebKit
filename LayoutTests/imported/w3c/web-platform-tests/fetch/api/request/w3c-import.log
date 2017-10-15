@@ -36,3 +36,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-003.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-structure.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-type-attribute-historical.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/url-encoding.html

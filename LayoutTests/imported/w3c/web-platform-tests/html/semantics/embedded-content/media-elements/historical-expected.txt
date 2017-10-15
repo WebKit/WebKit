@@ -41,6 +41,8 @@ PASS video.initialTime should not be supported
 PASS video.audio should not be supported 
 PASS audio.startDate should not be supported 
 PASS video.startDate should not be supported 
+PASS audio.mozSrcObject should not be supported 
+PASS video.mozSrcObject should not be supported 
 PASS TextTrackCue constructor should not be supported 
 FAIL audio.mediaGroup should not be supported assert_false: expected false got true
 FAIL video.mediaGroup should not be supported assert_false: expected false got true

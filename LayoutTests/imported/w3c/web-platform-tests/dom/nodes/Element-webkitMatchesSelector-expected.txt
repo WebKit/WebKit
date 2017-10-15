@@ -41,6 +41,7 @@ PASS Detached Element.webkitMatchesSelector: Unknown pseudo-class: :example
 PASS Detached Element.webkitMatchesSelector: Unknown pseudo-element: div::example 
 PASS Detached Element.webkitMatchesSelector: Unknown pseudo-element: ::example 
 PASS Detached Element.webkitMatchesSelector: Invalid pseudo-element: :::before 
+PASS Detached Element.webkitMatchesSelector: Invalid pseudo-element: :: before 
 PASS Detached Element.webkitMatchesSelector: Undeclared namespace: ns|div 
 PASS Detached Element.webkitMatchesSelector: Undeclared namespace: :not(ns|div) 
 PASS Detached Element.webkitMatchesSelector: Invalid namespace: ^|div 
@@ -73,6 +74,7 @@ PASS In-document Element.webkitMatchesSelector: Unknown pseudo-class: :example
 PASS In-document Element.webkitMatchesSelector: Unknown pseudo-element: div::example 
 PASS In-document Element.webkitMatchesSelector: Unknown pseudo-element: ::example 
 PASS In-document Element.webkitMatchesSelector: Invalid pseudo-element: :::before 
+PASS In-document Element.webkitMatchesSelector: Invalid pseudo-element: :: before 
 PASS In-document Element.webkitMatchesSelector: Undeclared namespace: ns|div 
 PASS In-document Element.webkitMatchesSelector: Undeclared namespace: :not(ns|div) 
 PASS In-document Element.webkitMatchesSelector: Invalid namespace: ^|div 

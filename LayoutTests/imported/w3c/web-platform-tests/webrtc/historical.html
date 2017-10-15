@@ -23,4 +23,15 @@ test(function() {
     assert_false(name in RTCPeerConnection.prototype);
   }, "RTCPeerConnection member " + name + " should not exist");
 });
+
+[
+  "mozRTCIceCandidate",
+  "mozRTCPeerConnection",
+  "mozRTCSessionDescription",
+  "webkitRTCPeerConnection",
+].forEach(function(name) {
+  test(function() {
+    assert_false(name in window);
+  }, name + " interface should not exist");
+});
 </script>

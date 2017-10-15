@@ -9,7 +9,7 @@ def main(request, response):
     test = request.GET['test']
 
     body = '''
-        const mainTime = {time};
+        const mainTime = {time:8f};
         const testName = {test};
         importScripts('update-max-aged-worker-imported-script.py');
 

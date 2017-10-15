@@ -41,6 +41,7 @@ PASS Detached Element.matches: Unknown pseudo-class: :example
 PASS Detached Element.matches: Unknown pseudo-element: div::example 
 PASS Detached Element.matches: Unknown pseudo-element: ::example 
 PASS Detached Element.matches: Invalid pseudo-element: :::before 
+PASS Detached Element.matches: Invalid pseudo-element: :: before 
 PASS Detached Element.matches: Undeclared namespace: ns|div 
 PASS Detached Element.matches: Undeclared namespace: :not(ns|div) 
 PASS Detached Element.matches: Invalid namespace: ^|div 
@@ -73,6 +74,7 @@ PASS In-document Element.matches: Unknown pseudo-class: :example
 PASS In-document Element.matches: Unknown pseudo-element: div::example 
 PASS In-document Element.matches: Unknown pseudo-element: ::example 
 PASS In-document Element.matches: Invalid pseudo-element: :::before 
+PASS In-document Element.matches: Invalid pseudo-element: :: before 
 PASS In-document Element.matches: Undeclared namespace: ns|div 
 PASS In-document Element.matches: Undeclared namespace: :not(ns|div) 
 PASS In-document Element.matches: Invalid namespace: ^|div 

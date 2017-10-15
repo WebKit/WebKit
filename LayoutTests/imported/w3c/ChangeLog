@@ -1,3 +1,310 @@
+2017-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Resync tests up to c1716b039411090428e7073158b1aea081dafe71
+        https://bugs.webkit.org/show_bug.cgi?id=178241
+
+        Reviewed by Ryosuke Niwa.
+
+        * resources/TestRepositories:
+        * resources/resource-files.json:
+        * web-platform-tests/IndexedDB/idb-binary-key-detached.htm:
+        * web-platform-tests/IndexedDB/keypath-exceptions.htm:
+        * web-platform-tests/WebCryptoAPI/digest/digest.js:
+        (run_test.):
+        * web-platform-tests/XMLHttpRequest/abort-after-stop-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/abort-after-stop.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/event-error-order.sub-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/event-error-order.sub.html: Removed.
+        * web-platform-tests/XMLHttpRequest/event-timeout-order-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/event-timeout-order.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/open-url-worker-origin-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/open-url-worker-origin.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/responsetype-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-after-setting-document-domain-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-after-setting-document-domain.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-not-enabled-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-not-enabled.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-repeat-no-args-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-repeat-no-args.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-setrequestheader.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-competing-names-passwords-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-competing-names-passwords.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-basic-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-basic.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub.htm: Removed.
+        * web-platform-tests/XMLHttpRequest/timeout-sync-expected.txt:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/background-fetch/interfaces-expected.txt:
+        * web-platform-tests/background-fetch/interfaces.idl:
+        * web-platform-tests/background-fetch/interfaces.worker-expected.txt:
+        * web-platform-tests/background-fetch/interfaces.worker.js:
+        * web-platform-tests/beacon/headers/header-content-type-expected.txt:
+        * web-platform-tests/common/vendor-prefix.js: Removed.
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/css/css-grid-1/abspos/w3c-import.log:
+        * web-platform-tests/css/css-grid-1/support/w3c-import.log:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-002.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-image-threshold-003.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-002.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-003.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-004.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-005.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-box-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-002.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-003.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-004.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-005.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-006.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-007.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-008.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-009.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-010.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-011.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-computed-shape-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-computed-shape-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-002.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-003.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-006.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-007.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-008.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-009.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-010.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-011.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-002.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-003.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-004.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-005.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-006.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-007.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-008.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-009.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-002.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-003.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-005.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-006.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-001.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-box-pair-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-inherit-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-initial-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-none-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-notation-000.html:
+        * web-platform-tests/css/css-shapes-1/shape-outside/values/support/parsing-utils.js:
+        (convertToPx):
+        (each):
+        (setupFonts):
+        * web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-012.html:
+        * web-platform-tests/css/css-shapes-1/w3c-import.log:
+        * web-platform-tests/css/css-ui-3/cursor-image-005-nfs.html:
+        * web-platform-tests/css/selectors4/w3c-import.log:
+        * web-platform-tests/cssom/OWNERS:
+        * web-platform-tests/cssom/getComputedStyle-pseudo-expected.txt:
+        * web-platform-tests/cssom/getComputedStyle-pseudo.html:
+        * web-platform-tests/cssom/style-sheet-interfaces-001-expected.txt:
+        * web-platform-tests/cssom/style-sheet-interfaces-001.html:
+        * web-platform-tests/cssom/w3c-import.log:
+        * web-platform-tests/custom-elements/Document-createElement-expected.txt:
+        * web-platform-tests/custom-elements/Document-createElement.html:
+        * web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt:
+        * web-platform-tests/custom-elements/w3c-import.log:
+        * web-platform-tests/dom/events/Event-timestamp-safe-resolution.html:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument.html:
+        * web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument.html:
+        * web-platform-tests/dom/nodes/Document-constructor.html:
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Element-webkitMatchesSelector-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/dom/nodes/selectors.js:
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-non-same-origin.htm:
+        * web-platform-tests/eventsource/eventsource-constructor-non-same-origin-expected.txt:
+        * web-platform-tests/eventsource/eventsource-constructor-non-same-origin.htm:
+        * web-platform-tests/eventsource/resources/last-event-id.py:
+        (main):
+        * web-platform-tests/eventsource/shared-worker/eventsource-constructor-non-same-origin-expected.txt:
+        * web-platform-tests/eventsource/shared-worker/eventsource-constructor-non-same-origin.htm:
+        * web-platform-tests/fetch/api/basic/integrity-expected.txt:
+        * web-platform-tests/fetch/api/basic/integrity-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/integrity.js:
+        (integrity):
+        * web-platform-tests/fetch/api/headers/headers-combine-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-combine.html:
+        * web-platform-tests/fetch/api/request/request-error-expected.txt:
+        * web-platform-tests/fetch/api/request/request-error.js:
+        * web-platform-tests/fetch/api/request/request-headers-expected.txt:
+        * web-platform-tests/fetch/api/request/request-headers.html:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-idl.html:
+        * web-platform-tests/fetch/api/request/request-structure-expected.txt:
+        * web-platform-tests/fetch/api/request/request-structure.html:
+        * web-platform-tests/fetch/api/request/w3c-import.log:
+        * web-platform-tests/fetch/api/response/response-clone-expected.txt:
+        * web-platform-tests/fetch/api/response/response-init-001-expected.txt:
+        * web-platform-tests/fetch/api/response/response-init-001.html:
+        * web-platform-tests/fetch/api/response/w3c-import.log:
+        * web-platform-tests/fonts/Ahem.ttf:
+        * web-platform-tests/hr-time/idlharness-expected.txt:
+        * web-platform-tests/hr-time/idlharness.html:
+        * web-platform-tests/html/README.md:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/w3c-import.log:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/w3c-import.log:
+        * web-platform-tests/html/browsers/origin/origin-of-data-document-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/not-in-shadow-tree-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_canplay_canplaythrough.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_canplay_playing.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_loadedmetadata_loadeddata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_loadstart_progress.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_pause.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_play.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_playing.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_progress_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/historical-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/historical.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/paused_false_during_play.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadedmetadata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_playing.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_008.htm:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.cross-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.cross.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.redirect-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.redirect.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-button-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-form-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-progress-element/progress-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-progress-element/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/w3c-import.log:
+        * web-platform-tests/html/syntax/serializing-html-fragments/serializing-expected.txt:
+        * web-platform-tests/html/syntax/serializing-html-fragments/serializing.html:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw-expected.txt:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/mediacapture-fromelement/capture.html:
+        * web-platform-tests/mediacapture-fromelement/creation.html:
+        * web-platform-tests/mediacapture-fromelement/ended.html:
+        * web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.sub.html:
+        * web-platform-tests/payment-request/PaymentAddress/attributes-and-toJSON-method-manual.https.html:
+        * web-platform-tests/resource-timing/idlharness-expected.txt:
+        * web-platform-tests/resource-timing/idlharness.html:
+        * web-platform-tests/resources/idlharness.js:
+        (IdlInterface.prototype.test_to_json_operation):
+        * web-platform-tests/resources/test/tests/api-tests-1.html:
+        * web-platform-tests/resources/test/tests/idlharness/IdlInterface/test_to_json_operation.html:
+        * web-platform-tests/resources/testharness.js:
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https.html:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/resources/redirect-scope.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/bytecheck-worker-imported-script.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/bytecheck-worker.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-redirect-iframe.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-xhr-iframe.https.html:
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-out-scope.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope1.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope2.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/update-max-aged-worker-imported-script.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/update-max-aged-worker.py:
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/w3c-import.log:
+        * web-platform-tests/shadow-dom/Extensions-to-Event-Interface-expected.txt:
+        * web-platform-tests/shadow-dom/Extensions-to-Event-Interface.html:
+        * web-platform-tests/shadow-dom/event-inside-shadow-tree-expected.txt:
+        * web-platform-tests/shadow-dom/event-with-related-target.html:
+        * web-platform-tests/shadow-dom/leaktests/get-elements-expected.txt:
+        * web-platform-tests/shadow-dom/resources/event-path-test-helpers.js:
+        (dispatchEventWithEventLog):
+        * web-platform-tests/shadow-dom/slotchange-event-expected.txt:
+        * web-platform-tests/shadow-dom/w3c-import.log:
+        * web-platform-tests/streams/piping/general-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.js:
+        (promise_test):
+        * web-platform-tests/streams/readable-byte-streams/w3c-import.log:
+        * web-platform-tests/streams/readable-streams/pipe-through-expected.txt: Removed.
+        * web-platform-tests/tools/manifest/catalog/xhtml.dtd:
+        * web-platform-tests/tools/manifest/sourcefile.py:
+        (SourceFile.references):
+        (SourceFile.spec_links):
+        * web-platform-tests/tools/manifest/tests/test_sourcefile.py:
+        (test_relpath_normalized):
+        (test_reftest_url_whitespace):
+        (test_spec_links_whitespace):
+        * web-platform-tests/tools/wptserve/tests/functional/test_handlers.py:
+        (TestDirectoryHandler.test_subdirectory_no_trailing_slash):
+        * web-platform-tests/tools/wptserve/wptserve/handlers.py:
+        (DirectoryHandler.__call__):
+        * web-platform-tests/update-built-tests.sh:
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/urltestdata.json:
+        * web-platform-tests/webrtc/RTCCertificate.html:
+        * web-platform-tests/webrtc/RTCConfiguration-iceServers-expected.txt:
+        * web-platform-tests/webrtc/RTCDTMFSender-insertDTMF.html: Removed.
+        * web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html: Removed.
+        * web-platform-tests/webrtc/RTCDTMFSender-ontonechange.html: Removed.
+        * web-platform-tests/webrtc/RTCPeerConnection-addTrack.html: Removed.
+        * web-platform-tests/webrtc/RTCPeerConnection-getStats.html: Removed.
+        * web-platform-tests/webrtc/RTCPeerConnection-ontrack.html: Removed.
+        * web-platform-tests/webrtc/RTCPeerConnection-removeTrack.html: Removed.
+        * web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.html: Removed.
+        * web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.html: Removed.
+        * web-platform-tests/webrtc/historical-expected.txt:
+        * web-platform-tests/webrtc/historical.html:
+        * web-platform-tests/webrtc/simplecall-expected.txt:
+        * web-platform-tests/webrtc/simplecall.html:
+        * web-platform-tests/webrtc/w3c-import.log:
+
 2017-10-13  Chris Dumez  <cdumez@apple.com>
 
         DOMTokenList shouldn't add empty attributes

@@ -85,6 +85,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/http-to-https-redirect-and-register.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/iframe-sandbox-register-link-element.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/immutable-prototype-serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-redirect.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-resource-map.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-updated-flag.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/indexeddb.https.html
@@ -101,6 +102,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/link-element-register-script-url.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/link-element-register-script.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/link-element-register-security-error.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/mime-sniffing.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/multiple-register.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/multiple-update.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigate-window.https.html

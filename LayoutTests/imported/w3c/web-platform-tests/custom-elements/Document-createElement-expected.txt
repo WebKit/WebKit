@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 225: ReferenceError: Can't find variable: document_types
 
 PASS document.createElement must create an instance of custom elements 
 PASS document.createElement must report a TypeError when the result of Construct is not a DOM node 
@@ -12,4 +11,27 @@ PASS document.createElement must report a NotSupportedError when an element chil
 PASS document.createElement must not report a NotSupportedError when an element child is added and removed during construction 
 PASS document.createElement must report a NotSupportedError when the element gets inserted into another element during construction 
 PASS document.createElement must not report a NotSupportedError when the element is inserted and removed from another element during construction 
+PASS document.createElement must report a NotSupportedError when the element is adopted into a the document of the template elements during construction 
+PASS document.createElement must report a NotSupportedError when the element is inserted into a the document of the template elements during construction 
+PASS document.createElement must not report a NotSupportedError when the element is adopted back from a the document of the template elements during construction 
+PASS document.createElement must report a NotSupportedError when the element is adopted into a a new document during construction 
+PASS document.createElement must report a NotSupportedError when the element is inserted into a a new document during construction 
+PASS document.createElement must not report a NotSupportedError when the element is adopted back from a a new document during construction 
+PASS document.createElement must report a NotSupportedError when the element is adopted into a a cloned document during construction 
+PASS document.createElement must report a NotSupportedError when the element is inserted into a a cloned document during construction 
+PASS document.createElement must not report a NotSupportedError when the element is adopted back from a a cloned document during construction 
+PASS document.createElement must report a NotSupportedError when the element is adopted into a a document created by createHTMLDocument during construction 
+PASS document.createElement must report a NotSupportedError when the element is inserted into a a document created by createHTMLDocument during construction 
+PASS document.createElement must not report a NotSupportedError when the element is adopted back from a a document created by createHTMLDocument during construction 
+PASS document.createElement must report a NotSupportedError when the element is adopted into a an HTML document created by createDocument during construction 
+PASS document.createElement must report a NotSupportedError when the element is inserted into a an HTML document created by createDocument during construction 
+PASS document.createElement must not report a NotSupportedError when the element is adopted back from a an HTML document created by createDocument during construction 
+PASS document.createElement must report a NotSupportedError when the element is adopted into a the document of an iframe during construction 
+PASS document.createElement must report a NotSupportedError when the element is inserted into a the document of an iframe during construction 
+PASS document.createElement must not report a NotSupportedError when the element is adopted back from a the document of an iframe during construction 
+PASS document.createElement must report a NotSupportedError when the element is adopted into a an HTML document fetched by XHR during construction 
+PASS document.createElement must report a NotSupportedError when the element is inserted into a an HTML document fetched by XHR during construction 
+PASS document.createElement must not report a NotSupportedError when the element is adopted back from a an HTML document fetched by XHR during construction 
+PASS document.createElement must report a NotSupportedError when the local name of the element does not match that of the custom element 
+PASS document.createElement must report an exception thrown by a custom element constructor 
 

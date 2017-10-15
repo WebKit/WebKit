@@ -16,4 +16,6 @@ PASS Multiple integrities: both are invalid
 PASS CORS empty integrity 
 PASS CORS SHA-512 integrity 
 PASS CORS invalid integrity 
+PASS Empty string integrity for opaque response 
+PASS SHA-* integrity for opaque response 
 

@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleSheet.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/GetBoundingRect.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList.html
+/LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList2.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/cssom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/cssom/StyleSheetList.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/computed-style-001.html
@@ -54,6 +55,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cssom/medialist-interfaces-004.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/overflow-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/selectorSerialize.html
+/LayoutTests/imported/w3c/web-platform-tests/cssom/selectorText-modification-restyle-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/cssom/selectorText-modification-restyle-001.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/serialization-CSSDeclaration-with-important.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-namespaced-type-selectors.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/serialize-values.html

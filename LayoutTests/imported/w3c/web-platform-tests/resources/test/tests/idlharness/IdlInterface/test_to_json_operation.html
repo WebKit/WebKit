@@ -32,17 +32,13 @@
     i = interfaceFrom("interface B { [Default] object toJSON(); attribute long foo; };");
     i.test_to_json_operation(wrap({ foo: "a value" }), i.members[0]);
 
-    // should fail (extra property)
+    // should handle extraneous attributes (e.g. from an extension specification)
     i = interfaceFrom("interface C { [Default] object toJSON(); attribute long foo; };");
-    i.test_to_json_operation(wrap({ foo: 123, bar: null }), i.members[0]);
+    i.test_to_json_operation(wrap({ foo: 123, bar: 456 }), i.members[0]);
 
     // should fail (missing property)
     i = interfaceFrom("interface D { [Default] object toJSON(); attribute long foo; };");
     i.test_to_json_operation(wrap({ }), i.members[0]);
-
-    // should fail (extra property)
-    i = interfaceFrom("interface E { [Default] object toJSON(); attribute long foo; attribute Promise<long> baz; };");
-    i.test_to_json_operation(wrap({ foo: 123, baz: 123 }), i.members[0]);
 
     // should fail (should be writable)
     obj = Object.defineProperties({}, { foo: {
@@ -117,22 +113,15 @@
                 "status_string": "FAIL"
             },
             {
-                "message": "assert_unreached: property \"bar\" should not be present in the output of C.prototype.toJSON() Reached unreachable code",
+                "message": null,
                 "name": "Test default toJSON operation of C",
                 "properties": {},
-                "stack": "(implementation-defined)",
-                "status_string": "FAIL"
+                "stack": null,
+                "status_string": "PASS"
             },
             {
                 "message": "assert_true: property \"foo\" should be present in the output of D.prototype.toJSON() expected true got false",
                 "name": "Test default toJSON operation of D",
-                "properties": {},
-                "stack": "(implementation-defined)",
-                "status_string": "FAIL"
-            },
-            {
-                "message": "assert_unreached: property \"baz\" should not be present in the output of E.prototype.toJSON() Reached unreachable code",
-                "name": "Test default toJSON operation of E",
                 "properties": {},
                 "stack": "(implementation-defined)",
                 "status_string": "FAIL"

@@ -32,10 +32,6 @@ const badRequestArgTests = [
     testName: "RequestInit's mode is no-cors and method is not simple"
   },
   {
-    args: ["", { "mode": "no-cors", "integrity": "not  an empty string" }],
-    testName: "RequestInit's mode is no-cors and integrity is not empty"
-  },
-  {
     args: ["", { "mode": "cors", "cache": "only-if-cached" }],
     testName: "RequestInit's cache mode is only-if-cached and mode is not same-origin"
   },

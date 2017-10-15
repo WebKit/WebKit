@@ -10,7 +10,7 @@ def main(request, response):
 
     imported_content = 'default'
     if imported_content_type == 'time':
-        imported_content = time.time()
+        imported_content = '%f' % time.time()
 
     body = '''
     // %s

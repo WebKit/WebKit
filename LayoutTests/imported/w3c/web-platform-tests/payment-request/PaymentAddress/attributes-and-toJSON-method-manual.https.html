@@ -74,16 +74,16 @@ function runManualTest(button, expected = {}) {
       dependentLocality: '',
       postalCode: '1001',
       sortingCode: '',
-      languageCode: '',
-      organization: '',
+      languageCode: 'fa',
+      organization: 'w3c',
       recipient: 'web platform test',
-      phone: '+9312345678910',
+      phone: '+93555555555',
     };
     runManualTest(this, expectedAddress);">
       If the requestShipping member is true, then shippingAddress's PaymentAddress must match the expected values.
     </button>
     "web platform test" as recipient, at address "1 wpt street" in "Kabul, Afghanistan", zip/postal code 1001.
-    Set the organization to "w3c". Set the phone number to "+9312345678910"
+    Set the organization to "w3c". Set the phone number to "+93 55 555 5555"
   </li>
 </ol>
 <small>

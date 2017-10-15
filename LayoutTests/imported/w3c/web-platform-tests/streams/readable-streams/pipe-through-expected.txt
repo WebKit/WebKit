@@ -1,7 +1,0 @@
-
-PASS ReadableStream.prototype.pipeThrough should work generically on its this and its arguments 
-PASS ReadableStream.prototype.pipeThrough should throw when its first argument is not convertible to an object 
-PASS ReadableStream.prototype.pipeThrough should throw when "this" has no pipeTo method 
-PASS ReadableStream.prototype.pipeThrough should rethrow errors from accessing pipeTo, readable, or writable 
-PASS ReadableStream.prototype.pipeThrough should work with missing readable, writable, or options 
-

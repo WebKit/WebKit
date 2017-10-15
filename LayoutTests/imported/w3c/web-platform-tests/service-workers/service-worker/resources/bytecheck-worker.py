@@ -10,7 +10,7 @@ def main(request, response):
 
     main_content = 'default'
     if main_content_type == 'time':
-        main_content = time.time()
+        main_content = '%f' % time.time()
 
     imported_request_path = ''
     if 'path' in request.GET:

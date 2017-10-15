@@ -103,6 +103,8 @@ PASS Document.querySelector: Unknown pseudo-element: ::example
 PASS Document.querySelectorAll: Unknown pseudo-element: ::example 
 PASS Document.querySelector: Invalid pseudo-element: :::before 
 PASS Document.querySelectorAll: Invalid pseudo-element: :::before 
+PASS Document.querySelector: Invalid pseudo-element: :: before 
+PASS Document.querySelectorAll: Invalid pseudo-element: :: before 
 PASS Document.querySelector: Undeclared namespace: ns|div 
 PASS Document.querySelectorAll: Undeclared namespace: ns|div 
 PASS Document.querySelector: Undeclared namespace: :not(ns|div) 
@@ -167,6 +169,8 @@ PASS Detached Element.querySelector: Unknown pseudo-element: ::example
 PASS Detached Element.querySelectorAll: Unknown pseudo-element: ::example 
 PASS Detached Element.querySelector: Invalid pseudo-element: :::before 
 PASS Detached Element.querySelectorAll: Invalid pseudo-element: :::before 
+PASS Detached Element.querySelector: Invalid pseudo-element: :: before 
+PASS Detached Element.querySelectorAll: Invalid pseudo-element: :: before 
 PASS Detached Element.querySelector: Undeclared namespace: ns|div 
 PASS Detached Element.querySelectorAll: Undeclared namespace: ns|div 
 PASS Detached Element.querySelector: Undeclared namespace: :not(ns|div) 
@@ -231,6 +235,8 @@ PASS Fragment.querySelector: Unknown pseudo-element: ::example
 PASS Fragment.querySelectorAll: Unknown pseudo-element: ::example 
 PASS Fragment.querySelector: Invalid pseudo-element: :::before 
 PASS Fragment.querySelectorAll: Invalid pseudo-element: :::before 
+PASS Fragment.querySelector: Invalid pseudo-element: :: before 
+PASS Fragment.querySelectorAll: Invalid pseudo-element: :: before 
 PASS Fragment.querySelector: Undeclared namespace: ns|div 
 PASS Fragment.querySelectorAll: Undeclared namespace: ns|div 
 PASS Fragment.querySelector: Undeclared namespace: :not(ns|div) 
@@ -295,6 +301,8 @@ PASS In-document Element.querySelector: Unknown pseudo-element: ::example
 PASS In-document Element.querySelectorAll: Unknown pseudo-element: ::example 
 PASS In-document Element.querySelector: Invalid pseudo-element: :::before 
 PASS In-document Element.querySelectorAll: Invalid pseudo-element: :::before 
+PASS In-document Element.querySelector: Invalid pseudo-element: :: before 
+PASS In-document Element.querySelectorAll: Invalid pseudo-element: :: before 
 PASS In-document Element.querySelector: Undeclared namespace: ns|div 
 PASS In-document Element.querySelectorAll: Undeclared namespace: ns|div 
 PASS In-document Element.querySelector: Undeclared namespace: :not(ns|div) 
@@ -387,6 +395,8 @@ PASS Document.querySelectorAll: Attribute begins with selector, matching href at
 PASS Document.querySelector: Attribute begins with selector, matching href attributes beginning with specified substring: #attr-begins a[href^="http://www"] 
 PASS Document.querySelectorAll: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
 PASS Document.querySelector: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
+PASS Document.querySelectorAll: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
+PASS Document.querySelector: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
 PASS Document.querySelectorAll: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS Document.querySelector: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS Document.querySelectorAll: Attribute begins with selector with single-quoted value, matching class attribute beginning with specified substring: #attr-begins [class^=' apple'] 
@@ -399,6 +409,8 @@ PASS Document.querySelectorAll: Attribute ends with selector, matching href attr
 PASS Document.querySelector: Attribute ends with selector, matching href attributes ending with specified substring: #attr-ends a[href$=".org"] 
 PASS Document.querySelectorAll: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
 PASS Document.querySelector: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
+PASS Document.querySelectorAll: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
+PASS Document.querySelector: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
 PASS Document.querySelectorAll: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS Document.querySelector: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS Document.querySelectorAll: Attribute ends with selector with single-quoted value, matching class attribute ending with specified substring: #attr-ends [class$='apple '] 
@@ -417,6 +429,8 @@ PASS Document.querySelectorAll: Attribute contains selector, matching lang attri
 PASS Document.querySelector: Attribute contains selector, matching lang attributes beginning with specified substring, : #attr-contains [lang*="en-"] 
 PASS Document.querySelectorAll: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
 PASS Document.querySelector: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
+PASS Document.querySelectorAll: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
+PASS Document.querySelector: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
 PASS Document.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS Document.querySelector: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS Document.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute ending with specified substring: #attr-contains [class*='orange '] 
@@ -799,6 +813,8 @@ PASS Detached Element.querySelectorAll: Attribute begins with selector, matching
 PASS Detached Element.querySelector: Attribute begins with selector, matching href attributes beginning with specified substring: #attr-begins a[href^="http://www"] 
 PASS Detached Element.querySelectorAll: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
 PASS Detached Element.querySelector: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
+PASS Detached Element.querySelectorAll: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
+PASS Detached Element.querySelector: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
 PASS Detached Element.querySelectorAll: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS Detached Element.querySelector: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS Detached Element.querySelectorAll: Attribute begins with selector with single-quoted value, matching class attribute beginning with specified substring: #attr-begins [class^=' apple'] 
@@ -811,6 +827,8 @@ PASS Detached Element.querySelectorAll: Attribute ends with selector, matching h
 PASS Detached Element.querySelector: Attribute ends with selector, matching href attributes ending with specified substring: #attr-ends a[href$=".org"] 
 PASS Detached Element.querySelectorAll: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
 PASS Detached Element.querySelector: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
+PASS Detached Element.querySelectorAll: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
+PASS Detached Element.querySelector: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
 PASS Detached Element.querySelectorAll: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS Detached Element.querySelector: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS Detached Element.querySelectorAll: Attribute ends with selector with single-quoted value, matching class attribute ending with specified substring: #attr-ends [class$='apple '] 
@@ -829,6 +847,8 @@ PASS Detached Element.querySelectorAll: Attribute contains selector, matching la
 PASS Detached Element.querySelector: Attribute contains selector, matching lang attributes beginning with specified substring, : #attr-contains [lang*="en-"] 
 PASS Detached Element.querySelectorAll: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
 PASS Detached Element.querySelector: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
+PASS Detached Element.querySelectorAll: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
+PASS Detached Element.querySelector: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
 PASS Detached Element.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS Detached Element.querySelector: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS Detached Element.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute ending with specified substring: #attr-contains [class*='orange '] 
@@ -1211,6 +1231,8 @@ PASS Fragment.querySelectorAll: Attribute begins with selector, matching href at
 PASS Fragment.querySelector: Attribute begins with selector, matching href attributes beginning with specified substring: #attr-begins a[href^="http://www"] 
 PASS Fragment.querySelectorAll: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
 PASS Fragment.querySelector: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
+PASS Fragment.querySelectorAll: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
+PASS Fragment.querySelector: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
 PASS Fragment.querySelectorAll: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS Fragment.querySelector: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS Fragment.querySelectorAll: Attribute begins with selector with single-quoted value, matching class attribute beginning with specified substring: #attr-begins [class^=' apple'] 
@@ -1223,6 +1245,8 @@ PASS Fragment.querySelectorAll: Attribute ends with selector, matching href attr
 PASS Fragment.querySelector: Attribute ends with selector, matching href attributes ending with specified substring: #attr-ends a[href$=".org"] 
 PASS Fragment.querySelectorAll: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
 PASS Fragment.querySelector: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
+PASS Fragment.querySelectorAll: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
+PASS Fragment.querySelector: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
 PASS Fragment.querySelectorAll: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS Fragment.querySelector: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS Fragment.querySelectorAll: Attribute ends with selector with single-quoted value, matching class attribute ending with specified substring: #attr-ends [class$='apple '] 
@@ -1241,6 +1265,8 @@ PASS Fragment.querySelectorAll: Attribute contains selector, matching lang attri
 PASS Fragment.querySelector: Attribute contains selector, matching lang attributes beginning with specified substring, : #attr-contains [lang*="en-"] 
 PASS Fragment.querySelectorAll: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
 PASS Fragment.querySelector: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
+PASS Fragment.querySelectorAll: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
+PASS Fragment.querySelector: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
 PASS Fragment.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS Fragment.querySelector: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS Fragment.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute ending with specified substring: #attr-contains [class*='orange '] 
@@ -1623,6 +1649,8 @@ PASS In-document Element.querySelectorAll: Attribute begins with selector, match
 PASS In-document Element.querySelector: Attribute begins with selector, matching href attributes beginning with specified substring: #attr-begins a[href^="http://www"] 
 PASS In-document Element.querySelectorAll: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
 PASS In-document Element.querySelector: Attribute begins with selector, matching lang attributes beginning with specified substring, : #attr-begins [lang^="en-"] 
+PASS In-document Element.querySelectorAll: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
+PASS In-document Element.querySelector: Attribute begins with selector, not matching class attribute with empty value: #attr-begins [class^=""] 
 PASS In-document Element.querySelectorAll: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS In-document Element.querySelector: Attribute begins with selector, not matching class attribute not beginning with specified substring: #attr-begins [class^=apple] 
 PASS In-document Element.querySelectorAll: Attribute begins with selector with single-quoted value, matching class attribute beginning with specified substring: #attr-begins [class^=' apple'] 
@@ -1635,6 +1663,8 @@ PASS In-document Element.querySelectorAll: Attribute ends with selector, matchin
 PASS In-document Element.querySelector: Attribute ends with selector, matching href attributes ending with specified substring: #attr-ends a[href$=".org"] 
 PASS In-document Element.querySelectorAll: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
 PASS In-document Element.querySelector: Attribute ends with selector, matching lang attributes ending with specified substring, : #attr-ends [lang$="-CH"] 
+PASS In-document Element.querySelectorAll: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
+PASS In-document Element.querySelector: Attribute ends with selector, not matching class attribute with empty value: #attr-ends [class$=""] 
 PASS In-document Element.querySelectorAll: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS In-document Element.querySelector: Attribute ends with selector, not matching class attribute not ending with specified substring: #attr-ends [class$=apple] 
 PASS In-document Element.querySelectorAll: Attribute ends with selector with single-quoted value, matching class attribute ending with specified substring: #attr-ends [class$='apple '] 
@@ -1653,6 +1683,8 @@ PASS In-document Element.querySelectorAll: Attribute contains selector, matching
 PASS In-document Element.querySelector: Attribute contains selector, matching lang attributes beginning with specified substring, : #attr-contains [lang*="en-"] 
 PASS In-document Element.querySelectorAll: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
 PASS In-document Element.querySelector: Attribute contains selector, matching lang attributes ending with specified substring, : #attr-contains [lang*="-CH"] 
+PASS In-document Element.querySelectorAll: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
+PASS In-document Element.querySelector: Attribute contains selector, not matching class attribute with empty value: #attr-contains [class*=""] 
 PASS In-document Element.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS In-document Element.querySelector: Attribute contains selector with single-quoted value, matching class attribute beginning with specified substring: #attr-contains [class*=' apple'] 
 PASS In-document Element.querySelectorAll: Attribute contains selector with single-quoted value, matching class attribute ending with specified substring: #attr-contains [class*='orange '] 

@@ -50,6 +50,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/focus-within-shadow-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/of-type-selectors-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/of-type-selectors.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors4/scope-without-scoping-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors4/scope-without-scoping.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/selector-required-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/selector-required.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-ltr-001-expected.xht

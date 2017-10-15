@@ -15,4 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid-1/support/check-layout-th.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid-1/support/grid-alignment.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid-1/support/grid.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid-1/support/style-change.js

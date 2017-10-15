@@ -109,7 +109,7 @@
       const transceiver2 = pc.addTransceiver(track);
 
       assert_not_equals(transceiver1, transceiver2);
-      assert_not_equals(transciever1.sender, transceiver2.sender);
+      assert_not_equals(transceiver1.sender, transceiver2.sender);
       assert_equals(transceiver1.sender.track, transceiver2.sender.track);
 
       return promise_rejects(t, 'InvalidAccessError', pc.getStats(track));
@@ -125,7 +125,7 @@
     const transceiver2 = pc.addTransceiver(transceiver1.receiver.track);
     assert_equals(transceiver1.receiver.track, transceiver2.sender.track);
 
-    return promise_rejects(t, 'InvalidAccessError', pc.getStats(track));
+    return promise_rejects(t, 'InvalidAccessError', pc.getStats(transceiver1.receiver.track));
   }, 'getStats() with track associated with both sender and receiver should reject with InvalidAccessError');
 
   /*

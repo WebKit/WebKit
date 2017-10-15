@@ -8,7 +8,6 @@ PASS Request has text method
 PASS Check method attribute 
 PASS Check url attribute 
 PASS Check headers attribute 
-PASS Check type attribute 
 PASS Check destination attribute 
 PASS Check referrer attribute 
 PASS Check referrerPolicy attribute 

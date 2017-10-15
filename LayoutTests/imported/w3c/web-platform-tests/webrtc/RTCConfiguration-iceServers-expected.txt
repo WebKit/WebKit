@@ -14,22 +14,22 @@ PASS new RTCPeerConnection(config) - { iceServers: [{}] } should throw TypeError
 PASS setConfiguration(config) - { iceServers: [{}] } should throw TypeError 
 FAIL new RTCPeerConnection(config) - with empty list urls should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL setConfiguration(config) - with empty list urls should succeed assert_equals: expected (string) "password" but got (undefined) undefined
-FAIL new RTCPeerConnection(config) - with stun server should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL setConfiguration(config) - with stun server should succeed assert_array_equals: lengths differ, expected 1 got 22
+FAIL new RTCPeerConnection(config) - with stun server should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
+FAIL setConfiguration(config) - with stun server should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL new RTCPeerConnection(config) - with stun server array should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL setConfiguration(config) - with stun server array should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL new RTCPeerConnection(config) - with 2 stun servers should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL setConfiguration(config) - with 2 stun servers should succeed assert_equals: expected (string) "password" but got (undefined) undefined
-FAIL new RTCPeerConnection(config) - with turn server, username, credential should succeed assert_array_equals: lengths differ, expected 1 got 21
-FAIL setConfiguration(config) - with turn server, username, credential should succeed assert_array_equals: lengths differ, expected 1 got 21
-FAIL new RTCPeerConnection(config) - with turns server and empty string username, credential should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL setConfiguration(config) - with turns server and empty string username, credential should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL new RTCPeerConnection(config) - with turn server and empty string username, credential should succeed assert_array_equals: lengths differ, expected 1 got 21
-FAIL setConfiguration(config) - with turn server and empty string username, credential should succeed assert_array_equals: lengths differ, expected 1 got 21
+FAIL new RTCPeerConnection(config) - with turn server, username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
+FAIL setConfiguration(config) - with turn server, username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
+FAIL new RTCPeerConnection(config) - with turns server and empty string username, credential should succeed assert_array_equals: value is "turns:turn.example.org", expected array
+FAIL setConfiguration(config) - with turns server and empty string username, credential should succeed assert_array_equals: value is "turns:turn.example.org", expected array
+FAIL new RTCPeerConnection(config) - with turn server and empty string username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
+FAIL setConfiguration(config) - with turn server and empty string username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
 PASS new RTCPeerConnection(config) - with one turns server, one turn server, username, credential should succeed 
 PASS setConfiguration(config) - with one turns server, one turn server, username, credential should succeed 
-FAIL new RTCPeerConnection(config) - with stun server and credentialType password should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL setConfiguration(config) - with stun server and credentialType password should succeed assert_array_equals: lengths differ, expected 1 got 22
+FAIL new RTCPeerConnection(config) - with stun server and credentialType password should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
+FAIL setConfiguration(config) - with stun server and credentialType password should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL new RTCPeerConnection(config) - with turn server and no credentials should throw InvalidAccessError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'turn:turn.example.net'
@@ -178,14 +178,14 @@ FAIL setConfiguration(config) - with turns server, credentialType oauth, and str
         username: 'user',
         credential: 'cred'
       }] })" did not throw
-FAIL new RTCPeerConnection(config) - with turns server, credentialType oauth and RTCOAuthCredential credential should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL setConfiguration(config) - with turns server, credentialType oauth and RTCOAuthCredential credential should succeed assert_array_equals: lengths differ, expected 1 got 22
+FAIL new RTCPeerConnection(config) - with turns server, credentialType oauth and RTCOAuthCredential credential should succeed assert_array_equals: value is "turns:turn.example.org", expected array
+FAIL setConfiguration(config) - with turns server, credentialType oauth and RTCOAuthCredential credential should succeed assert_array_equals: value is "turns:turn.example.org", expected array
 FAIL new RTCPeerConnection(config) - with both turns and stun server, credentialType oauth and RTCOAuthCredential credential should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
 FAIL setConfiguration(config) - with both turns and stun server, credentialType oauth and RTCOAuthCredential credential should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
-FAIL new RTCPeerConnection(config) - with stun server, credentialType oauth, and string credential should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL setConfiguration(config) - with stun server, credentialType oauth, and string credential should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL new RTCPeerConnection(config) - with stun server, credentialType password, and RTCOAuthCredential credential should succeed assert_array_equals: lengths differ, expected 1 got 22
-FAIL setConfiguration(config) - with stun server, credentialType password, and RTCOAuthCredential credential should succeed assert_array_equals: lengths differ, expected 1 got 22
+FAIL new RTCPeerConnection(config) - with stun server, credentialType oauth, and string credential should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
+FAIL setConfiguration(config) - with stun server, credentialType oauth, and string credential should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
+FAIL new RTCPeerConnection(config) - with stun server, credentialType password, and RTCOAuthCredential credential should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
+FAIL setConfiguration(config) - with stun server, credentialType password, and RTCOAuthCredential credential should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL new RTCPeerConnection(config) - with empty urls list, credentialType oauth, and string credential should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
 FAIL setConfiguration(config) - with empty urls list, credentialType oauth, and string credential should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
 FAIL new RTCPeerConnection(config) - with empty urls list, credentialType password, and RTCOAuthCredential credential should succeed assert_equals: expected (string) "password" but got (undefined) undefined

@@ -19,6 +19,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.serviceworker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.dedicatedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.sharedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.dedicatedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.js

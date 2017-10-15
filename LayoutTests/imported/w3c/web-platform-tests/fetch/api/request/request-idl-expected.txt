@@ -7,7 +7,6 @@ PASS Request interface: existence and properties of interface prototype object's
 PASS Request interface: attribute method 
 PASS Request interface: attribute url 
 PASS Request interface: attribute headers 
-PASS Request interface: attribute type 
 PASS Request interface: attribute destination 
 PASS Request interface: attribute referrer 
 PASS Request interface: attribute referrerPolicy 
@@ -29,7 +28,6 @@ PASS Stringification of new Request("")
 PASS Request interface: new Request("") must inherit property "method" with the proper type 
 PASS Request interface: new Request("") must inherit property "url" with the proper type 
 PASS Request interface: new Request("") must inherit property "headers" with the proper type 
-PASS Request interface: new Request("") must inherit property "type" with the proper type 
 PASS Request interface: new Request("") must inherit property "destination" with the proper type 
 PASS Request interface: new Request("") must inherit property "referrer" with the proper type 
 PASS Request interface: new Request("") must inherit property "referrerPolicy" with the proper type 

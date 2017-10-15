@@ -1861,9 +1861,6 @@ IdlInterface.prototype.test_to_json_operation = function(memberHolderObject, mem
                 this.array.assert_type_is(json[k], type);
                 delete json[k];
             }, this);
-            for (var k in json) {
-                assert_unreached("property " + JSON.stringify(k) + " should not be present in the output of " + this.name + ".prototype.toJSON()");
-            }
         }.bind(this), "Test default toJSON operation of " + this.name);
     } else {
         test(function() {

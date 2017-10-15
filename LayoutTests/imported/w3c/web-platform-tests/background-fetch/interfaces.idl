@@ -1,10 +1,19 @@
-// 3.1. Extensions to ServiceWorkerRegistration
+// 4.1. Extensions to ServiceWorkerGlobalScope
+
+partial interface ServiceWorkerGlobalScope {
+  attribute EventHandler onbackgroundfetched;
+  attribute EventHandler onbackgroundfetchfail;
+  attribute EventHandler onbackgroundfetchabort;
+  attribute EventHandler onbackgroundfetchclick;
+};
+
+// 4.2. Extensions to ServiceWorkerRegistration
 
 partial interface ServiceWorkerRegistration {
   readonly attribute BackgroundFetchManager backgroundFetch;
 };
 
-// 3.2. BackgroundFetchManager
+// 4.3. BackgroundFetchManager
 
 [Exposed=(Window,Worker)]
 interface BackgroundFetchManager {
@@ -17,7 +26,7 @@ interface BackgroundFetchManager {
 dictionary BackgroundFetchOptions {
   sequence<IconDefinition> icons;
   DOMString title;
-  long totalDownloadSize;
+  unsigned long long downloadTotal;
 };
 
 // This is taken from https://w3c.github.io/manifest/#icons-member.
@@ -28,40 +37,40 @@ dictionary IconDefinition {
   DOMString type;
 };
 
-// 3.3. BackgroundFetchRegistration
+// 4.4. BackgroundFetchRegistration
 
 [Exposed=(Window,Worker)]
-interface BackgroundFetchRegistration {
+interface BackgroundFetchRegistration : EventTarget {
   readonly attribute DOMString id;
-  readonly attribute FrozenArray<IconDefinition> icons;
-  readonly attribute long totalDownloadSize;
-  readonly attribute DOMString title;
-  readonly attribute FrozenArray<BackgroundFetchActiveFetches> fetches;
+  readonly attribute unsigned long long uploadTotal;
+  readonly attribute unsigned long long uploaded;
+  readonly attribute unsigned long long downloadTotal;
+  readonly attribute unsigned long long downloaded;
+  readonly attribute BackgroundFetchActiveFetches activeFetches;
 
-  void abort();
+  attribute EventHandler onprogress;
+
+  Promise<boolean> abort();
 };
 
 [Exposed=(Window,Worker)]
-interface BackgroundFetchFetches {
+interface BackgroundFetchFetch {
   readonly attribute Request request;
 };
 
 [Exposed=(Window,Worker)]
-interface BackgroundFetchActiveFetches : BackgroundFetchFetches {
+interface BackgroundFetchActiveFetches {
+  Promise<BackgroundFetchActiveFetch> match(RequestInfo request);
+  Promise<FrozenArray<BackgroundFetchActiveFetch>> values();
+};
+
+[Exposed=(Window,Worker)]
+interface BackgroundFetchActiveFetch : BackgroundFetchFetch {
   readonly attribute Promise<Response> responseReady;
-  // TODO: this will include fetch controller/observer objects
+  // In future this will include a fetch observer
 };
 
-// 3.4. Events
-
-partial interface ServiceWorkerGlobalScope {
-  attribute EventHandler onbackgroundfetched;
-  attribute EventHandler onbackgroundfetchfail;
-  attribute EventHandler onbackgroundfetchabort;
-  attribute EventHandler onbackgroundfetchclick;
-};
-
-// 3.4.1. BackgroundFetchEvent
+// 4.4.3. BackgroundFetchEvent
 
 [Constructor(DOMString type, BackgroundFetchEventInit init), Exposed=ServiceWorker]
 interface BackgroundFetchEvent : ExtendableEvent {
@@ -72,38 +81,38 @@ dictionary BackgroundFetchEventInit : ExtendableEventInit {
   required DOMString id;
 };
 
-// 3.4.2. BackgroundFetchEndEvent
+// 4.4.4. BackgroundFetchSettledEvent
 
-[Constructor(DOMString type, BackgroundFetchEndEventInit init), Exposed=ServiceWorker]
-interface BackgroundFetchEndEvent : BackgroundFetchEvent {
-  readonly attribute FrozenArray<BackgroundFetchSettledFetches> completeFetches;
-
-  Promise<void> updateUI(DOMString title);
+[Constructor(DOMString type, BackgroundFetchSettledEventInit init), Exposed=ServiceWorker]
+interface BackgroundFetchSettledEvent : BackgroundFetchEvent {
+  readonly attribute BackgroundFetchSettledFetches fetches;
 };
 
-dictionary BackgroundFetchEndEventInit : BackgroundFetchEventInit {
-  required BackgroundFetchSettledFetches completeFetches;
+dictionary BackgroundFetchSettledEventInit : BackgroundFetchEventInit {
+  required BackgroundFetchSettledFetches fetches;
 };
 
 [Exposed=ServiceWorker]
-interface BackgroundFetchSettledFetches : BackgroundFetchFetches {
+interface BackgroundFetchSettledFetches {
+  Promise<BackgroundFetchSettledFetch> match(RequestInfo request);
+  Promise<FrozenArray<BackgroundFetchSettledFetch>> values();
+};
+
+[Exposed=ServiceWorker]
+interface BackgroundFetchSettledFetch : BackgroundFetchFetch {
   readonly attribute Response? response;
 };
 
-// 3.4.3. BackgroundFetchFailEvent
+// 4.4.5. BackgroundFetchUpdateEvent
 
-[Constructor(DOMString type, BackgroundFetchEndEventInit init), Exposed=ServiceWorker]
-interface BackgroundFetchFailEvent : BackgroundFetchEndEvent {
-  readonly attribute FrozenArray<BackgroundFetchSettledFetches> failedFetches;
+[Constructor(DOMString type, BackgroundFetchSettledEventInit init), Exposed=ServiceWorker]
+interface BackgroundFetchUpdateEvent : BackgroundFetchSettledEvent {
+  Promise<void> updateUI(DOMString title);
 };
 
-dictionary BackgroundFetchFailEventInit : BackgroundFetchEndEventInit {
-  required BackgroundFetchSettledFetches failedFetches;
-};
+// 4.4.6. BackgroundFetchClickEvent
 
-// 3.4.4. BackgroundFetchClickEvent
-
-[Constructor(DOMString type, BackgroundFetchEndEventInit init), Exposed=ServiceWorker]
+[Constructor(DOMString type, BackgroundFetchClickEventInit init), Exposed=ServiceWorker]
 interface BackgroundFetchClickEvent : BackgroundFetchEvent {
   readonly attribute BackgroundFetchState state;
 };

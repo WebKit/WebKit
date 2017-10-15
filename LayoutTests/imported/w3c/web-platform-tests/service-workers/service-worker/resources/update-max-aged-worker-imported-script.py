@@ -6,7 +6,7 @@ def main(request, response):
                ('Last-Modified', time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime()))]
 
     body = '''
-        const importTime = {time};
+        const importTime = {time:8f};
     '''.format(time=time.time())
 
     return headers, body

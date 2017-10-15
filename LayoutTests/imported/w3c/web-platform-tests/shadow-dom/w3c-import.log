@@ -32,7 +32,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-inside-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-inside-slotted-node.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-post-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-with-related-target.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-customelements.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-event.html

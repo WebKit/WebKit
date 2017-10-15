@@ -11,4 +11,5 @@ PASS Missing title argument
 PASS createHTMLDocument(): metadata 
 PASS createHTMLDocument(): characterSet aliases 
 PASS createHTMLDocument(): URL parsing 
+PASS createHTMLDocument(): document location getter is null 
 

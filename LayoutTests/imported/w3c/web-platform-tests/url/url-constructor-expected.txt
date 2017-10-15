@@ -468,6 +468,9 @@ PASS Parsing: <https://[0:1.290.0.0.0]> against <about:blank>
 PASS Parsing: <https://[0:1.23.23]> against <about:blank> 
 PASS Parsing: <http://?> against <about:blank> 
 PASS Parsing: <http://#> against <about:blank> 
+PASS Parsing: <http://f:4294967377/c> against <http://example.org/> 
+PASS Parsing: <http://f:18446744073709551697/c> against <http://example.org/> 
+PASS Parsing: <http://f:340282366920938463463374607431768211537/c> against <http://example.org/> 
 PASS Parsing: <sc://ñ> against <about:blank> 
 PASS Parsing: <sc://ñ?x> against <about:blank> 
 PASS Parsing: <sc://ñ#x> against <about:blank> 
