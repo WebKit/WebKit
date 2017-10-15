@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +31,9 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace WTF;
-using namespace WTF::Unicode;
-
 namespace WebCore {
 
 const int nonCharacter = -1;
-
-std::unique_ptr<TextCodec> TextCodecUTF8::create(const TextEncoding&, const void*)
-{
-    return std::make_unique<TextCodecUTF8>();
-}
 
 void TextCodecUTF8::registerEncodingNames(EncodingNameRegistrar registrar)
 {
@@ -61,7 +53,9 @@ void TextCodecUTF8::registerEncodingNames(EncodingNameRegistrar registrar)
 
 void TextCodecUTF8::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("UTF-8", create, 0);
+    registrar("UTF-8", [] (const TextEncoding&, const void*) -> std::unique_ptr<TextCodec> {
+        return std::make_unique<TextCodecUTF8>();
+    }, nullptr);
 }
 
 static inline int nonASCIISequenceLength(uint8_t firstByte)
@@ -75,11 +69,11 @@ static inline int nonASCIISequenceLength(uint8_t firstByte)
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
         4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -87,55 +81,76 @@ static inline int nonASCIISequenceLength(uint8_t firstByte)
     return lengths[firstByte];
 }
 
-static inline int decodeNonASCIISequence(const uint8_t* sequence, unsigned length)
+static inline int decodeNonASCIISequence(const uint8_t* sequence, int& length)
 {
     ASSERT(!isASCII(sequence[0]));
     if (length == 2) {
+        ASSERT(sequence[0] >= 0xC2);
         ASSERT(sequence[0] <= 0xDF);
-        if (sequence[0] < 0xC2)
+        if (sequence[1] < 0x80 || sequence[1] > 0xBF) {
+            length = 1;
             return nonCharacter;
-        if (sequence[1] < 0x80 || sequence[1] > 0xBF)
-            return nonCharacter;
+        }
         return ((sequence[0] << 6) + sequence[1]) - 0x00003080;
     }
     if (length == 3) {
-        ASSERT(sequence[0] >= 0xE0 && sequence[0] <= 0xEF);
+        ASSERT(sequence[0] >= 0xE0);
+        ASSERT(sequence[0] <= 0xEF);
         switch (sequence[0]) {
         case 0xE0:
-            if (sequence[1] < 0xA0 || sequence[1] > 0xBF)
+            if (sequence[1] < 0xA0 || sequence[1] > 0xBF) {
+                length = 1;
                 return nonCharacter;
+            }
             break;
         case 0xED:
-            if (sequence[1] < 0x80 || sequence[1] > 0x9F)
+            if (sequence[1] < 0x80 || sequence[1] > 0x9F) {
+                length = 1;
                 return nonCharacter;
+            }
             break;
         default:
-            if (sequence[1] < 0x80 || sequence[1] > 0xBF)
+            if (sequence[1] < 0x80 || sequence[1] > 0xBF) {
+                length = 1;
                 return nonCharacter;
+            }
         }
-        if (sequence[2] < 0x80 || sequence[2] > 0xBF)
+        if (sequence[2] < 0x80 || sequence[2] > 0xBF) {
+            length = 2;
             return nonCharacter;
+        }
         return ((sequence[0] << 12) + (sequence[1] << 6) + sequence[2]) - 0x000E2080;
     }
     ASSERT(length == 4);
-    ASSERT(sequence[0] >= 0xF0 && sequence[0] <= 0xF4);
+    ASSERT(sequence[0] >= 0xF0);
+    ASSERT(sequence[0] <= 0xF4);
     switch (sequence[0]) {
     case 0xF0:
-        if (sequence[1] < 0x90 || sequence[1] > 0xBF)
+        if (sequence[1] < 0x90 || sequence[1] > 0xBF) {
+            length = 1;
             return nonCharacter;
+        }
         break;
     case 0xF4:
-        if (sequence[1] < 0x80 || sequence[1] > 0x8F)
+        if (sequence[1] < 0x80 || sequence[1] > 0x8F) {
+            length = 1;
             return nonCharacter;
+        }
         break;
     default:
-        if (sequence[1] < 0x80 || sequence[1] > 0xBF)
+        if (sequence[1] < 0x80 || sequence[1] > 0xBF) {
+            length = 1;
             return nonCharacter;
+        }
     }
-    if (sequence[2] < 0x80 || sequence[2] > 0xBF)
+    if (sequence[2] < 0x80 || sequence[2] > 0xBF) {
+        length = 2;
         return nonCharacter;
-    if (sequence[3] < 0x80 || sequence[3] > 0xBF)
+    }
+    if (sequence[3] < 0x80 || sequence[3] > 0xBF) {
+        length = 3;
         return nonCharacter;
+    }
     return ((sequence[0] << 18) + (sequence[1] << 12) + (sequence[2] << 6) + sequence[3]) - 0x03C82080;
 }
 
@@ -158,18 +173,7 @@ void TextCodecUTF8::consumePartialSequenceByte()
     memmove(m_partialSequence, m_partialSequence + 1, m_partialSequenceSize);
 }
 
-void TextCodecUTF8::handleError(UChar*& destination, bool stopOnError, bool& sawError)
-{
-    sawError = true;
-    if (stopOnError)
-        return;
-    // Each error generates a replacement character and consumes one byte.
-    *destination++ = replacementCharacter;
-    consumePartialSequenceByte();
-}
-
-template <>
-bool TextCodecUTF8::handlePartialSequence<LChar>(LChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool, bool&)
+bool TextCodecUTF8::handlePartialSequence(LChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush)
 {
     ASSERT(m_partialSequenceSize);
     do {
@@ -201,7 +205,7 @@ bool TextCodecUTF8::handlePartialSequence<LChar>(LChar*& destination, const uint
             m_partialSequenceSize = count;
         }
         int character = decodeNonASCIISequence(m_partialSequence, count);
-        if ((character == nonCharacter) || (character > 0xff))
+        if (character == nonCharacter || character > 0xFF)
             return true;
 
         m_partialSequenceSize -= count;
@@ -211,8 +215,7 @@ bool TextCodecUTF8::handlePartialSequence<LChar>(LChar*& destination, const uint
     return false;
 }
 
-template <>
-bool TextCodecUTF8::handlePartialSequence<UChar>(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError)
+void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError)
 {
     ASSERT(m_partialSequenceSize);
     do {
@@ -223,9 +226,11 @@ bool TextCodecUTF8::handlePartialSequence<UChar>(UChar*& destination, const uint
         }
         int count = nonASCIISequenceLength(m_partialSequence[0]);
         if (!count) {
-            handleError(destination, stopOnError, sawError);
+            sawError = true;
             if (stopOnError)
-                return false;
+                return;
+            *destination++ = replacementCharacter;
+            consumePartialSequenceByte();
             continue;
         }
         if (count > m_partialSequenceSize) {
@@ -235,12 +240,15 @@ bool TextCodecUTF8::handlePartialSequence<UChar>(UChar*& destination, const uint
                     // add it to the existing partial sequence.
                     memcpy(m_partialSequence + m_partialSequenceSize, source, end - source);
                     m_partialSequenceSize += end - source;
-                    return false;
+                    return;
                 }
                 // An incomplete partial sequence at the end is an error.
-                handleError(destination, stopOnError, sawError);
+                sawError = true;
                 if (stopOnError)
-                    return false;
+                    return;
+                *destination++ = replacementCharacter;
+                m_partialSequenceSize = 0;
+                source = end;
                 continue;
             }
             memcpy(m_partialSequence + m_partialSequenceSize, source, count - m_partialSequenceSize);
@@ -249,17 +257,18 @@ bool TextCodecUTF8::handlePartialSequence<UChar>(UChar*& destination, const uint
         }
         int character = decodeNonASCIISequence(m_partialSequence, count);
         if (character == nonCharacter) {
-            handleError(destination, stopOnError, sawError);
+            sawError = true;
             if (stopOnError)
-                return false;
+                return;
+            *destination++ = replacementCharacter;
+            m_partialSequenceSize -= count;
+            memmove(m_partialSequence, m_partialSequence + count, m_partialSequenceSize);
             continue;
         }
 
         m_partialSequenceSize -= count;
         destination = appendCharacter(destination, character);
     } while (m_partialSequenceSize);
-
-    return false;
 }
     
 String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
@@ -271,7 +280,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
 
     const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
     const uint8_t* end = source + length;
-    const uint8_t* alignedEnd = alignToMachineWord(end);
+    const uint8_t* alignedEnd = WTF::alignToMachineWord(end);
     LChar* destination = buffer.characters();
 
     do {
@@ -281,7 +290,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
             // in some compilers.
             LChar* destinationForHandlePartialSequence = destination;
             const uint8_t* sourceForHandlePartialSequence = source;
-            if (handlePartialSequence(destinationForHandlePartialSequence, sourceForHandlePartialSequence, end, flush, stopOnError, sawError)) {
+            if (handlePartialSequence(destinationForHandlePartialSequence, sourceForHandlePartialSequence, end, flush)) {
                 source = sourceForHandlePartialSequence;
                 goto upConvertTo16Bit;
             }
@@ -294,14 +303,14 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
         while (source < end) {
             if (isASCII(*source)) {
                 // Fast path for ASCII. Most UTF-8 text will be ASCII.
-                if (isAlignedToMachineWord(source)) {
+                if (WTF::isAlignedToMachineWord(source)) {
                     while (source < alignedEnd) {
-                        MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
-                        if (!isAllASCII<LChar>(chunk))
+                        auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
+                        if (!WTF::isAllASCII<LChar>(chunk))
                             break;
                         copyASCIIMachineWord(destination, source);
-                        source += sizeof(MachineWord);
-                        destination += sizeof(MachineWord);
+                        source += sizeof(WTF::MachineWord);
+                        destination += sizeof(WTF::MachineWord);
                     }
                     if (source == end)
                         break;
@@ -330,10 +339,10 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
                 sawError = true;
                 if (stopOnError)
                     break;
-                
+
                 goto upConvertTo16Bit;
             }
-            if (character > 0xff)
+            if (character > 0xFF)
                 goto upConvertTo16Bit;
 
             source += count;
@@ -371,14 +380,14 @@ upConvertTo16Bit:
         while (source < end) {
             if (isASCII(*source)) {
                 // Fast path for ASCII. Most UTF-8 text will be ASCII.
-                if (isAlignedToMachineWord(source)) {
+                if (WTF::isAlignedToMachineWord(source)) {
                     while (source < alignedEnd) {
-                        MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
-                        if (!isAllASCII<LChar>(chunk))
+                        auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
+                        if (!WTF::isAllASCII<LChar>(chunk))
                             break;
                         copyASCIIMachineWord(destination16, source);
-                        source += sizeof(MachineWord);
-                        destination16 += sizeof(MachineWord);
+                        source += sizeof(WTF::MachineWord);
+                        destination16 += sizeof(WTF::MachineWord);
                     }
                     if (source == end)
                         break;
@@ -407,9 +416,8 @@ upConvertTo16Bit:
                 sawError = true;
                 if (stopOnError)
                     break;
-                // Each error generates a replacement character and consumes one byte.
                 *destination16++ = replacementCharacter;
-                ++source;
+                source += count ? count : 1;
                 continue;
             }
             source += count;
@@ -429,17 +437,15 @@ CString TextCodecUTF8::encode(const UChar* characters, size_t length, Unencodabl
     // Non-BMP characters take two UTF-16 code units and can take up to 4 bytes (2x).
     if (length > std::numeric_limits<size_t>::max() / 3)
         CRASH();
-    Vector<uint8_t> bytes(length * 3);
 
-    size_t i = 0;
+    Vector<char, 3000> bytes(length * 3);
     size_t bytesWritten = 0;
-    while (i < length) {
+    for (size_t i = 0; i < length; ) {
         UChar32 character;
         U16_NEXT(characters, i, length, character);
         U8_APPEND_UNSAFE(bytes.data(), bytesWritten, character);
     }
-
-    return CString(reinterpret_cast<char*>(bytes.data()), bytesWritten);
+    return CString { bytes.data(), bytesWritten };
 }
 
 } // namespace WebCore

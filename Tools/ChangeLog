@@ -1,3 +1,18 @@
+2017-10-15  Darin Adler  <darin@apple.com>
+
+        UTF-8 decoding produces one replacement character per byte; Encoding standard requires one replacement character per illegal sequence instead
+        https://bugs.webkit.org/show_bug.cgi?id=178207
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added test.
+        * TestWebKitAPI/Tests/WebCore/TextCodec.cpp: Added.
+        (TestWebKitAPI::decodeHexTestBytes): Decodes a string so we can write readable tests.
+        (TestWebKitAPI::escapeNonPrintableASCIICharacters): Encodes a string so we can write readable tests.
+        (TestWebKitAPI::TEST): Added some UTF-8 tests and UTF-8 invalid sequences tests.
+        Would be smart to add more tests for other cases, exercising the fast ASCII loop for example, and
+        other encodings.
+
 2017-10-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] JHBuild build directory DependenciesWPE/Build is not removed by update-webkit-libs-jhbuild
