@@ -342,13 +342,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webvr/VRLayerInit.idl \
     $(WebCore)/Modules/webvr/VRPose.idl \
     $(WebCore)/Modules/webvr/VRStageParameters.idl \
-    $(WebCore)/animation/Animatable.idl \
-    $(WebCore)/animation/AnimationEffect.idl \
-    $(WebCore)/animation/AnimationTimeline.idl \
-    $(WebCore)/animation/DocumentAnimation.idl \
-    $(WebCore)/animation/DocumentTimeline.idl \
-    $(WebCore)/animation/KeyframeEffect.idl \
-    $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \

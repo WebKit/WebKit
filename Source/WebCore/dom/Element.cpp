@@ -41,7 +41,6 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTokenList.h"
-#include "DocumentAnimation.h"
 #include "DocumentSharedObjectPool.h"
 #include "Editing.h"
 #include "ElementIterator.h"
@@ -71,7 +70,6 @@
 #include "InspectorInstrumentation.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
-#include "KeyframeEffect.h"
 #include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -1495,21 +1493,6 @@ void Element::invalidateStyleAndRenderersForSubtree()
 {
     Node::invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
 }
-
-#if ENABLE(WEB_ANIMATIONS)
-WebAnimationVector Element::getAnimations()
-{
-    auto checkTarget = [this](AnimationEffect const& effect)
-    {
-        return (static_cast<KeyframeEffect const&>(effect).target() == this);
-    };
-
-    auto* document = DocumentAnimation::from(&this->document());
-    if (document)
-        return document->getAnimations(WTFMove(checkTarget));
-    return WebAnimationVector();
-}
-#endif
 
 bool Element::hasDisplayContents() const
 {

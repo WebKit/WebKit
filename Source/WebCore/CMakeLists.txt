@@ -415,14 +415,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webvr/VRPose.idl
     Modules/webvr/VRStageParameters.idl
 
-    animation/Animatable.idl
-    animation/AnimationEffect.idl
-    animation/AnimationTimeline.idl
-    animation/DocumentAnimation.idl
-    animation/DocumentTimeline.idl
-    animation/KeyframeEffect.idl
-    animation/WebAnimation.idl
-
     crypto/CryptoAlgorithmParameters.idl
     crypto/CryptoKey.idl
     crypto/CryptoKeyPair.idl
@@ -1261,13 +1253,6 @@ set(WebCore_SOURCES
     accessibility/AccessibilityTree.cpp
     accessibility/AccessibilityTreeItem.cpp
 
-    animation/AnimationEffect.cpp
-    animation/AnimationTimeline.cpp
-    animation/DocumentAnimation.cpp
-    animation/DocumentTimeline.cpp
-    animation/KeyframeEffect.cpp
-    animation/WebAnimation.cpp
-
     bindings/js/CachedModuleScriptLoader.cpp
     bindings/js/CachedScriptFetcher.cpp
     bindings/js/CallTracer.cpp
@@ -1275,7 +1260,6 @@ set(WebCore_SOURCES
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
     bindings/js/IDBBindingUtilities.cpp
-    bindings/js/JSAnimationTimelineCustom.cpp
     bindings/js/JSAttrCustom.cpp
     bindings/js/JSAudioTrackCustom.cpp
     bindings/js/JSAudioTrackListCustom.cpp

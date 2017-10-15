@@ -577,29 +577,6 @@
 		112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */; };
 		11E067EC1E62461300162D16 /* SimpleLineLayoutCoverage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */; };
 		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3EA1C80161C00B6D4DD /* WebAnimation.cpp */; };
-		120DE3F11C86CCC600B6D4DD /* AnimationEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3EE1C86CCBD00B6D4DD /* AnimationEffect.cpp */; };
-		120DE3F81C87C5A800B6D4DD /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 120DE3F51C87C58E00B6D4DD /* JSWebAnimation.h */; };
-		120DE3F91C87C5AB00B6D4DD /* JSWebAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3F41C87C58E00B6D4DD /* JSWebAnimation.cpp */; };
-		120DE3FD1C87E18400B6D4DD /* JSAnimationEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 120DE3FC1C87E17900B6D4DD /* JSAnimationEffect.h */; };
-		120DE3FE1C87E18800B6D4DD /* JSAnimationEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 120DE3FB1C87E17900B6D4DD /* JSAnimationEffect.cpp */; };
-		1221E0471BFC3D2C006A1A00 /* DocumentAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0411BFC3D2C006A1A00 /* DocumentAnimation.cpp */; };
-		1221E0481BFC3D2C006A1A00 /* DocumentAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E0421BFC3D2C006A1A00 /* DocumentAnimation.h */; };
-		1221E04A1BFC3D2C006A1A00 /* DocumentTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0441BFC3D2C006A1A00 /* DocumentTimeline.cpp */; };
-		1221E04B1BFC3D2C006A1A00 /* DocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E0451BFC3D2C006A1A00 /* DocumentTimeline.h */; };
-		1221E05D1C02B444006A1A00 /* JSDocumentAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0591C02B444006A1A00 /* JSDocumentAnimation.cpp */; };
-		1221E05E1C02B444006A1A00 /* JSDocumentAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E05A1C02B444006A1A00 /* JSDocumentAnimation.h */; };
-		1221E05F1C02B444006A1A00 /* JSDocumentTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E05B1C02B444006A1A00 /* JSDocumentTimeline.cpp */; };
-		1221E0601C02B444006A1A00 /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E05C1C02B444006A1A00 /* JSDocumentTimeline.h */; };
-		1221E0631C02D623006A1A00 /* AnimationTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0611C02D623006A1A00 /* AnimationTimeline.cpp */; };
-		1221E06C1C03D224006A1A00 /* JSAnimationTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E06A1C03D224006A1A00 /* JSAnimationTimeline.cpp */; };
-		1221E06D1C03D224006A1A00 /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1221E06B1C03D224006A1A00 /* JSAnimationTimeline.h */; };
-		1221E0731C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */; };
-		12A253DB1C8FF7DC00C22295 /* KeyframeEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A253D81C8FF7CC00C22295 /* KeyframeEffect.cpp */; };
-		12A253E01C8FFF6600C22295 /* JSKeyframeEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A253DE1C8FFF5700C22295 /* JSKeyframeEffect.cpp */; };
-		12A253E11C8FFF6600C22295 /* JSKeyframeEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 12A253DF1C8FFF5700C22295 /* JSKeyframeEffect.h */; };
-		12A253E21C8FFF6600C22295 /* JSAnimatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12A253DC1C8FFF4200C22295 /* JSAnimatable.cpp */; };
-		12A253E31C8FFF6600C22295 /* JSAnimatable.h in Headers */ = {isa = PBXBuildFile; fileRef = 12A253DD1C8FFF4200C22295 /* JSAnimatable.h */; };
 		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8148,40 +8125,6 @@
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
 		11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutCoverage.cpp; sourceTree = "<group>"; };
 		11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutCoverage.h; sourceTree = "<group>"; };
-		120DE3EA1C80161C00B6D4DD /* WebAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAnimation.cpp; sourceTree = "<group>"; };
-		120DE3EB1C80161C00B6D4DD /* WebAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAnimation.h; sourceTree = "<group>"; };
-		120DE3EC1C80161C00B6D4DD /* WebAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebAnimation.idl; sourceTree = "<group>"; };
-		120DE3EE1C86CCBD00B6D4DD /* AnimationEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffect.cpp; sourceTree = "<group>"; };
-		120DE3EF1C86CCBD00B6D4DD /* AnimationEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEffect.h; sourceTree = "<group>"; };
-		120DE3F41C87C58E00B6D4DD /* JSWebAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebAnimation.cpp; sourceTree = "<group>"; };
-		120DE3F51C87C58E00B6D4DD /* JSWebAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebAnimation.h; sourceTree = "<group>"; };
-		120DE3FA1C87D1F100B6D4DD /* AnimationEffect.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationEffect.idl; sourceTree = "<group>"; };
-		120DE3FB1C87E17900B6D4DD /* JSAnimationEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffect.cpp; sourceTree = "<group>"; };
-		120DE3FC1C87E17900B6D4DD /* JSAnimationEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimationEffect.h; sourceTree = "<group>"; };
-		120DE4011C8E997A00B6D4DD /* Animatable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Animatable.idl; sourceTree = "<group>"; };
-		1221E0411BFC3D2C006A1A00 /* DocumentAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentAnimation.cpp; sourceTree = "<group>"; };
-		1221E0421BFC3D2C006A1A00 /* DocumentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentAnimation.h; sourceTree = "<group>"; };
-		1221E0431BFC3D2C006A1A00 /* DocumentAnimation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentAnimation.idl; sourceTree = "<group>"; };
-		1221E0441BFC3D2C006A1A00 /* DocumentTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentTimeline.cpp; sourceTree = "<group>"; };
-		1221E0451BFC3D2C006A1A00 /* DocumentTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTimeline.h; sourceTree = "<group>"; };
-		1221E0461BFC3D2C006A1A00 /* DocumentTimeline.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentTimeline.idl; sourceTree = "<group>"; };
-		1221E0591C02B444006A1A00 /* JSDocumentAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentAnimation.cpp; sourceTree = "<group>"; };
-		1221E05A1C02B444006A1A00 /* JSDocumentAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentAnimation.h; sourceTree = "<group>"; };
-		1221E05B1C02B444006A1A00 /* JSDocumentTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentTimeline.cpp; sourceTree = "<group>"; };
-		1221E05C1C02B444006A1A00 /* JSDocumentTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentTimeline.h; sourceTree = "<group>"; };
-		1221E0611C02D623006A1A00 /* AnimationTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationTimeline.cpp; sourceTree = "<group>"; };
-		1221E0621C02D623006A1A00 /* AnimationTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationTimeline.h; sourceTree = "<group>"; };
-		1221E0651C02D636006A1A00 /* AnimationTimeline.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AnimationTimeline.idl; sourceTree = "<group>"; };
-		1221E06A1C03D224006A1A00 /* JSAnimationTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationTimeline.cpp; sourceTree = "<group>"; };
-		1221E06B1C03D224006A1A00 /* JSAnimationTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimationTimeline.h; sourceTree = "<group>"; };
-		1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationTimelineCustom.cpp; sourceTree = "<group>"; };
-		12A253D81C8FF7CC00C22295 /* KeyframeEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyframeEffect.cpp; sourceTree = "<group>"; };
-		12A253D91C8FF7CC00C22295 /* KeyframeEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyframeEffect.h; sourceTree = "<group>"; };
-		12A253DA1C8FF7CC00C22295 /* KeyframeEffect.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = KeyframeEffect.idl; sourceTree = "<group>"; };
-		12A253DC1C8FFF4200C22295 /* JSAnimatable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimatable.cpp; sourceTree = "<group>"; };
-		12A253DD1C8FFF4200C22295 /* JSAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimatable.h; sourceTree = "<group>"; };
-		12A253DE1C8FFF5700C22295 /* JSKeyframeEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyframeEffect.cpp; sourceTree = "<group>"; };
-		12A253DF1C8FFF5700C22295 /* JSKeyframeEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSKeyframeEffect.h; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
@@ -17077,25 +17020,6 @@
 		1221E0401BFC3CF2006A1A00 /* animation */ = {
 			isa = PBXGroup;
 			children = (
-				120DE4011C8E997A00B6D4DD /* Animatable.idl */,
-				120DE3EE1C86CCBD00B6D4DD /* AnimationEffect.cpp */,
-				120DE3EF1C86CCBD00B6D4DD /* AnimationEffect.h */,
-				120DE3FA1C87D1F100B6D4DD /* AnimationEffect.idl */,
-				1221E0611C02D623006A1A00 /* AnimationTimeline.cpp */,
-				1221E0621C02D623006A1A00 /* AnimationTimeline.h */,
-				1221E0651C02D636006A1A00 /* AnimationTimeline.idl */,
-				1221E0411BFC3D2C006A1A00 /* DocumentAnimation.cpp */,
-				1221E0421BFC3D2C006A1A00 /* DocumentAnimation.h */,
-				1221E0431BFC3D2C006A1A00 /* DocumentAnimation.idl */,
-				1221E0441BFC3D2C006A1A00 /* DocumentTimeline.cpp */,
-				1221E0451BFC3D2C006A1A00 /* DocumentTimeline.h */,
-				1221E0461BFC3D2C006A1A00 /* DocumentTimeline.idl */,
-				12A253D81C8FF7CC00C22295 /* KeyframeEffect.cpp */,
-				12A253D91C8FF7CC00C22295 /* KeyframeEffect.h */,
-				12A253DA1C8FF7CC00C22295 /* KeyframeEffect.idl */,
-				120DE3EA1C80161C00B6D4DD /* WebAnimation.cpp */,
-				120DE3EB1C80161C00B6D4DD /* WebAnimation.h */,
-				120DE3EC1C80161C00B6D4DD /* WebAnimation.idl */,
 			);
 			path = animation;
 			sourceTree = "<group>";
@@ -17103,20 +17027,6 @@
 		1221E0581C02B409006A1A00 /* Animation */ = {
 			isa = PBXGroup;
 			children = (
-				12A253DC1C8FFF4200C22295 /* JSAnimatable.cpp */,
-				12A253DD1C8FFF4200C22295 /* JSAnimatable.h */,
-				120DE3FB1C87E17900B6D4DD /* JSAnimationEffect.cpp */,
-				120DE3FC1C87E17900B6D4DD /* JSAnimationEffect.h */,
-				1221E06A1C03D224006A1A00 /* JSAnimationTimeline.cpp */,
-				1221E06B1C03D224006A1A00 /* JSAnimationTimeline.h */,
-				1221E0591C02B444006A1A00 /* JSDocumentAnimation.cpp */,
-				1221E05A1C02B444006A1A00 /* JSDocumentAnimation.h */,
-				1221E05B1C02B444006A1A00 /* JSDocumentTimeline.cpp */,
-				1221E05C1C02B444006A1A00 /* JSDocumentTimeline.h */,
-				12A253DE1C8FFF5700C22295 /* JSKeyframeEffect.cpp */,
-				12A253DF1C8FFF5700C22295 /* JSKeyframeEffect.h */,
-				120DE3F41C87C58E00B6D4DD /* JSWebAnimation.cpp */,
-				120DE3F51C87C58E00B6D4DD /* JSWebAnimation.h */,
 			);
 			name = Animation;
 			sourceTree = "<group>";
@@ -20267,7 +20177,6 @@
 		7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */ = {
 			isa = PBXGroup;
 			children = (
-				1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
 				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
@@ -27862,7 +27771,6 @@
 				84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */,
 				B2F34FE60E82F81400F627CD /* DNS.h in Headers */,
 				A8185F4009765766005826D9 /* Document.h in Headers */,
-				1221E0481BFC3D2C006A1A00 /* DocumentAnimation.h in Headers */,
 				A3BB59F41457A40D00AC56FE /* DocumentEventQueue.h in Headers */,
 				A8185F3D09765766005826D9 /* DocumentFragment.h in Headers */,
 				656D37360ADBA5DE00A4554D /* DocumentLoader.h in Headers */,
@@ -27873,7 +27781,6 @@
 				4A4F48AA16B0DFC000EDBB29 /* DocumentRuleSets.h in Headers */,
 				AD6E71AD1668899D00320C13 /* DocumentSharedObjectPool.h in Headers */,
 				0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */,
-				1221E04B1BFC3D2C006A1A00 /* DocumentTimeline.h in Headers */,
 				86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */,
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,
 				973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */,
@@ -28518,10 +28425,7 @@
 				57B5F8101E5E2A4E00F34F90 /* JSAesGcmParams.h in Headers */,
 				576814451E70CB1F00E77754 /* JSAesKeyParams.h in Headers */,
 				FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */,
-				12A253E31C8FFF6600C22295 /* JSAnimatable.h in Headers */,
-				120DE3FD1C87E18400B6D4DD /* JSAnimationEffect.h in Headers */,
 				3198480C1A1E6CE800A13318 /* JSAnimationEvent.h in Headers */,
-				1221E06D1C03D224006A1A00 /* JSAnimationTimeline.h in Headers */,
 				A1DF5A991F7EC8C00058A477 /* JSApplePayContactField.h in Headers */,
 				7C6579F01E00856600E3A27A /* JSApplePayLineItem.h in Headers */,
 				A1DF5A8E1F7EC0020058A477 /* JSApplePayMerchantCapability.h in Headers */,
@@ -28634,10 +28538,8 @@
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
 				659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */,
-				1221E05E1C02B444006A1A00 /* JSDocumentAnimation.h in Headers */,
 				ADDA94C219687AA500453029 /* JSDocumentCustom.h in Headers */,
 				1A494EDF0A123F4C00FDAFC1 /* JSDocumentFragment.h in Headers */,
-				1221E0601C02B444006A1A00 /* JSDocumentTimeline.h in Headers */,
 				65DF31F609D1CC60000BE325 /* JSDocumentType.h in Headers */,
 				7C57BFE71EDE2F6100534A48 /* JSDOMAbstractOperations.h in Headers */,
 				1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */,
@@ -28881,7 +28783,6 @@
 				0F4710E81DB700C7002DCEC3 /* JSIntersectionObserverEntry.h in Headers */,
 				57E2335B1DC7D5E500F28D01 /* JSJsonWebKey.h in Headers */,
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
-				12A253E11C8FFF6600C22295 /* JSKeyframeEffect.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
 				93A806201E03B585008A1F26 /* JSLongRange.h in Headers */,
@@ -29243,7 +29144,6 @@
 				7AF9B20D18CFB5F400C64BEF /* JSVTTRegion.h in Headers */,
 				7AF9B20F18CFB5F400C64BEF /* JSVTTRegionList.h in Headers */,
 				FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */,
-				120DE3F81C87C5A800B6D4DD /* JSWebAnimation.h in Headers */,
 				D3F3D3641A69B1900059FC2B /* JSWebGL2RenderingContext.h in Headers */,
 				A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */,
 				49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */,
@@ -31454,10 +31354,8 @@
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
-				120DE3F11C86CCC600B6D4DD /* AnimationEffect.cpp in Sources */,
 				319848021A1D818100A13318 /* AnimationEvent.cpp in Sources */,
 				49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */,
-				1221E0631C02D623006A1A00 /* AnimationTimeline.cpp in Sources */,
 				93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */,
 				A1DF5AB51F8078F30058A477 /* ApplePayContactField.cpp in Sources */,
 				1ADFDFE01E71D8EE008F5D34 /* ApplePayError.cpp in Sources */,
@@ -31954,7 +31852,6 @@
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
 				F293B27E56C112F373FFF27E /* DNSResolveQueue.cpp in Sources */,
 				A8185F3C09765766005826D9 /* Document.cpp in Sources */,
-				1221E0471BFC3D2C006A1A00 /* DocumentAnimation.cpp in Sources */,
 				A3BB59F31457A40D00AC56FE /* DocumentEventQueue.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragment.cpp in Sources */,
 				93E227E00AF589AD00D48324 /* DocumentLoader.cpp in Sources */,
@@ -31965,7 +31862,6 @@
 				4A4F48A916B0DFC000EDBB29 /* DocumentRuleSets.cpp in Sources */,
 				AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */,
 				0B9056190F2578BE0095FF6A /* DocumentThreadableLoader.cpp in Sources */,
-				1221E04A1BFC3D2C006A1A00 /* DocumentTimeline.cpp in Sources */,
 				A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */,
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
 				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
@@ -32557,11 +32453,7 @@
 				576814441E70CB1B00E77754 /* JSAesKeyParams.cpp in Sources */,
 				FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */,
 				31A795C61888BADC00382F90 /* JSANGLEInstancedArrays.cpp in Sources */,
-				12A253E21C8FFF6600C22295 /* JSAnimatable.cpp in Sources */,
-				120DE3FE1C87E18800B6D4DD /* JSAnimationEffect.cpp in Sources */,
 				3198480B1A1E6CE400A13318 /* JSAnimationEvent.cpp in Sources */,
-				1221E06C1C03D224006A1A00 /* JSAnimationTimeline.cpp in Sources */,
-				1221E0731C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp in Sources */,
 				A1DF5A9A1F7EC8C00058A477 /* JSApplePayContactField.cpp in Sources */,
 				1ADFDFEC1E71E455008F5D34 /* JSApplePayError.cpp in Sources */,
 				7C6579EF1E00856600E3A27A /* JSApplePayLineItem.cpp in Sources */,
@@ -32692,13 +32584,11 @@
 				31FB1A65120A5D3F00DC02A0 /* JSDeviceMotionEvent.cpp in Sources */,
 				59A86006119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp in Sources */,
 				659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */,
-				1221E05D1C02B444006A1A00 /* JSDocumentAnimation.cpp in Sources */,
 				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,
 				E3B7C0631DC34160001FB0B8 /* JSDocumentDOMJIT.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
 				7C33F3621B4A050400502CAF /* JSDocumentFragmentCustom.cpp in Sources */,
 				E3975B791EC9AF3F00847717 /* JSDocumentFragmentDOMJIT.cpp in Sources */,
-				1221E05F1C02B444006A1A00 /* JSDocumentTimeline.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
 				7C45C9CF1E3EFDF700AAB558 /* JSDOMBindingSecurity.cpp in Sources */,
@@ -32934,7 +32824,6 @@
 				0F4710E71DB700C7002DCEC3 /* JSIntersectionObserverEntry.cpp in Sources */,
 				57E2335F1DC7D67B00F28D01 /* JSJsonWebKey.cpp in Sources */,
 				A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */,
-				12A253E01C8FFF6600C22295 /* JSKeyframeEffect.cpp in Sources */,
 				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
 				BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */,
 				BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */,
@@ -33327,7 +33216,6 @@
 				7AF9B20C18CFB5F400C64BEF /* JSVTTRegion.cpp in Sources */,
 				7AF9B20E18CFB5F400C64BEF /* JSVTTRegionList.cpp in Sources */,
 				FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */,
-				120DE3F91C87C5AB00B6D4DD /* JSWebAnimation.cpp in Sources */,
 				D3F3D3631A69B1900059FC2B /* JSWebGL2RenderingContext.cpp in Sources */,
 				D3F3D36C1A69B7D50059FC2B /* JSWebGL2RenderingContextCustom.cpp in Sources */,
 				A7D20F62107F406900A80392 /* JSWebGLActiveInfo.cpp in Sources */,
@@ -33426,7 +33314,6 @@
 				2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
 				316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */,
-				12A253DB1C8FF7DC00C22295 /* KeyframeEffect.cpp in Sources */,
 				BC5EBA100E823E4700B25965 /* KeyframeList.cpp in Sources */,
 				450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */,
 				A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */,
@@ -34629,7 +34516,6 @@
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
-				120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */,
 				E18536851F50906100FE091B /* WebArchiveResourceFromNSAttributedString.mm in Sources */,
 				E18C35431F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm in Sources */,
 				CDE667A41E4BBF1500E8154A /* WebAudioBufferList.cpp in Sources */,

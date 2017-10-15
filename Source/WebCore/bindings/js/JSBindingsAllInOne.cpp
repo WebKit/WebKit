@@ -29,7 +29,6 @@
 #include "CallTracer.cpp"
 #include "DOMWrapperWorld.cpp"
 #include "GCController.cpp"
-#include "JSAnimationTimelineCustom.cpp"
 #include "JSAttrCustom.cpp"
 #include "JSAudioTrackCustom.cpp"
 #include "JSAudioTrackListCustom.cpp"

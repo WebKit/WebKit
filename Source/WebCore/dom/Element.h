@@ -543,10 +543,6 @@ public:
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
-#if ENABLE(WEB_ANIMATIONS)
-    Vector<WebAnimation*> getAnimations();
-#endif
-
     Element* findAnchorElementForLink(String& outAnchorName);
 
 protected:
