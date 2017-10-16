@@ -50,6 +50,7 @@
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/PublicSuffix.h>
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/URL.h>
 #include <stdio.h>
@@ -625,6 +626,15 @@ void WebProcessProxy::didClose(IPC::Connection&)
     auto pages = copyToVector(m_pageMap.values());
 
     shutDown();
+
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    if (pages.size() == 1) {
+        auto& page = *pages[0];
+        String domain = topPrivatelyControlledDomain(WebCore::URL(WebCore::ParsedURLString, page.currentURL()).host());
+        if (!domain.isEmpty())
+            page.logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingCrashKey(), domain, WebCore::ShouldSample::No);
+    }
+#endif
 
     for (auto& page : pages)
         page->processDidTerminate(ProcessTerminationReason::Crash);

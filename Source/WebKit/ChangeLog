@@ -1,3 +1,19 @@
+2017-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Log using differential privacy domains where the WebContent process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=178346
+        <rdar://problem/33293830>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::currentURL const):
+        (WebKit::WebPageProxy::processDidTerminate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+
 2017-10-16  Youenn Fablet  <youenn@apple.com>
 
         Activate Cache API by default

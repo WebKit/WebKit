@@ -423,6 +423,8 @@ public:
     bool drawsBackground() const { return m_drawsBackground; }
     void setDrawsBackground(bool);
 
+    String currentURL() const;
+
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
 
