@@ -1,3 +1,12 @@
+2017-10-16  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Add Emilio Cobos Álvarez to the contributors list.
+        https://bugs.webkit.org/show_bug.cgi?id=178334
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-10-07  Maciej Stachowiak  <mjs@apple.com>
 
         Improve --help documentation and add --list-plans to show available benchmarks.
