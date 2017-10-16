@@ -189,7 +189,8 @@ private:
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
     bool computeAccessibilityIsIgnored() const override;
     bool usesAltTagForTextComputation() const;
-
+    bool roleIgnoresTitle() const;
+    
     Node* m_node;
 };
 

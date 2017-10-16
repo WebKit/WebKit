@@ -1,3 +1,19 @@
+2017-09-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: On generic container elements, WebKit should distinguish between tooltip (e.g. @title) and label (e.g. @aria-label) attributes
+        https://bugs.webkit.org/show_bug.cgi?id=170475
+        <rdar://problem/31439222>
+
+        Reviewed by Joanmarie Diggs.
+
+        Test: accessibility/title-tag-on-unimportant-elements-is-help-text.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::helpText):
+        (WebCore::AccessibilityNodeObject::accessibilityDescription):
+        (WebCore::AccessibilityNodeObject::roleIgnoresTitle):
+        * accessibility/AccessibilityNodeObject.h:
+
 2017-09-12  Antti Koivisto  <antti@apple.com>
 
         Remove RenderElement::isCSSAnimating boolean
