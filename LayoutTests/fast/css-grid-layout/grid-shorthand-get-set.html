@@ -205,7 +205,7 @@
     testGridDefinitionsSetJSValues("none", "none", "none", "none", "row", "auto", "auto", "none", "none", "none", "initial", "initial", "initial");
 
     debug("");
-    debug("Test the inherit value on reset-only subproperties (grid-*-gap)");
+    debug("Test the inherit value does not affect gutter properties (grid-*-gap)");
     document.body.style.gridRowGap = "100px";
     document.body.style.gridColumnGap = "20px";
     var anotherElement = document.createElement("div");
@@ -213,8 +213,8 @@
     shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "0px");
     shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "0px");
     anotherElement.style.grid = "inherit";
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "20px");
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "100px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "0px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "0px");
 </script>
 </body>
 </html>

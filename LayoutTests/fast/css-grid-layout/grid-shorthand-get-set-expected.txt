@@ -331,11 +331,11 @@ PASS element.style.gridAutoColumns is "initial"
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS element.style.gridAutoRows is "initial"
 
-Test the inherit value on reset-only subproperties (grid-*-gap)
+Test the inherit value does not affect gutter properties (grid-*-gap)
 PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "0px"
 PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "0px"
-PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "20px"
-PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "100px"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "0px"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "0px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -4745,9 +4745,7 @@
                     "grid-template-areas",
                     "grid-auto-flow",
                     "grid-auto-rows",
-                    "grid-auto-columns",
-                    "grid-column-gap",
-                    "grid-row-gap"
+                    "grid-auto-columns"
                 ]
             },
             "specification": {
