@@ -237,26 +237,26 @@ static GtkWidget *browserWindowCreateBackForwardMenu(BrowserWindow *window, GLis
     return menu;
 }
 
-static void browserWindowUpdateNavigationActions(BrowserWindow *window, WebKitBackForwardList *backForwadlist)
+static void browserWindowUpdateNavigationActions(BrowserWindow *window, WebKitBackForwardList *backForwardlist)
 {
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
     gtk_widget_set_sensitive(window->backItem, webkit_web_view_can_go_back(webView));
     gtk_widget_set_sensitive(window->forwardItem, webkit_web_view_can_go_forward(webView));
 
-    GList *list = g_list_reverse(webkit_back_forward_list_get_back_list_with_limit(backForwadlist, 10));
+    GList *list = g_list_reverse(webkit_back_forward_list_get_back_list_with_limit(backForwardlist, 10));
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->backItem),
         browserWindowCreateBackForwardMenu(window, list));
     g_list_free(list);
 
-    list = webkit_back_forward_list_get_forward_list_with_limit(backForwadlist, 10);
+    list = webkit_back_forward_list_get_forward_list_with_limit(backForwardlist, 10);
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->forwardItem),
         browserWindowCreateBackForwardMenu(window, list));
     g_list_free(list);
 }
 
-static void backForwadlistChanged(WebKitBackForwardList *backForwadlist, WebKitBackForwardListItem *itemAdded, GList *itemsRemoved, BrowserWindow *window)
+static void backForwardlistChanged(WebKitBackForwardList *backForwardlist, WebKitBackForwardListItem *itemAdded, GList *itemsRemoved, BrowserWindow *window)
 {
-    browserWindowUpdateNavigationActions(window, backForwadlist);
+    browserWindowUpdateNavigationActions(window, backForwardlist);
 }
 
 static void webViewClose(WebKitWebView *webView, BrowserWindow *window)
@@ -823,8 +823,8 @@ static void browserWindowSwitchTab(GtkNotebook *notebook, BrowserTab *tab, guint
         /* We always want close to be connected even for not active tabs */
         g_signal_connect(webView, "close", G_CALLBACK(webViewClose), window);
 
-        WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(webView);
-        g_signal_handlers_disconnect_by_data(backForwadlist, window);
+        WebKitBackForwardList *backForwardlist = webkit_web_view_get_back_forward_list(webView);
+        g_signal_handlers_disconnect_by_data(backForwardlist, window);
     }
 
     window->activeTab = tab;
@@ -857,9 +857,9 @@ static void browserWindowSwitchTab(GtkNotebook *notebook, BrowserTab *tab, guint
     g_signal_connect(webView, "leave-fullscreen", G_CALLBACK(webViewLeaveFullScreen), window);
     g_signal_connect(webView, "scroll-event", G_CALLBACK(scrollEventCallback), window);
 
-    WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(webView);
-    browserWindowUpdateNavigationActions(window, backForwadlist);
-    g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
+    WebKitBackForwardList *backForwardlist = webkit_web_view_get_back_forward_list(webView);
+    browserWindowUpdateNavigationActions(window, backForwardlist);
+    g_signal_connect(backForwardlist, "changed", G_CALLBACK(backForwardlistChanged), window);
 }
 
 static void browserWindowTabAddedOrRemoved(GtkNotebook *notebook, BrowserTab *tab, guint tabIndex, BrowserWindow *window)

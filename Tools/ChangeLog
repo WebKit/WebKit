@@ -1,5 +1,15 @@
 2017-09-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Unreviewed, fix typo forwad -> forward
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowUpdateNavigationActions):
+        (backForwardlistChanged):
+        (browserWindowSwitchTab):
+        (backForwadlistChanged): Deleted.
+
+2017-09-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         MiniBrowser closes tab instead of window on close signal
         https://bugs.webkit.org/show_bug.cgi?id=176587
 
