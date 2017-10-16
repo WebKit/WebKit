@@ -981,8 +981,8 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
         auto result = source.remove();
         if (result.hasException())
             return result.releaseException();
-        ASSERT_WITH_SECURITY_IMPLICATION(!source.isConnected());
-        ASSERT_WITH_SECURITY_IMPLICATION(!source.parentNode());
+        RELEASE_ASSERT(!source.isConnected());
+        RELEASE_ASSERT(!source.parentNode());
     }
 
     source.setTreeScopeRecursively(*this);
@@ -2209,13 +2209,13 @@ void Document::didBecomeCurrentDocumentInFrame()
 void Document::frameDestroyed()
 {
     // detachFromFrame() must be called before destroying the Frame.
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_frame);
+    RELEASE_ASSERT(!m_frame);
     FrameDestructionObserver::frameDestroyed();
 }
 
 void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
+    RELEASE_ASSERT(cachedFrame.document() == this);
     ASSERT(cachedFrame.view());
     ASSERT(m_pageCacheState == Document::InPageCache);
     observeFrame(&cachedFrame.view()->frame());
@@ -2224,7 +2224,7 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
 {
     ASSERT_UNUSED(cachedFrame, cachedFrame.view());
-    ASSERT_WITH_SECURITY_IMPLICATION(cachedFrame.document() == this);
+    RELEASE_ASSERT(cachedFrame.document() == this);
     ASSERT(m_frame == &cachedFrame.view()->frame());
     ASSERT(m_pageCacheState == Document::InPageCache);
     detachFromFrame();
@@ -2358,7 +2358,7 @@ void Document::prepareForDestruction()
     // Note that m_pageCacheState can be Document::AboutToEnterPageCache if our frame
     // was removed in an onpagehide event handler fired when the top-level frame is
     // about to enter the page cache.
-    ASSERT_WITH_SECURITY_IMPLICATION(m_pageCacheState != Document::InPageCache);
+    RELEASE_ASSERT(m_pageCacheState != Document::InPageCache);
 }
 
 void Document::removeAllEventListeners()
@@ -4230,7 +4230,7 @@ EventListener* Document::getWindowAttributeEventListener(const AtomicString& eve
 
 void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    RELEASE_ASSERT(NoEventDispatchAssertion::isEventAllowedInMainThread());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchEvent(event, target);
@@ -4238,7 +4238,7 @@ void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 
 void Document::dispatchWindowLoadEvent()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    RELEASE_ASSERT(NoEventDispatchAssertion::isEventAllowedInMainThread());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchLoadEvent();
@@ -7085,7 +7085,7 @@ void Document::applyQuickLookSandbox()
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(securityOrigin)));
 
     static NeverDestroyed<String> quickLookCSP = makeString("default-src ", QLPreviewProtocol(), ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts");
-    ASSERT_WITH_SECURITY_IMPLICATION(contentSecurityPolicy());
+    RELEASE_ASSERT(contentSecurityPolicy());
     // The sandbox directive is only allowed if the policy is from an HTTP header.
     contentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader);
 

@@ -49,7 +49,7 @@ void DocumentOrderedMap::clear()
 void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, const TreeScope& treeScope)
 {
     UNUSED_PARAM(treeScope);
-    ASSERT_WITH_SECURITY_IMPLICATION(element.isInTreeScope());
+    RELEASE_ASSERT(element.isInTreeScope());
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope.rootNode().containsIncludingShadowDOM(&element));
 
     if (!element.isInTreeScope())
@@ -67,7 +67,7 @@ void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, cons
     if (addResult.isNewEntry)
         return;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
+    RELEASE_ASSERT(entry.count);
     entry.element = nullptr;
     entry.count++;
     entry.orderedList.clear();
@@ -78,15 +78,15 @@ void DocumentOrderedMap::remove(const AtomicStringImpl& key, Element& element)
     m_map.checkConsistency();
     auto it = m_map.find(&key);
 
-    ASSERT_WITH_SECURITY_IMPLICATION(it != m_map.end());
+    RELEASE_ASSERT(it != m_map.end());
     if (it == m_map.end())
         return;
 
     MapEntry& entry = it->value;
     ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.remove(&element));
-    ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
+    RELEASE_ASSERT(entry.count);
     if (entry.count == 1) {
-        ASSERT_WITH_SECURITY_IMPLICATION(!entry.element || entry.element == &element);
+        RELEASE_ASSERT(!entry.element || entry.element == &element);
         m_map.remove(it);
     } else {
         if (entry.element == &element)
@@ -108,8 +108,8 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
     MapEntry& entry = it->value;
     ASSERT(entry.count);
     if (entry.element) {
-        ASSERT_WITH_SECURITY_IMPLICATION(entry.element->isInTreeScope());
-        ASSERT_WITH_SECURITY_IMPLICATION(&entry.element->treeScope() == &scope);
+        RELEASE_ASSERT(entry.element->isInTreeScope());
+        RELEASE_ASSERT(&entry.element->treeScope() == &scope);
         ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(entry.element));
         return entry.element;
     }
@@ -119,8 +119,8 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
         if (!keyMatches(key, element))
             continue;
         entry.element = &element;
-        ASSERT_WITH_SECURITY_IMPLICATION(element.isInTreeScope());
-        ASSERT_WITH_SECURITY_IMPLICATION(&element.treeScope() == &scope);
+        RELEASE_ASSERT(element.isInTreeScope());
+        RELEASE_ASSERT(&element.treeScope() == &scope);
         ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(entry.element));
         return &element;
     }
@@ -187,7 +187,7 @@ const Vector<Element*>* DocumentOrderedMap::getAllElementsById(const AtomicStrin
         return nullptr;
 
     MapEntry& entry = it->value;
-    ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
+    RELEASE_ASSERT(entry.count);
     if (!entry.count)
         return nullptr;
 
@@ -202,7 +202,7 @@ const Vector<Element*>* DocumentOrderedMap::getAllElementsById(const AtomicStrin
                 continue;
             entry.orderedList.append(&element);
         }
-        ASSERT(entry.orderedList.size() == entry.count);
+        RELEASE_ASSERT(entry.orderedList.size() == entry.count);
     }
 
     return &entry.orderedList;

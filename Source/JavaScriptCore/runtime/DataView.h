@@ -60,7 +60,7 @@ public:
             }
             *status = true;
         } else
-            ASSERT_WITH_SECURITY_IMPLICATION(offset + sizeof(T) <= byteLength());
+            RELEASE_ASSERT(offset + sizeof(T) <= byteLength());
         return flipBytesIfLittleEndian(
             *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress.get()) + offset),
             littleEndian);
@@ -85,7 +85,7 @@ public:
             }
             *status = true;
         } else
-            ASSERT_WITH_SECURITY_IMPLICATION(offset + sizeof(T) <= byteLength());
+            RELEASE_ASSERT(offset + sizeof(T) <= byteLength());
         *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress.get()) + offset) =
             flipBytesIfLittleEndian(value, littleEndian);
     }

@@ -1,3 +1,16 @@
+2017-10-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Make some asserts into release asserts
+        https://bugs.webkit.org/show_bug.cgi?id=178324
+
+        Reviewed by Saam Barati.
+        
+        These asserts are not on perf critical paths, so they might as well be release asserts.
+
+        * runtime/DataView.h:
+        (JSC::DataView::get):
+        (JSC::DataView::set):
+
 2017-10-16  JF Bastien  <jfbastien@apple.com>
 
         JSRunLoopTimer: reduce likely race when used improperly
