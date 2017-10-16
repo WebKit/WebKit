@@ -2539,10 +2539,12 @@ set(WebCore_SOURCES
     platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp
     platform/mediastream/RTCSessionDescriptionDescriptor.cpp
+    platform/mediastream/RealtimeIncomingAudioSource.cpp
     platform/mediastream/RealtimeIncomingVideoSource.cpp
     platform/mediastream/RealtimeMediaSource.cpp
     platform/mediastream/RealtimeMediaSourceCenter.cpp
     platform/mediastream/RealtimeMediaSourceSettings.cpp
+    platform/mediastream/RealtimeOutgoingAudioSource.cpp
     platform/mediastream/RealtimeOutgoingVideoSource.cpp
 
     platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
