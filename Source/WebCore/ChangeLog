@@ -1,3 +1,25 @@
+2017-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        createMarkupInternal should protect its pointer to the Range's common ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=177033
+        <rdar://problem/34265390>
+
+        Reviewed by Tim Horton.
+
+        Adds basic safeguarding to codepaths hit while executing an outdent command.
+
+        Test: editing/execCommand/outdent-with-media-query-listener-in-iframe.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentRegion):
+
+        Avoid an infinite loop if endOfCurrentParagraph is a null position.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkupInternal):
+
+        Protect the raw pointer to the Range's common ancestor node.
+
 2017-09-18  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Always update display: contents styles in RenderTreeUpdater.

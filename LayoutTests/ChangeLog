@@ -1,3 +1,16 @@
+2017-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        createMarkupInternal should protect its pointer to the Range's common ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=177033
+        <rdar://problem/34265390>
+
+        Reviewed by Tim Horton.
+
+        Adds a test that removes the common ancestor node of a range in the middle of executing an outdent.
+
+        * editing/execCommand/outdent-with-media-query-listener-in-iframe-expected.txt: Added.
+        * editing/execCommand/outdent-with-media-query-listener-in-iframe.html: Added.
+
 2017-09-18  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Always update display: contents styles in RenderTreeUpdater.

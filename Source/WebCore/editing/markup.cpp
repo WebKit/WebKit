@@ -580,13 +580,13 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
     bool collapsed = range.collapsed();
     if (collapsed)
         return emptyString();
-    Node* commonAncestor = range.commonAncestorContainer();
+    RefPtr<Node> commonAncestor = range.commonAncestorContainer();
     if (!commonAncestor)
         return emptyString();
 
     document.updateLayoutIgnorePendingStylesheets();
 
-    auto* body = enclosingElementWithTag(firstPositionInNode(commonAncestor), bodyTag);
+    auto* body = enclosingElementWithTag(firstPositionInNode(commonAncestor.get()), bodyTag);
     Element* fullySelectedRoot = nullptr;
     // FIXME: Do this for all fully selected blocks, not just the body.
     if (body && VisiblePosition(firstPositionInNode(body)) == VisiblePosition(range.startPosition())
