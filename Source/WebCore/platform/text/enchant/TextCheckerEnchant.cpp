@@ -129,7 +129,7 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
         for (i = 0; i < numberOfSuggestions; i++)
             guesses.append(String::fromUTF8(suggestions[i]));
 
-        enchant_dict_free_suggestions(dictionary, suggestions);
+        enchant_dict_free_string_list(dictionary, suggestions);
     }
 
     return guesses;
