@@ -205,6 +205,7 @@ public:
 
     template <class Encoder> void encode(Encoder&) const;
     template <class Decoder> static bool decode(Decoder&, URL&);
+    template <class Decoder> static std::optional<URL> decode(Decoder&);
 
     String serialize(bool omitFragment = false) const;
 
@@ -261,37 +262,48 @@ void URL::encode(Encoder& encoder) const
 template <class Decoder>
 bool URL::decode(Decoder& decoder, URL& url)
 {
-    if (!decoder.decode(url.m_string))
+    auto optionalURL = URL::decode(decoder);
+    if (!optionalURL)
         return false;
+    url = WTFMove(*optionalURL);
+    return true;
+}
+
+template <class Decoder>
+std::optional<URL> URL::decode(Decoder& decoder)
+{
+    URL url;
+    if (!decoder.decode(url.m_string))
+        return std::nullopt;
     bool isValid;
     if (!decoder.decode(isValid))
-        return false;
+        return std::nullopt;
     url.m_isValid = isValid;
     if (!isValid)
-        return true;
+        return WTFMove(url);
     bool protocolIsInHTTPFamily;
     if (!decoder.decode(protocolIsInHTTPFamily))
-        return false;
+        return std::nullopt;
     url.m_protocolIsInHTTPFamily = protocolIsInHTTPFamily;
     if (!decoder.decode(url.m_schemeEnd))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_userStart))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_userEnd))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_passwordEnd))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_hostEnd))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_portEnd))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_pathAfterLastSlash))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_pathEnd))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(url.m_queryEnd))
-        return false;
-    return true;
+        return std::nullopt;
+    return WTFMove(url);
 }
 
 bool operator==(const URL&, const URL&);
