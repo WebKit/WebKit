@@ -2445,12 +2445,12 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
 #endif
         && !cb.isRenderGrid()
         ) {
-        LayoutUnit newMargin = containerLogicalWidth - computedValues.m_extent - cb.marginStartForChild(*this);
+        LayoutUnit newMarginTotal = containerLogicalWidth - computedValues.m_extent;
         bool hasInvertedDirection = cb.style().isLeftToRightDirection() != style().isLeftToRightDirection();
         if (hasInvertedDirection)
-            computedValues.m_margins.m_start = newMargin;
+            computedValues.m_margins.m_start = newMarginTotal - computedValues.m_margins.m_end;
         else
-            computedValues.m_margins.m_end = newMargin;
+            computedValues.m_margins.m_end = newMarginTotal - computedValues.m_margins.m_start;
     }
 }
 

@@ -1,3 +1,14 @@
+2017-09-21  Zhifei FANG  <facetothefate@gmail.com>
+
+        In regular block layout, the width of a child's margin box should always be equal to that of its containing block
+        Merge from Blink https://bugs.chromium.org/p/chromium/issues/detail?id=708751
+        https://bugs.webkit.org/show_bug.cgi?id=176620
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/block/over-constrained-auto-margin-expected.txt: Added.
+        * fast/block/over-constrained-auto-margin.html: Added.
+
 2017-09-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r191731): SVGPatternElement can only reference another SVGPatternElement in the same SVG document
