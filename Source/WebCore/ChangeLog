@@ -1,3 +1,14 @@
+2017-09-07  Darin Adler  <darin@apple.com>
+
+        Fix double resolve assertion in FontFaceSet seen while running tests
+        https://bugs.webkit.org/show_bug.cgi?id=176525
+
+        Reviewed by Brent Fulgham.
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::FontFaceSet): Only resolve the promise if the CSSFontFaceSet
+        is already loaded. Otherwise, we will resolve it later when it calls completedLoading.
+
 2017-09-08  Dean Jackson  <dino@apple.com>
 
         gl.detachShader breaks shader program
