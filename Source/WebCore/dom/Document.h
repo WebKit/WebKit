@@ -53,6 +53,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -1171,8 +1172,13 @@ public:
     WEBCORE_EXPORT void startTrackingStyleRecalcs();
     WEBCORE_EXPORT unsigned styleRecalcCount() const;
 
-    bool hasTouchEventHandlers() const;
-    bool touchEventTargetsContain(Node&) const;
+#if ENABLE(TOUCH_EVENTS)
+    bool hasTouchEventHandlers() const { return (m_touchEventTargets.get()) ? m_touchEventTargets->size() : false; }
+    bool touchEventTargetsContain(Node& node) const { return m_touchEventTargets ? m_touchEventTargets->contains(&node) : false; }
+#else
+    bool hasTouchEventHandlers() const { return false; }
+    bool touchEventTargetsContain(Node&) const { return false; }
+#endif
 
     void didAddTouchEventHandler(Node&);
     void didRemoveTouchEventHandler(Node&, EventHandlerRemoval = EventHandlerRemoval::One);
