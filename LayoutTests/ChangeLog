@@ -1,3 +1,12 @@
+2017-10-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark animations/play-state-in-shorthand.html as flaky on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=178341
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-10-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Don't use intrinsic width if our container's width is zero
