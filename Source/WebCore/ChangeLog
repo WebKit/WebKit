@@ -1,3 +1,19 @@
+2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Followup (r222427): SynchronizedFixedQueue should not have a public constructor
+        https://bugs.webkit.org/show_bug.cgi?id=177458
+
+        Reviewed by Tim Horton.
+
+        ImageFrameCache::decodingQueue() and frameRequestQueue() should return
+        raw references instead of Ref objects.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::decodingQueue):
+        (WebCore::ImageFrameCache::frameRequestQueue):
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
+        * platform/graphics/ImageFrameCache.h:
+
 2017-09-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Images may render partial frames even after loading all the encoded data

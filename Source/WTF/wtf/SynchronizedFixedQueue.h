@@ -40,11 +40,6 @@ public:
         return adoptRef(*new SynchronizedFixedQueue());
     }
 
-    SynchronizedFixedQueue()
-    {
-        static_assert(!((BufferSize - 1) & BufferSize), "BufferSize must be power of 2.");
-    }
-
     void open()
     {
         LockHolder lockHolder(m_mutex);
@@ -113,6 +108,11 @@ public:
     }
 
 private:
+    SynchronizedFixedQueue()
+    {
+        static_assert(!((BufferSize - 1) & BufferSize), "BufferSize must be power of 2.");
+    }
+
     Lock m_mutex;
     Condition m_condition;
 

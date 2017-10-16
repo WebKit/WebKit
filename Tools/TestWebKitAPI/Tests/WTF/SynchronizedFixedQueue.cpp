@@ -56,6 +56,8 @@ template <size_t BufferSize>
 class ToUpperConverter {
 public:
     ToUpperConverter()
+        : m_lowerQueue(SynchronizedFixedQueue<CString, BufferSize>::create())
+        , m_upperQueue(SynchronizedFixedQueue<CString, BufferSize>::create())
     {
     }
 
@@ -80,8 +82,8 @@ public:
 
         produceQueue()->dispatch([this] {
             CString lower;
-            while (m_lowerQueue.dequeue(lower)) {
-                m_upperQueue.enqueue(toUpper(lower));
+            while (m_lowerQueue->dequeue(lower)) {
+                m_upperQueue->enqueue(toUpper(lower));
                 EXPECT_TRUE(lower == textItem(m_produceCount++));
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
@@ -96,7 +98,7 @@ public:
 
         consumeQueue()->dispatch([this] {
             CString upper;
-            while (m_upperQueue.dequeue(upper)) {
+            while (m_upperQueue->dequeue(upper)) {
                 EXPECT_TRUE(upper == toUpper(textItem(m_consumeCount++)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
@@ -115,7 +117,7 @@ public:
         if (!isProducing())
             return;
 
-        m_lowerQueue.close();
+        m_lowerQueue->close();
         m_produceCloseSemaphore.wait(WallTime::infinity());
         m_produceQueue = nullptr;
     }
@@ -125,7 +127,7 @@ public:
         if (!isConsuming())
             return;
 
-        m_upperQueue.close();
+        m_upperQueue->close();
         m_consumeCloseSemaphore.wait(WallTime::infinity());
         m_consumeQueue = nullptr;
     }
@@ -138,7 +140,7 @@ public:
 
     void enqueueLower(const CString& lower)
     {
-        m_lowerQueue.enqueue(lower);
+        m_lowerQueue->enqueue(lower);
     }
 
     bool isProducing() { return m_produceQueue; }
@@ -148,8 +150,8 @@ public:
     size_t consumeCount() const { return m_consumeCount; }
 
 private:
-    SynchronizedFixedQueue<CString, BufferSize> m_lowerQueue;
-    SynchronizedFixedQueue<CString, BufferSize> m_upperQueue;
+    Ref<SynchronizedFixedQueue<CString, BufferSize>> m_lowerQueue;
+    Ref<SynchronizedFixedQueue<CString, BufferSize>> m_upperQueue;
     RefPtr<WorkQueue> m_produceQueue;
     RefPtr<WorkQueue> m_consumeQueue;
     BinarySemaphore m_produceCloseSemaphore;

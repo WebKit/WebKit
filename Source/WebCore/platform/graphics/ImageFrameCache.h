@@ -137,8 +137,8 @@ private:
 
     struct ImageFrameRequest;
     static const int BufferSize = 8;
-    Ref<WorkQueue> decodingQueue();
-    Ref<SynchronizedFixedQueue<ImageFrameRequest, BufferSize>> frameRequestQueue();
+    WorkQueue& decodingQueue();
+    SynchronizedFixedQueue<ImageFrameRequest, BufferSize>& frameRequestQueue();
 
     const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 

@@ -1,3 +1,20 @@
+2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Followup (r222427): SynchronizedFixedQueue should not have a public constructor
+        https://bugs.webkit.org/show_bug.cgi?id=177458
+
+        Reviewed by Tim Horton.
+
+        Fix the definition and the creation of SynchronizedFixedQueue.
+
+        * TestWebKitAPI/Tests/WTF/SynchronizedFixedQueue.cpp:
+        (TestWebKitAPI::ToUpperConverter::ToUpperConverter):
+        (TestWebKitAPI::ToUpperConverter::startProducing):
+        (TestWebKitAPI::ToUpperConverter::startConsuming):
+        (TestWebKitAPI::ToUpperConverter::stopProducing):
+        (TestWebKitAPI::ToUpperConverter::stopConsuming):
+        (TestWebKitAPI::ToUpperConverter::enqueueLower):
+
 2017-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r215613): Incorrect corners clipping with border-radius
