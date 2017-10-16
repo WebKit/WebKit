@@ -364,6 +364,33 @@ FloatPoint HarfBuzzShaper::adjustStartPoint(const FloatPoint& point)
     return point + m_startOffset;
 }
 
+static bool scriptsAreCompatibleForCharacters(UScriptCode script, UScriptCode previousScript, UChar32 character, UChar32 previousCharacter)
+{
+    if (script == previousScript)
+        return true;
+
+    if (script == USCRIPT_INHERITED || previousScript == USCRIPT_COMMON)
+        return true;
+
+    if (script == USCRIPT_COMMON) {
+        // §5.1 Handling Characters with the Common Script Property.
+        // Programs must resolve any of the special Script property values, such as Common,
+        // based on the context of the surrounding characters. A simple heuristic uses the
+        // script of the preceding character, which works well in many cases.
+        // http://www.unicode.org/reports/tr24/#Common.
+        //
+        // FIXME: cover all other cases mentioned in the spec (ie. brackets or quotation marks).
+        // https://bugs.webkit.org/show_bug.cgi?id=177003.
+        //
+        // We use a slightly more conservative heuristic than the one proposed in the spec,
+        // using the script of the previous character only if both are ASCII.
+        if (isASCII(character) && isASCII(previousCharacter))
+            return true;
+    }
+
+    return uscript_hasScript(character, previousScript);
+}
+
 bool HarfBuzzShaper::collectHarfBuzzRuns()
 {
     const UChar* normalizedBufferEnd = m_normalizedBuffer.get() + m_normalizedBufferLength;
@@ -386,6 +413,7 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
         if (!currentFontData)
             currentFontData = &m_font->primaryFont();
         UScriptCode currentScript = nextScript;
+        UChar32 previousCharacter = character;
 
         for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {
             if (FontCascade::treatAsZeroWidthSpace(character))
@@ -415,11 +443,18 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
             nextScript = uscript_getScript(character, &errorCode);
             if (U_FAILURE(errorCode))
                 return false;
-            if ((nextFontData != currentFontData) || ((currentScript != nextScript) && (nextScript != USCRIPT_INHERITED) && (!uscript_hasScript(character, currentScript))))
+
+            if (nextFontData != currentFontData)
                 break;
-            if (nextScript == USCRIPT_INHERITED)
+
+            if (!scriptsAreCompatibleForCharacters(nextScript, currentScript, character, previousCharacter))
+                break;
+
+            if (nextScript == USCRIPT_INHERITED || nextScript == USCRIPT_COMMON)
                 nextScript = currentScript;
+
             currentCharacterPosition = iterator.characters();
+            previousCharacter = character;
         }
         unsigned numCharactersOfCurrentRun = iterator.currentIndex() - startIndexOfCurrentRun;
         hb_script_t script = hb_icu_script_to_script(currentScript);

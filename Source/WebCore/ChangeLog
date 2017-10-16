@@ -1,3 +1,30 @@
+2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harfbuzz] Material icons not rendered correctly when using the web font
+        https://bugs.webkit.org/show_bug.cgi?id=176995
+
+        Reviewed by Michael Catanzaro.
+
+        Only a few of them are correctly rendered and some others are wrong. We only render correctly the ones that
+        don't have an underscore in their name (or that start with a number like 3d_rotation). In the cases where the
+        name before the underscore is also an icon, we render that icon instead, that's why some of them are wrong. This
+        is happening because the underscore is causing the HarfbuffShaper to split the text in 3 runs, one for the word
+        before the underscore, another one for the underscore and another for the word after the underscore. So, we
+        end up trying to shape the 3 runs independently and we fail when the icon doesn't exist, or when it exists but
+        it's not the one we are looking for. The cause of this is that the underscore has a different script (Common)
+        than the rest of characters (Latin) which is a condition in HarfbuffShaper to create a different run. The
+        unicode spec says that characters with Common script should be handled differently, but we are just ignoring
+        it. The spec proposes to use an heuristic based on simply inheriting the script of the previous character, which
+        should work in most of the cases. We could take a more conservative approach and do that only if both characters
+        are ASCII. We should also consider handling other cases mentioned by the spec like brackets and quotation marks,
+        but that belongs to a different bug/commit.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::scriptsAreCompatibleForCharacters): Helper function to check if the current and previous scripts are
+        compatible,
+        (WebCore::HarfBuzzShaper::collectHarfBuzzRuns): Use scriptsAreCompatibleForCharacters() to decided whether to
+        finish the current run or not. In case of Common script, inherit also the script from the previous character.
+
 2017-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Submitting a form can cause HTMLFormElement's associated elements vector to be mutated during iteration
