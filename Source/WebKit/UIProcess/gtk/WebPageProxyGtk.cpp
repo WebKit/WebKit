@@ -91,7 +91,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     m_pageClient.selectionDidChange();
 }
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
 typedef HashMap<uint64_t, GtkWidget* > PluginWindowMap;
 static PluginWindowMap& pluginWindowMap()
 {
@@ -144,7 +144,7 @@ void WebPageProxy::windowedPluginVisibilityDidChange(bool isVisible, uint64_t wi
     else
         gtk_widget_hide(plugin);
 }
-#endif // PLUGIN_ARCHITECTURE(X11)
+#endif // PLATFORM(X11)
 
 void WebPageProxy::setInputMethodState(bool enabled)
 {

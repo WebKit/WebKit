@@ -1,3 +1,19 @@
+2017-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Wrong use of PLUGIN_ARCHITECTURE(X11) in several places
+        https://bugs.webkit.org/show_bug.cgi?id=176329
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt: Build TestNetscapePlugIn when NETSCAPE_PLUGIN_API is enabled and only link to X11 libraries
+        when building the X11 target.
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/unix/CallInvalidateRectWithNullNPPArgument.cpp: Renamed from Tools/DumpRenderTree/TestNetscapePlugIn/Tests/x11/CallInvalidateRectWithNullNPPArgument.cpp.
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_Initialize):
+        (NPP_HandleEvent):
+        (NPP_GetValue):
+
 2017-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION: [GTK] Generated HTML API documentation is missing descriptions

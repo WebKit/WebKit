@@ -372,7 +372,7 @@ messages -> WebPageProxy {
     DictationAlternatives(uint64_t dictationContext) -> (Vector<String> alternatives)
 #endif
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
     # X11 windowed plugin messages
     CreatePluginContainer() -> (uint64_t windowID)
     WindowedPluginGeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, uint64_t windowID)

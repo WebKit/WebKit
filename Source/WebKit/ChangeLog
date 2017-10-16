@@ -1,3 +1,40 @@
+2017-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Wrong use of PLUGIN_ARCHITECTURE(X11) in several places
+        https://bugs.webkit.org/show_bug.cgi?id=176329
+
+        Reviewed by Michael Catanzaro.
+
+        We are using PLUGIN_ARCHITECTURE(X11) in several places where we should actually be using PLATFORM(X11). This is
+        confusing because PLUGIN_ARCHITECTURE(X11) is no longer specific to X11, it will be renamed as UNIX in a follow
+        up patch. Because of this we only support plugins in Wayland when building with both X11 and Wayland targets
+        enabled.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/PluginQuirks.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::shouldLoadSrcURL):
+        (WebKit::NetscapePlugin::initialize):
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp:
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+
 2017-09-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.18.0 release.

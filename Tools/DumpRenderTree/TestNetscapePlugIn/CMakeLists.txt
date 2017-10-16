@@ -27,7 +27,6 @@ set(WebKitTestNetscapePlugIn_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/PrivateBrowsing.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/ToStringAndValueOfObject.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/URLRedirect.cpp
-    ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/x11/CallInvalidateRectWithNullNPPArgument.cpp
 )
 
 set(WebKitTestNetscapePlugIn_INCLUDE_DIRECTORIES
@@ -37,20 +36,28 @@ set(WebKitTestNetscapePlugIn_INCLUDE_DIRECTORIES
     ${WTF_DIR}
 )
 
-set(WebKitTestNetscapePlugIn_SYSTEM_INCLUDE_DIRECTORIES
-    ${X11_INCLUDE_DIR}
-)
+if (MOZ_X11)
+    set(WebKitTestNetscapePlugIn_SYSTEM_INCLUDE_DIRECTORIES
+        ${X11_INCLUDE_DIR}
+    )
+
+    set(WebKitTestNetscapePlugIn_LIBRARIES
+        ${X11_LIBRARIES}
+    )
+
+    add_definitions(-DMOZ_X11)
+endif ()
+
+if (XP_UNIX)
+    list(APPEND WebKitTestNetscapePlugIn_SOURCES
+        ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/unix/CallInvalidateRectWithNullNPPArgument.cpp
+    )
+
+    add_definitions(-DXP_UNIX)
+endif ()
 
 include_directories(${WebKitTestNetscapePlugIn_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${WebKitTestNetscapePlugIn_SYSTEM_INCLUDE_DIRECTORIES})
-
-set(WebKitTestNetscapePlugIn_LIBRARIES
-    ${X11_LIBRARIES}
-)
-
-if (WTF_OS_UNIX)
-    add_definitions(-DXP_UNIX)
-endif ()
 
 add_library(TestNetscapePlugIn SHARED ${WebKitTestNetscapePlugIn_SOURCES})
 target_link_libraries(TestNetscapePlugIn ${WebKitTestNetscapePlugIn_LIBRARIES})

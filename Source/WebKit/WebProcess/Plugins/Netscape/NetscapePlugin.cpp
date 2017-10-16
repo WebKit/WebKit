@@ -546,7 +546,7 @@ void NetscapePlugin::callSetWindowInvisible()
 
 bool NetscapePlugin::shouldLoadSrcURL()
 {
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
     // Flash crashes when NPP_GetValue is called for NPPVpluginCancelSrcStream in windowed mode.
     if (m_isWindowed && m_pluginModule->pluginQuirks().contains(PluginQuirks::DoNotCancelSrcStreamInWindowedMode))
         return true;
@@ -644,7 +644,7 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
         paramValues.append(parameters.values[i].utf8());
     }
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
     if (equalLettersIgnoringASCIICase(parameters.mimeType, "application/x-shockwave-flash")) {
         size_t wmodeIndex = parameters.names.find("wmode");
         if (wmodeIndex != notFound) {

@@ -181,6 +181,8 @@ void NetscapePluginModule::determineQuirks()
 
     Vector<MimeClassInfo> mimeTypes;
     parseMIMEDescription(metaData.mimeDescription, mimeTypes);
+
+#if PLATFORM(X11)
     for (size_t i = 0; i < mimeTypes.size(); ++i) {
         if (mimeTypes[i].type == "application/x-shockwave-flash") {
 #if CPU(X86_64)
@@ -190,6 +192,7 @@ void NetscapePluginModule::determineQuirks()
             break;
         }
     }
+#endif // PLATFORM(X11)
 }
 
 static void writeCharacter(char byte)

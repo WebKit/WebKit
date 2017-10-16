@@ -182,10 +182,12 @@ SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_QUARTZ ${ENABLE_QUARTZ_TARGET})
 SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_X11 ${ENABLE_X11_TARGET})
 SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_WAYLAND ${ENABLE_WAYLAND_TARGET})
 
-# MOZ_X11 and XP_UNIX are required by npapi.h. Their value is not checked;
-# only their definedness is. They should only be defined in the true case.
-if (${ENABLE_X11_TARGET})
-    SET_AND_EXPOSE_TO_BUILD(MOZ_X11 1)
+if (ENABLE_NETSCAPE_PLUGIN_API)
+    # MOZ_X11 and XP_UNIX are required by npapi.h. Their value is not checked;
+    # only their definedness is. They should only be defined in the true case.
+    if (ENABLE_X11_TARGET)
+        SET_AND_EXPOSE_TO_BUILD(MOZ_X11 1)
+    endif ()
     SET_AND_EXPOSE_TO_BUILD(XP_UNIX 1)
 endif ()
 

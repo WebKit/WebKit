@@ -72,7 +72,7 @@
 #include <bindings/ScriptValue.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
 #include <WebCore/PlatformDisplay.h>
 #endif
 
@@ -1680,7 +1680,7 @@ void PluginView::didFailLoad(WebFrame* webFrame, bool wasCancelled)
     m_plugin->frameDidFail(request->requestID(), wasCancelled);
 }
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
 uint64_t PluginView::createPluginContainer()
 {
     uint64_t windowID = 0;
