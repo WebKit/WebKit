@@ -1,3 +1,17 @@
+2017-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/forms/append-children-during-form-submission.html fails due to a text diff on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176908
+
+        Reviewed by Tim Horton.
+
+        Tweak an existing layout test added in r222005 to make its expectation consistent across all platforms.
+
+        * fast/forms/append-children-during-form-submission-expected.txt:
+        * fast/forms/append-children-during-form-submission.html:
+        * platform/ios/fast/forms/append-children-during-form-submission-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/forms/append-children-during-form-submission-expected.txt: Removed.
+
 2017-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Submitting a form can cause HTMLFormElement's associated elements vector to be mutated during iteration
