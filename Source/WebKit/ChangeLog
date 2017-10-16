@@ -1,3 +1,18 @@
+2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] UI process crash in WebBackForwardList::restoreFromState
+        https://bugs.webkit.org/show_bug.cgi?id=176303
+
+        Reviewed by Michael Catanzaro.
+
+        Ensure the current index provided by the session state is not out of actual item list bounds. This is a bug in
+        the session state decoder, but WebBackForwardList::backForwardListState() is already doing the check and using
+        the last item index instead, so it's not easy to know where the actual problem is. In any case we should
+        still protect the decoder.
+
+        * UIProcess/API/glib/WebKitWebViewSessionState.cpp:
+        (decodeSessionState):
+
 2017-09-06  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][CMake] Fix path to the WebKitApplicationInfo.h header.
