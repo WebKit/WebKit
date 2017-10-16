@@ -34,21 +34,19 @@
 namespace WebCore {
 
 struct FetchOptions {
-    enum class Type { EmptyString, Audio, Font, Image, Script, Style, Track, Video };
-    enum class Destination { EmptyString, Document, Sharedworker, Subresource, Unknown, Worker };
+    enum class Destination { EmptyString, Audio, Document, Embed, Font, Image, Manifest, Object, Report, Script, Serviceworker, Sharedworker, Style, Track, Video, Worker, Xslt };
     enum class Mode { Navigate, SameOrigin, NoCors, Cors };
     enum class Credentials { Omit, SameOrigin, Include };
     enum class Cache { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
     enum class Redirect { Follow, Error, Manual };
 
     FetchOptions() = default;
-    FetchOptions(Type, Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool);
-    FetchOptions isolatedCopy() const { return { type, destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive }; }
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool);
+    FetchOptions isolatedCopy() const { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive }; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, FetchOptions&);
 
-    Type type { Type::EmptyString };
     Destination destination { Destination::EmptyString };
     Mode mode { Mode::NoCors };
     Credentials credentials { Credentials::Omit };
@@ -59,9 +57,8 @@ struct FetchOptions {
     bool keepAlive { false };
 };
 
-inline FetchOptions::FetchOptions(Type type, Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive)
-    : type(type)
-    , destination(destination)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive)
+    : destination(destination)
     , mode(mode)
     , credentials(credentials)
     , cache(cache)
@@ -76,29 +73,26 @@ inline FetchOptions::FetchOptions(Type type, Destination destination, Mode mode,
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::FetchOptions::Type> {
-    using values = EnumValues<
-        WebCore::FetchOptions::Type,
-        WebCore::FetchOptions::Type::EmptyString,
-        WebCore::FetchOptions::Type::Audio,
-        WebCore::FetchOptions::Type::Font,
-        WebCore::FetchOptions::Type::Image,
-        WebCore::FetchOptions::Type::Script,
-        WebCore::FetchOptions::Type::Style,
-        WebCore::FetchOptions::Type::Track,
-        WebCore::FetchOptions::Type::Video
-    >;
-};
-
 template<> struct EnumTraits<WebCore::FetchOptions::Destination> {
     using values = EnumValues<
         WebCore::FetchOptions::Destination,
         WebCore::FetchOptions::Destination::EmptyString,
+        WebCore::FetchOptions::Destination::Audio,
         WebCore::FetchOptions::Destination::Document,
+        WebCore::FetchOptions::Destination::Embed,
+        WebCore::FetchOptions::Destination::Font,
+        WebCore::FetchOptions::Destination::Image,
+        WebCore::FetchOptions::Destination::Manifest,
+        WebCore::FetchOptions::Destination::Object,
+        WebCore::FetchOptions::Destination::Report,
+        WebCore::FetchOptions::Destination::Script,
+        WebCore::FetchOptions::Destination::Serviceworker,
         WebCore::FetchOptions::Destination::Sharedworker,
-        WebCore::FetchOptions::Destination::Subresource,
-        WebCore::FetchOptions::Destination::Unknown,
-        WebCore::FetchOptions::Destination::Worker
+        WebCore::FetchOptions::Destination::Style,
+        WebCore::FetchOptions::Destination::Track,
+        WebCore::FetchOptions::Destination::Video,
+        WebCore::FetchOptions::Destination::Worker,
+        WebCore::FetchOptions::Destination::Xslt
     >;
 };
 
@@ -148,7 +142,6 @@ namespace WebCore {
 
 template<class Encoder> inline void FetchOptions::encode(Encoder& encoder) const
 {
-    encoder << type;
     encoder << destination;
     encoder << mode;
     encoder << credentials;
@@ -161,10 +154,6 @@ template<class Encoder> inline void FetchOptions::encode(Encoder& encoder) const
 
 template<class Decoder> inline bool FetchOptions::decode(Decoder& decoder, FetchOptions& options)
 {
-    FetchOptions::Type type;
-    if (!decoder.decode(type))
-        return false;
-
     FetchOptions::Destination destination;
     if (!decoder.decode(destination))
         return false;
@@ -197,7 +186,6 @@ template<class Decoder> inline bool FetchOptions::decode(Decoder& decoder, Fetch
     if (!decoder.decode(keepAlive))
         return false;
 
-    options.type = type;
     options.destination = destination;
     options.mode = mode;
     options.credentials = credentials;

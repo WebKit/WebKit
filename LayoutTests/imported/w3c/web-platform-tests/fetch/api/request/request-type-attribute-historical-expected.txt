@@ -1,0 +1,3 @@
+
+PASS 'type' getter should not exist on Request objects 
+

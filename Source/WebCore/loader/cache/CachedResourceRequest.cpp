@@ -266,4 +266,11 @@ bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const R
     return !origin->canRequest(requestURL);
 }
 
+void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination destination)
+{
+    if (m_options.destination != FetchOptions::Destination::EmptyString)
+        return;
+    m_options.destination = destination;
+}
+
 } // namespace WebCore

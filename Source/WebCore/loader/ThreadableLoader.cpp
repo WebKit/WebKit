@@ -65,7 +65,6 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     ThreadableLoaderOptions copy;
 
     // FetchOptions
-    copy.type = this->type;
     copy.destination = this->destination;
     copy.mode = this->mode;
     copy.credentials = this->credentials;

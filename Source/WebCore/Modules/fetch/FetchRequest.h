@@ -51,7 +51,6 @@ public:
     using Destination = FetchOptions::Destination;
     using Mode = FetchOptions::Mode;
     using Redirect = FetchOptions::Redirect;
-    using Type = FetchOptions::Type;
 
 
     static ExceptionOr<Ref<FetchRequest>> create(ScriptExecutionContext&, Info&&, Init&&);
@@ -62,7 +61,6 @@ public:
     FetchHeaders& headers() { return m_headers.get(); }
     const FetchHeaders& headers() const { return m_headers.get(); }
 
-    Type type() const { return m_options.type; }
     Destination destination() const { return m_options.destination; }
     String referrer() const;
     ReferrerPolicy referrerPolicy() const { return m_options.referrerPolicy; }

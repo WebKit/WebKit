@@ -1,0 +1,4 @@
+
+FAIL URL encoding and Request assert_equals: expected "http://localhost:8800/fetch/api/request/url-encoding.html?%C3%9F" but got "http://localhost:8800/fetch/api/request/url-encoding.html?%DF"
+FAIL URL encoding and fetch() assert_equals: expected "http://localhost:8800/fetch/api/request/url-encoding.html?%C3%9F" but got "http://localhost:8800/fetch/api/request/url-encoding.html?%DF"
+
