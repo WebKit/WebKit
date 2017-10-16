@@ -3,6 +3,17 @@
         [WPE][GTK] Merge ProcessLauncher[WPE,GTK]
         https://bugs.webkit.org/show_bug.cgi?id=177041
 
+        Unreviewed fixup, I broke the size of the argv buffer when experimenting with how to respond
+        to review comments. Not sure why this didn't blow up everything during testing.
+
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
+2017-09-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Merge ProcessLauncher[WPE,GTK]
+        https://bugs.webkit.org/show_bug.cgi?id=177041
+
         Reviewed by Carlos Garcia Campos.
 
         * PlatformGTK.cmake:

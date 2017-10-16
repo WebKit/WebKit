@@ -95,7 +95,7 @@ void ProcessLauncher::launchProcess()
 
     realExecutablePath = fileSystemRepresentation(executablePath);
     GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", socketPair.client));
-    unsigned nargs = 3; // size of the argv array for g_spawn_async()
+    unsigned nargs = 4; // size of the argv array for g_spawn_async()
 
 #if PLATFORM(WPE)
     GUniquePtr<gchar> wpeSocket;
