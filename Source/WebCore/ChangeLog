@@ -1,3 +1,44 @@
+2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Stretching auto tracks should be done as part of the track sizing algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=176783
+
+        Reviewed by Sergio Villar Senin.
+
+        CSS WG has agreed to modify the track sizing algorithm to include
+        a new step: https://drafts.csswg.org/css-grid/#algo-stretch
+        We used to do the stretch of the "auto" tracks at the end of
+        the track sizing algorithm, however this change integrates it
+        into the algorithm itself as the last step.
+        See: https://github.com/w3c/csswg-drafts/issues/1150
+
+        The patch moves the method
+        RenderGrid::applyStretchAlignmentToTracksIfNeeded() to
+        GridTrackSizingAlgorithm::stretchAutoTracks().
+        And then modifies the grid track sizing algorithm to execute
+        the new step.
+
+        This patch uses the WPT test updated to check the new behavior.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::initializeTrackSizes): Initialize
+        the list of auto tracks.
+        (WebCore::GridTrackSizingAlgorithm::stretchFlexibleTracks): Add
+        early return if there are not flexible tracks.
+        (WebCore::GridTrackSizingAlgorithm::stretchAutoTracks): Code moved from
+        RenderGrid::applyStretchAlignmentToTracksIfNeeded().
+        (WebCore::GridTrackSizingAlgorithm::setup): Reset list of auto tracks.
+        (WebCore::GridTrackSizingAlgorithm::run): Add new step
+        stretchAutoTracks().
+        (WebCore::GridTrackSizingAlgorithm::reset): Reset auto tracks.
+        * rendering/GridTrackSizingAlgorithm.h: Add m_autoSizedTracksIndex.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock): Avoid applying stretch here.
+        (WebCore::RenderGrid::contentAlignmentNormalBehaviorGrid): Make public.
+        (WebCore::RenderGrid::applyStretchAlignmentToTracksIfNeeded): Moved to
+        GridTrackSizingAlgorithm::stretchAutoTracks().
+        * rendering/RenderGrid.h:
+
 2017-09-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: On generic container elements, WebKit should distinguish between tooltip (e.g. @title) and label (e.g. @aria-label) attributes

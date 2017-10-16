@@ -305,9 +305,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         setLogicalHeight(std::max(logicalHeight(), minHeightForEmptyLine));
     }
 
-    applyStretchAlignmentToTracksIfNeeded(ForColumns);
-    applyStretchAlignmentToTracksIfNeeded(ForRows);
-
     layoutGridItems();
     m_trackSizingAlgorithm.reset();
 
@@ -880,40 +877,10 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     return tracks;
 }
 
-static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid()
+const StyleContentAlignmentData& RenderGrid::contentAlignmentNormalBehaviorGrid()
 {
     static const StyleContentAlignmentData normalBehavior = {ContentPositionNormal, ContentDistributionStretch};
     return normalBehavior;
-}
-
-void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection direction)
-{
-    std::optional<LayoutUnit> freeSpace = m_trackSizingAlgorithm.freeSpace(direction);
-    if (!freeSpace
-        || freeSpace.value() <= 0
-        || (direction == ForColumns && style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) != ContentDistributionStretch)
-        || (direction == ForRows && style().resolvedAlignContentDistribution(contentAlignmentNormalBehaviorGrid()) != ContentDistributionStretch))
-        return;
-
-    // Spec defines auto-sized tracks as the ones with an 'auto' max-sizing function.
-    Vector<GridTrack>& allTracks = m_trackSizingAlgorithm.tracks(direction);
-    Vector<unsigned> autoSizedTracksIndex;
-    for (unsigned i = 0; i < allTracks.size(); ++i) {
-        const GridTrackSize& trackSize = m_trackSizingAlgorithm.gridTrackSize(direction, i);
-        if (trackSize.hasAutoMaxTrackBreadth())
-            autoSizedTracksIndex.append(i);
-    }
-
-    unsigned numberOfAutoSizedTracks = autoSizedTracksIndex.size();
-    if (numberOfAutoSizedTracks < 1)
-        return;
-
-    LayoutUnit sizeToIncrease = freeSpace.value() / numberOfAutoSizedTracks;
-    for (const auto& trackIndex : autoSizedTracksIndex) {
-        auto& track = allTracks[trackIndex];
-        track.setBaseSize(track.baseSize() + sizeToIncrease);
-    }
-    m_trackSizingAlgorithm.setFreeSpace(direction, LayoutUnit());
 }
 
 void RenderGrid::layoutGridItems()

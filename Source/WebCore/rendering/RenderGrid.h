@@ -65,6 +65,8 @@ public:
     bool isOrthogonalChild(const RenderBox&) const;
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
 
+    static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid();
+
 protected:
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {
@@ -131,8 +133,6 @@ private:
     GridSpan cachedGridSpan(const RenderBox&, GridTrackSizingDirection) const;
 
     LayoutUnit gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox&, GridTrackSizingDirection) const;
-
-    void applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection);
 
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
     LayoutUnit marginLogicalSizeForChild(GridTrackSizingDirection, const RenderBox&) const;
