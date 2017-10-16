@@ -2724,6 +2724,14 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, ui
     frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), navigationID, downloadID);
 }
 
+void WebPage::continueWillSubmitForm(uint64_t frameID, uint64_t listenerID)
+{
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    frame->continueWillSubmitForm(listenerID);
+}
+
 void WebPage::didStartPageTransition()
 {
     m_drawingArea->setLayerTreeStateIsFrozen(true);

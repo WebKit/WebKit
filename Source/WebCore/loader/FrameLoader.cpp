@@ -2386,30 +2386,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
     ASSERT_NOT_REACHED();
 }
 
-void FrameLoader::continueLoadAfterWillSubmitForm()
-{
-    if (!m_provisionalDocumentLoader)
-        return;
-
-    prepareForLoadStart();
-    
-    // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader, 
-    // so we need to null check it again.
-    if (!m_provisionalDocumentLoader) {
-        RELEASE_LOG_IF_ALLOWED("continueLoadAfterWillSubmitForm: Frame load canceled (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
-        return;
-    }
-
-    DocumentLoader* activeDocLoader = activeDocumentLoader();
-    if (activeDocLoader && activeDocLoader->isLoadingMainResource()) {
-        RELEASE_LOG_IF_ALLOWED("continueLoadAfterWillSubmitForm: Main frame already being loaded (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
-        return;
-    }
-
-    m_loadingFromCachedPage = false;
-    m_provisionalDocumentLoader->startLoadingMainResource();
-}
-
 void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
 {
     // FIXME: Rename firstPartyForCookies back to mainDocumentURL. It was a mistake to think that it was only used for cookies.
@@ -3181,14 +3157,35 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
+    WTF::Function<void(void)> completionHandler = [this] {
+        if (!m_provisionalDocumentLoader)
+            return;
+        
+        prepareForLoadStart();
+        
+        // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader,
+        // so we need to null check it again.
+        if (!m_provisionalDocumentLoader) {
+            RELEASE_LOG_IF_ALLOWED("dispatchWillSubmitForm completionHandler: Frame load canceled (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
+            return;
+        }
+        
+        DocumentLoader* activeDocLoader = activeDocumentLoader();
+        if (activeDocLoader && activeDocLoader->isLoadingMainResource()) {
+            RELEASE_LOG_IF_ALLOWED("dispatchWillSubmitForm completionHandler: Main frame already being loaded (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
+            return;
+        }
+        
+        m_loadingFromCachedPage = false;
+        m_provisionalDocumentLoader->startLoadingMainResource();
+    };
+    
     if (!formState) {
-        continueLoadAfterWillSubmitForm();
+        completionHandler();
         return;
     }
 
-    m_client.dispatchWillSubmitForm(*formState, [this] (PolicyAction action) {
-        policyChecker().continueLoadAfterWillSubmitForm(action);
-    });
+    m_client.dispatchWillSubmitForm(*formState, WTFMove(completionHandler));
 }
 
 void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& request,

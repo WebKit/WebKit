@@ -71,13 +71,6 @@ public:
     bool delegateIsDecidingNavigationPolicy() const { return m_delegateIsDecidingNavigationPolicy; }
     bool delegateIsHandlingUnimplementablePolicy() const { return m_delegateIsHandlingUnimplementablePolicy; }
 
-    // FIXME: This function is a cheat.  Basically, this is just an asynchronouc callback
-    // from the FrameLoaderClient, but this callback uses the policy types and so has to
-    // live on this object.  In the long term, we should create a type for non-policy
-    // callbacks from the FrameLoaderClient and remove this vestige.  I just don't have
-    // the heart to hack on all the platforms to make that happen right now.
-    void continueLoadAfterWillSubmitForm(PolicyAction);
-
 #if ENABLE(CONTENT_FILTERING)
     void setContentFilterUnblockHandler(ContentFilterUnblockHandler unblockHandler) { m_contentFilterUnblockHandler = WTFMove(unblockHandler); }
 #endif

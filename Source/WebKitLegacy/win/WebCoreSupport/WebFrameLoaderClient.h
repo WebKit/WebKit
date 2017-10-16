@@ -104,7 +104,7 @@ public:
     void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) override;
 
     void dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&) override;
-    void dispatchWillSubmitForm(WebCore::FormState&, WebCore::FramePolicyFunction&&) override;
+    void dispatchWillSubmitForm(WebCore::FormState&, WTF::Function<void(void)>&&) override;
 
     void revertToProvisionalState(WebCore::DocumentLoader*) override;
     bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) override;

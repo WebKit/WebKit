@@ -1,3 +1,26 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Separate form submission from PolicyChecker infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=177396
+
+        Reviewed by Geoffrey Garen.
+
+        We used PolicyChecker for WillSubmitForm even though we just need a completion handler
+        with no parameters.  That is what lambdas and WTF::Functions are for.
+
+        No change in behavior.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchWillSubmitForm):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm): Deleted.
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::continueLoadAfterWillSubmitForm): Deleted.
+        * loader/PolicyChecker.h:
+
 2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Small refactoring adding RenderGrid::contentAlignment()

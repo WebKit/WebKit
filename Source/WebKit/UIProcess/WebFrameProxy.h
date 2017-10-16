@@ -49,7 +49,6 @@ class Decoder;
 
 namespace WebKit {
 class WebCertificateInfo;
-class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
 struct WebsitePolicies;
@@ -117,7 +116,6 @@ public:
     // Policy operations.
     void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, const WebsitePolicies&);
     WebFramePolicyListenerProxy& setUpPolicyListenerProxy(uint64_t listenerID);
-    WebFormSubmissionListenerProxy& setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTFMove(contentFilterUnblockHandler); }

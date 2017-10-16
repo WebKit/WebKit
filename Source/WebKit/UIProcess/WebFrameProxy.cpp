@@ -27,7 +27,6 @@
 #include "WebFrameProxy.h"
 
 #include "WebCertificateInfo.h"
-#include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -192,14 +191,6 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t li
         m_activeListener->invalidate();
     m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID);
     return *static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
-}
-
-WebFormSubmissionListenerProxy& WebFrameProxy::setUpFormSubmissionListenerProxy(uint64_t listenerID)
-{
-    if (m_activeListener)
-        m_activeListener->invalidate();
-    m_activeListener = WebFormSubmissionListenerProxy::create(this, listenerID);
-    return *static_cast<WebFormSubmissionListenerProxy*>(m_activeListener.get());
 }
 
 void WebFrameProxy::getWebArchive(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)

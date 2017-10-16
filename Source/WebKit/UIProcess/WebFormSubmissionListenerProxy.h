@@ -23,44 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFormSubmissionListenerProxy_h
-#define WebFormSubmissionListenerProxy_h
+#pragma once
 
 #include "WebFrameListenerProxy.h"
-
-#if PLATFORM(COCOA)
-#include "WKFoundation.h"
-#endif
-
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
 
 namespace WebKit {
 
 class WebFrameProxy;
 
-class WebFormSubmissionListenerProxy : public WebFrameListenerProxy {
+class WebFormSubmissionListenerProxy : public API::ObjectImpl<API::Object::Type::FormSubmissionListener> {
 public:
-    static const Type APIType = Type::FormSubmissionListener;
-
-    static Ref<WebFormSubmissionListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
+    static Ref<WebFormSubmissionListenerProxy> create(WTF::Function<void(void)>&& completionHandler)
     {
-        return adoptRef(*new WebFormSubmissionListenerProxy(frame, listenerID));
+        return adoptRef(*new WebFormSubmissionListenerProxy(WTFMove(completionHandler)));
     }
 
     void continueSubmission();
 
 private:
-    WebFormSubmissionListenerProxy(WebFrameProxy*, uint64_t listenerID);
-
-    Type type() const override { return APIType; }
-
-#if DELEGATE_REF_COUNTING_TO_COCOA
-    void* operator new(size_t size) { return newObject(size, APIType); }
-#endif
+    WebFormSubmissionListenerProxy(WTF::Function<void(void)>&& completionHandler)
+        : m_completionHandler(WTFMove(completionHandler))
+    { }
+    WTF::Function<void(void)> m_completionHandler;
 };
 
 } // namespace WebKit
-
-#undef DELEGATE_REF_COUNTING_TO_COCOA
-
-#endif // WebFramePolicyListenerProxy_h

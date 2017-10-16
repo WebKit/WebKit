@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIFormClient_h
-#define APIFormClient_h
+#pragma once
 
-#include "WebFormSubmissionListenerProxy.h"
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -42,12 +41,10 @@ class FormClient {
 public:
     virtual ~FormClient() { }
 
-    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, Ref<WebKit::WebFormSubmissionListenerProxy>&& listener)
+    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, WTF::Function<void(void)>&& completionHandler)
     {
-        listener->continueSubmission();
+        completionHandler();
     }
 };
 
 } // namespace API
-
-#endif // APIFormClient_h

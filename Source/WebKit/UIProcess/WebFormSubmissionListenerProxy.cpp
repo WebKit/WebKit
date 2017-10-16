@@ -30,14 +30,10 @@
 
 namespace WebKit {
 
-WebFormSubmissionListenerProxy::WebFormSubmissionListenerProxy(WebFrameProxy* frame, uint64_t listenerID)
-    : WebFrameListenerProxy(frame, listenerID)
-{
-}
-
 void WebFormSubmissionListenerProxy::continueSubmission()
 {
-    receivedPolicyDecision(WebCore::PolicyUse, { });
+    if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+        completionHandler();
 }
 
 } // namespace WebKit

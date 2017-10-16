@@ -1,3 +1,43 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Separate form submission from PolicyChecker infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=177396
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/APIFormClient.h:
+        (API::FormClient::willSubmitForm):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setInputDelegate:]):
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::willSubmitForm):
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebFormSubmissionListenerProxy.cpp:
+        (WebKit::WebFormSubmissionListenerProxy::continueSubmission):
+        (WebKit::WebFormSubmissionListenerProxy::WebFormSubmissionListenerProxy): Deleted.
+        * UIProcess/WebFormSubmissionListenerProxy.h:
+        (WebKit::WebFormSubmissionListenerProxy::create):
+        (WebKit::WebFormSubmissionListenerProxy::WebFormSubmissionListenerProxy):
+        (): Deleted.
+        (WebKit::WebFormSubmissionListenerProxy::operator new): Deleted.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::setUpFormSubmissionListenerProxy): Deleted.
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willSubmitForm):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::setUpWillSubmitFormListener):
+        (WebKit::WebFrame::continueWillSubmitForm):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::continueWillSubmitForm):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-09-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, move webkit_hit_test_result_context_is_scrollbar in documentation
