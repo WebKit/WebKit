@@ -1528,6 +1528,16 @@ class CppStyleTest(CppStyleTestBase):
                          ' for improved thread safety.'
                          '  [runtime/threadsafe_fn] [2]')
 
+    def test_debug_security_assertion(self):
+        self.assert_lint(
+            'ASSERT_WITH_SECURITY_IMPLICATION(value)',
+            'Please replace ASSERT_WITH_SECURITY_IMPLICATION() with '
+            'RELEASE_ASSERT_WITH_SECURITY_IMPLICATION().'
+            '  [security/assertion] [5]')
+        self.assert_lint(
+            'RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(value)',
+            '')
+
     # Test for insecure string functions like strcpy()/strcat().
     def test_insecure_string_operations(self):
         self.assert_lint(

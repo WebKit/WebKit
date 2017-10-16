@@ -1,3 +1,19 @@
+2017-10-16  David Kilzer  <ddkilzer@apple.com>
+
+        Add RELEASE_ASSERT_WITH_SECURITY_IMPLICATION() macro
+        <https://webkit.org/b/178269>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Add checker to warn about using
+        ASSERT_WITH_SECURITY_IMPLICATION().
+        (CppChecker.categories): Add 'security/assertion' to list of
+        enabled checkers.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_debug_security_assertion): Add tests for
+        new checker.
+
 2017-10-16  Chris Dumez  <cdumez@apple.com>
 
         Clicks on Link with download attribute causes all (other) links to trigger download when clicked

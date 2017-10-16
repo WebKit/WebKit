@@ -3178,6 +3178,13 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
               'If you can, use sizeof(%s) instead of %s as the 2nd arg '
               'to snprintf.' % (matched.group(1), matched.group(2)))
 
+    # Warn when Debug ASSERT_WITH_SECURITY_IMPLICATION() is used.
+    if filename != 'Source/WTF/wtf/Assertions.h':
+        if search(r'\bASSERT_WITH_SECURITY_IMPLICATION\b\(', line):
+            error(line_number, 'security/assertion', 5,
+                'Please replace ASSERT_WITH_SECURITY_IMPLICATION() with '
+                'RELEASE_ASSERT_WITH_SECURITY_IMPLICATION().')
+
     # Check if some verboten C functions are being used.
     if search(r'\bsprintf\b', line):
         error(line_number, 'security/printf', 5,
@@ -3930,6 +3937,7 @@ class CppChecker(object):
         'runtime/unsigned',
         'runtime/virtual',
         'runtime/wtf_move',
+        'security/assertion',
         'security/printf',
         'security/temp_file',
         'whitespace/blank_line',

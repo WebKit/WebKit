@@ -1,3 +1,13 @@
+2017-10-16  David Kilzer  <ddkilzer@apple.com>
+
+        Add RELEASE_ASSERT_WITH_SECURITY_IMPLICATION() macro
+        <https://webkit.org/b/178269>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/Assertions.h:
+        (RELEASE_ASSERT_WITH_SECURITY_IMPLICATION): Add macro.
+
 2017-10-14  Sam Weinig  <sam@webkit.org>
 
         Remove HashCountedSet's copyToVector functions
