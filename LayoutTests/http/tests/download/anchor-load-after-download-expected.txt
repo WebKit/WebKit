@@ -1,0 +1,5 @@
+Clicking the download link link and then the non-download link should not cause a second download.
+
+This test passes if it does not time out.
+
+Link with download attribute. Link without download attribute.

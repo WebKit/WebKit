@@ -2285,10 +2285,8 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
     if (action == PolicyAction::Ignore)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-    if (m_syncNavigationActionHasDownloadAttribute && action == PolicyAction::Use)
+    if (navigation && navigation->shouldForceDownload() && action == PolicyAction::Use)
         action = PolicyAction::Download;
-#endif
 
     DownloadID downloadID = { };
     if (action == PolicyAction::Download) {
@@ -3695,10 +3693,12 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
         auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
         newNavigationID = navigation->navigationID();
         navigation->setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
+        navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
         listener->setNavigation(WTFMove(navigation));
     } else {
         auto& navigation = m_navigationState->navigation(navigationID);
         navigation.setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
+        navigation.setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
         listener->setNavigation(navigation);
     }
 
@@ -3714,9 +3714,6 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     
     m_inDecidePolicyForNavigationAction = true;
     m_syncNavigationActionPolicyActionIsValid = false;
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-    m_syncNavigationActionHasDownloadAttribute = !navigationActionData.downloadAttribute.isNull();
-#endif
 
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameInfoData.frameID);
 

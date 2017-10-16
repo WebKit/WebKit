@@ -1,3 +1,19 @@
+2017-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Clicks on Link with download attribute causes all (other) links to trigger download when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=178267
+        <rdar://problem/34985016>
+
+        Reviewed by Darin Adler.
+
+        Use PassThrough policy in WKTR's InjectedBundle's decidePolicyForNewWindowAction so that the
+        request is sent to the UIProcess. This gets WKTR's closer to Safari behavior and helps
+        reproduce the bug. Without this change, I would not be able to write a regression test for
+        this bug that is very easily reproducible in Safari.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForNewWindowAction):
+
 2017-10-16  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Add Emilio Cobos Álvarez to the contributors list.

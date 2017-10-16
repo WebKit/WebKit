@@ -2003,10 +2003,6 @@ private:
     bool m_isPointerLocked { false };
 #endif
 
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
-    bool m_syncNavigationActionHasDownloadAttribute { false };
-#endif
-
     bool m_isUsingHighPerformanceWebGL { false };
 
     WeakPtrFactory<WebPageProxy> m_weakPtrFactory;
