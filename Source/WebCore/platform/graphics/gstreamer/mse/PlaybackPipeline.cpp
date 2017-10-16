@@ -300,7 +300,7 @@ void PlaybackPipeline::attachTrack(RefPtr<SourceBufferPrivateGStreamer> sourceBu
         g_signal_emit(G_OBJECT(stream->parent), webKitMediaSrcSignals[signal], 0, nullptr);
 }
 
-void PlaybackPipeline::reattachTrack(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, RefPtr<TrackPrivateBase> trackPrivate)
+void PlaybackPipeline::reattachTrack(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, RefPtr<TrackPrivateBase> trackPrivate, const char* mediaType)
 {
     GST_DEBUG("Re-attaching track");
 
@@ -315,10 +315,6 @@ void PlaybackPipeline::reattachTrack(RefPtr<SourceBufferPrivateGStreamer> source
 
     ASSERT(stream && stream->type != Invalid);
 
-    // The caps change is managed by gst_appsrc_push_sample() in enqueueSample() and
-    // flushAndEnqueueNonDisplayingSamples(), so the caps aren't set from here.
-    GRefPtr<GstCaps> appsrcCaps = adoptGRef(gst_app_src_get_caps(GST_APP_SRC(stream->appsrc)));
-    const gchar* mediaType = gst_structure_get_name(gst_caps_get_structure(appsrcCaps.get(), 0));
     int signal = -1;
 
     GST_OBJECT_LOCK(webKitMediaSrc);

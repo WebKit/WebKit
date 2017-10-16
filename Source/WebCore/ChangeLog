@@ -1,3 +1,27 @@
+2017-09-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        [GTK] HTMLMediaElement resize event not fired when video size changes
+        https://bugs.webkit.org/show_bug.cgi?id=174582
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Modify AppendPipeline to notify MediaPlayerPrivateGStreamerMSE that a track is detected
+        not only for the initial track detection but also for subsequent in particular when the
+        video size has changed.
+
+        Update test expectation for new passing tests.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::reattachTrack):
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h:
+
 2017-09-21  Zhifei FANG  <facetothefate@gmail.com>
 
         In regular block layout, the width of a child's margin box should always be equal to that of its containing block

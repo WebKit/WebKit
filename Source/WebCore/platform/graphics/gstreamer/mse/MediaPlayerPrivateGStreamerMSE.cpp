@@ -723,7 +723,7 @@ void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICase
     types = mimeTypeCache();
 }
 
-void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> appendPipeline, RefPtr<WebCore::TrackPrivateBase> oldTrack, RefPtr<WebCore::TrackPrivateBase> newTrack)
+void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> appendPipeline, RefPtr<WebCore::TrackPrivateBase> newTrack, bool firstTrackDetected)
 {
     ASSERT(appendPipeline->track() == newTrack);
 
@@ -744,10 +744,10 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> append
         m_videoSize.setHeight(height);
     }
 
-    if (!oldTrack)
+    if (firstTrackDetected)
         m_playbackPipeline->attachTrack(appendPipeline->sourceBufferPrivate(), newTrack, structure, caps);
     else
-        m_playbackPipeline->reattachTrack(appendPipeline->sourceBufferPrivate(), newTrack);
+        m_playbackPipeline->reattachTrack(appendPipeline->sourceBufferPrivate(), newTrack, mediaType);
 }
 
 const static HashSet<AtomicString>& codecSet()

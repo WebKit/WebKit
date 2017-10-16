@@ -607,8 +607,8 @@ void AppendPipeline::appsinkCapsChanged()
 
     if (m_appsinkCaps != caps) {
         m_appsinkCaps = WTFMove(caps);
-        if (m_playerPrivate && previousCapsWereNull)
-            m_playerPrivate->trackDetected(this, m_oldTrack, m_track);
+        if (m_playerPrivate)
+            m_playerPrivate->trackDetected(this, m_track, previousCapsWereNull);
         didReceiveInitializationSegment();
         gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
     }
@@ -981,8 +981,6 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     if (m_initialDuration > m_mediaSourceClient->duration()
         || (m_mediaSourceClient->duration().isInvalid() && m_initialDuration > MediaTime::zeroTime()))
         m_mediaSourceClient->durationChanged(m_initialDuration);
-
-    m_oldTrack = m_track;
 
     parseDemuxerSrcPadCaps(gst_caps_ref(caps.get()));
 

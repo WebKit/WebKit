@@ -142,7 +142,6 @@ private:
     bool m_abortPending;
 
     WebCore::MediaSourceStreamTypeGStreamer m_streamType;
-    RefPtr<WebCore::TrackPrivateBase> m_oldTrack;
     RefPtr<WebCore::TrackPrivateBase> m_track;
 
     GRefPtr<GstBuffer> m_pendingBuffer;
