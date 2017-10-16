@@ -121,6 +121,8 @@ private:
     bool forFileDrag() const { return false; }
 #endif
 
+    bool shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const;
+
     enum class AddFilesType { No, Yes };
     Vector<String> types(AddFilesType) const;
     Vector<Ref<File>> filesFromPasteboardAndItemList() const;

@@ -141,11 +141,15 @@ static RetainPtr<NSString> toUTI(NSString *type)
 
 - (NSInteger)addTypes:(NSArray *)newTypes owner:(id)newOwner
 {
-    _owner = newOwner;
+    if (_owner != newOwner) {
+        _owner = newOwner;
+        ++_changeCount;
+    }
+
     for (NSString *type in newTypes)
         _types.add(toUTI(type));
 
-    return ++_changeCount;
+    return _changeCount;
 }
 
 - (NSInteger)changeCount
@@ -186,7 +190,6 @@ static RetainPtr<NSString> toUTI(NSString *type)
         return NO;
 
     _data.set(WTFMove(uti), data ? data : [NSData data]);
-    ++_changeCount;
     return YES;
 }
 

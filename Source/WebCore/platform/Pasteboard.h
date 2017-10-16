@@ -189,6 +189,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForCopyAndPaste();
 
     static bool isSafeTypeForDOMToReadAndWrite(const String&);
+    static bool canExposeURLToDOMWhenPasteboardContainsFiles(const String&);
 
     virtual bool isStatic() const { return false; }
 

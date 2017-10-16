@@ -111,20 +111,37 @@ Vector<String> PlatformPasteboard::filenamesForDataInteraction()
     return filenames;
 }
 
-String PlatformPasteboard::stringForType(const String& type)
+static bool pasteboardMayContainFilePaths(id<AbstractPasteboard> pasteboard)
 {
-    NSArray *values = [m_pasteboard valuesForPasteboardType:type inItemSet:[NSIndexSet indexSetWithIndex:0]];
-    for (id value in values) {
-        if ([value isKindOfClass:[NSURL class]])
-            return [(NSURL *)value absoluteString];
+    if ([pasteboard isKindOfClass:[WebItemProviderPasteboard class]])
+        return false;
 
-        if ([value isKindOfClass:[NSAttributedString class]])
-            return [(NSAttributedString *)value string];
-
-        if ([value isKindOfClass:[NSString class]])
-            return (NSString *)value;
+    for (NSString *type in pasteboard.pasteboardTypes) {
+        if (Pasteboard::shouldTreatCocoaTypeAsFile(type))
+            return true;
     }
-    return String();
+    return false;
+}
+
+String PlatformPasteboard::stringForType(const String& type) const
+{
+    auto value = retainPtr([m_pasteboard valuesForPasteboardType:type inItemSet:[NSIndexSet indexSetWithIndex:0]].firstObject);
+    String result;
+    if ([value isKindOfClass:[NSURL class]])
+        result = [(NSURL *)value absoluteString];
+
+    else if ([value isKindOfClass:[NSAttributedString class]])
+        result = [(NSAttributedString *)value string];
+
+    else if ([value isKindOfClass:[NSString class]])
+        result = (NSString *)value;
+
+    if (pasteboardMayContainFilePaths(m_pasteboard.get()) && type == String { kUTTypeURL }) {
+        if (!Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(result))
+            result = { };
+    }
+
+    return result;
 }
 
 Color PlatformPasteboard::color()
@@ -388,8 +405,15 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
             continue;
         }
 
-        if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type))
-            domPasteboardTypes.add(String::fromUTF8(coercedType));
+        if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
+            auto domTypeAsString = String::fromUTF8(coercedType);
+            if (domTypeAsString == "text/uri-list") {
+                BOOL ableToDetermineProtocolOfPasteboardURL = ![m_pasteboard isKindOfClass:[WebItemProviderPasteboard class]];
+                if (ableToDetermineProtocolOfPasteboardURL && stringForType(kUTTypeURL).isEmpty())
+                    continue;
+            }
+            domPasteboardTypes.add(WTFMove(domTypeAsString));
+        }
     }
 
     return copyToVector(domPasteboardTypes);

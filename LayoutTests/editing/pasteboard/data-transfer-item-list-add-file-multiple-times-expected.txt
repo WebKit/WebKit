@@ -9,7 +9,8 @@ operation performed at each step.
 1. After adding all items
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/uri-list": "https://webkit.org"
     },
     "items": [
         {
@@ -86,7 +87,8 @@ operation performed at each step.
 2. After removing at index 4
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/uri-list": "https://webkit.org"
     },
     "items": [
         {
@@ -150,7 +152,8 @@ removedItem.getAsFile() should be null: null
 3. After removing at index 1
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/uri-list": "https://webkit.org"
     },
     "items": [
         {
@@ -200,7 +203,8 @@ removedItem.getAsFile() should be null: null
 4. After removing at index 3
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/uri-list": "https://webkit.org"
     },
     "items": [
         {

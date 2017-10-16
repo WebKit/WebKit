@@ -1,0 +1,11 @@
+
+1. link.href = "https://www.webkit.org/"
+URL: "https://www.webkit.org/"
+url: "https://www.webkit.org/"
+text/uri-list: "https://www.webkit.org/"
+Found file of type image/png
+2. link.href = "file:///foo/bar/baz"
+URL: ""
+url: ""
+text/uri-list: ""
+Found file of type image/png

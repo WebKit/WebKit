@@ -1,3 +1,31 @@
+2017-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        On ToT, event.dataTransfer.getData("text/uri-list") returns an empty string when dragging an image
+        https://bugs.webkit.org/show_bug.cgi?id=178301
+        <rdar://problem/34990050>
+
+        Reviewed by Darin Adler.
+
+        Fixes an existing test to account for asynchronous image decoding, and also rebaselines results to expect that
+        only the URL can be read, and not text.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-item-list-add-file-multiple-times-expected.txt:
+        * editing/pasteboard/drag-drop-href-as-text-data-expected.txt: Removed.
+        * editing/pasteboard/drag-drop-href-as-text-data.html: Removed.
+        * editing/pasteboard/drag-drop-href-as-url-expected.txt: Added.
+        * editing/pasteboard/drag-drop-href-as-url.html: Added.
+
+        Tweaks an existing drag and drop test to verify that an URL can be read back when dragging an image, but not
+        when if the URL is a file URL.
+
+        * editing/pasteboard/files-during-page-drags-expected.txt:
+        * editing/pasteboard/files-during-page-drags.html:
+
+        Fixes this test by decoding the dragged image element before starting the drag and drop simulation.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Modify CSS number values with up key and down key

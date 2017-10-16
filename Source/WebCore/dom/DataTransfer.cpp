@@ -149,12 +149,18 @@ void DataTransfer::clearData(const String& type)
 String DataTransfer::getDataForItem(const String& type) const
 {
     if (!canReadData())
-        return String();
-
-    if ((forFileDrag() || Settings::customPasteboardDataEnabled()) && m_pasteboard->containsFiles())
         return { };
 
     auto lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
+    if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
+        if (lowercaseType == "text/uri-list") {
+            auto urlString = m_pasteboard->readString(lowercaseType);
+            if (Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString))
+                return urlString;
+        }
+        return { };
+    }
+
     if (!Settings::customPasteboardDataEnabled())
         return m_pasteboard->readString(lowercaseType);
 
@@ -184,12 +190,19 @@ String DataTransfer::getData(const String& type) const
     return getDataForItem(normalizeType(type));
 }
 
+bool DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const
+{
+    if (!forFileDrag() && !Settings::customPasteboardDataEnabled())
+        return false;
+    return m_pasteboard->containsFiles();
+}
+
 void DataTransfer::setData(const String& type, const String& data)
 {
     if (!canWriteData())
         return;
 
-    if ((forFileDrag() || Settings::customPasteboardDataEnabled()) && m_pasteboard->containsFiles())
+    if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths())
         return;
 
     auto normalizedType = normalizeType(type);
@@ -271,17 +284,22 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
         return types;
     }
 
-    if (m_itemList && m_itemList->hasItems() && m_itemList->items().findMatching([] (const auto& item) { return item->isFile(); }) != notFound)
-        return addFilesType == AddFilesType::Yes ? Vector<String> { ASCIILiteral("Files") } : Vector<String> { };
+    auto safeTypes = m_pasteboard->typesSafeForBindings(m_originIdentifier);
+    bool hasFileBackedItem = m_itemList && m_itemList->hasItems() && notFound != m_itemList->items().findMatching([] (const auto& item) {
+        return item->isFile();
+    });
 
-    if (m_pasteboard->containsFiles()) {
-        ASSERT(!m_pasteboard->typesSafeForBindings(m_originIdentifier).contains("Files"));
-        return addFilesType == AddFilesType::Yes ? Vector<String> { ASCIILiteral("Files") } : Vector<String> { };
+    if (hasFileBackedItem || m_pasteboard->containsFiles()) {
+        Vector<String> types;
+        if (addFilesType == AddFilesType::Yes)
+            types.append(ASCIILiteral("Files"));
+        if (safeTypes.contains("text/uri-list"))
+            types.append(ASCIILiteral("text/uri-list"));
+        return types;
     }
 
-    auto types = m_pasteboard->typesSafeForBindings(m_originIdentifier);
-    ASSERT(!types.contains("Files"));
-    return types;
+    ASSERT(!safeTypes.contains("Files"));
+    return safeTypes;
 }
 
 Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const

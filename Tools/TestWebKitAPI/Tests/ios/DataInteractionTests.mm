@@ -1560,8 +1560,30 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithFileURL)
 
     // File URLs should never be exposed directly to web content, so DataTransfer.getData should return an empty string here.
     checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
-        @"dragover": @{ @"Files": @"" },
-        @"drop": @{ @"Files": @"" }
+        @"dragover": @{ @"Files": @"", @"text/uri-list": @"" },
+        @"drop": @{ @"Files": @"", @"text/uri-list": @"" }
+    });
+}
+
+TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithHTTPURL)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    {
+        completionHandler(UIImageJPEGRepresentation(testIconImage(), 0.5), nil);
+        return nil;
+    }];
+    [itemProvider registerObject:[NSURL URLWithString:@"http://webkit.org"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+
+    [simulator runFrom:CGPointMake(300, 375) to:CGPointMake(50, 375)];
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover": @{ @"Files": @"", @"text/uri-list": @"" },
+        @"drop": @{ @"Files": @"", @"text/uri-list": @"http://webkit.org/" }
     });
 }
 

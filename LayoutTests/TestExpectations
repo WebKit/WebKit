@@ -71,7 +71,7 @@ fast/events/autoscroll-when-zoomed.html [ Skip ]
 fast/events/autoscroll-main-document.html [ Skip ]
 
 # Drag and drop via EventSender is only supported on Mac WK1
-editing/pasteboard/drag-drop-href-as-text-data.html [ Skip ]
+editing/pasteboard/drag-drop-href-as-url.html [ Skip ]
 editing/pasteboard/data-transfer-get-data-on-drop-custom.html [ Skip ]
 editing/pasteboard/data-transfer-get-data-on-drop-plain-text.html [ Skip ]
 editing/pasteboard/data-transfer-get-data-on-drop-rich-text.html [ Skip ]

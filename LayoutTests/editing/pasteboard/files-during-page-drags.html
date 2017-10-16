@@ -3,11 +3,13 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
-<body>
+<body onload=runTest()>
 <p id="description"></p>
 <div id="console"></div>
 <script>
 description("Make sure that .files arrays are always empty for non-file drags.");
+
+jsTestIsAsync = true;
 
 var testContainer = document.createElement('div');
 // Put dragables at the top so that logging does not cause them to move off screen (where we can't drag).
@@ -69,23 +71,25 @@ function testDrag(source)
         testFailed("Drop of " + source.tagName + " never occured!");
     else if (droppedFiles.length == 0)
         testPassed("Drag of " + source.tagName + " resulted in empty files array.");
+    else if (source == image)
+        testPassed(`Drag of ${source.tagName} resulted in files array of size ${droppedFiles.length}`);
     else
         testFailed("Drag of " + source.tagName + " resulted in non-empty files array! (files: " + droppedFiles.length + ")");
     droppedFiles = null;
 }
 
-function runTest()
+async function runTest()
 {
+    if (!window.eventSender || !window.testRunner) {
+        testFailed("This test is not interactive, please run using DumpRenderTree");
+        return;
+    }
+
+    await image.decode();
     testDrag(link);
     testDrag(image);
-}
-
-if (window.eventSender) {
-    runTest();
-    // Clean up after ourselves
     document.body.removeChild(testContainer);
-} else {
-    testFailed("This test is not interactive, please run using DumpRenderTree");
+    finishJSTest();
 }
 
 var successfullyParsed = true;
