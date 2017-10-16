@@ -1,3 +1,16 @@
+2017-10-16  Alex Christensen  <achristensen@webkit.org>
+
+        De-flakify http/tests/loading/basic-credentials-sent-automatically.html
+        https://bugs.webkit.org/show_bug.cgi?id=178365
+
+        Reviewed by Andy Estes.
+
+        * http/tests/loading/basic-credentials-sent-automatically-expected.txt:
+        * http/tests/loading/basic-credentials-sent-automatically.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/http/tests/loading/basic-credentials-sent-automatically-expected.txt:
+
 2017-10-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cannot access images included in the content pasted from Microsoft Word
