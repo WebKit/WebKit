@@ -1,3 +1,18 @@
+2017-09-20  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Completely garbled display in GMail
+        https://bugs.webkit.org/show_bug.cgi?id=168964
+
+        Reviewed by Carlos Garcia Campos.
+
+        Do not try to decode images that are bigger than 32768 pixels, as cairo won't be able to render them,
+        and they will break the rendering of the rest of the page.
+
+        Covered by existent tests.
+
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::isOverSize):
+
 2017-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r215613): Incorrect corners clipping with border-radius
