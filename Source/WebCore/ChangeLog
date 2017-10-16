@@ -1,3 +1,48 @@
+2017-09-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r191731): SVGPatternElement can only reference another SVGPatternElement in the same SVG document
+        https://bugs.webkit.org/show_bug.cgi?id=176221
+
+        Reviewed by Tim Horton.
+
+        According to the specs:
+
+        https://www.w3.org/TR/SVG11/filters.html#FilterElementHrefAttribute
+        https://www.w3.org/TR/SVG11/pservers.html#LinearGradientElementHrefAttribute
+        https://www.w3.org/TR/SVG11/pservers.html#RadialGradientElementHrefAttribute
+        https://www.w3.org/TR/SVG11/pservers.html#PatternElementHrefAttribute
+
+        The xlink:href attribute of the SVG filter, gradient and pattern elements
+        must reference another element within the current SVG of the same type.
+
+        In r191731, the code of SVGPatternElement::collectPatternAttributes() was
+        removed and replaced by RenderSVGResourcePattern::collectPatternAttributes()
+        to avoid cyclic reference in the pattern element. The problem is the old
+        code used to check whether the referenced element is<SVGPatternElement>
+        before casting it. This code was not copied to the new function. So we
+        now allow the SVGPatternElement to reference any SVG resource element.
+
+        To fix this issue, we need to prevent SVGResources from chaining an incorrect
+        type of element to the SVG filter, gradient and pattern elements.
+
+        We also need to use the SVGResources for getting the referenced element
+        when collecting the attributes for the gradient elements. SVGResources solves
+        the cyclic referencing issue so there is no need to repeat the same code
+        in many places. Also, from now on the SVGResources will have valid linked
+        resource only. So casting the referenced element should always be valid.
+
+        Tests: svg/custom/pattern-invalid-content-inheritance.svg
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::collectPatternAttributes const): Asserts
+        the linkedResource is of type RenderSVGResourcePattern.
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::SVGResources):
+        (WebCore::isChainableResource): Ensure that an SVG resource can reference
+        only an SVG resource with the valid type.
+        (WebCore::SVGResources::buildCachedResources):
+        * rendering/svg/SVGResources.h:
+
 2017-09-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] atk_table_get_n_rows() and atk_table_get_n_columns() should return values of aria-rowcount and aria-colcount, if present
