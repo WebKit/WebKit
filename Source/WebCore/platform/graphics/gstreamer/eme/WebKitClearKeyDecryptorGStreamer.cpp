@@ -97,15 +97,6 @@ static void webkit_media_clear_key_decrypt_init(WebKitMediaClearKeyDecrypt* self
 {
     WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(self);
 
-    if (!gcry_check_version(GCRYPT_VERSION))
-        GST_ERROR_OBJECT(self, "Libgcrypt failed to initialize");
-
-    // Allocate a pool of 16k secure memory. This make the secure memory
-    // available and also drops privileges where needed.
-    gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0);
-
-    gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
-
     self->priv = priv;
     new (priv) WebKitMediaClearKeyDecryptPrivate();
 }

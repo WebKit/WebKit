@@ -1,3 +1,15 @@
+2017-09-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Drop libgcrypt initialization in webkit_media_clear_key_decrypt_init()
+        https://bugs.webkit.org/show_bug.cgi?id=176656
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webkit_media_clear_key_decrypt_init): Don't re-initialize libgcrypt here
+        since that's already done in the WebProcess main(), and the calls here
+        only result in libgcrypt writing out 'Oops' warnings on stderr.
+
 2017-09-07  Darin Adler  <darin@apple.com>
 
         Fix double resolve assertion in FontFaceSet seen while running tests
