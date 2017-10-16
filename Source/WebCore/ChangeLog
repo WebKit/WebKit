@@ -1,3 +1,18 @@
+2017-09-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] aria-autocomplete not exposed on comboboxes
+        https://bugs.webkit.org/show_bug.cgi?id=176724
+
+        Reviewed by Chris Fleizach.
+
+        Add a check to AccessibilityObject::supportsARIAAutoComplete() for
+        combobox because isARIATextControl() returns false for that role.
+
+        Add new combobox test cases to existing aria-autocomplete.html test.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIAAutoComplete const):
+
 2017-09-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Drop libgcrypt initialization in webkit_media_clear_key_decrypt_init()

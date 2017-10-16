@@ -19,6 +19,13 @@
   <div id="test12" role="group" aria-autocomplete="both">X</div>
   <div id="test13" role="group" aria-autocomplete="inline">X</div>
   <div id="test14" role="group" aria-autocomplete="list">X</div>
+  <div id="test15" role="combobox">X</div>
+  <div id="test16" role="combobox" aria-autocomplete="">X</div>
+  <div id="test17" role="combobox" aria-autocomplete="foo">X</div>
+  <div id="test18" role="combobox" aria-autocomplete="none">X</div>
+  <div id="test19" role="combobox" aria-autocomplete="both">X</div>
+  <div id="test20" role="combobox" aria-autocomplete="inline">X</div>
+  <div id="test21" role="combobox" aria-autocomplete="list">X</div>
 </div>
 <p id="description"></p>
 <div id="console"></div>
@@ -36,7 +43,7 @@
 
     description("This tests the exposure of aria-current");
     if (window.accessibilityController) {
-        for (var i = 1; i <= 14; i++) {
+        for (var i = 1; i <= 21; i++) {
             var axElement = accessibilityController.accessibleElementById("test" + i);
             debug("\ntest" + i + " supports autocompletion: " + axElement.boolAttributeValue("AXSupportsAutoCompletion"));
             debug(platformAttributes(axElement));

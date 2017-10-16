@@ -1,3 +1,13 @@
+2017-09-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] aria-autocomplete not exposed on comboboxes
+        https://bugs.webkit.org/show_bug.cgi?id=176724
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/aria-autocomplete-expected.txt: Updated for new test cases
+        * accessibility/gtk/aria-autocomplete.html: New test cases for combobox added
+
 2017-09-08  Dean Jackson  <dino@apple.com>
 
         gl.detachShader breaks shader program
