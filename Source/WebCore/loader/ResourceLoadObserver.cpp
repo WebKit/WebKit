@@ -274,10 +274,10 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
 {
-    ASSERT(document.page());
-
     if (!shouldLog(document.page()))
         return;
+
+    ASSERT(document.page());
 
     auto& url = document.url();
     if (url.isBlankURL() || url.isEmpty())

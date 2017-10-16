@@ -3130,7 +3130,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
         if (!wasHandled)
             topDocument->setUserDidInteractWithPage(savedUserDidInteractWithPage);
         else
-            ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(topDocument->topDocument());
+            ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(*topDocument);
     }
 
     return wasHandled;
