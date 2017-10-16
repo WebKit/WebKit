@@ -42,6 +42,7 @@
 #include "SecurityOriginHash.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
+#include "SQLiteTransaction.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -842,6 +843,9 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
         deleteOriginLockFor(origin);
         doneDeletingOrigin(origin);
 
+        SQLiteTransaction transaction(m_database);
+        transaction.begin();
+
         SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=?");
         if (statement.prepare() != SQLITE_OK) {
             LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
@@ -867,6 +871,8 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
             LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
             return false;
         }
+
+        transaction.commit();
 
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(originPath(origin));
 
