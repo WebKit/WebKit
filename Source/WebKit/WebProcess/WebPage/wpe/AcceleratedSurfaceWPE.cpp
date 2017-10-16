@@ -75,7 +75,12 @@ void AcceleratedSurfaceWPE::finalize()
 uint64_t AcceleratedSurfaceWPE::window() const
 {
     ASSERT(m_backend);
-    return reinterpret_cast<uint64_t>(wpe_renderer_backend_egl_target_get_native_window(m_backend));
+    // EGLNativeWindowType changes depending on the EGL implementation: reinterpret_cast works
+    // for pointers (only if they are 64-bit wide and not for other cases), and static_cast for
+    // numeric types (and when needed they get extended to 64-bit) but not for pointers. Using
+    // a plain C cast expression in this one instance works in all cases.
+    static_assert(sizeof(EGLNativeWindowType) <= sizeof(uint64_t), "EGLNativeWindowType must not be longer than 64 bits.");
+    return (uint64_t) wpe_renderer_backend_egl_target_get_native_window(m_backend);
 }
 
 uint64_t AcceleratedSurfaceWPE::surfaceID() const
