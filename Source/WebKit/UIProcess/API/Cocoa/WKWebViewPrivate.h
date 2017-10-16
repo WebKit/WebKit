@@ -30,6 +30,7 @@
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKFindOptions.h>
 #import <WebKit/_WKLayoutMode.h>
+#import <WebKit/_WKOverlayScrollbarStyle.h>
 #import <WebKit/_WKRenderingProgressEvents.h>
 
 typedef NS_ENUM(NSInteger, _WKPaginationMode) {
@@ -173,6 +174,8 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 
 @property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
 
+@property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(8.0));
+
 #if TARGET_OS_IPHONE
 // DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
 // Define the smallest size a page take with a regular viewport.
@@ -195,8 +198,6 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 @property (nonatomic, setter=_setInterfaceOrientationOverride:) UIInterfaceOrientation _interfaceOrientationOverride;
 
 @property (nonatomic, setter=_setAllowsViewportShrinkToFit:) BOOL _allowsViewportShrinkToFit;
-
-@property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage;
 
 // FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
 @property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
@@ -284,6 +285,9 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 - (void)_removeMediaPlaybackControlsView WK_API_AVAILABLE(macosx(10.12.3));
 
 - (void)_prepareForMoveToWindow:(NSWindow *)targetWindow completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macosx(10.13));
+
+@property (nonatomic, setter=_setOverlayScrollbarStyle:) _WKOverlayScrollbarStyle _overlayScrollbarStyle WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 #endif
 

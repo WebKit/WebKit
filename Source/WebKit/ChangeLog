@@ -1,3 +1,23 @@
+2017-10-16  Alex Christensen  <achristensen@webkit.org>
+
+        Expose more WKView properties as WKWebViewPrivate SPI
+        https://bugs.webkit.org/show_bug.cgi?id=178349
+        <rdar://problem/34980919>
+
+        Reviewed by Tim Horton.
+
+        _backgroundExtendsBeyondPage was already exposed on iOS, but we need it on Mac, too.
+        A few other properties also need exposing.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (toAPIScrollbarStyle):
+        (toCoreScrollbarStyle):
+        (-[WKWebView _setBackgroundExtendsBeyondPage:]):
+        (-[WKWebView _backgroundExtendsBeyondPage]):
+        (-[WKWebView _setOverlayScrollbarStyle:]):
+        (-[WKWebView _overlayScrollbarStyle]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2017-10-16  Chris Dumez  <cdumez@apple.com>
 
         Log using differential privacy domains where the WebContent process crashes

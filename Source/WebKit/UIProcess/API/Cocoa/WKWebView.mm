@@ -210,6 +210,40 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     return pageToViewMap().get(&page);
 }
 
+#if PLATFORM(MAC)
+static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
+{
+    if (!coreScrollbarStyle)
+        return _WKOverlayScrollbarStyleAutomatic;
+    
+    switch (coreScrollbarStyle.value()) {
+    case WebCore::ScrollbarOverlayStyleDark:
+        return _WKOverlayScrollbarStyleDark;
+    case WebCore::ScrollbarOverlayStyleLight:
+        return _WKOverlayScrollbarStyleLight;
+    case WebCore::ScrollbarOverlayStyleDefault:
+        return _WKOverlayScrollbarStyleDefault;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKOverlayScrollbarStyleAutomatic;
+}
+
+static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScrollbarStyle scrollbarStyle)
+{
+    switch (scrollbarStyle) {
+    case _WKOverlayScrollbarStyleDark:
+        return WebCore::ScrollbarOverlayStyleDark;
+    case _WKOverlayScrollbarStyleLight:
+        return WebCore::ScrollbarOverlayStyleLight;
+    case _WKOverlayScrollbarStyleDefault:
+        return WebCore::ScrollbarOverlayStyleDefault;
+    case _WKOverlayScrollbarStyleAutomatic:
+        break;
+    }
+    return std::nullopt;
+}
+#endif
+
 @implementation WKWebView {
     std::unique_ptr<WebKit::NavigationState> _navigationState;
     std::unique_ptr<WebKit::UIDelegate> _uiDelegate;
@@ -3714,7 +3748,7 @@ WEBCORE_COMMAND(yankAndSelect)
 {
 }
 
-#if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT)
 
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
@@ -4592,6 +4626,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->setFixedLayoutSize(WebCore::expandedIntSize(WebCore::FloatSize(fixedLayoutSize)));
 }
 
+- (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
+{
+    _page->setBackgroundExtendsBeyondPage(backgroundExtends);
+}
+
+- (BOOL)_backgroundExtendsBeyondPage
+{
+    return _page->backgroundExtendsBeyondPage();
+}
+
 - (CGFloat)_viewScale
 {
     return _page->viewScaleFactor();
@@ -4826,16 +4870,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
         [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(size)];
-}
-
-- (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
-{
-    _page->setBackgroundExtendsBeyondPage(backgroundExtends);
-}
-
-- (BOOL)_backgroundExtendsBeyondPage
-{
-    return _page->backgroundExtendsBeyondPage();
 }
 
 - (void)_setAllowsViewportShrinkToFit:(BOOL)allowShrinkToFit
@@ -5250,7 +5284,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [self _setDrawsBackground:!drawsTransparentBackground];
 }
 
-#if WK_API_ENABLED
 - (NSView *)_inspectorAttachmentView
 {
     return _impl->inspectorAttachmentView();
@@ -5260,7 +5293,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     _impl->setInspectorAttachmentView(newView);
 }
-#endif
+
+- (void)_setOverlayScrollbarStyle:(_WKOverlayScrollbarStyle)scrollbarStyle
+{
+    _impl->setOverlayScrollbarStyle(toCoreScrollbarStyle(scrollbarStyle));
+}
+
+- (_WKOverlayScrollbarStyle)_overlayScrollbarStyle
+{
+    return toAPIScrollbarStyle(_impl->overlayScrollbarStyle());
+}
 
 - (BOOL)_windowOcclusionDetectionEnabled
 {
