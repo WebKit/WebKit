@@ -39,8 +39,10 @@
 #import "HTMLBodyElement.h"
 #import "HTMLImageElement.h"
 #import "LegacyWebArchive.h"
+#import "MainFrame.h"
 #import "Page.h"
 #import "Settings.h"
+#import "SocketProvider.h"
 #import "WebArchiveResourceFromNSAttributedString.h"
 #import "WebArchiveResourceWebResourceHandler.h"
 #import "WebNSAttributedStringExtras.h"
@@ -179,37 +181,84 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
     return WTFMove(fragmentAndResources.fragment);
 }
 
+struct FragmentAndArchive {
+    Ref<DocumentFragment> fragment;
+    Ref<Archive> archive;
+};
+
+static std::optional<FragmentAndArchive> createFragmentFromWebArchive(Document& document, SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+{
+    auto archive = LegacyWebArchive::create(URL(), buffer);
+    if (!archive)
+        return std::nullopt;
+
+    RefPtr<ArchiveResource> mainResource = archive->mainResource();
+    if (!mainResource)
+        return std::nullopt;
+
+    auto type = mainResource->mimeType();
+    if (!canShowMIMETypeAsHTML(type))
+        return std::nullopt;
+
+    auto markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
+    auto fragment = createFragmentFromMarkup(document, markupString, mainResource->url(), DisallowScriptingAndPluginContent);
+
+    return FragmentAndArchive { WTFMove(fragment), archive.releaseNonNull() };
+}
+
 bool WebContentReader::readWebArchive(SharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
 
-    auto archive = LegacyWebArchive::create(URL(), buffer);
-    if (!archive)
-        return false;
-
-    RefPtr<ArchiveResource> mainResource = archive->mainResource();
-    if (!mainResource)
-        return false;
-
-    auto type = mainResource->mimeType();
-    if (!frame.loader().client().canShowMIMETypeAsHTML(type))
-        return false;
-
     DeferredLoadingScope scope(frame);
-    auto markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
-    addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
+    auto result = createFragmentFromWebArchive(*frame.document(), buffer, [&] (const String& type) {
+        return frame.loader().client().canShowMIMETypeAsHTML(type);
+    });
+    if (!result)
+        return false;
 
+    fragment = WTFMove(result->fragment);
     if (DocumentLoader* loader = frame.loader().documentLoader())
-        loader->addAllArchiveResources(*archive);
+        loader->addAllArchiveResources(result->archive.get());
 
     return true;
 }
 
-bool WebContentReader::readHTML(const String& string)
+bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
 {
-    String stringOmittingMicrosoftPrefix = string;
-    
+    auto page = createPageForSanitizingWebContent();
+    Document* stagingDocument = page->mainFrame().document();
+    ASSERT(stagingDocument);
+
+    DeferredLoadingScope scope(frame);
+    auto result = createFragmentFromWebArchive(*stagingDocument, buffer, [&] (const String& type) {
+        return frame.loader().client().canShowMIMETypeAsHTML(type);
+    });
+    if (!result)
+        return false;
+
+    HashMap<AtomicString, AtomicString> blobURLMap;
+    for (const Ref<ArchiveResource>& subresource : result->archive->subresources()) {
+        auto blob = Blob::create(subresource->data(), subresource->mimeType());
+        String blobURL = DOMURL::createObjectURL(*frame.document(), blob);
+        blobURLMap.set(subresource->url().string(), blobURL);
+    }
+    replaceSubresourceURLs(result->fragment.get(), WTFMove(blobURLMap));
+
+    auto* bodyElement = stagingDocument->body();
+    ASSERT(bodyElement);
+    bodyElement->appendChild(result->fragment);
+
+    auto range = Range::create(*stagingDocument);
+    range->selectNodeContents(*bodyElement);
+    markup = createMarkup(range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
+
+    return true;
+}
+
+static String stripMicrosoftPrefix(const String& string)
+{
 #if PLATFORM(MAC)
     // This code was added to make HTML paste from Microsoft Word on Mac work, back in 2004.
     // It's a simple-minded way to ignore the CF_HTML clipboard format, just skipping over the
@@ -217,24 +266,43 @@ bool WebContentReader::readHTML(const String& string)
     if (string.startsWith("Version:")) {
         size_t location = string.findIgnoringCase("<html");
         if (location != notFound)
-            stringOmittingMicrosoftPrefix = string.substring(location);
+            return string.substring(location);
     }
 #endif
+    return string;
+}
 
-    if (stringOmittingMicrosoftPrefix.isEmpty())
-        return false;
-
-    if (!frame.document())
+bool WebContentReader::readHTML(const String& string)
+{
+    if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
     Document& document = *frame.document();
+
+    String stringOmittingMicrosoftPrefix = stripMicrosoftPrefix(string);
+    if (stringOmittingMicrosoftPrefix.isEmpty())
+        return false;
 
     addFragment(createFragmentFromMarkup(document, stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent));
     return true;
 }
 
+bool WebContentMarkupReader::readHTML(const String& string)
+{
+    if (!frame.document())
+        return false;
+
+    String rawHTML = stripMicrosoftPrefix(string);
+    if (shouldSanitize())
+        markup = sanitizeMarkup(rawHTML);
+    else
+        markup = rawHTML;
+
+    return !markup.isEmpty();
+}
+
 bool WebContentReader::readRTFD(SharedBuffer& buffer)
 {
-    if (frame.settings().preferMIMETypeForImages())
+    if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
 
     auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get());
@@ -242,6 +310,15 @@ bool WebContentReader::readRTFD(SharedBuffer& buffer)
         return false;
     addFragment(fragment.releaseNonNull());
 
+    return true;
+}
+
+bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
+{
+    if (!frame.document())
+        return false;
+    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    markup = createMarkup(*fragment);
     return true;
 }
 
@@ -255,6 +332,17 @@ bool WebContentReader::readRTF(SharedBuffer& buffer)
         return false;
     addFragment(fragment.releaseNonNull());
 
+    return true;
+}
+
+bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
+{
+    if (!frame.document())
+        return false;
+    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    if (!fragment)
+        return false;
+    markup = createMarkup(*fragment);
     return true;
 }
 

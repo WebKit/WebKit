@@ -30,6 +30,7 @@
 #include "CachedImageClient.h"
 #include "DataTransferItem.h"
 #include "DataTransferItemList.h"
+#include "DocumentFragment.h"
 #include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"
@@ -42,7 +43,9 @@
 #include "Settings.h"
 #include "StaticPasteboard.h"
 #include "URLParser.h"
+#include "WebContentReader.h"
 #include "WebCorePasteboardFileReader.h"
+#include "markup.h"
 
 namespace WebCore {
 
@@ -78,18 +81,10 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
 #endif
 }
 
-static String originIdentifierForDocument(Document& document)
-{
-    auto origin = document.securityOrigin().toString();
-    if (origin == "null")
-        return document.uniqueIdentifier();
-    return origin;
-}
-
 Ref<DataTransfer> DataTransfer::createForCopyAndPaste(Document& document, StoreMode storeMode, std::unique_ptr<Pasteboard>&& pasteboard)
 {
     auto dataTransfer = adoptRef(*new DataTransfer(storeMode, WTFMove(pasteboard)));
-    dataTransfer->m_originIdentifier = originIdentifierForDocument(document);
+    dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
 
@@ -146,7 +141,7 @@ void DataTransfer::clearData(const String& type)
         m_itemList->didClearStringData(normalizedType);
 }
 
-String DataTransfer::getDataForItem(const String& type) const
+String DataTransfer::getDataForItem(Document& document, const String& type) const
 {
     if (!canReadData())
         return { };
@@ -164,30 +159,30 @@ String DataTransfer::getDataForItem(const String& type) const
     if (!Settings::customPasteboardDataEnabled())
         return m_pasteboard->readString(lowercaseType);
 
-    bool isSameOrigin = false;
-    if (is<StaticPasteboard>(*m_pasteboard)) {
-        // StaticPasteboard is only used to stage data written by websites before being committed to the system pasteboard.
-        isSameOrigin = true;
-    } else if (!m_originIdentifier.isNull()) {
-        String originOfPasteboard = m_pasteboard->readOrigin();
-        isSameOrigin = m_originIdentifier == originOfPasteboard;
+    // StaticPasteboard is only used to stage data written by websites before being committed to the system pasteboard.
+    bool isSameOrigin = is<StaticPasteboard>(*m_pasteboard) || (!m_originIdentifier.isNull() && m_originIdentifier == m_pasteboard->readOrigin());
+    if (isSameOrigin) {
+        String value = m_pasteboard->readStringInCustomData(lowercaseType);
+        if (!value.isNull())
+            return value;
     }
+    if (!Pasteboard::isSafeTypeForDOMToReadAndWrite(lowercaseType))
+        return { };
 
-    if (!isSameOrigin) {
-        if (!Pasteboard::isSafeTypeForDOMToReadAndWrite(lowercaseType))
+    if (!is<StaticPasteboard>(*m_pasteboard) && type == "text/html") {
+        if (!document.frame())
             return { };
-        return m_pasteboard->readString(lowercaseType);
+        WebContentMarkupReader reader { *document.frame() };
+        m_pasteboard->read(reader);
+        return reader.markup;
     }
 
-    String value = m_pasteboard->readStringInCustomData(lowercaseType);
-    if (value.isNull() && Pasteboard::isSafeTypeForDOMToReadAndWrite(lowercaseType))
-        value = m_pasteboard->readString(lowercaseType);
-    return value;
+    return m_pasteboard->readString(type);
 }
 
-String DataTransfer::getData(const String& type) const
+String DataTransfer::getData(Document& document, const String& type) const
 {
-    return getDataForItem(normalizeType(type));
+    return getDataForItem(document, normalizeType(type));
 }
 
 bool DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const
@@ -222,11 +217,13 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
     }
 
     String sanitizedData;
-    if (type == "text/uri-list") {
+    if (type == "text/html")
+        sanitizedData = sanitizeMarkup(data);
+    else if (type == "text/uri-list") {
         auto url = URLParser(data).result();
         if (url.isValid())
             sanitizedData = url.string();
-    } else if (type == "text/plain" || type == "text/html")
+    } else if (type == "text/plain")
         sanitizedData = data; // Nothing to sanitize.
 
     if (sanitizedData != data)
@@ -430,7 +427,7 @@ Ref<DataTransfer> DataTransfer::createForDrag()
 Ref<DataTransfer> DataTransfer::createForDragStartEvent(Document& document)
 {
     auto dataTransfer = adoptRef(*new DataTransfer(StoreMode::ReadWrite, std::make_unique<StaticPasteboard>(), Type::DragAndDropData));
-    dataTransfer->m_originIdentifier = originIdentifierForDocument(document);
+    dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
 
@@ -438,7 +435,7 @@ Ref<DataTransfer> DataTransfer::createForDrop(Document& document, std::unique_pt
 {
     auto dataTransfer = adoptRef(*new DataTransfer(DataTransfer::StoreMode::Readonly, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
     dataTransfer->setSourceOperation(sourceOperation);
-    dataTransfer->m_originIdentifier = originIdentifierForDocument(document);
+    dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
 
@@ -453,7 +450,7 @@ Ref<DataTransfer> DataTransfer::createForUpdatingDropTarget(Document& document, 
 #endif
     auto dataTransfer = adoptRef(*new DataTransfer(mode, WTFMove(pasteboard), draggingFiles ? Type::DragAndDropFiles : Type::DragAndDropData));
     dataTransfer->setSourceOperation(sourceOperation);
-    dataTransfer->m_originIdentifier = originIdentifierForDocument(document);
+    dataTransfer->m_originIdentifier = document.originIdentifierForPasteboard();
     return dataTransfer;
 }
 

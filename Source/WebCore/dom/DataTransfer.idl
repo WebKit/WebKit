@@ -38,7 +38,7 @@
     void setDragImage(Element? image, long x, long y); // FIXME: Element argument is not nullable in the HTML standard.
 
     readonly attribute FrozenArray<DOMString> types;
-    DOMString getData(DOMString format);
+    [CallWith=Document] DOMString getData(DOMString format);
     void setData(DOMString format, DOMString data);
     void clearData(optional DOMString format);
     // FIXME: files should use [SameObject] once that is supported.

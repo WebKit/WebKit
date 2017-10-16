@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="container">
+<div id="destination" onpaste="doPaste(event)" contenteditable>3. Paste here</div>
+</div>
+<script>
+
+description('This tests getData strips away secrets and dangerous code when copying HTML in a regular origin and pasting inside a null origin document.');
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setCustomPasteboardDataEnabled(true);
+
+const iframe = document.createElement('iframe');
+document.getElementById('container').prepend(iframe);
+iframe.src = `data:text/html;charset=utf-8,<!DOCTYPE html>
+<button id="copy" onclick="runTest()">1. Copy</button>
+<div><br></div>
+<div id="source" oncopy="doCopy(event)" contenteditable>some text</div>
+<div id="destination" onpaste="doPaste(event)" contenteditable>2. Paste here</div>
+<script>
+
+const originalHTML = '<meta content="secret"><b onmouseover="dangerousCode()">hello</b><!-- secret-->, world<script>dangerousCode()</scr' + 'ipt>';
+
+function runTest() {
+    document.getElementById('source').focus();
+    document.execCommand('selectAll');
+    document.execCommand('copy');
+}
+
+function doCopy(event) {
+    event.clipboardData.setData('text/html', originalHTML);
+    event.preventDefault();
+    setTimeout(() => {
+        document.getElementById('destination').focus();
+        if (window.testRunner)
+            document.execCommand('paste');
+    }, 0);
+};
+
+function doPaste(event) {
+    event.preventDefault();
+    parent.postMessage({
+        originalHTML,
+        html: event.clipboardData.getData('text/html'),
+        types: event.clipboardData.types,
+        items: Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})),
+    }, '*');
+};
+
+document.getElementById('destination').focus();
+if (window.testRunner)
+    runTest();
+    document.execCommand('paste');
+
+</scri` + 'pt>';
+
+function doCopy(event) {
+    event.clipboardData.setData('text/html', originalHTML);
+    event.preventDefault();
+}
+
+onmessage = (event) => {
+    typesInSameDocument = event.data.types;
+    shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/html"]');
+    htmlInSameDocument = event.data.html;
+    originalHTML = event.data.originalHTML;
+    shouldBeEqualToString('htmlInSameDocument', originalHTML);
+
+    itemsInSameDocument = event.data.items;
+    shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/html"}]');
+
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+}
+
+function doPaste(event) {
+    htmlInAnotherDocument = event.clipboardData.getData("text/html");
+    shouldBeFalse('htmlInAnotherDocument.includes("secret")');
+    shouldBeFalse('htmlInAnotherDocument.includes("dangerousCode")');
+    shouldBeEqualToString('b = (new DOMParser).parseFromString(htmlInAnotherDocument, "text/html").querySelector("b"); b.textContent', 'hello');
+    shouldBeEqualToString('b.parentNode.textContent', 'hello, world');
+    document.getElementById('container').remove();
+    finishJSTest();
+}
+
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

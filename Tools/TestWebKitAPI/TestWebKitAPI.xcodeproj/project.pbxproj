@@ -542,6 +542,9 @@
 		9999108B1F393C96008AD455 /* Copying.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9999108A1F393C8B008AD455 /* Copying.mm */; };
 		9B0786A51C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */; };
 		9B19CDA01F06DFE3000548DD /* NetworkProcessCrashWithPendingConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B19CD9E1F06DFE3000548DD /* NetworkProcessCrashWithPendingConnection.mm */; };
+		9B1F6F781F90558400B55744 /* CopyHTML.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B1056411F9045C700D5583F /* CopyHTML.mm */; };
+		9B1F6F791F90559E00B55744 /* copy-html.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B1056421F9047CC00D5583F /* copy-html.html */; };
+		9B2346421F943E2700DB1D23 /* PasteWebArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */; };
 		9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */; };
 		9B270FEE1DDC2C0B002D53F3 /* closed-shadow-tree-test.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B270FED1DDC25FD002D53F3 /* closed-shadow-tree-test.html */; };
 		9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B4F8FA6159D52CA002D9F94 /* HTMLCollectionNamedItem.html */; };
@@ -843,6 +846,7 @@
 				5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */,
 				CD0BD0A81F79982D001AB2CF /* ContextMenuImgWithVideo.html in Copy Resources */,
 				5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */,
+				9B1F6F791F90559E00B55744 /* copy-html.html in Copy Resources */,
 				9B62630C1F8C25C8007EE29B /* copy-url.html in Copy Resources */,
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */,
@@ -1507,7 +1511,10 @@
 		9999108A1F393C8B008AD455 /* Copying.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Copying.mm; sourceTree = "<group>"; };
 		9B0786A21C58830F00D159E3 /* InjectedBundleMakeAllShadowRootsOpen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMakeAllShadowRootsOpen.cpp; sourceTree = "<group>"; };
 		9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp; sourceTree = "<group>"; };
+		9B1056411F9045C700D5583F /* CopyHTML.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CopyHTML.mm; sourceTree = "<group>"; };
+		9B1056421F9047CC00D5583F /* copy-html.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "copy-html.html"; sourceTree = "<group>"; };
 		9B19CD9E1F06DFE3000548DD /* NetworkProcessCrashWithPendingConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessCrashWithPendingConnection.mm; path = WebKit/NetworkProcessCrashWithPendingConnection.mm; sourceTree = "<group>"; };
+		9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteWebArchive.mm; sourceTree = "<group>"; };
 		9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HTMLFormCollectionNamedItem.mm; sourceTree = "<group>"; };
 		9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = HTMLFormCollectionNamedItem.html; sourceTree = "<group>"; };
 		9B270FED1DDC25FD002D53F3 /* closed-shadow-tree-test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "closed-shadow-tree-test.html"; sourceTree = "<group>"; };
@@ -1986,6 +1993,7 @@
 				A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */,
 				5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */,
 				5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */,
+				9B1056411F9045C700D5583F /* CopyHTML.mm */,
 				9999108A1F393C8B008AD455 /* Copying.mm */,
 				9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */,
 				2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */,
@@ -2026,6 +2034,7 @@
 				CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */,
 				9BDCCD851F7D0B0700009A18 /* PasteImage.mm */,
 				9BDD95561F83683600D20C60 /* PasteRTFD.mm */,
+				9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */,
 				3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */,
 				83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
@@ -2236,6 +2245,7 @@
 				F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */,
 				A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */,
 				5C2936941D5BFD1900DEAB1E /* CookieMessage.html */,
+				9B1056421F9047CC00D5583F /* copy-html.html */,
 				9B62630B1F8C2510007EE29B /* copy-url.html */,
 				F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */,
 				F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */,
@@ -3229,6 +3239,7 @@
 				CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */,
 				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
 				51D1249B1E785425002B2820 /* CookieManager.cpp in Sources */,
+				9B1F6F781F90558400B55744 /* CopyHTML.mm in Sources */,
 				9999108B1F393C96008AD455 /* Copying.mm in Sources */,
 				9B7A37C41F8AEBA5004AA228 /* CopyURL.mm in Sources */,
 				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
@@ -3389,6 +3400,7 @@
 				7CCE7F0A1A411AE600447C4C /* PasteboardNotifications.mm in Sources */,
 				9BDCCD871F7D0B0700009A18 /* PasteImage.mm in Sources */,
 				9BDD95581F83683600D20C60 /* PasteRTFD.mm in Sources */,
+				9B2346421F943E2700DB1D23 /* PasteWebArchive.mm in Sources */,
 				7C83E0531D0A643A00FEBCF3 /* PendingAPIRequestURL.cpp in Sources */,
 				3FCC4FE51EC4E8520076E37C /* PictureInPictureDelegate.mm in Sources */,
 				7CCE7EAF1A411A3800447C4C /* PlatformUtilities.cpp in Sources */,

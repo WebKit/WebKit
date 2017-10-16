@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="container">
+<button id="copy" onclick="runTest()">1. Copy</button>
+<div><br></div>
+<div id="source" oncopy="doCopy(event)" contenteditable>
+    <b>16th President of the United States:</b>
+    <!-- secret-->
+    <img src="../resources/abe.png" alt="Abraham Lincoln" onmouseover="dangerousCode()">
+    <script>function dangerousCode() { } dangerousCode();</script>
+</div>
+<div id="destination" onpaste="doPaste(event)" contenteditable>3. Paste here</div></div>
+<script>
+
+description('This tests getData strips away secrets and dangerous code when copying inside a null origin document.');
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setCustomPasteboardDataEnabled(true);
+
+function runTest() {
+    document.getElementById('source').focus();
+    document.execCommand('selectAll');
+    document.execCommand('copy');
+}
+
+const container = document.getElementById('container');
+function doCopy(event) {
+    const iframe = document.createElement('iframe');
+    container.insertBefore(iframe, container.lastChild);
+    iframe.src = `data:text/html;charset=utf-8,<!DOCTYPE html>
+    <div id="destination" onpaste="doPaste(event)" contenteditable>2. Paste here</div>
+    <script>
+
+    function doPaste(event) {
+        event.preventDefault();
+        parent.postMessage({
+            html: event.clipboardData.getData('text/html'),
+            types: event.clipboardData.types,
+            items: Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})),
+        }, '*');
+    };
+
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+
+    </scri` + 'pt>';
+}
+
+onmessage = (event) => {
+    typesInNullOrigin = event.data.types;
+    shouldBeTrue('typesInNullOrigin.includes("text/html")');
+
+    htmlInNullOrigin = event.data.html;
+    shouldBeFalse('htmlInNullOrigin.includes("secret")');
+    shouldBeFalse('htmlInNullOrigin.includes("dangerousCode")');
+    shouldBeTrue('parsedTree = (new DOMParser).parseFromString(htmlInNullOrigin, "text/html"); !!parsedTree.querySelector("b");');
+    shouldBeEqualToString('parsedTree.querySelector("b").textContent', '16th President of the United States:');
+    shouldBeEqualToString('(new URL(parsedTree.querySelector("img").src)).protocol', 'blob:');
+    shouldBeFalse('parsedTree.querySelector("img").src.includes("resources/abe.png")');
+
+    itemsInNullOrigin = event.data.items;
+    shouldBeTrue('itemsInNullOrigin.some((item) => item.kind == "string" && item.type == "text/html")');
+
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+}
+
+function doPaste(event) {
+    event.preventDefault();
+
+    typesInSameDocument = event.clipboardData.types;
+    shouldBeTrue('typesInNullOrigin.includes("text/html")');
+
+    htmlInSameDocument = event.clipboardData.getData('text/html');
+    shouldBeFalse('htmlInSameDocument.includes("secret")');
+    shouldBeFalse('htmlInSameDocument.includes("dangerousCode")');
+    shouldBeTrue('parsedTree = (new DOMParser).parseFromString(htmlInNullOrigin, "text/html"); !!parsedTree.querySelector("b");');
+    shouldBeEqualToString('parsedTree.querySelector("b").textContent', '16th President of the United States:');
+
+    // FIXME: These two test cases fail.
+    shouldBeEqualToString('(new URL(parsedTree.querySelector("img").src)).protocol', 'file:');
+    shouldBeTrue('parsedTree.querySelector("img").src.includes("resources/abe.png")');
+
+    itemsInSameDocument = Array.from(event.clipboardData.items);
+    shouldBeTrue('itemsInSameDocument.some((item) => item.kind == "string" && item.type == "text/html")');
+
+    container.remove();
+    finishJSTest();
+}
+
+if (window.testRunner)
+    window.onload = runTest;
+
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

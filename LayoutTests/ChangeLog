@@ -1,3 +1,39 @@
+2017-10-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cannot access images included in the content pasted from Microsoft Word
+        https://bugs.webkit.org/show_bug.cgi?id=124391
+        <rdar://problem/26862741>
+
+        Reviewed by Antti Koivisto.
+
+        Added tests for copying & pasting and dragging & dropping HTML contents.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-get-data-on-drop-rich-text-expected.txt: Rebaselined.
+        * editing/pasteboard/data-transfer-get-data-on-paste-rich-text-expected.txt: Ditto.
+        * editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html: Modified the test to strip away platform specific
+        inline style properties.
+        * editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-expected.txt: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin-expected.txt: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying.html: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitizes-html-when-dragging-in-null-origin-expected.txt: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitizes-html-when-dragging-in-null-origin.html: Added.
+        * editing/pasteboard/data-transfer-set-data-sanitizes-url-when-dragging-in-null-origin.html: Removed the superflous
+        call to setTimeout that was errornously added during debugging. Also updated the test to not claim all URL and
+        HTML values are read in the same origin, and updated the assertion for cross-origin case as it's now sanitized.
+        * editing/pasteboard/onpaste-text-html-expected.txt: Rebaselined. The order of CSS properties have changed.
+        * http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html-expected.txt: Added.
+        * http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html: Added.
+        * http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html:
+        * http/tests/security/clipboard/resources/copy-html.html: Added.
+        * http/tests/security/clipboard/resources/copy-url.html: Renamed from copy.html.
+        * platform/ios-wk2/editing/pasteboard/data-transfer-get-data-on-paste-rich-text-expected.txt: Remoevd.
+        * platform/ios-wk1/editing/pasteboard/data-transfer-get-data-on-paste-rich-text-expected.txt: Remoevd.
+        * platform/mac-wk1/TestExpectations:
+
 2017-10-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layers tab mistakenly throws out the root element's layer.

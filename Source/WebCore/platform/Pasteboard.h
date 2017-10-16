@@ -127,9 +127,11 @@ struct PasteboardImage {
 
 class PasteboardWebContentReader {
 public:
+    String contentOrigin;
+
     virtual ~PasteboardWebContentReader() { }
 
-#if !(PLATFORM(GTK) || PLATFORM(WIN))
+#if PLATFORM(COCOA)
     virtual bool readWebArchive(SharedBuffer&) = 0;
     virtual bool readFilenames(const Vector<String>&) = 0;
     virtual bool readHTML(const String&) = 0;
@@ -270,6 +272,13 @@ private:
 #if PLATFORM(IOS)
     bool respectsUTIFidelities() const;
     void readRespectingUTIFidelities(PasteboardWebContentReader&);
+
+    enum class ReaderResult {
+        ReadType,
+        DidNotReadType,
+        PasteboardWasChangedExternally
+    };
+    ReaderResult readPasteboardWebContentDataForType(PasteboardWebContentReader&, PasteboardStrategy&, NSString *type, int itemIndex);
 #endif
 
 #if PLATFORM(WIN)

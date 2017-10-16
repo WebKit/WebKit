@@ -107,7 +107,8 @@ static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (platformType == String(NSURLPboardType))
         return ASCIILiteral("text/uri-list");
 
-    if (platformType == String(NSHTMLPboardType))
+    if (platformType == String(NSHTMLPboardType) || platformType == String(WebArchivePboardType)
+        || platformType == String(NSRTFDPboardType) || platformType == String(NSRTFPboardType))
         return ASCIILiteral("text/html");
 
     return nullptr;

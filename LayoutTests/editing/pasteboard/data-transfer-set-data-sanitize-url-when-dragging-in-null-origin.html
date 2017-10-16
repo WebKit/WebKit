@@ -83,34 +83,38 @@ onmessage = (event) => {
     debug(`${kind} in ${event.data.documentLabel}:`);
     switch (kind) {
     case 'dragstart':
-        urlReadInSameDocument = event.data.url;
-        shouldBeEqualToString('urlReadInSameDocument', originalURL);
-        htmlReadInSameDocument = event.data.html;
-        shouldBeEqualToString('htmlReadInSameDocument', "testing");
-        typesInSameDocument = event.data.types;
-        shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/uri-list","text/html"]');
-        itemsInSameDocument = event.data.items;
-        shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
+        url = event.data.url;
+        shouldBeEqualToString('url', originalURL);
+        html = event.data.html;
+        shouldBeEqualToString('html', "testing");
+        types = event.data.types;
+        shouldBeEqualToString('JSON.stringify(types)', '["text/uri-list","text/html"]');
+        items = event.data.items;
+        shouldBeEqualToString('JSON.stringify(items)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
         break;
     case 'dragover':
-        urlReadInSameDocument = event.data.url;
-        shouldBeEqualToString('urlReadInSameDocument', '');
-        htmlReadInSameDocument = event.data.html;
-        shouldBeEqualToString('htmlReadInSameDocument', '');
-        typesInSameDocument = event.data.types;
-        shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/uri-list","text/html"]');
-        itemsInSameDocument = event.data.items;
-        shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
+        url = event.data.url;
+        shouldBeEqualToString('url', '');
+        html = event.data.html;
+        shouldBeEqualToString('html', '');
+        types = event.data.types;
+        shouldBeEqualToString('JSON.stringify(types)', '["text/uri-list","text/html"]');
+        items = event.data.items;
+        shouldBeEqualToString('JSON.stringify(items)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
         break;
     case 'drop':
-        urlReadInSameDocument = event.data.url;
-        shouldBeEqualToString('urlReadInSameDocument', event.data.documentLabel.includes('null') ? originalURL : (new URL(originalURL)).href);
-        htmlReadInSameDocument = event.data.html;
-        shouldBeEqualToString('htmlReadInSameDocument', "testing");
-        typesInSameDocument = event.data.types;
-        shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/uri-list","text/html"]');
-        itemsInSameDocument = event.data.items;
-        shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
+        url = event.data.url;
+        isSameOrigin = event.data.documentLabel.includes('null');
+        shouldBeEqualToString('url', isSameOrigin ? originalURL : (new URL(originalURL)).href);
+        html = event.data.html;
+        if (isSameOrigin)
+            shouldBeEqualToString('html', 'testing');
+        else
+            shouldBeTrue('html.includes("testing")');
+        types = event.data.types;
+        shouldBeEqualToString('JSON.stringify(types)', '["text/uri-list","text/html"]');
+        items = event.data.items;
+        shouldBeEqualToString('JSON.stringify(items)', '[{"kind":"string","type":"text/uri-list"},{"kind":"string","type":"text/html"}]');
         if (!event.data.documentLabel.includes('null')) {
             document.getElementById('container').remove();
             finishJSTest();
@@ -157,8 +161,6 @@ function doSecondDrop(postContent) {
     eventSender.mouseMoveTo(destination.offsetLeft + 5, destination.offsetTop + 5);
     eventSender.mouseUp();
 }
-
-setTimeout(finishJSTest, 3000);
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

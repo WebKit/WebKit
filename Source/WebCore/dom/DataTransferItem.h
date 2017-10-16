@@ -60,7 +60,7 @@ public:
     bool isFile() const { return m_file; }
     String kind() const;
     String type() const;
-    void getAsString(ScriptExecutionContext&, RefPtr<StringCallback>&&) const;
+    void getAsString(Document&, RefPtr<StringCallback>&&) const;
     RefPtr<File> getAsFile() const;
     RefPtr<FileSystemEntry> getAsEntry(ScriptExecutionContext&) const;
 

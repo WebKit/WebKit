@@ -57,9 +57,18 @@ NSString *readURLFromPasteboard()
 }
 #endif
 
-TEST(CopyURL, ValidURL)
+static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto preferences = (WKPreferencesRef)[[webView configuration] preferences];
+    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
+    WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
+    return webView;
+}
+
+TEST(CopyURL, ValidURL)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
     [webView synchronouslyLoadTestPageNamed:@"copy-url"];
     [webView stringByEvaluatingJavaScript:@"URLToCopy = 'http://webkit.org/b/123';"];
     [webView copy:nil];
@@ -70,12 +79,9 @@ TEST(CopyURL, ValidURL)
     EXPECT_WK_STREQ(@"http://webkit.org/b/123", readURLFromPasteboard());
 }
 
-// FIXME: We should add a mechanism to enable custom pasteboard data in older OS for testing purposes.
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED > 101300)
-
 TEST(CopyURL, UnescapedURL)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
     [webView synchronouslyLoadTestPageNamed:@"copy-url"];
     [webView stringByEvaluatingJavaScript:@"URLToCopy = 'http://webkit.org/b/\u4F60\u597D;?x=8 + 6';"];
     [webView copy:nil];
@@ -88,7 +94,7 @@ TEST(CopyURL, UnescapedURL)
 
 TEST(CopyURL, MalformedURL)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
     [webView synchronouslyLoadTestPageNamed:@"copy-url"];
     [webView stringByEvaluatingJavaScript:@"URLToCopy = 'bad url';"];
     [webView copy:nil];
@@ -98,8 +104,6 @@ TEST(CopyURL, MalformedURL)
     EXPECT_WK_STREQ(@"bad url", [webView stringByEvaluatingJavaScript:@"window.pastedURL"]);
     EXPECT_WK_STREQ(@"", readURLFromPasteboard());
 }
-
-#endif
 
 #endif // WK_API_ENABLED && PLATFORM(MAC)
 

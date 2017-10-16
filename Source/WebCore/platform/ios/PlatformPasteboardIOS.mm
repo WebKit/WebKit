@@ -355,7 +355,8 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
         return ASCIILiteral("text/plain");
 
-    if (UTTypeConformsTo(cfType.get(), kUTTypeHTML))
+    if (UTTypeConformsTo(cfType.get(), kUTTypeHTML) || UTTypeConformsTo(cfType.get(), (CFStringRef)WebArchivePboardType)
+        || UTTypeConformsTo(cfType.get(), kUTTypeRTF) || UTTypeConformsTo(cfType.get(), kUTTypeFlatRTFD))
         return ASCIILiteral("text/html");
 
     if (UTTypeConformsTo(cfType.get(), kUTTypeURL))

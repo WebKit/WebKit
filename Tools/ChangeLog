@@ -1,3 +1,37 @@
+2017-10-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cannot access images included in the content pasted from Microsoft Word
+        https://bugs.webkit.org/show_bug.cgi?id=124391
+        <rdar://problem/26862741>
+
+        Reviewed by Antti Koivisto.
+
+        Added tests for sanitizing HTML contents for copy & paste and drag & drop.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm: Added.
+        (readHTMLFromPasteboard): Added.
+        (createWebViewWithCustomPasteboardDataEnabled): Added.
+        (CopyHTML.Sanitizes): Added.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyURL.mm:
+        (createWebViewWithCustomPasteboardDataEnabled): Added to enable more tests on bots.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteRTFD.mm:
+        (writeRTFToPasteboard): Added.
+        (createWebViewWithCustomPasteboardDataEnabled): Added.
+        (createHelloWorldString): Added.
+        (PasteRTF.ExposesHTMLTypeInDataTransfer): Added.
+        (PasteRTFD.ExposesHTMLTypeInDataTransfer): Added.
+        (PasteRTFD.ImageElementUsesBlobURLInHTML): Added.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/copy-html.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/paste-rtfd.html: Store the clipboardData contents for
+        PasteRTF.ExposesHTMLTypeInDataTransfer and PasteRTFD.ExposesHTMLTypeInDataTransfer.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (DataInteractionTests.DataTransferSanitizeHTML):
+
 2017-10-16  Youenn Fablet  <youenn@apple.com>
 
         Activate Cache API by default

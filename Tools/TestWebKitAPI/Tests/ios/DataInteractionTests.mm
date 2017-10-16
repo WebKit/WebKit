@@ -1764,6 +1764,46 @@ TEST(DataInteractionTests, DataTransferSetDataInvalidURL)
     });
 }
 
+TEST(DataInteractionTests, DataTransferSanitizeHTML)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView stringByEvaluatingJavaScript:@"select(rich)"];
+    [webView stringByEvaluatingJavaScript:@"customData = { 'text/html' : '<meta content=\"secret\">"
+        "<b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>' }"];
+    [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
+
+    __block bool done = false;
+    [simulator.get() setOverridePerformDropBlock:^NSArray<UIDragItem *> *(id <UIDropSession> session)
+    {
+        EXPECT_EQ(1UL, session.items.count);
+        auto *item = session.items[0].itemProvider;
+        EXPECT_TRUE([item.registeredTypeIdentifiers containsObject:(NSString *)kUTTypeHTML]);
+        [item loadDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML completionHandler:^(NSData *data, NSError *error) {
+            NSString *markup = [[[NSString alloc] initWithData:(NSData *)data encoding:NSUTF8StringEncoding] autorelease];
+            EXPECT_TRUE([markup containsString:@"hello"]);
+            EXPECT_TRUE([markup containsString:@", world"]);
+            EXPECT_FALSE([markup containsString:@"secret"]);
+            EXPECT_FALSE([markup containsString:@"dangerousCode"]);
+            done = true;
+        }];
+        return session.items;
+    }];
+    [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
+
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover": @{
+            @"text/html": @"",
+        },
+        @"drop": @{
+            @"text/html": @"<meta content=\"secret\"><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>",
+        }
+    });
+    TestWebKitAPI::Util::run(&done);
+}
+
 #endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
 
 } // namespace TestWebKitAPI

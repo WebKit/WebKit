@@ -29,6 +29,9 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -41,6 +44,12 @@
 @end
 
 #if PLATFORM(MAC)
+void writeRTFToPasteboard(NSData *data)
+{
+    [[NSPasteboard generalPasteboard] declareTypes:@[NSPasteboardTypeRTF] owner:nil];
+    [[NSPasteboard generalPasteboard] setData:data forType:NSPasteboardTypeRTF];
+}
+
 void writeRTFDToPasteboard(NSData *data)
 {
     [[NSPasteboard generalPasteboard] declareTypes:@[NSRTFDPboardType] owner:nil];
@@ -56,15 +65,56 @@ void writeRTFDToPasteboard(NSData *data)
 - (BOOL)containsAttachments;
 @end
 
+void writeRTFToPasteboard(NSData *data)
+{
+    [[UIPasteboard generalPasteboard] setItems:@[@{ (NSString *)kUTTypeRTF : data}]];
+}
+
 void writeRTFDToPasteboard(NSData *data)
 {
     [[UIPasteboard generalPasteboard] setItems:@[@{ (NSString *)kUTTypeFlatRTFD : data}]];
 }
 #endif
 
-TEST(PasteRTFD, EmptyRTFD)
+static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto preferences = (WKPreferencesRef)[[webView configuration] preferences];
+    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
+    WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
+    return webView;
+}
+
+static RetainPtr<NSAttributedString> createHelloWorldString()
+{
+    auto hello = adoptNS([[NSAttributedString alloc] initWithString:@"hello" attributes:@{ NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle) }]);
+    auto world = adoptNS([[NSAttributedString alloc] initWithString:@", world" attributes:@{ }]);
+    auto string = adoptNS([[NSMutableAttributedString alloc] init]);
+    [string appendAttributedString:hello.get()];
+    [string appendAttributedString:world.get()];
+    return string;
+}
+
+TEST(PasteRTF, ExposesHTMLTypeInDataTransfer)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+
+    auto string = createHelloWorldString();
+    writeRTFToPasteboard([string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }]);
+    [webView paste:nil];
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"]);
+    [webView stringByEvaluatingJavaScript:@"editor.innerHTML = clipboardData.values[0]; editor.focus()"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('underline')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary')"];
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('underline')"].boolValue);
+    EXPECT_WK_STREQ("hello, world", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+}
+
+TEST(PasteRTFD, EmptyRTFD)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html><body><div id='editor' contenteditable></div></body></html>"];
 
     writeRTFDToPasteboard([NSData data]);
@@ -72,9 +122,26 @@ TEST(PasteRTFD, EmptyRTFD)
     [webView paste:nil];
 }
 
-TEST(PasteRTFD, ImageElementsUseBlobURL)
+TEST(PasteRTFD, ExposesHTMLTypeInDataTransfer)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+
+    auto string = createHelloWorldString();
+    writeRTFDToPasteboard([string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }]);
+    [webView paste:nil];
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"]);
+    [webView stringByEvaluatingJavaScript:@"editor.innerHTML = clipboardData.values[0]; editor.focus()"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('underline')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary')"];
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('underline')"].boolValue);
+    EXPECT_WK_STREQ("hello, world", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+}
+
+TEST(PasteRTFD, ImageElementUsesBlobURL)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
 
     auto *pngData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
@@ -88,6 +155,25 @@ TEST(PasteRTFD, ImageElementsUseBlobURL)
     [webView waitForMessage:@"loaded"];
     EXPECT_WK_STREQ("200", [webView stringByEvaluatingJavaScript:@"imageElement = document.querySelector('img'); imageElement.width"]);
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src).protocol"]);
+}
+
+TEST(PasteRTFD, ImageElementUsesBlobURLInHTML)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+
+    auto *pngData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
+    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(NSString *)kUTTypePNG]);
+    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
+    NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
+
+    writeRTFDToPasteboard(RTFDData);
+    [webView paste:nil];
+
+    [webView waitForMessage:@"loaded"];
+    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"imageElement = (new DOMParser).parseFromString(clipboardData.values[0], 'text/html').querySelector('img'); !!imageElement"].boolValue);
+    EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"new URL(imageElement.src).protocol"]);
 }
 
 #endif // WK_API_ENABLED && PLATFORM(MAC)

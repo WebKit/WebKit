@@ -5300,8 +5300,11 @@ bool Document::isTelephoneNumberParsingAllowed() const
 
 #endif
 
-String Document::uniqueIdentifier()
+String Document::originIdentifierForPasteboard()
 {
+    auto origin = securityOrigin().toString();
+    if (origin != "null")
+        return origin;
     if (!m_uniqueIdentifier)
         m_uniqueIdentifier = "null:" + createCanonicalUUIDString();
     return m_uniqueIdentifier;

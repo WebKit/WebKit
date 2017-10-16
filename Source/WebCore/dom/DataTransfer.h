@@ -64,8 +64,8 @@ public:
 
     void clearData(const String& type = String());
 
-    String getData(const String& type) const;
-    String getDataForItem(const String& type) const;
+    String getData(Document&, const String& type) const;
+    String getDataForItem(Document&, const String& type) const;
 
     void setData(const String& type, const String& data);
     void setDataFromItemList(const String& type, const String& data);

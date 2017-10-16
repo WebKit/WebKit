@@ -65,6 +65,31 @@ private:
     bool readPlainText(const String&) override;
 };
 
+class WebContentMarkupReader final : public PasteboardWebContentReader {
+public:
+    Frame& frame;
+    String markup;
+
+    explicit WebContentMarkupReader(Frame& frame)
+        : frame(frame)
+    {
+    }
+
+private:
+    bool shouldSanitize() const;
+
+#if PLATFORM(COCOA)
+    bool readWebArchive(SharedBuffer&) override;
+    bool readFilenames(const Vector<String>&) override { return false; }
+    bool readHTML(const String&) override;
+    bool readRTFD(SharedBuffer&) override;
+    bool readRTF(SharedBuffer&) override;
+    bool readImage(Ref<SharedBuffer>&&, const String&) override { return false; }
+    bool readURL(const URL&, const String&) override { return false; }
+#endif
+    bool readPlainText(const String&) override { return false; }
+};
+
 #if PLATFORM(COCOA) && defined(__OBJC__)
 struct FragmentAndResources {
     RefPtr<DocumentFragment> fragment;

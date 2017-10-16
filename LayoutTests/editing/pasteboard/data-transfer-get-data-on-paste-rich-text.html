@@ -35,7 +35,7 @@ result = {};
 function updateResultWithEvent(event) {
     const eventData = {};
     for (const type of event.clipboardData.types)
-        eventData[type] = event.clipboardData.getData(type);
+        eventData[type] = event.clipboardData.getData(type).replace(/style="[^"]+"/g, 'style="...""');
     result[event.type] = eventData;
     output.textContent = JSON.stringify(result, null, "    ");
     event.preventDefault();
