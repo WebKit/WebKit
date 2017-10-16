@@ -1,3 +1,18 @@
+2017-09-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Object attributes are missing for ARIA live region roles
+        https://bugs.webkit.org/show_bug.cgi?id=171174
+
+        Reviewed by Chris Fleizach.
+
+        Move two macOS tests to the shared layout test set.
+
+        * accessibility/aria-liveregion-marquee-default-expected.txt: Renamed from LayoutTests/accessibility/mac/aria-liveregion-marquee-default-expected.txt.
+        * accessibility/aria-liveregion-marquee-default.html: Renamed from LayoutTests/accessibility/mac/aria-liveregion-marquee-default.html.
+        * accessibility/aria-liveregions-attributes-expected.txt: Renamed from LayoutTests/accessibility/mac/aria-liveregions-attributes-expected.txt.
+        * accessibility/aria-liveregions-attributes.html: Renamed from LayoutTests/accessibility/mac/aria-liveregions-attributes.html.
+        * platform/win/TestExpectations: Add the above tests to the list of known failures.
+
 2017-09-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GTK] HTMLMediaElement resize event not fired when video size changes

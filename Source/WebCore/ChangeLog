@@ -1,3 +1,30 @@
+2017-09-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Object attributes are missing for ARIA live region roles
+        https://bugs.webkit.org/show_bug.cgi?id=171174
+
+        Reviewed by Chris Fleizach.
+
+        Expose the values of aria-live, aria-atomic, and aria-relevant via AtkObject
+        attributes on live region elements and their descendants. In order to accomplish
+        exposure on descendants, add AccessibilityObject::ariaLiveRegionAncestor(). Add an
+        optional argument, excludeIfOff, to AccessibilityObject::isInsideARIALiveRegion()
+        and AccessibilityObject::supportsARIALiveRegion(). This is needed because we need
+        to expose live region properties via ATK even in the case where the live region
+        is disabled/off, but supportsARIALiveRegion() deliberately checks if the live
+        region is enabled.
+
+        Tests: accessibility/aria-liveregion-marquee-default.html
+               accessibility/aria-liveregions-attributes.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isInsideARIALiveRegion const):
+        (WebCore::AccessibilityObject::ariaLiveRegionAncestor const):
+        (WebCore::AccessibilityObject::supportsARIALiveRegion const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+
 2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r222427): SynchronizedFixedQueue should not have a public constructor

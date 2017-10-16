@@ -548,6 +548,33 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!roleDescription.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "roledescription", roleDescription.utf8().data());
 
+    // We need to expose the live region attributes even if the live region is currently disabled/off.
+    if (auto liveContainer = coreObject->ariaLiveRegionAncestor(false)) {
+        String liveStatus = liveContainer->ariaLiveRegionStatus();
+        String relevant = liveContainer->ariaLiveRegionRelevant();
+        bool isAtomic = liveContainer->ariaLiveRegionAtomic();
+        String liveRole = roleString.isEmpty() ? computedRoleString : roleString;
+
+        // According to the Core AAM, we need to expose the above properties with "container-" prefixed
+        // object attributes regardless of whether the container is this object, or an ancestor of it.
+        attributeSet = addToAtkAttributeSet(attributeSet, "container-live", liveStatus.utf8().data());
+        attributeSet = addToAtkAttributeSet(attributeSet, "container-relevant", relevant.utf8().data());
+        if (isAtomic)
+            attributeSet = addToAtkAttributeSet(attributeSet, "container-atomic", "true");
+        if (!liveRole.isEmpty())
+            attributeSet = addToAtkAttributeSet(attributeSet, "container-live-role", liveRole.utf8().data());
+
+        // According to the Core AAM, if this object is the live region (rather than its descendant),
+        // we must expose the above properties on the object without a "container-" prefix.
+        if (liveContainer == coreObject) {
+            attributeSet = addToAtkAttributeSet(attributeSet, "live", liveStatus.utf8().data());
+            attributeSet = addToAtkAttributeSet(attributeSet, "relevant", relevant.utf8().data());
+            if (isAtomic)
+                attributeSet = addToAtkAttributeSet(attributeSet, "atomic", "true");
+        } else if (!isAtomic && coreObject->ariaLiveRegionAtomic())
+            attributeSet = addToAtkAttributeSet(attributeSet, "atomic", "true");
+    }
+
     return attributeSet;
 }
 

@@ -2497,14 +2497,16 @@ const AtomicString& AccessibilityObject::placeholderValue() const
     return nullAtom();
 }
     
-bool AccessibilityObject::isInsideARIALiveRegion() const
+bool AccessibilityObject::isInsideARIALiveRegion(bool excludeIfOff) const
 {
-    if (supportsARIALiveRegion())
-        return true;
+    return ariaLiveRegionAncestor(excludeIfOff);
+}
     
-    return AccessibilityObject::matchedParent(*this, false, [] (const AccessibilityObject& object) {
-        return object.supportsARIALiveRegion();
-    }) != nullptr;
+AccessibilityObject* AccessibilityObject::ariaLiveRegionAncestor(bool excludeIfOff) const
+{
+    return const_cast<AccessibilityObject*>(AccessibilityObject::matchedParent(*this, true, [excludeIfOff] (const AccessibilityObject& object) {
+        return object.supportsARIALiveRegion(excludeIfOff);
+    }));
 }
 
 bool AccessibilityObject::supportsARIAAttributes() const
@@ -2535,9 +2537,10 @@ bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomicString& liveRegi
     return equalLettersIgnoringASCIICase(liveRegionStatus, "polite") || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive");
 }
     
-bool AccessibilityObject::supportsARIALiveRegion() const
+bool AccessibilityObject::supportsARIALiveRegion(bool excludeIfOff) const
 {
-    return liveRegionStatusIsEnabled(ariaLiveRegionStatus());
+    const AtomicString& liveRegionStatus = ariaLiveRegionStatus();
+    return excludeIfOff ? liveRegionStatusIsEnabled(liveRegionStatus) : !liveRegionStatus.isEmpty();
 }
 
 AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
