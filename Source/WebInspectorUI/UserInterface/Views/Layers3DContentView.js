@@ -127,8 +127,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
             return;
 
         WI.domTreeManager.requestDocument((node) => {
-            WI.layerTreeManager.layersForNode(node, (layerForNode, childLayers) => {
-                this._updateLayers(childLayers);
+            WI.layerTreeManager.layersForNode(node, (layers) => {
+                this._updateLayers(layers);
                 this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
             });
         });

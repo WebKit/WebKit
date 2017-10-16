@@ -122,17 +122,8 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
     {
         console.assert(this.supported);
 
-        LayerTreeAgent.layersForNode(node.id, function(error, layers) {
-            if (error || isEmptyObject(layers)) {
-                callback(null, []);
-                return;
-            }
-
-            layers = layers.map(WI.Layer.fromPayload);
-
-            var firstLayer = layers[0];
-            var layerForNode = firstLayer.nodeId === node.id && !firstLayer.isGeneratedContent ? layers.shift() : null;
-            callback(layerForNode, layers);
+        LayerTreeAgent.layersForNode(node.id, (error, layers) => {
+            callback(error ? [] : layers.map(WI.Layer.fromPayload));
         });
     }
 

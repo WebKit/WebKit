@@ -1,3 +1,13 @@
+2017-10-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Layers tab mistakenly throws out the root element's layer.
+        https://bugs.webkit.org/show_bug.cgi?id=178222
+
+        Reviewed by Brian Burg.
+
+        * inspector/layers/layer-tree-manager-expected.txt: Added.
+        * inspector/layers/layer-tree-manager.html: Added.
+
 2017-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Adjust one more test from constant() to env() after r177581

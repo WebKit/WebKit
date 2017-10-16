@@ -79,7 +79,9 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         if (!this.domNode)
             return;
 
-        WI.layerTreeManager.layersForNode(this.domNode, (layerForNode, childLayers) => {
+        WI.layerTreeManager.layersForNode(this.domNode, (layers) => {
+            let layerForNode = layers[0] && layers[0].nodeId === this.domNode.id && !layers[0].isGeneratedContent ? layers[0] : null;
+            let childLayers = layers.slice(layerForNode ? 1 : 0);
             this._unfilteredChildLayers = childLayers;
             this._updateDisplayWithLayers(layerForNode, childLayers);
         });

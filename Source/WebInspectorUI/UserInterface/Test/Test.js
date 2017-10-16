@@ -39,6 +39,7 @@ WI.loaded = function()
     InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
     InspectorBackend.registerTimelineDispatcher(new WI.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WI.CSSObserver);
+    InspectorBackend.registerLayerTreeDispatcher(new WI.LayerTreeObserver);
     InspectorBackend.registerRuntimeDispatcher(new WI.RuntimeObserver);
     InspectorBackend.registerWorkerDispatcher(new WI.WorkerObserver);
     InspectorBackend.registerCanvasDispatcher(new WI.CanvasObserver);
@@ -58,6 +59,7 @@ WI.loaded = function()
     this.memoryManager = new WI.MemoryManager;
     this.timelineManager = new WI.TimelineManager;
     this.debuggerManager = new WI.DebuggerManager;
+    this.layerTreeManager = new WI.LayerTreeManager;
     this.probeManager = new WI.ProbeManager;
     this.workerManager = new WI.WorkerManager;
     this.domDebuggerManager = new WI.DOMDebuggerManager;

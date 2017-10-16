@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LayerTreeManager");
+
+    suite.addTestCase({
+        name: "LayerTreeManager.layersForNode.root",
+        description: "Calling the LayerTreeManager#layersForNode method with the root node should the full layer list.",
+        test(resolve, reject) {
+            WI.domTreeManager.requestDocument((node) => {
+                WI.layerTreeManager.layersForNode(node, (layers) => {
+                    InspectorTest.expectEqual(layers.length, 5, "Returned array should include all layers.");
+                    InspectorTest.expectThat(layers.every((layer) => layer instanceof WI.Layer), "Array elements should be Layer instances.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.regular {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+.composited {
+    top: 25px;
+    left: 25px;
+    width: 50px;
+    height: 50px;
+    background-color: blue;
+    -webkit-transform: translateZ(0);
+}
+
+.offset {
+    left: 200px;
+    -webkit-transform: translateZ(0);
+}
+</style>
+</head>
+<body onload="runTest()">
+<p>Tests for LayerTreeManager.</p>
+<div class="regular"></div>
+<div class="composited">
+    <div class="composited"></div>
+</div>
+<div class="regular offset">
+    <div class="composited"></div>
+</div>
+</body>
+</html>
