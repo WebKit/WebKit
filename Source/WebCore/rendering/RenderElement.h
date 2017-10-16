@@ -203,9 +203,6 @@ public:
     bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
     void setHasCounterNodeMap(bool f) { m_hasCounterNodeMap = f; }
 
-    bool isCSSAnimating() const { return m_isCSSAnimating; }
-    void setIsCSSAnimating(bool b) { m_isCSSAnimating = b; }
-    
     const RenderElement* enclosingRendererWithTextDecoration(TextDecoration, bool firstLine) const;
     void drawLineForBoxSide(GraphicsContext&, const FloatRect&, BoxSide, Color, EBorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false) const;
 
@@ -338,7 +335,6 @@ private:
     unsigned m_renderBoxNeedsLazyRepaint : 1;
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
-    unsigned m_isCSSAnimating : 1;
     unsigned m_hasContinuation : 1;
     mutable unsigned m_hasValidCachedFirstLineStyle : 1;
 

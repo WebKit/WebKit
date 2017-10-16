@@ -1,3 +1,41 @@
+2017-09-12  Antti Koivisto  <antti@apple.com>
+
+        Remove RenderElement::isCSSAnimating boolean
+        https://bugs.webkit.org/show_bug.cgi?id=176779
+
+        Reviewed by Andreas Kling.
+
+        This optimization can be replaced with a simple style test that doesn't require keeping
+        two sources of truth in sync.
+
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::ensureCompositeAnimation):
+        (WebCore::CSSAnimationControllerPrivate::clear):
+
+            Can't test here as style might have become non-animating and we don't clear animation when that happens.
+            This is only called on renderer destruction so it is not an important optimization.
+
+        (WebCore::CSSAnimationControllerPrivate::isRunningAnimationOnRenderer const):
+        (WebCore::CSSAnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer const):
+        (WebCore::CSSAnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::CSSAnimationControllerPrivate::computeExtentOfAnimation const):
+        (WebCore::CSSAnimationController::cancelAnimations):
+        (WebCore::CSSAnimationController::getAnimatedStyleForRenderer):
+        (WebCore::CSSAnimationController::computeExtentOfAnimation const):
+        (WebCore::CSSAnimationController::isRunningAnimationOnRenderer const):
+        (WebCore::CSSAnimationController::isRunningAcceleratedAnimationOnRenderer const):
+
+            Test if the style has any animations. This is roughly equivalent of the old test.
+            (it is actually somewhat better as the boolean was never cleared on style changes)
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::isCSSAnimating const): Deleted.
+        (WebCore::RenderElement::setIsCSSAnimating): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasAnimationsOrTransitions const):
+
 2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Use transferred size over content size for automatic minimum size

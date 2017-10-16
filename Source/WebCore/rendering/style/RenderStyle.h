@@ -662,7 +662,7 @@ public:
     AnimationList* animations() { return m_rareNonInheritedData->animations.get(); }
     AnimationList* transitions() { return m_rareNonInheritedData->transitions.get(); }
     
-    bool hasAnimationsOrTransitions() const { return m_rareNonInheritedData->hasAnimationsOrTransitions(); }
+    bool hasAnimationsOrTransitions() const { return hasAnimations() || hasTransitions(); }
 
     AnimationList& ensureAnimations();
     AnimationList& ensureTransitions();
