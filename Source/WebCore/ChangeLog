@@ -1,3 +1,17 @@
+2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebKit should claim that it can show responses for a broader range of JSON MIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=176252
+        <rdar://problem/34212885>
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/MIMETypeRegistry.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::canShowMIMEType):
+        Extend this to support JavaScript and JSON MIMETypes that WebKit
+        knows how to treat as text.
+
 2017-09-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] grid shorthand should not reset the gutter properties

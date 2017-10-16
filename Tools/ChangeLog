@@ -1,3 +1,30 @@
+2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        WebKit should claim that it can show responses for a broader range of JSON MIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=176252
+        <rdar://problem/34212885>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKNavigationResponse.mm: Added.
+        (-[WKNavigationResponseTestNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[WKNavigationResponseTestNavigationDelegate webView:didCommitNavigation:]):
+        (-[WKNavigationResponseTestSchemeHandler webView:startURLSchemeTask:]):
+        (-[WKNavigationResponseTestSchemeHandler webView:stopURLSchemeTask:]):
+        (TEST):
+        Test for canShowMIMEType with multiple JSON mime types and a garbage mime type.
+        Previously canShowMIMEType would have been YES for "application/json" but
+        NO for "application/vnd.api+json". Now it shows YES for both.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/MIMETypeRegistry.cpp: Added.
+        (TestWebKitAPI::TEST):
+        Tests for MIMETypeRegistry's dynamic JSON mime type detection.
+
 2017-09-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][CMake] Add "dist" and "distcheck" targets
