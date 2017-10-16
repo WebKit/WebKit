@@ -363,7 +363,12 @@ void ResourceHandleCurlDelegate::willSendRequest()
     }
 
     ResourceResponse responseCopy = response();
-    m_handle->client()->willSendRequestAsync(m_handle, WTFMove(newRequest), WTFMove(responseCopy));
+    if (m_handle->client()->usesAsyncCallbacks())
+        m_handle->client()->willSendRequestAsync(m_handle, WTFMove(newRequest), WTFMove(responseCopy));
+    else {
+        auto request = m_handle->client()->willSendRequest(m_handle, WTFMove(newRequest), WTFMove(responseCopy));
+        continueAfterWillSendRequest(WTFMove(request));
+    }
 }
 
 void ResourceHandleCurlDelegate::continueWillSendRequest(ResourceRequest&& request)
@@ -439,7 +444,7 @@ void ResourceHandleCurlDelegate::handleDataURL()
 
     if (base64) {
         data = decodeURLEscapeSequences(data);
-        m_handle->didReceiveResponse(WTFMove(response));
+        m_handle->client()->didReceiveResponse(m_handle, WTFMove(response));
 
         // didReceiveResponse might cause the client to be deleted.
         if (m_handle->client()) {
@@ -450,7 +455,7 @@ void ResourceHandleCurlDelegate::handleDataURL()
     } else {
         TextEncoding encoding(charset);
         data = decodeURLEscapeSequences(data, encoding);
-        m_handle->didReceiveResponse(WTFMove(response));
+        m_handle->client()->didReceiveResponse(m_handle, WTFMove(response));
 
         // didReceiveResponse might cause the client to be deleted.
         if (m_handle->client()) {

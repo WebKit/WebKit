@@ -1,3 +1,15 @@
+2017-10-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r223271.
+
+        This change introduced LayoutTest failures on WK1.
+
+        Reverted changeset:
+
+        "Use asynchronous ResourceHandleClient calls for WebKit1"
+        https://bugs.webkit.org/show_bug.cgi?id=160677
+        https://trac.webkit.org/changeset/223271
+
 2017-10-13  Youenn Fablet  <youenn@apple.com>
 
         Implement listing origins for which CacheStorage is storing data

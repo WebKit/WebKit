@@ -276,6 +276,7 @@ void ResourceHandle::platformContinueSynchronousDidReceiveResponse()
 void ResourceHandle::continueWillSendRequest(ResourceRequest&& request)
 {
     ASSERT(isMainThread());
+    ASSERT(!client() || client()->usesAsyncCallbacks());
 
     if (d->m_delegate)
         d->m_delegate->continueWillSendRequest(WTFMove(request));

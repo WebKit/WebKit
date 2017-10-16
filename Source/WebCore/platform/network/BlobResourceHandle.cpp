@@ -74,12 +74,8 @@ class BlobResourceSynchronousLoader : public ResourceHandleClient {
 public:
     BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&);
 
-    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) final;
-    void didFail(ResourceHandle*, const ResourceError&) final;
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) final;
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&) final;
-#endif
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
+    void didFail(ResourceHandle*, const ResourceError&) override;
 
 private:
     ResourceError& m_error;
@@ -94,26 +90,11 @@ BlobResourceSynchronousLoader::BlobResourceSynchronousLoader(ResourceError& erro
 {
 }
 
-void BlobResourceSynchronousLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&)
-{
-    ASSERT_NOT_REACHED();
-    handle->continueWillSendRequest(WTFMove(request));
-}
-
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void BlobResourceSynchronousLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace&)
-{
-    ASSERT_NOT_REACHED();
-    handle->continueCanAuthenticateAgainstProtectionSpace(false);
-}
-#endif
-
-void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response)
+void BlobResourceSynchronousLoader::didReceiveResponse(ResourceHandle* handle, ResourceResponse&& response)
 {
     // We cannot handle the size that is more than maximum integer.
     if (response.expectedContentLength() > INT_MAX) {
         m_error = ResourceError(webKitBlobResourceDomain, static_cast<int>(BlobResourceHandle::Error::NotReadableError), response.url(), "File is too large");
-        handle->continueDidReceiveResponse();
         return;
     }
 
@@ -122,7 +103,6 @@ void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* hand
     // Read all the data.
     m_data.resize(static_cast<size_t>(response.expectedContentLength()));
     static_cast<BlobResourceHandle*>(handle)->readSync(m_data.data(), static_cast<int>(m_data.size()));
-    handle->continueDidReceiveResponse();
 }
 
 void BlobResourceSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
@@ -179,6 +159,9 @@ void BlobResourceHandle::cancel()
 
 void BlobResourceHandle::continueDidReceiveResponse()
 {
+    ASSERT(m_async);
+    ASSERT(usesAsyncCallbacks());
+
     m_buffer.resize(bufferSize);
     readAsync();
 }
@@ -245,6 +228,10 @@ void BlobResourceHandle::getSizeForNext()
         if (m_async) {
             Ref<BlobResourceHandle> protectedThis(*this);
             notifyResponse();
+            if (!usesAsyncCallbacks()) {
+                m_buffer.resize(bufferSize);
+                readAsync();
+            }
         }
         return;
     }
@@ -435,6 +422,7 @@ int BlobResourceHandle::readFileSync(const BlobDataItem& item, char* buf, int le
 void BlobResourceHandle::readAsync()
 {
     ASSERT(isMainThread());
+    ASSERT(m_async);
 
     // Do not continue if the request is aborted or an error occurs.
     if (erroredOrAborted())
@@ -458,6 +446,7 @@ void BlobResourceHandle::readAsync()
 void BlobResourceHandle::readDataAsync(const BlobDataItem& item)
 {
     ASSERT(isMainThread());
+    ASSERT(m_async);
     ASSERT(item.data().data());
 
     Ref<BlobResourceHandle> protectedThis(*this);
@@ -472,6 +461,7 @@ void BlobResourceHandle::readDataAsync(const BlobDataItem& item)
 void BlobResourceHandle::readFileAsync(const BlobDataItem& item)
 {
     ASSERT(isMainThread());
+    ASSERT(m_async);
 
     if (m_fileOpened) {
         m_asyncStream->read(m_buffer.data(), m_buffer.size());
@@ -585,7 +575,7 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
     // Notably, this will affect a name suggested in "File Save As".
 
-    client()->didReceiveResponseAsync(this, WTFMove(response));
+    didReceiveResponse(WTFMove(response));
 }
 
 void BlobResourceHandle::notifyResponseOnError()
@@ -608,7 +598,7 @@ void BlobResourceHandle::notifyResponseOnError()
         break;
     }
 
-    client()->didReceiveResponseAsync(this, WTFMove(response));
+    didReceiveResponse(WTFMove(response));
 }
 
 void BlobResourceHandle::notifyReceiveData(const char* data, int bytesRead)

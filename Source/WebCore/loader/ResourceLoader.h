@@ -184,9 +184,9 @@ private:
     void finishNetworkLoad();
 
     // ResourceHandleClient
+    ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&& redirectResponse) override;
     void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) override;
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength) override;
     void didFinishLoading(ResourceHandle*) override;
@@ -196,7 +196,7 @@ private:
     bool shouldUseCredentialStorage(ResourceHandle*) override { return shouldUseCredentialStorage(); }
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) override { didReceiveAuthenticationChallenge(challenge); } 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&) override;
+    bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace) override { return canAuthenticateAgainstProtectionSpace(protectionSpace); }
 #endif
     void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) override { receivedCancellation(challenge); }
 #if PLATFORM(IOS)

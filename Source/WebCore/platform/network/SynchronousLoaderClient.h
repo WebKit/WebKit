@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef SynchronousLoaderClient_h
+#define SynchronousLoaderClient_h
 
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
-#include <wtf/Function.h>
-#include <wtf/MessageQueue.h>
 
 namespace WebCore {
 
@@ -41,26 +40,28 @@ public:
     const ResourceResponse& response() const { return m_response; }
     Vector<char>& mutableData() { return m_data; }
     const ResourceError& error() const { return m_error; }
-    MessageQueue<Function<void()>>& messageQueue() { return m_messageQueue; }
+    bool isDone() { return m_isDone; }
 
     WEBCORE_EXPORT static ResourceError platformBadResponseError();
 
 private:
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
+    ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
     bool shouldUseCredentialStorage(ResourceHandle*) override;
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
-    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) override;
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
     void didFinishLoading(ResourceHandle*) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&) override;
+    bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) override;
 #endif
 
     bool m_allowStoredCredentials { false };
     ResourceResponse m_response;
     Vector<char> m_data;
     ResourceError m_error;
-    MessageQueue<Function<void()>> m_messageQueue;
+    bool m_isDone { false };
 };
 }
+
+#endif // SynchronousLoaderClient_h

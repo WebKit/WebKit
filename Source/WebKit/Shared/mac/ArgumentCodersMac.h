@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef ArgumentCodersMac_h
+#define ArgumentCodersMac_h
 
-#include <objc/objc.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSArray;
@@ -93,3 +93,5 @@ void encode(Encoder&, NSURL *);
 bool decode(Decoder&, RetainPtr<NSURL>&);
 
 } // namespace IPC
+
+#endif // ArgumentCodersMac_h

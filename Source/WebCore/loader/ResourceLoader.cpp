@@ -618,15 +618,12 @@ ResourceError ResourceLoader::cannotShowURLError()
     return frameLoader()->client().cannotShowURLError(m_request);
 }
 
-void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse)
+ResourceRequest ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
-    RefPtr<ResourceHandle> protectedHandle(handle);
-    if (documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(this, request, redirectResponse)) {
-        handle->continueWillSendRequest(WTFMove(request));
-        return;
-    }
+    if (documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(this, request, redirectResponse))
+        return WTFMove(request);
     willSendRequestInternal(request, redirectResponse);
-    handle->continueWillSendRequest(WTFMove(request));
+    return WTFMove(request);
 }
 
 void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
@@ -634,14 +631,11 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
     didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void ResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response)
+void ResourceLoader::didReceiveResponse(ResourceHandle*, ResourceResponse&& response)
 {
-    if (documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(this, response)) {
-        handle->continueDidReceiveResponse();
+    if (documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(this, response))
         return;
-    }
     didReceiveResponse(response);
-    handle->continueDidReceiveResponse();
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, unsigned length, int encodedDataLength)
@@ -712,10 +706,6 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void ResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace& protectionSpace)
-{
-    handle->continueCanAuthenticateAgainstProtectionSpace(canAuthenticateAgainstProtectionSpace(protectionSpace));
-}
 
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {

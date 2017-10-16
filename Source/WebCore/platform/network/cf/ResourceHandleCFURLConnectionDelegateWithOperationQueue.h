@@ -30,15 +30,13 @@
 #include "ResourceHandleCFURLConnectionDelegate.h"
 #include <CFNetwork/CFNetwork.h>
 #include <dispatch/queue.h>
-#include <wtf/Function.h>
-#include <wtf/MessageQueue.h>
-#include <wtf/threads/BinarySemaphore.h>
+#include <dispatch/semaphore.h>
 
 namespace WebCore {
 
 class ResourceHandleCFURLConnectionDelegateWithOperationQueue final : public ResourceHandleCFURLConnectionDelegate {
 public:
-    ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle*, MessageQueue<Function<void()>>*);
+    ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle*);
     virtual ~ResourceHandleCFURLConnectionDelegateWithOperationQueue();
 
 private:
@@ -57,21 +55,23 @@ private:
     void didReceiveChallenge(CFURLAuthChallengeRef) override;
     void didSendBodyData(CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite) override;
     Boolean shouldUseCredentialStorage() override;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    Boolean canRespondToProtectionSpace(CFURLProtectionSpaceRef) override;
+#endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
     void continueWillSendRequest(CFURLRequestRef) override;
     void continueDidReceiveResponse() override;
     void continueWillCacheResponse(CFCachedURLResponseRef) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    Boolean canRespondToProtectionSpace(CFURLProtectionSpaceRef) override;
     void continueCanAuthenticateAgainstProtectionSpace(bool) override;
-#endif
+#endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
-    BinarySemaphore m_semaphore;
-    MessageQueue<Function<void()>>* m_messageQueue { nullptr };
+    dispatch_queue_t m_queue;
+    dispatch_semaphore_t m_semaphore;
 
     RetainPtr<CFURLRequestRef> m_requestResult;
     RetainPtr<CFCachedURLResponseRef> m_cachedResponseResult;
-    bool m_boolResult { false };
+    bool m_boolResult;
 };
 
 } // namespace WebCore.
