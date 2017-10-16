@@ -1,3 +1,17 @@
+2017-10-16  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest http/tests/cache-storage/cache-clearing-origin.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=178305
+        <rdar://problem/34990264>
+
+        Unreviewed.
+
+        Removing flaky test expectations based on dashboard.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-10-16  Chris Dumez  <cdumez@apple.com>
 
         Clicks on Link with download attribute causes all (other) links to trigger download when clicked
