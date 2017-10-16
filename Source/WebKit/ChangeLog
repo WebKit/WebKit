@@ -1,5 +1,39 @@
 2017-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Rename PLUGIN_ARCHITECTURE(X11) as PLUGIN_ARCHITECTURE(UNIX)
+        https://bugs.webkit.org/show_bug.cgi?id=176330
+
+        Reviewed by Michael Catanzaro.
+
+        It's no longer X11 specific since it's also used in Wayland when the X11 target is enabled. It should be renamed
+        as UNIX and make it available when building the wayland target even if the X11 on is disabled.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp: Renamed from Source/WebKit/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::getPluginInfo):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_InvalidateRect):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::initialize):
+        (WebKit::NetscapePlugin::destroy):
+        (WebKit::NetscapePlugin::geometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp:
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.h:
+        * config.h:
+
+2017-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Wrong use of PLUGIN_ARCHITECTURE(X11) in several places
         https://bugs.webkit.org/show_bug.cgi?id=176329
 

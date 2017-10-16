@@ -49,7 +49,7 @@ class PluginProcessManager;
 class WebProcessProxy;
 struct PluginProcessCreationParameters;
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
 struct RawPluginMetaData {
     String name;
     String description;
@@ -89,7 +89,7 @@ public:
 
 #endif
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
     static bool scanPlugin(const String& pluginPath, RawPluginMetaData& result);
 #endif
 

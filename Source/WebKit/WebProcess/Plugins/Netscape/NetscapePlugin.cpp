@@ -42,7 +42,7 @@
 #include <utility>
 #include <wtf/text/CString.h>
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
 #include "NetscapePluginUnix.h"
 #endif
 
@@ -656,11 +656,13 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
             paramNames.append("wmode");
             paramValues.append("opaque");
         }
-    } else if (equalLettersIgnoringASCIICase(parameters.mimeType, "application/x-webkit-test-netscape")) {
+    }
+#endif
+
+    if (equalLettersIgnoringASCIICase(parameters.mimeType, "application/x-webkit-test-netscape")) {
         paramNames.append("windowedPlugin");
         paramValues.append("false");
     }
-#endif
 
     // The strings that these pointers point to are kept alive by paramNames and paramValues.
     Vector<const char*> names;
@@ -723,7 +725,7 @@ void NetscapePlugin::destroy()
     // Stop all streams.
     stopAllStreams();
 
-#if !PLUGIN_ARCHITECTURE(MAC) && !PLUGIN_ARCHITECTURE(X11)
+#if !PLUGIN_ARCHITECTURE(MAC) && !PLUGIN_ARCHITECTURE(UNIX)
     m_npWindow.window = 0;
     callSetWindow();
 #endif
@@ -795,7 +797,7 @@ void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&
     m_clipRect = clipRect;
     m_pluginToRootViewTransform = pluginToRootViewTransform;
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
     IntPoint frameRectLocationInWindowCoordinates = m_pluginToRootViewTransform.mapPoint(IntPoint());
     m_frameRectInWindowCoordinates = IntRect(frameRectLocationInWindowCoordinates, m_pluginSize);
 #endif

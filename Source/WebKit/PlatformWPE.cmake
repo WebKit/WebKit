@@ -99,7 +99,7 @@ list(APPEND WebKit2_SOURCES
     Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
     Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
 
-    Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
+    Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
 
     Shared/cairo/ShareableBitmapCairo.cpp
 

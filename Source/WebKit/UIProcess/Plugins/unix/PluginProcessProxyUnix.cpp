@@ -76,17 +76,18 @@ static bool pluginRequiresGtk2(const String& pluginPath)
 }
 #endif
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
 bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
 {
-#if PLATFORM(GTK)
     String pluginProcessPath = executablePathOfPluginProcess();
 
 #if PLATFORM(GTK)
     bool requiresGtk2 = pluginRequiresGtk2(pluginPath);
     if (requiresGtk2) {
-        if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
+#if PLATFORM(WAYLAND)
+        if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
             return false;
+#endif
 #if ENABLE(PLUGIN_PROCESS_GTK2)
         pluginProcessPath.append('2');
         if (!fileExists(pluginProcessPath))
@@ -152,11 +153,8 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     result.requiresGtk2 = requiresGtk2;
 #endif
     return !result.mimeDescription.isEmpty();
-#else // PLATFORM(GTK)
-    return false;
-#endif // PLATFORM(GTK)
 }
-#endif // PLUGIN_ARCHITECTURE(X11)
+#endif // PLUGIN_ARCHITECTURE(UNIX)
 
 } // namespace WebKit
 

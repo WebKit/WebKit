@@ -65,7 +65,7 @@ public:
 
     Module* module() const { return m_module.get(); }
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
     static bool scanPlugin(const String& pluginPath);
     static void parseMIMEDescription(const String& mimeDescription, Vector<WebCore::MimeClassInfo>& result);
     static String buildMIMEDescription(const Vector<WebCore::MimeClassInfo>&);
@@ -76,7 +76,7 @@ private:
 
     void determineQuirks();
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
     bool getPluginInfoForLoadedPlugin(RawPluginMetaData&);
 #endif
 
