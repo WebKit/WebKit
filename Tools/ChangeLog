@@ -1,3 +1,13 @@
+2017-09-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Add a switch to start the mini-browser in full-screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=176904
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2017-09-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Improve Ctrl+W and Ctrl+Q shortcuts in MiniBrowser
