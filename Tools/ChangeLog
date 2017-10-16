@@ -1,3 +1,10 @@
+2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix.
+
+        * TestWebKitAPI/PlatformWPE.cmake:
+        Link WebCore archives into the TestWebCore binary as a group.
+
 2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebKit should claim that it can show responses for a broader range of JSON MIMETypes
