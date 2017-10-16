@@ -85,26 +85,25 @@ static Expected<URL, ASCIILiteral> resolveModuleSpecifier(Document& document, co
     return result;
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
+JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
 {
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
-    auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(exec, &globalObject);
-    auto promise = DeferredPromise::create(globalObject, jsPromise);
+    JSC::VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We use a Symbol as a special purpose; It means this module is an inline module.
     // So there is no correct URL to retrieve the module source code. If the module name
     // value is a Symbol, it is used directly as a module key.
-    if (moduleNameValue.isSymbol()) {
-        promise->resolve<IDLAny>(JSC::Symbol::create(exec->vm(), asSymbol(moduleNameValue)->privateName().uid()));
-        return jsPromise.promise();
-    }
+    if (moduleNameValue.isSymbol())
+        return JSC::Identifier::fromUid(asSymbol(moduleNameValue)->privateName());
 
     if (!moduleNameValue.isString()) {
-        promise->reject(TypeError, ASCIILiteral("Importer module key is not a Symbol or a String."));
-        return jsPromise.promise();
+        JSC::throwTypeError(exec, scope, ASCIILiteral("Importer module key is not a Symbol or a String."));
+        return { };
     }
 
     String specifier = asString(moduleNameValue)->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
     URL baseURL;
     if (isRootModule(importerModuleKey))
         baseURL = m_document.baseURL();
@@ -120,12 +119,11 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
 
     auto result = resolveModuleSpecifier(m_document, specifier, baseURL);
     if (!result) {
-        promise->reject(TypeError, result.error());
-        return jsPromise.promise();
+        JSC::throwTypeError(exec, scope, result.error());
+        return { };
     }
 
-    promise->resolve<IDLDOMString>(result->string());
-    return jsPromise.promise();
+    return JSC::Identifier::fromString(&vm, result->string());
 }
 
 static void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)

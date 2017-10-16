@@ -202,7 +202,7 @@ JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* modul
     return deferred->promise();
 }
 
-JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer, JSValue scriptFetcher)
+Identifier JSModuleLoader::resolveSync(ExecState* exec, JSValue name, JSValue referrer, JSValue scriptFetcher)
 {
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [resolve] ", printableModuleKey(exec, name), "\n");
@@ -210,9 +210,25 @@ JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValu
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderResolve)
         return globalObject->globalObjectMethodTable()->moduleLoaderResolve(globalObject, exec, this, name, referrer, scriptFetcher);
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
-    deferred->resolve(exec, name);
-    return deferred->promise();
+    return name.toPropertyKey(exec);
+}
+
+JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer, JSValue scriptFetcher)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, exec->lexicalGlobalObject());
+    scope.releaseAssertNoException();
+    const Identifier moduleKey = resolveSync(exec, name, referrer, scriptFetcher);
+    if (UNLIKELY(scope.exception())) {
+        JSValue exception = scope.exception();
+        scope.clearException();
+        return deferred->reject(exec, exception);
+    }
+    auto result = deferred->resolve(exec, identifierToJSValue(vm, moduleKey));
+    scope.releaseAssertNoException();
+    return result;
 }
 
 JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue parameters, JSValue scriptFetcher)

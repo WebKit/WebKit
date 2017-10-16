@@ -54,8 +54,6 @@ void AbstractModuleRecord::finishCreation(ExecState* exec, VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("registryEntry")), jsUndefined());
-    putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("evaluated")), jsBoolean(false));
 
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSMap* map = JSMap::create(exec, vm, globalObject()->mapStructure());
@@ -149,10 +147,10 @@ AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(ExecState*
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue moduleNameValue = identifierToJSValue(exec, moduleName);
-    JSValue pair = m_dependenciesMap->JSMap::get(exec, moduleNameValue);
+    JSValue entry = m_dependenciesMap->JSMap::get(exec, moduleNameValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
     scope.release();
-    return jsCast<AbstractModuleRecord*>(pair.get(exec, Identifier::fromString(exec, "value")));
+    return jsCast<AbstractModuleRecord*>(entry.get(exec, Identifier::fromString(exec, "module")));
 }
 
 auto AbstractModuleRecord::resolveImport(ExecState* exec, const Identifier& localName) -> Resolution

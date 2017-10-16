@@ -72,6 +72,7 @@ public:
     // Platform dependent hooked APIs.
     JSInternalPromise* importModule(ExecState*, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer);
     JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer, JSValue scriptFetcher);
+    Identifier resolveSync(ExecState*, JSValue name, JSValue referrer, JSValue scriptFetcher);
     JSInternalPromise* fetch(ExecState*, JSValue key, JSValue parameters, JSValue scriptFetcher);
     JSObject* createImportMetaProperties(ExecState*, JSValue key, JSModuleRecord*, JSValue scriptFetcher);
 

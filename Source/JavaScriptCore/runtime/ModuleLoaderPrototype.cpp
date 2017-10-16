@@ -27,6 +27,7 @@
 #include "ModuleLoaderPrototype.h"
 
 #include "BuiltinNames.h"
+#include "CatchScope.h"
 #include "CodeProfiling.h"
 #include "Error.h"
 #include "Exception.h"
@@ -52,6 +53,7 @@ static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeRequestedModules(ExecSt
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeEvaluate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolve(ExecState*);
+static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolveSync(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeGetModuleNamespaceObject(ExecState*);
 
@@ -86,6 +88,7 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
     parseModule                    moduleLoaderPrototypeParseModule                    DontEnum|Function 2
     requestedModules               moduleLoaderPrototypeRequestedModules               DontEnum|Function 1
     resolve                        moduleLoaderPrototypeResolve                        DontEnum|Function 2
+    resolveSync                    moduleLoaderPrototypeResolveSync                    DontEnum|Function 2
     fetch                          moduleLoaderPrototypeFetch                          DontEnum|Function 3
 @end
 */
@@ -180,6 +183,19 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolve(ExecState* exec)
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->resolve(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
+}
+
+EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolveSync(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
+    if (!loader)
+        return JSValue::encode(jsUndefined());
+    auto result = loader->resolveSync(exec, exec->argument(0), exec->argument(1), exec->argument(2));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    return JSValue::encode(identifierToJSValue(vm, result));
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState* exec)
