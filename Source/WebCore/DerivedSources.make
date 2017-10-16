@@ -57,7 +57,6 @@ VPATH = \
     $(WebCore)/Modules/webdriver \
     $(WebCore)/Modules/websockets \
     $(WebCore)/Modules/webvr \
-    $(WebCore)/animation \
     $(WebCore)/bindings/js \
     $(WebCore)/crypto \
     $(WebCore)/crypto/keys \
@@ -1391,7 +1390,6 @@ PREPROCESS_IDLS_SCRIPTS = \
 
 IDL_INCLUDES = \
     $(WebCore)/Modules \
-    $(WebCore)/animation \
     $(WebCore)/css \
     $(WebCore)/crypto \
     $(WebCore)/dom \

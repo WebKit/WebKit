@@ -46,7 +46,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/Modules/webvr"
     "${WEBCORE_DIR}/accessibility"
-    "${WEBCORE_DIR}/animation"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bridge"
@@ -142,7 +141,6 @@ set(WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 set(WebCore_IDL_INCLUDES
-    animation
     css
     dom
     fileapi
