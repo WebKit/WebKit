@@ -1,3 +1,26 @@
+2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Use transferred size over content size for automatic minimum size
+        https://bugs.webkit.org/show_bug.cgi?id=176688
+
+        Reviewed by Sergio Villar Senin.
+
+        CSS WG has agreed to modify the spec so now the transferred size is used
+        (if it exists) independently if it's bigger or smaller
+        than the content size.
+        See: https://github.com/w3c/csswg-drafts/issues/1149
+
+        The spec text (https://drafts.csswg.org/css-grid/#min-size-auto):
+          "The automatic minimum size for a grid item in a given dimension is
+           its specified size if it exists, otherwise its transferred size
+           if that exists, else its content size"
+
+        This patch use the WPT tests updated to check the new behavior.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+        Modified so it always returns the transferred size (if any).
+
 2017-09-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] aria-autocomplete not exposed on comboboxes

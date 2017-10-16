@@ -1,3 +1,23 @@
+2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Use transferred size over content size for automatic minimum size
+        https://bugs.webkit.org/show_bug.cgi?id=176688
+
+        Reviewed by Sergio Villar Senin.
+
+        Import changes on the tests related to the new behavior.
+
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-006.html:
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-007.html:
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-008.html:
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-009.html:
+        * web-platform-tests/css/css-grid-1/grid-items/grid-minimum-size-grid-items-021.html:
+        * web-platform-tests/css/css-grid-1/grid-items/support/100x50-green.png: Removed.
+        * web-platform-tests/css/css-grid-1/grid-items/support/25x50-green.png: Added.
+        * web-platform-tests/css/css-grid-1/grid-items/support/50x100-green.png: Removed.
+        * web-platform-tests/css/css-grid-1/grid-items/support/50x25-green.png: Added.
+        * web-platform-tests/css/css-grid-1/grid-items/support/w3c-import.log:
+
 2017-09-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] grid shorthand should not reset the gutter properties
