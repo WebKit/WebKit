@@ -1,3 +1,9 @@
+2017-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust one more test from constant() to env() after r177581
+
+        * fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html:
+
 2017-10-16  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest http/tests/cache-storage/cache-clearing-origin.https.html is a flaky failure
