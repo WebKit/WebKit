@@ -1,0 +1,31 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function eventhandler1() {
+txt.appendChild(kg);
+}
+
+function eventhandler2() {
+anim.appendChild(kg);
+}
+
+function eventhandler3() {
+table.scrollIntoView(true);
+testRunner.notifyDone();
+}
+
+</script>
+This test passes if it doesn't assert or crash.
+<table id="table"></table>
+<form>
+<input id="kg" autofocus="autofocus">
+</form>
+<svg>
+<animate id="anim" attributeName="text-anchor" from="middle" to="inherit" onbegin="eventhandler1()" />
+<text id="txt" onload="eventhandler3()">
+<font color="white"></font>
+<select onfocus="eventhandler2()" autofocus="autofocus">
+<textarea>a</textarea>
+<iframe onload="eventhandler1()"></iframe>
