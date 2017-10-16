@@ -1,0 +1,122 @@
+<style>
+canvas {
+    width: 200px;
+    height: 200px;
+}
+</style>
+</head>
+<script id="vertexShaderSource" type="text/glsl">
+attribute vec4 position;
+void main() {
+  gl_Position = position;
+}
+</script>
+<script id="fragmentShaderSource" type="text/glsl">
+precision mediump float;
+uniform vec4 color;
+void main() {
+  gl_FragColor = color;
+}
+</script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function output(msg) {
+    let d = document.querySelector("div");
+    d.innerHTML += `${msg}<br>`;
+}
+
+function drawTriangle() {
+
+    let canvas = document.querySelector("canvas");
+    canvas.width = 200;
+    canvas.height = 200;
+    let gl = canvas.getContext("webgl");
+
+    let vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, document.getElementById("vertexShaderSource").textContent);
+    gl.compileShader(vertexShader);
+    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        output("Vertex Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(vertexShader));
+        return;
+    }
+    output("Vertex Shader compiled.");
+
+    let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, document.getElementById("fragmentShaderSource").textContent);
+    gl.compileShader(fragmentShader);
+    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        output("Fragment Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(fragmentShader));
+        return;
+    }
+    output("Fragment Shader compiled.");
+
+    let program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        output("Unable to link shaders into program.");
+        return;
+    }
+    output("Program linked. Detaching and deleting shaders.");
+
+    gl.detachShader(program, vertexShader);
+    gl.detachShader(program, fragmentShader);
+    gl.deleteShader(vertexShader);
+    gl.deleteShader(fragmentShader);
+
+    gl.useProgram(program);
+
+    let colorUniform = gl.getUniformLocation(program, "color");
+    if (colorUniform)
+        output("Color uniform location was identified.");
+    else {
+        output("FAIL: Color uniform location was not found.");
+        return;
+    }
+
+    let positionAttribute = gl.getAttribLocation(program, "position");
+    if (positionAttribute >= 0)
+        output("Position attribute location was identified.");
+    else {
+        output("FAIL: Position attribute location was not found.");
+        return;
+    }
+
+    gl.enableVertexAttribArray(positionAttribute);
+
+    let vertices = new Float32Array([
+       -0.8, -0.3,
+       0.7, -0.8,
+       0.55, 0.75
+    ]);
+
+    let triangleBuffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    let now = Date.now();
+    gl.uniform4fv(colorUniform, [1.0, 0.0, 0.0, 1.0]);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
+    gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    output("Drawn.");
+}
+
+window.addEventListener("load", drawTriangle, false);
+</script>
+<body>
+    <canvas></canvas>
+    <div></div>
+</body>

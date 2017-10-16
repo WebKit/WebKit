@@ -1340,8 +1340,13 @@ private:
         }
     };
 
+    // FIXME: Shaders are never removed from this map, even if they and their program are deleted.
+    // This is bad, and it also relies on the fact we never reuse Platform3DObject numbers.
     typedef HashMap<Platform3DObject, ShaderSourceEntry> ShaderSourceMap;
     ShaderSourceMap m_shaderSourceMap;
+
+    typedef HashMap<Platform3DObject, std::pair<Platform3DObject, Platform3DObject>> LinkedShaderMap;
+    LinkedShaderMap m_linkedShaderMap;
 
     struct ActiveShaderSymbolCounts {
         Vector<GC3Dint> filteredToActualAttributeIndexMap;
@@ -1369,6 +1374,8 @@ private:
     String mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
     String mappedSymbolName(Platform3DObject shaders[2], size_t count, const String& name);
     String originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
+    std::optional<String> mappedSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType, const String& name);
+    std::optional<String> originalSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType, const String& name);
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 

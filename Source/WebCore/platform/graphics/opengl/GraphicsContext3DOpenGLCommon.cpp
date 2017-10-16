@@ -922,6 +922,21 @@ static String generateHashedName(const String& name)
     return builder.toString();
 }
 
+std::optional<String> GraphicsContext3D::mappedSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType symbolType, const String& name)
+{
+    auto result = m_shaderSourceMap.find(shader);
+    if (result == m_shaderSourceMap.end())
+        return std::nullopt;
+
+    const auto& symbolMap = result->value.symbolMap(symbolType);
+    auto symbolEntry = symbolMap.find(name);
+    if (symbolEntry == symbolMap.end())
+        return std::nullopt;
+
+    auto& mappedName = symbolEntry->value.mappedName;
+    return String(mappedName.c_str(), mappedName.length());
+}
+
 String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType symbolType, const String& name)
 {
     GC3Dsizei count = 0;
@@ -929,16 +944,21 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
     getAttachedShaders(program, 2, &count, shaders);
 
     for (GC3Dsizei i = 0; i < count; ++i) {
-        ShaderSourceMap::iterator result = m_shaderSourceMap.find(shaders[i]);
-        if (result == m_shaderSourceMap.end())
-            continue;
+        auto mappedName = mappedSymbolInShaderSourceMap(shaders[i], symbolType, name);
+        if (mappedName)
+            return mappedName.value();
+    }
 
-        const ShaderSymbolMap& symbolMap = result->value.symbolMap(symbolType);
-        ShaderSymbolMap::const_iterator symbolEntry = symbolMap.find(name);
-        if (symbolEntry != symbolMap.end()) {
-            const std::string& mappedName = symbolEntry->value.mappedName;
-            return String(mappedName.c_str(), mappedName.length());
-        }
+    // We might have detached or deleted the shaders after linking.
+    auto result = m_linkedShaderMap.find(program);
+    if (result != m_linkedShaderMap.end()) {
+        auto linkedShaders = result->value;
+        auto mappedName = mappedSymbolInShaderSourceMap(linkedShaders.first, symbolType, name);
+        if (mappedName)
+            return mappedName.value();
+        mappedName = mappedSymbolInShaderSourceMap(linkedShaders.second, symbolType, name);
+        if (mappedName)
+            return mappedName.value();
     }
 
     if (symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE && !name.isEmpty()) {
@@ -948,7 +968,7 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
             nameHashMapForShaders = std::make_unique<ShaderNameHash>();
         setCurrentNameHashMapForShader(nameHashMapForShaders.get());
 
-        String generatedName = generateHashedName(name);
+        auto generatedName = generateHashedName(name);
 
         setCurrentNameHashMapForShader(nullptr);
 
@@ -959,7 +979,21 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
 
     return name;
 }
-    
+
+std::optional<String> GraphicsContext3D::originalSymbolInShaderSourceMap(Platform3DObject shader, ANGLEShaderSymbolType symbolType, const String& name)
+{
+    auto result = m_shaderSourceMap.find(shader);
+    if (result == m_shaderSourceMap.end())
+        return std::nullopt;
+
+    const auto& symbolMap = result->value.symbolMap(symbolType);
+    for (const auto& symbolEntry : symbolMap) {
+        if (name == symbolEntry.value.mappedName.c_str())
+            return symbolEntry.key;
+    }
+    return std::nullopt;
+}
+
 String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType symbolType, const String& name)
 {
     GC3Dsizei count;
@@ -967,15 +1001,21 @@ String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShad
     getAttachedShaders(program, 2, &count, shaders);
     
     for (GC3Dsizei i = 0; i < count; ++i) {
-        ShaderSourceMap::iterator result = m_shaderSourceMap.find(shaders[i]);
-        if (result == m_shaderSourceMap.end())
-            continue;
-        
-        const ShaderSymbolMap& symbolMap = result->value.symbolMap(symbolType);
-        for (const auto& symbolEntry : symbolMap) {
-            if (name == symbolEntry.value.mappedName.c_str())
-                return symbolEntry.key;
-        }
+        auto originalName = originalSymbolInShaderSourceMap(shaders[i], symbolType, name);
+        if (originalName)
+            return originalName.value();
+    }
+
+    // We might have detached or deleted the shaders after linking.
+    auto result = m_linkedShaderMap.find(program);
+    if (result != m_linkedShaderMap.end()) {
+        auto linkedShaders = result->value;
+        auto originalName = originalSymbolInShaderSourceMap(linkedShaders.first, symbolType, name);
+        if (originalName)
+            return originalName.value();
+        originalName = originalSymbolInShaderSourceMap(linkedShaders.second, symbolType, name);
+        if (originalName)
+            return originalName.value();
     }
 
     if (symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE && !name.isEmpty()) {
@@ -1140,6 +1180,14 @@ void GraphicsContext3D::linkProgram(Platform3DObject program)
 {
     ASSERT(program);
     makeContextCurrent();
+
+    GC3Dsizei count = 0;
+    Platform3DObject shaders[2] = { };
+    getAttachedShaders(program, 2, &count, shaders);
+
+    if (count == 2)
+        m_linkedShaderMap.set(program, std::make_pair(shaders[0], shaders[1]));
+
     ::glLinkProgram(program);
 }
 
@@ -1845,6 +1893,7 @@ void GraphicsContext3D::deleteFramebuffer(Platform3DObject framebuffer)
 void GraphicsContext3D::deleteProgram(Platform3DObject program)
 {
     makeContextCurrent();
+    m_shaderProgramSymbolCountMap.remove(program);
     glDeleteProgram(program);
 }
 

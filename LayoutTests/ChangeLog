@@ -1,3 +1,17 @@
+2017-09-08  Dean Jackson  <dino@apple.com>
+
+        gl.detachShader breaks shader program
+        https://bugs.webkit.org/show_bug.cgi?id=137689
+        <rdar://problem/34025056>
+
+        Reviewed by Sam Weinig.
+
+        Test that detaches and deletes shaders after linking, but before
+        asking for uniform locations.
+
+        * fast/canvas/webgl/detachShader-before-accessing-uniform-expected.txt: Added.
+        * fast/canvas/webgl/detachShader-before-accessing-uniform.html: Added.
+
 2017-09-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] grid shorthand should not reset the gutter properties
