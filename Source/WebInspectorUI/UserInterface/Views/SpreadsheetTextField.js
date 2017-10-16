@@ -225,6 +225,28 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return;
         }
 
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+            let delta = 1;
+            if (event.metaKey)
+                delta = 100;
+            else if (event.shiftKey)
+                delta = 10;
+            else if (event.altKey)
+                delta = 0.1;
+
+            if (event.key === "ArrowDown")
+                delta = -delta;
+
+            let didModify = WI.incrementElementValue(this._element, delta);
+            if (!didModify)
+                return;
+
+            event.stop();
+
+            if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
+                this._delegate.spreadsheetTextFieldDidChange(this);
+        }
+
         if (event.key === "Escape") {
             event.stop();
             this._discardChange();
