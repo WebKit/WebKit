@@ -41,6 +41,8 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringHash.h>
 
+#define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
+
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIPasteboard)
@@ -52,7 +54,7 @@ PlatformPasteboard::PlatformPasteboard()
 {
 }
 
-#if PLATFORM(IOS) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV))
+#if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
 PlatformPasteboard::PlatformPasteboard(const String& name)
 {
     if (name == "data interaction pasteboard")
@@ -113,8 +115,10 @@ Vector<String> PlatformPasteboard::filenamesForDataInteraction()
 
 static bool pasteboardMayContainFilePaths(id<AbstractPasteboard> pasteboard)
 {
+#if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
     if ([pasteboard isKindOfClass:[WebItemProviderPasteboard class]])
         return false;
+#endif
 
     for (NSString *type in pasteboard.pasteboardTypes) {
         if (Pasteboard::shouldTreatCocoaTypeAsFile(type))
@@ -208,7 +212,7 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
     return { };
 }
 
-#if PLATFORM(IOS) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV))
+#if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
 
 static NSString *webIOSPastePboardType = @"iOS rich content paste pasteboard type";
 
@@ -578,7 +582,7 @@ URL PlatformPasteboard::readURL(int index, const String& type, String& title)
     if (!allowReadingURLAtIndex(url, index))
         return { };
 
-#if PLATFORM(IOS) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV))
+#if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
     title = [url _title];
 #else
     UNUSED_PARAM(title);
