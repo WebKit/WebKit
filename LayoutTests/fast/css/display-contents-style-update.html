@@ -1,0 +1,15 @@
+<!doctype html>
+<div id="contents" style="display: contents; color: green; border: 10px solid red;">
+  <div>
+    Passes if the text is green and there's no border.
+  </div>
+</div>
+<script>
+document.body.offsetTop;
+
+let contents = document.getElementById("contents");
+
+contents.style.color = "red";
+document.body.offsetTop;
+contents.style.color = "green";
+</script>

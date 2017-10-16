@@ -1,3 +1,13 @@
+2017-09-18  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Always update display: contents styles in RenderTreeUpdater.
+        https://bugs.webkit.org/show_bug.cgi?id=177065
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/display-contents-style-update-expected.html: Added.
+        * fast/css/display-contents-style-update.html: Added.
+
 2017-09-18  Antti Koivisto  <antti@apple.com>
 
         Avoid style resolution when clearing focused element.

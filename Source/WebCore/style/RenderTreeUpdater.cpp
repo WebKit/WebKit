@@ -306,12 +306,10 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     }
 
     bool hasDisplayContents = update.style->display() == CONTENTS;
-    if (hasDisplayContents != element.hasDisplayContents()) {
-        if (!hasDisplayContents)
-            element.resetComputedStyle();
-        else
-            element.storeDisplayContentsStyle(RenderStyle::clonePtr(*update.style));
-    }
+    if (hasDisplayContents)
+        element.storeDisplayContentsStyle(RenderStyle::clonePtr(*update.style));
+    else
+        element.resetComputedStyle();
 
     bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents;
     if (shouldCreateNewRenderer) {
