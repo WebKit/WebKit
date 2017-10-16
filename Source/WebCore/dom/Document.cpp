@@ -5542,6 +5542,25 @@ void Document::detachRange(Range* range)
     m_ranges.remove(range);
 }
 
+bool Document::hasTouchEventHandlers() const
+{
+#if ENABLE(TOUCH_EVENTS)
+    return m_touchEventTargets && m_touchEventTargets->size();
+#else
+    return false;
+#endif
+}
+
+bool Document::touchEventTargetsContain(Node& node) const
+{
+#if ENABLE(TOUCH_EVENTS)
+    return m_touchEventTargets && m_touchEventTargets->contains(&node);
+#else
+    UNUSED_PARAM(node);
+    return false;
+#endif
+}
+    
 std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)
 {
     HTMLCanvasElement* element = getCSSCanvasElement(name);
