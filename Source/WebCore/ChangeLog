@@ -1,3 +1,18 @@
+2017-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERTION FAILED: !m_valueOrException under FontFaceSet::completedLoading loading a Serious Eats page
+        https://bugs.webkit.org/show_bug.cgi?id=175899
+
+        Reviewed by Tim Horton.
+
+        Slight style update to r221835. Also adds a test.
+
+        Test: fast/text/document-fonts-while-loading-crash.html
+
+        * css/CSSFontFaceSet.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::FontFaceSet):
+
 2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Stretching auto tracks should be done as part of the track sizing algorithm
