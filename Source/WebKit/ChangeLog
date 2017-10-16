@@ -1,3 +1,9 @@
+2017-09-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, move webkit_hit_test_result_context_is_scrollbar in documentation
+
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+
 2017-09-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Merge ProcessLauncher[WPE,GTK]
