@@ -248,19 +248,31 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
 
 void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&&)>&& replyHandler, CommandResult&& result) const
 {
-    RefPtr<InspectorObject> responseObject;
+    // §6.3 Processing Model.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#processing-model
+    RefPtr<InspectorValue> resultValue;
     if (result.isError()) {
-        responseObject = InspectorObject::create();
-        responseObject->setString(ASCIILiteral("error"), result.errorString());
-        responseObject->setString(ASCIILiteral("message"), result.errorMessage().value_or(emptyString()));
-        responseObject->setString(ASCIILiteral("stacktrace"), emptyString());
+        // When required to send an error.
+        // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-an-error
+        // Let body be a new JSON Object initialised with the following properties: "error", "message", "stacktrace".
+        auto errorObject = InspectorObject::create();
+        errorObject->setString(ASCIILiteral("error"), result.errorString());
+        errorObject->setString(ASCIILiteral("message"), result.errorMessage().value_or(emptyString()));
+        errorObject->setString(ASCIILiteral("stacktrace"), emptyString());
+        // If the error data dictionary contains any entries, set the "data" field on body to a new JSON Object populated with the dictionary.
         if (auto& additionalData = result.additionalErrorData())
-            responseObject->setObject(ASCIILiteral("data"), RefPtr<InspectorObject> { additionalData });
-    } else {
-        responseObject = InspectorObject::create();
-        auto resultValue = result.result();
-        responseObject->setValue(ASCIILiteral("value"), resultValue ? WTFMove(resultValue) : InspectorValue::null());
-    }
+            errorObject->setObject(ASCIILiteral("data"), RefPtr<InspectorObject> { additionalData });
+        // Send a response with status and body as arguments.
+        resultValue = WTFMove(errorObject);
+    } else if (auto value = result.result())
+        resultValue = WTFMove(value);
+    else
+        resultValue = InspectorValue::null();
+
+    // When required to send a response.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
+    RefPtr<InspectorObject> responseObject = InspectorObject::create();
+    responseObject->setValue(ASCIILiteral("value"), WTFMove(resultValue));
     replyHandler({ result.httpStatusCode(), responseObject->toJSONString().utf8(), ASCIILiteral("application/json; charset=utf-8") });
 }
 
