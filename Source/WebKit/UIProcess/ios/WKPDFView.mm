@@ -601,6 +601,9 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
             _currentFindSelection = match;
 
             CGRect zoomRect = [pageInfo.view convertRectFromPDFPageSpace:match.bounds];
+            if (CGRectIsNull(zoomRect))
+                return;
+
             [self zoom:pageInfo.view.get() to:zoomRect atPoint:CGPointZero kind:kUIPDFObjectKindText];
 
             return;

@@ -1,3 +1,17 @@
+2017-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Safari crashes after searching PDF (under [WKPDFView zoom:to:atPoint:kind:])
+        https://bugs.webkit.org/show_bug.cgi?id=178358
+        <rdar://problem/34676899>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _didFindMatch:]):
+        UIPDFSelection can return a null rect as the selection's bounds.
+        We can't zoom to a null rect (and doing so results in CA throwing an
+        exception later).
+
 2017-10-16  Alex Christensen  <achristensen@webkit.org>
 
         Add a _WKThumbnailView initializer with a WKWebView
