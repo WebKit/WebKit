@@ -1,3 +1,15 @@
+2017-09-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] atk_table_get_n_rows() and atk_table_get_n_columns() should return values of aria-rowcount and aria-colcount, if present
+        https://bugs.webkit.org/show_bug.cgi?id=171172
+
+        Reviewed by Chris Fleizach.
+
+        Generated platform-specific expectations to reflect the new behavior.
+
+        * accessibility/aria-table-attributes.html: Modified to handle platform differences.
+        * platform/gtk/accessibility/aria-table-attributes-expected.txt: Added.
+
 2017-09-19  Zalan Bujtas  <zalan@apple.com>
 
         Add missing text after r222226.

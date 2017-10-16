@@ -1,3 +1,20 @@
+2017-09-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] atk_table_get_n_rows() and atk_table_get_n_columns() should return values of aria-rowcount and aria-colcount, if present
+        https://bugs.webkit.org/show_bug.cgi?id=171172
+
+        Reviewed by Chris Fleizach.
+
+        Modify webKitAccessibleTableGetNColumns() and webkitAccessibleTableGetNRows()
+        to prefer the ARIA value over the DOM-based value.
+
+        No new tests needed: We already have coverage through aria-table-attributes.html.
+        Platform expectations for this test were updated.
+
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (webkitAccessibleTableGetNColumns):
+        (webkitAccessibleTableGetNRows):
+
 2017-09-20  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Completely garbled display in GMail
