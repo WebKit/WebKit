@@ -1,3 +1,21 @@
+2017-10-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Don't use intrinsic width if our container's width is zero
+        https://bugs.webkit.org/show_bug.cgi?id=178073
+
+        Reviewed by Sergio Villar Senin.
+
+        New rebaseline for width100percent-image.html test.
+
+        * fast/replaced/container-width-zero-expected.txt: Added.
+        * fast/replaced/container-width-zero.html: Added.
+        * platform/ios/fast/replaced/width100percent-image-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-image-expected.png:
+        * platform/gtk/fast/replaced/width100percent-image-expected.txt:
+        * platform/mac/fast/replaced/width100percent-image-expected.png:
+        * platform/mac/fast/replaced/width100percent-image-expected.txt:
+        * platform/win/TestExpectations: Skips test as it needs a rebaseline.
+
 2017-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         On ToT, event.dataTransfer.getData("text/uri-list") returns an empty string when dragging an image

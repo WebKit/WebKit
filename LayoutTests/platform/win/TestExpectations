@@ -82,6 +82,7 @@ fast/css/text-overflow-ellipsis.html [ Skip ]
 fast/css/text-overflow-ellipsis-bidi.html [ Skip ]
 fast/css/text-overflow-ellipsis-strict.html [ Skip ]
 
+webkit.org/b/178337 fast/replaced/width100percent-image.html [ Skip ]
 
 ################################################################################
 ##############    Missing Functionality Prevents Testing        ################
