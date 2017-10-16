@@ -1,3 +1,12 @@
+2017-09-20  Alberto Garcia  <berto@igalia.com>
+
+        Fix HPPA and Alpha builds
+        https://bugs.webkit.org/show_bug.cgi?id=177224
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2017-09-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Add ENABLE_WEB_CRYPTO option and make ENABLE_SUBTLE_CRYPTO depend on it.

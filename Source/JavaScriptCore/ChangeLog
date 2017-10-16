@@ -1,3 +1,12 @@
+2017-09-20  Alberto Garcia  <berto@igalia.com>
+
+        Fix HPPA and Alpha builds
+        https://bugs.webkit.org/show_bug.cgi?id=177224
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2017-08-30  Saam Barati  <sbarati@apple.com>
 
         semicolon is being interpreted as an = in the LiteralParser
