@@ -195,7 +195,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
 
-    UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
+    UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 
     UIProcess/linux/MemoryPressureMonitor.cpp
 
@@ -1015,7 +1015,7 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
         UIProcess/Launcher/ProcessLauncher.cpp
 
-        UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
+        UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 
         UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
