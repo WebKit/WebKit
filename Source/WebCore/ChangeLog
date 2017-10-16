@@ -1,3 +1,30 @@
+2017-09-03  Darin Adler  <darin@apple.com>
+
+        Follow up FrameView::updateLayoutAndStyleIfNeededRecursive changes with related improvements
+        https://bugs.webkit.org/show_bug.cgi?id=176277
+
+        Reviewed by Antti Koivisto.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::needsStyleRecalcOrLayout): Deleted. This function was only used
+        by an assertion inside updateLayoutAndStyleIfNeededRecursive, and thus there is no reason
+        for it to be in the header file, or for it to be a public member function.
+        (WebCore::appendRenderedChildren): Deleted. This function was only used inside
+        updateLayoutAndStyleIfNeededRecursive, and it is now packaged in an even better way
+        for efficient use inside that function.
+        (WebCore::FrameView::renderedChildFrameViews): Deleted. This function was only used
+        inside needsStyleRecalcOrLayout, and it's now packaged in a better way inside that function.
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive): Created a new lambda called
+        nextRendereredDescendant that packages up the process of repeatedly iterating this view
+        and all of its descendants in an easy-to-use way. Replaces both of the functions above.
+        Rewrote to use it; it made the logic clear enough that it was good to get rid of the
+        updateOneFrame lambda, too. Added two separate functions, one that checks for needed
+        style recalculation and a separate one that checked for needed layout. Using those,
+        replaced the old single assertion with two separate assertions.
+
+        * page/FrameView.h: Removed needsStyleRecalcOrLayout, renderedChildFrameViews, and
+        FrameViewList.
+
 2017-09-06  Tomas Popela  <tpopela@redhat.com>
 
         Missing break in URLParser

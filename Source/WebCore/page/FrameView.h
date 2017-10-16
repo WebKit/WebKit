@@ -122,8 +122,6 @@ public:
     WEBCORE_EXPORT void setNeedsLayout();
     void setViewportConstrainedObjectsNeedLayout();
 
-    bool needsStyleRecalcOrLayout(bool includeSubframes = true) const;
-
     bool needsFullRepaint() const { return m_needsFullRepaint; }
 
     WEBCORE_EXPORT bool renderedCharactersExceed(unsigned threshold);
@@ -605,9 +603,6 @@ public:
     void willRemoveWidgetFromRenderTree(Widget&);
 
     const HashSet<Widget*>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
-
-    typedef Vector<Ref<FrameView>, 16> FrameViewList;
-    FrameViewList renderedChildFrameViews() const;
 
     void addTrackedRepaintRect(const FloatRect&);
 

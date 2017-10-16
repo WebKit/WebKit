@@ -3150,25 +3150,6 @@ bool FrameView::layoutPending() const
     return m_layoutTimer.isActive();
 }
 
-bool FrameView::needsStyleRecalcOrLayout(bool includeSubframes) const
-{
-    if (frame().document() && frame().document()->childNeedsStyleRecalc())
-        return true;
-    
-    if (needsLayout())
-        return true;
-
-    if (!includeSubframes)
-        return false;
-
-    for (auto& frameView : renderedChildFrameViews()) {
-        if (frameView->needsStyleRecalcOrLayout())
-            return true;
-    }
-
-    return false;
-}
-
 bool FrameView::needsLayout() const
 {
     // This can return true in cases where the document does not have a body yet.
@@ -4574,30 +4555,9 @@ void FrameView::paintOverhangAreas(GraphicsContext& context, const IntRect& hori
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
 
-static void appendRenderedChildren(FrameView& view, Deque<Ref<FrameView>, 16>& deque)
-{
-    for (Frame* frame = view.frame().tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
-        if (frame->view())
-            deque.append(*frame->view());
-    }
-}
-
-// FIXME: Change the one remaining caller of this to use appendRenderedChildren above instead,
-// and then remove FrameViewList and renderedChildFrameViews.
-FrameView::FrameViewList FrameView::renderedChildFrameViews() const
-{
-    FrameViewList childViews;
-    for (Frame* frame = m_frame->tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
-        if (frame->view())
-            childViews.append(*frame->view());
-    }
-    
-    return childViews;
-}
-
 void FrameView::updateLayoutAndStyleIfNeededRecursive()
 {
-    // Style updating, render tree, creation, and layout needs to be done multiple times
+    // Style updating, render tree creation, and layout needs to be done multiple times
     // for more than one reason. But one reason is that when an <object> element determines
     // what it needs to load a subframe, a second pass is needed. That requires update
     // passes equal to the number of levels of DOM nesting. That is why this number is large.
@@ -4610,40 +4570,62 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
 
     AnimationUpdateBlock animationUpdateBlock(&frame().animation());
 
-    auto updateOnce = [this] {
-        auto updateOneFrame = [] (FrameView& view) {
-            bool didWork = view.frame().document()->updateStyleIfNeeded();
-            if (view.needsLayout()) {
-                view.layout();
-                didWork = true;
+    using DescendantsDeque = Deque<Ref<FrameView>, 16>;
+    auto nextRenderedDescendant = [this] (DescendantsDeque& descendantsDeque) -> RefPtr<FrameView> {
+        if (descendantsDeque.isEmpty())
+            descendantsDeque.append(*this);
+        else {
+            // Append renderered children after processing the parent, in case the processing
+            // affects the set of rendered children.
+            auto previousView = descendantsDeque.takeFirst();
+            for (auto* frame = previousView->frame().tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
+                if (auto* view = frame->view())
+                    descendantsDeque.append(*view);
             }
-            return didWork;
-        };
-
-        bool didWork = false;
-
-        // Use a copy of the child frame list because it can change while updating.
-        Deque<Ref<FrameView>, 16> views;
-        views.append(*this);
-        while (!views.isEmpty()) {
-            auto view = views.takeFirst();
-            if (updateOneFrame(view.get()))
-                didWork = true;
-            appendRenderedChildren(view.get(), views);
+            if (descendantsDeque.isEmpty())
+                return nullptr;
         }
-
-        return didWork;
+        return descendantsDeque.first().ptr();
     };
 
     for (unsigned i = 0; i < maxUpdatePasses; ++i) {
-        if (!updateOnce())
+        bool didWork = false;
+        DescendantsDeque deque;
+        while (auto view = nextRenderedDescendant(deque)) {
+            if (view->frame().document()->updateStyleIfNeeded())
+                didWork = true;
+            if (view->needsLayout()) {
+                view->layout();
+                didWork = true;
+            }
+        }
+        if (!didWork)
             break;
     }
 
-    // FIXME: Unclear why it's appropriate to skip this assertion for non-main frames.
-    // The need for this may be obsolete and a leftover from when this fucntion was
-    // implemented by recursively calling itself.
-    ASSERT(!frame().isMainFrame() || !needsStyleRecalcOrLayout());
+#if !ASSERT_DISABLED
+    auto needsStyleRecalc = [&] {
+        DescendantsDeque deque;
+        while (auto view = nextRenderedDescendant(deque)) {
+            auto* document = view->frame().document();
+            if (document && document->childNeedsStyleRecalc())
+                return true;
+        }
+        return false;
+    };
+
+    auto needsLayout = [&] {
+        DescendantsDeque deque;
+        while (auto view = nextRenderedDescendant(deque)) {
+            if (view->needsLayout())
+                return true;
+        }
+        return false;
+    };
+#endif
+
+    ASSERT(!needsStyleRecalc());
+    ASSERT(!needsLayout());
 }
 
 bool FrameView::qualifiesAsVisuallyNonEmpty() const
