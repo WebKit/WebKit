@@ -307,7 +307,7 @@ FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID 
 
     // Find the enclosing frame scrolling node.
     ScrollingStateNode* parentNode = stateNode;
-    while (parentNode && parentNode->nodeType() != FrameScrollingNode)
+    while (parentNode && !parentNode->isFrameScrollingNode())
         parentNode = parentNode->parent();
     
     if (!parentNode)

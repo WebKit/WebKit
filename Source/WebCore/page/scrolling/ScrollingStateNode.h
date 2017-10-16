@@ -196,7 +196,7 @@ public:
 
     bool isFixedNode() const { return m_nodeType == FixedNode; }
     bool isStickyNode() const { return m_nodeType == StickyNode; }
-    bool isScrollingNode() const { return m_nodeType == FrameScrollingNode || m_nodeType == OverflowScrollingNode; }
+    bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
     bool isFrameScrollingNode() const { return m_nodeType == FrameScrollingNode; }
     bool isOverflowScrollingNode() const { return m_nodeType == OverflowScrollingNode; }
 

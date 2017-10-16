@@ -82,7 +82,7 @@ void ScrollingTreeNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextB
 ScrollingTreeFrameScrollingNode* ScrollingTreeNode::enclosingFrameNode() const
 {
     ScrollingTreeNode* node = parent();
-    while (node && node->nodeType() != FrameScrollingNode)
+    while (node && !node->isFrameScrollingNode())
         node = node->parent();
 
     return downcast<ScrollingTreeFrameScrollingNode>(node);
