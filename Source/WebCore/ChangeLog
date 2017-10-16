@@ -1,3 +1,32 @@
+2017-09-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Images may render partial frames even after loading all the encoded data
+        https://bugs.webkit.org/show_bug.cgi?id=177406
+
+        Reviewed by Simon Fraser.
+
+        Because we do not want to block the main thread waiting for the image decoding
+        thread to terminate, we let the decoding thread finish its work even it will
+        be thrown away. If a new decoding thread is created and the SynchronizedFixedQueue
+        is reopened, the terminating decoding thread might have the chance to process
+        a new frame request. After it finishes decoding it, it realize that it is
+        terminating so it will drop the decoded frame to the floor. So the new request
+        was not processed by the new thread and because it was processed by the
+        terminating thread, nothing will be reported to the BitmapImage object and
+        the renderer will not be repainted.
+
+        The fix is to create a new SynchronizedFixedQueue every time a decoding 
+        thread is created. This will guarantee that the terminating thread won't
+        have access to the new frame request and will shut down after being notified
+        by the old SynchronizedFixedQueue that it has been closed.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::frameRequestQueue):
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
+        (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex):
+        (WebCore::ImageFrameCache::stopAsyncDecodingQueue):
+        * platform/graphics/ImageFrameCache.h:
+
 2017-09-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GTK] HTMLMediaElement resize event not fired when video size changes

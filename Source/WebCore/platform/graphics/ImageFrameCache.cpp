@@ -270,18 +270,24 @@ Ref<WorkQueue> ImageFrameCache::decodingQueue()
     return *m_decodingQueue;
 }
 
+Ref<ImageFrameCache::FrameRequestQueue> ImageFrameCache::frameRequestQueue()
+{
+    if (!m_frameRequestQueue)
+        m_frameRequestQueue = FrameRequestQueue::create();
+    
+    return *m_frameRequestQueue;
+}
+
 void ImageFrameCache::startAsyncDecodingQueue()
 {
     if (hasAsyncDecodingQueue() || !isDecoderAvailable())
         return;
 
-    m_frameRequestQueue.open();
-
     // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
-    decodingQueue()->dispatch([protectedThis = makeRef(*this), protectedQueue = decodingQueue(), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] {
+    decodingQueue()->dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = decodingQueue(), protectedFrameRequestQueue = frameRequestQueue(), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] {
         ImageFrameRequest frameRequest;
 
-        while (protectedThis->m_frameRequestQueue.dequeue(frameRequest)) {
+        while (protectedFrameRequestQueue->dequeue(frameRequest)) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
 
             // Get the frame NativeImage on the decoding thread.
@@ -294,7 +300,7 @@ void ImageFrameCache::startAsyncDecodingQueue()
             }
 
             // Update the cached frames on the main thread to avoid updating the MemoryCache from a different thread.
-            callOnMainThread([protectedThis = protectedThis.copyRef(), protectedQueue = protectedQueue.copyRef(), protectedDecoder = protectedDecoder.copyRef(), sourceURL = sourceURL.isolatedCopy(), nativeImage = WTFMove(nativeImage), frameRequest] () mutable {
+            callOnMainThread([protectedThis = protectedThis.copyRef(), protectedQueue = protectedDecodingQueue.copyRef(), protectedDecoder = protectedDecoder.copyRef(), sourceURL = sourceURL.isolatedCopy(), nativeImage = WTFMove(nativeImage), frameRequest] () mutable {
                 // The queue may have been closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called.
                 if (protectedQueue.ptr() == protectedThis->m_decodingQueue && protectedDecoder.ptr() == protectedThis->m_decoder) {
                     ASSERT(protectedThis->m_frameCommitQueue.first() == frameRequest);
@@ -317,7 +323,7 @@ void ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
     DecodingStatus decodingStatus = m_decoder->frameIsCompleteAtIndex(index) ? DecodingStatus::Complete : DecodingStatus::Partial;
 
     LOG(Images, "ImageFrameCache::%s - %p - url: %s [enqueuing frame %ld for decoding]", __FUNCTION__, this, sourceURL().string().utf8().data(), index);
-    m_frameRequestQueue.enqueue({ index, subsamplingLevel, sizeForDrawing, decodingStatus });
+    m_frameRequestQueue->enqueue({ index, subsamplingLevel, sizeForDrawing, decodingStatus });
     m_frameCommitQueue.append({ index, subsamplingLevel, sizeForDrawing, decodingStatus });
 }
 
@@ -339,7 +345,10 @@ void ImageFrameCache::stopAsyncDecodingQueue()
         }
     });
 
-    m_frameRequestQueue.close();
+    // Close m_frameRequestQueue then set it to nullptr. A new decoding thread might start and a
+    // new m_frameRequestQueue will be created. So the terminating thread will not have access to it.
+    m_frameRequestQueue->close();
+    m_frameRequestQueue = nullptr;
     m_frameCommitQueue.clear();
     m_decodingQueue = nullptr;
     LOG(Images, "ImageFrameCache::%s - %p - url: %s [decoding has been stopped]", __FUNCTION__, this, sourceURL().string().utf8().data());

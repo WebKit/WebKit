@@ -135,7 +135,10 @@ private:
     void cacheNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus = DecodingStatus::Invalid);
     void cacheNativeImageAtIndexAsync(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus);
 
+    struct ImageFrameRequest;
+    static const int BufferSize = 8;
     Ref<WorkQueue> decodingQueue();
+    Ref<SynchronizedFixedQueue<ImageFrameRequest, BufferSize>> frameRequestQueue();
 
     const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
@@ -157,10 +160,9 @@ private:
             return index == other.index && subsamplingLevel == other.subsamplingLevel && decodingOptions == other.decodingOptions && decodingStatus == other.decodingStatus;
         }
     };
-    static const int BufferSize = 8;
     using FrameRequestQueue = SynchronizedFixedQueue<ImageFrameRequest, BufferSize>;
     using FrameCommitQueue = Deque<ImageFrameRequest, BufferSize>;
-    FrameRequestQueue m_frameRequestQueue;
+    RefPtr<FrameRequestQueue> m_frameRequestQueue;
     FrameCommitQueue m_frameCommitQueue;
     RefPtr<WorkQueue> m_decodingQueue;
 

@@ -28,17 +28,23 @@
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
 
 template<typename T, size_t BufferSize>
-class SynchronizedFixedQueue {
+class SynchronizedFixedQueue : public ThreadSafeRefCounted<SynchronizedFixedQueue<T, BufferSize>> {
 public:
+    static Ref<SynchronizedFixedQueue> create()
+    {
+        return adoptRef(*new SynchronizedFixedQueue());
+    }
+
     SynchronizedFixedQueue()
     {
         static_assert(!((BufferSize - 1) & BufferSize), "BufferSize must be power of 2.");
     }
-    
+
     void open()
     {
         LockHolder lockHolder(m_mutex);
@@ -49,7 +55,7 @@ public:
         m_open = true;
         m_queue.clear();
     }
-    
+
     void close()
     {
         LockHolder lockHolder(m_mutex);
@@ -60,7 +66,7 @@ public:
         m_open = false;
         m_condition.notifyAll();
     }
-    
+
     bool isOpen()
     {
         LockHolder lockHolder(m_mutex);
@@ -73,11 +79,11 @@ public:
 
         // Wait for an empty place to be available in the queue.
         m_condition.wait(m_mutex, [this]() { return !m_open || m_queue.size() < BufferSize; });
-        
+
         // The queue is closing, exit immediately.
         if (!m_open)
             return false;
-        
+
         // Add the item in the queue.
         m_queue.append(value);
 
@@ -85,11 +91,11 @@ public:
         m_condition.notifyAll();
         return true;
     }
-    
+
     bool dequeue(T& value)
     {
         LockHolder lockHolder(m_mutex);
-        
+
         // Wait for an item to be added.
         m_condition.wait(m_mutex, [this]() { return !m_open || m_queue.size(); });
 
