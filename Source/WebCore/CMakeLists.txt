@@ -2246,6 +2246,7 @@ set(WebCore_SOURCES
     page/SecurityOriginData.cpp
     page/SecurityPolicy.cpp
     page/Settings.cpp
+    page/SettingsBase.cpp
     page/SocketProvider.cpp
     page/SpatialNavigation.cpp
     page/SuspendableTimer.cpp
