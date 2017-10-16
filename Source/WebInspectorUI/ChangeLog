@@ -1,3 +1,38 @@
+2017-10-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: show warning when recorded Canvas action caused no visual change
+        https://bugs.webkit.org/show_bug.cgi?id=175282
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.prototype.get valid):
+        (WI.RecordingAction.prototype.get hasVisibleEffect):
+        (WI.RecordingAction.prototype.markInvalid):
+        (WI.RecordingAction.prototype.apply):
+        (WI.RecordingAction.prototype.async._swizzle):
+        If the selected action is visual, save a copy of the preview canvas' dataURL before
+        applying the action and compare it to its dataURL after. If there is no difference, the
+        action had no visual effect.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement):
+        (WI.RecordingActionTreeElement.prototype._handleValidityChanged):
+        (WI.RecordingActionTreeElement.prototype._handleHasVisibleEffectChanged):
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.action.visual.no-visible-effect:not(.invalid) > .status > .warning):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.async._generateContentCanvas2D):
+        (WI.RecordingContentView.prototype._applyAction): Deleted.
+
 2017-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [PARITY] Styles Redesign: clicking on the go-to arrow in Computed tab should work

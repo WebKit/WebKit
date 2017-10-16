@@ -53,9 +53,9 @@ WI.Recording = class Recording
                     let validName = action.name in prototype;
                     let validFunction = !action.isFunction || typeof prototype[action.name] === "function";
                     if (!validName || !validFunction) {
-                        action.valid = false;
+                        action.markInvalid();
 
-                        WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(action.name));
+                        WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(this._name));
                     }
                 }
             }

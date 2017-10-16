@@ -916,6 +916,7 @@ localizedStrings["The “%s”\ntable is empty."] = "The “%s”\ntable is empt
 localizedStrings["The “webkit” prefix is needed for this property.\nClick to insert a duplicate with the prefix."] = "The “webkit” prefix is needed for this property.\nClick to insert a duplicate with the prefix.";
 localizedStrings["The “webkit” prefix is not necessary.\nClick to insert a duplicate without the prefix."] = "The “webkit” prefix is not necessary.\nClick to insert a duplicate without the prefix.";
 localizedStrings["This Element"] = "This Element";
+localizedStrings["This action causes no visual change"] = "This action causes no visual change";
 localizedStrings["This object is a root"] = "This object is a root";
 localizedStrings["This object is referenced by internal objects"] = "This object is referenced by internal objects";
 localizedStrings["This property needs a value.\nClick to open autocomplete."] = "This property needs a value.\nClick to open autocomplete.";

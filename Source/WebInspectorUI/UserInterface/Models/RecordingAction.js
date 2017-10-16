@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.RecordingAction = class RecordingAction
+WI.RecordingAction = class RecordingAction extends WI.Object
 {
     constructor(name, parameters, swizzleTypes, trace, snapshot)
     {
+        super();
+
         this._payloadName = name;
         this._payloadParameters = parameters;
         this._payloadSwizzleTypes = swizzleTypes;
@@ -44,6 +46,7 @@ WI.RecordingAction = class RecordingAction
         this._isFunction = false;
         this._isGetter = false;
         this._isVisual = false;
+        this._hasVisibleEffect = undefined;
         this._stateModifiers = new Set;
     }
 
@@ -89,20 +92,60 @@ WI.RecordingAction = class RecordingAction
     get swizzleTypes() { return this._payloadSwizzleTypes; }
     get trace() { return this._trace; }
     get snapshot() { return this._snapshot; }
-
     get valid() { return this._valid; }
-    set valid(valid) { this._valid = !!valid; }
-
     get isFunction() { return this._isFunction; }
     get isGetter() { return this._isGetter; }
     get isVisual() { return this._isVisual; }
+    get hasVisibleEffect() { return this._hasVisibleEffect; }
     get stateModifiers() { return this._stateModifiers; }
+
+    markInvalid()
+    {
+        let wasValid = this._valid;
+        this._valid = false;
+
+        if (wasValid)
+            this.dispatchEventToListeners(WI.RecordingAction.Event.ValidityChanged);
+    }
 
     swizzle(recording)
     {
         if (!this._swizzledPromise)
             this._swizzledPromise = this._swizzle(recording);
         return this._swizzledPromise;
+    }
+
+    apply(context, options = {})
+    {
+        if (!this.valid)
+            return;
+
+        let contentBefore = null;
+        let shouldCheckForChange = this._isVisual && this._hasVisibleEffect === undefined;
+        if (shouldCheckForChange)
+            contentBefore = context.canvas.toDataURL();
+
+        try {
+            let name = options.nameOverride || this._name;
+            if (this.isFunction)
+                context[name](...this._parameters);
+            else {
+                if (this.isGetter)
+                    context[name];
+                else
+                    context[name] = this._parameters[0];
+            }
+
+            if (shouldCheckForChange) {
+                this._hasVisibleEffect = contentBefore !== context.canvas.toDataURL();
+                if (!this._hasVisibleEffect)
+                    this.dispatchEventToListeners(WI.RecordingAction.Event.HasVisibleEffectChanged);
+            }
+        } catch {
+            this.markInvalid();
+
+            WI.Recording.synthesizeError(WI.UIString("“%s” threw an error.").format(this._name));
+        }
     }
 
     toJSON()
@@ -150,8 +193,12 @@ WI.RecordingAction = class RecordingAction
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
 
-        if (this._valid)
-            this._valid = this._parameters.every((parameter) => parameter !== undefined) && this._payloadSwizzleTypes.every((swizzleType) => swizzleType !== WI.Recording.Swizzle.None);
+        if (this._valid) {
+            let parametersSpecified = this._parameters.every((parameter) => parameter !== undefined);
+            let parametersCanBeSwizzled = this._payloadSwizzleTypes.every((swizzleType) => swizzleType !== WI.Recording.Swizzle.None);
+            if (!parametersSpecified || !parametersCanBeSwizzled)
+                this.markInvalid();
+        }
 
         this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
         this._isGetter = !this._isFunction && !this._parameters.length;
@@ -190,6 +237,11 @@ WI.RecordingAction = class RecordingAction
 
         return [];
     }
+};
+
+WI.RecordingAction.Event = {
+    ValidityChanged: "recording-action-marked-invalid",
+    HasVisibleEffectChanged: "recording-action-has-visible-effect-changed",
 };
 
 WI.RecordingAction._functionNames = {
