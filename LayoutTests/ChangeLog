@@ -1,3 +1,14 @@
+2017-10-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Protect FrameView during style calculations
+        https://bugs.webkit.org/show_bug.cgi?id=178300
+        <rdar://problem/34869329>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/html/marquee-reparent-check-expected.txt: Added.
+        * fast/html/marquee-reparent-check.html: Added.
+
 2017-09-01  Simon Fraser  <simon.fraser@apple.com>
 
         transformCanLikelyUseFastPath() can read off the end of a string
