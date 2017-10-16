@@ -1,3 +1,36 @@
+2017-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid style recomputation when forwarding a focus event to an text field's input type
+        https://bugs.webkit.org/show_bug.cgi?id=176160
+        <rdar://problem/34184820>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, TextFieldInputType::forwardEvent synchronously triggers style recomputation, for the purpose of
+        scrolling to the origin upon handling a blur event, and also for updating caps lock state after a blur or focus.
+        In synchronously triggering style recomputation, we may end up running arbitrary JavaScript, which may change
+        the HTMLInputElement's type and cause the current TextFieldInputType to be destroyed.
+
+        To mitigate this, we only update caps lock state when forwarding a focus or blur event to the InputType, and
+        instead scroll blurred text fields to the origin later, in HTMLInputElement::didBlur (invoked from
+        Document::setFocusedElement after blur and focusout events have fired). Instead of having the InputType update
+        style, lift the call to Document::updateStyleIfNeeded up into HTMLInputElement so that we gracefully handle the
+        case where the page destroys and sets a new InputType within the scope of this style update.
+
+        Test: fast/forms/change-input-type-in-focus-handler.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didBlur):
+        * html/HTMLInputElement.h:
+        * html/InputType.h:
+        (WebCore::InputType::elementDidBlur):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        (WebCore::TextFieldInputType::elementDidBlur):
+        * html/TextFieldInputType.h:
+
 2017-09-15  Brent Fulgham  <bfulgham@apple.com>
 
         Make DocumentLoader a FrameDestructionObserver

@@ -3795,6 +3795,9 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
             else
                 view()->setFocus(false);
         }
+
+        if (is<HTMLInputElement>(oldFocusedElement.get()))
+            downcast<HTMLInputElement>(*oldFocusedElement).didBlur();
     }
 
     if (newFocusedElement && newFocusedElement->isFocusable()) {
