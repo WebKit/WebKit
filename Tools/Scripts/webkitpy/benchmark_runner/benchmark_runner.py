@@ -51,14 +51,23 @@ class BenchmarkRunner(object):
 
     def _find_plan_file(self, plan_file):
         if not os.path.exists(plan_file):
-            absPath = os.path.join(os.path.dirname(__file__), 'data/plans', plan_file)
-            if os.path.exists(absPath):
-                return absPath
-            if not absPath.endswith('.plan'):
-                absPath += '.plan'
-            if os.path.exists(absPath):
-                return absPath
+            abs_path = os.path.join(BenchmarkRunner.plan_directory(), plan_file)
+            if os.path.exists(abs_path):
+                return abs_path
+            if not abs_path.endswith('.plan'):
+                abs_path += '.plan'
+            if os.path.exists(abs_path):
+                return abs_path
         return plan_file
+
+    @staticmethod
+    def plan_directory():
+        return os.path.join(os.path.dirname(__file__), 'data/plans')
+
+    @staticmethod
+    def available_plans():
+        plans = [os.path.splitext(plan_file)[0] for plan_file in os.listdir(BenchmarkRunner.plan_directory()) if plan_file.endswith(".plan")]
+        return plans
 
     def _run_one_test(self, web_root, test_file):
         raise NotImplementedError('BenchmarkRunner is an abstract class and shouldn\'t be instantiated.')

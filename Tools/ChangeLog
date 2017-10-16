@@ -1,3 +1,33 @@
+2017-10-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Improve --help documentation and add --list-plans to show available benchmarks.
+        https://bugs.webkit.org/show_bug.cgi?id=178059
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.available_plans): New function that returns the list of available plans.
+        (BenchmarkRunner.plan_directory): New method to centralize knowledge of where the plan files live.
+        (BenchmarkRunner._find_plan_file): Updated to use BenchmarkRunner.plan_directory
+
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        
+        (parse_args): Help cleanup: Reordered options to put more common
+        ones at the top. Fixed wording. Added help for each
+        option. Explained default for each option that has one.
+
+        New option: --list-plans which tells you the available benchmarks.
+        
+        Code cleanup: Removed use of dest where redundant, made variable
+        names conforming to Python coding style.
+        
+        (run_benchmark_plan): Adapted for new variable names.
+        (list_benchmark_plans): New helper for --list-plans option.
+        (start): Account for --list-plans. Also use
+        BechmarkRunner.available_plans and use
+        BenchmarkRunner.plan_directory instead of duplicating
+        code/knowledge here.
+
 2017-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         On ToT, event.dataTransfer.getData("text/uri-list") returns an empty string when dragging an image
