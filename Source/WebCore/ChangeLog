@@ -1,3 +1,42 @@
+2017-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r215613): Incorrect corners clipping with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=176498
+        <rdar://problem/34112607>
+
+        Reviewed by Tim Horton.
+
+        http://trac.webkit.org/r215613 introduced an optimization to bail out of repainting borders if the invalidated
+        rect to paint is fully contained within the inner rounded rect of the border. However, due to issues with
+        coordinate and intersection math in RoundedRect::contains() and ellipseContainsPoint(), this causes
+        RenderBoxModelObject::paintBorder to return early even in circumstances where the border requires a repaint.
+        This patch fixes the contains() helper in RoundedRect and adds a new API test suite for RoundedRect that covers
+        these changes.
+
+        Test: WebCore.RoundedRectContainsRect
+
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::ellipseContainsPoint):
+
+        This function attempts to return early if the Manhattan distance of the transformed point is less than the
+        radius of the circle that results from applying the same transformation to the ellipse. However, this bails and
+        returns true if `x + y <= R`, but this means that if x and y are negative, we'll always end up returning true.
+        We fix this by adding the absolute values instead, so the check becomes: |x| + |y| <= R.
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::contains const):
+
+        Before this patch, otherRect's upper left location was being used to hit-test against the ellipses formed from
+        each of the 4 corners of the rounded rect. Instead, this should use (x, y), (maxX, y), (x, maxY), (maxX, maxY)
+        for the top left, top right, bottom left, and bottom right corners, respectively.
+
+        Additionally, the checks for the bottom left and bottom right to determine whether the rect corner should be
+        checked for intersection against the ellipse's corner are incorrect. In the bottom left corner, the check for
+        `otherRect.maxX() >= center.x()` should instead be `otherRect.x() <= center.x()`, and the check for
+        `otherRect.x() <= center.x()` should instead be `otherRect.maxX() >= center.x()`.
+
+        * platform/graphics/RoundedRect.h:
+
 2017-09-19  Zalan Bujtas  <zalan@apple.com>
 
         AXObjectCache::performDeferredCacheUpdate is called recursively through FrameView::layout. 

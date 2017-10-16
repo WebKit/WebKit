@@ -154,16 +154,29 @@ FloatSize sizeWithAreaAndAspectRatio(float area, float aspectRatio)
 
 bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint& point)
 {
+    if (radii.width() <= 0 || radii.height() <= 0)
+        return false;
+
+    // First, offset the query point so that the ellipse is effectively centered at the origin.
     FloatPoint transformedPoint(point);
     transformedPoint.move(-center.x(), -center.y());
-    transformedPoint.scale(radii.height(), radii.width());
-    float radius = radii.width() * radii.height();
 
-    if (transformedPoint.x() > radius || transformedPoint.y() > radius)
+    // If the point lies outside of the bounding box determined by the radii of the ellipse, it can't possibly
+    // be contained within the ellipse, so bail early.
+    if (transformedPoint.x() < -radii.width() || transformedPoint.x() > radii.width() || transformedPoint.y() < -radii.height() || transformedPoint.y() > radii.height())
         return false;
-    if (transformedPoint.x() + transformedPoint.y() <= radius)
-        return true;
-    return (transformedPoint.lengthSquared() <= radius * radius);
+
+    // Let (x, y) represent the translated point, and let (Rx, Ry) represent the radii of an ellipse centered at the origin.
+    // (x, y) is contained within the ellipse if, after scaling the ellipse to be a unit circle, the identically scaled
+    // point lies within that unit circle. In other words, the squared distance (x/Rx)^2 + (y/Ry)^2 of the transformed point
+    // to the origin is no greater than 1. This is equivalent to checking whether or not the point (xRy, yRx) lies within a
+    // circle of radius RxRy.
+    transformedPoint.scale(radii.height(), radii.width());
+    auto transformedRadius = radii.width() * radii.height();
+
+    // We can bail early if |xRy| + |yRx| <= RxRy to avoid additional multiplications, since that means the Manhattan distance
+    // of the transformed point is less than the radius, so the point must lie within the transformed circle.
+    return std::abs(transformedPoint.x()) + std::abs(transformedPoint.y()) <= transformedRadius || transformedPoint.lengthSquared() <= transformedRadius * transformedRadius;
 }
 
 }
