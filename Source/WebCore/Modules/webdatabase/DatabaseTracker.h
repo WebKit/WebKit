@@ -69,7 +69,7 @@ public:
     ExceptionOr<void> retryCanEstablishDatabase(DatabaseContext&, const String& name, unsigned estimatedSize);
 
     void setDatabaseDetails(const SecurityOriginData&, const String& name, const String& displayName, unsigned estimatedSize);
-    String fullPathForDatabase(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
+    WEBCORE_EXPORT String fullPathForDatabase(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
 
     void addOpenDatabase(Database&);
     void removeOpenDatabase(Database&);
