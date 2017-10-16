@@ -2742,7 +2742,9 @@
 		5CD9F5671AA0F74200DA45FF /* DFABytecodeCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C39305F1AA0F6A90029C816 /* DFABytecodeCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CD9F5681AA0F74600DA45FF /* DFABytecodeInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C3930611AA0F6A90029C816 /* DFABytecodeInterpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CDD833D1E4324D900621E92 /* RealtimeOutgoingVideoSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD833B1E4324BB00621E92 /* RealtimeOutgoingVideoSource.cpp */; };
+		5CDD833D1E4324D900621B83 /* RealtimeOutgoingVideoSourceCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD833B1E4324BB00621B83 /* RealtimeOutgoingVideoSourceCocoa.cpp */; };
 		5CDD833E1E4324DC00621E92 /* RealtimeIncomingVideoSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD83391E4324BB00621E92 /* RealtimeIncomingVideoSource.cpp */; };
+		5CDD833E1E4324DC00621E83 /* RealtimeIncomingVideoSourceCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD83391E4324BB00621E83 /* RealtimeIncomingVideoSourceCocoa.cpp */; };
 		5CDD83641E4325A000621E92 /* LibWebRTCDataChannelHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD833F1E43253D00621E92 /* LibWebRTCDataChannelHandler.cpp */; };
 		5CDFA6C81AA4F2DA00EA8746 /* ContentExtensionActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDFA6C71AA4F2DA00EA8746 /* ContentExtensionActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CE5D9AB1DB89A0300CE7A8D /* JSTextDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE5D9A71DB899FC00CE7A8D /* JSTextDecoder.cpp */; };
@@ -10691,8 +10693,12 @@
 		5CBC8DAB1AAA302200E1C803 /* MediaAccessibilitySoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaAccessibilitySoftLink.h; sourceTree = "<group>"; };
 		5CDD83391E4324BB00621E92 /* RealtimeIncomingVideoSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeIncomingVideoSource.cpp; sourceTree = "<group>"; };
 		5CDD833A1E4324BB00621E92 /* RealtimeIncomingVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeIncomingVideoSource.h; sourceTree = "<group>"; };
+		5CDD83391E4324BB00621E83 /* RealtimeIncomingVideoSourceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeIncomingVideoSourceCocoa.cpp; sourceTree = "<group>"; };
+		5CDD833A1E4324BB00621E83 /* RealtimeIncomingVideoSourceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeIncomingVideoSourceCocoa.h; sourceTree = "<group>"; };
 		5CDD833B1E4324BB00621E92 /* RealtimeOutgoingVideoSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeOutgoingVideoSource.cpp; sourceTree = "<group>"; };
 		5CDD833C1E4324BB00621E92 /* RealtimeOutgoingVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeOutgoingVideoSource.h; sourceTree = "<group>"; };
+		5CDD833B1E4324BB00621B83 /* RealtimeOutgoingVideoSourceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeOutgoingVideoSourceCocoa.cpp; sourceTree = "<group>"; };
+		5CDD833C1E4324BB00621B83 /* RealtimeOutgoingVideoSourceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeOutgoingVideoSourceCocoa.h; sourceTree = "<group>"; };
 		5CDD833F1E43253D00621E92 /* LibWebRTCDataChannelHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCDataChannelHandler.cpp; path = libwebrtc/LibWebRTCDataChannelHandler.cpp; sourceTree = "<group>"; };
 		5CDD83401E43253D00621E92 /* LibWebRTCDataChannelHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCDataChannelHandler.h; path = libwebrtc/LibWebRTCDataChannelHandler.h; sourceTree = "<group>"; };
 		5CDFA6C71AA4F2DA00EA8746 /* ContentExtensionActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionActions.h; sourceTree = "<group>"; };
@@ -16550,6 +16556,8 @@
 				07FFDE66181AED420072D409 /* MediaStreamTrackPrivate.cpp */,
 				07FFDE67181AED420072D409 /* MediaStreamTrackPrivate.h */,
 				5EBB89381C77BDA400C65D41 /* PeerMediaDescription.h */,
+				5CDD83391E4324BB00621E92 /* RealtimeIncomingVideoSource.cpp */,
+				5CDD833A1E4324BB00621E92 /* RealtimeIncomingVideoSource.h */,
 				4A4F656B1AA997F100E38CDD /* RealtimeMediaSource.cpp */,
 				4A4F656C1AA997F100E38CDD /* RealtimeMediaSource.h */,
 				4A4F656D1AA997F100E38CDD /* RealtimeMediaSourceCapabilities.h */,
@@ -16559,6 +16567,8 @@
 				4A4F656F1AA997F100E38CDD /* RealtimeMediaSourceSettings.h */,
 				2EC41DE21C0410A300D294FE /* RealtimeMediaSourceSupportedConstraints.cpp */,
 				07C1C0E41BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h */,
+				5CDD833B1E4324BB00621E92 /* RealtimeOutgoingVideoSource.cpp */,
+				5CDD833C1E4324BB00621E92 /* RealtimeOutgoingVideoSource.h */,
 				3135910C1E7DDCB600F30630 /* RTCBundlePolicy.h */,
 				07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */,
 				07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */,
@@ -16609,14 +16619,14 @@
 				07EE76EE1BEA619800F89133 /* MockRealtimeVideoSourceMac.mm */,
 				41103AAA1E39790A00769F03 /* RealtimeIncomingAudioSource.cpp */,
 				41103AA91E39790A00769F03 /* RealtimeIncomingAudioSource.h */,
-				5CDD83391E4324BB00621E92 /* RealtimeIncomingVideoSource.cpp */,
-				5CDD833A1E4324BB00621E92 /* RealtimeIncomingVideoSource.h */,
+				5CDD83391E4324BB00621E83 /* RealtimeIncomingVideoSourceCocoa.cpp */,
+				5CDD833A1E4324BB00621E83 /* RealtimeIncomingVideoSourceCocoa.h */,
 				4A0FFAA31AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp */,
 				4A0FFAA41AAF5EF60062803B /* RealtimeMediaSourceCenterMac.h */,
 				41103AA71E39790A00769F03 /* RealtimeOutgoingAudioSource.cpp */,
 				41103AA81E39790A00769F03 /* RealtimeOutgoingAudioSource.h */,
-				5CDD833B1E4324BB00621E92 /* RealtimeOutgoingVideoSource.cpp */,
-				5CDD833C1E4324BB00621E92 /* RealtimeOutgoingVideoSource.h */,
+				5CDD833B1E4324BB00621B83 /* RealtimeOutgoingVideoSourceCocoa.cpp */,
+				5CDD833C1E4324BB00621B83 /* RealtimeOutgoingVideoSourceCocoa.h */,
 				07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h */,
 				07D6373F1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm */,
 			);
@@ -33729,6 +33739,7 @@
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
 				41103AAE1E39791000769F03 /* RealtimeIncomingAudioSource.cpp in Sources */,
 				5CDD833E1E4324DC00621E92 /* RealtimeIncomingVideoSource.cpp in Sources */,
+				5CDD833E1E4324DC00621E83 /* RealtimeIncomingVideoSourceCocoa.cpp in Sources */,
 				4A4F65701AA997F100E38CDD /* RealtimeMediaSource.cpp in Sources */,
 				4A0FFAA11AAF5EA20062803B /* RealtimeMediaSourceCenter.cpp in Sources */,
 				4A0FFAA51AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp in Sources */,
@@ -33736,6 +33747,7 @@
 				2EC41DE41C0410A300D294FE /* RealtimeMediaSourceSupportedConstraints.cpp in Sources */,
 				41103AAB1E39791000769F03 /* RealtimeOutgoingAudioSource.cpp in Sources */,
 				5CDD833D1E4324D900621E92 /* RealtimeOutgoingVideoSource.cpp in Sources */,
+				5CDD833D1E4324D900621B83 /* RealtimeOutgoingVideoSourceCocoa.cpp in Sources */,
 				FD45A95A175D417100C21EC8 /* RectangleShape.cpp in Sources */,
 				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
 				A578F4401DE0B634003DFC6A /* RejectedPromiseTracker.cpp in Sources */,
