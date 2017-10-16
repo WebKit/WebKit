@@ -1,3 +1,16 @@
+2017-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Submitting a form can cause HTMLFormElement's associated elements vector to be mutated during iteration
+        https://bugs.webkit.org/show_bug.cgi?id=176368
+        <rdar://problem/34254998>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new test to make sure we don't crash when mutating a form's associated elements during form submission.
+
+        * fast/forms/append-children-during-form-submission-expected.txt: Added.
+        * fast/forms/append-children-during-form-submission.html: Added.
+
 2017-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: !m_valueOrException under FontFaceSet::completedLoading loading a Serious Eats page

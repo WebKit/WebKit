@@ -1,3 +1,31 @@
+2017-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Submitting a form can cause HTMLFormElement's associated elements vector to be mutated during iteration
+        https://bugs.webkit.org/show_bug.cgi?id=176368
+        <rdar://problem/34254998>
+
+        Reviewed by Ryosuke Niwa.
+
+        In the process of iterating over form.associatedElements() during form submission in FormSubmission::create, the
+        page may cause us to clobber the vector of FormAssociatedElements* we're currently iterating over by inserting
+        new form controls beneath the form element we're in the process of submitting. This happens because
+        FormSubmission::create calls HTMLTextAreaElement::appendFormData, which requires layout to be up to date, which
+        in turn makes us updateLayout() and set focus, which fires a `change` event, upon which the page's JavaScript
+        inserts additonal DOM nodes into the form, modifying the vector of associated elements.
+
+        To mitigate this, instead of iterating over HTMLFormElement::associatedElements(), which returns a reference to
+        the HTMLFormElement's actual m_associatedElements vector, we iterate over a new vector of
+        Ref<FormAssociatedElement>s created from m_associatedElements.
+
+        This patch also removes an event dispatch assertion added in r212026. This assertion was added to catch any
+        other events dispatched in this scope, since dispatching events there would have had security implications, but
+        after making iteration over associated elements robust, this NoEventDispatchAssertion is no longer useful.
+
+        Test: fast/forms/append-children-during-form-submission.html
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+
 2017-09-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fails to build because 'Float32Array' has not been declared in AudioContext.h
