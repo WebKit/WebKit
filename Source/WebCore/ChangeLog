@@ -1,3 +1,20 @@
+2017-09-25  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash in WebCore::TreeScope::documentScope
+        https://bugs.webkit.org/show_bug.cgi?id=176159
+
+        Reviewed by Ryosuke Niwa.
+
+        When all children are replaced with a new node in ContainerNode::replaceAllChildren,
+        the treescope of the new node should be set after the call to willRemoveChildren,
+        since this call can fire events, and execute JS code, which might change the treescope
+        of the container node.
+
+        Test: fast/dom/crash-moving-subtree-between-documents.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceAllChildren):
+
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Separate form submission from PolicyChecker infrastructure

@@ -1,3 +1,13 @@
+2017-09-25  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash in WebCore::TreeScope::documentScope
+        https://bugs.webkit.org/show_bug.cgi?id=176159
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/crash-moving-subtree-between-documents-expected.txt: Added.
+        * fast/dom/crash-moving-subtree-between-documents.html: Added.
+
 2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] fit-content() tracks shouldn't stretch
