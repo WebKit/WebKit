@@ -1,3 +1,22 @@
+2017-09-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Improve Ctrl+W and Ctrl+Q shortcuts in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=176619
+
+        Reviewed by Carlos Garcia Campos.
+
+        There are two different problems here. First, Ctrl+W is closing the entire window. That made
+        sense when I implemented the shortcut a couple years ago, but now MiniBrowser supports tabs
+        and it should really close only one single tab. Fix that.
+
+        Next, the keyboard shortcuts are not using webkit_web_view_try_close() and so are bypassing
+        onbeforeunload handlers, which are respected when closing with the mouse. Fix that too.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowTryCloseCurrentWebView):
+        (browserWindowTryClose):
+        (browser_window_init):
+
 2017-09-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, fix typo forwad -> forward
