@@ -64,7 +64,7 @@ public:
     WEBCORE_EXPORT bool hasOpenDatabases(ScriptExecutionContext&);
     void stopDatabases(ScriptExecutionContext&, DatabaseTaskSynchronizer*);
 
-    String fullPathForDatabase(SecurityOrigin&, const String& name, bool createIfDoesNotExist = true);
+    WEBCORE_EXPORT String fullPathForDatabase(SecurityOrigin&, const String& name, bool createIfDoesNotExist = true);
 
     WEBCORE_EXPORT DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin&);
 
