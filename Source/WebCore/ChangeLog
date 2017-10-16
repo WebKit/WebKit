@@ -1,3 +1,26 @@
+2017-09-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Make DocumentLoader a FrameDestructionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=176364
+        <rdar://problem/34254780>
+
+        Reviewed by Alex Christensen.
+
+        The DocumentLoader needs to know when its Frame is destroyed so that it can
+        perform properly cleanup.
+
+        Test: fast/events/beforeunload-dom-manipulation-crash.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader): Call FrameDestructionObserver constructor.
+        (WebCore::DocumentLoader::responseReceived): Drive-by fix. Make sure the current
+        object is valid during the callback.
+        (WebCore::DocumentLoader::attachToFrame): Use FrameDestructionObserver::observerFrame rather
+        than setting the m_frame variable directly.
+        (WebCore::DocumentLoader::detachFromFrame): Ditto.
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::frame const): Deleted, as this is provided by the FrameDestructionObserver.
+
 2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Harfbuzz] Material icons not rendered correctly when using the web font

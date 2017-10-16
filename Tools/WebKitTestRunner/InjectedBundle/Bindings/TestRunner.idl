@@ -101,6 +101,9 @@ interface TestRunner {
     void display();
     void displayAndTrackRepaints();
 
+    // Failed load condition testing
+    void forceImmediateCompletion();
+
     // Printing
     boolean isPageBoxVisible(long pageIndex);
 

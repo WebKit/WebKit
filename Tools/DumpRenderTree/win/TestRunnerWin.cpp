@@ -293,6 +293,14 @@ void TestRunner::notifyDone()
     m_waitToDump = false;
 }
 
+void TestRunner::forceImmediateCompletion()
+{
+    // Same as on mac. This can be shared.
+    if (m_waitToDump && !WorkQueue::singleton().count())
+        dump();
+    m_waitToDump = false;
+}
+
 static wstring jsStringRefToWString(JSStringRef jsStr)
 {
     size_t length = JSStringGetLength(jsStr);
