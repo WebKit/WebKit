@@ -1,3 +1,14 @@
+2017-09-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][CMake] Fix path to the WebKitApplicationInfo.h header.
+
+        Unreviewed build fix.
+
+        This doesn't really make a difference for the build bots, but it makes
+        it possible to craft working release tarballs of WPE.
+
+        * PlatformWPE.cmake: Use the WPE version of WebKitApplicationInfo.h
+
 2017-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename PLUGIN_ARCHITECTURE(X11) as PLUGIN_ARCHITECTURE(UNIX)
