@@ -1,3 +1,32 @@
+2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] fit-content() tracks shouldn't stretch
+        https://bugs.webkit.org/show_bug.cgi?id=177300
+
+        Reviewed by Sergio Villar Senin.
+
+        The spec is pretty clear regarding this
+        (https://drafts.csswg.org/css-grid/#algo-stretch):
+          "This step sizes expands tracks that have an auto max track sizing
+           function by dividing any remaining positive, definite free space
+           equally amongst them."
+
+        The fit-content() tracks don't have an auto max track sizing function,
+        so they shouldn't be considered in this step of the algorithm.
+
+        The patch modifies GridTrackSizingAlgorithm::initializeTrackSizes()
+        so it doesn't consider fit-content() tracks as auto sized ones
+        (which are the ones later stretched in the last step of the algorithm).
+
+        Test: imported/w3c/web-platform-tests/css/css-grid-1/alignment/grid-fit-content-tracks-dont-stretch-001.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::initializeTrackSizes):
+        (WebCore::GridTrackSizingAlgorithm::stretchAutoTracks):
+        (WebCore::GridTrackSizingAlgorithm::setup):
+        (WebCore::GridTrackSizingAlgorithm::reset):
+        * rendering/GridTrackSizingAlgorithm.h:
+
 2017-09-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Object attributes are missing for ARIA live region roles

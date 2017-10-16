@@ -42,6 +42,7 @@ body {
 .minMaxWithMaxContentTracks { grid: minmax(20px, max-content) minmax(20px, max-content) / minmax(20px, max-content) minmax(20px, max-content); }
 .minMaxWithMinContentTracks { grid: minmax(20px, min-content) minmax(20px, min-content) / minmax(20px, min-content) minmax(20px, min-content); }
 .minMaxWithMinAutoTracks { grid: minmax(auto, max-content) minmax(auto, max-content) / minmax(auto, max-content) minmax(auto, max-content); }
+.fitContentTracks { grid: fit-content(20px) fit-content(20px) / fit-content(40px) fit-content(40px); font: 10px/1 Ahem; }
 
 </style>
 </head>
@@ -116,6 +117,16 @@ body {
         <div class="item firstRowSecondColumn" data-offset-x="40" data-offset-y="0" data-expected-width="40" data-expected-height="80"></div>
         <div class="item secondRowFirstColumn" data-offset-x="0" data-offset-y="80" data-expected-width="40" data-expected-height="80"></div>
         <div class="item secondRowSecondColumn" data-offset-x="40" data-offset-y="80" data-expected-width="40" data-expected-height="80"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <p>cols: 'fit-content(40px)' | rows: 'fit-content(20px)' | definite-sized container | content-sized items</p>
+    <div class="grid contentStretch itemsStart definiteSize fitContentTracks" data-expected-width="200" data-expected-height="300">
+        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="40" data-expected-height="20">X XX XX X</div>
+        <div class="firstRowSecondColumn" data-offset-x="40" data-offset-y="0" data-expected-width="40" data-expected-height="20">X XX XX X</div>
+        <div class="secondRowFirstColumn" data-offset-x="0" data-offset-y="20" data-expected-width="40" data-expected-height="20">X XX XX X</div>
+        <div class="secondRowSecondColumn" data-offset-x="40" data-offset-y="20" data-expected-width="40" data-expected-height="20">X XX XX X</div>
     </div>
 </div>
 

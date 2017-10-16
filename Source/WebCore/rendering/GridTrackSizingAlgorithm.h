@@ -172,7 +172,7 @@ private:
     Vector<GridTrack> m_rows;
     Vector<unsigned> m_contentSizedTracksIndex;
     Vector<unsigned> m_flexibleSizedTracksIndex;
-    Vector<unsigned> m_autoSizedTracksIndex;
+    Vector<unsigned> m_autoSizedTracksForStretchIndex;
 
     GridTrackSizingDirection m_direction;
     SizingOperation m_sizingOperation;

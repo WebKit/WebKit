@@ -1,3 +1,16 @@
+2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] fit-content() tracks shouldn't stretch
+        https://bugs.webkit.org/show_bug.cgi?id=177300
+
+        Reviewed by Sergio Villar Senin.
+
+        Imported a new test in WPT covering several cases for this issue.
+
+        * web-platform-tests/css/css-grid-1/alignment/grid-fit-content-tracks-dont-stretch-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid-1/alignment/grid-fit-content-tracks-dont-stretch-001.html: Added.
+        * web-platform-tests/css/css-grid-1/alignment/w3c-import.log:
+
 2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Stretching auto tracks should be done as part of the track sizing algorithm
