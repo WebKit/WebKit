@@ -304,7 +304,8 @@ Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const
         itemListContainsItems = true;
     }
 
-    ASSERT(!itemListContainsItems || !addedFilesFromPasteboard);
+    bool containsItemsAndFiles = itemListContainsItems && addedFilesFromPasteboard;
+    ASSERT_UNUSED(containsItemsAndFiles, !containsItemsAndFiles);
     return files;
 }
 
