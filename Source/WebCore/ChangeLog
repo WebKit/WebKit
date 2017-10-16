@@ -1,3 +1,16 @@
+2017-09-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Fails to build because 'Float32Array' has not been declared in AudioContext.h
+        https://bugs.webkit.org/show_bug.cgi?id=176870
+
+        Reviewed by Konstantin Tokarev.
+
+        Add missing include of Float32Array.h
+
+        No new tests, its a build fix.
+
+        * Modules/webaudio/AudioContext.h:
+
 2017-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: !m_valueOrException under FontFaceSet::completedLoading loading a Serious Eats page
