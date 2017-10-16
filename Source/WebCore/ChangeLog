@@ -1,3 +1,25 @@
+2017-09-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Add GRefPtr specializations for GstGLDisplay, GstGLContext
+        https://bugs.webkit.org/show_bug.cgi?id=176543
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Both GstGLDisplay and GstGLContext inherit from GstObject, meaning
+        gst_object_ref_sink() and gst_object_unref() should be used for
+        incrementing and decrementing reference count. Template specializations
+        for the adoptGRef(), refGPtr() and derefGPtr() are added for both types,
+        preventing GRefPtr<> from falling back to using g_object_ref() and
+        g_object_unref() for reference count modification purposes.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        (WTF::refGPtr<GstGLDisplay>):
+        (WTF::derefGPtr<GstGLDisplay>):
+        (WTF::refGPtr<GstGLContext>):
+        (WTF::derefGPtr<GstGLContext>):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+
 2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebKit should claim that it can show responses for a broader range of JSON MIMETypes
