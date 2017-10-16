@@ -1,3 +1,39 @@
+2017-10-16  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkSession] Add support for resuming downloads
+        https://bugs.webkit.org/show_bug.cgi?id=177625
+        <rdar://problem/34345975>
+
+        Reviewed by Alex Christensen.
+
+        Add support for resuming downloads for the WK2 NETWORK_SESSION code path.
+
+        This was tested manually. I was unable to write an API test because our tests
+        do not run an HTTP server and CFNetwork does not seem to generate resume data
+        when cancelling a download over non-HTTP.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveChallenge):
+        (WebKit::Download::continueCanAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadManager::resumeDownload):
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        This currently includes a workaround for <rdar://problem/34745171>. We update the
+        resume data to include the NSURLSessionResumeInfoLocalPath key with the final
+        destination path so that CFNetwork looks for the temporary data at the right
+        location.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::downloadTaskWithResumeData):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+
 2017-10-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Build failure due to invalid cast of EGLNativeWindowType when targetting 64-bit ARM

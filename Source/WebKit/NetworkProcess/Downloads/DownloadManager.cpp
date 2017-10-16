@@ -89,10 +89,15 @@ void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::uni
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void DownloadManager::continueCanAuthenticateAgainstProtectionSpace(DownloadID downloadID, bool canAuthenticate)
 {
-    auto* pendingDownload = m_pendingDownloads.get(downloadID);
-    ASSERT(pendingDownload);
-    if (pendingDownload)
+    if (auto* pendingDownload = m_pendingDownloads.get(downloadID)) {
         pendingDownload->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+        return;
+    }
+    if (auto* download = m_downloads.get(downloadID)) {
+        download->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 #endif
 
@@ -162,13 +167,17 @@ void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downlo
 #endif
 }
 
-void DownloadManager::resumeDownload(PAL::SessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
+void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
-#if USE(NETWORK_SESSION)
+#if USE(NETWORK_SESSION) && !PLATFORM(COCOA)
     notImplemented();
+#else
+#if USE(NETWORK_SESSION)
+    auto download = std::make_unique<Download>(*this, downloadID, nullptr, sessionID);
 #else
     // Download::resume() is responsible for setting the Download's resource request.
     auto download = std::make_unique<Download>(*this, downloadID, ResourceRequest());
+#endif
 
     download->resume(resumeData, path, sandboxExtensionHandle);
     ASSERT(!m_downloads.contains(downloadID));

@@ -144,7 +144,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
     m_process.send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, challengeID));
 }
 
-void AuthenticationManager::didReceiveAuthenticationChallenge(PendingDownload& pendingDownload, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
+void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
     uint64_t dummyPageID = 0;
     uint64_t challengeID = addChallengeToChallengeMap({ dummyPageID, authenticationChallenge, WTFMove(completionHandler) });
@@ -153,7 +153,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PendingDownload& p
     if (shouldCoalesceChallenge(dummyPageID, challengeID, authenticationChallenge))
         return;
     
-    pendingDownload.send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
+    download.send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
 }
 #endif
 

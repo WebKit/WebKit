@@ -27,7 +27,9 @@
 
 #if USE(NETWORK_SESSION)
 
+OBJC_CLASS NSData;
 OBJC_CLASS NSURLSession;
+OBJC_CLASS NSURLSessionDownloadTask;
 OBJC_CLASS NSOperationQueue;
 OBJC_CLASS WKNetworkSessionDelegate;
 
@@ -58,6 +60,7 @@ public:
 #endif
 
     NetworkDataTaskCocoa* dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier, WebCore::StoredCredentialsPolicy);
+    NSURLSessionDownloadTask* downloadTaskWithResumeData(NSData*);
 
     void addDownloadID(NetworkDataTaskCocoa::TaskIdentifier, DownloadID);
     DownloadID downloadID(NetworkDataTaskCocoa::TaskIdentifier);

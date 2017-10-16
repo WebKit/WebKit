@@ -278,6 +278,21 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         };
         networkDataTask->didReceiveChallenge(challenge, WTFMove(challengeCompletionHandler));
     } else {
+        auto downloadID = _session->downloadID(task.taskIdentifier);
+        if (downloadID.downloadID()) {
+            if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID)) {
+                // Received an authentication challenge for a download being resumed.
+                WebCore::AuthenticationChallenge authenticationChallenge { challenge };
+                auto completionHandlerCopy = Block_copy(completionHandler);
+                auto sessionID = _session->sessionID();
+                auto challengeCompletionHandler = [completionHandlerCopy, sessionID, authenticationChallenge](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
+                    completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
+                    Block_release(completionHandlerCopy);
+                };
+                download->didReceiveChallenge(challenge, WTFMove(challengeCompletionHandler));
+                return;
+            }
+        }
         LOG(NetworkSession, "%llu didReceiveChallenge completionHandler (cancel)", taskIdentifier);
         completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
     }
@@ -669,6 +684,11 @@ NetworkDataTaskCocoa* NetworkSessionCocoa::dataTaskForIdentifier(NetworkDataTask
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use)
         return m_dataTaskMapWithCredentials.get(taskIdentifier);
     return m_dataTaskMapWithoutState.get(taskIdentifier);
+}
+
+NSURLSessionDownloadTask* NetworkSessionCocoa::downloadTaskWithResumeData(NSData* resumeData)
+{
+    return [m_sessionWithCredentialStorage downloadTaskWithResumeData:resumeData];
 }
 
 void NetworkSessionCocoa::addDownloadID(NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, DownloadID downloadID)

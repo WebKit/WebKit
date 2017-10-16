@@ -34,6 +34,10 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
+namespace IPC {
+class MessageSender;
+}
+
 namespace WebCore {
 class AuthenticationChallenge;
 class CertificateInfo;
@@ -45,7 +49,6 @@ namespace WebKit {
 class ChildProcess;
 class Download;
 class DownloadID;
-class PendingDownload;
 class WebFrame;
 
 enum class AuthenticationChallengeDisposition {
@@ -65,7 +68,7 @@ public:
 
 #if USE(NETWORK_SESSION)
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
-    void didReceiveAuthenticationChallenge(PendingDownload&, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
+    void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
 #endif
