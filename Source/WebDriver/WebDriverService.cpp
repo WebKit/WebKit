@@ -625,7 +625,7 @@ void WebDriverService::newSession(RefPtr<InspectorObject>&& parameters, Function
                     break;
                 }
             }
-            resultObject->setObject(ASCIILiteral("value"), WTFMove(capabilitiesObject));
+            resultObject->setObject(ASCIILiteral("capabilities"), WTFMove(capabilitiesObject));
             completionHandler(CommandResult::success(WTFMove(resultObject)));
         });
     });

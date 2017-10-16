@@ -1,5 +1,18 @@
 2017-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: wrong key name for capabilities in new session response
+        https://bugs.webkit.org/show_bug.cgi?id=177074
+
+        Reviewed by Brian Burg.
+
+        We are using "value", it should be "capabilities".
+        https://w3c.github.io/webdriver/webdriver-spec.html#new-session
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::newSession):
+
+2017-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: HTTP responses should include Cache-Control header with no-cache value
         https://bugs.webkit.org/show_bug.cgi?id=177073
 
