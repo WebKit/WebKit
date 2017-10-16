@@ -65,7 +65,7 @@ public:
     bool isOrthogonalChild(const RenderBox&) const;
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
 
-    static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid();
+    StyleContentAlignmentData contentAlignment(GridTrackSizingDirection) const;
 
 protected:
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
