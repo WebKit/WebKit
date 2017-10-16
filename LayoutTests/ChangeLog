@@ -1,5 +1,11 @@
 2017-09-19  Zalan Bujtas  <zalan@apple.com>
 
+        Add missing text after r222226.
+
+        * accessibility/crash-table-recursive-layout.html:
+
+2017-09-19  Zalan Bujtas  <zalan@apple.com>
+
         AXObjectCache::performDeferredCacheUpdate is called recursively through FrameView::layout. 
         https://bugs.webkit.org/show_bug.cgi?id=176218
         <rdar://problem/34205612>
