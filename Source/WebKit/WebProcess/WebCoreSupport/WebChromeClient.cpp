@@ -566,7 +566,9 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 
 void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) const
 {
-    if (m_page.corePage()->settings().effectiveFrameFlattening() == FrameFlatteningDisabled) {
+    FrameView* frameView = frame.view();
+
+    if (frameView && frameView->effectiveFrameFlattening() == FrameFlattening::Disabled) {
         WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
         if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
             m_cachedFrameSetLargestFrame = largestFrame;
@@ -581,7 +583,6 @@ void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) con
 
     m_page.drawingArea()->mainFrameContentSizeChanged(size);
 
-    FrameView* frameView = frame.view();
     if (frameView && !frameView->delegatesScrolling())  {
         bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
         bool hasVerticalScrollbar = frameView->verticalScrollbar();

@@ -27,6 +27,8 @@
 #pragma once
 
 #include "SettingsBase.h"
+#include "SettingsMacros.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -36,18 +38,12 @@ public:
     static Ref<Settings> create(Page*);
     ~Settings();
 
-    void pageDestroyed() { m_page = nullptr; }
-
     SETTINGS_GETTERS_AND_SETTERS
-
-
-    WEBCORE_EXPORT FrameFlattening effectiveFrameFlattening();
 
 private:
     explicit Settings(Page*);
 
     SETTINGS_MEMBER_VARIABLES
-
 };
 
 } // namespace WebCore

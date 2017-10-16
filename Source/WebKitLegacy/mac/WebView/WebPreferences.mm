@@ -517,9 +517,9 @@ public:
         [NSNumber numberWithBool:YES],  WebKitLargeImageAsyncDecodingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAnimatedImageAsyncDecodingEnabledPreferenceKey,
 #if PLATFORM(IOS)
-        [NSNumber numberWithUnsignedInt:FrameFlatteningFullyEnabled], WebKitFrameFlatteningPreferenceKey,
+        [NSNumber numberWithUnsignedInt:static_cast<uint32_t>(FrameFlattening::FullyEnabled)], WebKitFrameFlatteningPreferenceKey,
 #else
-        [NSNumber numberWithUnsignedInt:FrameFlatteningDisabled], WebKitFrameFlatteningPreferenceKey,
+        [NSNumber numberWithUnsignedInt:static_cast<uint32_t>(FrameFlattening::Disabled)], WebKitFrameFlatteningPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitAsyncFrameScrollingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,

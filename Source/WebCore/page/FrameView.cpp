@@ -566,9 +566,21 @@ void FrameView::setMarginHeight(LayoutUnit h)
     m_margins.setHeight(h);
 }
 
+FrameFlattening FrameView::effectiveFrameFlattening() const
+{
+#if PLATFORM(IOS)
+    // On iOS when async frame scrolling is enabled, it does not make sense to use full frame flattening.
+    // In that case, we just consider that frame flattening is disabled. This allows people to test
+    // frame scrolling on iOS by enabling "Async Frame Scrolling" via the Safari menu.
+    if (frame().settings().asyncFrameScrollingEnabled() && frame().settings().frameFlattening() == FrameFlattening::FullyEnabled)
+        return FrameFlattening::Disabled;
+#endif
+    return frame().settings().frameFlattening();
+}
+
 bool FrameView::frameFlatteningEnabled() const
 {
-    return frame().settings().effectiveFrameFlattening() != FrameFlatteningDisabled;
+    return effectiveFrameFlattening() != FrameFlattening::Disabled;
 }
 
 bool FrameView::isFrameFlatteningValidForThisFrame() const

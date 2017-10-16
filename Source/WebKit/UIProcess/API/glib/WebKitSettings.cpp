@@ -1620,7 +1620,7 @@ gboolean webkit_settings_get_enable_frame_flattening(WebKitSettings* settings)
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     // FIXME: Expose more frame flattening values.
-    return settings->priv->preferences->frameFlattening() != WebCore::FrameFlatteningDisabled;
+    return settings->priv->preferences->frameFlattening() != static_cast<uint32_t>(WebCore::FrameFlattening::Disabled);
 }
 
 /**
@@ -1635,12 +1635,12 @@ void webkit_settings_set_enable_frame_flattening(WebKitSettings* settings, gbool
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->frameFlattening() != WebCore::FrameFlatteningDisabled;
+    bool currentValue = priv->preferences->frameFlattening() != static_cast<uint32_t>(WebCore::FrameFlattening::Disabled);
     if (currentValue == enabled)
         return;
 
     // FIXME: Expose more frame flattening values.
-    priv->preferences->setFrameFlattening(enabled ? WebCore::FrameFlatteningFullyEnabled : WebCore::FrameFlatteningDisabled);
+    priv->preferences->setFrameFlattening(enabled ? static_cast<uint32_t>(WebCore::FrameFlattening::FullyEnabled) : static_cast<uint32_t>(WebCore::FrameFlattening::Disabled));
     g_object_notify(G_OBJECT(settings), "enable-frame-flattening");
 }
 

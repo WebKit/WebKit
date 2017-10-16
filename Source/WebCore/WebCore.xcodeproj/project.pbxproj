@@ -11504,6 +11504,7 @@
 		7C6579ED1E00856600E3A27A /* JSApplePayShippingMethod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayShippingMethod.cpp; sourceTree = "<group>"; };
 		7C6579EE1E00856600E3A27A /* JSApplePayShippingMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayShippingMethod.h; sourceTree = "<group>"; };
 		7C6752BA1B06E82000C279CB /* NonElementParentNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NonElementParentNode.idl; sourceTree = "<group>"; };
+		7C6EFEEA1F946A2E00FFAD41 /* SettingsDefaultValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsDefaultValues.h; sourceTree = "<group>"; };
 		7C73FB05191EF416007DE061 /* UserMessageHandlersNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessageHandlersNamespace.cpp; sourceTree = "<group>"; };
 		7C73FB06191EF417007DE061 /* UserMessageHandlersNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandlersNamespace.h; sourceTree = "<group>"; };
 		7C73FB09191EF49F007DE061 /* UserMessageHandlersNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserMessageHandlersNamespace.idl; sourceTree = "<group>"; };
@@ -19920,6 +19921,7 @@
 				BC59DEF8169DEDC30016AC34 /* Settings.in */,
 				7CC6609B1F93057900D500E9 /* SettingsBase.cpp */,
 				7CC660991F93057800D500E9 /* SettingsBase.h */,
+				7C6EFEEA1F946A2E00FFAD41 /* SettingsDefaultValues.h */,
 				5C688AA21D38126F000B54FA /* SocketProvider.cpp */,
 				5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */,
 				626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */,

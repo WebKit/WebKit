@@ -61,6 +61,8 @@ class RenderStyle;
 class RenderView;
 class RenderWidget;
 
+enum class FrameFlattening;
+
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
 class FrameView final : public ScrollView {
@@ -634,6 +636,8 @@ public:
     void didDestroyRenderTree();
 
     void setSpeculativeTilingDelayDisabledForTesting(bool disabled) { m_speculativeTilingDelayDisabledForTesting = disabled; }
+
+    WEBCORE_EXPORT FrameFlattening effectiveFrameFlattening() const;
 
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;

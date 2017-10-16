@@ -31,7 +31,7 @@
 #include "EditingBehaviorTypes.h"
 #include "IntSize.h"
 #include "SecurityOrigin.h"
-#include "SettingsMacros.h"
+#include "StorageMap.h"
 #include "TextFlags.h"
 #include "Timer.h"
 #include "URL.h"
@@ -88,10 +88,10 @@ enum PDFImageCachingPolicy {
 #endif
 };
 
-enum FrameFlattening {
-    FrameFlatteningDisabled,
-    FrameFlatteningEnabledForNonFullScreenIFrames,
-    FrameFlatteningFullyEnabled
+enum class FrameFlattening {
+    Disabled,
+    EnabledForNonFullScreenIFrames,
+    FullyEnabled
 };
 
 typedef unsigned DebugOverlayRegions;
@@ -100,6 +100,8 @@ class SettingsBase {
     WTF_MAKE_NONCOPYABLE(SettingsBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     ~SettingsBase();
+
+    void pageDestroyed() { m_page = nullptr; }
 
     enum class FontLoadTimingOverride { None, Block, Swap, Failure };
 

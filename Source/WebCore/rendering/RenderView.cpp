@@ -59,7 +59,7 @@ namespace WebCore {
 struct FrameFlatteningLayoutDisallower {
     FrameFlatteningLayoutDisallower(FrameView& frameView)
         : m_frameView(frameView)
-        , m_disallowLayout(frameView.frame().settings().effectiveFrameFlattening() != FrameFlatteningDisabled)
+        , m_disallowLayout(frameView.effectiveFrameFlattening() != FrameFlattening::Disabled)
     {
         if (m_disallowLayout)
             m_frameView.startDisallowingLayout();

@@ -819,26 +819,11 @@ ExceptionOr<void> InternalSettings::setSystemLayoutDirection(const String& direc
     return Exception { InvalidAccessError };
 }
 
-static FrameFlattening internalSettingsToWebCoreValue(InternalSettings::FrameFlatteningValue value)
-{
-    switch (value) {
-    case InternalSettings::FrameFlatteningValue::Disabled:
-        return FrameFlatteningDisabled;
-    case InternalSettings::FrameFlatteningValue::EnabledForNonFullScreenIFrames:
-        return FrameFlatteningEnabledForNonFullScreenIFrames;
-    case InternalSettings::FrameFlatteningValue::FullyEnabled:
-        return FrameFlatteningFullyEnabled;
-    }
-
-    ASSERT_NOT_REACHED();
-    return FrameFlatteningDisabled;
-}
-
-ExceptionOr<void> InternalSettings::setFrameFlattening(const FrameFlatteningValue& frameFlattening)
+ExceptionOr<void> InternalSettings::setFrameFlattening(FrameFlatteningValue frameFlattening)
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    settings().setFrameFlattening(internalSettingsToWebCoreValue(frameFlattening));
+    settings().setFrameFlattening(frameFlattening);
     return { };
 }
 

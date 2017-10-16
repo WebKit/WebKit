@@ -1,3 +1,15 @@
+2017-10-16  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Remove all custom code from Settings.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=178330
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        
+            Update for naming changes of FrameFlattening now that it is an enum class.
+
 2017-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove Editor::simplifyMarkup

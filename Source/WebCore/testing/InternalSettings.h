@@ -101,8 +101,8 @@ public:
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
 
-    enum class FrameFlatteningValue { Disabled, EnabledForNonFullScreenIFrames, FullyEnabled };
-    ExceptionOr<void> setFrameFlattening(const FrameFlatteningValue&);
+    using FrameFlatteningValue = FrameFlattening;
+    ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
     
     static void setAllowsAnySSLCertificate(bool);
 

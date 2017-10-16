@@ -145,13 +145,13 @@ bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferencesRef)
 void WKPreferencesSetFrameFlatteningEnabled(WKPreferencesRef preferencesRef, bool frameFlatteningEnabled)
 {
     // FIXME: Expose more frame flattening values.
-    toImpl(preferencesRef)->setFrameFlattening(frameFlatteningEnabled ? WebCore::FrameFlatteningFullyEnabled : WebCore::FrameFlatteningDisabled);
+    toImpl(preferencesRef)->setFrameFlattening(frameFlatteningEnabled ? static_cast<uint32_t>(WebCore::FrameFlattening::FullyEnabled) : static_cast<uint32_t>(WebCore::FrameFlattening::Disabled));
 }
 
 bool WKPreferencesGetFrameFlatteningEnabled(WKPreferencesRef preferencesRef)
 {
     // FIXME: Expose more frame flattening values.
-    return toImpl(preferencesRef)->frameFlattening() != WebCore::FrameFlatteningDisabled;
+    return toImpl(preferencesRef)->frameFlattening() != static_cast<uint32_t>(WebCore::FrameFlattening::Disabled);
 }
 
 void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferencesRef, bool pluginsEnabled)
