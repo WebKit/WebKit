@@ -343,7 +343,7 @@ def parse_args(args):
             help=("If specified, tests are allowed to make requests to the specified hostname."))
     ]))
 
-    option_parser = optparse.OptionParser()
+    option_parser = optparse.OptionParser(usage="%prog [options] [<path>...]")
 
     for group_name, group_options in option_group_definitions:
         option_group = optparse.OptionGroup(option_parser, group_name)
