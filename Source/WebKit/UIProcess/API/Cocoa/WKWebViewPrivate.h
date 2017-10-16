@@ -100,6 +100,7 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 @class _WKIconLoadingDelegate;
 @class _WKRemoteObjectRegistry;
 @class _WKSessionState;
+@class _WKThumbnailView;
 @class _WKWebsitePolicies;
 @class _WKWebViewPrintFormatter;
 
@@ -288,6 +289,9 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 
 @property (nonatomic, setter=_setOverlayScrollbarStyle:) _WKOverlayScrollbarStyle _overlayScrollbarStyle WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
+@property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setIgnoresAllEvents:) BOOL _ignoresAllEvents WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 #endif
 

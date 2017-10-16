@@ -1079,6 +1079,11 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     return toAPI(_page.get());
 }
 
+- (WebKit::WebPageProxy *)_page
+{
+    return _page.get();
+}
+
 - (BOOL)allowsLinkPreview
 {
 #if PLATFORM(MAC)
@@ -5456,6 +5461,28 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _impl->prepareForMoveToWindow(targetWindow, [completionHandlerCopy] {
         completionHandlerCopy();
     });
+}
+
+- (void)_setThumbnailView:(_WKThumbnailView *)thumbnailView
+{
+    _impl->setThumbnailView(thumbnailView);
+}
+
+- (_WKThumbnailView *)_thumbnailView
+{
+    if (!_impl)
+        return nil;
+    return _impl->thumbnailView();
+}
+
+- (void)_setIgnoresAllEvents:(BOOL)ignoresAllEvents
+{
+    _impl->setIgnoresAllEvents(ignoresAllEvents);
+}
+
+- (BOOL)_ignoresAllEvents
+{
+    return _impl->ignoresAllEvents();
 }
 
 #endif

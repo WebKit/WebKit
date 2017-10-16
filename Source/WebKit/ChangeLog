@@ -1,5 +1,27 @@
 2017-10-16  Alex Christensen  <achristensen@webkit.org>
 
+        Add a _WKThumbnailView initializer with a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=178351
+        <rdar://problem/34979453>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _page]):
+        (-[WKWebView _setThumbnailView:]):
+        (-[WKWebView _thumbnailView]):
+        (-[WKWebView _setIgnoresAllEvents:]):
+        (-[WKWebView _ignoresAllEvents]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView initWithFrame:fromWKWebView:]):
+        (-[_WKThumbnailView _viewWasUnparented]):
+        (-[_WKThumbnailView _viewWasParented]):
+
+2017-10-16  Alex Christensen  <achristensen@webkit.org>
+
         Expose more WKView properties as WKWebViewPrivate SPI
         https://bugs.webkit.org/show_bug.cgi?id=178349
         <rdar://problem/34980919>

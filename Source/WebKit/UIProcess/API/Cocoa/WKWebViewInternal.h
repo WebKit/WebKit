@@ -147,6 +147,7 @@ struct PrintInfo;
 #endif
 
 - (WKPageRef)_pageForTesting;
+- (WebKit::WebPageProxy*)_page;
 
 @end
 

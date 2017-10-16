@@ -34,6 +34,7 @@
 #import "WKAPICast.h"
 #import "WKView.h"
 #import "WKViewInternal.h"
+#import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 
 // FIXME: Make it possible to leave a snapshot of the content presented in the WKView while the thumbnail is live.
@@ -47,6 +48,7 @@ using namespace WebKit;
 
 @implementation _WKThumbnailView {
     RetainPtr<WKView> _wkView;
+    RetainPtr<WKWebView> _wkWebView;
     WebPageProxy* _webPageProxy;
 
     BOOL _originalMayStartMediaWhenInWindow;
@@ -62,22 +64,42 @@ using namespace WebKit;
 @synthesize exclusivelyUsesSnapshot=_exclusivelyUsesSnapshot;
 @synthesize shouldKeepSnapshotWhenRemovedFromSuperview=_shouldKeepSnapshotWhenRemovedFromSuperview;
 
-- (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView
+- (instancetype)initWithFrame:(NSRect)frame
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
     self.wantsLayer = YES;
     self.layer.backgroundColor = [NSColor whiteColor].CGColor;
+    _scale = 1;
+    _lastSnapshotScale = NAN;
+    
+    return self;
+}
+
+- (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView
+{
+    if (!(self = [self initWithFrame:frame]))
+        return nil;
 
     _wkView = wkView;
     _webPageProxy = toImpl([_wkView pageRef]);
-    _scale = 1;
-    _lastSnapshotScale = NAN;
-
     _originalMayStartMediaWhenInWindow = _webPageProxy->mayStartMediaWhenInWindow();
     _originalSourceViewIsInWindow = !![_wkView window];
 
+    return self;
+}
+
+- (instancetype)initWithFrame:(NSRect)frame fromWKWebView:(WKWebView *)webView
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+    
+    _wkWebView = webView;
+    _webPageProxy = [_wkWebView _page];
+    _originalMayStartMediaWhenInWindow = _webPageProxy->mayStartMediaWhenInWindow();
+    _originalSourceViewIsInWindow = !![_wkWebView window];
+    
     return self;
 }
 
@@ -117,8 +139,14 @@ using namespace WebKit;
 - (void)_viewWasUnparented
 {
     if (!_exclusivelyUsesSnapshot) {
-        [_wkView _setThumbnailView:nil];
-        [_wkView _setIgnoresAllEvents:NO];
+        if (_wkView) {
+            [_wkView _setThumbnailView:nil];
+            [_wkView _setIgnoresAllEvents:NO];
+        } else {
+            ASSERT(_wkWebView);
+            [_wkWebView _setThumbnailView:nil];
+            [_wkWebView _setIgnoresAllEvents:NO];
+        }
         _webPageProxy->setMayStartMediaWhenInWindow(_originalMayStartMediaWhenInWindow);
     }
 
@@ -131,7 +159,9 @@ using namespace WebKit;
 
 - (void)_viewWasParented
 {
-    if ([_wkView _thumbnailView])
+    if (_wkView && [_wkView _thumbnailView])
+        return;
+    if (_wkWebView && [_wkWebView _thumbnailView])
         return;
 
     if (!_exclusivelyUsesSnapshot && !_originalSourceViewIsInWindow)
@@ -140,8 +170,14 @@ using namespace WebKit;
     [self _requestSnapshotIfNeeded];
 
     if (!_exclusivelyUsesSnapshot) {
-        [_wkView _setThumbnailView:self];
-        [_wkView _setIgnoresAllEvents:YES];
+        if (_wkView) {
+            [_wkView _setThumbnailView:self];
+            [_wkView _setIgnoresAllEvents:YES];
+        } else {
+            ASSERT(_wkWebView);
+            [_wkWebView _setThumbnailView:self];
+            [_wkWebView _setIgnoresAllEvents:YES];
+        }
     }
 }
 

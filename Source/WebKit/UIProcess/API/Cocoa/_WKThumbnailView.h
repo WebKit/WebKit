@@ -32,11 +32,13 @@
 #import <AppKit/AppKit.h>
 
 @class WKView;
+@class WKWebView;
 
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface _WKThumbnailView : NSView
 
 - (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView;
+- (instancetype)initWithFrame:(NSRect)frame fromWKWebView:(WKWebView *)webView;
 
 @property (nonatomic) CGFloat scale;
 @property (nonatomic, readonly) CGSize snapshotSize;
