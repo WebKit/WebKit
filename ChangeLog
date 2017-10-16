@@ -1,3 +1,17 @@
+2017-09-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Add ENABLE_WEB_CRYPTO option and make ENABLE_SUBTLE_CRYPTO depend on it.
+        https://bugs.webkit.org/show_bug.cgi?id=177180
+
+        Reviewed by Michael Catanzaro.
+
+        This adds a ENABLE_WEB_CRYPTO flag and makes ENABLE_SUBTLE_CRYPTO depend on it.
+        The GTK and WPE ports enable them and set ENABLE_WEB_CRYPTO to public.
+
+        * Source/cmake/OptionsGTK.cmake: Set both features to ON and ENABLE_WEB_CRYPTO to public. No change in behaviour for GTK.
+        * Source/cmake/OptionsWPE.cmake: Do like on the GTK port. The public flag is now ENABLE_WEB_CRYPTO.
+        * Source/cmake/WebKitFeatures.cmake: Add the definition of ENABLE_WEB_CRYPTO and make ENABLE_SUBTLE_CRYPTO depend on it.
+
 2017-09-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][CMake] Add "dist" and "distcheck" targets
