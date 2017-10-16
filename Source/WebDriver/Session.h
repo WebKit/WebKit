@@ -87,10 +87,8 @@ public:
     void getWindowHandles(Function<void (CommandResult&&)>&&);
     void switchToFrame(RefPtr<Inspector::InspectorValue>&&, Function<void (CommandResult&&)>&&);
     void switchToParentFrame(Function<void (CommandResult&&)>&&);
-    void getWindowPosition(Function<void (CommandResult&&)>&&);
-    void setWindowPosition(int windowX, int windowY, Function<void (CommandResult&&)>&&);
-    void getWindowSize(Function<void (CommandResult&&)>&&);
-    void setWindowSize(int windowWidth, int windowHeight, Function<void (CommandResult&&)>&&);
+    void getWindowRect(Function<void (CommandResult&&)>&&);
+    void setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&&);
     void findElements(const String& strategy, const String& selector, FindElementsMode, const String& rootElementID, Function<void (CommandResult&&)>&&);
     void isElementSelected(const String& elementID, Function<void (CommandResult&&)>&&);
     void getElementText(const String& elementID, Function<void (CommandResult&&)>&&);
@@ -122,6 +120,10 @@ private:
     void switchToBrowsingContext(std::optional<String>);
     void closeTopLevelBrowsingContext(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&&);
     void closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&&);
+
+    void getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&&);
+    void moveToplevelBrowsingContextWindow(double x, double y, Function<void (CommandResult&&)>&&);
+    void resizeToplevelBrowsingContextWindow(double width, double height, Function<void (CommandResult&&)>&&);
 
     std::optional<String> pageLoadStrategyString() const;
 

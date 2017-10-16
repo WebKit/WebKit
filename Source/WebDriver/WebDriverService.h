@@ -79,10 +79,8 @@ private:
     void getWindowHandles(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void switchToFrame(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void switchToParentFrame(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
-    void getWindowPosition(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
-    void setWindowPosition(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
-    void getWindowSize(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
-    void setWindowSize(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getWindowRect(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void setWindowRect(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void findElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void findElements(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void findElementFromElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);

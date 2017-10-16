@@ -636,13 +636,8 @@ void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionH
     });
 }
 
-void Session::getWindowPosition(Function<void (CommandResult&&)>&& completionHandler)
+void Session::getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&& completionHandler)
 {
-    if (!m_toplevelBrowsingContext) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -656,26 +651,37 @@ void Session::getWindowPosition(Function<void (CommandResult&&)>&& completionHan
             return;
         }
         RefPtr<InspectorObject> windowOrigin;
-        if (!browsingContext->getObject(ASCIILiteral("windowOrigin"), windowOrigin)) {
+        double x, y;
+        if (!browsingContext->getObject(ASCIILiteral("windowOrigin"), windowOrigin)
+            || !windowOrigin->getDouble(ASCIILiteral("x"), x)
+            || !windowOrigin->getDouble(ASCIILiteral("y"), y)) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        completionHandler(CommandResult::success(WTFMove(windowOrigin)));
+        RefPtr<InspectorObject> windowSize;
+        double width, height;
+        if (!browsingContext->getObject(ASCIILiteral("windowSize"), windowSize)
+            || !windowSize->getDouble(ASCIILiteral("width"), width)
+            || !windowSize->getDouble(ASCIILiteral("height"), width)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+            return;
+        }
+        auto windowRect = InspectorObject::create();
+        windowRect->setDouble(ASCIILiteral("x"), x);
+        windowRect->setDouble(ASCIILiteral("y"), y);
+        windowRect->setDouble(ASCIILiteral("width"), width);
+        windowRect->setDouble(ASCIILiteral("height"), height);
+        completionHandler(CommandResult::success(WTFMove(windowRect)));
     });
 }
 
-void Session::setWindowPosition(int windowX, int windowY, Function<void (CommandResult&&)>&& completionHandler)
+void Session::moveToplevelBrowsingContextWindow(double x, double y, Function<void (CommandResult&&)>&& completionHandler)
 {
-    if (!m_toplevelBrowsingContext) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     RefPtr<InspectorObject> windowOrigin = InspectorObject::create();
-    windowOrigin->setInteger("x", windowX);
-    windowOrigin->setInteger("y", windowY);
+    windowOrigin->setDouble("x", x);
+    windowOrigin->setDouble("y", y);
     parameters->setObject(ASCIILiteral("origin"), WTFMove(windowOrigin));
     m_host->sendCommandToBackend(ASCIILiteral("moveWindowOfBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
@@ -686,46 +692,13 @@ void Session::setWindowPosition(int windowX, int windowY, Function<void (Command
     });
 }
 
-void Session::getWindowSize(Function<void (CommandResult&&)>&& completionHandler)
+void Session::resizeToplevelBrowsingContextWindow(double width, double height, Function<void (CommandResult&&)>&& completionHandler)
 {
-    if (!m_toplevelBrowsingContext) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
-    parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
-    m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-        if (response.isError || !response.responseObject) {
-            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
-            return;
-        }
-        RefPtr<InspectorObject> browsingContext;
-        if (!response.responseObject->getObject(ASCIILiteral("context"), browsingContext)) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-            return;
-        }
-        RefPtr<InspectorObject> windowSize;
-        if (!browsingContext->getObject(ASCIILiteral("windowSize"), windowSize)) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-            return;
-        }
-        completionHandler(CommandResult::success(WTFMove(windowSize)));
-    });
-}
-
-void Session::setWindowSize(int windowWidth, int windowHeight, Function<void (CommandResult&&)>&& completionHandler)
-{
-    if (!m_toplevelBrowsingContext) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     RefPtr<InspectorObject> windowSize = InspectorObject::create();
-    windowSize->setInteger("width", windowWidth);
-    windowSize->setInteger("height", windowHeight);
+    windowSize->setDouble("width", width);
+    windowSize->setDouble("height", height);
     parameters->setObject(ASCIILiteral("size"), WTFMove(windowSize));
     m_host->sendCommandToBackend(ASCIILiteral("resizeWindowOfBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
@@ -733,6 +706,72 @@ void Session::setWindowSize(int windowWidth, int windowHeight, Function<void (Co
             return;
         }
         completionHandler(CommandResult::success());
+    });
+}
+
+void Session::getWindowRect(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        getToplevelBrowsingContextRect(WTFMove(completionHandler));
+    });
+}
+
+void Session::setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, x, y, width, height, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+
+        if (width && height)  {
+            resizeToplevelBrowsingContextWindow(width.value(), height.value(), [this, x, y, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                if (result.isError()) {
+                    completionHandler(WTFMove(result));
+                    return;
+                }
+                if (!x || !y) {
+                    getToplevelBrowsingContextRect(WTFMove(completionHandler));
+                    return;
+                }
+
+                moveToplevelBrowsingContextWindow(x.value(), y.value(), [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                    if (result.isError()) {
+                        completionHandler(WTFMove(result));
+                        return;
+                    }
+                    getToplevelBrowsingContextRect(WTFMove(completionHandler));
+                });
+            });
+            return;
+        }
+
+        if (x && y) {
+            moveToplevelBrowsingContextWindow(x.value(), y.value(), [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                if (result.isError()) {
+                    completionHandler(WTFMove(result));
+                    return;
+                }
+                getToplevelBrowsingContextRect(WTFMove(completionHandler));
+            });
+            return;
+        }
+
+        getToplevelBrowsingContextRect(WTFMove(completionHandler));
     });
 }
 
