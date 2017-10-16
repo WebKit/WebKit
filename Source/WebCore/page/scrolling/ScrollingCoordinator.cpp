@@ -89,7 +89,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
     )
         return false;
 
-    RenderView* renderView = frameView.frame().contentRenderer();
+    auto* renderView = frameView.frame().contentRenderer();
     if (!renderView)
         return false;
     return renderView->usesCompositing();
@@ -147,7 +147,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     EventTrackingRegions eventTrackingRegions;
 
     // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
-    for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
+    for (auto* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
         auto* subframeView = subframe->view();
         if (!subframeView)
             continue;
@@ -212,7 +212,7 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForScrollableArea(ScrollableArea
 
 GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView& frameView)
 {
-    if (RenderView* renderView = frameView.frame().contentRenderer())
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().scrollLayer();
     return nullptr;
 }
@@ -220,7 +220,7 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView& frameVie
 GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView& frameView)
 {
 #if ENABLE(RUBBER_BANDING)
-    if (RenderView* renderView = frameView.frame().contentRenderer())
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().headerLayer();
     return nullptr;
 #else
@@ -232,7 +232,7 @@ GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView& frameVie
 GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView& frameView)
 {
 #if ENABLE(RUBBER_BANDING)
-    if (RenderView* renderView = frameView.frame().contentRenderer())
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().footerLayer();
     return nullptr;
 #else
@@ -243,14 +243,14 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView& frameVie
 
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView& frameView)
 {
-    if (RenderView* renderView = frameView.frame().contentRenderer())
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().fixedRootBackgroundLayer();
     return nullptr;
 }
 
 GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(FrameView& frameView)
 {
-    if (RenderView* renderView = frameView.frame().contentRenderer())
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().clipLayer();
     return nullptr;
 }
@@ -258,7 +258,7 @@ GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(FrameView& frame
 GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(FrameView& frameView)
 {
 #if ENABLE(RUBBER_BANDING)
-    if (RenderView* renderView = frameView.frame().contentRenderer())
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().layerForContentShadow();
     
     return nullptr;
@@ -270,7 +270,7 @@ GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(FrameView& f
 
 GraphicsLayer* ScrollingCoordinator::rootContentLayerForFrameView(FrameView& frameView)
 {
-    if (RenderView* renderView = frameView.frame().contentRenderer())
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().rootContentLayer();
     return nullptr;
 }
@@ -295,7 +295,7 @@ void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
     if (!m_page)
         return;
 
-    FrameView* frameView = m_page->mainFrame().view();
+    auto* frameView = m_page->mainFrame().view();
     if (!frameView)
         return;
 
@@ -312,7 +312,7 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const
     for (auto& viewportConstrainedObject : *viewportConstrainedObjects) {
         if (!is<RenderBoxModelObject>(*viewportConstrainedObject) || !viewportConstrainedObject->hasLayer())
             return true;
-        RenderLayer& layer = *downcast<RenderBoxModelObject>(*viewportConstrainedObject).layer();
+        auto& layer = *downcast<RenderBoxModelObject>(*viewportConstrainedObject).layer();
         // Any explicit reason that a fixed position element is not composited shouldn't cause slow scrolling.
         if (!layer.isComposited() && layer.viewportConstrainedNotCompositedReason() == RenderLayer::NoNotCompositedReason)
             return true;
@@ -345,7 +345,7 @@ void ScrollingCoordinator::updateSynchronousScrollingReasons(FrameView& frameVie
 void ScrollingCoordinator::updateSynchronousScrollingReasonsForAllFrames()
 {
     for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (FrameView* frameView = frame->view()) {
+        if (auto* frameView = frame->view()) {
             if (coordinatesScrollingForFrameView(*frameView))
                 updateSynchronousScrollingReasons(*frameView);
         }
@@ -402,7 +402,7 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText(SynchronousScroll
 
 String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
 {
-    if (FrameView* frameView = m_page->mainFrame().view())
+    if (auto* frameView = m_page->mainFrame().view())
         return synchronousScrollingReasonsAsText(synchronousScrollingReasons(*frameView));
 
     return String();

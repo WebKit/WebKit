@@ -59,7 +59,7 @@ ScrollingNodeID ScrollingCoordinatorCoordinatedGraphics::attachToStateTree(Scrol
 
 void ScrollingCoordinatorCoordinatedGraphics::detachFromStateTree(ScrollingNodeID nodeID)
 {
-    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (node && node->nodeType() == FixedNode)
         downcast<CoordinatedGraphicsLayer>(*static_cast<GraphicsLayer*>(node->layer())).setFixedToViewport(false);
 
@@ -73,7 +73,7 @@ void ScrollingCoordinatorCoordinatedGraphics::clearStateTree()
 
 void ScrollingCoordinatorCoordinatedGraphics::updateNodeLayer(ScrollingNodeID nodeID, GraphicsLayer* graphicsLayer)
 {
-    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!node)
         return;
 
@@ -82,7 +82,7 @@ void ScrollingCoordinatorCoordinatedGraphics::updateNodeLayer(ScrollingNodeID no
 
 void ScrollingCoordinatorCoordinatedGraphics::updateNodeViewportConstraints(ScrollingNodeID nodeID, const ViewportConstraints& constraints)
 {
-    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!node)
         return;
 
@@ -102,7 +102,7 @@ void ScrollingCoordinatorCoordinatedGraphics::updateNodeViewportConstraints(Scro
 
 void ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange(ScrollableArea& scrollableArea)
 {
-    CoordinatedGraphicsLayer* layer = downcast<CoordinatedGraphicsLayer>(scrollLayerForScrollableArea(scrollableArea));
+    auto* layer = downcast<CoordinatedGraphicsLayer>(scrollLayerForScrollableArea(scrollableArea));
     if (!layer)
         return;
 
@@ -111,7 +111,7 @@ void ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange
 
 void ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea(ScrollableArea& scrollableArea)
 {
-    CoordinatedGraphicsLayer* layer = downcast<CoordinatedGraphicsLayer>(scrollLayerForScrollableArea(scrollableArea));
+    auto* layer = downcast<CoordinatedGraphicsLayer>(scrollLayerForScrollableArea(scrollableArea));
     if (!layer)
         return;
 
