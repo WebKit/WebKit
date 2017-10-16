@@ -1,3 +1,23 @@
+2017-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: HTTP responses should include Cache-Control header with no-cache value
+        https://bugs.webkit.org/show_bug.cgi?id=177073
+
+        Reviewed by Sergio Villar Senin.
+
+        6.3 Processing Model.
+        Set the response’s header with name and value with the following values:
+
+        Content-Type "application/json; charset=utf-8"
+        Cache-Control "no-cache"
+
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
+
+        We were setting the Content-Type, but not the Cache-Control. This is checked by all WPT WebDriver tests.
+
+        * soup/HTTPServerSoup.cpp:
+        (WebDriver::HTTPServer::listen): Add Cache-Control header.
+
 2017-09-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: ensure we close all windows handles when closing the session
