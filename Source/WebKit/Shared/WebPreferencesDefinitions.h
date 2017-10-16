@@ -374,7 +374,7 @@
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
     macro(AsyncFrameScrollingEnabled, asyncFrameScrollingEnabled, Bool, bool, false, "Async Frame Scrolling", "Perform frame scrolling in a dedicated thread or process") \
-    macro(CacheAPIEnabled, cacheAPIEnabled, Bool, bool, false, "Cache API", "Enable Cache API") \
+    macro(CacheAPIEnabled, cacheAPIEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Cache API", "Enable Cache API") \
     macro(ConstantPropertiesEnabled, constantPropertiesEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Constant Properties", "Enable CSS constant() properties") \
     macro(DisplayContentsEnabled, displayContentsEnabled, Bool, bool, false, "CSS display: contents", "Enable CSS display: contents support") \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \

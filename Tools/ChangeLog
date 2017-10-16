@@ -1,3 +1,18 @@
+2017-10-16  Youenn Fablet  <youenn@apple.com>
+
+        Activate Cache API by default
+        https://bugs.webkit.org/show_bug.cgi?id=178186
+
+        Reviewed by Chris Dumez.
+
+        Removing explicit activation of cache api.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setCacheAPIEnabled): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2017-10-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         run-webkit-tests help text should mention arguments too

@@ -355,8 +355,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setWebGL2Enabled(true);
     m_testRunner->setWebGPUEnabled(true);
 
-    m_testRunner->setCacheAPIEnabled(true);
-
     m_testRunner->setWritableStreamAPIEnabled(true);
     m_testRunner->setReadableByteStreamAPIEnabled(true);
 
