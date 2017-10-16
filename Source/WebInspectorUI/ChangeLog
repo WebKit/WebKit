@@ -1,3 +1,44 @@
+2017-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [PARITY] Styles Redesign: clicking on the go-to arrow in Computed tab should work
+        https://bugs.webkit.org/show_bug.cgi?id=178286
+        <rdar://problem/34986379>
+
+        Reviewed by Joseph Pecoraro.
+
+        Highlight the matching property using a yellow background and focus on the property value
+        if the property is editable (e.g., not a User Agent style).
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor):
+        (.spreadsheet-style-declaration-editor .property):
+        Move left padding to the property element so there's no awkward gap on the left side
+        when the property is highlighted.
+
+        (.spreadsheet-style-declaration-editor .property.highlighted):
+        (@keyframes style-property-highlight):
+        Use the same animation duration as we used in `.text-editor > .CodeMirror .highlighted`.
+        The highlight color was changed from light blue to yellow.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.highlightProperty):
+        Use the same logic as in WI.CSSStyleDeclarationTextEditor.prototype.highlightProperty
+        to find matching style property to highlight.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.highlightProperty):
+        Use the same logic as in WI.CSSStyleDeclarationSection.prototype.highlightProperty.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.scrollToSectionAndHighlightProperty):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.nodeStylesRefreshed):
+        Copied from WI.RulesStyleDetailsPanel.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.detached):
+        (WI.SpreadsheetStyleProperty.prototype.highlight):
+
 2017-10-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r223310): Web Inspector: Class list container is transparent and unreadable

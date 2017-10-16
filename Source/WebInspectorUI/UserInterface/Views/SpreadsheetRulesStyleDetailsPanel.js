@@ -129,6 +129,29 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         super.refresh(significantChange);
     }
 
+    scrollToSectionAndHighlightProperty(property)
+    {
+        if (!this._visible) {
+            this._propertyToSelectAndHighlight = property;
+            return;
+        }
+
+        for (let section of this._sections) {
+            if (section.highlightProperty(property))
+                return;
+        }
+    }
+
+    nodeStylesRefreshed(event)
+    {
+        super.nodeStylesRefreshed(event);
+
+        if (this._propertyToSelectAndHighlight) {
+            this.scrollToSectionAndHighlightProperty(this._propertyToSelectAndHighlight);
+            this._propertyToSelectAndHighlight = null;
+        }
+    }
+
     cssStyleDeclarationSectionStartEditingNextRule(currentSection)
     {
         let currentIndex = this._sections.indexOf(currentSection);

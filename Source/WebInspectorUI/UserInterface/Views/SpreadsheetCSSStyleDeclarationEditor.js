@@ -104,6 +104,47 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         }
     }
 
+    highlightProperty(property)
+    {
+        let propertiesMatch = (cssProperty) => {
+            if (cssProperty.attached && !cssProperty.overridden) {
+                if (cssProperty.canonicalName === property.canonicalName || hasMatchingLonghandProperty(cssProperty))
+                    return true;
+            }
+
+            return false;
+        };
+
+        let hasMatchingLonghandProperty = (cssProperty) => {
+            let cssProperties = cssProperty.relatedLonghandProperties;
+
+            if (!cssProperties.length)
+                return false;
+
+            for (let property of cssProperties) {
+                if (propertiesMatch(property))
+                    return true;
+            }
+
+            return false;
+        };
+
+        for (let cssProperty of this.style.properties) {
+            if (propertiesMatch(cssProperty)) {
+                let propertyView = cssProperty.__propertyView;
+                if (propertyView) {
+                    propertyView.highlight();
+
+                    if (cssProperty.editable)
+                        propertyView.valueTextField.startEditing();
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     spreadsheetCSSStyleDeclarationEditorFocusMoved({direction, movedFromProperty, willRemoveProperty})
     {
         let movedFromIndex = this._propertyViews.indexOf(movedFromProperty);

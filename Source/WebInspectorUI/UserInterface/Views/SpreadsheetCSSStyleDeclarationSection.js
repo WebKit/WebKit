@@ -104,6 +104,21 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._selectorElement.focus();
     }
 
+    highlightProperty(property)
+    {
+        // When navigating from the Computed panel to the Styles panel, the latter
+        // could be empty. Layout all properties so they can be highlighted.
+        if (!this.didInitialLayout)
+            this.updateLayout();
+
+        if (this._propertiesEditor.highlightProperty(property)) {
+            this._element.scrollIntoView();
+            return true;
+        }
+
+        return false;
+    }
+
     cssStyleDeclarationTextEditorStartEditingRuleSelector()
     {
         this.startEditingRuleSelector();

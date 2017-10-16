@@ -25,8 +25,11 @@
 
 .spreadsheet-style-declaration-editor {
     position: relative;
-    padding-left: 17px;
     clear: both;
+}
+
+.spreadsheet-style-declaration-editor .property {
+    padding-left: 17px;
 }
 
 .spreadsheet-style-declaration-editor .name {
@@ -87,4 +90,12 @@
 
 .spreadsheet-style-declaration-editor .completion-hint {
     color: hsl(0, 0%, 50%) !important;
+}
+
+.spreadsheet-style-declaration-editor .property.highlighted {
+    animation: style-property-highlight 2s;
+}
+
+@keyframes style-property-highlight {
+    from { background-color: yellow; }
 }
