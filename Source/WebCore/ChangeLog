@@ -1,3 +1,18 @@
+2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Missing GRefPtr adoptions in MediaPlayerPrivateGStreamerBase, PlaybackPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=176646
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::registerWebKitGStreamerElements): Adopt the return value
+        of gst_element_factory_find(), which is transferred in full.
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::flush): Adopt the return values
+        of gst_element_get_static_pad() and gst_pad_get_peer(), both being
+        transferred in full.
+
 2017-09-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Add GRefPtr specializations for GstGLDisplay, GstGLContext
