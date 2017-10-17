@@ -1,3 +1,13 @@
+2017-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid triggering layout from style change
+        https://bugs.webkit.org/show_bug.cgi?id=178184
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/scrolling/adjust-scroll-offset-on-zoom-expected.txt: Added.
+        * fast/scrolling/adjust-scroll-offset-on-zoom.html: Added.
+
 2017-10-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose value of aria-keyshortcuts as object attribute

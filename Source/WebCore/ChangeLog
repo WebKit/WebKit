@@ -1,3 +1,25 @@
+2017-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid triggering layout from style change
+        https://bugs.webkit.org/show_bug.cgi?id=178184
+        rdar://problem/34699113
+
+        Reviewed by Zalan Bujtas.
+
+        It's bad for RenderBox::styleDidChange() to scroll RenderLayers, because that
+        can trigger layout via FrameView::updateWidgetPositions() and ScrollingCoordinator::absoluteEventTrackingRegions().
+        So postpone the scrolling until after layout.
+
+        Test: fast/scrolling/adjust-scroll-offset-on-zoom.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::setPostLayoutScrollPosition):
+        (WebCore::RenderLayer::applyPostLayoutScrollPositionIfNeeded):
+        * rendering/RenderLayer.h:
+
 2017-10-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Expose value of aria-keyshortcuts as object attribute
