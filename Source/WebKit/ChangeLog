@@ -1,3 +1,15 @@
+2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][CMake] The “install” target should install all public API headers
+        https://bugs.webkit.org/show_bug.cgi?id=176475
+
+        Reviewed by Žan Doberšek.
+
+        Install the WPE port GLib-based API headers. The deprecated C API is still available,
+        but disabled by default behind the "EXPORT_DEPRECATED_WEBKIT2_C_API" CMake option.
+
+        * PlatformWPE.cmake: Always install "wpe-webkit.pc" and the GLib C API for WPE.
+
 2017-10-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Propagate libepoxy compiler flags obtained from pkg-config

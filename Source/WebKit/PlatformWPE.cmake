@@ -623,9 +623,14 @@ if (EXPORT_DEPRECATED_WEBKIT2_C_API)
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/wpe-${WPE_API_VERSION}/WPE"
         COMPONENT "Development"
     )
-
-    install(FILES ${CMAKE_BINARY_DIR}/wpe-webkit.pc
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
-        COMPONENT "Development"
-    )
 endif ()
+
+install(FILES "${CMAKE_BINARY_DIR}/wpe-webkit.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+    COMPONENT "Development"
+)
+
+install(FILES ${WPE_API_INSTALLED_HEADERS}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/wpe-${WPE_API_VERSION}/WPE/wpe"
+    COMPONENT "Development"
+)
