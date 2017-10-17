@@ -1,3 +1,17 @@
+2017-10-16  Dean Jackson  <dino@apple.com>
+
+        WebGL clamps drawingBufferWidth to 4096 pixels on a 5120 monitor/canvas
+        https://bugs.webkit.org/show_bug.cgi?id=178223
+        <rdar://problem/34597567>
+
+        Reviewed by Antoine Quint.
+
+        Test that resizes an already large buffer to make sure it
+        doesn't get clamped to 4k.
+
+        * fast/canvas/webgl/large-drawing-buffer-resize-expected.txt: Added.
+        * fast/canvas/webgl/large-drawing-buffer-resize.html: Added.
+
 2017-10-16  Chris Dumez  <cdumez@apple.com>
 
         DOMQuad.p1 / p2 / p3 / p4 should behave as [SameObject]
