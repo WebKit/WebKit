@@ -1,5 +1,14 @@
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [WPE] Cannot link against libWPEWebkit due to wrong contents of wpe-webkit.pc
+        https://bugs.webkit.org/show_bug.cgi?id=178133
+
+        Reviewed by Žan Doberšek.
+
+        * wpe/wpe-webkit.pc.in: Remove "-lWPE" and replace "Requires.private" with a plain "Requires".
+
+2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
         [WPE] GLib API headers WebKitScriptDialog.h and WebKitFileChooserRequest.h are not installed
         https://bugs.webkit.org/show_bug.cgi?id=178104
 
