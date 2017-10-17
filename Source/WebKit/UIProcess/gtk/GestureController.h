@@ -49,9 +49,17 @@ public:
     bool isProcessingGestures() const;
     bool handleEvent(const GdkEvent*);
 
+    void reset()
+    {
+        m_dragGesture.reset();
+        m_swipeGesture.reset();
+        m_zoomGesture.reset();
+    }
+
 private:
     class Gesture {
     public:
+        void reset();
         bool isActive() const;
         void handleEvent(const GdkEvent*);
 

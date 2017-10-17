@@ -1,3 +1,25 @@
+2017-10-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] WebKit2GTK+ does not handle touchmove and touchend events correctly
+        https://bugs.webkit.org/show_bug.cgi?id=158531
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Do not bypass WebCore event handling when receiving touch events.
+
+        Based on a patch by Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>.
+        Thanks to Carlos Garnacho <carlosg@gnome.org> for helping out reviewing the code.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent): Make sure touchend reaches gesture controller if touchbegin evet got to it.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTouchEvent): Do not invoke gesture controller directly by bypassing WebCore event handling.
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::reset): Added.
+        (WebKit::GestureController::handleEvent): Reset gesture controller when touchpadupdate/end is received without touchbegin.
+        (WebKit::GestureController::Gesture::reset): Added.
+        * UIProcess/gtk/GestureController.h:
+
 2017-10-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Do not hardcode font family in served remote inspector HTML snippets
