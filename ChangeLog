@@ -1,3 +1,22 @@
+2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Use implicit include directories for Clang as well
+        https://bugs.webkit.org/show_bug.cgi?id=177426
+
+        Reviewed by Michael Catanzaro.
+
+        In WebKitCompilerFlags.cmake, also gather and use the system
+        include directories for C and C++ build targets when compiling
+        with Clang. This fixes compilation errors when cross-building
+        WebKit with a Clang-based toolchain.
+
+        COMPILER_IS_GCC_OR_CLANG is used to check for GCC or Clang
+        compilers. That only checks for the C++ compiler, but it's not
+        reasonable to expect two widely different compilers being used
+        for C and C++ compilation.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2017-09-20  Alberto Garcia  <berto@igalia.com>
 
         Fix HPPA and Alpha builds
