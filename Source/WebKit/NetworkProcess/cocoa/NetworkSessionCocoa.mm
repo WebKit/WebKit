@@ -284,8 +284,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
                 // Received an authentication challenge for a download being resumed.
                 WebCore::AuthenticationChallenge authenticationChallenge { challenge };
                 auto completionHandlerCopy = Block_copy(completionHandler);
-                auto sessionID = _session->sessionID();
-                auto challengeCompletionHandler = [completionHandlerCopy, sessionID, authenticationChallenge](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
+                auto challengeCompletionHandler = [completionHandlerCopy, authenticationChallenge](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
                     completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
                     Block_release(completionHandlerCopy);
                 };
