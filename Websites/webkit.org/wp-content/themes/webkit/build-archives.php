@@ -62,7 +62,7 @@ add_action('wp_head', function() { ?>
     (function(document) {
         document.addEventListener("DOMContentLoaded", function () {
 
-            var creationTimeNodes = document.getElementsByClassName("date");
+            var creationTimeNodes = Array.prototype.slice.call(document.getElementsByClassName("date"));
             for (var timestamp of creationTimeNodes) {
                 var date = new Date(parseInt(timestamp.textContent));
                 timestamp.textContent = date.toLocaleDateString("en", {
@@ -75,7 +75,7 @@ add_action('wp_head', function() { ?>
                 })
             }
 
-            var tabnav = document.getElementsByClassName("tabnav-link"),
+            var tabnav = Array.prototype.slice.call(document.getElementsByClassName("tabnav-link")),
                 currentTab = function(e) {
                     var target = e.target ? e.target : e,
                         currentLink = document.getElementsByClassName("tabnav-link current")

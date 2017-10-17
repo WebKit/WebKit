@@ -1,3 +1,19 @@
+2017-10-16  Daniel Bates  <dabates@apple.com>
+
+        No nightlies listed on nightly.webkit.org when using shipping Safari on macOS Sierra and OS X El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=178372
+
+        Reviewed by Tim Horton.
+
+        The Build Archive page depends on the collections (e.g. HTMLCollection) being
+        iterable so as to support iteration using ES6 for-of loop. Such support postdates
+        the version of WebKit shipped in macOS Sierra and OS X El Capitan. We should
+        make <https://webkit.org/build-archives/> work for these OSes since we still publish
+        nightlies for them.
+
+        * wp-content/themes/webkit/build-archives.php: Use Array.prototype.slice() to
+        convert the HTMLCollection to an array that can be iterated using a ES6 for-of loop.
+
 2017-10-04  Megan Gardner  <megan_gardner@apple.com>
 
         Update Webkit Style webpage to include Obj-C blocks
