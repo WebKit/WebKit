@@ -109,7 +109,7 @@ private:
     void refView() override;
     void derefView() override;
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
     bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
 #endif
 
