@@ -119,14 +119,10 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
 
 void AutofillElements::autofill(String username, String password)
 {
-    if (m_username) {
+    if (m_username)
         m_username->setValueForUser(username);
-        m_username->setAutoFilled();
-    }
-    if (m_password) {
+    if (m_password)
         m_password->setValueForUser(password);
-        m_password->setAutoFilled();
-    }
 }
 
 } // namespace WebCore
