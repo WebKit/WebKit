@@ -63,7 +63,7 @@ const ClassInfo ReflectObject::s_info = { "Object", &Base::s_info, &reflectObjec
     deleteProperty           JSBuiltin                             DontEnum|Function 2
     get                      reflectObjectGet                      DontEnum|Function 2
     getOwnPropertyDescriptor reflectObjectGetOwnPropertyDescriptor DontEnum|Function 2
-    getPrototypeOf           reflectObjectGetPrototypeOf           DontEnum|Function 1 ReflectGetPrototypeOfIntrinsic
+    getPrototypeOf           reflectObjectGetPrototypeOf           DontEnum|Function 1
     has                      JSBuiltin                             DontEnum|Function 2
     isExtensible             reflectObjectIsExtensible             DontEnum|Function 1
     ownKeys                  reflectObjectOwnKeys                  DontEnum|Function 1

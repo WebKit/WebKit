@@ -111,10 +111,6 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "RegExpTestIntrinsic";
     case RegExpTestFastIntrinsic:
         return "RegExpTestFastIntrinsic";
-    case ObjectGetPrototypeOfIntrinsic:
-        return "ObjectGetPrototypeOfIntrinsic";
-    case ReflectGetPrototypeOfIntrinsic:
-        return "ReflectGetPrototypeOfIntrinsic";
     case StringPrototypeValueOfIntrinsic:
         return "StringPrototypeValueOfIntrinsic";
     case StringPrototypeReplaceIntrinsic:
@@ -193,8 +189,6 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "TypedArrayByteLengthIntrinsic";
     case TypedArrayByteOffsetIntrinsic:
         return "TypedArrayByteOffsetIntrinsic";
-    case UnderscoreProtoIntrinsic:
-        return "UnderscoreProtoIntrinsic";
     case DFGTrueIntrinsic:
         return "DFGTrueIntrinsic";
     case OSRExitIntrinsic:

@@ -63,11 +63,6 @@ bool IntrinsicGetterAccessCase::canEmitIntrinsicGetter(JSFunction* getter, Struc
         
         return true;
     }
-    case UnderscoreProtoIntrinsic: {
-        auto getPrototypeMethod = structure->classInfo()->methodTable.getPrototype;
-        MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-        return getPrototypeMethod == defaultGetPrototype;
-    }
     default:
         return false;
     }
@@ -126,19 +121,6 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
         done.link(&jit);
         
         jit.boxInt32(valueGPR, valueRegs);
-        state.succeed();
-        return;
-    }
-
-    case UnderscoreProtoIntrinsic: {
-        if (structure()->hasMonoProto()) {
-            jit.moveValue(structure()->storedPrototype(), valueRegs);
-            state.succeed();
-            return;
-        }
-        // FIXME: Support poly proto for intrinsic getters.
-        // https://bugs.webkit.org/show_bug.cgi?id=177318
-        jit.loadValue(MacroAssembler::Address(baseGPR, sizeof(EncodedJSValue) * structure()->polyProtoOffset() + JSObject::offsetOfInlineStorage()), valueRegs);
         state.succeed();
         return;
     }

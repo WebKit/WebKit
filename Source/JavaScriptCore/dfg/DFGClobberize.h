@@ -1114,23 +1114,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(MiscFields);
         def(HeapLocation(TypedArrayByteOffsetLoc, MiscFields, node->child1()), LazyNode(node));
         return;
-
-    case GetPrototypeOf: {
-        switch (node->child1().useKind()) {
-        case ArrayUse:
-        case FunctionUse:
-        case FinalObjectUse:
-            read(JSCell_structureID);
-            read(JSObject_butterfly);
-            read(NamedProperties); // Poly proto could load prototype from its slot.
-            def(HeapLocation(PrototypeLoc, NamedProperties, node->child1()), LazyNode(node));
-            return;
-        default:
-            read(World);
-            write(Heap);
-            return;
-        }
-    }
         
     case GetByOffset:
     case GetGetterSetterByOffset: {

@@ -144,7 +144,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ReallocatePropertyStorage:
     case NukeStructureAndSetButterfly:
     case GetTypedArrayByteOffset:
-    case GetPrototypeOf:
     case NotifyWrite:
     case StoreBarrier:
     case FencedStoreBarrier:

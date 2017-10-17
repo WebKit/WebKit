@@ -151,10 +151,6 @@ void printInternal(PrintStream& out, LocationKind kind)
     case TypedArrayByteOffsetLoc:
         out.print("TypedArrayByteOffsetLoc");
         return;
-
-    case PrototypeLoc:
-        out.print("PrototypeLoc");
-        return;
         
     case StructureLoc:
         out.print("StructureLoc");

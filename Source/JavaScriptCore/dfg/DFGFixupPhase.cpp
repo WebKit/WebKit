@@ -1603,11 +1603,6 @@ private:
             break;
         }
 
-        case GetPrototypeOf: {
-            fixupGetPrototypeOf(node);
-            break;
-        }
-
         case Phi:
         case Upsilon:
         case EntrySwitch:
@@ -2303,59 +2298,6 @@ private:
                 Edge(node->child1().node(), NotCellUse));
             m_graph.convertToConstant(node, jsBoolean(false));
             observeUseKindOnNode<NotCellUse>(node);
-            return;
-        }
-    }
-
-    void fixupGetPrototypeOf(Node* node)
-    {
-        // Reflect.getPrototypeOf only accepts Objects. For Reflect.getPrototypeOf, ByteCodeParser attaches ObjectUse edge filter before fixup phase.
-        if (node->child1().useKind() != ObjectUse) {
-            if (node->child1()->shouldSpeculateString()) {
-                insertCheck<StringUse>(node->child1().node());
-                m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->stringPrototype()));
-                return;
-            }
-            if (node->child1()->shouldSpeculateInt32()) {
-                insertCheck<Int32Use>(node->child1().node());
-                m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->numberPrototype()));
-                return;
-            }
-            if (enableInt52() && node->child1()->shouldSpeculateAnyInt()) {
-                insertCheck<Int52RepUse>(node->child1().node());
-                m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->numberPrototype()));
-                return;
-            }
-            if (node->child1()->shouldSpeculateNumber()) {
-                insertCheck<NumberUse>(node->child1().node());
-                m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->numberPrototype()));
-                return;
-            }
-            if (node->child1()->shouldSpeculateSymbol()) {
-                insertCheck<SymbolUse>(node->child1().node());
-                m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->symbolPrototype()));
-                return;
-            }
-            if (node->child1()->shouldSpeculateBoolean()) {
-                insertCheck<BooleanUse>(node->child1().node());
-                m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->booleanPrototype()));
-                return;
-            }
-        }
-
-        if (node->child1()->shouldSpeculateFinalObject()) {
-            fixEdge<FinalObjectUse>(node->child1());
-            node->clearFlags(NodeMustGenerate);
-            return;
-        }
-        if (node->child1()->shouldSpeculateArray()) {
-            fixEdge<ArrayUse>(node->child1());
-            node->clearFlags(NodeMustGenerate);
-            return;
-        }
-        if (node->child1()->shouldSpeculateFunction()) {
-            fixEdge<FunctionUse>(node->child1());
-            node->clearFlags(NodeMustGenerate);
             return;
         }
     }

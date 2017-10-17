@@ -68,8 +68,6 @@ enum Intrinsic {
     RegExpExecIntrinsic,
     RegExpTestIntrinsic,
     RegExpTestFastIntrinsic,
-    ObjectGetPrototypeOfIntrinsic,
-    ReflectGetPrototypeOfIntrinsic,
     StringPrototypeValueOfIntrinsic,
     StringPrototypeReplaceIntrinsic,
     StringPrototypeReplaceRegExpIntrinsic,
@@ -111,7 +109,6 @@ enum Intrinsic {
     TypedArrayLengthIntrinsic,
     TypedArrayByteLengthIntrinsic,
     TypedArrayByteOffsetIntrinsic,
-    UnderscoreProtoIntrinsic,
 
     // Debugging intrinsics. These are meant to be used as testing hacks within
     // jsc.cpp and should never be exposed to users.
