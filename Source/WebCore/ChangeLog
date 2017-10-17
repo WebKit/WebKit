@@ -1,3 +1,13 @@
+2017-10-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Align BitmapImage::LargeAnimationCutoff to a megabyte value
+        https://bugs.webkit.org/show_bug.cgi?id=177924
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/BitmapImage.h: Fix the 1014 multiplier used to calculate
+        the LargeAnimationCutoff value. It was most likely a typo.
+
 2017-10-04  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Fix playback of GIFs
