@@ -97,11 +97,17 @@
           // aria-colindex from parent row
           shouldBe("cell4.numberAttributeValue('AXARIAColumnIndex')", "3");
           
-          // aria-colspan and aria-rowspan
-          shouldBe("cell2.rowIndexRange()", "'{1, 2}'");
-          shouldBe("cell5.columnIndexRange()", "'{2, 3}'");
-          // aria-rowspan="0"
-          shouldBe("cell3.rowIndexRange()", "'{1, 2}'");
+          // aria-colspan and aria-rowspan, including aria-rowspan="0"
+          if (accessibilityController.platformName == "atk") {
+              // 0-based because these methods use the AtkTableCell interface
+              shouldBe("cell2.rowIndexRange()", "'{7, 2}'");
+              shouldBe("cell5.columnIndexRange()", "'{3, 3}'");
+              shouldBe("cell3.rowIndexRange()", "'{7, 2}'");
+          } else {
+              shouldBe("cell2.rowIndexRange()", "'{1, 2}'");
+              shouldBe("cell5.columnIndexRange()", "'{2, 3}'");
+              shouldBe("cell3.rowIndexRange()", "'{1, 2}'");
+          }
           shouldBe("cell6.rowIndexRange()", "'{0, 2}'");
           // use rowspan for native table
           shouldBe("cell7.rowIndexRange()", "'{0, 2}'");

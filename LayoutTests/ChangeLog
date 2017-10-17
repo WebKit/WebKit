@@ -1,3 +1,13 @@
+2017-09-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] atk_table_cell_get_position() should return values of aria-rowindex and aria-colindex, if present
+        https://bugs.webkit.org/show_bug.cgi?id=171176
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-table-attributes.html: Updated to reflect new behavior.
+        * platform/gtk/accessibility/aria-table-attributes-expected.txt: Updated to reflect new behavior.
+
 2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Several ARIA roles with presentational children are exposing children
