@@ -589,29 +589,29 @@ NativeImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subsam
 
         auto presentationTime = PAL::toMediaTime(m_cursor.get().presentationTimeStamp);
         auto indexIter = m_presentationTimeToIndex.find(presentationTime);
-        advanceCursor();
 
         if (indexIter == m_presentationTimeToIndex.end())
-            return nullptr;
+            break;
 
         auto& cursorSampleData = m_sampleData[indexIter->second];
 
         if (!cursorSampleData.sample) {
-            auto request = adoptNS([allocAVSampleBufferRequestInstance() initWithStartCursor:frameCursor]);
+            auto request = adoptNS([allocAVSampleBufferRequestInstance() initWithStartCursor:m_cursor.get()]);
             cursorSampleData.sample = adoptCF([m_generator createSampleBufferForRequest:request.get()]);
         }
 
         if (!cursorSampleData.sample)
-            return nullptr;
+            break;
 
         if (!storeSampleBuffer(cursorSampleData.sample.get()))
-            return nullptr;
+            break;
 
+        advanceCursor();
         if (sampleData.image)
             return sampleData.image;
     }
 
-    ASSERT_NOT_REACHED();
+    advanceCursor();
     return nullptr;
 }
 
