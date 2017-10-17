@@ -1,3 +1,21 @@
+2017-10-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Fix double seek requested by downloadbuffer GStreamer element in webkibwebsrc
+        https://bugs.webkit.org/show_bug.cgi?id=178079
+
+        Reviewed by Žan Doberšek.
+
+        When the downloadbuffer GStreamer element requests two seeks too
+        close to each other there's some rare race condition where our
+        source answers that it is not seekable and ends up with
+        downloadbuffer element to seek beyond the file size, which causes
+        the server to issue a 416 HTTP error code eventually, causing our
+        MediaPlayer to stop.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStop): We only unset he seekable attribute if we are
+        not seeking.
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM

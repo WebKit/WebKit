@@ -58,7 +58,7 @@ public:
     virtual ~CachedResourceStreamingClient();
 private:
 #if USE(SOUP)
-    char* getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize);
+    char* getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize) override;
 #endif
     // PlatformMediaResourceClient virtual methods.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
@@ -373,12 +373,12 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
     priv->paused = false;
 
     priv->offset = 0;
-    priv->seekable = FALSE;
 
     if (!wasSeeking) {
         priv->size = 0;
         priv->requestedOffset = 0;
         priv->player = nullptr;
+        priv->seekable = FALSE;
     }
 
     if (priv->appsrc) {
