@@ -1,3 +1,16 @@
+2017-10-17  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r222670 and r222732): RTL truncated text may not be drawn
+        https://bugs.webkit.org/show_bug.cgi?id=178278
+        <rdar://problem/34982818>
+
+        Reviewed by Darin Adler.
+
+        Add a test to ensure that we draw right-to-left truncated text correctly.
+
+        * fast/text/ellipsis-text-rtl-expected.html: Added.
+        * fast/text/ellipsis-text-rtl.html: Added.
+
 2017-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] __proto__ getter should be fast

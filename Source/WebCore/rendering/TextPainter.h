@@ -62,7 +62,7 @@ public:
     void setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText*);
 
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
-    void paint(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart = 0, unsigned selectionEnd = 0, bool paintSelectedTextOnly = false, bool paintSelectedTextSeparately = false, bool paintNonSelectedTextOnly = false);
+    void paint(const TextRun&, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart = 0, unsigned selectionEnd = 0, bool paintSelectedTextOnly = false, bool paintSelectedTextSeparately = false, bool paintNonSelectedTextOnly = false);
 
 private:
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& emphasisMark, float emphasisMarkOffset,

@@ -167,7 +167,7 @@ private:
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
 
-    String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The text to render.
+    String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The effective text for the run.
     TextRun createTextRun(String&) const;
 
     ExpansionBehavior expansionBehavior() const;

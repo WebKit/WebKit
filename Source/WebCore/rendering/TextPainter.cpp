@@ -190,11 +190,11 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
     paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_style, m_shadow);
 }
     
-void TextPainter::paint(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart, unsigned selectionEnd,
+void TextPainter::paint(const TextRun& textRun, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart, unsigned selectionEnd,
     bool paintSelectedTextOnly, bool paintSelectedTextSeparately, bool paintNonSelectedTextOnly)
 {
     ASSERT(m_font);
-    unsigned length = textRun.length();
+    ASSERT(length <= textRun.length());
     if (!paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode. It's probably dangerous to leave that mutated as a side
         // effect, so only when we know we're stroking, do a save/restore.

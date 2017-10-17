@@ -491,6 +491,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     auto text = this->text();
     TextRun textRun = createTextRun(text);
     unsigned length = textRun.length();
+    if (m_truncation != cNoTruncation)
+        length = m_truncation;
 
     unsigned selectionStart = 0;
     unsigned selectionEnd = 0;
@@ -549,7 +551,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         if (currentEnd < length)
             textPainter.paintRange(textRun, boxRect, textOrigin, currentEnd, length);
     } else
-        textPainter.paint(textRun, boxRect, textOrigin, selectionStart, selectionEnd, paintSelectedTextOnly, paintSelectedTextSeparately, paintNonSelectedTextOnly);
+        textPainter.paint(textRun, length, boxRect, textOrigin, selectionStart, selectionEnd, paintSelectedTextOnly, paintSelectedTextSeparately, paintNonSelectedTextOnly);
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
@@ -1077,8 +1079,6 @@ TextRun InlineTextBox::createTextRun(String& string) const
 
 String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
 {
-    if (UNLIKELY(m_truncation == cFullTruncation))
-        return emptyString();
     if (auto* combinedText = this->combinedText()) {
         if (ignoreCombinedText)
             return renderer().text()->substring(m_start, m_len);
@@ -1089,7 +1089,7 @@ String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
             return renderer().text()->substring(m_start, m_len);
         return makeString(StringView(renderer().text()).substring(m_start, m_len), lineStyle().hyphenString());
     }
-    return renderer().text()->substring(m_start, m_truncation != cNoTruncation ? m_truncation : m_len);
+    return renderer().text()->substring(m_start, m_len);
 }
 
 inline const RenderCombineText* InlineTextBox::combinedText() const
