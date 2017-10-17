@@ -1,3 +1,24 @@
+2017-10-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Command-click on a property name should jump to definition in Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=174329
+        <rdar://problem/33225564>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        Add "meta-key-pressed" class to <body> when Command key is pressed.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover):
+        Use the same styles as in CodeMirrorTokenTrackingController.css.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype._setupJumpToSymbol):
+        This is very similar to WI.CSSStyleDeclarationTextEditor.prototype.tokenTrackingControllerHighlightedRangeWasClicked,
+        except it doesn't include special cases for CSS variables and links yet.
+
 2017-10-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: apply syntax highlighting to property values

@@ -107,3 +107,10 @@
 .spreadsheet-style-declaration-editor .property:not(.disabled) .token-string {
     color: var(--syntax-highlight-string-color);
 }
+
+.meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover {
+    color: blue !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
+    -webkit-text-stroke-width: 0 !important;
+}

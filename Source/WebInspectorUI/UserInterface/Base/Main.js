@@ -1451,9 +1451,13 @@ WI._windowResized = function(event)
 
 WI._updateModifierKeys = function(event)
 {
-    var didChange = this.modifierKeys.altKey !== event.altKey || this.modifierKeys.metaKey !== event.metaKey || this.modifierKeys.shiftKey !== event.shiftKey;
+    let metaKeyDidChange = this.modifierKeys.metaKey !== event.metaKey;
+    let didChange = this.modifierKeys.altKey !== event.altKey || metaKeyDidChange || this.modifierKeys.shiftKey !== event.shiftKey;
 
     this.modifierKeys = {altKey: event.altKey, metaKey: event.metaKey, shiftKey: event.shiftKey};
+
+    if (metaKeyDidChange)
+        document.body.classList.toggle("meta-key-pressed", this.modifierKeys.metaKey);
 
     if (didChange)
         this.notifications.dispatchEventToListeners(WI.Notification.GlobalModifierKeysDidChange, event);

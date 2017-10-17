@@ -161,6 +161,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._valueTextField = new WI.SpreadsheetTextField(this, this._valueElement, this._valueCompletionDataProvider.bind(this));
         }
 
+        if (this._property.editable) {
+            this._setupJumpToSymbol(this._nameElement);
+            this._setupJumpToSymbol(this._valueElement);
+        }
+
         this.element.append(";");
 
         if (!this._property.enabled)
@@ -281,6 +286,35 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     _valueCompletionDataProvider(prefix)
     {
         return WI.CSSKeywordCompletions.forProperty(this._property.name).startsWith(prefix);
+    }
+
+    _setupJumpToSymbol(element)
+    {
+        element.addEventListener("mousedown", (event) => {
+            if (event.button !== 0)
+                return;
+
+            if (!WI.modifierKeys.metaKey)
+                return;
+
+            if (element.isContentEditable)
+                return;
+
+            let sourceCodeLocation = null;
+            if (this._property.ownerStyle.ownerRule)
+                sourceCodeLocation = this._property.ownerStyle.ownerRule.sourceCodeLocation;
+
+            if (!sourceCodeLocation)
+                return;
+
+            let range = this._property.styleSheetTextRange;
+            const options = {
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+            let sourceCode = sourceCodeLocation.sourceCode;
+            WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn), options);
+        });
     }
 };
 
