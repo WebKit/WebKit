@@ -1,3 +1,22 @@
+2017-10-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GLib] NetworkStateNotifier implementation missing
+        https://bugs.webkit.org/show_bug.cgi?id=177741
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests. The DOM support is already being tested, but we would need a way
+        of simulating a network outage to test GNetworkMonitor.
+
+        * PlatformGTK.cmake: add new file.
+        * PlatformWPE.cmake: add new file.
+        * platform/network/NetworkStateNotifier.cpp: no longer need the empty implementations, all platforms covered.
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/glib/NetworkStateNotifierGLib.cpp: Added.
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying): update the network state using GNetworkMonitor's availability.
+        (WebCore::NetworkStateNotifier::networkChangedCallback): when network-changed is emitted, trigger a state update.
+        (WebCore::NetworkStateNotifier::startObserving): watch GNetworkMonitor's network-changed signal.
+
 2017-10-02  Tomas Popela  <tpopela@redhat.com>
 
         [SOUP] Default kerberos authentication credentials are used in ephemeral (private) mode

@@ -98,6 +98,8 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/wpe/PlatformDisplayWPE.cpp
 
+    platform/network/glib/NetworkStateNotifierGLib.cpp
+
     platform/network/soup/AuthenticationChallengeSoup.cpp
     platform/network/soup/CertificateInfo.cpp
     platform/network/soup/CookieJarSoup.cpp

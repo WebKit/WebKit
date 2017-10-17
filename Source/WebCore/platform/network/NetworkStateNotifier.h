@@ -67,6 +67,10 @@ private:
     static void CALLBACK addressChangeCallback(void*, BOOLEAN timedOut);
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    static void networkChangedCallback(NetworkStateNotifier*);
+#endif
+
     std::optional<bool> m_isOnLine;
     Vector<WTF::Function<void(bool)>> m_listeners;
     Timer m_updateStateTimer;
