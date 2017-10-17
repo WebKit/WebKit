@@ -1,4 +1,15 @@
+# -----------------------------------------------------------------------------
+# Determine CMake version and build type.
+# -----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.3)
+
+if (NOT CMAKE_BUILD_TYPE)
+    message(WARNING "No CMAKE_BUILD_TYPE value specified, defaulting to RelWithDebInfo.")
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build." FORCE)
+else ()
+    message(STATUS "The CMake build type is: ${CMAKE_BUILD_TYPE}")
+endif ()
+
 project(WebKit)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")

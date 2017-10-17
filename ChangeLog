@@ -1,3 +1,14 @@
+2017-10-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Generate a compile error if release is built without compiler optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=177665
+
+        Reviewed by Brian Burg.
+
+        Default to RelWithDebInfo if CMAKE_BUILD_TYPE is unset.
+
+        * CMakeLists.txt:
+
 2017-10-02  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] Remove GnuTLS dependency

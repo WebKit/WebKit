@@ -1,3 +1,15 @@
+2017-10-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Generate a compile error if release is built without compiler optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=177665
+
+        Reviewed by Brian Burg.
+
+        Pass -DRELEASE_WITHOUT_OPTIMIZATIONS to testair.cpp and testb3.cpp because
+        this files are compiled with -O0 for build speed reasons after r195639.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2017-09-27  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(210837): RegExp containing failed non-zero minimum greedy groups incorrectly match

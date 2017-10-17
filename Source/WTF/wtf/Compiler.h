@@ -104,6 +104,10 @@
 
 #endif /* COMPILER(GCC) */
 
+#if COMPILER(GCC_OR_CLANG) && defined(NDEBUG) && !defined(__OPTIMIZE__) && !defined(RELEASE_WITHOUT_OPTIMIZATIONS)
+#error "Building release without compiler optimizations: WebKit will be slow. Set -DRELEASE_WITHOUT_OPTIMIZATIONS if this is intended."
+#endif
+
 /* COMPILER(MINGW) - MinGW GCC */
 
 #if defined(__MINGW32__)

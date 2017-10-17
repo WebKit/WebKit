@@ -1,3 +1,24 @@
+2017-10-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Generate a compile error if release is built without compiler optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=177665
+
+        Reviewed by Brian Burg.
+
+        For GCC and Clang, generate an error at build time that will alert
+        the developer that she is trying to build Release without any compiler
+        optimization. A build time error is much better than an unexpected
+        "oh, WebKit is really slow ..."  situation later.
+
+        If this was intended, then we tell the developer that she can continue
+        by just setting -DRELEASE_WITHOUT_OPTIMIZATIONS in the list of build
+        flags.
+
+        The intention of this patch is to ensure that nobody builds Release
+        without enabling compiler optimization by mistake.
+
+        * wtf/Compiler.h:
+
 2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r222427): SynchronizedFixedQueue should not have a public constructor
