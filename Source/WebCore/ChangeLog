@@ -1,3 +1,18 @@
+2017-10-05  Frederic Wang  <fwang@igalia.com>
+
+        Update Source/ThirdParty/woff2 to 22c256bc457777744ba14b7325a6e8e0e7dec91c
+        https://bugs.webkit.org/show_bug.cgi?id=177994
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests, already covered by existing tests.
+
+        * CMakeLists.txt: Include the directory for public headers instead.
+        * platform/graphics/WOFFFileFormat.cpp: Use the public header
+        woff2/decode.h and do not use the "wOF2" constant from private headers.
+        (WebCore::isWOFF):
+        (WebCore::convertWOFFToSfnt):
+
 2017-10-05  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] GIFImageDecoder never clears decoded frames even when told to do so

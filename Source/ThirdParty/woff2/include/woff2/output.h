@@ -1,34 +1,10 @@
-// Copyright 2016 Google Inc. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// Output buffer for WOFF2 decompression.
+/* Copyright 2016 Google Inc. All Rights Reserved.
 
-// Copyright 2016 Google Inc. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// Output buffer for WOFF2 decompression.
+   Distributed under MIT license.
+   See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+*/
+
+/* Output buffer for WOFF2 decompression. */
 
 #ifndef WOFF2_WOFF2_OUT_H_
 #define WOFF2_WOFF2_OUT_H_
@@ -37,15 +13,11 @@
 #include <cstring>
 #include <memory>
 #include <string>
-#include "./port.h"
 
 namespace woff2 {
 
 // Suggested max size for output.
 const size_t kDefaultMaxSize = 30 * 1024 * 1024;
-
-using std::string;
-
 
 /**
  * Output interface for the woff2 decoding.
@@ -79,7 +51,7 @@ class WOFF2StringOut : public WOFF2Out {
   // Create a writer that writes its data to buf.
   // buf->size() will grow to at most max_size
   // buf may be sized (e.g. using EstimateWOFF2FinalSize) or empty.
-  explicit WOFF2StringOut(string* buf);
+  explicit WOFF2StringOut(std::string* buf);
 
   bool Write(const void *buf, size_t n) override;
   bool Write(const void *buf, size_t offset, size_t n) override;
@@ -87,7 +59,7 @@ class WOFF2StringOut : public WOFF2Out {
   size_t MaxSize() { return max_size_; }
   void SetMaxSize(size_t max_size);
  private:
-  string* buf_;
+  std::string* buf_;
   size_t max_size_;
   size_t offset_;
 };

@@ -1,6 +1,7 @@
 set(WOFF2_DIR "${THIRDPARTY_DIR}/woff2")
 
 set(WOFF2_INCLUDE_DIRECTORIES
+  "${WOFF2_DIR}/include"
   "${WOFF2_DIR}/src"
 )
 
