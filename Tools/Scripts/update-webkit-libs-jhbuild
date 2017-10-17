@@ -2,6 +2,7 @@
 # Copyright (C) 2011 Igalia S.L.
 # Copyright (C) 2012 Intel Corporation
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+# Copyright (C) 2016 Canon Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,6 +22,7 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 use Getopt::Long qw(:config pass_through);
+use XML::LibXML;
 
 my $platform = "";
 $platform = "gtk" if isGtk();
@@ -38,6 +40,18 @@ GetOptions(
     'force' => \$force
 );
 
+sub getJhbuildIncludedFilePaths
+{
+    my $jhbuildFile = shift;
+    my $dom = XML::LibXML->load_xml(location => $jhbuildFile);
+    my @includes;
+
+    foreach my $includeFile ($dom->findnodes('/moduleset/include/@href')) {
+        push(@includes, $includeFile->to_literal());
+    }
+    return @includes;
+}
+
 sub getMD5HashForFile($)
 {
     my $file = shift;
@@ -54,39 +68,65 @@ sub getMD5HashForFile($)
     return md5_hex($contents);
 }
 
+sub jhbuildConfigurationCheckFile
+{
+    my $file = shift;
+    my $path = join('/', getJhbuildPath(), $platform, $file . '.md5sum');
+    if (! -e $path) {
+        return 1;
+    }
+
+    # Get the md5 sum of the file we're testing, look in the right platform directory.
+    my $actualFile = join('/', sourceDir(), 'Tools', $platform, $file);
+    my $currentSum = getMD5HashForFile($actualFile);
+
+    # Get our previous record.
+    open(PREVIOUS_MD5, $path);
+    chomp(my $previousSum = <PREVIOUS_MD5>);
+    close(PREVIOUS_MD5);
+
+    if ($previousSum ne $currentSum) {
+        return 1;
+    }
+}
+
 sub jhbuildConfigurationChanged()
 {
-    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
-        my $path = join('/', getJhbuildPath(), $file . '.md5sum');
-        if (! -e $path) {
-            return 1;
-        }
+    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, 'jhbuild.modules');
+    my @jhbuildFiles = qw(jhbuildrc jhbuild.modules);
+    push(@jhbuildFiles, getJhbuildIncludedFilePaths($jhbuildMain));
 
-        # Get the md5 sum of the file we're testing, look in the right platform directory.
-        my $actualFile = join('/', sourceDir(), 'Tools', $platform, $file);
-        my $currentSum = getMD5HashForFile($actualFile);
-
-        # Get our previous record.
-        open(PREVIOUS_MD5, $path);
-        chomp(my $previousSum = <PREVIOUS_MD5>);
-        close(PREVIOUS_MD5);
-
-        if ($previousSum ne $currentSum) {
+    foreach my $file (@jhbuildFiles) {
+        if (jhbuildConfigurationCheckFile($file)) {
             return 1;
         }
     }
 }
 
+sub saveMd5File
+{
+    my $file = shift;
+    my $path = realpath(dirname(join('/', getJhbuildPath(), $platform, $file)));
+    (-d $path) || mkpath $path;
+
+    $path = join('/', getJhbuildPath(), $platform);
+    my $source = join('/', sourceDir(), "Tools", $platform, $file);
+    my $destination = join('/', $path, $file);
+    open(SUM, ">$destination" . ".md5sum");
+    print SUM getMD5HashForFile($source);
+    close(SUM);
+}
+
 sub saveJhbuildMd5() {
     # Save md5sum for jhbuild-related files.saveJhbuildMd5();
     my $jhbuildPath = getJhbuildPath();
+    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, 'jhbuild.modules');
+    my @jhbuildFiles = qw(jhbuildrc jhbuild.modules);
+    push(@jhbuildFiles, getJhbuildIncludedFilePaths($jhbuildMain));
+
     (-d $jhbuildPath) || mkpath $jhbuildPath;
-    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
-        my $source = join('/', sourceDir(), "Tools", $platform, $file);
-        my $destination = join('/', $jhbuildPath, $file);
-        open(SUM, ">$destination" . ".md5sum");
-        print SUM getMD5HashForFile($source);
-        close(SUM);
+    foreach my $file (@jhbuildFiles) {
+        saveMd5File($file);
     }
 }
 
@@ -95,8 +135,13 @@ sub deleteJhbuildMd5() {
     if (!-d $jhbuildPath) {
         return;
     }
-    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
-        my $md5File = join('/', $jhbuildPath, $file) . ".md5sum";
+
+    my $jhbuildMain = join('/', sourceDir(), 'Tools', $platform, 'jhbuild.modules');
+    my @jhbuildFiles = qw(jhbuildrc jhbuild.modules);
+    push(@jhbuildFiles, getJhbuildIncludedFilePaths($jhbuildMain));
+
+    foreach my $file (@jhbuildFiles) {
+        my $md5File = join('/', $jhbuildPath, $platform, $file) . ".md5sum";
         unlink($md5File) if -e $md5File;
     }
 }

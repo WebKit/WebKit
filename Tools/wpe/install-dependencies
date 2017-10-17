@@ -120,6 +120,7 @@ function installDependenciesWithApt {
         libvorbis-dev \
         libvpx-dev \
         libxcb-xkb-dev \
+        libxml-libxml-perl \
         luajit"
 
     # These are dependencies necessary for using webkit-patch
@@ -207,6 +208,7 @@ function installDependenciesWithPacman {
         mesa-libgl \
         opus \
         orc \
+        perl-xml-libxml\
         v4l-utils"
 
     # These are dependencies necessary for using webkit-patch
@@ -284,6 +286,7 @@ function installDependenciesWithDnf {
         mesa-libGLES-devel \
         opus-devel \
         orc-devel \
+        perl-libxml-perl \
         pulseaudio-libs-devel"
 
     # These are dependencies necessary for using webkit-patch

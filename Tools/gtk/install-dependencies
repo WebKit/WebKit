@@ -203,6 +203,7 @@ function installDependenciesWithApt {
         libxkbcommon-x11-dev \
         libtool-bin \
         libudev-dev \
+        libxml-libxml-perl \
         python-dev \
         ragel \
         x11proto-bigreqs-dev \
@@ -351,6 +352,7 @@ function installDependenciesWithPacman {
         libxkbcommon-x11 \
         mtdev \
         orc \
+        perl-xml-libxml\
         python2 \
         python2-lxml \
         ragel \
@@ -494,6 +496,7 @@ function installDependenciesWithDnf {
         mesa-libEGL-devel \
         mtdev-devel \
         orc-devel \
+        perl-libxml-perl \
         ragel \
         systemd-devel \
         xorg-x11-font-utils \

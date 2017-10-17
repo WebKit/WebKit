@@ -1,3 +1,25 @@
+2017-10-17  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        [GStreamer][GTK][WPE] update-webkit-libs-jhbuild fails to detect changes in included moduleset files
+        https://bugs.webkit.org/show_bug.cgi?id=178206
+
+        Reviewed by Michael Catanzaro.
+
+        The update-webkit-libs-jhbuild scripts computes MD5 sum of GTK/WPE jhbuild configuration files to check if it
+        needs to rebuild the dependencies libraries. This patch fixes a bug when main GTK/WPE jhbuild modules
+        configuration file includes additional files (for example GStreamer module). It parses jhbuild.modules file to
+        check if additional files are included. If any, it computes MD5 sum for each of these included files.
+
+        * Scripts/update-webkit-libs-jhbuild:
+        (getJhbuildIncludedFilePaths): New function that returns included files in jhbuild.modules
+        (jhbuildConfigurationCheckFile): New function to check if MD5 sum file changes.
+        (jhbuildConfigurationChanged): Add MD5 sum check for included files.
+        (saveMd5File): New function to save MD5 sum of a file.
+        (saveJhbuildMd5): Add saving included files MD5 sum.
+        (deleteJhbuildMd5): Delete included files MD5 sum
+        * gtk/install-dependencies: Add perl-libXML lib that is used to parse jhbuild file.
+        * wpe/install-dependencies: Ditto.
+
 2017-10-17  Tomas Popela  <tpopela@redhat.com>
 
         Undefined WK_API_ENABLED warning when compiling COCOA content on WebKitGTK+
