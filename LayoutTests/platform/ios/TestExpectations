@@ -2950,3 +2950,5 @@ webkit.org/b/177617 http/tests/storageAccess/request-storage-access-top-frame.ht
 
 webkit.org/b/177547 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Pass Failure ]
 
+# macOS only test
+fast/canvas/webgl/large-drawing-buffer-resize.html [ Skip ]
