@@ -132,6 +132,12 @@ static HashMap<const RenderText*, String>& originalTextMap()
     return map;
 }
 
+static HashMap<const RenderText*, WeakPtr<RenderInline>>& inlineWrapperForDisplayContentsMap()
+{
+    static NeverDestroyed<HashMap<const RenderText*, WeakPtr<RenderInline>>> map;
+    return map;
+}
+
 void makeCapitalized(String* string, UChar previous)
 {
     // FIXME: Need to change this to use u_strToTitle instead of u_totitle and to consider locale.
@@ -183,6 +189,7 @@ inline RenderText::RenderText(Node& node, const String& text)
     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
     , m_useBackslashAsYenSymbol(false)
     , m_originalTextDiffersFromRendered(false)
+    , m_hasInlineWrapperForDisplayContents(false)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_candidateComputedTextSize(0)
 #endif
@@ -291,6 +298,8 @@ void RenderText::willBeDestroyed()
 
     if (m_originalTextDiffersFromRendered)
         originalTextMap().remove(this);
+
+    setInlineWrapperForDisplayContents(nullptr);
 
     RenderObject::willBeDestroyed();
 }
@@ -1735,6 +1744,44 @@ StringView RenderText::stringView(unsigned start, std::optional<unsigned> stop) 
     if (is8Bit())
         return StringView(characters8() + start, destination - start);
     return StringView(characters16() + start, destination - start);
+}
+
+RenderInline* RenderText::inlineWrapperForDisplayContents()
+{
+    ASSERT(m_hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContentsMap().contains(this));
+
+    if (!m_hasInlineWrapperForDisplayContents)
+        return nullptr;
+    return inlineWrapperForDisplayContentsMap().get(this).get();
+}
+
+void RenderText::setInlineWrapperForDisplayContents(RenderInline* wrapper)
+{
+    ASSERT(m_hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContentsMap().contains(this));
+
+    if (!wrapper) {
+        if (!m_hasInlineWrapperForDisplayContents)
+            return;
+        inlineWrapperForDisplayContentsMap().remove(this);
+        m_hasInlineWrapperForDisplayContents = false;
+        return;
+    }
+    inlineWrapperForDisplayContentsMap().add(this, makeWeakPtr(wrapper));
+    m_hasInlineWrapperForDisplayContents = true;
+}
+
+RenderText* RenderText::findByDisplayContentsInlineWrapperCandidate(RenderElement& renderer)
+{
+    auto* firstChild = renderer.firstChild();
+    if (!is<RenderText>(firstChild))
+        return nullptr;
+    auto& textRenderer = downcast<RenderText>(*firstChild);
+    if (textRenderer.inlineWrapperForDisplayContents() != &renderer)
+        return nullptr;
+    ASSERT(textRenderer.textNode());
+    ASSERT(renderer.firstChild() == renderer.lastChild());
+    return &textRenderer;
+
 }
 
 } // namespace WebCore

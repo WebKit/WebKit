@@ -38,6 +38,7 @@
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
 #include "RenderFullScreen.h"
+#include "RenderInline.h"
 #include "RenderListItem.h"
 #include "RenderTreeUpdaterFirstLetter.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
@@ -428,26 +429,48 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
     return true;
 }
 
-static void createTextRenderer(Text& textNode, RenderTreePosition& renderTreePosition)
+static void createTextRenderer(Text& textNode, RenderTreePosition& renderTreePosition, const Style::TextUpdate* textUpdate)
 {
     ASSERT(!textNode.renderer());
 
-    auto newRenderer = textNode.createTextRenderer(renderTreePosition.parent().style());
-    ASSERT(newRenderer);
+    auto textRenderer = textNode.createTextRenderer(renderTreePosition.parent().style());
 
     renderTreePosition.computeNextSibling(textNode);
 
-    if (!renderTreePosition.canInsert(*newRenderer))
+    if (!renderTreePosition.canInsert(*textRenderer))
         return;
 
-    textNode.setRenderer(newRenderer.get());
-    renderTreePosition.insert(WTFMove(newRenderer));
+    textNode.setRenderer(textRenderer.get());
+
+    if (textUpdate && textUpdate->inheritedDisplayContentsStyle && *textUpdate->inheritedDisplayContentsStyle) {
+        // Wrap text renderer into anonymous inline so we can give it a style.
+        // This is to support "<div style='display:contents;color:green'>text</div>" type cases
+        auto newDisplayContentsAnonymousWrapper = createRenderer<RenderInline>(textNode.document(), RenderStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
+        newDisplayContentsAnonymousWrapper->initializeStyle();
+        auto& displayContentsAnonymousWrapper = *newDisplayContentsAnonymousWrapper;
+        renderTreePosition.insert(WTFMove(newDisplayContentsAnonymousWrapper));
+
+        textRenderer->setInlineWrapperForDisplayContents(&displayContentsAnonymousWrapper);
+        displayContentsAnonymousWrapper.addChild(WTFMove(textRenderer));
+        return;
+    }
+
+    renderTreePosition.insert(WTFMove(textRenderer));
 }
 
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)
 {
     auto* existingRenderer = text.renderer();
     bool needsRenderer = textRendererIsNeeded(text, renderTreePosition());
+
+    if (existingRenderer && textUpdate && textUpdate->inheritedDisplayContentsStyle) {
+        if (existingRenderer->inlineWrapperForDisplayContents() || *textUpdate->inheritedDisplayContentsStyle) {
+            // FIXME: We could update without teardown.
+            tearDownRenderer(text);
+            existingRenderer = nullptr;
+        }
+    }
+
     if (existingRenderer) {
         if (needsRenderer) {
             if (textUpdate)
@@ -460,7 +483,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
     }
     if (!needsRenderer)
         return;
-    createTextRenderer(text, renderTreePosition());
+    createTextRenderer(text, renderTreePosition(), textUpdate);
     invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
 }
 

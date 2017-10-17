@@ -75,15 +75,17 @@ struct ElementUpdates {
 struct TextUpdate {
 #if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     TextUpdate() = default;
-    TextUpdate(unsigned offset, unsigned length)
+    TextUpdate(unsigned offset, unsigned length, std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle)
         : offset { offset }
         , length { length }
+        , inheritedDisplayContentsStyle { WTFMove(inheritedDisplayContentsStyle) }
     {
     }
 #endif
 
     unsigned offset { 0 };
     unsigned length { std::numeric_limits<unsigned>::max() };
+    std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;
 };
 
 class Update {

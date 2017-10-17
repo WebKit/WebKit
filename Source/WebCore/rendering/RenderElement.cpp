@@ -217,12 +217,30 @@ std::unique_ptr<RenderStyle> RenderElement::computeFirstLineStyle() const
         return RenderStyle::clonePtr(*firstLineStyle);
     }
 
-    if (rendererForFirstLineStyle.isAnonymous() || !rendererForFirstLineStyle.isRenderInline())
+    if (!rendererForFirstLineStyle.isRenderInline())
         return nullptr;
 
     auto& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
     if (&parentStyle == &rendererForFirstLineStyle.parent()->style())
         return nullptr;
+
+    if (rendererForFirstLineStyle.isAnonymous()) {
+        auto* textRendererWithDisplayContentsParent = RenderText::findByDisplayContentsInlineWrapperCandidate(rendererForFirstLineStyle);
+        if (!textRendererWithDisplayContentsParent)
+            return nullptr;
+        auto* composedTreeParentElement = textRendererWithDisplayContentsParent->textNode()->parentElementInComposedTree();
+        if (!composedTreeParentElement)
+            return nullptr;
+
+        auto style = composedTreeParentElement->styleResolver().styleForElement(*composedTreeParentElement, &parentStyle).renderStyle;
+        ASSERT(style->display() == CONTENTS);
+
+        // We act as if there was an unstyled <span> around the text node. Only styling happens via inheritance.
+        auto firstLineStyle = RenderStyle::createPtr();
+        firstLineStyle->inheritFrom(*style);
+        return firstLineStyle;
+    }
+
     return rendererForFirstLineStyle.element()->styleResolver().styleForElement(*element(), &parentStyle).renderStyle;
 }
 

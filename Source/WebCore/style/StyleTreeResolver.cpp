@@ -372,6 +372,18 @@ static bool hasLoadingStylesheet(const Style::Scope& styleScope, const Element& 
     return false;
 }
 
+static std::unique_ptr<RenderStyle> createInheritedDisplayContentsStyleIfNeeded(const RenderStyle& parentElementStyle, const RenderStyle* parentBoxStyle)
+{
+    if (parentElementStyle.display() != CONTENTS)
+        return nullptr;
+    if (parentBoxStyle && !parentBoxStyle->inheritedNotEqual(&parentElementStyle))
+        return nullptr;
+    // Compute style for imaginary unstyled <span> around the text node.
+    auto style = RenderStyle::createPtr();
+    style->inheritFrom(parentElementStyle);
+    return style;
+}
+
 void TreeResolver::resolveComposedTree()
 {
     ASSERT(m_parentStack.size() == 1);
@@ -396,8 +408,13 @@ void TreeResolver::resolveComposedTree()
 
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
-            if (text.styleValidity() >= Validity::SubtreeAndRenderersInvalid && parent.change != Detach)
-                m_update->addText(text, parent.element, { });
+            
+            if ((text.styleValidity() >= Validity::SubtreeAndRenderersInvalid && parent.change != Detach) || parent.style.display() == CONTENTS) {
+                TextUpdate textUpdate;
+                textUpdate.inheritedDisplayContentsStyle = createInheritedDisplayContentsStyleIfNeeded(parent.style, parentBoxStyle());
+
+                m_update->addText(text, parent.element, WTFMove(textUpdate));
+            }
 
             text.setHasValidStyle();
             it.traverseNextSkippingChildren();

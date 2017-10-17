@@ -179,6 +179,11 @@ public:
 
     Vector<std::pair<unsigned, unsigned>> draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const;
 
+    RenderInline* inlineWrapperForDisplayContents();
+    void setInlineWrapperForDisplayContents(RenderInline*);
+
+    static RenderText* findByDisplayContentsInlineWrapperCandidate(RenderElement&);
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     void willBeDestroyed() override;
@@ -233,6 +238,7 @@ private:
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
     unsigned m_useBackslashAsYenSymbol : 1;
     unsigned m_originalTextDiffersFromRendered : 1;
+    unsigned m_hasInlineWrapperForDisplayContents : 1;
     unsigned m_canUseSimplifiedTextMeasuring : 1;
 
 #if ENABLE(TEXT_AUTOSIZING)

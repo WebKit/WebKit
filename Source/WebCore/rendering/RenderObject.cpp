@@ -1455,15 +1455,11 @@ void RenderObject::willBeRemovedFromTree()
     parent()->setNeedsBoundariesUpdate();
 }
 
-void RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()
+static RenderObject& findDestroyRootIncludingAnonymous(RenderObject& renderer)
 {
-    // If the tree is destroyed, there is no need for a clean-up phase.
-    if (renderTreeBeingDestroyed()) {
-        removeFromParentAndDestroy();
-        return;
-    }
+    auto* inlineWrapperForDisplayContents = is<RenderText>(renderer) ? downcast<RenderText>(renderer).inlineWrapperForDisplayContents() : nullptr;
 
-    auto* destroyRoot = this;
+    auto* destroyRoot = inlineWrapperForDisplayContents ? inlineWrapperForDisplayContents : &renderer;
     auto* destroyRootParent = destroyRoot->parent();
     while (destroyRootParent && destroyRootParent->isAnonymous()) {
         if (!destroyRootParent->isTableCell() && !destroyRootParent->isTableRow()
@@ -1475,11 +1471,23 @@ void RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()
         destroyRoot = destroyRootParent;
         destroyRootParent = destroyRootParent->parent();
     }
+    return *destroyRoot;
+}
 
-    if (is<RenderTableRow>(*destroyRoot))
-        downcast<RenderTableRow>(*destroyRoot).collapseAndDestroyAnonymousSiblingRows();
+void RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()
+{
+    // If the tree is destroyed, there is no need for a clean-up phase.
+    if (renderTreeBeingDestroyed()) {
+        removeFromParentAndDestroy();
+        return;
+    }
 
-    destroyRoot->removeFromParentAndDestroy();
+    auto& destroyRoot = findDestroyRootIncludingAnonymous(*this);
+
+    if (is<RenderTableRow>(destroyRoot))
+        downcast<RenderTableRow>(destroyRoot).collapseAndDestroyAnonymousSiblingRows();
+
+    destroyRoot.removeFromParentAndDestroy();
     // WARNING: |this| is deleted here.
 }
 
