@@ -1,5 +1,24 @@
 2017-10-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: [PARITY] Styles Redesign: Add color picker inline widget
+        https://bugs.webkit.org/show_bug.cgi?id=178354
+
+        Reviewed by Joseph Pecoraro.
+
+        Show color picker using the existing WI.InlineSwatch.
+
+        * UserInterface/Models/Color.js:
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .token-comment):
+        Syntax highlight comments in values.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._renderValue):
+        (WI.SpreadsheetStyleProperty.prototype._addColorTokens):
+        Find colors in CodeMirror tokens and replace them with color token elements.
+
+2017-10-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles: Command-click on a property name should jump to definition in Resources tab
         https://bugs.webkit.org/show_bug.cgi?id=174329
         <rdar://problem/33225564>

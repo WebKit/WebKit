@@ -638,6 +638,13 @@ WI.Color.Format = {
     HSLA: "color-format-hsla"
 };
 
+WI.Color.FunctionNames = new Set([
+    "rgb",
+    "rgba",
+    "hsl",
+    "hsla",
+]);
+
 WI.Color.Keywords = {
     "aliceblue": [240, 248, 255],
     "antiquewhite": [250, 235, 215],

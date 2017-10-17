@@ -244,14 +244,27 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     _renderValue(value)
     {
         const maxValueLength = 150;
+        let tokens = WI.tokenizeCSSValue(value);
 
-        let tokens = WI.tokenizeCSSValue(value).map((token) => {
+        if (this._property.enabled) {
+            // Don't show color widgets for CSS gradients, show dedicated gradient widgets instead.
+            // FIXME: <https://webkit.org/b/178404> Web Inspector: [PARITY] Styles Redesign: Add bezier curve, color gradient, and CSS variable inline widgets
+            tokens = this._addColorTokens(tokens);
+        }
+
+        tokens = tokens.map((token) => {
+            if (token instanceof Element)
+                return token;
+
             let className = "";
+
             if (token.type) {
                 if (token.type.includes("string"))
                     className = "token-string";
                 else if (token.type.includes("link"))
                     className = "token-link";
+                else if (token.type.includes("comment"))
+                    className = "token-comment";
             }
 
             if (className) {
@@ -266,6 +279,79 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._valueElement.removeChildren();
         this._valueElement.append(...tokens);
+    }
+
+    _addColorTokens(tokens)
+    {
+        let newTokens = [];
+
+        let createColorTokenElement = (colorString, color) => {
+            let colorTokenElement = document.createElement("span");
+            colorTokenElement.className = "token-color";
+
+            let innerElement = document.createElement("span");
+            innerElement.className = "token-color-value";
+            innerElement.textContent = colorString;
+
+            if (color) {
+                let readOnly = !this._property.editable;
+                let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
+
+                swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
+                    let value = event.data && event.data.value && event.data.value.toString();
+                    console.assert(value, "Color value is empty.");
+                    if (!value)
+                        return;
+
+                    innerElement.textContent = value;
+                    this._handleValueChange();
+                }, this);
+
+                colorTokenElement.append(swatch.element);
+
+                // Prevent the value from editing when clicking on the swatch.
+                swatch.element.addEventListener("mousedown", (event) => { event.stop(); });
+            }
+
+            colorTokenElement.append(innerElement);
+            return colorTokenElement;
+        };
+
+        let pushPossibleColorToken = (text, ...tokens) => {
+            let color = WI.Color.fromString(text);
+            if (color)
+                newTokens.push(createColorTokenElement(text, color));
+            else
+                newTokens.push(...tokens);
+        };
+
+        let colorFunctionStartIndex = NaN;
+
+        for (let i = 0; i < tokens.length; i++) {
+            let token = tokens[i];
+            if (token.type && token.type.includes("hex-color")) {
+                // Hex
+                pushPossibleColorToken(token.value, token);
+            } else if (WI.Color.FunctionNames.has(token.value) && token.type && (token.type.includes("atom") || token.type.includes("keyword"))) {
+                // Color Function start
+                colorFunctionStartIndex = i;
+            } else if (isNaN(colorFunctionStartIndex) && token.type && token.type.includes("keyword")) {
+                // Color keyword
+                pushPossibleColorToken(token.value, token);
+            } else if (!isNaN(colorFunctionStartIndex)) {
+                // Color Function end
+                if (token.value !== ")")
+                    continue;
+
+                let rawTokens = tokens.slice(colorFunctionStartIndex, i + 1);
+                let text = rawTokens.map((token) => token.value).join("");
+                pushPossibleColorToken(text, ...rawTokens);
+                colorFunctionStartIndex = NaN;
+            } else
+                newTokens.push(token);
+        }
+
+        return newTokens;
     }
 
     _handleNameChange()

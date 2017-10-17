@@ -114,3 +114,7 @@
     cursor: pointer !important;
     -webkit-text-stroke-width: 0 !important;
 }
+
+.spreadsheet-style-declaration-editor .property:not(.disabled) .token-comment {
+    color: var(--syntax-highlight-comment-color);
+}
