@@ -254,6 +254,45 @@ log = [];
 shouldBeAsync(5, () => resumeAfterThrowEval(4));
 shouldBe("start:4 resume:throw1 resume:throw2", log.join(" "));
 
+var awaitEpression = async (value) => {
+    log.push("start:" + value);
+    if (!await false)
+        log.push('step 1');
+    var t = ~await true;
+    log.push('step 2 ' + t);
+
+    var t1 = +await Promise.resolve(12345);
+    log.push('step 3 ' + t1);
+
+    var t2 = -await 54321;
+    log.push('step 4 ' + t2);
+
+    var t3 = !!!!!await Promise.resolve(true);
+    log.push('step 5 ' + t3);
+
+    try {
+        var t4 = ++await 1;
+    } catch(e) {
+        if (e instanceof ReferenceError) {
+            log.push('step 6 ');
+        } 
+    }
+
+    try {
+        var t5 = --await 1;
+    } catch(e) {
+        if (e instanceof ReferenceError) {
+            log.push('step 7');
+        } 
+    }
+
+    return void await 'test';
+};
+log = [];
+
+shouldBeAsync(undefined, () => awaitEpression(5));
+shouldBe("start:5 step 1 step 2 -2 step 3 12345 step 4 -54321 step 5 false step 6  step 7", log.join(" "));
+
 // MethoodDefinition SyntaxErrors
 shouldThrowSyntaxError("var obj = { async foo : true };", "Unexpected token ':'. Expected a parenthesis for argument list.");
 shouldThrowSyntaxError("var obj = { async foo = true };", "Unexpected token '='. Expected a parenthesis for argument list.");

@@ -1,3 +1,16 @@
+2017-10-09  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Safari 10 /11 problem with if (!await get(something)).
+        https://bugs.webkit.org/show_bug.cgi?id=176685
+
+        Reviewed by Saam Barati.
+
+        * stress/async-await-basic.js:
+        (awaitEpression.async):
+        * stress/async-await-syntax.js:
+        (testTopLevelAsyncAwaitSyntaxSloppyMode.testSyntax):
+        (prototype.testTopLevelAsyncAwaitSyntaxStrictMode):
+
 2017-09-27  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(210837): RegExp containing failed non-zero minimum greedy groups incorrectly match

@@ -1,3 +1,17 @@
+2017-10-09  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        Safari 10 /11 problem with if (!await get(something)).
+        https://bugs.webkit.org/show_bug.cgi?id=176685
+
+        Reviewed by Saam Barati.
+
+        Using unary operator before `await` lead to count it as identifier.
+        According to spec https://tc39.github.io/ecma262/#sec-async-function-definitions
+        and Note 1 `await` is as AwaitExpression and it is allowed to use unary operator
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+
 2017-10-06  Robin Morisset  <rmorisset@apple.com>
 
         Avoid integer overflow in DFGStrengthReduction.cpp

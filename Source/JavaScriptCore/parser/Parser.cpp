@@ -4423,6 +4423,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case AWAIT:
         if (m_parserState.functionParsePhase == FunctionParsePhase::Parameters)
             failIfFalse(m_parserState.allowAwait, "Cannot use await expression within parameters");
+        else if (currentFunctionScope()->isAsyncFunctionBoundary())
+            return parseAwaitExpression(context);
+
         goto identifierExpression;
     case ASYNC: {
         JSTextPosition start = tokenStartPosition();
