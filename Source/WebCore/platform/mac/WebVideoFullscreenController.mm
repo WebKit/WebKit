@@ -47,11 +47,17 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 #define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
 #endif
 
-using namespace WebCore;
+using WebCore::HTMLVideoElement;
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
+using WebCore::PlatformMedia;
 @interface WebVideoFullscreenWindow : NSWindow<NSAnimationDelegate>
 {
     SEL _controllerActionOnAnimationEnd;
@@ -555,5 +561,9 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 }
 
 @end
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
 
 #endif /* ENABLE(VIDEO) */

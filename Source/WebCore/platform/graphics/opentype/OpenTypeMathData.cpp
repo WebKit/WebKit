@@ -34,9 +34,9 @@
 #endif
 #include "SharedBuffer.h"
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 #if ENABLE(OPENTYPE_MATH)
 namespace OpenType {

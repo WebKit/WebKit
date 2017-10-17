@@ -28,9 +28,9 @@
 
 #include "JSShadowRoot.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<DocumentFragment>&& impl)
 {

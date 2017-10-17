@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingTreeFixedNode.h"
+#import "config.h"
+#import "ScrollingTreeFixedNode.h"
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "Logging.h"
-#include "ScrollingStateFixedNode.h"
-#include "ScrollingTree.h"
-#include <QuartzCore/CALayer.h>
-#include <wtf/text/TextStream.h>
+#import "Logging.h"
+#import "ScrollingStateFixedNode.h"
+#import "ScrollingTree.h"
+#import <QuartzCore/CALayer.h>
+#import <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -63,13 +63,16 @@ void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&
         m_constraints = fixedStateNode.viewportConstraints();
 }
 
+namespace ScrollingTreeFixedNodeInternal {
 static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 {
     return CGPointMake(a.x * b.width, a.y * b.height);
 }
+}
 
 void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
 {
+    using namespace ScrollingTreeFixedNodeInternal;
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(fixedPositionRect);
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << fixedPositionRect << " viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " new offset from bottom " << (fixedPositionRect.maxY() - layerPosition.y()));

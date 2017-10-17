@@ -28,9 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSWebGPURenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {

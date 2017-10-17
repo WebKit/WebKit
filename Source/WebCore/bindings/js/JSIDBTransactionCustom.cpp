@@ -30,9 +30,9 @@
 
 #include "JSDOMBinding.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSIDBTransaction::visitAdditionalChildren(SlotVisitor& visitor)
 {

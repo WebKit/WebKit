@@ -31,9 +31,9 @@
 #include "KeyboardEvent.h"
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace WTF::Unicode;
 
 namespace WebCore {
+using namespace WTF::Unicode;
 
 TypeAhead::TypeAhead(TypeAheadDataSource* dataSource)
     : m_dataSource(dataSource)

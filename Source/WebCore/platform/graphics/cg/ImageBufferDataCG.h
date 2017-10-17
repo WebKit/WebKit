@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #include "Image.h"
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/CheckedArithmetic.h>

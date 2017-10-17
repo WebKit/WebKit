@@ -40,10 +40,9 @@
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
+namespace WebCore {
 using namespace WTF;
 using namespace Unicode;
-
-namespace WebCore {
 
 static bool useBackslashAsYenSignForFamily(const AtomicString& family)
 {

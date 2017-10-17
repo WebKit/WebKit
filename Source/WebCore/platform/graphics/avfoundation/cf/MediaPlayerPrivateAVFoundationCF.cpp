@@ -74,7 +74,7 @@
 
 // Soft-linking headers must be included last since they #define functions, constants, etc.
 #include "AVFoundationCFSoftLinking.h"
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 // We don't bother softlinking against libdispatch since it's already been loaded by AAS.
 #ifdef DEBUG_ALL
@@ -88,9 +88,10 @@ enum {
     AVAssetReferenceRestrictionForbidLocalReferenceToRemote = (1UL << 1)
 };
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
+using namespace PAL;
 
 class LayerClient;
 

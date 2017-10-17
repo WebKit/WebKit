@@ -42,7 +42,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
@@ -88,6 +88,7 @@ static bool makeRGBA32FromARGBCFArray(CFArrayRef colorArray, RGBA32& color)
 
 void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString, GenericCueData& cueData)
 {
+    using namespace PAL;
     // Some of the attributes we translate into per-cue WebVTT settings are repeated on each part of an attributed string so only
     // process the first instance of each.
     enum AttributeFlags {
@@ -472,6 +473,8 @@ void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 
 void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, const MediaTime& presentationTime)
 {
+    using namespace PAL;
+
     if (!nativeSamples)
         return;
 
@@ -540,6 +543,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
 
 bool InbandTextTrackPrivateAVF::readNativeSampleBuffer(CFArrayRef nativeSamples, CFIndex index, RefPtr<ArrayBuffer>& buffer, MediaTime& duration, CMFormatDescriptionRef& formatDescription)
 {
+    using namespace PAL;
 #if OS(WINDOWS) && HAVE(AVCFPLAYERITEM_CALLBACK_VERSION_2)
     return false;
 #else

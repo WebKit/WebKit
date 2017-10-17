@@ -27,9 +27,9 @@
 #include "WebCoreJSClientData.h"
 #include <wtf/MainThread.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, bool isNormal)
     : m_vm(vm)

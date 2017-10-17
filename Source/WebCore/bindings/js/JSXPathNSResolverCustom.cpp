@@ -29,9 +29,9 @@
 #include "JSCustomXPathNSResolver.h"
 #include "JSDOMExceptionHandling.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 RefPtr<XPathNSResolver> JSXPathNSResolver::toWrapped(VM& vm, ExecState& state, JSValue value)
 {

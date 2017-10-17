@@ -52,9 +52,10 @@
 #include <webrtc/pc/peerconnectionfactory.h>
 #include <wtf/MainThread.h>
 
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+using namespace PAL;
 
 LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client)
     : m_peerConnectionBackend(peerConnection)

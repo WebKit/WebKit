@@ -37,7 +37,6 @@
 #include <QuartzCore/CACFLayer.h>
 #include <wtf/MainThread.h>
 
-using namespace std;
 using namespace WebCore;
 
 PlatformCALayerWinInternal::PlatformCALayerWinInternal(PlatformCALayer* owner)
@@ -220,7 +219,7 @@ void PlatformCALayerWinInternal::removeAllSublayers()
 
 void PlatformCALayerWinInternal::insertSublayer(PlatformCALayer& layer, size_t index)
 {
-    index = min(index, sublayerCount());
+    index = std::min(index, sublayerCount());
 
     layer.removeFromSuperlayer();
     CACFLayerInsertSublayer(owner()->platformLayer(), layer.platformLayer(), index);

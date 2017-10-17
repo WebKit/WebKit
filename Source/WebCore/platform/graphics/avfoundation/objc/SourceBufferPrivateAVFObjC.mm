@@ -61,7 +61,7 @@
 
 #pragma mark - Soft Linking
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
@@ -413,6 +413,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 @end
 
 namespace WebCore {
+using namespace PAL;
 
 #pragma mark -
 #pragma mark MediaDescriptionAVFObjC

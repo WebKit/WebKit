@@ -29,9 +29,9 @@
 #include "DOMPoint.h"
 #include "JSDOMBinding.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSDOMQuad::visitAdditionalChildren(SlotVisitor& visitor)
 {

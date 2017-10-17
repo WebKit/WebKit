@@ -48,9 +48,10 @@
 #include <sys/time.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+using namespace PAL;
 
 class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
 #if PLATFORM(IOS)

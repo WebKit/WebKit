@@ -51,9 +51,9 @@
 #include <heap/StrongInlines.h>
 #include <wtf/Variant.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
 {

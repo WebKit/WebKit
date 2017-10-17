@@ -47,9 +47,9 @@
 #include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 using ExecuteSQLCallback = Inspector::DatabaseBackendDispatcherHandler::ExecuteSQLCallback;
 

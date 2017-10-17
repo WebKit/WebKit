@@ -84,7 +84,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 
-using namespace JSC;
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
 #define ASSUME_LITTLE_ENDIAN 0
@@ -93,6 +92,7 @@ using namespace JSC;
 #endif
 
 namespace WebCore {
+using namespace JSC;
 
 static const unsigned maximumFilterRecursion = 40000;
 

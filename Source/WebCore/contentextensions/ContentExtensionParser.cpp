@@ -43,9 +43,9 @@
 #include <wtf/Expected.h>
 #include <wtf/text/WTFString.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 namespace ContentExtensions {
     

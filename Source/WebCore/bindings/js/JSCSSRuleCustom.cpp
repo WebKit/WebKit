@@ -49,9 +49,9 @@
 #include "JSWebKitCSSViewportRule.h"
 #include "WebKitCSSViewportRule.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSCSSRule::visitAdditionalChildren(SlotVisitor& visitor)
 {

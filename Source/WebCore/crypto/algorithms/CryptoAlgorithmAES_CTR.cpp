@@ -34,10 +34,12 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmAES_CTRInternal {
 static const char* const ALG128 = "A128CTR";
 static const char* const ALG192 = "A192CTR";
 static const char* const ALG256 = "A256CTR";
 static const size_t CounterSize = 16;
+}
 
 static inline bool usagesAreInvalidForCryptoAlgorithmAES_CTR(CryptoKeyUsageBitmap usages)
 {
@@ -46,6 +48,7 @@ static inline bool usagesAreInvalidForCryptoAlgorithmAES_CTR(CryptoKeyUsageBitma
 
 static bool parametersAreValid(CryptoAlgorithmAesCtrParams& parameters)
 {
+    using namespace CryptoAlgorithmAES_CTRInternal;
     if (parameters.counterVector().size() != CounterSize)
         return false;
     if (!parameters.length || parameters.length > 128)
@@ -113,6 +116,7 @@ void CryptoAlgorithmAES_CTR::generateKey(const CryptoAlgorithmParameters& parame
 
 void CryptoAlgorithmAES_CTR::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_CTRInternal;
     ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_CTR(usages)) {
         exceptionCallback(SyntaxError);
@@ -153,6 +157,7 @@ void CryptoAlgorithmAES_CTR::importKey(CryptoKeyFormat format, KeyData&& data, c
 
 void CryptoAlgorithmAES_CTR::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_CTRInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {

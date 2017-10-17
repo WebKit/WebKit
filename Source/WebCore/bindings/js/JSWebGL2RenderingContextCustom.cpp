@@ -30,9 +30,9 @@
 #include "JSWebGL2RenderingContext.h"
 #include <heap/HeapInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {

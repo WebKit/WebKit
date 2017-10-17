@@ -32,9 +32,9 @@
 #include "JSWebGPURenderPassColorAttachmentDescriptor.h"
 #include "WebGPURenderPassColorAttachmentDescriptor.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<WebGPURenderPassAttachmentDescriptor>&& object)
 {

@@ -83,10 +83,10 @@
 #include "PageDebuggable.h"
 #endif
 
-using namespace JSC;
-using namespace Inspector;
 
 namespace WebCore {
+using namespace JSC;
+using namespace Inspector;
 
 InspectorController::InspectorController(Page& page, InspectorClient* inspectorClient)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))

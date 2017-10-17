@@ -38,10 +38,10 @@
 #include "ScriptSourceCode.h"
 #include <interpreter/FrameTracers.h>
 
-using namespace JSC;
-using namespace Inspector;
 
 namespace WebCore {
+using namespace JSC;
+using namespace Inspector;
 
 void InspectorClient::doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message)
 {

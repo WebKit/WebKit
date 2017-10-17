@@ -299,6 +299,31 @@
 
 // See Source/WebCore/platform/cf/CoreMediaSoftLink.{cpp,h} for an example implementation.
 
+
+#define SOFT_LINK_LIBRARY_FOR_HEADER(functionNamespace, lib) \
+    namespace functionNamespace { \
+    extern void* lib##Library(bool isOptional = false); \
+    inline bool is##lib##LibaryAvailable() { \
+        return lib##Library(true) != nullptr; \
+    } \
+    }
+
+#define SOFT_LINK_LIBRARY_FOR_SOURCE(functionNamespace, lib) \
+    namespace functionNamespace { \
+    void* lib##Library(bool isOptional); \
+    void* lib##Library(bool isOptional) \
+    { \
+        static void* library; \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            library = dlopen("/usr/lib/" #lib ".dylib", RTLD_NOW); \
+            if (!isOptional) \
+                RELEASE_ASSERT_WITH_MESSAGE(library, "%s", dlerror()); \
+        }); \
+        return library; \
+    } \
+    }
+
 #define SOFT_LINK_FRAMEWORK_FOR_HEADER(functionNamespace, framework) \
     namespace functionNamespace { \
     extern void* framework##Library(bool isOptional = false); \
@@ -469,6 +494,10 @@
         }); \
         return softLink##framework##functionName parameterNames; \
     } \
+    } \
+    resultType functionName parameterDeclarations \
+    {\
+        return functionNamespace::softLink##framework##functionName parameterNames; \
     }
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \

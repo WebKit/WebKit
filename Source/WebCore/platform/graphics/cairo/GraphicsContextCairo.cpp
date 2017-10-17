@@ -63,9 +63,9 @@
 #include <cairo-win32.h>
 #endif
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 // A helper which quickly fills a rectangle with a simple color fill.
 static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const Color& color)

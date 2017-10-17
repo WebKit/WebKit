@@ -33,9 +33,9 @@
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 bool JSCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {

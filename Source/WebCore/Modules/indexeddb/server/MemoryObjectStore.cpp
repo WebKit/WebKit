@@ -41,9 +41,9 @@
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSLock.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 namespace IDBServer {
 
 Ref<MemoryObjectStore> MemoryObjectStore::create(const IDBObjectStoreInfo& info)

@@ -33,9 +33,9 @@
 #include "SharedBuffer.h"
 #include <wtf/RefPtr.h>
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 namespace OpenType {
 
 const uint32_t GSUBTag = OT_MAKE_TAG('G', 'S', 'U', 'B');

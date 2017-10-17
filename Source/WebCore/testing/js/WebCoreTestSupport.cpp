@@ -42,10 +42,10 @@
 #include <interpreter/CallFrame.h>
 #include <runtime/IdentifierInlines.h>
 
-using namespace JSC;
 using namespace WebCore;
 
 namespace WebCoreTestSupport {
+using namespace JSC;
 
 void injectInternalsObject(JSContextRef context)
 {

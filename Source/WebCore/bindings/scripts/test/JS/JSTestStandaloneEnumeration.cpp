@@ -28,9 +28,9 @@
 #include <runtime/JSString.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 String convertEnumerationToString(TestStandaloneEnumeration enumerationValue)
 {

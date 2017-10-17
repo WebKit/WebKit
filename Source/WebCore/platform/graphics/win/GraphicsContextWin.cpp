@@ -42,9 +42,9 @@
 #include <wtf/MathExtras.h>
 #include <wtf/win/GDIObject.h>
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 static void fillWithClearColor(HBITMAP bitmap)
 {

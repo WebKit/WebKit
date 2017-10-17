@@ -36,9 +36,9 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSTestVoidCallbackFunction::JSTestVoidCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestVoidCallbackFunction(globalObject->scriptExecutionContext())

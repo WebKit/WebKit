@@ -52,9 +52,9 @@
 #include <inspector/ScriptCallStackFactory.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
     : WebDebuggerAgent(context)

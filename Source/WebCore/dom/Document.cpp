@@ -292,11 +292,11 @@
 #include "WebGPURenderingContext.h"
 #endif
 
+
+namespace WebCore {
 using namespace PAL;
 using namespace WTF;
 using namespace Unicode;
-
-namespace WebCore {
 
 using namespace HTMLNames;
 

@@ -47,11 +47,11 @@ SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIItemProvider)
 
-using namespace WebCore;
-
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
 typedef NSMutableDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
+using WebCore::Pasteboard;
+using WebCore::PasteboardCustomData;
 @interface WebItemProviderRegistrationInfo ()
 {
     RetainPtr<id <UIItemProviderWriting>> _representingObject;

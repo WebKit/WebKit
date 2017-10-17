@@ -33,9 +33,9 @@
 #include "NodeList.h"
 #include <wtf/text/AtomicString.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {

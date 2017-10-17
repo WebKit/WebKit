@@ -31,12 +31,12 @@
 #import "KeyEventCocoa.h"
 #import <wtf/Assertions.h>
 
-using namespace WebCore;
-
 #if PLATFORM(IOS)
 
 #import "WAKAppKitStubs.h"
 
+using WebCore::windowsKeyCodeForKeyCode;
+using WebCore::windowsKeyCodeForCharCode;
 @implementation WebEvent
 
 @synthesize type = _type;

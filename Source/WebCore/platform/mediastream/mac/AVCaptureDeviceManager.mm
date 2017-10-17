@@ -52,9 +52,6 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureSession)
 
-#define AVCaptureDevice getAVCaptureDeviceClass()
-#define AVCaptureSession getAVCaptureSessionClass()
-
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeMuxed, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)

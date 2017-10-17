@@ -53,9 +53,9 @@
 #include "JSRsaPssParams.h"
 #include <runtime/JSONObject.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 SubtleCrypto::SubtleCrypto(ScriptExecutionContext& context)
     : ContextDestructionObserver(&context)

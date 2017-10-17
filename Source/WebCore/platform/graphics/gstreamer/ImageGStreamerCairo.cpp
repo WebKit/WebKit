@@ -29,7 +29,6 @@
 #include <gst/video/gstvideometa.h>
 
 
-using namespace std;
 using namespace WebCore;
 
 ImageGStreamer::ImageGStreamer(GstSample* sample)

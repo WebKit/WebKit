@@ -52,9 +52,9 @@
 #include "JSTestObj.h"
 #endif
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 // Functions
 

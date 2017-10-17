@@ -26,9 +26,9 @@
 #include "config.h"
 #include "JSHTMLDocument.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<HTMLDocument>&& passedDocument)
 {

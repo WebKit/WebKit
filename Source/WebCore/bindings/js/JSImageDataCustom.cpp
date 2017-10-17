@@ -34,9 +34,9 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<ImageData>&& imageData)
 {

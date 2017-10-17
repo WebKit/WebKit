@@ -48,9 +48,9 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 Node* EventTarget::toNode()
 {

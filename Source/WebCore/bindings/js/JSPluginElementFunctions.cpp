@@ -26,9 +26,9 @@
 #include "JSHTMLElement.h"
 #include "PluginViewBase.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 using namespace Bindings;
 using namespace HTMLNames;

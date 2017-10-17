@@ -33,9 +33,9 @@
 #include <runtime/JSONObject.h>
 #include <runtime/JSPromiseConstructor.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSC::JSValue DeferredPromise::promise() const
 {

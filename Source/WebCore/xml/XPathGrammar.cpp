@@ -156,7 +156,6 @@ using namespace WebCore;
 using namespace XPath;
 
 
-
 /* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0

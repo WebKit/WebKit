@@ -40,9 +40,9 @@
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 Ref<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime, int maxCallStackDepth)
 {

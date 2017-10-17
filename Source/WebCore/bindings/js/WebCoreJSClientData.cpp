@@ -37,9 +37,9 @@
 #include <runtime/VM.h>
 #include <wtf/MainThread.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)

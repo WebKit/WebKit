@@ -37,9 +37,9 @@
 #include <heap/HeapInlines.h>
 #include <heap/StrongInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 ErrorEvent::ErrorEvent(ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)

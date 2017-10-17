@@ -39,9 +39,9 @@
 #include <heap/StrongInlines.h>
 #include <runtime/JSObject.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 const ClassInfo JSDOMWindowProxy::s_info = { "JSDOMWindowProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProxy) };
 

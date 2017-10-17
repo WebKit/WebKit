@@ -37,9 +37,9 @@
 #include "Node.h"
 #include "WebInjectedScriptManager.h"
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 PageConsoleAgent::PageConsoleAgent(WebAgentContext& context, InspectorHeapAgent* heapAgent, InspectorDOMAgent* domAgent)
     : WebConsoleAgent(context, heapAgent)

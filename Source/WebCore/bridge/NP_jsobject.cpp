@@ -49,8 +49,8 @@
 #include "npruntime_impl.h"
 #pragma GCC visibility pop
 
-using namespace JSC;
-using namespace JSC::Bindings;
+namespace JSC {
+using namespace Bindings;
 using namespace WebCore;
 
 class ObjectMap {
@@ -139,6 +139,7 @@ static void jsDeallocate(NPObject* npObj)
 static NPClass javascriptClass = { 1, jsAllocate, jsDeallocate, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static NPClass noScriptClass = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
+extern "C" {
 NPClass* NPScriptObjectClass = &javascriptClass;
 static NPClass* NPNoScriptObjectClass = &noScriptClass;
 
@@ -548,5 +549,9 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
     
     return false;
 }
+
+} // extern "C"
+
+} // namespace JSC
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

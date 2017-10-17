@@ -70,9 +70,9 @@
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static void collectGarbageAfterWindowProxyDestruction()
 {

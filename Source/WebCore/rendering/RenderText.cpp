@@ -62,10 +62,10 @@
 #include "SelectionRect.h"
 #endif
 
-using namespace WTF;
-using namespace Unicode;
 
 namespace WebCore {
+using namespace WTF;
+using namespace Unicode;
 
 struct SameSizeAsRenderText : public RenderObject {
     void* pointers[2];

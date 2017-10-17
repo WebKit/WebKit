@@ -38,15 +38,7 @@
 #include <wtf/CheckedArithmetic.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
-#include <wtf/SoftLinking.h>
-#endif
-
-#if OS(DARWIN) && !PLATFORM(GTK)
-SOFT_LINK_LIBRARY(libxslt)
-SOFT_LINK(libxslt, xsltIsBlank, int, (xmlChar *str), (str))
-SOFT_LINK(libxslt, xsltGetNsProp, xmlChar *, (xmlNodePtr node, const xmlChar *name, const xmlChar *nameSpace), (node, name, nameSpace))
-SOFT_LINK(libxslt, xsltParseStylesheetDoc, xsltStylesheetPtr, (xmlDocPtr doc), (doc))
-SOFT_LINK(libxslt, xsltLoadStylesheetPI, xsltStylesheetPtr, (xmlDocPtr doc), (doc))
+#include "SoftLinkLibxslt.h"
 #endif
 
 namespace WebCore {

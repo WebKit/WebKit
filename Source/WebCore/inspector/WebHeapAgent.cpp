@@ -28,9 +28,9 @@
 
 #include <wtf/RunLoop.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 struct GarbageCollectionData {
     Inspector::Protocol::Heap::GarbageCollection::Type type;

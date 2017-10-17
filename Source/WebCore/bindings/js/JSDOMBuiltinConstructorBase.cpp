@@ -24,9 +24,9 @@
 
 #include <runtime/JSCInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
     
 void JSDOMBuiltinConstructorBase::callFunctionWithCurrentArguments(JSC::ExecState& state, JSC::JSObject& thisObject, JSC::JSFunction& function)
 {

@@ -39,11 +39,12 @@
 #import <wtf/StringPrintStream.h>
 #import <wtf/Vector.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
 
 namespace WebCore {
+using namespace PAL;
 
 WebCoreDecompressionSession::WebCoreDecompressionSession(Mode mode)
     : m_mode(mode)

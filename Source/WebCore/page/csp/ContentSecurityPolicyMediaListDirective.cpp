@@ -39,11 +39,6 @@ static bool isMediaTypeCharacter(UChar c)
     return !isASCIISpace(c) && c != '/';
 }
 
-static bool isNotASCIISpace(UChar c)
-{
-    return !isASCIISpace(c);
-}
-
 ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
     : ContentSecurityPolicyDirective(directiveList, name, value)
 {

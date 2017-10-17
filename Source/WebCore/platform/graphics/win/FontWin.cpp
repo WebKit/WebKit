@@ -36,9 +36,9 @@
 #include "UniscribeController.h"
 #include <wtf/MathExtras.h>
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 bool FontCascade::canReturnFallbackFontsForComplexText()
 {

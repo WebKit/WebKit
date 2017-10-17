@@ -44,10 +44,10 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorFrontendRouter.h>
 
-using namespace JSC;
-using namespace Inspector;
 
 namespace WebCore {
+using namespace JSC;
+using namespace Inspector;
 
 WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGlobalScope)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))

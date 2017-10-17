@@ -105,9 +105,9 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 using namespace HTMLNames;
 

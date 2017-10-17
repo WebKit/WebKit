@@ -31,7 +31,6 @@ list(APPEND WebCore_SOURCES
 
     page/CaptionUserPreferencesMediaAF.cpp
 
-    platform/cf/CoreMediaSoftLink.cpp
     platform/cf/MediaAccessibilitySoftLink.cpp
 
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp

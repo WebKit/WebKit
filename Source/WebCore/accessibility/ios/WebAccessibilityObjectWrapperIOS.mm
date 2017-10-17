@@ -56,7 +56,6 @@
 #import "SelectionRect.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
-#import "WAKView.h"
 #import "WAKWindow.h"
 #import "WebCoreThread.h"
 #import "VisibleUnits.h"
@@ -86,8 +85,13 @@ enum {
 - (NSInteger)positionForTextMarker:(id)marker;
 @end
 
-@interface WAKView (iOSAccessibility)
-- (BOOL)accessibilityIsIgnored;
+@implementation WAKView (iOSAccessibility)
+
+- (BOOL)accessibilityIsIgnored
+{
+    return YES;
+}
+
 @end
 
 using namespace WebCore;

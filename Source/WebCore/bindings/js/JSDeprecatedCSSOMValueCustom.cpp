@@ -31,9 +31,9 @@
 #include "JSDeprecatedCSSOMValueList.h"
 #include "JSNode.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {

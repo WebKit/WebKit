@@ -58,9 +58,9 @@
 #include "JSWebGPURenderingContext.h"
 #endif
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Canvas"), context)

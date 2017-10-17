@@ -41,12 +41,13 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
+using namespace PAL;
 
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))

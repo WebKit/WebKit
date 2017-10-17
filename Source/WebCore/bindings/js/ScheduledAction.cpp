@@ -42,9 +42,9 @@
 #include "WorkerThread.h"
 #include <runtime/JSLock.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, JSC::Strong<JSC::Unknown>&& function)
 {

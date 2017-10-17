@@ -44,9 +44,9 @@
 #include <runtime/JSLock.h>
 #include <runtime/WeakGCMapInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 ScriptCachedFrameData::ScriptCachedFrameData(Frame& frame)
 {

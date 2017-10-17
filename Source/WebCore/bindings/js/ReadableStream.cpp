@@ -31,9 +31,9 @@
 #include "JSReadableStreamSource.h"
 #include "WebCoreJSClientData.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<ReadableStreamSource>&& source)
 {
@@ -58,6 +58,7 @@ Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<Rea
     return create(globalObject, *newReadableStream);
 }
 
+namespace ReadableStreamInternal {
 static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
     auto scope = DECLARE_CATCH_SCOPE(state.vm());
@@ -67,6 +68,7 @@ static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFu
     auto result = call(&state, jsFunction, callType, callData, thisValue, arguments);
     scope.assertNoException();
     return result;
+}
 }
 
 void ReadableStream::pipeTo(ReadableStreamSink& sink)
@@ -81,7 +83,7 @@ void ReadableStream::pipeTo(ReadableStreamSink& sink)
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());
     arguments.append(toJS(&state, m_globalObject.get(), sink));
-    callFunction(state, readableStreamPipeTo, JSC::jsUndefined(), arguments);
+    ReadableStreamInternal::callFunction(state, readableStreamPipeTo, JSC::jsUndefined(), arguments);
 }
 
 std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
@@ -96,7 +98,7 @@ std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());
     arguments.append(JSC::jsBoolean(true));
-    auto returnedValue = callFunction(state, readableStreamTee, JSC::jsUndefined(), arguments);
+    auto returnedValue = ReadableStreamInternal::callFunction(state, readableStreamTee, JSC::jsUndefined(), arguments);
 
     auto results = Detail::SequenceConverter<IDLInterface<ReadableStream>>::convert(state, returnedValue);
 
@@ -132,7 +134,7 @@ static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadab
     ASSERT(function);
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(readableStream);
-    return callFunction(state, function, JSC::jsUndefined(), arguments).isTrue();
+    return ReadableStreamInternal::callFunction(state, function, JSC::jsUndefined(), arguments).isTrue();
 }
 
 bool ReadableStream::isLocked() const

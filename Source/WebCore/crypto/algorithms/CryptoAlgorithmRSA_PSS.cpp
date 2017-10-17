@@ -37,11 +37,13 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmRSA_PSSInternal {
 static const char* const ALG1 = "PS1";
 static const char* const ALG224 = "PS224";
 static const char* const ALG256 = "PS256";
 static const char* const ALG384 = "PS384";
 static const char* const ALG512 = "PS512";
+}
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSA_PSS::create()
 {
@@ -101,6 +103,7 @@ void CryptoAlgorithmRSA_PSS::generateKey(const CryptoAlgorithmParameters& parame
 
 void CryptoAlgorithmRSA_PSS::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmRSA_PSSInternal;
     ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(*parameters);
 
@@ -178,6 +181,7 @@ void CryptoAlgorithmRSA_PSS::importKey(CryptoKeyFormat format, KeyData&& data, c
 
 void CryptoAlgorithmRSA_PSS::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmRSA_PSSInternal;
     const auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
 
     if (!rsaKey.keySizeInBits()) {

@@ -34,8 +34,6 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"
 SOFT_LINK_FRAMEWORK(AVKit)
@@ -44,6 +42,9 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTouchBarMediaSelectionOption)
 #else
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVFunctionBarMediaSelectionOption)
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+
+using WebCore::MediaSelectionOption;
+using WebCore::PlaybackSessionInterfaceMac;
 
 @implementation WebPlaybackControlsManager
 

@@ -71,10 +71,10 @@
 #include <wtf/WallTime.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace WTF;
-using namespace Unicode;
 
 namespace WebCore {
+using namespace WTF;
+using namespace Unicode;
 
 ContextMenuController::ContextMenuController(Page& page, ContextMenuClient& client)
     : m_page(page)

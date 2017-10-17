@@ -30,9 +30,9 @@
 #include <runtime/JSFunction.h>
 #include <runtime/Lookup.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, PropertyName propertyName, PropertySlot& slot)
 {

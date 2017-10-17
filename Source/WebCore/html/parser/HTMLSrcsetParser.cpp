@@ -43,7 +43,7 @@ static inline bool compareByDensity(const ImageCandidate& first, const ImageCand
 }
 
 enum DescriptorTokenizerState {
-    Start,
+    Initial,
     InParenthesis,
     AfterToken,
 };
@@ -74,12 +74,12 @@ static bool isEOF(const CharType* position, const CharType* end)
 template<typename CharType>
 static void tokenizeDescriptors(const CharType*& position, const CharType* attributeEnd, Vector<StringView>& descriptors)
 {
-    DescriptorTokenizerState state = Start;
+    DescriptorTokenizerState state = Initial;
     const CharType* descriptorsStart = position;
     const CharType* currentDescriptorStart = descriptorsStart;
     for (; ; ++position) {
         switch (state) {
-        case Start:
+        case Initial:
             if (isEOF(position, attributeEnd)) {
                 appendDescriptorAndReset(currentDescriptorStart, attributeEnd, descriptors);
                 return;
@@ -106,7 +106,7 @@ static void tokenizeDescriptors(const CharType*& position, const CharType* attri
             }
             if (*position == ')') {
                 appendCharacter(currentDescriptorStart, position);
-                state = Start;
+                state = Initial;
             } else
                 appendCharacter(currentDescriptorStart, position);
             break;
@@ -114,7 +114,7 @@ static void tokenizeDescriptors(const CharType*& position, const CharType* attri
             if (isEOF(position, attributeEnd))
                 return;
             if (!isHTMLSpace(*position)) {
-                state = Start;
+                state = Initial;
                 currentDescriptorStart = position;
                 --position;
             }

@@ -60,9 +60,9 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 static String consoleMessageForViolation(const char* effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const char* prefix, const char* subject = "it")
 {

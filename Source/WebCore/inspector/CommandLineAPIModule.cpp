@@ -32,10 +32,10 @@
 #include <heap/HeapInlines.h>
 #include <inspector/InjectedScript.h>
 
+namespace WebCore {
+
 using namespace JSC;
 using namespace Inspector;
-
-namespace WebCore {
 
 void CommandLineAPIModule::injectIfNeeded(InjectedScriptManager* injectedScriptManager, const InjectedScript& injectedScript)
 {

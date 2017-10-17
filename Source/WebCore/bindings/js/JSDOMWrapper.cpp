@@ -32,9 +32,9 @@
 #include "WebCoreJSClientData.h"
 #include <runtime/Error.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMObject);
 

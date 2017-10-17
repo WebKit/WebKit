@@ -29,10 +29,10 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include <wtf/MathExtras.h>
 
-using namespace WTF;
-using namespace Unicode;
 
 namespace WebCore {
+using namespace WTF;
+using namespace Unicode;
 
 WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSet<const Font*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
     : m_font(font)

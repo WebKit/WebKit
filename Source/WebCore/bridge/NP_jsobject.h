@@ -32,13 +32,11 @@
 #include <wtf/Forward.h>
 
 namespace JSC {
-    class JSObject;
-    namespace Bindings {
-        class RootObject;
-    }
+class JSObject;
+namespace Bindings {
+class RootObject;
 }
-
-extern NPClass* NPScriptObjectClass;
+}
 
 struct JavaScriptObject
 {
@@ -47,8 +45,12 @@ struct JavaScriptObject
     JSC::Bindings::RootObject* rootObject;
 };
 
+extern "C" {
+extern NPClass* NPScriptObjectClass;
+
 WEBCORE_EXPORT NPObject* _NPN_CreateScriptObject(NPP, JSC::JSObject*, RefPtr<JSC::Bindings::RootObject>&&);
 WEBCORE_EXPORT NPObject* _NPN_CreateNoScriptObject(void);
+}
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 

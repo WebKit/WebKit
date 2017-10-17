@@ -80,6 +80,7 @@
 #include "CachedTextTrack.h"
 #endif
 
+#undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - CachedResourceLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {

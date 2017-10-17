@@ -184,9 +184,9 @@ struct LogArgument<WebCore::URL> {
 };
 }
 
-using namespace PAL;
 
 namespace WebCore {
+using namespace PAL;
 
 static const Seconds SeekRepeatDelay { 100_ms };
 static const double SeekTime = 0.2;

@@ -73,9 +73,9 @@
 #include <runtime/ConsoleTypes.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 static const char* const requestAnimationFrameEventName = "requestAnimationFrame";
 static const char* const cancelAnimationFrameEventName = "cancelAnimationFrame";

@@ -34,10 +34,12 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmAES_CBCInternal {
 static const char* const ALG128 = "A128CBC";
 static const char* const ALG192 = "A192CBC";
 static const char* const ALG256 = "A256CBC";
 static const size_t IVSIZE = 16;
+}
 
 static inline bool usagesAreInvalidForCryptoAlgorithmAES_CBC(CryptoKeyUsageBitmap usages)
 {
@@ -56,6 +58,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmAES_CBC::identifier() const
 
 void CryptoAlgorithmAES_CBC::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
+    using namespace CryptoAlgorithmAES_CBCInternal;
     ASSERT(parameters);
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
@@ -71,6 +74,7 @@ void CryptoAlgorithmAES_CBC::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&
 
 void CryptoAlgorithmAES_CBC::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
+    using namespace CryptoAlgorithmAES_CBCInternal;
     ASSERT(parameters);
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
@@ -104,6 +108,7 @@ void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parame
 
 void CryptoAlgorithmAES_CBC::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_CBCInternal;
     ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_CBC(usages)) {
         exceptionCallback(SyntaxError);
@@ -144,6 +149,7 @@ void CryptoAlgorithmAES_CBC::importKey(CryptoKeyFormat format, KeyData&& data, c
 
 void CryptoAlgorithmAES_CBC::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_CBCInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {

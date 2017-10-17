@@ -54,9 +54,9 @@
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 struct ScriptExecutionContext::PendingException {
     WTF_MAKE_FAST_ALLOCATED;

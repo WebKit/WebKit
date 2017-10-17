@@ -33,9 +33,9 @@
 #include "MarkupTokenizerInlines.h"
 #include <wtf/text/StringBuilder.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 using namespace HTMLNames;
 

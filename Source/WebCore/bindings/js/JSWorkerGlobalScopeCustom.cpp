@@ -28,9 +28,9 @@
 
 #include "WorkerGlobalScope.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
 {

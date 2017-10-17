@@ -50,9 +50,9 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 namespace IDBServer {
 
 UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentifier& identifier)

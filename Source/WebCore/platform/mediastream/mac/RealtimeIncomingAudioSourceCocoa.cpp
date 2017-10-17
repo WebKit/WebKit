@@ -37,9 +37,10 @@
 #include "WebAudioSourceProviderAVFObjC.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+using namespace PAL;
 
 Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {

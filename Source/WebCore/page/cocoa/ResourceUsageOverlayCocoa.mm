@@ -41,8 +41,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
+using WebCore::ResourceUsageOverlay;
 @interface WebOverlayLayer : CALayer {
     ResourceUsageOverlay* m_overlay;
 }

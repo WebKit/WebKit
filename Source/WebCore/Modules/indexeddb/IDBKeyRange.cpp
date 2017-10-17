@@ -34,9 +34,9 @@
 #include "ScriptExecutionContext.h"
 #include <runtime/JSCJSValue.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen)
 {

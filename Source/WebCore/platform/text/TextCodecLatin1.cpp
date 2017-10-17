@@ -31,9 +31,9 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 static const UChar table[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, // 00-07

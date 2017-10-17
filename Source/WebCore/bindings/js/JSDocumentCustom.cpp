@@ -27,9 +27,9 @@
 #include "NodeTraversal.h"
 #include "SVGDocument.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Ref<Document>&& passedDocument)
 {

@@ -59,11 +59,11 @@
 #include "QuickLook.h"
 #endif
 
-using namespace WTF;
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
+using namespace WTF;
 
 ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
 {

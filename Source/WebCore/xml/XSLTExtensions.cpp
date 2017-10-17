@@ -36,13 +36,7 @@
 #include <libxslt/extra.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
-#include <wtf/SoftLinking.h>
-#endif
-
-#if OS(DARWIN) && !PLATFORM(GTK)
-SOFT_LINK_LIBRARY(libxslt)
-SOFT_LINK(libxslt, xsltRegisterExtFunction, int, (xsltTransformContextPtr ctxt, const xmlChar *name, const xmlChar *URI, xmlXPathFunction function), (ctxt, name, URI, function))
-SOFT_LINK(libxslt, xsltFunctionNodeSet, void, (xmlXPathParserContextPtr ctxt, int nargs), (ctxt, nargs))
+#include "SoftLinkLibxslt.h"
 #endif
 
 namespace WebCore {

@@ -70,9 +70,9 @@
 #include <wtf/text/TextBreakIteratorInternalICU.h>
 #endif
 
-using namespace WTF::Unicode;
 
 namespace WebCore {
+using namespace WTF::Unicode;
 
 using namespace HTMLNames;
 

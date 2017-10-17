@@ -50,7 +50,7 @@
 using namespace WebCore;
 
 // Soft-linking headers must be included last since they #define functions, constants, etc.
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)

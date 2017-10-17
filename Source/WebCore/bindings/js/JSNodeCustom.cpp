@@ -65,9 +65,9 @@
 #include "StyledElement.h"
 #include "Text.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 using namespace HTMLNames;
 

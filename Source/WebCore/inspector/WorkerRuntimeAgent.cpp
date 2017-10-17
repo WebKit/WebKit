@@ -37,9 +37,9 @@
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
     : InspectorRuntimeAgent(context)

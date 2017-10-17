@@ -33,12 +33,14 @@
 #import <wtf/Locker.h>
 #import <wtf/NeverDestroyed.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 
 namespace WebCore {
+
+using namespace PAL;
 
 AVFoundationMIMETypeCache::AVFoundationMIMETypeCache()
 {

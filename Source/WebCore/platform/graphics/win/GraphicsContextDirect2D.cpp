@@ -41,9 +41,9 @@
 
 #pragma warning (disable : 4756)
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
 {

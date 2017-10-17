@@ -148,11 +148,6 @@ void XMLDocumentParser::createLeafTextNode()
     m_currentNode->parserAppendChild(*m_leafTextNode);
 }
 
-static inline String toString(const xmlChar* string, size_t size) 
-{ 
-    return String::fromUTF8(reinterpret_cast<const char*>(string), size); 
-}
-
 bool XMLDocumentParser::updateLeafTextNode()
 {
     if (isStopped())
@@ -162,7 +157,7 @@ bool XMLDocumentParser::updateLeafTextNode()
         return true;
 
     // This operation might fire mutation event, see below.
-    m_leafTextNode->appendData(toString(m_bufferedText.data(), m_bufferedText.size()));
+    m_leafTextNode->appendData(String::fromUTF8(reinterpret_cast<const char*>(m_bufferedText.data()), m_bufferedText.size()));
     m_bufferedText = { };
 
     m_leafTextNode = nullptr;

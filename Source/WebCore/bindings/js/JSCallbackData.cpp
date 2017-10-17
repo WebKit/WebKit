@@ -35,9 +35,9 @@
 #include "JSMainThreadExecStateInstrumentation.h"
 #include <runtime/Exception.h>
 
-using namespace JSC;
     
 namespace WebCore {
+using namespace JSC;
 
 JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject* callback, JSValue thisValue, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
 {

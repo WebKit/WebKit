@@ -27,9 +27,14 @@
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
-#include "AXObjectCache.h"
-#include "AccessibilityObject.h"
-#include "WebAccessibilityObjectWrapperBase.h"
+#import "AXObjectCache.h"
+#import "AccessibilityObject.h"
+#import "WebAccessibilityObjectWrapperBase.h"
+#import "WAKView.h"
+
+@interface WAKView (iOSAccessibility)
+- (BOOL)accessibilityIsIgnored;
+@end
 
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase {
     // Cached data to avoid frequent re-computation.

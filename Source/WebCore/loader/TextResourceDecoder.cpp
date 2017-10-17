@@ -33,9 +33,9 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/StringExtras.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 using namespace HTMLNames;
 

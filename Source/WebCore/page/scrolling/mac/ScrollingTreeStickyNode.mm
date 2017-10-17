@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingTreeStickyNode.h"
+#import "config.h"
+#import "ScrollingTreeStickyNode.h"
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "Logging.h"
-#include "ScrollingStateStickyNode.h"
-#include "ScrollingTree.h"
-#include "ScrollingTreeFrameScrollingNode.h"
-#include "ScrollingTreeOverflowScrollingNode.h"
-#include <QuartzCore/CALayer.h>
-#include <wtf/text/TextStream.h>
+#import "Logging.h"
+#import "ScrollingStateStickyNode.h"
+#import "ScrollingTree.h"
+#import "ScrollingTreeFrameScrollingNode.h"
+#import "ScrollingTreeOverflowScrollingNode.h"
+#import <QuartzCore/CALayer.h>
+#import <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -65,13 +65,16 @@ void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
         m_constraints = stickyStateNode.viewportConstraints();
 }
 
+namespace ScrollingTreeStickyNodeInternal {
 static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 {
     return CGPointMake(a.x * b.width, a.y * b.height);
 }
+}
 
 void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
 {
+    using namespace ScrollingTreeStickyNodeInternal;
     bool adjustStickyLayer = false;
     FloatRect constrainingRect;
 

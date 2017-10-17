@@ -34,9 +34,9 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static void collect()
 {

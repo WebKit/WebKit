@@ -79,11 +79,11 @@
 
 #if PLATFORM(COCOA)
 #include "MediaSampleAVFObjC.h"
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
 namespace WebCore {
-
+using namespace PAL;
 using namespace HTMLNames;
 
 // These values come from the WhatWG/W3C HTML spec.

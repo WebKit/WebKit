@@ -36,9 +36,9 @@
 #include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     case interfaceName##EventTargetInterfaceType: \

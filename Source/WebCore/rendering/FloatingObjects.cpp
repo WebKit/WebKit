@@ -28,9 +28,9 @@
 #include "RenderBox.h"
 #include "RenderView.h"
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 struct SameSizeAsFloatingObject {
     void* pointers[2];

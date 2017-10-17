@@ -180,11 +180,6 @@ typedef NS_ENUM(NSInteger, NSWritingDirection) {
     NSWritingDirectionRightToLeft   =  1     // Right to left writing direction
 } NS_ENUM_AVAILABLE_IOS(6_0);
 
-typedef NS_ENUM(NSInteger, NSWritingDirectionFormatType) {
-    NSWritingDirectionEmbedding     = (0 << 1),
-    NSWritingDirectionOverride      = (1 << 1)
-} NS_ENUM_AVAILABLE_IOS(9_0);
-
 enum {
     NSEnterCharacter                = 0x0003,
     NSBackspaceCharacter            = 0x0008,

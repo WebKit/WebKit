@@ -44,9 +44,9 @@
 #include <runtime/VMEntryScope.h>
 #include <wtf/Ref.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSErrorHandler::JSErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
     : JSEventListener(function, wrapper, isAttribute, world)

@@ -50,9 +50,9 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 const size_t maxEncodingNameLength = 63;
 

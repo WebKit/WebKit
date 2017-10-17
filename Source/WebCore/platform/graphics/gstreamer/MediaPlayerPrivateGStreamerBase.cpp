@@ -120,9 +120,9 @@
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 void registerWebKitGStreamerElements()
 {

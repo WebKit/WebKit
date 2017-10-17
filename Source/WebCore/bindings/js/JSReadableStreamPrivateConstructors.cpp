@@ -34,9 +34,9 @@
 #include "WebCoreJSClientData.h"
 #include <runtime/JSCInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 enum class ReaderType {
     Byob,

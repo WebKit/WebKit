@@ -28,9 +28,9 @@
 #include "RenderView.h"
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace WTF::Unicode;
 
 namespace WebCore {
+using namespace WTF::Unicode;
 
 RenderQuote::RenderQuote(Document& document, RenderStyle&& style, QuoteType quote)
     : RenderInline(document, WTFMove(style))

@@ -36,9 +36,9 @@
 #include <heap/HeapInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 // Save the state value to the m_state member of a JSPopStateEvent, and return it, for convenience.
 static const JSValue& cacheState(ExecState& state, const JSPopStateEvent* event, const JSValue& eventState)

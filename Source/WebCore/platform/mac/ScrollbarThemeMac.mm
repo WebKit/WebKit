@@ -45,23 +45,25 @@
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
-using namespace WebCore;
+namespace WebCore {
 
+    typedef HashMap<Scrollbar*, RetainPtr<NSScrollerImp>> ScrollerImpMap;
+
+    static ScrollerImpMap* scrollbarMap()
+    {
+        static ScrollerImpMap* map = new ScrollerImpMap;
+        return map;
+    }
+
+}
+
+using WebCore::ScrollbarTheme;
+using WebCore::ScrollbarThemeMac;
+using WebCore::scrollbarMap;
+using WebCore::ScrollerImpMap;
 @interface NSColor (WebNSColorDetails)
 + (NSImage *)_linenPatternImage;
 @end
-
-namespace WebCore {
-
-typedef HashMap<Scrollbar*, RetainPtr<NSScrollerImp>> ScrollerImpMap;
-
-static ScrollerImpMap* scrollbarMap()
-{
-    static ScrollerImpMap* map = new ScrollerImpMap;
-    return map;
-}
-
-}
 
 @interface WebScrollbarPrefsObserver : NSObject
 {

@@ -39,9 +39,9 @@
 #include "WorkerThread.h"
 #include <runtime/VM.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope& context)
     : ScriptDebugServer(context.script()->vm())

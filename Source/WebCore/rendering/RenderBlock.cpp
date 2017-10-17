@@ -73,10 +73,10 @@
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 
-using namespace WTF;
-using namespace Unicode;
 
 namespace WebCore {
+using namespace WTF;
+using namespace Unicode;
 
 using namespace HTMLNames;
 

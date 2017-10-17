@@ -34,10 +34,12 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmAES_CFBInternal {
 static const char* const ALG128 = "A128CFB8";
 static const char* const ALG192 = "A192CFB8";
 static const char* const ALG256 = "A256CFB8";
 static const size_t IVSIZE = 16;
+}
 
 static inline bool usagesAreInvalidForCryptoAlgorithmAES_CFB(CryptoKeyUsageBitmap usages)
 {
@@ -56,6 +58,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmAES_CFB::identifier() const
 
 void CryptoAlgorithmAES_CFB::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
+    using namespace CryptoAlgorithmAES_CFBInternal;
     ASSERT(parameters);
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
@@ -71,6 +74,7 @@ void CryptoAlgorithmAES_CFB::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&
 
 void CryptoAlgorithmAES_CFB::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
+    using namespace CryptoAlgorithmAES_CFBInternal;
     ASSERT(parameters);
     auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
     if (aesParameters.ivVector().size() != IVSIZE) {
@@ -104,6 +108,7 @@ void CryptoAlgorithmAES_CFB::generateKey(const CryptoAlgorithmParameters& parame
 
 void CryptoAlgorithmAES_CFB::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_CFBInternal;
     ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_CFB(usages)) {
         exceptionCallback(SyntaxError);
@@ -144,6 +149,7 @@ void CryptoAlgorithmAES_CFB::importKey(CryptoKeyFormat format, KeyData&& data, c
 
 void CryptoAlgorithmAES_CFB::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_CFBInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {

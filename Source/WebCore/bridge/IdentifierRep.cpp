@@ -32,9 +32,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
-using namespace JSC;
-
 namespace WebCore {
+using namespace JSC;
 
 typedef HashSet<IdentifierRep*> IdentifierSet;
 

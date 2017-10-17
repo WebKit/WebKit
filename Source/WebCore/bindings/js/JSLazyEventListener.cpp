@@ -36,9 +36,9 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, eventListenerCounter, ("JSLazyEventListener"));
 

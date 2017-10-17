@@ -34,9 +34,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 static Vector<Ref<SharedBuffer>> extractKeyIDsKeyids(const SharedBuffer& buffer)
 {

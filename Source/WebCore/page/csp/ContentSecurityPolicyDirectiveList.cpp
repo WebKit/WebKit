@@ -45,11 +45,6 @@ static bool isDirectiveValueCharacter(UChar c)
     return isASCIISpace(c) || (c >= 0x21 && c <= 0x7e); // Whitespace + VCHAR
 }
 
-static bool isNotASCIISpace(UChar c)
-{
-    return !isASCIISpace(c);
-}
-
 static inline bool checkEval(ContentSecurityPolicySourceListDirective* directive)
 {
     return !directive || directive->allowEval();

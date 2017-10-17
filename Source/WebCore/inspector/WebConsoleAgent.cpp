@@ -37,9 +37,9 @@
 #include <runtime/JSCInlines.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 WebConsoleAgent::WebConsoleAgent(AgentContext& context, InspectorHeapAgent* heapAgent)
     : InspectorConsoleAgent(context, heapAgent)

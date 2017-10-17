@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingTreeIOS.h"
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
 #include "AsyncScrollingCoordinator.h"
 #include "PlatformWheelEvent.h"
@@ -120,4 +120,4 @@ void ScrollingTreeIOS::currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)

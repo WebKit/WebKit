@@ -36,11 +36,13 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmRSASSA_PKCS1_v1_5Internal {
 static const char* const ALG1 = "RS1";
 static const char* const ALG224 = "RS224";
 static const char* const ALG256 = "RS256";
 static const char* const ALG384 = "RS384";
 static const char* const ALG512 = "RS512";
+}
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSASSA_PKCS1_v1_5::create()
 {
@@ -100,6 +102,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParamete
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmRSASSA_PKCS1_v1_5Internal;
     ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(*parameters);
 
@@ -177,6 +180,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmRSASSA_PKCS1_v1_5Internal;
     const auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
 
     if (!rsaKey.keySizeInBits()) {

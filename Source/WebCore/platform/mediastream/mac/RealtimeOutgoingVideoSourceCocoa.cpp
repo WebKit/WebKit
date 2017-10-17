@@ -33,10 +33,11 @@
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
 
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+using namespace PAL;
 
 Ref<RealtimeOutgoingVideoSource> RealtimeOutgoingVideoSource::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {

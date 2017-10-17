@@ -42,9 +42,9 @@
 #include <heap/StrongInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {

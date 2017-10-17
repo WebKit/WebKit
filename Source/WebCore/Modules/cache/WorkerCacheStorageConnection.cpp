@@ -36,9 +36,9 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 
-using namespace WebCore::DOMCacheEngine;
 
 namespace WebCore {
+using namespace WebCore::DOMCacheEngine;
 
 struct CrossThreadRecordData {
     uint64_t identifier;

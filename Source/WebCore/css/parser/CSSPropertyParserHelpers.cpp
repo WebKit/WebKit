@@ -682,11 +682,12 @@ static bool positionFromTwoValues(CSSPrimitiveValue& value1, CSSPrimitiveValue& 
     return true;
 }
 
-    
+namespace CSSPropertyParserHelpersInternal {
 template<typename... Args>
 static Ref<CSSPrimitiveValue> createPrimitiveValuePair(Args&&... args)
 {
     return CSSValuePool::singleton().createValue(Pair::create(std::forward<Args>(args)...));
+}
 }
 
 static bool positionFromThreeOrFourValues(CSSPrimitiveValue** values, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY)
@@ -707,7 +708,7 @@ static bool positionFromThreeOrFourValues(CSSPrimitiveValue** values, RefPtr<CSS
 
         RefPtr<CSSPrimitiveValue> result;
         if (values[i + 1] && !values[i + 1]->isValueID())
-            result = createPrimitiveValuePair(currentValue, values[++i]);
+            result = CSSPropertyParserHelpersInternal::createPrimitiveValuePair(currentValue, values[++i]);
         else
             result = currentValue;
 
@@ -770,7 +771,7 @@ RefPtr<CSSPrimitiveValue> consumePosition(CSSParserTokenRange& range, CSSParserM
     RefPtr<CSSPrimitiveValue> resultX;
     RefPtr<CSSPrimitiveValue> resultY;
     if (consumePosition(range, cssParserMode, unitless, resultX, resultY))
-        return createPrimitiveValuePair(resultX.releaseNonNull(), resultY.releaseNonNull());
+        return CSSPropertyParserHelpersInternal::createPrimitiveValuePair(resultX.releaseNonNull(), resultY.releaseNonNull());
     return nullptr;
 }
 

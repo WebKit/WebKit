@@ -2023,8 +2023,8 @@ sub GenerateEnumerationImplementation
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($enumeration));
 
-    push(@implContent, "\nusing namespace JSC;\n\n");
-    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, "\n\nnamespace WebCore {\n");
+    push(@implContent, "using namespace JSC;\n\n");
     push(@implContent, GenerateEnumerationImplementationContent($enumeration, $className));
     push(@implContent, "} // namespace WebCore\n");
      
@@ -3798,8 +3798,8 @@ sub GenerateImplementation
 
     @implContent = ();
 
-    push(@implContent, "\nusing namespace JSC;\n\n");
-    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, "\n\nnamespace WebCore {\n");
+    push(@implContent, "using namespace JSC;\n\n");
 
     push(@implContent, GenerateEnumerationsImplementationContent($interface, $enumerations));
     push(@implContent, GenerateDictionariesImplementationContent($interface, $dictionaries));
@@ -5709,8 +5709,8 @@ sub GenerateDictionaryImplementation
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($dictionary));
 
-    push(@implContent, "\nusing namespace JSC;\n\n");
-    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, "\n\nnamespace WebCore {\n");
+    push(@implContent, "using namespace JSC;\n\n");
     push(@implContent, GenerateDictionaryImplementationContent($dictionary, $className));
     push(@implContent, GenerateEnumerationsImplementationContent($dictionary, $enumerations));
     push(@implContent, GenerateDictionariesImplementationContent($dictionary, $otherDictionaries)) if $otherDictionaries;
@@ -5749,8 +5749,8 @@ sub GenerateCallbackFunctionImplementation
 
     push(@implContentHeader, GenerateImplementationContentHeader($callbackFunction));
 
-    push(@implContent, "\nusing namespace JSC;\n\n");
-    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, "\n\nnamespace WebCore {\n");
+    push(@implContent, "using namespace JSC;\n\n");
 
     push(@implContent, GenerateEnumerationsImplementationContent($callbackFunction, $enumerations));
     push(@implContent, GenerateDictionariesImplementationContent($callbackFunction, $dictionaries));
@@ -5792,8 +5792,8 @@ sub GenerateCallbackInterfaceImplementation
 
     push(@implContentHeader, GenerateImplementationContentHeader($callbackInterface));
 
-    push(@implContent, "\nusing namespace JSC;\n\n");
-    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, "\n\nnamespace WebCore {\n");
+    push(@implContent, "using namespace JSC;\n\n");
 
     push(@implContent, GenerateEnumerationsImplementationContent($callbackInterface, $enumerations));
     push(@implContent, GenerateDictionariesImplementationContent($callbackInterface, $dictionaries));

@@ -32,9 +32,9 @@
 #include <runtime/JSCJSValue.h>
 #include <runtime/Structure.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
     
 JSValue JSCustomEvent::detail(ExecState& state) const
 {

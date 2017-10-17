@@ -34,6 +34,11 @@
 
 namespace WebCore {
 
+inline bool isNotASCIISpace(UChar c)
+{
+    return !isASCIISpace(c);
+}
+    
 template<typename CharType>
 bool skipExactly(const CharType*& position, const CharType* end, CharType delimiter)
 {

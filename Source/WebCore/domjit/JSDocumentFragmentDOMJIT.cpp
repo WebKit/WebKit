@@ -30,9 +30,9 @@
 
 #include "DOMJITCheckDOM.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 Ref<JSC::Snippet> checkSubClassSnippetForJSDocumentFragment()
 {

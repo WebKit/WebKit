@@ -27,9 +27,10 @@
 #include "WebAudioBufferList.h"
 
 #include "CAAudioStreamDescription.h"
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+using namespace PAL;
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
 {
@@ -76,6 +77,7 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, u
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format, CMSampleBufferRef sampleBuffer)
     : WebAudioBufferList(format)
 {
+
     if (!sampleBuffer)
         return;
 

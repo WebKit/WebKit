@@ -56,9 +56,9 @@
 #include <runtime/StructureInlines.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 namespace IDBServer {
 
 // Current version of the metadata schema being used in the metadata database.

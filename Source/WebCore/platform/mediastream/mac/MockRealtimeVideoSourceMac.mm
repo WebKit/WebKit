@@ -43,10 +43,11 @@
 #import <QuartzCore/CATransaction.h>
 #import <objc/runtime.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 
 namespace WebCore {
+using namespace PAL;
 
 static const int videoSampleRate = 90000;
 
@@ -67,7 +68,7 @@ MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(const String& deviceID, c
 
 RetainPtr<CMSampleBufferRef> MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer(CVPixelBufferRef pixelBuffer)
 {
-    if (!pixelBuffer)
+        if (!pixelBuffer)
         return nullptr;
 
     CMTime sampleTime = CMTimeMake((elapsedTime() + .1) * videoSampleRate, videoSampleRate);

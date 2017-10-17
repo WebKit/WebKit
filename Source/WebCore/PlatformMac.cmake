@@ -294,7 +294,6 @@ list(APPEND WebCore_SOURCES
     platform/audio/mac/MediaSessionManagerMac.mm
 
     platform/cf/CFURLExtras.cpp
-    platform/cf/CoreMediaSoftLink.cpp
     platform/cf/FileSystemCF.cpp
     platform/cf/KeyedDecoderCF.cpp
     platform/cf/KeyedEncoderCF.cpp

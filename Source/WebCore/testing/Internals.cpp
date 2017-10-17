@@ -260,9 +260,9 @@ using JSC::PropertySlot;
 using JSC::ScriptExecutable;
 using JSC::StackVisitor;
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 using namespace HTMLNames;
 

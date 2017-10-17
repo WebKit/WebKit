@@ -51,9 +51,9 @@
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/Locker.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 IDBObjectStore::IDBObjectStore(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
     : ActiveDOMObject(&context)

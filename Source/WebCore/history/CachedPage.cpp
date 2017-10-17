@@ -48,9 +48,9 @@
 #include "FrameSelection.h"
 #endif
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedPageCounter, ("CachedPage"));
 

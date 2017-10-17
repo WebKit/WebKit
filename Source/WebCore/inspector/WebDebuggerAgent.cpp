@@ -28,9 +28,9 @@
 
 #include "InstrumentingAgents.h"
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 WebDebuggerAgent::WebDebuggerAgent(WebAgentContext& context)
     : InspectorDebuggerAgent(context)

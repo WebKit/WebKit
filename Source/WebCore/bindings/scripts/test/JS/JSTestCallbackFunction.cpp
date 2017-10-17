@@ -26,9 +26,9 @@
 #include "JSDOMExceptionHandling.h"
 #include "ScriptExecutionContext.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSTestCallbackFunction::JSTestCallbackFunction(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackFunction(globalObject->scriptExecutionContext())

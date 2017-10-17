@@ -32,7 +32,7 @@
 #import <AVFoundation/AVAssetTrack.h>
 #import <pal/spi/cocoa/IOPSLibSPI.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import "VideoToolboxSoftLink.h"
 
 namespace WebCore {
@@ -109,8 +109,8 @@ bool assetTrackMeetsHardwareDecodeRequirements(AVAssetTrack *track, const Vector
     Vector<FourCC> codecs;
     for (NSUInteger i = 0, count = track.formatDescriptions.count; i < count; ++i) {
         CMFormatDescriptionRef description = (CMFormatDescriptionRef)track.formatDescriptions[i];
-        if (CMFormatDescriptionGetMediaType(description) == kCMMediaType_Video)
-            codecs.append(FourCC(CMFormatDescriptionGetMediaSubType(description)));
+        if (PAL::CMFormatDescriptionGetMediaType(description) == kCMMediaType_Video)
+            codecs.append(FourCC(PAL::CMFormatDescriptionGetMediaSubType(description)));
     }
     return codecsMeetHardwareDecodeRequirements(codecs, contentTypesRequiringHardwareDecode);
 }

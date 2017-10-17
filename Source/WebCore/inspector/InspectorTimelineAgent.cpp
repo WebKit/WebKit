@@ -61,9 +61,9 @@
 #include "RunLoopObserver.h"
 #endif
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 #if PLATFORM(COCOA)
 static const CFIndex frameStopRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit + 1;

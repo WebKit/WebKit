@@ -29,9 +29,9 @@
 #include "ScriptExecutionContext.h"
 #include <runtime/JSArray.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSTestCallbackFunctionWithTypedefs::JSTestCallbackFunctionWithTypedefs(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackFunctionWithTypedefs(globalObject->scriptExecutionContext())

@@ -31,9 +31,9 @@
 
 #include "JSTrackCustom.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSAudioTrack::visitAdditionalChildren(SlotVisitor& visitor)
 {

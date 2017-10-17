@@ -42,9 +42,9 @@
 #include <runtime/JSArray.h>
 #include <runtime/JSArrayBuffer.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue JSMessageEvent::data(ExecState& state) const
 {

@@ -34,9 +34,9 @@
 
 #include <cairo-win32.h>
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* faceName)
 {

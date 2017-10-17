@@ -33,8 +33,7 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/MainThread.h>
 
-using namespace WebCore;
-
+using WebCore::DisplayRefreshMonitorIOS;
 @interface WebDisplayLinkHandler : NSObject
 {
     DisplayRefreshMonitorIOS* m_monitor;

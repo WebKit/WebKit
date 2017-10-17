@@ -39,9 +39,9 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 #ifndef NDEBUG
 void EventListenerMap::assertNoActiveIterators() const

@@ -34,9 +34,9 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 static const size_t maximumResourcesContentSize = 100 * 1000 * 1000; // 100MB
 static const size_t maximumSingleResourceContentSize = 10 * 1000 * 1000; // 10MB

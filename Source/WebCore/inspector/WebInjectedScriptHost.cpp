@@ -33,9 +33,9 @@
 #include "JSNode.h"
 #include "JSNodeList.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue WebInjectedScriptHost::subtype(JSC::ExecState* exec, JSC::JSValue value)
 {

@@ -34,11 +34,13 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmHMACInternal {
 static const char* const ALG1 = "HS1";
 static const char* const ALG224 = "HS224";
 static const char* const ALG256 = "HS256";
 static const char* const ALG384 = "HS384";
 static const char* const ALG512 = "HS512";
+}
 
 static inline bool usagesAreInvalidForCryptoAlgorithmHMAC(CryptoKeyUsageBitmap usages)
 {
@@ -96,6 +98,7 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
 
 void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmHMACInternal;
     ASSERT(parameters);
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
 
@@ -144,6 +147,7 @@ void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, cons
 
 void CryptoAlgorithmHMAC::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmHMACInternal;
     const auto& hmacKey = downcast<CryptoKeyHMAC>(key.get());
 
     if (hmacKey.key().isEmpty()) {

@@ -29,9 +29,9 @@
 #include "Document.h"
 #include "InstrumentingAgents.h"
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 InspectorWorkerAgent::InspectorWorkerAgent(PageAgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Worker"), context)

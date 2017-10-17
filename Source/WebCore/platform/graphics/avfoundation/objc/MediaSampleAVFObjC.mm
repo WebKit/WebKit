@@ -31,10 +31,11 @@
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/PrintStream.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 
 namespace WebCore {
+using namespace PAL;
 
 static inline void releaseUint8Vector(void *array, const void*)
 {

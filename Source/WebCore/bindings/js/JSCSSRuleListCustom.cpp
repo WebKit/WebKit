@@ -32,9 +32,9 @@
 #include "JSCSSRuleCustom.h"
 #include "JSStyleSheetCustom.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {

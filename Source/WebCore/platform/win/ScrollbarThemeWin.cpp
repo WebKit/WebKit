@@ -61,9 +61,9 @@
 #define TS_LEFT_BUTTON_HOVER  19
 #define TS_RIGHT_BUTTON_HOVER   20
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 static HANDLE scrollbarTheme;
 static bool runningVista;

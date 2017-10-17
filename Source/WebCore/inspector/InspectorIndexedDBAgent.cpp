@@ -84,9 +84,9 @@ typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDatabaseCallback Re
 typedef Inspector::IndexedDBBackendDispatcherHandler::RequestDataCallback RequestDataCallback;
 typedef Inspector::IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback ClearObjectStoreCallback;
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 namespace {
 

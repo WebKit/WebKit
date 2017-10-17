@@ -34,10 +34,11 @@
 #include "MediaSampleAVFObjC.h"
 #include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
 
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+using namespace PAL;
 
 Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {

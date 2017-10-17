@@ -35,9 +35,9 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/Protect.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 DataCue::DataCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
     : TextTrackCue(context, start, end)

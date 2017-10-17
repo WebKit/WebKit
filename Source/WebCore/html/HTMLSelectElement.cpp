@@ -55,9 +55,9 @@
 #include "Settings.h"
 #include "SpatialNavigation.h"
 
-using namespace WTF::Unicode;
 
 namespace WebCore {
+using namespace WTF::Unicode;
 
 using namespace HTMLNames;
 

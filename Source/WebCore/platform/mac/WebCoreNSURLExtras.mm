@@ -922,8 +922,6 @@ static BOOL hasQuestionMarkOnlyQueryString(NSURL *URL)
     return NO;
 }
 
-#define completeURL (CFURLComponentType)-1
-
 NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
 {
     Vector<UInt8, URL_BYTES_BUFFER_LENGTH> allBytesBuffer(URL_BYTES_BUFFER_LENGTH);
@@ -934,6 +932,7 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
         bytesFilled = CFURLGetBytes((CFURLRef)URL, allBytesBuffer.data(), bytesToAllocate);
     }
     
+    const CFURLComponentType completeURL = (CFURLComponentType)-1;
     CFRange range;
     if (componentType != completeURL) {
         range = CFURLGetByteRangeForComponent((CFURLRef)URL, componentType, NULL);

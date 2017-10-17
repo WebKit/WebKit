@@ -34,9 +34,9 @@
 #include <inspector/InspectorAgentBase.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 HashSet<WorkerInspectorProxy*>& WorkerInspectorProxy::allWorkerInspectorProxies()
 {

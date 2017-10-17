@@ -36,9 +36,9 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 namespace {
 

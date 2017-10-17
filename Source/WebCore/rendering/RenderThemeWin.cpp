@@ -157,9 +157,9 @@ static bool haveTheme;
 
 static const unsigned vistaMenuListButtonOutset = 1;
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 // This is the fixed width IE and Firefox use for buttons on dropdown menus
 static const int dropDownButtonWidth = 17;

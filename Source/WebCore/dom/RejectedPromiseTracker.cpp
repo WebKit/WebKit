@@ -46,10 +46,10 @@
 #include <runtime/JSPromise.h>
 #include <runtime/WeakGCMapInlines.h>
 
-using namespace JSC;
-using namespace Inspector;
 
 namespace WebCore {
+using namespace JSC;
+using namespace Inspector;
 
 class UnhandledPromise {
     WTF_MAKE_NONCOPYABLE(UnhandledPromise);

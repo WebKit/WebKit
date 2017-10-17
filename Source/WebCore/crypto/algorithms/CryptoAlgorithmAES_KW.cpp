@@ -34,9 +34,11 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmAES_KWInternal {
 static const char* const ALG128 = "A128KW";
 static const char* const ALG192 = "A192KW";
 static const char* const ALG256 = "A256KW";
+}
 
 static inline bool usagesAreInvalidForCryptoAlgorithmAES_KW(CryptoKeyUsageBitmap usages)
 {
@@ -71,6 +73,7 @@ void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParameters& paramet
 
 void CryptoAlgorithmAES_KW::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_KWInternal;
     ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_KW(usages)) {
         exceptionCallback(SyntaxError);
@@ -110,6 +113,7 @@ void CryptoAlgorithmAES_KW::importKey(CryptoKeyFormat format, KeyData&& data, co
 
 void CryptoAlgorithmAES_KW::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmAES_KWInternal;
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {

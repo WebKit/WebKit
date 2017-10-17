@@ -57,9 +57,9 @@
 #include <pal/system/Sound.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {

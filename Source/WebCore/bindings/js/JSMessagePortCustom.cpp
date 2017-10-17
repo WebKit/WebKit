@@ -27,9 +27,9 @@
 #include "config.h"
 #include "JSMessagePort.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSMessagePort::visitAdditionalChildren(SlotVisitor& visitor)
 {

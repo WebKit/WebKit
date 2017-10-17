@@ -31,9 +31,9 @@
 #include "JSDOMBinding.h"
 #include "JSIDBCursorWithValue.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSIDBCursor::visitAdditionalChildren(SlotVisitor& visitor)
 {

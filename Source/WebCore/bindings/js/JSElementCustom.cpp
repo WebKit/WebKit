@@ -41,9 +41,9 @@
 #include "NodeList.h"
 #include "SVGElement.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 using namespace HTMLNames;
 

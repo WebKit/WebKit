@@ -33,9 +33,9 @@
 #include "JSTextTrack.h"
 #include "JSVideoTrack.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TrackBase& track)
 {

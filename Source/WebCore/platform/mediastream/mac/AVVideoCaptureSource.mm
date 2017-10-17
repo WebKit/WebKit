@@ -53,7 +53,7 @@
 #include "WebCoreThreadRun.h"
 #endif
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 
 typedef AVCaptureConnection AVCaptureConnectionType;
@@ -328,6 +328,7 @@ bool AVVideoCaptureSource::setPreset(NSString *preset)
 
 bool AVVideoCaptureSource::applyFrameRate(double rate)
 {
+    using namespace PAL;
     double epsilon = 0.00001;
     AVFrameRateRangeType *bestFrameRateRange = nil;
     for (AVFrameRateRangeType *frameRateRange in [[device() activeFormat] videoSupportedFrameRateRanges]) {
@@ -512,12 +513,12 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     if (!isProducingData() || muted())
         return;
 
-    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer.get());
+    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer.get());
     if (!formatDescription)
         return;
 
     m_buffer = sampleBuffer;
-    CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(formatDescription);
     if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right)
         std::swap(dimensions.width, dimensions.height);
 

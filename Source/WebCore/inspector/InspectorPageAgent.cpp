@@ -80,9 +80,9 @@
 #include "LegacyWebArchive.h"
 #endif
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 static bool decodeBuffer(const char* buffer, unsigned size, const String& textEncodingName, String* result)
 {

@@ -34,9 +34,9 @@
 #include <runtime/PropertyNameArray.h>
 #include <wtf/GetPtr.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 // Functions
 

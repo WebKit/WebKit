@@ -59,10 +59,10 @@
 #include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
 
-using namespace Inspector;
-using namespace std::literals::chrono_literals;
 
 namespace WebCore {
+using namespace Inspector;
+using namespace std::literals::chrono_literals;
 
 static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {

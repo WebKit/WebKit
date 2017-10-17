@@ -60,11 +60,6 @@
 
 namespace WebCore {
 
-static void releaseImageData(void*, const void* data, size_t)
-{
-    fastFree(const_cast<void*>(data));
-}
-
 static FloatSize scaleSizeToUserSpace(const FloatSize& logicalSize, const IntSize& backingStoreSize, const IntSize& internalSize)
 {
     float xMagnification = static_cast<float>(backingStoreSize.width()) / internalSize.width();
@@ -179,6 +174,9 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, CGColorSp
         m_data.bitmapInfo = kCGImageAlphaPremultipliedLast;
 #endif
         cgContext = adoptCF(CGBitmapContextCreate(m_data.data, m_data.backingStoreSize.width(), m_data.backingStoreSize.height(), 8, m_data.bytesPerRow.unsafeGet(), m_data.colorSpace, m_data.bitmapInfo));
+        const auto releaseImageData = [] (void*, const void* data, size_t) {
+            fastFree(const_cast<void*>(data));
+        };
         // Create a live image that wraps the data.
         m_data.dataProvider = adoptCF(CGDataProviderCreateWithData(0, m_data.data, numBytes.unsafeGet(), releaseImageData));
 

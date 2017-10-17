@@ -33,9 +33,8 @@
 #import "WindowsKeyboardCodes.h"
 #import <Carbon/Carbon.h>
 
-using namespace WTF;
-
 namespace WebCore {
+using namespace WTF;
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {

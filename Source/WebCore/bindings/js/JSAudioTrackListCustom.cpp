@@ -32,9 +32,9 @@
 #include "Element.h"
 #include "JSNodeCustom.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSAudioTrackList::visitAdditionalChildren(SlotVisitor& visitor)
 {

@@ -35,9 +35,9 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 static Length parseLength(const UChar* data, unsigned length)
 {

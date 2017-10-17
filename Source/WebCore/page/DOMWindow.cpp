@@ -140,9 +140,9 @@
 #include "WKContentObservationInternal.h"
 #endif
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 class PostMessageTimer : public TimerBase {
 public:

@@ -83,9 +83,9 @@ public:
 };
 #endif // PLATFORM(IOS)
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 FontCache& FontCache::singleton()
 {

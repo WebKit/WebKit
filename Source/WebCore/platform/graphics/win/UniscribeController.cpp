@@ -32,11 +32,11 @@
 #include "TextRun.h"
 #include <wtf/MathExtras.h>
 
+
+namespace WebCore {
 using namespace WTF;
 using namespace Unicode;
 using namespace std;
-
-namespace WebCore {
 
 // FIXME: Rearchitect this to be more like WidthIterator in Font.cpp.  Have an advance() method
 // that does stuff in that method instead of doing everything in the constructor.  Have advance()

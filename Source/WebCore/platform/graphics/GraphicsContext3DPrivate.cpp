@@ -35,9 +35,9 @@
 #include "OpenGLShims.h"
 #endif
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D*, GraphicsContext3D::RenderStyle renderStyle)
     : m_renderStyle(renderStyle)

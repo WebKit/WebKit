@@ -34,9 +34,9 @@
 #include "ScriptExecutionContext.h"
 #include "URL.h"
 
-using namespace WebCore::DOMCacheEngine;
 
 namespace WebCore {
+using namespace WebCore::DOMCacheEngine;
 
 DOMCache::DOMCache(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)

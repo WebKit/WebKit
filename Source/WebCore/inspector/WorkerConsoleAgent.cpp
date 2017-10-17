@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WorkerConsoleAgent.h"
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context, InspectorHeapAgent* heapAgent)
     : WebConsoleAgent(context, heapAgent)

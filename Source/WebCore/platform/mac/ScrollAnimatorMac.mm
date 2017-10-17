@@ -42,7 +42,7 @@
 #include <wtf/BlockObjCExceptions.h>
 #include <wtf/text/TextStream.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 static ScrollbarThemeMac* macScrollbarTheme()
 {
@@ -58,6 +58,17 @@ static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
     return nil;
 }
 
+}
+
+using WebCore::ScrollableArea;
+using WebCore::ScrollAnimatorMac;
+using WebCore::Scrollbar;
+using WebCore::ScrollbarThemeMac;
+using WebCore::GraphicsLayer;
+using WebCore::VerticalScrollbar;
+using WebCore::macScrollbarTheme;
+using WebCore::IntRect;
+using WebCore::ThumbPart;
 @interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
 - (void)_stopRun;

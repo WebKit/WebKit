@@ -31,9 +31,9 @@
 
 #if ENABLE(STREAMS_API)
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue JSReadableStreamSource::start(ExecState& state, Ref<DeferredPromise>&& promise)
 {

@@ -29,9 +29,9 @@
 
 #include "JSWebGLRenderingContext.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSWebGLRenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {

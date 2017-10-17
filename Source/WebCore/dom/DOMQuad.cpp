@@ -30,9 +30,9 @@
 #include "DOMRect.h"
 #include <wtf/MathExtras.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 DOMQuad::DOMQuad(const DOMPointInit& p1, const DOMPointInit& p2, const DOMPointInit& p3, const DOMPointInit& p4)
     : m_p1(DOMPoint::create(p1))

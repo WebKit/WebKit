@@ -154,7 +154,7 @@ typedef AVAssetCache AVAssetCacheType;
 #pragma mark - Soft Linking
 
 // Soft-linking headers must be included last since they #define functions, constants, etc.
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
@@ -360,6 +360,7 @@ enum MediaPlayerAVFoundationObservationContext {
 #endif
 
 namespace WebCore {
+using namespace PAL;
 
 static NSArray *assetMetadataKeyNames();
 static NSArray *itemKVOProperties();
@@ -685,6 +686,7 @@ void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 
 void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
 {
+    using namespace PAL;
     INFO_LOG(LOGIDENTIFIER);
 
     if (!m_avAsset || m_imageGenerator)

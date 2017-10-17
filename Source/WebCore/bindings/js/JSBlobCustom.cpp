@@ -35,9 +35,9 @@
 #include "JSDOMBinding.h"
 #include "JSFile.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<Blob>&& blob)
 {

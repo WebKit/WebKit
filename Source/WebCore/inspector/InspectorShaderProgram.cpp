@@ -35,9 +35,9 @@
 #include "WebGLShader.h"
 #include <inspector/IdentifiersFactory.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 Ref<InspectorShaderProgram> InspectorShaderProgram::create(WebGLProgram& program, InspectorCanvas& inspectorCanvas)
 {

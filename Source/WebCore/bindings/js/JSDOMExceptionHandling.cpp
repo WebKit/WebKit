@@ -37,9 +37,9 @@
 #include <runtime/ExceptionHelpers.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cachedScript)
 {

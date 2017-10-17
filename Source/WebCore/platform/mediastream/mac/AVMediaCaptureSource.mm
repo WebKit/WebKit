@@ -41,7 +41,7 @@
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceTypedef;

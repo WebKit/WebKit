@@ -45,7 +45,6 @@ SOFT_LINK_CLASS(QTKit, QTHUDTimeline)
 #define QTHUDSlider getQTHUDSliderClass()
 #define QTHUDTimeline getQTHUDTimelineClass()
 
-using namespace WebCore;
 
 namespace WebCore {
 
@@ -62,6 +61,9 @@ enum class MediaUIControl {
 
 }
 
+using WebCore::MediaUIControl;
+using WebCore::HTMLVideoElement;
+using WebCore::narrowPrecisionToFloat;
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
 - (void)updateTime;

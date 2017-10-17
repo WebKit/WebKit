@@ -35,19 +35,6 @@
 
 #import "WebAccessibilityObjectWrapperIOS.h"
 
-@interface WAKView (iOSAccessibility)
-- (BOOL)accessibilityIsIgnored;
-@end
-
-@implementation WAKView (iOSAccessibility)
-
-- (BOOL)accessibilityIsIgnored
-{
-    return YES;
-}
-
-@end
-
 namespace WebCore {
     
 void AccessibilityObject::detachFromParent()

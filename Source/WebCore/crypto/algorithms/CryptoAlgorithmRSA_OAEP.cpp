@@ -37,11 +37,13 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmRSA_OAEPInternal {
 static const char* const ALG1 = "RSA-OAEP";
 static const char* const ALG224 = "RSA-OAEP-224";
 static const char* const ALG256 = "RSA-OAEP-256";
 static const char* const ALG384 = "RSA-OAEP-384";
 static const char* const ALG512 = "RSA-OAEP-512";
+}
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSA_OAEP::create()
 {
@@ -103,6 +105,7 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& param
 
 void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmRSA_OAEPInternal;
     ASSERT(parameters);
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(*parameters);
 
@@ -192,6 +195,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
 
 void CryptoAlgorithmRSA_OAEP::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
+    using namespace CryptoAlgorithmRSA_OAEPInternal;
     const auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
 
     if (!rsaKey.keySizeInBits()) {

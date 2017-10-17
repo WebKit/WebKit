@@ -42,9 +42,9 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 // true if there is more to parse, after incrementing pos past whitespace.
 // Note: Might return pos == str.length()

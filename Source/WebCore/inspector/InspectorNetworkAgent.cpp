@@ -77,11 +77,11 @@
 #include <wtf/Stopwatch.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace Inspector;
 
 typedef Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback LoadResourceCallback;
 
 namespace WebCore {
+using namespace Inspector;
 
 namespace {
 

@@ -71,9 +71,9 @@
 #include <interpreter/CallFrame.h>
 #include <interpreter/StackVisitor.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 Ref<InspectorCanvas> InspectorCanvas::create(HTMLCanvasElement& canvas, const String& cssCanvasName)
 {

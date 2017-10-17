@@ -37,9 +37,9 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDocument.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
 {

@@ -34,9 +34,9 @@
 #include "JSVTTCue.h"
 #include "TextTrack.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {

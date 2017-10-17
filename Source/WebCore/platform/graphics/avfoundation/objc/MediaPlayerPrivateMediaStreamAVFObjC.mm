@@ -51,7 +51,7 @@
 
 #pragma mark - Soft Linking
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
@@ -180,6 +180,7 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
+using namespace PAL;
 
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaStreamAVFObjC

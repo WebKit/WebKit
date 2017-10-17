@@ -30,9 +30,8 @@
 #include "FetchResponse.h"
 #include <wtf/RandomNumber.h>
 
-using namespace WebCore::DOMCacheEngine;
-
 namespace WebCore {
+using namespace WebCore::DOMCacheEngine;
 
 void CacheStorageConnection::open(const String& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {

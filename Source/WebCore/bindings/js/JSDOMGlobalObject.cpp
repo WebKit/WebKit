@@ -45,9 +45,9 @@
 #include "WorkerGlobalScope.h"
 #include <builtins/BuiltinNames.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 EncodedJSValue JSC_HOST_CALL makeThisTypeErrorForBuiltins(ExecState*);
 EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState*);

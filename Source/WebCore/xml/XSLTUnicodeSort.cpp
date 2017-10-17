@@ -38,14 +38,7 @@
 #include <wtf/unicode/Collator.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
-#include <wtf/SoftLinking.h>
-#endif
-
-#if OS(DARWIN) && !PLATFORM(GTK)
-
-SOFT_LINK_LIBRARY(libxslt)
-SOFT_LINK(libxslt, xsltComputeSortResult, xmlXPathObjectPtr*, (xsltTransformContextPtr ctxt, xmlNodePtr sort), (ctxt, sort))
-SOFT_LINK(libxslt, xsltEvalAttrValueTemplate, xmlChar*, (xsltTransformContextPtr ctxt, xmlNodePtr node, const xmlChar *name, const xmlChar *ns), (ctxt, node, name, ns))
+#include "SoftLinkLibxslt.h"
 
 static void xsltTransformErrorTrampoline(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char* message, ...) WTF_ATTRIBUTE_PRINTF(4, 5);
 
@@ -64,7 +57,7 @@ void xsltTransformErrorTrampoline(xsltTransformContextPtr context, xsltStyleshee
     va_end(args);
 
     static void (*xsltTransformErrorPointer)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...) WTF_ATTRIBUTE_PRINTF(4, 5)
-        = reinterpret_cast<void (*)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...)>(dlsym(libxsltLibrary(), "xsltTransformError"));
+        = reinterpret_cast<void (*)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...)>(dlsym(WebCore::libxsltLibrary(), "xsltTransformError"));
     xsltTransformErrorPointer(context, style, node, "%s", buffer.data());
 }
 
@@ -112,9 +105,7 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
         tempstype[j] = 0;
         if ((comp->stype == NULL) && (comp->has_stype != 0)) {
             comp->stype =
-                xsltEvalAttrValueTemplate(ctxt, sorts[j],
-                                          (const xmlChar *) "data-type",
-                                          XSLT_NAMESPACE);
+                xsltEvalAttrValueTemplate(ctxt, sorts[j], (const xmlChar *) "data-type", XSLT_NAMESPACE);
             if (comp->stype != NULL) {
                 tempstype[j] = 1;
                 if (xmlStrEqual(comp->stype, (const xmlChar *) "text"))
@@ -131,9 +122,7 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
         }
         temporder[j] = 0;
         if ((comp->order == NULL) && (comp->has_order != 0)) {
-            comp->order = xsltEvalAttrValueTemplate(ctxt, sorts[j],
-                                                    (const xmlChar *) "order",
-                                                    XSLT_NAMESPACE);
+            comp->order = xsltEvalAttrValueTemplate(ctxt, sorts[j], (const xmlChar *) "order", XSLT_NAMESPACE);
             if (comp->order != NULL) {
                 temporder[j] = 1;
                 if (xmlStrEqual(comp->order, (const xmlChar *) "ascending"))

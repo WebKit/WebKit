@@ -48,9 +48,9 @@
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
     : m_url(url)

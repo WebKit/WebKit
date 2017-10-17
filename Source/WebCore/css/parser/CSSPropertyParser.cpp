@@ -82,9 +82,9 @@
 #include <memory>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
     
 bool isCustomPropertyName(const String& propertyName)
@@ -1153,6 +1153,7 @@ static Ref<CSSPrimitiveValue> createPrimitiveValuePair(Args&&... args)
 {
     return CSSValuePool::singleton().createValue(Pair::create(std::forward<Args>(args)...));
 }
+
 
 static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, int defaultValue)
 {

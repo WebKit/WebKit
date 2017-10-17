@@ -34,7 +34,7 @@
 #include <CoreMedia/CMSync.h>
 #include <wtf/NeverDestroyed.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 

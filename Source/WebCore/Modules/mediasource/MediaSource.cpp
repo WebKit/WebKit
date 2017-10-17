@@ -52,6 +52,7 @@
 namespace WebCore {
 
 #if !LOG_DISABLED
+namespace MediaSourceInternal {
 static const char* toString(MediaSource::ReadyState readyState)
 {
     switch (readyState) {
@@ -64,6 +65,7 @@ static const char* toString(MediaSource::ReadyState readyState)
     default:
         return "(unknown)";
     }
+}
 }
 #endif
 
@@ -531,7 +533,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
 void MediaSource::setReadyState(ReadyState state)
 {
     auto oldState = readyState();
-    LOG(MediaSource, "MediaSource::setReadyState(%p) : %s -> %s", this, toString(oldState), toString(state));
+    LOG(MediaSource, "MediaSource::setReadyState(%p) : %s -> %s", this, MediaSourceInternal::toString(oldState), MediaSourceInternal::toString(state));
 
     if (oldState == state)
         return;

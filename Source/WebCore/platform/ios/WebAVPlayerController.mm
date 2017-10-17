@@ -38,7 +38,7 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerController)
@@ -232,10 +232,12 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (void)skipBackwardThirtySeconds:(id)sender
 {
+    using namespace PAL;
+
     UNUSED_PARAM(sender);
     BOOL isTimeWithinSeekableTimeRanges = NO;
     CMTime currentTime = CMTimeMakeWithSeconds([[self timing] currentValue], 1000);
-    CMTime thirtySecondsBeforeCurrentTime = CMTimeSubtract(currentTime, CMTimeMake(30, 1));
+    CMTime thirtySecondsBeforeCurrentTime = CMTimeSubtract(currentTime, PAL::CMTimeMake(30, 1));
 
     for (NSValue *seekableTimeRangeValue in [self seekableTimeRanges]) {
         if (CMTimeRangeContainsTime([seekableTimeRangeValue CMTimeRangeValue], thirtySecondsBeforeCurrentTime)) {
@@ -250,6 +252,8 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (void)gotoEndOfSeekableRanges:(id)sender
 {
+    using namespace PAL;
+
     UNUSED_PARAM(sender);
     NSTimeInterval timeAtEndOfSeekableTimeRanges = NAN;
 
@@ -304,6 +308,8 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (BOOL)canSeekToBeginning
 {
+    using namespace PAL;
+
     CMTime minimumTime = kCMTimeIndefinite;
 
     for (NSValue *value in [self seekableTimeRanges])
@@ -331,6 +337,8 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (BOOL)canSeekToEnd
 {
+    using namespace PAL;
+
     CMTime maximumTime = kCMTimeIndefinite;
 
     for (NSValue *value in [self seekableTimeRanges])
@@ -489,6 +497,8 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    using namespace PAL;
+
     UNUSED_PARAM(object);
     UNUSED_PARAM(keyPath);
 
@@ -511,6 +521,8 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (void)updateMinMaxTiming
 {
+    using namespace PAL;
+
     AVValueTiming *newMinTiming = nil;
     AVValueTiming *newMaxTiming = nil;
 

@@ -58,9 +58,9 @@
 #include "JSWebGLVertexArrayObject.h"
 #include "JSWebGLVertexArrayObjectOES.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 // FIXME: This should use the IDLUnion JSConverter.
 JSValue convertToJSValue(ExecState& state, JSDOMGlobalObject& globalObject, const WebGLAny& any)

@@ -41,7 +41,7 @@
 #import <wtf/StringPrintStream.h>
 #endif
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 

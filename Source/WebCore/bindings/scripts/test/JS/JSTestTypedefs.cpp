@@ -50,9 +50,9 @@
 #include <wtf/GetPtr.h>
 #include <wtf/Variant.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 // Functions
 

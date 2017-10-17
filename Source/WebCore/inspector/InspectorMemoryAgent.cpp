@@ -33,9 +33,9 @@
 #include <inspector/InspectorEnvironment.h>
 #include <wtf/Stopwatch.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Memory"), context)

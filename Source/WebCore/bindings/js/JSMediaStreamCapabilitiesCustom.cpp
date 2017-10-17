@@ -33,9 +33,9 @@
 #include "JSAllVideoCapabilities.h"
 #include "JSDOMBinding.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<MediaStreamCapabilities>&& object)
 {

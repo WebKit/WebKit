@@ -38,10 +38,10 @@
 #include <wtf/DateMath.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace icu;
-using namespace std;
 
 namespace WebCore {
+using namespace icu;
+using namespace std;
 
 std::unique_ptr<Locale> Locale::create(const AtomicString& locale)
 {

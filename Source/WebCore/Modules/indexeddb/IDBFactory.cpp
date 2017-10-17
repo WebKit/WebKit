@@ -39,9 +39,9 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static bool shouldThrowSecurityException(ScriptExecutionContext& context)
 {

@@ -24,9 +24,9 @@
 
 #include <runtime/JSCInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 Structure* getCachedDOMStructure(JSDOMGlobalObject& globalObject, const ClassInfo* classInfo)
 {

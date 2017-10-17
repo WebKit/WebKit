@@ -38,9 +38,9 @@
 // Provided by IAccessibleEventID.idl
 #define IA2_EVENT_DOCUMENT_LOAD_COMPLETE    261
 
-using namespace std;
 
 namespace WebCore {
+using namespace std;
 
 void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachmentType)
 {

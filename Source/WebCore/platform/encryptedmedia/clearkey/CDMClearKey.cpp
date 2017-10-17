@@ -40,9 +40,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 class ClearKeyState {
     using KeyStore = HashMap<String, Vector<CDMInstanceClearKey::Key>>;

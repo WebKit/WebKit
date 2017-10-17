@@ -32,9 +32,9 @@
 #include "JSTextTrackCueList.h"
 #include "JSTrackCustom.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSTextTrack::visitAdditionalChildren(SlotVisitor& visitor)
 {

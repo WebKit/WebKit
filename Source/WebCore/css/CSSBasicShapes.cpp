@@ -39,9 +39,9 @@
 #include "SVGPathUtilities.h"
 #include <wtf/text/StringBuilder.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 static String serializePositionOffset(const Pair& offset, const Pair& other)
 {

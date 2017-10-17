@@ -38,9 +38,9 @@
 #include "Logging.h"
 #include <heap/HeapInlines.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 IDBIndex::IDBIndex(ScriptExecutionContext& context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
     : ActiveDOMObject(&context)

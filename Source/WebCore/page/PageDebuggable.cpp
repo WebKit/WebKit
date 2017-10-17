@@ -35,9 +35,9 @@
 #include "Settings.h"
 #include <inspector/InspectorAgentBase.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 PageDebuggable::PageDebuggable(Page& page)
     : m_page(page)

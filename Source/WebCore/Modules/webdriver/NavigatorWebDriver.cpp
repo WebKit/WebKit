@@ -30,9 +30,9 @@
 #include "Navigator.h"
 #include "Page.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 NavigatorWebDriver::NavigatorWebDriver()
 {

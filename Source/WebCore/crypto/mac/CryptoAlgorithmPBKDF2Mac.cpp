@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+namespace CryptoAlgorithmPBKDF2MacInternal {
 static CCPseudoRandomAlgorithm commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction)
 {
     switch (hashFunction) {
@@ -52,12 +53,13 @@ static CCPseudoRandomAlgorithm commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifi
         return 0;
     }
 }
+}
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(CryptoAlgorithmPbkdf2Params& parameters, const CryptoKeyRaw& key, size_t length)
 {
     Vector<uint8_t> result(length / 8);
     // <rdar://problem/32439955> Currently, CCKeyDerivationPBKDF bails out when an empty password/salt is provided.
-    if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(key.key().data()), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), commonCryptoHMACAlgorithm(parameters.hashIdentifier), parameters.iterations, result.data(), length / 8))
+    if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(key.key().data()), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), CryptoAlgorithmPBKDF2MacInternal::commonCryptoHMACAlgorithm(parameters.hashIdentifier), parameters.iterations, result.data(), length / 8))
         return Exception { OperationError };
     return WTFMove(result);
 }

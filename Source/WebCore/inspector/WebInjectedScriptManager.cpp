@@ -29,9 +29,9 @@
 #include "CommandLineAPIModule.h"
 #include "ScriptState.h"
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 WebInjectedScriptManager::WebInjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& host)
     : InjectedScriptManager(environment, WTFMove(host))

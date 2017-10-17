@@ -31,9 +31,9 @@
 #include "JSDOMExceptionHandling.h"
 #include <runtime/JSTypedArrays.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 enum class CloneMode {
     Full,

@@ -28,9 +28,9 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static inline String stringToByteString(ExecState& state, JSC::ThrowScope& scope, String&& string)
 {

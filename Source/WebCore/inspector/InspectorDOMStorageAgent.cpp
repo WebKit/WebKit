@@ -49,9 +49,9 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("DOMStorage"), context)

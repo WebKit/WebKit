@@ -37,9 +37,9 @@
 #include <inspector/InspectorValues.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace Inspector;
-
 namespace WebCore {
+
+using namespace Inspector;
 
 InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("ApplicationCache"), context)

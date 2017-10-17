@@ -34,8 +34,6 @@
 #include "PlatformTouchEventIOS.h"
 #endif
 
-using namespace WebCore;
-
 namespace WebCore {
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)

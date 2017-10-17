@@ -39,9 +39,9 @@
 #include <wtf/Language.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 Navigator::Navigator(ScriptExecutionContext& context, Frame& frame)
     : NavigatorBase(context)

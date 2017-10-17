@@ -33,9 +33,10 @@
 #include <AudioUnit/AudioUnit.h>
 #include <CoreMedia/CMSync.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+using namespace PAL;
 
 static bool getDeviceInfo(uint32_t deviceID, String& persistentID, String& label)
 {

@@ -40,15 +40,13 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/PIPSPI.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(PIP)
 SOFT_LINK_CLASS_OPTIONAL(PIP, PIPViewController)
-
-using namespace WebCore;
 
 @class WebVideoViewContainer;
 
@@ -58,6 +56,12 @@ using namespace WebCore;
 - (void)superviewDidChangeForVideoViewContainer:(WebVideoViewContainer *)videoViewContainer;
 
 @end
+
+using WebCore::VideoFullscreenModel;
+using WebCore::HTMLMediaElementEnums;
+using WebCore::VideoFullscreenInterfaceMac;
+using WebCore::VideoFullscreenChangeObserver;
+using WebCore::PlaybackSessionModel;
 
 @interface WebVideoViewContainer : NSView {
     id <WebVideoViewContainerDelegate> _videoViewContainerDelegate;
@@ -344,6 +348,7 @@ enum class PIPState {
 @end
 
 namespace WebCore {
+using namespace PAL;
 
 VideoFullscreenInterfaceMac::VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac& playbackSessionInterface)
     : m_playbackSessionInterface(playbackSessionInterface)

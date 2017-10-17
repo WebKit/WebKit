@@ -1904,8 +1904,6 @@
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4415292F0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */; };
 		442ABCD617D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 442ABCD517D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp */; };
-		443817FF1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 443817FD1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp */; };
-		443818001A91B2F8006E04F2 /* CoreMediaSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 443817FE1A91B2F8006E04F2 /* CoreMediaSoftLink.h */; };
 		443917FF1A91B2F8006E04F2 /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */; };
 		443918001A91B2F8006E04F2 /* QuickLookSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 443917FE1A91B2F8006E04F2 /* QuickLookSoftLink.h */; };
 		443F04270E75C8FB007E5407 /* NetworkStateNotifierIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */; };
@@ -2539,6 +2537,7 @@
 		536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */; };
 		536D5A21193E18EE00CE4CAB /* HTMLSrcsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536D5A1E193E18D000CE4CAB /* HTMLSrcsetParser.cpp */; };
 		536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */; };
+		538F10A81F9022A4005102CE /* SoftLinkLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F10A31F900BDC005102CE /* SoftLinkLibxslt.cpp */; };
 		53B895AF19DC7ED9009CAA93 /* Microtasks.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B895AD19DC7C37009CAA93 /* Microtasks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */; };
 		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9774,8 +9773,6 @@
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
 		4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInImageElement.cpp; sourceTree = "<group>"; };
 		442ABCD517D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronousLoaderClientCFNet.cpp; sourceTree = "<group>"; };
-		443817FD1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
-		443817FE1A91B2F8006E04F2 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
 		443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookSoftLink.mm; sourceTree = "<group>"; };
 		443917FE1A91B2F8006E04F2 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSoftLink.h; sourceTree = "<group>"; };
 		443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkStateNotifierIOS.mm; sourceTree = "<group>"; };
@@ -10462,6 +10459,8 @@
 		536D5A1E193E18D000CE4CAB /* HTMLSrcsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSrcsetParser.cpp; sourceTree = "<group>"; };
 		536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSrcsetParser.h; sourceTree = "<group>"; };
 		536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsingUtilities.h; sourceTree = "<group>"; };
+		538F10A31F900BDC005102CE /* SoftLinkLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoftLinkLibxslt.cpp; sourceTree = "<group>"; };
+		538F10A41F900BDD005102CE /* SoftLinkLibxslt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinkLibxslt.h; sourceTree = "<group>"; };
 		53B895AD19DC7C37009CAA93 /* Microtasks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Microtasks.h; sourceTree = "<group>"; };
 		53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlexibleBox.cpp; sourceTree = "<group>"; };
 		53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexibleBox.h; sourceTree = "<group>"; };
@@ -17353,8 +17352,6 @@
 			children = (
 				E1A8E56417552B2A007488E7 /* CFURLExtras.cpp */,
 				E1A8E56517552B2A007488E7 /* CFURLExtras.h */,
-				443817FD1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp */,
-				443817FE1A91B2F8006E04F2 /* CoreMediaSoftLink.h */,
 				5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */,
 				517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */,
 				517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */,
@@ -25359,6 +25356,8 @@
 				1ACE53E30A8D18E70022947D /* DOMParser.idl */,
 				E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */,
 				E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */,
+				538F10A31F900BDC005102CE /* SoftLinkLibxslt.cpp */,
+				538F10A41F900BDD005102CE /* SoftLinkLibxslt.h */,
 				A833C7F60A2CF1D800D57664 /* xmlattrs.in */,
 				59C28043138DC2410079B7E2 /* XMLErrors.cpp */,
 				59C28044138DC2410079B7E2 /* XMLErrors.h */,
@@ -27536,7 +27535,6 @@
 				3F8020351E9E47BF00DEC61D /* CoreAudioCaptureDevice.h in Headers */,
 				3F8020371E9E47C500DEC61D /* CoreAudioCaptureDeviceManager.h in Headers */,
 				07AFF4221EFB144900B545B3 /* CoreAudioCaptureSourceIOS.h in Headers */,
-				443818001A91B2F8006E04F2 /* CoreMediaSoftLink.h in Headers */,
 				CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */,
 				862F129E18C1576F005C54AF /* CountedUserActivity.h in Headers */,
 				A80E6D040A1989CA007FB8C5 /* Counter.h in Headers */,
@@ -31663,7 +31661,6 @@
 				3F8020381E9E47C900DEC61D /* CoreAudioCaptureDeviceManager.cpp in Sources */,
 				3FF1FA661E7350FD00C1002F /* CoreAudioCaptureSource.cpp in Sources */,
 				07AFF4231EFB144900B545B3 /* CoreAudioCaptureSourceIOS.mm in Sources */,
-				443817FF1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp in Sources */,
 				CD7D33471C7A16BF00041293 /* CoreVideoSoftLink.cpp in Sources */,
 				BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */,
 				9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */,
@@ -34116,6 +34113,7 @@
 				510D4A36103165EE0049EA54 /* SocketStreamHandle.cpp in Sources */,
 				5C668E651E7C6C4000D32B3B /* SocketStreamHandleImpl.cpp in Sources */,
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleImplCFNet.cpp in Sources */,
+				538F10A81F9022A4005102CE /* SoftLinkLibxslt.cpp in Sources */,
 				84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */,
 				CD3A496117A9D01B00274E42 /* SourceBuffer.cpp in Sources */,
 				CD3A496417A9D01B00274E42 /* SourceBufferList.cpp in Sources */,

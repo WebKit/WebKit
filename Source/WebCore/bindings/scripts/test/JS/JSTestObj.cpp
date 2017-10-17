@@ -109,9 +109,9 @@
 #include "TestObjBuiltins.h"
 #endif
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 String convertEnumerationToString(TestObj::EnumType enumerationValue)
 {

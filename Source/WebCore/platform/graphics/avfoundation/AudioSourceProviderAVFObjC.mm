@@ -47,7 +47,7 @@
 #import <wtf/StringPrintStream.h>
 #endif
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_FRAMEWORK(MediaToolbox)
@@ -69,6 +69,7 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicAudible, NSString *)
 
 namespace WebCore {
 
+using namespace PAL;
 static const double kRingBufferDuration = 1;
 
 struct AudioSourceProviderAVFObjC::TapStorage {
@@ -373,7 +374,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     if (rangeStart.isInvalid())
         return;
 
-    MediaTime currentTime = PAL::toMediaTime(CMTimebaseGetTime([m_avPlayerItem timebase]));
+    MediaTime currentTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_avPlayerItem timebase]));
     if (currentTime.isInvalid())
         return;
 

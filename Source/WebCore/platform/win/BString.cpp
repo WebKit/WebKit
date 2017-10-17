@@ -35,9 +35,9 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 BString::BString()
     : m_bstr(0)

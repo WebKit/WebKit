@@ -55,9 +55,9 @@
 #include "SVGPathSegMovetoAbs.h"
 #include "SVGPathSegMovetoRel.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<SVGPathSeg>&& object)
 {

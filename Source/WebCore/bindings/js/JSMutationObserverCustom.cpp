@@ -35,9 +35,9 @@
 #include "JSNodeCustom.h"
 #include "MutationCallback.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 void JSMutationObserver::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {

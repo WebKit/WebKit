@@ -55,9 +55,9 @@
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTransactionInfo& info)
 {

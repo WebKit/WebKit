@@ -35,9 +35,9 @@
 #include "SerializedScriptValue.h"
 #include <runtime/JSFunction.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue JSHistory::state(ExecState& state) const
 {

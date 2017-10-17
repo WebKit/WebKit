@@ -42,9 +42,9 @@
 #include "RenderView.h"
 #include <inspector/IdentifiersFactory.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)
     : InspectorAgentBase(ASCIILiteral("LayerTree"), context)

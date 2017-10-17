@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PageHeapAgent.h"
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 PageHeapAgent::PageHeapAgent(PageAgentContext& context)
     : WebHeapAgent(context)

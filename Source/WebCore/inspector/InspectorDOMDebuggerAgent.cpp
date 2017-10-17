@@ -57,9 +57,9 @@ const int domBreakpointDerivedTypeShift = 16;
 
 }
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
     : InspectorAgentBase(ASCIILiteral("DOMDebugger"), context)

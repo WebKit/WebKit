@@ -49,9 +49,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 const CSSParserContext& strictCSSParserContext()
 {

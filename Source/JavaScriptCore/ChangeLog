@@ -1,3 +1,12 @@
+2017-10-17  Keith Miller  <keith_miller@apple.com>
+
+        Change WebCore sources to work with unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=178229
+
+        Rubber stamped by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-10-15  Filip Pizlo  <fpizlo@apple.com>
 
         Make some asserts into release asserts

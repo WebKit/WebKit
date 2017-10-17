@@ -36,9 +36,9 @@
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/SetForScope.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype, const Identifier& id)
 {

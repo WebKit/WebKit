@@ -37,12 +37,10 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
-
-using namespace WebCore;
 
 namespace WebCore {
 
@@ -122,7 +120,7 @@ static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 
     for (unsigned i = 0; i < timeRanges.length(); i++) {
         const PlatformTimeRanges& ranges = timeRanges.ranges();
-        CMTimeRange range = CMTimeRangeMake(PAL::toCMTime(ranges.start(i)), PAL::toCMTime(ranges.end(i)));
+        CMTimeRange range = PAL::CMTimeRangeMake(PAL::toCMTime(ranges.start(i)), PAL::toCMTime(ranges.end(i)));
         [rangeArray addObject:[NSValue valueWithCMTimeRange:range]];
     }
 

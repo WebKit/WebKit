@@ -79,9 +79,9 @@
 #endif
 #endif
 
-using namespace WTF;
 
 namespace WebCore {
+using namespace WTF;
 
 static ThreadSpecific<ShaderNameHash*>& getCurrentNameHashMapForShader()
 {

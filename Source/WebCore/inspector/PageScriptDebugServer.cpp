@@ -49,10 +49,10 @@
 #include "WebCoreThreadInternal.h"
 #endif
 
-using namespace JSC;
-using namespace Inspector;
 
 namespace WebCore {
+using namespace JSC;
+using namespace Inspector;
 
 PageScriptDebugServer::PageScriptDebugServer(Page& page)
     : ScriptDebugServer(WebCore::commonVM())

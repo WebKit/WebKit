@@ -33,9 +33,9 @@
 #include "Logging.h"
 #include <pal/Logger.h>
 
-#include "CoreMediaSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
 namespace WebCore {
 
@@ -241,4 +241,4 @@ OSStatus AudioTrackPrivateMediaStreamCocoa::inputProc(void* userData, AudioUnitR
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)

@@ -61,9 +61,9 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-using namespace Inspector;
 
 namespace WebCore {
+using namespace Inspector;
 
 enum ForcePseudoClassFlags {
     PseudoClassNone = 0,

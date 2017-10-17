@@ -25,9 +25,9 @@
 #include "JSHTMLFormControlsCollection.h"
 #include "JSHTMLOptionsCollection.h"
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<HTMLCollection>&& collection)
 {

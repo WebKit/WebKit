@@ -50,10 +50,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
+namespace WebCore {
+
 using namespace JSC;
 using namespace Inspector;
-
-namespace WebCore {
 
 Ref<CommandLineAPIHost> CommandLineAPIHost::create()
 {

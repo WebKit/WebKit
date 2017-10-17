@@ -53,7 +53,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 
-#import "CoreMediaSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import "VideoToolboxSoftLink.h"
 
 #pragma mark - Soft Linking
@@ -353,7 +353,7 @@ void ImageDecoderAVFObjC::readSampleMetadata()
 
     for (size_t index = 0; index < static_cast<size_t>(sampleCount); ++index) {
         auto& sampleData = m_sampleData[index];
-        sampleData.duration = Seconds(CMTimeGetSeconds([cursor currentSampleDuration]));
+        sampleData.duration = Seconds(PAL::CMTimeGetSeconds([cursor currentSampleDuration]));
         sampleData.decodeTime = PAL::toMediaTime([cursor decodeTimeStamp]);
         sampleData.presentationTime = PAL::toMediaTime([cursor presentationTimeStamp]);
         auto request = adoptNS([allocAVSampleBufferRequestInstance() initWithStartCursor:cursor.get()]);
@@ -386,7 +386,7 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
         return false;
     }
 
-    auto presentationTime = PAL::toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer));
+    auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(sampleBuffer));
     auto indexIter = m_presentationTimeToIndex.find(presentationTime);
 
     if (m_rotation && !m_rotation.value().isIdentity()) {
@@ -518,7 +518,7 @@ bool ImageDecoderAVFObjC::frameIsCompleteAtIndex(size_t index) const
     if (!sampleData.sample)
         return false;
 
-    return CMSampleBufferDataIsReady(sampleData.sample.get());
+    return PAL::CMSampleBufferDataIsReady(sampleData.sample.get());
 }
 
 ImageOrientation ImageDecoderAVFObjC::frameOrientationAtIndex(size_t) const

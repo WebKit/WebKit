@@ -50,9 +50,9 @@
 #include <runtime/DateInstance.h>
 #include <runtime/ObjectConstructor.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 static bool get(ExecState& exec, JSValue object, const String& keyPathElement, JSValue& result)
 {

@@ -42,9 +42,9 @@
 #include <heap/WeakInlines.h>
 #include <runtime/JSLock.h>
 
-using namespace JSC;
 
 namespace WebCore {
+using namespace JSC;
 
 JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JSObject* constructor, JSDOMGlobalObject* globalObject)
     : ActiveDOMCallback(globalObject->scriptExecutionContext())
