@@ -1,3 +1,12 @@
+2017-10-17  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark fast/text/ellipsis-text-rtl.html as a failure on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=178413
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-10-16  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add subLocality and subAdministrativeArea to ApplePayPaymentContact and ApplePayError

@@ -3800,3 +3800,5 @@ webkit.org/b/178309 fast/frames/frame-unload-navigate-and-setTimeout-assert-fail
 
 webkit.org/b/178341 animations/play-state-in-shorthand.html [ Pass Failure ]
 webkit.org/b/178341 animations/play-state-suspend.html [ Pass Failure ]
+
+webkit.org/b/178413 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
