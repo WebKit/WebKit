@@ -1,3 +1,50 @@
+2017-09-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Drop cairo_matrix_t conversion operators for AffineTransform, TransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=177539
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the cairo_matrix_t conversion operators from the AffineTransform
+        and TransformationMatrix classes. These are rarely used, but enforce
+        including the cairo.h header in both headers, which leads to the Cairo
+        headers being included in around 800 build targets.
+
+        Instead, the toCairoMatrix() function is added to CairoUtilities.h that
+        creates a cairo_matrix_t object for the given AffineTransform. No
+        toCairoMatrix() is needed for TransformationMatrix since objects of
+        that type aren't converted to cairo_matrix_t anywhere in the codebase.
+
+        This patch excludes unnecessary Cairo headers from about 550 build
+        targets (with those headers being included in the other affected 250
+        targets by some other header inclusion chain). CairoUtilities.h header
+        is now included where necessary to make toCairoMatrix() available, and
+        duplicated cairo.h inclusions are removed.
+
+        No new tests -- no change in behavior.
+
+        * editing/gtk/EditorGtk.cpp: Explicitly include <cairo.h> since it's
+        necessary for Cairo operations used there.
+        * platform/Cairo.cmake:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::drawPatternToCairoContext):
+        (WebCore::toCairoMatrix):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::platformGradient):
+        (WebCore::Gradient::setPlatformGradientSpaceTransform):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::setCTM):
+        * platform/graphics/cairo/PathCairo.cpp: No need to include AffineTransform.h.
+        (WebCore::Path::addPath):
+        (WebCore::Path::transform):
+        * platform/graphics/cairo/PatternCairo.cpp: Ditto.
+        (WebCore::Pattern::createPlatformPattern const):
+        * platform/graphics/cairo/TransformationMatrixCairo.cpp: Removed.
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2017-09-27  Zalan Bujtas  <zalan@apple.com>
 
         Deferred image size change makes image-load-on-delay.html flaky.

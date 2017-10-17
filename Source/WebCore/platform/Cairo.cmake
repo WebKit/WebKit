@@ -20,7 +20,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/PlatformContextCairo.cpp
     platform/graphics/cairo/PlatformPathCairo.cpp
     platform/graphics/cairo/RefPtrCairo.cpp
-    platform/graphics/cairo/TransformationMatrixCairo.cpp
 )
 
 list(APPEND WebCore_LIBRARIES

@@ -29,9 +29,9 @@
 
 #if USE(CAIRO)
 
+#include "CairoUtilities.h"
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"
-#include <cairo.h>
 
 namespace WebCore {
 
@@ -84,7 +84,7 @@ cairo_pattern_t* Gradient::platformGradient(float globalAlpha)
         break;
     }
 
-    cairo_matrix_t matrix = m_gradientSpaceTransformation;
+    cairo_matrix_t matrix = toCairoMatrix(m_gradientSpaceTransformation);
     cairo_matrix_invert(&matrix);
     cairo_pattern_set_matrix(m_gradient, &matrix);
 
@@ -94,7 +94,7 @@ cairo_pattern_t* Gradient::platformGradient(float globalAlpha)
 void Gradient::setPlatformGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation)
 {
     if (m_gradient) {
-        cairo_matrix_t matrix = gradientSpaceTransformation;
+        cairo_matrix_t matrix = toCairoMatrix(gradientSpaceTransformation);
         cairo_matrix_invert(&matrix);
         cairo_pattern_set_matrix(m_gradient, &matrix);
     }

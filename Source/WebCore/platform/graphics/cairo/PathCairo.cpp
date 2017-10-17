@@ -28,12 +28,11 @@
 
 #if USE(CAIRO)
 
-#include "AffineTransform.h"
+#include "CairoUtilities.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "PlatformPathCairo.h"
 #include "StrokeStyleApplier.h"
-#include <cairo.h>
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
@@ -317,7 +316,7 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
     if (path.isNull())
         return;
 
-    cairo_matrix_t matrix(transform);
+    cairo_matrix_t matrix = toCairoMatrix(transform);
     if (cairo_matrix_invert(&matrix) != CAIRO_STATUS_SUCCESS)
         return;
 
@@ -431,12 +430,12 @@ void Path::apply(const PathApplierFunction& function) const
     cairo_path_destroy(pathCopy);
 }
 
-void Path::transform(const AffineTransform& trans)
+void Path::transform(const AffineTransform& transform)
 {
     cairo_t* cr = ensurePlatformPath()->context();
-    cairo_matrix_t c_matrix = cairo_matrix_t(trans);
-    cairo_matrix_invert(&c_matrix);
-    cairo_transform(cr, &c_matrix);
+    cairo_matrix_t matrix = toCairoMatrix(transform);
+    cairo_matrix_invert(&matrix);
+    cairo_transform(cr, &matrix);
 }
 
 } // namespace WebCore

@@ -34,8 +34,6 @@
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
-#elif USE(CAIRO)
-#include <cairo.h>
 #endif
 
 #if PLATFORM(WIN)
@@ -180,8 +178,6 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT operator CGAffineTransform() const;
-#elif USE(CAIRO)
-    operator cairo_matrix_t() const;
 #endif
 
 #if PLATFORM(WIN)

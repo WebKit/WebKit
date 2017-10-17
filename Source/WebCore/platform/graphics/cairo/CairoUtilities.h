@@ -95,6 +95,8 @@ void cairoSurfaceGetDeviceScale(cairo_surface_t*, double& xScale, double& yScale
 
 RefPtr<cairo_region_t> toCairoRegion(const Region&);
 
+cairo_matrix_t toCairoMatrix(const AffineTransform&);
+
 } // namespace WebCore
 
 #endif // USE(CAIRO)
