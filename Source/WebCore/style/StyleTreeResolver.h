@@ -51,13 +51,13 @@ public:
 
     std::unique_ptr<Update> resolve();
 
+    static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, Element&, Change parentChange);
+
 private:
     std::unique_ptr<RenderStyle> styleForElement(Element&, const RenderStyle& inheritedStyle);
 
     void resolveComposedTree();
-    ElementUpdates resolveElement(Element&);
-    ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, Element&, Change parentChange);
-    ElementUpdate resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
+    ElementUpdate resolveElement(Element&);
 
     struct Scope : RefCounted<Scope> {
         StyleResolver& styleResolver;

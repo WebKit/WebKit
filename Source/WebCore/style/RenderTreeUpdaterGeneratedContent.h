@@ -37,13 +37,15 @@ class RenderTreeUpdater::GeneratedContent {
 public:
     GeneratedContent(RenderTreeUpdater&);
 
-    void updatePseudoElement(Element&, const std::optional<Style::ElementUpdate>&, PseudoId);
+    void updateBeforePseudoElement(Element&);
+    void updateAfterPseudoElement(Element&);
     void updateRemainingQuotes();
 
 private:
+    void updatePseudoElement(Element&, PseudoId);
     void updateQuotesUpTo(RenderQuote*);
     
-    static bool needsPseudoElement(Element&, const std::optional<Style::ElementUpdate>&);
+    static bool needsPseudoElement(Element&, PseudoId);
 
     RenderTreeUpdater& m_updater;
     RenderQuote* m_previousUpdatedQuote { nullptr };

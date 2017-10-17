@@ -75,9 +75,9 @@ RenderTreeUpdater::Parent::Parent(ContainerNode& root)
 {
 }
 
-RenderTreeUpdater::Parent::Parent(Element& element, const Style::ElementUpdates* updates)
+RenderTreeUpdater::Parent::Parent(Element& element, Style::Change styleChange)
     : element(&element)
-    , updates(updates)
+    , styleChange(styleChange)
     , renderTreePosition(element.renderer() ? std::make_optional(RenderTreePosition(*element.renderer())) : std::nullopt)
 {
 }
@@ -176,7 +176,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
             auto* textUpdate = m_styleUpdate->textUpdate(text);
-            if ((parent().updates && parent().updates->update.change == Style::Detach) || textUpdate || m_invalidatedWhitespaceOnlyTextSiblings.contains(&text))
+            if (parent().styleChange == Style::Detach || textUpdate || m_invalidatedWhitespaceOnlyTextSiblings.contains(&text))
                 updateTextRenderer(text, textUpdate);
 
             it.traverseNextSkippingChildren();
@@ -185,17 +185,17 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         auto& element = downcast<Element>(node);
 
-        auto* elementUpdates = m_styleUpdate->elementUpdates(element);
+        auto* elementUpdate = m_styleUpdate->elementUpdate(element);
 
         // We hop through display: contents elements in findRenderingRoot, so
         // there may be other updates down the tree.
-        if (!elementUpdates && !element.hasDisplayContents()) {
+        if (!elementUpdate && !element.hasDisplayContents()) {
             it.traverseNextSkippingChildren();
             continue;
         }
 
-        if (elementUpdates)
-            updateElementRenderer(element, elementUpdates->update);
+        if (elementUpdate)
+            updateElementRenderer(element, *elementUpdate);
 
         bool mayHaveRenderedDescendants = element.renderer() || (element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent()));
         if (!mayHaveRenderedDescendants) {
@@ -203,7 +203,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
             continue;
         }
 
-        pushParent(element, elementUpdates);
+        pushParent(element, elementUpdate ? elementUpdate->change : Style::NoChange);
 
         it.traverseNext();
     }
@@ -223,18 +223,18 @@ RenderTreePosition& RenderTreeUpdater::renderTreePosition()
     return *m_parentStack.last().renderTreePosition;
 }
 
-void RenderTreeUpdater::pushParent(Element& element, const Style::ElementUpdates* updates)
+void RenderTreeUpdater::pushParent(Element& element, Style::Change changeType)
 {
-    m_parentStack.append(Parent(element, updates));
+    m_parentStack.append(Parent(element, changeType));
 
-    updateBeforeDescendants(element, updates);
+    updateBeforeDescendants(element);
 }
 
 void RenderTreeUpdater::popParent()
 {
     auto& parent = m_parentStack.last();
     if (parent.element)
-        updateAfterDescendants(*parent.element, parent.updates);
+        updateAfterDescendants(*parent.element, parent.styleChange);
 
     m_parentStack.removeLast();
 }
@@ -247,16 +247,14 @@ void RenderTreeUpdater::popParentsToDepth(unsigned depth)
         popParent();
 }
 
-void RenderTreeUpdater::updateBeforeDescendants(Element& element, const Style::ElementUpdates* updates)
+void RenderTreeUpdater::updateBeforeDescendants(Element& element)
 {
-    if (updates)
-        generatedContent().updatePseudoElement(element, updates->beforePseudoElementUpdate, BEFORE);
+    generatedContent().updateBeforePseudoElement(element);
 }
 
-void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::ElementUpdates* updates)
+void RenderTreeUpdater::updateAfterDescendants(Element& element, Style::Change styleChange)
 {
-    if (updates)
-        generatedContent().updatePseudoElement(element, updates->afterPseudoElementUpdate, AFTER);
+    generatedContent().updateAfterPseudoElement(element);
 
     auto* renderer = element.renderer();
     if (!renderer)
@@ -270,7 +268,7 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
     if (is<RenderBlockFlow>(*renderer))
         MultiColumn::update(downcast<RenderBlockFlow>(*renderer));
 
-    if (element.hasCustomStyleResolveCallbacks() && updates && updates->update.change == Style::Detach)
+    if (element.hasCustomStyleResolveCallbacks() && styleChange == Style::Detach)
         element.didAttachRenderers();
 }
 
@@ -495,7 +493,7 @@ void RenderTreeUpdater::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(
     // the current node gaining or losing the renderer. This can only affect white space text nodes.
     for (Node* sibling = current.nextSibling(); sibling; sibling = sibling->nextSibling()) {
         if (is<Element>(*sibling)) {
-            if (m_styleUpdate->elementUpdates(downcast<Element>(*sibling)))
+            if (m_styleUpdate->elementUpdate(downcast<Element>(*sibling)))
                 return;
             // Text renderers beyond rendered elements can't be affected.
             if (sibling->renderer())

@@ -174,7 +174,7 @@ static const RenderStyle* renderOrDisplayContentsStyle(const Element& element)
     return nullptr;
 }
 
-ElementUpdates TreeResolver::resolveElement(Element& element)
+ElementUpdate TreeResolver::resolveElement(Element& element)
 {
     if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithMissingStyle();
@@ -218,29 +218,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
             update.change = Detach;
     }
 
-    auto beforeUpdate = resolvePseudoStyle(element, update, BEFORE);
-    auto afterUpdate = resolvePseudoStyle(element, update, AFTER);
-
-    return { WTFMove(update), WTFMove(beforeUpdate), WTFMove(afterUpdate) };
-}
-
-ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
-{
-    if (!elementUpdate.style->hasPseudoStyle(pseudoId))
-        return { };
-    auto pseudoStyle = scope().styleResolver.pseudoStyleForElement(element, { pseudoId }, *elementUpdate.style);
-
-    PseudoElement* pseudoElement = pseudoId == BEFORE ? element.beforePseudoElement() : element.afterPseudoElement();
-    if (!pseudoElement) {
-        auto newPseudoElement = PseudoElement::create(element, pseudoId);
-        pseudoElement = newPseudoElement.ptr();
-        if (pseudoId == BEFORE)
-            element.setBeforePseudoElement(WTFMove(newPseudoElement));
-        else
-            element.setAfterPseudoElement(WTFMove(newPseudoElement));
-    }
-
-    return createAnimatedElementUpdate(WTFMove(pseudoStyle), *pseudoElement, elementUpdate.change);
+    return update;
 }
 
 const RenderStyle* TreeResolver::parentBoxStyle() const
@@ -259,7 +237,7 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, Element& element, Change parentChange)
 {
-    auto& animationController = m_document.frame()->animation();
+    auto& animationController = element.document().frame()->animation();
 
     auto* oldStyle = renderOrDisplayContentsStyle(element);
     auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
@@ -447,19 +425,19 @@ void TreeResolver::resolveComposedTree()
             if (element.hasCustomStyleResolveCallbacks())
                 element.willRecalcStyle(parent.change);
 
-            auto elementUpdates = resolveElement(element);
+            auto elementUpdate = resolveElement(element);
 
             if (element.hasCustomStyleResolveCallbacks())
-                element.didRecalcStyle(elementUpdates.update.change);
+                element.didRecalcStyle(elementUpdate.change);
 
-            style = elementUpdates.update.style.get();
-            change = elementUpdates.update.change;
+            style = elementUpdate.style.get();
+            change = elementUpdate.change;
 
             if (affectedByPreviousSibling && change != Detach)
                 change = Force;
 
-            if (elementUpdates.update.style)
-                m_update->addElement(element, parent.element, WTFMove(elementUpdates));
+            if (elementUpdate.style)
+                m_update->addElement(element, parent.element, WTFMove(elementUpdate));
 
             clearNeedsStyleResolution(element);
         }

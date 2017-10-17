@@ -44,6 +44,16 @@ RenderTreeUpdater::GeneratedContent::GeneratedContent(RenderTreeUpdater& updater
 {
 }
 
+void RenderTreeUpdater::GeneratedContent::updateBeforePseudoElement(Element& element)
+{
+    updatePseudoElement(element, BEFORE);
+}
+
+void RenderTreeUpdater::GeneratedContent::updateAfterPseudoElement(Element& element)
+{
+    updatePseudoElement(element, AFTER);
+}
+
 void RenderTreeUpdater::GeneratedContent::updateRemainingQuotes()
 {
     if (!m_updater.renderView().hasQuotesNeedingUpdate())
@@ -92,14 +102,14 @@ static void updateStyleForContentRenderers(RenderElement& renderer)
     }
 }
 
-void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, const std::optional<Style::ElementUpdate>& update, PseudoId pseudoId)
+void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, PseudoId pseudoId)
 {
     PseudoElement* pseudoElement = pseudoId == BEFORE ? current.beforePseudoElement() : current.afterPseudoElement();
 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
-    if (!needsPseudoElement(current, update)) {
+    if (!needsPseudoElement(current, pseudoId)) {
         if (pseudoElement) {
             if (pseudoId == BEFORE)
                 current.clearBeforePseudoElement();
@@ -115,23 +125,28 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         pseudoElement = newPseudoElement.get();
     }
 
-    if (update->change == Style::NoChange)
+    auto newStyle = RenderStyle::clonePtr(*current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style()));
+
+    auto elementUpdate = Style::TreeResolver::createAnimatedElementUpdate(WTFMove(newStyle), *pseudoElement, Style::NoChange);
+
+    if (elementUpdate.change == Style::NoChange)
         return;
 
     if (newPseudoElement) {
+        InspectorInstrumentation::pseudoElementCreated(m_updater.m_document.page(), *newPseudoElement);
         if (pseudoId == BEFORE)
             current.setBeforePseudoElement(newPseudoElement.releaseNonNull());
         else
             current.setAfterPseudoElement(newPseudoElement.releaseNonNull());
     }
 
-    m_updater.updateElementRenderer(*pseudoElement, *update);
+    m_updater.updateElementRenderer(*pseudoElement, elementUpdate);
 
     auto* pseudoRenderer = pseudoElement->renderer();
     if (!pseudoRenderer)
         return;
 
-    if (update->change == Style::Detach)
+    if (elementUpdate.change == Style::Detach)
         createContentRenderers(*pseudoRenderer);
     else
         updateStyleForContentRenderers(*pseudoRenderer);
@@ -144,14 +159,13 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         ListItem::updateMarker(downcast<RenderListItem>(*pseudoRenderer));
 }
 
-bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(Element& current, const std::optional<Style::ElementUpdate>& update)
+bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(Element& current, PseudoId pseudoId)
 {
-    ASSERT(!current.isPseudoElement());
-    if (!update)
-        return false;
     if (!current.renderer() || !current.renderer()->canHaveGeneratedChildren())
         return false;
-    if (!pseudoElementRendererIsNeeded(update->style.get()))
+    if (current.isPseudoElement())
+        return false;
+    if (!pseudoElementRendererIsNeeded(current.renderer()->getCachedPseudoStyle(pseudoId)))
         return false;
     return true;
 }

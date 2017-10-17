@@ -62,23 +62,23 @@ private:
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void createRenderer(Element&, RenderStyle&&);
     void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
-    void updateBeforeDescendants(Element&, const Style::ElementUpdates*);
-    void updateAfterDescendants(Element&, const Style::ElementUpdates*);
+    void updateBeforeDescendants(Element&);
+    void updateAfterDescendants(Element&, Style::Change);
 
     struct Parent {
         Element* element { nullptr };
-        const Style::ElementUpdates* updates { nullptr };
+        Style::Change styleChange { Style::NoChange };
         std::optional<RenderTreePosition> renderTreePosition;
 
         Parent(ContainerNode& root);
-        Parent(Element&, const Style::ElementUpdates*);
+        Parent(Element&, Style::Change);
     };
     Parent& parent() { return m_parentStack.last(); }
     RenderTreePosition& renderTreePosition();
 
     GeneratedContent& generatedContent() { return *m_generatedContent; }
 
-    void pushParent(Element&, const Style::ElementUpdates*);
+    void pushParent(Element&, Style::Change);
     void popParent();
     void popParentsToDepth(unsigned depth);
 
