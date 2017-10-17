@@ -27,7 +27,6 @@
 #define Heap_h
 
 #include "AllocationKind.h"
-#include "AsyncTask.h"
 #include "BumpRange.h"
 #include "Chunk.h"
 #include "HeapKind.h"
@@ -51,6 +50,7 @@ class BeginTag;
 class BumpAllocator;
 class DebugHeap;
 class EndTag;
+class Scavenger;
 
 class Heap {
 public:
@@ -111,11 +111,6 @@ private:
 
     LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t, AllocationKind);
 
-    void scheduleScavenger(size_t);
-    void scheduleScavengerIfUnderMemoryPressure(size_t);
-    
-    void concurrentScavenge();
-    
     HeapKind m_kind;
     
     size_t m_vmPageSizePhysical;
@@ -131,12 +126,8 @@ private:
 
     Map<Chunk*, ObjectType, ChunkHash> m_objectTypes;
 
-    size_t m_scavengerBytes { 0 };
-    bool m_isGrowing { false };
-    
-    AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
-
-    DebugHeap* m_debugHeap;
+    Scavenger* m_scavenger { nullptr };
+    DebugHeap* m_debugHeap { nullptr };
 };
 
 inline void Heap::allocateSmallBumpRanges(

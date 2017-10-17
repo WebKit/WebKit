@@ -26,7 +26,8 @@
 #pragma once
 
 #include "BPlatform.h"
-#include "StaticMutex.h"
+#include "Mutex.h"
+#include <condition_variable>
 #include <mutex>
 
 #if BOS(DARWIN)
@@ -34,9 +35,6 @@
 #endif
 
 namespace bmalloc {
-
-// FIXME: This class should become a common scavenger mechanism for all heaps.
-// https://bugs.webkit.org/show_bug.cgi?id=174973
 
 class Scavenger {
 public:
@@ -50,8 +48,39 @@ public:
     void setScavengerThreadQOSClass(qos_class_t overrideClass) { m_requestedScavengerThreadQOSClass = overrideClass; }
     qos_class_t requestedScavengerThreadQOSClass() const { return m_requestedScavengerThreadQOSClass; }
 #endif
+    
+    bool willRun() { return m_state == State::Run; }
+    void run();
+    
+    bool willRunSoon() { return m_state > State::Sleep; }
+    void runSoon();
+    
+    void didStartGrowing();
+    void scheduleIfUnderMemoryPressure(size_t bytes);
+    void schedule(size_t bytes);
 
 private:
+    enum class State { Sleep, Run, RunSoon };
+    
+    void runHoldingLock();
+    void runSoonHoldingLock();
+
+    void scheduleIfUnderMemoryPressureHoldingLock(size_t bytes);
+
+    static void threadEntryPoint(Scavenger*);
+    void threadRunLoop();
+    
+    void setSelfQOSClass();
+    
+    std::atomic<State> m_state { State::Sleep };
+    size_t m_scavengerBytes { 0 };
+    bool m_isProbablyGrowing { false };
+    
+    Mutex m_mutex;
+    std::condition_variable_any m_condition;
+
+    std::thread m_thread;
+    
 #if BOS(DARWIN)
     dispatch_source_t m_pressureHandlerDispatchSource;
     qos_class_t m_requestedScavengerThreadQOSClass { QOS_CLASS_USER_INITIATED };

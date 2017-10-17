@@ -48,7 +48,6 @@
 		14DD78BC18F48D6B00950702 /* SmallLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1452478618BC757C00F80098 /* SmallLine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 143E29ED18CAE90500FE8A0F /* SmallPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C518F48D7500950702 /* Algorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 1421A87718EE462A00B4DD68 /* Algorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14DD78C618F48D7500950702 /* AsyncTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F65218BA88A00076FA3F /* AsyncTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C718F48D7500950702 /* BAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E468189EEDE400546D68 /* BAssert.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C818F48D7500950702 /* FixedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D9DB4517F2447100EAAB79 /* FixedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C918F48D7500950702 /* BInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E460189DCE1E00546D68 /* BInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -98,7 +97,6 @@
 		1413E462189DE1CD00546D68 /* BumpAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BumpAllocator.h; path = bmalloc/BumpAllocator.h; sourceTree = "<group>"; };
 		1413E468189EEDE400546D68 /* BAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAssert.h; path = bmalloc/BAssert.h; sourceTree = "<group>"; };
 		1417F64F18B7280C0076FA3F /* Syscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Syscall.h; path = bmalloc/Syscall.h; sourceTree = "<group>"; };
-		1417F65218BA88A00076FA3F /* AsyncTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncTask.h; path = bmalloc/AsyncTask.h; sourceTree = "<group>"; };
 		141D9AFF1C8E51C0000ABBA0 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = bmalloc/List.h; sourceTree = "<group>"; };
 		1421A87718EE462A00B4DD68 /* Algorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Algorithm.h; path = bmalloc/Algorithm.h; sourceTree = "<group>"; };
 		142B44341E2839E7001DA6E9 /* DebugHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugHeap.cpp; path = bmalloc/DebugHeap.cpp; sourceTree = "<group>"; };
@@ -282,7 +280,6 @@
 			children = (
 				4408F2961C9896C40012EC64 /* darwin */,
 				1421A87718EE462A00B4DD68 /* Algorithm.h */,
-				1417F65218BA88A00076FA3F /* AsyncTask.h */,
 				6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */,
 				6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */,
 				1413E468189EEDE400546D68 /* BAssert.h */,
@@ -336,7 +333,6 @@
 				14DD789818F48D4A00950702 /* Allocator.h in Headers */,
 				0F5BF1531F22E1570029D91D /* Scavenger.h in Headers */,
 				0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */,
-				14DD78C618F48D7500950702 /* AsyncTask.h in Headers */,
 				6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
