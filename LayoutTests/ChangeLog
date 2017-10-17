@@ -1,5 +1,18 @@
 2017-10-17  Alex Christensen  <achristensen@webkit.org>
 
+        Layout Test http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=150095
+
+        Reviewed by Tim Horton.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html:
+        * platform/mac-wk2/TestExpectations:
+        We were mixing jsTestIsAsync with testRunner.notifyDone which caused some flakiness.
+        Calling finishJSTest on the next runloop iteration causes it to no longer be flaky.
+
+2017-10-17  Alex Christensen  <achristensen@webkit.org>
+
         De-flakify http/tests/loading/basic-auth-resend-wrong-credentials.html
         https://bugs.webkit.org/show_bug.cgi?id=178370
 

@@ -25,10 +25,8 @@ function processStateChange() {
         shouldNotThrow('req.overrideMimeType("text/plain")');
     }
 
-    if (req.readyState == req.DONE) {
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }     
+    if (req.readyState == req.DONE)
+        setTimeout(finishJSTest, 0);
 }
 
 function runTest(type) {

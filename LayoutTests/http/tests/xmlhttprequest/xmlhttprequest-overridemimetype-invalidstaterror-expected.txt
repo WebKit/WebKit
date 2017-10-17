@@ -14,4 +14,7 @@ Testing overrideMimeType when readyState = 3
 PASS req.overrideMimeType("text/plain") threw exception InvalidStateError: The object is in an invalid state..
 Testing overrideMimeType when readyState = 4
 PASS req.overrideMimeType("text/plain") threw exception InvalidStateError: The object is in an invalid state..
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
