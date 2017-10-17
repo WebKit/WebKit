@@ -719,8 +719,10 @@ void AXObjectCache::remove(Node* node)
     if (!node)
         return;
 
-    if (is<Element>(*node))
+    if (is<Element>(*node)) {
         m_deferredRecomputeIsIgnoredList.remove(downcast<Element>(node));
+        m_deferredSelectedChildredChangedList.remove(downcast<Element>(node));
+    }
     m_deferredTextChangedList.remove(node);
     removeNodeForUse(node);
 
@@ -2788,6 +2790,10 @@ void AXObjectCache::performDeferredCacheUpdate()
             recomputeIsIgnored(renderer);
     }
     m_deferredRecomputeIsIgnoredList.clear();
+    
+    for (auto* selectElement : m_deferredSelectedChildredChangedList)
+        selectedChildrenChanged(selectElement);
+    m_deferredSelectedChildredChangedList.clear();
 }
 
 static bool rendererNeedsDeferredUpdate(RenderObject& renderer)
@@ -2838,6 +2844,19 @@ void AXObjectCache::deferTextChangedIfNeeded(Node* node)
         return;
     }
     textChanged(node);
+}
+
+void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element& selectElement)
+{
+    auto* renderer = selectElement.renderer();
+    if (renderer && renderer->beingDestroyed())
+        return;
+    
+    if (renderer && rendererNeedsDeferredUpdate(*renderer)) {
+        m_deferredSelectedChildredChangedList.add(&selectElement);
+        return;
+    }
+    selectedChildrenChanged(&selectElement);
 }
 
 bool isNodeAriaVisible(Node* node)

@@ -162,7 +162,7 @@ void RenderListBox::selectionChanged()
     }
     
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->selectedChildrenChanged(this);
+        cache->deferSelectedChildrenChangedIfNeeded(selectElement());
 }
 
 void RenderListBox::layout()

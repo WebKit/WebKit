@@ -332,6 +332,7 @@ public:
     void deferRecomputeIsIgnoredIfNeeded(Element*);
     void deferRecomputeIsIgnored(Element*);
     void deferTextChangedIfNeeded(Node*);
+    void deferSelectedChildrenChangedIfNeeded(Element&);
     void performDeferredCacheUpdate();
     
     RefPtr<Range> rangeMatchesTextNearRange(RefPtr<Range>, const String&);
@@ -439,6 +440,7 @@ private:
     AXTextStateChangeIntent m_textSelectionIntent;
     ListHashSet<Element*> m_deferredRecomputeIsIgnoredList;
     ListHashSet<Node*> m_deferredTextChangedList;
+    ListHashSet<Element*> m_deferredSelectedChildredChangedList;
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
 };
@@ -490,6 +492,7 @@ inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }
 inline void AXObjectCache::deferRecomputeIsIgnored(Element*) { }
 inline void AXObjectCache::deferTextChangedIfNeeded(Node*) { }
+inline void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element&) { }
 inline void AXObjectCache::detachWrapper(AccessibilityObject*, AccessibilityDetachmentType) { }
 inline void AXObjectCache::focusAriaModalNodeTimerFired() { }
 inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent) { }
