@@ -47,10 +47,6 @@
 #include <usp10.h>
 #endif
 
-#if USE(CAIRO)
-#include <cairo.h>
-#endif
-
 #if USE(CG)
 #include "CoreGraphicsSPI.h"
 #endif

@@ -1,5 +1,22 @@
 2017-09-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Cairo] Remove unnecessary cairo.h includes
+        https://bugs.webkit.org/show_bug.cgi?id=177540
+
+        Reviewed by Carlos Garcia Campos.
+
+        Drop unnecessary includes of the cairo.h header from the Font.h,
+        FontPlatformData.h and Pattern.h headers. For the former two the
+        header isn't required, while in the last one we can use a forward
+        declaration for the cairo_pattern_t type instead of including
+        the whole Cairo headers to have that available.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/Pattern.h:
+
+2017-09-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [Cairo] Drop cairo_matrix_t conversion operators for AffineTransform, TransformationMatrix
         https://bugs.webkit.org/show_bug.cgi?id=177539
 
