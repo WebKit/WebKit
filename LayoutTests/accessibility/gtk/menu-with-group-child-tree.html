@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div role="menu" id="menu">
+    <div role="group"><div role="menuitem">content 1</div></div>
+    <div role="menuitem">content 2</div>
+  </div>
+</div>
+</div>
+<pre id="tree"></pre>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This verifies the accessibility tree of a menu with a group child.");
+    if (window.accessibilityController) {
+        var menu = accessibilityController.accessibleElementById("menu");
+        dumpAccessibilityTree(menu, null, 0, false, true);
+    }
+    document.getElementById("content").style.visibility = "hidden";
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

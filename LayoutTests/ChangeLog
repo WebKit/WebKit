@@ -1,5 +1,15 @@
 2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] ARIA menuitems should be exposed with ATK_ROLE_MENU_ITEM even when it's the child of group role
+        https://bugs.webkit.org/show_bug.cgi?id=177811
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/menu-with-group-child-tree-expected.txt: Added.
+        * accessibility/gtk/menu-with-group-child-tree.html: Added.
+
+2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] aria-rowindex set on row element is not being exposed
         https://bugs.webkit.org/show_bug.cgi?id=177821
 

@@ -1,5 +1,23 @@
 2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] ARIA menuitems should be exposed with ATK_ROLE_MENU_ITEM even when it's the child of group role
+        https://bugs.webkit.org/show_bug.cgi?id=177811
+
+        Reviewed by Chris Fleizach.
+
+        AccessibilityNodeObject::remapAriaRoleDueToParent() remaps ARIA menuitems to the
+        MenuButtonRole AccessibilityRole when the menuitem's parent is an ARIA group, but
+        the ATK code was not handling that remapped role value. As a result, the element
+        was being exposed as ATK_ROLE_UNKNOWN. Add MenuButtonRole to the AccessibilityRole
+        types exposed as ATK_ROLE_MENU_ITEM.
+
+        Test: accessibility/gtk/menu-with-group-child-tree.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
+2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] aria-rowindex set on row element is not being exposed
         https://bugs.webkit.org/show_bug.cgi?id=177821
 
