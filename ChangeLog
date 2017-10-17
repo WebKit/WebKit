@@ -1,3 +1,13 @@
+2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Remove the possibility of installing the old WebKit2 C API
+        https://bugs.webkit.org/show_bug.cgi?id=178125
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsWPE.cmake: Remove definition of the EXPORT_DEPRECATED_WEBKIT2_C_API
+        build option.
+
 2017-10-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Expose ENABLE_XSLT option
