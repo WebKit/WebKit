@@ -1,3 +1,21 @@
+2017-10-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Expose value of aria-keyshortcuts as object attribute
+        https://bugs.webkit.org/show_bug.cgi?id=171175
+
+        Reviewed by Chris Fleizach.
+
+        Expose the author-provided string through the "keyshortcuts" object attribute.
+
+        Test: accessibility/gtk/aria-keyshortcuts.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaKeyShortcutsValue const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        * html/HTMLAttributeNames.in:
+
 2017-10-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Fix double seek requested by downloadbuffer GStreamer element in webkibwebsrc

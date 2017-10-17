@@ -2444,6 +2444,11 @@ const AtomicString& AccessibilityObject::datetimeAttributeValue() const
     return getAttribute(datetimeAttr);
 }
     
+const AtomicString& AccessibilityObject::ariaKeyShortcutsValue() const
+{
+    return getAttribute(aria_keyshortcutsAttr);
+}
+
 Element* AccessibilityObject::element() const
 {
     Node* node = this->node();

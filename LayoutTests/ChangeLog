@@ -1,3 +1,13 @@
+2017-10-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Expose value of aria-keyshortcuts as object attribute
+        https://bugs.webkit.org/show_bug.cgi?id=171175
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/aria-keyshortcuts-expected.txt: Added.
+        * accessibility/gtk/aria-keyshortcuts.html: Added.
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM
