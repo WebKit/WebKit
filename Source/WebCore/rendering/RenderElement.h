@@ -323,7 +323,7 @@ private:
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;
 
-    void clearLayoutRootIfNeeded() const;
+    void clearSubtreeLayoutRootIfNeeded() const;
     
     bool shouldWillChangeCreateStackingContext() const;
     void issueRepaintForOutlineAuto(float outlineSize);

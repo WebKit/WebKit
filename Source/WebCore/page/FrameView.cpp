@@ -166,11 +166,11 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 class SubtreeLayoutStateMaintainer {
 public:
     SubtreeLayoutStateMaintainer(RenderElement* subtreeLayoutRoot)
-        : m_layoutRoot(subtreeLayoutRoot)
+        : m_subtreeLayoutRoot(subtreeLayoutRoot)
     {
-        if (m_layoutRoot) {
-            RenderView& view = m_layoutRoot->view();
-            view.pushLayoutState(*m_layoutRoot);
+        if (m_subtreeLayoutRoot) {
+            RenderView& view = m_subtreeLayoutRoot->view();
+            view.pushLayoutState(*m_subtreeLayoutRoot);
             if (shouldDisableLayoutStateForSubtree()) {
                 view.disableLayoutState();
                 m_didDisableLayoutState = true;
@@ -180,9 +180,9 @@ public:
 
     ~SubtreeLayoutStateMaintainer()
     {
-        if (m_layoutRoot) {
-            RenderView& view = m_layoutRoot->view();
-            view.popLayoutState(*m_layoutRoot);
+        if (m_subtreeLayoutRoot) {
+            RenderView& view = m_subtreeLayoutRoot->view();
+            view.popLayoutState(*m_subtreeLayoutRoot);
             if (m_didDisableLayoutState)
                 view.enableLayoutState();
         }
@@ -190,7 +190,7 @@ public:
 
     bool shouldDisableLayoutStateForSubtree()
     {
-        for (auto* renderer = m_layoutRoot; renderer; renderer = renderer->container()) {
+        for (auto* renderer = m_subtreeLayoutRoot; renderer; renderer = renderer->container()) {
             if (renderer->hasTransform() || renderer->hasReflection())
                 return true;
         }
@@ -198,7 +198,7 @@ public:
     }
     
 private:
-    RenderElement* m_layoutRoot { nullptr };
+    RenderElement* m_subtreeLayoutRoot { nullptr };
     bool m_didDisableLayoutState { false };
 };
 
@@ -336,7 +336,7 @@ void FrameView::reset()
     m_isOverlapped = false;
     m_contentIsOpaque = false;
     m_layoutTimer.stop();
-    m_layoutRoot = nullptr;
+    m_subtreeLayoutRoot = nullptr;
     m_delayedLayout = false;
     m_needsFullRepaint = true;
     m_layoutSchedulingEnabled = true;
@@ -655,12 +655,12 @@ void FrameView::didRestoreFromPageCache()
 void FrameView::willDestroyRenderTree()
 {
     detachCustomScrollbars();
-    m_layoutRoot = nullptr;
+    m_subtreeLayoutRoot = nullptr;
 }
 
 void FrameView::didDestroyRenderTree()
 {
-    ASSERT(!m_layoutRoot);
+    ASSERT(!m_subtreeLayoutRoot);
     ASSERT(m_widgetsInRenderTree.isEmpty());
 
     // If the render tree is destroyed below FrameView::updateEmbeddedObjects(), there will still be a null sentinel in the set.
@@ -828,7 +828,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         vMode = ScrollbarAlwaysOff;
     }
     
-    if (m_layoutRoot)
+    if (m_subtreeLayoutRoot)
         return;
     
     auto* document = frame().document();
@@ -1322,11 +1322,11 @@ static void applyTextSizingIfNeeded(RenderElement& layoutRoot)
 }
 #endif
 
-void FrameView::layout(bool allowSubtree)
+void FrameView::layout(bool allowSubtreeLayout)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
 
-    LOG(Layout, "FrameView %p (%dx%d) layout, main frameview %d, allowSubtree=%d", this, size().width(), size().height(), frame().isMainFrame(), allowSubtree);
+    LOG(Layout, "FrameView %p (%dx%d) layout, main frameview %d, allowSubtreeLayout=%d", this, size().width(), size().height(), frame().isMainFrame(), allowSubtreeLayout);
     if (isInRenderTreeLayout()) {
         LOG(Layout, "  in layout, bailing");
         return;
@@ -1354,9 +1354,9 @@ void FrameView::layout(bool allowSubtree)
             LOG_WITH_STREAM(MediaQueries, stream << "FrameView " << this << " snapshotting size " <<  ScrollView::layoutSize() << " for media queries");
             m_frameFlatteningViewSizeForMediaQuery = ScrollView::layoutSize();
         }
-        startLayoutAtMainFrameViewIfNeeded(allowSubtree);
-        RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
-        if (!root || !root->needsLayout())
+        startLayoutAtMainFrameViewIfNeeded(allowSubtreeLayout);
+        auto* layoutRoot = m_subtreeLayoutRoot ? m_subtreeLayoutRoot : frame().document()->renderView();
+        if (!layoutRoot || !layoutRoot->needsLayout())
             return;
     }
     
@@ -1364,7 +1364,7 @@ void FrameView::layout(bool allowSubtree)
 
 #if PLATFORM(IOS)
     if (updateFixedPositionLayoutRect())
-        allowSubtree = false;
+        allowSubtreeLayout = false;
 #endif
 
     m_layoutTimer.stop();
@@ -1379,7 +1379,7 @@ void FrameView::layout(bool allowSubtree)
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLayout(frame());
     AnimationUpdateBlock animationUpdateBlock(&frame().animation());
     
-    if (!allowSubtree && m_layoutRoot)
+    if (!allowSubtreeLayout && m_subtreeLayoutRoot)
         convertSubtreeLayoutToFullLayout();
 
     ASSERT(frame().view() == this);
@@ -1387,9 +1387,9 @@ void FrameView::layout(bool allowSubtree)
 
     Document& document = *frame().document();
     ASSERT(document.pageCacheState() == Document::NotInPageCache);
-    RenderElement* root = nullptr;
+    RenderElement* layoutRoot = nullptr;
     RenderLayer* layer = nullptr;
-    bool subtree = false;
+    bool isSubtreeLayout = false;
 
     {
         SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
@@ -1429,12 +1429,12 @@ void FrameView::layout(bool allowSubtree)
 
         autoSizeIfEnabled();
 
-        root = m_layoutRoot ? m_layoutRoot : document.renderView();
-        if (!root)
+        layoutRoot = m_subtreeLayoutRoot ? m_subtreeLayoutRoot : document.renderView();
+        if (!layoutRoot)
             return;
-        subtree = m_layoutRoot;
+        isSubtreeLayout = m_subtreeLayoutRoot;
 
-        if (!m_layoutRoot) {
+        if (!isSubtreeLayout) {
             auto* body = document.bodyOrFrameset();
             if (body && body->renderer()) {
                 if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled()) {
@@ -1451,9 +1451,9 @@ void FrameView::layout(bool allowSubtree)
 #endif
         }
 
-        m_needsFullRepaint = !subtree && (m_firstLayout || downcast<RenderView>(*root).printing());
+        m_needsFullRepaint = !isSubtreeLayout && (m_firstLayout || downcast<RenderView>(*layoutRoot).printing());
 
-        if (!subtree) {
+        if (!isSubtreeLayout) {
             ScrollbarMode hMode;
             ScrollbarMode vMode;    
             calculateScrollbarModesForLayout(hMode, vMode);
@@ -1465,7 +1465,7 @@ void FrameView::layout(bool allowSubtree)
                     m_firstLayout = false;
                     m_firstLayoutCallbackPending = true;
                     m_lastViewportSize = sizeForResizeEvent();
-                    m_lastZoomFactor = root->style().zoom();
+                    m_lastZoomFactor = layoutRoot->style().zoom();
 
                     // Set the initial vMode to AlwaysOn if we're auto.
                     if (vMode == ScrollbarAuto)
@@ -1502,10 +1502,11 @@ void FrameView::layout(bool allowSubtree)
             m_layoutPhase = InPreLayout;
         }
 
-        layer = root->enclosingLayer();
-        SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(m_layoutRoot);
+        ASSERT(allowSubtreeLayout || !isSubtreeLayout);
+        layer = layoutRoot->enclosingLayer();
+        SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(m_subtreeLayoutRoot);
 
-        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&root->view());
+        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&layoutRoot->view());
 
         ASSERT(m_layoutPhase == InPreLayout);
         m_layoutPhase = InRenderTreeLayout;
@@ -1514,16 +1515,16 @@ void FrameView::layout(bool allowSubtree)
 
         ASSERT(m_layoutPhase == InRenderTreeLayout);
 #ifndef NDEBUG
-        RenderTreeNeedsLayoutChecker checker(*root);
+        RenderTreeNeedsLayoutChecker checker(*layoutRoot);
 #endif
-        root->layout();
+        layoutRoot->layout();
 
 #if ENABLE(TEXT_AUTOSIZING)
-        applyTextSizingIfNeeded(*root);
+        applyTextSizingIfNeeded(*layoutRoot);
 #endif
 
         ASSERT(m_layoutPhase == InRenderTreeLayout);
-        m_layoutRoot = nullptr;
+        m_subtreeLayoutRoot = nullptr;
         // Close block here to end the scope of changeSchedulingEnabled and SubtreeLayoutStateMaintainer.
     }
 
@@ -1531,7 +1532,7 @@ void FrameView::layout(bool allowSubtree)
 
     bool neededFullRepaint = m_needsFullRepaint;
 
-    if (!subtree && !downcast<RenderView>(*root).printing()) {
+    if (!isSubtreeLayout && !downcast<RenderView>(*layoutRoot).printing()) {
         adjustViewSize();
         // FIXME: Firing media query callbacks synchronously on nested frames could produced a detached FrameView here by
         // navigating away from the current document (see webkit.org/b/173329).
@@ -1545,13 +1546,13 @@ void FrameView::layout(bool allowSubtree)
 
     // Now update the positions of all layers.
     if (m_needsFullRepaint)
-        root->view().repaintRootContents();
+        layoutRoot->view().repaintRootContents();
 
-    root->view().releaseProtectedRenderWidgets();
+    layoutRoot->view().releaseProtectedRenderWidgets();
 
-    ASSERT(!root->needsLayout());
+    ASSERT(!layoutRoot->needsLayout());
 
-    layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
+    layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, isSubtreeLayout, m_needsFullRepaint));
 
     updateCompositingLayersAfterLayout();
 
@@ -1560,8 +1561,8 @@ void FrameView::layout(bool allowSubtree)
     m_layoutCount++;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK)
-    if (AXObjectCache* cache = root->document().existingAXObjectCache())
-        cache->postNotification(root, AXObjectCache::AXLayoutComplete);
+    if (AXObjectCache* cache = layoutRoot->document().existingAXObjectCache())
+        cache->postNotification(layoutRoot, AXObjectCache::AXLayoutComplete);
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1604,7 +1605,7 @@ void FrameView::layout(bool allowSubtree)
             layout();
     }
 
-    InspectorInstrumentation::didLayout(cookie, *root);
+    InspectorInstrumentation::didLayout(cookie, *layoutRoot);
     DebugPageOverlays::didLayout(frame());
 
     --m_nestedLayoutCount;
@@ -3039,9 +3040,9 @@ void FrameView::hide()
 
 void FrameView::convertSubtreeLayoutToFullLayout()
 {
-    ASSERT(m_layoutRoot);
-    m_layoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No);
-    m_layoutRoot = nullptr;
+    ASSERT(m_subtreeLayoutRoot);
+    m_subtreeLayoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No);
+    m_subtreeLayoutRoot = nullptr;
 }
 
 void FrameView::layoutTimerFired()
@@ -3059,7 +3060,7 @@ void FrameView::scheduleRelayout()
     // too many false assertions.  See <rdar://problem/7218118>.
     ASSERT(frame().view() == this);
 
-    if (m_layoutRoot)
+    if (m_subtreeLayoutRoot)
         convertSubtreeLayoutToFullLayout();
     if (!m_layoutSchedulingEnabled)
         return;
@@ -3108,10 +3109,10 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     ASSERT(!renderView.renderTreeBeingDestroyed());
     ASSERT(frame().view() == this);
 
-    // When m_layoutRoot is already set, ignore the renderView's needsLayout bit
-    // since we need to resolve the conflict between the m_layoutRoot and newRelayoutRoot layouts.
-    if (renderView.needsLayout() && !m_layoutRoot) {
-        m_layoutRoot = &newRelayoutRoot;
+    // When m_subtreeLayoutRoot is already set, ignore the renderView's needsLayout bit
+    // since we need to resolve the conflict between the m_subtreeLayoutRoot and newRelayoutRoot layouts.
+    if (renderView.needsLayout() && !m_subtreeLayoutRoot) {
+        m_subtreeLayoutRoot = &newRelayoutRoot;
         convertSubtreeLayoutToFullLayout();
         return;
     }
@@ -3119,35 +3120,35 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     if (!layoutPending() && m_layoutSchedulingEnabled) {
         Seconds delay = renderView.document().minimumLayoutDelay();
         ASSERT(!newRelayoutRoot.container() || is<RenderView>(newRelayoutRoot.container()) || !newRelayoutRoot.container()->needsLayout());
-        m_layoutRoot = &newRelayoutRoot;
+        m_subtreeLayoutRoot = &newRelayoutRoot;
         InspectorInstrumentation::didInvalidateLayout(frame());
         m_delayedLayout = delay.value();
         m_layoutTimer.startOneShot(delay);
         return;
     }
 
-    if (m_layoutRoot == &newRelayoutRoot)
+    if (m_subtreeLayoutRoot == &newRelayoutRoot)
         return;
 
-    if (!m_layoutRoot) {
+    if (!m_subtreeLayoutRoot) {
         // We already have a pending (full) layout. Just mark the subtree for layout.
         newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
         InspectorInstrumentation::didInvalidateLayout(frame());
         return;
     }
 
-    if (isObjectAncestorContainerOf(m_layoutRoot, &newRelayoutRoot)) {
+    if (isObjectAncestorContainerOf(m_subtreeLayoutRoot, &newRelayoutRoot)) {
         // Keep the current root.
-        newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No, m_layoutRoot);
-        ASSERT(!m_layoutRoot->container() || is<RenderView>(m_layoutRoot->container()) || !m_layoutRoot->container()->needsLayout());
+        newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No, m_subtreeLayoutRoot);
+        ASSERT(!m_subtreeLayoutRoot->container() || is<RenderView>(m_subtreeLayoutRoot->container()) || !m_subtreeLayoutRoot->container()->needsLayout());
         return;
     }
 
-    if (isObjectAncestorContainerOf(&newRelayoutRoot, m_layoutRoot)) {
+    if (isObjectAncestorContainerOf(&newRelayoutRoot, m_subtreeLayoutRoot)) {
         // Re-root at newRelayoutRoot.
-        m_layoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No, &newRelayoutRoot);
-        m_layoutRoot = &newRelayoutRoot;
-        ASSERT(!m_layoutRoot->container() || is<RenderView>(m_layoutRoot->container()) || !m_layoutRoot->container()->needsLayout());
+        m_subtreeLayoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No, &newRelayoutRoot);
+        m_subtreeLayoutRoot = &newRelayoutRoot;
+        ASSERT(!m_subtreeLayoutRoot->container() || is<RenderView>(m_subtreeLayoutRoot->container()) || !m_subtreeLayoutRoot->container()->needsLayout());
         InspectorInstrumentation::didInvalidateLayout(frame());
         return;
     }
@@ -3170,7 +3171,7 @@ bool FrameView::needsLayout() const
     RenderView* renderView = this->renderView();
     return layoutPending()
         || (renderView && renderView->needsLayout())
-        || m_layoutRoot
+        || m_subtreeLayoutRoot
         || (m_deferSetNeedsLayoutCount && m_setNeedsLayoutWasDeferred);
 }
 
@@ -3688,7 +3689,7 @@ void FrameView::autoSizeIfEnabled()
 
     LOG(Layout, "FrameView %p autoSizeIfEnabled", this);
     SetForScope<bool> changeInAutoSize(m_inAutoSize, true);
-    if (m_layoutRoot)
+    if (m_subtreeLayoutRoot)
         convertSubtreeLayoutToFullLayout();
     // Start from the minimum size and allow it to grow.
     resize(m_minAutoSize.width(), m_minAutoSize.height());

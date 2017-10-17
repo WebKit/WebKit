@@ -2296,7 +2296,7 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
     }
 
     // If layout is limited to a subtree, the subtree root's logical width does not change.
-    if (element() && !view().frameView().layoutPending() && view().frameView().layoutRoot() == this)
+    if (element() && !view().frameView().layoutPending() && view().frameView().subtreeLayoutRoot() == this)
         return;
 
     // The parent box is flexing us, so it has increased or decreased our

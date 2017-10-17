@@ -116,8 +116,8 @@ public:
     bool isInRenderTreeLayout() const { return m_layoutPhase == InRenderTreeLayout; }
     bool inPaintableState() { return m_layoutPhase != InRenderTreeLayout && m_layoutPhase != InViewSizeAdjust && m_layoutPhase != InPostLayout; }
 
-    RenderElement* layoutRoot() const { return m_layoutRoot; }
-    void clearLayoutRoot() { m_layoutRoot = nullptr; }
+    RenderElement* subtreeLayoutRoot() const { return m_subtreeLayoutRoot; }
+    void clearSubtreeLayoutRoot() { m_subtreeLayoutRoot = nullptr; }
     int layoutCount() const { return m_layoutCount; }
 
     WEBCORE_EXPORT bool needsLayout() const;
@@ -799,7 +799,7 @@ private:
 
     Timer m_layoutTimer;
     bool m_delayedLayout;
-    RenderElement* m_layoutRoot { nullptr };
+    RenderElement* m_subtreeLayoutRoot { nullptr };
 
     LayoutPhase m_layoutPhase;
     bool m_layoutSchedulingEnabled;

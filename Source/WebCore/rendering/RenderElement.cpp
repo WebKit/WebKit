@@ -1096,12 +1096,12 @@ void RenderElement::willBeRemovedFromTree()
     RenderObject::willBeRemovedFromTree();
 }
 
-inline void RenderElement::clearLayoutRootIfNeeded() const
+inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
 {
     if (renderTreeBeingDestroyed())
         return;
 
-    if (view().frameView().layoutRoot() != this)
+    if (view().frameView().subtreeLayoutRoot() != this)
         return;
 
     // Normally when a renderer is detached from the tree, the appropriate dirty bits get set
@@ -1111,7 +1111,7 @@ inline void RenderElement::clearLayoutRootIfNeeded() const
     // This indicates a failure to layout the child, which is why
     // the layout root is still set to |this|. Make sure to clear it
     // since we are getting destroyed.
-    view().frameView().clearLayoutRoot();
+    view().frameView().clearSubtreeLayoutRoot();
 }
 
 void RenderElement::willBeDestroyed()
@@ -1128,7 +1128,7 @@ void RenderElement::willBeDestroyed()
 
     RenderObject::willBeDestroyed();
 
-    clearLayoutRootIfNeeded();
+    clearSubtreeLayoutRootIfNeeded();
 
     if (hasInitializedStyle()) {
         for (auto* bgLayer = &m_style.backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {

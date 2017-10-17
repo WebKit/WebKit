@@ -2068,7 +2068,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
                 break;
             }
             
-            if (currRenderer == frameView->layoutRoot())
+            if (currRenderer == frameView->subtreeLayoutRoot())
                 break;
         }
     }
