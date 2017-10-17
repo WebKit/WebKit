@@ -401,6 +401,8 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
             // We'll handle the style attribute separately, below.
             if (attribute.name() == styleAttr && shouldOverrideStyleAttr)
                 continue;
+            if (element.isEventHandlerAttribute(attribute) || element.isJavaScriptURLAttribute(attribute))
+                continue;
             appendAttribute(out, element, attribute, 0);
         }
     }

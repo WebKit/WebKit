@@ -1514,7 +1514,7 @@ void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 // It is a simple solution that has the advantage of not requiring any
 // code or configuration change if a new event handler is defined.
 
-static inline bool isEventHandlerAttribute(const Attribute& attribute)
+bool Element::isEventHandlerAttribute(const Attribute& attribute) const
 {
     return attribute.name().namespaceURI().isNull() && attribute.name().localName().startsWith("on");
 }
@@ -1527,7 +1527,7 @@ bool Element::isJavaScriptURLAttribute(const Attribute& attribute) const
 void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
 {
     attributeVector.removeAllMatching([this](auto& attribute) -> bool {
-        return isEventHandlerAttribute(attribute)
+        return this->isEventHandlerAttribute(attribute)
             || this->isJavaScriptURLAttribute(attribute)
             || this->isHTMLContentAttribute(attribute);
     });
