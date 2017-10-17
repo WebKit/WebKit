@@ -1176,7 +1176,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
     if (m_object->supportsARIAPosInSet())
         [additional addObject:NSAccessibilityARIAPosInSetAttribute];
     
-    if (m_object->sortDirection() != SortDirectionNone)
+    AccessibilitySortDirection sortDirection = m_object->sortDirection();
+    if (sortDirection != SortDirectionNone && sortDirection != SortDirectionInvalid)
         [additional addObject:NSAccessibilitySortDirectionAttribute];
     
     // If an object is a child of a live region, then add these

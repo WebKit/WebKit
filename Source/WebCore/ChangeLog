@@ -1,3 +1,26 @@
+2017-10-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Explicitly-set aria-sort value of "none" should be exposed as an object attribute
+        https://bugs.webkit.org/show_bug.cgi?id=177955
+
+        Reviewed by Chris Fleizach.
+
+        Expose "none" as the value of aria-sort when the attribute is present and not
+        one of the other valid sort types. Also add a new AccessibilitySortDirection,
+        SortDirectionInvalid. This is currently only being used when the sort direction
+        is sought for a role which does not support this ARIA attribute, but might come
+        in handy if we want to add further sanity checks on the author-provided values.
+
+        Test: accessibility/gtk/aria-sort-values.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::sortDirection const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+
 2017-10-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Propagate libepoxy compiler flags obtained from pkg-config

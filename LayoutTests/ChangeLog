@@ -1,3 +1,13 @@
+2017-10-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Explicitly-set aria-sort value of "none" should be exposed as an object attribute
+        https://bugs.webkit.org/show_bug.cgi?id=177955
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/aria-sort-values-expected.txt: Added.
+        * accessibility/gtk/aria-sort-values.html: Added.
+
 2017-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         Nullptr deref in WebCore::Node::computeEditability
