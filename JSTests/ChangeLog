@@ -1,3 +1,14 @@
+2017-09-27  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(210837): RegExp containing failed non-zero minimum greedy groups incorrectly match
+        https://bugs.webkit.org/show_bug.cgi?id=177570
+
+        Reviewed by Filip Pizlo.
+
+        New regression test.
+
+        * stress/regress-177570.js: Added.
+
 2017-09-27  Mark Lam  <mark.lam@apple.com>
 
         JSArray::canFastCopy() should fail if the source and destination arrays are the same.

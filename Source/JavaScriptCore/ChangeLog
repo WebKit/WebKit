@@ -1,3 +1,19 @@
+2017-09-27  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(210837): RegExp containing failed non-zero minimum greedy groups incorrectly match
+        https://bugs.webkit.org/show_bug.cgi?id=177570
+
+        Reviewed by Filip Pizlo.
+
+        The change in r210837 neglected to change the check in Interpreter::backtrackParentheses() that
+        greedy parenthesis have backtracked as far as possible.  Prior to r210837 when non-zero minimum greedy
+        parenthesis were factored into a fixed component and then a zero-based variable component.  After
+        r210837, the variable component is not zero based and the check needs to compare the
+        backTrack->matchAmount with the quantity iminimum count.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+
 2017-09-27  Mark Lam  <mark.lam@apple.com>
 
         JSArray::canFastCopy() should fail if the source and destination arrays are the same.
