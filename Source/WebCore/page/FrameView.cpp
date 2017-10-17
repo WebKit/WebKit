@@ -1365,6 +1365,9 @@ void FrameView::layout(bool allowSubtree)
 
     Document& document = *frame().document();
     ASSERT(document.pageCacheState() == Document::NotInPageCache);
+    RenderElement* root = nullptr;
+    RenderLayer* layer = nullptr;
+    bool subtree = false;
 
     {
         SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
@@ -1398,21 +1401,9 @@ void FrameView::layout(bool allowSubtree)
         if (hasOneRef())
             return;
 
-        // Close block here so we can set up the font cache purge preventer, which we will still
-        // want in scope even after we want m_layoutSchedulingEnabled to be restored again.
-        // The next block sets m_layoutSchedulingEnabled back to false once again.
-    }
+        m_layoutPhase = InPreLayout;
 
-    m_layoutPhase = InPreLayout;
-
-    RenderLayer* layer = nullptr;
-    bool subtree = false;
-    RenderElement* root = nullptr;
-
-    ++m_nestedLayoutCount;
-
-    {
-        SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
+        ++m_nestedLayoutCount;
 
         autoSizeIfEnabled();
 
