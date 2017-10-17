@@ -1,3 +1,21 @@
+2017-10-17  Alex Christensen  <achristensen@webkit.org>
+
+        De-flakify http/tests/loading/basic-auth-resend-wrong-credentials.html
+        https://bugs.webkit.org/show_bug.cgi?id=178370
+
+        Reviewed by Ryosuke Niwa.
+
+        Like r223445, in WebKit2 (and WebKit1 with asynchronous loading) sometimes the iframe would start
+        loading before the main resource loading finished, sometimes it wouldn't.  This isn't a problem,
+        and the rest of the test is still valid, but in order to make the dumped delegate callbacks deterministic,
+        we make it so the iframe always starts loading after the main resource is done loading.
+
+        * http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt:
+        * http/tests/loading/basic-auth-resend-wrong-credentials.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt:
+
 2017-10-17  Daniel Bates  <dabates@apple.com>
 
         ASSERTION FAILED: m_truncation != cFullTruncation in InlineTextBox::clampedOffset()
