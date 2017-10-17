@@ -37,7 +37,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 class ServiceWorker;
 
-class ServiceWorkerRegistration final : public EventTargetWithInlineData, public ActiveDOMObject {
+class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     enum class UpdateViaCache {
         Imports,
@@ -61,6 +61,9 @@ public:
 
     void update(Ref<DeferredPromise>&&);
     void unregister(Ref<DeferredPromise>&&);
+
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
     ServiceWorkerRegistration(ScriptExecutionContext&, const ServiceWorkerRegistrationData&);
