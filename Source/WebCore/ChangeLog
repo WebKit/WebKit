@@ -1,3 +1,14 @@
+2017-10-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Propagate libepoxy compiler flags obtained from pkg-config
+        https://bugs.webkit.org/show_bug.cgi?id=178081
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        No new tests needed.
+
+        * CMakeLists.txt: Use ${LIBEPOXY_DEFINITIONS} for building WebCore.
+
 2017-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         Nullptr deref in WebCore::Node::computeEditability

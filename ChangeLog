@@ -1,3 +1,13 @@
+2017-10-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Propagate libepoxy compiler flags obtained from pkg-config
+        https://bugs.webkit.org/show_bug.cgi?id=178081
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Source/cmake/FindLibEpoxy.cmake: Define the ${LIBEPOXY_DEFINITIONS} variable when libepoxy
+        is found by pkg-config. This contains the value of the "Cflags" field from "epoxy.pc".
+
 2017-10-05  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Generate a compile error if release is built without compiler optimizations

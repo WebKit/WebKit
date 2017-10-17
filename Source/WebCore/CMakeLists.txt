@@ -3389,6 +3389,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         list(APPEND WebCore_LIBRARIES
             ${LIBEPOXY_LIBRARIES}
         )
+        add_definitions(${LIBEPOXY_DEFINITIONS})
     else ()
         if (USE_OPENGL)
             list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES

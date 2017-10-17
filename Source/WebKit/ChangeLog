@@ -1,3 +1,12 @@
+2017-10-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Propagate libepoxy compiler flags obtained from pkg-config
+        https://bugs.webkit.org/show_bug.cgi?id=178081
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * CMakeLists.txt: Use ${LIBEPOXY_DEFINITIONS} for building WebKit.
+
 2017-10-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] WebKit2GTK+ does not handle touchmove and touchend events correctly
