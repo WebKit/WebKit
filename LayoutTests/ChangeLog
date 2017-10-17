@@ -1,3 +1,14 @@
+2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        "Tag" codepoints require the complex text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=177251
+        <rdar://problem/34384001>
+
+        Reviewed by David Hyatt.
+
+        * fast/text/flag-codepoint-expected.html: Added.
+        * fast/text/flag-codepoint.html: Added.
+
 2017-09-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] atk_table_cell_get_position() should return values of aria-rowindex and aria-colindex, if present
