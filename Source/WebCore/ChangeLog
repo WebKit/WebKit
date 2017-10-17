@@ -1,3 +1,20 @@
+2017-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Nullptr deref in WebCore::Node::computeEditability
+        https://bugs.webkit.org/show_bug.cgi?id=177905
+        <rdar://problem/34138402>
+
+        Reviewed by Darin Adler.
+
+        Script can run when setting focus, because a blur event and a focus event are generated.
+        A handler for one of these events can cause the focused element to be cleared. We should
+        handle this possibility gracefully.
+
+        Test: fast/dom/focus-shift-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+
 2017-10-05  Frederic Wang  <fwang@igalia.com>
 
         Update Source/ThirdParty/woff2 to 22c256bc457777744ba14b7325a6e8e0e7dec91c

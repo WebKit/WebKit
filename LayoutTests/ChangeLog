@@ -1,3 +1,14 @@
+2017-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Nullptr deref in WebCore::Node::computeEditability
+        https://bugs.webkit.org/show_bug.cgi?id=177905
+        <rdar://problem/34138402>
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/focus-shift-crash-expected.txt: Added.
+        * fast/dom/focus-shift-crash.html: Added.
+
 2017-10-04  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] aria-pressed="mixed" should be exposed via ATK_STATE_INDETERMINATE

@@ -3845,6 +3845,13 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
 
         m_focusedElement->setFocus(true);
 
+        // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
+        if (m_focusedElement != newFocusedElement) {
+            // handler shifted focus
+            focusChangeBlocked = true;
+            goto SetFocusedNodeDone;
+        }
+
         if (m_focusedElement->isRootEditableElement())
             frame()->editor().didBeginEditing();
 
