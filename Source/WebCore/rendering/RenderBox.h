@@ -628,7 +628,6 @@ protected:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void updateFromStyle() override;
 
-    void willBeRemovedFromTree() override;
     void willBeDestroyed() override;
 
     bool createsNewFormattingContext() const;

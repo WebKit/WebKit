@@ -161,7 +161,12 @@ void RenderBox::willBeDestroyed()
 
     view().unscheduleLazyRepaint(*this);
     removeControlStatesForRenderer(*this);
-    
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (hasInitializedStyle() && style().scrollSnapArea().hasSnapPosition())
+        view().unregisterBoxWithScrollSnapPositions(*this);
+#endif
+
     RenderBoxModelObject::willBeDestroyed();
 }
 
@@ -453,17 +458,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         updateShapeOutsideInfoAfterStyleChange(style(), oldStyle);
     updateGridPositionAfterStyleChange(style(), oldStyle);
 }
-
-void RenderBox::willBeRemovedFromTree()
-{
-#if ENABLE(CSS_SCROLL_SNAP)
-    if (hasInitializedStyle() && style().scrollSnapArea().hasSnapPosition())
-        view().unregisterBoxWithScrollSnapPositions(*this);
-#endif
-    
-    RenderBoxModelObject::willBeRemovedFromTree();
-}
-    
 
 void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
 {
