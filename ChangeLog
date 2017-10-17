@@ -1,3 +1,12 @@
+2017-10-02  Olivier Blin  <olivier.blin@softathome.com>
+
+        [WPE] Do not require XSLT if disabled
+        https://bugs.webkit.org/show_bug.cgi?id=177752
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsWPE.cmake: libxslt is not a hard dep
+
 2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Use implicit include directories for Clang as well
