@@ -48,7 +48,7 @@ StorageToWebProcessConnection::StorageToWebProcessConnection(IPC::Connection::Id
 
 StorageToWebProcessConnection::~StorageToWebProcessConnection()
 {
-
+    m_connection->invalidate();
 }
 
 void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

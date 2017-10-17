@@ -56,6 +56,7 @@ NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier c
 
 NetworkProcessConnection::~NetworkProcessConnection()
 {
+    m_connection->invalidate();
 }
 
 void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

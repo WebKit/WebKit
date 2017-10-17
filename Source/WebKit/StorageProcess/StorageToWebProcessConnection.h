@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebIDBConnectionToClient;
 
-class StorageToWebProcessConnection : public RefCounted<StorageToWebProcessConnection>, public IPC::Connection::Client, public IPC::MessageSender {
+class StorageToWebProcessConnection : public RefCounted<StorageToWebProcessConnection>, private IPC::Connection::Client, private IPC::MessageSender {
 public:
     static Ref<StorageToWebProcessConnection> create(IPC::Connection::Identifier);
     ~StorageToWebProcessConnection();

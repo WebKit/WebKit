@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebInspectorUI : public RefCounted<WebInspectorUI>, public IPC::Connection::Client, public WebCore::InspectorFrontendClient {
+class WebInspectorUI : public RefCounted<WebInspectorUI>, private IPC::Connection::Client, public WebCore::InspectorFrontendClient {
 public:
     static Ref<WebInspectorUI> create(WebPage&);
 

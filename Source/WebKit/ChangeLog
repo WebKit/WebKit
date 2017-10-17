@@ -1,3 +1,39 @@
+2017-09-30  Darin Adler  <darin@apple.com>
+
+        Have IPC::Connection::Client objects consistently invalidate the connection when destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=177708
+
+        Reviewed by Anders Carlsson.
+
+        I ran into an intermittent crash when running regression tests. It looked like a connection
+        client was being called after it was destroyed. I did an audit of the all the connection
+        clients to make sure they all invalidate their connection before they are destroyed.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess): Invalidate the
+        connection since this object opened the connection. There is no obvious
+        guarantee that the connection will already be invalid when this is destroyed.
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::~StorageToWebProcessConnection): Ditto.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::~PluginProcessProxy): Ditto.
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::~NetworkProcessConnection): Ditto.
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::~WebToStorageProcessConnection): Ditto.
+
+        * StorageProcess/StorageToWebProcessConnection.h: Derive privately rather than publicly
+        from IPC::Connection::Client because we can, and this means we don't have to study quite
+        as much code to understand how this is used as a connection client.
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h: Ditto.
+        * WebProcess/Storage/WebToStorageProcessConnection.h: Ditto.
+        * WebProcess/WebPage/WebInspector.h: Ditto.
+        * WebProcess/WebPage/WebInspectorUI.h: Ditto.
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer): Added a comment about a
+        reference cycle cycle leading to a leak that I believe exists here.
+
 2017-09-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Remove the cairo_glyph_t complexity from GlyphBuffer

@@ -66,6 +66,8 @@ WebIDBConnectionToServer::WebIDBConnectionToServer(SessionID sessionID)
     relaxAdoptionRequirement();
 
     m_isOpenInServer = sendSync(Messages::StorageToWebProcessConnection::EstablishIDBConnectionToServer(sessionID), Messages::StorageToWebProcessConnection::EstablishIDBConnectionToServer::Reply(m_identifier));
+
+    // FIXME: This creates a reference cycle, so neither this object nor the IDBConnectionToServer will ever be deallocated.
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
 }
 
