@@ -238,6 +238,7 @@ bool doesGC(Graph& graph, Node* node)
     case StringCharAt:
     case StringCharCodeAt:
     case GetTypedArrayByteOffset:
+    case GetPrototypeOf:
     case PutByValDirect:
     case PutByVal:
     case PutByValAlias:

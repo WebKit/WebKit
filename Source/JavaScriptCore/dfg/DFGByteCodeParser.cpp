@@ -238,7 +238,7 @@ private:
     template<typename ChecksFunctor>
     bool handleDOMJITCall(Node* callee, int resultOperand, const DOMJIT::Signature*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
-    bool handleIntrinsicGetter(int resultOperand, const GetByIdVariant& intrinsicVariant, Node* thisNode, const ChecksFunctor& insertChecks);
+    bool handleIntrinsicGetter(int resultOperand, SpeculatedType prediction, const GetByIdVariant& intrinsicVariant, Node* thisNode, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleTypedArrayConstructor(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
@@ -2599,6 +2599,24 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case ObjectGetPrototypeOfIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        insertChecks();
+        set(VirtualRegister(resultOperand), addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgument(1, registerOffset))));
+        return true;
+    }
+
+    case ReflectGetPrototypeOfIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        insertChecks();
+        set(VirtualRegister(resultOperand), addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), Edge(get(virtualRegisterForArgument(1, registerOffset)), ObjectUse)));
+        return true;
+    }
+
     case IsTypedArrayViewIntrinsic: {
         ASSERT(argumentCountIncludingThis == 2);
 
@@ -2946,7 +2964,7 @@ bool ByteCodeParser::handleDOMJITCall(Node* callTarget, int resultOperand, const
 
 
 template<typename ChecksFunctor>
-bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, const GetByIdVariant& variant, Node* thisNode, const ChecksFunctor& insertChecks)
+bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, SpeculatedType prediction, const GetByIdVariant& variant, Node* thisNode, const ChecksFunctor& insertChecks)
 {
     switch (variant.intrinsic()) {
     case TypedArrayByteLengthIntrinsic: {
@@ -3010,6 +3028,40 @@ bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, const GetByIdVaria
 
         set(VirtualRegister(resultOperand), addToGraph(GetTypedArrayByteOffset, OpInfo(ArrayMode(arrayType).asWord()), thisNode));
 
+        return true;
+    }
+
+    case UnderscoreProtoIntrinsic: {
+        insertChecks();
+
+        bool canFold = !variant.structureSet().isEmpty();
+        JSValue prototype;
+        variant.structureSet().forEach([&] (Structure* structure) {
+            auto getPrototypeMethod = structure->classInfo()->methodTable.getPrototype;
+            MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
+            if (getPrototypeMethod != defaultGetPrototype) {
+                canFold = false;
+                return;
+            }
+
+            if (structure->hasPolyProto()) {
+                canFold = false;
+                return;
+            }
+            if (!prototype)
+                prototype = structure->storedPrototype();
+            else if (prototype != structure->storedPrototype())
+                canFold = false;
+        });
+
+        // OK, only one prototype is found. We perform constant folding here.
+        // This information is important for super's constructor call to get new.target constant.
+        if (prototype && canFold) {
+            set(VirtualRegister(resultOperand), weakJSConstant(prototype));
+            return true;
+        }
+
+        set(VirtualRegister(resultOperand), addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), thisNode));
         return true;
     }
 
@@ -3796,7 +3848,7 @@ void ByteCodeParser::handleGetById(
     
     Node* getter = addToGraph(GetGetter, loadedValue);
 
-    if (handleIntrinsicGetter(destinationOperand, variant, base,
+    if (handleIntrinsicGetter(destinationOperand, prediction, variant, base,
             [&] () {
                 addToGraph(CheckCell, OpInfo(m_graph.freeze(variant.intrinsicFunction())), getter);
             })) {

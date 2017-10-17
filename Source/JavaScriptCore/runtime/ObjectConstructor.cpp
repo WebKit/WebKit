@@ -67,7 +67,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
 
 /* Source for ObjectConstructor.lut.h
 @begin objectConstructorTable
-  getPrototypeOf            objectConstructorGetPrototypeOf             DontEnum|Function 1
+  getPrototypeOf            objectConstructorGetPrototypeOf             DontEnum|Function 1 ObjectGetPrototypeOfIntrinsic
   setPrototypeOf            objectConstructorSetPrototypeOf             DontEnum|Function 2
   getOwnPropertyDescriptor  objectConstructorGetOwnPropertyDescriptor   DontEnum|Function 2
   getOwnPropertyDescriptors objectConstructorGetOwnPropertyDescriptors  DontEnum|Function 1

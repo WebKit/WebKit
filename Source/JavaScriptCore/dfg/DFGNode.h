@@ -1548,6 +1548,7 @@ public:
         case GetById:
         case GetByIdFlush:
         case GetByIdWithThis:
+        case GetPrototypeOf:
         case TryGetById:
         case GetByVal:
         case GetByValWithThis:
@@ -2309,6 +2310,11 @@ public:
     bool shouldSpeculateArray()
     {
         return isArraySpeculation(prediction());
+    }
+
+    bool shouldSpeculateFunction()
+    {
+        return isFunctionSpeculation(prediction());
     }
 
     bool shouldSpeculateProxyObject()

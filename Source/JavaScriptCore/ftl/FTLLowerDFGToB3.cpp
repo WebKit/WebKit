@@ -821,6 +821,9 @@ private:
         case GetTypedArrayByteOffset:
             compileGetTypedArrayByteOffset();
             break;
+        case GetPrototypeOf:
+            compileGetPrototypeOf();
+            break;
         case AllocatePropertyStorage:
             compileAllocatePropertyStorage();
             break;
@@ -3428,6 +3431,82 @@ private:
         m_out.appendTo(continuation, lastNext);
 
         setInt32(m_out.castToInt32(m_out.phi(pointerType(), simpleOut, wastefulOut)));
+    }
+
+    void compileGetPrototypeOf()
+    {
+        switch (m_node->child1().useKind()) {
+        case ArrayUse:
+        case FunctionUse:
+        case FinalObjectUse: {
+            LValue object = lowCell(m_node->child1());
+            switch (m_node->child1().useKind()) {
+            case ArrayUse:
+                speculateArray(m_node->child1(), object);
+                break;
+            case FunctionUse:
+                speculateFunction(m_node->child1(), object);
+                break;
+            case FinalObjectUse:
+                speculateFinalObject(m_node->child1(), object);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+
+            LValue structure = loadStructure(object);
+
+            AbstractValue& value = m_state.forNode(m_node->child1());
+            if ((value.m_type && !(value.m_type & ~SpecObject)) && value.m_structure.isFinite()) {
+                bool hasPolyProto = false;
+                bool hasMonoProto = false;
+                value.m_structure.forEach([&] (RegisteredStructure structure) {
+                    if (structure->hasPolyProto())
+                        hasPolyProto = true;
+                    else
+                        hasMonoProto = true;
+                });
+
+                if (hasMonoProto && !hasPolyProto) {
+                    setJSValue(m_out.load64(structure, m_heaps.Structure_prototype));
+                    return;
+                }
+
+                if (hasPolyProto && !hasMonoProto) {
+                    LValue prototypeBits = m_out.load64(structure, m_heaps.Structure_prototype);
+                    LValue index = m_out.bitAnd(prototypeBits, m_out.constInt64(UINT_MAX));
+                    setJSValue(m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), object, index, ScaleEight, JSObject::offsetOfInlineStorage())));
+                    return;
+                }
+            }
+
+            LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock loadPolyProto = m_out.newBlock();
+
+            LValue prototypeBits = m_out.load64(structure, m_heaps.Structure_prototype);
+            ValueFromBlock directPrototype = m_out.anchor(prototypeBits);
+            m_out.branch(isInt32(prototypeBits), unsure(loadPolyProto), unsure(continuation));
+
+            LBasicBlock lastNext = m_out.appendTo(loadPolyProto, continuation);
+            LValue index = m_out.bitAnd(prototypeBits, m_out.constInt64(UINT_MAX));
+            ValueFromBlock polyProto = m_out.anchor(
+                m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), object, index, ScaleEight, JSObject::offsetOfInlineStorage())));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, directPrototype, polyProto));
+            return;
+        }
+        case ObjectUse: {
+            setJSValue(vmCall(Int64, m_out.operation(operationGetPrototypeOfObject), m_callFrame, lowObject(m_node->child1())));
+            return;
+        }
+        default: {
+            setJSValue(vmCall(Int64, m_out.operation(operationGetPrototypeOf), m_callFrame, lowJSValue(m_node->child1())));
+            return;
+        }
+        }
     }
     
     void compileGetArrayLength()
@@ -9003,7 +9082,7 @@ private:
         LValue structure = loadStructure(value);
 
         LValue prototypeBits = m_out.load64(structure, m_heaps.Structure_prototype);
-        ValueFromBlock directProtoype = m_out.anchor(prototypeBits);
+        ValueFromBlock directPrototype = m_out.anchor(prototypeBits);
         m_out.branch(isInt32(prototypeBits), unsure(loadPolyProto), unsure(comparePrototype));
 
         m_out.appendTo(loadPolyProto, comparePrototype);
@@ -9013,7 +9092,7 @@ private:
         m_out.jump(comparePrototype);
 
         m_out.appendTo(comparePrototype, notYetInstance);
-        LValue currentPrototype = m_out.phi(Int64, directProtoype, polyProto);
+        LValue currentPrototype = m_out.phi(Int64, directPrototype, polyProto);
         ValueFromBlock isInstanceResult = m_out.anchor(m_out.booleanTrue);
         m_out.branch(
             m_out.equal(currentPrototype, prototype),

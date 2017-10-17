@@ -64,7 +64,7 @@ using namespace Unicode;
 
 namespace JSC {
 
-static const char* const ObjectProtoCalledOnNullOrUndefinedError = "Object.prototype.__proto__ called on null or undefined";
+const char* const ObjectProtoCalledOnNullOrUndefinedError = "Object.prototype.__proto__ called on null or undefined";
 
 template<unsigned charactersCount>
 static Bitmap<256> makeCharacterBitmap(const char (&characters)[charactersCount])
@@ -706,11 +706,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     if (thisValue.isUndefinedOrNull())
-        return throwVMTypeError(exec, scope, ASCIILiteral(ObjectProtoCalledOnNullOrUndefinedError));
+        return throwVMError(exec, scope, createNotAnObjectError(exec, thisValue));
 
     JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
     if (!thisObject) {
-        JSObject* prototype = exec->thisValue().synthesizePrototype(exec);
+        JSObject* prototype = thisValue.synthesizePrototype(exec);
         EXCEPTION_ASSERT(!!scope.exception() == !prototype);
         if (UNLIKELY(!prototype))
             return JSValue::encode(JSValue());

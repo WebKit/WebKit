@@ -113,7 +113,7 @@ shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set");
 shouldThrow("this.__proto__ = []");
 shouldBeFalse("({__proto__: this.__proto__}) instanceof Array");
 shouldThrow("__proto__ = []", '"TypeError: Object.prototype.__proto__ called on null or undefined"');
-shouldThrow("({__proto__: __proto__}) instanceof Array", '"TypeError: Object.prototype.__proto__ called on null or undefined"');
+shouldThrow("({__proto__: __proto__}) instanceof Array", '"TypeError: undefined is not an object (evaluating \'__proto__\')"');
 
 // Keywords - Syntax Errors
 debug("SyntaxErrors");

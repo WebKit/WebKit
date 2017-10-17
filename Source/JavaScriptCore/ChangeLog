@@ -1,3 +1,92 @@
+2017-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] __proto__ getter should be fast
+        https://bugs.webkit.org/show_bug.cgi?id=178067
+
+        Reviewed by Saam Barati.
+
+        In our ES6 class implementation, we access __proto__ field to retrieve super constructor.
+        Currently, it is handled as an usual getter call to a generic function. And DFG just emits
+        Call node for this. It is inefficient since typically we know the `prototype` of the given
+        object when accessing `object.__proto__` since we emit CheckStructure for this `object`.
+        If Structure has mono proto, we can immediately fold it to constant value. If it is poly proto,
+        we can still change this to efficient access to poly proto slot.
+
+        This patch implements GetPrototypeOf DFG node. This node efficiently accesses to prototype of
+        the given object. And in AI and ByteCodeParser phase, we attempt to fold it to constant.
+        ByteCodeParser's folding is a bit important since we have `callee.__proto__` code to get super
+        constructor. If we can change this to constant, we can reify CallLinkInfo with this constant.
+        This paves the way to optimizing ArrayConstructor super calls[1], which is particularly important
+        for ARES-6 ML.
+
+        And we also optimize Reflect.getPrototypeOf and Object.getPrototypeOf with this GetPrototypeOf node.
+
+        Currently, __proto__ access for poly proto object is not handled well in IC. But we add code handling
+        poly proto in GetPrototypeOf since Reflect.getPrototypeOf and Object.getPrototypeOf can use it.
+        Once IC starts handling poly proto & intrinsic getter well, this code will be used for that too.
+
+        This patch improves SixSpeed super.es6 by 3.42x.
+
+                                 baseline                  patched
+
+        super.es6           123.6666+-3.9917     ^     36.1684+-1.0351        ^ definitely 3.4192x faster
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=178064
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupGetPrototypeOf):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::shouldSpeculateFunction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateFunction):
+        (JSC::DFG::SpeculativeJIT::speculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::compileGetPrototypeOf):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPrototypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::canEmitIntrinsicGetter):
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoGetter):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ReflectObject.cpp:
+
 2017-10-17  Keith Miller  <keith_miller@apple.com>
 
         Change WebCore sources to work with unified source builds

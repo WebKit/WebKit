@@ -401,6 +401,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
     case CreateRest:
+    case GetPrototypeOf:
     case StringReplace:
     case StringReplaceRegExp:
     case GetRegExpObjectLastIndex:
