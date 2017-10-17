@@ -1,3 +1,17 @@
+2017-10-16  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] Webkit should still be able to build when unable to check if libraries are up to date
+        https://bugs.webkit.org/show_bug.cgi?id=178367
+
+        Adding a option to skip the check to see if windows libraries are up to date.
+        This option is useful when testing modified libraries. This option also allows
+        building webkit when GitHub blocks requests to verify the latest library version.
+
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/build-webkit:
+
 2017-10-12  Matt Rajca  <mrajca@apple.com>
 
         Add API support for quirk that lets an arbitrary click allow auto-play.

@@ -65,6 +65,7 @@ my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $startTime = time();
 my $archs32bit = 0;
+my $skipLibraryUpdate = 0;
 
 my @features = getFeatureOptionList();
 
@@ -117,6 +118,8 @@ Usage: $programName [options] [options to pass to build system]
 
   --only-webkit                     Build only the WebKit project
 
+  --skip-library-update             Skip the check to see if windows libraries are up to date
+
 EOF
 
 my %options = (
@@ -133,6 +136,7 @@ my %options = (
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
     'default-cmake-features' => \$defaultCMakeFeatures,
+    'skip-library-update' => \$skipLibraryUpdate
 );
 
 # Build usage text and options list from features
@@ -223,9 +227,9 @@ if (isAppleCocoaWebKit()) {
     # Build Tools needed for Apple ports
     push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
 
-} elsif (isWinCairo()) {
+} elsif (isWinCairo() && !$skipLibraryUpdate) {
     (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
-} elsif (isAppleWinWebKit()) {
+} elsif (isAppleWinWebKit() && !$skipLibraryUpdate) {
     # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
     # Will fail if WebKitSupportLibrary.zip is not in source root.
     (system("perl Tools/Scripts/update-webkit-support-libs") == 0) or die;
