@@ -1,3 +1,19 @@
+2017-10-16  Maureen Daum  <mdaum@apple.com>
+
+        We should wrap the removal of information from the tracker database in a transaction in DatabaseTracker::deleteOrigin()
+        https://bugs.webkit.org/show_bug.cgi?id=178274
+        <rdar://problem/34576132>
+
+        Reviewed by Tim Horton.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteOrigin):
+        Wrap the removal of information from the tracker database in a transaction so that
+        we don't end up in a case where only one of the tables contains information about
+        an origin.
+        If anything goes wrong when we're modifying the tracker database, rollback the transaction
+        before bailing.
+
 2017-10-13  Brent Fulgham  <bfulgham@apple.com>
 
         Protect FrameView during style calculations
