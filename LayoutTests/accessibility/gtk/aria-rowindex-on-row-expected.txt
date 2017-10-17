@@ -1,0 +1,10 @@
+Verifies the exposure of a mixed value of aria-pressed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axRow.numberAttributeValue('AXARIARowIndex') is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
