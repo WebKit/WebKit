@@ -1,3 +1,14 @@
+2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM
+        https://bugs.webkit.org/show_bug.cgi?id=178137
+
+        Reviewed by Chris Fleizach.
+
+        Add handling for ATK_ROLE_LANDMARK resulting from the ARIA form role.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA drag-and-drop attribute values should be exposed via AtkObject attributes

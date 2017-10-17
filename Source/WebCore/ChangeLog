@@ -1,5 +1,20 @@
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM
+        https://bugs.webkit.org/show_bug.cgi?id=178137
+
+        Reviewed by Chris Fleizach.
+
+        Expose the ARIA form role as ATK_ROLE_LANDMARK; continue to expose the HTML form
+        element as ATK_ROLE_FORM.
+
+        No new tests needed due to existing coverage. Update expectations for roles-exposed.html.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
+2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] STATE_CHECKABLE should be removed from radio buttons in radiogroups with aria-readonly="true"
         https://bugs.webkit.org/show_bug.cgi?id=177931
 
