@@ -150,10 +150,8 @@ void ensureGigacage()
             // https://bugs.webkit.org/show_bug.cgi?id=175245
             void* base = tryVMAllocate(maxAlignment, totalSize);
             if (!base) {
-                if (GIGACAGE_ALLOCATION_CAN_FAIL) {
-                    vmDeallocate(base, totalSize);
+                if (GIGACAGE_ALLOCATION_CAN_FAIL)
                     return;
-                }
                 fprintf(stderr, "FATAL: Could not allocate gigacage memory with maxAlignment = %lu, totalSize = %lu.\n", maxAlignment, totalSize);
                 BCRASH();
             }

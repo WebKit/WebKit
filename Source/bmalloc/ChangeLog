@@ -1,3 +1,16 @@
+2017-10-17  Filip Pizlo  <fpizlo@apple.com>
+
+        You can't vmDeallocate null
+        <rdar://problem/35038926>
+
+        Reviewed by Michael Saboff.
+        
+        After failing allocation, we would try to deallocate the thing we failed to allocate. The fix is to
+        not try to deallocate something that is obviously null.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+
 2017-09-29  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS
