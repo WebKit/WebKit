@@ -571,7 +571,7 @@ NativeImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subsam
     auto frameCursor = [m_track makeSampleCursorWithPresentationTimeStamp:PAL::toCMTime(sampleData.presentationTime)];
     if ([frameCursor comparePositionInDecodeOrderWithPositionOfCursor:m_cursor.get()] == NSOrderedAscending)  {
         // Rewind cursor to the last sync sample to begin decoding
-        m_cursor = [frameCursor copy];
+        m_cursor = adoptNS([frameCursor copy]);
         do {
             if ([m_cursor currentSampleSyncInfo].sampleIsFullSync)
                 break;
