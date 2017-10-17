@@ -133,7 +133,7 @@ void FetchEvent::promiseIsSettled()
     }
 
     auto body = m_response->consumeBody();
-    WTF::switchOn(body, [this] (Ref<FormData>&) {
+    WTF::switchOn(body, [] (Ref<FormData>&) {
         // FIXME: Support FormData response bodies.
     }, [this] (Ref<SharedBuffer>& buffer) {
         m_responseBody = WTFMove(buffer);
