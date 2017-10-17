@@ -57,6 +57,21 @@ struct ElementUpdate {
     bool recompositeLayer { false };
 };
 
+struct ElementUpdates {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
+    ElementUpdates() = default;
+    ElementUpdates(ElementUpdate update, std::optional<ElementUpdate> beforePseudoElementUpdate, std::optional<ElementUpdate> afterPseudoElementUpdate)
+        : update { WTFMove(update) }
+        , beforePseudoElementUpdate { WTFMove(beforePseudoElementUpdate) }
+        , afterPseudoElementUpdate { WTFMove(afterPseudoElementUpdate) }
+    {
+    }
+#endif
+    ElementUpdate update;
+    std::optional<ElementUpdate> beforePseudoElementUpdate;
+    std::optional<ElementUpdate> afterPseudoElementUpdate;
+};
+
 struct TextUpdate {
 #if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     TextUpdate() = default;
@@ -78,8 +93,8 @@ public:
 
     const ListHashSet<ContainerNode*>& roots() const { return m_roots; }
 
-    const ElementUpdate* elementUpdate(const Element&) const;
-    ElementUpdate* elementUpdate(const Element&);
+    const ElementUpdates* elementUpdates(const Element&) const;
+    ElementUpdates* elementUpdates(const Element&);
 
     const TextUpdate* textUpdate(const Text&) const;
 
@@ -90,7 +105,7 @@ public:
 
     unsigned size() const { return m_elements.size() + m_texts.size(); }
 
-    void addElement(Element&, Element* parent, ElementUpdate&&);
+    void addElement(Element&, Element* parent, ElementUpdates&&);
     void addText(Text&, Element* parent, TextUpdate&&);
     void addText(Text&, TextUpdate&&);
 
@@ -99,7 +114,7 @@ private:
 
     Document& m_document;
     ListHashSet<ContainerNode*> m_roots;
-    HashMap<const Element*, ElementUpdate> m_elements;
+    HashMap<const Element*, ElementUpdates> m_elements;
     HashMap<const Text*, TextUpdate> m_texts;
 };
 

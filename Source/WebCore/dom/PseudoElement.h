@@ -33,10 +33,7 @@ namespace WebCore {
 
 class PseudoElement final : public Element {
 public:
-    static Ref<PseudoElement> create(Element& host, PseudoId pseudoId)
-    {
-        return adoptRef(*new PseudoElement(host, pseudoId));
-    }
+    static Ref<PseudoElement> create(Element& host, PseudoId);
     virtual ~PseudoElement();
 
     Element* hostElement() const { return m_hostElement; }

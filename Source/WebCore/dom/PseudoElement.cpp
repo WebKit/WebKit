@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PseudoElement.h"
 
+#include "CSSAnimationController.h"
 #include "ContentData.h"
 #include "InspectorInstrumentation.h"
 #include "RenderElement.h"
@@ -71,9 +72,21 @@ PseudoElement::~PseudoElement()
     ASSERT(!m_hostElement);
 }
 
+Ref<PseudoElement> PseudoElement::create(Element& host, PseudoId pseudoId)
+{
+    auto pseudoElement = adoptRef(*new PseudoElement(host, pseudoId));
+
+    InspectorInstrumentation::pseudoElementCreated(host.document().page(), pseudoElement.get());
+
+    return pseudoElement;
+}
+
 void PseudoElement::clearHostElement()
 {
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
+
+    if (auto* frame = document().frame())
+        frame->animation().cancelAnimations(*this);
 
     m_hostElement = nullptr;
 }
