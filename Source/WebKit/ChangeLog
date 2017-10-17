@@ -1,3 +1,14 @@
+2017-08-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Build failure with Clang 4.0.1: no matching conversion for functional-style cast from 'pointer' (aka 'unsigned short *') to 'WTF::String'
+        https://bugs.webkit.org/show_bug.cgi?id=175477
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/wpe/WebEventFactory.cpp:
+        (WebKit::singleCharacterStringForKeyEvent): Cast to UChar* to make
+        compiler choose the correct WTF::String constructor.
+
 2017-10-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         CSS constant properties should not be enabled by default
