@@ -83,7 +83,7 @@ void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, co
 {
     ASSERT(sessionID != SessionID::defaultSessionID());
     ASSERT(!globalSessionMap().contains(sessionID));
-    globalSessionMap().add(sessionID, std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>()));
+    globalSessionMap().add(sessionID, std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>(sessionID)));
 }
 
 void NetworkStorageSession::ensureSession(SessionID, const String&)
@@ -99,7 +99,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 SoupNetworkSession& NetworkStorageSession::getOrCreateSoupNetworkSession() const
 {
     if (!m_session)
-        m_session = std::make_unique<SoupNetworkSession>(m_cookieStorage.get());
+        m_session = std::make_unique<SoupNetworkSession>(m_sessionID, m_cookieStorage.get());
     return *m_session;
 }
 

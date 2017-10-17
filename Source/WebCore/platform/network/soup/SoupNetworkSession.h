@@ -26,6 +26,7 @@
 #ifndef SoupNetworkSession_h
 #define SoupNetworkSession_h
 
+#include "SessionID.h"
 #include <glib-object.h>
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
@@ -47,7 +48,7 @@ struct SoupNetworkProxySettings;
 class SoupNetworkSession {
     WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit SoupNetworkSession(SoupCookieJar* = nullptr);
+    explicit SoupNetworkSession(SessionID = SessionID::defaultSessionID(), SoupCookieJar* = nullptr);
     ~SoupNetworkSession();
 
     SoupSession* soupSession() const { return m_soupSession.get(); }
