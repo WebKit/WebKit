@@ -670,7 +670,9 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
         auto minimumFontSize = document.settings().minimumFontSize();
         if (minimumFontSize > 0) {
             auto specifiedFontSize = computeBaseSpecifiedFontSize(document, style, percentageAutosizingEnabled);
-            if (specifiedFontSize < minimumFontSize) {
+            // Small font sizes cause a preposterously large (near infinity) line-height. Add a fuzz-factor of 1px which opts out of
+            // boosted line-height.
+            if (specifiedFontSize < minimumFontSize && specifiedFontSize >= 1) {
                 // FIXME: There are two settings which are relevant here: minimum font size, and minimum logical font size (as
                 // well as things like the zoom property, text zoom on the page, and text autosizing). The minimum logical font
                 // size is nonzero by default, and already incorporated into the computed font size, so if we just use the ratio
@@ -706,11 +708,8 @@ inline void StyleBuilderCustom::applyValueLineHeight(StyleResolver& styleResolve
         auto multiplier = computeLineHeightMultiplierDueToFontSize(styleResolver.document(), *styleResolver.style(), primitiveValue);
         if (multiplier == 1)
             computedLineHeight = lineHeight.value();
-        else {
-            std::optional<Length> lineHeight = StyleBuilderConverter::convertLineHeight(styleResolver, value, multiplier);
-            ASSERT(static_cast<bool>(lineHeight));
-            computedLineHeight = lineHeight.value();
-        }
+        else
+            computedLineHeight = StyleBuilderConverter::convertLineHeight(styleResolver, value, multiplier).value();
     }
 
     styleResolver.style()->setLineHeight(WTFMove(computedLineHeight));

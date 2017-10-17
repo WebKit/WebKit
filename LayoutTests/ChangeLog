@@ -1,5 +1,16 @@
 2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Minimum font size may cause elements to have an infinite line-height
+        https://bugs.webkit.org/show_bug.cgi?id=177573
+        <rdar://problem/34573792>
+
+        Reviewed by Dan Bernstein.
+
+        * fast/text/line-height-minimumFontSize-text-small-font-size-expected.txt: Added.
+        * fast/text/line-height-minimumFontSize-text-small-font-size.html: Added.
+
+2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         "Tag" codepoints require the complex text codepath
         https://bugs.webkit.org/show_bug.cgi?id=177251
         <rdar://problem/34384001>
