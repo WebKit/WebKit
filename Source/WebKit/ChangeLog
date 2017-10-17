@@ -1,3 +1,21 @@
+2017-10-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Build failure due to invalid cast of EGLNativeWindowType when targetting 64-bit ARM
+        https://bugs.webkit.org/show_bug.cgi?id=178090
+
+        Reviewed by Michael Catanzaro.
+
+        EGLNativeWindowType can be aliased to a different type depending (at least) on the EGL
+        implementation, its build options, and the libepoxy build options.  Using "static_cast"
+        works when it is a numeric value and the width of the value needs to be optionally
+        extended to 64 bits (e.g. the EGL type is "int" in a 32-bit CPU) but not for pointers,
+        and using "reinterpret_cast" works when the size of a pointer is 64 bits but not in other
+        cases. Therefore it seems reasonable to use a plain C cast expression to solve this
+        particular situation.
+
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp:
+        (WebKit::AcceleratedSurfaceWPE::window const): Use a good old plain C cast expression.
+
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Remove the possibility of installing the old WebKit2 C API
