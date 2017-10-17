@@ -18,18 +18,20 @@
     description("This verifies that when an image loads its resource late, the AX tree is updated to re-add the image.");
 
     if (window.accessibilityController) {
+          document.body.offsetHeight;
           window.jsTestIsAsync = true;
           var content = accessibilityController.accessibleElementById("content");
           debug("BEFORE: Group count: " + content.childrenCount);
 
           document.getElementById("image").onload = function() {
+              document.body.offsetHeight;
               debug("AFTER: Group count: " + content.childrenCount);
               finishJSTest();
           };
 
           setTimeout(function() { 
               document.getElementById("image").src = "resources/cake.png"; 
-          }, 1000);
+          }, 100);
     }
 
 </script>
