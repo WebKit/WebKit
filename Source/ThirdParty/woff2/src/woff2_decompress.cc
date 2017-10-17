@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
   string filename(argv[1]);
   string outfilename = filename.substr(0, filename.find_last_of(".")) + ".ttf";
 
+  // Note: update woff2_dec_fuzzer_new_entry.cc if this pattern changes.
   string input = woff2::GetFileContent(filename);
   const uint8_t* raw_input = reinterpret_cast<const uint8_t*>(input.data());
   string output(std::min(woff2::ComputeWOFF2FinalSize(raw_input, input.size()),

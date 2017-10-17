@@ -18,6 +18,8 @@
 
 #include "./woff2_common.h"
 
+#include "./port.h"
+
 namespace woff2 {
 
 
@@ -25,11 +27,11 @@ uint32_t ComputeULongSum(const uint8_t* buf, size_t size) {
   uint32_t checksum = 0;
   size_t aligned_size = size & ~3;
   for (size_t i = 0; i < aligned_size; i += 4) {
-#if (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
+#if defined(WOFF_LITTLE_ENDIAN)
     uint32_t v = *reinterpret_cast<const uint32_t*>(buf + i);
     checksum += (((v & 0xFF) << 24) | ((v & 0xFF00) << 8) |
       ((v & 0xFF0000) >> 8) | ((v & 0xFF000000) >> 24));
-#elif (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
+#elif defined(WOFF_BIG_ENDIAN)
     checksum += *reinterpret_cast<const uint32_t*>(buf + i);
 #else
     checksum += (buf[i] << 24) | (buf[i + 1] << 16) |

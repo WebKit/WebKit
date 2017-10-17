@@ -118,25 +118,27 @@ bool ReadGlyph(const uint8_t* data, size_t len, Glyph* glyph) {
 
     // Read the run-length coded flags.
     std::vector<std::vector<uint8_t> > flags(num_contours);
-    uint8_t flag = 0;
-    uint8_t flag_repeat = 0;
-    for (int i = 0; i < num_contours; ++i) {
-      flags[i].resize(glyph->contours[i].size());
-      for (size_t j = 0; j < glyph->contours[i].size(); ++j) {
-        if (flag_repeat == 0) {
-          if (!buffer.ReadU8(&flag)) {
-            return FONT_COMPRESSION_FAILURE();
-          }
-          if (flag & kFLAG_REPEAT) {
-            if (!buffer.ReadU8(&flag_repeat)) {
+    {
+      uint8_t flag = 0;
+      uint8_t flag_repeat = 0;
+      for (int i = 0; i < num_contours; ++i) {
+        flags[i].resize(glyph->contours[i].size());
+        for (size_t j = 0; j < glyph->contours[i].size(); ++j) {
+          if (flag_repeat == 0) {
+            if (!buffer.ReadU8(&flag)) {
               return FONT_COMPRESSION_FAILURE();
             }
+            if (flag & kFLAG_REPEAT) {
+              if (!buffer.ReadU8(&flag_repeat)) {
+                return FONT_COMPRESSION_FAILURE();
+              }
+            }
+          } else {
+            flag_repeat--;
           }
-        } else {
-          flag_repeat--;
+          flags[i][j] = flag;
+          glyph->contours[i][j].on_curve = flag & kFLAG_ONCURVE;
         }
-        flags[i][j] = flag;
-        glyph->contours[i][j].on_curve = flag & kFLAG_ONCURVE;
       }
     }
 

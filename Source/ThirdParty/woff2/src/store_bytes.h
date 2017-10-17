@@ -22,6 +22,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "./port.h"
+
 namespace woff2 {
 
 inline size_t StoreU32(uint8_t* dst, size_t offset, uint32_t x) {
@@ -33,10 +35,10 @@ inline size_t StoreU32(uint8_t* dst, size_t offset, uint32_t x) {
 }
 
 inline size_t Store16(uint8_t* dst, size_t offset, int x) {
-#if (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
+#if defined(WOFF_LITTLE_ENDIAN)
   *reinterpret_cast<uint16_t*>(dst + offset) =
       ((x & 0xFF) << 8) | ((x & 0xFF00) >> 8);
-#elif (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
+#elif defined(WOFF_BIG_ENDIAN)
   *reinterpret_cast<uint16_t*>(dst + offset) = static_cast<uint16_t>(x);
 #else
   dst[offset] = x >> 8;
@@ -53,11 +55,11 @@ inline void StoreU32(uint32_t val, size_t* offset, uint8_t* dst) {
 }
 
 inline void Store16(int val, size_t* offset, uint8_t* dst) {
-#if (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
+#if defined(WOFF_LITTLE_ENDIAN)
   *reinterpret_cast<uint16_t*>(dst + *offset) =
       ((val & 0xFF) << 8) | ((val & 0xFF00) >> 8);
   *offset += 2;
-#elif (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
+#elif defined(WOFF_BIG_ENDIAN)
   *reinterpret_cast<uint16_t*>(dst + *offset) = static_cast<uint16_t>(val);
   *offset += 2;
 #else

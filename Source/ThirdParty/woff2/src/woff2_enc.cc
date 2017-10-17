@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include "./compressor.h"
+#include "./brotli/encode.h"
 #include "./buffer.h"
 #include "./font.h"
 #include "./normalize.h"
@@ -33,7 +33,6 @@
 #include "./transform.h"
 #include "./variable_length.h"
 #include "./woff2_common.h"
-
 
 namespace woff2 {
 
@@ -47,16 +46,11 @@ using std::vector;
 const size_t kWoff2HeaderSize = 48;
 const size_t kWoff2EntrySize = 20;
 
-
-bool Compress(const uint8_t* data, const size_t len,
-              uint8_t* result, uint32_t* result_len,
-              brotli::BrotliParams::Mode mode, int quality) {
+bool Compress(const uint8_t* data, const size_t len, uint8_t* result,
+              uint32_t* result_len, BrotliEncoderMode mode, int quality) {
   size_t compressed_len = *result_len;
-  brotli::BrotliParams params;
-  params.mode = mode;
-  params.quality = quality;
-  if (brotli::BrotliCompressBuffer(params, len, data, &compressed_len, result)
-      == 0) {
+  if (BrotliEncoderCompress(quality, BROTLI_DEFAULT_WINDOW, mode, len, data,
+                            &compressed_len, result) == 0) {
     return false;
   }
   *result_len = compressed_len;
@@ -67,14 +61,14 @@ bool Woff2Compress(const uint8_t* data, const size_t len,
                    uint8_t* result, uint32_t* result_len,
                    int quality) {
   return Compress(data, len, result, result_len,
-                  brotli::BrotliParams::MODE_FONT, quality);
+                  BROTLI_MODE_FONT, quality);
 }
 
 bool TextCompress(const uint8_t* data, const size_t len,
                   uint8_t* result, uint32_t* result_len,
                   int quality) {
   return Compress(data, len, result, result_len,
-                  brotli::BrotliParams::MODE_TEXT, quality);
+                  BROTLI_MODE_TEXT, quality);
 }
 
 int KnownTableIndex(uint32_t tag) {
@@ -111,7 +105,8 @@ size_t TableEntrySize(const Table& table) {
 
 size_t ComputeWoff2Length(const FontCollection& font_collection,
                           const std::vector<Table>& tables,
-                          std::map<uint32_t, uint16_t> index_by_offset,
+                          std::map<std::pair<uint32_t, uint32_t>, uint16_t>
+                            index_by_tag_offset,
                           size_t compressed_data_length,
                           size_t extended_metadata_length) {
   size_t size = kWoff2HeaderSize;
@@ -134,7 +129,8 @@ size_t ComputeWoff2Length(const FontCollection& font_collection,
         // no collection entry for xform table
         if (table.tag & 0x80808080) continue;
 
-        uint16_t table_index = index_by_offset[table.offset];
+        std::pair<uint32_t, uint32_t> tag_offset(table.tag, table.offset);
+        uint16_t table_index = index_by_tag_offset[tag_offset];
         size += Size255UShort(table_index);  // 255UInt16 index entry
       }
     }
@@ -326,7 +322,7 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
   }
 
   std::vector<Table> tables;
-  std::map<uint32_t, uint16_t> index_by_offset;
+  std::map<std::pair<uint32_t, uint32_t>, uint16_t> index_by_tag_offset;
 
   for (const auto& font : font_collection.fonts) {
 
@@ -336,8 +332,9 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
         continue;
       }
 
-      if (index_by_offset.find(src_table.offset) == index_by_offset.end()) {
-        index_by_offset[src_table.offset] = tables.size();
+      std::pair<uint32_t, uint32_t> tag_offset(src_table.tag, src_table.offset);
+      if (index_by_tag_offset.find(tag_offset) == index_by_tag_offset.end()) {
+        index_by_tag_offset[tag_offset] = tables.size();
       } else {
         return false;
       }
@@ -362,7 +359,8 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
   }
 
   size_t woff2_length = ComputeWoff2Length(font_collection, tables,
-      index_by_offset, total_compressed_length, compressed_metadata_buf_length);
+      index_by_tag_offset, total_compressed_length,
+      compressed_metadata_buf_length);
   if (woff2_length > *result_length) {
 #ifdef FONT_COMPRESSION_BIN
     fprintf(stderr, "Result allocation was too small (%zd vs %zd bytes).\n",
@@ -435,14 +433,15 @@ bool ConvertTTFToWOFF2(const uint8_t *data, size_t length,
           table.IsReused() ? table.reuse_of->offset : table.offset;
         uint32_t table_length =
           table.IsReused() ? table.reuse_of->length : table.length;
-        if (index_by_offset.find(table_offset) == index_by_offset.end()) {
+        std::pair<uint32_t, uint32_t> tag_offset(table.tag, table_offset);
+        if (index_by_tag_offset.find(tag_offset) == index_by_tag_offset.end()) {
 #ifdef FONT_COMPRESSION_BIN
           fprintf(stderr, "Missing table index for offset 0x%08x\n",
                   table_offset);
 #endif
           return FONT_COMPRESSION_FAILURE();
         }
-        uint16_t index = index_by_offset[table_offset];
+        uint16_t index = index_by_tag_offset[tag_offset];
         Store255UShort(index, &offset, result);
 
       }
