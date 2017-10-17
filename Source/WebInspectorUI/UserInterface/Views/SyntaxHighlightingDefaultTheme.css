@@ -76,7 +76,7 @@
 }
 
 .syntax-highlighted a {
-    color: hsl(240, 100%, 52%);
+    color: var(--syntax-highlight-link-color);
 }
 
 .cm-s-default .cm-link,

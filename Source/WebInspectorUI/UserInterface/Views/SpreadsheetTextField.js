@@ -79,6 +79,9 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (this._editing)
             return;
 
+        if (this._delegate && typeof this._delegate.spreadsheetTextFieldWillStartEditing === "function")
+            this._delegate.spreadsheetTextFieldWillStartEditing(this);
+
         this._editing = true;
         this._startEditingValue = this.value;
 
@@ -86,9 +89,6 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._element.contentEditable = "plaintext-only";
         this._element.spellcheck = false;
         this._element.scrollIntoViewIfNeeded(false);
-
-        // Disable syntax highlighting.
-        this._element.textContent = this._element.textContent;
 
         this._element.focus();
         this._selectText();

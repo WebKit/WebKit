@@ -80,6 +80,7 @@
     --syntax-highlight-number-color: hsl(248, 100%, 40%);
     --syntax-highlight-boolean-color: hsl(309, 85%, 35%);
     --syntax-highlight-string-color: hsl(1, 79%, 42%);
+    --syntax-highlight-link-color: hsl(240, 100%, 52%);
     --syntax-highlight-regexp-color: hsl(20, 100%, 44%);
     --syntax-highlight-symbol-color: hsl(172, 45%, 45%);
     --syntax-highlight-comment-color: hsl(119, 100%, 22%);

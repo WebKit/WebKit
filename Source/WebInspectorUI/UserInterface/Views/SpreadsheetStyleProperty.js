@@ -151,7 +151,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._valueElement = this.element.appendChild(document.createElement("span"));
         this._valueElement.classList.add("value");
-        this._valueElement.textContent = this._property.rawValue;
+        this._renderValue(this._property.rawValue);
 
         if (this._property.editable && this._property.enabled) {
             this._nameElement.tabIndex = 0;
@@ -165,6 +165,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (!this._property.enabled)
             this.element.append(" */");
+    }
+
+    // SpreadsheetTextField delegate
+
+    spreadsheetTextFieldWillStartEditing(textField)
+    {
+        let isEditingName = textField === this._nameTextField;
+        textField.value = isEditingName ? this._property.name : this._property.rawValue;
     }
 
     spreadsheetTextFieldDidChange(textField)
@@ -188,6 +196,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             willRemoveProperty = true;
 
         let isEditingName = textField === this._nameTextField;
+
+        if (!isEditingName && !willRemoveProperty)
+            this._renderValue(propertyValue);
 
         if (propertyName && isEditingName)
             this._newlyAdded = false;
@@ -219,6 +230,37 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     {
         if (textField.value.trim() === "")
             this._remove();
+        else
+            this._renderValue(this._valueElement.textContent);
+    }
+
+    // Private
+
+    _renderValue(value)
+    {
+        const maxValueLength = 150;
+
+        let tokens = WI.tokenizeCSSValue(value).map((token) => {
+            let className = "";
+            if (token.type) {
+                if (token.type.includes("string"))
+                    className = "token-string";
+                else if (token.type.includes("link"))
+                    className = "token-link";
+            }
+
+            if (className) {
+                let span = document.createElement("span");
+                span.classList.add(className);
+                span.textContent = token.value.trimMiddle(maxValueLength);
+                return span;
+            }
+
+            return token.value;
+        });
+
+        this._valueElement.removeChildren();
+        this._valueElement.append(...tokens);
     }
 
     _handleNameChange()

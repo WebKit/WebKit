@@ -99,3 +99,11 @@
 @keyframes style-property-highlight {
     from { background-color: yellow; }
 }
+
+.spreadsheet-style-declaration-editor .property:not(.disabled) .token-link {
+    color: var(--syntax-highlight-link-color);
+}
+
+.spreadsheet-style-declaration-editor .property:not(.disabled) .token-string {
+    color: var(--syntax-highlight-string-color);
+}

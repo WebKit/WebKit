@@ -1,3 +1,40 @@
+2017-10-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: apply syntax highlighting to property values
+        https://bugs.webkit.org/show_bug.cgi?id=178176
+
+        Reviewed by Matt Baker.
+
+        - Highlight links blue and CSS strings dark red.
+        - Truncate URLs and strings over 150 characters.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        Parse CSS values using CodeMirror.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .token-link):
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .token-string):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldWillStartEditing):
+        Replace trancated values with their full version.
+
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        (WI.SpreadsheetStyleProperty.prototype._renderValue):
+        Highlight links and CSS strings in values when not editing.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype.startEditing):
+        Disabling of syntax highlighting moved to spreadsheetTextFieldWillStartEditing.
+
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.syntax-highlighted a):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Make link color a variable.
+
 2017-10-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layers tab mistakenly throws out the root element's layer.

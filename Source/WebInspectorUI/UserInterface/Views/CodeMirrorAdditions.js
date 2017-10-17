@@ -680,3 +680,33 @@ WI.walkTokens = function(cm, mode, initialPosition, callback)
     if (!abort)
         callback(null);
 };
+
+WI.tokenizeCSSValue = function(cssValue)
+{
+    const rulePrefix = "*{X:";
+    let cssRule = rulePrefix + cssValue + "}";
+    let tokens = [];
+
+    let mode = CodeMirror.getMode({indentUnit: 0}, "text/css");
+    let state = CodeMirror.startState(mode);
+    let stream = new CodeMirror.StringStream(cssRule);
+
+    function processToken(token, tokenType, column) {
+        if (column < rulePrefix.length)
+            return;
+
+        if (token === "}" && !tokenType)
+            return;
+
+        tokens.push({value: token, type: tokenType});
+    }
+
+    while (!stream.eol()) {
+        let style = mode.token(stream, state);
+        let value = stream.current();
+        processToken(value, style, stream.start);
+        stream.start = stream.pos;
+    }
+
+    return tokens;
+};
