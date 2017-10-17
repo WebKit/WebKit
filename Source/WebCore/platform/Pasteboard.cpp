@@ -47,7 +47,8 @@ bool Pasteboard::isSafeTypeForDOMToReadAndWrite(const String& type)
 
 bool Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(const String& urlString)
 {
-    return URLParser { urlString }.result().protocolIsInHTTPFamily();
+    auto url = URLParser { urlString }.result();
+    return url.protocolIsInHTTPFamily() || url.protocolIsBlob() || url.protocolIsData();
 }
 
 Ref<SharedBuffer> PasteboardCustomData::createSharedBuffer() const

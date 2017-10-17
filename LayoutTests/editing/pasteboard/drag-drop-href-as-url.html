@@ -30,6 +30,16 @@ function append(text) {
     target.appendChild(div);
 }
 
+function simulateDragAndDrop() {
+    let x = source.offsetLeft + source.offsetWidth / 2;
+    let y = source.offsetTop + source.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(x, y + 300);
+    eventSender.mouseUp();
+}
+
 async function setup() {
     target.addEventListener("dragenter", event => event.preventDefault());
     target.addEventListener("dragover", event => event.preventDefault());
@@ -49,23 +59,25 @@ async function setup() {
     testRunner.waitUntilDone();
 
     await source.decode();
-    let x = source.offsetLeft + source.offsetWidth / 2;
-    let y = source.offsetTop + source.offsetHeight / 2;
 
     append(`1. link.href = "${link.href}"`);
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.leapForward(500);
-    eventSender.mouseMoveTo(x, y + 300);
-    eventSender.mouseUp();
+    simulateDragAndDrop();
 
     link.href = "file:///foo/bar/baz";
     append(`2. link.href = "${link.href}"`);
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.leapForward(500);
-    eventSender.mouseMoveTo(x, y + 300);
-    eventSender.mouseUp();
+    simulateDragAndDrop();
+
+    link.href = "data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D";
+    append(`3. link.href = "${link.href}"`);
+    simulateDragAndDrop();
+
+    link.href = "blob:https://www.webkit.org/1ef10222-3882-48c0-875e-1b55e845a931";
+    append(`4. link.href = "${link.href}"`);
+    simulateDragAndDrop();
+
+    link.href = "ftp://some/server/somewhere";
+    append(`5. link.href = "${link.href}"`);
+    simulateDragAndDrop();
 
     testRunner.notifyDone();
 }
