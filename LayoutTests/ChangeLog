@@ -1,3 +1,19 @@
+2017-09-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Add ports 6679 and 6697 (IRC SSL) to port blacklist
+        https://bugs.webkit.org/show_bug.cgi?id=177544
+        <rdar://problem/34666525>
+
+        Reviewed by Alex Christensen.
+
+        Update test and expectations for new port.
+
+        * security/block-test-expected.txt:
+        * security/block-test.html:
+        * platform/gtk/security/block-test-expected.txt:
+        * platform/mac/security/block-test-expected.txt:
+        * platform/wpe/security/block-test-expected.txt:
+
 2017-09-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [REGRESSION] word-spacing property is incorrectly applied

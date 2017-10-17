@@ -1268,6 +1268,8 @@ bool portAllowed(const URL& url)
         6667, // Standard IRC [Apple addition]
         6668, // Alternate IRC [Apple addition]
         6669, // Alternate IRC [Apple addition]
+        6679, // Alternate IRC SSL [Apple addition]
+        6697, // IRC+SSL [Apple addition]
         invalidPortNumber, // Used to block all invalid port numbers
     };
 
