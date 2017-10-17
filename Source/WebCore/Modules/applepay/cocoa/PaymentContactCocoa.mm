@@ -48,6 +48,54 @@ SOFT_LINK_CLASS(PassKit, PKContact)
 
 namespace WebCore {
 
+static NSString *subLocality(CNPostalAddress *address)
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    if (![address respondsToSelector:@selector(subLocality)])
+        return nil;
+#endif
+    return address.subLocality;
+#else
+    return nil;
+#endif
+}
+
+static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocality)
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    if (![address respondsToSelector:@selector(setSubLocality:)])
+        return;
+#endif
+    address.subLocality = subLocality;
+#endif
+}
+
+static NSString *subAdministrativeArea(CNPostalAddress *address)
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    if (![address respondsToSelector:@selector(subAdministrativeArea)])
+        return nil;
+#endif
+    return address.subAdministrativeArea;
+#else
+    return nil;
+#endif
+}
+
+static void setSubAdministrativeArea(CNMutablePostalAddress *address, NSString *subAdministrativeArea)
+{
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101204)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+    if (![address respondsToSelector:@selector(setSubAdministrativeArea:)])
+        return;
+#endif
+    address.subAdministrativeArea = subAdministrativeArea;
+#endif
+}
+
 static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentContact& contact)
 {
     auto result = adoptNS([allocPKContactInstance() init]);
@@ -100,10 +148,14 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
         // FIXME: StringBuilder should hava a toNSString() function to avoid the extra String allocation.
         [address setStreet:builder.toString()];
 
+        if (!contact.subLocality.isEmpty())
+            setSubLocality(address.get(), contact.subLocality);
         if (!contact.locality.isEmpty())
             [address setCity:contact.locality];
         if (!contact.postalCode.isEmpty())
             [address setPostalCode:contact.postalCode];
+        if (!contact.subAdministrativeArea.isEmpty())
+            setSubAdministrativeArea(address.get(), contact.subAdministrativeArea);
         if (!contact.administrativeArea.isEmpty())
             [address setState:contact.administrativeArea];
         if (!contact.country.isEmpty())
@@ -140,8 +192,10 @@ static ApplePayPaymentContact convert(PKContact *contact)
         String(postalAddress.street).split("\n", addressLines);
         result.addressLines = WTFMove(addressLines);
     }
+    result.subLocality = subLocality(postalAddress);
     result.locality = postalAddress.city;
     result.postalCode = postalAddress.postalCode;
+    result.subAdministrativeArea = subAdministrativeArea(postalAddress);
     result.administrativeArea = postalAddress.state;
     result.country = postalAddress.country;
     result.countryCode = postalAddress.ISOCountryCode;
