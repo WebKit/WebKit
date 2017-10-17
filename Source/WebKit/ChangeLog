@@ -1,3 +1,16 @@
+2017-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] Crash in webkit_web_resource_get_data_finish()
+        https://bugs.webkit.org/show_bug.cgi?id=177107
+
+        Reviewed by Michael Catanzaro.
+
+        Handle errors in webkit_web_resource_get_data() callback.
+
+        * UIProcess/API/glib/WebKitWebResource.cpp:
+        (resourceDataCallback):
+        (webkit_web_resource_get_data):
+
 2017-10-02  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] Fix UIProcess build with GStreamer and without VIDEO
