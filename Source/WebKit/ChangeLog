@@ -1,3 +1,18 @@
+2017-10-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Do not hardcode font family in served remote inspector HTML snippets
+        https://bugs.webkit.org/show_bug.cgi?id=177742
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of hardcoding Cantarell as the font used for the HTML snippets served
+        by the remote inspector handler, use "font: menu" to obtain the system UI
+        font, plus a "font-size" rule for adjusting the size.
+
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest): Change the
+        CSS rules in the served snippet.
+
 2017-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] Crash in webkit_web_resource_get_data_finish()
