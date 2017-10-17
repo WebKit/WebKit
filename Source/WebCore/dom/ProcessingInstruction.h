@@ -59,6 +59,7 @@ private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    void finishedInsertingSubtree() override;
     void removedFrom(ContainerNode&) override;
 
     void checkStyleSheet();

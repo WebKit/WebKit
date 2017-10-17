@@ -280,8 +280,12 @@ Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Container
     if (!insertionPoint.isConnected())
         return InsertionDone;
     document().styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
+    return InsertionShouldCallFinishedInsertingSubtree;
+}
+
+void ProcessingInstruction::finishedInsertingSubtree()
+{
     checkStyleSheet();
-    return InsertionDone;
 }
 
 void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)

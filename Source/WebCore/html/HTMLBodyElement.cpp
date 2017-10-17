@@ -199,7 +199,14 @@ Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode& 
     auto* ownerElement = document().ownerElement();
     if (!is<HTMLFrameElementBase>(ownerElement))
         return InsertionDone;
-    
+
+    return InsertionShouldCallFinishedInsertingSubtree;
+}
+
+void HTMLBodyElement::finishedInsertingSubtree()
+{
+    auto* ownerElement = document().ownerElement();
+    RELEASE_ASSERT(is<HTMLFrameElementBase>(ownerElement));
     auto& ownerFrameElement = downcast<HTMLFrameElementBase>(*ownerElement);
 
     // Read values from the owner before setting any attributes, since setting an attribute can run arbitrary
@@ -211,8 +218,6 @@ Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode& 
         setIntegralAttribute(marginwidthAttr, marginWidth);
     if (marginHeight != -1)
         setIntegralAttribute(marginheightAttr, marginHeight);
-
-    return InsertionDone;
 }
 
 bool HTMLBodyElement::isURLAttribute(const Attribute& attribute) const

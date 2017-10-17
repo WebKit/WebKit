@@ -85,7 +85,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, Node& node
 
 void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVector& postInsertionNotificationTargets)
 {
-    RELEASE_ASSERT(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(insertionPoint));
+    NoEventDispatchAssertion assertNoEventDispatch;
 
     InspectorInstrumentation::didInsertDOMNode(node.document(), node);
 
