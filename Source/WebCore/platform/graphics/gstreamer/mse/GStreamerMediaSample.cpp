@@ -52,8 +52,8 @@ GStreamerMediaSample::GStreamerMediaSample(GstSample* sample, const FloatSize& p
 
     if (GST_BUFFER_PTS_IS_VALID(buffer))
         m_pts = createMediaTime(GST_BUFFER_PTS(buffer));
-    if (GST_BUFFER_DTS_IS_VALID(buffer))
-        m_dts = createMediaTime(GST_BUFFER_DTS(buffer));
+    if (GST_BUFFER_DTS_IS_VALID(buffer) || GST_BUFFER_PTS_IS_VALID(buffer))
+        m_dts = createMediaTime(GST_BUFFER_DTS_OR_PTS(buffer));
     if (GST_BUFFER_DURATION_IS_VALID(buffer))
         m_duration = createMediaTime(GST_BUFFER_DURATION(buffer));
 

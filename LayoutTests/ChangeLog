@@ -1,5 +1,27 @@
 2017-10-17  Alicia Boya García  <aboya@igalia.com>
 
+        [MSE][GStreamer] Insert parser elements in AppendPipeline when demuxing opus or Vorbis
+        https://bugs.webkit.org/show_bug.cgi?id=178076
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        YouTube does not include durations in the WebM container for files
+        containing Opus audio, so we need to read them from the contained
+        stream. Fortunately, GStreamer has an element to do that: opusparse.
+
+        The same thing happens with Vorbis contained in WebM files from the
+        W3C tests, which should also be fixed by the GStreamer element
+        vorbisparse.
+
+        This patch adds an opusparse or vorbisparse element to the
+        AppendPipeline at the sinkpad of the demuxer when either is found.
+
+        Tests: updated expectations.
+
+        * platform/gtk/TestExpectations:
+
+2017-10-17  Alicia Boya García  <aboya@igalia.com>
+
         [GStreamer][MSE] Unreviewed microgardening
         https://bugs.webkit.org/show_bug.cgi?id=178344
 

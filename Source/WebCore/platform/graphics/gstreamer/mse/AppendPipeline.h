@@ -118,6 +118,7 @@ private:
     GRefPtr<GstBus> m_bus;
     GRefPtr<GstElement> m_appsrc;
     GRefPtr<GstElement> m_demux;
+    GRefPtr<GstElement> m_parser; // Optional.
 #if ENABLE(ENCRYPTED_MEDIA)
     GRefPtr<GstElement> m_decryptor;
 #endif
