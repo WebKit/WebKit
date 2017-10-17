@@ -284,6 +284,11 @@ public:
         return m_currentDecodingFrame < m_frames.size() ? m_frames[m_currentDecodingFrame].get() : 0;
     }
 
+    const GIFFrameContext* frameContext(size_t frame) const
+    {
+        return frame < m_frames.size() ? m_frames[frame].get() : nullptr;
+    }
+
 private:
     bool parse(size_t dataPosition, size_t len, bool parseSizeOnly);
     void setRemainingBytes(size_t);

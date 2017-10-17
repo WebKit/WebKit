@@ -1,3 +1,25 @@
+2017-10-05  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] GIFImageDecoder never clears decoded frames even when told to do so
+        https://bugs.webkit.org/show_bug.cgi?id=177864
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix GIFImageDecoder::clearFrameBufferCache() so it really deletes decoded buffers, and modify
+        GIFImageDecoder to be able to decode frames that are not requested in the expected order.
+
+        Covered by existent tests.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::findFirstRequiredFrameToDecode):
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::decode):
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFImageReader::frameContext const):
+
 2017-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Align BitmapImage::LargeAnimationCutoff to a megabyte value
