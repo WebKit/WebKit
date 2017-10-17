@@ -1,3 +1,38 @@
+2017-08-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [CMake] Fix broken use of REQUIRED with find modules
+        https://bugs.webkit.org/show_bug.cgi?id=175427
+
+        Reviewed by Michael Catanzaro.
+
+        Module name passed to find_package_handle_standard_args() must exactly
+        match file name of CMake find module including letter case, e.g. "WebP"
+        must be used in FindWebP.cmake file. Otherwise find_package() arguments
+        (REQUIRED, QUIET, version) are not processed correctly.
+
+        To continue using old XXX_FOUND variables without case changes porting
+        to new find_package_handle_standard_args syntax which has FOUND_VAR
+        parameter. Unfortunately, variable name GTK_UNIX_PRINT_FOUND is not
+        allowed by find_package_handle_standard_args when package name is
+        GTKUnixPrint, so it's replaced to GTKUnixPrint_FOUND (default).
+
+        * Source/cmake/FindGTKUnixPrint.cmake:
+        * Source/cmake/FindGeoClue2.cmake:
+        * Source/cmake/FindHyphen.cmake:
+        * Source/cmake/FindLibEpoxy.cmake:
+        * Source/cmake/FindLibGBM.cmake:
+        * Source/cmake/FindLibsecret.cmake:
+        * Source/cmake/FindLibtasn1.cmake:
+        * Source/cmake/FindLibxkbcommon.cmake:
+        * Source/cmake/FindOpenGL.cmake:
+        * Source/cmake/FindOpenGLES2.cmake:
+        * Source/cmake/FindOpenWebRTC.cmake:
+        * Source/cmake/FindWPEBackend-mesa.cmake:
+        * Source/cmake/FindWPEBackend.cmake:
+        * Source/cmake/FindWayland.cmake:
+        * Source/cmake/FindWebP.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Remove the possibility of installing the old WebKit2 C API

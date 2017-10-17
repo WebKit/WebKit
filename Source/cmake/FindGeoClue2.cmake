@@ -48,4 +48,5 @@ if (GEOCLUE2_VERSION)
 endif ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GEOCLUE2 DEFAULT_MSG VERSION_OK)
+find_package_handle_standard_args(GeoClue2 REQUIRED_VARS VERSION_OK
+                                  FOUND_VAR GEOCLUE2_FOUND)

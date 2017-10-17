@@ -1,7 +1,7 @@
 # - Try to find gtk-unix-print
 # Once done, this will define
 #
-#  GTK_UNIX_PRINT_FOUND - system has gtk-unix-print
+#  GTKUnixPrint_FOUND - system has gtk-unix-print
 #  GTK_UNIX_PRINT_INCLUDE_DIRS - the gtk-unix-print include directories
 #  GTK_UNIX_PRINT_LIBRARIES - link these to use gtk-unix-print
 #
@@ -46,4 +46,4 @@ if (GTK_UNIX_PRINT_VERSION)
 endif ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK_UNIX_PRINT DEFAULT_MSG GTK_UNIX_PRINT_INCLUDE_DIRS GTK_UNIX_PRINT_LIBRARIES VERSION_OK)
+find_package_handle_standard_args(GTKUnixPrint REQUIRED_VARS GTK_UNIX_PRINT_INCLUDE_DIRS GTK_UNIX_PRINT_LIBRARIES VERSION_OK)
