@@ -66,6 +66,11 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     auto* pool = configuration->processPool();
     m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
 
+#if ENABLE(MEMORY_SAMPLER)
+    if (getenv("WEBKIT_SAMPLE_MEMORY"))
+        pool->startMemorySampler(0);
+#endif
+
     m_backend = backend;
     if (!m_backend)
         m_backend = wpe_view_backend_create();

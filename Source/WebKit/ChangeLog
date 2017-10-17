@@ -1,3 +1,15 @@
+2017-08-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Enable MEMORY_SAMPLER
+        https://bugs.webkit.org/show_bug.cgi?id=176099
+
+        Reviewed by Michael Catanzaro.
+
+        Enable it at runtime if the environment variable WEBKIT_SAMPLE_MEMORY is set.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_compositingManagerProxy):
+
 2017-08-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Build failure with Clang 4.0.1: no matching conversion for functional-style cast from 'pointer' (aka 'unsigned short *') to 'WTF::String'
