@@ -1,3 +1,21 @@
+2017-10-17  John Wilander  <wilander@apple.com>
+
+        Add and remove cookie partition accordingly in intermediary redirect requests
+        https://bugs.webkit.org/show_bug.cgi?id=178369
+        <rdar://problem/34467603>
+
+        Reviewed by Brent Fulgham.
+
+        Adds the function statisticsNotifyObserver().
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::statisticsNotifyObserver):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsNotifyObserver):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2017-10-17  Youenn Fablet  <youenn@apple.com>
 
         Cache API implementation should be able to compute storage size for WebKit client applications.

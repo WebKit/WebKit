@@ -133,7 +133,9 @@ public:
     unsigned imageCountInGeneralPasteboard() const;
 
     void setAllowsAnySSLCertificate(bool);
-    
+
+    void statisticsNotifyObserver();
+
 private:
     InjectedBundle();
     ~InjectedBundle();
