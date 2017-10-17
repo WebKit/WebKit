@@ -1,3 +1,15 @@
+2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Only report libgcrypt errors when logging is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=177360
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * pal/crypto/gcrypt/Utilities.h:
+        (PAL::GCrypt::logError): Only print out the libgcrypt error on stderr
+        when logging is enabled at build-time, avoiding unnecessary output in
+        non-debugging use cases.
+
 2017-09-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Libgcrypt warning: missing initialization - please fix the application
