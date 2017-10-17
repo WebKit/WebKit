@@ -1,0 +1,12 @@
+This tests that aria-multiselectable is exposed correctly for grids.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gridMultiselectableUnspecified.isMultiSelectable is true
+PASS gridMultiselectableTrue.isMultiSelectable is true
+PASS gridMultiselectableFalse.isMultiSelectable is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

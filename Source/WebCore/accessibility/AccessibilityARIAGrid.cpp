@@ -82,6 +82,12 @@ bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSe
     return true;
 }
 
+bool AccessibilityARIAGrid::isMultiSelectable() const
+{
+    const AtomicString& ariaMultiSelectable = getAttribute(HTMLNames::aria_multiselectableAttr);
+    return !equalLettersIgnoringASCIICase(ariaMultiSelectable, "false");
+}
+
 void AccessibilityARIAGrid::addRowDescendant(AccessibilityObject* rowChild, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
 {
     if (!rowChild)

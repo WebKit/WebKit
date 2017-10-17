@@ -1,3 +1,13 @@
+2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: ARIA grids claim to be multiselectable even with aria-multiselectable is set to false
+        https://bugs.webkit.org/show_bug.cgi?id=177498
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-multiselectable-grid-expected.txt: Added.
+        * accessibility/aria-multiselectable-grid.html: Added.
+
 2017-09-25  Per Arne Vollan  <pvollan@apple.com>
 
         Crash in WebCore::TreeScope::documentScope
