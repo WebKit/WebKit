@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div role="button" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="checkbox" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="img" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="math" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="menu">
+    <div role="menuitemcheckbox" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+    <div role="menuitemradio" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  </div>
+  <div role="listbox">
+    <div role="option" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  </div>
+  <div role="progressbar" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="radio" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="scrollbar" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="separator" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="slider" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="switch" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  <div role="tablist">
+    <div role="tab" tabindex="0" class="ex"><div>a</div><div>b</div></div>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that roles with children presentational true report no children.");
+    if (window.accessibilityController) {
+        var elements = document.querySelectorAll(".ex");
+        var count = elements.length;
+        for (var i = 0; i < count; i++) {
+	    var el = elements[i];
+            el.focus();
+            debug(el.getAttribute("role") + " childrenCount: " + accessibilityController.focusedElement.childrenCount);
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
