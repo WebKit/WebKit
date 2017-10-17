@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2014-2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +27,6 @@
 #include "config.h"
 #include "EventHandler.h"
 
-#include "DataTransfer.h"
-#include "FloatPoint.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -38,7 +37,14 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
+
+#if ENABLE(DRAG_SUPPORT)
+#include "DataTransfer.h"
+#endif
+
+#if PLATFORM(GTK)
 #include "Scrollbar.h"
+#endif
 
 namespace WebCore {
 
@@ -80,8 +86,8 @@ bool EventHandler::passMouseDownEventToWidget(Widget*)
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
 {
-    //GTK+ activation is not necessarily tied to mouse events, so it may
-    //not make sense to implement this
+    // GTK+ activation is not necessarily tied to mouse events, so it may
+    // not make sense to implement this
 
     notImplemented();
     return false;
@@ -133,11 +139,18 @@ OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
 // for styled scrollbars.
 bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult& result, const PlatformWheelEvent& event) const
 {
+#if PLATFORM(GTK)
     FrameView* view = m_frame.view();
     Scrollbar* scrollbar = view ? view->scrollbarAtPoint(event.position()) : nullptr;
     if (!scrollbar)
         scrollbar = result.scrollbar();
     return scrollbar && scrollbar->orientation() == HorizontalScrollbar;
+#else
+    UNUSED_PARAM(result);
+    UNUSED_PARAM(event);
+    notImplemented();
+    return false;
+#endif
 }
 
 }

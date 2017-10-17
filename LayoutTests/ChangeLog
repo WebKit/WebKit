@@ -1,3 +1,17 @@
+2017-08-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Some event handlers not working.
+        https://bugs.webkit.org/show_bug.cgi?id=175864
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expected failures for tests that now pass, add new expectation
+        for a test that is failing also on GTK+ and rebaseline a test with
+        the same expected result than on GTK+.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/events/focus-label-legend-elements-with-tab-expected.txt: Added.
+
 2017-10-13  Brent Fulgham  <bfulgham@apple.com>
 
         Protect FrameView during style calculations

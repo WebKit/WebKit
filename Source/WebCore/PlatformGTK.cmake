@@ -154,7 +154,8 @@ list(APPEND WebCorePlatformGTK_SOURCES
     editing/gtk/EditorGtk.cpp
 
     page/gtk/DragControllerGtk.cpp
-    page/gtk/EventHandlerGtk.cpp
+
+    platform/glib/EventHandlerGLib.cpp
 
     platform/graphics/PlatformDisplay.cpp
 
