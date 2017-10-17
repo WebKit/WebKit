@@ -24,38 +24,40 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 import os.path
-import sys
-from optparse import OptionParser
 
-from GenerateSettings import *
+from Settings import license, makeConditionalString, makeSetterFunctionName
 
 
-def main():
-    parser = OptionParser(usage="usage: %prog --input file")
-    parser.add_option('--input', dest='input', help='file to generate settings from', metavar='file')
-    parser.add_option('--outputDir', dest='outputDir', help='directory to generate file in', metavar='dir')
+def generateSettingsImplementationFile(outputDirectory, settings):
+    outputPath = os.path.join(outputDirectory, "Settings.cpp")
+    outputFile = open(outputPath, 'w')
+    outputFile.write(license())
 
-    (options, arguments) = parser.parse_args()
+    outputFile.write("#include \"config.h\"\n")
+    outputFile.write("#include \"Settings.h\"\n\n")
 
-    if not options.input:
-        print "Error: must provide an input file"
-        parser.print_usage()
-        exit(-1)
+    outputFile.write("#include \"Page.h\"\n")
+    outputFile.write("#include \"SettingsDefaultValues.h\"\n\n")
 
-    outputDirectory = options.outputDir if options.outputDir else os.getcwd()
+    outputFile.write("namespace WebCore {\n\n")
 
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
+    outputFile.write("Ref<Settings> Settings::create(Page* page)\n")
+    outputFile.write("{\n")
+    outputFile.write("    return adoptRef(*new Settings(page));\n")
+    outputFile.write("}\n\n")
 
-    settings = parseInput(options.input)
+    outputFile.write("Settings::Settings(Page* page)\n")
+    outputFile.write("    : SettingsBase(page)\n")
+    outputFile.write("    SETTINGS_INITIALIZER_LIST\n")
+    outputFile.write("{\n")
+    outputFile.write("}\n\n")
 
-    generateSettingsHeaderFile(outputDirectory, settings)
-    generateSettingsImplementationFile(outputDirectory, settings)
-    generateSettingsMacrosHeader(outputDirectory, settings)
-    generateInternalSettingsIDLFile(outputDirectory, settings)
-    generateInternalSettingsHeaderFile(outputDirectory, settings)
-    generateInternalSettingsImplementationFile(outputDirectory, settings)
+    outputFile.write("Settings::~Settings()\n")
+    outputFile.write("{\n")
+    outputFile.write("}\n\n")
 
+    outputFile.write("SETTINGS_SETTER_BODIES\n\n")
 
-if __name__ == '__main__':
-    main()
+    outputFile.write("}\n")
+
+    outputFile.close()

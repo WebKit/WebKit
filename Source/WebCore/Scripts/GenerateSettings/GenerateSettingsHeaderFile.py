@@ -24,38 +24,40 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 import os.path
-import sys
-from optparse import OptionParser
 
-from GenerateSettings import *
+from Settings import license, makeConditionalString, makeSetterFunctionName, makePreferredConditional
 
 
-def main():
-    parser = OptionParser(usage="usage: %prog --input file")
-    parser.add_option('--input', dest='input', help='file to generate settings from', metavar='file')
-    parser.add_option('--outputDir', dest='outputDir', help='directory to generate file in', metavar='dir')
+def generateSettingsHeaderFile(outputDirectory, settings):
+    outputPath = os.path.join(outputDirectory, "Settings.h")
+    outputFile = open(outputPath, 'w')
+    outputFile.write(license())
 
-    (options, arguments) = parser.parse_args()
+    outputFile.write("#pragma once\n\n")
 
-    if not options.input:
-        print "Error: must provide an input file"
-        parser.print_usage()
-        exit(-1)
+    outputFile.write("#include \"SettingsBase.h\"\n")
+    outputFile.write("#include \"SettingsMacros.h\"\n")
+    outputFile.write("#include <wtf/RefCounted.h>\n\n")
 
-    outputDirectory = options.outputDir if options.outputDir else os.getcwd()
+    outputFile.write("namespace WebCore {\n\n")
 
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
+    outputFile.write("class Page;\n\n")
 
-    settings = parseInput(options.input)
+    outputFile.write("class Settings : public SettingsBase, public RefCounted<Settings> {\n")
+    outputFile.write("    WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;\n")
+    outputFile.write("public:\n")
+    outputFile.write("    static Ref<Settings> create(Page*);\n")
+    outputFile.write("    ~Settings();\n\n")
 
-    generateSettingsHeaderFile(outputDirectory, settings)
-    generateSettingsImplementationFile(outputDirectory, settings)
-    generateSettingsMacrosHeader(outputDirectory, settings)
-    generateInternalSettingsIDLFile(outputDirectory, settings)
-    generateInternalSettingsHeaderFile(outputDirectory, settings)
-    generateInternalSettingsImplementationFile(outputDirectory, settings)
+    outputFile.write("    SETTINGS_GETTERS_AND_SETTERS\n\n")
 
+    outputFile.write("private:\n")
+    outputFile.write("    explicit Settings(Page*);\n\n")
 
-if __name__ == '__main__':
-    main()
+    outputFile.write("    SETTINGS_MEMBER_VARIABLES\n")
+
+    outputFile.write("};\n\n")
+
+    outputFile.write("}\n")
+
+    outputFile.close()

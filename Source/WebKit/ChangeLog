@@ -1,3 +1,16 @@
+2017-10-17  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Generate Settings.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=178361
+
+        Reviewed by Dean Jackson.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
+            Delete the old Settings.h from the forwarding 
+            headers directory to allow the build to work.
+
 2017-10-17  John Wilander  <wilander@apple.com>
 
         Add and remove cookie partition accordingly in intermediary redirect requests

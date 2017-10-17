@@ -14,6 +14,9 @@ add_definitions(-DWEBKIT2_COMPILATION)
 add_definitions(-DLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
+# Temporary workaround to allow the build to succeed.
+file(REMOVE "${FORWARDING_HEADERS_DIR}/WebCore/Settings.h")
+
 set(WebKit_USE_PREFIX_HEADER ON)
 
 add_custom_target(webkitwpe-forwarding-headers
