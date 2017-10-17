@@ -1300,6 +1300,28 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     ownerRenderer->view().frameView().scheduleRelayout();
 }
 
+#if ENABLE(TEXT_AUTOSIZING)
+static void applyTextSizingIfNeeded(RenderElement& layoutRoot)
+{
+    auto& settings = layoutRoot.settings();
+    if (!settings.textAutosizingEnabled() || layoutRoot.view().printing())
+        return;
+    auto minimumZoomFontSize = settings.minimumZoomFontSize();
+    if (!minimumZoomFontSize)
+        return;
+    auto textAutosizingWidth = layoutRoot.page().textAutosizingWidth();
+    if (auto overrideWidth = settings.textAutosizingWindowSizeOverride().width())
+        textAutosizingWidth = overrideWidth;
+    if (!textAutosizingWidth)
+        return;
+    layoutRoot.adjustComputedFontSizesOnBlocks(minimumZoomFontSize, textAutosizingWidth);
+    if (!layoutRoot.needsLayout())
+        return;
+    LOG(TextAutosizing, "Text Autosizing: minimumZoomFontSize=%.2f textAutosizingWidth=%.2f", minimumZoomFontSize, textAutosizingWidth);
+    layoutRoot.layout();
+}
+#endif
+
 void FrameView::layout(bool allowSubtree)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
@@ -1497,20 +1519,7 @@ void FrameView::layout(bool allowSubtree)
         root->layout();
 
 #if ENABLE(TEXT_AUTOSIZING)
-        if (frame().settings().textAutosizingEnabled() && !root->view().printing()) {
-            float minimumZoomFontSize = frame().settings().minimumZoomFontSize();
-            float textAutosizingWidth = frame().page() ? frame().page()->textAutosizingWidth() : 0;
-            if (int overrideWidth = frame().settings().textAutosizingWindowSizeOverride().width())
-                textAutosizingWidth = overrideWidth;
-
-            LOG(TextAutosizing, "Text Autosizing: minimumZoomFontSize=%.2f textAutosizingWidth=%.2f", minimumZoomFontSize, textAutosizingWidth);
-            
-            if (minimumZoomFontSize && textAutosizingWidth) {
-                root->adjustComputedFontSizesOnBlocks(minimumZoomFontSize, textAutosizingWidth);
-                if (root->needsLayout())
-                    root->layout();
-            }
-        }
+        applyTextSizingIfNeeded(*root);
 #endif
 
         ASSERT(m_layoutPhase == InRenderTreeLayout);
