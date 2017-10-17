@@ -1,3 +1,15 @@
+2017-09-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] object:state-changed notifications missing for multiple ARIA attributes
+        https://bugs.webkit.org/show_bug.cgi?id=177542
+
+        Add platform support for the notifications. Also add support for getting the
+        boolean argument indicating whether the state has been set or unset.
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+
 2017-09-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Object attributes are missing for ARIA live region roles

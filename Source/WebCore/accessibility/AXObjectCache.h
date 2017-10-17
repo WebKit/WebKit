@@ -265,6 +265,7 @@ public:
         AXCheckedStateChanged,
         AXChildrenChanged,
         AXCurrentChanged,
+        AXDisabledStateChanged,
         AXFocusedUIElementChanged,
         AXLayoutComplete,
         AXLoadComplete,
@@ -284,6 +285,9 @@ public:
         AXRowExpanded,
         AXExpandedChanged,
         AXInvalidStatusChanged,
+        AXPressedStateChanged,
+        AXReadOnlyStatusChanged,
+        AXRequiredStatusChanged,
         AXTextChanged,
         AXAriaAttributeChanged,
         AXElementBusyChanged

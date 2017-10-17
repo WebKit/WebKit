@@ -1477,6 +1477,14 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
         handleAriaModalChange(element);
     else if (attrName == aria_currentAttr)
         postNotification(element, AXObjectCache::AXCurrentChanged);
+    else if (attrName == aria_disabledAttr)
+        postNotification(element, AXObjectCache::AXDisabledStateChanged);
+    else if (attrName == aria_pressedAttr)
+        postNotification(element, AXObjectCache::AXPressedStateChanged);
+    else if (attrName == aria_readonlyAttr)
+        postNotification(element, AXObjectCache::AXReadOnlyStatusChanged);
+    else if (attrName == aria_requiredAttr)
+        postNotification(element, AXObjectCache::AXRequiredStatusChanged);
     else
         postNotification(element, AXObjectCache::AXAriaAttributeChanged);
 }

@@ -1,3 +1,25 @@
+2017-09-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] object:state-changed notifications missing for multiple ARIA attributes
+        https://bugs.webkit.org/show_bug.cgi?id=177542
+
+        Add new notification types to AXObjectCache in order to support the notifications
+        needed, post the notifications to all platforms, emit the signals for ATK.
+
+        Reviewed by Chris Fleizach.
+
+        Tests: accessibility/gtk/aria-disabled-changed-notification.html
+               accessibility/gtk/aria-expanded-changed-notification.html
+               accessibility/gtk/aria-pressed-changed-notification.html
+               accessibility/gtk/aria-readonly-changed-notification.html
+               accessibility/gtk/aria-required-changed-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2017-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         Add ports 6679 and 6697 (IRC SSL) to port blacklist
