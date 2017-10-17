@@ -1,3 +1,35 @@
+2017-10-04  Filip Pizlo  <fpizlo@apple.com>
+
+        bmalloc mutex should be adaptive
+        https://bugs.webkit.org/show_bug.cgi?id=177839
+
+        Reviewed by Michael Saboff.
+        
+        This pulls the WordLock algorithm into bmalloc, mostly by copy-pasting the code. We need to
+        copy paste because sometimes we build WTF without bmalloc, so WTF cannot rely on bmalloc for
+        anything other than malloc.
+
+        Reland after fixing ancient WordLock bug: the notify_one has to happen with the lock held
+        to ensure it doesn't run after that thread has died.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::compareExchangeWeak):
+        (bmalloc::compareExchangeStrong):
+        * bmalloc/PerThread.h:
+        * bmalloc/StaticMutex.cpp:
+        (bmalloc::StaticMutex::lockSlow):
+        (bmalloc::StaticMutex::unlockSlow):
+        (bmalloc::StaticMutex::lockSlowCase): Deleted.
+        * bmalloc/StaticMutex.h:
+        (bmalloc::StaticMutex::try_lock):
+        (bmalloc::StaticMutex::isLocked const):
+        (bmalloc::StaticMutex::init):
+        (bmalloc::StaticMutex::tryLock):
+        (bmalloc::StaticMutex::lock):
+        (bmalloc::StaticMutex::unlock):
+        (bmalloc::sleep): Deleted.
+        (bmalloc::waitUntilFalse): Deleted.
+
 2017-09-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed build fix for Clang with libc++
