@@ -1,3 +1,13 @@
+2017-09-27  Zalan Bujtas  <zalan@apple.com>
+
+        Deferred image size change makes image-load-on-delay.html flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=177520
+        <rdar://problem/34674299>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/TestExpectations:
+
 2017-09-26  Zalan Bujtas  <zalan@apple.com>
 
         AX: Defer RenderImage's imageChanged event until after layout is done.

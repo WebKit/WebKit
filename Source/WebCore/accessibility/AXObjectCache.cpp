@@ -2790,6 +2790,29 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredRecomputeIsIgnoredList.clear();
 }
 
+static bool rendererNeedsDeferredUpdate(RenderObject& renderer)
+{
+    ASSERT(!renderer.beingDestroyed());
+    auto& document = renderer.document();
+    return renderer.needsLayout() || document.needsStyleRecalc() || document.inRenderTreeUpdate() || (document.view() && document.view()->isInRenderTreeLayout());
+}
+
+void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
+{
+    if (!element)
+        return;
+
+    auto* renderer = element->renderer();
+    if (!renderer || renderer->beingDestroyed())
+        return;
+
+    if (rendererNeedsDeferredUpdate(*renderer)) {
+        m_deferredRecomputeIsIgnoredList.add(element);
+        return;
+    }
+    recomputeIsIgnored(renderer);
+}
+
 void AXObjectCache::deferRecomputeIsIgnored(Element* element)
 {
     if (!element)
@@ -2806,12 +2829,11 @@ void AXObjectCache::deferTextChangedIfNeeded(Node* node)
     if (!node)
         return;
 
-    if (node->renderer() && node->renderer()->beingDestroyed())
+    auto* renderer = node->renderer();
+    if (renderer && renderer->beingDestroyed())
         return;
 
-    auto& document = node->document();
-    // FIXME: We should just defer all text changes.
-    if (document.needsStyleRecalc() || document.inRenderTreeUpdate() || (document.view() && document.view()->isInRenderTreeLayout())) {
+    if (renderer && rendererNeedsDeferredUpdate(*renderer)) {
         m_deferredTextChangedList.add(node);
         return;
     }
