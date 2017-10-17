@@ -1,3 +1,21 @@
+2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] STATE_CHECKABLE should be removed from radio buttons in radiogroups with aria-readonly="true"
+        https://bugs.webkit.org/show_bug.cgi?id=177931
+
+        Reviewed by Chris Fleizach.
+
+        Add a check in canSetValueAttribute() for readonly radiogroup ancestors of
+        radio buttons.
+
+        Test: accessibility/gtk/aria-readonly-radiogroup.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetValueAttribute const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::radioGroupAncestor const):
+        * accessibility/AccessibilityObject.h:
+
 2017-10-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Explicitly-set aria-sort value of "none" should be exposed as an object attribute

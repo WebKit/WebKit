@@ -2099,8 +2099,13 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
 #if PLATFORM(GTK)
     // In ATK, input types which support aria-readonly are treated as having a
     // settable value if the user can modify the widget's value or its state.
-    if (supportsARIAReadOnly() || isRadioButton())
+    if (supportsARIAReadOnly())
         return true;
+
+    if (isRadioButton()) {
+        auto radioGroup = radioGroupAncestor();
+        return radioGroup ? radioGroup->ariaReadOnlyValue() != "true" : true;
+    }
 #endif
 
     if (isWebArea()) {
