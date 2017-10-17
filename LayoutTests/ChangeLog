@@ -1,3 +1,14 @@
+2017-10-16  Chris Dumez  <cdumez@apple.com>
+
+        DOMQuad.p1 / p2 / p3 / p4 should behave as [SameObject]
+        https://bugs.webkit.org/show_bug.cgi?id=178366
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * fast/css/DOMQuad-points-SameObject.html: Added.
+
 2017-10-16  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add subLocality and subAdministrativeArea to ApplePayPaymentContact and ApplePayError

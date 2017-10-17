@@ -34,6 +34,7 @@
     Constructor(optional unrestricted double x = 0, optional unrestricted double y = 0,
         optional unrestricted double z = 0, optional unrestricted double w = 1),
     Exposed=(Window,Worker),
+    GenerateIsReachable=Impl,
     ImplementationLacksVTable
 ]
 interface DOMPoint : DOMPointReadOnly {
