@@ -1,3 +1,25 @@
+2017-10-16  Maureen Daum  <mdaum@apple.com>
+
+        If we fail to delete any database file, don't remove its information from the tracker database
+        <rdar://problem/34576132> and https://bugs.webkit.org/show_bug.cgi?id=178251
+
+        Reviewed by Brady Eidson.
+
+        Add tests that verify we correctly delete databases and remove their information from
+        the tracker database, even if the database doesn't exist. Verify that if we fail to
+        delete a database, we don't remove its information from the tracker database.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Move DatabaseTrackerTest.cpp to DatabaseTrackerTest.mm so that we can use the cocoa
+        method for creating a temporary directory in the tests.
+        * TestWebKitAPI/Tests/WebCore/DatabaseTrackerTest.cpp: Removed.
+        The existing test was copied to DatabaseTrackerTest.mm.
+        * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::addToDatabasesTable):
+        (TestWebKitAPI::removeDirectoryAndAllContents):
+        (TestWebKitAPI::createFileAtPath):
+
 2017-10-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA form role should be mapped to ATK_ROLE_LANDMARK; not ATK_ROLE_FORM
