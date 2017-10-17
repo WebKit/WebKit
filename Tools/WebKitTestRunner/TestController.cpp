@@ -2299,7 +2299,7 @@ void TestController::removeAllSessionCredentials()
 
 #endif
 
-#if WK_API_ENABLED
+#if PLATFORM(COCOA) && WK_API_ENABLED
 struct ClearDOMCacheCallbackContext {
     explicit ClearDOMCacheCallbackContext(TestController& controller)
         : testController(controller)
@@ -2320,7 +2320,7 @@ static void clearDOMCacheCallback(void* userData)
 
 void TestController::clearDOMCache(WKStringRef origin)
 {
-#if WK_API_ENABLED
+#if PLATFORM(COCOA) && WK_API_ENABLED
     auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
     ClearDOMCacheCallbackContext context(*this);
 
