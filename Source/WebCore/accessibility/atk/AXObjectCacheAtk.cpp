@@ -271,7 +271,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         break;
 
     case AXReadOnlyStatusChanged:
+#if ATK_CHECK_VERSION(2,15,3)
         atk_object_notify_state_change(axObject, ATK_STATE_READ_ONLY, !coreObject->canSetValueAttribute());
+#endif
         break;
 
     case AXRequiredStatusChanged:

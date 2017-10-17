@@ -1,3 +1,17 @@
+2017-10-02  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        REGRESSION(r222640) [GTK] Build broken with ATK 2.14
+        https://bugs.webkit.org/show_bug.cgi?id=177634
+
+        Reviewed by Michael Catanzaro.
+
+        Use ATK_CHECK_VERSION to prevent the build failure.
+
+        No new tests. This fixes a downstream build failure.
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2017-09-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] object:state-changed notifications missing for multiple ARIA attributes
