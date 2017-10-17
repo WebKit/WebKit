@@ -41,10 +41,8 @@
     "phoneticName",
     "postalAddress",
     "addressLines",
-    "subLocality",
     "locality",
     "postalCode",
-    "subAdministrativeArea",
     "administrativeArea",
     "country",
     "countryCode"
