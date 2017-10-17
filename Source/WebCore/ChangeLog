@@ -1,3 +1,22 @@
+2017-10-16  Maureen Daum  <mdaum@apple.com>
+
+        If an origin doesn't have databases in the Databases table we should still remove its information from disk in DatabaseTracker::deleteOrigin()
+        https://bugs.webkit.org/show_bug.cgi?id=178281
+        <rdar://problem/34576132>
+
+        Reviewed by Brent Fulgham.
+
+        New test:
+        DatabaseTracker.DeleteOriginWithMissingEntryInDatabasesTable
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteOrigin):
+        If databaseNames is empty, don't bail early. Instead, delete everything in the directory
+        containing the databases for this origin. This condition indicates that we previously
+        tried to remove the origin but didn't get all of the way through the deletion process.
+        Because we have lost track of the databases for this origin, we can assume that no
+        other process is accessing them. This means it should be safe to delete them outright.
+
 2017-10-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed attempt to fix the Windows debug build.
