@@ -30,9 +30,11 @@ promise_test(async test => {
 
     var keys = await self.caches.keys();
     assert_not_equals(keys.length, 0, "keys should not be empty");
+    assert_true(testRunner.domCacheSize(window.location.origin) > 0, "Actual origin cache size is not zero");
 
     testRunner.clearDOMCache(window.location.origin);
     assert_false(testRunner.hasDOMCache(window.location.origin), "Actual origin cache is cleared");
+    assert_equals(testRunner.domCacheSize(window.location.origin), 0, "Actual origin cache size is zero");
 
     keys = await self.caches.keys();
     assert_equals(keys.length, 0, "keys should be empty");

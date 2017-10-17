@@ -1,3 +1,24 @@
+2017-10-17  Youenn Fablet  <youenn@apple.com>
+
+        Cache API implementation should be able to compute storage size for WebKit client applications.
+        https://bugs.webkit.org/show_bug.cgi?id=178350
+
+        Reviewed by Chris Dumez.
+
+        Adding support for a domCacheSize getter.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::domCacheSize):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::FetchCacheSizeForOriginCallbackContext::FetchCacheSizeForOriginCallbackContext):
+        (WTR::fetchCacheSizeForOriginCallback):
+        (WTR::TestController::domCacheSize):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-10-17  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GStreamer][GTK][WPE] update-webkit-libs-jhbuild fails to detect changes in included moduleset files

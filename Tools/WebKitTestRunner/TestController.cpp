@@ -2373,6 +2373,36 @@ bool TestController::hasDOMCache(WKStringRef origin)
     return context.result;
 }
 
+struct FetchCacheSizeForOriginCallbackContext {
+    explicit FetchCacheSizeForOriginCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    TestController& testController;
+
+    bool done { false };
+    uint64_t result { 0 };
+};
+
+static void fetchCacheSizeForOriginCallback(uint64_t size, void* userData)
+{
+    auto* context = static_cast<FetchCacheSizeForOriginCallbackContext*>(userData);
+    context->done = true;
+    context->result = size;
+    context->testController.notifyDone();
+}
+
+uint64_t TestController::domCacheSize(WKStringRef origin)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    FetchCacheSizeForOriginCallbackContext context(*this);
+    WKWebsiteDataStoreGetFetchCacheSizeForOrigin(dataStore, origin, &context, fetchCacheSizeForOriginCallback);
+    if (!context.done)
+        runUntil(context.done, m_currentInvocation->shortTimeout());
+    return context.result;
+}
+
 #if !PLATFORM(COCOA) || !WK_API_ENABLED
 
 void TestController::setStatisticsLastSeen(WKStringRef host, double seconds)

@@ -1,3 +1,13 @@
+2017-10-17  Youenn Fablet  <youenn@apple.com>
+
+        Cache API implementation should be able to compute storage size for WebKit client applications.
+        https://bugs.webkit.org/show_bug.cgi?id=178350
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/cache-storage/cache-clearing-origin.https.html:
+        * http/tests/cache-storage/cache-representation.https.html:
+
 2017-10-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add expected result file for fast/css/DOMQuad-points-SameObject.html.

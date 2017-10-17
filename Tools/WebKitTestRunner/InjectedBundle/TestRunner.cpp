@@ -1838,4 +1838,13 @@ bool TestRunner::hasDOMCache(JSStringRef origin)
     return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
 }
 
+uint64_t TestRunner::domCacheSize(JSStringRef origin)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("DOMCacheSize"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(origin));
+    WKTypeRef returnData = 0;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
+    return WKUInt64GetValue(static_cast<WKUInt64Ref>(returnData));
+}
+
 } // namespace WTR

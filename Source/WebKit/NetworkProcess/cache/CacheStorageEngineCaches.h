@@ -73,6 +73,8 @@ public:
     void clear(WTF::CompletionHandler<void()>&&);
     void clearMemoryRepresentation();
 
+    uint64_t storageSize() const;
+
 private:
     Caches(Engine&, String&& origin, String&& rootPath, uint64_t quota);
 

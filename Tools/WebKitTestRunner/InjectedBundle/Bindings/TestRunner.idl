@@ -59,6 +59,7 @@ interface TestRunner {
 
     void clearDOMCache(DOMString origin);
     boolean hasDOMCache(DOMString origin);
+    unsigned long domCacheSize(DOMString origin);
 
     // Special options.
     void keepWebHistory();

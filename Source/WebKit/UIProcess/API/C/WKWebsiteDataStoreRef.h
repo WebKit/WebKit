@@ -81,6 +81,9 @@ WK_EXPORT void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDa
 typedef void (*WKWebsiteDataStoreGetFetchCacheOriginsFunction)(WKArrayRef, void*);
 WK_EXPORT void WKWebsiteDataStoreGetFetchCacheOrigins(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreGetFetchCacheOriginsFunction function);
 
+typedef void (*WKWebsiteDataStoreGetFetchCacheSizeForOriginFunction)(uint64_t, void*);
+WK_EXPORT void WKWebsiteDataStoreGetFetchCacheSizeForOrigin(WKWebsiteDataStoreRef dataStoreRef, WKStringRef origin, void* context, WKWebsiteDataStoreGetFetchCacheSizeForOriginFunction function);
+
 #ifdef __cplusplus
 }
 #endif

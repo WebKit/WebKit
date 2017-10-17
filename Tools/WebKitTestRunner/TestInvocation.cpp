@@ -1219,6 +1219,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "DOMCacheSize")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef origin = static_cast<WKStringRef>(messageBody);
+
+        auto domCacheSize = TestController::singleton().domCacheSize(origin);
+        WKRetainPtr<WKTypeRef> result(AdoptWK, WKUInt64Create(domCacheSize));
+        return result;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

@@ -183,15 +183,16 @@ public:
     void statisticsClearThroughWebsiteDataRemoval();
     void statisticsResetToConsistentState();
 
-    bool hasDOMCache(WKStringRef);
-
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }
 
     void terminateNetworkProcess();
 
     void removeAllSessionCredentials();
+
     void clearDOMCache(WKStringRef origin);
+    bool hasDOMCache(WKStringRef origin);
+    uint64_t domCacheSize(WKStringRef origin);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);

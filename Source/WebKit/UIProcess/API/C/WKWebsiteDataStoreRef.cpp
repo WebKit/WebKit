@@ -29,9 +29,11 @@
 #include "APIArray.h"
 #include "APIWebsiteDataStore.h"
 #include "WKAPICast.h"
+#include "WKSecurityOriginRef.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteData.h"
+#include "WebsiteDataFetchOption.h"
 #include "WebsiteDataRecord.h"
 #include "WebsiteDataType.h"
 #include <WebCore/URL.h>
@@ -366,5 +368,24 @@ void WKWebsiteDataStoreGetFetchCacheOrigins(WKWebsiteDataStoreRef dataStoreRef, 
                 securityOrigins.append(API::SecurityOrigin::create(origin.securityOrigin()));
         }
         callback(WebKit::toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), context);
+    });
+}
+
+void WKWebsiteDataStoreGetFetchCacheSizeForOrigin(WKWebsiteDataStoreRef dataStoreRef, WKStringRef origin, void* context, WKWebsiteDataStoreGetFetchCacheSizeForOriginFunction callback)
+{
+    OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions = WebKit::WebsiteDataFetchOption::ComputeSizes;
+
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().fetchData(WebKit::WebsiteDataType::DOMCache, fetchOptions, [origin, context, callback] (auto dataRecords) {
+        auto originData = WebCore::SecurityOriginData::fromSecurityOrigin(WebCore::SecurityOrigin::createFromString(WebKit::toImpl(origin)->string()));
+        for (auto& dataRecord : dataRecords) {
+            for (const auto& recordOrigin : dataRecord.origins) {
+                if (originData == recordOrigin) {
+                    callback(dataRecord.size ? dataRecord.size->totalSize : 0, context);
+                    return;
+                }
+
+            }
+        }
+        callback(0, context);
     });
 }

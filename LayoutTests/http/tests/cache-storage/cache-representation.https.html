@@ -18,6 +18,10 @@
             var caches = results[0].caches;
             assert_equals(!!caches["persistent"].length, hasPersistent, "persistent");
             assert_equals(!!caches["removed"].length, hasRemoved, "removed");
+
+           if (!hasPersistent)
+               assert_equals(testRunner.domCacheSize(results.origin), 0, "non persistent cache storage size is zero");
+
         }, name);
     }
 

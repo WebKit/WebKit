@@ -530,6 +530,14 @@ void Caches::appendRepresentation(StringBuilder& builder) const
     builder.append("]}\n");
 }
 
+uint64_t Caches::storageSize() const
+{
+    ASSERT(m_isInitialized);
+    if (!shouldPersist())
+        return 0;
+    return m_storage->approximateSize();
+}
+
 } // namespace CacheStorage
 
 } // namespace WebKit

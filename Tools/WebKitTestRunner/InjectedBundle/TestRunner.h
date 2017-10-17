@@ -165,6 +165,7 @@ public:
 
     void clearDOMCache(JSStringRef origin);
     bool hasDOMCache(JSStringRef origin);
+    uint64_t domCacheSize(JSStringRef origin);
 
     // Failed load condition testing
     void forceImmediateCompletion();

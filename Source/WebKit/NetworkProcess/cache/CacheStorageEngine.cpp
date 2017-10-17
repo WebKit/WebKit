@@ -348,16 +348,17 @@ class ReadOriginsTaskCounter : public RefCounted<ReadOriginsTaskCounter> {
 public:
     static Ref<ReadOriginsTaskCounter> create(WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& callback)
     {
-        return adoptRef(*new ReadOriginsTaskCounter(WTFMove(callback)));}
+        return adoptRef(*new ReadOriginsTaskCounter(WTFMove(callback)));
+    }
 
     ~ReadOriginsTaskCounter()
     {
         m_callback(WTFMove(m_entries));
     }
 
-    void addOrigin(WebCore::SecurityOriginData&& origin)
+    void addOrigin(WebCore::SecurityOriginData&& origin, uint64_t size)
     {
-        m_entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::DOMCache, 0 });
+        m_entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataType::DOMCache, size });
     }
 
 private:
@@ -370,7 +371,7 @@ private:
     Vector<WebsiteData::Entry> m_entries;
 };
 
-void Engine::fetchEntries(bool /* shouldComputeSize */, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
+void Engine::fetchEntries(bool shouldComputeSize, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
 {
     if (!shouldPersist()) {
         auto entries = WTF::map(m_caches, [] (auto& pair) {
@@ -384,10 +385,23 @@ void Engine::fetchEntries(bool /* shouldComputeSize */, WTF::CompletionHandler<v
     for (auto& folderPath : WebCore::listDirectory(m_rootPath, "*")) {
         if (!WebCore::fileIsDirectory(folderPath, WebCore::ShouldFollowSymbolicLinks::No))
             continue;
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [taskCounter = taskCounter.copyRef()] (std::optional<WebCore::SecurityOriginData>&& origin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter = taskCounter.copyRef()] (std::optional<WebCore::SecurityOriginData>&& origin) mutable {
             ASSERT(RunLoop::isMain());
-            if (origin)
-                taskCounter->addOrigin(WTFMove(origin.value()));
+            if (!origin)
+                return;
+
+            if (!shouldComputeSize) {
+                taskCounter->addOrigin(WTFMove(origin.value()), 0);
+                return;
+            }
+
+            auto cacheOrigin = origin->securityOrigin()->toString();
+            protectedThis->readCachesFromDisk(cacheOrigin, [origin = WTFMove(origin.value()), taskCounter = WTFMove(taskCounter)] (CachesOrError&& result) mutable {
+                if (!result.hasValue())
+                    return;
+                taskCounter->addOrigin(WTFMove(origin), result.value().get().storageSize());
+
+            });
         });
     }
 }
