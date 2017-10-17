@@ -591,8 +591,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
 unsigned InlineTextBox::clampedOffset(unsigned x) const
 {
-    ASSERT(m_truncation != cFullTruncation);
     unsigned offset = std::max(std::min(x, m_start + m_len), m_start) - m_start;
+    if (m_truncation == cFullTruncation)
+        return offset;
     if (m_truncation != cNoTruncation)
         offset = std::min<unsigned>(offset, m_truncation);
     else if (offset == m_len) {

@@ -1,5 +1,18 @@
 2017-10-17  Daniel Bates  <dabates@apple.com>
 
+        ASSERTION FAILED: m_truncation != cFullTruncation in InlineTextBox::clampedOffset()
+        https://bugs.webkit.org/show_bug.cgi?id=178322
+
+        Reviewed by Darin Adler.
+
+        Add a test to ensure that clicking on the ellipsis in a truncated text run does not
+        cause an assertion failure in a debug build.
+
+        * fast/text/click-ellipsis-assertion-failure-expected.txt: Added.
+        * fast/text/click-ellipsis-assertion-failure.html: Added.
+
+2017-10-17  Daniel Bates  <dabates@apple.com>
+
         REGRESSION (r222670 and r222732): RTL truncated text may not be drawn
         https://bugs.webkit.org/show_bug.cgi?id=178278
         <rdar://problem/34982818>
