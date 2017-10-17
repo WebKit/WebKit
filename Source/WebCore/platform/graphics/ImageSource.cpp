@@ -79,6 +79,9 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     if (!isDecoderAvailable())
         return false;
 
+    if (auto expectedContentLength = m_frameCache->expectedContentLength())
+        m_decoder->setExpectedContentSize(expectedContentLength);
+
     m_frameCache->setDecoder(m_decoder.get());
     return true;
 }

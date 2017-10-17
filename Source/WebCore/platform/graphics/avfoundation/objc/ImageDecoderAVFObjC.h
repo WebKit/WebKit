@@ -119,7 +119,6 @@ private:
     Vector<SampleData> m_sampleData;
     Lock m_sampleGeneratorLock;
     bool m_isAllDataReceived { false };
-    long long m_expectedContentSize { 0 };
     std::optional<IntSize> m_size;
     std::optional<RotationProperties> m_rotation;
 };
