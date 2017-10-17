@@ -44,7 +44,7 @@ public:
         Rejected
     };
 
-    Status status(VM&) const;
+    JS_EXPORT_PRIVATE Status status(VM&) const;
     JS_EXPORT_PRIVATE JSValue result(VM&) const;
     JS_EXPORT_PRIVATE bool isHandled(VM&) const;
 

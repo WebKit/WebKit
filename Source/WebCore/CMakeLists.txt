@@ -786,6 +786,9 @@ set(WebCore_NON_SVG_IDL_FILES
     workers/WorkerLocation.idl
     workers/WorkerType.idl
 
+    workers/service/ExtendableEvent.idl
+    workers/service/ExtendableEventInit.idl
+    workers/service/FetchEvent.idl
     workers/service/ServiceWorker.idl
     workers/service/ServiceWorkerContainer.idl
     workers/service/ServiceWorkerGlobalScope.idl
@@ -1287,6 +1290,7 @@ set(WebCore_SOURCES
     bindings/js/JSDOMGlobalObjectTask.cpp
     bindings/js/JSDOMGuardedObject.cpp
     bindings/js/JSDOMMapLike.cpp
+    bindings/js/JSDOMPromise.cpp
     bindings/js/JSDOMPromiseDeferred.cpp
     bindings/js/JSDOMWindowBase.cpp
     bindings/js/JSDOMWindowCustom.cpp
@@ -3075,6 +3079,8 @@ set(WebCore_SOURCES
     workers/WorkerScriptLoader.cpp
     workers/WorkerThread.cpp
 
+    workers/service/ExtendableEvent.cpp
+    workers/service/FetchEvent.cpp
     workers/service/ServiceWorker.cpp
     workers/service/ServiceWorkerContainer.cpp
     workers/service/ServiceWorkerGlobalScope.cpp

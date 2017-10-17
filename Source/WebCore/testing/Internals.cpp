@@ -57,8 +57,9 @@
 #include "Editor.h"
 #include "Element.h"
 #include "EventHandler.h"
+#include "ExtendableEvent.h"
 #include "ExtensionStyleSheets.h"
-#include "FetchResponse.h"
+#include "FetchEvent.h"
 #include "File.h"
 #include "FontCache.h"
 #include "FormController.h"
@@ -87,6 +88,7 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "InternalSettings.h"
+#include "JSFetchResponse.h"
 #include "JSImageData.h"
 #include "LibWebRTCProvider.h"
 #include "MainFrame.h"
@@ -4194,5 +4196,29 @@ uint64_t Internals::responseSizeWithPadding(FetchResponse& response) const
 {
     return response.bodySizeWithPadding();
 }
+
+#if ENABLE(SERVICE_WORKER)
+void Internals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
+{
+    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] () mutable {
+        if (auto* response = event->response())
+            promise.resolve(*response);
+        else
+            promise.reject(TypeError, ASCIILiteral("fetch event responded with error"));
+    });
+}
+
+void Internals::waitForExtendableEventToFinish(ExtendableEvent& event, DOMPromiseDeferred<void>&& promise)
+{
+    event.onFinishedWaitingForTesting([promise = WTFMove(promise)] () mutable {
+        promise.resolve();
+    });
+}
+
+Ref<ExtendableEvent> Internals::createTrustedExtendableEvent()
+{
+    return ExtendableEvent::create("ExtendableEvent", { }, Event::IsTrusted::Yes);
+}
+#endif
 
 } // namespace WebCore

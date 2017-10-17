@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<title>Service Worker Extendable Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// FIXME: Should be run on a service worker.
+test(() => {
+    if (!window.internals)
+        return Promise.reject("test require internals");
+    var event = new ExtendableEvent('ExtendableEvent', {});
+    assert_throws('InvalidStateError', () => event.waitUntil(new Request('')));
+}, "ExtendableEvent waitUntil should support non promise parameters");
+
+promise_test(async t => {
+    if (!window.internals)
+        return Promise.reject("test require internals");
+    var event = internals.createTrustedExtendableEvent();
+    var promise = internals.waitForExtendableEventToFinish(event);
+    var shouldWait = true;
+    event.waitUntil(new Promise((resolve, reject) => {
+        setTimeout(() => {
+            shouldWait = false;
+            resolve(new Request(''));
+        }, 50);
+    }));
+    await promise;
+    assert_false(shouldWait);
+}, "ExtendableEvent should wait for given promise to resolve");
+
+promise_test(async t => {
+    if (!window.internals)
+        return Promise.reject("test require internals");
+    var event = internals.createTrustedExtendableEvent();
+    var promise = internals.waitForExtendableEventToFinish(event);
+    var shouldWait = true;
+    event.waitUntil(new Promise((resolve, reject) => {
+        setTimeout(() => {
+            shouldWait = false;
+            reject(new Request(''));
+        }, 50);
+    }));
+    await promise;
+    assert_false(shouldWait);
+}, "ExtendableEvent should wait for given promise to reject");
+
+test(function() {
+    assert_equals(
+      new ExtendableEvent('ExtendableEvent').type,
+      'ExtendableEvent', 'Type of ExtendableEvent should be ExtendableEvent');
+    assert_equals(
+      new ExtendableEvent('ExtendableEvent', {}).type,
+      'ExtendableEvent', 'Type of ExtendableEvent should be ExtendableEvent');
+    assert_equals(
+      new ExtendableEvent('ExtendableEvent', {}).cancelable,
+      false, 'Default ExtendableEvent.cancelable should be false');
+    assert_equals(
+      new ExtendableEvent('ExtendableEvent', {}).bubbles,
+      false, 'Default ExtendableEvent.bubbles should be false');
+    assert_equals(
+      new ExtendableEvent('ExtendableEvent', {cancelable: false}).cancelable,
+      false, 'ExtendableEvent.cancelable should be false');
+  }, 'Event constructors');
+</script>

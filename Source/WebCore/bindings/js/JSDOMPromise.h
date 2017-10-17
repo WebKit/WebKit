@@ -33,6 +33,7 @@ namespace WebCore {
 
 class DOMPromise : public DOMGuarded<JSC::JSPromise> {
 public:
+    static Ref<DOMPromise> create(JSC::ExecState&, JSC::JSValue);
     static Ref<DOMPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)
     {
         return adoptRef(*new DOMPromise(globalObject, promise));
@@ -43,6 +44,12 @@ public:
         ASSERT(!isSuspended());
         return guarded();
     }
+
+    void whenSettled(std::function<void()>&&);
+    JSC::JSValue result() const;
+
+    enum class Status { Pending, Fulfilled, Rejected };
+    Status status() const;
 
 private:
     DOMPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)

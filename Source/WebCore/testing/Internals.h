@@ -50,6 +50,8 @@ class DOMURL;
 class DOMWindow;
 class Document;
 class Element;
+class ExtendableEvent;
+class FetchEvent;
 class FetchResponse;
 class File;
 class Frame;
@@ -605,6 +607,12 @@ public:
     uint64_t responseSizeWithPadding(FetchResponse&) const;
 
     void setConsoleMessageListener(RefPtr<StringCallback>&&);
+
+#if ENABLE(SERVICE_WORKER)
+    void waitForFetchEventToFinish(FetchEvent&, DOMPromiseDeferred<IDLInterface<FetchResponse>>&&);
+    void waitForExtendableEventToFinish(ExtendableEvent&, DOMPromiseDeferred<void>&&);
+    Ref<ExtendableEvent> createTrustedExtendableEvent();
+#endif
 
 private:
     explicit Internals(Document&);

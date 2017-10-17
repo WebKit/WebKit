@@ -43,7 +43,9 @@ namespace WebCore {
     macro(DataTransferItem) \
     macro(DataTransferItemList) \
     macro(DocumentTimeline) \
+    macro(ExtendableEvent) \
     macro(FederatedCredential) \
+    macro(FetchEvent) \
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
     macro(FileSystemDirectoryReader) \

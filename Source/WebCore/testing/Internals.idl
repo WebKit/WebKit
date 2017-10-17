@@ -553,4 +553,8 @@ enum EventThrottlingBehavior {
     void setConsoleMessageListener(StringCallback callback);
 
     DOMString audioSessionCategory();
+
+    [Conditional=SERVICE_WORKER] Promise<Response> waitForFetchEventToFinish(FetchEvent event);
+    [Conditional=SERVICE_WORKER] Promise<void> waitForExtendableEventToFinish(ExtendableEvent event);
+    [Conditional=SERVICE_WORKER] ExtendableEvent createTrustedExtendableEvent();
 };
