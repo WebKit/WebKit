@@ -1,3 +1,10 @@
+2017-10-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed attempt to fix the Windows debug build.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteOrigin):
+
 2017-10-16  Maureen Daum  <mdaum@apple.com>
 
         If we fail to delete any database file, don't remove its information from the tracker database
