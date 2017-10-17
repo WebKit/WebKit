@@ -1,3 +1,41 @@
+2017-09-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Remove the cairo_glyph_t complexity from GlyphBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=177598
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the decade-old use of cairo_glyph_t as the underlying type for
+        Glyph. The former spans 24 bytes in size, while the latte is just 2
+        bytes. The x and y coordinate attributes of cairo_glyph_t were only
+        used in FontCascade::drawGlyphs() implementation, where they were
+        overridden even if the same GlyphBuffer object was used here repeatedly.
+
+        FontCascade::drawGlyphs() now creates a new Vector<cairo_glyph_t> object
+        and fills it only with the glyph index and coordinates data for glyphs
+        that will actually be drawn. This will likely in the future be leveraged
+        to pack the necessary data and perform the drawing operations in
+        parallelized tasks. GlyphBuffer usages that before required USE(CAIRO)
+        special-casing can now be simplified.
+
+        This also removes the need for <cairo.h> header inclusion in the
+        GlyphBuffer.h header. This further removes Cairo header inclusion in
+        roughly 600 build targets.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt const):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::drawGlyphsToContext):
+        (WebCore::drawGlyphsShadow):
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawGlyphs::generateGlyphBuffer const):
+
 2017-09-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [REGRESSION] word-spacing property is incorrectly applied

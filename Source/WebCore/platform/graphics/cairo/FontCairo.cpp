@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static void drawGlyphsToContext(cairo_t* context, const Font& font, GlyphBufferGlyph* glyphs, unsigned numGlyphs)
+static void drawGlyphsToContext(cairo_t* context, const Font& font, const cairo_glyph_t* glyphs, unsigned numGlyphs)
 {
     cairo_matrix_t originalTransform;
     float syntheticBoldOffset = font.syntheticBoldOffset();
@@ -66,7 +66,7 @@ static void drawGlyphsToContext(cairo_t* context, const Font& font, GlyphBufferG
         cairo_set_matrix(context, &originalTransform);
 }
 
-static void drawGlyphsShadow(GraphicsContext& graphicsContext, const FloatPoint& point, const Font& font, GlyphBufferGlyph* glyphs, unsigned numGlyphs)
+static void drawGlyphsShadow(GraphicsContext& graphicsContext, const FloatPoint& point, const Font& font, const cairo_glyph_t* glyphs, unsigned numGlyphs)
 {
     ShadowBlur& shadow = graphicsContext.platformContext()->shadowBlur();
 
@@ -103,37 +103,42 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     if (!font.platformData().size())
         return;
 
-    GlyphBufferGlyph* glyphs = const_cast<GlyphBufferGlyph*>(glyphBuffer.glyphs(from));
+    auto xOffset = point.x();
+    Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
+    {
+        ASSERT(from + numGlyphs <= glyphBuffer.size());
+        auto* glyphs = glyphBuffer.glyphs(from);
+        auto* advances = glyphBuffer.advances(from);
 
-    float offset = point.x();
-    for (unsigned i = 0; i < numGlyphs; i++) {
-        glyphs[i].x = offset;
-        glyphs[i].y = point.y();
-        offset += glyphBuffer.advanceAt(from + i).width();
+        auto yOffset = point.y();
+        for (size_t i = 0; i < numGlyphs; ++i) {
+            cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
+            xOffset += advances[i].width();
+        }
     }
 
     PlatformContextCairo* platformContext = context.platformContext();
-    drawGlyphsShadow(context, point, font, glyphs, numGlyphs);
+    drawGlyphsShadow(context, point, font, cairoGlyphs.data(), numGlyphs);
 
     cairo_t* cr = platformContext->cr();
     cairo_save(cr);
 
     if (context.textDrawingMode() & TextModeFill) {
         platformContext->prepareForFilling(context.state(), PlatformContextCairo::AdjustPatternForGlobalAlpha);
-        drawGlyphsToContext(cr, font, glyphs, numGlyphs);
+        drawGlyphsToContext(cr, font, cairoGlyphs.data(), numGlyphs);
     }
 
     // Prevent running into a long computation within cairo. If the stroke width is
     // twice the size of the width of the text we will not ask cairo to stroke
     // the text as even one single stroke would cover the full wdth of the text.
     //  See https://bugs.webkit.org/show_bug.cgi?id=33759.
-    if (context.textDrawingMode() & TextModeStroke && context.strokeThickness() < 2 * offset) {
+    if (context.textDrawingMode() & TextModeStroke && context.strokeThickness() < 2 * xOffset) {
         platformContext->prepareForStroking(context.state());
         cairo_set_line_width(cr, context.strokeThickness());
 
         // This may disturb the CTM, but we are going to call cairo_restore soon after.
         cairo_set_scaled_font(cr, font.platformData().scaledFont());
-        cairo_glyph_path(cr, glyphs, numGlyphs);
+        cairo_glyph_path(cr, cairoGlyphs.data(), numGlyphs);
         cairo_stroke(cr);
     }
 

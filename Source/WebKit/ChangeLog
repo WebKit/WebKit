@@ -1,3 +1,14 @@
+2017-09-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Remove the cairo_glyph_t complexity from GlyphBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=177598
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/API/c/cairo/WKImageCairo.cpp: Explicitly include the <cairo.h>
+        header here now that it's not included in GlyphBuffer.h.
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp: Ditto.
+
 2017-09-26  Brian Burg  <bburg@apple.com>
 
         Web Automation: overflow:hidden elements with no children are mistakenly reported as not visible
