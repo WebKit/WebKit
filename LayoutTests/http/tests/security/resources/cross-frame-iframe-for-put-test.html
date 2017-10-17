@@ -241,7 +241,7 @@
 
         // The test runs on a timer and not in a load event handler because we want both
         // window.onload and window.event to be undefined.
-        setTimeout(function() {
+        function runTest() {
             // Constructors
             shouldBe("window.Attr", "AttrOld");
             shouldBe("window.CDATASection", "CDATASectionOld");
@@ -451,7 +451,15 @@
             // showModalDialog is not implemented on all platforms for DumpRenderTree.  So don't display the values.
             shouldBe("window.showModalDialog", "showModalDialogOld", true);
             shouldBe("window.stop", "stopOld");
-        }, 0);
+            window.parent.postMessage("continue test in parent frame", "*")
+        };
+        function checkAndRunTest() {
+            if (window.innerHeight == 150)
+                runTest();
+            else
+                setTimeout(checkAndRunTest, 10);
+        }
+        checkAndRunTest();
     </script>
 </body>
 </html>

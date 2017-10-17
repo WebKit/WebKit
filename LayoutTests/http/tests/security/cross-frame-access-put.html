@@ -19,20 +19,18 @@ function setForbiddenProperty(obj, prop)
 
 window.targetWindow = window.frames[0];
 
+window.addEventListener("message", test, false);
+
 window.onload = function()
 {
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
-
-    // There is code in subframe that runs some tests, and that is scheduled on a zero delay
-    // timer when the subframe loads. The timer that we schedule here will run after the one
-    // in subframe, making the order of tests predictable.
-    setTimeout(test, 0);
 }
 
-function test() {
+function test(message) {
+    alert(message.data);
     // FIXME: This test should use fast/window/resources/window-properties.js instead of a custom list.
     // Constructors
     setForbiddenProperty(targetWindow, "Attr");

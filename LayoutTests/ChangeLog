@@ -1,5 +1,23 @@
 2017-10-17  Alex Christensen  <achristensen@webkit.org>
 
+        de-flakify http/tests/security/cross-frame-access-put.html
+        https://bugs.webkit.org/show_bug.cgi?id=178371
+
+        Reviewed by Tim Horton.
+
+        In the iframe, the test was being run after 0ms.  Sometimes, the whole iframe hadn't loaded yet,
+        so window.innerHeight and window.innerWidth were 0 instead of their intended values.  This changes
+        the test to wait for the iframe to finish loading before running the test, then post a message to
+        the parent to tell it to finish running its test instead of just relying on setTimeout(..., 0) to
+        always work after the iframe had finished loading.
+
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * http/tests/security/cross-frame-access-put.html:
+        * http/tests/security/resources/cross-frame-iframe-for-put-test.html:
+        * platform/mac-wk2/TestExpectations:
+
+2017-10-17  Alex Christensen  <achristensen@webkit.org>
+
         Layout Test http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=150095
 

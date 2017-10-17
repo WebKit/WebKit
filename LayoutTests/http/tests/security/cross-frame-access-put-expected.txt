@@ -185,6 +185,7 @@ ALERT: PASS: window.setInterval should be 'function setInterval() {    [native c
 ALERT: PASS: window.setTimeout should be 'function setTimeout() {    [native code]}' and is.
 ALERT: PASS: window.showModalDialog matched the expected value.
 ALERT: PASS: window.stop should be 'function stop() {    [native code]}' and is.
+ALERT: continue test in parent frame
 This test checks cross-frame access security of window attribute setters (rdar://problem/5326791).
 
 
