@@ -215,10 +215,6 @@ webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
 # MSE failures
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-readyState.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 # See also bug #175578
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Crash Failure ]
@@ -240,8 +236,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-dur
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
@@ -1298,7 +1292,6 @@ webkit.org/b/176805 media/media-higher-prio-audio-stream.html [ Crash ]
 webkit.org/b/176806 media/track/track-text-track-cue-list.html [ Crash ]
 
 webkit.org/b/176856 fast/mediastream/apply-constraints-video.html [ Crash ]
-webkit.org/b/176861 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Crash ]
 
 # See also webkit.org/b/141699
 webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash ImageOnlyFailure ]

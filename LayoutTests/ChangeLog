@@ -1,3 +1,29 @@
+2017-10-17  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MSE] Unreviewed microgardening
+        https://bugs.webkit.org/show_bug.cgi?id=178344
+
+        Updates the following expectations:
+
+        - imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html
+
+          Updated with current output (as a prerequisite to land this:
+          https://bugs.webkit.org/show_bug.cgi?id=178160, which improves the
+          -expected output a bit)
+
+        - imported/w3c/web-platform-tests/media-source/SourceBuffer-abort*.html
+
+          Marked them as passing, as they have been passing for a while.
+
+        - imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html
+          imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html
+
+          Marked them as passing. They were crashing on the build bot because
+          the changes of https://bugs.webkit.org/show_bug.cgi?id=176804 were
+          not being built, but Carlos López is already working on that.
+
+        * platform/gtk/TestExpectations:
+
 2017-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow reading data and blob URLs via DataTransfer when the pasteboard contains files
