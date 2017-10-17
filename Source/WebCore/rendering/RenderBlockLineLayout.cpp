@@ -504,7 +504,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
                     &wordMeasurement.fallbackFonts, &overflow);
                 UChar c = renderer.characterAt(wordMeasurement.startOffset);
                 // renderer.width() omits word-spacing value for leading whitespace, so let's just add it back here.
-                if (!atFirstWordMeasurement && (c == ' ' || c == '\t'))
+                if (!atFirstWordMeasurement && FontCascade::treatAsSpace(c))
                     measuredWidth += renderer.style().fontCascade().wordSpacing();
             } else
                 measuredWidth += wordMeasurement.width;

@@ -1,3 +1,23 @@
+2017-09-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [REGRESSION] word-spacing property is incorrectly applied
+        https://bugs.webkit.org/show_bug.cgi?id=142086
+        <rdar://problem/19985240>
+
+        Reviewed by Zalan Bujtas.
+
+        word-spacing property isn't applied to text nodes with starting
+        with '\n' if the kerning enabled. In Bug 165796, only ' ' and '\t'
+        are treated for word-spacing, but '\n'. It should be treated as
+        well.
+
+        Test: fast/text/word-space-between-inlines.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun): Use
+        FontCascade::treatAsSpace() instead of checking explicitly by
+        comparing with ' ' and '\t'.
+
 2017-09-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Remove unnecessary cairo.h includes

@@ -1052,12 +1052,6 @@ fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 # SVG gradients are not bit-for-bit equivalent through a scale.
 webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 
-# Word-spacing is incorrectly applied
-webkit.org/b/142086 fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
-webkit.org/b/142086 fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
-webkit.org/b/142086 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
-webkit.org/b/142086 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
-
 # Underlines' starting and ending positions need to be pixel-snapped
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ ImageOnlyFailure ]
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
