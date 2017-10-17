@@ -1,3 +1,23 @@
+2017-10-04  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Fix playback of GIFs
+        https://bugs.webkit.org/show_bug.cgi?id=176089
+
+        Reviewed by Carlos Garcia Campos.
+
+        Allow GIFImageReader to decode again already decoded frames. Thanks to this, we don't
+        need to delete the GIFImageReader when GIFImageDecoder::clearFrameBufferCache() is
+        called, and the we don't need the lock to avoid crashes in that situation.
+
+        Covered by existent tests.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::decode):
+
 2017-10-04  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] aria-pressed="mixed" should be exposed via ATK_STATE_INDETERMINATE
