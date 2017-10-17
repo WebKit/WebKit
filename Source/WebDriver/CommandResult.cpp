@@ -136,13 +136,13 @@ unsigned CommandResult::httpStatusCode() const
     case ErrorCode::InvalidArgument:
     case ErrorCode::InvalidElementState:
     case ErrorCode::InvalidSelector:
+        return 400;
     case ErrorCode::NoSuchAlert:
+    case ErrorCode::NoSuchCookie:
+    case ErrorCode::NoSuchElement:
     case ErrorCode::NoSuchFrame:
     case ErrorCode::NoSuchWindow:
     case ErrorCode::StaleElementReference:
-        return 400;
-    case ErrorCode::NoSuchCookie:
-    case ErrorCode::NoSuchElement:
     case ErrorCode::InvalidSessionID:
     case ErrorCode::UnknownCommand:
         return 404;
