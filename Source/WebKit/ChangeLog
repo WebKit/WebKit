@@ -1,3 +1,17 @@
+2017-09-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Harden our access to the vector of URL schemes.
+        https://bugs.webkit.org/show_bug.cgi?id=177470
+        <rdar://problem/33881522>
+
+        Reviewed by Chris Dumez.
+
+        Instead of asserting, use MESSAGE_CHECK so that we actually refuse to access an invalid iterator.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startURLSchemeTask):
+        (WebKit::WebPageProxy::stopURLSchemeTask):
+
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Separate form submission from PolicyChecker infrastructure

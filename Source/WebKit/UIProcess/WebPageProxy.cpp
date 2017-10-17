@@ -6959,7 +6959,7 @@ WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(const String& schem
 void WebPageProxy::startURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceRequest& request)
 {
     auto iterator = m_urlSchemeHandlersByIdentifier.find(handlerIdentifier);
-    ASSERT(iterator != m_urlSchemeHandlersByIdentifier.end());
+    MESSAGE_CHECK(iterator != m_urlSchemeHandlersByIdentifier.end());
 
     iterator->value->startTask(*this, taskIdentifier, request);
 }
@@ -6967,7 +6967,7 @@ void WebPageProxy::startURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskI
 void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
 {
     auto iterator = m_urlSchemeHandlersByIdentifier.find(handlerIdentifier);
-    ASSERT(iterator != m_urlSchemeHandlersByIdentifier.end());
+    MESSAGE_CHECK(iterator != m_urlSchemeHandlersByIdentifier.end());
 
     iterator->value->stopTask(*this, taskIdentifier);
 }
