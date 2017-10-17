@@ -1,3 +1,13 @@
+2017-10-03  Zalan Bujtas  <zalan@apple.com>
+
+        [AX] Do not trigger redundant layout on tables.
+        https://bugs.webkit.org/show_bug.cgi?id=177781
+        <rdar://problem/34777030>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: see webkit.org/b/177799
+
 2017-10-03  Daniel Bates  <dabates@apple.com>
 
         [CSP] Check policy before opening a new window to a JavaScript URL

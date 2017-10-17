@@ -1,3 +1,23 @@
+2017-10-03  Zalan Bujtas  <zalan@apple.com>
+
+        [AX] Do not trigger redundant layout on tables.
+        https://bugs.webkit.org/show_bug.cgi?id=177781
+        <rdar://problem/34777030>
+
+        Reviewed by Antti Koivisto.
+
+        RenderTable::forceSectionsRecalc() marks the RenderTable dirty and schedules a layout.
+        Every time AccessibilityTable asks for the table element (including during construction),
+        we end up triggering a layout. This call was added (r191357) to ensure RenderTable's m_firstBody is always
+        up-to-date (in case of anonymous wrapper table renderer). Instead of relying on the m_firstBody,
+        let's just use the first child to find the table element. The first child always points to a valid
+        renderer (or nullptr), while m_firstBody is the result of section computation.
+
+        Covered by existing tests.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::tableElement const):
+
 2017-10-03  Daniel Bates  <dabates@apple.com>
 
         [CSP] Check policy before opening a new window to a JavaScript URL
