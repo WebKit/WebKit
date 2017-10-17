@@ -687,6 +687,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case ScrollBarRole:
         return ATK_ROLE_SCROLL_BAR;
     case ScrollAreaRole:
+    case TabPanelRole:
         return ATK_ROLE_SCROLL_PANE;
     case GridRole:
     case TableRole:
@@ -701,7 +702,6 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case GroupRole:
     case RadioGroupRole:
     case SVGRootRole:
-    case TabPanelRole:
         return ATK_ROLE_PANEL;
     case RowHeaderRole:
         return ATK_ROLE_ROW_HEADER;

@@ -788,7 +788,7 @@ div[role=tab]
       AXRole: AXTab
       
 div[role=tabpanel]
-      AXRole: AXGroup
+      AXRole: AXScrollArea
       
 div[role=term]
       AXRole: AXDescriptionTerm

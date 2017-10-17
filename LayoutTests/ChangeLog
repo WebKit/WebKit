@@ -1,3 +1,15 @@
+2017-10-04  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] ARIA tabpanel role should be exposed as ATK_ROLE_SCROLL_PANE
+        https://bugs.webkit.org/show_bug.cgi?id=177815
+
+        Reviewed by Chris Fleizach.
+
+        Updated expectations to reflect new mapping.
+
+        * platform/gtk/accessibility/aria-tab-roles-expected.txt: Added.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated.
+
 2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] ARIA menuitems should be exposed with ATK_ROLE_MENU_ITEM even when it's the child of group role
