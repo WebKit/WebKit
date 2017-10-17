@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import linecache
 import logging
 import signal
@@ -43,14 +44,15 @@ def log_stack_trace(frame, file):
 
 def log_stack_trace_on_term(output_file=None):
     def handler(signum, frame):
-        file = open(output_file, 'w') if output_file else sys.stderr
+        file_name = os.path.join(os.path.dirname(output_file), '{}-{}'.format(os.getpid(), os.path.basename(output_file))) if output_file else None
+        file = open(file_name, 'w') if file_name else sys.stderr
         if not file:
-            raise RuntimeError('{} cannot be opened'.format(output_file))
+            raise RuntimeError('{} cannot be opened'.format(file_name))
 
         if file is sys.stderr:
             file.write('\n')
         else:
-            _log.critical('Stack trace saved to {}'.format(output_file))
+            _log.critical('Stack trace saved to {}'.format(file_name))
         file.write('SIGTERM signal received')
         log_stack_trace(frame, file)
         exit(-1)
@@ -60,14 +62,15 @@ def log_stack_trace_on_term(output_file=None):
 
 def log_stack_trace_on_cntrl_c(output_file=None):
     def handler(signum, frame):
-        file = open(output_file, 'w') if output_file else sys.stderr
+        file_name = os.path.join(os.path.dirname(output_file), '{}-{}'.format(os.getpid(), os.path.basename(output_file))) if output_file else None
+        file = open(file_name, 'w') if file_name else sys.stderr
         if not file:
-            raise RuntimeError('{} cannot be opened'.format(output_file))
+            raise RuntimeError('{} cannot be opened'.format(file_name))
 
         if file is sys.stderr:
             file.write('\n')
         else:
-            _log.critical('Stack trace saved to {}'.format(output_file))
+            _log.critical('Stack trace saved to {}'.format(file_name))
         file.write('cntrl C received\n')
         log_stack_trace(frame, file)
         raise KeyboardInterrupt
