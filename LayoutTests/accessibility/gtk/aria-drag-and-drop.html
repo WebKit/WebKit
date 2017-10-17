@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" role="button">X</div>
+  <div id="test2" role="button" aria-grabbed="">X</div>
+  <div id="test3" role="button" aria-grabbed="true">X</div>
+  <div id="test4" role="button" aria-grabbed="false">X</div>
+  <div id="test5" role="button" aria-dropeffect="copy">X</div>
+  <div id="test6" role="button" aria-dropeffect="move">X</div>
+  <div id="test7" role="button" aria-dropeffect="copy move">X</div>
+  <div id="test8" role="button" aria-dropeffect="none">X</div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function hasGrabbedAttribute(axElement) {
+        var allAttributes = axElement.allAttributes().split("\n");
+        var length = allAttributes.length;
+        for (var i = 0; i < length; i++) {
+            var string = allAttributes[i];
+            if (string.startsWith("AXPlatformAttributes"))
+                return string.search("grabbed") > -1;
+        }
+        return false;
+    }
+
+    description("This tests the exposure of ARIA properties related to drag and drop.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 8; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("test" + i + "\n\tariaDropEffects: " + axElement.ariaDropEffects +
+			       "\n\tariaIsGrabbed: " + axElement.ariaIsGrabbed +
+			       "\n\thas grabbed attribute: " + hasGrabbedAttribute(axElement));
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

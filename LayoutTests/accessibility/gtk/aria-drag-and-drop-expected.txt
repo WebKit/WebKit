@@ -1,0 +1,41 @@
+This tests the exposure of ARIA properties related to drag and drop.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1
+	ariaDropEffects: 
+	ariaIsGrabbed: false
+	has grabbed attribute: false
+test2
+	ariaDropEffects: 
+	ariaIsGrabbed: false
+	has grabbed attribute: false
+test3
+	ariaDropEffects: 
+	ariaIsGrabbed: true
+	has grabbed attribute: true
+test4
+	ariaDropEffects: 
+	ariaIsGrabbed: false
+	has grabbed attribute: true
+test5
+	ariaDropEffects: copy
+	ariaIsGrabbed: false
+	has grabbed attribute: false
+test6
+	ariaDropEffects: move
+	ariaIsGrabbed: false
+	has grabbed attribute: false
+test7
+	ariaDropEffects: copy move
+	ariaIsGrabbed: false
+	has grabbed attribute: false
+test8
+	ariaDropEffects: none
+	ariaIsGrabbed: false
+	has grabbed attribute: false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

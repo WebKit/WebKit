@@ -1,3 +1,16 @@
+2017-10-03  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] ARIA drag-and-drop attribute values should be exposed via AtkObject attributes
+        https://bugs.webkit.org/show_bug.cgi?id=177763
+
+        Reviewed by Chris Fleizach.
+
+        Implement ariaIsGrabbed() and ariaDropEffects() for ATK.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::ariaIsGrabbed const):
+        (WTR::AccessibilityUIElement::ariaDropEffects const):
+
 2017-10-02  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] The value of aria-level is not exposed on non-heading roles
