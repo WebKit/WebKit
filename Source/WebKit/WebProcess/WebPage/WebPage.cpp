@@ -5698,6 +5698,9 @@ void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
         quirks |= AutoplayQuirk::SynthesizedPauseEvents;
 
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::ArbitraryUserGestures))
+        quirks |= AutoplayQuirk::ArbitraryUserGestures;
+
     documentLoader->setAllowedAutoplayQuirks(quirks);
 
     AutoplayPolicy autoplayPolicy = AutoplayPolicy::Default;

@@ -90,6 +90,7 @@ enum class AutoplayPolicy {
 enum class AutoplayQuirk {
     SynthesizedPauseEvents = 1 << 0,
     InheritedUserGestures = 1 << 1,
+    ArbitraryUserGestures = 1 << 2,
 };
 
 class DocumentLoader : public RefCounted<DocumentLoader>, public FrameDestructionObserver, private CachedRawResourceClient {
