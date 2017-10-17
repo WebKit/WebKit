@@ -1,3 +1,16 @@
+2017-09-26  Brian Burg  <bburg@apple.com>
+
+        Web Automation: overflow:hidden elements with no children are mistakenly reported as not visible
+        https://bugs.webkit.org/show_bug.cgi?id=177514
+        <rdar://problem/31936291>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Automation/atoms/ElementDisplayed.js:
+        (isShown.isElementSubtreeHiddenByOverflow):
+        Array.prototype.every returns true when passed an empty list, so we need
+        to check for the case where the element has no children and return 'false'.
+
 2017-09-26  Brent Fulgham  <bfulgham@apple.com>
 
         Harden our access to the vector of URL schemes.
