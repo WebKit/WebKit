@@ -1,5 +1,14 @@
 2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [WPE] GLib API headers WebKitScriptDialog.h and WebKitFileChooserRequest.h are not installed
+        https://bugs.webkit.org/show_bug.cgi?id=178104
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformWPE.cmake: Add missing header paths to the WPE_API_INSTALLED_HEADERS variable.
+
+2017-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
         [WPE][CMake] The “install” target should install all public API headers
         https://bugs.webkit.org/show_bug.cgi?id=176475
 
