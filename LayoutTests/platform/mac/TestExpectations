@@ -395,8 +395,8 @@ editing/pasteboard/paste-global-selection.html
 
 # Unexpected WebGL Conformance tests that need to be fixed
 # These tests pass when run through webgl-conformance-tests.html but not when just opened via a browser (or via run-webkit-tests)
-webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure Timeout ]
-webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
+webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
+webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
 
 webkit.org/b/124935 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
