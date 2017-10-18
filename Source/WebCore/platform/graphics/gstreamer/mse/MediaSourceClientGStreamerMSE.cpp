@@ -124,11 +124,11 @@ void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateG
     appendPipeline->abort();
 }
 
-bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, const unsigned char* data, unsigned length)
+bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, Vector<unsigned char>&& data)
 {
     ASSERT(WTF::isMainThread());
 
-    GST_DEBUG("Appending %u bytes", length);
+    GST_DEBUG("Appending %u bytes", data.size());
 
     if (!m_playerPrivate)
         return false;
@@ -137,9 +137,14 @@ bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
 
     ASSERT(appendPipeline);
 
-    void* bufferData = fastMalloc(length);
-    GstBuffer* buffer = gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, length, 0, length, bufferData, fastFree);
-    gst_buffer_fill(buffer, 0, data, length);
+    // Wrap the whole Vector object in case the data is stored in the inlined buffer.
+    auto* bufferData = data.data();
+    auto bufferLength = data.size();
+    GstBuffer* buffer = gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, new Vector<unsigned char>(WTFMove(data)),
+        [](gpointer data)
+        {
+            delete static_cast<Vector<unsigned char>*>(data);
+        });
 
     return appendPipeline->pushNewBuffer(buffer) == GST_FLOW_OK;
 }

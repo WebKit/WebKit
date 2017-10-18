@@ -66,14 +66,14 @@ void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)
     m_sourceBufferPrivateClient = client;
 }
 
-void SourceBufferPrivateGStreamer::append(const unsigned char* data, unsigned length)
+void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
 {
     ASSERT(m_mediaSource);
 
     if (!m_sourceBufferPrivateClient)
         return;
 
-    if (m_client->append(this, data, length))
+    if (m_client->append(this, WTFMove(data)))
         return;
 
     m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::ReadStreamFailed);

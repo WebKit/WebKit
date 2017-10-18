@@ -558,7 +558,11 @@ void SourceBuffer::appendBufferTimerFired()
         return;
     }
 
-    m_private->append(m_pendingAppendData.data(), m_pendingAppendData.size());
+    // Manually clear out the m_pendingAppendData Vector, in case the platform implementation
+    // rejects appending the buffer for whatever reason.
+    // FIXME: The implementation should guarantee the move from this Vector, and we should
+    // assert here to confirm that. See https://bugs.webkit.org/show_bug.cgi?id=178003.
+    m_private->append(WTFMove(m_pendingAppendData));
     m_pendingAppendData.clear();
 }
 

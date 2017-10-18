@@ -139,9 +139,9 @@ void MockSourceBufferPrivate::setClient(SourceBufferPrivateClient* client)
     m_client = client;
 }
 
-void MockSourceBufferPrivate::append(const unsigned char* data, unsigned length)
+void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
 {
-    m_inputBuffer.append(data, length);
+    m_inputBuffer.appendVector(data);
     SourceBufferPrivateClient::AppendResult result = SourceBufferPrivateClient::AppendSucceeded;
 
     while (m_inputBuffer.size() && result == SourceBufferPrivateClient::AppendSucceeded) {

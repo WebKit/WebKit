@@ -57,7 +57,7 @@ private:
 
     // SourceBufferPrivate overrides
     void setClient(SourceBufferPrivateClient*) final;
-    void append(const unsigned char* data, unsigned length) final;
+    void append(Vector<unsigned char>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;

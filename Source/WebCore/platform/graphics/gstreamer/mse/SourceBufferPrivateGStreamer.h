@@ -55,7 +55,7 @@ public:
     void clearMediaSource() { m_mediaSource = nullptr; }
 
     void setClient(SourceBufferPrivateClient*) final;
-    void append(const unsigned char*, unsigned) final;
+    void append(Vector<unsigned char>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;
