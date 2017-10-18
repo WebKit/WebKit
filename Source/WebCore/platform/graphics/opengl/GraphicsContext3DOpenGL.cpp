@@ -333,6 +333,20 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
         if (getExtensions().requiresRestrictedMaximumTextureSize())
             *value = std::min(1024, *value);
         break;
+#if PLATFORM(MAC)
+    // Some older hardware advertises a larger maximum than they
+    // can actually handle. Rather than detecting such devices, simply
+    // clamp the maximum to 8192, which is big enough for a 5K display.
+    case MAX_RENDERBUFFER_SIZE:
+        ::glGetIntegerv(MAX_RENDERBUFFER_SIZE, value);
+        *value = std::min(8192, *value);
+        break;
+    case MAX_VIEWPORT_DIMS:
+        ::glGetIntegerv(MAX_VIEWPORT_DIMS, value);
+        value[0] = std::min(8192, value[0]);
+        value[1] = std::min(8192, value[1]);
+        break;
+#endif
     default:
         ::glGetIntegerv(pname, value);
     }

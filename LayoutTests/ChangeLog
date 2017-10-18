@@ -1,3 +1,19 @@
+2017-10-18  Dean Jackson  <dino@apple.com>
+
+        Cherry-pick r223640. rdar://problem/35063901
+
+    2017-10-18  Dean Jackson  <dino@apple.com>
+
+            Some older hardware can't actually use renderbuffers at the size they advertise
+            https://bugs.webkit.org/show_bug.cgi?id=178417
+            <rdar://problem/35042291>
+
+            Reviewed by Tim Horton.
+
+            Unskip webgl/1.0.2/conformance/canvas/drawingbuffer-static-canvas-test.html.
+
+            * TestExpectations:
+
 2017-10-17  Dean Jackson  <dino@apple.com>
 
         Cherry-pick r223567. rdar://problem/35041476
