@@ -47,6 +47,21 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static keyDown(key)
+    {
+        if (!this.isWebKit2() || !this.isIOS()) {
+            eventSender.keyDown(key);
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.keyDownUsingHardwareKeyboard("downArrow", function() {
+                    uiController.uiScriptComplete("Done");
+                });`, resolve);
+        });
+    }
+
     static ensurePresentationUpdate()
     {
         if (!this.isWebKit2()) {

@@ -1901,3 +1901,6 @@ http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
 http/tests/css/filters-on-iframes.html [ Skip ]
 
 webkit.org/b/172092 [ Release ] fast/parser/adoption-agency-unload-iframe-4.html [ Timeout ]
+
+# FIXME: For some reason EventSender.keyDown() does not work.
+webkit.org/b/178490 fast/text/scroll-text-overflow-ellipsis.html [ Skip ]
