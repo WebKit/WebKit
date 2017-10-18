@@ -1,3 +1,13 @@
+2017-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Regression] Webkit "-apple-system" font fallback token handles font weights of PingFang incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=177345
+        <rdar://problem/32975942>
+
+        Reviewed by Jon Lee.
+
+        * fast/text/system-ui-chinese-bold-fallback.html:
+
 2017-10-17  Dean Jackson  <dino@apple.com>
 
         webgl/1.0.2/conformance/canvas/drawingbuffer-static-canvas-test.html failing
