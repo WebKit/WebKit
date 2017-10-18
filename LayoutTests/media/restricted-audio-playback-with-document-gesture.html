@@ -20,7 +20,7 @@
             run("mediaElement.src = findMediaFile('audio', 'content/test')");
             waitForEvent('canplaythrough', canplaythrough);
             waitForEventAndFail('error');
-        });
+        }, true);
     }
 
     function canplaythrough()

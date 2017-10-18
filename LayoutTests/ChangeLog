@@ -1,3 +1,16 @@
+2017-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Key events should not update Document.lastHandledUserGestureTimestamp unless key event is handled
+        https://bugs.webkit.org/show_bug.cgi?id=178473
+        <rdar://problem/34869935>
+
+        Reviewed by Brent Fulgham.
+
+        * media/restricted-audio-playback-with-document-gesture.html: Pass true to runWithKeyDown so
+        it consumes the keydown event.
+        * media/video-test.js:
+        (runWithKeyDown): Take optional parameter which causes event handler to call preventDefault.
+
 2017-10-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         editing/deleting/delete-emoji-9.html is failing consistently.

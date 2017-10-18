@@ -3122,7 +3122,12 @@ bool EventHandler::isKeyEventAllowedInFullScreen(const PlatformKeyboardEvent& ke
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
 {
     Document* topDocument = m_frame.document() ? &m_frame.document()->topDocument() : nullptr;
+    MonotonicTime savedLastHandledUserGestureTimestamp;
     bool savedUserDidInteractWithPage = topDocument ? topDocument->userDidInteractWithPage() : false;
+
+    if (m_frame.document())
+        savedLastHandledUserGestureTimestamp = m_frame.document()->lastHandledUserGestureTimestamp();
+
     bool wasHandled = internalKeyEvent(keyEvent);
 
     // If the key event was not handled, do not treat it as user interaction with the page.
@@ -3132,6 +3137,9 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
         else
             ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(*topDocument);
     }
+
+    if (!wasHandled && m_frame.document())
+        m_frame.document()->updateLastHandledUserGestureTimestamp(savedLastHandledUserGestureTimestamp);
 
     return wasHandled;
 }

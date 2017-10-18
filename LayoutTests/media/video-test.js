@@ -394,13 +394,16 @@ function setCaptionDisplayMode(mode)
         consoleWrite("<br><b>** This test only works in DRT! **<" + "/b><br>");
 }
 
-function runWithKeyDown(fn) 
+function runWithKeyDown(fn, preventDefault) 
 {
     // FIXME: WKTR does not yet support the keyDown() message.  Do a mouseDown here
     // instead until keyDown support is added.
     var eventName = !window.testRunner || eventSender.keyDown ? 'keypress' : 'mousedown'
 
-    function thunk() {
+    function thunk(event) {
+        if (preventDefault)
+            event.preventDefault();
+
         document.removeEventListener(eventName, thunk, false);
         if (typeof fn === 'function')
             fn();
