@@ -136,8 +136,8 @@ protected:
     virtual void readOnlyAttributeChanged();
     virtual void requiredAttributeChanged();
     void didAttachRenderers() override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void finishedInsertingSubtree() override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
+    void didFinishInsertingNode() override;
     void removedFrom(ContainerNode&) override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 

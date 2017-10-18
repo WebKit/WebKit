@@ -254,15 +254,15 @@ void SVGTRefElement::buildPendingResource()
     updateReferencedText(target.get());
 }
 
-Node::InsertionNotificationRequest SVGTRefElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGTRefElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedInto(rootParent);
-    if (rootParent.isConnected())
-        return InsertionShouldCallFinishedInsertingSubtree;
-    return InsertionDone;
+    SVGElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
+        return InsertedIntoResult::NeedsPostInsertionCallback;
+    return InsertedIntoResult::Done;
 }
 
-void SVGTRefElement::finishedInsertingSubtree()
+void SVGTRefElement::didFinishInsertingNode()
 {
     buildPendingResource();
 }

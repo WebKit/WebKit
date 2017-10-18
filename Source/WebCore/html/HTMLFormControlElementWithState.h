@@ -45,7 +45,7 @@ protected:
 
     virtual bool shouldAutocomplete() const;
     void finishParsingChildren() override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
     bool isFormControlElementWithState() const override;
 };

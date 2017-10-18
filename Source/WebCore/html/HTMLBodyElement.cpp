@@ -187,23 +187,23 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicStri
     HTMLElement::parseAttribute(name, value);
 }
 
-Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLBodyElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
-    if (!insertionPoint.isConnected())
-        return InsertionDone;
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (!insertionType.connectedToDocument)
+        return InsertedIntoResult::Done;
 
     // FIXME: It's surprising this is web compatible since it means a marginwidth and marginheight attribute can
     // magically appear on the <body> of all documents embedded through <iframe> or <frame>.
     // FIXME: Perhaps this code should be in attach() instead of here.
     auto* ownerElement = document().ownerElement();
     if (!is<HTMLFrameElementBase>(ownerElement))
-        return InsertionDone;
+        return InsertedIntoResult::Done;
 
-    return InsertionShouldCallFinishedInsertingSubtree;
+    return InsertedIntoResult::NeedsPostInsertionCallback;
 }
 
-void HTMLBodyElement::finishedInsertingSubtree()
+void HTMLBodyElement::didFinishInsertingNode()
 {
     auto* ownerElement = document().ownerElement();
     RELEASE_ASSERT(is<HTMLFrameElementBase>(ownerElement));

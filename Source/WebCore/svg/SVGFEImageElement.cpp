@@ -150,13 +150,13 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-Node::InsertionNotificationRequest SVGFEImageElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGFEImageElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGFilterPrimitiveStandardAttributes::insertedInto(rootParent);
-    return InsertionShouldCallFinishedInsertingSubtree;
+    SVGFilterPrimitiveStandardAttributes::insertedInto(insertionType, parentOfInsertedTree);
+    return InsertedIntoResult::NeedsPostInsertionCallback;
 }
 
-void SVGFEImageElement::finishedInsertingSubtree()
+void SVGFEImageElement::didFinishInsertingNode()
 {
     buildPendingResource();
 }

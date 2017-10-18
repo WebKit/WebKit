@@ -48,20 +48,17 @@ HTMLSlotElement::HTMLSlotElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(slotTag));
 }
 
-HTMLSlotElement::InsertionNotificationRequest HTMLSlotElement::insertedInto(ContainerNode& insertionPoint)
+HTMLSlotElement::InsertedIntoResult HTMLSlotElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    auto insertionResult = HTMLElement::insertedInto(insertionPoint);
-    ASSERT_UNUSED(insertionResult, insertionResult == InsertionDone);
+    auto insertionResult = HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    ASSERT_UNUSED(insertionResult, insertionResult == InsertedIntoResult::Done);
 
-    // This function could be called when this element's shadow root's host or its ancestor is inserted.
-    // This element is new to the shadow tree (and its tree scope) only if the parent into which this element
-    // or its ancestor is inserted belongs to the same tree scope as this element's.
-    if (insertionPoint.isInShadowTree() && isInShadowTree() && &insertionPoint.treeScope() == &treeScope()) {
+    if (insertionType.treeScopeChanged && isInShadowTree()) {
         if (auto shadowRoot = containingShadowRoot())
             shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLSlotElement::removedFrom(ContainerNode& insertionPoint)

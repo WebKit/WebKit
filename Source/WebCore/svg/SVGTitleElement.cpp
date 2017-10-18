@@ -38,11 +38,11 @@ Ref<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGTitleElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest SVGTitleElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult SVGTitleElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedInto(insertionPoint);
+    SVGElement::insertedInto(insertionType, parentOfInsertedTree);
     document().titleElementAdded(*this);
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void SVGTitleElement::removedFrom(ContainerNode& insertionPoint)

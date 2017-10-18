@@ -113,11 +113,10 @@ void SVGStyleElement::finishParsingChildren()
     SVGElement::finishParsingChildren();
 }
 
-Node::InsertionNotificationRequest SVGStyleElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGStyleElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    bool wasInDocument = isConnected();
-    auto result = SVGElement::insertedInto(rootParent);
-    if (rootParent.isConnected() && !wasInDocument)
+    auto result = SVGElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
         m_styleSheetOwner.insertedIntoDocument(*this);
     return result;
 }

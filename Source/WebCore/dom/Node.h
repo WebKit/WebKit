@@ -443,19 +443,28 @@ public:
     //
     // WebKit notifies this callback regardless if the subtree of the node is a document tree or a floating subtree.
     // Implementation can determine the type of subtree by seeing insertionPoint->isConnected().
-    // For a performance reason, notifications are delivered only to ContainerNode subclasses if the insertionPoint is out of document.
     //
-    // There is another callback named finishedInsertingSubtree(), which is called after all descendants are notified.
-    // Only a few subclasses actually need this. To utilize this, the node should return InsertionShouldCallFinishedInsertingSubtree
+    // There is another callback named didFinishInsertingNode(), which is called after all descendants are notified.
+    // Only a few subclasses actually need this. To utilize this, the node should return InsertedIntoResult::NeedsPostInsertionCallback
     // from insrtedInto().
     //
-    enum InsertionNotificationRequest {
-        InsertionDone,
-        InsertionShouldCallFinishedInsertingSubtree
+    enum class InsertedIntoResult {
+        Done,
+        NeedsPostInsertionCallback,
     };
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode& insertionPoint);
-    virtual void finishedInsertingSubtree() { }
+    struct InsertionType {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
+        InsertionType(bool connectedToDocument, bool treeScopeChanged)
+            : connectedToDocument(connectedToDocument)
+            , treeScopeChanged(treeScopeChanged)
+        { }
+#endif
+        bool connectedToDocument { false };
+        bool treeScopeChanged { false };
+    };
+    virtual InsertedIntoResult insertedInto(InsertionType, ContainerNode& parentOfInsertedTree);
+    virtual void didFinishInsertingNode() { }
 
     // Notifies the node that it is no longer part of the tree.
     //

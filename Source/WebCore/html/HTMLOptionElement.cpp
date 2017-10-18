@@ -317,7 +317,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
     return downcast<HTMLOptGroupElement>(*parentNode()).isDisabledFormControl();
 }
 
-Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLOptionElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (HTMLSelectElement* select = ownerSelectElement()) {
         select->setRecalcListItems();
@@ -331,7 +331,7 @@ Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode
         select->scrollToSelection();
     }
 
-    return HTMLElement::insertedInto(insertionPoint);
+    return HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
 }
 
 String HTMLOptionElement::collectOptionInnerText() const

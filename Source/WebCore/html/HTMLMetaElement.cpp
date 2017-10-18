@@ -60,12 +60,12 @@ void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomicStri
         HTMLElement::parseAttribute(name, value);
 }
 
-Node::InsertionNotificationRequest HTMLMetaElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLMetaElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.isConnected())
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
         process();
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLMetaElement::process()

@@ -274,20 +274,20 @@ static void removeInvalidElementToAncestorFromInsertionPoint(const HTMLFormContr
         ancestor.removeInvalidDescendant(element);
 }
 
-Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLFormControlElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     m_dataListAncestorState = Unknown;
     setNeedsWillValidateCheck();
     if (willValidate() && !isValidFormControlElement())
-        addInvalidElementToAncestorFromInsertionPoint(*this, &insertionPoint);
+        addInvalidElementToAncestorFromInsertionPoint(*this, &parentOfInsertedTree);
     if (document().hasDisabledFieldsetElement())
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
-    HTMLElement::insertedInto(insertionPoint);
-    FormAssociatedElement::insertedInto(insertionPoint);
-    return InsertionShouldCallFinishedInsertingSubtree;
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    FormAssociatedElement::insertedInto(insertionType, parentOfInsertedTree);
+    return InsertedIntoResult::NeedsPostInsertionCallback;
 }
 
-void HTMLFormControlElement::finishedInsertingSubtree()
+void HTMLFormControlElement::didFinishInsertingNode()
 {
     resetFormOwner();
 }

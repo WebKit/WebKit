@@ -44,8 +44,8 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
-    void finishedInsertingSubtree() final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    void didFinishInsertingNode() final;
 
     bool isURLAttribute(const Attribute&) const final;
     

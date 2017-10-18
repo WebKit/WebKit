@@ -68,15 +68,15 @@ void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomicSt
         HTMLElement::parseAttribute(name, value);
 }
 
-Node::InsertionNotificationRequest HTMLScriptElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLScriptElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
-    return shouldCallFinishedInsertingSubtree(insertionPoint) ? InsertionShouldCallFinishedInsertingSubtree : InsertionDone;
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    return ScriptElement::insertedInto(insertionType, parentOfInsertedTree);
 }
 
-void HTMLScriptElement::finishedInsertingSubtree()
+void HTMLScriptElement::didFinishInsertingNode()
 {
-    ScriptElement::finishedInsertingSubtree();
+    ScriptElement::didFinishInsertingNode();
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#dom-script-text

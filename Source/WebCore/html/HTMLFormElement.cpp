@@ -121,12 +121,12 @@ bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
     return formIsTablePart;
 }
 
-Node::InsertionNotificationRequest HTMLFormElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLFormElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.isConnected())
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
         document().didAssociateFormControl(this);
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLFormElement::removedFrom(ContainerNode& insertionPoint)

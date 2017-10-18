@@ -173,13 +173,13 @@ void SVGTextPathElement::buildPendingResource()
     }
 }
 
-Node::InsertionNotificationRequest SVGTextPathElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGTextPathElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGTextContentElement::insertedInto(rootParent);
-    return InsertionShouldCallFinishedInsertingSubtree;
+    SVGTextContentElement::insertedInto(insertionType, parentOfInsertedTree);
+    return InsertedIntoResult::NeedsPostInsertionCallback;
 }
 
-void SVGTextPathElement::finishedInsertingSubtree()
+void SVGTextPathElement::didFinishInsertingNode()
 {
     buildPendingResource();
 }

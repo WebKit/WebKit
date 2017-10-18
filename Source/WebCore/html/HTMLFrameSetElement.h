@@ -64,7 +64,7 @@ private:
 
     void willRecalcStyle(Style::Change) final;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
 
     std::unique_ptr<Length[]> m_rowLengths;

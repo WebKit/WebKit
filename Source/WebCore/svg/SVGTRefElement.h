@@ -44,9 +44,9 @@ private:
     bool childShouldCreateRenderer(const Node&) const override;
     bool rendererIsNeeded(const RenderStyle&) override;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
-    void finishedInsertingSubtree() override;
+    void didFinishInsertingNode() override;
 
     void clearTarget() override;
 

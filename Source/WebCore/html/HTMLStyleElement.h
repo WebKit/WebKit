@@ -54,7 +54,7 @@ private:
     HTMLStyleElement(const QualifiedName&, Document&, bool createdByParser);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
     void childrenChanged(const ChildChange&) final;
 

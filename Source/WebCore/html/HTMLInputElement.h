@@ -350,8 +350,8 @@ private:
 
     void willChangeForm() final;
     void didChangeForm() final;
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
-    void finishedInsertingSubtree() final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    void didFinishInsertingNode() final;
     void removedFrom(ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 

@@ -279,11 +279,11 @@ void SVGPathElement::invalidateMPathDependencies()
     }
 }
 
-Node::InsertionNotificationRequest SVGPathElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGPathElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGGraphicsElement::insertedInto(rootParent);
+    SVGGraphicsElement::insertedInto(insertionType, parentOfInsertedTree);
     invalidateMPathDependencies();
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void SVGPathElement::removedFrom(ContainerNode& rootParent)

@@ -48,7 +48,7 @@ public:
 private:
     HTMLSlotElement(const QualifiedName&, Document&);
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
     void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) final;
 

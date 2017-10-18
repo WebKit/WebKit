@@ -47,7 +47,7 @@ public:
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
     
     virtual bool hasValidAttributeType() = 0;
@@ -118,7 +118,7 @@ protected:
     virtual void setTargetElement(SVGElement*);
     virtual void setAttributeName(const QualifiedName&);
 
-    void finishedInsertingSubtree() override;
+    void didFinishInsertingNode() override;
 
 private:
     void buildPendingResource() override;

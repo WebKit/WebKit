@@ -159,7 +159,7 @@ protected:
 
     bool isPresentationAttribute(const QualifiedName&) const override;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
     virtual bool selfHasRelativeLengths() const { return false; }

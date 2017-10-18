@@ -74,7 +74,7 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
     void accessKeyAction(bool) final;
 
     void childrenChanged(const ChildChange&) final;

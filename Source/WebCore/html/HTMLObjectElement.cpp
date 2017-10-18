@@ -313,14 +313,14 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
         renderFallbackContent();
 }
 
-Node::InsertionNotificationRequest HTMLObjectElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLObjectElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLPlugInImageElement::insertedInto(insertionPoint);
-    FormAssociatedElement::insertedInto(insertionPoint);
-    return InsertionShouldCallFinishedInsertingSubtree;
+    HTMLPlugInImageElement::insertedInto(insertionType, parentOfInsertedTree);
+    FormAssociatedElement::insertedInto(insertionType, parentOfInsertedTree);
+    return InsertedIntoResult::NeedsPostInsertionCallback;
 }
 
-void HTMLObjectElement::finishedInsertingSubtree()
+void HTMLObjectElement::didFinishInsertingNode()
 {
     resetFormOwner();
 }

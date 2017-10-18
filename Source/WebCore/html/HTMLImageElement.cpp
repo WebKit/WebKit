@@ -293,7 +293,7 @@ void HTMLImageElement::didAttachRenderers()
         renderImage.setImageSizeForAltText();
 }
 
-Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLImageElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (m_formSetByParser) {
         m_form = m_formSetByParser;
@@ -313,9 +313,9 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
     }
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
-    Node::InsertionNotificationRequest insertNotificationRequest = HTMLElement::insertedInto(insertionPoint);
+    Node::InsertedIntoResult insertNotificationRequest = HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
 
-    if (insertionPoint.isConnected() && !m_parsedUsemap.isNull())
+    if (insertionType.connectedToDocument && !m_parsedUsemap.isNull())
         document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode())) {
@@ -325,7 +325,7 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
 
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
-    if (insertionPoint.isConnected() && !m_imageLoader.image())
+    if (insertionType.connectedToDocument && !m_imageLoader.image())
         m_imageLoader.updateFromElement();
 
     return insertNotificationRequest;

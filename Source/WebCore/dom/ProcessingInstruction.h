@@ -58,8 +58,8 @@ private:
     NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void finishedInsertingSubtree() override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
+    void didFinishInsertingNode() override;
     void removedFrom(ContainerNode&) override;
 
     void checkStyleSheet();

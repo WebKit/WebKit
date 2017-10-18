@@ -551,7 +551,7 @@ public:
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
     void removeAllEventListeners() final;

@@ -114,10 +114,10 @@ Ref<HTMLCollection> HTMLMapElement::areas()
     return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<MapAreas>::traversalType>>(*this, MapAreas);
 }
 
-Node::InsertionNotificationRequest HTMLMapElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLMapElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    Node::InsertionNotificationRequest request = HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.isConnected())
+    Node::InsertedIntoResult request = HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
         treeScope().addImageMap(*this);
     return request;
 }

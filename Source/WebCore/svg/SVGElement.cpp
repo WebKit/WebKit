@@ -982,12 +982,12 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-Node::InsertionNotificationRequest SVGElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    StyledElement::insertedInto(rootParent);
+    StyledElement::insertedInto(insertionType, parentOfInsertedTree);
     updateRelativeLengthsInformation();
     buildPendingResourcesIfNeeded();
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void SVGElement::buildPendingResourcesIfNeeded()

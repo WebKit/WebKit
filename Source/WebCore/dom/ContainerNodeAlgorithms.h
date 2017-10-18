@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-void notifyChildNodeInserted(ContainerNode& insertionPoint, Node&, NodeVector& postInsertionNotificationTargets);
+NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node&);
 void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node&);
 void removeDetachedChildrenInContainer(ContainerNode&);
 

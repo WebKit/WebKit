@@ -40,11 +40,11 @@ HTMLFormControlElementWithState::~HTMLFormControlElementWithState()
 {
 }
 
-Node::InsertionNotificationRequest HTMLFormControlElementWithState::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLFormControlElementWithState::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (insertionPoint.isConnected() && !containingShadowRoot())
+    if (insertionType.connectedToDocument && !containingShadowRoot())
         document().formController().registerFormElementWithState(this);
-    return HTMLFormControlElement::insertedInto(insertionPoint);
+    return HTMLFormControlElement::insertedInto(insertionType, parentOfInsertedTree);
 }
 
 void HTMLFormControlElementWithState::removedFrom(ContainerNode& insertionPoint)

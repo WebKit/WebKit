@@ -94,7 +94,7 @@ private:
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
-    Node::InsertionNotificationRequest insertedInto(ContainerNode& insertionPoint) override;
+    Node::InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode& insertionPoint) override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 

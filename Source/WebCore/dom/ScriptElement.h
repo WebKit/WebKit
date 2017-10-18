@@ -81,8 +81,14 @@ protected:
     bool forceAsync() const { return m_forceAsync; }
 
     // Helper functions used by our parent classes.
-    bool shouldCallFinishedInsertingSubtree(ContainerNode&);
-    void finishedInsertingSubtree();
+    Node::InsertedIntoResult insertedInto(Node::InsertionType insertionType, ContainerNode&) const
+    {
+        if (insertionType.connectedToDocument && !m_parserInserted)
+            return Node::InsertedIntoResult::NeedsPostInsertionCallback;
+        return Node::InsertedIntoResult::Done;
+    }
+
+    void didFinishInsertingNode();
     void childrenChanged(const ContainerNode::ChildChange&);
     void handleSourceAttribute(const String& sourceURL);
     void handleAsyncAttribute();

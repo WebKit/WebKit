@@ -56,8 +56,8 @@ protected:
     bool isURLAllowed() const;
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
-    void finishedInsertingSubtree() final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    void didFinishInsertingNode() final;
     void didAttachRenderers() override;
 
 private:

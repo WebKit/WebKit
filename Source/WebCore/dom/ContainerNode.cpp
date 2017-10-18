@@ -356,13 +356,12 @@ void ContainerNode::notifyChildInserted(Node& child, const ChildChange& change)
 {
     ChildListMutationScope(*this).childAdded(child);
 
-    NodeVector postInsertionNotificationTargets;
-    notifyChildNodeInserted(*this, child, postInsertionNotificationTargets);
+    auto postInsertionNotificationTargets = notifyChildNodeInserted(*this, child);
 
     childrenChanged(change);
 
     for (auto& target : postInsertionNotificationTargets)
-        target->finishedInsertingSubtree();
+        target->didFinishInsertingNode();
 }
 
 void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource source)

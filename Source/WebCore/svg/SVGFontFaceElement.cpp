@@ -271,17 +271,17 @@ void SVGFontFaceElement::rebuildFontFace()
     document().styleScope().didChangeStyleSheetEnvironment();
 }
 
-Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGFontFaceElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedInto(rootParent);
-    if (!rootParent.isConnected()) {
+    SVGElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (!insertionType.connectedToDocument) {
         ASSERT(!m_fontElement);
-        return InsertionDone;
+        return InsertedIntoResult::Done;
     }
     document().accessSVGExtensions().registerSVGFontFaceElement(this);
 
     rebuildFontFace();
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)

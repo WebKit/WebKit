@@ -103,15 +103,15 @@ void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString
     SVGURIReference::parseAttribute(name, value);
 }
 
-Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGUseElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGGraphicsElement::insertedInto(rootParent);
-    if (isConnected()) {
+    SVGGraphicsElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument) {
         SVGExternalResourcesRequired::insertedIntoDocument(this);
         invalidateShadowTree();
         updateExternalDocument();
     }
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void SVGUseElement::removedFrom(ContainerNode& rootParent)

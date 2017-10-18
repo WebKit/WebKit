@@ -340,20 +340,19 @@ void HTMLLinkElement::clearSheet()
     m_sheet = nullptr;
 }
 
-Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLLinkElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    bool wasInDocument = isConnected();
-    HTMLElement::insertedInto(insertionPoint);
-    if (!insertionPoint.isConnected() || wasInDocument)
-        return InsertionDone;
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (!insertionType.connectedToDocument)
+        return InsertedIntoResult::Done;
 
     m_styleScope = &Style::Scope::forNode(*this);
     m_styleScope->addStyleSheetCandidateNode(*this, m_createdByParser);
 
-    return InsertionShouldCallFinishedInsertingSubtree;
+    return InsertedIntoResult::NeedsPostInsertionCallback;
 }
 
-void HTMLLinkElement::finishedInsertingSubtree()
+void HTMLLinkElement::didFinishInsertingNode()
 {
     process();
 }

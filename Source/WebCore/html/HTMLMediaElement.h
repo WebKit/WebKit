@@ -588,8 +588,8 @@ private:
     bool isMouseFocusable() const override;
     bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    void finishedInsertingSubtree() override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
+    void didFinishInsertingNode() override;
     void removedFrom(ContainerNode&) override;
     void didRecalcStyle(Style::Change) override;
 

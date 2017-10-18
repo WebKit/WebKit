@@ -124,7 +124,7 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    Node::InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    Node::InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
 
     void invalidateMPathDependencies();

@@ -50,11 +50,11 @@ Ref<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLTitleElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLTitleElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
     document().titleElementAdded(*this);
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLTitleElement::removedFrom(ContainerNode& insertionPoint)

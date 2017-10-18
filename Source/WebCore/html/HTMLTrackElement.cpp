@@ -76,17 +76,19 @@ Ref<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLTrackElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLTrackElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
 
-    if (is<HTMLMediaElement>(insertionPoint))
-        downcast<HTMLMediaElement>(insertionPoint).didAddTextTrack(*this);
+    // FIXME: This code is wrong. If HTMLTrackElement can be any descendent of HTMLMediaElement, then check ancestors of parentOfInsertedTree.
+    // If HTMLMediaElement only supports HTMLTrackElement which is an immediate child, then check parentNode() instead.
+    if (is<HTMLMediaElement>(parentOfInsertedTree))
+        downcast<HTMLMediaElement>(parentOfInsertedTree).didAddTextTrack(*this);
 
     // Since we've moved to a new parent, we may now be able to load.
     scheduleLoad();
 
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLTrackElement::removedFrom(ContainerNode& insertionPoint)

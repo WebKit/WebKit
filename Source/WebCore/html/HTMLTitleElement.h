@@ -39,7 +39,7 @@ public:
 private:
     HTMLTitleElement(const QualifiedName&, Document&);
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) final;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
     void removedFrom(ContainerNode&) final;
     void childrenChanged(const ChildChange&) final;
 

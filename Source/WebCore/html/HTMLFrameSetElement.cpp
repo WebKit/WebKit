@@ -208,15 +208,15 @@ void HTMLFrameSetElement::willRecalcStyle(Style::Change)
         renderer()->setNeedsLayout();
 }
 
-Node::InsertionNotificationRequest HTMLFrameSetElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLFrameSetElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.isConnected()) {
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument) {
         if (Frame* frame = document().frame())
             frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
     }
 
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLFrameSetElement::removedFrom(ContainerNode& insertionPoint)

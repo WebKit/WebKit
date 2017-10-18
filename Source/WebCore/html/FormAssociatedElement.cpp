@@ -68,7 +68,7 @@ void FormAssociatedElement::didMoveToNewDocument(Document&)
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
+void FormAssociatedElement::insertedInto(Node::InsertionType insertionType, ContainerNode&)
 {
     HTMLElement& element = asHTMLElement();
     if (m_formSetByParser) {
@@ -81,7 +81,7 @@ void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
     if (m_form && element.rootElement() != m_form->rootElement())
         setForm(nullptr);
 
-    if (!insertionPoint.isConnected())
+    if (!insertionType.connectedToDocument)
         return;
 
     if (element.hasAttributeWithoutSynchronization(formAttr))

@@ -871,12 +871,12 @@ bool HTMLMediaElement::childShouldCreateRenderer(const Node& child) const
 #endif
 }
 
-Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLMediaElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.isConnected()) {
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument) {
         m_inActiveDocument = true;
 
 #if PLATFORM(IOS)
@@ -893,10 +893,10 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode&
         m_mediaSession->canProduceAudioChanged();
     }
 
-    return InsertionShouldCallFinishedInsertingSubtree;
+    return InsertedIntoResult::NeedsPostInsertionCallback;
 }
 
-void HTMLMediaElement::finishedInsertingSubtree()
+void HTMLMediaElement::didFinishInsertingNode()
 {
     configureMediaControls();
 }

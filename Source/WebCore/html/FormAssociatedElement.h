@@ -24,6 +24,7 @@
 #pragma once
 
 #include "FormNamedItem.h"
+#include "Node.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -34,7 +35,6 @@ class Document;
 class FormAttributeTargetObserver;
 class HTMLElement;
 class HTMLFormElement;
-class Node;
 class ValidityState;
 
 class FormAssociatedElement : public FormNamedItem {
@@ -90,7 +90,7 @@ public:
 protected:
     FormAssociatedElement(HTMLFormElement*);
 
-    void insertedInto(ContainerNode&);
+    void insertedInto(Node::InsertionType, ContainerNode&);
     void removedFrom(ContainerNode&);
     void didMoveToNewDocument(Document& oldDocument);
 

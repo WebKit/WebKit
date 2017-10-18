@@ -1241,16 +1241,16 @@ Node& Node::getRootNode(const GetRootNodeOptions& options) const
     return options.composed ? shadowIncludingRoot() : rootNode();
 }
 
-Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult Node::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (insertionPoint.isConnected())
+    if (insertionType.connectedToDocument)
         setFlag(IsConnectedFlag);
-    if (insertionPoint.isInShadowTree())
+    if (parentOfInsertedTree.isInShadowTree())
         setFlag(IsInShadowTreeFlag);
 
     invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
 
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void Node::removedFrom(ContainerNode& insertionPoint)

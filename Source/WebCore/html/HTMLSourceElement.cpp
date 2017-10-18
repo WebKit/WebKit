@@ -63,9 +63,9 @@ Ref<HTMLSourceElement> HTMLSourceElement::create(Document& document)
     return create(sourceTag, document);
 }
 
-Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLSourceElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
     if (auto* parent = parentElement()) {
 #if ENABLE(VIDEO)
         if (is<HTMLMediaElement>(*parent))
@@ -75,7 +75,7 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode
         if (is<HTMLPictureElement>(*parent))
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
     }
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLSourceElement::removedFrom(ContainerNode& removalRoot)

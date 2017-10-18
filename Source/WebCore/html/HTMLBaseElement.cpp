@@ -51,12 +51,12 @@ void HTMLBaseElement::parseAttribute(const QualifiedName& name, const AtomicStri
         HTMLElement::parseAttribute(name, value);
 }
 
-Node::InsertionNotificationRequest HTMLBaseElement::insertedInto(ContainerNode& insertionPoint)
+Node::InsertedIntoResult HTMLBaseElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint.isConnected())
+    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
         document().processBaseElement();
-    return InsertionDone;
+    return InsertedIntoResult::Done;
 }
 
 void HTMLBaseElement::removedFrom(ContainerNode& insertionPoint)

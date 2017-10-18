@@ -78,12 +78,7 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
         m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
 }
 
-bool ScriptElement::shouldCallFinishedInsertingSubtree(ContainerNode& insertionPoint)
-{
-    return insertionPoint.isConnected() && !m_parserInserted;
-}
-
-void ScriptElement::finishedInsertingSubtree()
+void ScriptElement::didFinishInsertingNode()
 {
     ASSERT(!m_parserInserted);
     prepareScript(); // FIXME: Provide a real starting line number here.

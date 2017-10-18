@@ -45,7 +45,7 @@ public:
 private:
     SVGFEImageElement(const QualifiedName&, Document&);
 
-    void finishedInsertingSubtree() override;
+    void didFinishInsertingNode() override;
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -58,7 +58,7 @@ private:
     void requestImageResource();
 
     void buildPendingResource() override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEImageElement)

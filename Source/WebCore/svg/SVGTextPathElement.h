@@ -111,7 +111,7 @@ public:
     static Ref<SVGTextPathElement> create(const QualifiedName&, Document&);
 
 protected:
-    void finishedInsertingSubtree() override;
+    void didFinishInsertingNode() override;
 
 private:
     SVGTextPathElement(const QualifiedName&, Document&);
@@ -121,7 +121,7 @@ private:
     void clearResourceReferences();
 
     void buildPendingResource() override;
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
 
     static bool isSupportedAttribute(const QualifiedName&);

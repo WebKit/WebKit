@@ -120,7 +120,7 @@ private:
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void removedFrom(ContainerNode&) override;
 
     bool isFormAssociatedElement() const final { return false; }

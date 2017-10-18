@@ -467,9 +467,9 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
     return createRenderer<RenderSVGViewportContainer>(*this, WTFMove(style));
 }
 
-Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode& rootParent)
+Node::InsertedIntoResult SVGSVGElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (rootParent.isConnected()) {
+    if (insertionType.connectedToDocument) {
         document().accessSVGExtensions().addTimeContainer(this);
         if (!document().accessSVGExtensions().areAnimationsPaused())
             unpauseAnimations();
@@ -480,7 +480,7 @@ Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode& ro
         if (!document().parsing() && !document().processingLoadEvent() && document().loadEventFinished() && !m_timeContainer->isStarted())
             m_timeContainer->begin();
     }
-    return SVGGraphicsElement::insertedInto(rootParent);
+    return SVGGraphicsElement::insertedInto(insertionType, parentOfInsertedTree);
 }
 
 void SVGSVGElement::removedFrom(ContainerNode& rootParent)
