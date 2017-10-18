@@ -41,7 +41,7 @@ Update::Update(Document& document)
 {
 }
 
-const ElementUpdate* Update::elementUpdate(const Element& element) const
+const ElementUpdates* Update::elementUpdates(const Element& element) const
 {
     auto it = m_elements.find(&element);
     if (it == m_elements.end())
@@ -49,7 +49,7 @@ const ElementUpdate* Update::elementUpdate(const Element& element) const
     return &it->value;
 }
 
-ElementUpdate* Update::elementUpdate(const Element& element)
+ElementUpdates* Update::elementUpdates(const Element& element)
 {
     auto it = m_elements.find(&element);
     if (it == m_elements.end())
@@ -67,8 +67,8 @@ const TextUpdate* Update::textUpdate(const Text& text) const
 
 const RenderStyle* Update::elementStyle(const Element& element) const
 {
-    if (auto* update = elementUpdate(element))
-        return update->style.get();
+    if (auto* updates = elementUpdates(element))
+        return updates->update.style.get();
     auto* renderer = element.renderer();
     if (!renderer)
         return nullptr;
@@ -77,21 +77,21 @@ const RenderStyle* Update::elementStyle(const Element& element) const
 
 RenderStyle* Update::elementStyle(const Element& element)
 {
-    if (auto* update = elementUpdate(element))
-        return update->style.get();
+    if (auto* updates = elementUpdates(element))
+        return updates->update.style.get();
     auto* renderer = element.renderer();
     if (!renderer)
         return nullptr;
     return &renderer->mutableStyle();
 }
 
-void Update::addElement(Element& element, Element* parent, ElementUpdate&& elementUpdate)
+void Update::addElement(Element& element, Element* parent, ElementUpdates&& elementUpdates)
 {
     ASSERT(!m_elements.contains(&element));
     ASSERT(composedTreeAncestors(element).first() == parent);
 
     addPossibleRoot(parent);
-    m_elements.add(&element, WTFMove(elementUpdate));
+    m_elements.add(&element, WTFMove(elementUpdates));
 }
 
 void Update::addText(Text& text, Element* parent, TextUpdate&& textUpdate)
