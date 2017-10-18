@@ -282,6 +282,7 @@ set(WebKit_SOURCES
 
     StorageProcess/IndexedDB/WebIDBConnectionToClient.cpp
 
+    StorageProcess/ServiceWorker/WebSWOriginStore.cpp
     StorageProcess/ServiceWorker/WebSWServerConnection.cpp
 
     UIProcess/BackgroundProcessResponsivenessTimer.cpp
@@ -539,6 +540,7 @@ set(WebKit_SOURCES
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
 
     WebProcess/Storage/WebSWClientConnection.cpp
+    WebProcess/Storage/WebSWOriginTable.cpp
     WebProcess/Storage/WebServiceWorkerProvider.cpp
     WebProcess/Storage/WebToStorageProcessConnection.cpp
 

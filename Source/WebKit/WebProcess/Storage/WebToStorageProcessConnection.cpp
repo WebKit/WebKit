@@ -103,7 +103,7 @@ WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerFo
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-WebSWClientConnection& WebToStorageProcessConnection::serviceWorkerConnectionForSession(const SessionID& sessionID)
+WebSWClientConnection& WebToStorageProcessConnection::serviceWorkerConnectionForSession(SessionID sessionID)
 {
     auto result = m_swConnectionsBySession.add(sessionID, nullptr);
     if (result.isNewEntry) {

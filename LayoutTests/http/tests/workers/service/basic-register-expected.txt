@@ -1,3 +1,7 @@
-CONSOLE MESSAGE: line 10: Registration failed with error: UnknownError: Worker script successfully started, but it has no way to communicate yet
-CONSOLE MESSAGE: line 21: Registration failed with error: UnknownError: Worker script successfully started, but it has no way to communicate yet
+PASS: No service worker is initially registered for this origin
+PASS: No service worker is initially registered for this origin in private session
+Registered!
+PASS: A service worker is now registered for this origin
+PASS: No service worker is registered for this origin in private session
+Registered!
 

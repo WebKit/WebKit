@@ -86,6 +86,11 @@ void SWServer::Connection::scriptContextFailedToStart(const ServiceWorkerRegistr
     m_server.scriptContextFailedToStart(*this, registrationKey, workerID, message);
 }
 
+void SWServer::Connection::scriptContextStarted(const ServiceWorkerRegistrationKey& registrationKey, uint64_t identifier, const String& workerID)
+{
+    m_server.scriptContextStarted(*this, registrationKey, identifier, workerID);
+}
+
 SWServer::SWServer()
 {
     m_taskThread = Thread::create(ASCIILiteral("ServiceWorker Task Thread"), [this] {
@@ -155,6 +160,14 @@ void SWServer::scriptContextFailedToStart(Connection& connection, const ServiceW
     
     if (auto* registration = m_registrations.get(registrationKey))
         registration->scriptContextFailedToStart(connection, workerID, message);
+}
+
+void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, uint64_t identifier, const String& workerID)
+{
+    ASSERT(m_connections.contains(connection.identifier()));
+
+    if (auto* registration = m_registrations.get(registrationKey))
+        registration->scriptContextStarted(connection, identifier, workerID);
 }
 
 Ref<SWServerWorker> SWServer::createWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)

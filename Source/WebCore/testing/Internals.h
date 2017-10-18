@@ -614,6 +614,8 @@ public:
     Ref<ExtendableEvent> createTrustedExtendableEvent();
 #endif
 
+    bool hasServiceWorkerRegisteredForOrigin(const String&);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

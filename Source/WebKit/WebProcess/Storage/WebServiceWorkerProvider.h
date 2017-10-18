@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class WebServiceWorkerProvider : public WebCore::ServiceWorkerProvider {
+class WebServiceWorkerProvider final : public WebCore::ServiceWorkerProvider {
 public:
     static WebServiceWorkerProvider& singleton();
 
@@ -40,7 +40,7 @@ private:
     friend NeverDestroyed<WebServiceWorkerProvider>;
     WebServiceWorkerProvider();
 
-    WebCore::SWClientConnection& serviceWorkerConnectionForSession(const PAL::SessionID&) final;
+    WebCore::SWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID) final;
 
 }; // class WebServiceWorkerProvider
 

@@ -54,7 +54,7 @@ public:
     WebIDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    WebSWClientConnection& serviceWorkerConnectionForSession(const PAL::SessionID&);
+    WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
 #endif
 
 private:

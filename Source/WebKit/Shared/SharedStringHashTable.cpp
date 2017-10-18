@@ -132,6 +132,11 @@ SharedStringHash* SharedStringHashTable::findSlot(SharedStringHash sharedStringH
 
 void SharedStringHashTable::clear()
 {
+    if (!m_sharedMemory)
+        return;
+
+    memset(m_sharedMemory->data(), 0, m_sharedMemory->size());
+    m_table = nullptr;
     m_tableSize = 0;
     m_tableSizeMask = 0;
     m_sharedMemory = nullptr;

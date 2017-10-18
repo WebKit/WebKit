@@ -1654,6 +1654,8 @@ void WebProcess::startServiceWorkerContext(uint64_t serverConnectionIdentifier, 
     
     if (contextResult.hasException())
         m_workerContextConnection->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(serverConnectionIdentifier, data.registrationKey, data.workerID, contextResult.exception().message()), 0);
+    else
+        m_workerContextConnection->send(Messages::StorageProcess::ServiceWorkerContextStarted(serverConnectionIdentifier, data.registrationKey, contextResult.returnValue(), data.workerID), 0);
 }
 
 #endif

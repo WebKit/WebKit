@@ -123,11 +123,14 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGPathStringBuilder.h"
 #include "SVGSVGElement.h"
+#include "SWClientConnection.h"
 #include "SchemeRegistry.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingMomentumCalculator.h"
+#include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
+#include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SourceBuffer.h"
@@ -4185,6 +4188,19 @@ void Internals::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
         return;
 
     contextDocument()->setConsoleMessageListener(WTFMove(listener));
+}
+
+bool Internals::hasServiceWorkerRegisteredForOrigin(const String& origin)
+{
+#if ENABLE(SERVICE_WORKER)
+    if (!contextDocument())
+        return false;
+
+    return ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(contextDocument()->sessionID()).hasServiceWorkerRegisteredForOrigin(SecurityOrigin::createFromString(origin));
+#else
+    UNUSED_PARAM(origin);
+    return false;
+#endif
 }
 
 void Internals::setResponseSizeWithPadding(FetchResponse& response, uint64_t size)

@@ -51,17 +51,15 @@ ExceptionOr<uint64_t> SWContextManager::startServiceWorkerContext(uint64_t serve
     // FIXME: Provide a sensical session ID
 
     auto thread = ServiceWorkerThread::create(serverConnectionIdentifier, data, SessionID::defaultSessionID());
-    auto result = m_workerThreadMap.add(thread->identifier(), WTFMove(thread));
+    auto threadIdentifier = thread->identifier();
+    auto result = m_workerThreadMap.add(threadIdentifier, WTFMove(thread));
     ASSERT(result.isNewEntry);
 
     result.iterator->value->start();
     
     LOG(ServiceWorker, "Context process PID: %i started worker thread %s\n", getpid(), data.workerID.utf8().data());
     
-    // FIXME: For testing purposes we need to signal a failure with an exception payload.
-    // Later with more APIs and infrastructure filled in, testing will be much easier.
-    
-    return Exception { UnknownError, "Worker script successfully started, but it has no way to communicate yet" };
+    return threadIdentifier;
 }
 
 } // namespace WebCore

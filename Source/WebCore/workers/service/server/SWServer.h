@@ -55,6 +55,7 @@ public:
         WEBCORE_EXPORT virtual ~Connection();
 
         WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
+        WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
@@ -97,6 +98,7 @@ private:
 
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
+    void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
 
     HashMap<uint64_t, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;

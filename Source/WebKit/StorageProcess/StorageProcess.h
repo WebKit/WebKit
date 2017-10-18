@@ -47,6 +47,10 @@ class WebSWServerConnection;
 enum class WebsiteDataType;
 struct StorageProcessCreationParameters;
 
+#if ENABLE(SERVICE_WORKER)
+class WebSWOriginStore;
+#endif
+
 class StorageProcess : public ChildProcess
 #if ENABLE(INDEXED_DATABASE)
     , public WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler
@@ -69,16 +73,17 @@ public:
     void accessToTemporaryFileComplete(const String& path) final;
 #endif
 
-#if ENABLE(SERVICE_WORKER)
-    IPC::Connection* workerContextProcessConnection();
-    void createWorkerContextProcessConnection();
-#endif
-
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler);
 #endif
 
 #if ENABLE(SERVICE_WORKER)
+    IPC::Connection* workerContextProcessConnection();
+    void createWorkerContextProcessConnection();
+
+    WebSWOriginStore& ensureSWOriginStoreForSession(PAL::SessionID);
+    WebSWOriginStore* swOriginStoreForSession(PAL::SessionID) const;
+
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
@@ -113,6 +118,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void didGetWorkerContextProcessConnection(const IPC::Attachment& encodedConnectionIdentifier);
     void serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
+    void serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
@@ -122,7 +128,7 @@ private:
     void performNextStorageTask();
     void ensurePathExists(const String&);
 
-    Vector<RefPtr<StorageToWebProcessConnection>> m_storageToWebProcessConnections;
+    Vector<Ref<StorageToWebProcessConnection>> m_storageToWebProcessConnections;
 
     Ref<WorkQueue> m_queue;
 
@@ -143,6 +149,7 @@ private:
     bool m_waitingForWorkerContextProcessConnection { false };
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
     HashMap<uint64_t, WebSWServerConnection*> m_swServerConnections;
+    HashMap<PAL::SessionID, std::unique_ptr<WebSWOriginStore>> m_swOriginStores;
 #endif
 };
 

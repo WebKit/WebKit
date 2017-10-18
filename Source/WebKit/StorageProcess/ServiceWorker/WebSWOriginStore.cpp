@@ -24,38 +24,66 @@
  */
 
 #include "config.h"
-#include "WebServiceWorkerProvider.h"
 
 #if ENABLE(SERVICE_WORKER)
+#include "WebSWOriginStore.h"
 
-#include "WebProcess.h"
+#include "WebSWClientConnectionMessages.h"
 #include "WebSWServerConnection.h"
-#include "WebToStorageProcessConnection.h"
-#include <WebCore/Exception.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/ServiceWorkerJob.h>
-#include <pal/SessionID.h>
-#include <wtf/text/WTFString.h>
-
-using namespace PAL;
-using namespace WebCore;
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebKit {
 
-WebServiceWorkerProvider& WebServiceWorkerProvider::singleton()
-{
-    static NeverDestroyed<WebServiceWorkerProvider> provider;
-    return provider;
-}
+using namespace WebCore;
 
-WebServiceWorkerProvider::WebServiceWorkerProvider()
+WebSWOriginStore::WebSWOriginStore()
+    : m_store(*this)
 {
 }
 
-WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(SessionID sessionID)
+void WebSWOriginStore::add(const SecurityOrigin& origin)
 {
-    ASSERT(WebProcess::singleton().webToStorageProcessConnection());
-    return WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);
+    m_store.add(computeSharedStringHash(origin.toString()));
+}
+
+void WebSWOriginStore::remove(const SecurityOrigin& origin)
+{
+    m_store.remove(computeSharedStringHash(origin.toString()));
+}
+
+void WebSWOriginStore::clear()
+{
+    m_store.clear();
+}
+
+void WebSWOriginStore::registerSWServerConnection(WebSWServerConnection& connection)
+{
+    m_webSWServerConnections.add(&connection);
+
+    if (m_store.isEmpty())
+        return;
+
+    sendStoreHandle(connection);
+}
+
+void WebSWOriginStore::unregisterSWServerConnection(WebSWServerConnection& connection)
+{
+    m_webSWServerConnections.remove(&connection);
+}
+
+void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
+{
+    SharedMemory::Handle handle;
+    if (!m_store.createSharedMemoryHandle(handle))
+        return;
+
+    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(handle));
+}
+
+void WebSWOriginStore::didInvalidateSharedMemory()
+{
+    for (auto* connection : m_webSWServerConnections)
+        sendStoreHandle(*connection);
 }
 
 } // namespace WebKit

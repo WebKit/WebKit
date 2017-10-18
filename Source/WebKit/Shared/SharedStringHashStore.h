@@ -40,7 +40,7 @@ public:
         virtual ~Client() { }
 
         virtual void didInvalidateSharedMemory() = 0;
-        virtual void didUpdateSharedStringHashes(const Vector<WebCore::SharedStringHash>& addedHashes, const Vector<WebCore::SharedStringHash>& removedHashes) = 0;
+        virtual void didUpdateSharedStringHashes(const Vector<WebCore::SharedStringHash>& addedHashes, const Vector<WebCore::SharedStringHash>& removedHashes) { };
     };
 
     SharedStringHashStore(Client&);

@@ -1,2 +1,2 @@
-ALERT: Unexpected error received from server: UnknownError: Worker script successfully started, but it has no way to communicate yet
+CONSOLE MESSAGE: line 48: Original window resolved successfully (unexpected)
 

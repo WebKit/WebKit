@@ -30,14 +30,17 @@
 
 #include "DataReference.h"
 #include "Logging.h"
+#include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
 #include "WebSWClientConnectionMessages.h"
+#include "WebSWOriginStore.h"
 #include "WebSWServerConnectionMessages.h"
 #include "WebToStorageProcessConnection.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
 #include <WebCore/ServiceWorkerRegistrationData.h>
@@ -48,7 +51,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, const SessionID& sessionID)
+WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, SessionID sessionID)
     : SWServer::Connection(server, connectionIdentifier)
     , m_sessionID(sessionID)
     , m_contentConnection(connection)
@@ -71,6 +74,8 @@ void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const Exce
 
 void WebSWServerConnection::resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
 {
+    auto origin = registrationData.key.topOrigin.securityOrigin();
+    StorageProcess::singleton().ensureSWOriginStoreForSession(m_sessionID).add(origin);
     send(Messages::WebSWClientConnection::JobResolvedInServer(jobIdentifier, registrationData));
 }
 

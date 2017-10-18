@@ -41,13 +41,15 @@ namespace WebKit {
 
 class WebSWServerConnection : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    WebSWServerConnection(WebCore::SWServer&, IPC::Connection&, uint64_t connectionIdentifier, const PAL::SessionID&);
+    WebSWServerConnection(WebCore::SWServer&, IPC::Connection&, uint64_t connectionIdentifier, PAL::SessionID);
     WebSWServerConnection(const WebSWServerConnection&) = delete;
     ~WebSWServerConnection() final;
 
     void disconnectedFromWebProcess();
     void setContextConnection(IPC::Connection*);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    PAL::SessionID sessionID() const { return m_sessionID; }
 
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)

@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebSWOriginTable.h"
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/ServiceWorkerFetchResult.h>
 #include <WebCore/ServiceWorkerJobData.h>
@@ -40,9 +41,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebSWClientConnection::WebSWClientConnection(IPC::Connection& connection, const SessionID& sessionID)
+WebSWClientConnection::WebSWClientConnection(IPC::Connection& connection, SessionID sessionID)
     : m_sessionID(sessionID)
     , m_connection(connection)
+    , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
     bool result = sendSync(Messages::StorageToWebProcessConnection::EstablishSWServerConnection(sessionID), Messages::StorageToWebProcessConnection::EstablishSWServerConnection::Reply(m_identifier));
 
@@ -61,6 +63,16 @@ void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobD
 void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
 {
     send(Messages::WebSWServerConnection::FinishFetchingScriptInServer(result));
+}
+
+bool WebSWClientConnection::hasServiceWorkerRegisteredForOrigin(const SecurityOrigin& origin) const
+{
+    return m_swOriginTable->contains(origin);
+}
+
+void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::Handle& handle)
+{
+    m_swOriginTable->setSharedMemory(handle);
 }
 
 } // namespace WebKit

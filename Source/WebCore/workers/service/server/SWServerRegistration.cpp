@@ -88,10 +88,16 @@ void SWServerRegistration::scriptFetchFinished(SWServer::Connection& connection,
 
 void SWServerRegistration::scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message)
 {
-    ASSERT(m_currentJob);
     UNUSED_PARAM(workerID);
 
     rejectCurrentJob(ExceptionData { UnknownError, message });
+}
+
+void SWServerRegistration::scriptContextStarted(SWServer::Connection&, uint64_t identifier, const String& workerID)
+{
+    UNUSED_PARAM(workerID);
+
+    resolveCurrentJob(ServiceWorkerRegistrationData { m_registrationKey, identifier });
 }
 
 void SWServerRegistration::startNextJob()

@@ -1361,6 +1361,8 @@
 		8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */; };
 		831EEBBD1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 831EEBBB1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.h */; };
 		831EEBBE1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831EEBBC1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp */; };
+		832994A71F96F50200AC57B1 /* WebSWOriginStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832994A51F96F4FD00AC57B1 /* WebSWOriginStore.cpp */; };
+		832994A81F96F50200AC57B1 /* WebSWOriginStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 832994A61F96F4FE00AC57B1 /* WebSWOriginStore.h */; };
 		832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */; };
 		832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */; };
 		832ED18B1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */; };
@@ -1391,6 +1393,8 @@
 		83D454D71BE9D3C4006C93BD /* NetworkLoadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */; };
 		83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */; };
 		83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */; };
+		83F1A0791F96E7790045B94E /* WebSWOriginTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F1A0771F96E7700045B94E /* WebSWOriginTable.cpp */; };
+		83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F1A0781F96E7710045B94E /* WebSWOriginTable.h */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		868160D0187645570021E79D /* WindowServerConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 868160CF187645370021E79D /* WindowServerConnection.mm */; };
 		86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E67A21190F411800004AB7 /* ProcessThrottler.h */; };
@@ -3718,6 +3722,8 @@
 		8313F7EA1F7DAE0400B944EB /* SharedStringHashStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedStringHashStore.cpp; sourceTree = "<group>"; };
 		831EEBBB1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSpeculativeLoad.h; sourceTree = "<group>"; };
 		831EEBBC1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSpeculativeLoad.cpp; sourceTree = "<group>"; };
+		832994A51F96F4FD00AC57B1 /* WebSWOriginStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWOriginStore.cpp; sourceTree = "<group>"; };
+		832994A61F96F4FE00AC57B1 /* WebSWOriginStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWOriginStore.h; sourceTree = "<group>"; };
 		832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSpeculativeLoadManager.h; sourceTree = "<group>"; };
 		832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSpeculativeLoadManager.cpp; sourceTree = "<group>"; };
 		832ED1891E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerActivityStateCPUUsageSampler.cpp; sourceTree = "<group>"; };
@@ -3748,6 +3754,8 @@
 		83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLoadClient.h; path = NetworkProcess/NetworkLoadClient.h; sourceTree = "<group>"; };
 		83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebValidationMessageClient.cpp; sourceTree = "<group>"; };
 		83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebValidationMessageClient.h; sourceTree = "<group>"; };
+		83F1A0771F96E7700045B94E /* WebSWOriginTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWOriginTable.cpp; sourceTree = "<group>"; };
+		83F1A0781F96E7710045B94E /* WebSWOriginTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWOriginTable.h; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
@@ -6165,6 +6173,8 @@
 				517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */,
 				517A53021F4793B200DCDC0A /* WebSWClientConnection.h */,
 				517A530C1F479E9700DCDC0A /* WebSWClientConnection.messages.in */,
+				83F1A0771F96E7700045B94E /* WebSWOriginTable.cpp */,
+				83F1A0781F96E7710045B94E /* WebSWOriginTable.h */,
 				5118E9991F295259003EF9F5 /* WebToStorageProcessConnection.cpp */,
 				5118E99A1F295259003EF9F5 /* WebToStorageProcessConnection.h */,
 			);
@@ -6286,6 +6296,8 @@
 		517A53061F479E0F00DCDC0A /* ServiceWorker */ = {
 			isa = PBXGroup;
 			children = (
+				832994A51F96F4FD00AC57B1 /* WebSWOriginStore.cpp */,
+				832994A61F96F4FE00AC57B1 /* WebSWOriginStore.h */,
 				517A53091F479E3100DCDC0A /* WebSWServerConnection.cpp */,
 				517A53071F479E3100DCDC0A /* WebSWServerConnection.h */,
 				517A53081F479E3100DCDC0A /* WebSWServerConnection.messages.in */,
@@ -9003,6 +9015,8 @@
 				1A52C0F81A38CDC70016160A /* WebStorageNamespaceProvider.h in Headers */,
 				517A53051F4793C600DCDC0A /* WebSWClientConnection.h in Headers */,
 				517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */,
+				832994A81F96F50200AC57B1 /* WebSWOriginStore.h in Headers */,
+				83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */,
 				517A530B1F479E3600DCDC0A /* WebSWServerConnection.h in Headers */,
 				517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */,
 				5118E99C1F295266003EF9F5 /* WebToStorageProcessConnection.h in Headers */,
@@ -10651,6 +10665,8 @@
 				1A52C0F71A38CDC70016160A /* WebStorageNamespaceProvider.cpp in Sources */,
 				517A53041F4793C600DCDC0A /* WebSWClientConnection.cpp in Sources */,
 				517A530F1F47A86200DCDC0A /* WebSWClientConnectionMessageReceiver.cpp in Sources */,
+				832994A71F96F50200AC57B1 /* WebSWOriginStore.cpp in Sources */,
+				83F1A0791F96E7790045B94E /* WebSWOriginTable.cpp in Sources */,
 				517A530A1F479E3600DCDC0A /* WebSWServerConnection.cpp in Sources */,
 				517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */,
 				5118E99B1F295266003EF9F5 /* WebToStorageProcessConnection.cpp in Sources */,
@@ -11032,9 +11048,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = PluginProcessShim;
 			};
 			name = Debug;
@@ -11043,9 +11057,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = PluginProcessShim;
 			};
 			name = Release;
@@ -11054,9 +11066,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = PluginProcessShim;
 			};
 			name = Production;
@@ -11065,9 +11075,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Debug;
 		};
@@ -11075,9 +11083,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Release;
 		};
@@ -11161,9 +11167,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Production;
 		};

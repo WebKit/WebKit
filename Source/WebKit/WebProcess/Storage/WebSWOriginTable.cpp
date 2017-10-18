@@ -24,38 +24,31 @@
  */
 
 #include "config.h"
-#include "WebServiceWorkerProvider.h"
 
 #if ENABLE(SERVICE_WORKER)
+#include "WebSWOriginTable.h"
 
-#include "WebProcess.h"
-#include "WebSWServerConnection.h"
-#include "WebToStorageProcessConnection.h"
-#include <WebCore/Exception.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/ServiceWorkerJob.h>
-#include <pal/SessionID.h>
-#include <wtf/text/WTFString.h>
-
-using namespace PAL;
-using namespace WebCore;
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebKit {
 
-WebServiceWorkerProvider& WebServiceWorkerProvider::singleton()
+using namespace WebCore;
+
+bool WebSWOriginTable::contains(const SecurityOrigin& origin) const
 {
-    static NeverDestroyed<WebServiceWorkerProvider> provider;
-    return provider;
+    if (origin.isUnique())
+        return false;
+
+    return m_serviceWorkerOriginTable.contains(computeSharedStringHash(origin.toString()));
 }
 
-WebServiceWorkerProvider::WebServiceWorkerProvider()
+void WebSWOriginTable::setSharedMemory(const SharedMemory::Handle& handle)
 {
-}
+    auto sharedMemory = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return;
 
-WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(SessionID sessionID)
-{
-    ASSERT(WebProcess::singleton().webToStorageProcessConnection());
-    return WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);
+    m_serviceWorkerOriginTable.setSharedMemory(sharedMemory.releaseNonNull());
 }
 
 } // namespace WebKit

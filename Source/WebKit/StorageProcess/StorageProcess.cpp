@@ -31,11 +31,13 @@
 #include "StorageProcessProxyMessages.h"
 #include "StorageToWebProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebSWOriginStore.h"
 #include "WebSWServerConnection.h"
 #include "WebsiteData.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/TextEncoding.h>
 #include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
@@ -220,8 +222,10 @@ void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     };
 
 #if ENABLE(SERVICE_WORKER)
-    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
-        notImplemented();
+    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
+        if (auto* store = swOriginStoreForSession(sessionID))
+            store->clear();
+    }
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -241,8 +245,12 @@ void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     };
 
 #if ENABLE(SERVICE_WORKER)
-    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
-        notImplemented();
+    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
+        if (auto* store = swOriginStoreForSession(sessionID)) {
+            for (auto& originData : securityOriginDatas)
+                store->remove(originData.securityOrigin());
+        }
+    }
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -345,6 +353,21 @@ void StorageProcess::createWorkerContextProcessConnection()
     parentProcessConnection()->send(Messages::StorageProcessProxy::GetWorkerContextProcessConnection(), 0);
 }
 
+WebSWOriginStore& StorageProcess::ensureSWOriginStoreForSession(PAL::SessionID sessionID)
+{
+    return *m_swOriginStores.ensure(sessionID, [this, sessionID] {
+        return std::make_unique<WebSWOriginStore>();
+    }).iterator->value;
+}
+
+WebSWOriginStore* StorageProcess::swOriginStoreForSession(PAL::SessionID sessionID) const
+{
+    auto it = m_swOriginStores.find(sessionID);
+    if (it == m_swOriginStores.end())
+        return nullptr;
+    return it->value.get();
+}
+
 void StorageProcess::didGetWorkerContextProcessConnection(const IPC::Attachment& encodedConnectionIdentifier)
 {
     ASSERT(m_waitingForWorkerContextProcessConnection);
@@ -376,16 +399,25 @@ void StorageProcess::serviceWorkerContextFailedToStart(uint64_t serverConnection
         connection->scriptContextFailedToStart(registrationKey, workerID, message);
 }
 
+void StorageProcess::serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, uint64_t identifier, const String& workerID)
+{
+    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
+        connection->scriptContextStarted(registrationKey, identifier, workerID);
+}
+
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(!m_swServerConnections.contains(connection.identifier()));
     m_swServerConnections.add(connection.identifier(), &connection);
+    ensureSWOriginStoreForSession(connection.sessionID()).registerSWServerConnection(connection);
 }
 
 void StorageProcess::unregisterSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(m_swServerConnections.get(connection.identifier()) == &connection);
     m_swServerConnections.remove(connection.identifier());
+    if (auto* originStore = swOriginStoreForSession(connection.sessionID()))
+        originStore->unregisterSWServerConnection(connection);
 }
 #endif
 

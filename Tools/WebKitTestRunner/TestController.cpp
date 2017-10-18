@@ -781,6 +781,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
 
     WKContextClearCachedCredentials(TestController::singleton().context());
 
+    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKContextGetWebsiteDataStore(platformContext()));
+
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset the EventSender for each test.

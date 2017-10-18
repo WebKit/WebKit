@@ -50,6 +50,7 @@ public:
     void enqueueJob(const ServiceWorkerJobData&);
     void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message);
+    void scriptContextStarted(SWServer::Connection&, uint64_t identifier, const String& workerID);
     
     ServiceWorkerRegistrationData data() const;
 

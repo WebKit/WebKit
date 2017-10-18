@@ -38,5 +38,6 @@ messages -> StorageProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     DidGetWorkerContextProcessConnection(IPC::Attachment connectionHandle)
     ServiceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerRegistrationKey registrationKey, String workerID, String message)
+    ServiceWorkerContextStarted(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerRegistrationKey registrationKey, uint64_t identifier, String workerID)
 #endif
 }

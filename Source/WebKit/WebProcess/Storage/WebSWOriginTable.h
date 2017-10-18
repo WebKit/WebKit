@@ -27,52 +27,25 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "Connection.h"
-#include "MessageReceiver.h"
-#include "MessageSender.h"
 #include "SharedMemory.h"
-#include <WebCore/SWClientConnection.h>
-#include <pal/SessionID.h>
-#include <wtf/UniqueRef.h>
+#include "SharedStringHashTable.h"
 
 namespace WebCore {
-struct ExceptionData;
+class SecurityOrigin;
 }
 
 namespace WebKit {
 
-class WebSWOriginTable;
-
-class WebSWClientConnection : public WebCore::SWClientConnection, public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWOriginTable {
 public:
-    WebSWClientConnection(IPC::Connection&, PAL::SessionID);
-    WebSWClientConnection(const WebSWClientConnection&) = delete;
-    ~WebSWClientConnection() final;
+    WebSWOriginTable() = default;
 
-    uint64_t identifier() const final { return m_identifier; }
-
-    void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
-    void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
-
-    void disconnectedFromWebProcess();
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-
-    bool hasServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
+    bool contains(const WebCore::SecurityOrigin&) const;
+    void setSharedMemory(const SharedMemory::Handle&);
 
 private:
-    void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
-
-    IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
-    uint64_t messageSenderDestinationID() final { return m_identifier; }
-
-    void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
-
-    PAL::SessionID m_sessionID;
-    uint64_t m_identifier;
-
-    Ref<IPC::Connection> m_connection;
-    UniqueRef<WebSWOriginTable> m_swOriginTable;
-}; // class WebSWServerConnection
+    SharedStringHashTable m_serviceWorkerOriginTable;
+};
 
 } // namespace WebKit
 

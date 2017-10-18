@@ -1,3 +1,75 @@
+2017-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Add an efficient data structure for WebCore to query if there is a Service Worker registered for a given origin
+        https://bugs.webkit.org/show_bug.cgi?id=177876
+        <rdar://problem/34813129>
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce a Service Worker origin store which gets populated / updated on the StorageProcess side
+        and queried on the WebContent process side via the WebSWOriginTable so that the WebProcess can
+        efficiently check if there is a ServiceWorker registered for a given origin without actually doing
+        an IPC to the StorageProcess.
+
+        For efficiency, the hash table is backed by SharedMemory so we only pass shared memory handles
+        between the StorageProcess and the WebProcesses.
+
+        We currently add entries to the WebSWOriginStore whenever a service worker registration succeeds
+        on the StorageProcess side. We also clear this store whenever the API to clear service worker
+        registrations is called. Code to query the WebSWOriginTable from the WebContent process side is
+        there but currently only used by Internals for testing. We will later leverage this code when
+        integrating with Fetch API.
+
+        * CMakeLists.txt:
+        * Shared/SharedStringHashStore.h:
+        (WebKit::SharedStringHashStore::Client::didUpdateSharedStringHashes):
+        * Shared/SharedStringHashTable.cpp:
+        (WebKit::SharedStringHashTable::clear):
+        * StorageProcess/ServiceWorker/WebSWOriginStore.cpp: Copied from Source/WebKit/WebProcess/Storage/WebServiceWorkerProvider.cpp.
+        (WebKit::WebSWOriginStore::WebSWOriginStore):
+        (WebKit::WebSWOriginStore::add):
+        (WebKit::WebSWOriginStore::remove):
+        (WebKit::WebSWOriginStore::clear):
+        (WebKit::WebSWOriginStore::registerSWServerConnection):
+        (WebKit::WebSWOriginStore::unregisterSWServerConnection):
+        (WebKit::WebSWOriginStore::sendStoreHandle):
+        (WebKit::WebSWOriginStore::didInvalidateSharedMemory):
+        * StorageProcess/ServiceWorker/WebSWOriginStore.h: Copied from Source/WebKit/WebProcess/Storage/WebServiceWorkerProvider.h.
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::WebSWServerConnection):
+        (WebKit::WebSWServerConnection::resolveJobInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        (WebKit::WebSWServerConnection::sessionID const):
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::deleteWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+        (WebKit::StorageProcess::ensureSWOriginStoreForSession):
+        (WebKit::StorageProcess::swOriginStoreForSession const):
+        (WebKit::StorageProcess::serviceWorkerContextStarted):
+        (WebKit::StorageProcess::registerSWServerConnection):
+        (WebKit::StorageProcess::unregisterSWServerConnection):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        (WebKit::WebSWClientConnection::hasServiceWorkerRegisteredForOrigin const):
+        (WebKit::WebSWClientConnection::setSWOriginTableSharedMemory):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWOriginTable.cpp: Copied from Source/WebKit/WebProcess/Storage/WebServiceWorkerProvider.h.
+        (WebKit::WebSWOriginTable::contains const):
+        (WebKit::WebSWOriginTable::setSharedMemory):
+        * WebProcess/Storage/WebSWOriginTable.h: Copied from Source/WebKit/WebProcess/Storage/WebServiceWorkerProvider.h.
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnectionForSession):
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::serviceWorkerConnectionForSession):
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::startServiceWorkerContext):
+
 2017-10-16  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add subLocality and subAdministrativeArea to ApplePayPaymentContact and ApplePayError
