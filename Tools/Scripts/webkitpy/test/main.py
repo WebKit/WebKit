@@ -117,8 +117,11 @@ class Tester(object):
                           help='display per-test execution time (implies --verbose)')
         parser.add_option('-v', '--verbose', action='count', default=0,
                           help='verbose output (specify once for individual test results, twice for debug messages)')
+        # FIXME: Remove '--json' argument.
         parser.add_option('--json', action='store_true', default=False,
                           help='write JSON formatted test results to stdout')
+        parser.add_option('--json-output', action='store', type='string', dest='json_file_name',
+                          help='Create a file at specified path, listing test results in JSON format.')
 
         parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
                          'If no args are given, all the tests will be run.')
@@ -175,6 +178,11 @@ class Tester(object):
 
         if self._options.json:
             _print_results_as_json(sys.stdout, itertools.chain(parallel_tests, serial_tests), test_runner.failures, test_runner.errors)
+
+        if self._options.json_file_name:
+            self._options.json_file_name = os.path.abspath(self._options.json_file_name)
+            with open(self._options.json_file_name, 'w') as json_file:
+                _print_results_as_json(json_file, itertools.chain(parallel_tests, serial_tests), test_runner.failures, test_runner.errors)
 
         if self._options.coverage:
             cov.stop()

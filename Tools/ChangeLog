@@ -1,3 +1,14 @@
+2017-10-18  Aakash Jain  <aakash_jain@apple.com>
+
+        webkitpy tests should have --json-output option
+        https://bugs.webkit.org/show_bug.cgi?id=178481
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args): Added json-output argument.
+        (Tester._run_tests): Write output to json file.
+
 2017-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, rolling out r223291.
