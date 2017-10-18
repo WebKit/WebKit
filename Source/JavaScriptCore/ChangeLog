@@ -1,3 +1,16 @@
+2017-10-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove unused private name structure
+        https://bugs.webkit.org/show_bug.cgi?id=178436
+
+        Reviewed by Sam Weinig.
+
+        It is no longer used. This patch just removes it.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::numberObjectStructure const):
+        (JSC::JSGlobalObject::privateNameStructure const): Deleted.
+
 2017-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix macOS and iOS builds after r223594.
