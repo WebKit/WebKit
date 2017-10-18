@@ -1322,6 +1322,20 @@ static void applyTextSizingIfNeeded(RenderElement& layoutRoot)
 }
 #endif
 
+bool FrameView::handleLayoutWithFrameFlatteningIfNeeded(bool allowSubtreeLayout)
+{
+    if (!isInChildFrameWithFrameFlattening())
+        return false;
+    
+    if (!m_frameFlatteningViewSizeForMediaQuery) {
+        LOG_WITH_STREAM(MediaQueries, stream << "FrameView " << this << " snapshotting size " <<  ScrollView::layoutSize() << " for media queries");
+        m_frameFlatteningViewSizeForMediaQuery = ScrollView::layoutSize();
+    }
+    startLayoutAtMainFrameViewIfNeeded(allowSubtreeLayout);
+    auto* layoutRoot = m_subtreeLayoutRoot ? m_subtreeLayoutRoot : frame().document()->renderView();
+    return !layoutRoot || !layoutRoot->needsLayout();
+}
+
 void FrameView::layout(bool allowSubtreeLayout)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
@@ -1346,21 +1360,11 @@ void FrameView::layout(bool allowSubtreeLayout)
 
     // Every scroll that happens during layout is programmatic.
     SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
-
-    bool inChildFrameLayoutWithFrameFlattening = isInChildFrameWithFrameFlattening();
-
-    if (inChildFrameLayoutWithFrameFlattening) {
-        if (!m_frameFlatteningViewSizeForMediaQuery) {
-            LOG_WITH_STREAM(MediaQueries, stream << "FrameView " << this << " snapshotting size " <<  ScrollView::layoutSize() << " for media queries");
-            m_frameFlatteningViewSizeForMediaQuery = ScrollView::layoutSize();
-        }
-        startLayoutAtMainFrameViewIfNeeded(allowSubtreeLayout);
-        auto* layoutRoot = m_subtreeLayoutRoot ? m_subtreeLayoutRoot : frame().document()->renderView();
-        if (!layoutRoot || !layoutRoot->needsLayout())
-            return;
-    }
     
     TraceScope tracingScope(LayoutStart, LayoutEnd);
+
+    if (handleLayoutWithFrameFlatteningIfNeeded(allowSubtreeLayout))
+        return;
 
 #if PLATFORM(IOS)
     if (updateFixedPositionLayoutRect())
@@ -1394,7 +1398,7 @@ void FrameView::layout(bool allowSubtreeLayout)
     {
         SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
-        if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_postLayoutTasksTimer.isActive() && !inChildFrameLayoutWithFrameFlattening) {
+        if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening()) {
             // This is a new top-level layout. If there are any remaining tasks from the previous
             // layout, finish them now.
             SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
@@ -1576,7 +1580,7 @@ void FrameView::layout(bool allowSubtreeLayout)
 
     if (!m_postLayoutTasksTimer.isActive()) {
         if (!m_inSynchronousPostLayout) {
-            if (inChildFrameLayoutWithFrameFlattening)
+            if (isInChildFrameWithFrameFlattening())
                 updateWidgetPositions();
             else {
                 SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
@@ -1584,7 +1588,7 @@ void FrameView::layout(bool allowSubtreeLayout)
             }
         }
 
-        if (!m_postLayoutTasksTimer.isActive() && (needsLayout() || m_inSynchronousPostLayout || inChildFrameLayoutWithFrameFlattening)) {
+        if (!m_postLayoutTasksTimer.isActive() && (needsLayout() || m_inSynchronousPostLayout || isInChildFrameWithFrameFlattening())) {
             // If we need layout or are already in a synchronous call to postLayoutTasks(), 
             // defer widget updates and event dispatch until after we return. postLayoutTasks()
             // can make us need to update again, and we can get stuck in a nasty cycle unless
@@ -4289,7 +4293,7 @@ bool FrameView::isInChildFrameWithFrameFlattening() const
     return false;
 }
 
-void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtree)
+void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtreeLayout)
 {
     // When we start a layout at the child level as opposed to the topmost frame view and this child
     // frame requires flattening, we need to re-initiate the layout at the topmost view. Layout
@@ -4310,7 +4314,7 @@ void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtree)
         parentView = parentView->parentFrameView();
 
     LOG(Layout, "  frame flattening, starting from root");
-    parentView->layout(allowSubtree);
+    parentView->layout(allowSubtreeLayout);
 }
 
 void FrameView::updateControlTints()

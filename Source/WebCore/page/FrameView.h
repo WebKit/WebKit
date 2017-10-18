@@ -762,7 +762,8 @@ private:
 
     FrameView* parentFrameView() const;
 
-    void startLayoutAtMainFrameViewIfNeeded(bool allowSubtree);
+    bool handleLayoutWithFrameFlatteningIfNeeded(bool allowSubtreeLayout);
+    void startLayoutAtMainFrameViewIfNeeded(bool allowSubtreeLayout);
     bool frameFlatteningEnabled() const;
     bool isFrameFlatteningValidForThisFrame() const;
 
