@@ -486,7 +486,6 @@ void InspectorDOMAgent::discardBindings()
 {
     m_documentNodeToIdMap.clear();
     m_idToNode.clear();
-    m_eventListenerEntries.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
     m_backendIdToNode.clear();
@@ -831,31 +830,12 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
     Vector<EventListenerInfo> eventInformation;
     getEventListeners(node, eventInformation, true);
 
-    auto addListener = [&] (RegisteredEventListener& listener, const EventListenerInfo& info) {
-        int identifier = 0;
-        bool disabled = false;
-
-        auto it = m_eventListenerEntries.find(&listener.callback());
-        if (it == m_eventListenerEntries.end()) {
-            InspectorEventListener inspectorEventListener(m_lastEventListenerId++, *info.node, info.eventType, listener.useCapture());
-            m_eventListenerEntries.add(&listener.callback(), inspectorEventListener);
-
-            identifier = inspectorEventListener.identifier;
-            disabled = inspectorEventListener.disabled;
-        } else {
-            identifier = it->value.identifier;
-            disabled = it->value.disabled;
-        }
-
-        listenersArray->addItem(buildObjectForEventListener(listener, identifier, info.eventType, info.node, objectGroup, disabled));
-    };
-
     // Get Capturing Listeners (in this order)
     size_t eventInformationLength = eventInformation.size();
     for (auto& info : eventInformation) {
         for (auto& listener : info.eventListenerVector) {
             if (listener->useCapture())
-                addListener(*listener, info);
+                listenersArray->addItem(buildObjectForEventListener(*listener, info.eventType, info.node, objectGroup));
         }
     }
 
@@ -864,7 +844,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
         const EventListenerInfo& info = eventInformation[i - 1];
         for (auto& listener : info.eventListenerVector) {
             if (!listener->useCapture())
-                addListener(*listener, info);
+                listenersArray->addItem(buildObjectForEventListener(*listener, info.eventType, info.node, objectGroup));
         }
     }
 }
@@ -899,18 +879,6 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
                 eventInformation.append(EventListenerInfo(ancestor, type, WTFMove(filteredListeners)));
         }
     }
-}
-
-void InspectorDOMAgent::setEventListenerDisabled(ErrorString& errorString, int eventListenerId, bool disabled)
-{
-    for (InspectorEventListener& inspectorEventListener : m_eventListenerEntries.values()) {
-        if (inspectorEventListener.identifier == eventListenerId) {
-            inspectorEventListener.disabled = disabled;
-            return;
-        }
-    }
-
-    errorString = ASCIILiteral("No event listener for given identifier.");
 }
 
 void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties)
@@ -1586,7 +1554,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMA
     return WTFMove(pseudoElements);
 }
 
-Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, const AtomicString& eventType, Node* node, const String* objectGroupId, bool disabled)
+Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node, const String* objectGroupId)
 {
     Ref<EventListener> eventListener = registeredEventListener.callback();
 
@@ -1617,7 +1585,6 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
     }
 
     auto value = Inspector::Protocol::DOM::EventListener::create()
-        .setEventListenerId(identifier)
         .setType(eventType)
         .setUseCapture(registeredEventListener.useCapture())
         .setIsAttribute(eventListener->isAttribute())
@@ -1643,8 +1610,6 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         value->setPassive(true);
     if (registeredEventListener.isOnce())
         value->setOnce(true);
-    if (disabled)
-        value->setDisabled(disabled);
     return value;
 }
     
@@ -2255,7 +2220,7 @@ void InspectorDOMAgent::didAddEventListener(EventTarget& target)
     m_frontendDispatcher->didAddEventListener(nodeId);
 }
 
-void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+void InspectorDOMAgent::willRemoveEventListener(EventTarget& target)
 {
     Node* node = target.toNode();
     if (!node)
@@ -2265,32 +2230,7 @@ void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const Atomi
     if (!nodeId)
         return;
 
-    bool listenerExists = false;
-    for (const RefPtr<RegisteredEventListener>& item : node->eventListeners(eventType)) {
-        if (item->callback() == listener && item->useCapture() == capture) {
-            listenerExists = true;
-            break;
-        }
-    }
-
-    if (!listenerExists)
-        return;
-
-    m_eventListenerEntries.remove(&listener);
-
     m_frontendDispatcher->willRemoveEventListener(nodeId);
-}
-
-bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
-{
-    auto it = m_eventListenerEntries.find(&listener);
-    if (it == m_eventListenerEntries.end())
-        return false;
-
-    if (!it->value.disabled)
-        return false;
-
-    return it->value.eventTarget.get() == &target && it->value.eventType == eventType && it->value.useCapture == capture;
 }
 
 Node* InspectorDOMAgent::nodeForPath(const String& path)

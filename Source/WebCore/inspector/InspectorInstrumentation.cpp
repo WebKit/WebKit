@@ -327,14 +327,7 @@ void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& 
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->willRemoveEventListener(target, eventType, listener, capture);
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
-        domAgent->willRemoveEventListener(target, eventType, listener, capture);
-}
-
-bool InspectorInstrumentation::isEventListenerDisabledImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
-{
-    if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
-        return domAgent->isEventListenerDisabled(target, eventType, listener, capture);
-    return false;
+        domAgent->willRemoveEventListener(target);
 }
 
 void InspectorInstrumentation::didPostMessageImpl(InstrumentingAgents& instrumentingAgents, const TimerBase& timer, JSC::ExecState& state)

@@ -73,18 +73,12 @@ WI.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends WI.DetailsSec
 
     get label()
     {
-        return this._label;
+        return this._labelElement.textContent;
     }
 
     set label(label)
     {
-        this._label = label || "";
-
-        if (this._label instanceof Node) {
-            this._labelElement.removeChildren();
-            this._labelElement.appendChild(this._label);
-        } else
-            this._labelElement.textContent = this._label;
+        this._labelElement.textContent = label;
     }
 
     get value()

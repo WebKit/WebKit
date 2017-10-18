@@ -123,7 +123,6 @@ public:
     void setOuterHTML(ErrorString&, int nodeId, const String& outerHTML) override;
     void setNodeValue(ErrorString&, int nodeId, const String& value) override;
     void getEventListenersForNode(ErrorString&, int nodeId, const WTF::String* const objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
-    void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
     void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
     void performSearch(ErrorString&, const String& whitespaceTrimmedQuery, const Inspector::InspectorArray* nodeIds, String* searchId, int* resultCount) override;
     void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::Protocol::Array<int>>&) override;
@@ -169,8 +168,7 @@ public:
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
     void didAddEventListener(EventTarget&);
-    void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
-    bool isEventListenerDisabled(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    void willRemoveEventListener(EventTarget&);
 
     // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);
@@ -234,7 +232,7 @@ private:
     Ref<Inspector::Protocol::Array<String>> buildArrayForElementAttributes(Element*);
     Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, const AtomicString& eventType, Node*, const String* objectGroupId, bool disabled = false);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
     void processAccessibilityChildren(RefPtr<AccessibilityObject>&&, RefPtr<Inspector::Protocol::Array<int>>&&);
     
@@ -275,27 +273,6 @@ private:
     bool m_searchingForNode { false };
     bool m_suppressAttributeModifiedEvent { false };
     bool m_documentRequested { false };
-
-    struct InspectorEventListener {
-        int identifier { 1 };
-        RefPtr<EventTarget> eventTarget;
-        AtomicString eventType;
-        bool useCapture { false };
-        bool disabled { false };
-
-        InspectorEventListener() { }
-
-        InspectorEventListener(int identifier, EventTarget& eventTarget, const AtomicString& eventType, bool useCapture)
-            : identifier(identifier)
-            , eventTarget(&eventTarget)
-            , eventType(eventType)
-            , useCapture(useCapture)
-        {
-        }
-    };
-
-    HashMap<EventListener*, InspectorEventListener> m_eventListenerEntries;
-    int m_lastEventListenerId { 1 };
 };
 
 } // namespace WebCore
