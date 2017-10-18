@@ -1,3 +1,22 @@
+2017-10-16  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222417. rdar://problem/35010839
+
+    2017-09-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+            [Win64] Crashes in Yarr JIT compiled code
+            https://bugs.webkit.org/show_bug.cgi?id=177293
+
+            Reviewed by Yusuke Suzuki.
+
+            In x64 Windows, rcx register is used for the address of allocated
+            space for the return value. But, rcx is used for regT1 since
+            r221052. Save rcx in the stack.
+
+            * yarr/YarrJIT.cpp:
+            (JSC::Yarr::YarrGenerator::generateEnter): Push ecx.
+            (JSC::Yarr::YarrGenerator::generateReturn): Pop ecx.
+
 2017-10-08  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222748. rdar://problem/34820919
