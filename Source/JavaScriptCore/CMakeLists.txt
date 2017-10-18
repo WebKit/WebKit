@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.8.12)
 include(WebKitCommon)
 set_property(DIRECTORY . PROPERTY FOLDER "JavaScriptCore")
 
+list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
+    "Sources.txt"
+)
+
 set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${JAVASCRIPTCORE_DIR}"
@@ -47,8 +51,6 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
 set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
 )
-
-WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 
 set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ArrayConstructor.cpp
@@ -601,6 +603,7 @@ target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUD
 
 add_subdirectory(shell)
 
+WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
 WEBKIT_FRAMEWORK(JavaScriptCore)
 

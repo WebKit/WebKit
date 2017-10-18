@@ -3,14 +3,12 @@
 # WebCore), then put it there instead.
 
 macro(WEBKIT_COMPUTE_SOURCES _framework)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt" "${DERIVED_SOURCES_DIR}/${_framework}/Sources.txt" COPYONLY)
-    set(_platformSourcesFile ${CMAKE_CURRENT_SOURCE_DIR}/Sources${PORT}.txt)
-    if (EXISTS ${_platformSourcesFile})
-        message(STATUS "Using platform specific source list file: ${_platformSourcesFile}")
-        configure_file("${_platformSourcesFile}" "${DERIVED_SOURCES_DIR}/${_framework}/${_platformSourcesFile}" COPYONLY)
-    else ()
-        unset(_platformSourcesFile)
-    endif ()
+    foreach (_sourcesListFile IN LISTS ${_framework}_UNIFIED_SOURCE_LIST_FILES)
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${_sourcesListFile}" "${DERIVED_SOURCES_DIR}/${_framework}/${_sourcesListFile}" COPYONLY)
+      message(STATUS "Using source list file: ${_sourcesListFile}")
+
+      list(APPEND _sourceListFileTruePaths "${CMAKE_CURRENT_SOURCE_DIR}/${_sourcesListFile}")
+    endforeach ()
 
     if (WIN32 AND INTERNAL_BUILD)
         set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/WTF/Scripts")
@@ -22,8 +20,8 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         "--derived-sources-path" "${DERIVED_SOURCES_DIR}/${_framework}"
         "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
         "--print-bundled-sources"
-        ${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt
-        ${_platformSourcesFile}
+        "--feature-flags" "${UNIFIED_SOURCE_LIST_ENABLED_FEATURES}"
+        ${_sourceListFileTruePaths}
         RESULT_VARIABLE _resultTmp
         OUTPUT_VARIABLE _outputTmp)
 
@@ -40,8 +38,8 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
     execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
         "--derived-sources-path" "${DERIVED_SOURCES_DIR}/${_framework}"
         "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt
-        ${_platformSourcesFile}
+        "--feature-flags" "${UNIFIED_SOURCE_LIST_ENABLED_FEATURES}"
+        ${_sourceListFileTruePaths}
         RESULT_VARIABLE  _resultTmp
         OUTPUT_VARIABLE _outputTmp)
 

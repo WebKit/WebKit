@@ -1,5 +1,9 @@
 set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
 
+list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
+    "SourcesGTK.txt"
+)
+
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/inspector/remote/glib"
 )

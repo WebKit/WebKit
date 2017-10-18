@@ -1,3 +1,36 @@
+2017-10-18  Keith Miller  <keith_miller@apple.com>
+
+        Setup WebCore build to start using unified sources.
+        https://bugs.webkit.org/show_bug.cgi?id=178362
+
+        Reviewed by Tim Horton.
+
+        There are a number of changes to the bundler script. First, it is
+        now possible to enable or disable building files based on if the
+        associated feature flag is enabled or not. The syntax for this is
+        similar to how we do #ifs in C++ code. e.g.
+
+        #if ENABLE_APPLE_PAY
+            myApplePayFile.cpp
+        #endif
+
+        would enable myApplePayFile.cpp if and only if the APPLE_PAY
+        feature define is set.
+
+        I also changed comments from # to // to make it less likely they
+        would be confused with a #if.
+
+        Finally, this patch enables bundling files in the same relative
+        directory across source list files. Previously, if
+        SourcesCocoa.txt had platform/cf/foo.cpp and SourcesMac.txt had
+        platform/cf/bar.cpp those files would not be put in the same
+        unified source bundle. Now, those files will be put into the same
+        bundle but bar.cpp will always follow foo.cpp. The idea is that by
+        putting more specific files after more general files we can avoid
+        random build failures.
+
+        * Scripts/generate-unified-source-bundles.rb:
+
 2017-10-18  Konstantin Tokarev  <annulen@yandex.ru>
 
         REGRESSION(r217771): nullTerminatedWCharToString loses last character of input string

@@ -5,6 +5,10 @@ list(APPEND JavaScriptCore_LIBRARIES
     ${SECURITY_LIBRARY}
 )
 
+list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
+    "SourcesMac.txt"
+)
+
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/disassembler/udis86
     ${JAVASCRIPTCORE_DIR}/icu
