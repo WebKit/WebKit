@@ -882,15 +882,10 @@ void FrameView::willRecalcStyle()
 
 bool FrameView::updateCompositingLayersAfterStyleChange()
 {
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return false;
-
     // If we expect to update compositing after an incipient layout, don't do so here.
-    if (inPreLayoutStyleUpdate() || layoutPending() || renderView->needsLayout())
+    if (!renderView() || needsLayout() || isInLayout())
         return false;
-
-    return renderView->compositor().didRecalcStyleWithNoPendingLayout();
+    return renderView()->compositor().didRecalcStyleWithNoPendingLayout();
 }
 
 void FrameView::updateCompositingLayersAfterLayout()
@@ -1416,8 +1411,6 @@ void FrameView::layout(bool allowSubtreeLayout)
             SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
             performPostLayoutTasks();
         }
-
-        m_layoutPhase = InPreLayoutStyleUpdate;
 
         // Viewport-dependent media queries may cause us to need completely different style information.
         auto* styleResolver = document.styleScope().resolverIfExists();

@@ -657,15 +657,12 @@ private:
     enum LayoutPhase {
         OutsideLayout,
         InPreLayout,
-        InPreLayoutStyleUpdate,
         InRenderTreeLayout,
         InViewSizeAdjust,
         InPostLayout,
         InPostLayerPositionsUpdatedAfterLayout,
     };
     LayoutPhase layoutPhase() const { return m_layoutPhase; }
-
-    bool inPreLayoutStyleUpdate() const { return m_layoutPhase == InPreLayoutStyleUpdate; }
 
     bool isFrameView() const final { return true; }
 
