@@ -1,3 +1,17 @@
+2017-10-18  Alex Christensen  <achristensen@webkit.org>
+
+        http/tests/loading/basic-auth-resend-wrong-credentials.html is still a flaky failure after proposed fix.
+        https://bugs.webkit.org/show_bug.cgi?id=178467
+
+        Reviewed by Andy Estes.
+
+        * http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt:
+        * http/tests/loading/basic-auth-resend-wrong-credentials.html:
+        * platform/wk2/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt:
+        Use setTimeout to make the loading order deterministic.
+        The important part of this test is that the passwords shown in the delegate callbacks are correct,
+        and this doesn't change that.
+
 2017-10-18  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Test gardening.
