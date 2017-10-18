@@ -766,6 +766,8 @@ private:
     void startLayoutAtMainFrameViewIfNeeded(bool allowSubtreeLayout);
     bool frameFlatteningEnabled() const;
     bool isFrameFlatteningValidForThisFrame() const;
+    
+    void markRootOrBodyRendererDirty() const;
 
     bool qualifiesAsVisuallyNonEmpty() const;
     bool isViewForDocumentInFrame() const;

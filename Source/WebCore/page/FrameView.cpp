@@ -1336,6 +1336,18 @@ bool FrameView::handleLayoutWithFrameFlatteningIfNeeded(bool allowSubtreeLayout)
     return !layoutRoot || !layoutRoot->needsLayout();
 }
 
+void FrameView::markRootOrBodyRendererDirty() const
+{
+    auto& document = *frame().document();
+    RenderBox* rootRenderer = document.documentElement() ? document.documentElement()->renderBox() : nullptr;
+    auto* body = document.bodyOrFrameset();
+    RenderBox* bodyRenderer = rootRenderer && body ? body->renderBox() : nullptr;
+    if (bodyRenderer && bodyRenderer->stretchesToViewport())
+        bodyRenderer->setChildNeedsLayout();
+    else if (rootRenderer && rootRenderer->stretchesToViewport())
+        rootRenderer->setChildNeedsLayout();
+}
+
 void FrameView::layout(bool allowSubtreeLayout)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
@@ -1476,23 +1488,14 @@ void FrameView::layout(bool allowSubtreeLayout)
                     setScrollbarModes(hMode, vMode);
             }
 
-            LayoutSize oldSize = m_size;
+            auto oldSize = m_size;
             m_size = layoutSize();
-
             if (oldSize != m_size) {
                 LOG(Layout, "  layout size changed from %.3fx%.3f to %.3fx%.3f", oldSize.width().toFloat(), oldSize.height().toFloat(), m_size.width().toFloat(), m_size.height().toFloat());
                 m_needsFullRepaint = true;
-                if (!m_firstLayout) {
-                    RenderBox* rootRenderer = document.documentElement() ? document.documentElement()->renderBox() : nullptr;
-                    auto* body = document.bodyOrFrameset();
-                    RenderBox* bodyRenderer = rootRenderer && body ? body->renderBox() : nullptr;
-                    if (bodyRenderer && bodyRenderer->stretchesToViewport())
-                        bodyRenderer->setChildNeedsLayout();
-                    else if (rootRenderer && rootRenderer->stretchesToViewport())
-                        rootRenderer->setChildNeedsLayout();
-                }
+                if (!m_firstLayout)
+                    markRootOrBodyRendererDirty();
             }
-
             m_layoutPhase = InPreLayout;
         }
 
