@@ -4597,6 +4597,9 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     // region but then become included later by the second frame adding rects to the dirty region
     // when it lays out.
 
+    // Style updates can trigger script, which can cause this FrameView to be destroyed.
+    Ref<FrameView> protectedThis(*this);
+
     AnimationUpdateBlock animationUpdateBlock(&frame().animation());
 
     frame().document()->updateStyleIfNeeded();

@@ -1,3 +1,23 @@
+2017-10-17  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223313. rdar://problem/35042269
+
+    2017-10-13  Brent Fulgham  <bfulgham@apple.com>
+
+            Protect FrameView during style calculations
+            https://bugs.webkit.org/show_bug.cgi?id=178300
+            <rdar://problem/34869329>
+
+            Reviewed by Ryosuke Niwa.
+
+            Protect the FrameView during layout and style updates in case arbitrary script
+            is run that might clear it.
+
+            Test: fast/html/marquee-reparent-check.html
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+
 2017-10-12  Jason Marcell  <jmarcell@apple.com>
 
         Apply patch. rdar://problem/34891297
