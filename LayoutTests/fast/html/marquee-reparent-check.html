@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("The test passes if it does not ASSERT in debug builds.");
+
+var innerMarquee;
+var outerMarquee;
+
+function runTest() {
+    innerMarquee = document.getElementById("innerMarquee");
+    outerMarquee = document.getElementById("outerMarquee");
+
+    document.execCommand("createLink", false, "#foo");
+    document.getElementById("htmlTableHeader").innerHTML = "TEST";
+}
+
+function blurHandler() {
+    document.getElementById("htmlTextArea").setSelectionRange(0, 0, "foo");
+}
+
+function focusHandler() {
+    document.getElementById("htmlTextArea").click();
+    innerMarquee.appendChild(outerMarquee);
+}
+</script>
+</head>
+<body>
+    <div id="divElement">
+    </div>
+    <marquee id="outerMarquee">
+        <output>
+            <base target="divElement"></base>
+        </output>
+    </marquee>
+    <a href="">
+        <textarea id="htmlTextArea" onfocus="focusHandler()" onblur="blurHandler()" autofocus="autofocus">Test Text Area</textarea>
+    </a>
+    <table id="testTable">
+        <tbody>
+            <tr>
+                <th id="htmlTableHeader">
+                    <marquee id="innerMarquee">
+                        <svg>
+                            <mesh onload="runTest()">
+                            </mesh>
+                        </svg>
+                    </marquee>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    <keygen autofocus="autofocus">
+    <iframe>Test Frame</iframe>
+</body>
+</html>
