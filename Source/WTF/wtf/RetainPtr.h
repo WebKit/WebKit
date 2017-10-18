@@ -57,7 +57,7 @@ template<typename T> RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT) WARN_UNUSED_RE
 
 template<typename T> class RetainPtr {
 public:
-    typedef std::remove_pointer_t<T> ValueType;
+    typedef typename std::remove_pointer<T>::type ValueType;
     typedef ValueType* PtrType;
     typedef CFTypeRef StorageType;
 
@@ -113,13 +113,15 @@ private:
 
 #if defined (__OBJC__) && __has_feature(objc_arc)
     template<typename U>
-    auto fromStorageTypeHelper(StorageType ptr) const -> std::enable_if_t<std::is_convertible<U, id>::value, PtrType>
+    typename std::enable_if<std::is_convertible<U, id>::value, PtrType>::type
+    fromStorageTypeHelper(StorageType ptr) const
     {
         return (__bridge PtrType)ptr;
     }
 
     template<typename U>
-    auto fromStorageTypeHelper(StorageType ptr) const -> std::enable_if_t<!std::is_convertible<U, id>::value, PtrType>
+    typename std::enable_if<!std::is_convertible<U, id>::value, PtrType>::type
+    fromStorageTypeHelper(StorageType ptr) const
     {
         return (PtrType)ptr;
     }

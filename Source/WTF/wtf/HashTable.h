@@ -105,12 +105,12 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableConstIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, const Value*, const Value&> {
     private:
-        using HashTableType = HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using iterator = HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using const_iterator = HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using ValueType = Value;
-        using ReferenceType = const ValueType&;
-        using PointerType = const ValueType*;
+        typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
+        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
+        typedef Value ValueType;
+        typedef const ValueType& ReferenceType;
+        typedef const ValueType* PointerType;
 
         friend class HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
         friend class HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
@@ -241,12 +241,12 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, Value*, Value&> {
     private:
-        using HashTableType = HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using iterator = HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using const_iterator = HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using ValueType = Value;
-        using ReferenceType = ValueType&;
-        using PointerType = ValueType*;
+        typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
+        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
+        typedef Value ValueType;
+        typedef ValueType& ReferenceType;
+        typedef ValueType* PointerType;
 
         friend class HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
 
@@ -300,13 +300,13 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTable {
     public:
-        using iterator = HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using const_iterator = HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        using ValueTraits = Traits;
-        using KeyType = Key;
-        using ValueType = Value;
-        using IdentityTranslatorType = IdentityHashTranslator<ValueTraits, HashFunctions>;
-        using AddResult = HashTableAddResult<iterator>;
+        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
+        typedef Traits ValueTraits;
+        typedef Key KeyType;
+        typedef Value ValueType;
+        typedef IdentityHashTranslator<ValueTraits, HashFunctions> IdentityTranslatorType;
+        typedef HashTableAddResult<iterator> AddResult;
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
         struct Stats {
@@ -433,8 +433,8 @@ namespace WTF {
         static ValueType* allocateTable(unsigned size);
         static void deallocateTable(ValueType* table, unsigned size);
 
-        using LookupType = std::pair<ValueType*, bool>;
-        using FullLookupType = std::pair<LookupType, unsigned>;
+        typedef std::pair<ValueType*, bool> LookupType;
+        typedef std::pair<LookupType, unsigned> FullLookupType;
 
         LookupType lookupForWriting(const Key& key) { return lookupForWriting<IdentityTranslatorType>(key); };
         template<typename HashTranslator, typename T> FullLookupType fullLookupForWriting(const T&);
@@ -585,7 +585,7 @@ namespace WTF {
         if (!HashFunctions::safeToCompareToEmptyOrDeleted)
             return;
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-        std::aligned_storage_t<sizeof(ValueType), std::alignment_of<ValueType>::value> deletedValueBuffer;
+        typename std::aligned_storage<sizeof(ValueType), std::alignment_of<ValueType>::value>::type deletedValueBuffer;
         ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(&deletedValueBuffer);
         ValueType& deletedValue = *deletedValuePtr;
         Traits::constructDeletedValue(deletedValue);

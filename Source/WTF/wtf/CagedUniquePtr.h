@@ -79,7 +79,7 @@ private:
 };
 
 template<Gigacage::Kind kind, typename T>
-class CagedUniquePtr<kind, T[], std::enable_if_t<std::is_trivially_destructible<T>::value>> : public CagedPtr<kind, T> {
+class CagedUniquePtr<kind, T[], typename std::enable_if<std::is_trivially_destructible<T>::value>::type> : public CagedPtr<kind, T> {
 public:
     CagedUniquePtr() : CagedPtr<kind, T>() { }
     
@@ -130,7 +130,7 @@ private:
 };
 
 template<Gigacage::Kind kind, typename T>
-class CagedUniquePtr<kind, T[], std::enable_if_t<!std::is_trivially_destructible<T>::value>> : public CagedPtr<kind, T> {
+class CagedUniquePtr<kind, T[], typename std::enable_if<!std::is_trivially_destructible<T>::value>::type> : public CagedPtr<kind, T> {
 public:
     CagedUniquePtr() : CagedPtr<kind, T>() { }
     

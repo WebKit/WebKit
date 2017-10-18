@@ -57,9 +57,9 @@ struct KeyValuePair {
 };
 
 template<typename K, typename V>
-inline KeyValuePair<std::decay_t<K>, std::decay_t<V>> makeKeyValuePair(K&& key, V&& value)
+inline KeyValuePair<typename std::decay<K>::type, typename std::decay<V>::type> makeKeyValuePair(K&& key, V&& value)
 {
-    return KeyValuePair<std::decay_t<K>, std::decay_t<V>> { std::forward<K>(key), std::forward<V>(value) };
+    return KeyValuePair<typename std::decay<K>::type, typename std::decay<V>::type> { std::forward<K>(key), std::forward<V>(value) };
 }
 
 }

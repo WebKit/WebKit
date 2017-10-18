@@ -105,7 +105,7 @@ template<typename T> struct SignedWithZeroKeyHashTraits : GenericHashTraits<T> {
 
 // Can be used with strong enums, allows zero as key.
 template<typename T> struct StrongEnumHashTraits : GenericHashTraits<T> {
-    using UnderlyingType = std::underlying_type_t<T>;
+    using UnderlyingType = typename std::underlying_type<T>::type;
     static const bool emptyValueIsZero = false;
     static T emptyValue() { return static_cast<T>(std::numeric_limits<UnderlyingType>::max()); }
     static void constructDeletedValue(T& slot) { slot = static_cast<T>(std::numeric_limits<UnderlyingType>::max() - 1); }
@@ -224,13 +224,15 @@ struct HashTraitHasCustomDelete {
 };
 
 template<typename Traits, typename T>
-auto hashTraitsDeleteBucket(T& value) -> std::enable_if_t<HashTraitHasCustomDelete<Traits, T>::value>
+typename std::enable_if<HashTraitHasCustomDelete<Traits, T>::value>::type
+hashTraitsDeleteBucket(T& value)
 {
     Traits::customDeleteBucket(value);
 }
 
 template<typename Traits, typename T>
-auto hashTraitsDeleteBucket(T& value) -> std::enable_if_t<!HashTraitHasCustomDelete<Traits, T>::value>
+typename std::enable_if<!HashTraitHasCustomDelete<Traits, T>::value>::type
+hashTraitsDeleteBucket(T& value)
 {
     value.~T();
     Traits::constructDeletedValue(value);

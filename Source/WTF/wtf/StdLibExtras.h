@@ -148,7 +148,7 @@ inline ToType bitwise_cast(FromType from)
     static_assert(__is_trivially_copyable(ToType), "bitwise_cast of non-trivially-copyable type!");
     static_assert(__is_trivially_copyable(FromType), "bitwise_cast of non-trivially-copyable type!");
 #endif
-    std::remove_const_t<ToType> to { };
+    typename std::remove_const<ToType>::type to { };
     std::memcpy(&to, &from, sizeof(to));
     return to;
 }
@@ -402,7 +402,7 @@ namespace Detail
         static std::true_type test(Base<Args...>*);
         static std::false_type test(void*);
 
-        static constexpr const bool value = decltype(test(std::declval<std::remove_cv_t<Derived>*>()))::value;
+        static constexpr const bool value = decltype(test(std::declval<typename std::remove_cv<Derived>::type*>()))::value;
     };
 }
 
@@ -411,7 +411,7 @@ struct IsBaseOfTemplate : public std::integral_constant<bool, Detail::IsBaseOfTe
 
 template <class T>
 struct RemoveCVAndReference  {
-    typedef std::remove_cv_t<std::remove_reference_t<T>> type;
+    typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;
 };
 
 template<typename IteratorTypeLeft, typename IteratorTypeRight, typename IteratorTypeDst>
@@ -487,7 +487,7 @@ make_unique(Args&&... args)
 template<class T> inline typename _Unique_if<T>::_Unknown_bound
 make_unique(size_t n)
 {
-    typedef remove_extent_t<T> U;
+    typedef typename remove_extent<T>::type U;
     return unique_ptr<T>(new U[n]());
 }
 
@@ -506,11 +506,11 @@ T exchange(T& t, U&& newValue)
 #endif
 
 template<WTF::CheckMoveParameterTag, typename T>
-ALWAYS_INLINE constexpr remove_reference_t<T>&& move(T&& value)
+ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 {
     static_assert(is_lvalue_reference<T>::value, "T is not an lvalue reference; move() is unnecessary.");
 
-    using NonRefQualifiedType = remove_reference_t<T>;
+    using NonRefQualifiedType = typename remove_reference<T>::type;
     static_assert(!is_const<NonRefQualifiedType>::value, "T is const qualified.");
 
     return move(forward<T>(value));

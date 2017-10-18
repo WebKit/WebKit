@@ -38,7 +38,7 @@ namespace WTF {
 // enumerators around.
 template<typename T> class OptionSet {
     static_assert(std::is_enum<T>::value, "T is not an enum type");
-    using StorageType = std::make_unsigned_t<std::underlying_type_t<T>>;
+    typedef typename std::make_unsigned<typename std::underlying_type<T>::type>::type StorageType;
 
 public:
     template<typename StorageType> class Iterator {

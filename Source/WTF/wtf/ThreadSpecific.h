@@ -93,7 +93,7 @@ private:
         WTF_MAKE_NONCOPYABLE(Data);
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        using PointerType = std::remove_const_t<T>*;
+        using PointerType = typename std::remove_const<T>::type*;
 
         Data(ThreadSpecific<T, canBeGCThread>* owner)
             : owner(owner)
@@ -112,7 +112,7 @@ private:
 
         PointerType storagePointer() const { return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage)); }
 
-        std::aligned_storage_t<sizeof(T), std::alignment_of<T>::value> m_storage;
+        typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
         ThreadSpecific<T, canBeGCThread>* owner;
     };
 

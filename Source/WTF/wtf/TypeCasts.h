@@ -69,27 +69,25 @@ inline bool is(ArgType* source)
 // Update T's constness to match Reference's.
 template <typename Reference, typename T>
 struct match_constness {
-    typedef std::conditional_t<std::is_const<Reference>::value, std::add_const_t<T>, std::remove_const_t<T>> type;
+    typedef typename std::conditional<std::is_const<Reference>::value, typename std::add_const<T>::type, typename std::remove_const<T>::type>::type type;
 };
-
-template <typename Reference, typename T> using match_constness_t = typename match_constness<Reference, T>::type;
 
 // Safe downcasting functions.
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>& downcast(Source& source)
+inline typename match_constness<Source, Target>::type& downcast(Source& source)
 {
     static_assert(!std::is_same<Source, Target>::value, "Unnecessary cast to same type");
     static_assert(std::is_base_of<Source, Target>::value, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
-    return static_cast<match_constness_t<Source, Target>&>(source);
+    return static_cast<typename match_constness<Source, Target>::type&>(source);
 }
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* downcast(Source* source)
+inline typename match_constness<Source, Target>::type* downcast(Source* source)
 {
     static_assert(!std::is_same<Source, Target>::value, "Unnecessary cast to same type");
     static_assert(std::is_base_of<Source, Target>::value, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
-    return static_cast<match_constness_t<Source, Target>*>(source);
+    return static_cast<typename match_constness<Source, Target>::type*>(source);
 }
 
 // Add support for type checking / casting using is<>() / downcast<>() helpers for a specific class.

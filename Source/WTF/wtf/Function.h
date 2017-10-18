@@ -38,13 +38,13 @@ public:
     Function() = default;
     Function(std::nullptr_t) { }
 
-    template<typename CallableType, class = std::enable_if_t<!(std::is_pointer<CallableType>::value && std::is_function<std::remove_pointer_t<CallableType>>::value) && std::is_rvalue_reference<CallableType&&>::value>>
+    template<typename CallableType, class = typename std::enable_if<!(std::is_pointer<CallableType>::value && std::is_function<typename std::remove_pointer<CallableType>::type>::value) && std::is_rvalue_reference<CallableType&&>::value>::type>
     Function(CallableType&& callable)
         : m_callableWrapper(std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable)))
     {
     }
 
-    template<typename FunctionType, class = std::enable_if_t<std::is_pointer<FunctionType>::value && std::is_function<std::remove_pointer_t<FunctionType>>::value>>
+    template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
     Function(FunctionType f)
         : m_callableWrapper(std::make_unique<CallableWrapper<FunctionType>>(WTFMove(f)))
     {
@@ -58,14 +58,14 @@ public:
 
     explicit operator bool() const { return !!m_callableWrapper; }
 
-    template<typename CallableType, class = std::enable_if_t<!(std::is_pointer<CallableType>::value && std::is_function<std::remove_pointer_t<CallableType>>::value) && std::is_rvalue_reference<CallableType&&>::value>>
+    template<typename CallableType, class = typename std::enable_if<!(std::is_pointer<CallableType>::value && std::is_function<typename std::remove_pointer<CallableType>::type>::value) && std::is_rvalue_reference<CallableType&&>::value>::type>
     Function& operator=(CallableType&& callable)
     {
         m_callableWrapper = std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable));
         return *this;
     }
 
-    template<typename FunctionType, class = std::enable_if_t<std::is_pointer<FunctionType>::value && std::is_function<std::remove_pointer_t<FunctionType>>::value>>
+    template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
     Function& operator=(FunctionType f)
     {
         m_callableWrapper = std::make_unique<CallableWrapper<FunctionType>>(WTFMove(f));

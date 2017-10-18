@@ -53,8 +53,8 @@ template<typename T, typename SignedIntegerType>
 inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringSigned(SignedIntegerType number, typename IntegerToStringConversionTrait<T>::AdditionalArgumentType* additionalArgument = nullptr)
 {
     if (number < 0)
-        return numberToStringImpl<T, std::make_unsigned_t<SignedIntegerType>, NegativeNumber>(-number, additionalArgument);
-    return numberToStringImpl<T, std::make_unsigned_t<SignedIntegerType>, PositiveNumber>(number, additionalArgument);
+        return numberToStringImpl<T, typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number, additionalArgument);
+    return numberToStringImpl<T, typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number, additionalArgument);
 }
 
 template<typename T, typename UnsignedIntegerType>
@@ -87,8 +87,8 @@ template<typename CharacterType, typename SignedIntegerType>
 inline void writeNumberToBufferSigned(SignedIntegerType number, CharacterType* destination)
 {
     if (number < 0)
-        return writeNumberToBufferImpl<CharacterType, std::make_unsigned_t<SignedIntegerType>, NegativeNumber>(-number, destination);
-    return writeNumberToBufferImpl<CharacterType, std::make_unsigned_t<SignedIntegerType>, PositiveNumber>(number, destination);
+        return writeNumberToBufferImpl<CharacterType, typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number, destination);
+    return writeNumberToBufferImpl<CharacterType, typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number, destination);
 }
 
 template<typename CharacterType, typename UnsignedIntegerType>
@@ -118,8 +118,8 @@ template<typename SignedIntegerType>
 inline unsigned lengthOfNumberAsStringSigned(SignedIntegerType number)
 {
     if (number < 0)
-        return lengthOfNumberAsStringImpl<std::make_unsigned_t<SignedIntegerType>, NegativeNumber>(-number);
-    return lengthOfNumberAsStringImpl<std::make_unsigned_t<SignedIntegerType>, PositiveNumber>(number);
+        return lengthOfNumberAsStringImpl<typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number);
+    return lengthOfNumberAsStringImpl<typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number);
 }
 
 template<typename UnsignedIntegerType>

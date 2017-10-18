@@ -70,7 +70,7 @@ struct SameSizeAsVectorWithInlineCapacity<T, 0> {
 template<typename T, unsigned inlineCapacity>
 struct SameSizeAsVectorWithInlineCapacity {
     SameSizeAsVectorWithInlineCapacity<T, 0> baseCapacity;
-    std::aligned_storage_t<sizeof(T), std::alignment_of<T>::value> inlineBuffer[inlineCapacity];
+    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type inlineBuffer[inlineCapacity];
 };
 
 static_assert(sizeof(Vector<int>) == sizeof(SameSizeAsVectorWithInlineCapacity<int>), "Vector should stay small!");

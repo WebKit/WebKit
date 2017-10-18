@@ -346,7 +346,7 @@ ALWAYS_INLINE Dependency nullDependency()
     return 0;
 }
 
-template <typename T, std::enable_if_t<sizeof(T) == 8>* = nullptr>
+template <typename T, typename std::enable_if<sizeof(T) == 8>::type* = nullptr>
 ALWAYS_INLINE Dependency dependency(T value)
 {
     unsigned dependency;
@@ -379,7 +379,7 @@ ALWAYS_INLINE Dependency dependency(T value)
 
 // FIXME: This code is almost identical to the other dependency() overload.
 // https://bugs.webkit.org/show_bug.cgi?id=169405
-template <typename T, std::enable_if_t<sizeof(T) == 4>* = nullptr>
+template <typename T, typename std::enable_if<sizeof(T) == 4>::type* = nullptr>
 ALWAYS_INLINE Dependency dependency(T value)
 {
     unsigned dependency;
@@ -400,13 +400,13 @@ ALWAYS_INLINE Dependency dependency(T value)
     return dependency;
 }
 
-template <typename T, std::enable_if_t<sizeof(T) == 2>* = nullptr>
+template <typename T, typename std::enable_if<sizeof(T) == 2>::type* = nullptr>
 ALWAYS_INLINE Dependency dependency(T value)
 {
     return dependency(static_cast<uint32_t>(value));
 }
 
-template <typename T, std::enable_if_t<sizeof(T) == 1>* = nullptr>
+template <typename T, typename std::enable_if<sizeof(T) == 1>::type* = nullptr>
 ALWAYS_INLINE Dependency dependency(T value)
 {
     return dependency(static_cast<uint32_t>(value));
