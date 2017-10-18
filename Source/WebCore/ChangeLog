@@ -1,3 +1,24 @@
+2017-10-18  Dean Jackson  <dino@apple.com>
+
+        Cherry-pick r223640. rdar://problem/35063901
+
+    2017-10-18  Dean Jackson  <dino@apple.com>
+
+            Some older hardware can't actually use renderbuffers at the size they advertise
+            https://bugs.webkit.org/show_bug.cgi?id=178417
+            <rdar://problem/35042291>
+
+            Reviewed by Tim Horton.
+
+            The change in r223567 caused some older hardware to fail, because even though
+            they claimed to support a maximum renderbuffer and viewport of 16K, they were
+            unable to actually handle one. Rather than trying to identify such hardware,
+            clamp all buffers to a maximum of 8192. This is bigger than the previous value
+            of 4096, and large enough to have a full-screen buffer on a Retina 5K iMac.
+
+            * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+            (WebCore::GraphicsContext3D::getIntegerv):
+
 2017-10-17  Dean Jackson  <dino@apple.com>
 
         Cherry-pick r223567. rdar://problem/35041476
