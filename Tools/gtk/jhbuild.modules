@@ -26,7 +26,6 @@
       <dep package="libsoup"/>
       <dep package="atk"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
-      <dep package="openwebrtc"/>
       <dep package="pango"/>
       <dep package="llvm"/>
       <dep package="shared-mime-info"/>
@@ -405,39 +404,6 @@
       <dep package="libdrm"/>
       <dep package="wayland"/>
     </dependencies>
-  </autotools>
-
-  <autotools id="libusrsctp" supports-non-srcdir-builds="no" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
-    <branch repo="github.com" module="sctplab/usrsctp.git" checkoutdir="usrsctp" tag="078ff3252f73327e0ac11d6fd5eff62011f6646e"/>
-  </autotools>
-
-   <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
-     <dependencies>
-       <dep package="gst-plugins-base"/>
-       <dep package="libusrsctp"/>
-     </dependencies>
-    <branch repo="github.com" module="Igalia/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="9b2199ea970369dbf1d9ca2f8e61c95f21db2b6e"/>
-   </autotools>
-
-   <autotools id="libnice"
-              supports-non-srcdir-builds="no">
-    <dependencies>
-      <dep package="gstreamer"/>
-    </dependencies>
-    <branch module="libnice/libnice/archive/${version}.tar.gz" version="2803a0b4b70af9684e05ef5ed3f0c2fbca4b6c93"
-            checkoutdir="libnice-${version}" repo="github-tarball">
-      <patch file="libnice-0001-nicesrc-spin-the-agent-mainloop-in-a-separate-thread.patch" strip="1"/>
-      <patch file="libnice-0001-TURN-allow-REALM-to-be-empty.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <autotools id="openwebrtc" autogenargs="--enable-bridge=no --enable-owr-gst=yes">
-    <dependencies>
-      <dep package="gst-plugins-openwebrtc"/>
-      <dep package="gst-plugins-bad"/>
-      <dep package="libnice"/>
-     </dependencies>
-    <branch repo="github.com" module="Igalia/openwebrtc.git" checkoutdir="openwebrtc" tag="7f3d23e034818893db198f4b56e41609abd8847b"/>
   </autotools>
 
   <autotools id="llvm"

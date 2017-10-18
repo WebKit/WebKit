@@ -1,3 +1,19 @@
+2017-10-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove remnants of OpenWebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=178437
+
+        Reviewed by Alejandro G. Castro.
+
+        Drop OpenWebRTC packages from the GTK's Jhbuild modules file. Relevant
+        patches are also removed.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/libnice-0001-TURN-allow-REALM-to-be-empty.patch: Removed.
+        * gtk/patches/libnice-0001-nicesrc-spin-the-agent-mainloop-in-a-separate-thread.patch: Removed.
+        * gtk/patches/rtspsrc-timeout-on-udpsrc-is-in-nanoseconds.patch: Removed.
+        * gtk/patches/udpsrc-improve-timeouts.patch: Removed.
+
 2017-10-17  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Hang when workers write to the same stack trace file
