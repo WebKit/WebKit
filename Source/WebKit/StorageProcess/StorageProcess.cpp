@@ -355,7 +355,7 @@ void StorageProcess::createWorkerContextProcessConnection()
 
 WebSWOriginStore& StorageProcess::ensureSWOriginStoreForSession(PAL::SessionID sessionID)
 {
-    return *m_swOriginStores.ensure(sessionID, [this, sessionID] {
+    return *m_swOriginStores.ensure(sessionID, [] {
         return std::make_unique<WebSWOriginStore>();
     }).iterator->value;
 }
