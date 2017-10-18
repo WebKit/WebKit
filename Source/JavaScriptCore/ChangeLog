@@ -1,3 +1,9 @@
+2017-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix macOS and iOS builds after r223594.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2017-10-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] __proto__ getter should be fast
