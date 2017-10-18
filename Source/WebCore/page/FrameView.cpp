@@ -1433,27 +1433,17 @@ void FrameView::layout(bool allowSubtreeLayout)
         if (!layoutRoot)
             return;
         isSubtreeLayout = m_subtreeLayoutRoot;
+        m_needsFullRepaint = !isSubtreeLayout && (m_firstLayout || downcast<RenderView>(*layoutRoot).printing());
 
         if (!isSubtreeLayout) {
-            auto* body = document.bodyOrFrameset();
-            if (body && body->renderer()) {
-                if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled()) {
+            if (auto* body = document.bodyOrFrameset()) {
+                if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled() && body->renderer())
                     body->renderer()->setChildNeedsLayout();
-                } else if (is<HTMLBodyElement>(*body)) {
-                    if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox().stretchesToViewport())
-                        body->renderer()->setChildNeedsLayout();
-                }
             }
-
 #if !LOG_DISABLED
             if (m_firstLayout && !frame().ownerElement())
                 LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs\n", this, document.timeSinceDocumentCreation().value());
 #endif
-        }
-
-        m_needsFullRepaint = !isSubtreeLayout && (m_firstLayout || downcast<RenderView>(*layoutRoot).printing());
-
-        if (!isSubtreeLayout) {
             ScrollbarMode hMode;
             ScrollbarMode vMode;    
             calculateScrollbarModesForLayout(hMode, vMode);
