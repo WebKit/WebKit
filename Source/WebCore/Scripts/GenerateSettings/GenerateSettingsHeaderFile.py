@@ -29,6 +29,21 @@ from Settings import license, makeConditionalString, makeSetterFunctionName, mak
 
 
 def generateSettingsHeaderFile(outputDirectory, settings):
+    settingsByConditional = {}
+    unconditionalSettings = {}
+
+    for settingName in sorted(settings.iterkeys()):
+        setting = settings[settingName]
+        if setting.conditional:
+            if setting.conditional not in settingsByConditional:
+                settingsByConditional[setting.conditional] = {}
+            settingsByConditional[setting.conditional][setting.name] = True
+        else:
+            unconditionalSettings[setting.name] = True
+
+    sortedUnconditionalSettingsNames = sorted(unconditionalSettings.iterkeys())
+    sortedConditionals = sorted(settingsByConditional.iterkeys())
+
     outputPath = os.path.join(outputDirectory, "Settings.h")
     outputFile = open(outputPath, 'w')
     outputFile.write(license())
@@ -36,7 +51,6 @@ def generateSettingsHeaderFile(outputDirectory, settings):
     outputFile.write("#pragma once\n\n")
 
     outputFile.write("#include \"SettingsBase.h\"\n")
-    outputFile.write("#include \"SettingsMacros.h\"\n")
     outputFile.write("#include <wtf/RefCounted.h>\n\n")
 
     outputFile.write("namespace WebCore {\n\n")
@@ -49,15 +63,98 @@ def generateSettingsHeaderFile(outputDirectory, settings):
     outputFile.write("    static Ref<Settings> create(Page*);\n")
     outputFile.write("    ~Settings();\n\n")
 
-    outputFile.write("    SETTINGS_GETTERS_AND_SETTERS\n\n")
+    printGettersAndSetters(outputFile, sortedUnconditionalSettingsNames, sortedConditionals, settingsByConditional, settings)
 
     outputFile.write("private:\n")
     outputFile.write("    explicit Settings(Page*);\n\n")
 
-    outputFile.write("    SETTINGS_MEMBER_VARIABLES\n")
+    printMemberVariables(outputFile, sortedUnconditionalSettingsNames, sortedConditionals, settingsByConditional, settings)
 
     outputFile.write("};\n\n")
 
     outputFile.write("}\n")
 
     outputFile.close()
+
+
+def printGetterAndSetter(outputFile, setting):
+    setterFunctionName = makeSetterFunctionName(setting)
+
+    webcoreExport = "WEBCORE_EXPORT " if setting.setNeedsStyleRecalcInAllFrames else ""
+
+    if setting.type[0].islower():
+        outputFile.write("    " + setting.type + " " + setting.name + "() const { return m_" + setting.name + "; }\n")
+        outputFile.write("    " + webcoreExport + "void " + setterFunctionName + "(" + setting.type + " " + setting.name + ")")
+    else:
+        outputFile.write("    const " + setting.type + "& " + setting.name + "() const { return m_" + setting.name + "; } \n")
+        outputFile.write("    " + webcoreExport + "void " + setterFunctionName + "(const " + setting.type + "& " + setting.name + ")")
+
+    if setting.setNeedsStyleRecalcInAllFrames:
+        outputFile.write("; \n")
+    else:
+        outputFile.write(" { m_" + setting.name + " = " + setting.name + "; } \n")
+
+
+def printGettersAndSetters(outputFile, sortedUnconditionalSettingsNames, sortedConditionals, settingsByConditional, settings):
+    for unconditionalSettingName in sortedUnconditionalSettingsNames:
+        printGetterAndSetter(outputFile, settings[unconditionalSettingName])
+
+    outputFile.write("\n")
+
+    for conditional in sortedConditionals:
+        outputFile.write("#if " + makeConditionalString(conditional) + "\n")
+
+        for settingName in sorted(settingsByConditional[conditional].iterkeys()):
+            printGetterAndSetter(outputFile, settings[settingName])
+
+        outputFile.write("#endif\n\n")
+
+
+def printMemberVariables(outputFile, sortedUnconditionalSettingsNames, sortedConditionals, settingsByConditional, settings):
+    for unconditionalSettingName in sortedUnconditionalSettingsNames:
+        setting = settings[unconditionalSettingName]
+        if setting.type == "bool":
+            continue
+        outputFile.write("    " + setting.type + " m_" + setting.name + ";\n")
+
+    for conditional in sortedConditionals:
+        hasMemberVariable = False
+        for settingName in sorted(settingsByConditional[conditional].iterkeys()):
+            setting = settings[settingName]
+            if setting.type != "bool":
+                hasMemberVariable = True
+                break
+
+        if hasMemberVariable:
+            outputFile.write("#if " + makeConditionalString(conditional) + "\n")
+
+            for settingName in sorted(settingsByConditional[conditional].iterkeys()):
+                setting = settings[settingName]
+                if setting.type != "bool":
+                    outputFile.write("    " + setting.type + " m_" + setting.name + ";\n")
+
+            outputFile.write("#endif\n")
+
+    for unconditionalSettingName in sortedUnconditionalSettingsNames:
+        setting = settings[unconditionalSettingName]
+        if setting.type != "bool":
+            continue
+        outputFile.write("    " + setting.type + " m_" + setting.name + " : 1;\n")
+
+    for conditional in sortedConditionals:
+        hasMemberVariable = False
+        for settingName in sorted(settingsByConditional[conditional].iterkeys()):
+            setting = settings[settingName]
+            if setting.type == "bool":
+                hasMemberVariable = True
+                break
+
+        if hasMemberVariable:
+            outputFile.write("#if " + makeConditionalString(conditional) + "\n")
+
+            for settingName in sorted(settingsByConditional[conditional].iterkeys()):
+                setting = settings[settingName]
+                if setting.type == "bool":
+                    outputFile.write("    " + setting.type + " m_" + setting.name + " : 1;\n")
+
+            outputFile.write("#endif\n")
