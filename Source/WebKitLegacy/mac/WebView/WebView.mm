@@ -8532,6 +8532,13 @@ FORWARD(toggleUnderline)
 
 - (void)_simplifyMarkup:(DOMNode *)startNode endNode:(DOMNode *)endNode
 {
+    Frame* coreFrame = core([self mainFrame]);
+    if (!coreFrame || !startNode)
+        return;
+    Node* coreStartNode= core(startNode);
+    if (&coreStartNode->document() != coreFrame->document())
+        return;
+    return coreFrame->editor().simplifyMarkup(coreStartNode, core(endNode));
 }
 
 @end
