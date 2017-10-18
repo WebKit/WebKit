@@ -1517,23 +1517,17 @@ void FrameView::layout(bool allowSubtreeLayout)
         m_subtreeLayoutRoot = nullptr;
         // Close block here to end the scope of changeSchedulingEnabled and SubtreeLayoutStateMaintainer.
     }
-
-    m_layoutPhase = InViewSizeAdjust;
-
-    bool neededFullRepaint = m_needsFullRepaint;
-
     if (!isSubtreeLayout && !downcast<RenderView>(*layoutRoot).printing()) {
+        // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
+        SetForScope<bool> needsFullRepaint(m_needsFullRepaint);
+        m_layoutPhase = InViewSizeAdjust;
         adjustViewSize();
         // FIXME: Firing media query callbacks synchronously on nested frames could produced a detached FrameView here by
         // navigating away from the current document (see webkit.org/b/173329).
         if (hasOneRef())
             return;
     }
-
     m_layoutPhase = InPostLayout;
-
-    m_needsFullRepaint = neededFullRepaint;
-
     // Now update the positions of all layers.
     if (m_needsFullRepaint)
         layoutRoot->view().repaintRootContents();
