@@ -112,10 +112,6 @@ private:
     {
         m_graph.watchpoints().addLazily(set);
     }
-    void addLazily(InlineWatchpointSet& set)
-    {
-        m_graph.watchpoints().addLazily(set);
-    }
     
     JSGlobalObject* globalObject()
     {
