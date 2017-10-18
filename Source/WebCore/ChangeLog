@@ -1,3 +1,14 @@
+2017-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Stable] BackingStoreBackendCairoImpl.h:23:10: fatal error: WebCore/HysteresisActivity.h
+        https://bugs.webkit.org/show_bug.cgi?id=178407
+
+        Reviewed by Žan Doberšek.
+
+        Do not use #include <WebCore/Foo.h> inside WebCore.
+
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.h:
+
 2017-08-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] GstStructure shouldn't be handled through GRefPtr

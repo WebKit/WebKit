@@ -20,7 +20,7 @@
 
 #if USE(CAIRO)
 #include "BackingStoreBackendCairo.h"
-#include <WebCore/HysteresisActivity.h>
+#include "HysteresisActivity.h"
 
 namespace WebCore {
 
@@ -33,7 +33,7 @@ private:
     void scroll(const IntRect&, const IntSize&) override;
 
     RefPtr<cairo_surface_t> m_scrollSurface;
-    WebCore::HysteresisActivity m_scrolledHysteresis;
+    HysteresisActivity m_scrolledHysteresis;
 };
 
 } // namespace WebCore
