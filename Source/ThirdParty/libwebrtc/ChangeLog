@@ -1,3 +1,16 @@
+2017-10-13  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222531. rdar://problem/34985199
+
+    2017-09-26  Youenn Fablet  <youenn@apple.com>
+
+            Remove unnecessary libwebrtc dependencies
+            https://bugs.webkit.org/show_bug.cgi?id=177494
+
+            Reviewed by Alex Christensen.
+
+            * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222478. rdar://problem/34771020

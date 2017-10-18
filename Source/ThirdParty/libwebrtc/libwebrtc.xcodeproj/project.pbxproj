@@ -244,15 +244,9 @@
 		5C0073061E5513E70042215A /* libusrsctp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C11A12D1E4577E1004F0987 /* libusrsctp.a */; };
 		5C0073071E5513E70042215A /* libwebrtcpcrtc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C088C0B1E4AA3B100403995 /* libwebrtcpcrtc.a */; };
 		5C0073081E5513E70042215A /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0884DE1E4A980100403995 /* libyuv.a */; };
-		5C00730E1E5513E70042215A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073091E5513E70042215A /* AudioToolbox.framework */; };
-		5C00730F1E5513E70042215A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730A1E5513E70042215A /* AVFoundation.framework */; };
-		5C0073101E5513E70042215A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730B1E5513E70042215A /* CoreAudio.framework */; };
 		5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730C1E5513E70042215A /* CoreMedia.framework */; };
 		5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730D1E5513E70042215A /* CoreVideo.framework */; };
 		5C0073141E5514020042215A /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073131E5514020042215A /* VideoToolbox.framework */; };
-		5C0073431E552C800042215A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073411E552C800042215A /* CoreGraphics.framework */; };
-		5C0073441E552C800042215A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073421E552C800042215A /* Security.framework */; };
-		5C0073461E552CA20042215A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073451E552CA20042215A /* SystemConfiguration.framework */; };
 		5C0884E31E4A986000403995 /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D341E4323D4002651C8 /* compare.cc */; };
 		5C0884E41E4A986000403995 /* compare_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4D2F1E4323D4002651C8 /* compare_common.cc */; };
 		5C0884E51E4A986000403995 /* compare_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD84211E439BCB00621E92 /* compare_gcc.cc */; };
@@ -1156,7 +1150,6 @@
 		5C6CDD501E413598009754E3 /* typedefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6CDD431E413598009754E3 /* typedefs.h */; };
 		5C6CDD541E413598009754E3 /* video_receive_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6CDD471E413598009754E3 /* video_receive_stream.h */; };
 		5C6CDD551E413598009754E3 /* video_send_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6CDD481E413598009754E3 /* video_send_stream.h */; };
-		5C85C4CB1E5780DD00D097B1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C85C4CA1E5780DD00D097B1 /* CFNetwork.framework */; };
 		5CD284671E6A57F40094FDC8 /* i420_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CD284611E6A57F40094FDC8 /* i420_buffer.cc */; };
 		5CD284681E6A57F40094FDC8 /* i420_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD284621E6A57F40094FDC8 /* i420_buffer.h */; };
 		5CD284691E6A57F40094FDC8 /* video_frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD284631E6A57F40094FDC8 /* video_frame_buffer.h */; };
@@ -5321,14 +5314,7 @@
 			files = (
 				5C316D8B1E66333C008BE64D /* Foundation.framework in Frameworks */,
 				5C316D891E66323F008BE64D /* CoreFoundation.framework in Frameworks */,
-				5C85C4CB1E5780DD00D097B1 /* CFNetwork.framework in Frameworks */,
-				5C0073461E552CA20042215A /* SystemConfiguration.framework in Frameworks */,
-				5C0073431E552C800042215A /* CoreGraphics.framework in Frameworks */,
-				5C0073441E552C800042215A /* Security.framework in Frameworks */,
 				5C0073141E5514020042215A /* VideoToolbox.framework in Frameworks */,
-				5C00730E1E5513E70042215A /* AudioToolbox.framework in Frameworks */,
-				5C00730F1E5513E70042215A /* AVFoundation.framework in Frameworks */,
-				5C0073101E5513E70042215A /* CoreAudio.framework in Frameworks */,
 				5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */,
 				5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */,
 				5C0073031E5513E70042215A /* libboringssl.a in Frameworks */,
