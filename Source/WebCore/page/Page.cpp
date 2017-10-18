@@ -1651,13 +1651,13 @@ void Page::setIsPrerender()
     updateDOMTimerAlignmentInterval();
 }
 
-PageVisibilityState Page::visibilityState() const
+VisibilityState Page::visibilityState() const
 {
     if (isVisible())
-        return PageVisibilityState::Visible;
+        return VisibilityState::Visible;
     if (m_isPrerender)
-        return PageVisibilityState::Prerender;
-    return PageVisibilityState::Hidden;
+        return VisibilityState::Prerender;
+    return VisibilityState::Hidden;
 }
 
 #if ENABLE(RUBBER_BANDING)

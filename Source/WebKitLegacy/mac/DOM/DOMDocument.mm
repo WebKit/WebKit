@@ -392,11 +392,11 @@
 {
     WebCore::JSMainThreadNullState state;
     switch (IMPL->visibilityState()) {
-    case WebCore::Document::VisibilityState::Hidden:
+    case WebCore::VisibilityState::Hidden:
         return @"hidden";
-    case WebCore::Document::VisibilityState::Visible:
+    case WebCore::VisibilityState::Visible:
         return @"visible";
-    case WebCore::Document::VisibilityState::Prerender:
+    case WebCore::VisibilityState::Prerender:
         return @"prerender";
     }
 }

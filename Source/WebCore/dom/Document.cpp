@@ -1611,7 +1611,7 @@ void Document::visibilityStateChanged()
     notifyMediaCaptureOfVisibilityChanged();
 }
 
-auto Document::visibilityState() const -> VisibilityState
+VisibilityState Document::visibilityState() const
 {
     // The visibility of the document is inherited from the visibility of the
     // page. If there is no page associated with the document, we will assume

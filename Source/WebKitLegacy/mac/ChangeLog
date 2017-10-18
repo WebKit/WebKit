@@ -1,3 +1,15 @@
+2017-10-18  Chris Dumez  <cdumez@apple.com>
+
+        [Service Worker] Add stubs for Client / WindowClient / Clients
+        https://bugs.webkit.org/show_bug.cgi?id=178469
+
+        Reviewed by Youenn Fablet.
+
+        Rename PageVisiblityState to VisibilityState.
+
+        * WebView/WebView.mm:
+        (kit):
+
 2017-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, rolling out r223291.

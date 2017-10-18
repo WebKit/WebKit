@@ -27,7 +27,6 @@
 #include "LayoutRect.h"
 #include "LengthBox.h"
 #include "MediaProducer.h"
-#include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "RTCController.h"
 #include "Region.h"
@@ -36,6 +35,7 @@
 #include "Timer.h"
 #include "UserInterfaceLayoutDirection.h"
 #include "ViewportArguments.h"
+#include "VisibilityState.h"
 #include "WheelEventTestTrigger.h"
 #include <memory>
 #include <pal/SessionID.h>
@@ -423,7 +423,7 @@ public:
     void setEditable(bool isEditable) { m_isEditable = isEditable; }
     bool isEditable() { return m_isEditable; }
 
-    WEBCORE_EXPORT PageVisibilityState visibilityState() const;
+    WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
 
     WEBCORE_EXPORT void addLayoutMilestones(LayoutMilestones);

@@ -212,9 +212,6 @@ typedef (
     [Replaceable] readonly attribute HTMLAllCollection all; /* [SameObject] */
 };
 
-// FIXME: Missing "unloaded" value (https://www.w3.org/TR/page-visibility/#sec-document-interface).
-enum VisibilityState { "hidden", "visible", "prerender" };
-
 enum DocumentReadyState { "loading", "interactive", "complete" };
 
 Document implements DocumentAndElementEventHandlers;

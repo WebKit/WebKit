@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class DeferredPromise;
+class ServiceWorkerClients;
 class ServiceWorkerThread;
 
 class ServiceWorkerGlobalScope : public WorkerGlobalScope {
@@ -47,6 +48,7 @@ public:
 
     bool isServiceWorkerGlobalScope() const final { return true; }
 
+    ServiceWorkerClients& clients() { return m_clients.get(); }
     ServiceWorkerRegistration& registration();
     
     uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
@@ -60,6 +62,7 @@ private:
 
     uint64_t m_serverConnectionIdentifier;
     ServiceWorkerContextData m_contextData;
+    Ref<ServiceWorkerClients> m_clients;
 };
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerClients.h"
 #include "ServiceWorkerThread.h"
 
 namespace WebCore {
@@ -36,6 +37,7 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(uint64_t serverConnectionIden
     : WorkerGlobalScope(url, identifier, userAgent, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_contextData(crossThreadCopy(data))
+    , m_clients(ServiceWorkerClients::create(*this))
 {
 }
 

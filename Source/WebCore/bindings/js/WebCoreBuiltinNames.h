@@ -37,6 +37,8 @@ namespace WebCore {
     macro(Audio) \
     macro(Cache) \
     macro(CacheStorage) \
+    macro(Client) \
+    macro(Clients) \
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CustomElementRegistry) \
@@ -162,6 +164,7 @@ namespace WebCore {
     macro(WebKitMediaKeySession) \
     macro(WebKitMediaKeys) \
     macro(WebSocket) \
+    macro(WindowClient) \
     macro(WritableStream) \
     macro(XMLHttpRequest) \
     macro(addTrack) \

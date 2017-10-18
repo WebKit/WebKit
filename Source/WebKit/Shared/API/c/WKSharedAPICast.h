@@ -55,10 +55,10 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestones.h>
-#include <WebCore/PageVisibilityState.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
+#include <WebCore/VisibilityState.h>
 
 namespace API {
 class Array;
@@ -899,19 +899,19 @@ inline WebCore::LayoutMilestones toLayoutMilestones(WKLayoutMilestones wkMilesto
     return milestones;
 }
 
-inline WebCore::PageVisibilityState toPageVisibilityState(WKPageVisibilityState wkPageVisibilityState)
+inline WebCore::VisibilityState toVisibilityState(WKPageVisibilityState wkPageVisibilityState)
 {
     switch (wkPageVisibilityState) {
     case kWKPageVisibilityStateVisible:
-        return WebCore::PageVisibilityState::Visible;
+        return WebCore::VisibilityState::Visible;
     case kWKPageVisibilityStateHidden:
-        return WebCore::PageVisibilityState::Hidden;
+        return WebCore::VisibilityState::Hidden;
     case kWKPageVisibilityStatePrerender:
-        return WebCore::PageVisibilityState::Prerender;
+        return WebCore::VisibilityState::Prerender;
     }
 
     ASSERT_NOT_REACHED();
-    return WebCore::PageVisibilityState::Visible;
+    return WebCore::VisibilityState::Visible;
 }
 
 inline ImageOptions toImageOptions(WKImageOptions wkImageOptions)

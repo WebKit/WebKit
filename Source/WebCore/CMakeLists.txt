@@ -576,6 +576,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/UIEventInit.idl
+    dom/VisibilityState.idl
     dom/WebKitAnimationEvent.idl
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
@@ -794,10 +795,13 @@ set(WebCore_NON_SVG_IDL_FILES
     workers/service/ExtendableEventInit.idl
     workers/service/FetchEvent.idl
     workers/service/ServiceWorker.idl
+    workers/service/ServiceWorkerClient.idl
+    workers/service/ServiceWorkerClients.idl
     workers/service/ServiceWorkerContainer.idl
     workers/service/ServiceWorkerGlobalScope.idl
     workers/service/ServiceWorkerRegistration.idl
     workers/service/ServiceWorkerUpdateViaCache.idl
+    workers/service/ServiceWorkerWindowClient.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
@@ -3085,6 +3089,8 @@ set(WebCore_SOURCES
     workers/service/ExtendableEvent.cpp
     workers/service/FetchEvent.cpp
     workers/service/ServiceWorker.cpp
+    workers/service/ServiceWorkerClient.cpp
+    workers/service/ServiceWorkerClients.cpp
     workers/service/ServiceWorkerContainer.cpp
     workers/service/ServiceWorkerGlobalScope.cpp
     workers/service/ServiceWorkerJob.cpp
@@ -3094,6 +3100,7 @@ set(WebCore_SOURCES
     workers/service/ServiceWorkerRegistrationData.cpp
     workers/service/ServiceWorkerRegistrationKey.cpp
     workers/service/ServiceWorkerRegistrationOptions.cpp
+    workers/service/ServiceWorkerWindowClient.cpp
 
     workers/service/server/SWClientConnection.cpp
     workers/service/server/SWServer.cpp

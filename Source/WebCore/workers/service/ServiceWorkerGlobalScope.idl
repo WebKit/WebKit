@@ -30,8 +30,7 @@
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
 ] interface ServiceWorkerGlobalScope : WorkerGlobalScope {
-    // Add clients after first round of IDL stubbing.
-    // [SameObject] readonly attribute Clients clients;
+    [SameObject] readonly attribute ServiceWorkerClients clients;
     [SameObject] readonly attribute ServiceWorkerRegistration registration;
 
     [NewObject] Promise<void> skipWaiting();

@@ -1925,11 +1925,11 @@ gchar* webkit_dom_document_get_visibility_state(WebKitDOMDocument* self)
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
     switch (item->visibilityState()) {
-    case WebCore::Document::VisibilityState::Hidden:
+    case WebCore::VisibilityState::Hidden:
         return convertToUTF8String("hidden");
-    case WebCore::Document::VisibilityState::Visible:
+    case WebCore::VisibilityState::Visible:
         return convertToUTF8String("visible");
-    case WebCore::Document::VisibilityState::Prerender:
+    case WebCore::VisibilityState::Prerender:
         return convertToUTF8String("prerender");
     }
     ASSERT_NOT_REACHED();
