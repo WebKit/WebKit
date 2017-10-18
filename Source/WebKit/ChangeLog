@@ -1,3 +1,16 @@
+2017-10-18  John Wilander  <wilander@apple.com>
+
+        Check notifyPagesWhenTelemetryWasCaptured before notifying pages if there is no WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=178470
+        <rdar://problem/34417518>
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+            Add a missing check of notifyPagesWhenTelemetryWasCaptured.
+            The page notification is only for testing purposes.
+
 2017-10-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build error after r223608 with some SDKs.

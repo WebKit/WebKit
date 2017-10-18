@@ -248,7 +248,8 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const WebResourceLoa
     
     auto webPageProxy = nonEphemeralWebPageProxy();
     if (!webPageProxy) {
-        notifyPages(0, 0, 0);
+        if (notifyPagesWhenTelemetryWasCaptured)
+            notifyPages(0, 0, 0);
         return;
     }
     
