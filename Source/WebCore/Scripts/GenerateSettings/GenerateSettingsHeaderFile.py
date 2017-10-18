@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeConditionalString, makeSetterFunctionName, makePreferredConditional
+from Settings import license, makeConditionalString, makePreferredConditional
 
 
 def generateSettingsHeaderFile(outputDirectory, settings):
@@ -78,21 +78,22 @@ def generateSettingsHeaderFile(outputDirectory, settings):
 
 
 def printGetterAndSetter(outputFile, setting):
-    setterFunctionName = makeSetterFunctionName(setting)
+    setterFunctionName = setting.setterFunctionName()
+    getterFunctionName = setting.getterFunctionName()
 
-    webcoreExport = "WEBCORE_EXPORT " if setting.setNeedsStyleRecalcInAllFrames else ""
+    webcoreExport = "WEBCORE_EXPORT " if setting.hasComplexSetter() else ""
 
-    if setting.type[0].islower():
-        outputFile.write("    " + setting.type + " " + setting.name + "() const { return m_" + setting.name + "; }\n")
+    if setting.typeIsValueType():
+        outputFile.write("    " + setting.type + " " + getterFunctionName + "() const { return m_" + setting.name + "; }\n")
         outputFile.write("    " + webcoreExport + "void " + setterFunctionName + "(" + setting.type + " " + setting.name + ")")
     else:
-        outputFile.write("    const " + setting.type + "& " + setting.name + "() const { return m_" + setting.name + "; } \n")
+        outputFile.write("    const " + setting.type + "& " + getterFunctionName + "() const { return m_" + setting.name + "; }\n")
         outputFile.write("    " + webcoreExport + "void " + setterFunctionName + "(const " + setting.type + "& " + setting.name + ")")
 
-    if setting.setNeedsStyleRecalcInAllFrames:
-        outputFile.write("; \n")
+    if setting.hasComplexSetter():
+        outputFile.write(";\n")
     else:
-        outputFile.write(" { m_" + setting.name + " = " + setting.name + "; } \n")
+        outputFile.write(" { m_" + setting.name + " = " + setting.name + "; }\n")
 
 
 def printGettersAndSetters(outputFile, sortedUnconditionalSettingsNames, sortedConditionals, settingsByConditional, settings):

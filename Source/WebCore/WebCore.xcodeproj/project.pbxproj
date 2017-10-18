@@ -2548,8 +2548,6 @@
 		53E29E5F167A8A1900586D3D /* InternalSettingsGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */; };
 		53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ED3FDC167A88E7006762E6 /* JSInternalSettingsGenerated.cpp */; };
 		53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ED3FDD167A88E7006762E6 /* JSInternalSettingsGenerated.h */; };
-		53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
-		53EF766C16531994004CBE49 /* SettingsMacros.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 53EF766A16530A61004CBE49 /* SettingsMacros.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5550CB421E955E3C00111AA0 /* ImageTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5550CB411E955E3C00111AA0 /* ImageTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7511,7 +7509,6 @@
 				1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Copy Generated Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */,
 				7CD58DFE1F9565EC00112791 /* Settings.h in Copy Generated Headers */,
-				53EF766C16531994004CBE49 /* SettingsMacros.h in Copy Generated Headers */,
 				08C7A2C710DC7462002D368B /* SVGNames.h in Copy Generated Headers */,
 				1A1414B613A0F0500019996C /* WebKitFontFamilyNames.h in Copy Generated Headers */,
 			);
@@ -10487,7 +10484,6 @@
 		53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalSettingsGenerated.h; sourceTree = "<group>"; };
 		53ED3FDC167A88E7006762E6 /* JSInternalSettingsGenerated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternalSettingsGenerated.cpp; sourceTree = "<group>"; };
 		53ED3FDD167A88E7006762E6 /* JSInternalSettingsGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalSettingsGenerated.h; sourceTree = "<group>"; };
-		53EF766A16530A61004CBE49 /* SettingsMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsMacros.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5550CB411E955E3C00111AA0 /* ImageTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageTypes.h; sourceTree = "<group>"; };
@@ -19488,7 +19484,6 @@
 				26AA0F9F18D2A1C100419381 /* SelectorPseudoElementTypeMap.gperf */,
 				7CEB57EA1F95651500097AEC /* Settings.cpp */,
 				7CEB57E91F95651500097AEC /* Settings.h */,
-				53EF766A16530A61004CBE49 /* SettingsMacros.h */,
 				9908B0FD1BCAD07D00ED0F55 /* StreamInternalsBuiltins.cpp */,
 				9B03D8061BB3110D00B764C9 /* StreamInternalsBuiltins.h */,
 				8386A96E19F61E4F00E1EC4A /* StyleBuilder.cpp */,
@@ -30185,7 +30180,6 @@
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				7CD58DFB1F9565A500112791 /* Settings.h in Headers */,
 				7CC9722E1F93E3360004D4CF /* SettingsBase.h in Headers */,
-				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,

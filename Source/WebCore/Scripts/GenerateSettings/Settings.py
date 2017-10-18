@@ -76,16 +76,44 @@ class Setting:
             result += " RECALC:" + self.setNeedsStyleRecalcInAllFrames
         return result
 
+    def hasComplexSetter(self):
+        if self.setNeedsStyleRecalcInAllFrames:
+            return True
+        return False
+
+    def typeIsValueType(self):
+        if self.type == 'String':
+            return False
+        return True
+
+    def setterFunctionName(self):
+        for prefix in ["css", "xss", "ftp", "dom"]:
+            if self.name.startswith(prefix):
+                return "set" + uppercaseFirstN(self.name, len(prefix))
+        return "set" + uppercaseFirstN(self.name, 1)
+
+    def getterFunctionName(self):
+        return self.name
+
+    def idlType(self):
+        # FIXME: Add support for more types including enumerate types.
+        if self.type == 'int':
+            return 'long'
+        if self.type == 'unsigned':
+            return 'unsigned long'
+        if self.type == 'double':
+            return 'double'
+        if self.type == 'float':
+            return 'float'
+        if self.type == 'String':
+            return 'DOMString'
+        if self.type == 'bool':
+            return 'boolean'
+        return None
+
 
 def uppercaseFirstN(string, n):
     return string[:n].upper() + string[n:]
-
-
-def makeSetterFunctionName(setting):
-    for prefix in ["css", "xss", "ftp", "dom"]:
-        if setting.name.startswith(prefix):
-            return "set" + uppercaseFirstN(setting.name, len(prefix))
-    return "set" + uppercaseFirstN(setting.name, 1)
 
 
 def makePreferredConditional(conditional):
@@ -95,23 +123,6 @@ def makePreferredConditional(conditional):
 def makeConditionalString(conditional):
     conditionals = conditional.split('|')
     return "ENABLE(" + ") || ENABLE(".join(conditionals) + ")"
-
-
-def mapToIDLType(setting):
-    # FIXME: Add support for more types including enumerate types.
-    if setting.type == 'int':
-        return 'long'
-    if setting.type == 'unsigned' or setting.type == 'size_t':
-        return 'unsigned long'
-    if setting.type == 'double':
-        return 'double'
-    if setting.type == 'float':
-        return 'float'
-    if setting.type == 'String':
-        return 'DOMString'
-    if setting.type == 'bool':
-        return 'boolean'
-    return None
 
 
 def parseInput(input):

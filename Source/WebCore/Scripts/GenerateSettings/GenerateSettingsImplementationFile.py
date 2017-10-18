@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeConditionalString, makeSetterFunctionName, makePreferredConditional
+from Settings import license, makeConditionalString, makePreferredConditional
 
 
 def generateSettingsImplementationFile(outputDirectory, settings):
@@ -147,12 +147,12 @@ def printInitializerList(outputFile, sortedUnconditionalSettingsNames, sortedCon
 
 
 def printSetterBody(outputFile, setting):
-    if not setting.setNeedsStyleRecalcInAllFrames:
+    if not setting.hasComplexSetter():
         return
 
-    setterFunctionName = makeSetterFunctionName(setting)
+    setterFunctionName = setting.setterFunctionName()
 
-    if setting.type[0].islower():
+    if setting.typeIsValueType():
         outputFile.write("void Settings::" + setterFunctionName + "(" + setting.type + " " + setting.name + ")\n")
     else:
         outputFile.write("void Settings::" + setterFunctionName + "(const " + setting.type + "& " + setting.name + ")\n")
@@ -174,7 +174,7 @@ def printSetterBodies(outputFile, sortedUnconditionalSettingsNames, sortedCondit
         hasSetterBody = False
         for settingName in sorted(settingsByConditional[conditional].iterkeys()):
             setting = settings[settingName]
-            if setting.setNeedsStyleRecalcInAllFrames:
+            if setting.hasComplexSetter():
                 hasSetterBody = True
                 break
 

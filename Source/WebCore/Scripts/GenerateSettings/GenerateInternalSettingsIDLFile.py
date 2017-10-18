@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, mapToIDLType, makeSetterFunctionName
+from Settings import license
 
 
 def generateInternalSettingsIDLFile(outputDirectory, settings):
@@ -40,10 +40,10 @@ def generateInternalSettingsIDLFile(outputDirectory, settings):
 
     for settingName in sorted(settings.iterkeys()):
         setting = settings[settingName]
-        idlType = mapToIDLType(setting)
+        idlType = setting.idlType()
         if not idlType:
             continue
-        outputFile.write("    void " + makeSetterFunctionName(setting) + "(" + idlType + " " + setting.name + ");\n")
+        outputFile.write("    void " + setting.setterFunctionName() + "(" + idlType + " " + setting.name + ");\n")
 
     outputFile.write("};\n")
     outputFile.close()

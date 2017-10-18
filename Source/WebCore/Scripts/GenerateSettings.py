@@ -51,7 +51,6 @@ def main():
 
     generateSettingsHeaderFile(outputDirectory, settings)
     generateSettingsImplementationFile(outputDirectory, settings)
-    generateSettingsMacrosHeader(outputDirectory, settings)
     generateInternalSettingsIDLFile(outputDirectory, settings)
     generateInternalSettingsHeaderFile(outputDirectory, settings)
     generateInternalSettingsImplementationFile(outputDirectory, settings)

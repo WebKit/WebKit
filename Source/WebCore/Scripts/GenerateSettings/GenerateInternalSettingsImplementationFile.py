@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeSetterFunctionName, makeConditionalString, mapToIDLType, makeConditionalString
+from Settings import license, makeConditionalString, makeConditionalString
 
 
 def generateInternalSettingsImplementationFile(outputDirectory, settings):
@@ -46,14 +46,14 @@ def generateInternalSettingsImplementationFile(outputDirectory, settings):
 
     for settingName in sorted(settings.iterkeys()):
         setting = settings[settingName]
-        idlType = mapToIDLType(setting)
+        idlType = setting.idlType()
         if not idlType:
             continue
 
         if setting.conditional:
             outputFile.write("#if " + makeConditionalString(setting.conditional) + "\n")
 
-        outputFile.write("    , m_" + setting.name + "(page->settings()." + setting.name + "())\n")
+        outputFile.write("    , m_" + setting.name + "(page->settings()." + setting.getterFunctionName() + "())\n")
 
         if setting.conditional:
             outputFile.write("#endif\n")
@@ -70,14 +70,14 @@ def generateInternalSettingsImplementationFile(outputDirectory, settings):
 
     for settingName in sorted(settings.iterkeys()):
         setting = settings[settingName]
-        idlType = mapToIDLType(setting)
+        idlType = setting.idlType()
         if not idlType:
             continue
 
         if setting.conditional:
             outputFile.write("#if " + makeConditionalString(setting.conditional) + "\n")
 
-        outputFile.write("    m_page->settings()." + makeSetterFunctionName(setting) + "(m_" + setting.name + ");\n")
+        outputFile.write("    m_page->settings()." + setting.setterFunctionName() + "(m_" + setting.name + ");\n")
 
         if setting.conditional:
             outputFile.write("#endif\n")
@@ -86,19 +86,19 @@ def generateInternalSettingsImplementationFile(outputDirectory, settings):
 
     for settingName in sorted(settings.iterkeys()):
         setting = settings[settingName]
-        idlType = mapToIDLType(setting)
+        idlType = setting.idlType()
         if not idlType:
             continue
 
         type = "const String&" if setting.type == "String" else setting.type
 
-        outputFile.write("void InternalSettingsGenerated::" + makeSetterFunctionName(setting) + "(" + type + " " + setting.name + ")\n")
+        outputFile.write("void InternalSettingsGenerated::" + setting.setterFunctionName() + "(" + type + " " + setting.name + ")\n")
         outputFile.write("{\n")
 
         if setting.conditional:
             outputFile.write("#if " + makeConditionalString(setting.conditional) + "\n")
 
-        outputFile.write("    m_page->settings()." + makeSetterFunctionName(setting) + "(" + setting.name + ");\n")
+        outputFile.write("    m_page->settings()." + setting.setterFunctionName() + "(" + setting.name + ");\n")
 
         if setting.conditional:
             outputFile.write("#else\n")

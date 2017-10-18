@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeConditionalString, mapToIDLType, makeSetterFunctionName
+from Settings import license, makeConditionalString
 
 
 def generateInternalSettingsHeaderFile(outputDirectory, settings):
@@ -51,12 +51,12 @@ def generateInternalSettingsHeaderFile(outputDirectory, settings):
 
     for settingName in sorted(settings.iterkeys()):
         setting = settings[settingName]
-        idlType = mapToIDLType(setting)
+        idlType = setting.idlType()
         if not idlType:
             continue
 
         type = "const String&" if setting.type == "String" else setting.type
-        outputFile.write("    void " + makeSetterFunctionName(setting) + "(" + type + " " + setting.name + ");\n")
+        outputFile.write("    void " + setting.setterFunctionName() + "(" + type + " " + setting.name + ");\n")
 
     outputFile.write("\n")
     outputFile.write("private:\n")
@@ -64,7 +64,7 @@ def generateInternalSettingsHeaderFile(outputDirectory, settings):
 
     for settingName in sorted(settings.iterkeys()):
         setting = settings[settingName]
-        idlType = mapToIDLType(setting)
+        idlType = setting.idlType()
         if not idlType:
             continue
 

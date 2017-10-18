@@ -1370,12 +1370,11 @@ GENERATE_SETTINGS_SCRIPTS = \
     $(WebCore)/Scripts/GenerateSettings/GenerateSettings.py \
     $(WebCore)/Scripts/GenerateSettings/GenerateSettingsHeaderFile.py \
     $(WebCore)/Scripts/GenerateSettings/GenerateSettingsImplementationFile.py \
-    $(WebCore)/Scripts/GenerateSettings/GenerateSettingsMacrosHeader.py \
     $(WebCore)/Scripts/GenerateSettings/Settings.py \
     $(WebCore)/Scripts/GenerateSettings/__init__.py
 
-all : InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h Settings.cpp Settings.h SettingsMacros.h
-InternalSettingsGenerated%idl InternalSettingsGenerated%cpp InternalSettingsGenerated%h Settings%cpp Settings%h SettingsMacros%h : $(WebCore)/Scripts/GenerateSettings.py $(GENERATE_SETTINGS_SCRIPTS) page/Settings.in
+all : InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h Settings.cpp Settings.h
+InternalSettingsGenerated%idl InternalSettingsGenerated%cpp InternalSettingsGenerated%h Settings%cpp Settings%h : $(WebCore)/Scripts/GenerateSettings.py $(GENERATE_SETTINGS_SCRIPTS) page/Settings.in
 	$(PYTHON) $< --input $(WebCore)/page/Settings.in
 
 # --------
