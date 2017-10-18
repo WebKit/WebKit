@@ -146,28 +146,17 @@ SettingsBase::SettingsBase(Page* page)
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
-    , m_isJavaEnabled(false)
-    , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
     , m_areImagesEnabled(true)
-    , m_preferMIMETypeForImages(false)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
-    , m_needsAdobeFrameReloadingQuirk(false)
     , m_usesPageCache(false)
-    , m_fontRenderingMode(0)
-    , m_showTiledScrollingIndicator(false)
     , m_backgroundShouldExtendBeyondPage(false)
     , m_dnsPrefetchingEnabled(false)
-#if ENABLE(TOUCH_EVENTS)
-    , m_touchEventEmulationEnabled(false)
-#endif
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_setImageLoadingSettingsTimer(*this, &SettingsBase::imageLoadingSettingsTimerFired)
     , m_hiddenPageDOMTimerThrottlingEnabled(false)
     , m_hiddenPageCSSAnimationSuspensionEnabled(false)
-    , m_fontFallbackPrefersPictographs(false)
-    , m_forcePendingWebGLPolicy(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
@@ -334,32 +323,12 @@ void SettingsBase::setScriptEnabled(bool isScriptEnabled)
 #endif
 }
 
-void SettingsBase::setJavaEnabled(bool isJavaEnabled)
-{
-    m_isJavaEnabled = isJavaEnabled;
-}
-
-void SettingsBase::setJavaEnabledForLocalFiles(bool isJavaEnabledForLocalFiles)
-{
-    m_isJavaEnabledForLocalFiles = isJavaEnabledForLocalFiles;
-}
-
 void SettingsBase::setImagesEnabled(bool areImagesEnabled)
 {
     m_areImagesEnabled = areImagesEnabled;
 
     // See comment in setLoadsImagesAutomatically.
     m_setImageLoadingSettingsTimer.startOneShot(0_s);
-}
-
-void SettingsBase::setPreferMIMETypeForImages(bool preferMIMETypeForImages)
-{
-    m_preferMIMETypeForImages = preferMIMETypeForImages;
-}
-
-void SettingsBase::setForcePendingWebGLPolicy(bool forced)
-{
-    m_forcePendingWebGLPolicy = forced;
 }
 
 void SettingsBase::setPluginsEnabled(bool arePluginsEnabled)
@@ -380,13 +349,6 @@ void SettingsBase::setUserStyleSheetLocation(const URL& userStyleSheetLocation)
 
     if (m_page)
         m_page->userStyleSheetLocationChanged();
-}
-
-// FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
-// can fix the bug from their end.
-void SettingsBase::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
-{
-    m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
 }
 
 void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
@@ -423,20 +385,6 @@ void SettingsBase::setUsesPageCache(bool usesPageCache)
         PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
 }
 
-void SettingsBase::setFontRenderingMode(FontRenderingMode mode)
-{
-    if (fontRenderingMode() == mode)
-        return;
-    m_fontRenderingMode = static_cast<int>(mode);
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-FontRenderingMode SettingsBase::fontRenderingMode() const
-{
-    return static_cast<FontRenderingMode>(m_fontRenderingMode);
-}
-
 void SettingsBase::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
 {
     if (m_dnsPrefetchingEnabled == dnsPrefetchingEnabled)
@@ -445,14 +393,6 @@ void SettingsBase::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
     m_dnsPrefetchingEnabled = dnsPrefetchingEnabled;
     if (m_page)
         m_page->dnsPrefetchingStateChanged();
-}
-
-void SettingsBase::setShowTiledScrollingIndicator(bool enabled)
-{
-    if (m_showTiledScrollingIndicator == enabled)
-        return;
-        
-    m_showTiledScrollingIndicator = enabled;
 }
 
 #if ENABLE(RESOURCE_USAGE)
@@ -638,16 +578,6 @@ void SettingsBase::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
     m_hiddenPageCSSAnimationSuspensionEnabled = flag;
     if (m_page)
         m_page->hiddenPageCSSAnimationSuspensionStateChanged();
-}
-
-void SettingsBase::setFontFallbackPrefersPictographs(bool preferPictographs)
-{
-    if (m_fontFallbackPrefersPictographs == preferPictographs)
-        return;
-
-    m_fontFallbackPrefersPictographs = preferPictographs;
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
 }
 
 void SettingsBase::setLowPowerVideoAudioBufferSizeEnabled(bool flag)

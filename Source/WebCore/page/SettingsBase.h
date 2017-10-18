@@ -150,18 +150,8 @@ public:
     WEBCORE_EXPORT void setScriptEnabled(bool);
 
 
-    WEBCORE_EXPORT void setJavaEnabled(bool);
-    bool isJavaEnabled() const { return m_isJavaEnabled; }
-
-    // This settings is only consulted if isJavaEnabled() returns true;
-    WEBCORE_EXPORT void setJavaEnabledForLocalFiles(bool);
-    bool isJavaEnabledForLocalFiles() const { return m_isJavaEnabledForLocalFiles; }
-
     WEBCORE_EXPORT void setImagesEnabled(bool);
     bool areImagesEnabled() const { return m_areImagesEnabled; }
-
-    WEBCORE_EXPORT void setPreferMIMETypeForImages(bool);
-    bool preferMIMETypeForImages() const { return m_preferMIMETypeForImages; }
 
     WEBCORE_EXPORT void setPluginsEnabled(bool);
     bool arePluginsEnabled() const { return m_arePluginsEnabled; }
@@ -171,9 +161,6 @@ public:
 
     WEBCORE_EXPORT void setUserStyleSheetLocation(const URL&);
     const URL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
-
-    WEBCORE_EXPORT void setNeedsAdobeFrameReloadingQuirk(bool);
-    bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
 
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(Seconds); // Initialized to DOMTimer::defaultMinimumInterval().
     Seconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
@@ -189,12 +176,6 @@ public:
     WEBCORE_EXPORT void setUsesPageCache(bool);
     bool usesPageCache() const { return m_usesPageCache; }
         
-    void setFontRenderingMode(FontRenderingMode mode);
-    FontRenderingMode fontRenderingMode() const;
-
-    WEBCORE_EXPORT void setShowTiledScrollingIndicator(bool);
-    bool showTiledScrollingIndicator() const { return m_showTiledScrollingIndicator; }
-
 #if ENABLE(RESOURCE_USAGE)
     bool resourceUsageOverlayVisible() const { return m_resourceUsageOverlayVisible; }
     WEBCORE_EXPORT void setResourceUsageOverlayVisible(bool);
@@ -248,11 +229,6 @@ public:
     WEBCORE_EXPORT static void setUsesMockScrollAnimator(bool);
     static bool usesMockScrollAnimator();
 
-#if ENABLE(TOUCH_EVENTS)
-    void setTouchEventEmulationEnabled(bool enabled) { m_touchEventEmulationEnabled = enabled; }
-    bool isTouchEventEmulationEnabled() const { return m_touchEventEmulationEnabled; }
-#endif
-
     WEBCORE_EXPORT void setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy);
     SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy() const { return m_storageBlockingPolicy; }
 
@@ -262,14 +238,8 @@ public:
     WEBCORE_EXPORT static void setShouldRespectPriorityInCSSAttributeSetters(bool);
     static bool shouldRespectPriorityInCSSAttributeSetters();
 
-    void setTimeWithoutMouseMovementBeforeHidingControls(Seconds time) { m_timeWithoutMouseMovementBeforeHidingControls = time; }
-    Seconds timeWithoutMouseMovementBeforeHidingControls() const { return m_timeWithoutMouseMovementBeforeHidingControls; }
-
     bool hiddenPageCSSAnimationSuspensionEnabled() const { return m_hiddenPageCSSAnimationSuspensionEnabled; }
     WEBCORE_EXPORT void setHiddenPageCSSAnimationSuspensionEnabled(bool);
-
-    WEBCORE_EXPORT void setFontFallbackPrefersPictographs(bool);
-    bool fontFallbackPrefersPictographs() const { return m_fontFallbackPrefersPictographs; }
 
     static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
@@ -304,33 +274,14 @@ public:
     static void setCustomPasteboardDataEnabled(bool enabled) { gCustomPasteboardDataEnabled = enabled; }
     static bool customPasteboardDataEnabled() { return gCustomPasteboardDataEnabled; }
     WEBCORE_EXPORT static bool defaultCustomPasteboardDataEnabled();
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    void setMediaKeysStorageDirectory(const String& directory) { m_mediaKeysStorageDirectory = directory; }
-    const String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
-#endif
     
 #if ENABLE(MEDIA_STREAM)
-    void setMediaDeviceIdentifierStorageDirectory(const String& directory) { m_mediaDeviceIdentifierStorageDirectory = directory; }
-    const String& mediaDeviceIdentifierStorageDirectory() const { return m_mediaDeviceIdentifierStorageDirectory; }
-
     static bool mockCaptureDevicesEnabled();
     WEBCORE_EXPORT static void setMockCaptureDevicesEnabled(bool);
 
     bool mediaCaptureRequiresSecureConnection() const;
     WEBCORE_EXPORT static void setMediaCaptureRequiresSecureConnection(bool);
 #endif
-
-#if ENABLE(APPLE_PAY)
-    bool applePayEnabled() const { return m_applePayEnabled; }
-    void setApplePayEnabled(bool applePayEnabled) { m_applePayEnabled = applePayEnabled; }
-
-    bool applePayCapabilityDisclosureAllowed() const { return m_applePayCapabilityDisclosureAllowed; }
-    void setApplePayCapabilityDisclosureAllowed(bool applePayCapabilityDisclosureAllowed) { m_applePayCapabilityDisclosureAllowed = applePayCapabilityDisclosureAllowed; }
-#endif
-
-    WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
-    bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
 
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
     static bool allowsAnySSLCertificate();
@@ -354,35 +305,21 @@ protected:
     Seconds m_layoutInterval;
     Seconds m_minimumDOMTimerInterval;
 
-    bool m_isJavaEnabled : 1;
-    bool m_isJavaEnabledForLocalFiles : 1;
     bool m_loadsImagesAutomatically : 1;
     bool m_areImagesEnabled : 1;
-    bool m_preferMIMETypeForImages : 1;
     bool m_arePluginsEnabled : 1;
     bool m_isScriptEnabled : 1;
-    bool m_needsAdobeFrameReloadingQuirk : 1;
     bool m_usesPageCache : 1;
-    unsigned m_fontRenderingMode : 1;
     bool m_showTiledScrollingIndicator : 1;
     bool m_backgroundShouldExtendBeyondPage : 1;
     bool m_dnsPrefetchingEnabled : 1;
-
-#if ENABLE(TOUCH_EVENTS)
-    bool m_touchEventEmulationEnabled : 1;
-#endif
     bool m_scrollingPerformanceLoggingEnabled : 1;
-
-    Seconds m_timeWithoutMouseMovementBeforeHidingControls { 3_s };
 
     Timer m_setImageLoadingSettingsTimer;
     void imageLoadingSettingsTimerFired();
 
     bool m_hiddenPageDOMTimerThrottlingEnabled : 1;
     bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
-    bool m_fontFallbackPrefersPictographs : 1;
-
-    bool m_forcePendingWebGLPolicy : 1;
 
 #if ENABLE(RESOURCE_USAGE)
     bool m_resourceUsageOverlayVisible { false };
@@ -418,20 +355,10 @@ protected:
 #endif
     WEBCORE_EXPORT static bool gManageAudioSession;
     WEBCORE_EXPORT static bool gCustomPasteboardDataEnabled;
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    String m_mediaKeysStorageDirectory;
-#endif
     
 #if ENABLE(MEDIA_STREAM)
-    String m_mediaDeviceIdentifierStorageDirectory;
     static bool gMockCaptureDevicesEnabled;
     static bool gMediaCaptureRequiresSecureConnection;
-#endif
-
-#if ENABLE(APPLE_PAY)
-    bool m_applePayEnabled { false };
-    bool m_applePayCapabilityDisclosureAllowed { true };
 #endif
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;

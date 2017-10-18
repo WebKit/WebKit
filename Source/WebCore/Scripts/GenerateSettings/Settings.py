@@ -61,39 +61,38 @@ def license():
 class Setting:
     def __init__(self, name):
         self.name = name
-        self.type = "bool"
+        self.type = 'bool'
         self.initial = None
         self.conditional = None
         self.setNeedsStyleRecalcInAllFrames = None
+        self.getter = None
 
     def __str__(self):
-        result = self.name + " TYPE:" + self.type
+        result = self.name + ' TYPE:' + self.type
         if (self.initial):
-            result += " INIT:" + self.initial
+            result += ' INIT:' + self.initial
         if (self.conditional):
-            result += " COND:" + self.conditional
+            result += ' COND:' + self.conditional
         if (self.setNeedsStyleRecalcInAllFrames):
-            result += " RECALC:" + self.setNeedsStyleRecalcInAllFrames
+            result += ' RECALC:' + self.setNeedsStyleRecalcInAllFrames
+        if (self.getter):
+            result += ' GETTER:' + self.getter
         return result
 
     def hasComplexSetter(self):
-        if self.setNeedsStyleRecalcInAllFrames:
-            return True
-        return False
+        return self.setNeedsStyleRecalcInAllFrames
 
     def typeIsValueType(self):
-        if self.type == 'String':
-            return False
-        return True
+        return self.type != 'String'
 
     def setterFunctionName(self):
-        for prefix in ["css", "xss", "ftp", "dom"]:
+        for prefix in ['css', 'xss', 'ftp', 'dom']:
             if self.name.startswith(prefix):
-                return "set" + uppercaseFirstN(self.name, len(prefix))
-        return "set" + uppercaseFirstN(self.name, 1)
+                return 'set' + uppercaseFirstN(self.name, len(prefix))
+        return 'set' + uppercaseFirstN(self.name, 1)
 
     def getterFunctionName(self):
-        return self.name
+        return self.getter or self.name
 
     def idlType(self):
         # FIXME: Add support for more types including enumerate types.
@@ -122,32 +121,36 @@ def makePreferredConditional(conditional):
 
 def makeConditionalString(conditional):
     conditionals = conditional.split('|')
-    return "ENABLE(" + ") || ENABLE(".join(conditionals) + ")"
+    return 'ENABLE(' + ') || ENABLE('.join(conditionals) + ')'
 
 
 def parseInput(input):
     settings = {}
-    for line in open(input, "r"):
-        if not line.startswith("#") and not line.isspace():
 
-            (name, optionsString) = line.rstrip().split(' ', 1)
+    with open(input, 'r') as file:
+        for line in file:
+            if not line.startswith('#') and not line.isspace():
 
-            options = re.split(r' *, *', optionsString)
+                (name, optionsString) = line.rstrip().split(' ', 1)
 
-            setting = Setting(name)
-            for option in options:
-                (name, value) = re.split(r' *= *', option)
-                if (name == 'type'):
-                    setting.type = value
-                if (name == 'initial'):
-                    setting.initial = value
-                if (name == 'conditional'):
-                    setting.conditional = value
-                if (name == 'setNeedsStyleRecalcInAllFrames'):
-                    setting.setNeedsStyleRecalcInAllFrames = value
+                options = re.split(r' *, *', optionsString)
 
-            # FIXME: ASSERT something about setting.initial
+                setting = Setting(name)
+                for option in options:
+                    (name, value) = re.split(r' *= *', option)
+                    if (name == 'type'):
+                        setting.type = value
+                    if (name == 'initial'):
+                        setting.initial = value
+                    if (name == 'conditional'):
+                        setting.conditional = value
+                    if (name == 'setNeedsStyleRecalcInAllFrames'):
+                        setting.setNeedsStyleRecalcInAllFrames = value
+                    if (name == 'getter'):
+                        setting.getter = value
 
-            settings[setting.name] = setting
+                # FIXME: ASSERT something about setting.initial
+
+                settings[setting.name] = setting
 
     return settings
