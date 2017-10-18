@@ -109,9 +109,12 @@ if (length($fontNamesIn)) {
     open F, ">$header" or die "Unable to open $header for writing.";
 
     printLicenseHeader($F);
-    printHeaderHead($F, "CSS", $familyNamesFileBase, "#include <wtf/text/AtomicString.h>", "");
+    printHeaderHead($F, "CSS", $familyNamesFileBase, <<END, "");
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/AtomicString.h>
+END
 
-    printMacros($F, "extern const WTF::AtomicString", "", \%parameters);
+    printMacros($F, "extern LazyNeverDestroyed<const WTF::AtomicString>", "", \%parameters);
     print F "#endif\n\n";
 
     printInit($F, 1);
@@ -125,9 +128,7 @@ if (length($fontNamesIn)) {
 
     print F StaticString::GenerateStrings(\%parameters);
 
-    for my $name (sort keys %parameters) {
-        print F "DEFINE_GLOBAL(AtomicString, $name)\n";
-    }
+    printMacros($F, "LazyNeverDestroyed<const WTF::AtomicString>", "", \%parameters);
 
     printInit($F, 0);
 
@@ -138,7 +139,7 @@ if (length($fontNamesIn)) {
         # FIXME: Would like to use static_cast here, but there are differences in const
         # depending on whether SKIP_STATIC_CONSTRUCTORS_ON_GCC is used, so stick with a
         # C-style cast for now.
-        print F "    new (NotNull, (void*)&$name) AtomicString(&${name}Data);\n";
+        print F "    ${name}.construct(&${name}Data);\n";
     }
 
     print F "}\n}\n}\n";
