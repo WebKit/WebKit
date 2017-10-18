@@ -39,7 +39,7 @@ public:
     static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh);
     static RefPtr<ImageData> create(const IntSize&);
     static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&);
-    static ExceptionOr<RefPtr<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, unsigned sh);
+    static ExceptionOr<RefPtr<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, std::optional<unsigned> sh);
 
     IntSize size() const { return m_size; }
     int width() const { return m_size.width(); }

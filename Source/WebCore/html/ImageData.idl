@@ -28,7 +28,7 @@
 
 [
     Constructor(unsigned long sw, unsigned long sh),
-    Constructor(Uint8ClampedArray data, unsigned long sw, optional unsigned long sh = 0), // FIXME: sh should not have a default value
+    Constructor(Uint8ClampedArray data, unsigned long sw, optional unsigned long sh),
     ConstructorMayThrowException,
     CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,

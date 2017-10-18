@@ -1,3 +1,14 @@
+2017-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Align ImageData constructor with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=178406
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline test now that one more check is passing.
+
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/imagedata-expected.txt:
+
 2017-10-16  Youenn Fablet  <youenn@apple.com>
 
         [FETCH] Remove Request.type getter
