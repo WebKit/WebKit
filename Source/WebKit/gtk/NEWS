@@ -1,4 +1,21 @@
 ==================
+WebKitGTK+  2.18.1
+==================
+
+What's new in WebKitGTK+ 2.18.1?
+
+  - Improve performance of GIF animations.
+  - Fix garbled display in GMail.
+  - Fix rendering of several material design icons when using the web font.
+  - Fix flickering when resizing the window in Wayland.
+  - Prevent default kerberos authentication credentials from being used in ephemeral sessions.
+  - Fix a crash when webkit_web_resource_get_data() is cancelled.
+  - Correctly handle touchmove and touchend events in WebKitWebView.
+  - Fix the build with enchant 2.1.1.
+  - Fix the build in HPPA and Alpha.
+  - Fix several crashes and rendering issues.
+
+==================
 WebKitGTK+  2.18.0
 ==================
 

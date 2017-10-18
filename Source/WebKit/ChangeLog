@@ -1,3 +1,9 @@
+2017-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.18.1 release.
+
+        * gtk/NEWS: Add release notes for 2.18.1.
+
 2017-08-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Enable MEMORY_SAMPLER
