@@ -52,6 +52,7 @@
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
+#include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
 #include "JSSet.h"
@@ -2516,6 +2517,36 @@ JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, Enc
     if (!bucket)
         return vm.sentinelSetBucket.get();
     return *bucket;
+}
+
+EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState* exec, JSObject* thisObject)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    return JSValue::encode(thisObject->getPrototype(vm, exec));
+}
+
+EncodedJSValue JIT_OPERATION operationGetPrototypeOf(ExecState* exec, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = JSValue::decode(encodedValue).toThis(exec, StrictMode);
+    if (thisValue.isUndefinedOrNull())
+        return throwVMError(exec, scope, createNotAnObjectError(exec, thisValue));
+
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
+    if (!thisObject) {
+        JSObject* prototype = thisValue.synthesizePrototype(exec);
+        EXCEPTION_ASSERT(!!scope.exception() == !prototype);
+        if (UNLIKELY(!prototype))
+            return JSValue::encode(JSValue());
+        return JSValue::encode(prototype);
+    }
+
+    scope.release();
+    return JSValue::encode(thisObject->getPrototype(vm, exec));
 }
 
 void JIT_OPERATION operationThrowDFG(ExecState* exec, EncodedJSValue valueToThrow)

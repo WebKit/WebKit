@@ -60,6 +60,7 @@ enum LocationKind {
     SetterLoc,
     StructureLoc,
     TypedArrayByteOffsetLoc,
+    PrototypeLoc,
     StackLoc,
     StackPayloadLoc,
     MapBucketLoc,

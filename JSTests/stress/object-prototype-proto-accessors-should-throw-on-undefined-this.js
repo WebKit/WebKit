@@ -34,5 +34,5 @@ function runTest(testId, test, expectedResult, expectedException) {
     }
 }
 
-runTest(10000, testInvokeGetter, undefined, "TypeError: Object.prototype.__proto__ called on null or undefined");
+runTest(10000, testInvokeGetter, undefined, "TypeError: undefined is not an object (evaluating 'getter()')");
 runTest(10100, testInvokeSetter, undefined, "TypeError: Object.prototype.__proto__ called on null or undefined");

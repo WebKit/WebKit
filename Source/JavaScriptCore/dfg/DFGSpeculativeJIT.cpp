@@ -9186,13 +9186,23 @@ void SpeculativeJIT::speculateObject(Edge edge)
     speculateObject(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateFunction(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecFunction, JSFunctionType);
+}
+
 void SpeculativeJIT::speculateFunction(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecFunction))
         return;
     
     SpeculateCellOperand operand(this, edge);
-    speculateCellType(edge, operand.gpr(), SpecFunction, JSFunctionType);
+    speculateFunction(edge, operand.gpr());
+}
+
+void SpeculativeJIT::speculateFinalObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecFinalObject, FinalObjectType);
 }
 
 void SpeculativeJIT::speculateFinalObject(Edge edge)
@@ -9201,7 +9211,7 @@ void SpeculativeJIT::speculateFinalObject(Edge edge)
         return;
     
     SpeculateCellOperand operand(this, edge);
-    speculateCellType(edge, operand.gpr(), SpecFinalObject, FinalObjectType);
+    speculateFinalObject(edge, operand.gpr());
 }
 
 void SpeculativeJIT::speculateRegExpObject(Edge edge, GPRReg cell)
@@ -10765,6 +10775,125 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
     // No exception check here since operationWeakMapGet never throws an exception.
 
     jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileGetPrototypeOf(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case ArrayUse:
+    case FunctionUse:
+    case FinalObjectUse: {
+        SpeculateCellOperand object(this, node->child1());
+        GPRTemporary temp(this);
+        GPRTemporary temp2(this);
+
+        GPRReg objectGPR = object.gpr();
+        GPRReg tempGPR = temp.gpr();
+        GPRReg temp2GPR = temp2.gpr();
+
+        switch (node->child1().useKind()) {
+        case ArrayUse:
+            speculateArray(node->child1(), objectGPR);
+            break;
+        case FunctionUse:
+            speculateFunction(node->child1(), objectGPR);
+            break;
+        case FinalObjectUse:
+            speculateFinalObject(node->child1(), objectGPR);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        m_jit.emitLoadStructure(*m_jit.vm(), objectGPR, tempGPR, temp2GPR);
+
+        AbstractValue& value = m_state.forNode(node->child1());
+        if ((value.m_type && !(value.m_type & ~SpecObject)) && value.m_structure.isFinite()) {
+            bool hasPolyProto = false;
+            bool hasMonoProto = false;
+            value.m_structure.forEach([&] (RegisteredStructure structure) {
+                if (structure->hasPolyProto())
+                    hasPolyProto = true;
+                else
+                    hasMonoProto = true;
+            });
+
+            if (hasMonoProto && !hasPolyProto) {
+#if USE(JSVALUE64)
+                m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
+                jsValueResult(tempGPR, node);
+#else
+                m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + TagOffset), temp2GPR);
+                m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
+                jsValueResult(temp2GPR, tempGPR, node);
+#endif
+                return;
+            }
+
+            if (hasPolyProto && !hasMonoProto) {
+#if USE(JSVALUE64)
+                m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
+                m_jit.zeroExtend32ToPtr(tempGPR, tempGPR);
+                m_jit.load64(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage()), tempGPR);
+                jsValueResult(tempGPR, node);
+#else
+                m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
+                m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + TagOffset), temp2GPR);
+                m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + PayloadOffset), tempGPR);
+                jsValueResult(temp2GPR, tempGPR, node);
+#endif
+                return;
+            }
+        }
+
+#if USE(JSVALUE64)
+        m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
+        auto isMonoProto = m_jit.branchIfNotInt32(JSValueRegs(tempGPR));
+        m_jit.zeroExtend32ToPtr(tempGPR, tempGPR);
+        m_jit.load64(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage()), tempGPR);
+        isMonoProto.link(&m_jit);
+        jsValueResult(tempGPR, node);
+#else
+        m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + TagOffset), temp2GPR);
+        m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
+        auto isMonoProto = m_jit.branch32(CCallHelpers::NotEqual, temp2GPR, TrustedImm32(JSValue::Int32Tag));
+        m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + TagOffset), temp2GPR);
+        m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + PayloadOffset), tempGPR);
+        isMonoProto.link(&m_jit);
+        jsValueResult(temp2GPR, tempGPR, node);
+#endif
+        return;
+    }
+    case ObjectUse: {
+        SpeculateCellOperand value(this, node->child1());
+        JSValueRegsTemporary result(this);
+
+        GPRReg valueGPR = value.gpr();
+        JSValueRegs resultRegs = result.regs();
+
+        speculateObject(node->child1(), valueGPR);
+
+        flushRegisters();
+        callOperation(operationGetPrototypeOfObject, resultRegs, valueGPR);
+        m_jit.exceptionCheck();
+        jsValueResult(resultRegs, node);
+        return;
+    }
+    default: {
+        JSValueOperand value(this, node->child1());
+        JSValueRegsTemporary result(this);
+
+        JSValueRegs valueRegs = value.jsValueRegs();
+        JSValueRegs resultRegs = result.regs();
+
+        flushRegisters();
+        callOperation(operationGetPrototypeOf, resultRegs, valueRegs);
+        m_jit.exceptionCheck();
+        jsValueResult(resultRegs, node);
+        return;
+    }
+    }
 }
 
 } } // namespace JSC::DFG

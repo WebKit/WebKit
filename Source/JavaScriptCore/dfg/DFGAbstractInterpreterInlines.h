@@ -2740,6 +2740,48 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecInt32Only);
         break;
     }
+
+    case GetPrototypeOf: {
+        AbstractValue& value = forNode(node->child1());
+        if ((value.m_type && !(value.m_type & ~SpecObject)) && value.m_structure.isFinite()) {
+            bool canFold = !value.m_structure.isClear();
+            JSValue prototype;
+            value.m_structure.forEach([&] (RegisteredStructure structure) {
+                auto getPrototypeMethod = structure->classInfo()->methodTable.getPrototype;
+                MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
+                if (getPrototypeMethod != defaultGetPrototype) {
+                    canFold = false;
+                    return;
+                }
+
+                if (structure->hasPolyProto()) {
+                    canFold = false;
+                    return;
+                }
+                if (!prototype)
+                    prototype = structure->storedPrototype();
+                else if (prototype != structure->storedPrototype())
+                    canFold = false;
+            });
+
+            if (prototype && canFold) {
+                setConstant(node, *m_graph.freeze(prototype));
+                break;
+            }
+        }
+
+        switch (node->child1().useKind()) {
+        case ArrayUse:
+        case FunctionUse:
+        case FinalObjectUse:
+            break;
+        default:
+            clobberWorld(node->origin.semantic, clobberLimit);
+            break;
+        }
+        forNode(node).setType(m_graph, SpecObject | SpecOther);
+        break;
+    }
         
     case GetByOffset: {
         StorageAccessData& data = node->storageAccessData();

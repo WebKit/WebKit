@@ -987,6 +987,11 @@ public:
         m_jit.setupArgumentsWithExecState(object, TrustedImmPtr(static_cast<size_t>(size)));
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_JITOperation_EO operation, JSValueRegs result, GPRReg object)
+    {
+        m_jit.setupArgumentsWithExecState(object);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_JITOperation_EPS operation, GPRReg result, GPRReg old, size_t size)
     {
         m_jit.setupArgumentsWithExecState(old, TrustedImmPtr(size));
@@ -2835,6 +2840,7 @@ public:
     void compileWeakMapGet(Node*);
     void compileLoadKeyFromMapBucket(Node*);
     void compileLoadValueFromMapBucket(Node*);
+    void compileGetPrototypeOf(Node*);
     
 #if USE(JSVALUE32_64)
     template<typename BaseOperandType, typename PropertyOperandType, typename ValueOperandType, typename TagType>
@@ -3084,7 +3090,9 @@ public:
     void speculateObject(Edge);
     void speculateArray(Edge, GPRReg cell);
     void speculateArray(Edge);
+    void speculateFunction(Edge, GPRReg cell);
     void speculateFunction(Edge);
+    void speculateFinalObject(Edge, GPRReg cell);
     void speculateFinalObject(Edge);
     void speculateRegExpObject(Edge, GPRReg cell);
     void speculateRegExpObject(Edge);
