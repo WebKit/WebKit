@@ -60,7 +60,7 @@ inline String wcharToString(const wchar_t* characters, unsigned length)
 
 inline String nullTerminatedWCharToString(const wchar_t* characters)
 {
-    return wcharToString(characters, wcslen(characters) - 1);
+    return wcharToString(characters, wcslen(characters));
 }
 
 } // namespace WTF
