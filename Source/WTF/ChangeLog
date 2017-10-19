@@ -1,3 +1,16 @@
+2017-10-19  Keith Miller  <keith_miller@apple.com>
+
+        REGRESSION (r223476): WebCore exports symbols with names belonging to other frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=178424
+
+        Reviewed by David Kilzer.
+
+        This patch moves the wrapper function sharing the name of the externed function
+        to the source file and marks it as always inline. Marking it as inline prevents
+        the framework from exporting it.
+
+        * wtf/cocoa/SoftLinking.h:
+
 2017-10-18  Keith Miller  <keith_miller@apple.com>
 
         Setup WebCore build to start using unified sources.

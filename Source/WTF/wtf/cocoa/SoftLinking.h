@@ -476,6 +476,10 @@
     { \
         return softLink##framework##functionName parameterNames; \
     } \
+    } \
+    ALWAYS_INLINE resultType functionName parameterDeclarations \
+    {\
+        return functionNamespace::softLink##framework##functionName parameterNames; \
     }
 
 #define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
@@ -494,10 +498,6 @@
         }); \
         return softLink##framework##functionName parameterNames; \
     } \
-    } \
-    resultType functionName parameterDeclarations \
-    {\
-        return functionNamespace::softLink##framework##functionName parameterNames; \
     }
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
