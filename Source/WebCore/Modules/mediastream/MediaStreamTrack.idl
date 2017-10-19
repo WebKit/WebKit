@@ -49,7 +49,7 @@ enum MediaStreamTrackState { "live", "ended" };
 
     MediaTrackCapabilities getCapabilities();
     MediaTrackConstraints getConstraints();
-    MediaTrackSettings getSettings();
+    [CallWith=Document] MediaTrackSettings getSettings();
     Promise<void> applyConstraints(optional MediaTrackConstraints constraints);
 
     attribute EventHandler onoverconstrained;

@@ -57,7 +57,7 @@ public:
     CaptureSourceOrError createVideoCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         for (auto& device : MockRealtimeMediaSource::videoDevices()) {
             if (device.persistentId() == deviceID)
-                return MockRealtimeVideoSource::create(device.label(), constraints);
+                return MockRealtimeVideoSource::create(deviceID, device.label(), constraints);
         }
         return { };
     }
@@ -72,9 +72,9 @@ private:
 };
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
-CaptureSourceOrError MockRealtimeVideoSource::create(const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeVideoSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(*new MockRealtimeVideoSource(name));
+    auto source = adoptRef(*new MockRealtimeVideoSource(deviceID, name));
     if (constraints && source->applyConstraints(*constraints))
         return { };
 
@@ -84,7 +84,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(const String& name, const M
 
 Ref<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const String& name)
 {
-    auto source = adoptRef(*new MockRealtimeVideoSource(name));
+    auto source = adoptRef(*new MockRealtimeVideoSource(String { }, name));
     source->notifyMutedChange(true);
     return source;
 }
@@ -100,8 +100,8 @@ RealtimeMediaSource::VideoCaptureFactory& MockRealtimeVideoSource::factory()
     return mockVideoCaptureSourceFactory();
 }
 
-MockRealtimeVideoSource::MockRealtimeVideoSource(const String& name)
-    : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Video, name)
+MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const String& name)
+    : MockRealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Video, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
     setFrameRate(!deviceIndex() ? 30 : 15);

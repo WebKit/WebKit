@@ -1,5 +1,45 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222471. rdar://problem/35061708
+
+    2017-09-25  Youenn Fablet  <youenn@apple.com>
+
+            MediaStreamTrack.getSettings should compute its deviceId/groupId like enumerateDevices
+            https://bugs.webkit.org/show_bug.cgi?id=177433
+
+            Reviewed by Jer Noble.
+
+            Covered by improved test.
+
+            Hash the deviceId returned by getSettings as done by enumerateDevices/getUserMedia.
+            Do the same thing for groupId.
+            Make sure mock sources have their deviceId set consistently with mock devices.
+
+            * Modules/mediastream/MediaStreamTrack.cpp:
+            (WebCore::MediaStreamTrack::getSettings const):
+            * Modules/mediastream/MediaStreamTrack.h:
+            * Modules/mediastream/MediaStreamTrack.idl:
+            * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+            * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+            (WebCore::MockRealtimeAudioSource::create):
+            (WebCore::MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac):
+            * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+            * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+            (WebCore::MockRealtimeVideoSource::create):
+            (WebCore::MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac):
+            * platform/mock/MockRealtimeAudioSource.cpp:
+            (WebCore::MockRealtimeAudioSource::create):
+            (WebCore::MockRealtimeAudioSource::createMuted):
+            (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource):
+            * platform/mock/MockRealtimeAudioSource.h:
+            * platform/mock/MockRealtimeVideoSource.cpp:
+            (WebCore::MockRealtimeVideoSource::create):
+            (WebCore::MockRealtimeVideoSource::createMuted):
+            (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+            * platform/mock/MockRealtimeVideoSource.h:
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221971. rdar://problem/34958928
 
     2017-09-13  Ms2ger  <Ms2ger@igalia.com>
