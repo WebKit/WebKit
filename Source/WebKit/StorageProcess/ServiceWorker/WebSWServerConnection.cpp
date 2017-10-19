@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
 #include "WebSWClientConnectionMessages.h"

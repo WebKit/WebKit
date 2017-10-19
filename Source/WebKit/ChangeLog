@@ -1,5 +1,11 @@
 2017-10-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed build fix after r223692.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+
+2017-10-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, revert r223650 as it caused crashes on the bots.
 
         * CMakeLists.txt:
