@@ -586,12 +586,12 @@ void SettingsBase::hiddenPageCSSAnimationSuspensionEnabledChanged()
         m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
 
-#if ENABLE(RESOURCE_USAGE)
 void SettingsBase::resourceUsageOverlayVisibleChanged()
 {
+#if ENABLE(RESOURCE_USAGE)
     if (m_page)
         m_page->setResourceUsageOverlayVisible(m_page->settings().resourceUsageOverlayVisible());
-}
 #endif
+}
 
 } // namespace WebCore

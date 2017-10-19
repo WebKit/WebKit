@@ -260,9 +260,7 @@ protected:
     void scrollingPerformanceLoggingEnabledChanged();
     void hiddenPageDOMTimerThrottlingStateChanged();
     void hiddenPageCSSAnimationSuspensionEnabledChanged();
-#if ENABLE(RESOURCE_USAGE)
     void resourceUsageOverlayVisibleChanged();
-#endif
 
     Page* m_page;
 
