@@ -28,6 +28,8 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
+#include "HTMLFrameOwnerElement.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -129,7 +131,7 @@ static WallTime reduceToHourlyTimeResolution(WallTime time)
     return WallTime::fromRawSeconds(std::floor(time.secondsSinceEpoch() / timestampResolution) * timestampResolution.seconds());
 }
 
-void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest)
+void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const URL& redirectUrl)
 {
     ASSERT(frame.document());
     ASSERT(topFrame.document());
@@ -142,7 +144,11 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     if (!shouldLog(page))
         return;
 
-    auto& sourceURL = frame.document()->url();
+    auto sourceURL = redirectUrl;
+    bool isRedirect = !redirectUrl.isNull();
+    if (!isRedirect)
+        sourceURL = nonNullOwnerURL(*frame.document());
+
     auto& targetURL = newRequest.url();
     auto& mainFrameURL = topFrame.document()->url();
     
@@ -152,20 +158,30 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     auto targetHost = targetURL.host();
     auto mainFrameHost = mainFrameURL.host();
 
-    if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == mainFrameHost || targetHost == sourceURL.host())
+    if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == sourceURL.host())
         return;
 
     auto targetPrimaryDomain = primaryDomain(targetURL);
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
-    
-    if (areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain))
-        return;
+    bool shouldCallNotificationCallback = false;
 
-    auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-    targetStatistics.lastSeen = reduceToHourlyTimeResolution(WallTime::now());
-    auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-    if (subframeUnderTopFrameOriginsResult.isNewEntry)
+    if (targetHost != mainFrameHost
+        && !(areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain))) {
+        auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+        targetStatistics.lastSeen = reduceToHourlyTimeResolution(WallTime::now());
+        if (targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
+            shouldCallNotificationCallback = true;
+    }
+
+    if (isRedirect
+        && !areDomainsAssociated(page, sourcePrimaryDomain, targetPrimaryDomain)) {
+        auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+        if (redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry)
+            shouldCallNotificationCallback = true;
+    }
+
+    if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
 }
 
@@ -337,6 +353,26 @@ void ResourceLoadObserver::clearState()
     m_notificationTimer.stop();
     m_resourceStatisticsMap.clear();
     m_lastReportedUserInteractionMap.clear();
+}
+
+URL ResourceLoadObserver::nonNullOwnerURL(const Document& document) const
+{
+    auto url = document.url();
+    auto* frame = document.frame();
+    auto host = document.url().host();
+
+    while ((host.isNull() || host.isEmpty()) && !frame->isMainFrame()) {
+        auto* ownerElement = frame->ownerElement();
+
+        ASSERT(ownerElement != nullptr);
+        
+        auto& doc = ownerElement->document();
+        frame = doc.frame();
+        url = doc.url();
+        host = url.host();
+    }
+
+    return url;
 }
 
 } // namespace WebCore

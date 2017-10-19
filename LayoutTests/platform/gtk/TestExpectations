@@ -2293,6 +2293,9 @@ fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 # This is a Mac specific feature
 webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
 
+# Currently only has Objective-C API
+http/tests/resourceLoadStatistics [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests with architecture-specific results
 #////////////////////////////////////////////////////////////////////////////////////////

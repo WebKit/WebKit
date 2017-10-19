@@ -683,6 +683,7 @@ http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store.h
 webkit.org/b/172452 http/tests/loading/resourceLoadStatistics/grandfathering.html [ Pass Failure Timeout ]
 webkit.org/b/173499 http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
 http/tests/loading/resourceLoadStatistics/prune-statistics.html [ Pass ]
+http/tests/resourceLoadStatistics [ Pass ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
