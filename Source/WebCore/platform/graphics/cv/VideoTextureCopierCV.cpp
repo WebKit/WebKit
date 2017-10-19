@@ -27,9 +27,9 @@
 #include "VideoTextureCopierCV.h"
 
 #include "FourCC.h"
-#include "IOSurfaceSPI.h"
 #include "Logging.h"
 #include "TextureCacheCV.h"
+#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
