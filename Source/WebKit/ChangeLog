@@ -1,5 +1,20 @@
 2017-10-19  Tim Horton  <timothy_horton@apple.com>
 
+        Display link bringup can block the main thread for ~150ms during WKWebView init
+        https://bugs.webkit.org/show_bug.cgi?id=178524
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::displayLinkHandler):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+        Lazily initialize the display link at first use.
+
+2017-10-19  Tim Horton  <timothy_horton@apple.com>
+
         Expand r209943 to suppress paste during provisional navigation as well
         https://bugs.webkit.org/show_bug.cgi?id=178429
         <rdar://problem/33952830>

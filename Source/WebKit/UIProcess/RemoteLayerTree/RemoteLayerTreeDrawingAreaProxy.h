@@ -72,6 +72,10 @@ private:
     void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
 #endif
 
+#if PLATFORM(IOS)
+    WKOneShotDisplayLinkHandler *displayLinkHandler();
+#endif
+
     float indicatorScale(WebCore::IntSize contentsSize) const;
     void updateDebugIndicator() override;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);

@@ -109,9 +109,6 @@ namespace WebKit {
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
     , m_remoteLayerTreeHost(*this)
-#if PLATFORM(IOS)
-    , m_displayLinkHandler(adoptNS([[WKOneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]))
-#endif
 {
 #if USE(IOSURFACE)
     // We don't want to pool surfaces in the UI process.
@@ -134,6 +131,15 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
     [m_displayLinkHandler invalidate];
 #endif
 }
+
+#if PLATFORM(IOS)
+WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxy::displayLinkHandler()
+{
+    if (!m_displayLinkHandler)
+        m_displayLinkHandler = adoptNS([[WKOneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]);
+    return m_displayLinkHandler.get();
+}
+#endif
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
@@ -233,7 +239,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 #if PLATFORM(IOS)
     if (std::exchange(m_didUpdateMessageState, NeedsDidUpdate) == MissedCommit)
         didRefreshDisplay();
-    [m_displayLinkHandler schedule];
+    [displayLinkHandler() schedule];
 #else
     m_didUpdateMessageState = NeedsDidUpdate;
     didRefreshDisplay();
@@ -406,7 +412,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     if (m_didUpdateMessageState != NeedsDidUpdate) {
         m_didUpdateMessageState = MissedCommit;
 #if PLATFORM(IOS)
-        [m_displayLinkHandler pause];
+        [displayLinkHandler() pause];
 #endif
         return;
     }
