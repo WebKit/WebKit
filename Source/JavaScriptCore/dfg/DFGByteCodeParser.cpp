@@ -1480,7 +1480,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, const CallLin
         addJumpTo(*entryBlockPtr);
         return true;
         // It would be unsound to jump over a non-tail call: the "tail" call is not really a tail call in that case.
-    } while (stackEntry->m_inlineCallFrame && stackEntry->m_inlineCallFrame->kind == TailCall && (stackEntry = stackEntry->m_caller));
+    } while (stackEntry->m_inlineCallFrame && stackEntry->m_inlineCallFrame->kind == InlineCallFrame::TailCall && (stackEntry = stackEntry->m_caller));
 
     // The tail call was not recursive
     return false;

@@ -1,5 +1,15 @@
 2017-10-19  Saam Barati  <sbarati@apple.com>
 
+        REGRESSION(r223691): DFGByteCodeParser.cpp:1483:83: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+        https://bugs.webkit.org/show_bug.cgi?id=178543
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+
+2017-10-19  Saam Barati  <sbarati@apple.com>
+
         re-inline ObjectAllocationProfile::initializeProfile
         https://bugs.webkit.org/show_bug.cgi?id=178532
 
