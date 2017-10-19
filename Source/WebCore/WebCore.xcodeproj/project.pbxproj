@@ -3331,6 +3331,8 @@
 		7CBBBCC71F560581005EFAAC /* DOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */; };
 		7CBBBCCA1F5617C5005EFAAC /* JSDOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */; };
 		7CBBBCCB1F56180D005EFAAC /* JSDOMMatrix2DInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */; };
+		7CBD129D1F98B90B00127D29 /* DeprecatedGlobalSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBD129C1F98B5FF00127D29 /* DeprecatedGlobalSettings.cpp */; };
+		7CBD129E1F98B90E00127D29 /* DeprecatedGlobalSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBD129A1F98B5FE00127D29 /* DeprecatedGlobalSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEE393817974274001D7580 /* URLRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CC2DDFB1EC9415A0027B774 /* NotificationPermission.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC2DDF81EC9415A0027B774 /* NotificationPermission.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CC2DE001EC95A440027B774 /* JSNotificationPermission.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC2DDFE1EC95A440027B774 /* JSNotificationPermission.cpp */; };
@@ -11604,6 +11606,8 @@
 		7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMatrix2DInit.h; sourceTree = "<group>"; };
 		7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrix2DInit.cpp; sourceTree = "<group>"; };
 		7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMMatrix2DInit.h; sourceTree = "<group>"; };
+		7CBD129A1F98B5FE00127D29 /* DeprecatedGlobalSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedGlobalSettings.h; sourceTree = "<group>"; };
+		7CBD129C1F98B5FF00127D29 /* DeprecatedGlobalSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedGlobalSettings.cpp; sourceTree = "<group>"; };
 		7CC2DDF81EC9415A0027B774 /* NotificationPermission.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationPermission.h; sourceTree = "<group>"; };
 		7CC2DDFA1EC9415A0027B774 /* NotificationPermission.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NotificationPermission.idl; sourceTree = "<group>"; };
 		7CC2DDFE1EC95A440027B774 /* JSNotificationPermission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationPermission.cpp; sourceTree = "<group>"; };
@@ -19803,6 +19807,8 @@
 				1ACB2B221A5733F400333392 /* DatabaseProvider.h */,
 				0F6A12BB1A00923700C6DE72 /* DebugPageOverlays.cpp */,
 				0F6A12BC1A00923700C6DE72 /* DebugPageOverlays.h */,
+				7CBD129C1F98B5FF00127D29 /* DeprecatedGlobalSettings.cpp */,
+				7CBD129A1F98B5FE00127D29 /* DeprecatedGlobalSettings.h */,
 				CCC2B51015F613060048CDD6 /* DeviceClient.h */,
 				CCC2B51115F613060048CDD6 /* DeviceController.cpp */,
 				CCC2B51215F613060048CDD6 /* DeviceController.h */,
@@ -27821,6 +27827,7 @@
 				9479493E1E0463BE00018D85 /* DeprecatedCSSOMRGBColor.h in Headers */,
 				947949251E0308AF00018D85 /* DeprecatedCSSOMValue.h in Headers */,
 				9479493D1E0463B600018D85 /* DeprecatedCSSOMValueList.h in Headers */,
+				7CBD129E1F98B90E00127D29 /* DeprecatedGlobalSettings.h in Headers */,
 				A7C9ABF91357A3BF00F5503F /* DetailsMarkerControl.h in Headers */,
 				A1ED778D1BE3294000DC1791 /* Device.h in Headers */,
 				CCC2B51415F613060048CDD6 /* DeviceClient.h in Headers */,
@@ -31929,6 +31936,7 @@
 				9479493C1E045CF300018D85 /* DeprecatedCSSOMPrimitiveValue.cpp in Sources */,
 				947949241E0308A400018D85 /* DeprecatedCSSOMValue.cpp in Sources */,
 				9479492E1E0457BA00018D85 /* DeprecatedCSSOMValueList.cpp in Sources */,
+				7CBD129D1F98B90B00127D29 /* DeprecatedGlobalSettings.cpp in Sources */,
 				A7C9ABF81357A3BF00F5503F /* DetailsMarkerControl.cpp in Sources */,
 				A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */,
 				CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */,

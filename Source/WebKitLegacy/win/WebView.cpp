@@ -90,6 +90,7 @@
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseManager.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DragController.h>
@@ -3096,7 +3097,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
 
     BOOL useHighResolutionTimer;
     if (SUCCEEDED(m_preferences->shouldUseHighResolutionTimers(&useHighResolutionTimer)))
-        Settings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
+        DeprecatedGlobalSettings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
 
     m_inspectorClient = new WebInspectorClient(this);
 
@@ -5358,7 +5359,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->avFoundationEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings.setAVFoundationEnabled(enabled);
+    DeprecatedGlobalSettings::setAVFoundationEnabled(enabled);
 #endif
 
     if (prefsPrivate) {
@@ -5416,7 +5417,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->shouldUseHighResolutionTimers(&enabled);
     if (FAILED(hr))
         return hr;
-    settings.setShouldUseHighResolutionTimers(enabled);
+    DeprecatedGlobalSettings::setShouldUseHighResolutionTimers(enabled);
 
     hr = prefsPrivate->isFrameFlatteningEnabled(&enabled);
     if (FAILED(hr))
@@ -5517,7 +5518,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->mockScrollbarsEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings.setMockScrollbarsEnabled(enabled);
+    DeprecatedGlobalSettings::setMockScrollbarsEnabled(enabled);
 
     hr = prefsPrivate->isInheritURIQueryComponentEnabled(&enabled);
     if (FAILED(hr))

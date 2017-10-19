@@ -26,9 +26,9 @@
 #include "config.h"
 #include "CommonVM.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "Frame.h"
 #include "ScriptController.h"
-#include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <heap/HeapInlines.h>
 #include "heap/MachineStackMarker.h"
@@ -59,7 +59,7 @@ VM& commonVMSlow()
     g_commonVMOrNull->heap.machineThreads().addCurrentThread();
 #endif
     
-    g_commonVMOrNull->setGlobalConstRedeclarationShouldThrow(Settings::globalConstRedeclarationShouldThrow());
+    g_commonVMOrNull->setGlobalConstRedeclarationShouldThrow(DeprecatedGlobalSettings::globalConstRedeclarationShouldThrow());
     
     JSVMClientData::initNormalWorld(g_commonVMOrNull);
     

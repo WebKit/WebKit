@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkStateNotifier.h"
 
-#import "Settings.h"
+#import "DeprecatedGlobalSettings.h"
 #import "WebCoreThreadRun.h"
 #import <wtf/SoftLinking.h>
 
@@ -83,7 +83,7 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
 
 void NetworkStateNotifier::startObserving()
 {
-    if (Settings::shouldOptOutOfNetworkStateObservation())
+    if (DeprecatedGlobalSettings::shouldOptOutOfNetworkStateObservation())
         return;
     m_observer = adoptNS([[WebNetworkStateObserver alloc] initWithBlock:^ {
         WebThreadRun(^ {

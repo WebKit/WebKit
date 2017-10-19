@@ -34,8 +34,8 @@
 
 #if USE(SOUP)
 
+#include "DeprecatedGlobalSettings.h"
 #include "Logging.h"
-#include "Settings.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include "URL.h"
@@ -71,8 +71,8 @@ Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, Socke
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
     if (url.protocolIs("wss")) {
         g_socket_client_set_tls(socketClient.get(), TRUE);
-        // FIXME: this is only used by tests, but using Settings from here is a layering violation.
-        if (Settings::allowsAnySSLCertificate())
+        // FIXME: Using DeprecatedGlobalSettings from here is a layering violation.
+        if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
             g_signal_connect(socketClient.get(), "event", G_CALLBACK(wssSocketClientEventCallback), nullptr);
     }
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();

@@ -49,6 +49,7 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "DebugPageOverlays.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentEventQueue.h"
 #include "DocumentMarkerController.h"
@@ -3273,7 +3274,7 @@ bool RenderLayer::isScrollSnapInProgress() const
 
 bool RenderLayer::usesMockScrollAnimator() const
 {
-    return Settings::usesMockScrollAnimator();
+    return DeprecatedGlobalSettings::usesMockScrollAnimator();
 }
 
 void RenderLayer::logMockScrollAnimatorMessage(const String& message) const

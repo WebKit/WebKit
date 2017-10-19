@@ -1,3 +1,24 @@
+2017-10-19  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Move global settings into their own file
+        https://bugs.webkit.org/show_bug.cgi?id=178512
+
+        Reviewed by Darin Adler.
+
+        Moves all global settigns out of SettingsBase and into the new DeprecatedGlobalSettings.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setAllowsAnySSLCertificateForWebSocket):
+        * Shared/WebPreferencesDefinitions.h:
+        * Shared/WebPreferencesStore.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setResourceLoadStatisticsEnabled):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::supportsVideoFullscreen const):
+
 2017-10-19  Andy Estes  <aestes@apple.com>
 
         [iOS] Conditionally rename DatabaseProcess to StorageProcess when building for iOS devices

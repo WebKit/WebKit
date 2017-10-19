@@ -36,6 +36,7 @@
 #import "AuthenticationChallenge.h"
 #import "CDMSessionAVFoundationObjC.h"
 #import "Cookie.h"
+#import "DeprecatedGlobalSettings.h"
 #import "Extensions3D.h"
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
@@ -53,7 +54,6 @@
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformRepresentationMac.h"
-#import "Settings.h"
 #import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "TextureCacheCV.h"
@@ -1013,7 +1013,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
-    if (Settings::isAVFoundationNSURLSessionEnabled()
+    if (DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
         && [resourceLoader respondsToSelector:@selector(setURLSession:)]
         && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegate)]
         && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegateQueue)]) {
@@ -2301,7 +2301,7 @@ bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
 {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
-    if (!Settings::isAVFoundationNSURLSessionEnabled()
+    if (!DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
         || ![resourceLoader respondsToSelector:@selector(URLSession)])
         return false;
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceLoadObserver.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -123,7 +124,7 @@ bool ResourceLoadObserver::shouldLog(Page* page) const
     if (!page)
         return false;
 
-    return Settings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
+    return DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
 }
 
 static WallTime reduceToHourlyTimeResolution(WallTime time)

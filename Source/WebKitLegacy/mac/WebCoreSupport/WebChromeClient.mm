@@ -58,6 +58,7 @@
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Cursor.h>
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FileIconLoader.h>
@@ -951,7 +952,7 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode)
 {
 #if PLATFORM(IOS)
-    if (!Settings::avKitEnabled())
+    if (!DeprecatedGlobalSettings::avKitEnabled())
         return false;
 #endif
     return true;

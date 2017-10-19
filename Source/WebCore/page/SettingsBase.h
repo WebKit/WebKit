@@ -105,10 +105,19 @@ public:
 
     enum class FontLoadTimingOverride { None, Block, Swap, Failure };
 
+    // FIXME: Move these default values to SettingsDefaultValues.h
+
     enum class ForcedAccessibilityValue { System, On, Off };
     static const SettingsBase::ForcedAccessibilityValue defaultForcedColorsAreInvertedAccessibilityValue = ForcedAccessibilityValue::System;
     static const SettingsBase::ForcedAccessibilityValue defaultForcedDisplayIsMonochromeAccessibilityValue = ForcedAccessibilityValue::System;
     static const SettingsBase::ForcedAccessibilityValue defaultForcedPrefersReducedMotionAccessibilityValue = ForcedAccessibilityValue::System;
+
+    WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
+    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
+
+    static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
+    static const unsigned defaultMaximumRenderTreeDepth = 512;
+
 
     WEBCORE_EXPORT void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
@@ -136,103 +145,6 @@ public:
 
     WEBCORE_EXPORT void setLayoutInterval(Seconds);
     Seconds layoutInterval() const { return m_layoutInterval; }
-
-
-    WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
-    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
-
-#if PLATFORM(WIN)
-    static void setShouldUseHighResolutionTimers(bool);
-    static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
-#endif
-
-    static bool isPostLoadCPUUsageMeasurementEnabled();
-    static bool isPostBackgroundingCPUUsageMeasurementEnabled();
-    static bool isPerActivityStateCPUUsageMeasurementEnabled();
-
-    static bool isPostLoadMemoryUsageMeasurementEnabled();
-    static bool isPostBackgroundingMemoryUsageMeasurementEnabled();
-
-    static bool globalConstRedeclarationShouldThrow();
-
-#if USE(AVFOUNDATION)
-    WEBCORE_EXPORT static void setAVFoundationEnabled(bool flag);
-    static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
-    WEBCORE_EXPORT static void setAVFoundationNSURLSessionEnabled(bool flag);
-    static bool isAVFoundationNSURLSessionEnabled() { return gAVFoundationNSURLSessionEnabled; }
-#endif
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT static void setQTKitEnabled(bool flag);
-    static bool isQTKitEnabled() { return gQTKitEnabled; }
-#else
-    static bool isQTKitEnabled() { return false; }
-#endif
-
-#if USE(GSTREAMER)
-    WEBCORE_EXPORT static void setGStreamerEnabled(bool flag);
-    static bool isGStreamerEnabled() { return gGStreamerEnabled; }
-#endif
-
-    static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
-    static const unsigned defaultMaximumRenderTreeDepth = 512;
-
-    WEBCORE_EXPORT static void setMockScrollbarsEnabled(bool flag);
-    WEBCORE_EXPORT static bool mockScrollbarsEnabled();
-
-    WEBCORE_EXPORT static void setUsesOverlayScrollbars(bool flag);
-    static bool usesOverlayScrollbars();
-
-    WEBCORE_EXPORT static void setUsesMockScrollAnimator(bool);
-    static bool usesMockScrollAnimator();
-
-    WEBCORE_EXPORT static void setShouldRespectPriorityInCSSAttributeSetters(bool);
-    static bool shouldRespectPriorityInCSSAttributeSetters();
-
-    static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
-    WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
-
-    static bool resourceLoadStatisticsEnabled() { return gResourceLoadStatisticsEnabledEnabled; }
-    WEBCORE_EXPORT static void setResourceLoadStatisticsEnabled(bool);
-
-#if PLATFORM(IOS)
-    WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
-    static unsigned audioSessionCategoryOverride();
-
-    WEBCORE_EXPORT static void setNetworkDataUsageTrackingEnabled(bool);
-    static bool networkDataUsageTrackingEnabled();
-
-    WEBCORE_EXPORT static void setNetworkInterfaceName(const String&);
-    static const String& networkInterfaceName();
-
-#if HAVE(AVKIT)
-    static void setAVKitEnabled(bool flag) { gAVKitEnabled = flag; }
-#endif
-    static bool avKitEnabled() { return gAVKitEnabled; }
-
-    static void setShouldOptOutOfNetworkStateObservation(bool flag) { gShouldOptOutOfNetworkStateObservation = flag; }
-    static bool shouldOptOutOfNetworkStateObservation() { return gShouldOptOutOfNetworkStateObservation; }
-#endif
-
-#if USE(AUDIO_SESSION)
-    static void setShouldManageAudioSessionCategory(bool flag) { gManageAudioSession = flag; }
-    static bool shouldManageAudioSessionCategory() { return gManageAudioSession; }
-#endif
-
-    static void setCustomPasteboardDataEnabled(bool enabled) { gCustomPasteboardDataEnabled = enabled; }
-    static bool customPasteboardDataEnabled() { return gCustomPasteboardDataEnabled; }
-    WEBCORE_EXPORT static bool defaultCustomPasteboardDataEnabled();
-    
-#if ENABLE(MEDIA_STREAM)
-    static bool mockCaptureDevicesEnabled();
-    WEBCORE_EXPORT static void setMockCaptureDevicesEnabled(bool);
-
-    bool mediaCaptureRequiresSecureConnection() const;
-    WEBCORE_EXPORT static void setMediaCaptureRequiresSecureConnection(bool);
-#endif
-
-    WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
-    static bool allowsAnySSLCertificate();
 
     WEBCORE_EXPORT static const String& defaultMediaContentTypesRequiringHardwareSupport();
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>&);
@@ -271,89 +183,6 @@ protected:
     Timer m_setImageLoadingSettingsTimer;
 
     Vector<ContentType> m_mediaContentTypesRequiringHardwareSupport;
-
-#if USE(AVFOUNDATION)
-    WEBCORE_EXPORT static bool gAVFoundationEnabled;
-    WEBCORE_EXPORT static bool gAVFoundationNSURLSessionEnabled;
-#endif
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT static bool gQTKitEnabled;
-#endif
-
-#if USE(GSTREAMER)
-    WEBCORE_EXPORT static bool gGStreamerEnabled;
-#endif
-
-    static bool gMockScrollbarsEnabled;
-    static bool gUsesOverlayScrollbars;
-    static bool gMockScrollAnimatorEnabled;
-
-#if PLATFORM(WIN)
-    static bool gShouldUseHighResolutionTimers;
-#endif
-    static bool gShouldRespectPriorityInCSSAttributeSetters;
-#if PLATFORM(IOS)
-    static bool gNetworkDataUsageTrackingEnabled;
-    WEBCORE_EXPORT static bool gAVKitEnabled;
-    WEBCORE_EXPORT static bool gShouldOptOutOfNetworkStateObservation;
-#endif
-    WEBCORE_EXPORT static bool gManageAudioSession;
-    WEBCORE_EXPORT static bool gCustomPasteboardDataEnabled;
-    
-#if ENABLE(MEDIA_STREAM)
-    static bool gMockCaptureDevicesEnabled;
-    static bool gMediaCaptureRequiresSecureConnection;
-#endif
-
-    static bool gLowPowerVideoAudioBufferSizeEnabled;
-    static bool gResourceLoadStatisticsEnabledEnabled;
-    static bool gAllowsAnySSLCertificate;
 };
-
-inline bool SettingsBase::isPostLoadCPUUsageMeasurementEnabled()
-{
-#if PLATFORM(COCOA)
-    return true;
-#else
-    return false;
-#endif
-}
-
-inline bool SettingsBase::isPostBackgroundingCPUUsageMeasurementEnabled()
-{
-#if PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
-}
-
-inline bool SettingsBase::isPerActivityStateCPUUsageMeasurementEnabled()
-{
-#if PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
-}
-
-inline bool SettingsBase::isPostLoadMemoryUsageMeasurementEnabled()
-{
-#if PLATFORM(COCOA)
-    return true;
-#else
-    return false;
-#endif
-}
-
-inline bool SettingsBase::isPostBackgroundingMemoryUsageMeasurementEnabled()
-{
-#if PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
-}
 
 } // namespace WebCore

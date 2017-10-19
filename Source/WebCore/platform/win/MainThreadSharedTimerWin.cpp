@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MainThreadSharedTimer.h"
 
-#include "Settings.h"
+#include "DeprecatedGlobalSettings.h"
 #include "WebCoreInstanceHandle.h"
 #include "Widget.h"
 #include <wtf/Assertions.h>
@@ -134,7 +134,7 @@ void MainThreadSharedTimer::setFireInterval(Seconds intervalInSeconds)
     initializeOffScreenTimerWindow();
     bool timerSet = false;
 
-    if (Settings::shouldUseHighResolutionTimers()) {
+    if (DeprecatedGlobalSettings::shouldUseHighResolutionTimers()) {
         if (interval < highResolutionThresholdMsec) {
             if (!highResTimerActive) {
                 highResTimerActive = true;

@@ -34,10 +34,10 @@
 
 #include "Credential.h"
 #include "CredentialStorage.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Logging.h"
 #include "NetworkStorageSession.h"
 #include "ProtectionSpace.h"
-#include "Settings.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include <CFNetwork/CFNetwork.h>
@@ -363,7 +363,7 @@ void SocketStreamHandleImpl::createStreams()
     }
 
     if (shouldUseSSL()) {
-        CFBooleanRef validateCertificateChain = Settings::allowsAnySSLCertificate() ? kCFBooleanFalse : kCFBooleanTrue;
+        CFBooleanRef validateCertificateChain = DeprecatedGlobalSettings::allowsAnySSLCertificate() ? kCFBooleanFalse : kCFBooleanTrue;
         const void* keys[] = { kCFStreamSSLPeerName, kCFStreamSSLLevel, kCFStreamSSLValidatesCertificateChain };
         const void* values[] = { host.get(), kCFStreamSocketSecurityLevelNegotiatedSSL, validateCertificateChain };
         RetainPtr<CFDictionaryRef> settings = adoptCF(CFDictionaryCreate(0, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

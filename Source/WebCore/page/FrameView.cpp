@@ -36,6 +36,7 @@
 #include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "DebugPageOverlays.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -1715,7 +1716,7 @@ bool FrameView::usesAsyncScrolling() const
 
 bool FrameView::usesMockScrollAnimator() const
 {
-    return Settings::usesMockScrollAnimator();
+    return DeprecatedGlobalSettings::usesMockScrollAnimator();
 }
 
 void FrameView::logMockScrollAnimatorMessage(const String& message) const

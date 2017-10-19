@@ -2204,6 +2204,7 @@ set(WebCore_SOURCES
     page/DOMWindowProperty.cpp
     page/DatabaseProvider.cpp
     page/DebugPageOverlays.cpp
+    page/DeprecatedGlobalSettings.cpp
     page/DeviceController.cpp
     page/DiagnosticLoggingKeys.cpp
     page/DragController.cpp

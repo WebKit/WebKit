@@ -32,6 +32,7 @@
 
 #include "AXObjectCache.h"
 #include "CSSFontSelector.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentEventQueue.h"
 #include "EventHandler.h"
@@ -890,7 +891,7 @@ IntRect RenderListBox::scrollableAreaBoundingBox(bool*) const
 
 bool RenderListBox::usesMockScrollAnimator() const
 {
-    return Settings::usesMockScrollAnimator();
+    return DeprecatedGlobalSettings::usesMockScrollAnimator();
 }
 
 void RenderListBox::logMockScrollAnimatorMessage(const String& message) const

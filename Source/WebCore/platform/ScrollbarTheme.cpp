@@ -26,16 +26,16 @@
 #include "config.h"
 #include "ScrollbarTheme.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollbarThemeMock.h"
-#include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 ScrollbarTheme& ScrollbarTheme::theme()
 {
-    if (Settings::mockScrollbarsEnabled()) {
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled()) {
         static NeverDestroyed<ScrollbarThemeMock> mockTheme;
         return mockTheme;
     }

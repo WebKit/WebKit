@@ -28,13 +28,13 @@
 #include "config.h"
 #include "NSScrollerImpDetails.h"
 
-#include "Settings.h"
+#include "DeprecatedGlobalSettings.h"
 
 namespace WebCore {
 
 NSScrollerStyle recommendedScrollerStyle()
 {
-    if (Settings::usesOverlayScrollbars())
+    if (DeprecatedGlobalSettings::usesOverlayScrollbars())
         return NSScrollerStyleOverlay;
     return [NSScroller preferredScrollerStyle];
 }

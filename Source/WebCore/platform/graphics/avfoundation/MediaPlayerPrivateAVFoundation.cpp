@@ -29,6 +29,7 @@
 
 #include "MediaPlayerPrivateAVFoundation.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentLoader.h"
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
@@ -474,7 +475,7 @@ bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
 #else
     // FIXME: WebVideoFullscreenController assumes a QTKit/QuickTime media engine
 #if PLATFORM(IOS)
-    if (Settings::avKitEnabled())
+    if (DeprecatedGlobalSettings::avKitEnabled())
         return true;
 #endif
     return false;

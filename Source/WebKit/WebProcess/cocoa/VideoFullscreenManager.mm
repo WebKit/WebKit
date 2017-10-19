@@ -37,6 +37,7 @@
 #import "WebProcess.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/Color.h>
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FrameView.h>
@@ -219,7 +220,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 {
 #if PLATFORM(IOS)
     UNUSED_PARAM(mode);
-    return Settings::avKitEnabled();
+    return DeprecatedGlobalSettings::avKitEnabled();
 #else
     return mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && supportsPictureInPicture();
 #endif

@@ -30,7 +30,7 @@
 #import "PlatformUtilities.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <UIKit/UIKit.h>
-#import <WebCore/Settings.h>
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebKit/WebKitLegacy.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
@@ -61,7 +61,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, AudioSessionCategoryIOS)
 {
-    WebCore::Settings::setShouldManageAudioSessionCategory(true);
+    WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
     RetainPtr<UIWindow> uiWindow = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     RetainPtr<UIWebView> uiWebView = adoptNS([[UIWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [uiWindow addSubview:uiWebView.get()];

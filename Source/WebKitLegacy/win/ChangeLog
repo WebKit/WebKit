@@ -1,3 +1,15 @@
+2017-10-19  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Move global settings into their own file
+        https://bugs.webkit.org/show_bug.cgi?id=178512
+
+        Reviewed by Darin Adler.
+
+        Moves all global settigns out of SettingsBase and into the new DeprecatedGlobalSettings.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2017-10-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         Replace some stack raw pointers with RefPtrs within WebCore/html

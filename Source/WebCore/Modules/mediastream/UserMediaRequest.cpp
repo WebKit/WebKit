@@ -36,6 +36,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "JSMediaStream.h"
@@ -102,7 +103,7 @@ static bool isSecure(DocumentLoader& documentLoader)
 
 static bool canCallGetUserMedia(Document& document, String& errorMessage)
 {
-    bool requiresSecureConnection = document.settings().mediaCaptureRequiresSecureConnection();
+    bool requiresSecureConnection = DeprecatedGlobalSettings::mediaCaptureRequiresSecureConnection();
     auto& documentLoader = *document.loader();
     if (requiresSecureConnection && !isSecure(documentLoader) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url())) {
         errorMessage = "Trying to call getUserMedia from an insecure document.";

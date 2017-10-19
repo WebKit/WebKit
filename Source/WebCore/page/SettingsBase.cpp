@@ -37,7 +37,6 @@
 #include "FontGenericFamilies.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HTMLMediaElement.h"
 #include "HistoryItem.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -46,20 +45,7 @@
 #include "Settings.h"
 #include "StorageMap.h"
 #include <limits>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-
-#if PLATFORM(COCOA)
-#include <wtf/spi/darwin/dyldSPI.h>
-#endif
-
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
-#include "RealtimeMediaSourceCenterMac.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include "MockRealtimeMediaSourceCenter.h"
-#endif
 
 namespace WebCore {
 
@@ -69,59 +55,6 @@ static void invalidateAfterGenericFamilyChange(Page* page)
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
 }
-
-#if USE(AVFOUNDATION)
-bool SettingsBase::gAVFoundationEnabled = true;
-bool SettingsBase::gAVFoundationNSURLSessionEnabled = true;
-#endif
-
-#if PLATFORM(COCOA)
-bool SettingsBase::gQTKitEnabled = false;
-#endif
-
-#if USE(GSTREAMER)
-bool SettingsBase::gGStreamerEnabled = true;
-#endif
-
-bool SettingsBase::gMockScrollbarsEnabled = false;
-bool SettingsBase::gUsesOverlayScrollbars = false;
-bool SettingsBase::gMockScrollAnimatorEnabled = false;
-
-#if ENABLE(MEDIA_STREAM)
-bool SettingsBase::gMockCaptureDevicesEnabled = false;
-bool SettingsBase::gMediaCaptureRequiresSecureConnection = true;
-#endif
-
-#if PLATFORM(WIN)
-bool SettingsBase::gShouldUseHighResolutionTimers = true;
-#endif
-    
-bool SettingsBase::gShouldRespectPriorityInCSSAttributeSetters = false;
-bool SettingsBase::gLowPowerVideoAudioBufferSizeEnabled = false;
-bool SettingsBase::gResourceLoadStatisticsEnabledEnabled = false;
-bool SettingsBase::gAllowsAnySSLCertificate = false;
-
-#if PLATFORM(IOS)
-bool SettingsBase::gNetworkDataUsageTrackingEnabled = false;
-bool SettingsBase::gAVKitEnabled = false;
-bool SettingsBase::gShouldOptOutOfNetworkStateObservation = false;
-#endif
-bool SettingsBase::gManageAudioSession = false;
-bool SettingsBase::gCustomPasteboardDataEnabled = false;
-
-bool SettingsBase::defaultCustomPasteboardDataEnabled()
-{
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-    return IOSApplication::isMobileSafari() || dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_11_3;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
-    return MacApplication::isSafari() || dyld_get_program_sdk_version() > DYLD_MACOSX_VERSION_10_13;
-#elif PLATFORM(MAC)
-    return MacApplication::isSafari();
-#else
-    return false;
-#endif
-}
-
 
 // This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
 // FIXME: For faster machines this value can really be lowered to 200. 250 is adequate, but a little high
@@ -145,6 +78,25 @@ SettingsBase::SettingsBase(Page* page)
 SettingsBase::~SettingsBase()
 {
 }
+
+float SettingsBase::defaultMinimumZoomFontSize()
+{
+    return 15;
+}
+
+#if !PLATFORM(IOS)
+bool SettingsBase::defaultTextAutosizingEnabled()
+{
+    return false;
+}
+#endif
+
+#if !PLATFORM(COCOA)
+const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()
+{
+    return emptyString();
+}
+#endif
 
 #if !PLATFORM(COCOA)
 void SettingsBase::initializeDefaultFontFamilies()
@@ -237,18 +189,6 @@ void SettingsBase::setPictographFontFamily(const AtomicString& family, UScriptCo
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-float SettingsBase::defaultMinimumZoomFontSize()
-{
-    return 15;
-}
-
-#if !PLATFORM(IOS)
-bool SettingsBase::defaultTextAutosizingEnabled()
-{
-    return false;
-}
-#endif
-
 void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
 {
     auto oldTimerInterval = std::exchange(m_minimumDOMTimerInterval, interval);
@@ -268,199 +208,6 @@ void SettingsBase::setLayoutInterval(Seconds layoutInterval)
     // We should either expose layoutScheduleThreshold or better communicate this invariant.
     m_layoutInterval = std::max(layoutInterval, layoutScheduleThreshold);
 }
-
-#if PLATFORM(WIN)
-void SettingsBase::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
-{
-    gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;
-}
-#endif
-
-#if USE(AVFOUNDATION)
-void SettingsBase::setAVFoundationEnabled(bool enabled)
-{
-    if (gAVFoundationEnabled == enabled)
-        return;
-
-    gAVFoundationEnabled = enabled;
-    HTMLMediaElement::resetMediaEngines();
-}
-
-void SettingsBase::setAVFoundationNSURLSessionEnabled(bool enabled)
-{
-    if (gAVFoundationNSURLSessionEnabled == enabled)
-        return;
-
-    gAVFoundationNSURLSessionEnabled = enabled;
-}
-#endif
-
-#if PLATFORM(COCOA)
-void SettingsBase::setQTKitEnabled(bool enabled)
-{
-    if (gQTKitEnabled == enabled)
-        return;
-
-    gQTKitEnabled = enabled;
-    HTMLMediaElement::resetMediaEngines();
-}
-#endif
-
-#if USE(GSTREAMER)
-void SettingsBase::setGStreamerEnabled(bool enabled)
-{
-    if (gGStreamerEnabled == enabled)
-        return;
-
-    gGStreamerEnabled = enabled;
-    HTMLMediaElement::resetMediaEngines();
-}
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-bool SettingsBase::mockCaptureDevicesEnabled()
-{
-    return gMockCaptureDevicesEnabled;
-}
-
-void SettingsBase::setMockCaptureDevicesEnabled(bool enabled)
-{
-    gMockCaptureDevicesEnabled = enabled;
-    MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(enabled);
-}
-
-bool SettingsBase::mediaCaptureRequiresSecureConnection() const
-{
-    return gMediaCaptureRequiresSecureConnection;
-}
-
-void SettingsBase::setMediaCaptureRequiresSecureConnection(bool mediaCaptureRequiresSecureConnection)
-{
-    gMediaCaptureRequiresSecureConnection = mediaCaptureRequiresSecureConnection;
-}
-#endif
-
-// It's very important that this setting doesn't change in the middle of a document's lifetime.
-// The Mac port uses this flag when registering and deregistering platform-dependent scrollbar
-// objects. Therefore, if this changes at an unexpected time, deregistration may not happen
-// correctly, which may cause the platform to follow dangling pointers.
-void SettingsBase::setMockScrollbarsEnabled(bool flag)
-{
-    gMockScrollbarsEnabled = flag;
-    // FIXME: This should update scroll bars in existing pages.
-}
-
-bool SettingsBase::mockScrollbarsEnabled()
-{
-    return gMockScrollbarsEnabled;
-}
-
-void SettingsBase::setUsesOverlayScrollbars(bool flag)
-{
-    gUsesOverlayScrollbars = flag;
-    // FIXME: This should update scroll bars in existing pages.
-}
-
-bool SettingsBase::usesOverlayScrollbars()
-{
-    return gUsesOverlayScrollbars;
-}
-
-void SettingsBase::setUsesMockScrollAnimator(bool flag)
-{
-    gMockScrollAnimatorEnabled = flag;
-}
-
-bool SettingsBase::usesMockScrollAnimator()
-{
-    return gMockScrollAnimatorEnabled;
-}
-
-void SettingsBase::setShouldRespectPriorityInCSSAttributeSetters(bool flag)
-{
-    gShouldRespectPriorityInCSSAttributeSetters = flag;
-}
-
-bool SettingsBase::shouldRespectPriorityInCSSAttributeSetters()
-{
-    return gShouldRespectPriorityInCSSAttributeSetters;
-}
-
-void SettingsBase::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
-{
-    gLowPowerVideoAudioBufferSizeEnabled = flag;
-}
-
-void SettingsBase::setResourceLoadStatisticsEnabled(bool flag)
-{
-    gResourceLoadStatisticsEnabledEnabled = flag;
-}
-
-#if PLATFORM(IOS)
-void SettingsBase::setAudioSessionCategoryOverride(unsigned sessionCategory)
-{
-    AudioSession::sharedSession().setCategoryOverride(static_cast<AudioSession::CategoryType>(sessionCategory));
-}
-
-unsigned SettingsBase::audioSessionCategoryOverride()
-{
-    return AudioSession::sharedSession().categoryOverride();
-}
-
-void SettingsBase::setNetworkDataUsageTrackingEnabled(bool trackingEnabled)
-{
-    gNetworkDataUsageTrackingEnabled = trackingEnabled;
-}
-
-bool SettingsBase::networkDataUsageTrackingEnabled()
-{
-    return gNetworkDataUsageTrackingEnabled;
-}
-
-static String& sharedNetworkInterfaceNameGlobal()
-{
-    static NeverDestroyed<String> networkInterfaceName;
-    return networkInterfaceName;
-}
-
-void SettingsBase::setNetworkInterfaceName(const String& networkInterfaceName)
-{
-    sharedNetworkInterfaceNameGlobal() = networkInterfaceName;
-}
-
-const String& SettingsBase::networkInterfaceName()
-{
-    return sharedNetworkInterfaceNameGlobal();
-}
-#endif
-
-bool SettingsBase::globalConstRedeclarationShouldThrow()
-{
-#if PLATFORM(MAC)
-    return !MacApplication::isIBooks();
-#elif PLATFORM(IOS)
-    return !IOSApplication::isIBooks();
-#else
-    return true;
-#endif
-}
-
-void SettingsBase::setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
-{
-    gAllowsAnySSLCertificate = allowAnySSLCertificate;
-}
-
-bool SettingsBase::allowsAnySSLCertificate()
-{
-    return gAllowsAnySSLCertificate;
-}
-
-#if !PLATFORM(COCOA)
-const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()
-{
-    return emptyString();
-}
-#endif
 
 void SettingsBase::setMediaContentTypesRequiringHardwareSupport(const String& contentTypes)
 {

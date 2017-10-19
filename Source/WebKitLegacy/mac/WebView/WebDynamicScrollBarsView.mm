@@ -29,6 +29,7 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
+#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/PlatformEventFactoryMac.h>
@@ -86,7 +87,7 @@ static Class customScrollerClass;
 
 + (Class)_horizontalScrollerClass
 {
-    if (Settings::mockScrollbarsEnabled() && customScrollerClass)
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled() && customScrollerClass)
         return customScrollerClass;
 
     return [super _horizontalScrollerClass];
@@ -94,7 +95,7 @@ static Class customScrollerClass;
 
 + (Class)_verticalScrollerClass
 {
-    if (Settings::mockScrollbarsEnabled() && customScrollerClass)
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled() && customScrollerClass)
         return customScrollerClass;
 
     return [super _horizontalScrollerClass];
