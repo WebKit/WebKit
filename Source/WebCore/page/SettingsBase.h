@@ -131,55 +131,15 @@ public:
     WEBCORE_EXPORT void setPictographFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomicString& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
-    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
-
-    // Only set by Layout Tests.
-    WEBCORE_EXPORT void setMediaTypeOverride(const String&);
-    const String& mediaTypeOverride() const { return m_mediaTypeOverride; }
-
-    // Unlike areImagesEnabled, this only suppresses the network load of
-    // the image URL.  A cached image will still be rendered if requested.
-    WEBCORE_EXPORT void setLoadsImagesAutomatically(bool);
-    bool loadsImagesAutomatically() const { return m_loadsImagesAutomatically; }
-
-    // Clients that execute script should call ScriptController::canExecuteScripts()
-    // instead of this function. ScriptController::canExecuteScripts() checks the
-    // HTML sandbox, plug-in sandboxing, and other important details.
-    bool isScriptEnabled() const { return m_isScriptEnabled; }
-    WEBCORE_EXPORT void setScriptEnabled(bool);
-
-
-    WEBCORE_EXPORT void setImagesEnabled(bool);
-    bool areImagesEnabled() const { return m_areImagesEnabled; }
-
-    WEBCORE_EXPORT void setPluginsEnabled(bool);
-    bool arePluginsEnabled() const { return m_arePluginsEnabled; }
-
-    WEBCORE_EXPORT void setDNSPrefetchingEnabled(bool);
-    bool dnsPrefetchingEnabled() const { return m_dnsPrefetchingEnabled; }
-
-    WEBCORE_EXPORT void setUserStyleSheetLocation(const URL&);
-    const URL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
-
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(Seconds); // Initialized to DOMTimer::defaultMinimumInterval().
     Seconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
     WEBCORE_EXPORT void setLayoutInterval(Seconds);
     Seconds layoutInterval() const { return m_layoutInterval; }
 
-    bool hiddenPageDOMTimerThrottlingEnabled() const { return m_hiddenPageDOMTimerThrottlingEnabled; }
-    WEBCORE_EXPORT void setHiddenPageDOMTimerThrottlingEnabled(bool);
-    bool hiddenPageDOMTimerThrottlingAutoIncreases() const { return m_hiddenPageDOMTimerThrottlingAutoIncreases; }
-    WEBCORE_EXPORT void setHiddenPageDOMTimerThrottlingAutoIncreases(bool);
 
-    WEBCORE_EXPORT void setUsesPageCache(bool);
-    bool usesPageCache() const { return m_usesPageCache; }
-        
-#if ENABLE(RESOURCE_USAGE)
-    bool resourceUsageOverlayVisible() const { return m_resourceUsageOverlayVisible; }
-    WEBCORE_EXPORT void setResourceUsageOverlayVisible(bool);
-#endif
+    WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
+    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
 
 #if PLATFORM(WIN)
     static void setShouldUseHighResolutionTimers(bool);
@@ -194,9 +154,6 @@ public:
     static bool isPostBackgroundingMemoryUsageMeasurementEnabled();
 
     static bool globalConstRedeclarationShouldThrow();
-
-    WEBCORE_EXPORT void setBackgroundShouldExtendBeyondPage(bool);
-    bool backgroundShouldExtendBeyondPage() const { return m_backgroundShouldExtendBeyondPage; }
 
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static void setAVFoundationEnabled(bool flag);
@@ -229,17 +186,8 @@ public:
     WEBCORE_EXPORT static void setUsesMockScrollAnimator(bool);
     static bool usesMockScrollAnimator();
 
-    WEBCORE_EXPORT void setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy);
-    SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy() const { return m_storageBlockingPolicy; }
-
-    WEBCORE_EXPORT void setScrollingPerformanceLoggingEnabled(bool);
-    bool scrollingPerformanceLoggingEnabled() { return m_scrollingPerformanceLoggingEnabled; }
-
     WEBCORE_EXPORT static void setShouldRespectPriorityInCSSAttributeSetters(bool);
     static bool shouldRespectPriorityInCSSAttributeSetters();
-
-    bool hiddenPageCSSAnimationSuspensionEnabled() const { return m_hiddenPageCSSAnimationSuspensionEnabled; }
-    WEBCORE_EXPORT void setHiddenPageCSSAnimationSuspensionEnabled(bool);
 
     static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
@@ -296,36 +244,33 @@ protected:
 
     void initializeDefaultFontFamilies();
 
+    void imageLoadingSettingsTimerFired();
+
+    // Helpers used by generated Settings.cpp.
+    void setNeedsRecalcStyleInAllFrames();
+    void mediaTypeOverrideChanged();
+    void imagesEnabledChanged();
+    void scriptEnabledChanged();
+    void pluginsEnabledChanged();
+    void userStyleSheetLocationChanged();
+    void usesPageCacheChanged();
+    void dnsPrefetchingEnabledChanged();
+    void resourceUsageOverlayVisibleChanged();
+    void storageBlockingPolicyChanged();
+    void backgroundShouldExtendBeyondPageChanged();
+    void scrollingPerformanceLoggingEnabledChanged();
+    void hiddenPageDOMTimerThrottlingStateChanged();
+    void hiddenPageCSSAnimationSuspensionEnabledChanged();
+
     Page* m_page;
 
-    String m_mediaTypeOverride { "screen" };
-    URL m_userStyleSheetLocation;
     const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
-    SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy { SecurityOrigin::AllowAllStorage };
     Seconds m_layoutInterval;
     Seconds m_minimumDOMTimerInterval;
 
-    bool m_loadsImagesAutomatically : 1;
-    bool m_areImagesEnabled : 1;
-    bool m_arePluginsEnabled : 1;
-    bool m_isScriptEnabled : 1;
-    bool m_usesPageCache : 1;
-    bool m_showTiledScrollingIndicator : 1;
-    bool m_backgroundShouldExtendBeyondPage : 1;
-    bool m_dnsPrefetchingEnabled : 1;
-    bool m_scrollingPerformanceLoggingEnabled : 1;
-
     Timer m_setImageLoadingSettingsTimer;
-    void imageLoadingSettingsTimerFired();
 
-    bool m_hiddenPageDOMTimerThrottlingEnabled : 1;
-    bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
-
-#if ENABLE(RESOURCE_USAGE)
-    bool m_resourceUsageOverlayVisible { false };
-#endif
-
-    bool m_hiddenPageDOMTimerThrottlingAutoIncreases { false };
+    Vector<ContentType> m_mediaContentTypesRequiringHardwareSupport;
 
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static bool gAVFoundationEnabled;
@@ -364,8 +309,6 @@ protected:
     static bool gLowPowerVideoAudioBufferSizeEnabled;
     static bool gResourceLoadStatisticsEnabledEnabled;
     static bool gAllowsAnySSLCertificate;
-
-    Vector<ContentType> m_mediaContentTypesRequiringHardwareSupport;
 };
 
 inline bool SettingsBase::isPostLoadCPUUsageMeasurementEnabled()

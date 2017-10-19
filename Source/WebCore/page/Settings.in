@@ -35,10 +35,10 @@ deviceHeight type=int, initial=0
 # since the memory used won't be released until the Page is destroyed.
 sessionStorageQuota type=unsigned, initial=StorageMap::noQuota
 
-minimumFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
-minimumLogicalFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
-defaultFontSize type=int, initial=16, setNeedsStyleRecalcInAllFrames=1
-defaultFixedFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
+minimumFontSize type=int, initial=0, onChange=setNeedsRecalcStyleInAllFrames
+minimumLogicalFontSize type=int, initial=0, onChange=setNeedsRecalcStyleInAllFrames
+defaultFontSize type=int, initial=16, onChange=setNeedsRecalcStyleInAllFrames
+defaultFixedFontSize type=int, initial=0, onChange=setNeedsRecalcStyleInAllFrames
 
 editingBehaviorType type=EditingBehaviorType, initial=editingBehaviorTypeForPlatform()
 maximumHTMLParserDOMTreeDepth type=unsigned, initial=defaultMaximumHTMLParserDOMTreeDepth
@@ -59,14 +59,16 @@ shouldPrintBackgrounds initial=false
 usesDashboardBackwardCompatibilityMode initial=false, conditional=DASHBOARD_SUPPORT
 clipboardAccessPolicy type=ClipboardAccessPolicy, initial=ClipboardAccessPolicy::RequiresUserGesture
 
-textAreasAreResizable initial=false, setNeedsStyleRecalcInAllFrames=1
-authorAndUserStylesEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
-acceleratedCompositingEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
-acceleratedCompositedAnimationsEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
-showDebugBorders initial=false, setNeedsStyleRecalcInAllFrames=1
-showRepaintCounter initial=false, setNeedsStyleRecalcInAllFrames=1
+textAreasAreResizable initial=false, onChange=setNeedsRecalcStyleInAllFrames
+authorAndUserStylesEnabled initial=true, onChange=setNeedsRecalcStyleInAllFrames
+userStyleSheetLocation type=URL, onChange=userStyleSheetLocationChanged
+acceleratedCompositingEnabled initial=true, onChange=setNeedsRecalcStyleInAllFrames
+acceleratedCompositedAnimationsEnabled initial=true, onChange=setNeedsRecalcStyleInAllFrames
+showDebugBorders initial=false, onChange=setNeedsRecalcStyleInAllFrames
+showRepaintCounter initial=false, onChange=setNeedsRecalcStyleInAllFrames
 visibleDebugOverlayRegions type=DebugOverlayRegions, initial=0
 showTiledScrollingIndicator initial=false
+resourceUsageOverlayVisible initial=false, onChange=resourceUsageOverlayVisibleChanged, condition=RESOURCE_USAGE
 
 # This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
 # making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,
@@ -199,13 +201,13 @@ selectTrailingWhitespaceEnabled initial=defaultSelectTrailingWhitespaceEnabled
 useLegacyBackgroundSizeShorthandBehavior initial=false
 fixedBackgroundsPaintRelativeToDocument initial=defaultFixedBackgroundsPaintRelativeToDocument
 
-textAutosizingEnabled initial=defaultTextAutosizingEnabled(), setNeedsStyleRecalcInAllFrames=1, conditional=TEXT_AUTOSIZING
-textAutosizingWindowSizeOverride type=IntSize, setNeedsStyleRecalcInAllFrames=1, conditional=TEXT_AUTOSIZING
+textAutosizingEnabled initial=defaultTextAutosizingEnabled(), onChange=setNeedsRecalcStyleInAllFrames, conditional=TEXT_AUTOSIZING
+textAutosizingWindowSizeOverride type=IntSize, onChange=setNeedsRecalcStyleInAllFrames, conditional=TEXT_AUTOSIZING
 minimumZoomFontSize type=float, initial=defaultMinimumZoomFontSize(), conditional=TEXT_AUTOSIZING
 
-subpixelAntialiasedLayerTextEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
-simpleLineLayoutEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
-simpleLineLayoutDebugBordersEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
+subpixelAntialiasedLayerTextEnabled initial=false, onChange=setNeedsRecalcStyleInAllFrames
+simpleLineLayoutEnabled initial=true, onChange=setNeedsRecalcStyleInAllFrames
+simpleLineLayoutDebugBordersEnabled initial=false, onChange=setNeedsRecalcStyleInAllFrames
 
 subpixelCSSOMElementMetricsEnabled initial=false
 
@@ -271,7 +273,7 @@ treatIPAddressAsDomain initial=false
 mediaPreloadingEnabled initial=false
 
 # Runtime-enabled features
-visualViewportEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
+visualViewportEnabled initial=false, onChange=setNeedsRecalcStyleInAllFrames
 
 inputEventsEnabled initial=true
 
@@ -308,7 +310,7 @@ storageAccessAPIEnabled initial=false
 
 timeWithoutMouseMovementBeforeHidingControls type=Seconds, initial=3_s 
 
-fontFallbackPrefersPictographs initial=false, setNeedsStyleRecalcInAllFrames=1
+fontFallbackPrefersPictographs initial=false, onChange=setNeedsRecalcStyleInAllFrames
 
 fontLoadTimingOverride type=FontLoadTimingOverride, initial=FontLoadTimingOverride::None
 shouldIgnoreFontLoadCompletions initial=false
@@ -319,6 +321,31 @@ applePayCapabilityDisclosureAllowed initial=true, conditional=APPLE_PAY
 
 javaEnabled initial=false, getter=isJavaEnabled
 javaEnabledForLocalFiles initial=true, getter=isJavaEnabledForLocalFiles
+
+# Unlike the imagesEnabled setting, this only suppresses the network load of
+# the image URL. A cached image will still be rendered if requested.
+loadsImagesAutomatically initial=false, onChange=imagesEnabledChanged
+imagesEnabled initial=true, getter=areImagesEnabled, onChange=imagesEnabledChanged
+scriptEnabled initial=false, getter=isScriptEnabled, onChange=scriptEnabledChanged
+pluginsEnabled initial=false, getter=arePluginsEnabled, onChange=pluginsEnabledChanged
+
+usesPageCache initial=false, onChange=usesPageCacheChanged
+
+dnsPrefetchingEnabled initial=false, onChange=dnsPrefetchingEnabledChanged
+
+backgroundShouldExtendBeyondPage initial=false, onChange=backgroundShouldExtendBeyondPageChanged
+
+scrollingPerformanceLoggingEnabled initial=false, onChange=scrollingPerformanceLoggingEnabledChanged
+
+hiddenPageDOMTimerThrottlingEnabled initial=false, onChange=hiddenPageDOMTimerThrottlingStateChanged
+hiddenPageDOMTimerThrottlingAutoIncreases initial=false, onChange=hiddenPageDOMTimerThrottlingStateChanged
+hiddenPageCSSAnimationSuspensionEnabled initial=false, onChange=hiddenPageCSSAnimationSuspensionEnabledChanged
+
+storageBlockingPolicy type=SecurityOrigin::StorageBlockingPolicy, initial=SecurityOrigin::AllowAllStorage, onChange=storageBlockingPolicyChanged
+
+# Only set by Layout Tests.
+mediaTypeOverride type=String, initial="screen", onChange=mediaTypeOverrideChanged
+
 
 fontRenderingMode type=FontRenderingMode, initial=FontRenderingMode::Normal
 

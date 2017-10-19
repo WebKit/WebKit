@@ -63,19 +63,6 @@
 
 namespace WebCore {
 
-static void setImageLoadingSettings(Page* page)
-{
-    if (!page)
-        return;
-
-    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->document())
-            continue;
-        frame->document()->cachedResourceLoader().setImagesEnabled(page->settings().areImagesEnabled());
-        frame->document()->cachedResourceLoader().setAutoLoadImages(page->settings().loadsImagesAutomatically());
-    }
-}
-
 static void invalidateAfterGenericFamilyChange(Page* page)
 {
     invalidateFontCascadeCache();
@@ -146,17 +133,7 @@ SettingsBase::SettingsBase(Page* page)
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
-    , m_loadsImagesAutomatically(false)
-    , m_areImagesEnabled(true)
-    , m_arePluginsEnabled(false)
-    , m_isScriptEnabled(false)
-    , m_usesPageCache(false)
-    , m_backgroundShouldExtendBeyondPage(false)
-    , m_dnsPrefetchingEnabled(false)
-    , m_scrollingPerformanceLoggingEnabled(false)
     , m_setImageLoadingSettingsTimer(*this, &SettingsBase::imageLoadingSettingsTimerFired)
-    , m_hiddenPageDOMTimerThrottlingEnabled(false)
-    , m_hiddenPageCSSAnimationSuspensionEnabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
@@ -272,85 +249,6 @@ bool SettingsBase::defaultTextAutosizingEnabled()
 }
 #endif
 
-void SettingsBase::setMediaTypeOverride(const String& mediaTypeOverride)
-{
-    if (m_mediaTypeOverride == mediaTypeOverride)
-        return;
-
-    m_mediaTypeOverride = mediaTypeOverride;
-
-    if (!m_page)
-        return;
-
-    FrameView* view = m_page->mainFrame().view();
-    ASSERT(view);
-
-    view->setMediaType(mediaTypeOverride);
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void SettingsBase::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
-{
-    m_loadsImagesAutomatically = loadsImagesAutomatically;
-    
-    // Changing this setting to true might immediately start new loads for images that had previously had loading disabled.
-    // If this happens while a WebView is being dealloc'ed, and we don't know the WebView is being dealloc'ed, these new loads
-    // can cause crashes downstream when the WebView memory has actually been free'd.
-    // One example where this can happen is in Mac apps that subclass WebView then do work in their overridden dealloc methods.
-    // Starting these loads synchronously is not important.  By putting it on a 0-delay, properly closing the Page cancels them
-    // before they have a chance to really start.
-    // See http://webkit.org/b/60572 for more discussion.
-    m_setImageLoadingSettingsTimer.startOneShot(0_s);
-}
-
-void SettingsBase::imageLoadingSettingsTimerFired()
-{
-    setImageLoadingSettings(m_page);
-}
-
-void SettingsBase::setScriptEnabled(bool isScriptEnabled)
-{
-    if (m_isScriptEnabled == isScriptEnabled)
-        return;
-
-    m_isScriptEnabled = isScriptEnabled;
-
-    if (!m_page)
-        return;
-
-#if PLATFORM(IOS)
-    m_page->setNeedsRecalcStyleInAllFrames();
-#endif
-}
-
-void SettingsBase::setImagesEnabled(bool areImagesEnabled)
-{
-    m_areImagesEnabled = areImagesEnabled;
-
-    // See comment in setLoadsImagesAutomatically.
-    m_setImageLoadingSettingsTimer.startOneShot(0_s);
-}
-
-void SettingsBase::setPluginsEnabled(bool arePluginsEnabled)
-{
-    if (m_arePluginsEnabled == arePluginsEnabled)
-        return;
-
-    m_arePluginsEnabled = arePluginsEnabled;
-    Page::refreshPlugins(false);
-}
-
-void SettingsBase::setUserStyleSheetLocation(const URL& userStyleSheetLocation)
-{
-    if (m_userStyleSheetLocation == userStyleSheetLocation)
-        return;
-
-    m_userStyleSheetLocation = userStyleSheetLocation;
-
-    if (m_page)
-        m_page->userStyleSheetLocationChanged();
-}
-
 void SettingsBase::setMinimumDOMTimerInterval(Seconds interval)
 {
     auto oldTimerInterval = std::exchange(m_minimumDOMTimerInterval, interval);
@@ -371,69 +269,12 @@ void SettingsBase::setLayoutInterval(Seconds layoutInterval)
     m_layoutInterval = std::max(layoutInterval, layoutScheduleThreshold);
 }
 
-void SettingsBase::setUsesPageCache(bool usesPageCache)
-{
-    if (m_usesPageCache == usesPageCache)
-        return;
-        
-    m_usesPageCache = usesPageCache;
-
-    if (!m_page)
-        return;
-
-    if (!m_usesPageCache)
-        PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
-}
-
-void SettingsBase::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
-{
-    if (m_dnsPrefetchingEnabled == dnsPrefetchingEnabled)
-        return;
-
-    m_dnsPrefetchingEnabled = dnsPrefetchingEnabled;
-    if (m_page)
-        m_page->dnsPrefetchingStateChanged();
-}
-
-#if ENABLE(RESOURCE_USAGE)
-void SettingsBase::setResourceUsageOverlayVisible(bool visible)
-{
-    if (m_resourceUsageOverlayVisible == visible)
-        return;
-
-    m_resourceUsageOverlayVisible = visible;
-    if (m_page)
-        m_page->setResourceUsageOverlayVisible(visible);
-}
-#endif
-
 #if PLATFORM(WIN)
 void SettingsBase::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {
     gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;
 }
 #endif
-
-void SettingsBase::setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy enabled)
-{
-    if (m_storageBlockingPolicy == enabled)
-        return;
-
-    m_storageBlockingPolicy = enabled;
-    if (m_page)
-        m_page->storageBlockingStateChanged();
-}
-
-void SettingsBase::setBackgroundShouldExtendBeyondPage(bool shouldExtend)
-{
-    if (m_backgroundShouldExtendBeyondPage == shouldExtend)
-        return;
-
-    m_backgroundShouldExtendBeyondPage = shouldExtend;
-
-    if (m_page)
-        m_page->mainFrame().view()->updateExtendBackgroundIfNecessary();
-}
 
 #if USE(AVFOUNDATION)
 void SettingsBase::setAVFoundationEnabled(bool enabled)
@@ -499,14 +340,6 @@ void SettingsBase::setMediaCaptureRequiresSecureConnection(bool mediaCaptureRequ
 }
 #endif
 
-void SettingsBase::setScrollingPerformanceLoggingEnabled(bool enabled)
-{
-    m_scrollingPerformanceLoggingEnabled = enabled;
-
-    if (m_page && m_page->mainFrame().view())
-        m_page->mainFrame().view()->setScrollingPerformanceLoggingEnabled(enabled);
-}
-
 // It's very important that this setting doesn't change in the middle of a document's lifetime.
 // The Mac port uses this flag when registering and deregistering platform-dependent scrollbar
 // objects. Therefore, if this changes at an unexpected time, deregistration may not happen
@@ -551,33 +384,6 @@ void SettingsBase::setShouldRespectPriorityInCSSAttributeSetters(bool flag)
 bool SettingsBase::shouldRespectPriorityInCSSAttributeSetters()
 {
     return gShouldRespectPriorityInCSSAttributeSetters;
-}
-
-void SettingsBase::setHiddenPageDOMTimerThrottlingEnabled(bool flag)
-{
-    if (m_hiddenPageDOMTimerThrottlingEnabled == flag)
-        return;
-    m_hiddenPageDOMTimerThrottlingEnabled = flag;
-    if (m_page)
-        m_page->hiddenPageDOMTimerThrottlingStateChanged();
-}
-
-void SettingsBase::setHiddenPageDOMTimerThrottlingAutoIncreases(bool flag)
-{
-    if (m_hiddenPageDOMTimerThrottlingAutoIncreases == flag)
-        return;
-    m_hiddenPageDOMTimerThrottlingAutoIncreases = flag;
-    if (m_page)
-        m_page->hiddenPageDOMTimerThrottlingStateChanged();
-}
-
-void SettingsBase::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
-{
-    if (m_hiddenPageCSSAnimationSuspensionEnabled == flag)
-        return;
-    m_hiddenPageCSSAnimationSuspensionEnabled = flag;
-    if (m_page)
-        m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
 
 void SettingsBase::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
@@ -666,6 +472,124 @@ void SettingsBase::setMediaContentTypesRequiringHardwareSupport(const String& co
 void SettingsBase::setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>& contentTypes)
 {
     m_mediaContentTypesRequiringHardwareSupport = contentTypes;
+}
+
+
+
+// MARK - onChange handlers
+
+void SettingsBase::setNeedsRecalcStyleInAllFrames()
+{
+    if (m_page)
+        m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void SettingsBase::mediaTypeOverrideChanged()
+{
+    if (!m_page)
+        return;
+
+    FrameView* view = m_page->mainFrame().view();
+    if (view)
+        view->setMediaType(m_page->settings().mediaTypeOverride());
+
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void SettingsBase::imagesEnabledChanged()
+{
+    // Changing this setting to true might immediately start new loads for images that had previously had loading disabled.
+    // If this happens while a WebView is being dealloc'ed, and we don't know the WebView is being dealloc'ed, these new loads
+    // can cause crashes downstream when the WebView memory has actually been free'd.
+    // One example where this can happen is in Mac apps that subclass WebView then do work in their overridden dealloc methods.
+    // Starting these loads synchronously is not important. By putting it on a 0-delay, properly closing the Page cancels them
+    // before they have a chance to really start.
+    // See http://webkit.org/b/60572 for more discussion.
+    m_setImageLoadingSettingsTimer.startOneShot(0_s);
+}
+
+void SettingsBase::imageLoadingSettingsTimerFired()
+{
+    if (!m_page)
+        return;
+
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->cachedResourceLoader().setImagesEnabled(m_page->settings().areImagesEnabled());
+        frame->document()->cachedResourceLoader().setAutoLoadImages(m_page->settings().loadsImagesAutomatically());
+    }
+}
+
+void SettingsBase::scriptEnabledChanged()
+{
+#if PLATFORM(IOS)
+    // FIXME: Why do we only do this on iOS?
+    if (m_page)
+        m_page->setNeedsRecalcStyleInAllFrames();
+#endif
+}
+
+void SettingsBase::pluginsEnabledChanged()
+{
+    Page::refreshPlugins(false);
+}
+
+void SettingsBase::userStyleSheetLocationChanged()
+{
+    if (m_page)
+        m_page->userStyleSheetLocationChanged();
+}
+
+void SettingsBase::usesPageCacheChanged()
+{
+    if (!m_page)
+        return;
+
+    if (!m_page->settings().usesPageCache())
+        PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
+}
+
+void SettingsBase::dnsPrefetchingEnabledChanged()
+{
+    if (m_page)
+        m_page->dnsPrefetchingStateChanged();
+}
+
+void SettingsBase::resourceUsageOverlayVisibleChanged()
+{
+    if (m_page)
+        m_page->setResourceUsageOverlayVisible(m_page->settings().resourceUsageOverlayVisible());
+}
+
+void SettingsBase::storageBlockingPolicyChanged()
+{
+    if (m_page)
+        m_page->storageBlockingStateChanged();
+}
+
+void SettingsBase::backgroundShouldExtendBeyondPageChanged()
+{
+    if (m_page)
+        m_page->mainFrame().view()->updateExtendBackgroundIfNecessary();
+}
+
+void SettingsBase::scrollingPerformanceLoggingEnabledChanged()
+{
+    if (m_page && m_page->mainFrame().view())
+        m_page->mainFrame().view()->setScrollingPerformanceLoggingEnabled(m_page->settings().scrollingPerformanceLoggingEnabled());
+}
+
+void SettingsBase::hiddenPageDOMTimerThrottlingStateChanged()
+{
+    if (m_page)
+        m_page->hiddenPageDOMTimerThrottlingStateChanged();
+}
+
+void SettingsBase::hiddenPageCSSAnimationSuspensionEnabledChanged()
+{
+    if (m_page)
+        m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
 
 } // namespace WebCore

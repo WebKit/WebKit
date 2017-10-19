@@ -151,6 +151,7 @@ def printSetterBody(outputFile, setting):
         return
 
     setterFunctionName = setting.setterFunctionName()
+    changeFunctionName = setting.setterChangeFunctionName()
 
     if setting.typeIsValueType():
         outputFile.write("void Settings::" + setterFunctionName + "(" + setting.type + " " + setting.name + ")\n")
@@ -161,7 +162,7 @@ def printSetterBody(outputFile, setting):
     outputFile.write("    if (m_" + setting.name + " == " + setting.name + ")\n")
     outputFile.write("        return;\n")
     outputFile.write("    m_" + setting.name + " = " + setting.name + ";\n")
-    outputFile.write("    m_page->setNeedsRecalcStyleInAllFrames();\n")
+    outputFile.write("    " + changeFunctionName + "();\n")
     outputFile.write("}\n\n")
 
 

@@ -64,7 +64,7 @@ class Setting:
         self.type = 'bool'
         self.initial = None
         self.conditional = None
-        self.setNeedsStyleRecalcInAllFrames = None
+        self.onChange = None
         self.getter = None
 
     def __str__(self):
@@ -73,26 +73,33 @@ class Setting:
             result += ' INIT:' + self.initial
         if (self.conditional):
             result += ' COND:' + self.conditional
-        if (self.setNeedsStyleRecalcInAllFrames):
-            result += ' RECALC:' + self.setNeedsStyleRecalcInAllFrames
+        if (self.onChange):
+            result += ' CHANGE:' + self.onChange
         if (self.getter):
             result += ' GETTER:' + self.getter
         return result
 
-    def hasComplexSetter(self):
-        return self.setNeedsStyleRecalcInAllFrames
-
     def typeIsValueType(self):
-        return self.type != 'String'
+        if self.type == 'String':
+            return False
+        if self.type == 'URL':
+            return False
+        return True
 
     def setterFunctionName(self):
-        for prefix in ['css', 'xss', 'ftp', 'dom']:
+        for prefix in ['css', 'xss', 'ftp', 'dom', 'dns']:
             if self.name.startswith(prefix):
                 return 'set' + uppercaseFirstN(self.name, len(prefix))
         return 'set' + uppercaseFirstN(self.name, 1)
 
     def getterFunctionName(self):
         return self.getter or self.name
+
+    def setterChangeFunctionName(self):
+        return self.onChange
+
+    def hasComplexSetter(self):
+        return self.onChange != None
 
     def idlType(self):
         # FIXME: Add support for more types including enumerate types.
@@ -144,8 +151,8 @@ def parseInput(input):
                         setting.initial = value
                     if (name == 'conditional'):
                         setting.conditional = value
-                    if (name == 'setNeedsStyleRecalcInAllFrames'):
-                        setting.setNeedsStyleRecalcInAllFrames = value
+                    if (name == 'onChange'):
+                        setting.onChange = value
                     if (name == 'getter'):
                         setting.getter = value
 
