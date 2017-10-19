@@ -1,3 +1,24 @@
+2017-10-19  Dean Jackson  <dino@apple.com>
+
+        Import W3C Web Platform Tests for createImageBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=178509
+        <rdar://problem/35070583>
+
+        Reviewed by Antoine Quint.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/2dcontext/imagebitmap/common.js: Added.
+        (testCanvasDisplayingPattern):
+        (testDrawImageBitmap):
+        (initializeImageData):
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-sizeOverflow-expected.txt: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-sizeOverflow.html: Added.
+        * web-platform-tests/2dcontext/imagebitmap/w3c-import.log: Added.
+
 2017-10-18  Chris Dumez  <cdumez@apple.com>
 
         Align ImageData constructor with the specification
