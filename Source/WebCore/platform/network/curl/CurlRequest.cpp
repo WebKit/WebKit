@@ -391,12 +391,12 @@ void CurlRequest::resolveBlobReferences(ResourceRequest& request)
 {
     ASSERT(isMainThread());
 
-    RefPtr<FormData> formData = request.httpBody();
-    if (!formData)
+    auto body = request.httpBody();
+    if (!body || body->isEmpty())
         return;
 
     // Resolve the blob elements so the formData can correctly report it's size.
-    formData = formData->resolveBlobReferences();
+    RefPtr<FormData> formData = body->resolveBlobReferences();
     request.setHTTPBody(WTFMove(formData));
 }
 
@@ -418,13 +418,17 @@ void CurlRequest::setupPOST(ResourceRequest& request)
 {
     m_curlHandle->enableHttpPostRequest();
 
-    auto numElements = request.httpBody()->elements().size();
+    auto body = request.httpBody();
+    if (!body || body->isEmpty())
+        return;
+
+    auto numElements = body->elements().size();
     if (!numElements)
         return;
 
     // Do not stream for simple POST data
     if (numElements == 1) {
-        m_postBuffer = request.httpBody()->flatten();
+        m_postBuffer = body->flatten();
         if (m_postBuffer.size())
             m_curlHandle->setPostFields(m_postBuffer.data(), m_postBuffer.size());
     } else
