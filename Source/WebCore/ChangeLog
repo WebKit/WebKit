@@ -1,5 +1,16 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223289. rdar://problem/34958928
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; forward declare the type of IOSurfaceRef.
+
+            * platform/cocoa/CoreVideoSoftLink.cpp:
+            * platform/cocoa/CoreVideoSoftLink.h:
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223287. rdar://problem/34958928
 
     2017-10-13  Jer Noble  <jer.noble@apple.com>
