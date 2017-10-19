@@ -680,6 +680,14 @@ bool GraphicsContext3D::texImageIOSurface2D(GC3Denum target, GC3Denum internalFo
 #elif PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
     return [platformGraphicsContext3D() texImageIOSurface:surface target:target internalFormat:internalFormat width:width height:height format:format type:type plane:plane];
 #else
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(surface);
+    UNUSED_PARAM(plane);
     return false;
 #endif
 }

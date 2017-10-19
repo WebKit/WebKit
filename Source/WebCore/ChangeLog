@@ -1,5 +1,16 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223285. rdar://problem/34958928
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; add UNUSED_PARAM macros.
+
+            * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+            (WebCore::GraphicsContext3D::texImageIOSurface2D):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223280. rdar://problem/34958928
 
     2017-10-13  Jer Noble  <jer.noble@apple.com>
