@@ -65,7 +65,7 @@ static unsigned tableSizeForKeyCount(unsigned keyCount)
 
 SharedStringHashStore::SharedStringHashStore(Client& client)
     : m_client(client)
-    , m_pendingOperationsTimer(RunLoop::main(), this, &SharedStringHashStore::pendingOperationsTimerFired)
+    , m_pendingOperationsTimer(RunLoop::main(), this, &SharedStringHashStore::processPendingOperations)
 {
 }
 
@@ -74,7 +74,7 @@ bool SharedStringHashStore::createSharedMemoryHandle(SharedMemory::Handle& handl
     return m_table.sharedMemory()->createHandle(handle, SharedMemory::Protection::ReadOnly);
 }
 
-void SharedStringHashStore::add(SharedStringHash sharedStringHash)
+void SharedStringHashStore::scheduleAddition(SharedStringHash sharedStringHash)
 {
     m_pendingOperations.append({ Operation::Add, sharedStringHash });
 
@@ -82,7 +82,7 @@ void SharedStringHashStore::add(SharedStringHash sharedStringHash)
         m_pendingOperationsTimer.startOneShot(0_s);
 }
 
-void SharedStringHashStore::remove(WebCore::SharedStringHash sharedStringHash)
+void SharedStringHashStore::scheduleRemoval(WebCore::SharedStringHash sharedStringHash)
 {
     m_pendingOperations.append({ Operation::Remove, sharedStringHash });
 
@@ -92,10 +92,7 @@ void SharedStringHashStore::remove(WebCore::SharedStringHash sharedStringHash)
 
 bool SharedStringHashStore::contains(WebCore::SharedStringHash sharedStringHash)
 {
-    if (m_pendingOperationsTimer.isActive()) {
-        m_pendingOperationsTimer.stop();
-        pendingOperationsTimerFired();
-    }
+    flushPendingChanges();
     return m_table.contains(sharedStringHash);
 }
 
@@ -106,6 +103,15 @@ void SharedStringHashStore::clear()
     m_keyCount = 0;
     m_tableSize = 0;
     m_table.clear();
+}
+
+void SharedStringHashStore::flushPendingChanges()
+{
+    if (!m_pendingOperationsTimer.isActive())
+        return;
+
+    m_pendingOperationsTimer.stop();
+    processPendingOperations();
 }
 
 void SharedStringHashStore::resizeTable(unsigned newTableSize)
@@ -158,7 +164,7 @@ void SharedStringHashStore::resizeTable(unsigned newTableSize)
     m_client.didInvalidateSharedMemory();
 }
 
-void SharedStringHashStore::pendingOperationsTimerFired()
+void SharedStringHashStore::processPendingOperations()
 {
     unsigned currentTableSize = m_tableSize;
     unsigned approximateNewHashCount = std::count_if(m_pendingOperations.begin(), m_pendingOperations.end(), [](auto& operation) {

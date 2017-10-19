@@ -46,16 +46,20 @@ public:
     SharedStringHashStore(Client&);
 
     bool createSharedMemoryHandle(SharedMemory::Handle&);
-    void add(WebCore::SharedStringHash);
-    void remove(WebCore::SharedStringHash);
+
+    void scheduleAddition(WebCore::SharedStringHash);
+    void scheduleRemoval(WebCore::SharedStringHash);
+
     bool contains(WebCore::SharedStringHash);
     void clear();
 
     bool isEmpty() const { return !m_keyCount; }
 
+    void flushPendingChanges();
+
 private:
     void resizeTable(unsigned newTableSize);
-    void pendingOperationsTimerFired();
+    void processPendingOperations();
 
     struct Operation {
         enum Type { Add, Remove };

@@ -43,6 +43,7 @@ public:
     WebSWOriginStore();
 
     void add(const WebCore::SecurityOrigin&);
+    void addAll(const Vector<WebCore::SecurityOrigin>&);
     void remove(const WebCore::SecurityOrigin&);
     void clear();
 

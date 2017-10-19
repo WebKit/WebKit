@@ -79,7 +79,7 @@ void VisitedLinkStore::removeProcess(WebProcessProxy& process)
 
 void VisitedLinkStore::addVisitedLinkHash(SharedStringHash linkHash)
 {
-    m_linkHashStore.add(linkHash);
+    m_linkHashStore.scheduleAddition(linkHash);
 }
 
 bool VisitedLinkStore::containsVisitedLinkHash(WebCore::SharedStringHash linkHash)
@@ -89,7 +89,7 @@ bool VisitedLinkStore::containsVisitedLinkHash(WebCore::SharedStringHash linkHas
 
 void VisitedLinkStore::removeVisitedLinkHash(WebCore::SharedStringHash linkHash)
 {
-    m_linkHashStore.remove(linkHash);
+    m_linkHashStore.scheduleRemoval(linkHash);
 }
 
 void VisitedLinkStore::removeAll()
