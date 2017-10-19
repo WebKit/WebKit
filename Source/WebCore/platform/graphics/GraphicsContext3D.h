@@ -1078,24 +1078,24 @@ public:
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels);
 
     void uniform1f(GC3Dint location, GC3Dfloat x);
-    void uniform1fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
+    void uniform1fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
     void uniform1i(GC3Dint location, GC3Dint x);
-    void uniform1iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
+    void uniform1iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
     void uniform2f(GC3Dint location, GC3Dfloat x, GC3Dfloat y);
-    void uniform2fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
+    void uniform2fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
     void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y);
-    void uniform2iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
+    void uniform2iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
     void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void uniform3fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
+    void uniform3fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
     void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z);
-    void uniform3iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
+    void uniform3iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
     void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void uniform4fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
+    void uniform4fv(GC3Dint location, GC3Dsizei, const GC3Dfloat* v);
     void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w);
-    void uniform4iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
-    void uniformMatrix2fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, GC3Dfloat* value);
-    void uniformMatrix3fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, GC3Dfloat* value);
-    void uniformMatrix4fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, GC3Dfloat* value);
+    void uniform4iv(GC3Dint location, GC3Dsizei, const GC3Dint* v);
+    void uniformMatrix2fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value);
+    void uniformMatrix3fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value);
+    void uniformMatrix4fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, const GC3Dfloat* value);
 
     void useProgram(Platform3DObject);
     void validateProgram(Platform3DObject);
@@ -1103,13 +1103,13 @@ public:
     bool precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
 
     void vertexAttrib1f(GC3Duint index, GC3Dfloat x);
-    void vertexAttrib1fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttrib1fv(GC3Duint index, const GC3Dfloat* values);
     void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y);
-    void vertexAttrib2fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttrib2fv(GC3Duint index, const GC3Dfloat* values);
     void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void vertexAttrib3fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttrib3fv(GC3Duint index, const GC3Dfloat* values);
     void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void vertexAttrib4fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttrib4fv(GC3Duint index, const GC3Dfloat* values);
     void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized,
                              GC3Dsizei stride, GC3Dintptr offset);
 

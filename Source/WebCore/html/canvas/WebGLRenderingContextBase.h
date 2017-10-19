@@ -269,11 +269,11 @@ public:
         {
         }
 
-        DataType* data() const
+        const DataType* data() const
         {
             return WTF::switchOn(m_variant,
-                [] (const RefPtr<TypedArray>& typedArray) -> DataType* { return typedArray->data(); },
-                [] (const Vector<DataType>& vector) -> DataType* { return const_cast<Vector<DataType>&>(vector).data(); }
+                [] (const RefPtr<TypedArray>& typedArray) -> const DataType* { return typedArray->data(); },
+                [] (const Vector<DataType>& vector) -> const DataType* { return vector.data(); }
             );
         }
 
@@ -779,7 +779,7 @@ protected:
     bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Int32List&, GC3Dsizei mod);
     bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, void*, GC3Dsizei, GC3Dsizei mod);
     bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, const Float32List&, GC3Dsizei mod);
-    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, void*, GC3Dsizei, GC3Dsizei mod);
+    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, const void*, GC3Dsizei, GC3Dsizei mod);
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.

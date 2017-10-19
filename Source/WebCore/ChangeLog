@@ -1,5 +1,40 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221971. rdar://problem/34958928
+
+    2017-09-13  Ms2ger  <Ms2ger@igalia.com>
+
+            Make WebGLRenderingContextBase::TypedList::data() const-correct.
+            https://bugs.webkit.org/show_bug.cgi?id=176833
+
+            Reviewed by Sam Weinig.
+
+            No change of behavior.
+
+            * html/canvas/WebGLRenderingContextBase.cpp:
+            (WebCore::WebGLRenderingContextBase::validateUniformMatrixParameters):
+            * html/canvas/WebGLRenderingContextBase.h:
+            (WebCore::WebGLRenderingContextBase::TypedList::data const):
+            * platform/graphics/GraphicsContext3D.h:
+            * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+            (WebCore::GraphicsContext3D::uniform1fv):
+            (WebCore::GraphicsContext3D::uniform2fv):
+            (WebCore::GraphicsContext3D::uniform3fv):
+            (WebCore::GraphicsContext3D::uniform4fv):
+            (WebCore::GraphicsContext3D::uniform1iv):
+            (WebCore::GraphicsContext3D::uniform2iv):
+            (WebCore::GraphicsContext3D::uniform3iv):
+            (WebCore::GraphicsContext3D::uniform4iv):
+            (WebCore::GraphicsContext3D::uniformMatrix2fv):
+            (WebCore::GraphicsContext3D::uniformMatrix3fv):
+            (WebCore::GraphicsContext3D::uniformMatrix4fv):
+            (WebCore::GraphicsContext3D::vertexAttrib1fv):
+            (WebCore::GraphicsContext3D::vertexAttrib2fv):
+            (WebCore::GraphicsContext3D::vertexAttrib3fv):
+            (WebCore::GraphicsContext3D::vertexAttrib4fv):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223315. rdar://problem/34985202
 
     2017-10-13  Jer Noble  <jer.noble@apple.com>
