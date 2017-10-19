@@ -1,5 +1,25 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223423. rdar://problem/34745623
+
+    2017-10-16  Maureen Daum  <mdaum@apple.com>
+
+            We should wrap the removal of information from the tracker database in a transaction in DatabaseTracker::deleteOrigin()
+            https://bugs.webkit.org/show_bug.cgi?id=178274
+            <rdar://problem/34576132>
+
+            Reviewed by Tim Horton.
+
+            * Modules/webdatabase/DatabaseTracker.cpp:
+            (WebCore::DatabaseTracker::deleteOrigin):
+            Wrap the removal of information from the tracker database in a transaction so that
+            we don't end up in a case where only one of the tables contains information about
+            an origin.
+            If anything goes wrong when we're modifying the tracker database, rollback the transaction
+            before bailing.
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223420. rdar://problem/34745623
 
     2017-10-16  Ryan Haddad  <ryanhaddad@apple.com>
