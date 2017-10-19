@@ -1,11 +1,21 @@
 <html>
 <head>
 <script>
-function log(msg) {
-    window.opener.postMessage(msg, "*");
+function ownerWindow()
+{
+    var owner = window.parent;
+    if (owner === this)
+        owner = window.opener;
+    return owner;
 }
 
-function runTest() {
+function log(message)
+{
+    ownerWindow().postMessage(message, "*");
+}
+
+function runTest()
+{
     var referrerHeader = "<?php echo $_SERVER['HTTP_REFERER'] ?>";
     if (referrerHeader == "")
         log("HTTP Referer header is empty");

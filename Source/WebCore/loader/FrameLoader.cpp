@@ -3553,6 +3553,15 @@ RetainPtr<CFDictionaryRef> FrameLoader::connectionProperties(ResourceLoader* loa
 }
 #endif
 
+ReferrerPolicy FrameLoader::effectiveReferrerPolicy() const
+{
+    if (auto* parentFrame = m_frame.tree().parent())
+        return parentFrame->document()->referrerPolicy();
+    if (m_opener)
+        return m_opener->document()->referrerPolicy();
+    return ReferrerPolicy::NoReferrerWhenDowngrade;
+}
+
 String FrameLoader::referrer() const
 {
     return m_documentLoader ? m_documentLoader->request().httpReferrer() : emptyString();
