@@ -278,21 +278,20 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     }
 
     String selectedShippingOption;
-    HashSet<String> seenShippingOptionIDs;
-    for (auto& shippingOption : details.shippingOptions) {
-        auto exception = checkAndCanonicalizeAmount(shippingOption.amount);
-        if (exception.hasException())
-            return exception.releaseException();
+    if (options.requestShipping) {
+        HashSet<String> seenShippingOptionIDs;
+        for (auto& shippingOption : details.shippingOptions) {
+            auto exception = checkAndCanonicalizeAmount(shippingOption.amount);
+            if (exception.hasException())
+                return exception.releaseException();
 
-        auto addResult = seenShippingOptionIDs.add(shippingOption.id);
-        if (!addResult.isNewEntry) {
-            details.shippingOptions = { };
-            selectedShippingOption = { };
-            break;
+            auto addResult = seenShippingOptionIDs.add(shippingOption.id);
+            if (!addResult.isNewEntry)
+                return Exception { TypeError, "Shipping option IDs must be unique." };
+
+            if (shippingOption.selected)
+                selectedShippingOption = shippingOption.id;
         }
-
-        if (shippingOption.selected)
-            selectedShippingOption = shippingOption.id;
     }
 
     Vector<String> serializedModifierData;
