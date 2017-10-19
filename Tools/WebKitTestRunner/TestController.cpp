@@ -908,7 +908,11 @@ const char* TestController::databaseProcessName()
 {
     // FIXME: Find a way to not hardcode the process name.
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110300
     return "com.apple.WebKit.Databases";
+#else
+    return "com.apple.WebKit.Storage";
+#endif
 #elif PLATFORM(COCOA)
     return "com.apple.WebKit.Storage.Development";
 #else

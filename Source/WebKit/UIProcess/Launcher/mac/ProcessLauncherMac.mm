@@ -56,10 +56,10 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
     case ProcessLauncher::ProcessType::Storage:
-#if PLATFORM(MAC) || PLATFORM(IOS_SIMULATOR)
-        return "com.apple.WebKit.Storage";
-#else
+#if PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && !PLATFORM(IOS_SIMULATOR) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110300
         return "com.apple.WebKit.Databases";
+#else
+        return "com.apple.WebKit.Storage";
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::ProcessType::Plugin32:
@@ -69,7 +69,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 #endif
     }
 }
-    
+
 static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 {
 #if PLATFORM(IOS)
