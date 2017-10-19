@@ -1,5 +1,30 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223589. rdar://problem/34771462
+
+    2017-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Regression] Webkit "-apple-system" font fallback token handles font weights of PingFang incorrectly.
+            https://bugs.webkit.org/show_bug.cgi?id=177345
+            <rdar://problem/32975942>
+
+            Reviewed by Jon Lee.
+
+            This bug has a fairly insideous cause. In particular, the system font fallback path follows
+            system conventions, which are not the same as the CSS fallback path. For example, the Chinese
+            fallback of San Francisco weight 600 is Ping Fang weight 500. This doesn't match our
+            assumptions in CSS, because Ping Fang does have a 600 weight, which CSS would think is closer.
+            However, the whole point of system-ui is that it follows the system fallback path, not CSS's.
+            Therefore, falling back from a bold system-ui request to a non-bold fallback font is correct
+            and expected, and we shouldn't synthesize bold in this situation.
+
+            Test: fast/text/system-ui-chinese-bold-fallback.html
+
+            * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+            (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223580. rdar://problem/34958773
 
     2017-10-16  Andy Estes  <aestes@apple.com>

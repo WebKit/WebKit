@@ -1,5 +1,19 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223589. rdar://problem/34771462
+
+    2017-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Regression] Webkit "-apple-system" font fallback token handles font weights of PingFang incorrectly.
+            https://bugs.webkit.org/show_bug.cgi?id=177345
+            <rdar://problem/32975942>
+
+            Reviewed by Jon Lee.
+
+            * fast/text/system-ui-chinese-bold-fallback.html:
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223580. rdar://problem/34958773
 
     2017-10-16  Andy Estes  <aestes@apple.com>
