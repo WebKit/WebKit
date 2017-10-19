@@ -1502,7 +1502,12 @@ void TestRunner::statisticsDidRunTelemetryCallback(unsigned totalPrevalentResour
     
     callTestRunnerCallback(StatisticsDidRunTelemetryCallbackID, 1, &result);
 }
-    
+
+void TestRunner::statisticsNotifyObserver()
+{
+    InjectedBundle::singleton().statisticsNotifyObserver();
+}
+
 void TestRunner::statisticsProcessStatisticsAndDataRecords()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsProcessStatisticsAndDataRecords"));

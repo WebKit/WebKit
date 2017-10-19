@@ -1,5 +1,28 @@
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223565. rdar://problem/35041490
+
+    2017-10-17  John Wilander  <wilander@apple.com>
+
+            Add and remove cookie partition accordingly in intermediary redirect requests
+            https://bugs.webkit.org/show_bug.cgi?id=178369
+            <rdar://problem/34467603>
+
+            Reviewed by Brent Fulgham.
+
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::shouldChangePartition):
+                Convenience function. Comment documents the logic.
+            (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+                Now adds and removes cookie partition based on the
+                redirect-to URL's domain.
+            * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+            (WKBundleResourceLoadStatisticsNotifyObserver):
+                Test infrastructure.
+            * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223253. rdar://problem/35077489
 
     2017-10-12  John Wilander  <wilander@apple.com>

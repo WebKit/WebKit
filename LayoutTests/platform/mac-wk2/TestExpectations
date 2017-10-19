@@ -723,3 +723,5 @@ webkit.org/b/172397 [ Sierra Debug ] animations/needs-layout.html [ Pass ImageOn
 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/remove-partitioning-from-redirect.html [ Pass ]

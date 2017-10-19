@@ -356,6 +356,7 @@ public:
     void statisticsDidModifyDataRecordsCallback();
     void statisticsDidScanDataRecordsCallback();
     void statisticsDidRunTelemetryCallback(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
+    void statisticsNotifyObserver();
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookiePartitioning();
     void statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value);

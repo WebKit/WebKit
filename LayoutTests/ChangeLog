@@ -1,5 +1,47 @@
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223565. rdar://problem/35041490
+
+    2017-10-17  John Wilander  <wilander@apple.com>
+
+            Add and remove cookie partition accordingly in intermediary redirect requests
+            https://bugs.webkit.org/show_bug.cgi?id=178369
+            <rdar://problem/34467603>
+
+            Reviewed by Brent Fulgham.
+
+            This patch adds two new tests, relevant for the code change.
+            Also makes changes to existing tests to increase speed and
+            reliability.
+
+            * http/tests/resourceLoadStatistics/add-partitioning-to-redirect-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+            * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+            * http/tests/resourceLoadStatistics/remove-partitioning-from-redirect-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/remove-partitioning-from-redirect.html: Added.
+            * http/tests/resourceLoadStatistics/resources/get-cookies.php: Added.
+            * http/tests/resourceLoadStatistics/resources/redirect.php:
+            * http/tests/resourceLoadStatistics/resources/set-cookie.php: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+            * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html:
+            * platform/ios/TestExpectations:
+                The two new tests are marked [ Pass ].
+            * platform/mac-wk2/TestExpectations:
+                The two new tests are marked [ Pass ].
+            * platform/wk2/TestExpectations:
+                The two new tests are marked [ Skip ] because they require cookie partitioning.
+
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223253. rdar://problem/35077489
 
     2017-10-12  John Wilander  <wilander@apple.com>

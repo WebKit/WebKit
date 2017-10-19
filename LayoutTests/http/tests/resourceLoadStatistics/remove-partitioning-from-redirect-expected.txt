@@ -1,0 +1,25 @@
+Tests that partitioning is removed mid-flight in redirects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Should receive first-party cookie.
+Received cookie named 'firstPartyCookie'.
+Did not receive cookie named 'partitionedCookie'.
+Client-side document.cookie: firstPartyCookie=value
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Redirect case, should receive first-party cookie.
+Received cookie named 'firstPartyCookie'.
+Did not receive cookie named 'partitionedCookie'.
+Client-side document.cookie: firstPartyCookie=value

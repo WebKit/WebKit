@@ -282,3 +282,8 @@ void WKBundleClearResourceLoadStatistics(WKBundleRef)
 {
     ResourceLoadObserver::shared().clearState();
 }
+
+void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
+{
+    ResourceLoadObserver::shared().notifyObserver();
+}

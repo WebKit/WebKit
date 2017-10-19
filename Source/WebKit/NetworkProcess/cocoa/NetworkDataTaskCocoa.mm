@@ -187,6 +187,16 @@ void NetworkDataTaskCocoa::didReceiveData(Ref<WebCore::SharedBuffer>&& data)
         m_client->didReceiveData(WTFMove(data));
 }
 
+static bool shouldChangePartition(const String& requiredStoragePartition, const String& currentStoragePartition)
+{
+    // The need for a partion change is according to the following:
+    //      currentStoragePartition:  null  ""    abc
+    // requiredStoragePartition: ""   false false true
+    //                           abc  true  true  false
+    //                           xyz  true  true  true
+    return !((requiredStoragePartition.isEmpty() && currentStoragePartition.isEmpty()) || currentStoragePartition == requiredStoragePartition);
+}
+
 void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
@@ -231,6 +241,16 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 #endif
     }
     
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
+        String requiredStoragePartition = m_session->networkStorageSession().cookieStoragePartition(request);
+        if (shouldChangePartition(requiredStoragePartition, m_task.get()._storagePartitionIdentifier)) {
+            LOG(NetworkSession, "%llu %s cookies for redirected URL %s", [m_task taskIdentifier], (requiredStoragePartition.isEmpty() ? "Not partitioning" : "Partitioning"), request.url().string().utf8().data());
+            m_task.get()._storagePartitionIdentifier = requiredStoragePartition;
+        }
+    }
+#endif
+
     if (m_client)
         m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), WTFMove(completionHandler));
     else {

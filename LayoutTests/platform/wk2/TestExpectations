@@ -684,6 +684,10 @@ webkit.org/b/172452 http/tests/loading/resourceLoadStatistics/grandfathering.htm
 webkit.org/b/173499 http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
 http/tests/loading/resourceLoadStatistics/prune-statistics.html [ Pass ]
 http/tests/resourceLoadStatistics [ Pass ]
+# Cookie partitioning is only supported in macOS High Sierra and iOS 11.
+http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Skip ]
+http/tests/resourceLoadStatistics/remove-partitioning-from-redirect.html [ Skip ]
+
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################

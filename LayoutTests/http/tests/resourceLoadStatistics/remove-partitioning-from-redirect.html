@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Tests that partitioning is removed mid-flight in redirects.");
+    jsTestIsAsync = true;
+
+    function setEnableFeature(enable) {
+        if (!enable)
+            testRunner.statisticsResetToConsistentState();
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+    }
+
+    if (document.location.hash === "") {
+        setEnableFeature(true);
+        if (testRunner.isStatisticsPrevalentResource("http://localhost"))
+            testFailed("Localhost was classified as prevalent resource before the test starts.");
+        testRunner.dumpChildFramesAsText();
+        document.location.hash = "step1";
+    }
+
+    const partitionHost = "127.0.0.1:8000";
+    const thirdPartyOrigin = "http://localhost:8000";
+    const resourcePath = "/resourceLoadStatistics/resources";
+    const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
+    const partitionBaseUrl = "http://" + partitionHost + resourcePath;
+    const firstPartyCookieName = "firstPartyCookie";
+    const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
+    const partitionedCookieName = "partitionedCookie";
+    const returnUrl = "http://" + partitionHost + "/resourceLoadStatistics/remove-partitioning-from-redirect.html";
+    const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
+    const redirectChainUrl = thirdPartyBaseUrl + "/redirect.php?redirectTo=" + partitionBaseUrl + subPathToGetCookies;
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                // Set localhost as prevalent.
+                document.location.hash = "step2";
+                testRunner.setStatisticsPrevalentResource("http://localhost", true);
+                testRunner.statisticsUpdateCookiePartitioning();
+                if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
+                    testFailed("Host did not get set as prevalent resource.");
+                runTest();
+                break;
+            case "#step2":
+                // Set first-party cookie for 127.0.0.1.
+                document.location.href = partitionBaseUrl + subPathToSetFirstPartyCookie + "#" + returnUrl + "#step3";
+                break;
+            case "#step3":
+                // Check that the cookie gets sent for 127.0.0.1 under 127.0.0.1.
+                document.location.hash = "step4";
+                openIframe(partitionBaseUrl + subPathToGetCookies + "&message=Should receive first-party cookie.", runTest);
+                break;
+            case "#step4":
+                document.location.hash = "step5";
+                // Load an iframe in a redirect chain that starts with localhost and ends with 127.0.0.1. Expect a cookie for 127.0.0.1.
+                openIframe(redirectChainUrl + "&message=Redirect case, should receive first-party cookie.", runTest);
+                break;
+            case "#step5":
+                setEnableFeature(false);
+                finishJSTest();
+                break;
+        }
+    }
+</script>
+</body>
+</html>

@@ -271,6 +271,7 @@ interface TestRunner {
     void setStatisticsSubresourceUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsTimeToLiveCookiePartitionFree(double seconds);
+    void statisticsNotifyObserver();
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookiePartitioning();
     void statisticsSetShouldPartitionCookiesForHost(DOMString hostName, boolean value);
