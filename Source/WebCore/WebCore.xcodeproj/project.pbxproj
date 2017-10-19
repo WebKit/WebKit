@@ -2327,8 +2327,6 @@
 		517A63C61B74319200E7DCDC /* KeyedEncoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517B25A91CC82B2A0061C011 /* IDBConnectionProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517B25A71CC820320061C011 /* IDBConnectionProxy.cpp */; };
 		517B25AA1CC82B2A0061C011 /* IDBConnectionProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B25A81CC820320061C011 /* IDBConnectionProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517C870A1F8EBB2500EB8076 /* SWContextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517C87081F8EB9BF00EB8076 /* SWContextManager.cpp */; };
-		517C870B1F8EBB2500EB8076 /* SWContextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517C87091F8EB9C000EB8076 /* SWContextManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517C87181F8FD4D900EB8076 /* ServiceWorkerContextData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517C87161F8FD4D300EB8076 /* ServiceWorkerContextData.cpp */; };
 		517DEEE51DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */; };
 		517DEEE81DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10230,8 +10228,6 @@
 		517A63C21B74317E00E7DCDC /* KeyedEncoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedEncoderCF.h; sourceTree = "<group>"; };
 		517B25A71CC820320061C011 /* IDBConnectionProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBConnectionProxy.cpp; sourceTree = "<group>"; };
 		517B25A81CC820320061C011 /* IDBConnectionProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBConnectionProxy.h; sourceTree = "<group>"; };
-		517C87081F8EB9BF00EB8076 /* SWContextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SWContextManager.cpp; path = workers/service/context/SWContextManager.cpp; sourceTree = SOURCE_ROOT; };
-		517C87091F8EB9C000EB8076 /* SWContextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SWContextManager.h; path = workers/service/context/SWContextManager.h; sourceTree = SOURCE_ROOT; };
 		517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServiceWorkerThread.h; path = workers/service/context/ServiceWorkerThread.h; sourceTree = SOURCE_ROOT; };
 		517C87111F8EE72F00EB8076 /* ServiceWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServiceWorkerThread.cpp; path = workers/service/context/ServiceWorkerThread.cpp; sourceTree = SOURCE_ROOT; };
 		517C87161F8FD4D300EB8076 /* ServiceWorkerContextData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerContextData.cpp; sourceTree = "<group>"; };
@@ -19089,8 +19085,6 @@
 			children = (
 				517C87111F8EE72F00EB8076 /* ServiceWorkerThread.cpp */,
 				517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */,
-				517C87081F8EB9BF00EB8076 /* SWContextManager.cpp */,
-				517C87091F8EB9C000EB8076 /* SWContextManager.h */,
 			);
 			path = context;
 			sourceTree = "<group>";
@@ -30636,7 +30630,6 @@
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
 				517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */,
-				517C870B1F8EBB2500EB8076 /* SWContextManager.h in Headers */,
 				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
 				51F645971F4A686F00B54DED /* SWServerRegistration.h in Headers */,
 				517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */,
@@ -34368,7 +34361,6 @@
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
 				517A531C1F4B53B100DCDC0A /* SWClientConnection.cpp in Sources */,
-				517C870A1F8EBB2500EB8076 /* SWContextManager.cpp in Sources */,
 				517A52F11F4754E700DCDC0A /* SWServer.cpp in Sources */,
 				51F645961F4A686F00B54DED /* SWServerRegistration.cpp in Sources */,
 				517A53451F50C17F00DCDC0A /* SWServerWorker.cpp in Sources */,

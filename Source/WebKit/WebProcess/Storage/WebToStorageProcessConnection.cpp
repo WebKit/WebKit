@@ -27,11 +27,13 @@
 #include "config.h"
 #include "WebToStorageProcessConnection.h"
 
+#include "ServiceWorkerClientFetchMessages.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebProcess.h"
 #include "WebSWClientConnection.h"
 #include "WebSWClientConnectionMessages.h"
+#include "WebServiceWorkerProvider.h"
 
 using namespace PAL;
 using namespace WebCore;
@@ -65,6 +67,10 @@ void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connectio
         auto serviceWorkerConnection = m_swConnectionsByIdentifier.get(decoder.destinationID());
         if (serviceWorkerConnection)
             serviceWorkerConnection->didReceiveMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::ServiceWorkerClientFetch::messageReceiverName()) {
+        WebServiceWorkerProvider::singleton().didReceiveServiceWorkerClientFetchMessage(connection, decoder);
         return;
     }
 #endif

@@ -30,8 +30,10 @@
 
 #include "DataReference.h"
 #include "Logging.h"
+#include "ServiceWorkerClientFetchMessages.h"
 #include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
 #include "WebSWClientConnectionMessages.h"
@@ -90,6 +92,31 @@ void WebSWServerConnection::startServiceWorkerContext(const ServiceWorkerContext
         return;
 
     m_pendingContextDatas.append(data);
+}
+
+void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
+{
+    sendToContextProcess(Messages::WebProcess::StartFetchInServiceWorker(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
+}
+
+void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)
+{
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response }, fetchIdentifier);
+}
+
+void WebSWServerConnection::didReceiveFetchData(uint64_t fetchIdentifier, const IPC::DataReference& data, int64_t encodedDataLength)
+{
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveData { data, encodedDataLength }, fetchIdentifier);
+}
+
+void WebSWServerConnection::didFinishFetch(uint64_t fetchIdentifier)
+{
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFinish { }, fetchIdentifier);
+}
+
+void WebSWServerConnection::didFailFetch(uint64_t fetchIdentifier)
+{
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFail { }, fetchIdentifier);
 }
 
 template<typename U> bool WebSWServerConnection::sendToContextProcess(U&& message)

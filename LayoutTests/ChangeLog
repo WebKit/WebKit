@@ -1,5 +1,17 @@
 2017-10-18  Youenn Fablet  <youenn@apple.com>
 
+        Add preliminary support for ServiceWorker Handle Fetch
+        https://bugs.webkit.org/show_bug.cgi?id=178475
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/basic-fetch.https-expected.txt: Added.
+        * http/tests/workers/service/basic-fetch.https.html: Added.
+        * http/tests/workers/service/resources/basic-fetch-worker.js: Added.
+        * http/tests/workers/service/resources/basic-fetch.js: Added.
+
+2017-10-18  Youenn Fablet  <youenn@apple.com>
+
         TestController should clear all fetch caches when resetting its state
         https://bugs.webkit.org/show_bug.cgi?id=178486
 

@@ -100,7 +100,7 @@ public:
 
     WEBCORE_EXPORT String httpContentType() const;
     WEBCORE_EXPORT void setHTTPContentType(const String&);
-    void clearHTTPContentType();
+    WEBCORE_EXPORT void clearHTTPContentType();
 
     bool hasHTTPHeader(HTTPHeaderName) const;
 
