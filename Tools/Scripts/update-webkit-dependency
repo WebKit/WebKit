@@ -95,7 +95,7 @@ print "Checking for newer version of $zipFile...\n";
 # errors for those requests. Instead we can just set a size limit for a GET request (which we can also set the range for
 # to request just the first byte) so that we don't have to retrieve the entire file.
 $ua->max_size(0);
-my $response = $ua->get($libsURL, "Range", "bytes=0-0");
+my $response = $ua->get($libsURL, Accept => '*/*', Range => "bytes=0-0");
 $ua->max_size(undef);
 
 if (! $response->is_success) {
@@ -191,8 +191,10 @@ if (defined $lastModifiedTime && defined $oldLastModifiedTime
 
 print "Downloading $zipFile...\n\n";
 print "$libsURL\n";
-my $result = getstore($libsURL, File::Spec->catfile($tmpAbsDir, $zipFile));
-die "Couldn't download $zipFile!" if is_error($result);
+my $request = HTTP::Request->new(GET => $libsURL);
+$request->header(Accept => "*/*");
+$response = $ua->request($request, File::Spec->catfile($tmpAbsDir, $zipFile));
+die "Couldn't download $zipFile!" if is_error($response->code);
 
 my $zip = Archive::Zip->new(File::Spec->catfile($tmpAbsDir, $zipFile));
 
@@ -211,7 +213,7 @@ if (! $zip->memberNamed($prefixDirectoryPathInZipFile)) {
     }
 }
 
-$result = $zip->extractTree("", $tmpAbsDir);
+my $result = $zip->extractTree("", $tmpAbsDir);
 die "Couldn't unzip $zipFile." if $result != AZ_OK;
 
 print "\nInstalling $file...\n";

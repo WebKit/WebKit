@@ -1,3 +1,15 @@
+2017-10-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        update-webkit-auxiliary-libs can't download WebKitAuxiliaryLibrary.zip due to 403 Forbidden
+        https://bugs.webkit.org/show_bug.cgi?id=178381
+
+        Reviewed by Alexey Proskuryakov.
+
+        The web server developer.apple.com seems to reject HTTP requests
+        without Accept header field.
+
+        * Scripts/update-webkit-dependency: Add 'Accept' header field to requests.
+
 2017-10-18  Aakash Jain  <aakash_jain@apple.com>
 
         webkitpy tests should have --json-output option
