@@ -1,5 +1,19 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223210. rdar://problem/34820936
+
+    2017-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+            Avoid triggering layout from style change
+            https://bugs.webkit.org/show_bug.cgi?id=178184
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/scrolling/adjust-scroll-offset-on-zoom-expected.txt: Added.
+            * fast/scrolling/adjust-scroll-offset-on-zoom.html: Added.
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222471. rdar://problem/35061708
 
     2017-09-25  Youenn Fablet  <youenn@apple.com>
