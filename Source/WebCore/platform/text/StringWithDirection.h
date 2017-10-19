@@ -65,9 +65,7 @@ inline bool operator!=(const StringWithDirection& a, const StringWithDirection& 
 
 inline StringWithDirection truncateFromEnd(const StringWithDirection& string, unsigned maxLength)
 {
-    if (string.direction == LTR)
-        return StringWithDirection(string.string.left(maxLength), LTR);
-    return StringWithDirection(string.string.right(maxLength), RTL);
+    return { string.string.left(maxLength), string.direction };
 }
 
 }
