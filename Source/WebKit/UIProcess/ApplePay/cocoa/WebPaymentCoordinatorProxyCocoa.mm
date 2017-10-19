@@ -62,7 +62,9 @@ SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkVisa, NSString *);
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 SOFT_LINK_FRAMEWORK(Contacts)
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStreetKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubLocalityKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCityKey, NSString *);
+SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubAdministrativeAreaKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStateKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressPostalCodeKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);
@@ -651,6 +653,11 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
             postalAddressKey = getCNPostalAddressStreetKey();
             break;
 
+        case WebCore::PaymentError::ContactField::SubLocality:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressSubLocalityKey();
+            break;
+
         case WebCore::PaymentError::ContactField::Locality:
             pkContactField = getPKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCityKey();
@@ -659,6 +666,11 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
         case WebCore::PaymentError::ContactField::PostalCode:
             pkContactField = getPKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressPostalCodeKey();
+            break;
+
+        case WebCore::PaymentError::ContactField::SubAdministrativeArea:
+            pkContactField = getPKContactFieldPostalAddress();
+            postalAddressKey = getCNPostalAddressSubAdministrativeAreaKey();
             break;
 
         case WebCore::PaymentError::ContactField::AdministrativeArea:
