@@ -257,6 +257,9 @@ PASS new ApplePaySession(2, request) did not throw exception.
 SETUP: request = validRequest(); request.billingContact = { };
 PASS new ApplePaySession(2, request) did not throw exception.
 
+SETUP: request = validRequest(); request.billingContact = { subLocality: '', subAdministrativeArea: '' };
+PASS new ApplePaySession(2, request) did not throw exception.
+
 Testing PaymentRequest.requiredShippingContactFields
 
 SETUP: request = validRequest(); request.requiredShippingContactFields = undefined;
@@ -316,6 +319,9 @@ SETUP: request = validRequest(); request.shippingContact = undefined;
 PASS new ApplePaySession(2, request) did not throw exception.
 
 SETUP: request = validRequest(); request.shippingContact = { };
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingContact = { subLocality: '', subAdministrativeArea: '' };
 PASS new ApplePaySession(2, request) did not throw exception.
 
 Testing PaymentRequest.shippingType

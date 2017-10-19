@@ -27,10 +27,10 @@ SETUP:
 PASS new ApplePayError('addressUnserviceable') did not throw exception.
 
 SETUP: 
-PASS new ApplePayError('unknown', []) threw exception TypeError: Argument 2 ('contactField') to the ApplePayError constructor must be one of: "phoneNumber", "emailAddress", "name", "phoneticName", "postalAddress", "addressLines", "locality", "postalCode", "administrativeArea", "country", "countryCode".
+PASS new ApplePayError('unknown', []) threw exception TypeError: Argument 2 ('contactField') to the ApplePayError constructor must be one of: "phoneNumber", "emailAddress", "name", "phoneticName", "postalAddress", "addressLines", "subLocality", "locality", "postalCode", "subAdministrativeArea", "administrativeArea", "country", "countryCode".
 
 SETUP: 
-PASS new ApplePayError('unknown', '') threw exception TypeError: Argument 2 ('contactField') to the ApplePayError constructor must be one of: "phoneNumber", "emailAddress", "name", "phoneticName", "postalAddress", "addressLines", "locality", "postalCode", "administrativeArea", "country", "countryCode".
+PASS new ApplePayError('unknown', '') threw exception TypeError: Argument 2 ('contactField') to the ApplePayError constructor must be one of: "phoneNumber", "emailAddress", "name", "phoneticName", "postalAddress", "addressLines", "subLocality", "locality", "postalCode", "subAdministrativeArea", "administrativeArea", "country", "countryCode".
 
 SETUP: 
 PASS new ApplePayError('unknown', 'phoneNumber') did not throw exception.

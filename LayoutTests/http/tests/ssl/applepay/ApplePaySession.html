@@ -147,6 +147,7 @@ function go() {
     logAndShouldNotThrow("request = validRequest(); request.billingContact = null;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.billingContact = undefined;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.billingContact = { };", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.billingContact = { subLocality: '', subAdministrativeArea: '' };", "new ApplePaySession(2, request)")
     
     debug("Testing PaymentRequest.requiredShippingContactFields")
     debug("");
@@ -173,6 +174,7 @@ function go() {
     logAndShouldNotThrow("request = validRequest(); request.shippingContact = null;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.shippingContact = undefined;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.shippingContact = { };", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingContact = { subLocality: '', subAdministrativeArea: '' };", "new ApplePaySession(2, request)")
     
     debug("Testing PaymentRequest.shippingType")
     debug("");

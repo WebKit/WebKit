@@ -1,5 +1,21 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223580. rdar://problem/34958773
+
+    2017-10-16  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Add subLocality and subAdministrativeArea to ApplePayPaymentContact and ApplePayError
+            https://bugs.webkit.org/show_bug.cgi?id=178191
+            <rdar://problem/34906367>
+
+            Reviewed by Tim Horton.
+
+            * http/tests/ssl/applepay/ApplePayError-expected.txt:
+            * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+            * http/tests/ssl/applepay/ApplePaySession.html:
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223210. rdar://problem/34820936
 
     2017-10-11  Simon Fraser  <simon.fraser@apple.com>
