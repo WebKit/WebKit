@@ -66,7 +66,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
     bool syntheticBold, syntheticOblique;
     std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(fontForSynthesisComputation.get(), fontDescription).boldObliquePair();
 
-    FontPlatformData fontPlatformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+    FontPlatformData fontPlatformData(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
 
     return FontRanges(FontCache::singleton().fontForPlatformData(fontPlatformData));
 }
