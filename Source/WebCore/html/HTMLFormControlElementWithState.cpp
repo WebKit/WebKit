@@ -47,11 +47,11 @@ Node::InsertedIntoResult HTMLFormControlElementWithState::insertedInto(Insertion
     return HTMLFormControlElement::insertedInto(insertionType, parentOfInsertedTree);
 }
 
-void HTMLFormControlElementWithState::removedFrom(ContainerNode& insertionPoint)
+void HTMLFormControlElementWithState::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    if (insertionPoint.isConnected() && !containingShadowRoot() && !insertionPoint.containingShadowRoot())
+    if (removalType.disconnectedFromDocument && !containingShadowRoot() && !parentOfRemovedTree.containingShadowRoot())
         document().formController().unregisterFormElementWithState(this);
-    HTMLFormControlElement::removedFrom(insertionPoint);
+    HTMLFormControlElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 bool HTMLFormControlElementWithState::shouldAutocomplete() const

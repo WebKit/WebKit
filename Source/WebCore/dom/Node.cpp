@@ -1253,9 +1253,9 @@ Node::InsertedIntoResult Node::insertedInto(InsertionType insertionType, Contain
     return InsertedIntoResult::Done;
 }
 
-void Node::removedFrom(ContainerNode& insertionPoint)
+void Node::removedFrom(RemovalType removalType, ContainerNode&)
 {
-    if (insertionPoint.isConnected())
+    if (removalType.disconnectedFromDocument)
         clearFlag(IsConnectedFlag);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearFlag(IsInShadowTreeFlag);

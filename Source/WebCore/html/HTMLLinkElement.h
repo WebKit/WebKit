@@ -83,7 +83,7 @@ private:
 
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
-    void removedFrom(ContainerNode&) final;
+    void removedFrom(RemovalType, ContainerNode&) final;
 
     void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&);
 

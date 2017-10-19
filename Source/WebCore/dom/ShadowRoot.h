@@ -95,7 +95,7 @@ private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     Node::InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(ContainerNode& insertionPoint) override;
+    void removedFrom(RemovalType, ContainerNode& insertionPoint) override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     bool m_resetStyleInheritance { false };

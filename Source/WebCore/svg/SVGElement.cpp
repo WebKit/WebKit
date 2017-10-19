@@ -365,15 +365,14 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
     ASSERT_NOT_REACHED();
 }
 
-void SVGElement::removedFrom(ContainerNode& rootParent)
+void SVGElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    bool wasInDocument = rootParent.isConnected();
-    if (wasInDocument)
+    if (removalType.disconnectedFromDocument)
         updateRelativeLengthsInformation(false, this);
 
-    StyledElement::removedFrom(rootParent);
+    StyledElement::removedFrom(removalType, parentOfRemovedTree);
 
-    if (wasInDocument) {
+    if (removalType.disconnectedFromDocument) {
         document().accessSVGExtensions().clearTargetDependencies(*this);
         document().accessSVGExtensions().removeAllElementReferencesForTarget(this);
     }

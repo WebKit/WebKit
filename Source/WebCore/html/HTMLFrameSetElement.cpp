@@ -219,10 +219,10 @@ Node::InsertedIntoResult HTMLFrameSetElement::insertedInto(InsertionType inserti
     return InsertedIntoResult::Done;
 }
 
-void HTMLFrameSetElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLFrameSetElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    HTMLElement::removedFrom(insertionPoint);
-    if (insertionPoint.isConnected()) {
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument) {
         if (RefPtr<Frame> frame = document().frame())
             frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
     }

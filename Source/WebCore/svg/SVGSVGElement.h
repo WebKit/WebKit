@@ -144,7 +144,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
     void svgAttributeChanged(const QualifiedName&) override;
     bool selfHasRelativeLengths() const override;
     void prepareForDocumentSuspension() override;

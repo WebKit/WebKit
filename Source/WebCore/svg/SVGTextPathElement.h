@@ -122,7 +122,7 @@ private:
 
     void buildPendingResource() override;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
 
     static bool isSupportedAttribute(const QualifiedName&);
     void parseAttribute(const QualifiedName&, const AtomicString&) override;

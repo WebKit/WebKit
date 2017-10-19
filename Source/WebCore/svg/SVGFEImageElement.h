@@ -59,7 +59,7 @@ private:
 
     void buildPendingResource() override;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEImageElement)
         DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)

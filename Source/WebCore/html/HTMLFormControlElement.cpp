@@ -292,7 +292,7 @@ void HTMLFormControlElement::didFinishInsertingNode()
     resetFormOwner();
 }
 
-void HTMLFormControlElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLFormControlElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
     bool wasMatchingInvalidPseudoClass = willValidate() && !isValidFormControlElement();
 
@@ -300,11 +300,11 @@ void HTMLFormControlElement::removedFrom(ContainerNode& insertionPoint)
     if (m_disabledByAncestorFieldset)
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     m_dataListAncestorState = Unknown;
-    HTMLElement::removedFrom(insertionPoint);
-    FormAssociatedElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    FormAssociatedElement::removedFrom(removalType, parentOfRemovedTree);
 
     if (wasMatchingInvalidPseudoClass)
-        removeInvalidElementToAncestorFromInsertionPoint(*this, &insertionPoint);
+        removeInvalidElementToAncestorFromInsertionPoint(*this, &parentOfRemovedTree);
 }
 
 void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool changed)

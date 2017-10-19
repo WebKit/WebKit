@@ -267,10 +267,10 @@ void SVGTRefElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGTRefElement::removedFrom(ContainerNode& rootParent)
+void SVGTRefElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGElement::removedFrom(rootParent);
-    if (rootParent.isConnected())
+    SVGElement::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         m_targetListener->detach();
 }
 

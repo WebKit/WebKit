@@ -331,19 +331,19 @@ Node::InsertedIntoResult HTMLImageElement::insertedInto(InsertionType insertionT
     return insertNotificationRequest;
 }
 
-void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLImageElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
     if (m_form)
         m_form->removeImgElement(this);
 
-    if (insertionPoint.isConnected() && !m_parsedUsemap.isNull())
+    if (removalType.disconnectedFromDocument && !m_parsedUsemap.isNull())
         document().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
-    
+
     if (is<HTMLPictureElement>(parentNode()))
         setPictureElement(nullptr);
-    
+
     m_form = nullptr;
-    HTMLElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 HTMLPictureElement* HTMLImageElement::pictureElement() const

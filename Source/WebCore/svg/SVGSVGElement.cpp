@@ -483,13 +483,13 @@ Node::InsertedIntoResult SVGSVGElement::insertedInto(InsertionType insertionType
     return SVGGraphicsElement::insertedInto(insertionType, parentOfInsertedTree);
 }
 
-void SVGSVGElement::removedFrom(ContainerNode& rootParent)
+void SVGSVGElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    if (rootParent.isConnected()) {
+    if (removalType.disconnectedFromDocument) {
         document().accessSVGExtensions().removeTimeContainer(this);
         pauseAnimations();
     }
-    SVGGraphicsElement::removedFrom(rootParent);
+    SVGGraphicsElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 void SVGSVGElement::pauseAnimations()

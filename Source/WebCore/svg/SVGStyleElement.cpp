@@ -121,10 +121,10 @@ Node::InsertedIntoResult SVGStyleElement::insertedInto(InsertionType insertionTy
     return result;
 }
 
-void SVGStyleElement::removedFrom(ContainerNode& rootParent)
+void SVGStyleElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGElement::removedFrom(rootParent);
-    if (rootParent.isConnected() && !isConnected())
+    SVGElement::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         m_styleSheetOwner.removedFromDocument(*this);
 }
 

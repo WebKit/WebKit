@@ -114,9 +114,9 @@ Node::InsertedIntoResult SVGUseElement::insertedInto(InsertionType insertionType
     return InsertedIntoResult::Done;
 }
 
-void SVGUseElement::removedFrom(ContainerNode& rootParent)
+void SVGUseElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGGraphicsElement::removedFrom(rootParent);
+    SVGGraphicsElement::removedFrom(removalType, parentOfRemovedTree);
     clearShadowTree();
     updateExternalDocument();
 }

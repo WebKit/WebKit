@@ -93,10 +93,10 @@ Node::InsertedIntoResult ShadowRoot::insertedInto(InsertionType insertionType, C
     return InsertedIntoResult::Done;
 }
 
-void ShadowRoot::removedFrom(ContainerNode& insertionPoint)
+void ShadowRoot::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    DocumentFragment::removedFrom(insertionPoint);
-    if (insertionPoint.isConnected() && !isConnected())
+    DocumentFragment::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         document().didRemoveInDocumentShadowRoot(*this);
 }
 

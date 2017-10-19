@@ -60,7 +60,7 @@ private:
 
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
 
     void checkStyleSheet();
     void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) override;

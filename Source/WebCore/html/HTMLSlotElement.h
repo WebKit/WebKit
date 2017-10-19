@@ -49,7 +49,7 @@ private:
     HTMLSlotElement(const QualifiedName&, Document&);
 
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(ContainerNode&) final;
+    void removedFrom(RemovalType, ContainerNode&) final;
     void attributeChanged(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason) final;
 
     bool m_inSignalSlotList { false };

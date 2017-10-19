@@ -286,9 +286,9 @@ Node::InsertedIntoResult SVGPathElement::insertedInto(InsertionType insertionTyp
     return InsertedIntoResult::Done;
 }
 
-void SVGPathElement::removedFrom(ContainerNode& rootParent)
+void SVGPathElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGGraphicsElement::removedFrom(rootParent);
+    SVGGraphicsElement::removedFrom(removalType, parentOfRemovedTree);
     invalidateMPathDependencies();
 }
 

@@ -1519,11 +1519,11 @@ void HTMLInputElement::didFinishInsertingNode()
         addToRadioButtonGroup();
 }
 
-void HTMLInputElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLInputElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    if (insertionPoint.isConnected() && !form())
+    if (removalType.disconnectedFromDocument && !form())
         removeFromRadioButtonGroup();
-    HTMLTextFormControlElement::removedFrom(insertionPoint);
+    HTMLTextFormControlElement::removedFrom(removalType, parentOfRemovedTree);
     ASSERT(!isConnected());
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();

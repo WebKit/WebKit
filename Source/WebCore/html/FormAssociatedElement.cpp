@@ -88,7 +88,7 @@ void FormAssociatedElement::insertedInto(Node::InsertionType insertionType, Cont
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::removedFrom(ContainerNode&)
+void FormAssociatedElement::removedFrom(Node::RemovalType, ContainerNode&)
 {
     m_formAttributeTargetObserver = nullptr;
 

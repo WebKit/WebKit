@@ -91,12 +91,14 @@ Node::InsertedIntoResult HTMLTrackElement::insertedInto(InsertionType insertionT
     return InsertedIntoResult::Done;
 }
 
-void HTMLTrackElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLTrackElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    HTMLElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 
-    if (is<HTMLMediaElement>(insertionPoint))
-        downcast<HTMLMediaElement>(insertionPoint).didRemoveTextTrack(*this);
+    // FIXME: This code is wrong. If HTMLTrackElement can be any descendent of HTMLMediaElement, then check ancestors of parentOfInsertedTree.
+    // If HTMLMediaElement only supports HTMLTrackElement which is an immediate child, then check parentNode() instead.
+    if (is<HTMLMediaElement>(parentOfRemovedTree))
+        downcast<HTMLMediaElement>(parentOfRemovedTree).didRemoveTextTrack(*this);
 }
 
 void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

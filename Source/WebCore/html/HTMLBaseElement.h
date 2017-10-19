@@ -40,7 +40,7 @@ private:
     bool isURLAttribute(const Attribute&) const final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(ContainerNode&) final;
+    void removedFrom(RemovalType, ContainerNode&) final;
 };
 
 } // namespace

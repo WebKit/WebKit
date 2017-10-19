@@ -433,21 +433,6 @@ public:
 
     virtual const RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO);
 
-    // -----------------------------------------------------------------------------
-    // Notification of document structure changes (see ContainerNode.h for more notification methods)
-    //
-    // At first, WebKit notifies the node that it has been inserted into the document. This is called during document parsing, and also
-    // when a node is added through the DOM methods insertBefore(), appendChild() or replaceChild(). The call happens _after_ the node has been added to the tree.
-    // This is similar to the DOMNodeInsertedIntoDocument DOM event, but does not require the overhead of event
-    // dispatching.
-    //
-    // WebKit notifies this callback regardless if the subtree of the node is a document tree or a floating subtree.
-    // Implementation can determine the type of subtree by seeing insertionPoint->isConnected().
-    //
-    // There is another callback named didFinishInsertingNode(), which is called after all descendants are notified.
-    // Only a few subclasses actually need this. To utilize this, the node should return InsertedIntoResult::NeedsPostInsertionCallback
-    // from insrtedInto().
-    //
     enum class InsertedIntoResult {
         Done,
         NeedsPostInsertionCallback,
@@ -463,15 +448,22 @@ public:
         bool connectedToDocument { false };
         bool treeScopeChanged { false };
     };
+    // Called *after* this node or its ancestor is inserted into a new parent (may or may not be a part of document) by scripts or parser.
+    // insertedInto **MUST NOT** invoke scripts. Return NeedsPostInsertionCallback and implement didFinishInsertingNode instead to run scripts.
     virtual InsertedIntoResult insertedInto(InsertionType, ContainerNode& parentOfInsertedTree);
     virtual void didFinishInsertingNode() { }
 
-    // Notifies the node that it is no longer part of the tree.
-    //
-    // This is a dual of insertedInto(), and is similar to the DOMNodeRemovedFromDocument DOM event, but does not require the overhead of event
-    // dispatching, and is called _after_ the node is removed from the tree.
-    //
-    virtual void removedFrom(ContainerNode& insertionPoint);
+    struct RemovalType {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
+        RemovalType(bool disconnectedFromDocument, bool treeScopeChanged)
+            : disconnectedFromDocument(disconnectedFromDocument)
+            , treeScopeChanged(treeScopeChanged)
+        { }
+#endif
+        bool disconnectedFromDocument { false };
+        bool treeScopeChanged { false };
+    };
+    virtual void removedFrom(RemovalType, ContainerNode& parentOfRemovedTree);
 
 #if ENABLE(TREE_DEBUGGING)
     virtual void formatForDebugger(char* buffer, unsigned length) const;

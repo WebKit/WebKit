@@ -104,10 +104,10 @@ Node::InsertedIntoResult HTMLStyleElement::insertedInto(InsertionType insertionT
     return result;
 }
 
-void HTMLStyleElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLStyleElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    HTMLElement::removedFrom(insertionPoint);
-    if (insertionPoint.isConnected() && !isConnected())
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         m_styleSheetOwner.removedFromDocument(*this);
 }
 

@@ -58,7 +58,7 @@ private:
 
     bool isValid() const override;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
     void buildPendingResource() override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;

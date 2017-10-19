@@ -288,9 +288,9 @@ void SVGSMILElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGSMILElement::removedFrom(ContainerNode& rootParent)
+void SVGSMILElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    if (rootParent.isConnected()) {
+    if (removalType.disconnectedFromDocument) {
         clearResourceReferences();
         disconnectConditions();
         setTargetElement(nullptr);
@@ -299,7 +299,7 @@ void SVGSMILElement::removedFrom(ContainerNode& rootParent)
         m_timeContainer = nullptr;
     }
 
-    SVGElement::removedFrom(rootParent);
+    SVGElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 bool SVGSMILElement::hasValidAttributeName()

@@ -161,10 +161,10 @@ void SVGFEImageElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGFEImageElement::removedFrom(ContainerNode& rootParent)
+void SVGFEImageElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGFilterPrimitiveStandardAttributes::removedFrom(rootParent);
-    if (rootParent.isConnected())
+    SVGFilterPrimitiveStandardAttributes::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         clearResourceReferences();
 }
 

@@ -184,10 +184,10 @@ void SVGTextPathElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGTextPathElement::removedFrom(ContainerNode& rootParent)
+void SVGTextPathElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGTextContentElement::removedFrom(rootParent);
-    if (rootParent.isConnected())
+    SVGTextContentElement::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         clearResourceReferences();
 }
 

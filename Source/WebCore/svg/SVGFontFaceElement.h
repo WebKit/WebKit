@@ -59,7 +59,7 @@ private:
 
     void childrenChanged(const ChildChange&) final;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(ContainerNode&) final;
+    void removedFrom(RemovalType, ContainerNode&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 

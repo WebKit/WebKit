@@ -930,17 +930,17 @@ void HTMLMediaElement::pauseAfterDetachedTask()
     }
 }
 
-void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLMediaElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
     INFO_LOG(LOGIDENTIFIER);
 
     m_inActiveDocument = false;
-    if (insertionPoint.isConnected()) {
+    if (removalType.disconnectedFromDocument) {
         // Pause asynchronously to let the operation that removed us finish, in case we get inserted back into a document.
         m_pauseAfterDetachedTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::pauseAfterDetachedTask, this));
     }
 
-    HTMLElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 void HTMLMediaElement::willAttachRenderers()

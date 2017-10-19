@@ -99,11 +99,11 @@ void SVGMPathElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGMPathElement::removedFrom(ContainerNode& rootParent)
+void SVGMPathElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGElement::removedFrom(rootParent);
-    notifyParentOfPathChange(&rootParent);
-    if (rootParent.isConnected())
+    SVGElement::removedFrom(removalType, parentOfRemovedTree);
+    notifyParentOfPathChange(&parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         clearResourceReferences();
 }
 

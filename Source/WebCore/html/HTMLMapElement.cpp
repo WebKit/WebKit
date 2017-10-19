@@ -122,11 +122,11 @@ Node::InsertedIntoResult HTMLMapElement::insertedInto(InsertionType insertionTyp
     return request;
 }
 
-void HTMLMapElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLMapElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    if (insertionPoint.isConnected())
+    if (removalType.disconnectedFromDocument)
         treeScope().removeImageMap(*this);
-    HTMLElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 }

@@ -138,7 +138,7 @@ protected:
     void didAttachRenderers() override;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     bool supportsFocus() const override;

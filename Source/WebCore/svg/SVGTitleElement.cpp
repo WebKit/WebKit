@@ -45,9 +45,9 @@ Node::InsertedIntoResult SVGTitleElement::insertedInto(InsertionType insertionTy
     return InsertedIntoResult::Done;
 }
 
-void SVGTitleElement::removedFrom(ContainerNode& insertionPoint)
+void SVGTitleElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGElement::removedFrom(insertionPoint);
+    SVGElement::removedFrom(removalType, parentOfRemovedTree);
     document().titleElementRemoved(*this);
 }
 

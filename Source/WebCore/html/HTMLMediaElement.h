@@ -590,7 +590,7 @@ private:
     bool childShouldCreateRenderer(const Node&) const override;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
     void didRecalcStyle(Style::Change) override;
 
     void willBecomeFullscreenElement() override;

@@ -59,10 +59,10 @@ Node::InsertedIntoResult HTMLBaseElement::insertedInto(InsertionType insertionTy
     return InsertedIntoResult::Done;
 }
 
-void HTMLBaseElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLBaseElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    HTMLElement::removedFrom(insertionPoint);
-    if (insertionPoint.isConnected())
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
         document().processBaseElement();
 }
 

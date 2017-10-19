@@ -61,17 +61,15 @@ HTMLSlotElement::InsertedIntoResult HTMLSlotElement::insertedInto(InsertionType 
     return InsertedIntoResult::Done;
 }
 
-void HTMLSlotElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLSlotElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    // ContainerNode::removeBetween always sets the removed child's tree scope to Document's but InShadowRoot flag is unset in Node::removedFrom.
-    // So if InShadowRoot flag is set but this element's tree scope is Document's, this element has just been removed from a shadow root.
-    if (insertionPoint.isInShadowTree() && isInShadowTree() && &treeScope() == &document()) {
-        auto* oldShadowRoot = insertionPoint.containingShadowRoot();
+    if (removalType.treeScopeChanged && parentOfRemovedTree.isInShadowTree()) {
+        auto* oldShadowRoot = parentOfRemovedTree.containingShadowRoot();
         ASSERT(oldShadowRoot);
         oldShadowRoot->removeSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
-    HTMLElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)

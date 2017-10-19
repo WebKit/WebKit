@@ -125,7 +125,7 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final;
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(ContainerNode&) final;
+    void removedFrom(RemovalType, ContainerNode&) final;
     void finishParsingChildren() final;
 
     void handleLocalEvents(Event&) final;

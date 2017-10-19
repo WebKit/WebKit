@@ -357,10 +357,10 @@ void HTMLLinkElement::didFinishInsertingNode()
     process();
 }
 
-void HTMLLinkElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLLinkElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    HTMLElement::removedFrom(insertionPoint);
-    if (!insertionPoint.isConnected() || isConnected())
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    if (!removalType.disconnectedFromDocument)
         return;
 
     m_linkLoader.cancelLoad();

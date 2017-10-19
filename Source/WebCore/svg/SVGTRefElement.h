@@ -45,7 +45,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) override;
 
     InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(ContainerNode&) override;
+    void removedFrom(RemovalType, ContainerNode&) override;
     void didFinishInsertingNode() override;
 
     void clearTarget() override;

@@ -57,9 +57,9 @@ Node::InsertedIntoResult HTMLTitleElement::insertedInto(InsertionType insertionT
     return InsertedIntoResult::Done;
 }
 
-void HTMLTitleElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLTitleElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    HTMLElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
     document().titleElementRemoved(*this);
 }
 

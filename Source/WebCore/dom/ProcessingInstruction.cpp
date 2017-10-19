@@ -288,10 +288,10 @@ void ProcessingInstruction::didFinishInsertingNode()
     checkStyleSheet();
 }
 
-void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)
+void ProcessingInstruction::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    CharacterData::removedFrom(insertionPoint);
-    if (!insertionPoint.isConnected())
+    CharacterData::removedFrom(removalType, parentOfRemovedTree);
+    if (!removalType.disconnectedFromDocument)
         return;
     
     document().styleScope().removeStyleSheetCandidateNode(*this);

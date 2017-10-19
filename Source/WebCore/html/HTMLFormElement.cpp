@@ -129,13 +129,13 @@ Node::InsertedIntoResult HTMLFormElement::insertedInto(InsertionType insertionTy
     return InsertedIntoResult::Done;
 }
 
-void HTMLFormElement::removedFrom(ContainerNode& insertionPoint)
+void HTMLFormElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
     Node& root = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope is outdated.
     Vector<FormAssociatedElement*> associatedElements(m_associatedElements);
     for (auto& associatedElement : associatedElements)
         associatedElement->formOwnerRemovedFromTree(root);
-    HTMLElement::removedFrom(insertionPoint);
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 void HTMLFormElement::handleLocalEvents(Event& event)

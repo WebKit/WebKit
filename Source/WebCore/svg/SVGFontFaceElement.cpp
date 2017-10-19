@@ -284,11 +284,11 @@ Node::InsertedIntoResult SVGFontFaceElement::insertedInto(InsertionType insertio
     return InsertedIntoResult::Done;
 }
 
-void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)
+void SVGFontFaceElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
 {
-    SVGElement::removedFrom(rootParent);
+    SVGElement::removedFrom(removalType, parentOfRemovedTree);
 
-    if (rootParent.isConnected()) {
+    if (removalType.disconnectedFromDocument) {
         m_fontElement = nullptr;
         document().accessSVGExtensions().unregisterSVGFontFaceElement(this);
         m_fontFaceRule->mutableProperties().clear();
