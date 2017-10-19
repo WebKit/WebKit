@@ -1,5 +1,16 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223424. rdar://problem/34745623
+
+    2017-10-16  Alex Christensen  <achristensen@webkit.org>
+
+            Fix iOS build after r223422
+            https://bugs.webkit.org/show_bug.cgi?id=178251
+
+            * Modules/webdatabase/DatabaseManager.h:
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223423. rdar://problem/34745623
 
     2017-10-16  Maureen Daum  <mdaum@apple.com>
