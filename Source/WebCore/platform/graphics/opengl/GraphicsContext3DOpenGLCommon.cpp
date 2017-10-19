@@ -261,7 +261,7 @@ void GraphicsContext3D::prepareTexture()
 #endif
 
     ::glActiveTexture(GL_TEXTURE0);
-    ::glBindTexture(GL_TEXTURE_2D, m_state.boundTexture0);
+    ::glBindTexture(GL_TEXTURE_2D, m_state.boundTarget(GL_TEXTURE0) == GL_TEXTURE_2D ? m_state.boundTexture(GL_TEXTURE0) : 0);
     ::glActiveTexture(m_state.activeTexture);
     if (m_state.boundFBO != m_fbo)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
@@ -505,8 +505,7 @@ void GraphicsContext3D::bindRenderbuffer(GC3Denum target, Platform3DObject rende
 void GraphicsContext3D::bindTexture(GC3Denum target, Platform3DObject texture)
 {
     makeContextCurrent();
-    if (m_state.activeTexture == GL_TEXTURE0 && target == GL_TEXTURE_2D)
-        m_state.boundTexture0 = texture;
+    m_state.setBoundTexture(m_state.activeTexture, texture, target);
     ::glBindTexture(target, texture);
 }
 
@@ -582,12 +581,14 @@ void GraphicsContext3D::texStorage2D(GC3Denum target, GC3Dsizei levels, GC3Denum
 {
     makeContextCurrent();
     ::glTexStorage2D(target, levels, internalformat, width, height);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContext3D::texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth)
 {
     makeContextCurrent();
     ::glTexStorage3D(target, levels, internalformat, width, height, depth);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 #endif
 
@@ -830,6 +831,7 @@ void GraphicsContext3D::framebufferTexture2D(GC3Denum target, GC3Denum attachmen
 {
     makeContextCurrent();
     ::glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContext3D::frontFace(GC3Denum mode)
@@ -1860,18 +1862,21 @@ void GraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xo
 
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.
     ::glTexSubImage2D(target, level, xoff, yoff, width, height, format, type, pixels);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContext3D::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data)
 {
     makeContextCurrent();
     ::glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContext3D::compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data)
 {
     makeContextCurrent();
     ::glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 Platform3DObject GraphicsContext3D::createBuffer()
@@ -1915,6 +1920,7 @@ Platform3DObject GraphicsContext3D::createTexture()
     makeContextCurrent();
     GLuint o = 0;
     glGenTextures(1, &o);
+    m_state.textureSeedCount.add(o);
     return o;
 }
 
@@ -1957,9 +1963,11 @@ void GraphicsContext3D::deleteShader(Platform3DObject shader)
 void GraphicsContext3D::deleteTexture(Platform3DObject texture)
 {
     makeContextCurrent();
-    if (m_state.boundTexture0 == texture)
-        m_state.boundTexture0 = 0;
+    m_state.boundTextureMap.removeIf([texture] (auto& keyValue) {
+        return keyValue.value.first == texture;
+    });
     glDeleteTextures(1, &texture);
+    m_state.textureSeedCount.removeAll(texture);
 }
 
 void GraphicsContext3D::synthesizeGLError(GC3Denum error)
@@ -2014,6 +2022,7 @@ void GraphicsContext3D::texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denu
 {
     makeContextCurrent();
     ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+    m_state.textureSeedCount.add(m_state.currentBoundTexture());
 }
 
 void GraphicsContext3D::drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount)

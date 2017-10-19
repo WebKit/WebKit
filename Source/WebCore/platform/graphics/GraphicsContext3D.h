@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "PlatformLayer.h"
 #include <memory>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
@@ -1279,6 +1280,8 @@ public:
 
     void setFailNextGPUStatusCheck() { m_failNextStatusCheck = true; }
 
+    unsigned textureSeed(GC3Duint texture) { return m_state.textureSeedCount.count(texture); }
+
 private:
     GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen);
 
@@ -1424,7 +1427,38 @@ private:
     struct GraphicsContext3DState {
         GC3Duint boundFBO { 0 };
         GC3Denum activeTexture { GraphicsContext3D::TEXTURE0 };
-        GC3Duint boundTexture0 { 0 };
+
+        using BoundTextureMap = HashMap<GC3Denum,
+            std::pair<GC3Duint, GC3Denum>,
+            WTF::IntHash<GC3Denum>, 
+            WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>,
+            WTF::PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>, WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>>
+        >;
+        BoundTextureMap boundTextureMap;
+        GC3Duint currentBoundTexture() { return boundTexture(activeTexture); }
+        GC3Duint boundTexture(GC3Denum textureUnit)
+        {
+            auto iterator = boundTextureMap.find(textureUnit);
+            if (iterator != boundTextureMap.end())
+                return iterator->value.first;
+            return 0;
+        }
+
+        GC3Denum boundTarget(GC3Denum textureUnit)
+        {
+            auto iterator = boundTextureMap.find(textureUnit);
+            if (iterator != boundTextureMap.end())
+                return iterator->value.second;
+            return 0;
+        }
+
+        void setBoundTexture(GC3Denum textureUnit, GC3Duint texture, GC3Denum target)
+        {
+            boundTextureMap.set(textureUnit, std::make_pair(texture, target));
+        }
+
+        using TextureSeedCount = HashCountedSet<GC3Duint, WTF::IntHash<GC3Duint>, WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>>;
+        TextureSeedCount textureSeedCount;
     };
 
     GraphicsContext3DState m_state;

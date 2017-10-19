@@ -1,5 +1,48 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223315. rdar://problem/34985202
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Performance: Skip texture upload if source image and destination texture haven't changed
+            https://bugs.webkit.org/show_bug.cgi?id=178254
+            <rdar://problem/34968181>
+
+            Reviewed by Dean Jackson.
+
+            Update GraphicsContext3D to track which texture is bound to which texture unit, and also to
+            track when those bound textures have their backing stores modified. This new "seed" value
+            will be used to determine whether a given texture which has previously had image data
+            uploaded to it needs to be re-updated.
+
+            In VideoTextureCopierCV, track whether the texture's seed changed, whether the IOSurface is
+            the same,  whether the IOSurface's seed has changed, and whether the "flipY" parameter
+            changed since the last time the copier was asked to upload to the texture.
+
+            * platform/graphics/GraphicsContext3D.h:
+            (WebCore::GraphicsContext3D::textureSeed):
+            (WebCore::GraphicsContext3D::GraphicsContext3DState::currentBoundTexture):
+            (WebCore::GraphicsContext3D::GraphicsContext3DState::boundTexture):
+            (WebCore::GraphicsContext3D::GraphicsContext3DState::setBoundTexture):
+            * platform/graphics/cv/VideoTextureCopierCV.cpp:
+            (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+            * platform/graphics/cv/VideoTextureCopierCV.h:
+            (WebCore::VideoTextureCopierCV::lastTextureSeed):
+            * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+            (WebCore::GraphicsContext3D::prepareTexture):
+            (WebCore::GraphicsContext3D::bindTexture):
+            (WebCore::GraphicsContext3D::texStorage2D):
+            (WebCore::GraphicsContext3D::texStorage3D):
+            (WebCore::GraphicsContext3D::framebufferTexture2D):
+            (WebCore::GraphicsContext3D::texSubImage2D):
+            (WebCore::GraphicsContext3D::compressedTexImage2D):
+            (WebCore::GraphicsContext3D::compressedTexSubImage2D):
+            (WebCore::GraphicsContext3D::createTexture):
+            (WebCore::GraphicsContext3D::deleteTexture):
+            (WebCore::GraphicsContext3D::texImage2DDirect):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223298. rdar://problem/34958928
 
     2017-10-13  Jer Noble  <jer.noble@apple.com>
