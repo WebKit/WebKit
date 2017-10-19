@@ -1,3 +1,12 @@
+2017-10-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Remove superfluous file External/.eslintrc
+        https://bugs.webkit.org/show_bug.cgi?id=178474
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/External/.eslintrc: Removed.
+
 2017-10-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Inspector UI does not use system font despite -webkit-system-font being supported
