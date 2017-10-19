@@ -1,3 +1,51 @@
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223614. rdar://problem/34920288
+
+    2017-10-18  Mark Lam  <mark.lam@apple.com>
+
+            The compiler should always register a structure when it adds its transitionWatchPointSet.
+            https://bugs.webkit.org/show_bug.cgi?id=178420
+            <rdar://problem/34814024>
+
+            Reviewed by Saam Barati and Filip Pizlo.
+
+            Instead of invoking addLazily() to add a structure's transitionWatchpointSet, we
+            now invoke Graph::registerAndWatchStructureTransition() on the structure.
+            registerAndWatchStructureTransition() both registers the structure and add its
+            transitionWatchpointSet to the plan desired watchpoints.
+
+            Graph::registerAndWatchStructureTransition() is based on Graph::registerStructure()
+            except registerAndWatchStructureTransition() adds the structure's
+            transitionWatchpointSet unconditionally.
+
+            * dfg/DFGArgumentsEliminationPhase.cpp:
+            * dfg/DFGArrayMode.cpp:
+            (JSC::DFG::ArrayMode::refine const):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::registerAndWatchStructureTransition):
+            * dfg/DFGGraph.h:
+
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+            - The second set of addLazily()s is redundant.  This set is executed only when
+              prototypeChainIsSane is true, and prototypeChainIsSane can only be true if and
+              only if we've executed the if statement above it.  That preceding if statement
+              already registerAndWatchStructureTransition() the same 2 structures.  Hence,
+              this second set can be deleted.
+
+            * dfg/DFGWatchpointCollectionPhase.cpp:
+            (JSC::DFG::WatchpointCollectionPhase::addLazily):
+            - Deleted an unused function.
+
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+
 2017-10-16  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222417. rdar://problem/35010839
