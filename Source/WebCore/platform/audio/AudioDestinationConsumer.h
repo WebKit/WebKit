@@ -39,7 +39,7 @@ class AudioBus;
 
 class AudioDestinationConsumer : public RefCounted<AudioDestinationConsumer> {
 public:
-    virtual ~AudioDestinationConsumer() { }
+    virtual ~AudioDestinationConsumer() = default;
 
     virtual void setFormat(size_t numberOfChannels, float sampleRate) = 0;
     virtual void consumeAudio(AudioBus*, size_t numberOfFrames) = 0;

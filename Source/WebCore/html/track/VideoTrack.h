@@ -38,7 +38,7 @@ class VideoTrack;
 
 class VideoTrackClient {
 public:
-    virtual ~VideoTrackClient() { }
+    virtual ~VideoTrackClient() = default;
     virtual void videoTrackSelectedChanged(VideoTrack&) = 0;
 };
 

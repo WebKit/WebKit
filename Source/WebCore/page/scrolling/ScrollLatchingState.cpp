@@ -30,13 +30,9 @@
 
 namespace WebCore {
 
-ScrollLatchingState::ScrollLatchingState()
-{
-}
+ScrollLatchingState::ScrollLatchingState() = default;
     
-ScrollLatchingState::~ScrollLatchingState()
-{
-}
+ScrollLatchingState::~ScrollLatchingState() = default;
 
 void ScrollLatchingState::clear()
 {

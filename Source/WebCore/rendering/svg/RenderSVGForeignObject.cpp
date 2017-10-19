@@ -41,9 +41,7 @@ RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element,
 {
 }
 
-RenderSVGForeignObject::~RenderSVGForeignObject()
-{
-}
+RenderSVGForeignObject::~RenderSVGForeignObject() = default;
 
 SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
 {

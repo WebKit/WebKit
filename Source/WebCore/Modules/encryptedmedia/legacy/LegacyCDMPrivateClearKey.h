@@ -40,7 +40,7 @@ public:
     {
     }
 
-    virtual ~LegacyCDMPrivateClearKey() { }
+    virtual ~LegacyCDMPrivateClearKey() = default;
 
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);

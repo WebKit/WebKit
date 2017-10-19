@@ -44,9 +44,7 @@ PerformanceEntry::PerformanceEntry(Type type, const String& name, const String& 
 {
 }
 
-PerformanceEntry::~PerformanceEntry()
-{
-}
+PerformanceEntry::~PerformanceEntry() = default;
 
 std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(const String& entryType)
 {

@@ -57,9 +57,7 @@ AccessibilityTable::AccessibilityTable(RenderObject* renderer)
 {
 }
 
-AccessibilityTable::~AccessibilityTable()
-{
-}
+AccessibilityTable::~AccessibilityTable() = default;
 
 void AccessibilityTable::init()
 {

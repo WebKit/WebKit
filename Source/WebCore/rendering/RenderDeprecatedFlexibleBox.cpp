@@ -124,9 +124,7 @@ RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, Rende
     m_stretchingChildren = false;
 }
 
-RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox()
-{
-}
+RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox() = default;
 
 static LayoutUnit marginWidthForChild(RenderBox* child)
 {

@@ -41,7 +41,7 @@ class AudioResampler {
 public:
     AudioResampler();
     AudioResampler(unsigned numberOfChannels);
-    ~AudioResampler() { }
+    ~AudioResampler() = default;
     
     // Given an AudioSourceProvider, process() resamples the source stream into destinationBus.
     void process(AudioSourceProvider*, AudioBus* destinationBus, size_t framesToProcess);

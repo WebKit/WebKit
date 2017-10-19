@@ -41,8 +41,6 @@ PasswordCredential::PasswordCredential(const HTMLFormElement&)
 {
 }
 
-PasswordCredential::~PasswordCredential()
-{
-}
+PasswordCredential::~PasswordCredential() = default;
 
 } // namespace WebCore

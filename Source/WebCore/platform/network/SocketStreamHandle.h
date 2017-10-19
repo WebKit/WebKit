@@ -49,7 +49,7 @@ typedef struct {
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle> {
 public:
     enum SocketStreamState { Connecting, Open, Closing, Closed };
-    virtual ~SocketStreamHandle() { }
+    virtual ~SocketStreamHandle() = default;
     SocketStreamState state() const;
 
     void sendData(const char* data, size_t length, Function<void(bool)>);

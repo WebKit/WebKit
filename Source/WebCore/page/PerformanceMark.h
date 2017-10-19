@@ -40,7 +40,7 @@ private:
     {
     }
 
-    ~PerformanceMark() { }
+    ~PerformanceMark() = default;
 };
 
 } // namespace WebCore

@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct SameSizeAsInlineBox {
-    virtual ~SameSizeAsInlineBox() { }
+    virtual ~SameSizeAsInlineBox() = default;
     void* a[4];
     FloatPoint b;
     float c[2];

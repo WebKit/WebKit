@@ -59,9 +59,7 @@ RenderMathMLBlock::RenderMathMLBlock(Document& document, RenderStyle&& style)
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderMathMLBlock::~RenderMathMLBlock()
-{
-}
+RenderMathMLBlock::~RenderMathMLBlock() = default;
 
 bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {

@@ -46,7 +46,7 @@ class RenderTheme {
 protected:
     RenderTheme();
 
-    virtual ~RenderTheme() { }
+    virtual ~RenderTheme() = default;
 
 public:
     // This function is to be implemented in platform-specific theme implementations to hand back the

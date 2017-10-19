@@ -42,7 +42,7 @@ class InspectorMemoryAgent final : public InspectorAgentBase, public Inspector::
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorMemoryAgent(PageAgentContext&);
-    virtual ~InspectorMemoryAgent() { }
+    virtual ~InspectorMemoryAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;

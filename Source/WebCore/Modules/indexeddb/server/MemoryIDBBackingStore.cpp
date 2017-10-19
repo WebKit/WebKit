@@ -56,9 +56,7 @@ MemoryIDBBackingStore::MemoryIDBBackingStore(const IDBDatabaseIdentifier& identi
 {
 }
 
-MemoryIDBBackingStore::~MemoryIDBBackingStore()
-{
-}
+MemoryIDBBackingStore::~MemoryIDBBackingStore() = default;
 
 IDBError MemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
 {

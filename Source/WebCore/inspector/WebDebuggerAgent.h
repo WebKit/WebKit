@@ -38,7 +38,7 @@ class WebDebuggerAgent : public Inspector::InspectorDebuggerAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebDebuggerAgent(WebAgentContext&);
-    virtual ~WebDebuggerAgent() { }
+    virtual ~WebDebuggerAgent() = default;
 
 protected:
     void enable() override;

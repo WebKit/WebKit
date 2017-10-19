@@ -43,9 +43,7 @@ EventContext::EventContext(Node* node, EventTarget* currentTarget, EventTarget* 
     ASSERT(!isUnreachableNode(m_target.get()));
 }
 
-EventContext::~EventContext()
-{
-}
+EventContext::~EventContext() = default;
 
 void EventContext::handleLocalEvents(Event& event) const
 {
@@ -69,9 +67,7 @@ MouseOrFocusEventContext::MouseOrFocusEventContext(Node* node, EventTarget* curr
 {
 }
 
-MouseOrFocusEventContext::~MouseOrFocusEventContext()
-{
-}
+MouseOrFocusEventContext::~MouseOrFocusEventContext() = default;
 
 void MouseOrFocusEventContext::handleLocalEvents(Event& event) const
 {
@@ -95,9 +91,7 @@ TouchEventContext::TouchEventContext(Node* node, EventTarget* currentTarget, Eve
 {
 }
 
-TouchEventContext::~TouchEventContext()
-{
-}
+TouchEventContext::~TouchEventContext() = default;
 
 void TouchEventContext::handleLocalEvents(Event& event) const
 {

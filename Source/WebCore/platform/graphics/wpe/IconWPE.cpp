@@ -28,9 +28,7 @@
 
 namespace WebCore {
 
-Icon::~Icon()
-{
-}
+Icon::~Icon() = default;
 
 void Icon::paint(GraphicsContext&, const FloatRect&)
 {

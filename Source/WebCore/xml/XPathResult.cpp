@@ -58,9 +58,7 @@ XPathResult::XPathResult(Document& document, const Value& value)
     ASSERT_NOT_REACHED();
 }
 
-XPathResult::~XPathResult()
-{
-}
+XPathResult::~XPathResult() = default;
 
 ExceptionOr<void> XPathResult::convertTo(unsigned short type)
 {

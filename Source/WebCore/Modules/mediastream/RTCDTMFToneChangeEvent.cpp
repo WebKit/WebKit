@@ -54,9 +54,7 @@ RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const AtomicString& type, const I
 {
 }
 
-RTCDTMFToneChangeEvent::~RTCDTMFToneChangeEvent()
-{
-}
+RTCDTMFToneChangeEvent::~RTCDTMFToneChangeEvent() = default;
 
 const String& RTCDTMFToneChangeEvent::tone() const
 {

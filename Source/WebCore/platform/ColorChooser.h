@@ -38,7 +38,7 @@ class Color;
 
 class ColorChooser {
 public:
-    virtual ~ColorChooser() { }
+    virtual ~ColorChooser() = default;
 
     virtual void reattachColorChooser(const Color&) { }
     virtual void setSelectedColor(const Color&) { }

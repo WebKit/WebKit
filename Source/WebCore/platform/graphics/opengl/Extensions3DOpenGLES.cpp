@@ -64,9 +64,7 @@ Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context, bool useI
 {
 }
 
-Extensions3DOpenGLES::~Extensions3DOpenGLES()
-{
-}
+Extensions3DOpenGLES::~Extensions3DOpenGLES() = default;
 
 void Extensions3DOpenGLES::framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned int texture, int level, unsigned long samples)
 {

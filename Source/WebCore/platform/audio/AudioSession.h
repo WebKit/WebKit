@@ -70,7 +70,7 @@ public:
 
     class MutedStateObserver {
     public:
-        virtual ~MutedStateObserver() { }
+        virtual ~MutedStateObserver() = default;
 
         virtual void hardwareMutedStateDidChange(AudioSession*) = 0;
     };

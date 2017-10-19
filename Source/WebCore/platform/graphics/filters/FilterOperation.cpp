@@ -50,9 +50,7 @@ ReferenceFilterOperation::ReferenceFilterOperation(const String& url, const Stri
 {
 }
 
-ReferenceFilterOperation::~ReferenceFilterOperation()
-{
-}
+ReferenceFilterOperation::~ReferenceFilterOperation() = default;
     
 bool ReferenceFilterOperation::operator==(const FilterOperation& operation) const
 {

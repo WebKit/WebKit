@@ -37,7 +37,7 @@ class KeyedDecoder {
 public:
     WEBCORE_EXPORT static std::unique_ptr<KeyedDecoder> decoder(const uint8_t* data, size_t);
 
-    virtual ~KeyedDecoder() { }
+    virtual ~KeyedDecoder() = default;
 
     virtual bool decodeBytes(const String& key, const uint8_t*&, size_t&) = 0;
     virtual bool decodeBool(const String& key, bool&) = 0;
@@ -144,7 +144,7 @@ class KeyedEncoder {
 public:
     WEBCORE_EXPORT static std::unique_ptr<KeyedEncoder> encoder();
 
-    virtual ~KeyedEncoder() { }
+    virtual ~KeyedEncoder() = default;
 
     virtual void encodeBytes(const String& key, const uint8_t*, size_t) = 0;
     virtual void encodeBool(const String& key, bool) = 0;

@@ -36,8 +36,8 @@ class LegacyCDMSessionClient;
 
 class CDMPrivateInterface {
 public:
-    CDMPrivateInterface() { }
-    virtual ~CDMPrivateInterface() { }
+    CDMPrivateInterface() = default;
+    virtual ~CDMPrivateInterface() = default;
 
     virtual bool supportsMIMEType(const String&) = 0;
 

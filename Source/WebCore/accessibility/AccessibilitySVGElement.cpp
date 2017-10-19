@@ -48,9 +48,7 @@ AccessibilitySVGElement::AccessibilitySVGElement(RenderObject* renderer)
 {
 }
 
-AccessibilitySVGElement::~AccessibilitySVGElement()
-{
-}
+AccessibilitySVGElement::~AccessibilitySVGElement() = default;
 
 Ref<AccessibilitySVGElement> AccessibilitySVGElement::create(RenderObject* renderer)
 {

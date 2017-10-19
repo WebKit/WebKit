@@ -49,7 +49,7 @@ typedef String ErrorString;
 
 class InspectorCSSId {
 public:
-    InspectorCSSId() { }
+    InspectorCSSId() = default;
 
     explicit InspectorCSSId(const Inspector::InspectorObject& value)
     {
@@ -151,8 +151,8 @@ class InspectorStyleSheet : public RefCounted<InspectorStyleSheet> {
 public:
     class Listener {
     public:
-        Listener() { }
-        virtual ~Listener() { }
+        Listener() = default;
+        virtual ~Listener() = default;
         virtual void styleSheetChanged(InspectorStyleSheet*) = 0;
     };
 

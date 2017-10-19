@@ -150,9 +150,7 @@ PlatformMessagePortChannel::PlatformMessagePortChannel(MessagePortQueue* incomin
 {
 }
 
-PlatformMessagePortChannel::~PlatformMessagePortChannel()
-{
-}
+PlatformMessagePortChannel::~PlatformMessagePortChannel() = default;
 
 void PlatformMessagePortChannel::setRemotePort(MessagePort* port)
 {

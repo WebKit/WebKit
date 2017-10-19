@@ -95,7 +95,7 @@ protected:
         , m_type(o.m_type)
         { }
 
-    ~StyleRuleBase() { }
+    ~StyleRuleBase() = default;
 
 private:
     WEBCORE_EXPORT void destroy();

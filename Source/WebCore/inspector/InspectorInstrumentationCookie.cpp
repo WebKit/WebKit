@@ -62,8 +62,6 @@ InspectorInstrumentationCookie& InspectorInstrumentationCookie::operator=(const 
     return *this;
 }
 
-InspectorInstrumentationCookie::~InspectorInstrumentationCookie()
-{
-}
+InspectorInstrumentationCookie::~InspectorInstrumentationCookie() = default;
 
 } // namespace WebCore

@@ -48,13 +48,9 @@ static const AtomicString& slotNameFromSlotAttribute(const Node& child)
     return slotNameFromAttributeValue(downcast<Element>(child).attributeWithoutSynchronization(slotAttr));
 }
 
-SlotAssignment::SlotAssignment()
-{
-}
+SlotAssignment::SlotAssignment() = default;
 
-SlotAssignment::~SlotAssignment()
-{
-}
+SlotAssignment::~SlotAssignment() = default;
 
 HTMLSlotElement* SlotAssignment::findAssignedSlot(const Node& node, ShadowRoot& shadowRoot)
 {

@@ -124,7 +124,7 @@ protected:
 
 private:
     RenderThemeIOS();
-    virtual ~RenderThemeIOS() { }
+    virtual ~RenderThemeIOS() = default;
 
     void purgeCaches() override;
 

@@ -40,7 +40,7 @@ public:
     void stopListeningForInterruptions() override;
 
 protected:
-    virtual ~MediaSessionInterruptionProviderMac() { }
+    virtual ~MediaSessionInterruptionProviderMac() = default;
 };
 
 } // namespace WebCore

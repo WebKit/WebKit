@@ -53,9 +53,7 @@ MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, const Ini
 {
 }
 
-MediaStreamTrackEvent::~MediaStreamTrackEvent()
-{
-}
+MediaStreamTrackEvent::~MediaStreamTrackEvent() = default;
 
 MediaStreamTrack* MediaStreamTrackEvent::track() const
 {

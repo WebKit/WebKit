@@ -98,9 +98,7 @@ CSSFontFace::CSSFontFace(CSSFontSelector* fontSelector, StyleRuleFontFace* cssCo
 {
 }
 
-CSSFontFace::~CSSFontFace()
-{
-}
+CSSFontFace::~CSSFontFace() = default;
 
 bool CSSFontFace::setFamilies(CSSValue& family)
 {

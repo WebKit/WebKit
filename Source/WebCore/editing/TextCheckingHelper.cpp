@@ -217,9 +217,7 @@ TextCheckingHelper::TextCheckingHelper(EditorClient& client, Range& range)
 {
 }
 
-TextCheckingHelper::~TextCheckingHelper()
-{
-}
+TextCheckingHelper::~TextCheckingHelper() = default;
 
 String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange)
 {

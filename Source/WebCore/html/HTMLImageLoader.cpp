@@ -45,9 +45,7 @@ HTMLImageLoader::HTMLImageLoader(Element& element)
 {
 }
 
-HTMLImageLoader::~HTMLImageLoader()
-{
-}
+HTMLImageLoader::~HTMLImageLoader() = default;
 
 void HTMLImageLoader::dispatchLoadEvent()
 {

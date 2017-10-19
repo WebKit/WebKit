@@ -45,9 +45,7 @@ WebGPUCommandQueue::WebGPUCommandQueue(WebGPURenderingContext* context)
     m_commandQueue = context->device()->createCommandQueue();
 }
 
-WebGPUCommandQueue::~WebGPUCommandQueue()
-{
-}
+WebGPUCommandQueue::~WebGPUCommandQueue() = default;
 
 String WebGPUCommandQueue::label() const
 {

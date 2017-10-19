@@ -63,9 +63,7 @@ Biquad::Biquad()
     reset(); // clear filter memory
 }
 
-Biquad::~Biquad()
-{
-}
+Biquad::~Biquad() = default;
 
 void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
 {

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class PlatformGamepad {
 public:
-    virtual ~PlatformGamepad() { }
+    virtual ~PlatformGamepad() = default;
 
     const String& id() const { return m_id; }
     unsigned index() const { return m_index; }

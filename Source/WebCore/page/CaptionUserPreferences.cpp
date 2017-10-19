@@ -54,9 +54,7 @@ CaptionUserPreferences::CaptionUserPreferences(PageGroup& group)
 {
 }
 
-CaptionUserPreferences::~CaptionUserPreferences()
-{
-}
+CaptionUserPreferences::~CaptionUserPreferences() = default;
 
 void CaptionUserPreferences::timerFired()
 {

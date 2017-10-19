@@ -81,7 +81,7 @@ public:
 
 protected:
     Theme() = default;
-    virtual ~Theme() { }
+    virtual ~Theme() = default;
 
 private:
     Theme(const Theme&) = delete;

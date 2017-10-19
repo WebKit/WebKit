@@ -260,13 +260,9 @@ namespace {
 
 } // anonymous namespace
 
-WebGLFramebuffer::WebGLAttachment::WebGLAttachment()
-{
-}
+WebGLFramebuffer::WebGLAttachment::WebGLAttachment() = default;
 
-WebGLFramebuffer::WebGLAttachment::~WebGLAttachment()
-{
-}
+WebGLFramebuffer::WebGLAttachment::~WebGLAttachment() = default;
 
 Ref<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& ctx)
 {

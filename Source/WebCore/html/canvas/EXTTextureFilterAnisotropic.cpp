@@ -36,9 +36,7 @@ EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContextBa
 {
 }
 
-EXTTextureFilterAnisotropic::~EXTTextureFilterAnisotropic()
-{
-}
+EXTTextureFilterAnisotropic::~EXTTextureFilterAnisotropic() = default;
 
 WebGLExtension::ExtensionName EXTTextureFilterAnisotropic::getName() const
 {

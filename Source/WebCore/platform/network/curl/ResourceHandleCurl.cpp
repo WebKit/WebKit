@@ -47,9 +47,7 @@ ResourceHandleInternal::~ResourceHandleInternal()
         m_delegate->releaseHandle();
 }
 
-ResourceHandle::~ResourceHandle()
-{
-}
+ResourceHandle::~ResourceHandle() = default;
 
 bool ResourceHandle::start()
 {

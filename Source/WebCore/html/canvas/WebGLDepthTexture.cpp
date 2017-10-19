@@ -38,9 +38,7 @@ WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase& context)
 {
 }
 
-WebGLDepthTexture::~WebGLDepthTexture()
-{
-}
+WebGLDepthTexture::~WebGLDepthTexture() = default;
 
 WebGLExtension::ExtensionName WebGLDepthTexture::getName() const
 {

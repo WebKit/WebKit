@@ -67,9 +67,7 @@ RenderReplaced::RenderReplaced(Document& document, RenderStyle&& style, const La
     setReplaced(true);
 }
 
-RenderReplaced::~RenderReplaced()
-{
-}
+RenderReplaced::~RenderReplaced() = default;
 
 void RenderReplaced::willBeDestroyed()
 {

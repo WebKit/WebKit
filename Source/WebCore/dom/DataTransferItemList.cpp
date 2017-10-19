@@ -39,9 +39,7 @@ DataTransferItemList::DataTransferItemList(DataTransfer& dataTransfer)
 {
 }
 
-DataTransferItemList::~DataTransferItemList()
-{
-}
+DataTransferItemList::~DataTransferItemList() = default;
 
 unsigned DataTransferItemList::length() const
 {

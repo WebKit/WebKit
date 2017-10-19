@@ -336,9 +336,7 @@ TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncod
 {
 }
 
-TextResourceDecoder::~TextResourceDecoder()
-{
-}
+TextResourceDecoder::~TextResourceDecoder() = default;
 
 void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSource source)
 {

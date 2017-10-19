@@ -57,9 +57,7 @@ ExceptionOr<Ref<WebKitCSSMatrix>> WebKitCSSMatrix::create(const String& string)
     return WTFMove(result);
 }
 
-WebKitCSSMatrix::~WebKitCSSMatrix()
-{
-}
+WebKitCSSMatrix::~WebKitCSSMatrix() = default;
 
 ExceptionOr<void> WebKitCSSMatrix::setMatrixValue(const String& string)
 {

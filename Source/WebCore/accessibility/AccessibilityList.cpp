@@ -45,9 +45,7 @@ AccessibilityList::AccessibilityList(RenderObject* renderer)
 {
 }
 
-AccessibilityList::~AccessibilityList()
-{
-}
+AccessibilityList::~AccessibilityList() = default;
 
 Ref<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
 {

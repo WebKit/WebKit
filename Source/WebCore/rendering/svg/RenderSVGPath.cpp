@@ -38,9 +38,7 @@ RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
 {
 }
 
-RenderSVGPath::~RenderSVGPath()
-{
-}
+RenderSVGPath::~RenderSVGPath() = default;
 
 void RenderSVGPath::updateShapeFromElement()
 {

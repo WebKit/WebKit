@@ -31,7 +31,7 @@ class FontSelector;
 
 class FontSelectorClient {
 public:
-    virtual ~FontSelectorClient() { }
+    virtual ~FontSelectorClient() = default;
 
     virtual void fontsNeedUpdate(FontSelector&) = 0;
 };

@@ -42,9 +42,7 @@ Ref<FileChooser> FileChooser::create(FileChooserClient* client, const FileChoose
     return adoptRef(*new FileChooser(client, settings));
 }
 
-FileChooser::~FileChooser()
-{
-}
+FileChooser::~FileChooser() = default;
 
 void FileChooser::invalidate()
 {

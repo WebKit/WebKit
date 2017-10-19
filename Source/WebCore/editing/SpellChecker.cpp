@@ -48,9 +48,7 @@ SpellCheckRequest::SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& pa
 {
 }
 
-SpellCheckRequest::~SpellCheckRequest()
-{
-}
+SpellCheckRequest::~SpellCheckRequest() = default;
 
 RefPtr<SpellCheckRequest> SpellCheckRequest::create(TextCheckingTypeMask textCheckingOptions, TextCheckingProcessType processType, Ref<Range>&& checkingRange, Ref<Range>&& paragraphRange)
 {

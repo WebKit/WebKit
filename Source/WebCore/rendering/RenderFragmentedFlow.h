@@ -54,7 +54,7 @@ typedef HashMap<const RootInlineBox*, RenderFragmentContainer*> ContainingFragme
 
 class RenderFragmentedFlow: public RenderBlockFlow {
 public:
-    virtual ~RenderFragmentedFlow() { }
+    virtual ~RenderFragmentedFlow() = default;
 
     virtual void removeFlowChildInfo(RenderElement&);
 #ifndef NDEBUG

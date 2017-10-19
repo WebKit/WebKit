@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
 
     explicit PeerConnectionBackend(RTCPeerConnection&);
-    virtual ~PeerConnectionBackend() { }
+    virtual ~PeerConnectionBackend() = default;
 
     void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);

@@ -198,9 +198,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
 {
 }
 
-ImageBuffer::~ImageBuffer()
-{
-}
+ImageBuffer::~ImageBuffer() = default;
 
 FloatSize ImageBuffer::sizeForDestinationSize(FloatSize destinationSize) const
 {

@@ -46,9 +46,7 @@ WebGPULibrary::WebGPULibrary(WebGPURenderingContext* context, const String& sour
     m_library = context->device()->createLibrary(sourceCode);
 }
 
-WebGPULibrary::~WebGPULibrary()
-{
-}
+WebGPULibrary::~WebGPULibrary() = default;
 
 String WebGPULibrary::label() const
 {

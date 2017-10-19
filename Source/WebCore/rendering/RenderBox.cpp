@@ -82,7 +82,7 @@
 namespace WebCore {
 
 struct SameSizeAsRenderBox : public RenderBoxModelObject {
-    virtual ~SameSizeAsRenderBox() { }
+    virtual ~SameSizeAsRenderBox() = default;
     LayoutRect frameRect;
     LayoutBoxExtent marginBox;
     LayoutUnit preferredLogicalWidths[2];

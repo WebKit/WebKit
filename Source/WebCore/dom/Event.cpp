@@ -72,9 +72,7 @@ Event::Event(const AtomicString& eventType, const EventInit& initializer, IsTrus
 {
 }
 
-Event::~Event()
-{
-}
+Event::~Event() = default;
 
 void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool cancelableArg)
 {

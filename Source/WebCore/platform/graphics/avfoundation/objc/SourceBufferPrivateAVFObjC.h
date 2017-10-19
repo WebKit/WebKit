@@ -66,7 +66,7 @@ class WebCoreDecompressionSession;
 
 class SourceBufferPrivateAVFObjCErrorClient {
 public:
-    virtual ~SourceBufferPrivateAVFObjCErrorClient() { }
+    virtual ~SourceBufferPrivateAVFObjCErrorClient() = default;
     virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) = 0;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"

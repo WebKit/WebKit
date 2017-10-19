@@ -40,13 +40,13 @@ namespace WebCore {
 
 class RTCVoidRequest : public RefCounted<RTCVoidRequest> {
 public:
-    virtual ~RTCVoidRequest() { }
+    virtual ~RTCVoidRequest() = default;
 
     virtual void requestSucceeded() = 0;
     virtual void requestFailed(const String& error) = 0;
 
 protected:
-    RTCVoidRequest() { }
+    RTCVoidRequest() = default;
 };
 
 } // namespace WebCore

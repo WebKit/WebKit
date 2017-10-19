@@ -48,9 +48,7 @@ WebGPURenderPassDescriptor::WebGPURenderPassDescriptor()
     m_renderPassDescriptor = GPURenderPassDescriptor::create();
 }
 
-WebGPURenderPassDescriptor::~WebGPURenderPassDescriptor()
-{
-}
+WebGPURenderPassDescriptor::~WebGPURenderPassDescriptor() = default;
 
 RefPtr<WebGPURenderPassDepthAttachmentDescriptor> WebGPURenderPassDescriptor::depthAttachment()
 {

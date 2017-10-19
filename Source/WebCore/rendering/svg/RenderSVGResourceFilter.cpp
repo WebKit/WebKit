@@ -47,9 +47,7 @@ RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, Rend
 {
 }
 
-RenderSVGResourceFilter::~RenderSVGResourceFilter()
-{
-}
+RenderSVGResourceFilter::~RenderSVGResourceFilter() = default;
 
 void RenderSVGResourceFilter::removeAllClientsFromCache(bool markForInvalidation)
 {

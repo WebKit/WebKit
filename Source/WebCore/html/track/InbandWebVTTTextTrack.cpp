@@ -46,9 +46,7 @@ Ref<InbandTextTrack> InbandWebVTTTextTrack::create(ScriptExecutionContext& conte
     return adoptRef(*new InbandWebVTTTextTrack(context, client, trackPrivate));
 }
 
-InbandWebVTTTextTrack::~InbandWebVTTTextTrack()
-{
-}
+InbandWebVTTTextTrack::~InbandWebVTTTextTrack() = default;
 
 WebVTTParser& InbandWebVTTTextTrack::parser()
 {

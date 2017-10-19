@@ -63,9 +63,7 @@ SubtleCrypto::SubtleCrypto(ScriptExecutionContext& context)
 {
 }
 
-SubtleCrypto::~SubtleCrypto()
-{
-}
+SubtleCrypto::~SubtleCrypto() = default;
 
 enum class Operations {
     Encrypt,

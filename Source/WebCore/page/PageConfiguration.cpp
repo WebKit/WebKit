@@ -52,8 +52,6 @@ PageConfiguration::PageConfiguration(UniqueRef<EditorClient>&& editorClient, Ref
 {
 }
 
-PageConfiguration::~PageConfiguration()
-{
-}
+PageConfiguration::~PageConfiguration() = default;
 
 }

@@ -65,9 +65,7 @@ CommandLineAPIHost::CommandLineAPIHost()
 {
 }
 
-CommandLineAPIHost::~CommandLineAPIHost()
-{
-}
+CommandLineAPIHost::~CommandLineAPIHost() = default;
 
 void CommandLineAPIHost::disconnect()
 {

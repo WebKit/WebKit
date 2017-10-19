@@ -30,9 +30,7 @@
 
 namespace WebCore {
 
-PaymentRequestUpdateEvent::~PaymentRequestUpdateEvent()
-{
-}
+PaymentRequestUpdateEvent::~PaymentRequestUpdateEvent() = default;
 
 void PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&&)
 {

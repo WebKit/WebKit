@@ -46,9 +46,7 @@ AccessibilityListBox::AccessibilityListBox(RenderObject* renderer)
 {
 }
 
-AccessibilityListBox::~AccessibilityListBox()
-{
-}
+AccessibilityListBox::~AccessibilityListBox() = default;
 
 Ref<AccessibilityListBox> AccessibilityListBox::create(RenderObject* renderer)
 {

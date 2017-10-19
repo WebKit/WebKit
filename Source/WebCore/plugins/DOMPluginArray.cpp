@@ -33,9 +33,7 @@ DOMPluginArray::DOMPluginArray(Frame* frame)
 {
 }
 
-DOMPluginArray::~DOMPluginArray()
-{
-}
+DOMPluginArray::~DOMPluginArray() = default;
 
 unsigned DOMPluginArray::length() const
 {

@@ -49,9 +49,7 @@ ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoord
 {
 }
 
-ScrollingStateTree::~ScrollingStateTree()
-{
-}
+ScrollingStateTree::~ScrollingStateTree() = default;
 
 void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
 {

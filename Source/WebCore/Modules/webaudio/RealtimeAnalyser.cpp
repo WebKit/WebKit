@@ -62,9 +62,7 @@ RealtimeAnalyser::RealtimeAnalyser()
     m_analysisFrame = std::make_unique<FFTFrame>(DefaultFFTSize);
 }
 
-RealtimeAnalyser::~RealtimeAnalyser()
-{
-}
+RealtimeAnalyser::~RealtimeAnalyser() = default;
 
 void RealtimeAnalyser::reset()
 {

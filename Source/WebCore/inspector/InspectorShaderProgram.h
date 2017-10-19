@@ -50,7 +50,7 @@ public:
     bool disabled() const { return m_disabled; }
     void setDisabled(bool disabled) { m_disabled = disabled; }
 
-    ~InspectorShaderProgram() { }
+    ~InspectorShaderProgram() = default;
 
 private:
     InspectorShaderProgram(WebGLProgram&, InspectorCanvas&);

@@ -37,8 +37,6 @@ FederatedCredential::FederatedCredential(const FederatedCredentialInit& init)
 {
 }
 
-FederatedCredential::~FederatedCredential()
-{
-}
+FederatedCredential::~FederatedCredential() = default;
 
 } // namespace WebCore

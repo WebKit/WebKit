@@ -55,7 +55,7 @@ public:
 
 class VideoFullscreenModelClient {
 public:
-    virtual ~VideoFullscreenModelClient() { }
+    virtual ~VideoFullscreenModelClient() = default;
     virtual void hasVideoChanged(bool) = 0;
     virtual void videoDimensionsChanged(const FloatSize&) = 0;
 };

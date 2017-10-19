@@ -45,7 +45,7 @@ public:
         Bottom,
     };
 
-    virtual ~InspectorFrontendClient() { }
+    virtual ~InspectorFrontendClient() = default;
 
     WEBCORE_EXPORT virtual void windowObjectCleared() = 0;
     virtual void frontendLoaded() = 0;

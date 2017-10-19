@@ -117,9 +117,7 @@ CSSParser::CSSParser(const CSSParserContext& context)
 {
 }
 
-CSSParser::~CSSParser()
-{
-}
+CSSParser::~CSSParser() = default;
 
 void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, RuleParsing ruleParsing)
 {

@@ -35,8 +35,8 @@ class Cursor;
 class HostWindow {
     WTF_MAKE_NONCOPYABLE(HostWindow); WTF_MAKE_FAST_ALLOCATED;
 public:
-    HostWindow() { }
-    virtual ~HostWindow() { }
+    HostWindow() = default;
+    virtual ~HostWindow() = default;
 
     // Requests the host invalidate the root view, not the contents.
     virtual void invalidateRootView(const IntRect& updateRect) = 0;

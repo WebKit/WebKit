@@ -84,9 +84,7 @@ MutableStyleProperties::MutableStyleProperties(const CSSProperty* properties, un
         m_propertyVector.uncheckedAppend(properties[i]);
 }
 
-MutableStyleProperties::~MutableStyleProperties()
-{
-}
+MutableStyleProperties::~MutableStyleProperties() = default;
 
 ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties, unsigned length, CSSParserMode cssParserMode)
     : StyleProperties(cssParserMode, length)
@@ -1421,9 +1419,7 @@ DeferredStyleProperties::DeferredStyleProperties(const CSSParserTokenRange& rang
     m_tokens.append(range.begin(), length);
 }
     
-DeferredStyleProperties::~DeferredStyleProperties()
-{
-}
+DeferredStyleProperties::~DeferredStyleProperties() = default;
 
 Ref<ImmutableStyleProperties> DeferredStyleProperties::parseDeferredProperties()
 {

@@ -75,9 +75,7 @@ Ref<FilterEffectRenderer> FilterEffectRenderer::create()
     return adoptRef(*new FilterEffectRenderer);
 }
 
-FilterEffectRenderer::~FilterEffectRenderer()
-{
-}
+FilterEffectRenderer::~FilterEffectRenderer() = default;
 
 GraphicsContext* FilterEffectRenderer::inputContext()
 {

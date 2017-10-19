@@ -54,9 +54,7 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& eleme
 {
 }
 
-RenderTextControlSingleLine::~RenderTextControlSingleLine()
-{
-}
+RenderTextControlSingleLine::~RenderTextControlSingleLine() = default;
 
 inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
 {

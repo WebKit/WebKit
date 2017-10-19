@@ -86,9 +86,7 @@ NavigatorBase::NavigatorBase(ScriptExecutionContext& context)
 #endif
 }
 
-NavigatorBase::~NavigatorBase()
-{
-}
+NavigatorBase::~NavigatorBase() = default;
 
 String NavigatorBase::appName()
 {

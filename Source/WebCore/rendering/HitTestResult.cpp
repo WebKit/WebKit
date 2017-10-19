@@ -99,9 +99,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     m_listBasedTestResult = other.m_listBasedTestResult ? std::make_unique<NodeSet>(*other.m_listBasedTestResult) : nullptr;
 }
 
-HitTestResult::~HitTestResult()
-{
-}
+HitTestResult::~HitTestResult() = default;
 
 HitTestResult& HitTestResult::operator=(const HitTestResult& other)
 {

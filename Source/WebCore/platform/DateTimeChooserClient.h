@@ -36,7 +36,7 @@ namespace WebCore {
 
 class DateTimeChooserClient {
 public:
-    virtual ~DateTimeChooserClient() { }
+    virtual ~DateTimeChooserClient() = default;
 
     // Called when user picked a value.
     virtual void didChooseValue(const String&) = 0;

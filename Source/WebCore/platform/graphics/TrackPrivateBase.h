@@ -39,7 +39,7 @@ namespace WebCore {
 
 class TrackPrivateBaseClient {
 public:
-    virtual ~TrackPrivateBaseClient() { }
+    virtual ~TrackPrivateBaseClient() = default;
     virtual void idChanged(const AtomicString&) = 0;
     virtual void labelChanged(const AtomicString&) = 0;
     virtual void languageChanged(const AtomicString&) = 0;

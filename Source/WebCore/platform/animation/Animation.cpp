@@ -125,9 +125,7 @@ Animation& Animation::operator=(const Animation& o)
     return *this;
 }
 
-Animation::~Animation()
-{
-}
+Animation::~Animation() = default;
 
 bool Animation::animationsMatch(const Animation& other, bool matchPlayStates) const
 {

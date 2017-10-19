@@ -53,9 +53,7 @@ RenderImageControls::RenderImageControls(HTMLElement& element, RenderStyle&& sty
 {
 }
 
-RenderImageControls::~RenderImageControls()
-{
-}
+RenderImageControls::~RenderImageControls() = default;
 
 void RenderImageControls::updateLogicalWidth()
 {
@@ -98,9 +96,7 @@ ImageControlsRootElementMac::ImageControlsRootElementMac(Document& document)
 {
 }
 
-ImageControlsRootElementMac::~ImageControlsRootElementMac()
-{
-}
+ImageControlsRootElementMac::~ImageControlsRootElementMac() = default;
 
 RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {

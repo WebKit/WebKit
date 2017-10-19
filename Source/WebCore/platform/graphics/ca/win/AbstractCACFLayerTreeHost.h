@@ -40,7 +40,7 @@ public:
     virtual void flushPendingLayerChangesNow() = 0;
 
 protected:
-    virtual ~AbstractCACFLayerTreeHost() { }
+    virtual ~AbstractCACFLayerTreeHost() = default;
 };
 
 }

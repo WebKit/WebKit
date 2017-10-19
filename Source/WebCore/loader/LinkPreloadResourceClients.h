@@ -45,7 +45,7 @@ class LinkLoader;
 
 class LinkPreloadResourceClient {
 public:
-    virtual ~LinkPreloadResourceClient() { }
+    virtual ~LinkPreloadResourceClient() = default;
 
     void triggerEvents(const CachedResource&);
 
@@ -83,7 +83,7 @@ public:
         return std::unique_ptr<LinkPreloadScriptResourceClient>(new LinkPreloadScriptResourceClient(loader, resource));
     }
 
-    virtual ~LinkPreloadScriptResourceClient() { }
+    virtual ~LinkPreloadScriptResourceClient() = default;
 
 
     void notifyFinished(CachedResource& resource) override { triggerEvents(resource); }
@@ -106,7 +106,7 @@ public:
         return std::unique_ptr<LinkPreloadStyleResourceClient>(new LinkPreloadStyleResourceClient(loader, resource));
     }
 
-    virtual ~LinkPreloadStyleResourceClient() { }
+    virtual ~LinkPreloadStyleResourceClient() = default;
 
     void setCSSStyleSheet(const String&, const URL&, const String&, const CachedCSSStyleSheet* resource) override
     {
@@ -133,7 +133,7 @@ public:
         return std::unique_ptr<LinkPreloadImageResourceClient>(new LinkPreloadImageResourceClient(loader, resource));
     }
 
-    virtual ~LinkPreloadImageResourceClient() { }
+    virtual ~LinkPreloadImageResourceClient() = default;
 
     void notifyFinished(CachedResource& resource) override { triggerEvents(resource); }
 
@@ -155,7 +155,7 @@ public:
         return std::unique_ptr<LinkPreloadFontResourceClient>(new LinkPreloadFontResourceClient(loader, resource));
     }
 
-    virtual ~LinkPreloadFontResourceClient() { }
+    virtual ~LinkPreloadFontResourceClient() = default;
 
     void fontLoaded(CachedFont& resource) override
     {
@@ -181,7 +181,7 @@ public:
         return std::unique_ptr<LinkPreloadRawResourceClient>(new LinkPreloadRawResourceClient(loader, resource));
     }
 
-    virtual ~LinkPreloadRawResourceClient() { }
+    virtual ~LinkPreloadRawResourceClient() = default;
 
     void notifyFinished(CachedResource& resource) override { triggerEvents(resource); }
 

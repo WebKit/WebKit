@@ -31,9 +31,7 @@
 
 namespace WebCore {
 
-Archive::~Archive()
-{
-}
+Archive::~Archive() = default;
 
 void Archive::clearAllSubframeArchives()
 {

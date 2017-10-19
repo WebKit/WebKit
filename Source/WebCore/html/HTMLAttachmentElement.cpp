@@ -42,9 +42,7 @@ HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Docum
     ASSERT(hasTagName(attachmentTag));
 }
 
-HTMLAttachmentElement::~HTMLAttachmentElement()
-{
-}
+HTMLAttachmentElement::~HTMLAttachmentElement() = default;
 
 Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& tagName, Document& document)
 {

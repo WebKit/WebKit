@@ -33,7 +33,7 @@ struct SecurityOriginData;
 
 class DatabaseManagerClient {
 public:
-    virtual ~DatabaseManagerClient() { }
+    virtual ~DatabaseManagerClient() = default;
     virtual void dispatchDidModifyOrigin(const SecurityOriginData&) = 0;
     virtual void dispatchDidModifyDatabase(const SecurityOriginData&, const String& databaseName) = 0;
 

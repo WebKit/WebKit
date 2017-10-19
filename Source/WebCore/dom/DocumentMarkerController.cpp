@@ -52,9 +52,7 @@ DocumentMarkerController::DocumentMarkerController(Document& document)
 {
 }
 
-DocumentMarkerController::~DocumentMarkerController()
-{
-}
+DocumentMarkerController::~DocumentMarkerController() = default;
 
 void DocumentMarkerController::detach()
 {

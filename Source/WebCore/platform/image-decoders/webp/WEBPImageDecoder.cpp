@@ -38,9 +38,7 @@ WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
 {
 }
 
-WEBPImageDecoder::~WEBPImageDecoder()
-{
-}
+WEBPImageDecoder::~WEBPImageDecoder() = default;
 
 void WEBPImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {

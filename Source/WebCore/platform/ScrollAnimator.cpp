@@ -55,9 +55,7 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
 {
 }
 
-ScrollAnimator::~ScrollAnimator()
-{
-}
+ScrollAnimator::~ScrollAnimator() = default;
 
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
 {

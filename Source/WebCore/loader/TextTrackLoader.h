@@ -42,7 +42,7 @@ class ScriptExecutionContext;
 
 class TextTrackLoaderClient {
 public:
-    virtual ~TextTrackLoaderClient() { }
+    virtual ~TextTrackLoaderClient() = default;
     
     virtual void newCuesAvailable(TextTrackLoader*) = 0;
     virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) = 0;

@@ -45,9 +45,7 @@ WorkerDebuggerAgent::WorkerDebuggerAgent(WorkerAgentContext& context)
 {
 }
 
-WorkerDebuggerAgent::~WorkerDebuggerAgent()
-{
-}
+WorkerDebuggerAgent::~WorkerDebuggerAgent() = default;
 
 void WorkerDebuggerAgent::breakpointActionLog(ExecState& state, const String& message)
 {

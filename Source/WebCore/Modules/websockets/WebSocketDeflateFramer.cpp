@@ -41,7 +41,7 @@ class WebSocketExtensionDeflateFrame : public WebSocketExtensionProcessor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebSocketExtensionDeflateFrame(WebSocketDeflateFramer*);
-    virtual ~WebSocketExtensionDeflateFrame() { }
+    virtual ~WebSocketExtensionDeflateFrame() = default;
 
     String handshakeString() override;
     bool processResponse(const HashMap<String, String>&) override;

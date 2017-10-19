@@ -37,9 +37,7 @@ ScrollingTreeScrollingNodeDelegate::ScrollingTreeScrollingNodeDelegate(Scrolling
 {
 }
 
-ScrollingTreeScrollingNodeDelegate::~ScrollingTreeScrollingNodeDelegate()
-{
-}
+ScrollingTreeScrollingNodeDelegate::~ScrollingTreeScrollingNodeDelegate() = default;
 
 ScrollingTree& ScrollingTreeScrollingNodeDelegate::scrollingTree() const
 {

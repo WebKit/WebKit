@@ -55,10 +55,10 @@ public:
     virtual bool equals(const CSSBasicShape&) const = 0;
 
 public:
-    virtual ~CSSBasicShape() { }
+    virtual ~CSSBasicShape() = default;
 
 protected:
-    CSSBasicShape() { }
+    CSSBasicShape() = default;
     RefPtr<CSSPrimitiveValue> m_referenceBox;
 };
 
@@ -110,7 +110,7 @@ public:
     void setBottomLeftRadius(RefPtr<CSSPrimitiveValue>&& radius) { m_bottomLeftRadius = WTFMove(radius); }
 
 private:
-    CSSBasicShapeInset() { }
+    CSSBasicShapeInset() = default;
 
     Type type() const final { return CSSBasicShapeInsetType; }
     String cssText() const final;
@@ -140,7 +140,7 @@ public:
     void setRadius(Ref<CSSPrimitiveValue>&& radius) { m_radius = WTFMove(radius); }
 
 private:
-    CSSBasicShapeCircle() { }
+    CSSBasicShapeCircle() = default;
 
     Type type() const final { return CSSBasicShapeCircleType; }
     String cssText() const final;
@@ -166,7 +166,7 @@ public:
     void setRadiusY(Ref<CSSPrimitiveValue>&& radiusY) { m_radiusY = WTFMove(radiusY); }
 
 private:
-    CSSBasicShapeEllipse() { }
+    CSSBasicShapeEllipse() = default;
 
     Type type() const final { return CSSBasicShapeEllipseType; }
     String cssText() const final;

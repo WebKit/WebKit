@@ -43,7 +43,7 @@ public:
         return adoptRef(*new InbandTextTrackPrivateAVFObjC(player, selection, format));
     }
 
-    ~InbandTextTrackPrivateAVFObjC() { }
+    ~InbandTextTrackPrivateAVFObjC() = default;
 
     InbandTextTrackPrivate::Kind kind() const override;
     bool isClosedCaptions() const override;

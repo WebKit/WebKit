@@ -104,9 +104,7 @@ void PlatformContextCairo::restore()
     cairo_restore(m_cr.get());
 }
 
-PlatformContextCairo::~PlatformContextCairo()
-{
-}
+PlatformContextCairo::~PlatformContextCairo() = default;
 
 void PlatformContextCairo::save()
 {

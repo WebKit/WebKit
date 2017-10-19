@@ -69,9 +69,7 @@ Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString)
     return MediaQueryParser::parseMediaQuerySet(mediaString).releaseNonNull();
 }
 
-MediaQuerySet::MediaQuerySet()
-{
-}
+MediaQuerySet::MediaQuerySet() = default;
 
 MediaQuerySet::MediaQuerySet(const MediaQuerySet& o)
     : RefCounted()
@@ -80,9 +78,7 @@ MediaQuerySet::MediaQuerySet(const MediaQuerySet& o)
 {
 }
 
-MediaQuerySet::~MediaQuerySet()
-{
-}
+MediaQuerySet::~MediaQuerySet() = default;
 
 bool MediaQuerySet::set(const String& mediaString)
 {
@@ -177,9 +173,7 @@ MediaList::MediaList(MediaQuerySet* mediaQueries, CSSRule* parentRule)
 {
 }
 
-MediaList::~MediaList()
-{
-}
+MediaList::~MediaList() = default;
 
 ExceptionOr<void> MediaList::setMediaText(const String& value)
 {

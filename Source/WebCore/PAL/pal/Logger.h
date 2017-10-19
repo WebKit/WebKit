@@ -57,7 +57,7 @@ public:
 
     class Observer {
     public:
-        virtual ~Observer() { }
+        virtual ~Observer() = default;
         virtual void didLogMessage(const WTFLogChannel&, WTFLogLevel, const String&) = 0;
     };
 

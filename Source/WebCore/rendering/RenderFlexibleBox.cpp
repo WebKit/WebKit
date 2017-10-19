@@ -69,9 +69,7 @@ RenderFlexibleBox::RenderFlexibleBox(Document& document, RenderStyle&& style)
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::~RenderFlexibleBox()
-{
-}
+RenderFlexibleBox::~RenderFlexibleBox() = default;
 
 const char* RenderFlexibleBox::renderName() const
 {

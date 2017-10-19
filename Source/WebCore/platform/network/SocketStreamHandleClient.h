@@ -39,7 +39,7 @@ class SocketStreamHandle;
 
 class SocketStreamHandleClient {
 public:
-    virtual ~SocketStreamHandleClient() { }
+    virtual ~SocketStreamHandleClient() = default;
 
     virtual void didOpenSocketStream(SocketStreamHandle&) = 0;
     virtual void didCloseSocketStream(SocketStreamHandle&) = 0;

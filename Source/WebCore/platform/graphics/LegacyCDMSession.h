@@ -34,7 +34,7 @@ namespace WebCore {
 
 class LegacyCDMSessionClient {
 public:
-    virtual ~LegacyCDMSessionClient() { }
+    virtual ~LegacyCDMSessionClient() = default;
     virtual void sendMessage(Uint8Array*, String destinationURL) = 0;
 
     enum {
@@ -61,7 +61,7 @@ enum LegacyCDMSessionType {
 
 class LegacyCDMSession {
 public:
-    virtual ~LegacyCDMSession() { }
+    virtual ~LegacyCDMSession() = default;
 
     virtual LegacyCDMSessionType type() { return CDMSessionTypeUnknown; }
     virtual void setClient(LegacyCDMSessionClient*) = 0;

@@ -38,9 +38,7 @@ VideoTrackList::VideoTrackList(HTMLMediaElement* element, ScriptExecutionContext
 {
 }
 
-VideoTrackList::~VideoTrackList()
-{
-}
+VideoTrackList::~VideoTrackList() = default;
 
 void VideoTrackList::append(Ref<VideoTrack>&& track)
 {

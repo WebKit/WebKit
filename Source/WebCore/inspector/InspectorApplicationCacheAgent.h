@@ -48,7 +48,7 @@ class InspectorApplicationCacheAgent final : public InspectorAgentBase, public I
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorApplicationCacheAgent(WebAgentContext&, InspectorPageAgent*);
-    virtual ~InspectorApplicationCacheAgent() { }
+    virtual ~InspectorApplicationCacheAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;

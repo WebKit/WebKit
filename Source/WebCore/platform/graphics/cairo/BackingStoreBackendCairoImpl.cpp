@@ -48,9 +48,7 @@ BackingStoreBackendCairoImpl::BackingStoreBackendCairoImpl(const IntSize& size, 
     m_surface = createCairoImageSurfaceWithFastMalloc(scaledSize, deviceScaleFactor);
 }
 
-BackingStoreBackendCairoImpl::~BackingStoreBackendCairoImpl()
-{
-}
+BackingStoreBackendCairoImpl::~BackingStoreBackendCairoImpl() = default;
 
 void BackingStoreBackendCairoImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {

@@ -49,8 +49,8 @@ class InspectorFrontendClientLocal : public InspectorFrontendClient {
 public:
     class WEBCORE_EXPORT Settings {
     public:
-        Settings() { }
-        virtual ~Settings() { }
+        Settings() = default;
+        virtual ~Settings() = default;
         virtual String getProperty(const String& name);
         virtual void setProperty(const String& name, const String& value);
     };

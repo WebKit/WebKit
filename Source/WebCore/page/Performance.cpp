@@ -58,9 +58,7 @@ Performance::Performance(ScriptExecutionContext& context, MonotonicTime timeOrig
     ASSERT(m_timeOrigin);
 }
 
-Performance::~Performance()
-{
-}
+Performance::~Performance() = default;
 
 void Performance::contextDestroyed()
 {

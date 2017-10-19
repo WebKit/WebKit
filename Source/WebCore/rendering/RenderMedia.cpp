@@ -47,9 +47,7 @@ RenderMedia::RenderMedia(HTMLMediaElement& element, RenderStyle&& style, const I
     setHasShadowControls(true);
 }
 
-RenderMedia::~RenderMedia()
-{
-}
+RenderMedia::~RenderMedia() = default;
 
 void RenderMedia::paintReplaced(PaintInfo&, const LayoutPoint&)
 {

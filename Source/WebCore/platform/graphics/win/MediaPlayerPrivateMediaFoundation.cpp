@@ -2688,9 +2688,7 @@ MediaPlayerPrivateMediaFoundation::Direct3DPresenter::Direct3DPresenter()
     createD3DDevice();
 }
 
-MediaPlayerPrivateMediaFoundation::Direct3DPresenter::~Direct3DPresenter()
-{
-}
+MediaPlayerPrivateMediaFoundation::Direct3DPresenter::~Direct3DPresenter() = default;
 
 HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::getService(REFGUID guidService, REFIID riid, void** ppv)
 {

@@ -36,7 +36,7 @@ namespace WebCore {
 
     class ContextMenuClient {
     public:
-        virtual ~ContextMenuClient() {  }
+        virtual ~ContextMenuClient() = default;
         virtual void contextMenuDestroyed() = 0;
         
         virtual void downloadURL(const URL& url) = 0;

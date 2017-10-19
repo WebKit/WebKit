@@ -44,9 +44,7 @@ Array::Array(RefPtr<RootObject>&& rootObject)
     ASSERT(m_rootObject);
 }
 
-Array::~Array()
-{
-}
+Array::~Array() = default;
 
 Instance::Instance(RefPtr<RootObject>&& rootObject)
     : m_rootObject(WTFMove(rootObject))

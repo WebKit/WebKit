@@ -36,7 +36,7 @@ class RTCDTMFSenderHandlerClient;
 
 class RTCDTMFSenderHandler {
 public:
-    virtual ~RTCDTMFSenderHandler() { }
+    virtual ~RTCDTMFSenderHandler() = default;
 
     virtual void setClient(RTCDTMFSenderHandlerClient*) = 0;
 

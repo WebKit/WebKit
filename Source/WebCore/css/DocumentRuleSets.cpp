@@ -44,9 +44,7 @@ DocumentRuleSets::DocumentRuleSets(StyleResolver& styleResolver)
     m_authorStyle->disableAutoShrinkToFit();
 }
 
-DocumentRuleSets::~DocumentRuleSets()
-{
-}
+DocumentRuleSets::~DocumentRuleSets() = default;
 
 RuleSet* DocumentRuleSets::userStyle() const
 {

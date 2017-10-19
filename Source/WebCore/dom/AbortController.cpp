@@ -40,9 +40,7 @@ AbortController::AbortController(ScriptExecutionContext& context)
 {
 }
 
-AbortController::~AbortController()
-{
-}
+AbortController::~AbortController() = default;
 
 AbortSignal& AbortController::signal()
 {

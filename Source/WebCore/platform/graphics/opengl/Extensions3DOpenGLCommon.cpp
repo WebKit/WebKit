@@ -92,9 +92,7 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context, b
 #endif
 }
 
-Extensions3DOpenGLCommon::~Extensions3DOpenGLCommon()
-{
-}
+Extensions3DOpenGLCommon::~Extensions3DOpenGLCommon() = default;
 
 bool Extensions3DOpenGLCommon::supports(const String& name)
 {

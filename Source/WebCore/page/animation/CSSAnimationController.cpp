@@ -79,9 +79,7 @@ CSSAnimationControllerPrivate::CSSAnimationControllerPrivate(Frame& frame)
 {
 }
 
-CSSAnimationControllerPrivate::~CSSAnimationControllerPrivate()
-{
-}
+CSSAnimationControllerPrivate::~CSSAnimationControllerPrivate() = default;
 
 CompositeAnimation& CSSAnimationControllerPrivate::ensureCompositeAnimation(Element& element)
 {
@@ -630,9 +628,7 @@ CSSAnimationController::CSSAnimationController(Frame& frame)
 {
 }
 
-CSSAnimationController::~CSSAnimationController()
-{
-}
+CSSAnimationController::~CSSAnimationController() = default;
 
 void CSSAnimationController::cancelAnimations(Element& element)
 {

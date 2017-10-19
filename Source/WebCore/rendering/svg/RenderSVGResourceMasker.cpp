@@ -34,9 +34,7 @@ RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, Render
 {
 }
 
-RenderSVGResourceMasker::~RenderSVGResourceMasker()
-{
-}
+RenderSVGResourceMasker::~RenderSVGResourceMasker() = default;
 
 void RenderSVGResourceMasker::removeAllClientsFromCache(bool markForInvalidation)
 {

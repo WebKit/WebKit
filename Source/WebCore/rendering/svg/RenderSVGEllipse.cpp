@@ -38,9 +38,7 @@ RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& st
 {
 }
 
-RenderSVGEllipse::~RenderSVGEllipse()
-{
-}
+RenderSVGEllipse::~RenderSVGEllipse() = default;
 
 void RenderSVGEllipse::updateShapeFromElement()
 {

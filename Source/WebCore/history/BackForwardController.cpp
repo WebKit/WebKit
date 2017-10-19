@@ -37,9 +37,7 @@ BackForwardController::BackForwardController(Page& page, Ref<BackForwardClient>&
 {
 }
 
-BackForwardController::~BackForwardController()
-{
-}
+BackForwardController::~BackForwardController() = default;
 
 bool BackForwardController::canGoBackOrForward(int distance) const
 {

@@ -60,9 +60,7 @@ JSCustomXPathNSResolver::JSCustomXPathNSResolver(VM& vm, JSObject* customResolve
 {
 }
 
-JSCustomXPathNSResolver::~JSCustomXPathNSResolver()
-{
-}
+JSCustomXPathNSResolver::~JSCustomXPathNSResolver() = default;
 
 String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {

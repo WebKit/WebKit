@@ -34,13 +34,9 @@
 
 namespace WebCore {
 
-WebCoreTypedArrayController::WebCoreTypedArrayController()
-{
-}
+WebCoreTypedArrayController::WebCoreTypedArrayController() = default;
 
-WebCoreTypedArrayController::~WebCoreTypedArrayController()
-{
-}
+WebCoreTypedArrayController::~WebCoreTypedArrayController() = default;
 
 JSC::JSArrayBuffer* WebCoreTypedArrayController::toJS(JSC::ExecState* state, JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
 {

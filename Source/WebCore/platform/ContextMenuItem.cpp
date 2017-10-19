@@ -70,9 +70,7 @@ ContextMenuItem::ContextMenuItem()
 {
 }
 
-ContextMenuItem::~ContextMenuItem()
-{
-}
+ContextMenuItem::~ContextMenuItem() = default;
 
 bool ContextMenuItem::isNull() const
 {

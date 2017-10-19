@@ -65,7 +65,7 @@ private:
     {
     }
 
-    virtual ~MediaSampleAVFObjC() { }
+    virtual ~MediaSampleAVFObjC() = default;
 
     MediaTime presentationTime() const override;
     MediaTime outputPresentationTime() const override;

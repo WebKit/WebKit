@@ -37,9 +37,7 @@ WebGPUObject::WebGPUObject(WebGPURenderingContext* context)
 {
 }
 
-WebGPUObject::~WebGPUObject()
-{
-}
+WebGPUObject::~WebGPUObject() = default;
 
 void WebGPUObject::deleteObject(GPUDevice*)
 {

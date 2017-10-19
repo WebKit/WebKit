@@ -49,7 +49,7 @@ public:
         return adoptRef(*new CurlRequest(request, delegate, shouldSuspend));
     }
 
-    virtual ~CurlRequest() { }
+    virtual ~CurlRequest() = default;
 
     void setDelegate(CurlRequestDelegate* delegate) { m_delegate = delegate;  }
     void setUserPass(const String&, const String&);

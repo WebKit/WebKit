@@ -164,9 +164,7 @@ std::unique_ptr<InputType> InputType::createText(HTMLInputElement& element)
     return std::make_unique<TextInputType>(element);
 }
 
-InputType::~InputType()
-{
-}
+InputType::~InputType() = default;
 
 bool InputType::themeSupportsDataListUI(InputType* type)
 {

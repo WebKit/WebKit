@@ -41,7 +41,7 @@ namespace WebCore {
     // context can be distinct.
     class WorkerLoaderProxy {
     public:
-        virtual ~WorkerLoaderProxy() { }
+        virtual ~WorkerLoaderProxy() = default;
 
         // Posts a task to the thread which runs the loading code (normally, the main thread).
         virtual void postTaskToLoader(ScriptExecutionContext::Task&&) = 0;

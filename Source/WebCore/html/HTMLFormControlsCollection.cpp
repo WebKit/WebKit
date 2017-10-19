@@ -48,9 +48,7 @@ Ref<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode
     return adoptRef(*new HTMLFormControlsCollection(ownerNode));
 }
 
-HTMLFormControlsCollection::~HTMLFormControlsCollection()
-{
-}
+HTMLFormControlsCollection::~HTMLFormControlsCollection() = default;
 
 std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsCollection::namedItemOrItems(const String& name) const
 {

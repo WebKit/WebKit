@@ -32,9 +32,7 @@
 
 namespace WebCore {
 
-TextCodec::~TextCodec()
-{
-}
+TextCodec::~TextCodec() = default;
 
 int TextCodec::getUnencodableReplacement(unsigned codePoint, UnencodableHandling handling, UnencodableReplacementArray replacement)
 {

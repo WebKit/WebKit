@@ -78,9 +78,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, bool canBubble
     return adoptRef(*new MouseEvent(eventType, canBubble, cancelable, view, detail, { screenX, screenY }, { clientX, clientY }, ctrlKey, altKey, shiftKey, metaKey, button, buttons, syntheticClickType, relatedTarget));
 }
 
-MouseEvent::MouseEvent()
-{
-}
+MouseEvent::MouseEvent() = default;
 
 MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
@@ -127,9 +125,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& init
     initCoordinates({ initializer.clientX, initializer.clientY });
 }
 
-MouseEvent::~MouseEvent()
-{
-}
+MouseEvent::~MouseEvent() = default;
 
 void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget)
 {

@@ -41,7 +41,7 @@ class WorkerScriptDebugServer final : public Inspector::ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
     WorkerScriptDebugServer(WorkerGlobalScope&);
-    ~WorkerScriptDebugServer() { }
+    ~WorkerScriptDebugServer() = default;
 
     void recompileAllJSFunctions() override;
 

@@ -43,7 +43,7 @@ public:
     ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
     static std::unique_ptr<ScrollingMomentumCalculator> create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
     WEBCORE_EXPORT static void setPlatformMomentumScrollingPredictionEnabled(bool);
-    virtual ~ScrollingMomentumCalculator() { }
+    virtual ~ScrollingMomentumCalculator() = default;
 
     virtual FloatPoint scrollOffsetAfterElapsedTime(Seconds) = 0;
     virtual Seconds animationDuration() = 0;

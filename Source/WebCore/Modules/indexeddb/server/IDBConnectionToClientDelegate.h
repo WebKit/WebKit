@@ -42,7 +42,7 @@ class UniqueIDBDatabaseConnection;
 
 class IDBConnectionToClientDelegate {
 public:
-    virtual ~IDBConnectionToClientDelegate() { }
+    virtual ~IDBConnectionToClientDelegate() = default;
     
     virtual uint64_t identifier() const = 0;
 

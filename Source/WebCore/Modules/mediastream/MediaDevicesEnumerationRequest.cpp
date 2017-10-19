@@ -48,9 +48,7 @@ MediaDevicesEnumerationRequest::MediaDevicesEnumerationRequest(ScriptExecutionCo
 {
 }
 
-MediaDevicesEnumerationRequest::~MediaDevicesEnumerationRequest()
-{
-}
+MediaDevicesEnumerationRequest::~MediaDevicesEnumerationRequest() = default;
 
 SecurityOrigin* MediaDevicesEnumerationRequest::userMediaDocumentOrigin() const
 {

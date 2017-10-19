@@ -33,9 +33,7 @@ RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, Rend
 {
 }
 
-RenderSVGResourceMarker::~RenderSVGResourceMarker()
-{
-}
+RenderSVGResourceMarker::~RenderSVGResourceMarker() = default;
 
 void RenderSVGResourceMarker::layout()
 {

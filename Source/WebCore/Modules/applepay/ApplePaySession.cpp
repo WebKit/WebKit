@@ -461,9 +461,7 @@ ApplePaySession::ApplePaySession(Document& document, ApplePaySessionPaymentReque
     suspendIfNeeded();
 }
 
-ApplePaySession::~ApplePaySession()
-{
-}
+ApplePaySession::~ApplePaySession() = default;
 
 ExceptionOr<bool> ApplePaySession::supportsVersion(ScriptExecutionContext& scriptExecutionContext, unsigned version)
 {

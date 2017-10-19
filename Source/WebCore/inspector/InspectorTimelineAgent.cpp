@@ -93,9 +93,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, Inspect
 {
 }
 
-InspectorTimelineAgent::~InspectorTimelineAgent()
-{
-}
+InspectorTimelineAgent::~InspectorTimelineAgent() = default;
 
 void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {

@@ -65,9 +65,7 @@ LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection
 {
 }
 
-LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend()
-{
-}
+LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend() = default;
 
 static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {

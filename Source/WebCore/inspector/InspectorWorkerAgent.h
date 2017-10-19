@@ -43,7 +43,7 @@ class InspectorWorkerAgent final : public InspectorAgentBase, public Inspector::
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorWorkerAgent(PageAgentContext&);
-    virtual ~InspectorWorkerAgent() { }
+    virtual ~InspectorWorkerAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;

@@ -44,9 +44,7 @@ WebMediaSessionManagerMac::WebMediaSessionManagerMac()
 {
 }
 
-WebMediaSessionManagerMac::~WebMediaSessionManagerMac()
-{
-}
+WebMediaSessionManagerMac::~WebMediaSessionManagerMac() = default;
 
 WebCore::MediaPlaybackTargetPicker& WebMediaSessionManagerMac::platformPicker()
 {

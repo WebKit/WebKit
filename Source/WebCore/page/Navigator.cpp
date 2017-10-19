@@ -49,9 +49,7 @@ Navigator::Navigator(ScriptExecutionContext& context, Frame& frame)
 {
 }
 
-Navigator::~Navigator()
-{
-}
+Navigator::~Navigator() = default;
 
 // If this function returns true, we need to hide the substring "4." that would otherwise
 // appear in the appVersion string. This is to avoid problems with old versions of a

@@ -113,7 +113,7 @@ struct PlatformMedia {
 
 struct MediaEngineSupportParameters {
 
-    MediaEngineSupportParameters() { }
+    MediaEngineSupportParameters() = default;
 
     ContentType type;
     URL url;
@@ -161,7 +161,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 
 class MediaPlayerClient {
 public:
-    virtual ~MediaPlayerClient() { }
+    virtual ~MediaPlayerClient() = default;
 
     // the network state has changed
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) { }
@@ -309,7 +309,7 @@ public:
 
 class MediaPlayerSupportsTypeClient {
 public:
-    virtual ~MediaPlayerSupportsTypeClient() { }
+    virtual ~MediaPlayerSupportsTypeClient() = default;
 
     virtual bool mediaPlayerNeedsSiteSpecificHacks() const { return false; }
     virtual String mediaPlayerDocumentHost() const { return String(); }

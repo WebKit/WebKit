@@ -51,7 +51,7 @@ struct GrammarDetail;
 
 class EditorClient {
 public:
-    virtual ~EditorClient() {  }
+    virtual ~EditorClient() = default;
 
     virtual bool shouldDeleteRange(Range*) = 0;
     virtual bool smartInsertDeleteEnabled() = 0; 

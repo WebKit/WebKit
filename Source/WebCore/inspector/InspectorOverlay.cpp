@@ -170,9 +170,7 @@ InspectorOverlay::InspectorOverlay(Page& page, InspectorClient* client)
 {
 }
 
-InspectorOverlay::~InspectorOverlay()
-{
-}
+InspectorOverlay::~InspectorOverlay() = default;
 
 void InspectorOverlay::paint(GraphicsContext& context)
 {

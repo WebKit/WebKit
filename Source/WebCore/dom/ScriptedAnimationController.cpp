@@ -63,9 +63,7 @@ ScriptedAnimationController::ScriptedAnimationController(Document& document, Pla
     windowScreenDidChange(displayID);
 }
 
-ScriptedAnimationController::~ScriptedAnimationController()
-{
-}
+ScriptedAnimationController::~ScriptedAnimationController() = default;
 
 bool ScriptedAnimationController::requestAnimationFrameEnabled() const
 {

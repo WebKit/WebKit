@@ -129,9 +129,7 @@ WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, D
     m_expectedAccept = getExpectedWebSocketAccept(m_secWebSocketKey);
 }
 
-WebSocketHandshake::~WebSocketHandshake()
-{
-}
+WebSocketHandshake::~WebSocketHandshake() = default;
 
 const URL& WebSocketHandshake::url() const
 {

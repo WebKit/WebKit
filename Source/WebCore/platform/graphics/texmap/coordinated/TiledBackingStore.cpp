@@ -46,9 +46,7 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, float cont
 {
 }
 
-TiledBackingStore::~TiledBackingStore()
-{
-}
+TiledBackingStore::~TiledBackingStore() = default;
 
 void TiledBackingStore::setTrajectoryVector(const FloatPoint& trajectoryVector)
 {

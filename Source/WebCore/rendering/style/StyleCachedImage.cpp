@@ -48,9 +48,7 @@ StyleCachedImage::StyleCachedImage(CSSValue& cssValue)
     }
 }
 
-StyleCachedImage::~StyleCachedImage()
-{
-}
+StyleCachedImage::~StyleCachedImage() = default;
 
 bool StyleCachedImage::operator==(const StyleImage& other) const
 {

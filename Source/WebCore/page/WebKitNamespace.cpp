@@ -39,9 +39,7 @@ WebKitNamespace::WebKitNamespace(Frame& frame, UserContentProvider& userContentP
 {
 }
 
-WebKitNamespace::~WebKitNamespace()
-{
-}
+WebKitNamespace::~WebKitNamespace() = default;
 
 UserMessageHandlersNamespace* WebKitNamespace::messageHandlers()
 {

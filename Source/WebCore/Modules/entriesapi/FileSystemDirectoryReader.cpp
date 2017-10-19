@@ -43,9 +43,7 @@ FileSystemDirectoryReader::FileSystemDirectoryReader(ScriptExecutionContext& con
     suspendIfNeeded();
 }
 
-FileSystemDirectoryReader::~FileSystemDirectoryReader()
-{
-}
+FileSystemDirectoryReader::~FileSystemDirectoryReader() = default;
 
 const char* FileSystemDirectoryReader::activeDOMObjectName() const
 {

@@ -54,9 +54,7 @@ JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JS
 {
 }
 
-JSCustomElementInterface::~JSCustomElementInterface()
-{
-}
+JSCustomElementInterface::~JSCustomElementInterface() = default;
 
 static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, ExecState&, JSObject* constructor, const AtomicString& localName);
 

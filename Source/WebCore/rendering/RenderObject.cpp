@@ -96,7 +96,7 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 #endif
 
 struct SameSizeAsRenderObject {
-    virtual ~SameSizeAsRenderObject() { } // Allocate vtable pointer.
+    virtual ~SameSizeAsRenderObject() = default; // Allocate vtable pointer.
     void* pointers[5];
 #ifndef NDEBUG
     unsigned m_debugBitfields : 2;

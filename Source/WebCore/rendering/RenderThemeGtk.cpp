@@ -312,9 +312,7 @@ static bool nodeHasClass(Node* node, const char* className)
     return element.classNames().contains(className);
 }
 
-RenderThemeGtk::~RenderThemeGtk()
-{
-}
+RenderThemeGtk::~RenderThemeGtk() = default;
 
 static bool supportsFocus(ControlPart appearance)
 {

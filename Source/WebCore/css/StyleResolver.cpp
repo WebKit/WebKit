@@ -2018,13 +2018,9 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
     return true;
 }
 
-inline StyleResolver::MatchedProperties::MatchedProperties()
-{
-}
+inline StyleResolver::MatchedProperties::MatchedProperties() = default;
 
-StyleResolver::MatchedProperties::~MatchedProperties()
-{
-}
+StyleResolver::MatchedProperties::~MatchedProperties() = default;
 
 StyleResolver::CascadedProperties::CascadedProperties(TextDirection direction, WritingMode writingMode)
     : m_direction(direction)

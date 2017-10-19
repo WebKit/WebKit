@@ -97,9 +97,7 @@ void RenderThemeWidget::clearCache()
     widgetMap().clear();
 }
 
-RenderThemeWidget::~RenderThemeWidget()
-{
-}
+RenderThemeWidget::~RenderThemeWidget() = default;
 
 RenderThemeScrollbar::RenderThemeScrollbar(GtkOrientation orientation, Mode mode, VerticalPosition verticalPosition)
 {

@@ -42,9 +42,7 @@ SVGAnimateElementBase::SVGAnimateElementBase(const QualifiedName& tagName, Docum
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag) || hasTagName(SVGNames::animateTransformTag));
 }
 
-SVGAnimateElementBase::~SVGAnimateElementBase()
-{
-}
+SVGAnimateElementBase::~SVGAnimateElementBase() = default;
 
 bool SVGAnimateElementBase::hasValidAttributeType()
 {

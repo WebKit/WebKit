@@ -36,9 +36,7 @@ ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(const AtomicString&
 {
 }
 
-ApplePayValidateMerchantEvent::~ApplePayValidateMerchantEvent()
-{
-}
+ApplePayValidateMerchantEvent::~ApplePayValidateMerchantEvent() = default;
 
 EventInterface ApplePayValidateMerchantEvent::eventInterface() const
 {

@@ -35,7 +35,7 @@ class VisibleSelection;
 
 class TextCheckerClient {
 public:
-    virtual ~TextCheckerClient() { }
+    virtual ~TextCheckerClient() = default;
 
     virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const = 0;
     virtual void ignoreWordInSpellDocument(const String&) = 0;

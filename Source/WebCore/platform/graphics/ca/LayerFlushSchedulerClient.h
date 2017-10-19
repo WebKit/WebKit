@@ -30,7 +30,7 @@ namespace WebCore {
 
 class LayerFlushSchedulerClient {
 protected:
-    virtual ~LayerFlushSchedulerClient() { }
+    virtual ~LayerFlushSchedulerClient() = default;
 
 public:
     // Flush the layers. Returns true on success.

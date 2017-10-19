@@ -38,9 +38,7 @@ UserMessageHandlerDescriptor::UserMessageHandlerDescriptor(const AtomicString& n
 {
 }
 
-UserMessageHandlerDescriptor::~UserMessageHandlerDescriptor()
-{
-}
+UserMessageHandlerDescriptor::~UserMessageHandlerDescriptor() = default;
 
 const AtomicString& UserMessageHandlerDescriptor::name() const
 {

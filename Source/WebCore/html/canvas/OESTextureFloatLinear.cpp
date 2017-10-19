@@ -35,9 +35,7 @@ OESTextureFloatLinear::OESTextureFloatLinear(WebGLRenderingContextBase& context)
 {
 }
 
-OESTextureFloatLinear::~OESTextureFloatLinear()
-{
-}
+OESTextureFloatLinear::~OESTextureFloatLinear() = default;
 
 WebGLExtension::ExtensionName OESTextureFloatLinear::getName() const
 {

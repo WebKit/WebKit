@@ -50,9 +50,7 @@ ICOImageDecoder::ICOImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
 {
 }
 
-ICOImageDecoder::~ICOImageDecoder()
-{
-}
+ICOImageDecoder::~ICOImageDecoder() = default;
 
 void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {

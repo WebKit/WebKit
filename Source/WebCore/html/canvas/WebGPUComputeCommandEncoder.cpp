@@ -54,9 +54,7 @@ WebGPUComputeCommandEncoder::WebGPUComputeCommandEncoder(WebGPURenderingContext*
     m_computeCommandEncoder = buffer->commandBuffer()->createComputeCommandEncoder();
 }
     
-WebGPUComputeCommandEncoder::~WebGPUComputeCommandEncoder()
-{
-}
+WebGPUComputeCommandEncoder::~WebGPUComputeCommandEncoder() = default;
     
 void WebGPUComputeCommandEncoder::setComputePipelineState(WebGPUComputePipelineState& pipelineState)
 {

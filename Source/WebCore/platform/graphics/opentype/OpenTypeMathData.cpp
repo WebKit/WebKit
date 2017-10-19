@@ -269,9 +269,7 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData&)
 #endif
 }
 
-OpenTypeMathData::~OpenTypeMathData()
-{
-}
+OpenTypeMathData::~OpenTypeMathData() = default;
 
 #if ENABLE(OPENTYPE_MATH)
 float OpenTypeMathData::getMathConstant(const Font& font, MathConstant constant) const

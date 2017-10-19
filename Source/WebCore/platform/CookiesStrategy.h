@@ -50,7 +50,7 @@ public:
     virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String& cookieName) = 0;
 
 protected:
-    virtual ~CookiesStrategy() { }
+    virtual ~CookiesStrategy() = default;
 };
 
 } // namespace WebCore

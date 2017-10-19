@@ -43,8 +43,8 @@ class PlatformTextTrack;
 class MediaPlayerPrivateInterface {
     WTF_MAKE_NONCOPYABLE(MediaPlayerPrivateInterface); WTF_MAKE_FAST_ALLOCATED;
 public:
-    MediaPlayerPrivateInterface() { }
-    virtual ~MediaPlayerPrivateInterface() { }
+    MediaPlayerPrivateInterface() = default;
+    virtual ~MediaPlayerPrivateInterface() = default;
 
     virtual void load(const String& url) = 0;
 #if ENABLE(MEDIA_SOURCE)

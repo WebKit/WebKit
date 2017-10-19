@@ -45,7 +45,7 @@ public:
         SVGTRefTargetEventListenerType,
     };
 
-    virtual ~EventListener() { }
+    virtual ~EventListener() = default;
     virtual bool operator==(const EventListener&) const = 0;
     virtual void handleEvent(ScriptExecutionContext&, Event&) = 0;
     virtual bool wasCreatedFromMarkup() const { return false; }

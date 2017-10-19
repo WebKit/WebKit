@@ -75,9 +75,7 @@ UserMediaRequest::UserMediaRequest(Document& document, UserMediaController& cont
 {
 }
 
-UserMediaRequest::~UserMediaRequest()
-{
-}
+UserMediaRequest::~UserMediaRequest() = default;
 
 SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
 {

@@ -42,9 +42,7 @@ DOMWindowIndexedDatabase::DOMWindowIndexedDatabase(DOMWindow* window)
 {
 }
 
-DOMWindowIndexedDatabase::~DOMWindowIndexedDatabase()
-{
-}
+DOMWindowIndexedDatabase::~DOMWindowIndexedDatabase() = default;
 
 const char* DOMWindowIndexedDatabase::supplementName()
 {

@@ -45,7 +45,7 @@ class Expression {
 public:
     static EvaluationContext& evaluationContext();
 
-    virtual ~Expression() { }
+    virtual ~Expression() = default;
 
     virtual Value evaluate() const = 0;
     virtual Value::Type resultType() const = 0;

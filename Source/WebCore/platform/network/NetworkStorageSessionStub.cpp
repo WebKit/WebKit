@@ -40,9 +40,7 @@ NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, Networkin
 {
 }
 
-NetworkStorageSession::~NetworkStorageSession()
-{
-}
+NetworkStorageSession::~NetworkStorageSession() = default;
 
 NetworkingContext* NetworkStorageSession::context() const
 {

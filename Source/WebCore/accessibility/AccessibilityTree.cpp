@@ -45,9 +45,7 @@ AccessibilityTree::AccessibilityTree(RenderObject* renderer)
 {
 }
     
-AccessibilityTree::~AccessibilityTree()
-{
-}
+AccessibilityTree::~AccessibilityTree() = default;
     
 Ref<AccessibilityTree> AccessibilityTree::create(RenderObject* renderer)
 {

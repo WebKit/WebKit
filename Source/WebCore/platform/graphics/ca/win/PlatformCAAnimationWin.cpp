@@ -207,9 +207,7 @@ Ref<PlatformCAAnimation> PlatformCAAnimationWin::copy() const
     return animation;
 }
 
-PlatformCAAnimationWin::~PlatformCAAnimationWin()
-{
-}
+PlatformCAAnimationWin::~PlatformCAAnimationWin() = default;
 
 PlatformAnimationRef PlatformCAAnimationWin::platformAnimation() const
 {

@@ -36,7 +36,7 @@ class MediaPlaybackTarget;
 
 class MediaPlaybackTargetClient {
 public:
-    virtual ~MediaPlaybackTargetClient() { }
+    virtual ~MediaPlaybackTargetClient() = default;
 
     virtual void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;
     virtual void externalOutputDeviceAvailableDidChange(bool) = 0;

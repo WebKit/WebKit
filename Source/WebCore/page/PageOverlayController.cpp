@@ -49,10 +49,7 @@ PageOverlayController::PageOverlayController(MainFrame& mainFrame)
 {
 }
 
-PageOverlayController::~PageOverlayController()
-{
-
-}
+PageOverlayController::~PageOverlayController() = default;
 
 void PageOverlayController::createRootLayersIfNeeded()
 {

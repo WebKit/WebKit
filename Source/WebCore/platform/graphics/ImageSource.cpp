@@ -59,9 +59,7 @@ ImageSource::ImageSource(Image* image, AlphaOption alphaOption, GammaAndColorPro
 {
 }
 
-ImageSource::~ImageSource()
-{
-}
+ImageSource::~ImageSource() = default;
 
 void ImageSource::clearFrameBufferCache(size_t clearBeforeFrame)
 {

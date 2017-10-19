@@ -86,9 +86,7 @@ void ScrollAnimationSmooth::setCurrentPosition(const FloatPoint& position)
     m_verticalData = PerAxisData(position.y(), m_verticalData.visibleLength);
 }
 
-ScrollAnimationSmooth::~ScrollAnimationSmooth()
-{
-}
+ScrollAnimationSmooth::~ScrollAnimationSmooth() = default;
 
 static inline double curveAt(ScrollAnimationSmooth::Curve curve, double t)
 {

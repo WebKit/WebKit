@@ -44,9 +44,7 @@ WebGPUDepthStencilDescriptor::WebGPUDepthStencilDescriptor()
     m_depthStencilDescriptor = GPUDepthStencilDescriptor::create();
 }
 
-WebGPUDepthStencilDescriptor::~WebGPUDepthStencilDescriptor()
-{
-}
+WebGPUDepthStencilDescriptor::~WebGPUDepthStencilDescriptor() = default;
 
 bool WebGPUDepthStencilDescriptor::depthWriteEnabled() const
 {

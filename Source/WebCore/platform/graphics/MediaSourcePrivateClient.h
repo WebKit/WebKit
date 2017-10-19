@@ -37,7 +37,7 @@ class MediaSourcePrivate;
 
 class MediaSourcePrivateClient : public RefCounted<MediaSourcePrivateClient> {
 public:
-    virtual ~MediaSourcePrivateClient() { }
+    virtual ~MediaSourcePrivateClient() = default;
 
     virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) = 0;
     virtual MediaTime duration() const = 0;

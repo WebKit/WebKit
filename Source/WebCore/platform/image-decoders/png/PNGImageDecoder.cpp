@@ -231,9 +231,7 @@ PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
 {
 }
 
-PNGImageDecoder::~PNGImageDecoder()
-{
-}
+PNGImageDecoder::~PNGImageDecoder() = default;
 
 #if ENABLE(APNG)
 RepetitionCount PNGImageDecoder::repetitionCount() const

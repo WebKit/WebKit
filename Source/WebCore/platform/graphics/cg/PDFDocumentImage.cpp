@@ -62,9 +62,7 @@ PDFDocumentImage::PDFDocumentImage(ImageObserver* observer)
 {
 }
 
-PDFDocumentImage::~PDFDocumentImage()
-{
-}
+PDFDocumentImage::~PDFDocumentImage() = default;
 
 String PDFDocumentImage::filenameExtension() const
 {

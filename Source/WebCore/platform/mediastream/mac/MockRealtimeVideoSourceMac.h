@@ -44,7 +44,7 @@ namespace WebCore {
 
 class MockRealtimeVideoSourceMac final : public MockRealtimeVideoSource, private OrientationNotifier::Observer {
 public:
-    virtual ~MockRealtimeVideoSourceMac() { }
+    virtual ~MockRealtimeVideoSourceMac() = default;
 
 private:
     friend class MockRealtimeVideoSource;

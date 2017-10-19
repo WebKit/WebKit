@@ -35,7 +35,7 @@ class AutoFillButtonElement final : public HTMLDivElement {
 public:
     class AutoFillButtonOwner {
     public:
-        virtual ~AutoFillButtonOwner() { }
+        virtual ~AutoFillButtonOwner() = default;
         virtual void autoFillButtonElementWasClicked() = 0;
     };
 

@@ -35,9 +35,7 @@ EXTShaderTextureLOD::EXTShaderTextureLOD(WebGLRenderingContextBase& context)
 {
 }
 
-EXTShaderTextureLOD::~EXTShaderTextureLOD()
-{
-}
+EXTShaderTextureLOD::~EXTShaderTextureLOD() = default;
 
 WebGLExtension::ExtensionName EXTShaderTextureLOD::getName() const
 {

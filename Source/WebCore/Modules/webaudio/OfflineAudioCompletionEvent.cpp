@@ -44,9 +44,7 @@ OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(RefPtr<AudioBuffer>&& r
 {
 }
 
-OfflineAudioCompletionEvent::~OfflineAudioCompletionEvent()
-{
-}
+OfflineAudioCompletionEvent::~OfflineAudioCompletionEvent() = default;
 
 EventInterface OfflineAudioCompletionEvent::eventInterface() const
 {

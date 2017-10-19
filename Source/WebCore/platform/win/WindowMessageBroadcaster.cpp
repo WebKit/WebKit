@@ -68,9 +68,7 @@ WindowMessageBroadcaster::WindowMessageBroadcaster(HWND hwnd)
     ASSERT_ARG(hwnd, IsWindow(hwnd));
 }
 
-WindowMessageBroadcaster::~WindowMessageBroadcaster()
-{
-}
+WindowMessageBroadcaster::~WindowMessageBroadcaster() = default;
 
 void WindowMessageBroadcaster::addListener(WindowMessageListener* listener)
 {

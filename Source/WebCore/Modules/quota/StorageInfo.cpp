@@ -43,13 +43,9 @@
 
 namespace WebCore {
 
-StorageInfo::StorageInfo()
-{
-}
+StorageInfo::StorageInfo() = default;
 
-StorageInfo::~StorageInfo()
-{
-}
+StorageInfo::~StorageInfo() = default;
 
 void StorageInfo::queryUsageAndQuota(ScriptExecutionContext& scriptExecutionContext, int storageType, RefPtr<StorageUsageCallback>&& successCallback, RefPtr<StorageErrorCallback>&& errorCallback)
 {

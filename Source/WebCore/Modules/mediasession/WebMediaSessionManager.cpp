@@ -132,9 +132,7 @@ WebMediaSessionManager::WebMediaSessionManager()
 {
 }
 
-WebMediaSessionManager::~WebMediaSessionManager()
-{
-}
+WebMediaSessionManager::~WebMediaSessionManager() = default;
 
 uint64_t WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionManagerClient& client, uint64_t contextId)
 {

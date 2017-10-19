@@ -52,7 +52,7 @@ struct PlatformSample {
 
 class MediaSample : public RefCounted<MediaSample> {
 public:
-    virtual ~MediaSample() { }
+    virtual ~MediaSample() = default;
 
     virtual MediaTime presentationTime() const = 0;
     virtual MediaTime outputPresentationTime() const { return presentationTime(); }

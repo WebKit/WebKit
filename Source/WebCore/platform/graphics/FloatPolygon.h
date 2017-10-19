@@ -76,7 +76,7 @@ private:
 
 class VertexPair {
 public:
-    virtual ~VertexPair() { }
+    virtual ~VertexPair() = default;
 
     virtual const FloatPoint& vertex1() const = 0;
     virtual const FloatPoint& vertex2() const = 0;

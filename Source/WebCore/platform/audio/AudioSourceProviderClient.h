@@ -31,7 +31,7 @@ class AudioSourceProviderClient {
 public:
     virtual void setFormat(size_t numberOfChannels, float sampleRate) = 0;
 protected:
-    virtual ~AudioSourceProviderClient() { }
+    virtual ~AudioSourceProviderClient() = default;
 };
 
 } // WebCore

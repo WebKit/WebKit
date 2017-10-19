@@ -41,9 +41,7 @@ RenderScrollbarPart::RenderScrollbarPart(Document& document, RenderStyle&& style
 {
 }
 
-RenderScrollbarPart::~RenderScrollbarPart()
-{
-}
+RenderScrollbarPart::~RenderScrollbarPart() = default;
 
 void RenderScrollbarPart::layout()
 {

@@ -97,9 +97,7 @@ Ref<SVGRenderStyle> SVGRenderStyle::copy() const
     return adoptRef(*new SVGRenderStyle(*this));
 }
 
-SVGRenderStyle::~SVGRenderStyle()
-{
-}
+SVGRenderStyle::~SVGRenderStyle() = default;
 
 bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
 {

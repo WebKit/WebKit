@@ -147,9 +147,7 @@ BitStack::BitStack()
 {
 }
 
-BitStack::~BitStack()
-{
-}
+BitStack::~BitStack() = default;
 
 void BitStack::push(bool bit)
 {
@@ -379,9 +377,7 @@ TextIterator::TextIterator(const Range* range, TextIteratorBehavior behavior)
     advance();
 }
 
-TextIterator::~TextIterator()
-{
-}
+TextIterator::~TextIterator() = default;
 
 static HTMLSlotElement* assignedAuthorSlot(Node& node)
 {
@@ -2404,9 +2400,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     foldQuoteMarks(m_target);
 }
 
-inline SearchBuffer::~SearchBuffer()
-{
-}
+inline SearchBuffer::~SearchBuffer() = default;
 
 inline void SearchBuffer::reachedBreak()
 {

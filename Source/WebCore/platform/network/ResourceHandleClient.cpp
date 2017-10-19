@@ -32,13 +32,9 @@
 
 namespace WebCore {
 
-ResourceHandleClient::ResourceHandleClient()
-{
-}
+ResourceHandleClient::ResourceHandleClient() = default;
 
-ResourceHandleClient::~ResourceHandleClient()
-{
-}
+ResourceHandleClient::~ResourceHandleClient() = default;
     
 ResourceRequest ResourceHandleClient::willSendRequest(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&)
 {

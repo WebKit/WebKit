@@ -42,9 +42,7 @@ ApplePayError::ApplePayError(Code code, std::optional<ContactField> contactField
 {
 }
 
-ApplePayError::~ApplePayError()
-{
-}
+ApplePayError::~ApplePayError() = default;
 
 }
 

@@ -57,9 +57,7 @@ IDBKeyRange::IDBKeyRange(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool is
 {
 }
 
-IDBKeyRange::~IDBKeyRange()
-{
-}
+IDBKeyRange::~IDBKeyRange() = default;
 
 ExceptionOr<Ref<IDBKeyRange>> IDBKeyRange::only(RefPtr<IDBKey>&& key)
 {

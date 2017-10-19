@@ -38,9 +38,7 @@ WebGLLoseContext::WebGLLoseContext(WebGLRenderingContextBase& context)
 {
 }
 
-WebGLLoseContext::~WebGLLoseContext()
-{
-}
+WebGLLoseContext::~WebGLLoseContext() = default;
 
 WebGLExtension::ExtensionName WebGLLoseContext::getName() const
 {

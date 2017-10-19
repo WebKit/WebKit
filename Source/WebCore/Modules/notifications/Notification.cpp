@@ -71,9 +71,7 @@ Notification::Notification(Document& document, const String& title, const Option
     m_taskTimer->startOneShot(0_s);
 }
 
-Notification::~Notification() 
-{
-}
+Notification::~Notification()  = default;
 
 void Notification::show()
 {

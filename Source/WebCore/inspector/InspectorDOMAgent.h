@@ -92,7 +92,7 @@ class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOM
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct DOMListener {
-        virtual ~DOMListener() { }
+        virtual ~DOMListener() = default;
         virtual void didRemoveDOMNode(Node&, int nodeId) = 0;
         virtual void didModifyDOMAttr(Element&) = 0;
     };

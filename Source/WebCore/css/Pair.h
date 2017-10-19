@@ -45,7 +45,7 @@ public:
     {
         return adoptRef(*new Pair(WTFMove(first), WTFMove(second), encoding));
     }
-    virtual ~Pair() { }
+    virtual ~Pair() = default;
 
     CSSPrimitiveValue* first() const { return m_first.get(); }
     CSSPrimitiveValue* second() const { return m_second.get(); }

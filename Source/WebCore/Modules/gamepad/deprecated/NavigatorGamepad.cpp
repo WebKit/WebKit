@@ -34,13 +34,9 @@
 
 namespace WebCore {
 
-NavigatorGamepad::NavigatorGamepad()
-{
-}
+NavigatorGamepad::NavigatorGamepad() = default;
 
-NavigatorGamepad::~NavigatorGamepad()
-{
-}
+NavigatorGamepad::~NavigatorGamepad() = default;
 
 const char* NavigatorGamepad::supplementName()
 {

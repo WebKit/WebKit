@@ -37,7 +37,7 @@ public:
     virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID) = 0;
 
 protected:
-    virtual ~PlugInClient() { }
+    virtual ~PlugInClient() = default;
 };
 
 } // namespace WebCore

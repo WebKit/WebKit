@@ -45,9 +45,7 @@ WebGPURenderPassDepthAttachmentDescriptor::WebGPURenderPassDepthAttachmentDescri
 {
 }
 
-WebGPURenderPassDepthAttachmentDescriptor::~WebGPURenderPassDepthAttachmentDescriptor()
-{
-}
+WebGPURenderPassDepthAttachmentDescriptor::~WebGPURenderPassDepthAttachmentDescriptor() = default;
 
 double WebGPURenderPassDepthAttachmentDescriptor::clearDepth() const
 {

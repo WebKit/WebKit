@@ -29,7 +29,7 @@ namespace WebCore {
     
 class OverlapTestRequestClient {
 public:
-    virtual ~OverlapTestRequestClient() { }
+    virtual ~OverlapTestRequestClient() = default;
     virtual void setOverlapTestResult(bool) = 0;
 };
 

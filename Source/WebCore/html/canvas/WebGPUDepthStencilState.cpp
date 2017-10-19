@@ -47,9 +47,7 @@ WebGPUDepthStencilState::WebGPUDepthStencilState(WebGPURenderingContext* context
     m_depthStencilState = GPUDepthStencilState::create(context->device().get(), descriptor->depthStencilDescriptor());
 }
 
-WebGPUDepthStencilState::~WebGPUDepthStencilState()
-{
-}
+WebGPUDepthStencilState::~WebGPUDepthStencilState() = default;
 
 String WebGPUDepthStencilState::label() const
 {

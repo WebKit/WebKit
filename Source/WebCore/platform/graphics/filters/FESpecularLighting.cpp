@@ -37,9 +37,7 @@ Ref<FESpecularLighting> FESpecularLighting::create(Filter& filter, const Color& 
     return adoptRef(*new FESpecularLighting(filter, lightingColor, surfaceScale, specularConstant, specularExponent, kernelUnitLengthX, kernelUnitLengthY, WTFMove(lightSource)));
 }
 
-FESpecularLighting::~FESpecularLighting()
-{
-}
+FESpecularLighting::~FESpecularLighting() = default;
 
 const Color& FESpecularLighting::lightingColor() const
 {

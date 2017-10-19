@@ -47,7 +47,7 @@ class PageOverlay final : public RefCounted<PageOverlay> {
 public:
     class Client {
     protected:
-        virtual ~Client() { }
+        virtual ~Client() = default;
     
     public:
         virtual void willMoveToPage(PageOverlay&, Page*) = 0;

@@ -51,7 +51,7 @@ class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageRuntimeAgent(PageAgentContext&, InspectorPageAgent*);
-    virtual ~PageRuntimeAgent() { }
+    virtual ~PageRuntimeAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;

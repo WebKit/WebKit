@@ -61,9 +61,7 @@ TextIndicator::TextIndicator(const TextIndicatorData& data)
 {
 }
 
-TextIndicator::~TextIndicator()
-{
-}
+TextIndicator::~TextIndicator() = default;
 
 Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
 {

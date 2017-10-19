@@ -79,9 +79,7 @@ Pasteboard::Pasteboard()
 {
 }
 
-Pasteboard::~Pasteboard()
-{
-}
+Pasteboard::~Pasteboard() = default;
 
 const SelectionData& Pasteboard::selectionData() const
 {

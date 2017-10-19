@@ -42,7 +42,7 @@ class RTCRtpReceiver : public RTCRtpSenderReceiverBase {
 public:
     class Backend {
     public:
-        virtual ~Backend() { }
+        virtual ~Backend() = default;
         virtual RTCRtpParameters getParameters() { return { }; }
     };
 

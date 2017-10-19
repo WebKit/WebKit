@@ -39,9 +39,7 @@ FontFamilySpecificationCoreText::FontFamilySpecificationCoreText(CTFontDescripto
 {
 }
 
-FontFamilySpecificationCoreText::~FontFamilySpecificationCoreText()
-{
-}
+FontFamilySpecificationCoreText::~FontFamilySpecificationCoreText() = default;
 
 FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fontDescription) const
 {

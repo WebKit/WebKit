@@ -67,9 +67,7 @@ HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagN
 {
 }
 
-HTMLTextFormControlElement::~HTMLTextFormControlElement()
-{
-}
+HTMLTextFormControlElement::~HTMLTextFormControlElement() = default;
 
 bool HTMLTextFormControlElement::childShouldCreateRenderer(const Node& child) const
 {

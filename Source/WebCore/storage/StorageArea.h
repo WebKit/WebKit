@@ -41,7 +41,7 @@ struct SecurityOriginData;
 
 class StorageArea : public RefCounted<StorageArea> {
 public:
-    virtual ~StorageArea() { }
+    virtual ~StorageArea() = default;
 
     virtual unsigned length() = 0;
     virtual String key(unsigned index) = 0;

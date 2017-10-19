@@ -51,9 +51,7 @@ WebGPURenderCommandEncoder::WebGPURenderCommandEncoder(WebGPURenderingContext* c
     m_renderCommandEncoder = buffer->commandBuffer()->createRenderCommandEncoder(descriptor->renderPassDescriptor());
 }
 
-WebGPURenderCommandEncoder::~WebGPURenderCommandEncoder()
-{
-}
+WebGPURenderCommandEncoder::~WebGPURenderCommandEncoder() = default;
 
 void WebGPURenderCommandEncoder::setRenderPipelineState(WebGPURenderPipelineState& pipelineState)
 {

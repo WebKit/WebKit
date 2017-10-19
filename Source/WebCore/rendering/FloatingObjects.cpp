@@ -133,7 +133,7 @@ public:
     {
     }
 
-    virtual ~ComputeFloatOffsetAdapter() { }
+    virtual ~ComputeFloatOffsetAdapter() = default;
 
     LayoutUnit lowValue() const { return m_lineTop; }
     LayoutUnit highValue() const { return m_lineBottom; }
@@ -159,7 +159,7 @@ public:
     {
     }
 
-    virtual ~ComputeFloatOffsetForFloatLayoutAdapter() { }
+    virtual ~ComputeFloatOffsetForFloatLayoutAdapter() = default;
 
     LayoutUnit heightRemaining() const;
 
@@ -175,7 +175,7 @@ public:
     {
     }
 
-    virtual ~ComputeFloatOffsetForLineLayoutAdapter() { }
+    virtual ~ComputeFloatOffsetForLineLayoutAdapter() = default;
 
 protected:
     bool updateOffsetIfNeeded(const FloatingObject&) final;
@@ -254,9 +254,7 @@ FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
 {
 }
 
-FloatingObjects::~FloatingObjects()
-{
-}
+FloatingObjects::~FloatingObjects() = default;
 
 void FloatingObjects::clearLineBoxTreePointers()
 {

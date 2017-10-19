@@ -61,9 +61,7 @@ PageOverlay::PageOverlay(Client& client, OverlayType overlayType)
 {
 }
 
-PageOverlay::~PageOverlay()
-{
-}
+PageOverlay::~PageOverlay() = default;
 
 PageOverlayController* PageOverlay::controller() const
 {

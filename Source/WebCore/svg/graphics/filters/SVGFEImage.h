@@ -46,7 +46,7 @@ public:
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const final;
     
 private:
-    virtual ~FEImage() { }
+    virtual ~FEImage() = default;
     FEImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatioValue&);
     FEImage(Filter&, Document&, const String&, const SVGPreserveAspectRatioValue&);
     RenderElement* referencedRenderer() const;

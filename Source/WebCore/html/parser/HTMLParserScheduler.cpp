@@ -74,9 +74,7 @@ PumpSession::PumpSession(unsigned& nestingLevel, Document* document)
 {
 }
 
-PumpSession::~PumpSession()
-{
-}
+PumpSession::~PumpSession() = default;
 
 HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
     : m_parser(parser)

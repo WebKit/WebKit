@@ -37,7 +37,7 @@ struct ServiceWorkerRegistrationData;
 
 class ServiceWorkerJobClient {
 public:
-    virtual ~ServiceWorkerJobClient() { };
+    virtual ~ServiceWorkerJobClient() = default;
 
     virtual void jobFailedWithException(ServiceWorkerJob&, const Exception&) = 0;
     virtual void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&) = 0;

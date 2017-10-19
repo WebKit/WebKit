@@ -29,9 +29,7 @@ RenderTableCaption::RenderTableCaption(Element& element, RenderStyle&& style)
 {
 }
 
-RenderTableCaption::~RenderTableCaption()
-{
-}
+RenderTableCaption::~RenderTableCaption() = default;
 
 void RenderTableCaption::insertedIntoTree()
 {

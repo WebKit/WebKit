@@ -33,7 +33,7 @@ class TextureMapper;
 class TextureMapperTiledBackingStore : public TextureMapperBackingStore {
 public:
     static Ref<TextureMapperTiledBackingStore> create() { return adoptRef(*new TextureMapperTiledBackingStore); }
-    virtual ~TextureMapperTiledBackingStore() { }
+    virtual ~TextureMapperTiledBackingStore() = default;
 
     RefPtr<BitmapTexture> texture() const override;
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
@@ -47,7 +47,7 @@ public:
     void setContentsToImage(Image* image) { m_image = image; }
 
 private:
-    TextureMapperTiledBackingStore() { }
+    TextureMapperTiledBackingStore() = default;
 
     void createOrDestroyTilesIfNeeded(const FloatSize& backingStoreSize, const IntSize& tileSize, bool hasAlpha);
     void updateContentsFromImageIfNeeded(TextureMapper&);

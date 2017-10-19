@@ -32,7 +32,7 @@ class CairoPath {
 public:
     CairoPath();
 
-    ~CairoPath() {}
+    ~CairoPath() = default;
 
     cairo_t* context() { return m_cr.get(); }
 

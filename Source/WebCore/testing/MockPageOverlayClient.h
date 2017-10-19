@@ -46,7 +46,7 @@ public:
 
     String layerTreeAsText(MainFrame&, LayerTreeFlags);
 
-    virtual ~MockPageOverlayClient() { }
+    virtual ~MockPageOverlayClient() = default;
 
 private:
     void willMoveToPage(PageOverlay&, Page*) override;

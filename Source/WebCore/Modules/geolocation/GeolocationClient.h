@@ -52,7 +52,7 @@ public:
     void provideGeolocationTo(Page*, GeolocationClient&);
 
 protected:
-    virtual ~GeolocationClient() { }
+    virtual ~GeolocationClient() = default;
 };
 
 WEBCORE_EXPORT void provideGeolocationTo(Page*, GeolocationClient&);

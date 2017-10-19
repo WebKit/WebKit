@@ -70,9 +70,7 @@ ScrollableArea::ScrollableArea()
 {
 }
 
-ScrollableArea::~ScrollableArea()
-{
-}
+ScrollableArea::~ScrollableArea() = default;
 
 ScrollAnimator& ScrollableArea::scrollAnimator() const
 {

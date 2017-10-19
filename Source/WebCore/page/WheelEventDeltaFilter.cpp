@@ -36,13 +36,9 @@
 
 namespace WebCore {
     
-WheelEventDeltaFilter::WheelEventDeltaFilter()
-{
-}
+WheelEventDeltaFilter::WheelEventDeltaFilter() = default;
 
-WheelEventDeltaFilter::~WheelEventDeltaFilter()
-{
-}
+WheelEventDeltaFilter::~WheelEventDeltaFilter() = default;
 
 std::unique_ptr<WheelEventDeltaFilter> WheelEventDeltaFilter::create()
 {

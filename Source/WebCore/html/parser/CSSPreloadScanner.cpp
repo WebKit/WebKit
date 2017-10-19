@@ -39,9 +39,7 @@ CSSPreloadScanner::CSSPreloadScanner()
 {
 }
 
-CSSPreloadScanner::~CSSPreloadScanner()
-{
-}
+CSSPreloadScanner::~CSSPreloadScanner() = default;
 
 void CSSPreloadScanner::reset()
 {

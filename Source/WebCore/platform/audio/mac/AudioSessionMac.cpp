@@ -64,9 +64,7 @@ AudioSession::AudioSession()
 {
 }
 
-AudioSession::~AudioSession()
-{
-}
+AudioSession::~AudioSession() = default;
 
 AudioSession::CategoryType AudioSession::category() const
 {

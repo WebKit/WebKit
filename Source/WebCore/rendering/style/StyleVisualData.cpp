@@ -33,9 +33,7 @@ StyleVisualData::StyleVisualData()
 {
 }
 
-StyleVisualData::~StyleVisualData()
-{
-}
+StyleVisualData::~StyleVisualData() = default;
 
 inline StyleVisualData::StyleVisualData(const StyleVisualData& other)
     : RefCounted<StyleVisualData>()

@@ -42,7 +42,7 @@ public:
 
     class SpinButtonOwner {
     public:
-        virtual ~SpinButtonOwner() { }
+        virtual ~SpinButtonOwner() = default;
         virtual void focusAndSelectSpinButtonOwner() = 0;
         virtual bool shouldSpinButtonRespondToMouseEvents() = 0;
         virtual bool shouldSpinButtonRespondToWheelEvents() = 0;

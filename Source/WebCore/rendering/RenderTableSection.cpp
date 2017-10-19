@@ -94,9 +94,7 @@ RenderTableSection::RenderTableSection(Document& document, RenderStyle&& style)
     setInline(false);
 }
 
-RenderTableSection::~RenderTableSection()
-{
-}
+RenderTableSection::~RenderTableSection() = default;
 
 void RenderTableSection::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {

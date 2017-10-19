@@ -35,9 +35,7 @@ EXTsRGB::EXTsRGB(WebGLRenderingContextBase& context)
 {
 }
 
-EXTsRGB::~EXTsRGB()
-{
-}
+EXTsRGB::~EXTsRGB() = default;
 
 WebGLExtension::ExtensionName EXTsRGB::getName() const
 {

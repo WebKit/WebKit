@@ -44,9 +44,7 @@ ScrollbarTheme& ScrollbarTheme::nativeTheme()
     return theme;
 }
 
-ScrollbarThemeGtk::~ScrollbarThemeGtk()
-{
-}
+ScrollbarThemeGtk::~ScrollbarThemeGtk() = default;
 
 #ifndef GTK_API_VERSION_2
 static void themeChangedCallback()

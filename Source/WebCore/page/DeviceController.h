@@ -41,7 +41,7 @@ class DeviceController : public Supplement<Page> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DeviceController(DeviceClient*);
-    virtual ~DeviceController() { }
+    virtual ~DeviceController() = default;
 
     void addDeviceEventListener(DOMWindow*);
     void removeDeviceEventListener(DOMWindow*);

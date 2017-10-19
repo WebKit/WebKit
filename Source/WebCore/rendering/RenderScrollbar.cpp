@@ -66,9 +66,7 @@ RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrient
     setFrameRect(IntRect(0, 0, width, height));
 }
 
-RenderScrollbar::~RenderScrollbar()
-{
-}
+RenderScrollbar::~RenderScrollbar() = default;
 
 RenderBox* RenderScrollbar::owningRenderer() const
 {

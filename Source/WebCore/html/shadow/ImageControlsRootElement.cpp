@@ -42,9 +42,7 @@ ImageControlsRootElement::ImageControlsRootElement(Document& document)
 {
 }
 
-ImageControlsRootElement::~ImageControlsRootElement()
-{
-}
+ImageControlsRootElement::~ImageControlsRootElement() = default;
 
 } // namespace WebCore
 

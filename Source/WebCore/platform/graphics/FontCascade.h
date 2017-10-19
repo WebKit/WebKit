@@ -85,7 +85,7 @@ public:
     virtual std::pair<float, float> extents() = 0;
     virtual GlyphUnderlineType underlineType() = 0;
     virtual void advance() = 0;
-    virtual ~GlyphToPathTranslator() { }
+    virtual ~GlyphToPathTranslator() = default;
 };
 GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun&, const GlyphBuffer&, unsigned index);
 

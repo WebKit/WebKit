@@ -69,9 +69,7 @@ HRTFPanner::HRTFPanner(float sampleRate, HRTFDatabaseLoader* databaseLoader)
     ASSERT(databaseLoader);
 }
 
-HRTFPanner::~HRTFPanner()
-{
-}
+HRTFPanner::~HRTFPanner() = default;
 
 size_t HRTFPanner::fftSizeForSampleRate(float sampleRate)
 {

@@ -250,9 +250,7 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, ParserCon
     ASSERT(m_document.isHTMLDocument() || m_document.isXHTMLDocument());
 }
 
-HTMLConstructionSite::~HTMLConstructionSite()
-{
-}
+HTMLConstructionSite::~HTMLConstructionSite() = default;
 
 void HTMLConstructionSite::setForm(HTMLFormElement* form)
 {

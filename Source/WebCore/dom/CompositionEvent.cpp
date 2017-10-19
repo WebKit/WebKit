@@ -29,9 +29,7 @@
 
 namespace WebCore {
 
-CompositionEvent::CompositionEvent()
-{
-}
+CompositionEvent::CompositionEvent() = default;
 
 CompositionEvent::CompositionEvent(const AtomicString& type, DOMWindow* view, const String& data)
     : UIEvent(type, true, true, view, 0)
@@ -45,9 +43,7 @@ CompositionEvent::CompositionEvent(const AtomicString& type, const Init& initial
 {
 }
 
-CompositionEvent::~CompositionEvent()
-{
-}
+CompositionEvent::~CompositionEvent() = default;
 
 void CompositionEvent::initCompositionEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, const String& data)
 {

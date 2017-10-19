@@ -40,7 +40,7 @@ public:
 
     class Client {
     public:
-        virtual ~Client() { }
+        virtual ~Client() = default;
         virtual void paintToSurfaceContext(GraphicsContext&) = 0;
     };
 
@@ -48,7 +48,7 @@ public:
     static void setFactory(Factory);
     static RefPtr<CoordinatedSurface> create(const IntSize&, Flags);
 
-    virtual ~CoordinatedSurface() { }
+    virtual ~CoordinatedSurface() = default;
 
     bool supportsAlpha() const { return flags() & SupportsAlpha; }
     IntSize size() const { return m_size; }

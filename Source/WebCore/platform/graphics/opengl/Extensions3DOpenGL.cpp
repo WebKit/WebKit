@@ -50,9 +50,7 @@ Extensions3DOpenGL::Extensions3DOpenGL(GraphicsContext3D* context, bool useIndex
 {
 }
 
-Extensions3DOpenGL::~Extensions3DOpenGL()
-{
-}
+Extensions3DOpenGL::~Extensions3DOpenGL() = default;
 
 
 void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)

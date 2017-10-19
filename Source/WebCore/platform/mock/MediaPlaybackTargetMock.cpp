@@ -42,9 +42,7 @@ MediaPlaybackTargetMock::MediaPlaybackTargetMock(const String& name, MediaPlayba
 {
 }
 
-MediaPlaybackTargetMock::~MediaPlaybackTargetMock()
-{
-}
+MediaPlaybackTargetMock::~MediaPlaybackTargetMock() = default;
 
 const MediaPlaybackTargetContext& MediaPlaybackTargetMock::targetContext() const
 {

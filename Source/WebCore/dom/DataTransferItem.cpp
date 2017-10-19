@@ -67,9 +67,7 @@ DataTransferItem::DataTransferItem(WeakPtr<DataTransferItemList>&& list, const S
 {
 }
 
-DataTransferItem::~DataTransferItem()
-{
-}
+DataTransferItem::~DataTransferItem() = default;
 
 void DataTransferItem::clearListAndPutIntoDisabledMode()
 {

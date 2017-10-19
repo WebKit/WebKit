@@ -56,9 +56,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
         ASSERT(!function);
 }
 
-JSEventListener::~JSEventListener()
-{
-}
+JSEventListener::~JSEventListener() = default;
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext&) const
 {

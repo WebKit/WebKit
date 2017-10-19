@@ -53,9 +53,7 @@ Step::Step(Axis axis, NodeTest nodeTest, Vector<std::unique_ptr<Expression>> pre
 {
 }
 
-Step::~Step()
-{
-}
+Step::~Step() = default;
 
 void Step::optimize()
 {

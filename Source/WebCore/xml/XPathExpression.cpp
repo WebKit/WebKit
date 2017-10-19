@@ -51,9 +51,7 @@ ExceptionOr<Ref<XPathExpression>> XPathExpression::createExpression(const String
     return adoptRef(*new XPathExpression(parseResult.releaseReturnValue()));
 }
 
-XPathExpression::~XPathExpression()
-{
-}
+XPathExpression::~XPathExpression() = default;
 
 // FIXME: Why does this take an XPathResult that it ignores?
 ExceptionOr<Ref<XPathResult>> XPathExpression::evaluate(Node* contextNode, unsigned short type, XPathResult*)

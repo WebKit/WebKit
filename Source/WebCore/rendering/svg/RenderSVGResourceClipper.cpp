@@ -45,9 +45,7 @@ RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement& element, 
 {
 }
 
-RenderSVGResourceClipper::~RenderSVGResourceClipper()
-{
-}
+RenderSVGResourceClipper::~RenderSVGResourceClipper() = default;
 
 void RenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidation)
 {

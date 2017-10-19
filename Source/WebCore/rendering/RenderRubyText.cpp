@@ -41,9 +41,7 @@ RenderRubyText::RenderRubyText(Element& element, RenderStyle&& style)
 {
 }
 
-RenderRubyText::~RenderRubyText()
-{
-}
+RenderRubyText::~RenderRubyText() = default;
 
 RenderRubyRun* RenderRubyText::rubyRun() const
 {

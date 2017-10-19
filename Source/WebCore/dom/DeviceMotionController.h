@@ -38,7 +38,7 @@ class DeviceMotionController final : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceMotionController);
 public:
     explicit DeviceMotionController(DeviceMotionClient*);
-    virtual ~DeviceMotionController() { }
+    virtual ~DeviceMotionController() = default;
 
 #if PLATFORM(IOS)
     // FIXME: We should look to reconcile the iOS and OpenSource differences with this class

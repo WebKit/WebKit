@@ -47,9 +47,7 @@ AccessibilityTableRow::AccessibilityTableRow(RenderObject* renderer)
 {
 }
 
-AccessibilityTableRow::~AccessibilityTableRow()
-{
-}
+AccessibilityTableRow::~AccessibilityTableRow() = default;
 
 Ref<AccessibilityTableRow> AccessibilityTableRow::create(RenderObject* renderer)
 {

@@ -44,9 +44,7 @@ WebGPUTextureDescriptor::WebGPUTextureDescriptor(unsigned long pixelFormat, unsi
     m_textureDescriptor = GPUTextureDescriptor::create(pixelFormat, width, height, mipmapped);
 }
 
-WebGPUTextureDescriptor::~WebGPUTextureDescriptor()
-{
-}
+WebGPUTextureDescriptor::~WebGPUTextureDescriptor() = default;
 
 unsigned long WebGPUTextureDescriptor::width() const
 {

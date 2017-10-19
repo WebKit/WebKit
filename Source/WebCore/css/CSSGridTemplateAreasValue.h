@@ -43,7 +43,7 @@ public:
         return adoptRef(*new CSSGridTemplateAreasValue(gridAreaMap, rowCount, columnCount));
     }
 
-    ~CSSGridTemplateAreasValue() { }
+    ~CSSGridTemplateAreasValue() = default;
 
     String customCSSText() const;
 

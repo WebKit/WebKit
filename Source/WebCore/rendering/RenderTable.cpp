@@ -89,9 +89,7 @@ RenderTable::RenderTable(Document& document, RenderStyle&& style)
     m_columnPos.fill(0, 1);
 }
 
-RenderTable::~RenderTable()
-{
-}
+RenderTable::~RenderTable() = default;
 
 void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {

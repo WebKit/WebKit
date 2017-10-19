@@ -50,9 +50,7 @@ Crypto::Crypto(ScriptExecutionContext& context)
 {
 }
 
-Crypto::~Crypto()
-{
-}
+Crypto::~Crypto() = default;
 
 ExceptionOr<void> Crypto::getRandomValues(ArrayBufferView& array)
 {

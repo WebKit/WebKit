@@ -38,9 +38,7 @@ RenderProgress::RenderProgress(HTMLElement& element, RenderStyle&& style)
 {
 }
 
-RenderProgress::~RenderProgress()
-{
-}
+RenderProgress::~RenderProgress() = default;
 
 void RenderProgress::updateFromElement()
 {

@@ -49,7 +49,7 @@ class WheelEventTestTrigger;
 
 class ScrollControllerClient {
 protected:
-    virtual ~ScrollControllerClient() { }
+    virtual ~ScrollControllerClient() = default;
 
 public:
 #if ENABLE(RUBBER_BANDING)

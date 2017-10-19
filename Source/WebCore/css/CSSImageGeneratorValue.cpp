@@ -63,9 +63,7 @@ CSSImageGeneratorValue::CSSImageGeneratorValue(ClassType classType)
 {
 }
 
-CSSImageGeneratorValue::~CSSImageGeneratorValue()
-{
-}
+CSSImageGeneratorValue::~CSSImageGeneratorValue() = default;
 
 void CSSImageGeneratorValue::addClient(RenderElement& renderer)
 {

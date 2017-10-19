@@ -61,9 +61,7 @@ MediaController::MediaController(ScriptExecutionContext& context)
 {
 }
 
-MediaController::~MediaController()
-{
-}
+MediaController::~MediaController() = default;
 
 void MediaController::addMediaElement(HTMLMediaElement& element)
 {

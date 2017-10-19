@@ -67,9 +67,7 @@ CryptoKeyHMAC::CryptoKeyHMAC(Vector<uint8_t>&& key, CryptoAlgorithmIdentifier ha
 {
 }
 
-CryptoKeyHMAC::~CryptoKeyHMAC()
-{
-}
+CryptoKeyHMAC::~CryptoKeyHMAC() = default;
 
 RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::generate(size_t lengthBits, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap usages)
 {

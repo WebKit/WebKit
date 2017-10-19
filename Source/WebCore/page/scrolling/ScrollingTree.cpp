@@ -40,13 +40,9 @@
 
 namespace WebCore {
 
-ScrollingTree::ScrollingTree()
-{
-}
+ScrollingTree::ScrollingTree() = default;
 
-ScrollingTree::~ScrollingTree()
-{
-}
+ScrollingTree::~ScrollingTree() = default;
 
 bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent& wheelEvent)
 {

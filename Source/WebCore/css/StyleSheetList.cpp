@@ -37,9 +37,7 @@ StyleSheetList::StyleSheetList(Document* document)
 {
 }
 
-StyleSheetList::~StyleSheetList()
-{
-}
+StyleSheetList::~StyleSheetList() = default;
 
 inline const Vector<RefPtr<StyleSheet>>& StyleSheetList::styleSheets() const
 {

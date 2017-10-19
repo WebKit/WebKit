@@ -52,7 +52,7 @@ public:
         , m_anchorEdges(other.m_anchorEdges)
     { }
     
-    virtual ~ViewportConstraints() { }
+    virtual ~ViewportConstraints() = default;
     
     virtual ConstraintType constraintType() const = 0;
     

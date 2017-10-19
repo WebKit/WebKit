@@ -49,9 +49,7 @@ SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& d
     registerAnimatedPropertiesForSVGGraphicsElement();
 }
 
-SVGGraphicsElement::~SVGGraphicsElement()
-{
-}
+SVGGraphicsElement::~SVGGraphicsElement() = default;
 
 Ref<SVGMatrix> SVGGraphicsElement::getCTMForBindings()
 {

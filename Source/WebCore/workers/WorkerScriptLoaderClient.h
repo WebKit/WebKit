@@ -36,7 +36,7 @@ public:
     virtual void notifyFinished() = 0;
 
 protected:
-    virtual ~WorkerScriptLoaderClient() { }
+    virtual ~WorkerScriptLoaderClient() = default;
 };
 
 } // namespace WebCore

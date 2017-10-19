@@ -43,9 +43,7 @@ RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent(bool canBubble, bool cancel
 {
 }
 
-RTCPeerConnectionIceEvent::~RTCPeerConnectionIceEvent()
-{
-}
+RTCPeerConnectionIceEvent::~RTCPeerConnectionIceEvent() = default;
 
 RTCIceCandidate* RTCPeerConnectionIceEvent::candidate() const
 {

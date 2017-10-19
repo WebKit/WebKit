@@ -52,9 +52,7 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
 {
 }
 
-SearchInputType::~SearchInputType()
-{
-}
+SearchInputType::~SearchInputType() = default;
 
 void SearchInputType::addSearchResult()
 {

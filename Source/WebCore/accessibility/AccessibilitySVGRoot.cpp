@@ -38,9 +38,7 @@ AccessibilitySVGRoot::AccessibilitySVGRoot(RenderObject* renderer)
 {
 }
 
-AccessibilitySVGRoot::~AccessibilitySVGRoot()
-{
-}
+AccessibilitySVGRoot::~AccessibilitySVGRoot() = default;
 
 Ref<AccessibilitySVGRoot> AccessibilitySVGRoot::create(RenderObject* renderer)
 {

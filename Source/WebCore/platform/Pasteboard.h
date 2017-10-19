@@ -130,7 +130,7 @@ class PasteboardWebContentReader {
 public:
     String contentOrigin;
 
-    virtual ~PasteboardWebContentReader() { }
+    virtual ~PasteboardWebContentReader() = default;
 
 #if PLATFORM(COCOA)
     virtual bool readWebArchive(SharedBuffer&) = 0;

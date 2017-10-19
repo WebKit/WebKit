@@ -31,7 +31,7 @@ public:
         : m_absoluteTransform(absoluteTransform)
         , m_filterScale(filterScale)
     { }
-    virtual ~Filter() { }
+    virtual ~Filter() = default;
 
     void setSourceImage(std::unique_ptr<ImageBuffer> sourceImage) { m_sourceImage = WTFMove(sourceImage); }
     ImageBuffer* sourceImage() { return m_sourceImage.get(); }

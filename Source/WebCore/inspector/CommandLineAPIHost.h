@@ -85,7 +85,7 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual JSC::JSValue get(JSC::ExecState&);
-        virtual ~InspectableObject() { }
+        virtual ~InspectableObject() = default;
     };
     void addInspectedObject(std::unique_ptr<InspectableObject>);
     JSC::JSValue inspectedObject(JSC::ExecState&);

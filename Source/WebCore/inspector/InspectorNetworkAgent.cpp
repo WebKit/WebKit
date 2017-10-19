@@ -91,7 +91,7 @@ public:
     InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
         : m_callback(WTFMove(callback)) { }
 
-    virtual ~InspectorThreadableLoaderClient() { }
+    virtual ~InspectorThreadableLoaderClient() = default;
 
     void didReceiveResponse(unsigned long, const ResourceResponse& response) override
     {

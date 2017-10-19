@@ -113,7 +113,7 @@ public:
     {
     }
 
-    virtual ~Item() { }
+    virtual ~Item() = default;
 
     ItemType type() const
     {

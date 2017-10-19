@@ -42,9 +42,7 @@ WebTiledBackingLayerWin::WebTiledBackingLayerWin(PlatformCALayer* owner)
 {
 }
 
-WebTiledBackingLayerWin::~WebTiledBackingLayerWin()
-{
-}
+WebTiledBackingLayerWin::~WebTiledBackingLayerWin() = default;
 
 struct DisplayOnMainThreadContext {
     RetainPtr<CACFLayerRef> layer;

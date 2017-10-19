@@ -47,7 +47,7 @@ namespace WebCore {
 class RTCRtpTransceiver : public RefCounted<RTCRtpTransceiver>, public ScriptWrappable {
 public:
     static Ref<RTCRtpTransceiver> create(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver) { return adoptRef(*new RTCRtpTransceiver(WTFMove(sender), WTFMove(receiver))); }
-    virtual ~RTCRtpTransceiver() { }
+    virtual ~RTCRtpTransceiver() = default;
 
     bool hasSendingDirection() const;
     void enableSendingDirection();

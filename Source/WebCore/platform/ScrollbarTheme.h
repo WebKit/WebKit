@@ -43,7 +43,7 @@ class GraphicsLayer;
 class ScrollbarTheme {
     WTF_MAKE_NONCOPYABLE(ScrollbarTheme); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ScrollbarTheme() { }
+    ScrollbarTheme() = default;
     virtual ~ScrollbarTheme() {};
 
     virtual void updateEnabledState(Scrollbar&) { }

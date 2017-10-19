@@ -80,9 +80,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
         setFooterLayer(stateNode.footerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
-ScrollingStateFrameScrollingNode::~ScrollingStateFrameScrollingNode()
-{
-}
+ScrollingStateFrameScrollingNode::~ScrollingStateFrameScrollingNode() = default;
 
 Ref<ScrollingStateNode> ScrollingStateFrameScrollingNode::clone(ScrollingStateTree& adoptiveTree)
 {

@@ -49,9 +49,7 @@
 
 namespace WebCore {
 
-BlobRegistryImpl::~BlobRegistryImpl()
-{
-}
+BlobRegistryImpl::~BlobRegistryImpl() = default;
 
 static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {

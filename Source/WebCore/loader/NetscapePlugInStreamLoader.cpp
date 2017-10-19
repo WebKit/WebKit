@@ -51,9 +51,7 @@ NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame& frame, NetscapePlu
 #endif
 }
 
-NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader()
-{
-}
+NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader() = default;
 
 RefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(Frame& frame, NetscapePlugInStreamLoaderClient& client, const ResourceRequest& request)
 {

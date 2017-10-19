@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RTCDTMFSenderHandlerClient {
 public:
-    virtual ~RTCDTMFSenderHandlerClient() { }
+    virtual ~RTCDTMFSenderHandlerClient() = default;
 
     virtual void didPlayTone(const String&) = 0;
 };

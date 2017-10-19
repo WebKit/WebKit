@@ -37,7 +37,7 @@ public:
     virtual String lookupNamespaceURI(const String& prefix) = 0;
 
 protected:
-    XPathNSResolver() { }
+    XPathNSResolver() = default;
 };
 
 }

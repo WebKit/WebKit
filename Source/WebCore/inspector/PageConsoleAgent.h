@@ -43,7 +43,7 @@ class PageConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageConsoleAgent(WebAgentContext&, Inspector::InspectorHeapAgent*, InspectorDOMAgent*);
-    virtual ~PageConsoleAgent() { }
+    virtual ~PageConsoleAgent() = default;
 
 private:
     void clearMessages(ErrorString&) override;

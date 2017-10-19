@@ -54,9 +54,7 @@ RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& s
     setFragmentedFlowState(InsideInFragmentedFlow);
 }
 
-RenderMultiColumnFlow::~RenderMultiColumnFlow()
-{
-}
+RenderMultiColumnFlow::~RenderMultiColumnFlow() = default;
 
 const char* RenderMultiColumnFlow::renderName() const
 {    

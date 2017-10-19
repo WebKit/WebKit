@@ -47,7 +47,7 @@ public:
     {
         return adoptRef(*new RTCIceTransport());
     }
-    virtual ~RTCIceTransport() { }
+    virtual ~RTCIceTransport() = default;
 
     RTCIceTransportState state() const { return m_transportState; }
     void setState(RTCIceTransportState state) { m_transportState = state; }

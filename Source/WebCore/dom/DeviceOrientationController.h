@@ -39,7 +39,7 @@ class DeviceOrientationController final : public DeviceController {
     WTF_MAKE_NONCOPYABLE(DeviceOrientationController);
 public:
     explicit DeviceOrientationController(DeviceOrientationClient*);
-    virtual ~DeviceOrientationController() { }
+    virtual ~DeviceOrientationController() = default;
 
     void didChangeDeviceOrientation(DeviceOrientationData*);
     DeviceOrientationClient* deviceOrientationClient();

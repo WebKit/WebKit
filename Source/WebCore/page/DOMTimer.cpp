@@ -212,9 +212,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAct
         startRepeating(m_currentTimerInterval);
 }
 
-DOMTimer::~DOMTimer()
-{
-}
+DOMTimer::~DOMTimer() = default;
 
 int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, bool singleShot)
 {

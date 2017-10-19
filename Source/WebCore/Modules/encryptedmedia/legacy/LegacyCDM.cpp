@@ -117,9 +117,7 @@ LegacyCDM::LegacyCDM(const String& keySystem)
     m_private = CDMFactoryForKeySystem(keySystem)->constructor(this);
 }
 
-LegacyCDM::~LegacyCDM()
-{
-}
+LegacyCDM::~LegacyCDM() = default;
 
 bool LegacyCDM::supportsMIMEType(const String& mimeType) const
 {

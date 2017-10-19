@@ -34,9 +34,7 @@
 
 namespace WebCore {
 
-Path2D::~Path2D()
-{
-}
+Path2D::~Path2D() = default;
 
 ExceptionOr<void> Path2D::addPath(Path2D& path, DOMMatrix2DInit&& matrixInit)
 {

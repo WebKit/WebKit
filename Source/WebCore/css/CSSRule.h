@@ -34,7 +34,7 @@ struct CSSParserContext;
 
 class CSSRule : public RefCounted<CSSRule> {
 public:
-    virtual ~CSSRule() { }
+    virtual ~CSSRule() = default;
 
     enum Type {
         UNKNOWN_RULE,

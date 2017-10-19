@@ -48,9 +48,7 @@ SVGResourcesCycleSolver::SVGResourcesCycleSolver(RenderElement& renderer, SVGRes
 {
 }
 
-SVGResourcesCycleSolver::~SVGResourcesCycleSolver()
-{
-}
+SVGResourcesCycleSolver::~SVGResourcesCycleSolver() = default;
 
 bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) const
 {

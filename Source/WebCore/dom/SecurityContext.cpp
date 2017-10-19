@@ -35,13 +35,9 @@
 
 namespace WebCore {
 
-SecurityContext::SecurityContext()
-{
-}
+SecurityContext::SecurityContext() = default;
 
-SecurityContext::~SecurityContext()
-{
-}
+SecurityContext::~SecurityContext() = default;
 
 void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
 {

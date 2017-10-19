@@ -66,7 +66,7 @@ class WEBCORE_EXPORT RealtimeMediaSource : public RefCounted<RealtimeMediaSource
 public:
     class Observer {
     public:
-        virtual ~Observer() { }
+        virtual ~Observer() = default;
 
         // Source state changes.
         virtual void sourceStarted() { }
@@ -125,7 +125,7 @@ public:
         VideoCaptureFactory() = default;
     };
 
-    virtual ~RealtimeMediaSource() { }
+    virtual ~RealtimeMediaSource() = default;
 
     const String& id() const { return m_id; }
 

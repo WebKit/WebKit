@@ -29,7 +29,7 @@ namespace WebCore {
 
 class VisibilityChangeClient {
 public:
-    virtual ~VisibilityChangeClient() { }
+    virtual ~VisibilityChangeClient() = default;
 
     virtual void visibilityStateChanged() = 0;
 };

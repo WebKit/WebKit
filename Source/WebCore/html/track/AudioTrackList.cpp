@@ -38,9 +38,7 @@ AudioTrackList::AudioTrackList(HTMLMediaElement* element, ScriptExecutionContext
 {
 }
 
-AudioTrackList::~AudioTrackList()
-{
-}
+AudioTrackList::~AudioTrackList() = default;
 
 void AudioTrackList::append(Ref<AudioTrack>&& track)
 {

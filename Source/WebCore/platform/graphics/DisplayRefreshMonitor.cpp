@@ -66,9 +66,7 @@ DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
 {
 }
 
-DisplayRefreshMonitor::~DisplayRefreshMonitor()
-{
-}
+DisplayRefreshMonitor::~DisplayRefreshMonitor() = default;
 
 void DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(void* data)
 {

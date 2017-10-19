@@ -45,7 +45,7 @@ public:
     enum FillModeType { NoFillMode, Forwards, Backwards, Both };
     enum ValueFunctionType { NoValueFunction, RotateX, RotateY, RotateZ, ScaleX, ScaleY, ScaleZ, Scale, TranslateX, TranslateY, TranslateZ, Translate };
 
-    virtual ~PlatformCAAnimation() { }
+    virtual ~PlatformCAAnimation() = default;
 
     virtual bool isPlatformCAAnimationCocoa() const { return false; }
     virtual bool isPlatformCAAnimationWin() const { return false; }

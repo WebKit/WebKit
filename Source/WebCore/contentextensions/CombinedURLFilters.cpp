@@ -137,9 +137,7 @@ CombinedURLFilters::CombinedURLFilters()
 {
 }
 
-CombinedURLFilters::~CombinedURLFilters()
-{
-}
+CombinedURLFilters::~CombinedURLFilters() = default;
 
 bool CombinedURLFilters::isEmpty() const
 {

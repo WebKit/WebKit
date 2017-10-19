@@ -85,7 +85,7 @@ protected:
 
     // NOTE: This class is non-virtual for memory and performance reasons.
     // Don't go making it virtual again unless you know exactly what you're doing!
-    ~DeprecatedCSSOMValue() { }
+    ~DeprecatedCSSOMValue() = default;
 
 private:
     WEBCORE_EXPORT void destroy();

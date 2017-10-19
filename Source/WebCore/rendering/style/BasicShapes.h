@@ -46,7 +46,7 @@ class SVGPathByteStream;
 
 class BasicShape : public RefCounted<BasicShape> {
 public:
-    virtual ~BasicShape() { }
+    virtual ~BasicShape() = default;
 
     enum Type {
         BasicShapePolygonType,

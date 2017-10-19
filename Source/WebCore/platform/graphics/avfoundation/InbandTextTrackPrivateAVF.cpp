@@ -46,9 +46,7 @@
 
 namespace WebCore {
 
-AVFInbandTrackParent::~AVFInbandTrackParent()
-{
-}
+AVFInbandTrackParent::~AVFInbandTrackParent() = default;
 
 InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(AVFInbandTrackParent* owner, CueFormat format)
     : InbandTextTrackPrivate(format)

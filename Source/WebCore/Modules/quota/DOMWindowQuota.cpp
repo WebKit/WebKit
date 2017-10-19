@@ -45,9 +45,7 @@ DOMWindowQuota::DOMWindowQuota(DOMWindow* window)
 {
 }
 
-DOMWindowQuota::~DOMWindowQuota()
-{
-}
+DOMWindowQuota::~DOMWindowQuota() = default;
 
 const char* DOMWindowQuota::supplementName()
 {

@@ -44,7 +44,7 @@ public:
         QuoteDataType,
         TextDataType
     };
-    virtual ~ContentData() { }
+    virtual ~ContentData() = default;
 
     Type type() const { return m_type; }
 

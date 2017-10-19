@@ -42,9 +42,7 @@ WebKitAnimationEvent::WebKitAnimationEvent(const AtomicString& type, const Strin
 {
 }
 
-WebKitAnimationEvent::~WebKitAnimationEvent()
-{
-}
+WebKitAnimationEvent::~WebKitAnimationEvent() = default;
 
 const String& WebKitAnimationEvent::animationName() const
 {

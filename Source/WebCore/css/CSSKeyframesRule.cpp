@@ -59,9 +59,7 @@ StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
         m_keyframes.uncheckedAppend(keyframe.copyRef());
 }
 
-StyleRuleKeyframes::~StyleRuleKeyframes()
-{
-}
+StyleRuleKeyframes::~StyleRuleKeyframes() = default;
 
 void StyleRuleKeyframes::parseDeferredRulesIfNeeded() const
 {

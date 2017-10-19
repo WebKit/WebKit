@@ -43,9 +43,7 @@ OriginLock::OriginLock(String originPath)
 {
 }
 
-OriginLock::~OriginLock()
-{
-}
+OriginLock::~OriginLock() = default;
 
 void OriginLock::lock()
 {

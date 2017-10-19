@@ -38,9 +38,7 @@ CSSContentDistributionValue::CSSContentDistributionValue(CSSValueID distribution
 {
 }
 
-CSSContentDistributionValue::~CSSContentDistributionValue()
-{
-}
+CSSContentDistributionValue::~CSSContentDistributionValue() = default;
 
 String CSSContentDistributionValue::customCSSText() const
 {

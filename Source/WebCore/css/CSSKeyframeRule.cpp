@@ -47,9 +47,7 @@ StyleRuleKeyframe::StyleRuleKeyframe(std::unique_ptr<Vector<double>> keys, Ref<S
 {
 }
     
-StyleRuleKeyframe::~StyleRuleKeyframe()
-{
-}
+StyleRuleKeyframe::~StyleRuleKeyframe() = default;
 
 MutableStyleProperties& StyleRuleKeyframe::mutableProperties()
 {

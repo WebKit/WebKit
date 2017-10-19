@@ -41,9 +41,7 @@ ScrollingTreeFrameScrollingNode::ScrollingTreeFrameScrollingNode(ScrollingTree& 
 {
 }
 
-ScrollingTreeFrameScrollingNode::~ScrollingTreeFrameScrollingNode()
-{
-}
+ScrollingTreeFrameScrollingNode::~ScrollingTreeFrameScrollingNode() = default;
 
 void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {

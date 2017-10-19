@@ -50,9 +50,7 @@ CSSImageValue::CSSImageValue(CachedImage& image)
 }
 
 
-CSSImageValue::~CSSImageValue()
-{
-}
+CSSImageValue::~CSSImageValue() = default;
 
 bool CSSImageValue::isPending() const
 {

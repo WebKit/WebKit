@@ -44,9 +44,7 @@ WebGPURenderPipelineColorAttachmentDescriptor::WebGPURenderPipelineColorAttachme
 {
 }
 
-WebGPURenderPipelineColorAttachmentDescriptor::~WebGPURenderPipelineColorAttachmentDescriptor()
-{
-}
+WebGPURenderPipelineColorAttachmentDescriptor::~WebGPURenderPipelineColorAttachmentDescriptor() = default;
 
 unsigned long WebGPURenderPipelineColorAttachmentDescriptor::pixelFormat() const
 {

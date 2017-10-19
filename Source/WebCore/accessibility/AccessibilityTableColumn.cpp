@@ -42,13 +42,9 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityTableColumn::AccessibilityTableColumn()
-{
-}
+AccessibilityTableColumn::AccessibilityTableColumn() = default;
 
-AccessibilityTableColumn::~AccessibilityTableColumn()
-{
-}    
+AccessibilityTableColumn::~AccessibilityTableColumn() = default;
 
 Ref<AccessibilityTableColumn> AccessibilityTableColumn::create()
 {

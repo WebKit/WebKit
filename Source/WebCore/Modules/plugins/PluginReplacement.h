@@ -44,7 +44,7 @@ class URL;
 
 class PluginReplacement : public RefCounted<PluginReplacement> {
 public:
-    virtual ~PluginReplacement() { }
+    virtual ~PluginReplacement() = default;
 
     virtual bool installReplacement(ShadowRoot&) = 0;
     virtual JSC::JSObject* scriptObject() { return nullptr; }

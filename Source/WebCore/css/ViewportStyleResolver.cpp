@@ -47,9 +47,7 @@ ViewportStyleResolver::ViewportStyleResolver(Document* document)
     ASSERT(m_document);
 }
 
-ViewportStyleResolver::~ViewportStyleResolver()
-{
-}
+ViewportStyleResolver::~ViewportStyleResolver() = default;
 
 void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
 {

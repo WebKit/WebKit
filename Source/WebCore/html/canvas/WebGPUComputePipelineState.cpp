@@ -47,9 +47,7 @@ WebGPUComputePipelineState::WebGPUComputePipelineState(WebGPURenderingContext* c
     m_computePipelineState = GPUComputePipelineState::create(context->device().get(), function->function());
 }
 
-WebGPUComputePipelineState::~WebGPUComputePipelineState()
-{
-}
+WebGPUComputePipelineState::~WebGPUComputePipelineState() = default;
 
 } // namespace WebCore
 

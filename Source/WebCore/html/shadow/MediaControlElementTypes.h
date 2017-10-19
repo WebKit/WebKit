@@ -92,7 +92,7 @@ public:
 
 protected:
     explicit MediaControlElement(MediaControlElementType, HTMLElement*);
-    ~MediaControlElement() { }
+    ~MediaControlElement() = default;
 
     virtual void setDisplayType(MediaControlElementType);
     virtual bool isMediaControlElement() const { return true; }

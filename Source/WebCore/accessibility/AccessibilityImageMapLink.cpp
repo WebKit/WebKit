@@ -45,9 +45,7 @@ AccessibilityImageMapLink::AccessibilityImageMapLink()
 {
 }
 
-AccessibilityImageMapLink::~AccessibilityImageMapLink()
-{
-}    
+AccessibilityImageMapLink::~AccessibilityImageMapLink() = default;
 
 Ref<AccessibilityImageMapLink> AccessibilityImageMapLink::create()
 {

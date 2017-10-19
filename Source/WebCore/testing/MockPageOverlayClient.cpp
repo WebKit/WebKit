@@ -44,9 +44,7 @@ MockPageOverlayClient& MockPageOverlayClient::singleton()
     return sharedClient.get();
 }
 
-MockPageOverlayClient::MockPageOverlayClient()
-{
-}
+MockPageOverlayClient::MockPageOverlayClient() = default;
 
 Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(MainFrame& mainFrame, PageOverlay::OverlayType overlayType)
 {

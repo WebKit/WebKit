@@ -32,13 +32,9 @@
 
 namespace WebCore {
 
-GamepadWebVR::GamepadWebVR()
-{
-}
+GamepadWebVR::GamepadWebVR() = default;
 
-GamepadWebVR::~GamepadWebVR()
-{
-}
+GamepadWebVR::~GamepadWebVR() = default;
 
 unsigned GamepadWebVR::displayId(const Gamepad&)
 {

@@ -35,7 +35,7 @@ class ScrollView;
 
 class RenderScrollbarTheme final : public ScrollbarThemeComposite {
 public:
-    virtual ~RenderScrollbarTheme() { }
+    virtual ~RenderScrollbarTheme() = default;
     
     int scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState expansionState = ScrollbarExpansionState::Expanded) override { return ScrollbarTheme::theme().scrollbarThickness(controlSize, expansionState); }
 

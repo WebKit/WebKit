@@ -46,9 +46,7 @@ Gamepad::Gamepad(const PlatformGamepad& platformGamepad)
         m_buttons.append(GamepadButton::create());
 }
 
-Gamepad::~Gamepad()
-{
-}
+Gamepad::~Gamepad() = default;
 
 const Vector<double>& Gamepad::axes() const
 {

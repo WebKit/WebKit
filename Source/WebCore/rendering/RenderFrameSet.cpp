@@ -53,9 +53,7 @@ RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& styl
     setInline(false);
 }
 
-RenderFrameSet::~RenderFrameSet()
-{
-}
+RenderFrameSet::~RenderFrameSet() = default;
 
 HTMLFrameSetElement& RenderFrameSet::frameSetElement() const
 {

@@ -39,9 +39,7 @@ SWServerWorker::SWServerWorker(const ServiceWorkerRegistrationKey& registrationK
 {
 }
 
-SWServerWorker::~SWServerWorker()
-{
-}
+SWServerWorker::~SWServerWorker() = default;
 
 } // namespace WebCore
 

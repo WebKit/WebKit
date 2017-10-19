@@ -65,9 +65,7 @@ HistoryController::HistoryController(Frame& frame)
 {
 }
 
-HistoryController::~HistoryController()
-{
-}
+HistoryController::~HistoryController() = default;
 
 void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 {

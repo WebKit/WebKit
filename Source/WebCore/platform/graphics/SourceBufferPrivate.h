@@ -42,7 +42,7 @@ class SourceBufferPrivateClient;
 
 class SourceBufferPrivate : public RefCounted<SourceBufferPrivate> {
 public:
-    virtual ~SourceBufferPrivate() { }
+    virtual ~SourceBufferPrivate() = default;
 
     virtual void setClient(SourceBufferPrivateClient*) = 0;
 

@@ -45,9 +45,7 @@ TransitionEvent::TransitionEvent(const AtomicString& type, const Init& initializ
 {
 }
 
-TransitionEvent::~TransitionEvent()
-{
-}
+TransitionEvent::~TransitionEvent() = default;
 
 const String& TransitionEvent::propertyName() const
 {

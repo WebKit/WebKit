@@ -41,9 +41,7 @@ AccessibilityTreeItem::AccessibilityTreeItem(RenderObject* renderer)
 {
 }
     
-AccessibilityTreeItem::~AccessibilityTreeItem()
-{
-}
+AccessibilityTreeItem::~AccessibilityTreeItem() = default;
     
 Ref<AccessibilityTreeItem> AccessibilityTreeItem::create(RenderObject* renderer)
 {

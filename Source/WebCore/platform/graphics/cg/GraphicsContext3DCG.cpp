@@ -317,9 +317,7 @@ void convert16BitFormatToRGBA8(GraphicsContext3D::DataFormat srcFormat, const ui
 
 }
 
-GraphicsContext3D::ImageExtractor::~ImageExtractor()
-{
-}
+GraphicsContext3D::ImageExtractor::~ImageExtractor() = default;
 
 bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {

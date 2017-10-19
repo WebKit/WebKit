@@ -30,21 +30,11 @@
 
 namespace WebCore {
 
-PasteboardWriterData::PasteboardWriterData()
-{
-}
+PasteboardWriterData::PasteboardWriterData() = default;
+PasteboardWriterData::~PasteboardWriterData() = default;
 
-PasteboardWriterData::~PasteboardWriterData()
-{
-}
-
-PasteboardWriterData::WebContent::WebContent()
-{
-}
-
-PasteboardWriterData::WebContent::~WebContent()
-{
-}
+PasteboardWriterData::WebContent::WebContent() = default;
+PasteboardWriterData::WebContent::~WebContent() = default;
 
 bool PasteboardWriterData::isEmpty() const
 {

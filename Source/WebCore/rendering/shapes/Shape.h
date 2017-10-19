@@ -76,7 +76,7 @@ public:
     static std::unique_ptr<Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, float margin);
     static std::unique_ptr<Shape> createBoxShape(const RoundedRect&, WritingMode, float margin);
 
-    virtual ~Shape() { }
+    virtual ~Shape() = default;
 
     virtual LayoutRect shapeMarginLogicalBoundingBox() const = 0;
     virtual bool isEmpty() const = 0;

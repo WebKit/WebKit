@@ -41,9 +41,7 @@ MockGamepadProvider& MockGamepadProvider::singleton()
     return sharedProvider;
 }
 
-MockGamepadProvider::MockGamepadProvider()
-{
-}
+MockGamepadProvider::MockGamepadProvider() = default;
 
 void MockGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
 {

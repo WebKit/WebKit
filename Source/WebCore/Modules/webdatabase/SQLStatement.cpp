@@ -83,9 +83,7 @@ SQLStatement::SQLStatement(Database& database, const String& statement, Vector<S
 {
 }
 
-SQLStatement::~SQLStatement()
-{
-}
+SQLStatement::~SQLStatement() = default;
 
 SQLError* SQLStatement::sqlError() const
 {

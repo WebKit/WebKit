@@ -40,7 +40,7 @@ class MediaPlaybackTargetPicker {
 public:
     class Client {
     protected:
-        virtual ~Client() { }
+        virtual ~Client() = default;
 
     public:
         virtual void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) = 0;

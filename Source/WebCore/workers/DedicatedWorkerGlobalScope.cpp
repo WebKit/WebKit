@@ -54,9 +54,7 @@ DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope(const URL& url, const Str
 {
 }
 
-DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope()
-{
-}
+DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope() = default;
 
 EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
 {

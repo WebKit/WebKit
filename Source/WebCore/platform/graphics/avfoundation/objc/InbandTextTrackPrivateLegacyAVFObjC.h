@@ -44,7 +44,7 @@ public:
         return adoptRef(*new InbandTextTrackPrivateLegacyAVFObjC(player, track));
     }
 
-    ~InbandTextTrackPrivateLegacyAVFObjC() { }
+    ~InbandTextTrackPrivateLegacyAVFObjC() = default;
 
     InbandTextTrackPrivate::Kind kind() const override;
     bool isClosedCaptions() const override;

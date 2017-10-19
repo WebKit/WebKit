@@ -36,9 +36,7 @@ SuspendableTimer::SuspendableTimer(ScriptExecutionContext& context)
 {
 }
 
-SuspendableTimer::~SuspendableTimer()
-{
-}
+SuspendableTimer::~SuspendableTimer() = default;
 
 bool SuspendableTimer::hasPendingActivity() const
 {

@@ -34,9 +34,7 @@ BasicCredential::BasicCredential(const CredentialData& data, Type type)
 {
 }
 
-BasicCredential::~BasicCredential()
-{
-}
+BasicCredential::~BasicCredential() = default;
 
 String BasicCredential::type() const
 {

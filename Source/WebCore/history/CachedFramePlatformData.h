@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CachedFramePlatformData {
 public:
-    virtual ~CachedFramePlatformData() { }
+    virtual ~CachedFramePlatformData() = default;
     virtual void clear() { }
 };
 

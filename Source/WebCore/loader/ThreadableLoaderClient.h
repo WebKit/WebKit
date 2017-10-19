@@ -48,8 +48,8 @@ namespace WebCore {
         virtual void didFinishTiming(const ResourceTiming&) { }
 
     protected:
-        ThreadableLoaderClient() { }
-        virtual ~ThreadableLoaderClient() { }
+        ThreadableLoaderClient() = default;
+        virtual ~ThreadableLoaderClient() = default;
     };
 
 } // namespace WebCore

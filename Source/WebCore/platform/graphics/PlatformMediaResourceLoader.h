@@ -40,7 +40,7 @@ class ResourceResponse;
 
 class PlatformMediaResourceClient {
 public:
-    virtual ~PlatformMediaResourceClient() { }
+    virtual ~PlatformMediaResourceClient() = default;
 
     virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&) { }
     virtual void redirectReceived(PlatformMediaResource&, ResourceRequest&, const ResourceResponse&) { }
@@ -64,19 +64,19 @@ public:
     };
     typedef unsigned LoadOptions;
 
-    virtual ~PlatformMediaResourceLoader() { }
+    virtual ~PlatformMediaResourceLoader() = default;
 
     virtual RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) = 0;
 
 protected:
-    PlatformMediaResourceLoader() { }
+    PlatformMediaResourceLoader() = default;
 };
 
 class PlatformMediaResource : public RefCounted<PlatformMediaResource> {
     WTF_MAKE_NONCOPYABLE(PlatformMediaResource); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PlatformMediaResource() { }
-    virtual ~PlatformMediaResource() { }
+    PlatformMediaResource() = default;
+    virtual ~PlatformMediaResource() = default;
     virtual void stop() { }
     virtual void setDefersLoading(bool) { }
     virtual bool didPassAccessControlCheck() const { return false; }

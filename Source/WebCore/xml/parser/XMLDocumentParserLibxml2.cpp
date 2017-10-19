@@ -198,7 +198,7 @@ public:
 
 private:
     struct PendingCallback {
-        virtual ~PendingCallback() { }
+        virtual ~PendingCallback() = default;
         virtual void call(XMLDocumentParser* parser) = 0;
     };
 

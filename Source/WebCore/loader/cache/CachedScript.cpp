@@ -42,9 +42,7 @@ CachedScript::CachedScript(CachedResourceRequest&& request, PAL::SessionID sessi
 {
 }
 
-CachedScript::~CachedScript()
-{
-}
+CachedScript::~CachedScript() = default;
 
 void CachedScript::setEncoding(const String& chs)
 {

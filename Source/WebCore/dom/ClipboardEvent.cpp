@@ -33,9 +33,7 @@ ClipboardEvent::ClipboardEvent(const AtomicString& type, const Init& init, IsTru
 {
 }
 
-ClipboardEvent::~ClipboardEvent()
-{
-}
+ClipboardEvent::~ClipboardEvent() = default;
 
 EventInterface ClipboardEvent::eventInterface() const
 {

@@ -49,7 +49,7 @@ class ThreadableWebSocketChannel {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
 public:
     static Ref<ThreadableWebSocketChannel> create(ScriptExecutionContext&, WebSocketChannelClient&, SocketProvider&);
-    ThreadableWebSocketChannel() { }
+    ThreadableWebSocketChannel() = default;
 
     virtual bool isWebSocketChannel() const { return false; }
 
@@ -77,7 +77,7 @@ public:
     void deref() { derefThreadableWebSocketChannel(); }
 
 protected:
-    virtual ~ThreadableWebSocketChannel() { }
+    virtual ~ThreadableWebSocketChannel() = default;
     virtual void refThreadableWebSocketChannel() = 0;
     virtual void derefThreadableWebSocketChannel() = 0;
 };

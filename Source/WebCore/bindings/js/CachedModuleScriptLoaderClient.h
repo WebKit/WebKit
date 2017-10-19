@@ -33,7 +33,7 @@ class CachedModuleScriptLoader;
 
 class CachedModuleScriptLoaderClient {
 public:
-    virtual ~CachedModuleScriptLoaderClient() { }
+    virtual ~CachedModuleScriptLoaderClient() = default;
 
     virtual void notifyFinished(CachedModuleScriptLoader&, RefPtr<DeferredPromise>) = 0;
 };

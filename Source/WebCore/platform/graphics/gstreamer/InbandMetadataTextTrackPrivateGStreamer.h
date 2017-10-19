@@ -38,7 +38,7 @@ public:
         return adoptRef(*new InbandMetadataTextTrackPrivateGStreamer(kind, cueFormat, id));
     }
 
-    ~InbandMetadataTextTrackPrivateGStreamer() { }
+    ~InbandMetadataTextTrackPrivateGStreamer() = default;
 
     Kind kind() const override { return m_kind; }
     AtomicString id() const override { return m_id; }

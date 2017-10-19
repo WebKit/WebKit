@@ -43,9 +43,7 @@ CSSImageSetValue::CSSImageSetValue()
 {
 }
 
-CSSImageSetValue::~CSSImageSetValue()
-{
-}
+CSSImageSetValue::~CSSImageSetValue() = default;
 
 void CSSImageSetValue::fillImageSet()
 {

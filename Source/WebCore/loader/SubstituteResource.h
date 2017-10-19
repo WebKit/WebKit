@@ -33,7 +33,7 @@ namespace WebCore {
 
 class SubstituteResource : public RefCounted<SubstituteResource> {
 public:
-    virtual ~SubstituteResource() { }
+    virtual ~SubstituteResource() = default;
 
     const URL& url() const { return m_url; }
     const ResourceResponse& response() const { return m_response; }

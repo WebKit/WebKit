@@ -41,9 +41,7 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(uint64_t serverConnectionIden
 {
 }
 
-ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope()
-{
-}
+ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope() = default;
 
 ServiceWorkerRegistration& ServiceWorkerGlobalScope::registration()
 {

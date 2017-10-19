@@ -32,9 +32,7 @@
 
 namespace WebCore {
 
-GamepadList::~GamepadList()
-{
-}
+GamepadList::~GamepadList() = default;
 
 void GamepadList::set(unsigned index, RefPtr<Gamepad>&& gamepad)
 {

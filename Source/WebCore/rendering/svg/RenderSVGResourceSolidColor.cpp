@@ -28,13 +28,9 @@
 
 namespace WebCore {
 
-RenderSVGResourceSolidColor::RenderSVGResourceSolidColor()
-{
-}
+RenderSVGResourceSolidColor::RenderSVGResourceSolidColor() = default;
 
-RenderSVGResourceSolidColor::~RenderSVGResourceSolidColor()
-{
-}
+RenderSVGResourceSolidColor::~RenderSVGResourceSolidColor() = default;
 
 bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {

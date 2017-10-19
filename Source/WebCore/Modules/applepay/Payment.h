@@ -37,16 +37,10 @@ struct ApplePayPayment;
 
 class Payment {
 public:
-    Payment()
-    {
-    }
+    Payment() = default;
 
     explicit Payment(PKPayment *pkPayment)
         : m_pkPayment(pkPayment)
-    {
-    }
-
-    ~Payment()
     {
     }
 

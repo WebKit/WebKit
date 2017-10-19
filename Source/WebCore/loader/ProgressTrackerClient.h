@@ -31,7 +31,7 @@ class Frame;
 
 class ProgressTrackerClient {
 protected:
-    virtual ~ProgressTrackerClient() { }
+    virtual ~ProgressTrackerClient() = default;
 
 public:
     virtual void progressTrackerDestroyed() { }

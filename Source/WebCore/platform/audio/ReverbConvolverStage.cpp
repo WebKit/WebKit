@@ -95,9 +95,7 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
     m_preDelayBuffer.allocate(delayBufferSize);
 }
 
-ReverbConvolverStage::~ReverbConvolverStage()
-{
-}
+ReverbConvolverStage::~ReverbConvolverStage() = default;
 
 void ReverbConvolverStage::processInBackground(ReverbConvolver* convolver, size_t framesToProcess)
 {

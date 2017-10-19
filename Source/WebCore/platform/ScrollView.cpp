@@ -40,13 +40,9 @@
 
 namespace WebCore {
 
-ScrollView::ScrollView()
-{
-}
+ScrollView::ScrollView() = default;
 
-ScrollView::~ScrollView()
-{
-}
+ScrollView::~ScrollView() = default;
 
 void ScrollView::addChild(Widget& child)
 {

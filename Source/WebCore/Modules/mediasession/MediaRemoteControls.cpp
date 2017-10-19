@@ -43,9 +43,7 @@ void MediaRemoteControls::clearSession()
     m_session = nullptr;
 }
 
-MediaRemoteControls::~MediaRemoteControls()
-{
-}
+MediaRemoteControls::~MediaRemoteControls() = default;
 
 void MediaRemoteControls::setPreviousTrackEnabled(bool isEnabled)
 {

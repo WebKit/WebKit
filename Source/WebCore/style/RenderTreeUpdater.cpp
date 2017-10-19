@@ -88,9 +88,7 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document)
 {
 }
 
-RenderTreeUpdater::~RenderTreeUpdater()
-{
-}
+RenderTreeUpdater::~RenderTreeUpdater() = default;
 
 static ContainerNode* findRenderingRoot(ContainerNode& node)
 {

@@ -65,9 +65,7 @@ DocumentEventQueue::DocumentEventQueue(Document& document)
     m_pendingEventTimer->suspendIfNeeded();
 }
 
-DocumentEventQueue::~DocumentEventQueue()
-{
-}
+DocumentEventQueue::~DocumentEventQueue() = default;
 
 bool DocumentEventQueue::enqueueEvent(Ref<Event>&& event)
 {

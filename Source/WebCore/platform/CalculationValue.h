@@ -64,7 +64,7 @@ class CalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CalcExpressionNode(CalcExpressionNodeType = CalcExpressionNodeUndefined);
-    virtual ~CalcExpressionNode() { }
+    virtual ~CalcExpressionNode() = default;
 
     CalcExpressionNodeType type() const { return m_type; }
 

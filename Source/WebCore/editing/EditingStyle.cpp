@@ -160,8 +160,8 @@ class HTMLElementEquivalent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     HTMLElementEquivalent(CSSPropertyID, CSSValueID primitiveValue, const QualifiedName& tagName);
+    virtual ~HTMLElementEquivalent() = default;
 
-    virtual ~HTMLElementEquivalent() { }
     virtual bool matches(const Element& element) const { return !m_tagName || element.hasTagName(*m_tagName); }
     virtual bool hasAttribute() const { return false; }
     virtual bool propertyExistsInStyle(const EditingStyle& style) const { return style.m_mutableStyle && style.m_mutableStyle->getPropertyCSSValue(m_propertyID); }
@@ -380,9 +380,7 @@ EditingStyle::EditingStyle(CSSPropertyID propertyID, CSSValueID value)
     extractFontSizeDelta();
 }
 
-EditingStyle::~EditingStyle()
-{
-}
+EditingStyle::~EditingStyle() = default;
 
 static Color cssValueToColor(CSSValue* colorValue)
 {

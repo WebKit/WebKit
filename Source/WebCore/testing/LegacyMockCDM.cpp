@@ -40,7 +40,7 @@ namespace WebCore {
 class MockCDMSession : public LegacyCDMSession {
 public:
     MockCDMSession(LegacyCDMSessionClient*);
-    virtual ~MockCDMSession() { }
+    virtual ~MockCDMSession() = default;
 
     void setClient(LegacyCDMSessionClient* client) override { m_client = client; }
     const String& sessionId() const override { return m_sessionId; }

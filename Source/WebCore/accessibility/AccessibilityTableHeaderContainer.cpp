@@ -34,13 +34,9 @@
 
 namespace WebCore {
 
-AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer()
-{
-}
+AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer() = default;
 
-AccessibilityTableHeaderContainer::~AccessibilityTableHeaderContainer()
-{
-}
+AccessibilityTableHeaderContainer::~AccessibilityTableHeaderContainer() = default;
 
 Ref<AccessibilityTableHeaderContainer> AccessibilityTableHeaderContainer::create()
 {

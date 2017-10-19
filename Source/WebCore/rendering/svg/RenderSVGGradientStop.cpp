@@ -36,9 +36,7 @@ RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, RenderStyl
 {
 }
 
-RenderSVGGradientStop::~RenderSVGGradientStop()
-{
-}
+RenderSVGGradientStop::~RenderSVGGradientStop() = default;
 
 void RenderSVGGradientStop::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {

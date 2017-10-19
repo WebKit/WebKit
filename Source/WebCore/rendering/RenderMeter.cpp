@@ -35,9 +35,7 @@ RenderMeter::RenderMeter(HTMLElement& element, RenderStyle&& style)
 {
 }
 
-RenderMeter::~RenderMeter()
-{
-}
+RenderMeter::~RenderMeter() = default;
 
 HTMLMeterElement* RenderMeter::meterElement() const
 {

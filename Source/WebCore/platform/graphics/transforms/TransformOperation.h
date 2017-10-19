@@ -55,7 +55,7 @@ public:
         : m_type(type)
     {
     }
-    virtual ~TransformOperation() { }
+    virtual ~TransformOperation() = default;
 
     virtual Ref<TransformOperation> clone() const = 0;
 

@@ -89,9 +89,7 @@ inline LocaleWin::LocaleWin(LCID lcid)
 {
 }
 
-LocaleWin::~LocaleWin()
-{
-}
+LocaleWin::~LocaleWin() = default;
 
 String LocaleWin::getLocaleInfoString(LCTYPE type)
 {

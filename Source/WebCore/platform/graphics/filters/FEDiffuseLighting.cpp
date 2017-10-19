@@ -37,9 +37,7 @@ Ref<FEDiffuseLighting> FEDiffuseLighting::create(Filter& filter, const Color& li
     return adoptRef(*new FEDiffuseLighting(filter, lightingColor, surfaceScale, diffuseConstant, kernelUnitLengthX, kernelUnitLengthY, WTFMove(lightSource)));
 }
 
-FEDiffuseLighting::~FEDiffuseLighting()
-{
-}
+FEDiffuseLighting::~FEDiffuseLighting() = default;
 
 const Color& FEDiffuseLighting::lightingColor() const
 {

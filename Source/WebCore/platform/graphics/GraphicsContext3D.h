@@ -731,13 +731,13 @@ public:
     class ContextLostCallback {
     public:
         virtual void onContextLost() = 0;
-        virtual ~ContextLostCallback() {}
+        virtual ~ContextLostCallback() = default;
     };
 
     class ErrorMessageCallback {
     public:
         virtual void onErrorMessage(const String& message, GC3Dint id) = 0;
-        virtual ~ErrorMessageCallback() { }
+        virtual ~ErrorMessageCallback() = default;
     };
 
     void setContextLostCallback(std::unique_ptr<ContextLostCallback>);

@@ -38,13 +38,9 @@
 
 namespace WebCore {
 
-WorkerScriptLoader::WorkerScriptLoader()
-{
-}
+WorkerScriptLoader::WorkerScriptLoader() = default;
 
-WorkerScriptLoader::~WorkerScriptLoader()
-{
-}
+WorkerScriptLoader::~WorkerScriptLoader() = default;
 
 void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
 {

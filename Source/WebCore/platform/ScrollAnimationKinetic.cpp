@@ -110,9 +110,7 @@ ScrollAnimationKinetic::ScrollAnimationKinetic(ScrollableArea& scrollableArea, s
 {
 }
 
-ScrollAnimationKinetic::~ScrollAnimationKinetic()
-{
-}
+ScrollAnimationKinetic::~ScrollAnimationKinetic() = default;
 
 void ScrollAnimationKinetic::stop()
 {

@@ -41,9 +41,7 @@ WebGLCompressedTextureATC::WebGLCompressedTextureATC(WebGLRenderingContextBase& 
     context.addCompressedTextureFormat(Extensions3D::COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD);
 }
 
-WebGLCompressedTextureATC::~WebGLCompressedTextureATC()
-{
-}
+WebGLCompressedTextureATC::~WebGLCompressedTextureATC() = default;
 
 WebGLExtension::ExtensionName WebGLCompressedTextureATC::getName() const
 {

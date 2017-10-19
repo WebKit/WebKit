@@ -43,9 +43,7 @@ HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document&
     setHasCustomStyleResolveCallbacks();
 }
 
-HTMLProgressElement::~HTMLProgressElement()
-{
-}
+HTMLProgressElement::~HTMLProgressElement() = default;
 
 Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagName, Document& document)
 {

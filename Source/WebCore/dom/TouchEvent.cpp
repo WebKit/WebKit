@@ -34,9 +34,7 @@
 
 namespace WebCore {
 
-TouchEvent::TouchEvent()
-{
-}
+TouchEvent::TouchEvent() = default;
 
 TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
         TouchList* changedTouches, const AtomicString& type, 
@@ -62,9 +60,7 @@ TouchEvent::TouchEvent(const AtomicString& type, const Init& initializer, IsTrus
 {
 }
 
-TouchEvent::~TouchEvent()
-{
-}
+TouchEvent::~TouchEvent() = default;
 
 void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
         TouchList* changedTouches, const AtomicString& type, 

@@ -62,9 +62,7 @@ CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElement
 {
 }
 
-CustomElementConstructionData::~CustomElementConstructionData()
-{
-}
+CustomElementConstructionData::~CustomElementConstructionData() = default;
 
 namespace {
 

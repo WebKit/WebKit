@@ -39,9 +39,7 @@ ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingT
 {
 }
 
-ScrollingTreeScrollingNode::~ScrollingTreeScrollingNode()
-{
-}
+ScrollingTreeScrollingNode::~ScrollingTreeScrollingNode() = default;
 
 void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {

@@ -38,7 +38,7 @@ namespace WebCore {
 
 class StorageQuotaCallback : public RefCounted<StorageQuotaCallback> {
 public:
-    virtual ~StorageQuotaCallback() { }
+    virtual ~StorageQuotaCallback() = default;
     virtual bool handleEvent(unsigned long long grantedQuotaInBytes) = 0;
 };
 

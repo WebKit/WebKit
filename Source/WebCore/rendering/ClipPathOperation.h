@@ -46,7 +46,7 @@ public:
         Box
     };
 
-    virtual ~ClipPathOperation() { }
+    virtual ~ClipPathOperation() = default;
 
     virtual bool operator==(const ClipPathOperation&) const = 0;
     bool operator!=(const ClipPathOperation& o) const { return !(*this == o); }

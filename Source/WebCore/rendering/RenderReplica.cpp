@@ -44,9 +44,7 @@ RenderReplica::RenderReplica(Document& document, RenderStyle&& style)
     setReplaced(true);
 }
 
-RenderReplica::~RenderReplica()
-{
-}
+RenderReplica::~RenderReplica() = default;
     
 void RenderReplica::layout()
 {

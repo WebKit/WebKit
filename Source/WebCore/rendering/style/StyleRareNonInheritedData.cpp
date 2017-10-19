@@ -203,9 +203,7 @@ Ref<StyleRareNonInheritedData> StyleRareNonInheritedData::copy() const
     return adoptRef(*new StyleRareNonInheritedData(*this));
 }
 
-StyleRareNonInheritedData::~StyleRareNonInheritedData()
-{
-}
+StyleRareNonInheritedData::~StyleRareNonInheritedData() = default;
 
 bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) const
 {

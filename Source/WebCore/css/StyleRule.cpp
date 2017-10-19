@@ -194,9 +194,7 @@ StyleRule::StyleRule(const StyleRule& o)
 {
 }
 
-StyleRule::~StyleRule()
-{
-}
+StyleRule::~StyleRule() = default;
 
 const StyleProperties& StyleRule::properties() const
 {
@@ -263,9 +261,7 @@ StyleRulePage::StyleRulePage(const StyleRulePage& o)
 {
 }
 
-StyleRulePage::~StyleRulePage()
-{
-}
+StyleRulePage::~StyleRulePage() = default;
 
 MutableStyleProperties& StyleRulePage::mutableProperties()
 {
@@ -286,9 +282,7 @@ StyleRuleFontFace::StyleRuleFontFace(const StyleRuleFontFace& o)
 {
 }
 
-StyleRuleFontFace::~StyleRuleFontFace()
-{
-}
+StyleRuleFontFace::~StyleRuleFontFace() = default;
 
 MutableStyleProperties& StyleRuleFontFace::mutableProperties()
 {
@@ -416,9 +410,7 @@ StyleRuleViewport::StyleRuleViewport(const StyleRuleViewport& o)
 {
 }
 
-StyleRuleViewport::~StyleRuleViewport()
-{
-}
+StyleRuleViewport::~StyleRuleViewport() = default;
 
 MutableStyleProperties& StyleRuleViewport::mutableProperties()
 {
@@ -438,9 +430,7 @@ StyleRuleCharset::StyleRuleCharset(const StyleRuleCharset& o)
 {
 }
 
-StyleRuleCharset::~StyleRuleCharset()
-{
-}
+StyleRuleCharset::~StyleRuleCharset() = default;
 
 StyleRuleNamespace::StyleRuleNamespace(AtomicString prefix, AtomicString uri)
     : StyleRuleBase(Namespace)
@@ -456,8 +446,6 @@ StyleRuleNamespace::StyleRuleNamespace(const StyleRuleNamespace& o)
 {
 }
 
-StyleRuleNamespace::~StyleRuleNamespace()
-{
-}
+StyleRuleNamespace::~StyleRuleNamespace() = default;
 
 } // namespace WebCore

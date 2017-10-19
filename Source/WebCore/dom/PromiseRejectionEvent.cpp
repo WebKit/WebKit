@@ -41,8 +41,6 @@ PromiseRejectionEvent::PromiseRejectionEvent(ExecState& state, const AtomicStrin
 {
 }
 
-PromiseRejectionEvent::~PromiseRejectionEvent()
-{
-}
+PromiseRejectionEvent::~PromiseRejectionEvent() = default;
 
 } // namespace WebCore

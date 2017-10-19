@@ -34,9 +34,7 @@ SVGImageLoader::SVGImageLoader(SVGImageElement& element)
 {
 }
 
-SVGImageLoader::~SVGImageLoader()
-{
-}
+SVGImageLoader::~SVGImageLoader() = default;
 
 void SVGImageLoader::dispatchLoadEvent()
 {

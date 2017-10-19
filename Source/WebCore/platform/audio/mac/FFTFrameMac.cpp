@@ -94,9 +94,7 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     memcpy(imagData(), frame.m_frame.imagp, nbytes);
 }
 
-FFTFrame::~FFTFrame()
-{
-}
+FFTFrame::~FFTFrame() = default;
 
 void FFTFrame::multiply(const FFTFrame& frame)
 {

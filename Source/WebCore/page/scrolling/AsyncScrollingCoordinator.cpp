@@ -58,9 +58,7 @@ AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
 {
 }
 
-AsyncScrollingCoordinator::~AsyncScrollingCoordinator()
-{
-}
+AsyncScrollingCoordinator::~AsyncScrollingCoordinator() = default;
 
 void AsyncScrollingCoordinator::scrollingStateTreePropertiesChanged()
 {

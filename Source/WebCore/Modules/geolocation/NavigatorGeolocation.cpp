@@ -38,9 +38,7 @@ NavigatorGeolocation::NavigatorGeolocation(Frame* frame)
 {
 }
 
-NavigatorGeolocation::~NavigatorGeolocation()
-{
-}
+NavigatorGeolocation::~NavigatorGeolocation() = default;
 
 const char* NavigatorGeolocation::supplementName()
 {

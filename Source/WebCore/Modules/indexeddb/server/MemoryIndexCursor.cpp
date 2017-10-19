@@ -62,9 +62,7 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& in
         m_currentIterator.invalidate();
 }
 
-MemoryIndexCursor::~MemoryIndexCursor()
-{
-}
+MemoryIndexCursor::~MemoryIndexCursor() = default;
 
 void MemoryIndexCursor::currentData(IDBGetResult& getResult)
 {

@@ -85,7 +85,7 @@ public:
                 m_initiatedByMainFrame = InitiatedByMainFrame::Yes;
         }
     }
-    virtual ~ScheduledNavigation() { }
+    virtual ~ScheduledNavigation() = default;
 
     virtual void fire(Frame&) = 0;
 
@@ -335,9 +335,7 @@ NavigationScheduler::NavigationScheduler(Frame& frame)
 {
 }
 
-NavigationScheduler::~NavigationScheduler()
-{
-}
+NavigationScheduler::~NavigationScheduler() = default;
 
 bool NavigationScheduler::redirectScheduledDuringLoad()
 {

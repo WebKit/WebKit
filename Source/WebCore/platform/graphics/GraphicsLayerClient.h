@@ -84,7 +84,7 @@ typedef unsigned GraphicsLayerPaintBehavior;
     
 class GraphicsLayerClient {
 public:
-    virtual ~GraphicsLayerClient() {}
+    virtual ~GraphicsLayerClient() = default;
 
     virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) { }
     

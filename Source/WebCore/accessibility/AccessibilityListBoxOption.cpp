@@ -50,9 +50,7 @@ AccessibilityListBoxOption::AccessibilityListBoxOption()
 {
 }
 
-AccessibilityListBoxOption::~AccessibilityListBoxOption()
-{
-}    
+AccessibilityListBoxOption::~AccessibilityListBoxOption() = default;
     
 Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create()
 {

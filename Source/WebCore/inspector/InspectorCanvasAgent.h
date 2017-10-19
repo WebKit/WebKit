@@ -60,7 +60,7 @@ class InspectorCanvasAgent final : public InspectorAgentBase, public CanvasObser
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorCanvasAgent(WebAgentContext&);
-    virtual ~InspectorCanvasAgent() { }
+    virtual ~InspectorCanvasAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;

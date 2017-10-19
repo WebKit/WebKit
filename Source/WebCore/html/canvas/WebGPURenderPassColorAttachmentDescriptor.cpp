@@ -45,9 +45,7 @@ WebGPURenderPassColorAttachmentDescriptor::WebGPURenderPassColorAttachmentDescri
 {
 }
 
-WebGPURenderPassColorAttachmentDescriptor::~WebGPURenderPassColorAttachmentDescriptor()
-{
-}
+WebGPURenderPassColorAttachmentDescriptor::~WebGPURenderPassColorAttachmentDescriptor() = default;
 
 GPURenderPassColorAttachmentDescriptor* WebGPURenderPassColorAttachmentDescriptor::renderPassColorAttachmentDescriptor() const
 {

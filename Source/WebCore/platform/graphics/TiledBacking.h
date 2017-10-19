@@ -71,7 +71,7 @@ struct VelocityData  {
 
 class TiledBacking {
 public:
-    virtual ~TiledBacking() { }
+    virtual ~TiledBacking() = default;
 
     virtual void setVisibleRect(const FloatRect&) = 0;
     virtual FloatRect visibleRect() const = 0;

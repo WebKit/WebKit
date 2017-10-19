@@ -45,7 +45,7 @@ public:
     {
     }
 
-    ~MultipartHandle() { }
+    ~MultipartHandle() = default;
 
     void contentReceived(const char* data, size_t length);
     void contentEnded();

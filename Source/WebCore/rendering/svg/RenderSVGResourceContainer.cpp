@@ -40,9 +40,7 @@ RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement& element, Rend
 {
 }
 
-RenderSVGResourceContainer::~RenderSVGResourceContainer()
-{
-}
+RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;
 
 void RenderSVGResourceContainer::layout()
 {

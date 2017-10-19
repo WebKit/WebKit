@@ -92,9 +92,7 @@ NavigatorContentUtils* NavigatorContentUtils::from(Page* page)
     return static_cast<NavigatorContentUtils*>(Supplement<Page>::from(page, supplementName()));
 }
 
-NavigatorContentUtils::~NavigatorContentUtils()
-{
-}
+NavigatorContentUtils::~NavigatorContentUtils() = default;
 
 ExceptionOr<void> NavigatorContentUtils::registerProtocolHandler(Navigator& navigator, const String& scheme, const String& url, const String& title)
 {

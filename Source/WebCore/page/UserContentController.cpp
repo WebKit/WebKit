@@ -44,13 +44,9 @@ Ref<UserContentController> UserContentController::create()
     return adoptRef(*new UserContentController);
 }
 
-UserContentController::UserContentController()
-{
-}
+UserContentController::UserContentController() = default;
 
-UserContentController::~UserContentController()
-{
-}
+UserContentController::~UserContentController() = default;
 
 void UserContentController::forEachUserScript(Function<void(DOMWrapperWorld&, const UserScript&)>&& functor) const
 {

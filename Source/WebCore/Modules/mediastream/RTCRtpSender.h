@@ -43,7 +43,7 @@ public:
     public:
         virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
         virtual RTCRtpParameters getParameters(RTCRtpSender&) const = 0;
-        virtual ~Backend() { }
+        virtual ~Backend() = default;
     };
 
     static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, Backend&);

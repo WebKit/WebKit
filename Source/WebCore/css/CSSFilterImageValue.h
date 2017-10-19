@@ -94,7 +94,7 @@ private:
         {
         }
 
-        virtual ~FilterSubimageObserverProxy() { }
+        virtual ~FilterSubimageObserverProxy() = default;
         void imageChanged(CachedImage*, const IntRect* = nullptr) final;
         void setReady(bool ready) { m_ready = ready; }
     private:

@@ -86,9 +86,7 @@ CryptoKeyRSAComponents::CryptoKeyRSAComponents(Vector<uint8_t>&& modulus, Vector
 {
 }
 
-CryptoKeyRSAComponents::~CryptoKeyRSAComponents()
-{
-}
+CryptoKeyRSAComponents::~CryptoKeyRSAComponents() = default;
 
 } // namespace WebCore
 

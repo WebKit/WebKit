@@ -38,7 +38,7 @@ class URL;
 // drawing, and animating.
 class ImageObserver {
 protected:
-    virtual ~ImageObserver() {}
+    virtual ~ImageObserver() = default;
 public:
     virtual URL sourceUrl() const = 0;
     virtual String mimeType() const = 0;

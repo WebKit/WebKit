@@ -71,9 +71,7 @@ RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, RenderStyle&& style)
 {
 }
 
-RenderSVGShape::~RenderSVGShape()
-{
-}
+RenderSVGShape::~RenderSVGShape() = default;
 
 void RenderSVGShape::updateShapeFromElement()
 {

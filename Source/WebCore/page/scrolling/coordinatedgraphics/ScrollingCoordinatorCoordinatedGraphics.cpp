@@ -48,9 +48,7 @@ ScrollingCoordinatorCoordinatedGraphics::ScrollingCoordinatorCoordinatedGraphics
 {
 }
 
-ScrollingCoordinatorCoordinatedGraphics::~ScrollingCoordinatorCoordinatedGraphics()
-{
-}
+ScrollingCoordinatorCoordinatedGraphics::~ScrollingCoordinatorCoordinatedGraphics() = default;
 
 ScrollingNodeID ScrollingCoordinatorCoordinatedGraphics::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
 {

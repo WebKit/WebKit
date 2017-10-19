@@ -64,9 +64,7 @@ RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
     m_supportedConstraints.setSupportsGroupId(true);
 }
 
-RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
-{
-}
+RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac() = default;
 
 
 RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::defaultAudioFactory()

@@ -51,9 +51,7 @@ RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RefPtr<MediaStream
 {
 }
 
-RTCDTMFSender::~RTCDTMFSender()
-{
-}
+RTCDTMFSender::~RTCDTMFSender() = default;
 
 bool RTCDTMFSender::canInsertDTMF() const
 {

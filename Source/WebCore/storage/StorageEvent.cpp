@@ -35,13 +35,9 @@ Ref<StorageEvent> StorageEvent::createForBindings()
     return adoptRef(*new StorageEvent);
 }
 
-StorageEvent::StorageEvent()
-{
-}
+StorageEvent::StorageEvent() = default;
 
-StorageEvent::~StorageEvent()
-{
-}
+StorageEvent::~StorageEvent() = default;
 
 Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
 {

@@ -46,9 +46,7 @@ WebGPUFunction::WebGPUFunction(WebGPURenderingContext* context, WebGPULibrary* l
     m_function = library->library()->functionWithName(name);
 }
 
-WebGPUFunction::~WebGPUFunction()
-{
-}
+WebGPUFunction::~WebGPUFunction() = default;
 
 String WebGPUFunction::name() const
 {

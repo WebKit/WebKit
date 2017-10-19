@@ -53,9 +53,7 @@ MemoryIndex::MemoryIndex(const IDBIndexInfo& info, MemoryObjectStore& objectStor
 {
 }
 
-MemoryIndex::~MemoryIndex()
-{
-}
+MemoryIndex::~MemoryIndex() = default;
 
 void MemoryIndex::cursorDidBecomeClean(MemoryIndexCursor& cursor)
 {

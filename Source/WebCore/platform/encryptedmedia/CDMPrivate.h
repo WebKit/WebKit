@@ -39,7 +39,7 @@ struct CDMRestrictions;
 
 class CDMPrivate {
 public:
-    virtual ~CDMPrivate() { }
+    virtual ~CDMPrivate() = default;
 
     virtual bool supportsInitDataType(const AtomicString&) const = 0;
     virtual bool supportsConfiguration(const CDMKeySystemConfiguration&) const = 0;

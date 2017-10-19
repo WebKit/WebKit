@@ -69,9 +69,7 @@ ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, String&& code)
 {
 }
 
-ScheduledAction::~ScheduledAction()
-{
-}
+ScheduledAction::~ScheduledAction() = default;
 
 void ScheduledAction::addArguments(Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {

@@ -55,7 +55,7 @@ class MediaElementSession final : public PlatformMediaSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MediaElementSession(HTMLMediaElement&);
-    virtual ~MediaElementSession() { }
+    virtual ~MediaElementSession() = default;
 
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);

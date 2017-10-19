@@ -51,9 +51,7 @@ ScrollingStateStickyNode::ScrollingStateStickyNode(const ScrollingStateStickyNod
 {
 }
 
-ScrollingStateStickyNode::~ScrollingStateStickyNode()
-{
-}
+ScrollingStateStickyNode::~ScrollingStateStickyNode() = default;
 
 Ref<ScrollingStateNode> ScrollingStateStickyNode::clone(ScrollingStateTree& adoptiveTree)
 {

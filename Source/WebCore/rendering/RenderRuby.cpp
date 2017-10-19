@@ -127,9 +127,7 @@ RenderRubyAsInline::RenderRubyAsInline(Element& element, RenderStyle&& style)
 {
 }
 
-RenderRubyAsInline::~RenderRubyAsInline()
-{
-}
+RenderRubyAsInline::~RenderRubyAsInline() = default;
 
 void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
@@ -236,9 +234,7 @@ RenderRubyAsBlock::RenderRubyAsBlock(Element& element, RenderStyle&& style)
 {
 }
 
-RenderRubyAsBlock::~RenderRubyAsBlock()
-{
-}
+RenderRubyAsBlock::~RenderRubyAsBlock() = default;
 
 void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {

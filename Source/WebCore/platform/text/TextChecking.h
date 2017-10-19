@@ -102,7 +102,7 @@ private:
 
 class TextCheckingRequest : public RefCounted<TextCheckingRequest> {
 public:
-    virtual ~TextCheckingRequest() { }
+    virtual ~TextCheckingRequest() = default;
 
     virtual const TextCheckingRequestData& data() const = 0;
     virtual void didSucceed(const Vector<TextCheckingResult>&) = 0;

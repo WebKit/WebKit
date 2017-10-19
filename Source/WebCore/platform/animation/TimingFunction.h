@@ -37,7 +37,7 @@ class TimingFunction : public RefCounted<TimingFunction> {
 public:
     virtual Ref<TimingFunction> clone() const = 0;
 
-    virtual ~TimingFunction() { }
+    virtual ~TimingFunction() = default;
 
     enum TimingFunctionType { LinearFunction, CubicBezierFunction, StepsFunction, SpringFunction };
     TimingFunctionType type() const { return m_type; }

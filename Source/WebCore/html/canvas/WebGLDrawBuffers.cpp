@@ -37,9 +37,7 @@ WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase& context)
 {
 }
 
-WebGLDrawBuffers::~WebGLDrawBuffers()
-{
-}
+WebGLDrawBuffers::~WebGLDrawBuffers() = default;
 
 WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
 {

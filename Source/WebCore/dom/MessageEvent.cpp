@@ -131,9 +131,7 @@ Ref<MessageEvent> MessageEvent::create(ExecState& state, const AtomicString& typ
     return adoptRef(*new MessageEvent(state, type, WTFMove(initializer), isTrusted));
 }
 
-MessageEvent::~MessageEvent()
-{
-}
+MessageEvent::~MessageEvent() = default;
 
 void MessageEvent::initMessageEvent(ExecState& state, const AtomicString& type, bool canBubble, bool cancelable, JSValue data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
 {

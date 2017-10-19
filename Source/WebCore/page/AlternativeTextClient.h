@@ -57,7 +57,7 @@ enum class AutocorrectionResponse {
 
 class AlternativeTextClient {
 public:
-    virtual ~AlternativeTextClient() { }
+    virtual ~AlternativeTextClient() = default;
     virtual void pageDestroyed() = 0;
 #if USE(AUTOCORRECTION_PANEL)
     virtual void showCorrectionAlternative(AlternativeTextType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;

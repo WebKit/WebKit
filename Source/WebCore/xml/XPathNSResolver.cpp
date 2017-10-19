@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-XPathNSResolver::~XPathNSResolver()
-{
-}
+XPathNSResolver::~XPathNSResolver() = default;
 
 }

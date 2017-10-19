@@ -60,9 +60,7 @@ RenderImageControlsButton::RenderImageControlsButton(HTMLElement& element, Rende
 {
 }
 
-RenderImageControlsButton::~RenderImageControlsButton()
-{
-}
+RenderImageControlsButton::~RenderImageControlsButton() = default;
 
 void RenderImageControlsButton::updateLogicalWidth()
 {
@@ -85,9 +83,7 @@ ImageControlsButtonElementMac::ImageControlsButtonElementMac(Document& document)
 {
 }
 
-ImageControlsButtonElementMac::~ImageControlsButtonElementMac()
-{
-}
+ImageControlsButtonElementMac::~ImageControlsButtonElementMac() = default;
 
 RefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::tryCreate(Document& document)
 {

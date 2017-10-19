@@ -40,9 +40,7 @@ DOMMimeType::DOMMimeType(RefPtr<PluginData>&& pluginData, Frame* frame, unsigned
     m_pluginInfo = m_pluginData->webVisiblePlugins()[mimePluginIndices[index]];
 }
 
-DOMMimeType::~DOMMimeType()
-{
-}
+DOMMimeType::~DOMMimeType() = default;
 
 String DOMMimeType::type() const
 {

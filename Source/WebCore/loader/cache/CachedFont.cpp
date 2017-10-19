@@ -52,9 +52,7 @@ CachedFont::CachedFont(CachedResourceRequest&& request, PAL::SessionID sessionID
 {
 }
 
-CachedFont::~CachedFont()
-{
-}
+CachedFont::~CachedFont() = default;
 
 void CachedFont::load(CachedResourceLoader&)
 {

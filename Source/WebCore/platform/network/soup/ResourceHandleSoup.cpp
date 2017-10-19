@@ -71,9 +71,7 @@ static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
 static void continueAfterDidReceiveResponse(ResourceHandle*);
 
-ResourceHandleInternal::~ResourceHandleInternal()
-{
-}
+ResourceHandleInternal::~ResourceHandleInternal() = default;
 
 static SoupSession* sessionFromContext(NetworkingContext* context)
 {

@@ -33,9 +33,7 @@ CachedSVGDocument::CachedSVGDocument(CachedResourceRequest&& request, PAL::Sessi
 {
 }
 
-CachedSVGDocument::~CachedSVGDocument()
-{
-}
+CachedSVGDocument::~CachedSVGDocument() = default;
 
 void CachedSVGDocument::setEncoding(const String& chs)
 {

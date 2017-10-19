@@ -60,9 +60,7 @@ std::unique_ptr<Locale> Locale::create(const AtomicString&)
     return std::make_unique<LocaleNone>();
 }
 
-LocaleNone::~LocaleNone()
-{
-}
+LocaleNone::~LocaleNone() = default;
 
 void LocaleNone::initializeLocaleData()
 {

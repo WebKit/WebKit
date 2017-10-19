@@ -36,9 +36,7 @@ GIFImageDecoder::GIFImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
 {
 }
 
-GIFImageDecoder::~GIFImageDecoder()
-{
-}
+GIFImageDecoder::~GIFImageDecoder() = default;
 
 void GIFImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 {

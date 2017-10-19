@@ -94,7 +94,7 @@ class ExecutableWithDatabase : public RefCounted<ExecutableWithDatabase> {
 public:
     ExecutableWithDatabase(ScriptExecutionContext* context)
         : m_context(context) { }
-    virtual ~ExecutableWithDatabase() { }
+    virtual ~ExecutableWithDatabase() = default;
     void start(IDBFactory*, SecurityOrigin*, const String& databaseName);
     virtual void execute(IDBDatabase&) = 0;
     virtual RequestCallback& requestCallback() = 0;
@@ -216,7 +216,7 @@ public:
         return adoptRef(*new DatabaseLoader(context, WTFMove(requestCallback)));
     }
 
-    virtual ~DatabaseLoader() { }
+    virtual ~DatabaseLoader() = default;
 
     void execute(IDBDatabase& database) override
     {
@@ -350,7 +350,7 @@ public:
         return adoptRef(*new OpenCursorCallback(injectedScript, WTFMove(requestCallback), skipCount, pageSize));
     }
 
-    virtual ~OpenCursorCallback() { }
+    virtual ~OpenCursorCallback() = default;
 
     bool operator==(const EventListener& other) const override
     {
@@ -437,7 +437,7 @@ public:
         return adoptRef(*new DataLoader(context, WTFMove(requestCallback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize));
     }
 
-    virtual ~DataLoader() { }
+    virtual ~DataLoader() = default;
 
     void execute(IDBDatabase& database) override
     {
@@ -517,9 +517,7 @@ InspectorIndexedDBAgent::InspectorIndexedDBAgent(WebAgentContext& context, Inspe
 {
 }
 
-InspectorIndexedDBAgent::~InspectorIndexedDBAgent()
-{
-}
+InspectorIndexedDBAgent::~InspectorIndexedDBAgent() = default;
 
 void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
 {
@@ -635,7 +633,7 @@ public:
         return adoptRef(*new ClearObjectStoreListener(WTFMove(requestCallback)));
     }
 
-    virtual ~ClearObjectStoreListener() { }
+    virtual ~ClearObjectStoreListener() = default;
 
     bool operator==(const EventListener& other) const override
     {

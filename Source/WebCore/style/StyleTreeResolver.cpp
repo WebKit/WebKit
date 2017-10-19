@@ -59,9 +59,7 @@ TreeResolver::TreeResolver(Document& document)
 {
 }
 
-TreeResolver::~TreeResolver()
-{
-}
+TreeResolver::~TreeResolver() = default;
 
 TreeResolver::Scope::Scope(Document& document)
     : styleResolver(document.styleScope().resolver())

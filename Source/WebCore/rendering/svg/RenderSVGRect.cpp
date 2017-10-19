@@ -36,9 +36,7 @@ RenderSVGRect::RenderSVGRect(SVGRectElement& element, RenderStyle&& style)
 {
 }
 
-RenderSVGRect::~RenderSVGRect()
-{
-}
+RenderSVGRect::~RenderSVGRect() = default;
 
 SVGRectElement& RenderSVGRect::rectElement() const
 {

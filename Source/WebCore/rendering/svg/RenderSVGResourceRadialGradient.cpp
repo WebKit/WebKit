@@ -29,9 +29,7 @@ RenderSVGResourceRadialGradient::RenderSVGResourceRadialGradient(SVGRadialGradie
 {
 }
 
-RenderSVGResourceRadialGradient::~RenderSVGResourceRadialGradient()
-{
-}
+RenderSVGResourceRadialGradient::~RenderSVGResourceRadialGradient() = default;
 
 bool RenderSVGResourceRadialGradient::collectGradientAttributes()
 {

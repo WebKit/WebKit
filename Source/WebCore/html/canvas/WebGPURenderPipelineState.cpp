@@ -47,9 +47,7 @@ WebGPURenderPipelineState::WebGPURenderPipelineState(WebGPURenderingContext* con
     m_renderPipelineState = GPURenderPipelineState::create(context->device().get(), descriptor->renderPipelineDescriptor());
 }
 
-WebGPURenderPipelineState::~WebGPURenderPipelineState()
-{
-}
+WebGPURenderPipelineState::~WebGPURenderPipelineState() = default;
 
 String WebGPURenderPipelineState::label() const
 {

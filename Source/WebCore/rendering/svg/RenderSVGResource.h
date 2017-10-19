@@ -54,8 +54,8 @@ class RenderSVGResourceSolidColor;
 
 class RenderSVGResource {
 public:
-    RenderSVGResource() { }
-    virtual ~RenderSVGResource() { }
+    RenderSVGResource() = default;
+    virtual ~RenderSVGResource() = default;
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) = 0;
     virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) = 0;

@@ -75,9 +75,7 @@ RootObject* findRootObject(JSGlobalObject* globalObject)
     return 0;
 }
 
-RootObject::InvalidationCallback::~InvalidationCallback()
-{
-}
+RootObject::InvalidationCallback::~InvalidationCallback() = default;
 
 Ref<RootObject> RootObject::create(const void* nativeHandle, JSGlobalObject* globalObject)
 {

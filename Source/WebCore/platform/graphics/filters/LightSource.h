@@ -64,7 +64,7 @@ public:
         : m_type(type)
     { }
 
-    virtual ~LightSource() { }
+    virtual ~LightSource() = default;
 
     LightType type() const { return m_type; }
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const = 0;

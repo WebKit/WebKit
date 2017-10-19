@@ -66,9 +66,7 @@ ScrollAnimatorGtk::ScrollAnimatorGtk(ScrollableArea& scrollableArea)
 #endif
 }
 
-ScrollAnimatorGtk::~ScrollAnimatorGtk()
-{
-}
+ScrollAnimatorGtk::~ScrollAnimatorGtk() = default;
 
 #if ENABLE(SMOOTH_SCROLLING)
 void ScrollAnimatorGtk::ensureSmoothScrollingAnimation()

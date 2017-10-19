@@ -76,9 +76,7 @@ Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(ScriptExecutionContex
     return adoptRef(*new InbandGenericTextTrack(context, client, trackPrivate));
 }
 
-InbandGenericTextTrack::~InbandGenericTextTrack()
-{
-}
+InbandGenericTextTrack::~InbandGenericTextTrack() = default;
 
 void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric& cue, GenericCueData& cueData)
 {

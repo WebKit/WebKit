@@ -34,7 +34,7 @@ class WebGLRenderingContextBase;
 
 class WebGLObject : public RefCounted<WebGLObject> {
 public:
-    virtual ~WebGLObject() { }
+    virtual ~WebGLObject() = default;
 
     Platform3DObject object() const { return m_object; }
 

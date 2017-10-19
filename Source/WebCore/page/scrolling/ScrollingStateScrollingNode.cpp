@@ -57,9 +57,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
         setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
-ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
-{
-}
+ScrollingStateScrollingNode::~ScrollingStateScrollingNode() = default;
 
 void ScrollingStateScrollingNode::setScrollableAreaSize(const FloatSize& size)
 {

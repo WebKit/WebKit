@@ -61,9 +61,7 @@ ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned l
 {
 }
 
-ErrorEvent::~ErrorEvent()
-{
-}
+ErrorEvent::~ErrorEvent() = default;
 
 EventInterface ErrorEvent::eventInterface() const
 {

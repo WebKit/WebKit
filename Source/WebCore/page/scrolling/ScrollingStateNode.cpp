@@ -59,9 +59,7 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     scrollingStateTree().addNode(this);
 }
 
-ScrollingStateNode::~ScrollingStateNode()
-{
-}
+ScrollingStateNode::~ScrollingStateNode() = default;
 
 void ScrollingStateNode::setPropertyChanged(unsigned propertyBit)
 {

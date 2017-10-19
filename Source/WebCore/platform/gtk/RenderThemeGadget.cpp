@@ -85,9 +85,7 @@ RenderThemeGadget::RenderThemeGadget(const RenderThemeGadget::Info& info, Render
     m_context = createStyleContext(path.get(), parent ? parent->context() : nullptr);
 }
 
-RenderThemeGadget::~RenderThemeGadget()
-{
-}
+RenderThemeGadget::~RenderThemeGadget() = default;
 
 GtkBorder RenderThemeGadget::marginBox() const
 {

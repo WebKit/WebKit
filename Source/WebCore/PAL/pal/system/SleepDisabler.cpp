@@ -40,8 +40,6 @@ SleepDisabler::SleepDisabler(const char*, Type type)
 {
 }
 
-SleepDisabler::~SleepDisabler()
-{
-}
+SleepDisabler::~SleepDisabler() = default;
 
 } // namespace PAL

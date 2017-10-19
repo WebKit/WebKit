@@ -37,10 +37,10 @@ namespace Bindings {
 class Method {
     WTF_MAKE_NONCOPYABLE(Method); WTF_MAKE_FAST_ALLOCATED;
 public:
-    Method() { }
+    Method() = default;
     virtual int numParameters() const = 0;
 
-    virtual ~Method() { }
+    virtual ~Method() = default;
 };
 
 } // namespace Bindings

@@ -33,7 +33,7 @@ class Node;
 
 class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
 public:
-    virtual ~NodeList() { }
+    virtual ~NodeList() = default;
 
     // DOM methods & attributes for NodeList
     virtual unsigned length() const = 0;

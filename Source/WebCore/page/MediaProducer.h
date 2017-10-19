@@ -70,7 +70,7 @@ public:
     virtual void pageMutedStateDidChange() = 0;
 
 protected:
-    virtual ~MediaProducer() { }
+    virtual ~MediaProducer() = default;
 };
 
 } // namespace WebCore

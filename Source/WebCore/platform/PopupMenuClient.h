@@ -37,7 +37,7 @@ class ScrollableArea;
 
 class PopupMenuClient {
 public:
-    virtual ~PopupMenuClient() {}
+    virtual ~PopupMenuClient() = default;
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true) = 0;
     virtual void selectionChanged(unsigned listIndex, bool fireEvents = true) = 0;
     virtual void selectionCleared() = 0;

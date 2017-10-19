@@ -50,7 +50,7 @@ public:
     virtual void cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest&) = 0;
 
 protected:
-    virtual ~UserMediaClient() { }
+    virtual ~UserMediaClient() = default;
 };
 
 WEBCORE_EXPORT void provideUserMediaTo(Page*, UserMediaClient*);

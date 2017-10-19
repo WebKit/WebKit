@@ -42,7 +42,7 @@ typedef String ErrorString;
 class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
 public:
     WorkerRuntimeAgent(WorkerAgentContext&);
-    ~WorkerRuntimeAgent() { }
+    ~WorkerRuntimeAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;

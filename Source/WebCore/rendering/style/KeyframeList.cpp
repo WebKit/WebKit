@@ -42,9 +42,7 @@ TimingFunction* KeyframeValue::timingFunction(const AtomicString& name) const
     return nullptr;
 }
 
-KeyframeList::~KeyframeList()
-{
-}
+KeyframeList::~KeyframeList() = default;
 
 void KeyframeList::clear()
 {

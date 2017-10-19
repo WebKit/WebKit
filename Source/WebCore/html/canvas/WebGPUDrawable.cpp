@@ -51,9 +51,7 @@ WebGPUDrawable::WebGPUDrawable(WebGPURenderingContext* context)
     m_texture = WebGPUTexture::createFromDrawableTexture(context, WTFMove(drawableTexture));
 }
 
-WebGPUDrawable::~WebGPUDrawable()
-{
-}
+WebGPUDrawable::~WebGPUDrawable() = default;
 
 WebGPUTexture* WebGPUDrawable::texture()
 {

@@ -35,9 +35,7 @@ EXTBlendMinMax::EXTBlendMinMax(WebGLRenderingContextBase& context)
 {
 }
 
-EXTBlendMinMax::~EXTBlendMinMax()
-{
-}
+EXTBlendMinMax::~EXTBlendMinMax() = default;
 
 WebGLExtension::ExtensionName EXTBlendMinMax::getName() const
 {

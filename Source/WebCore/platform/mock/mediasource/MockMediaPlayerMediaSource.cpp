@@ -85,9 +85,7 @@ MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer* player)
 {
 }
 
-MockMediaPlayerMediaSource::~MockMediaPlayerMediaSource()
-{
-}
+MockMediaPlayerMediaSource::~MockMediaPlayerMediaSource() = default;
 
 void MockMediaPlayerMediaSource::load(const String&)
 {

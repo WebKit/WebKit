@@ -63,7 +63,7 @@ public:
 #endif
 #endif
 
-    virtual ~DragClient() { }
+    virtual ~DragClient() = default;
 };
     
 } // namespace WebCore

@@ -31,13 +31,9 @@
 
 namespace WebCore {
 
-NavigatorCredentials::NavigatorCredentials()
-{
-}
+NavigatorCredentials::NavigatorCredentials() = default;
 
-NavigatorCredentials::~NavigatorCredentials()
-{
-}
+NavigatorCredentials::~NavigatorCredentials() = default;
 
 const char* NavigatorCredentials::supplementName()
 {

@@ -50,7 +50,7 @@ class VoidCallback;
 
 class SQLTransactionWrapper : public ThreadSafeRefCounted<SQLTransactionWrapper> {
 public:
-    virtual ~SQLTransactionWrapper() { }
+    virtual ~SQLTransactionWrapper() = default;
     virtual bool performPreflight(SQLTransaction&) = 0;
     virtual bool performPostflight(SQLTransaction&) = 0;
     virtual SQLError* sqlError() const = 0;

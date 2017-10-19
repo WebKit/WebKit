@@ -109,7 +109,7 @@ public:
     // don't want to do it in WebKit.
     virtual bool hasHTMLView() const;
 
-    virtual ~FrameLoaderClient() { }
+    virtual ~FrameLoaderClient() = default;
 
     virtual void frameLoaderDestroyed() = 0;
 

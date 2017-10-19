@@ -61,7 +61,7 @@ using AsTextFlags = unsigned;
 
 class CanvasObserver {
 public:
-    virtual ~CanvasObserver() { }
+    virtual ~CanvasObserver() = default;
 
     virtual bool isCanvasObserverProxy() const { return false; }
 

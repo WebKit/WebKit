@@ -66,9 +66,7 @@ PageGroup::PageGroup(Page& page)
     addPage(page);
 }
 
-PageGroup::~PageGroup()
-{
-}
+PageGroup::~PageGroup() = default;
 
 typedef HashMap<String, PageGroup*> PageGroupMap;
 static PageGroupMap* pageGroups = nullptr;

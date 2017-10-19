@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-DatabaseProvider::~DatabaseProvider()
-{
-}
+DatabaseProvider::~DatabaseProvider() = default;
 
 }

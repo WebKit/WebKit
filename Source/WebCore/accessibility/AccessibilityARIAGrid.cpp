@@ -45,9 +45,7 @@ AccessibilityARIAGrid::AccessibilityARIAGrid(RenderObject* renderer)
 {
 }
 
-AccessibilityARIAGrid::~AccessibilityARIAGrid()
-{
-}
+AccessibilityARIAGrid::~AccessibilityARIAGrid() = default;
 
 Ref<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
 {

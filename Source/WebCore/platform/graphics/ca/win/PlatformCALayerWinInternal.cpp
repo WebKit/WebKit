@@ -44,9 +44,7 @@ PlatformCALayerWinInternal::PlatformCALayerWinInternal(PlatformCALayer* owner)
 {
 }
 
-PlatformCALayerWinInternal::~PlatformCALayerWinInternal()
-{
-}
+PlatformCALayerWinInternal::~PlatformCALayerWinInternal() = default;
 
 struct DisplayOnMainThreadContext {
     RetainPtr<CACFLayerRef> layer;

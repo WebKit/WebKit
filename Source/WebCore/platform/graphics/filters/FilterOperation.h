@@ -66,7 +66,7 @@ public:
         NONE
     };
 
-    virtual ~FilterOperation() { }
+    virtual ~FilterOperation() = default;
 
     virtual Ref<FilterOperation> clone() const = 0;
 

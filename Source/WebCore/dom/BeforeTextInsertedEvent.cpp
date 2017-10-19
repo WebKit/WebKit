@@ -35,9 +35,7 @@ BeforeTextInsertedEvent::BeforeTextInsertedEvent(const String& text)
 {
 }
 
-BeforeTextInsertedEvent::~BeforeTextInsertedEvent()
-{
-}
+BeforeTextInsertedEvent::~BeforeTextInsertedEvent() = default;
 
 EventInterface BeforeTextInsertedEvent::eventInterface() const
 {

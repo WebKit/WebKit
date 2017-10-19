@@ -38,9 +38,7 @@ CSSNamespaceRule::CSSNamespaceRule(StyleRuleNamespace& namespaceRule, CSSStyleSh
 {
 }
 
-CSSNamespaceRule::~CSSNamespaceRule()
-{
-}
+CSSNamespaceRule::~CSSNamespaceRule() = default;
 
 AtomicString CSSNamespaceRule::namespaceURI() const
 {

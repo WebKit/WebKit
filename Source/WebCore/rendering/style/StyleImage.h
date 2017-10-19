@@ -43,7 +43,7 @@ typedef const void* WrappedImagePtr;
 
 class StyleImage : public RefCounted<StyleImage> {
 public:
-    virtual ~StyleImage() { }
+    virtual ~StyleImage() = default;
 
     virtual bool operator==(const StyleImage& other) const = 0;
 

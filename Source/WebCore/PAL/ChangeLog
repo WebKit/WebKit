@@ -1,3 +1,16 @@
+2017-10-19  Daniel Bates  <dabates@apple.com>
+
+        Use "= default" to denote default constructor or destructor
+        https://bugs.webkit.org/show_bug.cgi?id=178528
+
+        Rubber-stamped by Andy Estes.
+
+        * pal/Logger.h:
+        (PAL::Logger::Observer::~Observer): Deleted.
+        * pal/crypto/gcrypt/CryptoDigestGCrypt.cpp:
+        * pal/system/SleepDisabler.cpp:
+        * pal/system/SystemSleepListener.h:
+
 2017-10-17  Keith Miller  <keith_miller@apple.com>
 
         Change WebCore sources to work with unified source builds

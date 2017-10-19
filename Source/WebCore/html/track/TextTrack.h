@@ -42,7 +42,7 @@ class VTTRegionList;
 
 class TextTrackClient {
 public:
-    virtual ~TextTrackClient() { }
+    virtual ~TextTrackClient() = default;
     virtual void textTrackKindChanged(TextTrack&) = 0;
     virtual void textTrackModeChanged(TextTrack&) = 0;
     virtual void textTrackAddCues(TextTrack&, const TextTrackCueList&) = 0;

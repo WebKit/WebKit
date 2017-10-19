@@ -43,9 +43,7 @@ RenderGeometryMap::RenderGeometryMap(MapCoordinatesFlags flags)
 {
 }
 
-RenderGeometryMap::~RenderGeometryMap()
-{
-}
+RenderGeometryMap::~RenderGeometryMap() = default;
 
 void RenderGeometryMap::mapToContainer(TransformState& transformState, const RenderLayerModelObject* container) const
 {

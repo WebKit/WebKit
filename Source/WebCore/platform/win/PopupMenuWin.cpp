@@ -1097,9 +1097,7 @@ AccessiblePopupMenu::AccessiblePopupMenu(const PopupMenuWin& popupMenu)
 {
 }
 
-AccessiblePopupMenu::~AccessiblePopupMenu()
-{
-}
+AccessiblePopupMenu::~AccessiblePopupMenu() = default;
 
 HRESULT AccessiblePopupMenu::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {

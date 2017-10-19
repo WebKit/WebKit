@@ -41,9 +41,7 @@ RenderTextControl::RenderTextControl(HTMLTextFormControlElement& element, Render
 {
 }
 
-RenderTextControl::~RenderTextControl()
-{
-}
+RenderTextControl::~RenderTextControl() = default;
 
 HTMLTextFormControlElement& RenderTextControl::textFormControlElement() const
 {

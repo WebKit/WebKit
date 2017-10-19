@@ -40,9 +40,7 @@ GenericEventQueue::GenericEventQueue(EventTarget& owner)
 {
 }
 
-GenericEventQueue::~GenericEventQueue()
-{
-}
+GenericEventQueue::~GenericEventQueue() = default;
 
 void GenericEventQueue::enqueueEvent(RefPtr<Event>&& event)
 {

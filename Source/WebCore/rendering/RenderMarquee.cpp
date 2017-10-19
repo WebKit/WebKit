@@ -66,9 +66,7 @@ RenderMarquee::RenderMarquee(RenderLayer* l)
     l->setConstrainsScrollingToContentEdge(false);
 }
 
-RenderMarquee::~RenderMarquee()
-{
-}
+RenderMarquee::~RenderMarquee() = default;
 
 int RenderMarquee::marqueeSpeed() const
 {

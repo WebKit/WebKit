@@ -45,9 +45,7 @@ NavigatorMediaDevices::NavigatorMediaDevices(Frame* frame)
 {
 }
 
-NavigatorMediaDevices::~NavigatorMediaDevices()
-{
-}
+NavigatorMediaDevices::~NavigatorMediaDevices() = default;
 
 NavigatorMediaDevices* NavigatorMediaDevices::from(Navigator* navigator)
 {

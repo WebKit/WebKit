@@ -50,9 +50,7 @@ Ref<Text> Text::createEditingText(Document& document, const String& data)
     return adoptRef(*new Text(document, data, CreateEditingText));
 }
 
-Text::~Text()
-{
-}
+Text::~Text() = default;
 
 ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 {

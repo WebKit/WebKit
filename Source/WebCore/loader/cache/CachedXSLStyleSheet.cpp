@@ -42,9 +42,7 @@ CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, PAL::S
 {
 }
 
-CachedXSLStyleSheet::~CachedXSLStyleSheet()
-{
-}
+CachedXSLStyleSheet::~CachedXSLStyleSheet() = default;
 
 void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 {

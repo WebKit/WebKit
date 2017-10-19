@@ -57,7 +57,7 @@ private:
 class AccessibilitySpinButtonPart final : public AccessibilityMockObject {
 public:
     static Ref<AccessibilitySpinButtonPart> create();
-    virtual ~AccessibilitySpinButtonPart() { }
+    virtual ~AccessibilitySpinButtonPart() = default;
     
     bool isIncrementor() const { return m_isIncrementor; }
     void setIsIncrementor(bool value) { m_isIncrementor = value; }

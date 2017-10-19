@@ -44,9 +44,7 @@ WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const Ini
 {
 }
 
-WebKitTransitionEvent::~WebKitTransitionEvent()
-{
-}
+WebKitTransitionEvent::~WebKitTransitionEvent() = default;
 
 const String& WebKitTransitionEvent::propertyName() const
 {

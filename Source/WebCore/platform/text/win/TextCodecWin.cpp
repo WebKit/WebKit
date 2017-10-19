@@ -139,9 +139,7 @@ TextCodecWin::TextCodecWin(UINT codePage)
 {
 }
 
-TextCodecWin::~TextCodecWin()
-{
-}
+TextCodecWin::~TextCodecWin() = default;
 
 void TextCodecWin::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
 {

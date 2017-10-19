@@ -467,7 +467,7 @@ public:
     virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, WTF::Function<void (bool)>&& callback) { callback(false); }
 
 protected:
-    virtual ~ChromeClient() { }
+    virtual ~ChromeClient() = default;
 };
 
 } // namespace WebCore

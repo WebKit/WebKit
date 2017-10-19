@@ -55,7 +55,7 @@ public:
     virtual void boundaryEventOccurred(PlatformSpeechSynthesisUtterance&, SpeechBoundary, unsigned charIndex) = 0;
     virtual void voicesDidChange() = 0;
 protected:
-    virtual ~PlatformSpeechSynthesizerClient() { }
+    virtual ~PlatformSpeechSynthesizerClient() = default;
 };
 
 class WEBCORE_EXPORT PlatformSpeechSynthesizer {

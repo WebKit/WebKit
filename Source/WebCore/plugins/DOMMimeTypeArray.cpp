@@ -33,9 +33,7 @@ DOMMimeTypeArray::DOMMimeTypeArray(Frame* frame)
 {
 }
 
-DOMMimeTypeArray::~DOMMimeTypeArray()
-{
-}
+DOMMimeTypeArray::~DOMMimeTypeArray() = default;
 
 unsigned DOMMimeTypeArray::length() const
 {

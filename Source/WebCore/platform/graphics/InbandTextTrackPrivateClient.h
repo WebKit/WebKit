@@ -243,7 +243,7 @@ inline bool GenericCueData::doesExtendCueData(const GenericCueData& other) const
     
 class InbandTextTrackPrivateClient : public TrackPrivateBaseClient {
 public:
-    virtual ~InbandTextTrackPrivateClient() { }
+    virtual ~InbandTextTrackPrivateClient() = default;
 
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned) = 0;
 

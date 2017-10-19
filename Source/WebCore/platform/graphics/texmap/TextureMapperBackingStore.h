@@ -34,7 +34,7 @@ public:
     virtual RefPtr<BitmapTexture> texture() const = 0;
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override = 0;
     virtual void drawRepaintCounter(TextureMapper&, int /* repaintCount */, const Color&, const FloatRect&, const TransformationMatrix&) { }
-    virtual ~TextureMapperBackingStore() { }
+    virtual ~TextureMapperBackingStore() = default;
 
 protected:
     static unsigned calculateExposedTileEdges(const FloatRect& totalRect, const FloatRect& tileRect);

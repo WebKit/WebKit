@@ -34,7 +34,7 @@ class BackingStoreBackendCairo {
     WTF_MAKE_NONCOPYABLE(BackingStoreBackendCairo);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~BackingStoreBackendCairo() { }
+    virtual ~BackingStoreBackendCairo() = default;
 
     cairo_surface_t* surface() const { return m_surface.get(); }
     const IntSize& size() const { return m_size; }

@@ -42,9 +42,7 @@ AnimationEvent::AnimationEvent(const AtomicString& type, const String& animation
 {
 }
 
-AnimationEvent::~AnimationEvent()
-{
-}
+AnimationEvent::~AnimationEvent() = default;
 
 const String& AnimationEvent::animationName() const
 {

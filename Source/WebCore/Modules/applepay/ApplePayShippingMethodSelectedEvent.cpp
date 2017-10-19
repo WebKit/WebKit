@@ -49,9 +49,7 @@ ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const A
 {
 }
 
-ApplePayShippingMethodSelectedEvent::~ApplePayShippingMethodSelectedEvent()
-{
-}
+ApplePayShippingMethodSelectedEvent::~ApplePayShippingMethodSelectedEvent() = default;
 
 EventInterface ApplePayShippingMethodSelectedEvent::eventInterface() const
 {

@@ -167,13 +167,9 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     SelectorFilter::collectIdentifierHashes(selector(), m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
 
-RuleSet::RuleSet()
-{
-}
+RuleSet::RuleSet() = default;
 
-RuleSet::~RuleSet()
-{
-}
+RuleSet::~RuleSet() = default;
 
 void RuleSet::addToRuleSet(const AtomicString& key, AtomRuleMap& map, const RuleData& ruleData)
 {

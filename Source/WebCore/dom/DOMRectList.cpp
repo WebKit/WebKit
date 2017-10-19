@@ -44,8 +44,6 @@ DOMRectList::DOMRectList(const Vector<FloatRect>& rects)
         m_items.uncheckedAppend(DOMRect::create(rect));
 }
 
-DOMRectList::~DOMRectList()
-{
-}
+DOMRectList::~DOMRectList() = default;
 
 } // namespace WebCore

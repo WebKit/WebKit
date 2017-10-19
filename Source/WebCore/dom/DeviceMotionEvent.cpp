@@ -30,9 +30,7 @@
 
 namespace WebCore {
 
-DeviceMotionEvent::~DeviceMotionEvent()
-{
-}
+DeviceMotionEvent::~DeviceMotionEvent() = default;
 
 DeviceMotionEvent::DeviceMotionEvent()
     : m_deviceMotionData(DeviceMotionData::create())

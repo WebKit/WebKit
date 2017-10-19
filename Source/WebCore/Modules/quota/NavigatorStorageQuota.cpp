@@ -44,9 +44,7 @@ NavigatorStorageQuota::NavigatorStorageQuota(Frame* frame)
 {
 }
 
-NavigatorStorageQuota::~NavigatorStorageQuota()
-{
-}
+NavigatorStorageQuota::~NavigatorStorageQuota() = default;
 
 const char* NavigatorStorageQuota::supplementName()
 {

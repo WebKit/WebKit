@@ -48,7 +48,7 @@ public:
 
     static void updateNowPlayingInfoIfNecessary();
 
-    virtual ~PlatformMediaSessionManager() { }
+    virtual ~PlatformMediaSessionManager() = default;
 
     virtual void scheduleUpdateNowPlayingInfo() { }
     bool has(PlatformMediaSession::MediaType) const;

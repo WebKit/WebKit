@@ -89,9 +89,7 @@ static const int requiredValuesForType[] =  {0, 6, 1, 1, 1, 1, 1};
 static const int optionalValuesForType[] =  {0, 0, 1, 1, 2, 0, 0};
 
 // This destructor is needed in order to link correctly with Intel ICC.
-SVGTransformable::~SVGTransformable()
-{
-}
+SVGTransformable::~SVGTransformable() = default;
 
 bool SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, const UChar*& ptr, const UChar* end, SVGTransformValue& transform)
 {

@@ -43,7 +43,7 @@ public:
     void deref() { derefAuthenticationClient(); }
 
 protected:
-    virtual ~AuthenticationClient() { }
+    virtual ~AuthenticationClient() = default;
 
 private:
     virtual void refAuthenticationClient() = 0;

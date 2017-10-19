@@ -41,9 +41,7 @@ AccessibilityMathMLElement::AccessibilityMathMLElement(RenderObject* renderer, b
 {
 }
 
-AccessibilityMathMLElement::~AccessibilityMathMLElement()
-{
-}
+AccessibilityMathMLElement::~AccessibilityMathMLElement() = default;
 
 Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(RenderObject* renderer, bool isAnonymousOperator)
 {

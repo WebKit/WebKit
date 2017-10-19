@@ -36,9 +36,7 @@ OESTextureHalfFloat::OESTextureHalfFloat(WebGLRenderingContextBase& context)
 {
 }
 
-OESTextureHalfFloat::~OESTextureHalfFloat()
-{
-}
+OESTextureHalfFloat::~OESTextureHalfFloat() = default;
 
 WebGLExtension::ExtensionName OESTextureHalfFloat::getName() const
 {

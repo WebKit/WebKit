@@ -41,9 +41,7 @@ WebGPURenderPassAttachmentDescriptor::WebGPURenderPassAttachmentDescriptor(WebGP
 {
 }
 
-WebGPURenderPassAttachmentDescriptor::~WebGPURenderPassAttachmentDescriptor()
-{
-}
+WebGPURenderPassAttachmentDescriptor::~WebGPURenderPassAttachmentDescriptor() = default;
 
 unsigned long WebGPURenderPassAttachmentDescriptor::loadAction() const
 {

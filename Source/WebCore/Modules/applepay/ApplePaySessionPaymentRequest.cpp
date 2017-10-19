@@ -33,13 +33,9 @@
 
 namespace WebCore {
 
-ApplePaySessionPaymentRequest::ApplePaySessionPaymentRequest()
-{
-}
+ApplePaySessionPaymentRequest::ApplePaySessionPaymentRequest() = default;
 
-ApplePaySessionPaymentRequest::~ApplePaySessionPaymentRequest()
-{
-}
+ApplePaySessionPaymentRequest::~ApplePaySessionPaymentRequest() = default;
 
 bool ApplePaySessionPaymentRequest::isValidSupportedNetwork(unsigned version, const String& supportedNetwork)
 {

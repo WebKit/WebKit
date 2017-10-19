@@ -53,9 +53,7 @@ RenderRubyRun::RenderRubyRun(Document& document, RenderStyle&& style)
     setInline(true);
 }
 
-RenderRubyRun::~RenderRubyRun()
-{
-}
+RenderRubyRun::~RenderRubyRun() = default;
 
 bool RenderRubyRun::hasRubyText() const
 {

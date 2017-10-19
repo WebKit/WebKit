@@ -52,9 +52,7 @@ IDBCursorWithValue::IDBCursorWithValue(IDBTransaction& transaction, IDBIndex& in
 {
 }
 
-IDBCursorWithValue::~IDBCursorWithValue()
-{
-}
+IDBCursorWithValue::~IDBCursorWithValue() = default;
 
 } // namespace WebCore
 

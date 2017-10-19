@@ -44,7 +44,7 @@ public:
     virtual void didReceiveEndOfInterruptionNotification(MediaSessionInterruptingCategory) = 0;
 
 protected:
-    virtual ~MediaSessionInterruptionProviderClient() { }
+    virtual ~MediaSessionInterruptionProviderClient() = default;
 };
 
 class MediaSessionInterruptionProvider : public RefCounted<MediaSessionInterruptionProvider> {

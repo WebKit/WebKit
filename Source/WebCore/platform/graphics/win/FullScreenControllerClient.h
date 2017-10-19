@@ -43,7 +43,7 @@ public:
     virtual void fullScreenClientSaveScrollPosition() = 0;
     virtual void fullScreenClientRestoreScrollPosition() = 0;
 protected:
-    virtual ~FullScreenControllerClient() { }
+    virtual ~FullScreenControllerClient() = default;
 };
 
 }

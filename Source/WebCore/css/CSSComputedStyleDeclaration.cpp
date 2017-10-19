@@ -1660,9 +1660,7 @@ CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool 
     (pseudoElementName.substringSharingImpl(nameWithoutColonsStart))));
 }
 
-CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration()
-{
-}
+CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration() = default;
 
 void CSSComputedStyleDeclaration::ref()
 {

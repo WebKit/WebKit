@@ -75,9 +75,7 @@ SettingsBase::SettingsBase(Page* page)
     m_page = page; // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
 }
 
-SettingsBase::~SettingsBase()
-{
-}
+SettingsBase::~SettingsBase() = default;
 
 float SettingsBase::defaultMinimumZoomFontSize()
 {

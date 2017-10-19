@@ -36,9 +36,7 @@ HTMLFormControlElementWithState::HTMLFormControlElementWithState(const Qualified
 {
 }
 
-HTMLFormControlElementWithState::~HTMLFormControlElementWithState()
-{
-}
+HTMLFormControlElementWithState::~HTMLFormControlElementWithState() = default;
 
 Node::InsertedIntoResult HTMLFormControlElementWithState::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {

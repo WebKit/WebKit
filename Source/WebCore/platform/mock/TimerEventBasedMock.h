@@ -40,7 +40,7 @@ class TimerEvent;
 
 class MockNotifier : public RefCounted<MockNotifier> {
 public:
-    virtual ~MockNotifier() { }
+    virtual ~MockNotifier() = default;
     virtual void fire() = 0;
 };
 

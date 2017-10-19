@@ -30,7 +30,7 @@ namespace WebCore {
 
 class CACFLayerTreeHostClient {
 public:
-    virtual ~CACFLayerTreeHostClient() { }
+    virtual ~CACFLayerTreeHostClient() = default;
     virtual void flushPendingGraphicsLayerChanges() { }
 };
 

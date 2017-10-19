@@ -76,9 +76,7 @@ CoordinatedImageBacking::CoordinatedImageBacking(Client& client, Ref<Image>&& im
     m_client->createImageBacking(id());
 }
 
-CoordinatedImageBacking::~CoordinatedImageBacking()
-{
-}
+CoordinatedImageBacking::~CoordinatedImageBacking() = default;
 
 void CoordinatedImageBacking::addHost(Host* host)
 {

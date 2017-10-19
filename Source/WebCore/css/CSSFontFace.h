@@ -117,7 +117,7 @@ public:
 
     class Client {
     public:
-        virtual ~Client() { }
+        virtual ~Client() = default;
         virtual void fontLoaded(CSSFontFace&) { }
         virtual void fontStateChanged(CSSFontFace&, Status /*oldState*/, Status /*newState*/) { }
         virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* /*oldFamilies*/ = nullptr) { }

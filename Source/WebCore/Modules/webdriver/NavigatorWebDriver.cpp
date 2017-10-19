@@ -34,13 +34,9 @@
 namespace WebCore {
 using namespace JSC;
 
-NavigatorWebDriver::NavigatorWebDriver()
-{
-}
+NavigatorWebDriver::NavigatorWebDriver() = default;
 
-NavigatorWebDriver::~NavigatorWebDriver()
-{
-}
+NavigatorWebDriver::~NavigatorWebDriver() = default;
 
 const char* NavigatorWebDriver::supplementName()
 {

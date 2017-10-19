@@ -34,7 +34,7 @@ class Event;
 
 class EventQueue {
 public:
-    virtual ~EventQueue() { }
+    virtual ~EventQueue() = default;
     virtual bool enqueueEvent(Ref<Event>&&) = 0;
     virtual bool cancelEvent(Event&) = 0;
     virtual void close() = 0; // Discard accumulated events and all future events. No events will be dispatched after this.

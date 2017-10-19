@@ -40,7 +40,7 @@ class CaptureDevice;
 
 class MockRealtimeMediaSource : public RealtimeMediaSource {
 public:
-    virtual ~MockRealtimeMediaSource() { }
+    virtual ~MockRealtimeMediaSource() = default;
 
     static Vector<CaptureDevice>& audioDevices();
     static Vector<CaptureDevice>& videoDevices();

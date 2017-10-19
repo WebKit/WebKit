@@ -33,7 +33,7 @@ class ResourceTiming;
 
 class CachedRawResourceClient : public CachedResourceClient {
 public:
-    virtual ~CachedRawResourceClient() { }
+    virtual ~CachedRawResourceClient() = default;
     static CachedResourceClientType expectedType() { return RawResourceType; }
     CachedResourceClientType resourceClientType() const override { return expectedType(); }
 

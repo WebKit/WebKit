@@ -69,13 +69,9 @@ Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
     return path;
 }
 
-Path::Path()
-{
-}
+Path::Path() = default;
 
-Path::~Path()
-{
-}
+Path::~Path() = default;
 
 PlatformPathPtr Path::ensurePlatformPath()
 {

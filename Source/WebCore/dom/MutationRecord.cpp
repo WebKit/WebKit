@@ -184,8 +184,6 @@ Ref<MutationRecord> MutationRecord::createWithNullOldValue(MutationRecord& recor
     return adoptRef(static_cast<MutationRecord&>(*new MutationRecordWithNullOldValue(record)));
 }
 
-MutationRecord::~MutationRecord()
-{
-}
+MutationRecord::~MutationRecord() = default;
 
 } // namespace WebCore

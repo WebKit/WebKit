@@ -74,7 +74,7 @@ struct FileChooserSettings {
 
 class FileChooserClient {
 public:
-    virtual ~FileChooserClient() { }
+    virtual ~FileChooserClient() = default;
 
     virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) = 0;
 };

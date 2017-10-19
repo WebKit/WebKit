@@ -197,13 +197,9 @@ bool RadioButtonGroup::contains(HTMLInputElement* button) const
 // Explicity define empty constructor and destructor in order to prevent the
 // compiler from generating them as inlines. So we don't need to to define
 // RadioButtonGroup in the header.
-RadioButtonGroups::RadioButtonGroups()
-{
-}
+RadioButtonGroups::RadioButtonGroups() = default;
 
-RadioButtonGroups::~RadioButtonGroups()
-{
-}
+RadioButtonGroups::~RadioButtonGroups() = default;
 
 void RadioButtonGroups::addButton(HTMLInputElement* element)
 {

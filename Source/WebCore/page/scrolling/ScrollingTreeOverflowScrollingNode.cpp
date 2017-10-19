@@ -38,9 +38,7 @@ ScrollingTreeOverflowScrollingNode::ScrollingTreeOverflowScrollingNode(Scrolling
 {
 }
 
-ScrollingTreeOverflowScrollingNode::~ScrollingTreeOverflowScrollingNode()
-{
-}
+ScrollingTreeOverflowScrollingNode::~ScrollingTreeOverflowScrollingNode() = default;
 
 } // namespace WebCore
 

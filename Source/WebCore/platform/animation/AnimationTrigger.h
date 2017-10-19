@@ -38,7 +38,7 @@ class AnimationTrigger : public RefCounted<AnimationTrigger> {
 public:
     virtual Ref<AnimationTrigger> clone() const = 0;
 
-    virtual ~AnimationTrigger() { }
+    virtual ~AnimationTrigger() = default;
 
     enum class AnimationTriggerType { AutoAnimationTriggerType, ScrollAnimationTriggerType };
     AnimationTriggerType type() const { return m_type; }

@@ -195,7 +195,7 @@ private:
 class PlatformMediaSessionClient {
     WTF_MAKE_NONCOPYABLE(PlatformMediaSessionClient);
 public:
-    PlatformMediaSessionClient() { }
+    PlatformMediaSessionClient() = default;
     
     virtual PlatformMediaSession::MediaType mediaType() const = 0;
     virtual PlatformMediaSession::MediaType presentationType() const = 0;
@@ -236,7 +236,7 @@ public:
     virtual bool processingUserGestureForMedia() const = 0;
 
 protected:
-    virtual ~PlatformMediaSessionClient() { }
+    virtual ~PlatformMediaSessionClient() = default;
 };
 
 }

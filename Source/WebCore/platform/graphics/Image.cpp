@@ -52,9 +52,7 @@ Image::Image(ImageObserver* observer)
 {
 }
 
-Image::~Image()
-{
-}
+Image::~Image() = default;
 
 Image& Image::nullImage()
 {

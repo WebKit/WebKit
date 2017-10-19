@@ -35,8 +35,8 @@ namespace WebCore {
 class UserScript {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    UserScript() { }
-    ~UserScript() { }
+    UserScript() = default;
+    ~UserScript() = default;
 
     UserScript(String&& source, URL&& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
         : m_source(WTFMove(source))

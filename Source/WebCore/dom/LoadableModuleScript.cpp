@@ -45,9 +45,7 @@ LoadableModuleScript::LoadableModuleScript(const String& nonce, const String& in
 {
 }
 
-LoadableModuleScript::~LoadableModuleScript()
-{
-}
+LoadableModuleScript::~LoadableModuleScript() = default;
 
 bool LoadableModuleScript::isLoaded() const
 {

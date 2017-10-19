@@ -828,9 +828,7 @@ CSSSelector::RareData::RareData(AtomicString&& value)
 {
 }
 
-CSSSelector::RareData::~RareData()
-{
-}
+CSSSelector::RareData::~RareData() = default;
 
 // a helper function for parsing nth-arguments
 bool CSSSelector::RareData::parseNth()

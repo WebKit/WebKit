@@ -39,7 +39,7 @@ class URL;
 
 class ScriptElement {
 public:
-    virtual ~ScriptElement() { }
+    virtual ~ScriptElement() = default;
 
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }

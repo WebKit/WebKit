@@ -125,9 +125,7 @@ MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs resolve
 {
 }
 
-MarkupAccumulator::~MarkupAccumulator()
-{
-}
+MarkupAccumulator::~MarkupAccumulator() = default;
 
 String MarkupAccumulator::serializeNodes(Node& targetNode, EChildrenOnly childrenOnly, Vector<QualifiedName>* tagNamesToSkip)
 {

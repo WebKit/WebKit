@@ -41,9 +41,7 @@ WorkerConsoleClient::WorkerConsoleClient(WorkerGlobalScope& workerGlobalScope)
 {
 }
 
-WorkerConsoleClient::~WorkerConsoleClient()
-{
-}
+WorkerConsoleClient::~WorkerConsoleClient() = default;
 
 void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<Inspector::ScriptArguments>&& arguments)
 {

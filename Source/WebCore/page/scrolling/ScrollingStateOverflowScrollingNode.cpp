@@ -48,9 +48,7 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(const S
 {
 }
 
-ScrollingStateOverflowScrollingNode::~ScrollingStateOverflowScrollingNode()
-{
-}
+ScrollingStateOverflowScrollingNode::~ScrollingStateOverflowScrollingNode() = default;
 
 Ref<ScrollingStateNode> ScrollingStateOverflowScrollingNode::clone(ScrollingStateTree& adoptiveTree)
 {

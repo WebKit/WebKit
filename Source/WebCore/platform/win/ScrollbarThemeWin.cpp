@@ -105,9 +105,7 @@ ScrollbarThemeWin::ScrollbarThemeWin()
     }
 }
 
-ScrollbarThemeWin::~ScrollbarThemeWin()
-{
-}
+ScrollbarThemeWin::~ScrollbarThemeWin() = default;
 
 static int scrollbarThicknessInPixels()
 {

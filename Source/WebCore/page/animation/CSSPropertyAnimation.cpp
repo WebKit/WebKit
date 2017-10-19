@@ -404,8 +404,7 @@ public:
         : m_prop(prop)
     {
     }
-
-    virtual ~AnimationPropertyWrapperBase() { }
+    virtual ~AnimationPropertyWrapperBase() = default;
 
     virtual bool isShorthandWrapper() const { return false; }
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const = 0;
@@ -966,10 +965,9 @@ public:
         : m_property(property)
     {
     }
-    
-    CSSPropertyID property() const { return m_property; }
+    virtual ~FillLayerAnimationPropertyWrapperBase() = default;
 
-    virtual ~FillLayerAnimationPropertyWrapperBase() { }
+    CSSPropertyID property() const { return m_property; }
 
     virtual bool equals(const FillLayer*, const FillLayer*) const = 0;
     virtual void blend(const AnimationBase*, FillLayer*, const FillLayer*, const FillLayer*, double) const = 0;

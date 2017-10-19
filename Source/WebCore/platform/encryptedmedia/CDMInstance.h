@@ -45,7 +45,7 @@ struct CDMKeySystemConfiguration;
 
 class CDMInstance : public RefCounted<CDMInstance> {
 public:
-    virtual ~CDMInstance() { }
+    virtual ~CDMInstance() = default;
 
     enum class ImplementationType {
         Mock,

@@ -37,9 +37,7 @@ NativeXPathNSResolver::NativeXPathNSResolver(RefPtr<Node>&& node)
 {
 }
 
-NativeXPathNSResolver::~NativeXPathNSResolver()
-{
-}
+NativeXPathNSResolver::~NativeXPathNSResolver() = default;
 
 String NativeXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {

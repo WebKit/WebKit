@@ -90,9 +90,7 @@ FontFaceSet::PendingPromise::PendingPromise(LoadPromise&& promise)
 {
 }
 
-FontFaceSet::PendingPromise::~PendingPromise()
-{
-}
+FontFaceSet::PendingPromise::~PendingPromise() = default;
 
 bool FontFaceSet::has(FontFace& face) const
 {

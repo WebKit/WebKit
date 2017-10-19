@@ -56,8 +56,8 @@ enum SVGPathSegRole {
 
 class SVGPathSeg : public RefCounted<SVGPathSeg> {
 public:
-    SVGPathSeg() { }
-    virtual ~SVGPathSeg() { }
+    SVGPathSeg() = default;
+    virtual ~SVGPathSeg() = default;
 
     // Forward declare these enums in the w3c naming scheme, for IDL generation
     enum {

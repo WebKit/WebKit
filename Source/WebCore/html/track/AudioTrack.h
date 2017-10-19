@@ -37,7 +37,7 @@ class AudioTrack;
 
 class AudioTrackClient {
 public:
-    virtual ~AudioTrackClient() { }
+    virtual ~AudioTrackClient() = default;
     virtual void audioTrackEnabledChanged(AudioTrack&) = 0;
 };
 

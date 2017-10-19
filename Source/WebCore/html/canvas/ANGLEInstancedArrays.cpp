@@ -39,9 +39,7 @@ ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase& context)
 {
 }
 
-ANGLEInstancedArrays::~ANGLEInstancedArrays()
-{
-}
+ANGLEInstancedArrays::~ANGLEInstancedArrays() = default;
 
 WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
 {

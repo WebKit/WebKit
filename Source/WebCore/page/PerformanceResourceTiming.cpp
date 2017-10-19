@@ -82,9 +82,7 @@ PerformanceResourceTiming::PerformanceResourceTiming(MonotonicTime timeOrigin, R
 {
 }
 
-PerformanceResourceTiming::~PerformanceResourceTiming()
-{
-}
+PerformanceResourceTiming::~PerformanceResourceTiming() = default;
 
 String PerformanceResourceTiming::nextHopProtocol() const
 {

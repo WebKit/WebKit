@@ -32,9 +32,7 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-CompiledContentExtension::~CompiledContentExtension()
-{
-}
+CompiledContentExtension::~CompiledContentExtension() = default;
     
 } // namespace ContentExtensions
 } // namespace WebCore

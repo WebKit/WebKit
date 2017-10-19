@@ -53,7 +53,7 @@ public:
         , m_isExitingFullScreen(false)
     {
     }
-    virtual ~Private() { }
+    virtual ~Private() = default;
 
     virtual LRESULT fullscreenClientWndProc(HWND, UINT, WPARAM, LPARAM);
     
@@ -108,9 +108,7 @@ FullScreenController::FullScreenController(FullScreenControllerClient* client)
     ASSERT_ARG(client, client);
 }
 
-FullScreenController::~FullScreenController()
-{
-}
+FullScreenController::~FullScreenController() = default;
 
 bool FullScreenController::isFullScreen() const
 {

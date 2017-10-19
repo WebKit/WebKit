@@ -52,9 +52,7 @@ Ref<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new HTMLMapElement(tagName, document));
 }
 
-HTMLMapElement::~HTMLMapElement()
-{
-}
+HTMLMapElement::~HTMLMapElement() = default;
 
 bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size, HitTestResult& result)
 {

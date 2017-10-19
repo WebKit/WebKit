@@ -58,7 +58,7 @@ public:
         CssCalcOperation
     };
 
-    virtual ~CSSCalcExpressionNode() { }
+    virtual ~CSSCalcExpressionNode() = default;
     virtual bool isZero() const = 0;
     virtual std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData&) const = 0;
     virtual double doubleValue() const = 0;

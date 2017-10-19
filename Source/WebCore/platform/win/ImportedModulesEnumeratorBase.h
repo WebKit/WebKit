@@ -39,7 +39,7 @@ public:
     virtual ImportedFunctionsEnumerator functionsEnumerator() const = 0;
 
 protected:
-    virtual ~ImportedModulesEnumeratorBase() { }
+    virtual ~ImportedModulesEnumeratorBase() = default;
 };
 
 } // namespace WebCore

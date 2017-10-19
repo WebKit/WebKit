@@ -1155,9 +1155,7 @@ Editor::Editor(Frame& frame)
 {
 }
 
-Editor::~Editor()
-{
-}
+Editor::~Editor() = default;
 
 void Editor::clear()
 {

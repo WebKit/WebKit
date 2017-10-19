@@ -44,7 +44,7 @@ public:
 
     static bool shouldLogAfterSampling(ShouldSample);
 
-    virtual ~DiagnosticLoggingClient() { }
+    virtual ~DiagnosticLoggingClient() = default;
 };
 
 inline bool DiagnosticLoggingClient::shouldLogAfterSampling(ShouldSample shouldSample)

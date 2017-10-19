@@ -64,9 +64,7 @@ VTTRegion::VTTRegion(ScriptExecutionContext& context)
 {
 }
 
-VTTRegion::~VTTRegion()
-{
-}
+VTTRegion::~VTTRegion() = default;
 
 void VTTRegion::setTrack(TextTrack* track)
 {

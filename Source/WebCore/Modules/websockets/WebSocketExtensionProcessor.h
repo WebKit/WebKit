@@ -37,7 +37,7 @@ namespace WebCore {
 
 class WebSocketExtensionProcessor {
 public:
-    virtual ~WebSocketExtensionProcessor() { }
+    virtual ~WebSocketExtensionProcessor() = default;
 
     String extensionToken() const { return m_extensionToken; }
 

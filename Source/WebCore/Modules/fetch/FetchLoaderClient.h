@@ -37,7 +37,7 @@ class ResourceResponse;
 
 class FetchLoaderClient {
 public:
-    virtual ~FetchLoaderClient() { }
+    virtual ~FetchLoaderClient() = default;
 
     virtual void didReceiveResponse(const ResourceResponse&) { }
 

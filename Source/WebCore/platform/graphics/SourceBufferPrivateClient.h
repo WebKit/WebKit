@@ -40,7 +40,7 @@ class VideoTrackPrivate;
 
 class SourceBufferPrivateClient {
 public:
-    virtual ~SourceBufferPrivateClient() { }
+    virtual ~SourceBufferPrivateClient() = default;
 
     struct InitializationSegment {
         MediaTime duration;

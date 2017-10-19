@@ -38,9 +38,7 @@ AutoTableLayout::AutoTableLayout(RenderTable* table)
 {
 }
 
-AutoTableLayout::~AutoTableLayout()
-{
-}
+AutoTableLayout::~AutoTableLayout() = default;
 
 void AutoTableLayout::recalcColumn(unsigned effCol)
 {

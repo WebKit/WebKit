@@ -56,9 +56,7 @@ CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, Vector<uint8_t>&
     ASSERT(isValidAESAlgorithm(algorithm));
 }
 
-CryptoKeyAES::~CryptoKeyAES()
-{
-}
+CryptoKeyAES::~CryptoKeyAES() = default;
 
 bool CryptoKeyAES::isValidAESAlgorithm(CryptoAlgorithmIdentifier algorithm)
 {

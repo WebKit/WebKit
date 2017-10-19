@@ -45,9 +45,7 @@ RenderSVGContainer::RenderSVGContainer(SVGElement& element, RenderStyle&& style)
 {
 }
 
-RenderSVGContainer::~RenderSVGContainer()
-{
-}
+RenderSVGContainer::~RenderSVGContainer() = default;
 
 void RenderSVGContainer::layout()
 {

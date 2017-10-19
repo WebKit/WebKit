@@ -43,9 +43,7 @@ CanvasPattern::CanvasPattern(Ref<Image>&& image, bool repeatX, bool repeatY, boo
 {
 }
 
-CanvasPattern::~CanvasPattern()
-{
-}
+CanvasPattern::~CanvasPattern() = default;
 
 bool CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY)
 {

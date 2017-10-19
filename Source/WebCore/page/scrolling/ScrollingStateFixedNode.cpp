@@ -51,9 +51,7 @@ ScrollingStateFixedNode::ScrollingStateFixedNode(const ScrollingStateFixedNode& 
 {
 }
 
-ScrollingStateFixedNode::~ScrollingStateFixedNode()
-{
-}
+ScrollingStateFixedNode::~ScrollingStateFixedNode() = default;
 
 Ref<ScrollingStateNode> ScrollingStateFixedNode::clone(ScrollingStateTree& adoptiveTree)
 {

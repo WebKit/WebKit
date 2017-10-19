@@ -38,9 +38,7 @@
 
 using namespace WebCore;
 
-CaptureDeviceManager::~CaptureDeviceManager()
-{
-}
+CaptureDeviceManager::~CaptureDeviceManager() = default;
 
 Vector<CaptureDevice> CaptureDeviceManager::getAudioSourcesInfo()
 {

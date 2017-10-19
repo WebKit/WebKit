@@ -38,7 +38,7 @@ namespace WebCore {
 
 class OverconstrainedErrorEvent : public Event {
 public:
-    virtual ~OverconstrainedErrorEvent() { }
+    virtual ~OverconstrainedErrorEvent() = default;
 
     static Ref<OverconstrainedErrorEvent> create(const AtomicString& type, bool canBubble, bool cancelable, OverconstrainedError* error)
     {

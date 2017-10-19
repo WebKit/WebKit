@@ -45,9 +45,7 @@ FileSystemEntry::FileSystemEntry(ScriptExecutionContext& context, DOMFileSystem&
     suspendIfNeeded();
 }
 
-FileSystemEntry::~FileSystemEntry()
-{
-}
+FileSystemEntry::~FileSystemEntry() = default;
 
 DOMFileSystem& FileSystemEntry::filesystem() const
 {

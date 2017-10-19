@@ -103,9 +103,7 @@ ContentSecurityPolicy::ContentSecurityPolicy(const SecurityOrigin& securityOrigi
     updateSourceSelf(securityOrigin);
 }
 
-ContentSecurityPolicy::~ContentSecurityPolicy()
-{
-}
+ContentSecurityPolicy::~ContentSecurityPolicy() = default;
 
 void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other) 
 {

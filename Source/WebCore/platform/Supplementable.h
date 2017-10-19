@@ -77,7 +77,7 @@ class Supplementable;
 template<typename T>
 class Supplement {
 public:
-    virtual ~Supplement() { }
+    virtual ~Supplement() = default;
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     virtual bool isRefCountedWrapper() const { return false; }
 #endif

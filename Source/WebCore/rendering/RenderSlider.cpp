@@ -52,9 +52,7 @@ RenderSlider::RenderSlider(HTMLInputElement& element, RenderStyle&& style)
     ASSERT(element.isRangeControl());
 }
 
-RenderSlider::~RenderSlider()
-{
-}
+RenderSlider::~RenderSlider() = default;
 
 HTMLInputElement& RenderSlider::element() const
 {

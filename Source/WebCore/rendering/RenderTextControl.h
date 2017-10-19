@@ -91,7 +91,7 @@ public:
     explicit RenderTextControlInnerContainer(Element& element, RenderStyle&& style)
         : RenderFlexibleBox(element, WTFMove(style))
     { }
-    virtual ~RenderTextControlInnerContainer() { }
+    virtual ~RenderTextControlInnerContainer() = default;
 
     int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
     {

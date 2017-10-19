@@ -40,7 +40,7 @@ private:
     {
     }
 
-    ~PerformanceMeasure() { }
+    ~PerformanceMeasure() = default;
 };
 
 } // namespace WebCore

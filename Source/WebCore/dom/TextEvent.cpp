@@ -103,9 +103,7 @@ TextEvent::TextEvent(DOMWindow* view, const String& data, const Vector<Dictation
 {
 }
 
-TextEvent::~TextEvent()
-{
-}
+TextEvent::~TextEvent() = default;
 
 void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, const String& data)
 {

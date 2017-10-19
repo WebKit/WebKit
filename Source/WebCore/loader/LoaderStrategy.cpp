@@ -30,9 +30,7 @@
 
 namespace WebCore {
 
-LoaderStrategy::~LoaderStrategy()
-{
-}
+LoaderStrategy::~LoaderStrategy() = default;
 
 } // namespace WebCore
 

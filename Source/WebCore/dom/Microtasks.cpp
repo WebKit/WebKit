@@ -38,9 +38,7 @@ MicrotaskQueue::MicrotaskQueue()
 {
 }
 
-MicrotaskQueue::~MicrotaskQueue()
-{
-}
+MicrotaskQueue::~MicrotaskQueue() = default;
 
 MicrotaskQueue& MicrotaskQueue::mainThreadQueue()
 {

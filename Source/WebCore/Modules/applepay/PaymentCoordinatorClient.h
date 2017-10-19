@@ -58,7 +58,7 @@ public:
     virtual void paymentCoordinatorDestroyed() = 0;
 
 protected:
-    virtual ~PaymentCoordinatorClient() { }
+    virtual ~PaymentCoordinatorClient() = default;
 };
 
 }

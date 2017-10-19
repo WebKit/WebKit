@@ -36,9 +36,7 @@ OESElementIndexUint::OESElementIndexUint(WebGLRenderingContextBase& context)
 {
 }
 
-OESElementIndexUint::~OESElementIndexUint()
-{
-}
+OESElementIndexUint::~OESElementIndexUint() = default;
 
 WebGLExtension::ExtensionName OESElementIndexUint::getName() const
 {

@@ -37,7 +37,7 @@ namespace WebCore {
 
 class UndoStep : public RefCounted<UndoStep> {
 public:
-    virtual ~UndoStep() { }
+    virtual ~UndoStep() = default;
 
     virtual void unapply() = 0;
     virtual void reapply() = 0;

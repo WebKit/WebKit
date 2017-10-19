@@ -37,9 +37,7 @@ PlatformSpeechSynthesizerMock::PlatformSpeechSynthesizerMock(PlatformSpeechSynth
 {
 }
 
-PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
-{
-}
+PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock() = default;
 
 void PlatformSpeechSynthesizerMock::speakingFinished()
 {

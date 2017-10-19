@@ -77,7 +77,7 @@ public:
     virtual Permission checkPermission(ScriptExecutionContext*) = 0;
 
 protected:
-    virtual ~NotificationClient() { }
+    virtual ~NotificationClient() = default;
 };
 
 WEBCORE_EXPORT void provideNotification(Page*, NotificationClient*);

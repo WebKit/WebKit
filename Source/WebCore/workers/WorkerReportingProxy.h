@@ -37,7 +37,7 @@ namespace WebCore {
     // APIs used by workers to report console activity.
     class WorkerReportingProxy {
     public:
-        virtual ~WorkerReportingProxy() {}
+        virtual ~WorkerReportingProxy() = default;
 
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) = 0;
 

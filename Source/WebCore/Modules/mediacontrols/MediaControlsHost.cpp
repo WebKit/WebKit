@@ -80,9 +80,7 @@ MediaControlsHost::MediaControlsHost(HTMLMediaElement* mediaElement)
     ASSERT(mediaElement);
 }
 
-MediaControlsHost::~MediaControlsHost()
-{
-}
+MediaControlsHost::~MediaControlsHost() = default;
 
 Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {

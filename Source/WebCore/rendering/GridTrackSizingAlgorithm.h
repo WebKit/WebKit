@@ -47,7 +47,7 @@ class GridTrackSizingAlgorithmStrategy;
 
 class GridTrack {
 public:
-    GridTrack() { }
+    GridTrack() = default;
 
     const LayoutUnit& baseSize() const;
     void setBaseSize(LayoutUnit);
@@ -218,7 +218,7 @@ public:
     LayoutUnit maxContentForChild(RenderBox&) const;
     LayoutUnit minSizeForChild(RenderBox&) const;
 
-    virtual ~GridTrackSizingAlgorithmStrategy() { }
+    virtual ~GridTrackSizingAlgorithmStrategy() = default;
 
     virtual void maximizeTracks(Vector<GridTrack>&, std::optional<LayoutUnit>& freeSpace) = 0;
     virtual double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> initialFreeSpace) const = 0;

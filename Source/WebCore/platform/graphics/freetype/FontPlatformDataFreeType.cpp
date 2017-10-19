@@ -204,9 +204,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     return *this;
 }
 
-FontPlatformData::~FontPlatformData()
-{
-}
+FontPlatformData::~FontPlatformData() = default;
 
 FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
 {

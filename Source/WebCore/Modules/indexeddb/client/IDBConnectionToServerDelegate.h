@@ -55,7 +55,7 @@ namespace IDBClient {
 
 class IDBConnectionToServerDelegate {
 public:
-    virtual ~IDBConnectionToServerDelegate() { }
+    virtual ~IDBConnectionToServerDelegate() = default;
 
     virtual uint64_t identifier() const = 0;
     virtual void deleteDatabase(const IDBRequestData&) = 0;

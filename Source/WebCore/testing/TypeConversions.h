@@ -143,9 +143,7 @@ public:
     void setTestTreatNullAsEmptyStringUnion(const TestTreatNullAsEmptyStringUnion& value) { m_treatNullAsEmptyStringUnion = value; }
 
 private:
-    TypeConversions()
-    {
-    }
+    TypeConversions() = default;
 
     int8_t m_byte { 0 };
     uint8_t m_octet { 0 };

@@ -52,9 +52,7 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     imageResource().initialize(*this);
 }
 
-RenderSVGImage::~RenderSVGImage()
-{
-}
+RenderSVGImage::~RenderSVGImage() = default;
 
 void RenderSVGImage::willBeDestroyed()
 {

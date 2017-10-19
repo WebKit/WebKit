@@ -43,7 +43,7 @@ typedef int ExceptionCode;
 
 class StorageErrorCallback : public RefCounted<StorageErrorCallback> {
 public:
-    virtual ~StorageErrorCallback() { }
+    virtual ~StorageErrorCallback() = default;
     virtual bool handleEvent(DOMException*) = 0;
 
     class CallbackTask : public ScriptExecutionContext::Task {

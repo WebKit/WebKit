@@ -337,9 +337,7 @@ URLFilterParser::URLFilterParser(CombinedURLFilters& combinedURLFilters)
 {
 }
 
-URLFilterParser::~URLFilterParser()
-{
-}
+URLFilterParser::~URLFilterParser() = default;
 
 URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
 {

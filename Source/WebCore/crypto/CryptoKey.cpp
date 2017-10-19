@@ -41,9 +41,7 @@ CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithmIdentifier, Type type, b
 {
 }
 
-CryptoKey::~CryptoKey()
-{
-}
+CryptoKey::~CryptoKey() = default;
 
 auto CryptoKey::usages() const -> Vector<CryptoKeyUsage>
 {

@@ -250,9 +250,7 @@ Ref<StyleRareInheritedData> StyleRareInheritedData::copy() const
     return adoptRef(*new StyleRareInheritedData(*this));
 }
 
-StyleRareInheritedData::~StyleRareInheritedData()
-{
-}
+StyleRareInheritedData::~StyleRareInheritedData() = default;
 
 bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 {

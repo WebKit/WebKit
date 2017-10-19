@@ -41,9 +41,7 @@ AccessibilityLabel::AccessibilityLabel(RenderObject* renderer)
 {
 }
 
-AccessibilityLabel::~AccessibilityLabel()
-{
-}
+AccessibilityLabel::~AccessibilityLabel() = default;
 
 Ref<AccessibilityLabel> AccessibilityLabel::create(RenderObject* renderer)
 {

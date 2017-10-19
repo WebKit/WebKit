@@ -29,9 +29,7 @@ RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient(SVGLinearGradie
 {
 }
 
-RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient()
-{
-}
+RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient() = default;
 
 bool RenderSVGResourceLinearGradient::collectGradientAttributes()
 {

@@ -80,9 +80,7 @@ public:
         m_textFont.update(nullptr);
     }
 
-    ~ResourceUsageOverlayPainter()
-    {
-    }
+    ~ResourceUsageOverlayPainter() = default;
 
 private:
     void paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior) override

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class NullTextTrackRepresentation : public TextTrackRepresentation {
 public:
-    virtual ~NullTextTrackRepresentation() { }
+    virtual ~NullTextTrackRepresentation() = default;
     void update() override { }
     PlatformLayer* platformLayer() override { return nullptr; }
     void setContentScale(float) override { }

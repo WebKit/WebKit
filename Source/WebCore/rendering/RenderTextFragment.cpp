@@ -55,9 +55,7 @@ RenderTextFragment::RenderTextFragment(Document& textNode, const String& text)
 {
 }
 
-RenderTextFragment::~RenderTextFragment()
-{
-}
+RenderTextFragment::~RenderTextFragment() = default;
 
 bool RenderTextFragment::canBeSelectionLeaf() const
 {

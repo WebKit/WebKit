@@ -47,9 +47,7 @@ XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle(EventTa
     ASSERT(target);
 }
 
-XMLHttpRequestProgressEventThrottle::~XMLHttpRequestProgressEventThrottle()
-{
-}
+XMLHttpRequestProgressEventThrottle::~XMLHttpRequestProgressEventThrottle() = default;
 
 void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total)
 {

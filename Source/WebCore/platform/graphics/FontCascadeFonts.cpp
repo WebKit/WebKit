@@ -113,9 +113,7 @@ FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
     m_realizedFallbackRanges.append(FontRanges(FontCache::singleton().fontForPlatformData(platformData)));
 }
 
-FontCascadeFonts::~FontCascadeFonts()
-{
-}
+FontCascadeFonts::~FontCascadeFonts() = default;
 
 void FontCascadeFonts::determinePitch(const FontCascadeDescription& description)
 {

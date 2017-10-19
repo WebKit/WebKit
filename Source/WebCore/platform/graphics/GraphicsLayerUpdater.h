@@ -34,7 +34,7 @@ class GraphicsLayerUpdater;
 
 class GraphicsLayerUpdaterClient {
 public:
-    virtual ~GraphicsLayerUpdaterClient() { }
+    virtual ~GraphicsLayerUpdaterClient() = default;
     virtual void flushLayersSoon(GraphicsLayerUpdater&) = 0;
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     virtual RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const = 0;

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class FileReaderLoaderClient {
 public:
-    virtual ~FileReaderLoaderClient() {}
+    virtual ~FileReaderLoaderClient() = default;
 
     virtual void didStartLoading() = 0;
     virtual void didReceiveData() = 0;

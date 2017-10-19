@@ -40,8 +40,6 @@ SecurityOriginPolicy::SecurityOriginPolicy(Ref<SecurityOrigin>&& securityOrigin)
 {
 }
 
-SecurityOriginPolicy::~SecurityOriginPolicy()
-{
-}
+SecurityOriginPolicy::~SecurityOriginPolicy() = default;
 
 }

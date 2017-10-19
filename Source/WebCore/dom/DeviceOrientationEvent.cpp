@@ -30,9 +30,7 @@
 
 namespace WebCore {
 
-DeviceOrientationEvent::~DeviceOrientationEvent()
-{
-}
+DeviceOrientationEvent::~DeviceOrientationEvent() = default;
 
 DeviceOrientationEvent::DeviceOrientationEvent()
     : m_orientation(DeviceOrientationData::create())

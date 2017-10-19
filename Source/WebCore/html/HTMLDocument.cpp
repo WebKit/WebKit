@@ -88,9 +88,7 @@ HTMLDocument::HTMLDocument(Frame* frame, const URL& url, DocumentClassFlags docu
     clearXMLVersion();
 }
 
-HTMLDocument::~HTMLDocument()
-{
-}
+HTMLDocument::~HTMLDocument() = default;
 
 int HTMLDocument::width()
 {

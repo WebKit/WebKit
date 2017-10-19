@@ -50,9 +50,7 @@ InbandMetadataTextTrackPrivateAVF::InbandMetadataTextTrackPrivateAVF(InbandTextT
 {
 }
 
-InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF()
-{
-}
+InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF() = default;
 
 #if ENABLE(DATACUE_VALUE)
 

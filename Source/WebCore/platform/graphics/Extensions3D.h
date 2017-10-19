@@ -43,7 +43,7 @@ namespace WebCore {
 // this situation, if the function has a return value, 0 is returned.
 class Extensions3D {
 public:
-    virtual ~Extensions3D() {}
+    virtual ~Extensions3D() = default;
 
     // Supported extensions:
     //   GL_EXT_texture_format_BGRA8888

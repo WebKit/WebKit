@@ -84,9 +84,7 @@ RejectedPromiseTracker::RejectedPromiseTracker(ScriptExecutionContext& context, 
 {
 }
 
-RejectedPromiseTracker::~RejectedPromiseTracker()
-{
-}
+RejectedPromiseTracker::~RejectedPromiseTracker() = default;
 
 static RefPtr<ScriptCallStack> createScriptCallStackFromReason(ExecState& state, JSValue reason)
 {

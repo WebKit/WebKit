@@ -68,7 +68,7 @@ typedef unsigned AsTextFlags;
 class AnimationValue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~AnimationValue() { }
+    virtual ~AnimationValue() = default;
 
     double keyTime() const { return m_keyTime; }
     const TimingFunction* timingFunction() const { return m_timingFunction.get(); }

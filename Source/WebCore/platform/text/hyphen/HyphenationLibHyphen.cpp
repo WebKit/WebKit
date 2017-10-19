@@ -167,7 +167,8 @@ class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
 public:
     typedef std::unique_ptr<HyphenDict, void(*)(HyphenDict*)> HyphenDictUniquePtr;
 
-    virtual ~HyphenationDictionary() { }
+    virtual ~HyphenationDictionary() = default;
+
     static RefPtr<HyphenationDictionary> createNull()
     {
         return adoptRef(new HyphenationDictionary());

@@ -34,10 +34,10 @@ class Text;
 
 class TextInsertionMarkerSupplier : public RefCounted<TextInsertionMarkerSupplier> {
 public:
-    virtual ~TextInsertionMarkerSupplier() { }
+    virtual ~TextInsertionMarkerSupplier() = default;
     virtual void addMarkersToTextNode(Text*, unsigned offsetOfInsertion, const String& textInserted) = 0;
 protected:
-    TextInsertionMarkerSupplier() { }
+    TextInsertionMarkerSupplier() = default;
 };
 
 class InsertTextCommand : public CompositeEditCommand {

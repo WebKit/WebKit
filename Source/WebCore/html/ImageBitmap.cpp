@@ -325,13 +325,9 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageData>& imag
     promise.resolve(imageBitmap);
 }
 
-ImageBitmap::ImageBitmap()
-{
-}
+ImageBitmap::ImageBitmap() = default;
 
-ImageBitmap::~ImageBitmap()
-{
-}
+ImageBitmap::~ImageBitmap() = default;
 
 unsigned ImageBitmap::width() const
 {

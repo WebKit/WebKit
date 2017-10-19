@@ -48,9 +48,7 @@ WebGPURenderPipelineDescriptor::WebGPURenderPipelineDescriptor()
     m_renderPipelineDescriptor = GPURenderPipelineDescriptor::create();
 }
 
-WebGPURenderPipelineDescriptor::~WebGPURenderPipelineDescriptor()
-{
-}
+WebGPURenderPipelineDescriptor::~WebGPURenderPipelineDescriptor() = default;
 
 RefPtr<WebGPUFunction> WebGPURenderPipelineDescriptor::vertexFunction() const
 {

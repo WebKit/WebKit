@@ -39,7 +39,7 @@ class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebConsoleAgent(Inspector::AgentContext&, Inspector::InspectorHeapAgent*);
-    virtual ~WebConsoleAgent() { }
+    virtual ~WebConsoleAgent() = default;
 
     void setMonitoringXHREnabled(ErrorString&, bool enabled) final;
 

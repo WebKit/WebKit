@@ -83,9 +83,7 @@ IDBKey::IDBKey(const ThreadSafeDataBuffer& buffer)
 {
 }
 
-IDBKey::~IDBKey()
-{
-}
+IDBKey::~IDBKey() = default;
 
 bool IDBKey::isValid() const
 {

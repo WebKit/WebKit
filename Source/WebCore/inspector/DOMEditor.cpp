@@ -342,9 +342,7 @@ DOMEditor::DOMEditor(InspectorHistory& history)
 {
 }
 
-DOMEditor::~DOMEditor()
-{
-}
+DOMEditor::~DOMEditor() = default;
 
 ExceptionOr<void> DOMEditor::insertBefore(Node& parentNode, Ref<Node>&& node, Node* anchorNode)
 {

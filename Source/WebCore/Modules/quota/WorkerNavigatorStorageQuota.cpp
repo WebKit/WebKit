@@ -38,13 +38,9 @@
 
 namespace WebCore {
 
-WorkerNavigatorStorageQuota::WorkerNavigatorStorageQuota()
-{
-}
+WorkerNavigatorStorageQuota::WorkerNavigatorStorageQuota() = default;
 
-WorkerNavigatorStorageQuota::~WorkerNavigatorStorageQuota()
-{
-}
+WorkerNavigatorStorageQuota::~WorkerNavigatorStorageQuota() = default;
 
 const char* WorkerNavigatorStorageQuota::supplementName()
 {

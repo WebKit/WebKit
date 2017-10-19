@@ -42,7 +42,7 @@ class MediaStreamAudioSource final : public RealtimeMediaSource {
 public:
     static Ref<MediaStreamAudioSource> create();
 
-    ~MediaStreamAudioSource() { }
+    ~MediaStreamAudioSource() = default;
 
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;

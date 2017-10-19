@@ -35,7 +35,7 @@ namespace WebCore {
 
 class LinkLoaderClient {
 public:
-    virtual ~LinkLoaderClient() { }
+    virtual ~LinkLoaderClient() = default;
 
     virtual bool shouldLoadLink() = 0;
 

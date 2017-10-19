@@ -763,9 +763,7 @@ CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, 
 {
 }
 
-CachedResourceStreamingClient::~CachedResourceStreamingClient()
-{
-}
+CachedResourceStreamingClient::~CachedResourceStreamingClient() = default;
 
 #if USE(SOUP)
 char* CachedResourceStreamingClient::getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize)

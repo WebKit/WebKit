@@ -60,9 +60,7 @@ TrackEvent::TrackEvent(const AtomicString& type, Init&& initializer, IsTrusted i
 {
 }
 
-TrackEvent::~TrackEvent()
-{
-}
+TrackEvent::~TrackEvent() = default;
 
 EventInterface TrackEvent::eventInterface() const
 {

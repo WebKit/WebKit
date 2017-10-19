@@ -56,9 +56,7 @@ WebGPUTexture::WebGPUTexture(WebGPURenderingContext* context, WebGPUTextureDescr
     m_texture = context->device()->createTexture(descriptor->textureDescriptor());
 }
 
-WebGPUTexture::~WebGPUTexture()
-{
-}
+WebGPUTexture::~WebGPUTexture() = default;
 
 unsigned long WebGPUTexture::width() const
 {

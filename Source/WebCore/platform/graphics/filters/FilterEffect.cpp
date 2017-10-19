@@ -50,9 +50,7 @@ FilterEffect::FilterEffect(Filter& filter)
 {
 }
 
-FilterEffect::~FilterEffect()
-{
-}
+FilterEffect::~FilterEffect() = default;
 
 void FilterEffect::determineAbsolutePaintRect()
 {

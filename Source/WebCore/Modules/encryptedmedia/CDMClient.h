@@ -36,7 +36,7 @@ class CDMInstance;
 
 class CDMClient {
 public:
-    virtual ~CDMClient() { }
+    virtual ~CDMClient() = default;
 
     virtual void cdmClientAttemptToResumePlaybackIfNecessary() = 0;
 };

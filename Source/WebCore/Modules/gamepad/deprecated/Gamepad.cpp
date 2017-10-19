@@ -52,9 +52,7 @@ void Gamepad::buttons(unsigned count, float* data)
         std::copy(data, data + count, m_buttons.begin());
 }
 
-Gamepad::~Gamepad()
-{
-}
+Gamepad::~Gamepad() = default;
 
 } // namespace WebCore
 

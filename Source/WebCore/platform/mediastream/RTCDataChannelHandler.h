@@ -45,7 +45,7 @@ class RTCDataChannelHandlerClient;
 
 class RTCDataChannelHandler {
 public:
-    virtual ~RTCDataChannelHandler() { }
+    virtual ~RTCDataChannelHandler() = default;
 
     virtual void setClient(RTCDataChannelHandlerClient&) = 0;
 

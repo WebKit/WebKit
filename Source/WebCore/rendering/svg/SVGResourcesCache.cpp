@@ -26,13 +26,9 @@
 
 namespace WebCore {
 
-SVGResourcesCache::SVGResourcesCache()
-{
-}
+SVGResourcesCache::SVGResourcesCache() = default;
 
-SVGResourcesCache::~SVGResourcesCache()
-{
-}
+SVGResourcesCache::~SVGResourcesCache() = default;
 
 void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const RenderStyle& style)
 {

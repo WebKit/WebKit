@@ -149,9 +149,7 @@ DOMFileSystem::DOMFileSystem(Ref<File>&& file)
     ASSERT(!m_rootPath.endsWith('/'));
 }
 
-DOMFileSystem::~DOMFileSystem()
-{
-}
+DOMFileSystem::~DOMFileSystem() = default;
 
 Ref<FileSystemDirectoryEntry> DOMFileSystem::root(ScriptExecutionContext& context)
 {

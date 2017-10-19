@@ -42,9 +42,7 @@ ScrollAnimatorMock::ScrollAnimatorMock(ScrollableArea& scrollableArea, WTF::Func
 {
 }
 
-ScrollAnimatorMock::~ScrollAnimatorMock()
-{
-}
+ScrollAnimatorMock::~ScrollAnimatorMock() = default;
 
 void ScrollAnimatorMock::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {

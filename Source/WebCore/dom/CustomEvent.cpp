@@ -41,9 +41,7 @@ CustomEvent::CustomEvent(JSC::ExecState& state, const AtomicString& type, const 
 {
 }
 
-CustomEvent::~CustomEvent()
-{
-}
+CustomEvent::~CustomEvent() = default;
 
 void CustomEvent::initCustomEvent(JSC::ExecState& state, const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail)
 {

@@ -63,9 +63,7 @@ ThreadGlobalData::ThreadGlobalData()
     Thread::current();
 }
 
-ThreadGlobalData::~ThreadGlobalData()
-{
-}
+ThreadGlobalData::~ThreadGlobalData() = default;
 
 void ThreadGlobalData::destroy()
 {

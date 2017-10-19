@@ -42,7 +42,7 @@ public:
     virtual void didTruncate(bool) { } // false signals failure.
 
 protected:
-    virtual ~FileStreamClient() { }
+    virtual ~FileStreamClient() = default;
 };
 
 } // namespace WebCore

@@ -74,9 +74,7 @@ PasteboardHelper::PasteboardHelper()
     gtk_target_list_add(m_targetList.get(), unknownAtom, 0, PasteboardHelper::TargetTypeUnknown);
 }
 
-PasteboardHelper::~PasteboardHelper()
-{
-}
+PasteboardHelper::~PasteboardHelper() = default;
 
 GtkTargetList* PasteboardHelper::targetList() const
 {
@@ -274,9 +272,7 @@ struct ClipboardSetData {
     {
     }
 
-    ~ClipboardSetData()
-    {
-    }
+    ~ClipboardSetData() = default;
 
     Ref<SelectionData> selectionData;
     WTF::Function<void()> selectionClearedCallback;

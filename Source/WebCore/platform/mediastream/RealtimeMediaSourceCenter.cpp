@@ -90,9 +90,7 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsDeviceId(true);
 }
 
-RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter()
-{
-}
+RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;
 
 void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {

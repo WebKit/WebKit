@@ -45,9 +45,7 @@ Ref<InbandDataTextTrack> InbandDataTextTrack::create(ScriptExecutionContext& con
     return adoptRef(*new InbandDataTextTrack(context, client, trackPrivate));
 }
 
-InbandDataTextTrack::~InbandDataTextTrack()
-{
-}
+InbandDataTextTrack::~InbandDataTextTrack() = default;
 
 void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
 {

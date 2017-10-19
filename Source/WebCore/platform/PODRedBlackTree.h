@@ -93,7 +93,7 @@ public:
     public:
         virtual void visit(const T& data) = 0;
     protected:
-        virtual ~Visitor() { }
+        virtual ~Visitor() = default;
     };
 
     PODRedBlackTree()
@@ -205,7 +205,7 @@ public:
         {
         }
 
-        virtual ~Node() { }
+        virtual ~Node() = default;
 
         Color color() const { return m_color; }
         void setColor(Color color) { m_color = color; }

@@ -46,9 +46,7 @@ HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(meterTag));
 }
 
-HTMLMeterElement::~HTMLMeterElement()
-{
-}
+HTMLMeterElement::~HTMLMeterElement() = default;
 
 Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document& document)
 {

@@ -36,7 +36,7 @@ struct RecentSearch {
 
 class SearchPopupMenu : public RefCounted<SearchPopupMenu> {
 public:
-    virtual ~SearchPopupMenu() { }
+    virtual ~SearchPopupMenu() = default;
     virtual PopupMenu* popupMenu() = 0;
     virtual void saveRecentSearches(const AtomicString& name, const Vector<RecentSearch>&) = 0;
     virtual void loadRecentSearches(const AtomicString& name, Vector<RecentSearch>&) = 0;

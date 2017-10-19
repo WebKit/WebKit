@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ReadableStreamSource : public RefCounted<ReadableStreamSource> {
 public:
-    virtual ~ReadableStreamSource() { }
+    virtual ~ReadableStreamSource() = default;
 
     void start(ReadableStreamDefaultController&&, DOMPromiseDeferred<void>&&);
     void pull(DOMPromiseDeferred<void>&&);

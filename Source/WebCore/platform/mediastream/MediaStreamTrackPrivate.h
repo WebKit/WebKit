@@ -42,7 +42,7 @@ class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate>, publ
 public:
     class Observer {
     public:
-        virtual ~Observer() { }
+        virtual ~Observer() = default;
 
         virtual void trackStarted(MediaStreamTrackPrivate&) { };
         virtual void trackEnded(MediaStreamTrackPrivate&) = 0;

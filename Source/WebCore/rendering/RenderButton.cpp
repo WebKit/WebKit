@@ -42,9 +42,7 @@ RenderButton::RenderButton(HTMLFormControlElement& element, RenderStyle&& style)
 {
 }
 
-RenderButton::~RenderButton()
-{
-}
+RenderButton::~RenderButton() = default;
 
 HTMLFormControlElement& RenderButton::formControlElement() const
 {

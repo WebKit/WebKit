@@ -38,9 +38,7 @@ ApplePayShippingContactSelectedEvent::ApplePayShippingContactSelectedEvent(const
 {
 }
 
-ApplePayShippingContactSelectedEvent::~ApplePayShippingContactSelectedEvent()
-{
-}
+ApplePayShippingContactSelectedEvent::~ApplePayShippingContactSelectedEvent() = default;
 
 EventInterface ApplePayShippingContactSelectedEvent::eventInterface() const
 {

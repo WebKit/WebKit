@@ -69,7 +69,7 @@ public:
     virtual void platformCALayerLogFilledVisibleFreshTile(unsigned /* blankPixelCount */) { }
 
 protected:
-    virtual ~PlatformCALayerClient() {}
+    virtual ~PlatformCALayerClient() = default;
 };
 
 }

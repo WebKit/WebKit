@@ -62,9 +62,7 @@ RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
     setChildrenInline(false);
 }
 
-RenderGrid::~RenderGrid()
-{
-}
+RenderGrid::~RenderGrid() = default;
 
 void RenderGrid::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {

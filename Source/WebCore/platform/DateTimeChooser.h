@@ -60,7 +60,7 @@ struct DateTimeChooserParameters {
 // For pickers like color pickers and date pickers.
 class DateTimeChooser : public RefCounted<DateTimeChooser> {
 public:
-    virtual ~DateTimeChooser() { }
+    virtual ~DateTimeChooser() = default;
 
     virtual void endChooser() = 0;
 };

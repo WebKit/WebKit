@@ -34,9 +34,7 @@ FileMonitor::FileMonitor(const String&, Ref<WorkQueue>&&, WTF::Function<void(Fil
 {
 }
 
-FileMonitor::~FileMonitor()
-{
-}
+FileMonitor::~FileMonitor() = default;
 
 #endif
 

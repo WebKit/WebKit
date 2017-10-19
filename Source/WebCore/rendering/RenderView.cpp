@@ -98,9 +98,7 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     setPositionState(AbsolutePosition); // to 0,0 :)
 }
 
-RenderView::~RenderView()
-{
-}
+RenderView::~RenderView() = default;
 
 void RenderView::scheduleLazyRepaint(RenderBox& renderer)
 {

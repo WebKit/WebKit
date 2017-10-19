@@ -38,9 +38,7 @@ ApplePayPaymentAuthorizedEvent::ApplePayPaymentAuthorizedEvent(const AtomicStrin
 {
 }
 
-ApplePayPaymentAuthorizedEvent::~ApplePayPaymentAuthorizedEvent()
-{
-}
+ApplePayPaymentAuthorizedEvent::~ApplePayPaymentAuthorizedEvent() = default;
 
 EventInterface ApplePayPaymentAuthorizedEvent::eventInterface() const
 {

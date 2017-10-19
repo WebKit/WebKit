@@ -44,9 +44,7 @@ WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, c
 {
 }
 
-WebKitMediaKeyNeededEvent::~WebKitMediaKeyNeededEvent()
-{
-}
+WebKitMediaKeyNeededEvent::~WebKitMediaKeyNeededEvent() = default;
 
 EventInterface WebKitMediaKeyNeededEvent::eventInterface() const
 {

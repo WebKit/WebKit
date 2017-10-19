@@ -57,7 +57,7 @@ class MediaStreamPrivate : public MediaStreamTrackPrivate::Observer, public RefC
 public:
     class Observer {
     public:
-        virtual ~Observer() { }
+        virtual ~Observer() = default;
 
         virtual void characteristicsChanged() { }
         virtual void activeStatusChanged() { }

@@ -48,7 +48,7 @@ public:
     {
     }
 
-    virtual ~AudioProcessor() { }
+    virtual ~AudioProcessor() = default;
 
     // Full initialization can be done here instead of in the constructor.
     virtual void initialize() = 0;

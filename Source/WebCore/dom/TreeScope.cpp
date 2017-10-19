@@ -77,9 +77,7 @@ TreeScope::TreeScope(Document& document)
     document.setTreeScope(*this);
 }
 
-TreeScope::~TreeScope()
-{
-}
+TreeScope::~TreeScope() = default;
 
 void TreeScope::destroyTreeScopeData()
 {

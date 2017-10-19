@@ -33,7 +33,7 @@ namespace WebCore {
 
 class GraphicsLayerFactory {
 public:
-    virtual ~GraphicsLayerFactory() { }
+    virtual ~GraphicsLayerFactory() = default;
 
     virtual std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayer::Type, GraphicsLayerClient&) = 0;
 };

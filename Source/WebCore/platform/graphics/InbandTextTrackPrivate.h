@@ -41,7 +41,7 @@ public:
         WebVTT
     };
     static RefPtr<InbandTextTrackPrivate> create(CueFormat format) { return adoptRef(new InbandTextTrackPrivate(format)); }
-    virtual ~InbandTextTrackPrivate() { }
+    virtual ~InbandTextTrackPrivate() = default;
 
     InbandTextTrackPrivateClient* client() const override { return m_client; }
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }

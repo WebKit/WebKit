@@ -38,9 +38,7 @@ ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent(const Ato
 {
 }
 
-ApplePayPaymentMethodSelectedEvent::~ApplePayPaymentMethodSelectedEvent()
-{
-}
+ApplePayPaymentMethodSelectedEvent::~ApplePayPaymentMethodSelectedEvent() = default;
 
 EventInterface ApplePayPaymentMethodSelectedEvent::eventInterface() const
 {

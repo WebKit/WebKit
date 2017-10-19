@@ -46,7 +46,7 @@ public:
     virtual bool wantsAllStreams() const { return false; }
 
 protected:
-    virtual ~NetscapePlugInStreamLoaderClient() { }
+    virtual ~NetscapePlugInStreamLoaderClient() = default;
 };
 
 class NetscapePlugInStreamLoader final : public ResourceLoader {

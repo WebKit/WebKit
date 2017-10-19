@@ -40,7 +40,7 @@ public:
     // FIXME: We should move some of these arguments to an auxillary struct.
     SelectionRect(const IntRect&, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
     WEBCORE_EXPORT SelectionRect();
-    ~SelectionRect() { }
+    ~SelectionRect() = default;
 
     IntRect rect() const { return m_rect; }
 

@@ -66,9 +66,7 @@ Ref<HTMLBodyElement> HTMLBodyElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLBodyElement(tagName, document));
 }
 
-HTMLBodyElement::~HTMLBodyElement()
-{
-}
+HTMLBodyElement::~HTMLBodyElement() = default;
 
 bool HTMLBodyElement::isPresentationAttribute(const QualifiedName& name) const
 {

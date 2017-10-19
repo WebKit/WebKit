@@ -180,9 +180,7 @@ String DateTimeStringBuilder::toString()
 
 #endif
 
-Locale::~Locale()
-{
-}
+Locale::~Locale() = default;
 
 void Locale::setLocaleData(const Vector<String, DecimalSymbolsSize>& symbols, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix)
 {

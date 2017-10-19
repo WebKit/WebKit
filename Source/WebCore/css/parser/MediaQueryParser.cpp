@@ -74,7 +74,7 @@ MediaQueryParser::MediaQueryParser(ParserType parserType)
         m_state = &MediaQueryParser::readMediaNot;
 }
 
-MediaQueryParser::~MediaQueryParser() { }
+MediaQueryParser::~MediaQueryParser() = default;
 
 void MediaQueryParser::setStateAndRestrict(State state, MediaQuery::Restrictor restrictor)
 {

@@ -42,7 +42,7 @@ public:
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-    virtual ~CDMPrivateMediaPlayer() { }
+    virtual ~CDMPrivateMediaPlayer() = default;
 
     bool supportsMIMEType(const String& mimeType) override;
     std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient*) override;

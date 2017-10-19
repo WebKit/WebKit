@@ -37,7 +37,7 @@ class FontFaceSet;
 
 class CSSFontFaceSetClient {
 public:
-    virtual ~CSSFontFaceSetClient() { }
+    virtual ~CSSFontFaceSetClient() = default;
     virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) { };
     virtual void fontModified() { };
     virtual void startedLoading() { };

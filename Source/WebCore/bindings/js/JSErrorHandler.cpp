@@ -53,9 +53,7 @@ JSErrorHandler::JSErrorHandler(JSObject* function, JSObject* wrapper, bool isAtt
 {
 }
 
-JSErrorHandler::~JSErrorHandler()
-{
-}
+JSErrorHandler::~JSErrorHandler() = default;
 
 void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event)
 {

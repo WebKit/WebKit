@@ -58,7 +58,7 @@ public:
     String name;
     CryptoAlgorithmIdentifier identifier;
 
-    virtual ~CryptoAlgorithmParameters() { }
+    virtual ~CryptoAlgorithmParameters() = default;
 
     virtual Class parametersClass() const { return Class::None; }
 };

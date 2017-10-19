@@ -529,9 +529,7 @@ InspectorStyle::InspectorStyle(const InspectorCSSId& styleId, Ref<CSSStyleDeclar
 {
 }
 
-InspectorStyle::~InspectorStyle()
-{
-}
+InspectorStyle::~InspectorStyle() = default;
 
 RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle() const
 {

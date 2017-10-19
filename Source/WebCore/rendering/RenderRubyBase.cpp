@@ -44,9 +44,7 @@ RenderRubyBase::RenderRubyBase(Document& document, RenderStyle&& style)
     setInline(false);
 }
 
-RenderRubyBase::~RenderRubyBase()
-{
-}
+RenderRubyBase::~RenderRubyBase() = default;
 
 bool RenderRubyBase::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {

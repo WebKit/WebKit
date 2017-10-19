@@ -49,7 +49,7 @@ class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PageDebuggerAgent(PageAgentContext&, InspectorPageAgent*, InspectorOverlay*);
-    virtual ~PageDebuggerAgent() { }
+    virtual ~PageDebuggerAgent() = default;
 
     void didClearMainFrameWindowObject();
 

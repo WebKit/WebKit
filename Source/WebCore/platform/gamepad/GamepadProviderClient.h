@@ -35,7 +35,7 @@ class PlatformGamepad;
 
 class GamepadProviderClient {
 public:
-    virtual ~GamepadProviderClient() { }
+    virtual ~GamepadProviderClient() = default;
 
     virtual void setInitialConnectedGamepads(const Vector<PlatformGamepad*>&) { }
     virtual void platformGamepadConnected(PlatformGamepad&) = 0;

@@ -41,9 +41,7 @@ AccessibilitySpinButton::AccessibilitySpinButton()
 {
 }
 
-AccessibilitySpinButton::~AccessibilitySpinButton()
-{
-}
+AccessibilitySpinButton::~AccessibilitySpinButton() = default;
     
 AccessibilityObject* AccessibilitySpinButton::incrementButton()
 {

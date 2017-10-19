@@ -65,9 +65,7 @@ LayerFlushScheduler::LayerFlushScheduler(LayerFlushSchedulerClient* client)
     });
 }
 
-LayerFlushScheduler::~LayerFlushScheduler()
-{
-}
+LayerFlushScheduler::~LayerFlushScheduler() = default;
 
 void LayerFlushScheduler::layerFlushCallback()
 {

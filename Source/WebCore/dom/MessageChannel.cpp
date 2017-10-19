@@ -39,8 +39,6 @@ MessageChannel::MessageChannel(ScriptExecutionContext& context)
     MessagePortChannel::createChannel(m_port1.get(), m_port2.get());
 }
 
-MessageChannel::~MessageChannel()
-{
-}
+MessageChannel::~MessageChannel() = default;
 
 } // namespace WebCore

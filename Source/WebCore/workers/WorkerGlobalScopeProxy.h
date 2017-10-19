@@ -58,7 +58,7 @@ public:
     virtual void notifyNetworkStateChange(bool isOnline) = 0;
 
 protected:
-    virtual ~WorkerGlobalScopeProxy() { }
+    virtual ~WorkerGlobalScopeProxy() = default;
 };
 
 } // namespace WebCore

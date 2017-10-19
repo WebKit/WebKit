@@ -41,9 +41,7 @@ MediaQueryMatcher::MediaQueryMatcher(Document& document)
 {
 }
 
-MediaQueryMatcher::~MediaQueryMatcher()
-{
-}
+MediaQueryMatcher::~MediaQueryMatcher() = default;
 
 void MediaQueryMatcher::documentDestroyed()
 {

@@ -44,9 +44,7 @@ DedicatedWorkerThread::DedicatedWorkerThread(const URL& url, const String& ident
 {
 }
 
-DedicatedWorkerThread::~DedicatedWorkerThread()
-{
-}
+DedicatedWorkerThread::~DedicatedWorkerThread() = default;
 
 Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
 {

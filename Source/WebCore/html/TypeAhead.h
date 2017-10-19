@@ -35,7 +35,7 @@ class KeyboardEvent;
 
 class TypeAheadDataSource {
 public:
-    virtual ~TypeAheadDataSource() { }
+    virtual ~TypeAheadDataSource() = default;
 
     virtual int indexOfSelectedOption() const = 0;
     virtual int optionCount() const = 0;

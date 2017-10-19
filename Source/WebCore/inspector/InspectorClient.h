@@ -41,7 +41,7 @@ class Page;
 
 class InspectorClient {
 public:
-    virtual ~InspectorClient() { }
+    virtual ~InspectorClient() = default;
 
     virtual void inspectedPageDestroyed() = 0;
 

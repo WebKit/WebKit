@@ -33,9 +33,7 @@ CAAudioStreamDescription::CAAudioStreamDescription()
 {
 }
     
-CAAudioStreamDescription::~CAAudioStreamDescription()
-{
-}
+CAAudioStreamDescription::~CAAudioStreamDescription() = default;
 
 CAAudioStreamDescription::CAAudioStreamDescription(const AudioStreamBasicDescription &desc)
     : m_streamDescription(desc)

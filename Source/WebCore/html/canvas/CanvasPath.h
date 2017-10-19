@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CanvasPath {
 public:
-    virtual ~CanvasPath() { }
+    virtual ~CanvasPath() = default;
 
     void closePath();
     void moveTo(float x, float y);
@@ -51,7 +51,7 @@ public:
     float currentY() const;
 
 protected:
-    CanvasPath() { }
+    CanvasPath() = default;
     CanvasPath(const Path& path)
         : m_path(path)
     { }

@@ -58,9 +58,7 @@ CertificateInfo::CertificateInfo(GTlsCertificate* certificate, GTlsCertificateFl
 {
 }
 
-CertificateInfo::~CertificateInfo()
-{
-}
+CertificateInfo::~CertificateInfo() = default;
 
 } // namespace WebCore
 

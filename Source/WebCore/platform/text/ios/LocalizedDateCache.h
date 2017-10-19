@@ -38,7 +38,7 @@ namespace WebCore {
 class MeasureTextClient {
 public:
     virtual float measureText(const String&) const = 0;
-    virtual ~MeasureTextClient() { }
+    virtual ~MeasureTextClient() = default;
 };
 
 class LocalizedDateCache {

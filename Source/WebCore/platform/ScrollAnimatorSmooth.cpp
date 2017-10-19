@@ -56,9 +56,7 @@ ScrollAnimatorSmooth::ScrollAnimatorSmooth(ScrollableArea& scrollableArea)
 {
 }
 
-ScrollAnimatorSmooth::~ScrollAnimatorSmooth()
-{
-}
+ScrollAnimatorSmooth::~ScrollAnimatorSmooth() = default;
 
 bool ScrollAnimatorSmooth::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {

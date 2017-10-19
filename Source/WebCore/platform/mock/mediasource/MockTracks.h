@@ -37,7 +37,7 @@ namespace WebCore {
 class MockAudioTrackPrivate : public AudioTrackPrivate {
 public:
     static Ref<MockAudioTrackPrivate> create(const MockTrackBox& box) { return adoptRef(*new MockAudioTrackPrivate(box)); }
-    virtual ~MockAudioTrackPrivate() { }
+    virtual ~MockAudioTrackPrivate() = default;
 
     virtual AtomicString id() const { return m_id; }
 
@@ -54,7 +54,7 @@ protected:
 class MockTextTrackPrivate : public InbandTextTrackPrivate {
 public:
     static RefPtr<MockTextTrackPrivate> create(const MockTrackBox& box) { return adoptRef(new MockTextTrackPrivate(box)); }
-    virtual ~MockTextTrackPrivate() { }
+    virtual ~MockTextTrackPrivate() = default;
 
     virtual AtomicString id() const { return m_id; }
 
@@ -73,7 +73,7 @@ protected:
 class MockVideoTrackPrivate : public VideoTrackPrivate {
 public:
     static RefPtr<MockVideoTrackPrivate> create(const MockTrackBox& box) { return adoptRef(new MockVideoTrackPrivate(box)); }
-    virtual ~MockVideoTrackPrivate() { }
+    virtual ~MockVideoTrackPrivate() = default;
 
     virtual AtomicString id() const { return m_id; }
 

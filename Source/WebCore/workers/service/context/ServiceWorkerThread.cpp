@@ -76,9 +76,7 @@ ServiceWorkerThread::ServiceWorkerThread(uint64_t serverConnectionIdentifier, co
 {
 }
 
-ServiceWorkerThread::~ServiceWorkerThread()
-{
-}
+ServiceWorkerThread::~ServiceWorkerThread() = default;
 
 Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
 {

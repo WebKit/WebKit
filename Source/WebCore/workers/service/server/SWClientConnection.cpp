@@ -34,13 +34,9 @@
 
 namespace WebCore {
 
-SWClientConnection::SWClientConnection()
-{
-}
+SWClientConnection::SWClientConnection() = default;
 
-SWClientConnection::~SWClientConnection()
-{
-}
+SWClientConnection::~SWClientConnection() = default;
 
 void SWClientConnection::scheduleJob(ServiceWorkerJob& job)
 {

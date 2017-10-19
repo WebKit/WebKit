@@ -134,9 +134,7 @@ EditCommand::EditCommand(Document& document, const VisibleSelection& startingSel
     setEndingSelection(endingSelection);
 }
 
-EditCommand::~EditCommand()
-{
-}
+EditCommand::~EditCommand() = default;
 
 Frame& EditCommand::frame()
 {

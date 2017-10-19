@@ -42,9 +42,7 @@ DOMWindowSpeechSynthesis::DOMWindowSpeechSynthesis(DOMWindow* window)
 {
 }
 
-DOMWindowSpeechSynthesis::~DOMWindowSpeechSynthesis()
-{
-}
+DOMWindowSpeechSynthesis::~DOMWindowSpeechSynthesis() = default;
 
 const char* DOMWindowSpeechSynthesis::supplementName()
 {

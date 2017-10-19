@@ -40,9 +40,7 @@ PageTransitionEvent::PageTransitionEvent(const AtomicString& type, const Init& i
 {
 }
 
-PageTransitionEvent::~PageTransitionEvent()
-{
-}
+PageTransitionEvent::~PageTransitionEvent() = default;
 
 EventInterface PageTransitionEvent::eventInterface() const
 {

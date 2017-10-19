@@ -34,9 +34,7 @@
 
 namespace WebCore {
 
-DisplayRefreshMonitorManager::~DisplayRefreshMonitorManager()
-{
-}
+DisplayRefreshMonitorManager::~DisplayRefreshMonitorManager() = default;
 
 DisplayRefreshMonitorManager& DisplayRefreshMonitorManager::sharedManager()
 {

@@ -506,9 +506,7 @@ JPEGImageDecoder::JPEGImageDecoder(AlphaOption alphaOption, GammaAndColorProfile
 {
 }
 
-JPEGImageDecoder::~JPEGImageDecoder()
-{
-}
+JPEGImageDecoder::~JPEGImageDecoder() = default;
 
 bool JPEGImageDecoder::setSize(const IntSize& size)
 {

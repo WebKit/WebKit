@@ -54,9 +54,7 @@ PageConsoleClient::PageConsoleClient(Page& page)
 {
 }
 
-PageConsoleClient::~PageConsoleClient()
-{
-}
+PageConsoleClient::~PageConsoleClient() = default;
 
 static int muteCount = 0;
 static bool printExceptions = false;

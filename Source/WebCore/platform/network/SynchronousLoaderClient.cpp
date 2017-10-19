@@ -32,9 +32,7 @@
 
 namespace WebCore {
 
-SynchronousLoaderClient::~SynchronousLoaderClient()
-{
-}
+SynchronousLoaderClient::~SynchronousLoaderClient() = default;
 
 ResourceRequest SynchronousLoaderClient::willSendRequest(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&)
 {

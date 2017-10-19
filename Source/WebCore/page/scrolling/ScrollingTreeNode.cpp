@@ -42,9 +42,7 @@ ScrollingTreeNode::ScrollingTreeNode(ScrollingTree& scrollingTree, ScrollingNode
 {
 }
 
-ScrollingTreeNode::~ScrollingTreeNode()
-{
-}
+ScrollingTreeNode::~ScrollingTreeNode() = default;
 
 void ScrollingTreeNode::appendChild(Ref<ScrollingTreeNode>&& childNode)
 {

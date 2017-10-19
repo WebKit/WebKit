@@ -42,7 +42,7 @@ public:
 
     virtual void isPlayingDidChange() = 0;
 
-    virtual ~AudioIOCallback() { }
+    virtual ~AudioIOCallback() = default;
 };
 
 } // WebCore

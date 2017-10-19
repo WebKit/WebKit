@@ -143,9 +143,7 @@ BlobResourceHandle::BlobResourceHandle(BlobData* blobData, const ResourceRequest
         m_stream = std::make_unique<FileStream>();
 }
 
-BlobResourceHandle::~BlobResourceHandle()
-{
-}
+BlobResourceHandle::~BlobResourceHandle() = default;
 
 void BlobResourceHandle::cancel()
 {

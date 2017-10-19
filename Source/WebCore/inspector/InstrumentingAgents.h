@@ -72,7 +72,7 @@ public:
     {
         return adoptRef(*new InstrumentingAgents(environment));
     }
-    ~InstrumentingAgents() { }
+    ~InstrumentingAgents() = default;
     void reset();
 
     Inspector::InspectorEnvironment& inspectorEnvironment() const { return m_environment; }

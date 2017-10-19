@@ -86,7 +86,7 @@ private:
         ASSERT_WITH_MESSAGE(m_size, "SpaceSplitStringData should never be empty by definition. There is no difference between empty and null.");
     }
 
-    ~SpaceSplitStringData() { }
+    ~SpaceSplitStringData() = default;
     static void destroy(SpaceSplitStringData*);
 
     AtomicString* tokenArrayStart() { return reinterpret_cast<AtomicString*>(this + 1); }
@@ -98,7 +98,7 @@ private:
 
 class SpaceSplitString {
 public:
-    SpaceSplitString() { }
+    SpaceSplitString() = default;
     SpaceSplitString(const AtomicString& string, bool shouldFoldCase) { set(string, shouldFoldCase); }
 
     bool operator!=(const SpaceSplitString& other) const { return m_data != other.m_data; }

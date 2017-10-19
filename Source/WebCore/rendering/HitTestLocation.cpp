@@ -91,9 +91,7 @@ HitTestLocation::HitTestLocation(const HitTestLocation& other)
 {
 }
 
-HitTestLocation::~HitTestLocation()
-{
-}
+HitTestLocation::~HitTestLocation() = default;
 
 HitTestLocation& HitTestLocation::operator=(const HitTestLocation& other)
 {

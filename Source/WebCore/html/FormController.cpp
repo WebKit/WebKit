@@ -363,13 +363,9 @@ void FormKeyGenerator::willDeleteForm(HTMLFormElement* form)
 
 // ----------------------------------------------------------------------------
 
-FormController::FormController()
-{
-}
+FormController::FormController() = default;
 
-FormController::~FormController()
-{
-}
+FormController::~FormController() = default;
 
 unsigned FormController::formElementsCharacterCount() const
 {

@@ -51,7 +51,7 @@ public:
     bool needsMoreData() const { return m_state == State::Filtering; }
     bool didBlockData() const { return m_state == State::Blocked; }
 
-    virtual ~PlatformContentFilter() { }
+    virtual ~PlatformContentFilter() = default;
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) = 0;
     virtual void responseReceived(const ResourceResponse&) = 0;
     virtual void addData(const char* data, int length) = 0;

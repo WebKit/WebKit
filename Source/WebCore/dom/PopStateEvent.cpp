@@ -46,9 +46,7 @@ PopStateEvent::PopStateEvent(RefPtr<SerializedScriptValue>&& serializedState, Hi
 {
 }
 
-PopStateEvent::~PopStateEvent()
-{
-}
+PopStateEvent::~PopStateEvent() = default;
 
 Ref<PopStateEvent> PopStateEvent::create(RefPtr<SerializedScriptValue>&& serializedState, History* history)
 {

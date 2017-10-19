@@ -36,9 +36,7 @@ LabelableElement::LabelableElement(const QualifiedName& tagName, Document& docum
 {
 }
 
-LabelableElement::~LabelableElement()
-{
-}
+LabelableElement::~LabelableElement() = default;
 
 RefPtr<NodeList> LabelableElement::labels()
 {

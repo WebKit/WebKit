@@ -86,9 +86,7 @@ AnimationBase::AnimationBase(const Animation& animation, Element& element, Compo
         m_totalDuration = m_animation->duration() * m_animation->iterationCount();
 }
 
-AnimationBase::~AnimationBase()
-{
-}
+AnimationBase::~AnimationBase() = default;
 
 const RenderStyle& AnimationBase::currentStyle() const
 {

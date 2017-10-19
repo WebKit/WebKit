@@ -49,9 +49,7 @@ AudioSession::AudioSession()
     notImplemented();
 }
 
-AudioSession::~AudioSession()
-{
-}
+AudioSession::~AudioSession() = default;
 
 void AudioSession::setCategory(CategoryType)
 {

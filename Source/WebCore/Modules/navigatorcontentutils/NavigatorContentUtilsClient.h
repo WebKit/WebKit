@@ -36,7 +36,7 @@ class Page;
 
 class NavigatorContentUtilsClient {
 public:
-    virtual ~NavigatorContentUtilsClient() { }
+    virtual ~NavigatorContentUtilsClient() = default;
     virtual void registerProtocolHandler(const String& scheme, const URL& baseURL, const URL&, const String& title) = 0;
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)

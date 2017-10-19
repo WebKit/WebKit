@@ -56,9 +56,7 @@ RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
 {
 }
 
-RenderSVGRoot::~RenderSVGRoot()
-{
-}
+RenderSVGRoot::~RenderSVGRoot() = default;
 
 SVGSVGElement& RenderSVGRoot::svgSVGElement() const
 {

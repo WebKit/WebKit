@@ -38,9 +38,7 @@ LiveNodeList::LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType in
     ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
 }
 
-LiveNodeList::~LiveNodeList()
-{
-}
+LiveNodeList::~LiveNodeList() = default;
 
 ContainerNode& LiveNodeList::rootNode() const
 {

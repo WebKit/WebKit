@@ -46,9 +46,7 @@ AccessibilityMediaObject::AccessibilityMediaObject(RenderObject* renderer)
 {
 }
 
-AccessibilityMediaObject::~AccessibilityMediaObject()
-{
-}
+AccessibilityMediaObject::~AccessibilityMediaObject() = default;
 
 Ref<AccessibilityMediaObject> AccessibilityMediaObject::create(RenderObject* renderer)
 {

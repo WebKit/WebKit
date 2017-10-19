@@ -38,7 +38,7 @@ class Icon;
 
 class FileIconLoaderClient {
 public:
-    virtual ~FileIconLoaderClient() { }
+    virtual ~FileIconLoaderClient() = default;
     virtual void iconLoaded(RefPtr<Icon>&&) = 0;
 };
 

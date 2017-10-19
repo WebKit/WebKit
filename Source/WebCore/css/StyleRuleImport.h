@@ -58,7 +58,7 @@ private:
 class ImportedStyleSheetClient final : public CachedStyleSheetClient {
     public:
         ImportedStyleSheetClient(StyleRuleImport* ownerRule) : m_ownerRule(ownerRule) { }
-        virtual ~ImportedStyleSheetClient() { }
+        virtual ~ImportedStyleSheetClient() = default;
         void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet) final
         {
             m_ownerRule->setCSSStyleSheet(href, baseURL, charset, sheet);

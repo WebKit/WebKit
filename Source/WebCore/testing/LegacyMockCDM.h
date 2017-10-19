@@ -43,7 +43,7 @@ public:
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-    virtual ~LegacyMockCDM() { }
+    virtual ~LegacyMockCDM() = default;
 
     bool supportsMIMEType(const String& mimeType) override;
     std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient*) override;

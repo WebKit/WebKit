@@ -89,8 +89,8 @@ namespace WebCore {
         static void logError(ScriptExecutionContext&, const ResourceError&, const String&);
 
     protected:
-        ThreadableLoader() { }
-        virtual ~ThreadableLoader() { }
+        ThreadableLoader() = default;
+        virtual ~ThreadableLoader() = default;
         virtual void refThreadableLoader() = 0;
         virtual void derefThreadableLoader() = 0;
     };

@@ -65,9 +65,7 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrappe
 {
 }
 
-JSDOMGlobalObject::~JSDOMGlobalObject()
-{
-}
+JSDOMGlobalObject::~JSDOMGlobalObject() = default;
 
 void JSDOMGlobalObject::destroy(JSCell* cell)
 {

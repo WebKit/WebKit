@@ -61,9 +61,7 @@ RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, Render
 {
 }
 
-RenderFileUploadControl::~RenderFileUploadControl()
-{
-}
+RenderFileUploadControl::~RenderFileUploadControl() = default;
 
 HTMLInputElement& RenderFileUploadControl::inputElement() const
 {

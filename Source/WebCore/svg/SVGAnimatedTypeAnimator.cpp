@@ -34,9 +34,7 @@ SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator(AnimatedPropertyType type, SVGA
 {
 }
 
-SVGAnimatedTypeAnimator::~SVGAnimatedTypeAnimator()
-{
-}
+SVGAnimatedTypeAnimator::~SVGAnimatedTypeAnimator() = default;
 
 void SVGAnimatedTypeAnimator::calculateFromAndToValues(std::unique_ptr<SVGAnimatedType>& from, std::unique_ptr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {

@@ -39,9 +39,7 @@ UserMessageHandler::UserMessageHandler(Frame& frame, UserMessageHandlerDescripto
 {
 }
 
-UserMessageHandler::~UserMessageHandler()
-{
-}
+UserMessageHandler::~UserMessageHandler() = default;
 
 ExceptionOr<void> UserMessageHandler::postMessage(RefPtr<SerializedScriptValue>&& value)
 {
