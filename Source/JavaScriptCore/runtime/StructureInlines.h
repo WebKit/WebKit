@@ -447,9 +447,6 @@ ALWAYS_INLINE void Structure::setPropertyTable(VM& vm, PropertyTable* table)
 
 ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const Structure* b)
 {
-    if (!Options::usePolyProto())
-        return false;
-
     if (!a || !b)
         return false;
 

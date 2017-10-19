@@ -451,13 +451,13 @@ $numFailures = 0
 $numPasses = 0
 
 # We force all tests to use a smaller (1.5M) stack so that stack overflow tests can run faster.
-BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--validateExceptionChecks=true", "--maxPerThreadStackUsage=1572864", "--usePolyProto=true"]
-EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true", "--usePolyProto=true"]
+BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--validateExceptionChecks=true", "--maxPerThreadStackUsage=1572864"]
+EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true"]
 # NOTE: Tests rely on this using scribbleFreeCells.
-NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true", "--usePolyProto=true"]
-B3O1_OPTIONS = ["--defaultB3OptLevel=1", "--usePolyProto=true"]
-FTL_OPTIONS = ["--useFTLJIT=true", "--usePolyProto=true"]
-PROBE_OSR_EXIT_OPTION = ["--useProbeOSRExit=true", "--usePolyProto=true"]
+NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
+B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
+FTL_OPTIONS = ["--useFTLJIT=true"]
+PROBE_OSR_EXIT_OPTION = ["--useProbeOSRExit=true"]
 
 require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
 
