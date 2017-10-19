@@ -30,9 +30,19 @@ else
 
 testRunner.setPrivateBrowsingEnabled(false);
 
-navigator.serviceWorker.register("resources/empty-worker.js", { })
+navigator.serviceWorker.register("resources/empty-worker.js", { scope: "/test", updateViaCache: "none" })
 .then(function(r) {
 	log("Registered!");
+
+        if (r.scope == "http://127.0.0.1:8000/test")
+           log("PASS: registration object's scope is valid");
+        else
+           log("FAIL: registration object's scope is invalid, got: " + r.scope);
+
+        if (r.updateViaCache == "none")
+           log("PASS: registration object's updateViaCache is valid");
+        else
+           log("FAIL: registration object's updateViaCache is invalid, got: " + r.updateViaCache);
 
         if (internals.hasServiceWorkerRegisteredForOrigin(self.origin))
             log("PASS: A service worker is now registered for this origin");

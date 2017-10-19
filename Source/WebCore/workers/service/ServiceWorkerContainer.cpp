@@ -167,7 +167,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
     jobDidFinish(job);
 }
 
-void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, const ServiceWorkerRegistrationData& data)
+void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data)
 {
     ScopeGuard guard([this, &job] {
         jobDidFinish(job);
@@ -182,7 +182,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     // FIXME: Implement proper selection of service workers.
     context->setSelectedServiceWorkerIdentifier(data.identifier);
 
-    auto registration = ServiceWorkerRegistration::create(*context, data);
+    auto registration = ServiceWorkerRegistration::create(*context, WTFMove(data));
     job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration.get());
 }
 

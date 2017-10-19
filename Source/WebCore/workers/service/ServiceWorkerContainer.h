@@ -72,7 +72,7 @@ private:
     void scheduleJob(Ref<ServiceWorkerJob>&&);
 
     void jobFailedWithException(ServiceWorkerJob&, const Exception&) final;
-    void jobResolvedWithRegistration(ServiceWorkerJob&, const ServiceWorkerRegistrationData&) final;
+    void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&) final;
     void startScriptFetchForJob(ServiceWorkerJob&) final;
     void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) final;
     void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&) final;

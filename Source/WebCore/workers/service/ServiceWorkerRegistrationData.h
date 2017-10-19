@@ -31,9 +31,13 @@
 
 namespace WebCore {
 
+enum class ServiceWorkerUpdateViaCache;
+
 struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationKey key;
     uint64_t identifier;
+    URL scopeURL;
+    ServiceWorkerUpdateViaCache updateViaCache;
 
     ServiceWorkerRegistrationData isolatedCopy() const;
 
@@ -45,7 +49,7 @@ struct ServiceWorkerRegistrationData {
 template<class Encoder>
 void ServiceWorkerRegistrationData::encode(Encoder& encoder) const
 {
-    encoder << key << identifier;
+    encoder << key << identifier << scopeURL << updateViaCache;
 }
 
 template<class Decoder>
@@ -60,8 +64,18 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
-    
-    return {{ WTFMove(*key), WTFMove(*identifier) }};
+
+    std::optional<URL> scopeURL;
+    decoder >> scopeURL;
+    if (!scopeURL)
+        return std::nullopt;
+
+    std::optional<ServiceWorkerUpdateViaCache> updateViaCache;
+    decoder >> updateViaCache;
+    if (!updateViaCache)
+        return std::nullopt;
+
+    return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*scopeURL), WTFMove(*updateViaCache) } };
 }
 
 } // namespace WTF

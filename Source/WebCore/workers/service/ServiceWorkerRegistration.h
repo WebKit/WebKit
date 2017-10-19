@@ -39,15 +39,9 @@ class ServiceWorker;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    enum class UpdateViaCache {
-        Imports,
-        All,
-        None,
-    };
-
-    static Ref<ServiceWorkerRegistration> create(ScriptExecutionContext& context, const ServiceWorkerRegistrationData& data)
+    static Ref<ServiceWorkerRegistration> create(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& data)
     {
-        return adoptRef(*new ServiceWorkerRegistration(context, data));
+        return adoptRef(*new ServiceWorkerRegistration(context, WTFMove(data)));
     }
 
     virtual ~ServiceWorkerRegistration() = default;
@@ -57,7 +51,7 @@ public:
     ServiceWorker* active();
 
     const String& scope() const;
-    UpdateViaCache updateViaCache() const;
+    ServiceWorkerUpdateViaCache updateViaCache() const;
 
     void update(Ref<DeferredPromise>&&);
     void unregister(Ref<DeferredPromise>&&);
@@ -66,15 +60,15 @@ public:
     using RefCounted::deref;
 
 private:
-    ServiceWorkerRegistration(ScriptExecutionContext&, const ServiceWorkerRegistrationData&);
+    ServiceWorkerRegistration(ScriptExecutionContext&, ServiceWorkerRegistrationData&&);
 
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    EventTargetInterface eventTargetInterface() const final;
+    ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    const char* activeDOMObjectName() const { return "ServiceWorkerRegistration"; }
-    bool canSuspendForDocumentSuspension() const { return false; }
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     ServiceWorkerRegistrationData m_registrationData;
 };

@@ -39,6 +39,7 @@
 #include <WebCore/PaymentHeaders.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/ServiceWorkerUpdateViaCache.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 
 namespace WTF {
@@ -783,5 +784,16 @@ template <> struct EnumTraits<WebCore::StoredCredentialsPolicy> {
         WebCore::StoredCredentialsPolicy::Use
     >;
 };
+
+#if ENABLE(SERVICE_WORKER)
+template <> struct EnumTraits<WebCore::ServiceWorkerUpdateViaCache> {
+    using values = EnumValues<
+        WebCore::ServiceWorkerUpdateViaCache,
+        WebCore::ServiceWorkerUpdateViaCache::Imports,
+        WebCore::ServiceWorkerUpdateViaCache::All,
+        WebCore::ServiceWorkerUpdateViaCache::None
+    >;
+};
+#endif
 
 } // namespace WTF

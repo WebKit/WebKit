@@ -75,7 +75,7 @@ void SWClientConnection::jobRejectedInServer(uint64_t jobIdentifier, const Excep
     job->failedWithException(exceptionData.toException());
 }
 
-void SWClientConnection::jobResolvedInServer(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
+void SWClientConnection::jobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&& registrationData)
 {
     auto job = m_scheduledJobs.take(jobIdentifier);
     if (!job) {
@@ -83,7 +83,7 @@ void SWClientConnection::jobResolvedInServer(uint64_t jobIdentifier, const Servi
         return;
     }
 
-    job->resolvedWithRegistration(registrationData);
+    job->resolvedWithRegistration(WTFMove(registrationData));
 }
 
 void SWClientConnection::startScriptFetchForServer(uint64_t jobIdentifier)

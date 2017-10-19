@@ -32,10 +32,12 @@ namespace WebCore {
 
 ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() const
 {
-    ServiceWorkerRegistrationData result;
-    result.key = key.isolatedCopy();
-    result.identifier = identifier;
-    return result;
+    return {
+        key.isolatedCopy(),
+        identifier,
+        scopeURL.isolatedCopy(),
+        updateViaCache
+    };
 }
 
 } // namespace WTF

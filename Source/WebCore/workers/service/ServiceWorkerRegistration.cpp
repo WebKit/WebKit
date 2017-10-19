@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, const ServiceWorkerRegistrationData& registrationData)
+ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& registrationData)
     : ActiveDOMObject(&context)
-    , m_registrationData(registrationData)
+    , m_registrationData(WTFMove(registrationData))
 {
     suspendIfNeeded();
 }
@@ -54,22 +54,22 @@ ServiceWorker* ServiceWorkerRegistration::active()
 
 const String& ServiceWorkerRegistration::scope() const
 {
-    return emptyString();
+    return m_registrationData.scopeURL;
 }
 
-ServiceWorkerRegistration::UpdateViaCache ServiceWorkerRegistration::updateViaCache() const
+ServiceWorkerUpdateViaCache ServiceWorkerRegistration::updateViaCache() const
 {
-    return UpdateViaCache::Imports;
+    return m_registrationData.updateViaCache;
 }
 
 void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(Exception(UnknownError, ASCIILiteral("ServiceWorkerRegistration::update not yet implemented")));
+    promise->reject(Exception(NotSupportedError, ASCIILiteral("ServiceWorkerRegistration::update not yet implemented")));
 }
 
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(Exception(UnknownError, ASCIILiteral("ServiceWorkerRegistration::unregister not yet implemented")));
+    promise->reject(Exception(NotSupportedError, ASCIILiteral("ServiceWorkerRegistration::unregister not yet implemented")));
 }
 
 EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const
@@ -79,7 +79,17 @@ EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const
 
 ScriptExecutionContext* ServiceWorkerRegistration::scriptExecutionContext() const
 {
-    return nullptr;
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+const char* ServiceWorkerRegistration::activeDOMObjectName() const
+{
+    return "ServiceWorkerRegistration";
+}
+
+bool ServiceWorkerRegistration::canSuspendForDocumentSuspension() const
+{
+    return !hasPendingActivity();
 }
 
 } // namespace WebCore

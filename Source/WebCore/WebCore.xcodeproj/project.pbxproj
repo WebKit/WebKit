@@ -2491,7 +2491,7 @@
 		51F175671F3EBC8300C74950 /* ServiceWorkerRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F1754D1F3EBC0C00C74950 /* ServiceWorkerRegistration.cpp */; };
 		51F175681F3EBC8300C74950 /* ServiceWorkerRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F1754C1F3EBC0C00C74950 /* ServiceWorkerRegistration.h */; };
 		51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F1754A1F3EBC0C00C74950 /* ServiceWorkerRegistrationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175471F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.h */; };
+		51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175471F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F645621F45398F00B54DED /* ExceptionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645601F45398B00B54DED /* ExceptionData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F645691F4539B900B54DED /* ServiceWorkerJobData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645661F45399F00B54DED /* ServiceWorkerJobData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F6456A1F4539C000B54DED /* ServiceWorkerJobType.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645651F45399F00B54DED /* ServiceWorkerJobType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -32708,9 +32708,8 @@
 				0F4966AA1DB40C4300A274BB /* JSDOMPoint.cpp in Sources */,
 				0F4966AC1DB40C4300A274BB /* JSDOMPointInit.cpp in Sources */,
 				0F4966AE1DB40C4300A274BB /* JSDOMPointReadOnly.cpp in Sources */,
-                                41AF379D1F8DB1B500111C31 /* JSDOMPromise.cpp in Sources */,
-				E172AF8F1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp in Sources */,
-                                0FF3B9281EE3B6DE00B84144 /* JSDOMQuad.cpp in Sources */,
+				41AF379D1F8DB1B500111C31 /* JSDOMPromise.cpp in Sources */,
+				0FF3B9281EE3B6DE00B84144 /* JSDOMQuad.cpp in Sources */,
 				0FF3B92A1EE3B6DE00B84144 /* JSDOMQuadInit.cpp in Sources */,
 				0F4710BB1DB56BE8002DCEC3 /* JSDOMRect.cpp in Sources */,
 				0F4710BD1DB56BE8002DCEC3 /* JSDOMRectInit.cpp in Sources */,

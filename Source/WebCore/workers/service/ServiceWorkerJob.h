@@ -55,7 +55,7 @@ public:
     WEBCORE_EXPORT ~ServiceWorkerJob();
 
     void failedWithException(const Exception&);
-    void resolvedWithRegistration(const ServiceWorkerRegistrationData&);
+    void resolvedWithRegistration(ServiceWorkerRegistrationData&&);
     void startScriptFetch();
 
     ServiceWorkerJobData data() const { return m_jobData; }

@@ -34,6 +34,7 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerRegistrationData.h"
+#include "ServiceWorkerUpdateViaCache.h"
 #include "WorkerType.h"
 
 namespace WebCore {
@@ -96,8 +97,7 @@ void SWServerRegistration::scriptContextFailedToStart(SWServer::Connection&, con
 void SWServerRegistration::scriptContextStarted(SWServer::Connection&, uint64_t identifier, const String& workerID)
 {
     UNUSED_PARAM(workerID);
-
-    resolveCurrentJob(ServiceWorkerRegistrationData { m_registrationKey, identifier });
+    resolveCurrentJob(ServiceWorkerRegistrationData { m_registrationKey, identifier, m_scopeURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) });
 }
 
 void SWServerRegistration::startNextJob()
@@ -249,7 +249,7 @@ void SWServerRegistration::finishCurrentJob()
 
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
-    return { m_registrationKey, identifier() };
+    return { m_registrationKey, identifier(), m_scopeURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) };
 }
 
 

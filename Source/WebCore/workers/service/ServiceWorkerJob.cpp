@@ -57,13 +57,13 @@ void ServiceWorkerJob::failedWithException(const Exception& exception)
     m_client->jobFailedWithException(*this, exception);
 }
 
-void ServiceWorkerJob::resolvedWithRegistration(const ServiceWorkerRegistrationData& data)
+void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& data)
 {
     ASSERT(currentThread() == m_creationThread);
     ASSERT(!m_completed);
 
     m_completed = true;
-    m_client->jobResolvedWithRegistration(*this, data);
+    m_client->jobResolvedWithRegistration(*this, WTFMove(data));
 }
 
 void ServiceWorkerJob::startScriptFetch()

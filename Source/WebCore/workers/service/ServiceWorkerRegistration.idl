@@ -45,9 +45,3 @@
     // event
     attribute EventHandler onupdatefound;
 };
-
-enum ServiceWorkerUpdateViaCache {
-    "imports",
-    "all",
-    "none"
-};

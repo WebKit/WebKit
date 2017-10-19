@@ -1,3 +1,13 @@
+2017-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Implement ServiceWorkerRegistration.scope / updateViaCache
+        https://bugs.webkit.org/show_bug.cgi?id=178497
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+
 2017-10-18  Youenn Fablet  <youenn@apple.com>
 
         Add preliminary support for ServiceWorker Handle Fetch
