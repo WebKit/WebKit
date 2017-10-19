@@ -1349,59 +1349,51 @@ void FrameView::layout(bool allowSubtreeLayout)
 
     LOG(Layout, "FrameView %p (%dx%d) layout, main frameview %d, allowSubtreeLayout=%d", this, size().width(), size().height(), frame().isMainFrame(), allowSubtreeLayout);
     if (isInRenderTreeLayout()) {
-        LOG(Layout, "  in layout, bailing");
+        LOG(Layout, "  in render tree layout, bailing");
         return;
     }
 
     if (layoutDisallowed()) {
-        LOG(Layout, "  layout is disallowed, bailing");
+        LOG(Layout, "  is disallowed, bailing");
+        return;
+    }
+    ASSERT(!isPainting());
+    if (isPainting()) {
+        LOG(Layout, "  in painting, bailing");
         return;
     }
 
+    ASSERT(frame().view() == this);
+    ASSERT(frame().document());
+    ASSERT(frame().document()->pageCacheState() == Document::NotInPageCache);
     // Protect the view from being deleted during layout (in recalcStyle).
     Ref<FrameView> protectedThis(*this);
+    TraceScope tracingScope(LayoutStart, LayoutEnd);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLayout(frame());
+    AnimationUpdateBlock animationUpdateBlock(&frame().animation());
 
     // Many of the tasks performed during layout can cause this function to be re-entered,
     // so save the layout phase now and restore it on exit.
     SetForScope<LayoutPhase> layoutPhaseRestorer(m_layoutPhase, InPreLayout);
-
     // Every scroll that happens during layout is programmatic.
     SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
-    
-    TraceScope tracingScope(LayoutStart, LayoutEnd);
 
-    if (handleLayoutWithFrameFlatteningIfNeeded(allowSubtreeLayout))
-        return;
-
+    m_layoutTimer.stop();
+    m_delayedLayout = false;
+    m_setNeedsLayoutWasDeferred = false;
+    if (!allowSubtreeLayout && m_subtreeLayoutRoot)
+        convertSubtreeLayoutToFullLayout();
 #if PLATFORM(IOS)
     if (updateFixedPositionLayoutRect())
         allowSubtreeLayout = false;
 #endif
 
-    m_layoutTimer.stop();
-    m_delayedLayout = false;
-    m_setNeedsLayoutWasDeferred = false;
-    
-    // we shouldn't enter layout() while painting
-    ASSERT(!isPainting());
-    if (isPainting())
+    if (handleLayoutWithFrameFlatteningIfNeeded(allowSubtreeLayout))
         return;
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLayout(frame());
-    AnimationUpdateBlock animationUpdateBlock(&frame().animation());
-    
-    if (!allowSubtreeLayout && m_subtreeLayoutRoot)
-        convertSubtreeLayoutToFullLayout();
-
-    ASSERT(frame().view() == this);
-    ASSERT(frame().document());
-
     Document& document = *frame().document();
-    ASSERT(document.pageCacheState() == Document::NotInPageCache);
     RenderElement* layoutRoot = nullptr;
-    RenderLayer* layer = nullptr;
     bool isSubtreeLayout = false;
-
     {
         SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
@@ -1493,27 +1485,22 @@ void FrameView::layout(bool allowSubtreeLayout)
         }
 
         ASSERT(allowSubtreeLayout || !isSubtreeLayout);
-        layer = layoutRoot->enclosingLayer();
-        SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(m_subtreeLayoutRoot);
-
-        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&layoutRoot->view());
-
         ASSERT(m_layoutPhase == InPreLayout);
-        m_layoutPhase = InRenderTreeLayout;
 
         forceLayoutParentViewIfNeeded();
 
-        ASSERT(m_layoutPhase == InRenderTreeLayout);
+        SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(m_subtreeLayoutRoot);
+        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&layoutRoot->view());
 #ifndef NDEBUG
         RenderTreeNeedsLayoutChecker checker(*layoutRoot);
 #endif
+        m_layoutPhase = InRenderTreeLayout;
         layoutRoot->layout();
+        ASSERT(m_layoutPhase == InRenderTreeLayout);
 
 #if ENABLE(TEXT_AUTOSIZING)
         applyTextSizingIfNeeded(*layoutRoot);
 #endif
-
-        ASSERT(m_layoutPhase == InRenderTreeLayout);
         m_subtreeLayoutRoot = nullptr;
         // Close block here to end the scope of changeSchedulingEnabled and SubtreeLayoutStateMaintainer.
     }
@@ -1535,8 +1522,8 @@ void FrameView::layout(bool allowSubtreeLayout)
     layoutRoot->view().releaseProtectedRenderWidgets();
 
     ASSERT(!layoutRoot->needsLayout());
-
-    layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, isSubtreeLayout, m_needsFullRepaint));
+    auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
+    layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layoutRootEnclosingLayer, isSubtreeLayout, m_needsFullRepaint));
 
     updateCompositingLayersAfterLayout();
 
