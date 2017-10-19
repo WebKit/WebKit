@@ -30,7 +30,6 @@
 
 .panel.details.layer .data-grid {
     height: 100%;
-    border: none;
 }
 
 .panel.details.layer .name-column .icon {
@@ -60,7 +59,6 @@
     height: var(--console-prompt-min-height);
     width: 100%;
     border-top: 1px solid var(--border-color);
-    background-color: white;
 }
 
 .panel.details.layer .bottom-bar > div {

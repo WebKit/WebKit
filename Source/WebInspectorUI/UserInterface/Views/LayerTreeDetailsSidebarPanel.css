@@ -60,7 +60,6 @@
     height: var(--console-prompt-min-height);
     width: 100%;
     border-top: 1px solid var(--border-color);
-    background-color: white;
 }
 
 .panel.details.layer-tree .bottom-bar > div {
