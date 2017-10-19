@@ -90,7 +90,7 @@
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget > .text {
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget.inline > .text {
@@ -160,7 +160,7 @@
 }
 
 .popover .debugger-popover-content > .title {
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-weight: 500;
 
     padding: 2px 6px 4px 6px;

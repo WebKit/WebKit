@@ -35,7 +35,7 @@
 }
 
 .object-tree-array-index .index-name {
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 11px;
     font-variant-numeric: tabular-nums;
     vertical-align: top;

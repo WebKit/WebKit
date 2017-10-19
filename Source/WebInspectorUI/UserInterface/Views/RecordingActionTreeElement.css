@@ -35,7 +35,7 @@
     position: relative;
     top: 3px;
     content: attr(data-index);
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 9px;
     color: var(--text-color-gray-medium);
     font-variant-numeric: tabular-nums;

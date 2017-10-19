@@ -81,7 +81,7 @@ body[dir=rtl] .log-scope-bar > li.unread::before {
 
     word-wrap: break-word;
 
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
 
     min-height: 100%;

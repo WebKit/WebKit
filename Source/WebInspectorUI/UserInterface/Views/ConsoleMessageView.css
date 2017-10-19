@@ -35,7 +35,7 @@
     border: 1px solid transparent;
     background-color: var(--selected-background-color);
     color: var(--selected-foreground-color);
-    font: 10px -apple-system, sans-serif;
+    font: 10px -webkit-system-font, sans-serif;
     -webkit-user-select: none;
 }
 
@@ -144,7 +144,7 @@
     height: 13px;
     content: "•";
 
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 11px;
     color: var(--console-secondary-text-color);
 
@@ -235,7 +235,7 @@
 
 .console-message .console-message-location {
     float: right;
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
     font-weight: normal;
 }

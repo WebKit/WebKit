@@ -30,7 +30,7 @@
     min-width: 32px;
 
     font-size: 11px;
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
 
     --path-component-icon-margin-start: 4px;
     --path-component-icon-margin-end: 3px;

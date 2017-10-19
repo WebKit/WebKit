@@ -76,7 +76,7 @@
 .object-tree-property .property-name,
 .object-tree-property .function-parameters,
 .object-tree-property .prototype-name {
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
 }
 

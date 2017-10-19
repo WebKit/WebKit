@@ -178,7 +178,7 @@ body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
     padding: 2px 6px;
     white-space: nowrap;
     overflow: hidden;
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-variant-numeric: tabular-nums;
 }
 

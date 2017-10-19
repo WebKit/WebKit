@@ -121,7 +121,7 @@
 .tree-outline.object li .empty-message {
     color: hsl(0, 0%, 60%);
     margin-left: 15px;
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     font-size: 12px;
 }
 

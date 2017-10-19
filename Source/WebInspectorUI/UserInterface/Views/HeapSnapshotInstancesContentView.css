@@ -138,7 +138,7 @@
 }
 
 .heap-snapshot-instance-popover-content > .title {
-    font-family: -apple-system, sans-serif;
+    font-family: -webkit-system-font, sans-serif;
     text-align: center;
     border-bottom: 1px solid var(--border-color);
     padding: 0 5px 2px 5px;

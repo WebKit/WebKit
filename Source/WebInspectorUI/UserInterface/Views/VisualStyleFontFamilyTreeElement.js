@@ -166,7 +166,7 @@ WI.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeElement ext
     }
 };
 
-WI.VisualStyleFontFamilyTreeElement.FontFamilyFallback = "-apple-system, sans-serif";
+WI.VisualStyleFontFamilyTreeElement.FontFamilyFallback = "-webkit-system-font, sans-serif";
 
 WI.VisualStyleFontFamilyTreeElement.Event = {
     KeywordChanged: "visual-style-font-family-tree-element-keyword-changed",
