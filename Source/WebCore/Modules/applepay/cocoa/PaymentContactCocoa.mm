@@ -57,6 +57,7 @@ static NSString *subLocality(CNPostalAddress *address)
 #endif
     return address.subLocality;
 #else
+    UNUSED_PARAM(address);
     return nil;
 #endif
 }
@@ -69,6 +70,9 @@ static void setSubLocality(CNMutablePostalAddress *address, NSString *subLocalit
         return;
 #endif
     address.subLocality = subLocality;
+#else
+    UNUSED_PARAM(address);
+    UNUSED_PARAM(subLocality);
 #endif
 }
 
@@ -81,6 +85,7 @@ static NSString *subAdministrativeArea(CNPostalAddress *address)
 #endif
     return address.subAdministrativeArea;
 #else
+    UNUSED_PARAM(address);
     return nil;
 #endif
 }
@@ -93,6 +98,9 @@ static void setSubAdministrativeArea(CNMutablePostalAddress *address, NSString *
         return;
 #endif
     address.subAdministrativeArea = subAdministrativeArea;
+#else
+    UNUSED_PARAM(address);
+    UNUSED_PARAM(subAdministrativeArea);
 #endif
 }
 
