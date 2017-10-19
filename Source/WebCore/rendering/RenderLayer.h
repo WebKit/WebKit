@@ -209,6 +209,9 @@ public:
     void scrollToXPosition(int x, ScrollOffsetClamping = ScrollOffsetUnclamped);
     void scrollToYPosition(int y, ScrollOffsetClamping = ScrollOffsetUnclamped);
 
+    void setPostLayoutScrollPosition(std::optional<ScrollPosition>);
+    void applyPostLayoutScrollPositionIfNeeded();
+
     ScrollOffset scrollOffset() const { return scrollOffsetFromPosition(m_scrollPosition); }
     IntSize scrollableContentsSize() const;
 
@@ -1146,6 +1149,7 @@ private:
     IntSize m_layerSize;
 
     ScrollPosition m_scrollPosition;
+    std::optional<ScrollPosition> m_postLayoutScrollPosition;
 
     // The width/height of our scrolled area.
     IntSize m_scrollSize;

@@ -367,14 +367,10 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
     // new zoomed coordinate space.
     if (hasOverflowClip() && layer() && oldStyle && oldStyle->effectiveZoom() != newStyle.effectiveZoom()) {
-        if (int left = layer()->scrollOffset().x()) {
-            left = (left / oldStyle->effectiveZoom()) * newStyle.effectiveZoom();
-            layer()->scrollToXOffset(left);
-        }
-        if (int top = layer()->scrollOffset().y()) {
-            top = (top / oldStyle->effectiveZoom()) * newStyle.effectiveZoom();
-            layer()->scrollToYOffset(top);
-        }
+        ScrollPosition scrollPosition = layer()->scrollPosition();
+        float zoomScaleFactor = newStyle.effectiveZoom() / oldStyle->effectiveZoom();
+        scrollPosition.scale(zoomScaleFactor);
+        layer()->setPostLayoutScrollPosition(scrollPosition);
     }
 
     // Our opaqueness might have changed without triggering layout.

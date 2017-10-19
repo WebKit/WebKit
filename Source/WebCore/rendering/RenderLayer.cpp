@@ -484,6 +484,9 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
     updateLayerPosition(); // For relpositioned layers or non-positioned layers,
                            // we need to keep in sync, since we may have shifted relative
                            // to our parent layer.
+
+    applyPostLayoutScrollPositionIfNeeded();
+
     if (geometryMap)
         geometryMap->pushMappingsToAncestor(this, parent());
 
@@ -2340,6 +2343,20 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
         // https://bugs.webkit.org/show_bug.cgi?id=28237
     }
+}
+
+void RenderLayer::setPostLayoutScrollPosition(std::optional<ScrollPosition> position)
+{
+    m_postLayoutScrollPosition = position;
+}
+
+void RenderLayer::applyPostLayoutScrollPositionIfNeeded()
+{
+    if (!m_postLayoutScrollPosition)
+        return;
+
+    scrollToOffset(scrollOffsetFromPosition(m_postLayoutScrollPosition.value()), ScrollOffsetClamped);
+    m_postLayoutScrollPosition = std::nullopt;
 }
 
 void RenderLayer::scrollToXPosition(int x, ScrollOffsetClamping clamp)
