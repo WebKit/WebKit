@@ -2112,6 +2112,8 @@ String Editor::misspelledWordAtCaretOrRange(Node* clickedNode) const
     VisibleSelection wordSelection(selection.base());
     wordSelection.expandUsingGranularity(WordGranularity);
     RefPtr<Range> wordRange = wordSelection.toNormalizedRange();
+    if (!wordRange)
+        return String();
 
     // In compliance with GTK+ applications, additionally allow to provide suggestions when the current
     // selection exactly match the word selection.

@@ -461,7 +461,7 @@ void DeleteSelectionCommand::deleteTextFromNode(Text& node, unsigned offset, uns
 void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss()
 {
     RefPtr<Range> range = m_selectionToDelete.toNormalizedRange();
-    RefPtr<Node> node = range->firstNode();
+    RefPtr<Node> node = range ? range->firstNode() : nullptr;
     while (node && node != range->pastLastNode()) {
         RefPtr<Node> nextNode = NodeTraversal::next(*node);
         if ((is<HTMLStyleElement>(*node) && !downcast<HTMLStyleElement>(*node).hasAttributeWithoutSynchronization(scopedAttr)) || is<HTMLLinkElement>(*node)) {

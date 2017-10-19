@@ -1447,9 +1447,10 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
     // Also, if the selection is a range, ignore the background color at the start of selection,
     // and find the background color of the common ancestor.
     if (shouldUseBackgroundColorInEffect && (selection.isRange() || hasTransparentBackgroundColor(style->m_mutableStyle.get()))) {
-        RefPtr<Range> range(selection.toNormalizedRange());
-        if (auto value = backgroundColorInEffect(range->commonAncestorContainer()))
-            style->setProperty(CSSPropertyBackgroundColor, value->cssText());
+        if (auto range = selection.toNormalizedRange()) {
+            if (auto value = backgroundColorInEffect(range->commonAncestorContainer()))
+                style->setProperty(CSSPropertyBackgroundColor, value->cssText());
+        }
     }
 
     return WTFMove(style);

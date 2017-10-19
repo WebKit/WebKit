@@ -1,5 +1,37 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223228. rdar://problem/35061705
+
+    2017-10-11  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct nullptr deref in selection handling.
+            https://bugs.webkit.org/show_bug.cgi?id=178189
+            <rdar://problem/33833012>
+
+            Reviewed by Ryosuke Niwa.
+
+            The VisibleSelection::toNormalizedRange returns nullptr for certain conditions (e.g., 'isNone'
+            and 'isOrphaned' cases). It's possible to crash the WebProcess by executing a code path with
+            an orphaned selection range.
+
+            The return value of 'toNormalizedRange' is checked for nullptr in many places, but not everywhere.
+            This patch adds those missing nullptr checks.
+
+            * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+            (-[WebAccessibilityObjectWrapper textMarkerRangeForSelection]):
+            * editing/DeleteSelectionCommand.cpp:
+            (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+            * editing/EditingStyle.cpp:
+            (WebCore::EditingStyle::styleAtSelectionStart):
+            * editing/Editor.cpp:
+            (WebCore::Editor::misspelledWordAtCaretOrRange const):
+            * page/DOMSelection.cpp:
+            (WebCore::DOMSelection::containsNode const):
+            * page/DragController.cpp:
+            (WebCore::DragController::concludeEditDrag):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223210. rdar://problem/34820936
 
     2017-10-11  Simon Fraser  <simon.fraser@apple.com>
