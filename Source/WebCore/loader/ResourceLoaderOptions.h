@@ -92,6 +92,11 @@ enum class InitiatorContext {
     Worker,
 };
 
+enum class ServiceWorkersMode {
+    All,
+    None,
+};
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions() { }
 
@@ -124,6 +129,8 @@ struct ResourceLoaderOptions : public FetchOptions {
     CachingPolicy cachingPolicy { CachingPolicy::AllowCaching };
     SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
     InitiatorContext initiatorContext { InitiatorContext::Document };
+    ServiceWorkersMode serviceWorkersMode { ServiceWorkersMode::All };
+    uint64_t serviceWorkerIdentifier { 0 };
 
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
     unsigned maxRedirectCount { 20 };

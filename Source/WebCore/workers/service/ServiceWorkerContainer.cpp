@@ -179,6 +179,9 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         return;
     }
 
+    // FIXME: Implement proper selection of service workers.
+    context->setSelectedServiceWorkerIdentifier(data.identifier);
+
     auto registration = ServiceWorkerRegistration::create(*context, WTFMove(data));
     job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration.get());
 }

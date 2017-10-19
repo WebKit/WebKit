@@ -1,5 +1,95 @@
 2017-10-19  Youenn Fablet  <youenn@apple.com>
 
+        Add preliminary support for ServiceWorker Handle Fetch
+        https://bugs.webkit.org/show_bug.cgi?id=178475
+        <rdar://problem/35066424>
+
+        Reviewed by Chris Dumez.
+
+        Relanding now that underlying issue is fixed in https://bugs.webkit.org/show_bug.cgi?id=178527.
+
+        Preliminary support of Handle Fetch algorithm and integration with fetch spec.
+        Adding ServiceWorkerClientFetch as the class responsible to do the load through ServiceWorker.
+        It is similar to WebResourceLoader that do the load through NetworkProcess.
+        In case ServiceWorkerClientFetch is not able to load through ServiceWorker,
+        it will fallback to WebResourceLoader through a fallback callback.
+
+        Loading through Service Worker is done currently if:
+        - There is a service worker registered for that origin
+        - Request is a subresource
+        - service workers mode is all
+        There will be cases where the service worker will not do the loading, for instance when fetch event handler is not set.
+        Future work should try to reduce the cases where the IPC dance is done unnecessarily.
+
+        ServiceWorkerClientFetch is responsible to adapt the ServiceWorker response to ResourceLoader.
+        In particular, it is calling ResourceLoader error callback if response is of type error.
+        It should call ResourceLoader redirection callback if response is a redirection response.
+        This will be done as a follow-up.
+
+        Implementing the IPC communication dedicated to fetch between WebProcess and ServiceWorker through StorageProcess.
+        In the future, WebProcess should create a direct IPC communication to the ServiceWorker process.
+
+        Moved SWContextManager from WebCore to WebKit and renamed it to ServiceWorkerContextManager.
+        This class is moved to WebKit as it will have to handle IPC and having a separation will add some unnecessary boilerplate.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::didReceiveFetchResponse):
+        (WebKit::WebSWServerConnection::didReceiveFetchData):
+        (WebKit::WebSWServerConnection::didFinishFetch):
+        (WebKit::WebSWServerConnection::didFailFetch):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didFailFetch):
+        (WebKit::StorageProcess::didReceiveFetchResponse):
+        (WebKit::StorageProcess::didReceiveFetchData):
+        (WebKit::StorageProcess::didFinishFetch):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::remove):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp: Added.
+        (WebKit::ServiceWorkerClientFetch::ServiceWorkerClientFetch):
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+        (WebKit::ServiceWorkerClientFetch::didReceiveData):
+        (WebKit::ServiceWorkerClientFetch::didFinish):
+        (WebKit::ServiceWorkerClientFetch::didFail):
+        (WebKit::ServiceWorkerClientFetch::cancel):
+        * WebProcess/Storage/ServiceWorkerClientFetch.h: Copied from Source/WebKit/WebProcess/Storage/WebSWClientConnection.h.
+        * WebProcess/Storage/ServiceWorkerClientFetch.messages.in: Copied from Source/WebKit/StorageProcess/ServiceWorker/WebSWServerConnection.messages.in.
+        * WebProcess/Storage/ServiceWorkerContextManager.cpp: Added.
+        (WebKit::ServiceWorkerContextManager::startServiceWorkerContext):
+        (WebKit::ServiceWorkerContextManager::startFetch):
+        * WebProcess/Storage/ServiceWorkerContextManager.h: Renamed from Source/WebCore/workers/service/context/SWContextManager.h.
+        (WebKit::ServiceWorkerContextManager::ServiceWorkerContextManager):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::shouldHandleFetch):
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+        (WebKit::WebServiceWorkerProvider::cancelFetch):
+        (WebKit::WebServiceWorkerProvider::fetchFinished):
+        (WebKit::WebServiceWorkerProvider::didReceiveServiceWorkerClientFetchMessage):
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didReceiveMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWorkerContextConnection):
+        (WebKit::WebProcess::startServiceWorkerContext):
+        (WebKit::WebProcess::startFetchInServiceWorker):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
+2017-10-19  Youenn Fablet  <youenn@apple.com>
+
         Service Worker process should not be selected to open WebView on it
         https://bugs.webkit.org/show_bug.cgi?id=178527
 

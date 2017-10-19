@@ -890,6 +890,9 @@
 		413075B21DE85F580039EC69 /* LibWebRTCSocketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A61DE85EE70039EC69 /* LibWebRTCSocketFactory.h */; };
 		413075B31DE85F580039EC69 /* LibWebRTCProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413075A71DE85EE70039EC69 /* LibWebRTCProvider.cpp */; };
 		413075B41DE85F580039EC69 /* LibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */; };
+		4131F3D11F96BCCC0059995A /* ServiceWorkerClientFetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4131F3D01F96BCC80059995A /* ServiceWorkerClientFetch.cpp */; };
+		4131F3D41F96E9350059995A /* ServiceWorkerContextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4131F3D31F96E9310059995A /* ServiceWorkerContextManager.cpp */; };
+		4131F3D51F96E9350059995A /* ServiceWorkerContextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131F3D21F96E9300059995A /* ServiceWorkerContextManager.h */; };
 		4135FBD11F4FB8090074C47B /* CacheStorageEngineCaches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */; };
 		41897ECF1F415D620016FA42 /* WebCacheStorageConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ECE1F415D5C0016FA42 /* WebCacheStorageConnection.cpp */; };
 		41897ED01F415D650016FA42 /* WebCacheStorageProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ECC1F415D5C0016FA42 /* WebCacheStorageProvider.cpp */; };
@@ -1029,7 +1032,9 @@
 		5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7E016138E2900D03ED3 /* NetworkProcess.h */; };
 		5179556D162877B100FA43B6 /* NetworkProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510CC7EA16138E7200D03ED3 /* NetworkProcessProxy.cpp */; };
 		5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7EB16138E7200D03ED3 /* NetworkProcessProxy.h */; };
+		617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchConnectionMessageReceiver.cpp */; };
 		517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */; };
+		617A52D91F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 617A52D61F43A9B600DCDC0A /* ServiceWorkerClientFetchMessages.h */; };
 		517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */; };
 		517A53041F4793C600DCDC0A /* WebSWClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */; };
 		517A53051F4793C600DCDC0A /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
@@ -3178,6 +3183,11 @@
 		413075A61DE85EE70039EC69 /* LibWebRTCSocketFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCSocketFactory.h; path = Network/webrtc/LibWebRTCSocketFactory.h; sourceTree = "<group>"; };
 		413075A71DE85EE70039EC69 /* LibWebRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = LibWebRTCProvider.cpp; path = Network/webrtc/LibWebRTCProvider.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = LibWebRTCProvider.h; path = Network/webrtc/LibWebRTCProvider.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		4131F3CE1F96A4950059995A /* ServiceWorkerClientFetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerClientFetch.h; sourceTree = "<group>"; };
+		4131F3CF1F96A9360059995A /* ServiceWorkerClientFetch.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerClientFetch.messages.in; sourceTree = "<group>"; };
+		4131F3D01F96BCC80059995A /* ServiceWorkerClientFetch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerClientFetch.cpp; sourceTree = "<group>"; };
+		4131F3D21F96E9300059995A /* ServiceWorkerContextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerContextManager.h; sourceTree = "<group>"; };
+		4131F3D31F96E9310059995A /* ServiceWorkerContextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerContextManager.cpp; sourceTree = "<group>"; };
 		4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCaches.cpp; sourceTree = "<group>"; };
 		4135FBD01F4FB7F20074C47B /* CacheStorageEngineCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCaches.h; sourceTree = "<group>"; };
 		41897ECB1F415D5C0016FA42 /* WebCacheStorageConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCacheStorageConnection.messages.in; sourceTree = "<group>"; };
@@ -3334,7 +3344,9 @@
 		516A4A5B120A2CCD00C05B7F /* APIError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIError.h; sourceTree = "<group>"; };
 		517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKApplicationCacheManager.cpp; sourceTree = "<group>"; };
 		517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKApplicationCacheManager.h; sourceTree = "<group>"; };
+		617A52D61F43A9B600DCDC0A /* ServiceWorkerFetchClientMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnectionMessages.h; sourceTree = "<group>"; };
 		517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnectionMessages.h; sourceTree = "<group>"; };
+		617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerClientFetchMessageReceiver.cpp; sourceTree = "<group>"; };
 		517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		517A53021F4793B200DCDC0A /* WebSWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWClientConnection.h; sourceTree = "<group>"; };
 		517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWClientConnection.cpp; sourceTree = "<group>"; };
@@ -6168,6 +6180,11 @@
 		5118E9981F295259003EF9F5 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				4131F3D01F96BCC80059995A /* ServiceWorkerClientFetch.cpp */,
+				4131F3CE1F96A4950059995A /* ServiceWorkerClientFetch.h */,
+				4131F3CF1F96A9360059995A /* ServiceWorkerClientFetch.messages.in */,
+				4131F3D31F96E9310059995A /* ServiceWorkerContextManager.cpp */,
+				4131F3D21F96E9300059995A /* ServiceWorkerContextManager.h */,
 				51BEB6291F3A5ACD005029B9 /* WebServiceWorkerProvider.cpp */,
 				51BEB62A1F3A5ACD005029B9 /* WebServiceWorkerProvider.h */,
 				517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */,
@@ -8010,6 +8027,7 @@
 				1BBBE49E19B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp */,
 				E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */,
 				E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */,
+				617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchConnectionMessageReceiver.cpp */,
 				2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */,
 				2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */,
 				1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */,
@@ -8781,6 +8799,7 @@
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
+				4131F3D51F96E9350059995A /* ServiceWorkerContextManager.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
@@ -10370,6 +10389,9 @@
 				E18E690B169B563F009B6670 /* SecItemShimProxy.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				514D9F5819119D35000063A7 /* ServicesController.mm in Sources */,
+				4131F3D11F96BCCC0059995A /* ServiceWorkerClientFetch.cpp in Sources */,
+				617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchConnectionMessageReceiver.cpp in Sources */,
+				4131F3D41F96E9350059995A /* ServiceWorkerContextManager.cpp in Sources */,
 				1AFDE6591954A42B00C48FFA /* SessionState.cpp in Sources */,
 				1A002D48196B345D00B9AD44 /* SessionStateCoding.mm in Sources */,
 				1A7284481959F8040007BCE5 /* SessionStateConversion.cpp in Sources */,

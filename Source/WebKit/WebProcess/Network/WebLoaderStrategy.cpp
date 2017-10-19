@@ -43,6 +43,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
+#include "WebServiceWorkerProvider.h"
 #include "WebURLSchemeHandlerProxy.h"
 #include "WebURLSchemeTaskProxy.h"
 #include <WebCore/ApplicationCacheHost.h>
@@ -215,6 +216,29 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
         }
     }
 
+#if ENABLE(SERVICE_WORKER)
+    WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, resource, webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID(), [trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
+        if (result != ServiceWorkerClientFetch::Result::Unhandled)
+            return;
+
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader->url().string().latin1().data());
+        WebProcess::singleton().webLoaderStrategy().scheduleLoadFromNetworkProcess(resourceLoader.get(), resourceLoader->originalRequest(), WTFMove(trackingParameters), shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime);
+    });
+#else
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader.url().string().latin1().data());
+    scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
+#endif
+}
+
+void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
+{
+    ResourceLoadIdentifier identifier = resourceLoader.identifier();
+    ASSERT(identifier);
+
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
+
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()));
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? SniffContent : DoNotSniffContent;
@@ -225,7 +249,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     loadParameters.webPageID = webPage ? webPage->pageID() : 0;
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
-    loadParameters.request = resourceLoader.request();
+    loadParameters.request = request;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.storedCredentialsPolicy = storedCredentialsPolicy;
     // If there is no WebFrame then this resource cannot be authenticated with the client.
@@ -233,7 +257,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.defersLoading = resourceLoader.defersLoading();
     loadParameters.needsCertificateInfo = resourceLoader.shouldIncludeCertificateInfo();
-    loadParameters.maximumBufferingTime = maximumBufferingTime(resource);
+    loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.derivedCachedDataTypesToRetrieve = resourceLoader.options().derivedCachedDataTypesToRetrieve;
 
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);
@@ -300,7 +324,12 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
         LOG_ERROR("WebLoaderStrategy removing a ResourceLoader that has no identifier.");
         return;
     }
-    
+
+#if ENABLE(SERVICE_WORKER)
+    if (WebServiceWorkerProvider::singleton().cancelFetch(identifier))
+        return;
+#endif
+
     RefPtr<WebResourceLoader> loader = m_webResourceLoaders.take(identifier);
     // Loader may not be registered if we created it, but haven't scheduled yet (a bundle client can decide to cancel such request via willSendRequest).
     if (!loader)

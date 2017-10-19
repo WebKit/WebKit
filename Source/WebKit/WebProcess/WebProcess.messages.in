@@ -117,5 +117,6 @@ messages -> WebProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     GetWorkerContextConnection()
     StartServiceWorkerContext(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerContextData contextData)
+    StartFetchInServiceWorker(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
 #endif
 }

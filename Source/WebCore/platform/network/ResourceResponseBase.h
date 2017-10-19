@@ -153,7 +153,7 @@ public:
         return 1280;
     }
 
-    void setType(Type);
+    WEBCORE_EXPORT void setType(Type);
     Type type() const { return m_type; }
 
     void setRedirected(bool isRedirected) { m_isRedirected = isRedirected; }
