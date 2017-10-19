@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#pragma once
+
 #include "ObjectAllocationProfile.h"
 
-#include "JSFunction.h"
 #include "JSFunctionInlines.h"
 
 namespace JSC {
 
-void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalObject* globalObject, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity, JSFunction* constructor)
+ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalObject* globalObject, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity, JSFunction* constructor)
 {
     ASSERT(!m_allocator);
     ASSERT(!m_structure);
@@ -131,7 +131,7 @@ void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalObject* globalOb
     m_inlineCapacity = inlineCapacity;
 }
 
-unsigned ObjectAllocationProfile::possibleDefaultPropertyCount(VM& vm, JSObject* prototype)
+ALWAYS_INLINE unsigned ObjectAllocationProfile::possibleDefaultPropertyCount(VM& vm, JSObject* prototype)
 {
     if (prototype == prototype->globalObject()->objectPrototype())
         return 0;

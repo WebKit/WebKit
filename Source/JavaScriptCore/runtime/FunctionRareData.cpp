@@ -27,6 +27,7 @@
 #include "FunctionRareData.h"
 
 #include "JSCInlines.h"
+#include "ObjectAllocationProfileInlines.h"
 
 namespace JSC {
 
