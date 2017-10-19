@@ -556,12 +556,6 @@ void SettingsBase::dnsPrefetchingEnabledChanged()
         m_page->dnsPrefetchingStateChanged();
 }
 
-void SettingsBase::resourceUsageOverlayVisibleChanged()
-{
-    if (m_page)
-        m_page->setResourceUsageOverlayVisible(m_page->settings().resourceUsageOverlayVisible());
-}
-
 void SettingsBase::storageBlockingPolicyChanged()
 {
     if (m_page)
@@ -591,5 +585,13 @@ void SettingsBase::hiddenPageCSSAnimationSuspensionEnabledChanged()
     if (m_page)
         m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
+
+#if ENABLE(RESOURCE_USAGE)
+void SettingsBase::resourceUsageOverlayVisibleChanged()
+{
+    if (m_page)
+        m_page->setResourceUsageOverlayVisible(m_page->settings().resourceUsageOverlayVisible());
+}
+#endif
 
 } // namespace WebCore

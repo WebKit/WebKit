@@ -255,12 +255,14 @@ protected:
     void userStyleSheetLocationChanged();
     void usesPageCacheChanged();
     void dnsPrefetchingEnabledChanged();
-    void resourceUsageOverlayVisibleChanged();
     void storageBlockingPolicyChanged();
     void backgroundShouldExtendBeyondPageChanged();
     void scrollingPerformanceLoggingEnabledChanged();
     void hiddenPageDOMTimerThrottlingStateChanged();
     void hiddenPageCSSAnimationSuspensionEnabledChanged();
+#if ENABLE(RESOURCE_USAGE)
+    void resourceUsageOverlayVisibleChanged();
+#endif
 
     Page* m_page;
 
