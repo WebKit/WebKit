@@ -67,6 +67,9 @@
     if (allowedQuirks & _WKWebsiteAutoplayQuirkSynthesizedPauseEvents)
         quirks |= WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents;
 
+    if (allowedQuirks & _WKWebsiteAutoplayQuirkArbitraryUserGestures)
+        quirks |= WebKit::WebsiteAutoplayQuirk::ArbitraryUserGestures;
+
     _websitePolicies->setAllowedAutoplayQuirks(quirks);
 }
 
@@ -80,6 +83,9 @@
 
     if (allowedQuirks.contains(WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents))
         quirks |= _WKWebsiteAutoplayQuirkSynthesizedPauseEvents;
+
+    if (allowedQuirks.contains(WebKit::WebsiteAutoplayQuirk::ArbitraryUserGestures))
+        quirks |= _WKWebsiteAutoplayQuirkArbitraryUserGestures;
 
     return quirks;
 }

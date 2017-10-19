@@ -44,6 +44,7 @@ typedef uint32_t WKWebsiteAutoplayQuirk;
 enum {
     kWKWebsiteAutoplayQuirkSynthesizedPauseEvents = 1 << 0,
     kWKWebsiteAutoplayQuirkInheritedUserGestures = 1 << 1,
+    kWKWebsiteAutoplayQuirkArbitraryUserGestures = 1 << 2,
 };
 
 WK_EXPORT WKWebsitePoliciesRef WKWebsitePoliciesCreate();

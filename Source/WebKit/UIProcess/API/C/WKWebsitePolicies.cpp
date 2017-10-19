@@ -61,6 +61,9 @@ void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef websitePolic
     if (allowedQuirks & kWKWebsiteAutoplayQuirkSynthesizedPauseEvents)
         quirks |= WebsiteAutoplayQuirk::SynthesizedPauseEvents;
 
+    if (allowedQuirks & kWKWebsiteAutoplayQuirkArbitraryUserGestures)
+        quirks |= WebsiteAutoplayQuirk::ArbitraryUserGestures;
+
     toImpl(websitePolicies)->setAllowedAutoplayQuirks(quirks);
 }
 
@@ -74,6 +77,9 @@ WKWebsiteAutoplayQuirk WKWebsitePoliciesGetAllowedAutoplayQuirks(WKWebsitePolici
 
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
         quirks |= kWKWebsiteAutoplayQuirkInheritedUserGestures;
+
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::ArbitraryUserGestures))
+        quirks |= kWKWebsiteAutoplayQuirkArbitraryUserGestures;
 
     return quirks;
 }

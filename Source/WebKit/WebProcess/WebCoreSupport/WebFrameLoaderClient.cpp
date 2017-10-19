@@ -802,6 +802,9 @@ void WebFrameLoaderClient::applyToDocumentLoader(const WebsitePolicies& websiteP
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
         quirks |= AutoplayQuirk::SynthesizedPauseEvents;
 
+    if (allowedQuirks.contains(WebsiteAutoplayQuirk::ArbitraryUserGestures))
+        quirks |= AutoplayQuirk::ArbitraryUserGestures;
+
     documentLoader->setAllowedAutoplayQuirks(quirks);
 
     switch (websitePolicies.autoplayPolicy) {

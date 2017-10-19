@@ -596,6 +596,39 @@ TEST(WebKit2, WebsitePoliciesUpdates)
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPreventFromAutoplaying);
 }
 
+TEST(WebKit2, WebsitePoliciesArbitraryUserGestureQuirk)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
+    WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
+
+    [delegate setAllowedAutoplayQuirksForURL:^_WKWebsiteAutoplayQuirk(NSURL *url)
+    {
+        return _WKWebsiteAutoplayQuirkArbitraryUserGestures;
+    }];
+    [delegate setAutoplayPolicyForURL:^(NSURL *)
+    {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView waitForMessage:@"did-not-play"];
+
+    const NSPoint clickPoint = NSMakePoint(760, 560);
+    [webView mouseDownAtPoint:clickPoint simulatePressure:NO];
+    [webView mouseUpAtPoint:clickPoint];
+
+    [webView stringByEvaluatingJavaScript:@"playVideo()"];
+    [webView waitForMessage:@"autoplayed"];
+}
+
 TEST(WebKit2, WebsitePoliciesAutoplayQuirks)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

@@ -30,6 +30,7 @@
 #include "MediaElementSession.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLAudioElement.h"
@@ -154,8 +155,8 @@ static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
     if (!document.settings().needsSiteSpecificQuirks())
         return false;
 
-    auto host = document.url().host();
-    return equalLettersIgnoringASCIICase(host, "washingtonpost.com") || host.endsWithIgnoringASCIICase(".washingtonpost.com");
+    auto* loader = document.loader();
+    return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::ArbitraryUserGestures);
 }
 #endif // PLATFORM(MAC)
 
