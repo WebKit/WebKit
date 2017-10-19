@@ -245,6 +245,32 @@ bool TestController::isStatisticsPrevalentResource(WKStringRef hostName)
     return isPrevalentResource;
 }
 
+bool TestController::isStatisticsRegisteredAsSubFrameUnder(WKStringRef subFrameHost, WKStringRef topFrameHost)
+{
+    __block bool isDataReady = false;
+    __block bool isRegisteredAsSubFrameUnder = false;
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsRegisteredAsSubFrameUnder:toNSString(subFrameHost) topFrameHost:toNSString(topFrameHost) completionHandler:^(BOOL _isRegisteredAsSubFrameUnder) {
+        isRegisteredAsSubFrameUnder = _isRegisteredAsSubFrameUnder;
+        isDataReady = true;
+    }];
+    platformRunUntil(isDataReady, 0);
+    
+    return isRegisteredAsSubFrameUnder;
+}
+
+bool TestController::isStatisticsRegisteredAsRedirectingTo(WKStringRef hostRedirectedFrom, WKStringRef hostRedirectedTo)
+{
+    __block bool isDataReady = false;
+    __block bool isRegisteredAsRedirectingTo = false;
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsRegisteredAsRedirectingTo:toNSString(hostRedirectedFrom) hostRedirectedTo:toNSString(hostRedirectedTo) completionHandler:^(BOOL _isRegisteredAsRedirectingTo) {
+        isRegisteredAsRedirectingTo = _isRegisteredAsRedirectingTo;
+        isDataReady = true;
+    }];
+    platformRunUntil(isDataReady, 0);
+    
+    return isRegisteredAsRedirectingTo;
+}
+
 void TestController::setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value)
 {
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetHadUserInteraction:value forHost:toNSString(hostName)];

@@ -2262,6 +2262,16 @@ bool TestController::isStatisticsPrevalentResource(WKStringRef)
     return false;
 }
 
+bool TestController::isStatisticsRegisteredAsSubFrameUnder(WKStringRef, WKStringRef)
+{
+    return false;
+}
+
+bool TestController::isStatisticsRegisteredAsRedirectingTo(WKStringRef, WKStringRef)
+{
+    return false;
+}
+
 void TestController::setStatisticsHasHadUserInteraction(WKStringRef, bool)
 {
 }

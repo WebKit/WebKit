@@ -623,6 +623,4 @@ media/encrypted-media/encrypted-media-session-lifetime.html [ Skip ]
 media/encrypted-media/encrypted-media-syntax.html [ Skip ]
 media/encrypted-media/encrypted-media-v2-events.html [ Skip ]
 media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
-
-# No support for resource load statistics in test controller.
-webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout Failure ]
+http/tests/resourceLoadStatistics [ Skip ]

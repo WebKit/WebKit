@@ -1,5 +1,42 @@
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223253. rdar://problem/35077489
+
+    2017-10-12  John Wilander  <wilander@apple.com>
+
+            ResourceLoadObserver::logFrameNavigation() should use redirectResponse.url()
+            https://bugs.webkit.org/show_bug.cgi?id=175257
+            <rdar://problem/33359866>
+
+            Reviewed by Brent Fulgham.
+
+            This patch was joint work between Michael Specter and John Wilander.
+
+            Tests: http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html
+                   http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html
+                   http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html
+                   http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html
+                   http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html
+                   http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html
+                   http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html
+                   http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html
+                   http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html
+                   http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html
+                   http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html
+                   http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::willSendRequest):
+                Now sends redirectResponse.url() to WebCore::ResourceLoadObserver::logFrameNavigation().
+            * loader/ResourceLoadObserver.cpp:
+            (WebCore::ResourceLoadObserver::logFrameNavigation):
+                Now receives the redirect response URL from WebCore::DocumentLoader().
+            (WebCore::ResourceLoadObserver::nonNullOwnerURL const):
+                New function to traverse the frame chain upward and find the first non-null URL.
+            * loader/ResourceLoadObserver.h:
+
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223451. rdar://problem/34985194
 
     2017-10-12  Matt Rajca  <mrajca@apple.com>

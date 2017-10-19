@@ -259,6 +259,34 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+- (void)_resourceLoadStatisticsIsRegisteredAsSubFrameUnder:(NSString *)subFrameHost topFrameHost:(NSString *)topFrameHost completionHandler:(void (^)(BOOL))completionHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        completionHandler(NO);
+        return;
+    }
+    
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    store->isRegisteredAsSubFrameUnder(URL(URL(), subFrameHost), URL(URL(), topFrameHost), [completionHandlerCopy](bool isRegisteredAsSubFrameUnder) {
+        completionHandlerCopy(isRegisteredAsSubFrameUnder);
+    });
+}
+
+- (void)_resourceLoadStatisticsIsRegisteredAsRedirectingTo:(NSString *)hostRedirectedFrom hostRedirectedTo:(NSString *)hostRedirectedTo completionHandler:(void (^)(BOOL))completionHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        completionHandler(NO);
+        return;
+    }
+    
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    store->isRegisteredAsRedirectingTo(URL(URL(), hostRedirectedFrom), URL(URL(), hostRedirectedTo), [completionHandlerCopy](bool isRegisteredAsRedirectingTo) {
+        completionHandlerCopy(isRegisteredAsRedirectingTo);
+    });
+}
+
 - (void)_resourceLoadStatisticsSetHadUserInteraction:(BOOL)value forHost:(NSString *)host
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();

@@ -1,3 +1,56 @@
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223253. rdar://problem/35077489
+
+    2017-10-12  John Wilander  <wilander@apple.com>
+
+            ResourceLoadObserver::logFrameNavigation() should use redirectResponse.url()
+            https://bugs.webkit.org/show_bug.cgi?id=175257
+            <rdar://problem/33359866>
+
+            Reviewed by Brent Fulgham.
+
+            * TestExpectations:
+                Marked new directory as [ Skip ] since these are WK2-only.
+            * http/tests/resourceLoadStatistics: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/non-sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * http/tests/resourceLoadStatistics/resources: Added.
+            * http/tests/resourceLoadStatistics/resources/iframe-report-back-loaded.html: Added.
+            * http/tests/resourceLoadStatistics/resources/page-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/resources/page-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * http/tests/resourceLoadStatistics/resources/page-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/resources/page-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * http/tests/resourceLoadStatistics/resources/redirect.php: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-non-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/sandboxed-nesting-iframe-with-sandboxed-iframe-redirect-localhost-to-ip-to-localhost.html: Added.
+            * platform/gtk/TestExpectations:
+                Marked new directory as [ Skip ].
+            * platform/wk2/TestExpectations:
+                Marked new directory as [ Pass ].
+            * platform/wpe/TestExpectations:
+                Marked new directory as [ Skip ].
+
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223589. rdar://problem/34771462
