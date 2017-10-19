@@ -1340,6 +1340,28 @@ void FrameView::markRootOrBodyRendererDirty() const
         rootRenderer->setChildNeedsLayout();
 }
 
+void FrameView::adjustScrollbarsForLayout(bool isFirstLayout)
+{
+    ScrollbarMode hMode;
+    ScrollbarMode vMode;
+    calculateScrollbarModesForLayout(hMode, vMode);
+    if (isFirstLayout && !isLayoutNested()) {
+        setScrollbarsSuppressed(true);
+        // Set the initial vMode to AlwaysOn if we're auto.
+        if (vMode == ScrollbarAuto)
+            setVerticalScrollbarMode(ScrollbarAlwaysOn); // This causes a vertical scrollbar to appear.
+        // Set the initial hMode to AlwaysOff if we're auto.
+        if (hMode == ScrollbarAuto)
+            setHorizontalScrollbarMode(ScrollbarAlwaysOff); // This causes a horizontal scrollbar to disappear.
+        ASSERT(frame().page());
+        if (frame().page()->expectsWheelEventTriggers())
+            scrollAnimator().setWheelEventTestTrigger(frame().page()->testTrigger());
+        setScrollbarModes(hMode, vMode);
+        setScrollbarsSuppressed(false, true);
+    } else if (hMode != horizontalScrollbarMode() || vMode != verticalScrollbarMode())
+        setScrollbarModes(hMode, vMode);
+}
+
 void FrameView::layout(bool allowSubtreeLayout)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
@@ -1436,33 +1458,12 @@ void FrameView::layout(bool allowSubtreeLayout)
             if (m_firstLayout && !frame().ownerElement())
                 LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs\n", this, document.timeSinceDocumentCreation().value());
 #endif
-            ScrollbarMode hMode;
-            ScrollbarMode vMode;    
-            calculateScrollbarModesForLayout(hMode, vMode);
-
-            if (m_firstLayout || (hMode != horizontalScrollbarMode() || vMode != verticalScrollbarMode())) {
-                if (m_firstLayout) {
-                    setScrollbarsSuppressed(true);
-
-                    m_firstLayout = false;
-                    m_firstLayoutCallbackPending = true;
-                    m_lastViewportSize = sizeForResizeEvent();
-                    m_lastZoomFactor = layoutRoot->style().zoom();
-
-                    // Set the initial vMode to AlwaysOn if we're auto.
-                    if (vMode == ScrollbarAuto)
-                        setVerticalScrollbarMode(ScrollbarAlwaysOn); // This causes a vertical scrollbar to appear.
-                    // Set the initial hMode to AlwaysOff if we're auto.
-                    if (hMode == ScrollbarAuto)
-                        setHorizontalScrollbarMode(ScrollbarAlwaysOff); // This causes a horizontal scrollbar to disappear.
-                    Page* page = frame().page();
-                    if (page && page->expectsWheelEventTriggers())
-                        scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
-                    setScrollbarModes(hMode, vMode);
-                    setScrollbarsSuppressed(false, true);
-                } else
-                    setScrollbarModes(hMode, vMode);
+            if (m_firstLayout) {
+                m_lastViewportSize = sizeForResizeEvent();
+                m_lastZoomFactor = layoutRoot->style().zoom();
+                m_firstLayoutCallbackPending = true;
             }
+            adjustScrollbarsForLayout(m_firstLayout);
 
             auto oldSize = m_size;
             m_size = layoutSize();
@@ -1473,6 +1474,7 @@ void FrameView::layout(bool allowSubtreeLayout)
                     markRootOrBodyRendererDirty();
             }
             m_layoutPhase = InPreLayout;
+            m_firstLayout = false;
         }
 
         ASSERT(allowSubtreeLayout || !isSubtreeLayout);

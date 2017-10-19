@@ -735,6 +735,8 @@ private:
     IntSize sizeForResizeEvent() const;
     void sendResizeEventIfNeeded();
 
+    void adjustScrollbarsForLayout(bool firstLayout);
+
     void handleDeferredScrollbarsUpdateAfterDirectionChange();
 
     void updateScrollableAreaSet();
