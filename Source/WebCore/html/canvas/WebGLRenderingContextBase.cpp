@@ -5273,7 +5273,7 @@ bool WebGLRenderingContextBase::validateUniformMatrixParameters(const char* func
     return validateUniformMatrixParameters(functionName, location, transpose, v.data(), v.length(), requiredMinSize);
 }
 
-bool WebGLRenderingContextBase::validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation* location, GC3Dboolean transpose, void* v, GC3Dsizei size, GC3Dsizei requiredMinSize)
+bool WebGLRenderingContextBase::validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation* location, GC3Dboolean transpose, const void* v, GC3Dsizei size, GC3Dsizei requiredMinSize)
 {
     if (!location)
         return false;
