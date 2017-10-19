@@ -1,3 +1,13 @@
+2017-10-19  Michael Saboff  <msaboff@apple.com>
+
+        Test262: RegExp/property-escapes/generated/Emoji_Component.js fails with current RegExp Unicode Properties implementation
+        https://bugs.webkit.org/show_bug.cgi?id=178521
+
+        Reviewed by JF Bastien.
+
+        * ucd/emoji-data.txt: Replaced with the Unicode Emoji 5.0 version of the file as that is the most recent
+        standard version.  The prior version was the draft 6.0 version.
+
 2017-10-19  Saam Barati  <sbarati@apple.com>
 
         We should hard code the poly proto offset
