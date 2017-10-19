@@ -937,25 +937,19 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
     if (m_processes.size() < maximumNumberOfProcesses())
         return createNewWebProcess(websiteDataStore);
 
-    Vector<RefPtr<WebProcessProxy>> processesMatchingDataStore;
-    if (mustMatchDataStore) {
-        for (auto& process : m_processes) {
-            if (&process->websiteDataStore() == &websiteDataStore)
-                processesMatchingDataStore.append(process);
-        }
-
-        if (processesMatchingDataStore.isEmpty())
-            return createNewWebProcess(websiteDataStore);
+    WebProcessProxy* processToReuse = nullptr;
+    for (auto& process : m_processes) {
+        if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
+            continue;
+#if ENABLE(SERVICE_WORKER)
+        if (process.get() == m_workerContextProcess)
+            continue;
+#endif
+        // Choose the process with fewest pages.
+        if (!processToReuse || processToReuse->pageCount() > process->pageCount())
+            processToReuse = process.get();
     }
-
-    // Choose the process with fewest pages.
-    auto* processes = mustMatchDataStore ? &processesMatchingDataStore : &m_processes;
-    ASSERT(!processes->isEmpty());
-    auto& process = *std::min_element(processes->begin(), processes->end(), [](const RefPtr<WebProcessProxy>& a, const RefPtr<WebProcessProxy>& b) {
-        return a->pageCount() < b->pageCount();
-    });
-
-    return *process;
+    return processToReuse ? *processToReuse : createNewWebProcess(websiteDataStore);
 }
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)

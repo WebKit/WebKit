@@ -1,3 +1,15 @@
+2017-10-19  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker process should not be selected to open WebView on it
+        https://bugs.webkit.org/show_bug.cgi?id=178527
+
+        Reviewed by Chris Dumez.
+
+        Selection of process to open a page will no longer use an existing web process if it is the service worker process.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+
 2017-10-19  Tim Horton  <timothy_horton@apple.com>
 
         Display link bringup can block the main thread for ~150ms during WKWebView init
