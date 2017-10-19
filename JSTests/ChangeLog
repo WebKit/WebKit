@@ -1,3 +1,18 @@
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223614. rdar://problem/34920288
+
+    2017-10-18  Mark Lam  <mark.lam@apple.com>
+
+            The compiler should always register a structure when it adds its transitionWatchPointSet.
+            https://bugs.webkit.org/show_bug.cgi?id=178420
+            <rdar://problem/34814024>
+
+            Reviewed by Saam Barati and Filip Pizlo.
+
+            * stress/regress-178420.js: Added.
+            (new.Array.10000.map):
+
 2017-10-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222598. rdar://problem/34771434

@@ -217,6 +217,7 @@ public:
         return registerStructure(structure, ignored);
     }
     RegisteredStructure registerStructure(Structure*, StructureRegistrationResult&);
+    void registerAndWatchStructureTransition(Structure*);
     void assertIsRegistered(Structure* structure);
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
