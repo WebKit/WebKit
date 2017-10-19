@@ -1548,27 +1548,39 @@ void FrameView::layout(bool allowSubtreeLayout)
 
     frame().document()->markers().invalidateRectsForAllMarkers();
 
-    if (!m_postLayoutTasksTimer.isActive()) {
-        if (!m_inPerformPostLayoutTasks) {
-            if (isInChildFrameWithFrameFlattening())
-                updateWidgetPositions();
-            else
-                performPostLayoutTasks(); // Calls resumeScheduledEvents().
-        }
-
-        if (!m_postLayoutTasksTimer.isActive() && (needsLayout() || m_inPerformPostLayoutTasks || isInChildFrameWithFrameFlattening())) {
-            // If we need layout or are already in a synchronous call to postLayoutTasks(), 
-            // defer widget updates and event dispatch until after we return. postLayoutTasks()
-            // can make us need to update again, and we can get stuck in a nasty cycle unless
-            // we call it through the timer here.
-            m_postLayoutTasksTimer.startOneShot(0_s);
-        }
-        if (needsLayout())
-            layout();
-    }
+    runOrSchedulePostLayoutTasks();
 
     InspectorInstrumentation::didLayout(cookie, *layoutRoot);
     DebugPageOverlays::didLayout(frame());
+}
+    
+void FrameView::runOrSchedulePostLayoutTasks()
+{
+    if (m_postLayoutTasksTimer.isActive())
+        return;
+
+    if (isInChildFrameWithFrameFlattening()) {
+        // While flattening frames, we defer post layout tasks to avoid getting stuck in a cycle,
+        // except updateWidgetPositions() which is required to kick off subframe layout in certain cases.
+        if (!m_inPerformPostLayoutTasks)
+            updateWidgetPositions();
+        m_postLayoutTasksTimer.startOneShot(0_s);
+        return;
+    }
+
+    // If we are already in performPostLayoutTasks(), defer post layout tasks until after we return
+    // to avoid re-entrancy.
+    if (m_inPerformPostLayoutTasks) {
+        m_postLayoutTasksTimer.startOneShot(0_s);
+        return;
+    }
+
+    performPostLayoutTasks();
+    if (needsLayout()) {
+        // If performPostLayoutTasks() made us layout again, let's defer the tasks until after we return.
+        m_postLayoutTasksTimer.startOneShot(0_s);
+        layout();
+    }
 }
 
 bool FrameView::shouldDeferScrollUpdateAfterContentSizeChange()

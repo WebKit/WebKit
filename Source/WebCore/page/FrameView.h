@@ -688,6 +688,7 @@ private:
 
     void forceLayoutParentViewIfNeeded();
     void flushPostLayoutTasksQueue();
+    void runOrSchedulePostLayoutTasks();
     void performPostLayoutTasks();
     void autoSizeIfEnabled();
 
