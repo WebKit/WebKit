@@ -27,6 +27,7 @@
 #include "VideoTextureCopierCV.h"
 
 #include "FourCC.h"
+#include "IOSurfaceSPI.h"
 #include "Logging.h"
 #include "TextureCacheCV.h"
 #include <wtf/NeverDestroyed.h>
