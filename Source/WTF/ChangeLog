@@ -1,3 +1,26 @@
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223315. rdar://problem/34985202
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Performance: Skip texture upload if source image and destination texture haven't changed
+            https://bugs.webkit.org/show_bug.cgi?id=178254
+            <rdar://problem/34968181>
+
+            Reviewed by Dean Jackson.
+
+            Add a new class, UnsafePointer, for safely holding pointers to objects with uncontrolled lifetimes.
+
+            * WTF.xcodeproj/project.pbxproj:
+            * wtf/UnsafePointer.h: Added.
+            (WTF::UnsafePointer::UnsafePointer):
+            (WTF::UnsafePointer::operator== const):
+            (WTF::UnsafePointer::operator!= const):
+            (WTF::UnsafePointer::operator bool const):
+            (WTF::operator==):
+            (WTF::operator!=):
+
 2017-10-10  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223111. rdar://problem/34920353

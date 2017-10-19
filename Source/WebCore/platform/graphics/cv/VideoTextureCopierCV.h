@@ -27,6 +27,7 @@
 #define VideoTextureCopierCV_h
 
 #import "GraphicsContext3D.h"
+#import <wtf/UnsafePointer.h>
 
 typedef struct __CVBuffer* CVImageBufferRef;
 typedef struct __CVBuffer* CVPixelBufferRef;
@@ -83,6 +84,14 @@ private:
     bool initializeContextObjects();
     bool initializeUVContextObjects();
 
+#if USE(IOSURFACE)
+    unsigned lastTextureSeed(GC3Duint texture)
+    {
+        auto iterator = m_lastTextureSeed.find(texture);
+        return iterator == m_lastTextureSeed.end() ? 0 : iterator->value;
+    }
+#endif
+
     Ref<GraphicsContext3D> m_context;
     std::unique_ptr<TextureCacheCV> m_textureCache;
     Platform3DObject m_framebuffer { 0 };
@@ -102,6 +111,15 @@ private:
     GC3Dint m_yuvPositionAttributeLocation { -1 };
     GC3Dint m_yTextureSizeUniformLocation { -1 };
     GC3Dint m_uvTextureSizeUniformLocation { -1 };
+
+#if USE(IOSURFACE)
+    bool m_lastFlipY { false };
+    UnsafePointer<IOSurfaceRef> m_lastSurface;
+    uint32_t m_lastSurfaceSeed { 0 };
+
+    using TextureSeedMap = HashMap<GC3Duint, unsigned, WTF::IntHash<GC3Duint>, WTF::UnsignedWithZeroKeyHashTraits<GC3Duint>>;
+    TextureSeedMap m_lastTextureSeed;
+#endif
 };
 
 }
