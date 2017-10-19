@@ -76,6 +76,40 @@ unsigned NoEventDispatchAssertion::DisableAssertionsInScope::s_existingCount = 0
 NoEventDispatchAssertion::EventAllowedScope* NoEventDispatchAssertion::EventAllowedScope::s_currentScope = nullptr;
 #endif
 
+enum class ReplacedAllChildren { No, Yes };
+
+template<typename DOMInsertionWork>
+static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode& containerNode, Node& child,
+    ContainerNode::ChildChangeSource source, ReplacedAllChildren replacedAllChildren, DOMInsertionWork doNodeInsertion)
+{
+    NodeVector postInsertionNotificationTargets;
+    {
+        NoEventDispatchAssertion assertNoEventDispatch;
+        doNodeInsertion();
+        ChildListMutationScope(containerNode).childAdded(child);
+        postInsertionNotificationTargets = notifyChildNodeInserted(containerNode, child);
+    }
+
+    // FIXME: Move childrenChanged into NoEventDispatchAssertion block.
+    if (replacedAllChildren == ReplacedAllChildren::Yes)
+        containerNode.childrenChanged(ContainerNode::ChildChange { ContainerNode::AllChildrenReplaced, nullptr, nullptr, source });
+    else {
+        containerNode.childrenChanged(ContainerNode::ChildChange {
+            child.isElementNode() ? ContainerNode::ElementInserted : (child.isTextNode() ? ContainerNode::TextInserted : ContainerNode::NonContentsChildInserted),
+            ElementTraversal::previousSibling(child),
+            ElementTraversal::nextSibling(child),
+            source
+        });
+    }
+
+    ASSERT(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(child));
+    for (auto& target : postInsertionNotificationTargets)
+        target->didFinishInsertingNode();
+
+    if (source == ContainerNode::ChildChangeSource::API)
+        dispatchChildInsertionEvents(child);
+}
+
 static ExceptionOr<void> collectChildrenAndRemoveFromOldParent(Node& node, NodeVector& nodes)
 {
     if (!is<DocumentFragment>(node)) {
@@ -140,7 +174,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
             oldParent->removeBetween(nullptr, child->nextSibling(), *child);
             notifyChildNodeRemoved(*oldParent, *child);
         }
-        ChildChange change = { AllChildrenRemoved, nullptr, nullptr, ChildChangeSourceParser };
+        ChildChange change = { AllChildrenRemoved, nullptr, nullptr, ChildChangeSource::Parser };
         childrenChanged(change);
     }
 
@@ -285,14 +319,10 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
         if (child->parentNode())
             break;
 
-        {
-            NoEventDispatchAssertion assertNoEventDispatch;
-
+        executeNodeInsertionWithScriptAssertion(*this, child.get(), ChildChangeSource::API, ReplacedAllChildren::No, [&] {
             child->setTreeScopeRecursively(treeScope());
             insertBeforeCommon(next, child);
-        }
-
-        updateTreeAfterInsertion(child);
+        });
     }
 
     dispatchSubtreeModifiedEvent();
@@ -339,31 +369,6 @@ void ContainerNode::appendChildCommon(Node& child)
     m_lastChild = &child;
 }
 
-inline auto ContainerNode::changeForChildInsertion(Node& child, ChildChangeSource source, ReplacedAllChildren replacedAllChildren) -> ChildChange
-{
-    if (replacedAllChildren == ReplacedAllChildren::Yes)
-        return { AllChildrenReplaced, nullptr, nullptr, source };
-
-    return {
-        child.isElementNode() ? ElementInserted : child.isTextNode() ? TextInserted : NonContentsChildInserted,
-        ElementTraversal::previousSibling(child),
-        ElementTraversal::nextSibling(child),
-        source
-    };
-}
-
-void ContainerNode::notifyChildInserted(Node& child, const ChildChange& change)
-{
-    ChildListMutationScope(*this).childAdded(child);
-
-    auto postInsertionNotificationTargets = notifyChildNodeInserted(*this, child);
-
-    childrenChanged(change);
-
-    for (auto& target : postInsertionNotificationTargets)
-        target->didFinishInsertingNode();
-}
-
 void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource source)
 {
     NoEventDispatchAssertion assertNoEventDispatch;
@@ -387,14 +392,14 @@ void ContainerNode::parserInsertBefore(Node& newChild, Node& nextChild)
     if (nextChild.previousSibling() == &newChild || &nextChild == &newChild) // nothing to do
         return;
 
-    if (&document() != &newChild.document())
-        document().adoptNode(newChild);
+    executeNodeInsertionWithScriptAssertion(*this, newChild, ChildChangeSource::Parser, ReplacedAllChildren::No, [&] {
+        if (&document() != &newChild.document())
+            document().adoptNode(newChild);
 
-    insertBeforeCommon(nextChild, newChild);
+        insertBeforeCommon(nextChild, newChild);
 
-    newChild.updateAncestorConnectedSubframeCountForInsertion();
-
-    notifyChildInserted(newChild, changeForChildInsertion(newChild, ChildChangeSourceParser));
+        newChild.updateAncestorConnectedSubframeCountForInsertion();
+    });
 }
 
 ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
@@ -461,16 +466,13 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
         if (child->parentNode())
             break;
 
-        {
-            NoEventDispatchAssertion assertNoEventDispatch;
+        executeNodeInsertionWithScriptAssertion(*this, child.get(), ChildChangeSource::API, ReplacedAllChildren::No, [&] {
             child->setTreeScopeRecursively(treeScope());
             if (refChild)
                 insertBeforeCommon(*refChild, child.get());
             else
                 appendChildCommon(child);
-        }
-
-        updateTreeAfterInsertion(child.get());
+        });
     }
 
     dispatchSubtreeModifiedEvent();
@@ -544,7 +546,7 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
         Node* next = child->nextSibling();
         removeBetween(prev, next, child);
 
-        notifyChildRemoved(child, prev, next, ChildChangeSourceAPI);
+        notifyChildRemoved(child, prev, next, ChildChangeSource::API);
     }
 
     rebuildSVGExtensionsElementsIfNecessary();
@@ -609,7 +611,7 @@ void ContainerNode::parserRemoveChild(Node& oldChild)
 
         removeBetween(prev, next, oldChild);
 
-        notifyChildRemoved(oldChild, prev, next, ChildChangeSourceParser);
+        notifyChildRemoved(oldChild, prev, next, ChildChangeSource::Parser);
     }
 }
 
@@ -643,9 +645,7 @@ void ContainerNode::replaceAllChildren(Ref<Node>&& node)
 
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-        {
-            NoEventDispatchAssertion assertNoEventDispatch;
-
+        executeNodeInsertionWithScriptAssertion(*this, node.get(), ChildChangeSource::API, ReplacedAllChildren::Yes, [&] {
             document().nodeChildrenWillBeRemoved(*this);
 
             while (RefPtr<Node> child = m_firstChild) {
@@ -658,9 +658,7 @@ void ContainerNode::replaceAllChildren(Ref<Node>&& node)
             InspectorInstrumentation::willInsertDOMNode(document(), *this);
 
             appendChildCommon(node);
-        }
-
-        updateTreeAfterInsertion(node, ReplacedAllChildren::Yes);
+        });
     }
 
     rebuildSVGExtensionsElementsIfNecessary();
@@ -698,8 +696,7 @@ void ContainerNode::removeChildren()
             notifyChildNodeRemoved(*this, *child);
         }
 
-        ChildChange change = { AllChildrenRemoved, nullptr, nullptr, ChildChangeSourceAPI };
-        childrenChanged(change);
+        childrenChanged(ChildChange { AllChildrenRemoved, nullptr, nullptr, ChildChangeSource::API });
     }
 
     rebuildSVGExtensionsElementsIfNecessary();
@@ -749,13 +746,10 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
             break;
 
         // Append child to the end of the list
-        {
-            NoEventDispatchAssertion assertNoEventDispatch;
+        executeNodeInsertionWithScriptAssertion(*this, child.get(), ChildChangeSource::API, ReplacedAllChildren::No, [&] {
             child->setTreeScopeRecursively(treeScope());
             appendChildCommon(child);
-        }
-
-        updateTreeAfterInsertion(child.get());
+        });
     }
 
     dispatchSubtreeModifiedEvent();
@@ -768,25 +762,20 @@ void ContainerNode::parserAppendChild(Node& newChild)
     ASSERT(!newChild.isDocumentFragment());
     ASSERT(!hasTagName(HTMLNames::templateTag));
 
-    {
-        NoEventDispatchAssertion assertNoEventDispatch;
-
+    executeNodeInsertionWithScriptAssertion(*this, newChild, ChildChangeSource::Parser, ReplacedAllChildren::No, [&] {
         if (&document() != &newChild.document())
             document().adoptNode(newChild);
 
         appendChildCommon(newChild);
         newChild.setTreeScopeRecursively(treeScope());
-    }
-
-    newChild.updateAncestorConnectedSubframeCountForInsertion();
-
-    notifyChildInserted(newChild, changeForChildInsertion(newChild, ChildChangeSourceParser));
+        newChild.updateAncestorConnectedSubframeCountForInsertion();
+    });
 }
 
 void ContainerNode::childrenChanged(const ChildChange& change)
 {
     document().incDOMTreeVersion();
-    if (change.source == ChildChangeSourceAPI && change.type != TextChanged)
+    if (change.source == ChildChangeSource::API && change.type != TextChanged)
         document().updateRangesAfterChildrenChanged(*this);
     invalidateNodeListAndCollectionCachesInAncestors();
 }
@@ -861,15 +850,6 @@ static void dispatchChildRemovalEvents(Node& child)
         for (; c; c = NodeTraversal::next(*c, &child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, false));
     }
-}
-
-void ContainerNode::updateTreeAfterInsertion(Node& child, ReplacedAllChildren replacedAllChildren)
-{
-    ASSERT(child.refCount());
-
-    notifyChildInserted(child, changeForChildInsertion(child, ChildChangeSourceAPI, replacedAllChildren));
-
-    dispatchChildInsertionEvents(child);
 }
 
 ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)

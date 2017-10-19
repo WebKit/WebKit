@@ -103,7 +103,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (is<Text>(*this) && parentNode())
         downcast<Text>(*this).updateRendererAfterContentChange(oldLength, 0);
 
-    notifyParentAfterChange(ContainerNode::ChildChangeSourceParser);
+    notifyParentAfterChange(ContainerNode::ChildChangeSource::Parser);
 
     return characterLengthLimit;
 }
@@ -201,7 +201,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     if (document().frame())
         document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
 
-    notifyParentAfterChange(ContainerNode::ChildChangeSourceAPI);
+    notifyParentAfterChange(ContainerNode::ChildChangeSource::API);
 
     dispatchModifiedEvent(oldData);
 }

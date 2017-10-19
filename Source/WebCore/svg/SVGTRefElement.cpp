@@ -25,6 +25,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "MutationEvent.h"
+#include "NoEventDispatchAssertion.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
@@ -143,8 +144,9 @@ void SVGTRefElement::updateReferencedText(Element* target)
     if (target)
         textContent = target->textContent();
 
-    ASSERT(shadowRoot());
-    ShadowRoot* root = shadowRoot();
+    auto root = userAgentShadowRoot();
+    ASSERT(root);
+    NoEventDispatchAssertion::EventAllowedScope allowedScope(*root);
     if (!root->firstChild())
         root->appendChild(Text::create(document(), textContent));
     else {

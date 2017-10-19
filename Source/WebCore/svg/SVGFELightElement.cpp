@@ -173,7 +173,7 @@ void SVGFELightElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
 
-    if (change.source == ChildChangeSourceParser)
+    if (change.source == ChildChangeSource::Parser)
         return;
     ContainerNode* parent = parentNode();
     if (!parent)

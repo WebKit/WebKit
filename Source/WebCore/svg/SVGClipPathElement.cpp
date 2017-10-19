@@ -95,7 +95,7 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
 {
     SVGGraphicsElement::childrenChanged(change);
 
-    if (change.source == ChildChangeSourceParser)
+    if (change.source == ChildChangeSource::Parser)
         return;
 
     if (RenderObject* object = renderer())
