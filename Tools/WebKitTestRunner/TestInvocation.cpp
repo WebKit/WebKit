@@ -1210,6 +1210,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearDOMCaches")) {
+        TestController::singleton().clearDOMCaches();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "HasDOMCache")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef origin = static_cast<WKStringRef>(messageBody);

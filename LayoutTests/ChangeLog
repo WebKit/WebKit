@@ -1,3 +1,12 @@
+2017-10-18  Youenn Fablet  <youenn@apple.com>
+
+        TestController should clear all fetch caches when resetting its state
+        https://bugs.webkit.org/show_bug.cgi?id=178486
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/cache-storage/cache-clearing-all.https.html:
+
 2017-10-18  Dean Jackson  <dino@apple.com>
 
         Some older hardware can't actually use renderbuffers at the size they advertise

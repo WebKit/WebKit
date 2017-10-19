@@ -191,6 +191,7 @@ public:
     void removeAllSessionCredentials();
 
     void clearDOMCache(WKStringRef origin);
+    void clearDOMCaches();
     bool hasDOMCache(WKStringRef origin);
     uint64_t domCacheSize(WKStringRef origin);
 

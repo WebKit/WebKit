@@ -22,7 +22,7 @@ promise_test(async (test) => {
 
     if (!window.testRunner)
         return Promise.reject("test runner needed");
-    testRunner.clearDOMCache();
+    testRunner.clearDOMCaches();
 
     var keys = await self.caches.keys();
     assert_equals(keys.length, 0, "keys should be empty");

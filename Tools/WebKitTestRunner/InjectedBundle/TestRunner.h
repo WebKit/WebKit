@@ -164,6 +164,7 @@ public:
     JSValueRef originsWithApplicationCache();
 
     void clearDOMCache(JSStringRef origin);
+    void clearDOMCaches();
     bool hasDOMCache(JSStringRef origin);
     uint64_t domCacheSize(JSStringRef origin);
 

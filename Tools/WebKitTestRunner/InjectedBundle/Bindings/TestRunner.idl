@@ -57,6 +57,7 @@ interface TestRunner {
     void dumpDOMAsWebArchive();
     void dumpPolicyDelegateCallbacks();
 
+    void clearDOMCaches();
     void clearDOMCache(DOMString origin);
     boolean hasDOMCache(DOMString origin);
     unsigned long domCacheSize(DOMString origin);

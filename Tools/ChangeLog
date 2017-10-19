@@ -1,3 +1,20 @@
+2017-10-18  Youenn Fablet  <youenn@apple.com>
+
+        TestController should clear all fetch caches when resetting its state
+        https://bugs.webkit.org/show_bug.cgi?id=178486
+
+        Reviewed by Chris Dumez.
+
+        Adding clearDOMCaches test runner method.
+        Using that method when resetting state.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::clearDOMCaches):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-10-18  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] Use new class name from UIKit when checking UITextSuggestion type
