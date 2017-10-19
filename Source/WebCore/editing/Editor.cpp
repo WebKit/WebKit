@@ -456,6 +456,9 @@ bool Editor::canCopy() const
 
 bool Editor::canPaste() const
 {
+    if (m_frame.mainFrame().loader().shouldSuppressTextInputFromEditing())
+        return false;
+
     return canEdit();
 }
 
@@ -704,7 +707,7 @@ bool Editor::tryDHTMLCut()
 
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
 {
-    if (m_frame.mainFrame().loader().shouldSuppressKeyboardInput() && action == EditorInsertAction::Typed)
+    if (m_frame.mainFrame().loader().shouldSuppressTextInputFromEditing() && action == EditorInsertAction::Typed)
         return false;
 
     return client() && client()->shouldInsertText(text, range, action);

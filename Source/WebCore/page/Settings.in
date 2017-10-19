@@ -288,7 +288,7 @@ largeImageAsyncDecodingEnabled initial=true
 animatedImageAsyncDecodingEnabled initial=true
 webkitImageReadyEventEnabled initial=false
 
-shouldSuppressKeyboardInputDuringProvisionalNavigation initial=false
+shouldSuppressTextInputFromEditingDuringProvisionalNavigation initial=false
 
 langAttributeAwareFormControlUIEnabled initial=false
 

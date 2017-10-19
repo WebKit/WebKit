@@ -117,7 +117,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!frame)
         return false;
 
-    if (!frame->mainFrame().loader().shouldSuppressKeyboardInput())
+    if (!frame->mainFrame().loader().shouldSuppressTextInputFromEditing())
         return false;
 
     if (is<TextEvent>(event)) {
