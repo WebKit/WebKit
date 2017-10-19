@@ -777,6 +777,8 @@ private:
     void convertSubtreeLayoutToFullLayout();
 
     RenderElement* viewportRenderer() const;
+    
+    bool isLayoutNested() const { return m_layoutNestedState == LayoutNestedState::Nested; }
 
     HashSet<Widget*> m_widgetsInRenderTree;
 
@@ -805,7 +807,8 @@ private:
     bool m_layoutSchedulingEnabled;
     bool m_inSynchronousPostLayout;
     int m_layoutCount;
-    unsigned m_nestedLayoutCount;
+    enum class LayoutNestedState { NotInLayout, NotNested, Nested };
+    LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
     Timer m_postLayoutTasksTimer;
     Timer m_updateEmbeddedObjectsTimer;
     bool m_firstLayoutCallbackPending;

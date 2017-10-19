@@ -343,7 +343,6 @@ void FrameView::reset()
     m_layoutPhase = OutsideLayout;
     m_inSynchronousPostLayout = false;
     m_layoutCount = 0;
-    m_nestedLayoutCount = 0;
     m_postLayoutTasksTimer.stop();
     m_updateEmbeddedObjectsTimer.stop();
     m_firstLayout = true;
@@ -1362,7 +1361,6 @@ void FrameView::layout(bool allowSubtreeLayout)
         LOG(Layout, "  in painting, bailing");
         return;
     }
-
     ASSERT(frame().view() == this);
     ASSERT(frame().document());
     ASSERT(frame().document()->pageCacheState() == Document::NotInPageCache);
@@ -1372,6 +1370,7 @@ void FrameView::layout(bool allowSubtreeLayout)
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLayout(frame());
     AnimationUpdateBlock animationUpdateBlock(&frame().animation());
 
+    SetForScope<LayoutNestedState> nestedState(m_layoutNestedState, m_layoutNestedState == LayoutNestedState::NotInLayout ? LayoutNestedState::NotNested : LayoutNestedState::Nested);
     // Many of the tasks performed during layout can cause this function to be re-entered,
     // so save the layout phase now and restore it on exit.
     SetForScope<LayoutPhase> layoutPhaseRestorer(m_layoutPhase, InPreLayout);
@@ -1397,7 +1396,7 @@ void FrameView::layout(bool allowSubtreeLayout)
     {
         SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
-        if (!m_nestedLayoutCount && !m_inSynchronousPostLayout && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening()) {
+        if (!isLayoutNested() && !m_inSynchronousPostLayout && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening()) {
             // This is a new top-level layout. If there are any remaining tasks from the previous
             // layout, finish them now.
             SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
@@ -1425,8 +1424,6 @@ void FrameView::layout(bool allowSubtreeLayout)
             return;
 
         m_layoutPhase = InPreLayout;
-
-        ++m_nestedLayoutCount;
 
         autoSizeIfEnabled();
 
@@ -1578,8 +1575,6 @@ void FrameView::layout(bool allowSubtreeLayout)
 
     InspectorInstrumentation::didLayout(cookie, *layoutRoot);
     DebugPageOverlays::didLayout(frame());
-
-    --m_nestedLayoutCount;
 }
 
 bool FrameView::shouldDeferScrollUpdateAfterContentSizeChange()
@@ -2630,7 +2625,7 @@ void FrameView::updateLayerPositionsAfterScrolling()
     if (m_layoutPhase == InViewSizeAdjust)
         return;
 
-    if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {
+    if (!isLayoutNested() && hasViewportConstrainedObjects()) {
         if (RenderView* renderView = this->renderView()) {
             updateWidgetPositions();
             renderView->layer()->updateLayerPositionsAfterDocumentScroll();
@@ -2672,7 +2667,7 @@ void FrameView::updateCompositingLayersAfterScrolling()
     if (!shouldUpdateCompositingLayersAfterScrolling())
         return;
 
-    if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {
+    if (!isLayoutNested() && hasViewportConstrainedObjects()) {
         if (RenderView* renderView = this->renderView())
             renderView->compositor().updateCompositingLayers(CompositingUpdateType::OnScroll);
     }
@@ -3449,7 +3444,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 
 bool FrameView::updateEmbeddedObjects()
 {
-    if (m_nestedLayoutCount > 1 || !m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty())
+    if (isLayoutNested() || !m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty())
         return true;
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -3493,7 +3488,7 @@ void FrameView::queuePostLayoutCallback(Function<void()>&& callback)
 
 void FrameView::flushPostLayoutTasksQueue()
 {
-    if (m_nestedLayoutCount > 1)
+    if (isLayoutNested())
         return;
 
     if (!m_postLayoutCallbackQueue.size())
@@ -3515,7 +3510,7 @@ void FrameView::performPostLayoutTasks()
 
     flushPostLayoutTasksQueue();
 
-    if (m_nestedLayoutCount <= 1 && frame().document()->documentElement())
+    if (!isLayoutNested() && frame().document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();
 
 #if PLATFORM(IOS)
@@ -4280,7 +4275,7 @@ void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtreeLayout)
         return;
 
     // In the middle of parent layout, no need to restart from topmost.
-    if (parentView->m_nestedLayoutCount)
+    if (parentView->isInLayout())
         return;
 
     // Parent tree is clean. Starting layout from it would have no effect.
