@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+#if USE(IOSURFACE)
 enum class PixelRange {
     Unknown,
     Video,
@@ -158,6 +159,7 @@ static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRa
     ASSERT(iterator != matrices.get().end());
     return iterator->second;
 }
+#endif // USE(IOSURFACE)
 
 VideoTextureCopierCV::VideoTextureCopierCV(GraphicsContext3D& context)
     : m_context(context)

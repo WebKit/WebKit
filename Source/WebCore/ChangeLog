@@ -1,5 +1,16 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223298. rdar://problem/34958928
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; wrap more functions in USE(IOSURFACE) so that
+            they do not generate "unused function" errors.
+
+            * platform/graphics/cv/VideoTextureCopierCV.cpp:
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223297. rdar://problem/34958928
 
     2017-10-13  Jer Noble  <jer.noble@apple.com>
