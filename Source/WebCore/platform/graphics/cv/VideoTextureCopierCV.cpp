@@ -29,7 +29,7 @@
 #include "FourCC.h"
 #include "Logging.h"
 #include "TextureCacheCV.h"
-#include <pal/spi/cocoa/IOSurfaceSPI.h>
+#include <IOSurfaceSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
