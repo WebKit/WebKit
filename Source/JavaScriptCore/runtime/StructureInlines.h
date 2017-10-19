@@ -61,7 +61,7 @@ inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructu
 
 inline JSObject* Structure::storedPrototypeObject() const
 {
-    RELEASE_ASSERT(hasMonoProto());
+    ASSERT(hasMonoProto());
     JSValue value = m_prototype.get();
     if (value.isNull())
         return nullptr;
@@ -70,7 +70,7 @@ inline JSObject* Structure::storedPrototypeObject() const
 
 inline Structure* Structure::storedPrototypeStructure() const
 {
-    RELEASE_ASSERT(hasMonoProto());
+    ASSERT(hasMonoProto());
     JSObject* object = storedPrototypeObject();
     if (!object)
         return nullptr;
@@ -79,17 +79,17 @@ inline Structure* Structure::storedPrototypeStructure() const
 
 ALWAYS_INLINE JSValue Structure::storedPrototype(const JSObject* object) const
 {
-    RELEASE_ASSERT(object->structure() == this);
+    ASSERT(object->structure() == this);
     if (hasMonoProto())
         return storedPrototype();
-    RELEASE_ASSERT(m_prototype.get().isInt32());
+    ASSERT(m_prototype.get().isInt32());
     PropertyOffset offset = m_prototype.get().asInt32();
     return object->getDirect(offset);
 }
 
 ALWAYS_INLINE JSObject* Structure::storedPrototypeObject(const JSObject* object) const
 {
-    RELEASE_ASSERT(object->structure() == this);
+    ASSERT(object->structure() == this);
     if (hasMonoProto())
         return storedPrototypeObject();
     JSValue proto = object->getDirect(polyProtoOffset());
@@ -210,7 +210,7 @@ ALWAYS_INLINE JSValue prototypeForLookupPrimitiveImpl(JSGlobalObject* globalObje
 
 inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const
 {
-    RELEASE_ASSERT(hasMonoProto());
+    ASSERT(hasMonoProto());
     if (isObject())
         return storedPrototype();
     return prototypeForLookupPrimitiveImpl(globalObject, this);
@@ -218,7 +218,7 @@ inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const
 
 inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject, JSCell* base) const
 {
-    RELEASE_ASSERT(base->structure() == this);
+    ASSERT(base->structure() == this);
     if (isObject())
         return storedPrototype(asObject(base));
     return prototypeForLookupPrimitiveImpl(globalObject, this);
@@ -226,7 +226,7 @@ inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject, JSCel
 
 inline StructureChain* Structure::prototypeChain(VM& vm, JSGlobalObject* globalObject, JSObject* base) const
 {
-    RELEASE_ASSERT(base->structure(vm) == this);
+    ASSERT(base->structure(vm) == this);
     // We cache our prototype chain so our clients can share it.
     if (!isValid(globalObject, m_cachedPrototypeChain.get(), base)) {
         JSValue prototype = prototypeForLookup(globalObject, base);

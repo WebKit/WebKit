@@ -262,22 +262,22 @@ public:
     // object of a structure is presumed to be immutable in a bunch of places.
     void setGlobalObject(VM& vm, JSGlobalObject* globalObject) { m_globalObject.set(vm, this, globalObject); }
 
-    bool hasMonoProto() const
+    ALWAYS_INLINE bool hasMonoProto() const
     {
         return !m_prototype.get().isInt32();
     }
-    bool hasPolyProto() const
+    ALWAYS_INLINE bool hasPolyProto() const
     {
         return !hasMonoProto();
     }
-    JSValue storedPrototype() const
+    ALWAYS_INLINE JSValue storedPrototype() const
     {
-        RELEASE_ASSERT(hasMonoProto());
+        ASSERT(hasMonoProto());
         return m_prototype.get();
     }
-    PropertyOffset polyProtoOffset() const
+    ALWAYS_INLINE PropertyOffset polyProtoOffset() const
     {
-        RELEASE_ASSERT(hasPolyProto());
+        ASSERT(hasPolyProto());
         return m_prototype.get().asInt32();
     }
     JSValue storedPrototype(const JSObject*) const;

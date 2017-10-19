@@ -1,5 +1,20 @@
 2017-10-19  Saam Barati  <sbarati@apple.com>
 
+        Turn various poly proto RELEASE_ASSERTs into ASSERTs because they're on the hot path in speedometer
+        https://bugs.webkit.org/show_bug.cgi?id=178529
+
+        Reviewed by Mark Lam.
+
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::storedPrototypeObject const):
+        (JSC::Structure::storedPrototypeStructure const):
+        (JSC::Structure::storedPrototype const):
+        (JSC::Structure::prototypeForLookup const):
+        (JSC::Structure::prototypeChain const):
+
+2017-10-19  Saam Barati  <sbarati@apple.com>
+
         Turn poly proto back on by default and remove the option
         https://bugs.webkit.org/show_bug.cgi?id=178525
 
