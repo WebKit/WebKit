@@ -1053,6 +1053,7 @@ private:
         case GetMyArgumentByValOutOfBounds:
         case PutHint:
         case CheckStructureImmediate:
+        case CheckStructureOrEmpty:
         case MaterializeNewObject:
         case MaterializeCreateActivation:
         case PutStack:
@@ -1065,8 +1066,7 @@ private:
         case RecordRegExpCachedResult:
         case LazyJSConstant:
         case CallDOM: {
-            // This node should never be visible at this stage of compilation. It is
-            // inserted by fixup(), which follows this phase.
+            // This node should never be visible at this stage of compilation.
             DFG_CRASH(m_graph, m_currentNode, "Unexpected node during prediction propagation");
             break;
         }

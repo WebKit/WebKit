@@ -1555,6 +1555,7 @@ private:
         case GetVectorLength:
         case PutHint:
         case CheckStructureImmediate:
+        case CheckStructureOrEmpty:
         case MaterializeNewObject:
         case MaterializeCreateActivation:
         case PutStack:

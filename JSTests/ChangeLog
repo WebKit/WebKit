@@ -1,5 +1,19 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221607. rdar://problem/35041474
+
+    2017-09-04  Saam Barati  <sbarati@apple.com>
+
+            typeCheckHoistingPhase may emit a CheckStructure on the empty value which leads to a dereference of zero on 64 bit platforms
+            https://bugs.webkit.org/show_bug.cgi?id=176317
+
+            Reviewed by Keith Miller.
+
+            * stress/dont-crash-when-hoist-check-structure-on-tdz.js: Added.
+            (Foo):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223614. rdar://problem/34920288
 
     2017-10-18  Mark Lam  <mark.lam@apple.com>

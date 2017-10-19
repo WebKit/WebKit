@@ -367,6 +367,7 @@ private:
                     escapeBasedOnArrayMode(node->arrayMode(), node->child1(), node);
                     break;
 
+                case CheckStructureOrEmpty:
                 case CheckStructure: {
                     if (!m_candidates.contains(node->child1().node()))
                         break;
@@ -1091,6 +1092,7 @@ private:
                     break;
                 }
 
+                case CheckStructureOrEmpty:
                 case CheckStructure:
                     if (!isEliminatedAllocation(node->child1().node()))
                         break;

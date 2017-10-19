@@ -2327,6 +2327,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         filter(value, set, admittedTypes);
         break;
     }
+
+    case CheckStructureOrEmpty: {
+        AbstractValue& value = forNode(node->child1());
+
+        bool mayBeEmpty = value.m_type & SpecEmpty;
+        if (!mayBeEmpty)
+            m_state.setFoundConstants(true);
+
+        SpeculatedType admittedTypes = mayBeEmpty ? SpecEmpty : SpecNone;
+        filter(value, node->structureSet(), admittedTypes);
+        break;
+    }
         
     case CheckStructureImmediate: {
         // FIXME: This currently can only reason about one structure at a time.

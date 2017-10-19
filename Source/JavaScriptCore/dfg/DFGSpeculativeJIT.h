@@ -2850,8 +2850,8 @@ public:
     void compileIsObjectOrNull(Node*);
     void compileIsFunction(Node*);
     void compileTypeOf(Node*);
-    void compileCheckStructure(Node*, GPRReg cellGPR, GPRReg tempGPR);
     void compileCheckStructure(Node*);
+    void emitStructureCheck(Node*, GPRReg cellGPR, GPRReg tempGPR);
     void compilePutAccessorById(Node*);
     void compilePutGetterSetterById(Node*);
     void compilePutAccessorByVal(Node*);

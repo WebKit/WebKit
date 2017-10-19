@@ -139,7 +139,15 @@ private:
                 // See: https://bugs.webkit.org/show_bug.cgi?id=174844
                 break;
             }
-                
+
+            case CheckStructureOrEmpty: {
+                const AbstractValue& value = m_state.forNode(node->child1());
+                if (value.m_type & SpecEmpty)
+                    break;
+                node->convertCheckStructureOrEmptyToCheckStructure();
+                changed = true;
+                FALLTHROUGH;
+            }
             case CheckStructure:
             case ArrayifyToStructure: {
                 AbstractValue& value = m_state.forNode(node->child1());

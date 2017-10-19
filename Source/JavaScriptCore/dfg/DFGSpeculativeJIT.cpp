@@ -7783,7 +7783,7 @@ void SpeculativeJIT::compileTypeOf(Node* node)
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileCheckStructure(Node* node, GPRReg cellGPR, GPRReg tempGPR)
+void SpeculativeJIT::emitStructureCheck(Node* node, GPRReg cellGPR, GPRReg tempGPR)
 {
     ASSERT(node->structureSet().size());
     
@@ -7828,7 +7828,7 @@ void SpeculativeJIT::compileCheckStructure(Node* node)
     case CellUse:
     case KnownCellUse: {
         SpeculateCellOperand cell(this, node->child1());
-        compileCheckStructure(node, cell.gpr(), InvalidGPRReg);
+        emitStructureCheck(node, cell.gpr(), InvalidGPRReg);
         noResult(node);
         return;
     }
@@ -7846,7 +7846,7 @@ void SpeculativeJIT::compileCheckStructure(Node* node)
             m_jit.branchIfNotOther(valueRegs, tempGPR));
         JITCompiler::Jump done = m_jit.jump();
         cell.link(&m_jit);
-        compileCheckStructure(node, valueRegs.payloadGPR(), tempGPR);
+        emitStructureCheck(node, valueRegs.payloadGPR(), tempGPR);
         done.link(&m_jit);
         noResult(node);
         return;

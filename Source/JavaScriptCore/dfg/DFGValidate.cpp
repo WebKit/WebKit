@@ -269,6 +269,11 @@ public:
                     VALIDATE((node), !!node->child1());
                     VALIDATE((node), !!node->cellOperand()->value() && node->cellOperand()->value().isCell());
                     break;
+                case CheckStructureOrEmpty:
+                    VALIDATE((node), is64Bit());
+                    VALIDATE((node), !!node->child1());
+                    VALIDATE((node), node->child1().useKind() == CellUse);
+                    break;
                 case CheckStructure:
                 case StringFromCharCode:
                     VALIDATE((node), !!node->child1());
