@@ -50,6 +50,7 @@ public:
     static String diskCacheKey();
     static String diskCacheAfterValidationKey();
     static String documentLoaderStoppingKey();
+    WEBCORE_EXPORT static String domainCausingCrashKey();
     static String domainCausingEnergyDrainKey();
     WEBCORE_EXPORT static String domainCausingJetsamKey();
     WEBCORE_EXPORT static String simulatedPageCrashKey();

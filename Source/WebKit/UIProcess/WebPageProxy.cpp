@@ -1065,10 +1065,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
 {
     SandboxExtension::Handle sandboxExtensionHandle;
 
-    String url = m_pageLoadState.activeURL();
-    if (url.isEmpty() && m_backForwardList->currentItem())
-        url = m_backForwardList->currentItem()->url();
-
+    String url = currentURL();
     if (!url.isEmpty()) {
         auto transaction = m_pageLoadState.transaction();
         m_pageLoadState.setPendingAPIRequestURL(transaction, url);
@@ -5407,16 +5404,21 @@ void WebPageProxy::didChangeProcessIsResponsive()
     m_pageLoadState.didChangeProcessIsResponsive();
 }
 
+String WebPageProxy::currentURL() const
+{
+    String url = m_pageLoadState.activeURL();
+    if (url.isEmpty() && m_backForwardList->currentItem())
+        url = m_backForwardList->currentItem()->url();
+    return url;
+}
+
 void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
 {
     ASSERT(m_isValid);
 
 #if PLATFORM(IOS)
     if (m_process->isUnderMemoryPressure()) {
-        String url = m_pageLoadState.activeURL();
-        if (url.isEmpty() && m_backForwardList->currentItem())
-            url = m_backForwardList->currentItem()->url();
-        String domain = WebCore::topPrivatelyControlledDomain(WebCore::URL(WebCore::ParsedURLString, url).host());
+        String domain = WebCore::topPrivatelyControlledDomain(WebCore::URL(WebCore::ParsedURLString, currentURL()).host());
         if (!domain.isEmpty())
             logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingJetsamKey(), domain, WebCore::ShouldSample::No);
     }

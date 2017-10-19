@@ -1,3 +1,21 @@
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223436. rdar://problem/35061711
+
+    2017-10-16  Chris Dumez  <cdumez@apple.com>
+
+            Log using differential privacy domains where the WebContent process crashes
+            https://bugs.webkit.org/show_bug.cgi?id=178346
+            <rdar://problem/33293830>
+
+            Reviewed by Alex Christensen.
+
+            Add new diagnostic logging key for domain causing crashes.
+
+            * page/DiagnosticLoggingKeys.cpp:
+            (WebCore::DiagnosticLoggingKeys::domainCausingCrashKey):
+            * page/DiagnosticLoggingKeys.h:
+
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221921. rdar://problem/35041482
