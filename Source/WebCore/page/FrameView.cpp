@@ -242,7 +242,6 @@ FrameView::FrameView(Frame& frame)
     , m_canHaveScrollbars(true)
     , m_layoutTimer(*this, &FrameView::layoutTimerFired)
     , m_layoutPhase(OutsideLayout)
-    , m_inSynchronousPostLayout(false)
     , m_postLayoutTasksTimer(*this, &FrameView::performPostLayoutTasks)
     , m_updateEmbeddedObjectsTimer(*this, &FrameView::updateEmbeddedObjectsTimerFired)
     , m_isTransparent(false)
@@ -341,7 +340,6 @@ void FrameView::reset()
     m_needsFullRepaint = true;
     m_layoutSchedulingEnabled = true;
     m_layoutPhase = OutsideLayout;
-    m_inSynchronousPostLayout = false;
     m_layoutCount = 0;
     m_postLayoutTasksTimer.stop();
     m_updateEmbeddedObjectsTimer.stop();
@@ -1395,13 +1393,9 @@ void FrameView::layout(bool allowSubtreeLayout)
     bool isSubtreeLayout = false;
     {
         SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
-
-        if (!isLayoutNested() && !m_inSynchronousPostLayout && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening()) {
-            // This is a new top-level layout. If there are any remaining tasks from the previous
-            // layout, finish them now.
-            SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
+        // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
+        if (!isLayoutNested() && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening())
             performPostLayoutTasks();
-        }
 
         // Viewport-dependent media queries may cause us to need completely different style information.
         auto* styleResolver = document.styleScope().resolverIfExists();
@@ -1553,16 +1547,14 @@ void FrameView::layout(bool allowSubtreeLayout)
     frame().document()->markers().invalidateRectsForAllMarkers();
 
     if (!m_postLayoutTasksTimer.isActive()) {
-        if (!m_inSynchronousPostLayout) {
+        if (!m_inPerformPostLayoutTasks) {
             if (isInChildFrameWithFrameFlattening())
                 updateWidgetPositions();
-            else {
-                SetForScope<bool> inSynchronousPostLayoutChange(m_inSynchronousPostLayout, true);
+            else
                 performPostLayoutTasks(); // Calls resumeScheduledEvents().
-            }
         }
 
-        if (!m_postLayoutTasksTimer.isActive() && (needsLayout() || m_inSynchronousPostLayout || isInChildFrameWithFrameFlattening())) {
+        if (!m_postLayoutTasksTimer.isActive() && (needsLayout() || m_inPerformPostLayoutTasks || isInChildFrameWithFrameFlattening())) {
             // If we need layout or are already in a synchronous call to postLayoutTasks(), 
             // defer widget updates and event dispatch until after we return. postLayoutTasks()
             // can make us need to update again, and we can get stuck in a nasty cycle unless
@@ -3501,6 +3493,10 @@ void FrameView::flushPostLayoutTasksQueue()
 
 void FrameView::performPostLayoutTasks()
 {
+    if (m_inPerformPostLayoutTasks)
+        return;
+
+    SetForScope<bool> inPerformPostLayoutTasks(m_inPerformPostLayoutTasks, true);
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "FrameView %p performPostLayoutTasks", this);
 

@@ -805,7 +805,7 @@ private:
 
     LayoutPhase m_layoutPhase;
     bool m_layoutSchedulingEnabled;
-    bool m_inSynchronousPostLayout;
+    bool m_inPerformPostLayoutTasks { false };
     int m_layoutCount;
     enum class LayoutNestedState { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
