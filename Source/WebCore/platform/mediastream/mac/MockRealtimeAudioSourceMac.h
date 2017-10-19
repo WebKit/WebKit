@@ -49,7 +49,7 @@ class WebAudioSourceProviderAVFObjC;
 class MockRealtimeAudioSourceMac final : public MockRealtimeAudioSource {
 private:
     friend class MockRealtimeAudioSource;
-    explicit MockRealtimeAudioSourceMac(const String&);
+    MockRealtimeAudioSourceMac(const String& deviceID, const String& name);
 
     bool applySampleRate(int) final;
     bool applySampleSize(int) final { return false; }

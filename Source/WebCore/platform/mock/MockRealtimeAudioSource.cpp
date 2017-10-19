@@ -50,16 +50,16 @@ public:
     CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
         for (auto& device : MockRealtimeMediaSource::audioDevices()) {
             if (device.persistentId() == deviceID)
-                return MockRealtimeAudioSource::create(device.label(), constraints);
+                return MockRealtimeAudioSource::create(deviceID, device.label(), constraints);
         }
         return { };
     }
 };
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
-CaptureSourceOrError MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, const String& name, const MediaConstraints* constraints)
 {
-    auto source = adoptRef(*new MockRealtimeAudioSource(name));
+    auto source = adoptRef(*new MockRealtimeAudioSource(deviceID, name));
     if (constraints && source->applyConstraints(*constraints))
         return { };
 
@@ -69,7 +69,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(const String& name, const M
 
 Ref<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
 {
-    auto source = adoptRef(*new MockRealtimeAudioSource(name));
+    auto source = adoptRef(*new MockRealtimeAudioSource(String { }, name));
     source->notifyMutedChange(true);
     return source;
 }
@@ -85,8 +85,8 @@ RealtimeMediaSource::AudioCaptureFactory& MockRealtimeAudioSource::factory()
     return mockAudioCaptureSourceFactory();
 }
 
-MockRealtimeAudioSource::MockRealtimeAudioSource(const String& name)
-    : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Type::Audio, name)
+MockRealtimeAudioSource::MockRealtimeAudioSource(const String& deviceID, const String& name)
+    : MockRealtimeMediaSource(deviceID, RealtimeMediaSource::Type::Audio, name)
     , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {
 }

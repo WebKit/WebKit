@@ -28,10 +28,20 @@
             constraints[info.type] = { deviceId: { exact: info.id } };
         });
     
+        var audioTrack, videoTrack;
         return navigator.mediaDevices.getUserMedia(constraints)
             .then((stream) => {
                 assert_equals(stream.getAudioTracks().length, 1, "correct number of audio tracks");
                 assert_equals(stream.getVideoTracks().length, 1, "correct number of audio tracks");
+
+                videoTrack = stream.getVideoTracks()[0];
+                audioTrack = stream.getAudioTracks()[0];
+                return navigator.mediaDevices.enumerateDevices();
+            }).then(devices => {
+                var ids = devices.map(device => device.deviceId);
+                assert_true(ids.indexOf(videoTrack.getSettings().deviceId) !== -1 , "deviceId for video track should be respected");
+                assert_true(ids.indexOf(audioTrack.getSettings().deviceId) !== -1 , "deviceId for audio track should be respected");
+                assert_equals(audioTrack.getSettings().groupId, videoTrack.getSettings().groupId, "groupId should match");
             })
 
     }, "Pass device IDs as exact constraints");
