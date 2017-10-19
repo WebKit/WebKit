@@ -29,6 +29,8 @@
 #include <CoreVideo/CoreVideo.h>
 #include <wtf/SoftLinking.h>
 
+typedef struct __IOSurface* IOSurfaceRef;
+
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, CoreVideo)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferGetAttachment, CFTypeRef, (CVBufferRef buffer, CFStringRef key, CVAttachmentMode* attachmentMode), (buffer, key, attachmentMode))
