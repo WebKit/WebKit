@@ -1,5 +1,43 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223409. rdar://problem/34792148
+
+    2017-10-16  JF Bastien  <jfbastien@apple.com>
+
+            JSRunLoopTimer: reduce likely race when used improperly
+            https://bugs.webkit.org/show_bug.cgi?id=178298
+            <rdar://problem/32899816>
+
+            Reviewed by Saam Barati.
+
+            If an API user sets a timer on JSRunLoopTimer, and then racily
+            destroys the JSRunLoopTimer while the timer is firing then it's
+            possible for timerDidFire to cause a use-after-free and / or crash
+            because e.g. m_apiLock becomes a nullptr while timerDidFire is
+            executing. That results from an invalid use of JSRunLoopTimer, but
+            we should try to be more resilient for that type of misuse because
+            it's not necessarily easy to catch by inspection.
+
+            With this change the only remaining race is if the timer fires,
+            and then only timerDidFire's prologue executes, but not the load
+            of the m_apiLock pointer from `this`. It's a much smaller race.
+
+            Separately, I'll reach out to API users who are seemingly misusing
+            the API.
+
+            * runtime/JSRunLoopTimer.cpp:
+            (JSC::JSRunLoopTimer::timerDidFire): put m_apiLock on the stack,
+            and checks for nullptr. This prevents loading it twice off of
+            `this` and turns a nullptr deref into "just" a use-after-free.
+            (JSC::JSRunLoopTimer::~JSRunLoopTimer): acquire m_apiLock before
+            calling m_vm->unregisterRunLoopTimer(this), which in turn does
+            CFRunLoopRemoveTimer / CFRunLoopTimerInvalidate. This prevents
+            timerDidFire from doing much while the timers are un-registered.
+            ~JSRunLoopTimer also needs to set m_apiLock to nullptr before
+            releasing the lock, so it needs its own local copy.
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223614. rdar://problem/34920288
 
     2017-10-18  Mark Lam  <mark.lam@apple.com>

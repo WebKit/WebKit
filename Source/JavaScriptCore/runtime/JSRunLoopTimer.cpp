@@ -40,27 +40,28 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
+#include <mutex>
+
 namespace JSC {
 
 const Seconds JSRunLoopTimer::s_decade { 60 * 60 * 24 * 365 * 10 };
 
 void JSRunLoopTimer::timerDidFire()
 {
-    m_apiLock->lock();
-
-    RefPtr<VM> vm = m_apiLock->vm();
-    if (!vm) {
-        // The VM has been destroyed, so we should just give up.
-        m_apiLock->unlock();
+    JSLock* apiLock = m_apiLock.get();
+    if (!apiLock) {
+        // Likely a buggy usage: the timer fired while JSRunLoopTimer was being destroyed.
         return;
     }
 
-    {
-        JSLockHolder locker(vm.get());
-        doWork();
+    std::lock_guard<JSLock> lock(*apiLock);
+    RefPtr<VM> vm = apiLock->vm();
+    if (!vm) {
+        // The VM has been destroyed, so we should just give up.
+        return;
     }
 
-    m_apiLock->unlock();
+    doWork();
 }
 
 #if USE(CF)
@@ -92,7 +93,10 @@ void JSRunLoopTimer::setRunLoop(CFRunLoopRef runLoop)
 
 JSRunLoopTimer::~JSRunLoopTimer()
 {
+    JSLock* apiLock = m_apiLock.get();
+    std::lock_guard<JSLock> lock(*apiLock);
     m_vm->unregisterRunLoopTimer(this);
+    m_apiLock = nullptr;
 }
 
 void JSRunLoopTimer::timerDidFireCallback(CFRunLoopTimerRef, void* contextPtr)
