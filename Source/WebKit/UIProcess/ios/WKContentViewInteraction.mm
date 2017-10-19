@@ -2985,8 +2985,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion
 {
     // FIXME: Replace NSClassFromString with actual class as soon as UIKit submitted the new class into the iOS SDK.
-    if ([textSuggestion isKindOfClass:NSClassFromString(@"UIKeyboardLoginCredentialsSuggestion")]) {
-        _page->autofillLoginCredentials([(UIKeyboardLoginCredentialsSuggestion *)textSuggestion username], [(UIKeyboardLoginCredentialsSuggestion *)textSuggestion password]);
+    if ([textSuggestion isKindOfClass:NSClassFromString(@"UITextAutofillSuggestion")]) {
+        _page->autofillLoginCredentials([(UITextAutofillSuggestion *)textSuggestion username], [(UITextAutofillSuggestion *)textSuggestion password]);
         return;
     }
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];

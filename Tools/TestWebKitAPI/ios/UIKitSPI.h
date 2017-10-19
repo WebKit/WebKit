@@ -73,13 +73,17 @@ WTF_EXTERN_C_END
 - (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion;
 @end
 
-#if __has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
+#if __has_include(<UIKit/UITextAutofillSuggestion.h>)
 // FIXME: Move this import under USE(APPLE_INTERNAL_SDK) once <rdar://problem/34583628> lands in the SDK.
-#import <UIKit/UIKeyboardLoginCredentialsSuggestion.h>
+#import <UIKit/UITextAutofillSuggestion.h>
+@interface UITextAutofillSuggestion ()
++ (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
+@end
 #else
-@interface UIKeyboardLoginCredentialsSuggestion : UITextSuggestion
+@interface UITextAutofillSuggestion : UITextSuggestion
 @property (nonatomic, assign) NSString *username;
 @property (nonatomic, assign) NSString *password;
++ (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
 @end
 #endif
 

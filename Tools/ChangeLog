@@ -1,3 +1,22 @@
+2017-10-18  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] Use new class name from UIKit when checking UITextSuggestion type
+        https://bugs.webkit.org/show_bug.cgi?id=178416
+
+        Reviewed by Tim Horton.
+
+        This updates our test using/mocking out UITextAutofillSuggestion instead of UIKeyboardLoginCredentialsSuggestion.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (-[UITextAutofillSuggestion initWithUsername:password:]): Copied from UIKit's implementation. This will serve as
+        a mock of this method for builds not containingit.
+        (+[UITextAutofillSuggestion autofillSuggestionWithUsername:password:]): Ditto.
+        (TestWebKitAPI::TEST): Use +[UITextAutofillSuggestion autofillSuggestionWithUsername:password:] inline instead of
+        helper function for creating a new suggestion.
+        (newUIKeyboardLoginCredentialsSuggestion): Deleted.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2017-10-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         update-webkit-auxiliary-libs can't download WebKitAuxiliaryLibrary.zip due to 403 Forbidden

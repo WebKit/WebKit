@@ -35,19 +35,25 @@
 #import <WebKit/_WKInputDelegate.h>
 #import <wtf/BlockPtr.h>
 
-#if !__has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
+#if !__has_include(<UIKit/UITextAutofillSuggestion.h>)
 // FIXME: This can be safely removed once <rdar://problem/34583628> lands in the SDK.
-@implementation UIKeyboardLoginCredentialsSuggestion
+@implementation UITextAutofillSuggestion
+- (instancetype)initWithUsername:(NSString *)username password:(NSString *)password
+{
+    self = [super init];
+    if (self) {
+        _username = username;
+        _password = password;
+    }
+    return self;
+}
+
++ (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password
+{
+    return [[self alloc] initWithUsername:username password:password];
+}
 @end
 #endif
-
-static UIKeyboardLoginCredentialsSuggestion *newUIKeyboardLoginCredentialsSuggestion(NSString *username, NSString *password)
-{
-    UIKeyboardLoginCredentialsSuggestion *suggestion = [UIKeyboardLoginCredentialsSuggestion new];
-    suggestion.username = username;
-    suggestion.password = password;
-    return suggestion;
-}
 
 typedef UIView <UITextInputTraits_Private_Proposed_SPI_34583628> AutofillInputView;
 
@@ -119,8 +125,8 @@ TEST(WKWebViewAutofillTests, UsernameAndPasswordField)
     [webView stringByEvaluatingJavaScript:@"password.focus()"];
     EXPECT_TRUE([webView textInputHasAutofillContext]);
 
-    auto credentialSuggestion = adoptNS(newUIKeyboardLoginCredentialsSuggestion(@"frederik", @"famos"));
-    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion.get()];
+    auto credentialSuggestion = [UITextAutofillSuggestion autofillSuggestionWithUsername:@"frederik" password:@"famos"];
+    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion];
 
     EXPECT_WK_STREQ("famos", [webView stringByEvaluatingJavaScript:@"password.value"]);
 
@@ -138,8 +144,8 @@ TEST(WKWebViewAutofillTests, UsernameAndPasswordFieldSeparatedByRadioButton)
     [webView stringByEvaluatingJavaScript:@"password.focus()"];
     EXPECT_TRUE([webView textInputHasAutofillContext]);
 
-    auto credentialSuggestion = adoptNS(newUIKeyboardLoginCredentialsSuggestion(@"frederik", @"famos"));
-    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion.get()];
+    auto credentialSuggestion = [UITextAutofillSuggestion autofillSuggestionWithUsername:@"frederik" password:@"famos"];
+    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion];
 
     EXPECT_WK_STREQ("frederik", [webView stringByEvaluatingJavaScript:@"user.value"]);
     EXPECT_WK_STREQ("famos", [webView stringByEvaluatingJavaScript:@"password.value"]);
@@ -166,8 +172,8 @@ TEST(WKWebViewAutofillTests, StandalonePasswordField)
     [webView stringByEvaluatingJavaScript:@"password.focus()"];
     EXPECT_TRUE([webView textInputHasAutofillContext]);
 
-    auto credentialSuggestion = adoptNS(newUIKeyboardLoginCredentialsSuggestion(@"frederik", @"famos"));
-    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion.get()];
+    auto credentialSuggestion = [UITextAutofillSuggestion autofillSuggestionWithUsername:@"frederik" password:@"famos"];
+    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion];
 
     EXPECT_WK_STREQ("famos", [webView stringByEvaluatingJavaScript:@"password.value"]);
 
