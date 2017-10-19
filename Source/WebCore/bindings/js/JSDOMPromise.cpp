@@ -49,24 +49,6 @@ static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFu
     return result;
 }
 
-Ref<DOMPromise> DOMPromise::create(JSC::ExecState& state, JSC::JSValue value)
-{
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
-
-    auto promiseConstructor = globalObject.promiseConstructor();
-    auto resolveFunction = promiseConstructor->get(&state, state.vm().propertyNames->builtinNames().resolvePrivateName());
-    ASSERT(resolveFunction.isFunction());
-
-    JSC::MarkedArgumentBuffer arguments;
-    arguments.append(value);
-    auto result = callFunction(state, resolveFunction, promiseConstructor, arguments);
-
-    auto* promise = JSC::jsCast<JSC::JSPromise*>(result);
-    ASSERT(promise);
-
-    return create(globalObject, *promise);
-}
-
 void DOMPromise::whenSettled(std::function<void()>&& callback)
 {
     auto& state = *globalObject()->globalExec();

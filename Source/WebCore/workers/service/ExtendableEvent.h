@@ -29,10 +29,11 @@
 
 #include "Event.h"
 #include "ExtendableEventInit.h"
-#include "JSDOMPromise.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class DOMPromise;
 
 class ExtendableEvent : public Event {
 public:
@@ -43,7 +44,7 @@ public:
 
     EventInterface eventInterface() const override { return ExtendableEventInterfaceType; }
 
-    ExceptionOr<void> waitUntil(JSC::ExecState&, JSC::JSValue);
+    ExceptionOr<void> waitUntil(Ref<DOMPromise>&&);
 
     WEBCORE_EXPORT void onFinishedWaitingForTesting(WTF::Function<void()>&&);
 

@@ -23,7 +23,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-//FIXME: Should be exposed on ServiceWorker only.
+// FIXME: Should be exposed on ServiceWorker only.
 [
     Constructor(DOMString type, FetchEventInit eventInitDict),
     Conditional=SERVICE_WORKER,
@@ -32,15 +32,13 @@
     Exposed=(ServiceWorker,Worker,Window),
     ExportToWrappedFunction,
     JSGenerateToNativeObject
-]
-interface FetchEvent : ExtendableEvent {
+] interface FetchEvent : ExtendableEvent {
     [SameObject] readonly attribute FetchRequest request;
     readonly attribute DOMString clientId;
     readonly attribute DOMString reservedClientId;
     readonly attribute DOMString targetClientId;
 
-    // FIXME: Binding generator should be able to wrap any non Promise value into a promise and pass it to respondWith.
-    [CallWith=ScriptState, MayThrowException] void respondWith(any r);
+    [MayThrowException] void respondWith(Promise<FetchResponse> r);
 };
 
 dictionary FetchEventInit : ExtendableEventInit {

@@ -29,16 +29,14 @@
 
 #include "Event.h"
 
-namespace JSC {
-class JSPromise;
-}
-
 namespace WebCore {
+
+class DOMPromise;
 
 class PaymentRequestUpdateEvent final : public Event {
 public:
     ~PaymentRequestUpdateEvent();
-    void updateWith(JSC::JSPromise*);
+    void updateWith(Ref<DOMPromise>&&);
 };
 
 } // namespace WebCore

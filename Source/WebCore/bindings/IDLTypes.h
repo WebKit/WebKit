@@ -220,7 +220,7 @@ template<typename K, typename V> struct IDLRecord : IDLType<Vector<WTF::KeyValue
     using NullableParameterType = const std::optional<Vector<WTF::KeyValuePair<typename K::ImplementationType, typename V::ImplementationType>>>&;
 };
 
-template<typename T> struct IDLPromise : IDLType<DOMPromise> {
+template<typename T> struct IDLPromise : IDLWrapper<DOMPromise> {
     using InnerType = T;
 };
 

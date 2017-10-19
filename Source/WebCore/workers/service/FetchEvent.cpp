@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FetchEvent.h"
 
+#include "JSDOMPromise.h"
 #include "JSFetchResponse.h"
 
 #if ENABLE(SERVICE_WORKER)
@@ -41,7 +42,7 @@ FetchEvent::FetchEvent(const AtomicString& type, Init&& initializer, IsTrusted i
 {
 }
 
-ExceptionOr<void> FetchEvent::respondWith(JSC::ExecState& state, JSC::JSValue promise)
+ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
 {
     if (isBeingDispatched())
         return Exception { InvalidStateError, ASCIILiteral("Event is being dispatched") };
@@ -49,7 +50,7 @@ ExceptionOr<void> FetchEvent::respondWith(JSC::ExecState& state, JSC::JSValue pr
     if (m_respondWithEntered)
         return Exception { InvalidStateError, ASCIILiteral("Event respondWith flag is set") };
 
-    m_respondPromise = DOMPromise::create(state, promise);
+    m_respondPromise = WTFMove(promise);
     addPendingPromise(*m_respondPromise);
 
     m_respondPromise->whenSettled([this, weakThis = createWeakPtr()] () {
@@ -133,12 +134,16 @@ void FetchEvent::promiseIsSettled()
     }
 
     auto body = m_response->consumeBody();
-    WTF::switchOn(body, [] (Ref<FormData>&) {
-        // FIXME: Support FormData response bodies.
-    }, [this] (Ref<SharedBuffer>& buffer) {
-        m_responseBody = WTFMove(buffer);
-    }, [] (std::nullptr_t&) {
-    });
+    WTF::switchOn(body, 
+        [] (Ref<FormData>&) {
+            // FIXME: Support FormData response bodies.
+        },
+        [this] (Ref<SharedBuffer>& buffer) {
+            m_responseBody = WTFMove(buffer);
+        }, 
+        [] (std::nullptr_t&) {
+        }
+    );
 
     processResponse();
 }

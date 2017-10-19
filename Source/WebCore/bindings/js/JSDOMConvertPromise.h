@@ -32,7 +32,7 @@
 namespace WebCore {
 
 template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromise<T>> {
-    using ReturnType = JSC::JSPromise*;
+    using ReturnType = RefPtr<DOMPromise>;
 
     // https://heycam.github.io/webidl/#es-promise
     template<typename ExceptionThrower = DefaultExceptionThrower>
@@ -54,7 +54,7 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
         ASSERT(promise);
 
         // 3. Return the IDL promise type value that is a reference to the same object as promise.
-        return promise;
+        return DOMPromise::create(*globalObject, *promise);
     }
 };
 
@@ -62,9 +62,9 @@ template<typename T> struct JSConverter<IDLPromise<T>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    static JSC::JSValue convert(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromise& promise)
+    static JSC::JSValue convert(JSC::ExecState&, JSDOMGlobalObject&, DOMPromise& promise)
     {
-        return &promise;
+        return promise.promise();
     }
 
     template<template<typename> class U>

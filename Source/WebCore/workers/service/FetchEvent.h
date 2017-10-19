@@ -49,7 +49,7 @@ public:
 
     EventInterface eventInterface() const final { return FetchEventInterfaceType; }
 
-    ExceptionOr<void> respondWith(JSC::ExecState&, JSC::JSValue);
+    ExceptionOr<void> respondWith(Ref<DOMPromise>&&);
 
     WEBCORE_EXPORT void onResponse(WTF::Function<void()>&&);
 

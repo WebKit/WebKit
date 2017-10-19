@@ -1544,7 +1544,7 @@ sub PassArgumentExpression
         return "${name}.releaseNonNull()";
     }
 
-    return "${name}.releaseNonNull()" if $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type);
+    return "${name}.releaseNonNull()" if $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type) || $codeGenerator->IsPromiseType($type);
     return "*${name}" if $codeGenerator->IsWrapperType($type);
     return "WTFMove(${name})";
 }

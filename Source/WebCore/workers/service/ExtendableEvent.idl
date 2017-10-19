@@ -23,7 +23,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-//FIXME: Should be exposed on ServiceWorker only.
+// FIXME: Should be exposed on ServiceWorker only.
 [
     Constructor(DOMString type, optional ExtendableEventInit eventInitDict),
     Conditional=SERVICE_WORKER,
@@ -31,8 +31,6 @@
     Exposed=(ServiceWorker,Worker,Window),
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
-]
-interface ExtendableEvent : Event {
-    // FIXME: Binding generator should be able to wrap any non Promise value into a promise and pass it to waitUntil.
-    [CallWith=ScriptState, MayThrowException] void waitUntil(any f);
+] interface ExtendableEvent : Event {
+    [MayThrowException] void waitUntil(Promise<any> f);
 };

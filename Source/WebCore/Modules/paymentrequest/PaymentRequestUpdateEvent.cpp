@@ -34,7 +34,7 @@ PaymentRequestUpdateEvent::~PaymentRequestUpdateEvent()
 {
 }
 
-void PaymentRequestUpdateEvent::updateWith(JSC::JSPromise*)
+void PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&&)
 {
 }
 

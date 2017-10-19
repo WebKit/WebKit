@@ -28,6 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "JSDOMPromise.h"
+
 namespace WebCore {
 
 ExtendableEvent::ExtendableEvent(const AtomicString& type, const ExtendableEventInit& initializer, IsTrusted isTrusted)
@@ -35,7 +37,7 @@ ExtendableEvent::ExtendableEvent(const AtomicString& type, const ExtendableEvent
 {
 }
 
-ExceptionOr<void> ExtendableEvent::waitUntil(JSC::ExecState& state, JSC::JSValue promise)
+ExceptionOr<void> ExtendableEvent::waitUntil(Ref<DOMPromise>&& promise)
 {
     if (!isTrusted())
         return Exception { InvalidStateError, ASCIILiteral("Event is not trusted") };
@@ -43,8 +45,7 @@ ExceptionOr<void> ExtendableEvent::waitUntil(JSC::ExecState& state, JSC::JSValue
     if (m_pendingPromises.isEmpty() && isBeingDispatched())
         return Exception { InvalidStateError, ASCIILiteral("Event is being dispatched") };
 
-    addPendingPromise(DOMPromise::create(state, promise));
-
+    addPendingPromise(WTFMove(promise));
     return { };
 }
 
