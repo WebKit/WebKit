@@ -1,5 +1,45 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223419. rdar://problem/34745623
+
+    2017-10-16  Maureen Daum  <mdaum@apple.com>
+
+            If we fail to delete any database file, don't remove its information from the tracker database
+            <rdar://problem/34576132> and https://bugs.webkit.org/show_bug.cgi?id=178251
+
+            Reviewed by Brady Eidson.
+
+            New tests:
+            DatabaseTracker.DeleteDatabase
+            DatabaseTracker.DeleteDatabaseWhenDatabaseDoesNotExist
+            DatabaseTracker.DeleteOrigin
+            DatabaseTracker.DeleteOriginWhenDeletingADatabaseFails
+            DatabaseTracker.DeleteOriginWhenDatabaseDoesNotExist
+
+            * Modules/webdatabase/DatabaseTracker.cpp:
+            (WebCore::DatabaseTracker::deleteDatabasesModifiedSince):
+            If the database doesn't exist, we previously deleted it but failed to remove the
+            information from the tracker database. We still want to delete all of the information
+            associated with this database from the tracker database, so add it to databaseNamesToDelete.
+            (WebCore::DatabaseTracker::deleteOrigin):
+            If a database doesn't exist, don't try to delete it. We don't need to, but more
+            importantly, deleteDatabaseFile() will fail if the database doesn't exist, which
+            will cause us to incorrectly think we failed to remove database information from disk.
+            If we actually fail to delete any database file, return before we remove the origin
+            information from the tracker database so we don't lose track of the database.
+            (WebCore::DatabaseTracker::deleteDatabase):
+            If a database doesn't exist, don't try to delete it. We don't need to, but also it
+            will cause us to incorrectly think that we were unable to delete a database, so we
+            would bail before we remove the database information from the tracker database. We
+            want to remove the database information from the tracker database because the database
+            doesn't exist.
+            * Modules/webdatabase/DatabaseTracker.h:
+            Expose fullPathForDatabase() for use by tests.
+            * platform/Logging.h:
+            Add a logging channel.
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223228. rdar://problem/35061705
 
     2017-10-11  Brent Fulgham  <bfulgham@apple.com>
