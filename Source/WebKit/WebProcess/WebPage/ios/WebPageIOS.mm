@@ -1867,7 +1867,7 @@ void WebPage::moveSelectionByOffset(int32_t offset, CallbackID callbackID)
 void WebPage::getRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    VisibleSelection selection = frame.selection().selection();
+    VisibleSelection selection = m_storedSelectionForAccessibility.isNone() ? frame.selection().selection() : m_storedSelectionForAccessibility;
     VisiblePosition selectionStart = selection.visibleStart();
 
     if (selectionStart.isNull()) {
@@ -1890,6 +1890,16 @@ void WebPage::getRectsForGranularityWithSelectionOffset(uint32_t granularity, in
     send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
 }
 
+void WebPage::storeSelectionForAccessibility(bool shouldStore)
+{
+    if (!shouldStore)
+        m_storedSelectionForAccessibility = VisibleSelection();
+    else {
+        Frame& frame = m_page->focusController().focusedOrMainFrame();
+        m_storedSelectionForAccessibility = frame.selection().selection();
+    }
+}
+
 static RefPtr<Range> rangeNearPositionMatchesText(const VisiblePosition& position, RefPtr<Range> originalRange, const String& matchText, RefPtr<Range> selectionRange)
 {
     auto range = Range::create(selectionRange->ownerDocument(), selectionRange->startPosition(), position.deepEquivalent().parentAnchoredEquivalent());
@@ -1901,7 +1911,7 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     uint32_t length = text.length();
-    VisibleSelection selection = frame.selection().selection();
+    VisibleSelection selection = m_storedSelectionForAccessibility.isNone() ? frame.selection().selection() : m_storedSelectionForAccessibility;
     VisiblePosition selectionStart = selection.visibleStart();
     VisiblePosition selectionEnd = selection.visibleEnd();
 

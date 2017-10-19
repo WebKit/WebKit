@@ -1,3 +1,14 @@
+2017-10-19  Nan Wang  <n_wang@apple.com>
+
+        AX: Provide a way for Accessibility to cache the selection while retrieving rects for speak selection
+        https://bugs.webkit.org/show_bug.cgi?id=176247
+        <rdar://problem/34217143>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2017-10-19  Sam Weinig  <sam@webkit.org>
 
         [Settings] Move global settings into their own file

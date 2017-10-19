@@ -392,6 +392,8 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 
 - (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block WK_API_AVAILABLE(ios(11.0));
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_accessibilityStoreSelection WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_accessibilityClearSelection WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #else
 - (void)_dismissContentRelativeChildWindows WK_API_AVAILABLE(macosx(WK_MAC_TBA));

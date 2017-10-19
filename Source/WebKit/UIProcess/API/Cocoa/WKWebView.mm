@@ -5531,6 +5531,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     }];
 }
 
+- (void)_accessibilityStoreSelection
+{
+    [_contentView _accessibilityStoreSelection];
+}
+
+- (void)_accessibilityClearSelection
+{
+    [_contentView _accessibilityClearSelection];
+}
+
 - (CGRect)_contentVisibleRect
 {
     return [self convertRect:[self bounds] toView:self._currentContentView];

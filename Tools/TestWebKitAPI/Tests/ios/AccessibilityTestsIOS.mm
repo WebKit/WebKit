@@ -96,6 +96,24 @@ TEST(AccessibilityTests, RectsForSpeakingSelectionDoNotCrashWhenChangingSelectio
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 }
 
+TEST(AccessibilityTests, StoreSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><span id='first'>first</span><br><span id='second'>first</span>"];
+    
+    // Select first node and store the selection
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(first, 0, first, 1)"];
+    [webView _accessibilityStoreSelection];
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 26, 19), 0);
+    // Now select the second node, we should use the stored selection to retrieve rects
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(second, 0, second, 1)"];
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 26, 19), 0);
+    
+    // Clear the stored selection, we should use the current selection to retrieve rects
+    [webView _accessibilityClearSelection];
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 27, 26, 20), 0);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS) && WK_API_ENABLED

@@ -723,6 +723,11 @@ void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const S
     m_process->send(Messages::WebPage::GetRectsAtSelectionOffsetWithText(offset, text, callbackID), m_pageID);
 }
 
+void WebPageProxy::storeSelectionForAccessibility(bool shouldStore)
+{
+    m_process->send(Messages::WebPage::StoreSelectionForAccessibility(shouldStore), m_pageID);
+}
+
 void WebPageProxy::moveSelectionByOffset(int32_t offset, WTF::Function<void (CallbackBase::Error)>&& callbackFunction)
 {
     if (!isValid()) {

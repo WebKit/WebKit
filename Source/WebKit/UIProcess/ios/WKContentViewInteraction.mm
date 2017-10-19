@@ -2307,6 +2307,16 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     });
 }
 
+- (void)_accessibilityStoreSelection
+{
+    _page->storeSelectionForAccessibility(true);
+}
+
+- (void)_accessibilityClearSelection
+{
+    _page->storeSelectionForAccessibility(false);
+}
+
 // UIWKInteractionViewProtocol
 
 static inline GestureType toGestureType(UIWKGestureType gestureType)
