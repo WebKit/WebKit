@@ -75,6 +75,12 @@ TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
+    styleResolver.setOverrideDocumentElementStyle(enclosingScope.styleResolver.overrideDocumentElementStyle());
+}
+
+TreeResolver::Scope::~Scope()
+{
+    styleResolver.setOverrideDocumentElementStyle(nullptr);
 }
 
 TreeResolver::Parent::Parent(Document& document)
@@ -93,19 +99,16 @@ TreeResolver::Parent::Parent(Element& element, const RenderStyle& style, Change 
 void TreeResolver::pushScope(ShadowRoot& shadowRoot)
 {
     m_scopeStack.append(adoptRef(*new Scope(shadowRoot, scope())));
-    scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 }
 
 void TreeResolver::pushEnclosingScope()
 {
     ASSERT(scope().enclosingScope);
     m_scopeStack.append(*scope().enclosingScope);
-    scope().styleResolver.setOverrideDocumentElementStyle(m_documentElementStyle.get());
 }
 
 void TreeResolver::popScope()
 {
-    scope().styleResolver.setOverrideDocumentElementStyle(nullptr);
     return m_scopeStack.removeLast();
 }
 

@@ -68,6 +68,7 @@ private:
 
         Scope(Document&);
         Scope(ShadowRoot&, Scope& enclosingScope);
+        ~Scope();
     };
 
     struct Parent {
