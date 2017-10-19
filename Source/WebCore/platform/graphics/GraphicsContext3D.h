@@ -59,6 +59,7 @@
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
+typedef struct __IOSurface* IOSurfaceRef;
 #elif PLATFORM(GTK) || PLATFORM(WIN_CAIRO) || PLATFORM(WPE)
 typedef unsigned int GLuint;
 #endif
@@ -1147,6 +1148,7 @@ public:
 
 #if PLATFORM(COCOA)
     void endPaint();
+    bool texImageIOSurface2D(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, IOSurfaceRef, GC3Duint plane);
 #endif
 
 #if PLATFORM(MAC)

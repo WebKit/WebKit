@@ -54,7 +54,7 @@ TextureCacheCV::TextureCacheCV(GraphicsContext3D& context, RetainPtr<TextureCach
 {
 }
 
-RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVImageBufferRef image, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type)
+RetainPtr<TextureCacheCV::TextureType> TextureCacheCV::textureFromImage(CVPixelBufferRef image, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type)
 {
     TextureType bareVideoTexture = nullptr;
 #if PLATFORM(IOS)

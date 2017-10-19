@@ -1,3 +1,52 @@
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223280. rdar://problem/34958928
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Performance: do pixel conformance and texturing in a single step.
+            https://bugs.webkit.org/show_bug.cgi?id=178219
+            <rdar://problem/34937237>
+
+            Reviewed by Dean Jackson.
+
+            No new tests; performance improvements should have no behavior change.
+
+            Rather than asking the VTDecompressionSession to conform the output CVPixelBuffer into a
+            pixel format compatible with OpenGL (& ES), don't constrain the output at all, and only do a
+            conformance step if the output is not already compatible with OpenGL. This eliminates one
+            copy (in hardware) operation.
+
+            Move the TextureCacheCV object into VideoTextureCopierCV; it will be conditionally used to
+            create the texture if the pixel buffer is compatible.
+
+            Refactor copyVideoTextureToPlatformTexture(CVOpenGLTextureRef) in VideoTextureCopierCV. The
+            new entry point, copyImageToPlatformTexture(), will attempt to use the texture cache first,
+            and call a new common copyVideoTextureToPlatformTexture(Platform3DObject) with the result.
+
+            The new copyImageToPlatformTexture() will pull planar YUV frames into two textures, and combine
+            the two with a color transfer function when drawing to the output texture.
+
+            * platform/graphics/GraphicsContext3D.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture):
+            * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+            (WebCore::GraphicsContext3D::texImageIOSurface2D):
+            * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+            (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+            * platform/graphics/cv/TextureCacheCV.h:
+            * platform/graphics/cv/TextureCacheCV.mm:
+            (WebCore::TextureCacheCV::textureFromImage):
+            * platform/graphics/cv/VideoTextureCopierCV.cpp:
+            (WebCore::pixelRangeFromPixelFormat):
+            (WebCore::transferFunctionFromString):
+            (WebCore::YCbCrToRGBMatrixForRangeAndTransferFunction):
+            (WebCore::VideoTextureCopierCV::~VideoTextureCopierCV):
+            (WebCore::VideoTextureCopierCV::initializeUVContextObjects):
+            (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+            (WebCore::VideoTextureCopierCV::copyVideoTextureToPlatformTexture):
+            * platform/graphics/cv/VideoTextureCopierCV.h:
+
 2017-10-18  Dean Jackson  <dino@apple.com>
 
         Cherry-pick r223640. rdar://problem/35063901

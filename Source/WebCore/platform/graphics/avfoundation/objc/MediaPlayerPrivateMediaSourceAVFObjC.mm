@@ -604,14 +604,6 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture(Gra
     if (updateLastPixelBuffer()) {
         if (!m_lastPixelBuffer)
             return false;
-
-        if (!m_textureCache) {
-            m_textureCache = TextureCacheCV::create(*context);
-            if (!m_textureCache)
-                return false;
-        }
-
-        m_lastTexture = m_textureCache->textureFromImage(m_lastPixelBuffer.get(), outputTarget, level, internalFormat, format, type);
     }
 
     size_t width = CVPixelBufferGetWidth(m_lastPixelBuffer.get());
@@ -620,7 +612,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::copyVideoTextureToPlatformTexture(Gra
     if (!m_videoTextureCopier)
         m_videoTextureCopier = std::make_unique<VideoTextureCopierCV>(*context);
 
-    return m_videoTextureCopier->copyVideoTextureToPlatformTexture(m_lastTexture.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    return m_videoTextureCopier->copyImageToPlatformTexture(m_lastPixelBuffer.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const
