@@ -1,5 +1,25 @@
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223565. rdar://problem/35041490
+
+    2017-10-17  John Wilander  <wilander@apple.com>
+
+            Add and remove cookie partition accordingly in intermediary redirect requests
+            https://bugs.webkit.org/show_bug.cgi?id=178369
+            <rdar://problem/34467603>
+
+            Reviewed by Brent Fulgham.
+
+            Tests: http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html
+                   http/tests/resourceLoadStatistics/remove-partitioning-from-redirect.html
+
+            * loader/ResourceLoadObserver.h:
+                Now exposes notifyObserver() so that it can be triggered
+                by the TestRunner.
+                Removed unimplemented ResourceLoadObserver::setShouldThrottleObserverNotifications().
+
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223253. rdar://problem/35077489
 
     2017-10-12  John Wilander  <wilander@apple.com>

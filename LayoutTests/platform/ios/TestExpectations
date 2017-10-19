@@ -2959,6 +2959,9 @@ fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
 
 webkit.org/b/174120 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
+# Skipped in WK2 expectations because cookie partitioning is only available in macOS High Sierra and iOS 11.
+http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Pass ]
+http/tests/resourceLoadStatistics/remove-partitioning-from-redirect.html [ Pass ]
 
 webkit.org/b/175273 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Failure ]
 

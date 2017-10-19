@@ -831,4 +831,9 @@ void InjectedBundle::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
     WebCoreTestSupport::setAllowsAnySSLCertificate(allowsAnySSLCertificate);
 }
 
+void InjectedBundle::statisticsNotifyObserver()
+{
+    WKBundleResourceLoadStatisticsNotifyObserver(m_bundle);
+}
+
 } // namespace WTR

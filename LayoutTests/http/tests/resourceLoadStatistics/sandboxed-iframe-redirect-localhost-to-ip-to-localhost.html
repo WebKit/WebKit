@@ -2,17 +2,31 @@
 <html>
 <head>
     <script src="/js-test-resources/js-test.js"></script>
-    <script src="/js-test-resources/ui-helper.js"></script>
     <script>
         description("Tests that redirects for sandboxed iframes get counted properly.");
         jsTestIsAsync = true;
         window.addEventListener("message", receiveMessage, false);
+
+        function setEnableFeature(enable) {
+            if (!enable)
+                testRunner.statisticsResetToConsistentState();
+            internals.setResourceLoadStatisticsEnabled(enable);
+            testRunner.setCookieStoragePartitioningEnabled(enable);
+        }
+
+        function finishTest() {
+            setEnableFeature(false);
+            finishJSTest();
+        }
+
         if (testRunner) {
+            setEnableFeature(true);
             testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
             testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
         }
 
-        var testPhasesDone = 0;
+        var lastPageInRedirectChainLoaded = false;
+        var statsChecked = false;
 
         function receiveMessage(event) {
             if (event.origin === "null") {
@@ -20,18 +34,22 @@
                     testFailed(event.data.replace("FAIL ", ""));
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
-            ++testPhasesDone;
-            if (testPhasesDone === 2)
-                finishJSTest();
+
+            lastPageInRedirectChainLoaded = true;
+            if (statsChecked)
+                finishTest();
+            else
+                testRunner.statisticsNotifyObserver();
         }
 
         function checkStats() {
             shouldBeTrue('testRunner.isStatisticsRegisteredAsSubFrameUnder("http://localhost", "http://127.0.0.1")');
             shouldBeTrue('testRunner.isStatisticsRegisteredAsRedirectingTo("http://localhost", "http://127.0.0.1")');
             shouldBeTrue('testRunner.isStatisticsRegisteredAsRedirectingTo("http://127.0.0.1", "http://localhost")');
-            ++testPhasesDone;
-            if (testPhasesDone === 2)
-                finishJSTest();
+
+            statsChecked = true;
+            if (lastPageInRedirectChainLoaded)
+                finishTest();
         }
     </script>
 </head>
