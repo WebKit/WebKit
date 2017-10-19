@@ -82,9 +82,7 @@ ALWAYS_INLINE JSValue Structure::storedPrototype(const JSObject* object) const
     ASSERT(object->structure() == this);
     if (hasMonoProto())
         return storedPrototype();
-    ASSERT(m_prototype.get().isInt32());
-    PropertyOffset offset = m_prototype.get().asInt32();
-    return object->getDirect(offset);
+    return object->getDirect(knownPolyProtoOffset);
 }
 
 ALWAYS_INLINE JSObject* Structure::storedPrototypeObject(const JSObject* object) const
@@ -92,7 +90,7 @@ ALWAYS_INLINE JSObject* Structure::storedPrototypeObject(const JSObject* object)
     ASSERT(object->structure() == this);
     if (hasMonoProto())
         return storedPrototypeObject();
-    JSValue proto = object->getDirect(polyProtoOffset());
+    JSValue proto = object->getDirect(knownPolyProtoOffset);
     if (proto.isNull())
         return nullptr;
     return asObject(proto);

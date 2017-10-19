@@ -3249,17 +3249,16 @@ void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg p
     m_jit.emitLoadStructure(*m_jit.vm(), scratchReg, scratch3Reg, scratch2Reg);
 #if USE(JSVALUE64)
     m_jit.load64(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset()), scratch3Reg);
-    auto isMonoProto = m_jit.branchIfNotInt32(JSValueRegs(scratch3Reg));
-    m_jit.zeroExtend32ToPtr(scratch3Reg, scratch3Reg);
-    m_jit.load64(JITCompiler::BaseIndex(scratchReg, scratch3Reg, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage()), scratch3Reg);
-    isMonoProto.link(&m_jit);
+    auto hasMonoProto = m_jit.branchTest64(JITCompiler::NonZero, scratch3Reg);
+    m_jit.load64(JITCompiler::Address(scratchReg, offsetRelativeToBase(knownPolyProtoOffset)), scratch3Reg);
+    hasMonoProto.link(&m_jit);
     m_jit.move(scratch3Reg, scratchReg);
 #else
     m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + TagOffset), scratch2Reg);
     m_jit.load32(MacroAssembler::Address(scratch3Reg, Structure::prototypeOffset() + PayloadOffset), scratch3Reg);
-    auto isMonoProto = m_jit.branch32(CCallHelpers::NotEqual, scratch2Reg, TrustedImm32(JSValue::Int32Tag));
-    m_jit.load32(JITCompiler::BaseIndex(scratchReg, scratch3Reg, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + PayloadOffset), scratch3Reg);
-    isMonoProto.link(&m_jit);
+    auto hasMonoProto = m_jit.branch32(CCallHelpers::NotEqual, scratch2Reg, TrustedImm32(JSValue::EmptyValueTag));
+    m_jit.load32(JITCompiler::Address(scratchReg, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), scratch3Reg);
+    hasMonoProto.link(&m_jit);
     m_jit.move(scratch3Reg, scratchReg);
 #endif
 
@@ -10830,14 +10829,11 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
 
             if (hasPolyProto && !hasMonoProto) {
 #if USE(JSVALUE64)
-                m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
-                m_jit.zeroExtend32ToPtr(tempGPR, tempGPR);
-                m_jit.load64(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage()), tempGPR);
+                m_jit.load64(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), tempGPR);
                 jsValueResult(tempGPR, node);
 #else
-                m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
-                m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + TagOffset), temp2GPR);
-                m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + PayloadOffset), tempGPR);
+                m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + TagOffset), temp2GPR);
+                m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), tempGPR);
                 jsValueResult(temp2GPR, tempGPR, node);
 #endif
                 return;
@@ -10846,18 +10842,17 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
 
 #if USE(JSVALUE64)
         m_jit.load64(MacroAssembler::Address(tempGPR, Structure::prototypeOffset()), tempGPR);
-        auto isMonoProto = m_jit.branchIfNotInt32(JSValueRegs(tempGPR));
-        m_jit.zeroExtend32ToPtr(tempGPR, tempGPR);
-        m_jit.load64(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage()), tempGPR);
-        isMonoProto.link(&m_jit);
+        auto hasMonoProto = m_jit.branchTest64(JITCompiler::NonZero, tempGPR);
+        m_jit.load64(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), tempGPR);
+        hasMonoProto.link(&m_jit);
         jsValueResult(tempGPR, node);
 #else
         m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + TagOffset), temp2GPR);
         m_jit.load32(MacroAssembler::Address(tempGPR, Structure::prototypeOffset() + PayloadOffset), tempGPR);
-        auto isMonoProto = m_jit.branch32(CCallHelpers::NotEqual, temp2GPR, TrustedImm32(JSValue::Int32Tag));
-        m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + TagOffset), temp2GPR);
-        m_jit.load32(JITCompiler::BaseIndex(objectGPR, tempGPR, JITCompiler::TimesEight, JSObject::offsetOfInlineStorage() + PayloadOffset), tempGPR);
-        isMonoProto.link(&m_jit);
+        auto hasMonoProto = m_jit.branch32(CCallHelpers::NotEqual, temp2GPR, TrustedImm32(JSValue::EmptyValueTag));
+        m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + TagOffset), temp2GPR);
+        m_jit.load32(JITCompiler::Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), tempGPR);
+        hasMonoProto.link(&m_jit);
         jsValueResult(temp2GPR, tempGPR, node);
 #endif
         return;

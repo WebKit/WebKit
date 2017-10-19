@@ -3474,9 +3474,7 @@ private:
                 }
 
                 if (hasPolyProto && !hasMonoProto) {
-                    LValue prototypeBits = m_out.load64(structure, m_heaps.Structure_prototype);
-                    LValue index = m_out.bitAnd(prototypeBits, m_out.constInt64(UINT_MAX));
-                    setJSValue(m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), object, index, ScaleEight, JSObject::offsetOfInlineStorage())));
+                    setJSValue(m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), object, m_out.constInt64(knownPolyProtoOffset), ScaleEight, JSObject::offsetOfInlineStorage())));
                     return;
                 }
             }
@@ -3486,12 +3484,11 @@ private:
 
             LValue prototypeBits = m_out.load64(structure, m_heaps.Structure_prototype);
             ValueFromBlock directPrototype = m_out.anchor(prototypeBits);
-            m_out.branch(isInt32(prototypeBits), unsure(loadPolyProto), unsure(continuation));
+            m_out.branch(m_out.isZero64(prototypeBits), unsure(loadPolyProto), unsure(continuation));
 
             LBasicBlock lastNext = m_out.appendTo(loadPolyProto, continuation);
-            LValue index = m_out.bitAnd(prototypeBits, m_out.constInt64(UINT_MAX));
             ValueFromBlock polyProto = m_out.anchor(
-                m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), object, index, ScaleEight, JSObject::offsetOfInlineStorage())));
+                m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), object, m_out.constInt64(knownPolyProtoOffset), ScaleEight, JSObject::offsetOfInlineStorage())));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -9083,12 +9080,11 @@ private:
 
         LValue prototypeBits = m_out.load64(structure, m_heaps.Structure_prototype);
         ValueFromBlock directPrototype = m_out.anchor(prototypeBits);
-        m_out.branch(isInt32(prototypeBits), unsure(loadPolyProto), unsure(comparePrototype));
+        m_out.branch(m_out.isZero64(prototypeBits), unsure(loadPolyProto), unsure(comparePrototype));
 
         m_out.appendTo(loadPolyProto, comparePrototype);
-        LValue index = m_out.bitAnd(prototypeBits, m_out.constInt64(UINT_MAX));
         ValueFromBlock polyProto = m_out.anchor(
-            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), value, index, ScaleEight, JSObject::offsetOfInlineStorage())));
+            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), value, m_out.constInt64(knownPolyProtoOffset), ScaleEight, JSObject::offsetOfInlineStorage())));
         m_out.jump(comparePrototype);
 
         m_out.appendTo(comparePrototype, notYetInstance);

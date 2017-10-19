@@ -139,8 +139,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(m_prototype);
-        ASSERT(m_prototype.isObject() || m_prototype.isNull() || m_prototype.isInt32());
+        ASSERT(m_prototype.get().isEmpty() || m_prototype.isObject() || m_prototype.isNull());
     }
 
     void finishCreation(VM& vm, const Structure* previous)
@@ -264,7 +263,7 @@ public:
 
     ALWAYS_INLINE bool hasMonoProto() const
     {
-        return !m_prototype.get().isInt32();
+        return !m_prototype.get().isEmpty();
     }
     ALWAYS_INLINE bool hasPolyProto() const
     {
@@ -274,11 +273,6 @@ public:
     {
         ASSERT(hasMonoProto());
         return m_prototype.get();
-    }
-    ALWAYS_INLINE PropertyOffset polyProtoOffset() const
-    {
-        ASSERT(hasPolyProto());
-        return m_prototype.get().asInt32();
     }
     JSValue storedPrototype(const JSObject*) const;
     JSObject* storedPrototypeObject(const JSObject*) const;

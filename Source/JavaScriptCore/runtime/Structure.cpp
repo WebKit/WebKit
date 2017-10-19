@@ -308,8 +308,9 @@ Structure* Structure::create(PolyProtoTag, VM& vm, JSGlobalObject* globalObject,
         vm, vm.propertyNames->builtinNames().underscoreProtoPrivateName(), static_cast<unsigned>(PropertyAttribute::DontEnum),
         [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newLastOffset) {
             RELEASE_ASSERT(Structure::outOfLineCapacity(newLastOffset) == oldOutOfLineCapacity);
-            RELEASE_ASSERT(isInlineOffset(offset));
-            result->m_prototype.set(vm, result, jsNumber(offset));
+            RELEASE_ASSERT(offset == knownPolyProtoOffset);
+            RELEASE_ASSERT(isInlineOffset(knownPolyProtoOffset));
+            result->m_prototype.setWithoutWriteBarrier(JSValue());
             result->setLastOffset(newLastOffset);
         });
 
@@ -1172,7 +1173,7 @@ void Structure::dump(PrintStream& out) const
     out.print("}, ", IndexingTypeDump(indexingType()));
     
     if (hasPolyProto())
-        out.print(", PolyProto offset:", polyProtoOffset());
+        out.print(", PolyProto offset:", knownPolyProtoOffset);
     else if (m_prototype.get().isCell())
         out.print(", Proto:", RawPointer(m_prototype.get().asCell()));
 

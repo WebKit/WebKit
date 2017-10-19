@@ -1638,7 +1638,7 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
         Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype, deferred);
         setStructure(vm, newStructure);
     } else
-        putDirect(vm, structure(vm)->polyProtoOffset(), prototype);
+        putDirect(vm, knownPolyProtoOffset, prototype);
 
     if (!anyObjectInChainMayInterceptIndexedAccesses())
         return;

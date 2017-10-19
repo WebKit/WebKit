@@ -249,7 +249,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
         JSObject* result = constructEmptyObject(exec, structure);
         if (structure->hasPolyProto()) {
             JSObject* prototype = jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec);
-            result->putDirect(vm, structure->polyProtoOffset(), prototype);
+            result->putDirect(vm, knownPolyProtoOffset, prototype);
             prototype->didBecomePrototype();
             ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
         }

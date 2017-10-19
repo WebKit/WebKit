@@ -432,13 +432,11 @@ void AccessCase::generateWithGuard(
                         // Transitions must do this because they need to verify there isn't a setter in the chain.
                         // Miss/InMiss need to do this to ensure there isn't a new item at the end of the chain that
                         // has the property.
-                        PropertyOffset polyProtoOffset = structure->polyProtoOffset();
-                        RELEASE_ASSERT(isInlineOffset(polyProtoOffset));
 #if USE(JSVALUE64)
-                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset)), baseForAccessGPR);
+                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
                         fallThrough.append(jit.branch64(CCallHelpers::NotEqual, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
 #else
-                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset) + PayloadOffset), baseForAccessGPR);
+                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
                         fallThrough.append(jit.branchTestPtr(CCallHelpers::NonZero, baseForAccessGPR));
 #endif
                     }
@@ -449,13 +447,11 @@ void AccessCase::generateWithGuard(
                         jit.move(CCallHelpers::TrustedImmPtr(asObject(prototype)), baseForAccessGPR);
                     } else {
                         RELEASE_ASSERT(structure->isObject()); // Primitives must have a stored prototype. We use prototypeForLookup for them.
-                        PropertyOffset polyProtoOffset = structure->polyProtoOffset();
-                        RELEASE_ASSERT(isInlineOffset(polyProtoOffset));
 #if USE(JSVALUE64)
-                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset)), baseForAccessGPR);
+                        jit.load64(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset)), baseForAccessGPR);
                         fallThrough.append(jit.branch64(CCallHelpers::Equal, baseForAccessGPR, CCallHelpers::TrustedImm64(ValueNull)));
 #else
-                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(polyProtoOffset) + PayloadOffset), baseForAccessGPR);
+                        jit.load32(MacroAssembler::Address(baseForAccessGPR, offsetRelativeToBase(knownPolyProtoOffset) + PayloadOffset), baseForAccessGPR);
                         fallThrough.append(jit.branchTestPtr(CCallHelpers::Zero, baseForAccessGPR));
 #endif
                     }

@@ -31,8 +31,10 @@ namespace JSC {
 
 typedef int PropertyOffset;
 
-static const PropertyOffset invalidOffset = -1;
-static const PropertyOffset firstOutOfLineOffset = 100;
+static constexpr PropertyOffset invalidOffset = -1;
+static constexpr PropertyOffset firstOutOfLineOffset = 100;
+static constexpr PropertyOffset knownPolyProtoOffset = 0;
+static_assert(knownPolyProtoOffset < firstOutOfLineOffset, "We assume in all the JITs that the poly proto offset is an inline offset");
 
 // Declare all of the functions because they tend to do forward calls.
 inline void checkOffset(PropertyOffset);

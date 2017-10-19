@@ -168,9 +168,8 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     // Otherwise, check if we've hit null - if we have then drop out of the loop, if not go again.
     emitLoadStructure(*vm(), regT2, regT4, regT3);
     load64(Address(regT4, Structure::prototypeOffset()), regT4);
-    auto hasMonoProto = branchIfNotInt32(JSValueRegs(regT4));
-    zeroExtend32ToPtr(regT4, regT4);
-    load64(BaseIndex(regT2, regT4, TimesEight, JSObject::offsetOfInlineStorage()), regT4);
+    auto hasMonoProto = branchTest64(NonZero, regT4);
+    load64(Address(regT2, offsetRelativeToBase(knownPolyProtoOffset)), regT4);
     hasMonoProto.link(this);
     move(regT4, regT2);
     Jump isInstance = branchPtr(Equal, regT2, regT1);
