@@ -1,5 +1,18 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223297. rdar://problem/34958928
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            One last unreviewed build fix; since the IOSurface APIs don't exist at
+            all on the simulator, just wrap the entirety of the implementation of
+            copyImageToPlatformTexture() in a #if USE(IOSURFACE) check.
+
+            * platform/graphics/cv/VideoTextureCopierCV.cpp:
+            (WebCore::VideoTextureCopierCV::copyImageToPlatformTexture):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223295. rdar://problem/34958928
 
     2017-10-13  Jer Noble  <jer.noble@apple.com>
