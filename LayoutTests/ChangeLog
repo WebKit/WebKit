@@ -1,3 +1,12 @@
+2017-10-19  Matt Lewis  <jlewis3@apple.com>
+
+        Marked http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=178472
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-10-19  Daniel Bates  <dabates@apple.com>
 
         Referrer policy should be inherited from creator
