@@ -134,7 +134,7 @@ public:
 
     HTMLElement* containerElement() const;
     
-    TextControlInnerTextElement* innerTextElement() const final;
+    RefPtr<TextControlInnerTextElement> innerTextElement() const final;
     RenderStyle createInnerTextStyle(const RenderStyle&) const override;
 
     HTMLElement* innerBlockElement() const;

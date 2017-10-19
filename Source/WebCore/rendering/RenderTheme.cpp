@@ -819,7 +819,7 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
     if (!is<Element>(node))
         return false;
 
-    Element* focusDelegate = downcast<Element>(*node).focusDelegate();
+    auto focusDelegate = downcast<Element>(*node).focusDelegate();
     Document& document = focusDelegate->document();
     Frame* frame = document.frame();
     return focusDelegate == document.focusedElement() && frame && frame->selection().isFocusedAndActive();

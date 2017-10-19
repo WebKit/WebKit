@@ -81,7 +81,7 @@ public:
 
     virtual String value() const = 0;
 
-    virtual TextControlInnerTextElement* innerTextElement() const = 0;
+    virtual RefPtr<TextControlInnerTextElement> innerTextElement() const = 0;
     virtual RenderStyle createInnerTextStyle(const RenderStyle&) const = 0;
 
     void selectionChanged(bool shouldFireSelectEvent);

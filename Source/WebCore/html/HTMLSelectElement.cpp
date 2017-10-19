@@ -218,7 +218,7 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
 
 ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element, const std::optional<HTMLElementOrInt>& before)
 {
-    HTMLElement* beforeElement = nullptr;
+    RefPtr<HTMLElement> beforeElement;
     if (before) {
         beforeElement = WTF::switchOn(before.value(),
             [](const RefPtr<HTMLElement>& element) -> HTMLElement* { return element.get(); },
@@ -230,7 +230,7 @@ ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element,
     );
 
 
-    return insertBefore(toInsert, beforeElement);
+    return insertBefore(toInsert, beforeElement.get());
 }
 
 void HTMLSelectElement::remove(int optionIndex)
@@ -767,9 +767,9 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
 
     m_shouldRecalcListItems = false;
 
-    HTMLOptionElement* foundSelected = 0;
-    HTMLOptionElement* firstOption = 0;
-    for (Element* currentElement = ElementTraversal::firstWithin(*this); currentElement; ) {
+    RefPtr<HTMLOptionElement> foundSelected;
+    RefPtr<HTMLOptionElement> firstOption;
+    for (RefPtr<Element> currentElement = ElementTraversal::firstWithin(*this); currentElement; ) {
         if (!is<HTMLElement>(*currentElement)) {
             currentElement = ElementTraversal::nextSkippingChildren(*currentElement, this);
             continue;
@@ -779,7 +779,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // Only consider optgroup elements that are direct children of the select element.
         if (is<HTMLOptGroupElement>(current) && current.parentNode() == this) {
             m_listItems.append(&current);
-            if (Element* nextElement = ElementTraversal::firstWithin(current)) {
+            if (RefPtr<Element> nextElement = ElementTraversal::firstWithin(current)) {
                 currentElement = nextElement;
                 continue;
             }
@@ -858,14 +858,14 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
     auto& items = listItems();
     int listIndex = optionToListIndex(optionIndex);
 
-    HTMLElement* element = nullptr;
+    RefPtr<HTMLElement> element;
     if (listIndex >= 0)
         element = items[listIndex];
 
     if (shouldDeselect)
-        deselectItemsWithoutValidation(element);
+        deselectItemsWithoutValidation(element.get());
 
-    if (is<HTMLOptionElement>(element)) {
+    if (is<HTMLOptionElement>(element.get())) {
         if (m_activeSelectionAnchorIndex < 0 || shouldDeselect)
             setActiveSelectionAnchorIndex(listIndex);
         if (m_activeSelectionEndIndex < 0 || shouldDeselect)
@@ -1053,8 +1053,8 @@ bool HTMLSelectElement::appendFormData(DOMFormData& formData, bool)
 
 void HTMLSelectElement::reset()
 {
-    HTMLOptionElement* firstOption = nullptr;
-    HTMLOptionElement* selectedOption = nullptr;
+    RefPtr<HTMLOptionElement> firstOption;
+    RefPtr<HTMLOptionElement> selectedOption;
 
     for (auto& element : listItems()) {
         if (!is<HTMLOptionElement>(*element))
@@ -1336,7 +1336,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
                 updateSelectedState(listIndex, mouseEvent.ctrlKey(), mouseEvent.shiftKey());
 #endif
             }
-            if (Frame* frame = document().frame())
+            if (RefPtr<Frame> frame = document().frame())
                 frame->eventHandler().setMouseDownMayStartAutoscroll();
 
             mouseEvent.setDefaultHandled();

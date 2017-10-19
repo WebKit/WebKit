@@ -143,13 +143,13 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackIte
             break;
 
         // Quickly reject obviously non-matching candidates.
-        HTMLStackItem* candidate = entry.stackItem();
+        RefPtr<HTMLStackItem> candidate = entry.stackItem();
         if (newItem.localName() != candidate->localName() || newItem.namespaceURI() != candidate->namespaceURI())
             continue;
         if (candidate->attributes().size() != newItemAttributeCount)
             continue;
 
-        candidates.append(candidate);
+        candidates.append(candidate.get());
     }
 
     if (candidates.size() < kNoahsArkCapacity)

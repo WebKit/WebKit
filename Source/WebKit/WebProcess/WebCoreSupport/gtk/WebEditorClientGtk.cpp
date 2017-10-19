@@ -63,7 +63,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (platformEvent->handledByInputMethod())
         return;
 
-    Node* node = event->target()->toNode();
+    auto node = event->target()->toNode();
     ASSERT(node);
     Frame* frame = node->document().frame();
     ASSERT(frame);

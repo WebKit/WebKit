@@ -539,7 +539,7 @@ void HTMLLinkElement::handleClick(Event& event)
     URL url = href();
     if (url.isNull())
         return;
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (!frame)
         return;
     frame->loader().urlSelected(url, target(), &event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());

@@ -224,7 +224,7 @@ bool Element::supportsFocus() const
     return tabIndexSetExplicitly();
 }
 
-Element* Element::focusDelegate()
+RefPtr<Element> Element::focusDelegate()
 {
     return this;
 }
@@ -1862,7 +1862,7 @@ ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
     return nullptr;
 }
 
-ShadowRoot* Element::userAgentShadowRoot() const
+RefPtr<ShadowRoot> Element::userAgentShadowRoot() const
 {
     ASSERT(!shadowRoot() || shadowRoot()->mode() == ShadowRootMode::UserAgent);
     return shadowRoot();
@@ -1870,7 +1870,7 @@ ShadowRoot* Element::userAgentShadowRoot() const
 
 ShadowRoot& Element::ensureUserAgentShadowRoot()
 {
-    if (auto* shadow = userAgentShadowRoot())
+    if (auto shadow = userAgentShadowRoot())
         return *shadow;
     auto newShadow = ShadowRoot::create(document(), ShadowRootMode::UserAgent);
     ShadowRoot& shadow = newShadow;

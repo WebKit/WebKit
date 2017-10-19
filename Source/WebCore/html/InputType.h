@@ -216,7 +216,7 @@ public:
 
     virtual HTMLElement* containerElement() const { return nullptr; }
     virtual HTMLElement* innerBlockElement() const { return nullptr; }
-    virtual TextControlInnerTextElement* innerTextElement() const { return nullptr; }
+    virtual RefPtr<TextControlInnerTextElement> innerTextElement() const;
     virtual HTMLElement* innerSpinButtonElement() const { return nullptr; }
     virtual HTMLElement* capsLockIndicatorElement() const { return nullptr; }
     virtual HTMLElement* autoFillButtonElement() const { return nullptr; }

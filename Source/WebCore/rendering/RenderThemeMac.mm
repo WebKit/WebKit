@@ -1544,7 +1544,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
 
     // Update the various states we respond to.
     updateEnabledState(sliderThumbCell, o);
-        Element* focusDelegate = is<Element>(o.node()) ? downcast<Element>(*o.node()).focusDelegate() : nullptr;
+    auto focusDelegate = is<Element>(o.node()) ? downcast<Element>(*o.node()).focusDelegate() : nullptr;
     if (focusDelegate)
         updateFocusedState(sliderThumbCell, *focusDelegate->renderer());
 

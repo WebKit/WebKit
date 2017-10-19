@@ -363,7 +363,7 @@ bool MediaControls::containsRelatedTarget(Event& event)
     EventTarget* relatedTarget = downcast<MouseEvent>(event).relatedTarget();
     if (!relatedTarget)
         return false;
-    return contains(relatedTarget->toNode());
+    return contains(relatedTarget->toNode().get());
 }
 
 #if ENABLE(VIDEO_TRACK)

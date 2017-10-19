@@ -52,7 +52,7 @@ void WindowEventContext::handleLocalEvents(Event& event) const
 
 static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shadowRoot, EventTarget& target)
 {
-    Node* targetNode = target.toNode();
+    auto targetNode = target.toNode();
 
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     // Video-only full screen is a mode where we use the shadow DOM as an implementation
@@ -159,7 +159,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
 
 void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
 {
-    Node* relatedNode = relatedTarget.toNode();
+    auto relatedNode = relatedTarget.toNode();
     if (!relatedNode || m_path.isEmpty())
         return;
 
@@ -204,7 +204,7 @@ void EventPath::retargetTouch(TouchEventContext::TouchListType touchListType, co
     if (!eventTarget)
         return;
 
-    Node* targetNode = eventTarget->toNode();
+    auto targetNode = eventTarget->toNode();
     if (!targetNode)
         return;
 
@@ -258,7 +258,7 @@ bool EventPath::hasEventListeners(const AtomicString& eventType) const
 Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& target) const
 {
     Vector<EventTarget*> path;
-    auto* targetNode = const_cast<EventTarget&>(target).toNode();
+    auto targetNode = const_cast<EventTarget&>(target).toNode();
     if (!targetNode) {
         auto* domWindow = const_cast<EventTarget&>(target).toDOMWindow();
         if (!domWindow)
@@ -267,7 +267,7 @@ Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& t
         ASSERT(targetNode);
     }
     for (auto& context : m_path) {
-        if (auto* nodeInPath = context->currentTarget()->toNode()) {
+        if (auto nodeInPath = context->currentTarget()->toNode()) {
             if (!targetNode->isClosedShadowHidden(*nodeInPath))
                 path.append(context->currentTarget());
         } else

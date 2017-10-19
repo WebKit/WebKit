@@ -284,7 +284,7 @@ void FileInputType::disabledAttributeChanged()
 {
     ASSERT(element().shadowRoot());
 
-    auto* root = element().userAgentShadowRoot();
+    auto root = element().userAgentShadowRoot();
     if (!root)
         return;
     
@@ -296,7 +296,7 @@ void FileInputType::multipleAttributeChanged()
 {
     ASSERT(element().shadowRoot());
 
-    auto* root = element().userAgentShadowRoot();
+    auto root = element().userAgentShadowRoot();
     if (!root)
         return;
 

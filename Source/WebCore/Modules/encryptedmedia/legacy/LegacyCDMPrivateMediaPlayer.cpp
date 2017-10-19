@@ -56,7 +56,7 @@ bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType)
 
 std::unique_ptr<LegacyCDMSession> CDMPrivateMediaPlayer::createSession(LegacyCDMSessionClient* client)
 {
-    MediaPlayer* mediaPlayer = m_cdm->mediaPlayer();
+    auto mediaPlayer = m_cdm->mediaPlayer();
     if (!mediaPlayer)
         return nullptr;
 

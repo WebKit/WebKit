@@ -306,8 +306,8 @@ id <DOMEventTarget> kit(EventTarget* eventTarget)
     if (!eventTarget)
         return nil;
 
-    if (auto* node = eventTarget->toNode())
-        return kit(node);
+    if (auto node = eventTarget->toNode())
+        return kit(node.get());
 
     // We don't have an ObjC binding for XMLHttpRequest.
 

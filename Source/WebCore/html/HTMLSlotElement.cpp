@@ -99,19 +99,19 @@ static void flattenAssignedNodes(Vector<Node*>& nodes, const HTMLSlotElement& sl
 {
     auto* assignedNodes = slot.assignedNodes();
     if (!assignedNodes) {
-        for (Node* child = slot.firstChild(); child; child = child->nextSibling()) {
+        for (RefPtr<Node> child = slot.firstChild(); child; child = child->nextSibling()) {
             if (is<HTMLSlotElement>(*child))
                 flattenAssignedNodes(nodes, downcast<HTMLSlotElement>(*child));
             else if (is<Text>(*child) || is<Element>(*child))
-                nodes.append(child);
+                nodes.append(child.get());
         }
         return;
     }
-    for (Node* node : *assignedNodes) {
+    for (RefPtr<Node> node : *assignedNodes) {
         if (is<HTMLSlotElement>(*node))
             flattenAssignedNodes(nodes, downcast<HTMLSlotElement>(*node));
         else
-            nodes.append(node);
+            nodes.append(node.get());
     }
 }
 

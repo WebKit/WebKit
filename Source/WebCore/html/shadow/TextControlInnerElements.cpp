@@ -111,7 +111,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event& event)
     // Then we would add one to the text field's inner div, and we wouldn't need this subclass.
     // Or possibly we could just use a normal event listener.
     if (event.isBeforeTextInsertedEvent() || event.type() == eventNames().webkitEditableContentChangedEvent) {
-        Element* shadowAncestor = shadowHost();
+        RefPtr<Element> shadowAncestor = shadowHost();
         // A TextControlInnerTextElement can have no host if its been detached,
         // but kept alive by an EditCommand. In this case, an undo/redo can
         // cause events to be sent to the TextControlInnerTextElement. To
@@ -250,7 +250,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 #if !PLATFORM(IOS)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
-    const HTMLInputElement* input = downcast<HTMLInputElement>(shadowHost());
+    const RefPtr<HTMLInputElement> input = downcast<HTMLInputElement>(shadowHost());
     if (input && !input->isDisabledOrReadOnly())
         return true;
 

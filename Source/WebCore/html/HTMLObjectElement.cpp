@@ -211,7 +211,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
 
 bool HTMLObjectElement::hasFallbackContent() const
 {
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
         // Ignore whitespace-only text, and <param> tags, any other content is fallback content.
         if (is<Text>(*child)) {
             if (!downcast<Text>(*child).containsOnlyWhitespace())

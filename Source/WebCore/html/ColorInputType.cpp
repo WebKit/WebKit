@@ -207,7 +207,7 @@ void ColorInputType::endColorChooser()
 
 void ColorInputType::updateColorSwatch()
 {
-    HTMLElement* colorSwatch = shadowColorSwatch();
+    RefPtr<HTMLElement> colorSwatch = shadowColorSwatch();
     if (!colorSwatch)
         return;
 
@@ -216,7 +216,7 @@ void ColorInputType::updateColorSwatch()
 
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
-    ShadowRoot* shadow = element().userAgentShadowRoot();
+    RefPtr<ShadowRoot> shadow = element().userAgentShadowRoot();
     if (!shadow)
         return nullptr;
 

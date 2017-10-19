@@ -462,7 +462,7 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& 
     }
 #endif
 
-    MediaPlayer* player = element.player();
+    auto player = element.player();
     if (!player)
         return true;
 
@@ -479,7 +479,7 @@ void MediaElementSession::setWirelessVideoPlaybackDisabled(const HTMLMediaElemen
     else
         removeBehaviorRestriction(WirelessVideoPlaybackDisabled);
 
-    MediaPlayer* player = element.player();
+    auto player = element.player();
     if (!player)
         return;
 
@@ -723,7 +723,7 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
     // Elements which are obscured by other elements cannot be main content.
     mainRenderView.hitTest(request, result);
     result.setToNonUserAgentShadowAncestor();
-    Element* hitElement = result.targetElement();
+    RefPtr<Element> hitElement = result.targetElement();
     if (hitElement != &element)
         return false;
 

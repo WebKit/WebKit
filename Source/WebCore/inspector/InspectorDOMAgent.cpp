@@ -2209,11 +2209,11 @@ void InspectorDOMAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
 
 void InspectorDOMAgent::didAddEventListener(EventTarget& target)
 {
-    Node* node = target.toNode();
+    auto node = target.toNode();
     if (!node)
         return;
 
-    int nodeId = boundNodeId(node);
+    int nodeId = boundNodeId(node.get());
     if (!nodeId)
         return;
 
@@ -2222,11 +2222,11 @@ void InspectorDOMAgent::didAddEventListener(EventTarget& target)
 
 void InspectorDOMAgent::willRemoveEventListener(EventTarget& target)
 {
-    Node* node = target.toNode();
+    auto node = target.toNode();
     if (!node)
         return;
 
-    int nodeId = boundNodeId(node);
+    int nodeId = boundNodeId(node.get());
     if (!nodeId)
         return;
 

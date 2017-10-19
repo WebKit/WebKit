@@ -115,7 +115,7 @@ void SpinButtonElement::defaultEventHandler(Event& event)
     else if (mouseEvent.type() == eventNames().mousemoveEvent) {
         if (box->borderBoxRect().contains(local)) {
             if (!m_capturing) {
-                if (Frame* frame = document().frame()) {
+                if (RefPtr<Frame> frame = document().frame()) {
                     frame->eventHandler().setCapturingMouseEventsElement(this);
                     m_capturing = true;
                     if (Page* page = document().page())
@@ -201,7 +201,7 @@ void SpinButtonElement::releaseCapture()
 {
     stopRepeatingTimer();
     if (m_capturing) {
-        if (Frame* frame = document().frame()) {
+        if (RefPtr<Frame> frame = document().frame()) {
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
             m_capturing = false;
             if (Page* page = document().page())

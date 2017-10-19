@@ -120,11 +120,11 @@ void HTMLFormControlElement::setFormAction(const AtomicString& value)
 
 bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 {
-    Element* previousAncestor = nullptr;
-    for (Element* ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
+    RefPtr<Element> previousAncestor;
+    for (RefPtr<Element> ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
         if (is<HTMLFieldSetElement>(*ancestor) && ancestor->hasAttributeWithoutSynchronization(disabledAttr)) {
             HTMLFieldSetElement& fieldSetAncestor = downcast<HTMLFieldSetElement>(*ancestor);
-            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
+            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor.get()) && previousAncestor == fieldSetAncestor.legend();
             return !isInFirstLegend;
         }
         previousAncestor = ancestor;
@@ -448,7 +448,7 @@ void HTMLFormControlElement::setNeedsWillValidateCheck()
 
     if (!m_willValidate && !wasValid) {
         removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
-        if (HTMLFormElement* form = this->form())
+        if (RefPtr<HTMLFormElement> form = this->form())
             form->removeInvalidAssociatedFormControlIfNeeded(*this);
     }
 
@@ -544,7 +544,7 @@ void HTMLFormControlElement::willChangeForm()
 void HTMLFormControlElement::didChangeForm()
 {
     FormAssociatedElement::didChangeForm();
-    if (HTMLFormElement* form = this->form()) {
+    if (RefPtr<HTMLFormElement> form = this->form()) {
         if (m_willValidateInitialized && m_willValidate && !isValidFormControlElement())
             form->registerInvalidAssociatedFormControl(*this);
     }
@@ -606,7 +606,7 @@ bool HTMLFormControlElement::shouldAutocorrect() const
     const AtomicString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
-    if (HTMLFormElement* form = this->form())
+    if (RefPtr<HTMLFormElement> form = this->form())
         return form->shouldAutocorrect();
     return true;
 }
@@ -615,7 +615,7 @@ AutocapitalizeType HTMLFormControlElement::autocapitalizeType() const
 {
     AutocapitalizeType type = HTMLElement::autocapitalizeType();
     if (type == AutocapitalizeTypeDefault) {
-        if (HTMLFormElement* form = this->form())
+        if (RefPtr<HTMLFormElement> form = this->form())
             return form->autocapitalizeType();
     }
     return type;

@@ -57,7 +57,7 @@ Ref<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagNam
 
 static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& startNode, bool isDisabled)
 {
-    HTMLFormControlElement* control;
+    RefPtr<HTMLFormControlElement> control;
     if (is<HTMLFormControlElement>(startNode))
         control = &downcast<HTMLFormControlElement>(startNode);
     else
@@ -96,7 +96,7 @@ void HTMLFieldSetElement::disabledStateChanged()
 
     bool thisFieldsetIsDisabled = hasAttributeWithoutSynchronization(disabledAttr);
     bool hasSeenFirstLegendElement = false;
-    for (HTMLElement* control = Traversal<HTMLElement>::firstChild(*this); control; control = Traversal<HTMLElement>::nextSibling(*control)) {
+    for (RefPtr<HTMLElement> control = Traversal<HTMLElement>::firstChild(*this); control; control = Traversal<HTMLElement>::nextSibling(*control)) {
         if (!hasSeenFirstLegendElement && is<HTMLLegendElement>(*control)) {
             hasSeenFirstLegendElement = true;
             updateFromControlElementsAncestorDisabledStateUnder(*control, false /* isDisabled */);
@@ -112,7 +112,7 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
     if (!hasAttributeWithoutSynchronization(disabledAttr))
         return;
 
-    HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(*this);
+    RefPtr<HTMLLegendElement> legend = Traversal<HTMLLegendElement>::firstChild(*this);
     if (!legend)
         return;
 

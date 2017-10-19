@@ -127,7 +127,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
     frame->view()->flushAnyPendingPostLayoutTasks();
 
     if (RenderWidget* renderer = m_embedElement->renderWidget()) {
-        if (Widget* widget = renderer->widget()) {
+        if (RefPtr<Widget> widget = renderer->widget()) {
             frame->loader().client().redirectDataToPlugin(*widget);
             // In a plugin document, the main resource is the plugin. If we have a null widget, that means
             // the loading of the plugin was cancelled, which gives us a null mainResourceLoader(), so we

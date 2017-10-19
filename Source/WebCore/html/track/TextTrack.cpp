@@ -235,9 +235,9 @@ void TextTrack::setMode(Mode mode)
 
     if (mode != Mode::Showing && m_cues) {
         for (size_t i = 0; i < m_cues->length(); ++i) {
-            TextTrackCue* cue = m_cues->item(i);
+            RefPtr<TextTrackCue> cue = m_cues->item(i);
             if (cue->isRenderable())
-                toVTTCue(cue)->removeDisplayTree();
+                toVTTCue(cue.get())->removeDisplayTree();
         }
     }
 
@@ -486,7 +486,7 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
         ASSERT(searchStart <= m_cues->length());
         ASSERT(searchEnd <= m_cues->length());
         
-        TextTrackCue* existingCue;
+        RefPtr<TextTrackCue> existingCue;
         
         // Cues in the TextTrackCueList are maintained in start time order.
         if (searchStart == searchEnd) {

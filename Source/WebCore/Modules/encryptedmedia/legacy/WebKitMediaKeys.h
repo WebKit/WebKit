@@ -55,7 +55,7 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
 private:
-    MediaPlayer* cdmMediaPlayer(const LegacyCDM*) const final;
+    RefPtr<MediaPlayer> cdmMediaPlayer(const LegacyCDM*) const final;
 
     WebKitMediaKeys(const String& keySystem, std::unique_ptr<LegacyCDM>&&);
 

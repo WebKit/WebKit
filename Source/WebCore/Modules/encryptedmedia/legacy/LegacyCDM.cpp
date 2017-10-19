@@ -134,10 +134,10 @@ std::unique_ptr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClien
     return session;
 }
 
-MediaPlayer* LegacyCDM::mediaPlayer() const
+RefPtr<MediaPlayer> LegacyCDM::mediaPlayer() const
 {
     if (!m_client)
-        return 0;
+        return nullptr;
     return m_client->cdmMediaPlayer(this);
 }
 

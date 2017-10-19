@@ -88,7 +88,7 @@ bool RadioNodeList::checkElementMatchesRadioNodeListFilter(const Element& testEl
 {
     ASSERT(is<HTMLObjectElement>(testElement) || is<HTMLFormControlElement>(testElement));
     if (is<HTMLFormElement>(ownerNode())) {
-        HTMLFormElement* formElement = nullptr;
+        RefPtr<HTMLFormElement> formElement;
         if (testElement.hasTagName(objectTag))
             formElement = downcast<HTMLObjectElement>(testElement).form();
         else

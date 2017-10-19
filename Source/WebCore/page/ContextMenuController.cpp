@@ -150,7 +150,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
         return nullptr;
 
     auto& mouseEvent = downcast<MouseEvent>(event);
-    auto* node = mouseEvent.target()->toNode();
+    auto node = mouseEvent.target()->toNode();
     if (!node)
         return nullptr;
     auto* frame = node->document().frame();

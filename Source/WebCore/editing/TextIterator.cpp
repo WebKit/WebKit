@@ -878,7 +878,7 @@ bool TextIterator::handleReplacedElement()
     }
 
     if ((m_behavior & TextIteratorEntersTextControls) && is<RenderTextControl>(renderer)) {
-        if (TextControlInnerTextElement* innerTextElement = downcast<RenderTextControl>(renderer).textFormControlElement().innerTextElement()) {
+        if (auto innerTextElement = downcast<RenderTextControl>(renderer).textFormControlElement().innerTextElement()) {
             m_node = innerTextElement->containingShadowRoot();
             pushFullyClippedState(m_fullyClippedStack, *m_node);
             m_offset = 0;

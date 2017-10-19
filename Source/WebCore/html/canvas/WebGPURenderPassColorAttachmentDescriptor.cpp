@@ -56,7 +56,7 @@ GPURenderPassColorAttachmentDescriptor* WebGPURenderPassColorAttachmentDescripto
 
 Vector<float> WebGPURenderPassColorAttachmentDescriptor::clearColor() const
 {
-    GPURenderPassColorAttachmentDescriptor* descriptor = renderPassColorAttachmentDescriptor();
+    RefPtr<GPURenderPassColorAttachmentDescriptor> descriptor = renderPassColorAttachmentDescriptor();
     if (!descriptor) {
         Vector<float> black = { 0.0, 0.0, 0.0, 1.0 };
         return black;
@@ -66,7 +66,7 @@ Vector<float> WebGPURenderPassColorAttachmentDescriptor::clearColor() const
 
 void WebGPURenderPassColorAttachmentDescriptor::setClearColor(const Vector<float>& newClearColor)
 {
-    GPURenderPassColorAttachmentDescriptor* descriptor = renderPassColorAttachmentDescriptor();
+    RefPtr<GPURenderPassColorAttachmentDescriptor> descriptor = renderPassColorAttachmentDescriptor();
     if (!descriptor)
         return;
 

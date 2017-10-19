@@ -58,6 +58,7 @@
 #include "SearchInputType.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "TextControlInnerElements.h"
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
@@ -179,7 +180,7 @@ HTMLElement* HTMLInputElement::containerElement() const
     return m_inputType->containerElement();
 }
 
-TextControlInnerTextElement* HTMLInputElement::innerTextElement() const
+RefPtr<TextControlInnerTextElement> HTMLInputElement::innerTextElement() const
 {
     return m_inputType->innerTextElement();
 }
@@ -454,7 +455,7 @@ void HTMLInputElement::endEditing()
     if (!isTextField())
         return;
 
-    if (Frame* frame = document().frame())
+    if (RefPtr<Frame> frame = document().frame())
         frame->editor().textFieldDidEndEditing(this);
 }
 
@@ -1595,11 +1596,11 @@ HTMLDataListElement* HTMLInputElement::dataList() const
     if (!m_inputType->shouldRespectListAttribute())
         return nullptr;
 
-    Element* element = treeScope().getElementById(attributeWithoutSynchronization(listAttr));
-    if (!is<HTMLDataListElement>(element))
+    RefPtr<Element> element = treeScope().getElementById(attributeWithoutSynchronization(listAttr));
+    if (!is<HTMLDataListElement>(element.get())
         return nullptr;
 
-    return downcast<HTMLDataListElement>(element);
+    return downcast<HTMLDataListElement>(element.get());
 }
 
 void HTMLInputElement::resetListAttributeTargetObserver()
@@ -2058,9 +2059,9 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
     parameters.currentValue = value();
     parameters.isAnchorElementRTL = computedStyle()->direction() == RTL;
 #if ENABLE(DATALIST_ELEMENT)
-    if (HTMLDataListElement* dataList = this->dataList()) {
+    if (RefPtr<HTMLDataListElement> dataList = this->dataList()) {
         Ref<HTMLCollection> options = dataList->options();
-        for (unsigned i = 0; HTMLOptionElement* option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
+        for (unsigned i = 0; RefPtr<HTMLOptionElement> option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
             if (!isValidValue(option->value()))
                 continue;
             parameters.suggestionValues.append(sanitizeValue(option->value()));

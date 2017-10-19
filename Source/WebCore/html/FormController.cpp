@@ -303,7 +303,7 @@ static inline void recordFormStructure(const HTMLFormElement& form, StringBuilde
     for (size_t i = 0, namedControls = 0; i < controls.size() && namedControls < namedControlsToBeRecorded; ++i) {
         if (!controls[i]->isFormControlElementWithState())
             continue;
-        HTMLFormControlElementWithState* control = static_cast<HTMLFormControlElementWithState*>(controls[i]);
+        RefPtr<HTMLFormControlElementWithState> control = static_cast<HTMLFormControlElementWithState*>(controls[i]);
         if (!ownerFormForState(*control))
             continue;
         AtomicString name = control->name();
@@ -332,12 +332,12 @@ static inline String formSignature(const HTMLFormElement& form)
 
 AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& control)
 {
-    HTMLFormElement* form = ownerFormForState(control);
+    RefPtr<HTMLFormElement> form = ownerFormForState(control);
     if (!form) {
         static NeverDestroyed<AtomicString> formKeyForNoOwner("No owner", AtomicString::ConstructFromLiteral);
         return formKeyForNoOwner;
     }
-    FormToKeyMap::const_iterator it = m_formToKeyMap.find(form);
+    FormToKeyMap::const_iterator it = m_formToKeyMap.find(form.get());
     if (it != m_formToKeyMap.end())
         return it->value;
 
@@ -351,7 +351,7 @@ AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& co
     builder.appendLiteral(" #");
     builder.appendNumber(nextIndex);
     AtomicString formKey = builder.toAtomicString();
-    m_formToKeyMap.add(form, formKey);
+    m_formToKeyMap.add(form.get(), formKey);
     return formKey;
 }
 
@@ -488,7 +488,7 @@ void FormController::restoreControlStateIn(HTMLFormElement& form)
     for (auto& element : form.associatedElements()) {
         if (!element->isFormControlElementWithState())
             continue;
-        HTMLFormControlElementWithState* control = static_cast<HTMLFormControlElementWithState*>(element);
+        RefPtr<HTMLFormControlElementWithState> control = static_cast<HTMLFormControlElementWithState*>(element);
         if (!control->shouldSaveAndRestoreFormControlState())
             continue;
         if (ownerFormForState(*control) != &form)

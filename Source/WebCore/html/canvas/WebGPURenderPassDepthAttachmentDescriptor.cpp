@@ -51,7 +51,7 @@ WebGPURenderPassDepthAttachmentDescriptor::~WebGPURenderPassDepthAttachmentDescr
 
 double WebGPURenderPassDepthAttachmentDescriptor::clearDepth() const
 {
-    GPURenderPassDepthAttachmentDescriptor* descriptor = renderPassDepthAttachmentDescriptor();
+    RefPtr<GPURenderPassDepthAttachmentDescriptor> descriptor = renderPassDepthAttachmentDescriptor();
     if (!descriptor)
         return 0;
 
@@ -60,7 +60,7 @@ double WebGPURenderPassDepthAttachmentDescriptor::clearDepth() const
 
 void WebGPURenderPassDepthAttachmentDescriptor::setClearDepth(double newClearDepth)
 {
-    GPURenderPassDepthAttachmentDescriptor* descriptor = renderPassDepthAttachmentDescriptor();
+    RefPtr<GPURenderPassDepthAttachmentDescriptor> descriptor = renderPassDepthAttachmentDescriptor();
     if (!descriptor)
         return;
     

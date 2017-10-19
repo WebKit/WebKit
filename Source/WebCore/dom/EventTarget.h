@@ -68,7 +68,7 @@ public:
     virtual EventTargetInterface eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-    virtual Node* toNode();
+    virtual RefPtr<Node> toNode();
     virtual DOMWindow* toDOMWindow();
     virtual bool isMessagePort() const;
 

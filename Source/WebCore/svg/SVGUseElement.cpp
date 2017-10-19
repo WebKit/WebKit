@@ -214,7 +214,7 @@ static inline bool isDisallowedElement(const Element& element)
 
 void SVGUseElement::clearShadowTree()
 {
-    if (auto* root = userAgentShadowRoot())
+    if (auto root = userAgentShadowRoot())
         root->removeChildren();
 }
 
@@ -259,7 +259,7 @@ void SVGUseElement::updateShadowTree()
 
 SVGElement* SVGUseElement::targetClone() const
 {
-    auto* root = userAgentShadowRoot();
+    auto root = userAgentShadowRoot();
     if (!root)
         return nullptr;
     return childrenOfType<SVGElement>(*root).first();

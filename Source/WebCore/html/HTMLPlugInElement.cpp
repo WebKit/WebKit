@@ -98,7 +98,7 @@ void HTMLPlugInElement::willDetachRenderers()
     m_instance = nullptr;
 
     if (m_isCapturingMouseEvents) {
-        if (Frame* frame = document().frame())
+        if (RefPtr<Frame> frame = document().frame())
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
         m_isCapturingMouseEvents = false;
     }
@@ -226,8 +226,8 @@ bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent&) const
     if (!document().page())
         return false;
 
-    Widget* widget = pluginWidget();
-    if (!is<PluginViewBase>(widget))
+    RefPtr<Widget> widget = pluginWidget();
+    if (!is<PluginViewBase>(widget.get()))
         return false;
 
     return downcast<PluginViewBase>(*widget).supportsKeyboardFocus();
@@ -241,8 +241,8 @@ bool HTMLPlugInElement::isPluginElement() const
 bool HTMLPlugInElement::isUserObservable() const
 {
     // No widget - can't be anything to see or hear here.
-    Widget* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
-    if (!is<PluginViewBase>(widget))
+    RefPtr<Widget> widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
+    if (!is<PluginViewBase>(widget.get()))
         return false;
 
     PluginViewBase& pluginView = downcast<PluginViewBase>(*widget);

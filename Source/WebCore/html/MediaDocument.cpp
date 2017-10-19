@@ -123,7 +123,7 @@ void MediaDocumentParser::createDocumentStructure()
 
     body->appendChild(videoElement);
 
-    Frame* frame = document.frame();
+    RefPtr<Frame> frame = document.frame();
     if (!frame)
         return;
 
@@ -185,11 +185,11 @@ void MediaDocument::defaultEventHandler(Event& event)
     
     // Match the default Quicktime plugin behavior to allow
     // clicking and double-clicking to pause and play the media.
-    Node* targetNode = event.target()->toNode();
+    auto targetNode = event.target()->toNode();
     if (!targetNode)
         return;
 
-    if (HTMLVideoElement* video = ancestorVideoElement(targetNode)) {
+    if (RefPtr<HTMLVideoElement> video = ancestorVideoElement(targetNode.get())) {
         if (event.type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
                 video->pause();
@@ -207,7 +207,7 @@ void MediaDocument::defaultEventHandler(Event& event)
         return;
     ContainerNode& targetContainer = downcast<ContainerNode>(*targetNode);
     if (event.type() == eventNames().keydownEvent && is<KeyboardEvent>(event)) {
-        HTMLVideoElement* video = descendantVideoElement(targetContainer);
+        RefPtr<HTMLVideoElement> video = descendantVideoElement(targetContainer);
         if (!video)
             return;
 

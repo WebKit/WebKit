@@ -107,11 +107,10 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
         // the first element in the document to have an ID that equal to
         // the value of form attribute, so we put the result of
         // treeScope().getElementById() over the given element.
-        HTMLFormElement* newForm = nullptr;
-        Element* newFormCandidate = element->treeScope().getElementById(formId);
-        if (is<HTMLFormElement>(newFormCandidate))
-            newForm = downcast<HTMLFormElement>(newFormCandidate);
-        return newForm;
+        RefPtr<Element> newFormCandidate = element->treeScope().getElementById(formId);
+        if (is<HTMLFormElement>(newFormCandidate.get()))
+            return downcast<HTMLFormElement>(newFormCandidate.get());
+        return nullptr;
     }
 
     if (!currentAssociatedForm)
@@ -123,7 +122,7 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
 void FormAssociatedElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
     ASSERT(m_form);
-    Node* rootNode = &asHTMLElement();
+    RefPtr<Node> rootNode = &asHTMLElement();
     for (auto* ancestor = asHTMLElement().parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == m_form) {
             // Form is our ancestor so we don't need to reset our owner, we also no longer
@@ -172,7 +171,7 @@ void FormAssociatedElement::formWillBeDestroyed()
 
 void FormAssociatedElement::resetFormOwner()
 {
-    HTMLFormElement* originalForm = m_form;
+    RefPtr<HTMLFormElement> originalForm = m_form;
     setForm(findAssociatedForm(&asHTMLElement(), m_form));
     HTMLElement& element = asHTMLElement();
     if (m_form && m_form != originalForm && m_form->isConnected())
@@ -184,7 +183,7 @@ void FormAssociatedElement::formAttributeChanged()
     HTMLElement& element = asHTMLElement();
     if (!element.hasAttributeWithoutSynchronization(formAttr)) {
         // The form attribute removed. We need to reset form owner here.
-        HTMLFormElement* originalForm = m_form;
+        RefPtr<HTMLFormElement> originalForm = m_form;
         setForm(HTMLFormElement::findClosestFormAncestor(element));
         if (m_form && m_form != originalForm && m_form->isConnected())
             element.document().didAssociateFormControl(&element);

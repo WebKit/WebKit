@@ -226,17 +226,17 @@ RenderPtr<RenderElement> SliderThumbElement::createElementRenderer(RenderStyle&&
 
 bool SliderThumbElement::isDisabledFormControl() const
 {
-    HTMLInputElement* input = hostInput();
+    auto input = hostInput();
     return !input || input->isDisabledFormControl();
 }
 
 bool SliderThumbElement::matchesReadWritePseudoClass() const
 {
-    HTMLInputElement* input = hostInput();
+    auto input = hostInput();
     return input && input->matchesReadWritePseudoClass();
 }
 
-Element* SliderThumbElement::focusDelegate()
+RefPtr<Element> SliderThumbElement::focusDelegate()
 {
     return hostInput();
 }
@@ -252,7 +252,7 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 {
-    RefPtr<HTMLInputElement> input = hostInput();
+    auto input = hostInput();
     if (!input)
         return;
 
@@ -319,7 +319,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 
 void SliderThumbElement::startDragging()
 {
-    if (Frame* frame = document().frame()) {
+    if (RefPtr<Frame> frame = document().frame()) {
         frame->eventHandler().setCapturingMouseEventsElement(this);
         m_inDragMode = true;
     }
@@ -330,7 +330,7 @@ void SliderThumbElement::stopDragging()
     if (!m_inDragMode)
         return;
 
-    if (Frame* frame = document().frame())
+    if (RefPtr<Frame> frame = document().frame())
         frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     m_inDragMode = false;
     if (renderer())
@@ -347,7 +347,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
 
     // FIXME: Should handle this readonly/disabled check in more general way.
     // Missing this kind of check is likely to occur elsewhere if adding it in each shadow element.
-    HTMLInputElement* input = hostInput();
+    auto input = hostInput();
     if (!input || input->isDisabledFormControl()) {
         HTMLDivElement::defaultEventHandler(event);
         return;
@@ -380,7 +380,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
 #if !PLATFORM(IOS)
 bool SliderThumbElement::willRespondToMouseMoveEvents()
 {
-    const HTMLInputElement* input = hostInput();
+    const auto input = hostInput();
     if (input && !input->isDisabledFormControl() && m_inDragMode)
         return true;
 
@@ -389,7 +389,7 @@ bool SliderThumbElement::willRespondToMouseMoveEvents()
 
 bool SliderThumbElement::willRespondToMouseClickEvents()
 {
-    const HTMLInputElement* input = hostInput();
+    const auto input = hostInput();
     if (input && !input->isDisabledFormControl())
         return true;
 
@@ -400,7 +400,7 @@ bool SliderThumbElement::willRespondToMouseClickEvents()
 void SliderThumbElement::willDetachRenderers()
 {
     if (m_inDragMode) {
-        if (Frame* frame = document().frame())
+        if (RefPtr<Frame> frame = document().frame())
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     }
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -429,23 +429,23 @@ static Touch* findTouchWithIdentifier(TouchList& list, unsigned identifier)
 {
     unsigned length = list.length();
     for (unsigned i = 0; i < length; ++i) {
-        Touch* touch = list.item(i);
+        RefPtr<Touch> touch = list.item(i);
         if (touch->identifier() == identifier)
-            return touch;
+            return touch.get();
     }
     return nullptr;
 }
 
 void SliderThumbElement::handleTouchStart(TouchEvent& touchEvent)
 {
-    TouchList* targetTouches = touchEvent.targetTouches();
+    RefPtr<TouchList> targetTouches = touchEvent.targetTouches();
     if (!targetTouches)
         return;
 
     if (targetTouches->length() != 1)
         return;
 
-    Touch* touch = targetTouches->item(0);
+    RefPtr<Touch> touch = targetTouches->item(0);
     if (!renderer())
         return;
     IntRect boundingBox = renderer()->absoluteBoundingBoxRect();
@@ -465,11 +465,11 @@ void SliderThumbElement::handleTouchMove(TouchEvent& touchEvent)
     if (identifier == NoIdentifier)
         return;
 
-    TouchList* targetTouches = touchEvent.targetTouches();
+    RefPtr<TouchList> targetTouches = touchEvent.targetTouches();
     if (!targetTouches)
         return;
 
-    Touch* touch = findTouchWithIdentifier(*targetTouches, identifier);
+    RefPtr<Touch> touch = findTouchWithIdentifier(*targetTouches, identifier);
     if (!touch)
         return;
 
@@ -484,18 +484,18 @@ void SliderThumbElement::handleTouchEndAndCancel(TouchEvent& touchEvent)
     if (identifier == NoIdentifier)
         return;
 
-    TouchList* targetTouches = touchEvent.targetTouches();
+    RefPtr<TouchList> targetTouches = touchEvent.targetTouches();
     if (!targetTouches)
         return;
     // If our exclusive touch still exists, it was not the touch
     // that ended, so we should not stop dragging.
-    Touch* exclusiveTouch = findTouchWithIdentifier(*targetTouches, identifier);
+    RefPtr<Touch> exclusiveTouch = findTouchWithIdentifier(*targetTouches, identifier);
     if (exclusiveTouch)
         return;
 
     clearExclusiveTouchIdentifier();
 
-    RefPtr<HTMLInputElement> input = hostInput();
+    auto input = hostInput();
     if (input)
         input->dispatchFormControlChangeEvent();
     stopDragging();
@@ -509,7 +509,7 @@ void SliderThumbElement::didAttachRenderers()
 
 void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
 {
-    HTMLInputElement* input = hostInput();
+    auto input = hostInput();
     ASSERT(input);
     if (input->isReadOnly() || input->isDisabledFormControl()) {
         clearExclusiveTouchIdentifier();
@@ -578,7 +578,7 @@ void SliderThumbElement::disabledAttributeChanged()
 #endif
 }
 
-HTMLInputElement* SliderThumbElement::hostInput() const
+RefPtr<HTMLInputElement> SliderThumbElement::hostInput() const
 {
     // Only HTMLInputElement creates SliderThumbElement instances as its shadow nodes.
     // So, shadowHost() must be an HTMLInputElement.

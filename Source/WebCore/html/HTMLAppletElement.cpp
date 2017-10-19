@@ -171,7 +171,7 @@ void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)
         paramValues.append(param.value());
     }
 
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     ASSERT(frame);
 
     renderer->setWidget(frame->loader().subframeLoader().createJavaAppletWidget(roundedIntSize(LayoutSize(contentWidth, contentHeight)), *this, paramNames, paramValues));

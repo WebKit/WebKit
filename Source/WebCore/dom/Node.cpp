@@ -356,7 +356,7 @@ void Node::clearRareData()
     clearFlag(HasRareDataFlag);
 }
 
-Node* Node::toNode()
+RefPtr<Node> Node::toNode()
 {
     return this;
 }

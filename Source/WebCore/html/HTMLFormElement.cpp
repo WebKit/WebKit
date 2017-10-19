@@ -140,7 +140,7 @@ void HTMLFormElement::removedFrom(ContainerNode& insertionPoint)
 
 void HTMLFormElement::handleLocalEvents(Event& event)
 {
-    Node* targetNode = event.target()->toNode();
+    auto targetNode = event.target()->toNode();
     if (event.eventPhase() != Event::CAPTURING_PHASE && targetNode && targetNode != this && (event.type() == eventNames().submitEvent || event.type() == eventNames().resetEvent)) {
         event.stopPropagation();
         return;
@@ -206,11 +206,11 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
         prepareForSubmission(event);
 }
 
-static inline HTMLFormControlElement* submitElementFromEvent(const Event& event)
+static inline RefPtr<HTMLFormControlElement> submitElementFromEvent(const Event& event)
 {
-    for (Node* node = event.target()->toNode(); node; node = node->parentNode()) {
+    for (RefPtr<Node> node = event.target()->toNode(); node; node = node->parentNode()) {
         if (is<HTMLFormControlElement>(*node))
-            return downcast<HTMLFormControlElement>(node);
+            return downcast<HTMLFormControlElement>(node.get());
     }
     return nullptr;
 }
@@ -260,7 +260,7 @@ void HTMLFormElement::prepareForSubmission(Event& event)
     if (!isConnected())
         return;
 
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (m_isSubmittingOrPreparingForSubmission || !frame)
         return;
 
@@ -269,7 +269,7 @@ void HTMLFormElement::prepareForSubmission(Event& event)
 
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
 
-    HTMLFormControlElement* submitElement = submitElementFromEvent(event);
+    auto submitElement = submitElementFromEvent(event);
     if (submitElement && submitElement->formNoValidate())
         shouldValidate = false;
 
@@ -322,8 +322,8 @@ StringPairVector HTMLFormElement::textFieldValues() const
 
 void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger formSubmissionTrigger)
 {
-    FrameView* view = document().view();
-    Frame* frame = document().frame();
+    RefPtr<FrameView> view = document().view();
+    RefPtr<Frame> frame = document().frame();
     if (!view || !frame)
         return;
 
@@ -367,7 +367,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
 
 void HTMLFormElement::reset()
 {
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (m_isInResetFunction || !frame)
         return;
 
@@ -406,7 +406,7 @@ bool HTMLFormElement::shouldAutocorrect() const
     const AtomicString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
         return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
-    if (HTMLFormElement* form = this->form())
+    if (RefPtr<HTMLFormElement> form = this->form())
         return form->shouldAutocorrect();
     return true;
 }
@@ -419,7 +419,7 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicStri
         m_attributes.parseAction(value);
         
         if (!m_attributes.action().isEmpty()) {
-            if (Frame* f = document().frame()) {
+            if (RefPtr<Frame> f = document().frame()) {
                 Frame& topFrame = f->tree().top();
                 topFrame.loader().mixedContentChecker().checkFormForMixedContent(topFrame.document()->securityOrigin(), document().completeURL(m_attributes.action()));
             }
@@ -672,7 +672,7 @@ void HTMLFormElement::resetDefaultButton()
         return;
     }
 
-    HTMLFormControlElement* oldDefault = m_defaultButton;
+    RefPtr<HTMLFormControlElement> oldDefault = m_defaultButton;
     m_defaultButton = nullptr;
     defaultButton();
     if (m_defaultButton != oldDefault) {
@@ -735,7 +735,7 @@ inline void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem*) const
 }
 #endif
 
-HTMLElement* HTMLFormElement::elementFromPastNamesMap(const AtomicString& pastName) const
+RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomicString& pastName) const
 {
     if (pastName.isEmpty() || !m_pastNamesMap)
         return nullptr;
@@ -784,7 +784,7 @@ Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomicString& name)
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-nameditem
     Vector<Ref<Element>> namedItems = elements()->namedItems(name);
 
-    HTMLElement* elementFromPast = elementFromPastNamesMap(name);
+    auto elementFromPast = elementFromPastNamesMap(name);
     if (namedItems.size() == 1 && namedItems.first().ptr() != elementFromPast)
         addToPastNamesMap(downcast<HTMLElement>(namedItems.first().get()).asFormNamedItem(), name);
     else if (elementFromPast && namedItems.isEmpty())

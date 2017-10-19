@@ -144,7 +144,7 @@ static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask&
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::InsertAlreadyParsedChild);
 
-    if (ContainerNode* parent = task.child->parentNode())
+    if (RefPtr<ContainerNode> parent = task.child->parentNode())
         parent->parserRemoveChild(*task.child);
 
     if (task.child->parentNode())
@@ -588,8 +588,8 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     // FIXME: Splitting text nodes into smaller chunks contradicts HTML5 spec, but is currently necessary
     // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
 
-    Node* previousChild = task.nextChild ? task.nextChild->previousSibling() : task.parent->lastChild();
-    if (is<Text>(previousChild)) {
+    RefPtr<Node> previousChild = task.nextChild ? task.nextChild->previousSibling() : task.parent->lastChild();
+    if (is<Text>(previousChild.get())) {
         // FIXME: We're only supposed to append to this text node if it
         // was the last text node inserted by the parser.
         currentPosition = downcast<Text>(*previousChild).parserAppendData(characters, 0, lengthLimit);

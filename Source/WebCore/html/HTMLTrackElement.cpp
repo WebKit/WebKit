@@ -211,7 +211,7 @@ void HTMLTrackElement::loadTimerFired()
 
 bool HTMLTrackElement::canLoadURL(const URL& url)
 {
-    HTMLMediaElement* parent = mediaElement();
+    auto parent = mediaElement();
     if (!parent)
         return false;
 
@@ -270,7 +270,7 @@ COMPILE_ASSERT(HTMLTrackElement::TRACK_ERROR == static_cast<HTMLTrackElement::Re
 void HTMLTrackElement::setReadyState(ReadyState state)
 {
     track().setReadinessState(static_cast<TextTrack::ReadinessState>(state));
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto parent = mediaElement())
         parent->textTrackReadyStateChanged(m_track.get());
 }
 
@@ -281,14 +281,14 @@ HTMLTrackElement::ReadyState HTMLTrackElement::readyState()
 
 const AtomicString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
 {
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto parent = mediaElement())
         return parent->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     return nullAtom();
 }
 
 void HTMLTrackElement::textTrackKindChanged(TextTrack& track)
 {
-    if (auto* parent = mediaElement())
+    if (auto parent = mediaElement())
         parent->textTrackKindChanged(track);
 }
 
@@ -298,35 +298,35 @@ void HTMLTrackElement::textTrackModeChanged(TextTrack& track)
     if (readyState() == HTMLTrackElement::NONE)
         scheduleLoad();
 
-    if (auto* parent = mediaElement())
+    if (auto parent = mediaElement())
         parent->textTrackModeChanged(track);
 }
 
 void HTMLTrackElement::textTrackAddCues(TextTrack& track, const TextTrackCueList& cues)
 {
-    if (auto* parent = mediaElement())
+    if (auto parent = mediaElement())
         parent->textTrackAddCues(track, cues);
 }
     
 void HTMLTrackElement::textTrackRemoveCues(TextTrack& track, const TextTrackCueList& cues)
 {
-    if (auto* parent = mediaElement())
+    if (auto parent = mediaElement())
         parent->textTrackRemoveCues(track, cues);
 }
     
 void HTMLTrackElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
 {
-    if (auto* parent = mediaElement())
+    if (auto parent = mediaElement())
         parent->textTrackAddCue(track, cue);
 }
     
 void HTMLTrackElement::textTrackRemoveCue(TextTrack& track, TextTrackCue& cue)
 {
-    if (auto* parent = mediaElement())
+    if (auto parent = mediaElement())
         parent->textTrackRemoveCue(track, cue);
 }
 
-HTMLMediaElement* HTMLTrackElement::mediaElement() const
+RefPtr<HTMLMediaElement> HTMLTrackElement::mediaElement() const
 {
     auto* parent = parentElement();
     if (!is<HTMLMediaElement>(parent))

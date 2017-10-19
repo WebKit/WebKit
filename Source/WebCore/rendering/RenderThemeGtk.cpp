@@ -1871,7 +1871,7 @@ static FloatRoundedRect::Radii borderRadiiFromStyle(const RenderStyle& style)
 
 bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = parentMediaElement(o);
+    auto mediaElement = parentMediaElement(o);
     if (!mediaElement)
         return true;
 
@@ -1911,7 +1911,7 @@ bool RenderThemeGtk::paintMediaSliderThumb(const RenderObject& o, const PaintInf
 
 bool RenderThemeGtk::paintMediaVolumeSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = parentMediaElement(renderObject);
+    auto mediaElement = parentMediaElement(renderObject);
     if (!mediaElement)
         return true;
 

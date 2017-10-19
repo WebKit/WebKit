@@ -68,6 +68,7 @@
 #include "ShadowRoot.h"
 #include "SubmitInputType.h"
 #include "TelephoneInputType.h"
+#include "TextControlInnerElements.h"
 #include "TextInputType.h"
 #include "TimeInputType.h"
 #include "URLInputType.h"
@@ -495,7 +496,7 @@ void InputType::createShadowSubtree()
 
 void InputType::destroyShadowSubtree()
 {
-    ShadowRoot* root = element().userAgentShadowRoot();
+    RefPtr<ShadowRoot> root = element().userAgentShadowRoot();
     if (!root)
         return;
 
@@ -1145,6 +1146,11 @@ Color InputType::valueAsColor() const
 
 void InputType::selectColor(const Color&)
 {
+}
+
+RefPtr<TextControlInnerTextElement> InputType::innerTextElement() const
+{
+    return nullptr;
 }
 
 } // namespace WebCore

@@ -57,7 +57,7 @@ void HTMLFrameOwnerElement::setContentFrame(Frame* frame)
     ASSERT(isConnected());
     m_contentFrame = frame;
 
-    for (ContainerNode* node = this; node; node = node->parentOrShadowHostNode())
+    for (RefPtr<ContainerNode> node = this; node; node = node->parentOrShadowHostNode())
         node->incrementConnectedSubframeCount();
 }
 
@@ -68,7 +68,7 @@ void HTMLFrameOwnerElement::clearContentFrame()
 
     m_contentFrame = 0;
 
-    for (ContainerNode* node = this; node; node = node->parentOrShadowHostNode())
+    for (RefPtr<ContainerNode> node = this; node; node = node->parentOrShadowHostNode())
         node->decrementConnectedSubframeCount();
 }
 
@@ -78,7 +78,7 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
     // unload event in the subframe which could execute script that could then
     // reach up into this document and then attempt to look back down. We should
     // see if this behavior is really needed as Gecko does not allow this.
-    if (Frame* frame = contentFrame()) {
+    if (RefPtr<Frame> frame = contentFrame()) {
         Ref<Frame> protect(*frame);
         frame->loader().frameDetached();
         frame->disconnectOwnerElement();
@@ -133,8 +133,8 @@ void HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition()
 
 bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement& owner)
 {
-    for (ContainerNode* node = &owner; node; node = node->parentOrShadowHostNode()) {
-        if (disabledSubtreeRoots().contains(node))
+    for (RefPtr<ContainerNode> node = &owner; node; node = node->parentOrShadowHostNode()) {
+        if (disabledSubtreeRoots().contains(node.get()))
             return false;
     }
     return true;

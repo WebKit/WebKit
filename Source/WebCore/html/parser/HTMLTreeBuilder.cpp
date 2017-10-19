@@ -685,7 +685,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken&& token)
         return;
     }
     if (token.name() == aTag) {
-        Element* activeATag = m_tree.activeFormattingElements().closestElementInScopeWithName(aTag.localName());
+        RefPtr<Element> activeATag = m_tree.activeFormattingElements().closestElementInScopeWithName(aTag.localName());
         if (activeATag) {
             parseError(token);
             processFakeEndTag(aTag);
@@ -1425,7 +1425,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
     // 1, 2, 3 and 16 are covered by the for() loop.
     for (int i = 0; i < outerIterationLimit; ++i) {
         // 4.
-        Element* formattingElement = m_tree.activeFormattingElements().closestElementInScopeWithName(token.name());
+        RefPtr<Element> formattingElement = m_tree.activeFormattingElements().closestElementInScopeWithName(token.name());
         // 4.a
         if (!formattingElement)
             return processAnyOtherEndTagForInBody(WTFMove(token));
@@ -1511,7 +1511,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#reset-the-insertion-mode-appropriately
     bool last = false;
     for (auto* record = &m_tree.openElements().topRecord(); ; record = record->next()) {
-        HTMLStackItem* item = &record->stackItem();
+        RefPtr<HTMLStackItem> item = &record->stackItem();
         if (&item->node() == &m_tree.openElements().rootNode()) {
             last = true;
             bool shouldCreateItem = isParsingFragment();

@@ -223,7 +223,7 @@ int MouseEvent::which() const
     return m_button + 1;
 }
 
-Node* MouseEvent::toElement() const
+RefPtr<Node> MouseEvent::toElement() const
 {
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
     if (type() == eventNames().mouseoutEvent || type() == eventNames().mouseleaveEvent) {
@@ -234,7 +234,7 @@ Node* MouseEvent::toElement() const
     return target() ? target()->toNode() : nullptr;
 }
 
-Node* MouseEvent::fromElement() const
+RefPtr<Node> MouseEvent::fromElement() const
 {
     // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
     if (type() != eventNames().mouseoutEvent && type() != eventNames().mouseleaveEvent) {

@@ -46,7 +46,7 @@ protected:
     RenderTextControl(HTMLTextFormControlElement&, RenderStyle&&);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
-    TextControlInnerTextElement* innerTextElement() const;
+    RefPtr<TextControlInnerTextElement> innerTextElement() const;
 
     int scrollbarThickness() const;
 

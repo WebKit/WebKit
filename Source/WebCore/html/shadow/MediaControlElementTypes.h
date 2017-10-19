@@ -72,8 +72,8 @@ enum MediaControlElementType {
     MediaClosedCaptionsTrackList,
 };
 
-HTMLMediaElement* parentMediaElement(Node*);
-inline HTMLMediaElement* parentMediaElement(const RenderObject& renderer) { return parentMediaElement(renderer.node()); }
+RefPtr<HTMLMediaElement> parentMediaElement(Node*);
+inline RefPtr<HTMLMediaElement> parentMediaElement(const RenderObject& renderer) { return parentMediaElement(renderer.node()); }
 
 MediaControlElementType mediaControlElementType(Node*);
 

@@ -46,16 +46,16 @@ using namespace HTMLNames;
 
 class Event;
 
-HTMLMediaElement* parentMediaElement(Node* node)
+RefPtr<HTMLMediaElement> parentMediaElement(Node* node)
 {
     if (!node)
         return nullptr;
-    Node* mediaNode = node->shadowHost();
+    RefPtr<Node> mediaNode = node->shadowHost();
     if (!mediaNode)
         mediaNode = node;
     if (!is<HTMLMediaElement>(*mediaNode))
         return nullptr;
-    return downcast<HTMLMediaElement>(mediaNode);
+    return downcast<HTMLMediaElement>(mediaNode.get());
 }
 
 MediaControlElementType mediaControlElementType(Node* node)

@@ -287,7 +287,7 @@ void HTMLTextAreaElement::subtreeHasChanged()
     if (!focused())
         return;
 
-    if (Frame* frame = document().frame())
+    if (RefPtr<Frame> frame = document().frame())
         frame->editor().textDidChangeInTextArea(this);
     // When typing in a textarea, childrenChanged is not called, so we need to force the directionality check.
     calculateAndAdjustDirectionality();
@@ -325,9 +325,9 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
     return proposedValue.left(numCharactersInGraphemeClusters(proposedValue, maxLength));
 }
 
-TextControlInnerTextElement* HTMLTextAreaElement::innerTextElement() const
+RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() const
 {
-    ShadowRoot* root = userAgentShadowRoot();
+    RefPtr<ShadowRoot> root = userAgentShadowRoot();
     if (!root)
         return nullptr;
     

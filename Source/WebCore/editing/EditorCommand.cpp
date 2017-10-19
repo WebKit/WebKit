@@ -89,7 +89,7 @@ static Frame* targetFrame(Frame& frame, Event* event)
 {
     if (!event)
         return &frame;
-    Node* node = event->target()->toNode();
+    auto node = event->target()->toNode();
     if (!node)
         return &frame;
     return node->document().frame();

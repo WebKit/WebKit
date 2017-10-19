@@ -167,7 +167,7 @@ RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(RenderStyle&
     return createRenderer<RenderFrameSet>(*this, WTFMove(style));
 }
 
-HTMLFrameSetElement* HTMLFrameSetElement::findContaining(Element* descendant)
+RefPtr<HTMLFrameSetElement> HTMLFrameSetElement::findContaining(Element* descendant)
 {
     return ancestorsOfType<HTMLFrameSetElement>(*descendant).first();
 }
@@ -176,7 +176,7 @@ void HTMLFrameSetElement::willAttachRenderers()
 {
     // Inherit default settings from parent frameset.
     // FIXME: This is not dynamic.
-    const HTMLFrameSetElement* containingFrameSet = findContaining(this);
+    const auto containingFrameSet = findContaining(this);
     if (!containingFrameSet)
         return;
     if (!m_frameborderSet)
@@ -212,7 +212,7 @@ Node::InsertedIntoResult HTMLFrameSetElement::insertedInto(InsertionType inserti
 {
     HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
-        if (Frame* frame = document().frame())
+        if (RefPtr<Frame> frame = document().frame())
             frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
     }
 
@@ -223,7 +223,7 @@ void HTMLFrameSetElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint.isConnected()) {
-        if (Frame* frame = document().frame())
+        if (RefPtr<Frame> frame = document().frame())
             frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
     }
 }

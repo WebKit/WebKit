@@ -52,7 +52,7 @@
 namespace WebCore {
 using namespace WTF;
 
-Node* EventTarget::toNode()
+RefPtr<Node> EventTarget::toNode()
 {
     return nullptr;
 }
@@ -74,7 +74,7 @@ bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListe
     if (!passive.has_value() && eventNames().isTouchScrollBlockingEventType(eventType)) {
         if (toDOMWindow())
             passive = true;
-        else if (auto* node = toNode()) {
+        else if (auto node = toNode()) {
             if (node->isDocumentNode() || node->document().documentElement() == node || node->document().body() == node)
                 passive = true;
         }

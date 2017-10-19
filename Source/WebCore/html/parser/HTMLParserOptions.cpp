@@ -45,7 +45,7 @@ HTMLParserOptions::HTMLParserOptions()
 
 HTMLParserOptions::HTMLParserOptions(Document& document)
 {
-    Frame* frame = document.frame();
+    RefPtr<Frame> frame = document.frame();
     scriptEnabled = frame && frame->script().canExecuteScripts(NotAboutToExecuteScript);
     pluginsEnabled = frame && frame->loader().subframeLoader().allowPlugins();
 

@@ -245,10 +245,10 @@ int HTMLBodyElement::scrollLeft()
 {
     if (isFirstBodyElementOfDocument()) {
         document().updateLayoutIgnorePendingStylesheets();
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return 0;
-        FrameView* view = frame->view();
+        RefPtr<FrameView> view = frame->view();
         if (!view)
             return 0;
         return adjustForZoom(view->contentsScrollPosition().x(), *frame);
@@ -260,10 +260,10 @@ void HTMLBodyElement::setScrollLeft(int scrollLeft)
 {
     if (isFirstBodyElementOfDocument()) {
         document().updateLayoutIgnorePendingStylesheets();
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return;
-        FrameView* view = frame->view();
+        RefPtr<FrameView> view = frame->view();
         if (!view)
             return;
         view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), view->scrollY()));
@@ -275,10 +275,10 @@ int HTMLBodyElement::scrollTop()
 {
     if (isFirstBodyElementOfDocument()) {
         document().updateLayoutIgnorePendingStylesheets();
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return 0;
-        FrameView* view = frame->view();
+        RefPtr<FrameView> view = frame->view();
         if (!view)
             return 0;
         return adjustForZoom(view->contentsScrollPosition().y(), *frame);
@@ -290,10 +290,10 @@ void HTMLBodyElement::setScrollTop(int scrollTop)
 {
     if (isFirstBodyElementOfDocument()) {
         document().updateLayoutIgnorePendingStylesheets();
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return;
-        FrameView* view = frame->view();
+        RefPtr<FrameView> view = frame->view();
         if (!view)
             return;
         view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->frameScaleFactor())));
@@ -323,10 +323,10 @@ int HTMLBodyElement::scrollHeight()
     if (isFirstBodyElementOfDocument()) {
         // Update the document's layout.
         document().updateLayoutIgnorePendingStylesheets();
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return 0;
-        FrameView* view = frame->view();
+        RefPtr<FrameView> view = frame->view();
         if (!view)
             return 0;
         return adjustForZoom(view->contentsHeight(), *frame);
@@ -339,10 +339,10 @@ int HTMLBodyElement::scrollWidth()
     if (isFirstBodyElementOfDocument()) {
         // Update the document's layout.
         document().updateLayoutIgnorePendingStylesheets();
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return 0;
-        FrameView* view = frame->view();
+        RefPtr<FrameView> view = frame->view();
         if (!view)
             return 0;
         return adjustForZoom(view->contentsWidth(), *frame);

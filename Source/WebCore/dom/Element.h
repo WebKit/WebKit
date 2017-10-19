@@ -275,7 +275,7 @@ public:
     };
     ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
 
-    ShadowRoot* userAgentShadowRoot() const;
+    RefPtr<ShadowRoot> userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
 
     void setIsDefinedCustomElement(JSCustomElementInterface&);
@@ -308,7 +308,7 @@ public:
 
     virtual int tabIndex() const;
     WEBCORE_EXPORT void setTabIndex(int);
-    virtual Element* focusDelegate();
+    virtual RefPtr<Element> focusDelegate();
 
     WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html);

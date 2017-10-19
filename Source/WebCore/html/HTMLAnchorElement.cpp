@@ -145,7 +145,7 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
     auto& mouseEvent = downcast<MouseEvent>(event);
 
     ASSERT(mouseEvent.target());
-    auto* target = mouseEvent.target()->toNode();
+    auto target = mouseEvent.target()->toNode();
     ASSERT(target);
     if (!is<HTMLImageElement>(*target))
         return;
@@ -366,7 +366,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 {
     event.setDefaultHandled();
 
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (!frame)
         return;
 

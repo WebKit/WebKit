@@ -80,7 +80,7 @@ Node::InsertedIntoResult HTMLSourceElement::insertedInto(InsertionType insertion
 
 void HTMLSourceElement::removedFrom(ContainerNode& removalRoot)
 {
-    Element* parent = parentElement();
+    RefPtr<Element> parent = parentElement();
     if (!parent && is<Element>(removalRoot))
         parent = &downcast<Element>(removalRoot);
     if (parent) {

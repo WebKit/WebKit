@@ -109,7 +109,7 @@ RefPtr<ImageControlsButtonElementMac> ImageControlsButtonElementMac::tryCreate(D
 void ImageControlsButtonElementMac::defaultEventHandler(Event& event)
 {
     if (event.type() == eventNames().clickEvent) {
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return;
 

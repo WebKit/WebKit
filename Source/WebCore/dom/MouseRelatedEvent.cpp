@@ -146,7 +146,7 @@ void MouseRelatedEvent::receivedTarget()
 
 void MouseRelatedEvent::computeRelativePosition()
 {
-    RefPtr<Node> targetNode = target() ? target()->toNode() : nullptr;
+    auto targetNode = target() ? target()->toNode() : nullptr;
     if (!targetNode)
         return;
 

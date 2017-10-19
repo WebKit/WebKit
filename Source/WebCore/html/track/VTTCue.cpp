@@ -498,7 +498,7 @@ void VTTCue::createWebVTTNodeTree()
 
 void VTTCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* parent)
 {
-    for (Node* node = webVTTNode->firstChild(); node; node = node->nextSibling()) {
+    for (RefPtr<Node> node = webVTTNode->firstChild(); node; node = node->nextSibling()) {
         RefPtr<Node> clonedNode;
         if (is<WebVTTElement>(*node))
             clonedNode = downcast<WebVTTElement>(*node).createEquivalentHTMLElement(ownerDocument());
@@ -506,7 +506,7 @@ void VTTCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* p
             clonedNode = node->cloneNode(false);
         parent->appendChild(*clonedNode);
         if (is<ContainerNode>(*node))
-            copyWebVTTNodeToDOMTree(downcast<ContainerNode>(node), downcast<ContainerNode>(clonedNode.get()));
+            copyWebVTTNodeToDOMTree(downcast<ContainerNode>(node.get()), downcast<ContainerNode>(clonedNode.get()));
     }
 }
 
@@ -618,7 +618,7 @@ void VTTCue::determineTextDirection()
     // pre-order, depth-first traversal, excluding WebVTT Ruby Text Objects and
     // their descendants.
     StringBuilder paragraphBuilder;
-    for (Node* node = m_webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(*node, m_webVTTNodeTree.get())) {
+    for (RefPtr<Node> node = m_webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(*node, m_webVTTNodeTree.get())) {
         // FIXME: The code does not match the comment above. This does not actually exclude Ruby Text Object descendant.
         if (!node->isTextNode() || node->localName() == rtTag)
             continue;
@@ -759,7 +759,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
     if (currentTimestamp > movieTime)
         isPastNode = false;
     
-    for (Node* child = root->firstChild(); child; child = NodeTraversal::next(*child, root)) {
+    for (RefPtr<Node> child = root->firstChild(); child; child = NodeTraversal::next(*child, root)) {
         if (child->nodeName() == timestampTag) {
             MediaTime currentTimestamp;
             bool check = WebVTTParser::collectTimeStamp(child->nodeValue(), currentTimestamp);
@@ -850,9 +850,10 @@ void VTTCue::removeDisplayTree()
     // The region needs to be informed about the cue removal.
     if (m_notifyRegion && track()) {
         if (VTTRegionList* regions = track()->regions()) {
-            if (VTTRegion* region = regions->getRegionById(m_regionId))
+            if (RefPtr<VTTRegion> region = regions->getRegionById(m_regionId)) {
                 if (hasDisplayTree())
                     region->willRemoveTextTrackCueBox(m_displayTree.get());
+            }
         }
     }
 
@@ -1116,7 +1117,7 @@ std::pair<double, double> VTTCue::getCSSPosition() const
 
 bool VTTCue::cueContentsMatch(const TextTrackCue& cue) const
 {
-    const VTTCue* vttCue = toVTTCue(&cue);
+    RefPtr<const VTTCue> vttCue = toVTTCue(&cue);
     if (text() != vttCue->text())
         return false;
     if (cueSettings() != vttCue->cueSettings())

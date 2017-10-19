@@ -223,7 +223,7 @@ bool MediaControlsHost::shouldForceControlsDisplay() const
 String MediaControlsHost::externalDeviceDisplayName() const
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    MediaPlayer* player = m_mediaElement->player();
+    auto player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceDisplayName - returning \"\" because player is NULL");
         return emptyString();
@@ -243,7 +243,7 @@ auto MediaControlsHost::externalDeviceType() const -> DeviceType
 #if !ENABLE(WIRELESS_PLAYBACK_TARGET)
     return DeviceType::None;
 #else
-    MediaPlayer* player = m_mediaElement->player();
+    auto player = m_mediaElement->player();
     if (!player) {
         LOG(Media, "MediaControlsHost::externalDeviceType - returning \"none\" because player is NULL");
         return DeviceType::None;

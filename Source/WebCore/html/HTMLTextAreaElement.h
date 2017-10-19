@@ -53,7 +53,7 @@ public:
     bool tooLong() const final;
     bool isValidValue(const String&) const;
     
-    TextControlInnerTextElement* innerTextElement() const final;
+    RefPtr<TextControlInnerTextElement> innerTextElement() const final;
     RenderStyle createInnerTextStyle(const RenderStyle&) const final;
     void copyNonAttributePropertiesFromElement(const Element&) final;
 

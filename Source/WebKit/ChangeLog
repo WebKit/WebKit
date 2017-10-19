@@ -1,3 +1,24 @@
+2017-10-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Replace some stack raw pointers with RefPtrs within WebCore/html
+        https://bugs.webkit.org/show_bug.cgi?id=178201
+        <rdar://problem/34841692>
+
+        Reviewed by Ryosuke Niwa.
+
+        Change the type of node as toNode() is changed to return RefPtr.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivate.cpp:
+        (WebKit::wrap):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::frameForEvent):
+
 2017-10-18  Chris Dumez  <cdumez@apple.com>
 
         [Service Worker] Add stubs for Client / WindowClient / Clients

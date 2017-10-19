@@ -61,7 +61,7 @@ RenderVideo::~RenderVideo()
 
 void RenderVideo::willBeDestroyed()
 {
-    if (MediaPlayer* player = videoElement().player())
+    if (auto player = videoElement().player())
         player->setVisible(false);
 
     RenderMedia::willBeDestroyed();
@@ -117,7 +117,7 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
     // The intrinsic height of a video element's playback area is the intrinsic height 
     // of the video resource, if that is available; otherwise it is the intrinsic 
     // height of the poster frame, if that is available; otherwise it is 150 CSS pixels.
-    MediaPlayer* player = videoElement().player();
+    auto player = videoElement().player();
     if (player && videoElement().readyState() >= HTMLVideoElement::HAVE_METADATA) {
         LayoutSize size(player->naturalSize());
         if (!size.isEmpty())
@@ -169,7 +169,7 @@ bool RenderVideo::shouldDisplayVideo() const
 
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    MediaPlayer* mediaPlayer = videoElement().player();
+    auto mediaPlayer = videoElement().player();
     bool displayingPoster = videoElement().shouldDisplayPosterImage();
 
     if (!displayingPoster && !mediaPlayer) {
@@ -235,7 +235,7 @@ void RenderVideo::updatePlayer()
     intrinsicSizeChanged = updateIntrinsicSize();
     ASSERT_UNUSED(intrinsicSizeChanged, !intrinsicSizeChanged || !view().frameView().isInRenderTreeLayout());
 
-    MediaPlayer* mediaPlayer = videoElement().player();
+    auto mediaPlayer = videoElement().player();
     if (!mediaPlayer)
         return;
 
@@ -264,20 +264,20 @@ LayoutUnit RenderVideo::minimumReplacedHeight() const
 
 bool RenderVideo::supportsAcceleratedRendering() const
 {
-    if (MediaPlayer* player = videoElement().player())
+    if (auto player = videoElement().player())
         return player->supportsAcceleratedRendering();
     return false;
 }
 
 void RenderVideo::acceleratedRenderingStateChanged()
 {
-    if (MediaPlayer* player = videoElement().player())
+    if (auto player = videoElement().player())
         player->acceleratedRenderingStateChanged();
 }
 
 bool RenderVideo::requiresImmediateCompositing() const
 {
-    MediaPlayer* player = videoElement().player();
+    auto player = videoElement().player();
     return player && player->requiresImmediateCompositing();
 }
 
@@ -327,7 +327,7 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     if (!videoBox().contains(enclosingIntRect(localRect)))
         return false;
 
-    if (MediaPlayer* player = videoElement().player())
+    if (auto player = videoElement().player())
         return player->hasAvailableVideoFrame();
 
     return false;

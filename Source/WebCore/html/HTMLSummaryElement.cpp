@@ -85,7 +85,7 @@ HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
 
 bool HTMLSummaryElement::isActiveSummary() const
 {
-    HTMLDetailsElement* details = detailsElement();
+    RefPtr<HTMLDetailsElement> details = detailsElement();
     if (!details)
         return false;
     return details->isActiveSummary(*this);
@@ -99,8 +99,8 @@ static bool isClickableControl(Node* node)
     Element& element = downcast<Element>(*node);
     if (is<HTMLFormControlElement>(element))
         return true;
-    Element* host = element.shadowHost();
-    return host && is<HTMLFormControlElement>(host);
+    RefPtr<Element> host = element.shadowHost();
+    return host && is<HTMLFormControlElement>(host.get());
 }
 
 bool HTMLSummaryElement::supportsFocus() const
@@ -111,8 +111,8 @@ bool HTMLSummaryElement::supportsFocus() const
 void HTMLSummaryElement::defaultEventHandler(Event& event)
 {
     if (isActiveSummary() && renderer()) {
-        if (event.type() == eventNames().DOMActivateEvent && !isClickableControl(event.target()->toNode())) {
-            if (HTMLDetailsElement* details = detailsElement())
+        if (event.type() == eventNames().DOMActivateEvent && !isClickableControl(event.target()->toNode().get())) {
+            if (RefPtr<HTMLDetailsElement> details = detailsElement())
                 details->toggleOpen();
             event.setDefaultHandled();
             return;

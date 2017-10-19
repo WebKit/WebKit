@@ -494,7 +494,7 @@ public:
 
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 
-    Node* toNode() override;
+    RefPtr<Node> toNode() override;
 
     EventTargetInterface eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h

@@ -137,7 +137,7 @@ void WebKitMediaKeys::setMediaElement(HTMLMediaElement* element)
         m_mediaElement->player()->setCDMSession(m_sessions.last()->session());
 }
 
-MediaPlayer* WebKitMediaKeys::cdmMediaPlayer(const LegacyCDM*) const
+RefPtr<MediaPlayer> WebKitMediaKeys::cdmMediaPlayer(const LegacyCDM*) const
 {
     if (!m_mediaElement)
         return nullptr;

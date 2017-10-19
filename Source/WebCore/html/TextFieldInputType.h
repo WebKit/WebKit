@@ -50,7 +50,7 @@ protected:
 
     HTMLElement* containerElement() const final;
     HTMLElement* innerBlockElement() const final;
-    TextControlInnerTextElement* innerTextElement() const final;
+    RefPtr<TextControlInnerTextElement> innerTextElement() const final;
     HTMLElement* innerSpinButtonElement() const final;
     HTMLElement* capsLockIndicatorElement() const final;
     HTMLElement* autoFillButtonElement() const final;

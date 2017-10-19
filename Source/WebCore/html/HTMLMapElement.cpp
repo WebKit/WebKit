@@ -58,7 +58,7 @@ HTMLMapElement::~HTMLMapElement()
 
 bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size, HitTestResult& result)
 {
-    HTMLAreaElement* defaultArea = 0;
+    RefPtr<HTMLAreaElement> defaultArea;
 
     for (auto& area : descendantsOfType<HTMLAreaElement>(*this)) {
         if (area.isDefault()) {
@@ -69,8 +69,8 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
     }
     
     if (defaultArea) {
-        result.setInnerNode(defaultArea);
-        result.setURLElement(defaultArea);
+        result.setInnerNode(defaultArea.get());
+        result.setURLElement(defaultArea.get());
     }
     return defaultArea;
 }

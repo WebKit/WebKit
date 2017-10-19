@@ -146,7 +146,7 @@ class HTMLMediaElement
 {
 public:
     WeakPtr<HTMLMediaElement> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
-    MediaPlayer* player() const { return m_player.get(); }
+    RefPtr<MediaPlayer> player() const { return m_player; }
 
     virtual bool isVideo() const { return false; }
     bool hasVideo() const override { return false; }

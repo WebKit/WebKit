@@ -196,7 +196,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     //  - we hit the <input> element (e.g. we're over the border or padding), or
     //  - we hit regions not in any decoration buttons.
     HTMLElement* container = containerElement();
-    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == &inputElement() || (container && container == result.innerNode())) {
+    if (result.innerNode()->isDescendantOf(innerTextElement().get()) || result.innerNode() == &inputElement() || (container && container == result.innerNode())) {
         LayoutPoint pointInParent = locationInContainer.point();
         if (container && innerBlockElement()) {
             if (innerBlockElement()->renderBox())
@@ -226,7 +226,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
         containerRenderer->mutableStyle().setWidth(Length());
     }
     if (diff == StyleDifferenceLayout) {
-        if (auto* innerTextRenderer = innerTextElement()->renderer())
+        if (auto innerTextRenderer = innerTextElement()->renderer())
             innerTextRenderer->setNeedsLayout(MarkContainingBlockChain);
         if (auto* placeholder = inputElement().placeholderElement()) {
             if (placeholder->renderer())

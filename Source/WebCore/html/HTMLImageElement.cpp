@@ -149,7 +149,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         return { };
     picture->clearViewportDependentResults();
     document().removeViewportDependentPicture(*picture);
-    for (Node* child = picture->firstChild(); child && child != this; child = child->nextSibling()) {
+    for (RefPtr<Node> child = picture->firstChild(); child && child != this; child = child->nextSibling()) {
         if (!is<HTMLSourceElement>(*child))
             continue;
         auto& source = downcast<HTMLSourceElement>(*child);
@@ -350,10 +350,10 @@ HTMLPictureElement* HTMLImageElement::pictureElement() const
 {
     if (!gPictureOwnerMap || !gPictureOwnerMap->contains(this))
         return nullptr;
-    HTMLPictureElement* result = gPictureOwnerMap->get(this).get();
+    auto result = gPictureOwnerMap->get(this);
     if (!result)
         gPictureOwnerMap->remove(this);
-    return result;
+    return result.get();
 }
     
 void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
@@ -619,11 +619,11 @@ void HTMLImageElement::tryCreateImageControls()
 
 void HTMLImageElement::destroyImageControls()
 {
-    ShadowRoot* shadowRoot = userAgentShadowRoot();
+    auto shadowRoot = userAgentShadowRoot();
     if (!shadowRoot)
         return;
 
-    if (Node* node = shadowRoot->firstChild()) {
+    if (RefPtr<Node> node = shadowRoot->firstChild()) {
         ASSERT_WITH_SECURITY_IMPLICATION(node->isImageControlsRootElement());
         shadowRoot->removeChild(*node);
     }
@@ -637,8 +637,8 @@ void HTMLImageElement::destroyImageControls()
 
 bool HTMLImageElement::hasImageControls() const
 {
-    if (ShadowRoot* shadowRoot = userAgentShadowRoot()) {
-        Node* node = shadowRoot->firstChild();
+    if (auto shadowRoot = userAgentShadowRoot()) {
+        RefPtr<Node> node = shadowRoot->firstChild();
         ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isImageControlsRootElement());
         return node;
     }

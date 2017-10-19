@@ -119,8 +119,8 @@ void HTMLOptionElement::setText(const String &text)
     int oldSelectedIndex = selectIsMenuList ? select->selectedIndex() : -1;
 
     // Handle the common special case where there's exactly 1 child node, and it's a text node.
-    Node* child = firstChild();
-    if (is<Text>(child) && !child->nextSibling())
+    RefPtr<Node> child = firstChild();
+    if (is<Text>(child.get()) && !child->nextSibling())
         downcast<Text>(*child).setData(text);
     else {
         removeChildren();
@@ -133,7 +133,7 @@ void HTMLOptionElement::setText(const String &text)
 
 void HTMLOptionElement::accessKeyAction(bool)
 {
-    HTMLSelectElement* select = ownerSelectElement();
+    RefPtr<HTMLSelectElement> select = ownerSelectElement();
     if (select)
         select->accessKeySetSelectedIndex(index());
 }
@@ -142,7 +142,7 @@ int HTMLOptionElement::index() const
 {
     // It would be faster to cache the index, but harder to get it right in all cases.
 
-    HTMLSelectElement* selectElement = ownerSelectElement();
+    RefPtr<HTMLSelectElement> selectElement = ownerSelectElement();
     if (!selectElement)
         return 0;
 
@@ -163,7 +163,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicSt
 {
 #if ENABLE(DATALIST_ELEMENT)
     if (name == valueAttr) {
-        if (HTMLDataListElement* dataList = ownerDataListElement())
+        if (RefPtr<HTMLDataListElement> dataList = ownerDataListElement())
             dataList->optionElementChildrenChanged();
     } else
 #endif
@@ -204,7 +204,7 @@ void HTMLOptionElement::setValue(const String& value)
 
 bool HTMLOptionElement::selected()
 {
-    if (HTMLSelectElement* select = ownerSelectElement())
+    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
         select->updateListItemSelectedStates();
     return m_isSelected;
 }
@@ -216,7 +216,7 @@ void HTMLOptionElement::setSelected(bool selected)
 
     setSelectedState(selected);
 
-    if (HTMLSelectElement* select = ownerSelectElement())
+    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
         select->optionSelectionStateChanged(*this, selected);
 }
 
@@ -228,18 +228,18 @@ void HTMLOptionElement::setSelectedState(bool selected)
     m_isSelected = selected;
     invalidateStyleForSubtree();
 
-    if (HTMLSelectElement* select = ownerSelectElement())
+    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
         select->invalidateSelectedItems();
 }
 
 void HTMLOptionElement::childrenChanged(const ChildChange& change)
 {
 #if ENABLE(DATALIST_ELEMENT)
-    if (HTMLDataListElement* dataList = ownerDataListElement())
+    if (RefPtr<HTMLDataListElement> dataList = ownerDataListElement())
         dataList->optionElementChildrenChanged();
     else
 #endif
-    if (HTMLSelectElement* select = ownerSelectElement())
+    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
         select->optionElementChildrenChanged();
     HTMLElement::childrenChanged(change);
 }
@@ -247,7 +247,7 @@ void HTMLOptionElement::childrenChanged(const ChildChange& change)
 #if ENABLE(DATALIST_ELEMENT)
 HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
 {
-    for (ContainerNode* parent = parentNode(); parent ; parent = parent->parentNode()) {
+    for (RefPtr<ContainerNode> parent = parentNode(); parent ; parent = parent->parentNode()) {
         if (is<HTMLDataListElement>(*parent))
             return downcast<HTMLDataListElement>(parent);
     }
@@ -257,14 +257,14 @@ HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
 
 HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 {
-    ContainerNode* select = parentNode();
+    RefPtr<ContainerNode> select = parentNode();
     while (select && !is<HTMLSelectElement>(*select))
         select = select->parentNode();
 
     if (!select)
         return nullptr;
 
-    return downcast<HTMLSelectElement>(select);
+    return downcast<HTMLSelectElement>(select.get());
 }
 
 String HTMLOptionElement::label() const
@@ -300,8 +300,8 @@ void HTMLOptionElement::willResetComputedStyle()
 
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
-    ContainerNode* parent = parentNode();
-    if (is<HTMLOptGroupElement>(parent))
+    RefPtr<ContainerNode> parent = parentNode();
+    if (is<HTMLOptGroupElement>(parent.get()))
         return "    " + displayLabel();
     return displayLabel();
 }
@@ -319,7 +319,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
 
 Node::InsertedIntoResult HTMLOptionElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (HTMLSelectElement* select = ownerSelectElement()) {
+    if (RefPtr<HTMLSelectElement> select = ownerSelectElement()) {
         select->setRecalcListItems();
         select->updateValidity();
         // Do not call selected() since calling updateListItemSelectedStates()
@@ -337,7 +337,7 @@ Node::InsertedIntoResult HTMLOptionElement::insertedInto(InsertionType insertion
 String HTMLOptionElement::collectOptionInnerText() const
 {
     StringBuilder text;
-    for (Node* node = firstChild(); node; ) {
+    for (RefPtr<Node> node = firstChild(); node; ) {
         if (is<Text>(*node))
             text.append(node->nodeValue());
         // Text nodes inside script elements are not part of the option text.

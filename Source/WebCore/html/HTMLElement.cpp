@@ -716,11 +716,11 @@ void HTMLElement::setTranslate(bool enable)
 bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (hasTagName(noscriptTag)) {
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
             return false;
     } else if (hasTagName(noembedTag)) {
-        Frame* frame = document().frame();
+        RefPtr<Frame> frame = document().frame();
         if (frame && frame->loader().subframeLoader().allowPlugins())
             return false;
     }
@@ -749,7 +749,7 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
 {
     firstNode->setSelfOrAncestorHasDirAutoAttribute(flag);
 
-    Node* node = firstNode->firstChild();
+    RefPtr<Node> node = firstNode->firstChild();
 
     while (node) {
         if (node->selfOrAncestorHasDirAutoAttribute() == flag)
@@ -802,7 +802,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
         return (textDirection == U_LEFT_TO_RIGHT) ? LTR : RTL;
     }
 
-    Node* node = firstChild();
+    RefPtr<Node> node = firstChild();
     while (node) {
         // Skip bdi, script, style and text form controls.
         if (equalLettersIgnoringASCIICase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
@@ -825,7 +825,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
             UCharDirection textDirection = node->textContent(true).defaultWritingDirection(&hasStrongDirectionality);
             if (hasStrongDirectionality) {
                 if (strongDirectionalityTextNode)
-                    *strongDirectionalityTextNode = node;
+                    *strongDirectionalityTextNode = node.get();
                 return (textDirection == U_LEFT_TO_RIGHT) ? LTR : RTL;
             }
         }
@@ -838,9 +838,9 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
 
 void HTMLElement::dirAttributeChanged(const AtomicString& value)
 {
-    Element* parent = parentElement();
+    RefPtr<Element> parent = parentElement();
 
-    if (is<HTMLElement>(parent) && parent->selfOrAncestorHasDirAutoAttribute())
+    if (is<HTMLElement>(parent.get()) && parent->selfOrAncestorHasDirAutoAttribute())
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
     if (equalLettersIgnoringASCIICase(value, "auto"))
@@ -879,14 +879,14 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     if (!selfOrAncestorHasDirAutoAttribute())
         return;
 
-    Node* oldMarkedNode = nullptr;
+    RefPtr<Node> oldMarkedNode;
     if (beforeChange)
         oldMarkedNode = changeType == ElementInserted ? ElementTraversal::nextSibling(*beforeChange) : beforeChange->nextSibling();
 
     while (oldMarkedNode && elementAffectsDirectionality(*oldMarkedNode))
         oldMarkedNode = oldMarkedNode->nextSibling();
     if (oldMarkedNode)
-        setHasDirAutoFlagRecursively(oldMarkedNode, false);
+        setHasDirAutoFlagRecursively(oldMarkedNode.get(), false);
 
     for (auto& elementToAdjust : lineageOfType<HTMLElement>(*this)) {
         if (elementAffectsDirectionality(elementToAdjust)) {

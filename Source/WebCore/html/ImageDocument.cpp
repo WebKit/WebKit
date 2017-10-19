@@ -242,7 +242,7 @@ void ImageDocument::createDocumentStructure()
         processViewport(ASCIILiteral("width=device-width"), ViewportArguments::ImageDocument);
 #else
         auto listener = ImageEventListener::create(*this);
-        if (DOMWindow* window = this->domWindow())
+        if (RefPtr<DOMWindow> window = this->domWindow())
             window->addEventListener("resize", listener.copyRef(), false);
         imageElement->addEventListener("click", WTFMove(listener), false);
 #endif
@@ -284,7 +284,7 @@ float ImageDocument::scale()
     if (!m_imageElement)
         return 1;
 
-    FrameView* view = this->view();
+    RefPtr<FrameView> view = this->view();
     if (!view)
         return 1;
 
@@ -333,7 +333,7 @@ bool ImageDocument::imageFitsInWindow()
     if (!m_imageElement)
         return true;
 
-    FrameView* view = this->view();
+    RefPtr<FrameView> view = this->view();
     if (!view)
         return true;
 

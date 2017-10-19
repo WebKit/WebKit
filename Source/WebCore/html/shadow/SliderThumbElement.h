@@ -47,7 +47,7 @@ public:
 
     void setPositionFromValue();
     void dragFrom(const LayoutPoint&);
-    HTMLInputElement* hostInput() const;
+    RefPtr<HTMLInputElement> hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -64,7 +64,7 @@ private:
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
     bool isDisabledFormControl() const override;
     bool matchesReadWritePseudoClass() const override;
-    Element* focusDelegate() override;
+    RefPtr<Element> focusDelegate() override;
 #if !PLATFORM(IOS)
     void defaultEventHandler(Event&) override;
     bool willRespondToMouseMoveEvents() override;

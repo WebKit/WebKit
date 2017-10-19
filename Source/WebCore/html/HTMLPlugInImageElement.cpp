@@ -397,7 +397,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 bool HTMLPlugInImageElement::partOfSnapshotOverlay(const Node* node) const
 {
     static NeverDestroyed<AtomicString> selector(".snapshot-overlay", AtomicString::ConstructFromLiteral);
-    auto* shadow = userAgentShadowRoot();
+    auto shadow = userAgentShadowRoot();
     if (!shadow)
         return false;
     if (!node)
@@ -430,7 +430,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
     if (!document().page())
         return;
 
-    for (Frame* frame = &document().page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr<Frame> frame = &document().page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->loader().subframeLoader().containsPlugins())
             continue;
         

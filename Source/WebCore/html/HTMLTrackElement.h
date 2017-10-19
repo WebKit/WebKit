@@ -72,7 +72,7 @@ private:
 
     void loadTimerFired();
 
-    HTMLMediaElement* mediaElement() const;
+    RefPtr<HTMLMediaElement> mediaElement() const;
 
     // TextTrackClient
     void textTrackModeChanged(TextTrack&) final;

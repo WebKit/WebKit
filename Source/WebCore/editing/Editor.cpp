@@ -233,7 +233,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
     HTMLTextFormControlElement* textFormControlOfSelectionStart = enclosingTextFormControl(selection.start());
-    HTMLTextFormControlElement* textFromControlOfTarget = is<HTMLTextFormControlElement>(*event->target()->toNode()) ? downcast<HTMLTextFormControlElement>(event->target()->toNode()) : nullptr;
+    HTMLTextFormControlElement* textFromControlOfTarget = is<HTMLTextFormControlElement>(*event->target()->toNode()) ? downcast<HTMLTextFormControlElement>(event->target()->toNode().get()) : nullptr;
     if (textFromControlOfTarget && (selection.start().isNull() || textFromControlOfTarget != textFormControlOfSelectionStart)) {
         if (RefPtr<Range> range = textFromControlOfTarget->selection())
             return VisibleSelection(*range, DOWNSTREAM, selection.isDirectional());

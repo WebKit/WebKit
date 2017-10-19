@@ -64,7 +64,7 @@ bool HTMLFrameElement::noResize() const
 void HTMLFrameElement::didAttachRenderers()
 {
     HTMLFrameElementBase::didAttachRenderers();
-    const HTMLFrameSetElement* containingFrameSet = HTMLFrameSetElement::findContaining(this);
+    const auto containingFrameSet = HTMLFrameSetElement::findContaining(this);
     if (!containingFrameSet)
         return;
     if (!m_frameBorderSet)

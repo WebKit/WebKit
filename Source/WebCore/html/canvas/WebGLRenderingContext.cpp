@@ -352,7 +352,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
                 synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
                 return nullptr;
             }
-            WebGLRenderbuffer* renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
+            RefPtr<WebGLRenderbuffer> renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
             GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
             ASSERT(renderBufferFormat != Extensions3D::SRGB_EXT && renderBufferFormat != Extensions3D::SRGB_ALPHA_EXT);
             if (renderBufferFormat == Extensions3D::SRGB8_ALPHA8_EXT)

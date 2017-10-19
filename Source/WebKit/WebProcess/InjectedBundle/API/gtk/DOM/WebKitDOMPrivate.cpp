@@ -142,8 +142,8 @@ WebKitDOMEventTarget* wrap(EventTarget* eventTarget)
 {
     ASSERT(eventTarget);
 
-    if (Node* node = eventTarget->toNode())
-        return WEBKIT_DOM_EVENT_TARGET(kit(node));
+    if (auto node = eventTarget->toNode())
+        return WEBKIT_DOM_EVENT_TARGET(kit(node.get()));
 
     if (DOMWindow* window = eventTarget->toDOMWindow())
         return WEBKIT_DOM_EVENT_TARGET(kit(window));

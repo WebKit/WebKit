@@ -283,7 +283,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
     ASSERT(m_state == Uninitialized);
     m_state = Initialized;
 
-    if (Frame* frame = document->frame())
+    if (RefPtr<Frame> frame = document->frame())
         m_isEnabled = frame->settings().xssAuditorEnabled();
 
     if (!m_isEnabled)
@@ -317,7 +317,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
         m_decodedURL = String();
 
     String httpBodyAsString;
-    if (DocumentLoader* documentLoader = document->frame()->loader().documentLoader()) {
+    if (RefPtr<DocumentLoader> documentLoader = document->frame()->loader().documentLoader()) {
         static NeverDestroyed<String> XSSProtectionHeader(MAKE_STATIC_STRING_IMPL("X-XSS-Protection"));
         String headerValue = documentLoader->response().httpHeaderField(XSSProtectionHeader);
         String errorDetails;
@@ -343,7 +343,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
 
         if (auditorDelegate)
             auditorDelegate->setReportURL(reportURL.isolatedCopy());
-        FormData* httpBody = documentLoader->originalRequest().httpBody();
+        RefPtr<FormData> httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
             httpBodyAsString = httpBody->flattenToString();
             if (!httpBodyAsString.isEmpty()) {

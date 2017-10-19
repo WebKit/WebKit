@@ -292,7 +292,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     end = std::max(end, 0);
     start = std::min(std::max(start, 0), end);
 
-    TextControlInnerTextElement* innerText = innerTextElement();
+    auto innerText = innerTextElement();
     bool hasFocus = document().focusedElement() == this;
     if (!hasFocus && innerText) {
         // FIXME: Removing this synchronous layout requires fixing <https://webkit.org/b/128797>
@@ -310,35 +310,35 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
         }
     }
 
-    Position startPosition = positionForIndex(innerText, start);
+    Position startPosition = positionForIndex(innerText.get(), start);
     Position endPosition;
     if (start == end)
         endPosition = startPosition;
     else {
         if (direction == SelectionHasBackwardDirection) {
             endPosition = startPosition;
-            startPosition = positionForIndex(innerText, end);
+            startPosition = positionForIndex(innerText.get(), end);
         } else
-            endPosition = positionForIndex(innerText, end);
+            endPosition = positionForIndex(innerText.get(), end);
     }
 
-    if (Frame* frame = document().frame())
+    if (RefPtr<Frame> frame = document().frame())
         frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus, intent);
 }
 
 int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& position) const
 {
-    TextControlInnerTextElement* innerText = innerTextElement();
+    auto innerText = innerTextElement();
     if (!innerText || !innerText->contains(position.deepEquivalent().anchorNode()))
         return 0;
     unsigned index = indexForPosition(position.deepEquivalent());
-    ASSERT(VisiblePosition(positionForIndex(innerTextElement(), index)) == position);
+    ASSERT(VisiblePosition(positionForIndex(innerTextElement().get(), index)) == position);
     return index;
 }
 
 VisiblePosition HTMLTextFormControlElement::visiblePositionForIndex(int index) const
 {
-    VisiblePosition position = positionForIndex(innerTextElement(), index);
+    VisiblePosition position = positionForIndex(innerTextElement().get(), index);
     ASSERT(indexForVisiblePosition(position) == index);
     return position;
 }
@@ -356,7 +356,7 @@ int HTMLTextFormControlElement::selectionStart() const
 int HTMLTextFormControlElement::computeSelectionStart() const
 {
     ASSERT(isTextFormControl());
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (!frame)
         return 0;
 
@@ -375,7 +375,7 @@ int HTMLTextFormControlElement::selectionEnd() const
 int HTMLTextFormControlElement::computeSelectionEnd() const
 {
     ASSERT(isTextFormControl());
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (!frame)
         return 0;
 
@@ -414,7 +414,7 @@ const AtomicString& HTMLTextFormControlElement::selectionDirection() const
 TextFieldSelectionDirection HTMLTextFormControlElement::computeSelectionDirection() const
 {
     ASSERT(isTextFormControl());
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (!frame)
         return SelectionHasNoDirection;
 
@@ -442,7 +442,7 @@ RefPtr<Range> HTMLTextFormControlElement::selection() const
     int end = m_cachedSelectionEnd;
 
     ASSERT(start <= end);
-    TextControlInnerTextElement* innerText = innerTextElement();
+    auto innerText = innerTextElement();
     if (!innerText)
         return nullptr;
 
@@ -452,16 +452,16 @@ RefPtr<Range> HTMLTextFormControlElement::selection() const
     int offset = 0;
     Node* startNode = nullptr;
     Node* endNode = nullptr;
-    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText)) {
+    for (RefPtr<Node> node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText.get())) {
         ASSERT(!node->firstChild());
         ASSERT(node->isTextNode() || node->hasTagName(brTag));
-        int length = node->isTextNode() ? lastOffsetInNode(node) : 1;
+        int length = node->isTextNode() ? lastOffsetInNode(node.get()) : 1;
 
         if (offset <= start && start <= offset + length)
-            setContainerAndOffsetForRange(node, start - offset, startNode, start);
+            setContainerAndOffsetForRange(node.get(), start - offset, startNode, start);
 
         if (offset <= end && end <= offset + length) {
-            setContainerAndOffsetForRange(node, end - offset, endNode, end);
+            setContainerAndOffsetForRange(node.get(), end - offset, endNode, end);
             break;
         }
 
@@ -515,7 +515,7 @@ void HTMLTextFormControlElement::readOnlyAttributeChanged()
 
 void HTMLTextFormControlElement::updateInnerTextElementEditability()
 {
-    if (TextControlInnerTextElement* innerText = innerTextElement())
+    if (auto innerText = innerTextElement())
         innerText->setAttributeWithoutSynchronization(contenteditableAttr, isDisabledOrReadOnly() ? "false" : "plaintext-only");
 }
 
@@ -537,7 +537,7 @@ static void stripTrailingNewline(StringBuilder& result)
 static String innerTextValueFrom(TextControlInnerTextElement& innerText)
 {
     StringBuilder result;
-    for (Node* node = innerText.firstChild(); node; node = NodeTraversal::next(*node, &innerText)) {
+    for (RefPtr<Node> node = innerText.firstChild(); node; node = NodeTraversal::next(*node, &innerText)) {
         if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
         else if (is<Text>(*node))
@@ -550,7 +550,7 @@ static String innerTextValueFrom(TextControlInnerTextElement& innerText)
 void HTMLTextFormControlElement::setInnerTextValue(const String& value)
 {
     LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::PerformanceOptimization);
-    RefPtr<TextControlInnerTextElement> innerText = innerTextElement();
+    auto innerText = innerTextElement();
     if (!innerText)
         return;
 
@@ -588,18 +588,18 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
 
 String HTMLTextFormControlElement::innerTextValue() const
 {
-    TextControlInnerTextElement* innerText = innerTextElement();
+    auto innerText = innerTextElement();
     return innerText ? innerTextValueFrom(*innerText) : emptyString();
 }
 
 static Position positionForIndex(TextControlInnerTextElement* innerText, unsigned index)
 {
     unsigned remainingCharactersToMoveForward = index;
-    Node* lastBrOrText = innerText;
-    for (Node* node = innerText; node; node = NodeTraversal::next(*node, innerText)) {
+    RefPtr<Node> lastBrOrText = innerText;
+    for (RefPtr<Node> node = innerText; node; node = NodeTraversal::next(*node, innerText)) {
         if (node->hasTagName(brTag)) {
             if (!remainingCharactersToMoveForward)
-                return positionBeforeNode(node);
+                return positionBeforeNode(node.get());
             remainingCharactersToMoveForward--;
             lastBrOrText = node;
         } else if (is<Text>(*node)) {
@@ -610,26 +610,26 @@ static Position positionForIndex(TextControlInnerTextElement* innerText, unsigne
             lastBrOrText = node;
         }
     }
-    return lastPositionInOrAfterNode(lastBrOrText);
+    return lastPositionInOrAfterNode(lastBrOrText.get());
 }
 
 unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosition) const
 {
-    TextControlInnerTextElement* innerText = innerTextElement();
+    auto innerText = innerTextElement();
     if (!innerText || !innerText->contains(passedPosition.anchorNode()) || passedPosition.isNull())
         return 0;
 
-    if (positionBeforeNode(innerText) == passedPosition)
+    if (positionBeforeNode(innerText.get()) == passedPosition)
         return 0;
 
     unsigned index = 0;
-    Node* startNode = passedPosition.computeNodeBeforePosition();
+    RefPtr<Node> startNode = passedPosition.computeNodeBeforePosition();
     if (!startNode)
         startNode = passedPosition.containerNode();
     ASSERT(startNode);
-    ASSERT(innerText->contains(startNode));
+    ASSERT(innerText->contains(startNode.get()));
 
-    for (Node* node = startNode; node; node = NodeTraversal::previous(*node, innerText)) {
+    for (RefPtr<Node> node = startNode; node; node = NodeTraversal::previous(*node, innerText.get())) {
         if (is<Text>(*node)) {
             unsigned length = downcast<Text>(*node).length();
             if (node == passedPosition.containerNode())
@@ -655,13 +655,13 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
 #if PLATFORM(IOS)
 void HTMLTextFormControlElement::hidePlaceholder()
 {
-    if (HTMLElement* placeholder = placeholderElement())
+    if (RefPtr<HTMLElement> placeholder = placeholderElement())
         placeholder->setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, true);
 }
 
 void HTMLTextFormControlElement::showPlaceholderIfNecessary()
 {
-    if (HTMLElement* placeholder = placeholderElement())
+    if (RefPtr<HTMLElement> placeholder = placeholderElement())
         placeholder->setInlineStyleProperty(CSSPropertyVisibility, CSSValueVisible, true);
 }
 #endif
@@ -690,7 +690,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
     if (!isTextFormControl())
         return value();
 
-    TextControlInnerTextElement* innerText = innerTextElement();
+    auto innerText = innerTextElement();
     if (!innerText)
         return value();
 
@@ -707,7 +707,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
     getNextSoftBreak(line, breakNode, breakOffset);
 
     StringBuilder result;
-    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText)) {
+    for (RefPtr<Node> node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText.get())) {
         if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
         else if (is<Text>(*node)) {
@@ -737,11 +737,11 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
         || position.containerNode() || !position.anchorNode()->shadowHost()
         || hasShadowRootParent(*position.anchorNode()));
         
-    Node* container = position.containerNode();
+    RefPtr<Node> container = position.containerNode();
     if (!container)
         return nullptr;
-    Element* ancestor = container->shadowHost();
-    return ancestor && is<HTMLTextFormControlElement>(*ancestor) ? downcast<HTMLTextFormControlElement>(ancestor) : nullptr;
+    RefPtr<Element> ancestor = container->shadowHost();
+    return ancestor && is<HTMLTextFormControlElement>(*ancestor) ? downcast<HTMLTextFormControlElement>(ancestor.get()) : nullptr;
 }
 
 static const Element* parentHTMLElement(const Element* element)
@@ -797,7 +797,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
     textBlockStyle.setDirection(parentStyle.direction());
     textBlockStyle.setUnicodeBidi(parentStyle.unicodeBidi());
 
-    if (HTMLElement* innerText = innerTextElement()) {
+    if (auto innerText = innerTextElement()) {
         if (const StyleProperties* properties = innerText->presentationAttributeStyle()) {
             RefPtr<CSSValue> value = properties->getPropertyCSSValue(CSSPropertyWebkitUserModify);
             if (is<CSSPrimitiveValue>(value.get()))

@@ -156,7 +156,7 @@ void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    Frame* frame = document().frame();
+    RefPtr<Frame> frame = document().frame();
     if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return createRenderer<RenderHTMLCanvas>(*this, WTFMove(style));
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
@@ -197,8 +197,8 @@ HashSet<Element*> HTMLCanvasElement::cssCanvasClients() const
 
         auto clients = downcast<CSSCanvasValue::CanvasObserverProxy>(observer)->ownerValue().clients();
         for (auto& entry : clients) {
-            if (Element* element = entry.key->element())
-                cssCanvasClients.add(element);
+            if (RefPtr<Element> element = entry.key->element())
+                cssCanvasClients.add(element.get());
         }
     }
     return cssCanvasClients;

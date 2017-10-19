@@ -2341,7 +2341,7 @@ const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
 
 bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
-    Node* node = evt->target()->toNode();
+    auto node = evt->target()->toNode();
     ASSERT(node);
     Frame* frame = node->document().frame();
     ASSERT(frame);

@@ -75,7 +75,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement& table, 
             return &*row;
     }
 
-    Element* child = nullptr;
+    RefPtr<Element> child;
 
     // If still looking at head sections, find the first row in the next head section.
     if (!previous)
@@ -98,7 +98,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement& table, 
         child = ElementTraversal::nextSibling(*previous->parentNode());
     for (; child; child = ElementTraversal::nextSibling(*child)) {
         if (is<HTMLTableRowElement>(*child))
-            return downcast<HTMLTableRowElement>(child);
+            return downcast<HTMLTableRowElement>(child.get());
         if (child->hasTagName(tbodyTag)) {
             if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
                 return row;

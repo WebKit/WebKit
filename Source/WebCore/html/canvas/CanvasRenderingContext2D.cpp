@@ -1431,7 +1431,7 @@ static inline FloatSize size(ImageBitmap& imageBitmap)
 
 static inline FloatSize size(HTMLVideoElement& video)
 {
-    auto* player = video.player();
+    auto player = video.player();
     if (!player)
         return { };
     return player->naturalSize();
@@ -1529,7 +1529,7 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLImageElement& imageEle
     if (!cachedImage)
         return { };
 
-    Image* image = cachedImage->imageForRenderer(imageElement.renderer());
+    RefPtr<Image> image = cachedImage->imageForRenderer(imageElement.renderer());
     if (!image)
         return { };
 
@@ -1595,7 +1595,7 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLCanvasElement& sourceC
 #if ENABLE(ACCELERATED_2D_CANVAS)
     // If we're drawing from one accelerated canvas 2d to another, avoid calling sourceCanvas.makeRenderingResultsAvailable()
     // as that will do a readback to software.
-    CanvasRenderingContext* sourceContext = sourceCanvas.renderingContext();
+    RefPtr<CanvasRenderingContext> sourceContext = sourceCanvas.renderingContext();
     // FIXME: Implement an accelerated path for drawing from a WebGL canvas to a 2d canvas when possible.
     if (!isAccelerated() || !sourceContext || !sourceContext->isAccelerated() || !sourceContext->is2d())
         sourceCanvas.makeRenderingResultsAvailable();

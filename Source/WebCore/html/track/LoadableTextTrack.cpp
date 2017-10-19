@@ -144,7 +144,7 @@ size_t LoadableTextTrack::trackElementIndex()
     ASSERT(m_trackElement->parentNode());
 
     size_t index = 0;
-    for (Node* node = m_trackElement->parentNode()->firstChild(); node; node = node->nextSibling()) {
+    for (RefPtr<Node> node = m_trackElement->parentNode()->firstChild(); node; node = node->nextSibling()) {
         if (!node->hasTagName(trackTag) || !node->parentNode())
             continue;
         if (node == m_trackElement)

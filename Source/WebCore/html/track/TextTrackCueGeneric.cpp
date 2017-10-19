@@ -69,7 +69,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
     setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValuePlaintext);
     
-    TextTrackCueGeneric* cue = static_cast<TextTrackCueGeneric*>(getCue());
+    RefPtr<TextTrackCueGeneric> cue = static_cast<TextTrackCueGeneric*>(getCue());
     Ref<HTMLSpanElement> cueElement = cue->element();
 
     CSSValueID alignment = cue->getCSSAlignment();

@@ -106,19 +106,19 @@ String HTMLOptGroupElement::groupLabelText() const
     
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
-    ContainerNode* select = parentNode();
+    RefPtr<ContainerNode> select = parentNode();
     while (select && !is<HTMLSelectElement>(*select))
         select = select->parentNode();
     
     if (!select)
         return nullptr;
     
-    return downcast<HTMLSelectElement>(select);
+    return downcast<HTMLSelectElement>(select.get());
 }
 
 void HTMLOptGroupElement::accessKeyAction(bool)
 {
-    HTMLSelectElement* select = ownerSelectElement();
+    RefPtr<HTMLSelectElement> select = ownerSelectElement();
     // send to the parent to bring focus to the list box
     if (select && !select->focused())
         select->accessKeyAction(false);

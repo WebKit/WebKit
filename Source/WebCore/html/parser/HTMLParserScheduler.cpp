@@ -111,7 +111,7 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(PumpSession& session)
 {
     // If we've never painted before and a layout is pending, yield prior to running
     // scripts to give the page a chance to paint earlier.
-    Document* document = m_parser.document();
+    RefPtr<Document> document = m_parser.document();
     bool needsFirstPaint = document->view() && !document->view()->hasEverPainted();
     session.didSeeScript = true;
     return needsFirstPaint && document->isLayoutTimerActive();
