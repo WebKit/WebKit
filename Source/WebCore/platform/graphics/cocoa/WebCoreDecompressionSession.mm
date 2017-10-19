@@ -220,11 +220,7 @@ void WebCoreDecompressionSession::ensureDecompressionSessionForSample(CMSampleBu
 
         NSDictionary *attributes;
         if (m_mode == OpenGL) {
-#if PLATFORM(IOS)
-            attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey: @YES};
-#else
-            attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey: @YES};
-#endif
+            attributes = nil;
         } else {
             ASSERT(m_mode == RGB);
             attributes = @{(NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};

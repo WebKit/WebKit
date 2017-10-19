@@ -29,10 +29,13 @@
 #import "GraphicsContext3D.h"
 
 typedef struct __CVBuffer* CVImageBufferRef;
+typedef struct __CVBuffer* CVPixelBufferRef;
 typedef CVImageBufferRef CVOpenGLTextureRef;
 typedef CVImageBufferRef CVOpenGLESTextureRef;
 
 namespace WebCore {
+
+class TextureCacheCV;
 
 class VideoTextureCopierCV {
 public:
@@ -45,11 +48,14 @@ public:
     typedef CVOpenGLTextureRef TextureType;
 #endif
 
+    bool copyImageToPlatformTexture(CVPixelBufferRef, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
     bool copyVideoTextureToPlatformTexture(TextureType, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
 
     GraphicsContext3D& context() { return m_context.get(); }
 
 private:
+    bool copyVideoTextureToPlatformTexture(Platform3DObject inputTexture, GC3Denum inputTarget, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY);
+
     class GC3DStateSaver {
     public:
         GC3DStateSaver(GraphicsContext3D&);
@@ -75,8 +81,10 @@ private:
     };
 
     bool initializeContextObjects();
+    bool initializeUVContextObjects();
 
     Ref<GraphicsContext3D> m_context;
+    std::unique_ptr<TextureCacheCV> m_textureCache;
     Platform3DObject m_framebuffer { 0 };
     Platform3DObject m_program { 0 };
     Platform3DObject m_vertexBuffer { 0 };
@@ -85,6 +93,15 @@ private:
     GC3Dint m_flipYUniformLocation { -1 };
     GC3Dint m_premultiplyUniformLocation { -1 };
     GC3Dint m_positionAttributeLocation { -1 };
+    Platform3DObject m_yuvProgram { 0 };
+    Platform3DObject m_yuvVertexBuffer { 0 };
+    GC3Dint m_yTextureUniformLocation { -1 };
+    GC3Dint m_uvTextureUniformLocation { -1 };
+    GC3Dint m_yuvFlipYUniformLocation { -1 };
+    GC3Dint m_colorMatrixUniformLocation { -1 };
+    GC3Dint m_yuvPositionAttributeLocation { -1 };
+    GC3Dint m_yTextureSizeUniformLocation { -1 };
+    GC3Dint m_uvTextureSizeUniformLocation { -1 };
 };
 
 }
