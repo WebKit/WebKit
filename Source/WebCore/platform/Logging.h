@@ -42,7 +42,6 @@ namespace WebCore {
     M(Archives) \
     M(Compositing) \
     M(ContentFiltering) \
-    M(DatabaseTracker) \
     M(DisplayLists) \
     M(DOMTimers) \
     M(Editing) \
