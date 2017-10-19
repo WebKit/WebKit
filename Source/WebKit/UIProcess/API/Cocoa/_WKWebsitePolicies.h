@@ -37,6 +37,7 @@ typedef NS_ENUM(NSInteger, _WKWebsiteAutoplayPolicy) {
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteAutoplayQuirk) {
     _WKWebsiteAutoplayQuirkSynthesizedPauseEvents = 1 << 0,
     _WKWebsiteAutoplayQuirkInheritedUserGestures = 1 << 1,
+    _WKWebsiteAutoplayQuirkArbitraryUserGestures = 1 << 2,
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))

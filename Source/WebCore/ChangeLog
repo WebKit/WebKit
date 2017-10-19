@@ -1,5 +1,25 @@
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223451. rdar://problem/34985194
+
+    2017-10-12  Matt Rajca  <mrajca@apple.com>
+
+            Add API support for quirk that lets an arbitrary click allow auto-play.
+            https://bugs.webkit.org/show_bug.cgi?id=178227
+
+            Reviewed by Alex Christensen.
+
+            Added API test.
+
+            Instead of hardcoding sites in WebCore, let API clients control which websites opt into the quirk that lets
+            an arbitrary click allow auto-play via website policies.
+
+            * html/MediaElementSession.cpp:
+            (WebCore::needsArbitraryUserGestureAutoplayQuirk):
+            * loader/DocumentLoader.h:
+
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223436. rdar://problem/35061711
 
     2017-10-16  Chris Dumez  <cdumez@apple.com>
