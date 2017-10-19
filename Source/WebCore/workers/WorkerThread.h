@@ -61,7 +61,7 @@ class WorkerThread : public RefCounted<WorkerThread> {
 public:
     virtual ~WorkerThread();
 
-    WEBCORE_EXPORT bool start();
+    bool start();
     void stop();
 
     ThreadIdentifier threadID() const { return m_thread ? m_thread->id() : 0; }

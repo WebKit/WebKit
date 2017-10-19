@@ -230,11 +230,6 @@ public:
 
     JSC::ExecState* execState();
 
-#if ENABLE(SERVICE_WORKER)
-    uint64_t selectedServiceWorkerIdentifier() const { return m_serviceWorkerIdentifier; }
-    void setSelectedServiceWorkerIdentifier(uint64_t identifier) { m_serviceWorkerIdentifier = identifier; }
-#endif
-
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -301,10 +296,6 @@ private:
 #endif
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     bool m_activeDOMObjectRemovalForbidden { false };
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-    uint64_t m_serviceWorkerIdentifier { 0 };
 #endif
 };
 

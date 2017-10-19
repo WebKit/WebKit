@@ -23,37 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SWContextManager.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "Connection.h"
-#include <WebCore/ServiceWorkerThread.h>
-#include <wtf/HashMap.h>
+#include "Logging.h"
+#include <pal/SessionID.h>
+
+using namespace PAL;
 
 namespace WebCore {
-struct FetchOptions;
-class ResourceRequest;
-struct ServiceWorkerContextData;
+
+SWContextManager& SWContextManager::singleton()
+{
+    static SWContextManager* sharedManager = new SWContextManager;
+    return *sharedManager;
 }
 
-namespace WebKit {
+SWContextManager::SWContextManager()
+{
 
-class ServiceWorkerContextManager {
-public:
-    explicit ServiceWorkerContextManager(Ref<IPC::Connection>&& connection)
-        : m_connectionToStorageProcess(WTFMove(connection))
-    {
-    }
+}
 
-    void startServiceWorkerContext(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
-    void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
+ExceptionOr<uint64_t> SWContextManager::startServiceWorkerContext(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
+{
+    // FIXME: Provide a sensical session ID
 
-private:
-    Ref<IPC::Connection> m_connectionToStorageProcess;
-    HashMap<uint64_t, RefPtr<WebCore::ServiceWorkerThread>> m_workerThreadMap;
-};
+    auto thread = ServiceWorkerThread::create(serverConnectionIdentifier, data, SessionID::defaultSessionID());
+    auto threadIdentifier = thread->identifier();
+    auto result = m_workerThreadMap.add(threadIdentifier, WTFMove(thread));
+    ASSERT(result.isNewEntry);
 
-} // namespace WebKit
+    result.iterator->value->start();
+    
+    LOG(ServiceWorker, "Context process PID: %i started worker thread %s\n", getpid(), data.workerID.utf8().data());
+    
+    return threadIdentifier;
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

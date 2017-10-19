@@ -405,30 +405,6 @@ void StorageProcess::serviceWorkerContextStarted(uint64_t serverConnectionIdenti
         connection->scriptContextStarted(registrationKey, identifier, workerID);
 }
 
-void StorageProcess::didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didFailFetch(fetchIdentifier);
-}
-
-void StorageProcess::didReceiveFetchResponse(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const WebCore::ResourceResponse& response)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didReceiveFetchResponse(fetchIdentifier, response);
-}
-
-void StorageProcess::didReceiveFetchData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const IPC::DataReference& data, int64_t encodedDataLength)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didReceiveFetchData(fetchIdentifier, data, encodedDataLength);
-}
-
-void StorageProcess::didFinishFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didFinishFetch(fetchIdentifier);
-}
-
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(!m_swServerConnections.contains(connection.identifier()));

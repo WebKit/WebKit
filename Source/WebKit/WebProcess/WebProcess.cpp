@@ -40,7 +40,6 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkSession.h"
 #include "PluginProcessConnectionManager.h"
-#include "ServiceWorkerContextManager.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "StorageProcessMessages.h"
@@ -106,6 +105,7 @@
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/SWContextManager.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerContextData.h>
@@ -1622,7 +1622,7 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 #if ENABLE(SERVICE_WORKER)
 void WebProcess::getWorkerContextConnection()
 {
-    ASSERT(!m_serviceWorkerManager);
+    ASSERT(!m_workerContextConnection);
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
@@ -1642,27 +1642,20 @@ void WebProcess::getWorkerContextConnection()
     RELEASE_ASSERT_NOT_REACHED();
 #endif
 
-    auto workerContextConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
-    workerContextConnection->open();
-    m_serviceWorkerManager =  ServiceWorkerContextManager(WTFMove(workerContextConnection));
+    m_workerContextConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
+    m_workerContextConnection->open();
+
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidGetWorkerContextConnection(connectionClientPort), 0);
 }
 
 void WebProcess::startServiceWorkerContext(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
 {
-    ASSERT(m_serviceWorkerManager);
-    if (!m_serviceWorkerManager)
-        return;
-
-    m_serviceWorkerManager->startServiceWorkerContext(serverConnectionIdentifier, data);
-}
-
-void WebProcess::startFetchInServiceWorker(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
-{
-    if (!m_serviceWorkerManager)
-        return;
-
-    m_serviceWorkerManager->startFetch(serverConnectionIdentifier, fetchIdentifier, serviceWorkerIdentifier, request, options);
+    auto contextResult = SWContextManager::singleton().startServiceWorkerContext(serverConnectionIdentifier, data);
+    
+    if (contextResult.hasException())
+        m_workerContextConnection->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(serverConnectionIdentifier, data.registrationKey, data.workerID, contextResult.exception().message()), 0);
+    else
+        m_workerContextConnection->send(Messages::StorageProcess::ServiceWorkerContextStarted(serverConnectionIdentifier, data.registrationKey, contextResult.returnValue(), data.workerID), 0);
 }
 
 #endif

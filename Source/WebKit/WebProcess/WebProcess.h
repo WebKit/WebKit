@@ -30,7 +30,6 @@
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
-#include "ServiceWorkerContextManager.h"
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
@@ -301,7 +300,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void getWorkerContextConnection();
     void startServiceWorkerContext(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
-    void startFetchInServiceWorker(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
+    RefPtr<IPC::Connection> m_workerContextConnection;
 #endif
 
     void releasePageCache();
@@ -438,9 +437,6 @@ private:
 
 #if PLATFORM(WAYLAND)
     std::unique_ptr<WaylandCompositorDisplay> m_waylandCompositorDisplay;
-#endif
-#if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerContextManager> m_serviceWorkerManager;
 #endif
 };
 

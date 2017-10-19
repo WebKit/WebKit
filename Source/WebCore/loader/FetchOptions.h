@@ -69,21 +69,6 @@ inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credential
 {
 }
 
-inline bool isPotentialNavigationOrSubresourceRequest(FetchOptions::Destination destination)
-{
-    return destination == FetchOptions::Destination::Object
-        || destination == FetchOptions::Destination::Embed;
-}
-
-inline bool isNonSubresourceRequest(FetchOptions::Destination destination)
-{
-    return destination == FetchOptions::Destination::Document
-        || destination == FetchOptions::Destination::Report
-        || destination == FetchOptions::Destination::Serviceworker
-        || destination == FetchOptions::Destination::Sharedworker
-        || destination == FetchOptions::Destination::Worker;
-}
-
 }
 
 namespace WTF {

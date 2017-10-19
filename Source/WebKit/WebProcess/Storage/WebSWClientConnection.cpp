@@ -29,7 +29,6 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Logging.h"
-#include "ServiceWorkerClientFetch.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSWOriginTable.h"
@@ -74,15 +73,6 @@ bool WebSWClientConnection::hasServiceWorkerRegisteredForOrigin(const SecurityOr
 void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::Handle& handle)
 {
     m_swOriginTable->setSharedMemory(handle);
-}
-
-Ref<ServiceWorkerClientFetch> WebSWClientConnection::startFetch(WebServiceWorkerProvider& provider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, ServiceWorkerClientFetch::Callback&& callback)
-{
-    ASSERT(loader->options().serviceWorkersMode == ServiceWorkersMode::All);
-    // FIXME: Decide whether to assert for loader->options().serviceWorkerIdentifier once we have a story for navigation loads.
-
-    send(Messages::WebSWServerConnection::StartFetch(identifier, loader->options().serviceWorkerIdentifier, loader->originalRequest(), loader->options()));
-    return ServiceWorkerClientFetch::create(provider, WTFMove(loader), identifier, m_connection.get(), WTFMove(callback));
 }
 
 } // namespace WebKit

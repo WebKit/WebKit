@@ -27,36 +27,24 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ServiceWorkerContextData.h"
-#include "WorkerThread.h"
-#include <wtf/Identified.h>
+#include "ExceptionOr.h"
+#include "ServiceWorkerThread.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class ContentSecurityPolicyResponseHeaders;
-class WorkerObjectProxy;
 struct ServiceWorkerContextData;
 
-class ServiceWorkerThread : public WorkerThread, public ThreadSafeIdentified<ServiceWorkerThread> {
+class SWContextManager {
 public:
-    template<typename... Args> static Ref<ServiceWorkerThread> create(Args&&... args)
-    {
-        return adoptRef(*new ServiceWorkerThread(std::forward<Args>(args)...));
-    }
-    virtual ~ServiceWorkerThread();
+    WEBCORE_EXPORT static SWContextManager& singleton();
 
-    WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
-
-protected:
-    Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID) final;
-    void runEventLoop() override;
+    WEBCORE_EXPORT ExceptionOr<uint64_t> startServiceWorkerContext(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&);
 
 private:
-    ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID);
-
-    uint64_t m_serverConnectionIdentifier;
-    ServiceWorkerContextData m_data;
-    WorkerObjectProxy& m_workerObjectProxy;
+    SWContextManager();
+    
+    HashMap<uint64_t, RefPtr<ServiceWorkerThread>> m_workerThreadMap;
 };
 
 } // namespace WebCore

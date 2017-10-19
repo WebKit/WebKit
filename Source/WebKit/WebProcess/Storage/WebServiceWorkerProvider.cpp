@@ -58,60 +58,6 @@ WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionFo
     return WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);
 }
 
-static inline bool shouldHandleFetch(const WebSWClientConnection& connection, CachedResource* resource, const ResourceLoaderOptions& options)
-{
-    if (options.serviceWorkersMode != ServiceWorkersMode::All)
-        return false;
-
-    // FIXME: We should probably assert that options.serviceWorkersIdentifier is not null.
-    if (isPotentialNavigationOrSubresourceRequest(options.destination))
-        return false;
-
-    // FIXME: Implement non-subresource request loads.
-    if (isNonSubresourceRequest(options.destination))
-        return false;
-
-    if (!resource)
-        return false;
-
-    return connection.hasServiceWorkerRegisteredForOrigin(*resource->origin());
-}
-
-void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, ServiceWorkerClientFetch::Callback&& callback)
-{
-    auto& connection = WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);
-
-    if (!shouldHandleFetch(connection, resource, loader.options())) {
-        // FIXME: Add an option to error resource load for DTL to actually go through preflight.
-        callback(ServiceWorkerClientFetch::Result::Unhandled);
-        return;
-    }
-
-    auto fetch = connection.startFetch(*this, loader, loader.identifier(), WTFMove(callback));
-    ASSERT(fetch->isOngoing());
-
-    m_ongoingFetchTasks.add(loader.identifier(), WTFMove(fetch));
-}
-
-bool WebServiceWorkerProvider::cancelFetch(uint64_t fetchIdentifier)
-{
-    auto fetch = m_ongoingFetchTasks.take(fetchIdentifier);
-    if (fetch)
-        (*fetch)->cancel();
-    return !!fetch;
-}
-
-void WebServiceWorkerProvider::fetchFinished(uint64_t fetchIdentifier)
-{
-    m_ongoingFetchTasks.take(fetchIdentifier);
-}
-
-void WebServiceWorkerProvider::didReceiveServiceWorkerClientFetchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    if (auto fetch = m_ongoingFetchTasks.get(decoder.destinationID()))
-        fetch->didReceiveMessage(connection, decoder);
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

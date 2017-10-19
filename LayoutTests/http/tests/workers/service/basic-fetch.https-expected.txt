@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: line 12: test1 status code: 200
-CONSOLE MESSAGE: line 13: test1 status text: Hello from service worker
-CONSOLE MESSAGE: line 16: test2 status code: 500
-CONSOLE MESSAGE: line 17: test2 status text: Error from service worker
-CONSOLE MESSAGE: line 26: test3 fetch failed as expected
-

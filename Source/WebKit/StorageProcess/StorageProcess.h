@@ -119,11 +119,6 @@ private:
     void didGetWorkerContextProcessConnection(const IPC::Attachment& encodedConnectionIdentifier);
     void serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
     void serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
-
-    void didReceiveFetchResponse(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveFetchData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
-    void didFinishFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
-    void didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);

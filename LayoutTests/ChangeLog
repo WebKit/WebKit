@@ -1,3 +1,12 @@
+2017-10-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r223650 as it caused crashes on the bots.
+
+        * http/tests/workers/service/basic-fetch.https-expected.txt: Removed.
+        * http/tests/workers/service/basic-fetch.https.html: Removed.
+        * http/tests/workers/service/resources/basic-fetch-worker.js: Removed.
+        * http/tests/workers/service/resources/basic-fetch.js: Removed.
+
 2017-10-19  Antti Koivisto  <antti@apple.com>
 
         Overlapping text on all CSS fonts specs

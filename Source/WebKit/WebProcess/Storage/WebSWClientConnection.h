@@ -30,7 +30,6 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "ServiceWorkerClientFetch.h"
 #include "SharedMemory.h"
 #include <WebCore/SWClientConnection.h>
 #include <pal/SessionID.h>
@@ -38,13 +37,11 @@
 
 namespace WebCore {
 struct ExceptionData;
-class ResourceLoader;
 }
 
 namespace WebKit {
 
 class WebSWOriginTable;
-class WebServiceWorkerProvider;
 
 class WebSWClientConnection : public WebCore::SWClientConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
@@ -61,7 +58,6 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     bool hasServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
-    Ref<ServiceWorkerClientFetch> startFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, ServiceWorkerClientFetch::Callback&&);
 
 private:
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);

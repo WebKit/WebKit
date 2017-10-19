@@ -51,22 +51,15 @@ public:
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 
-    void didReceiveFetchResponse(uint64_t fetchIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveFetchData(uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
-    void didFinishFetch(uint64_t fetchIdentifier);
-    void didFailFetch(uint64_t fetchIdentifier);
-
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
     void rejectJobInClient(uint64_t jobIdentifier, const WebCore::ExceptionData&) final;
     void resolveJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&) final;
     void startScriptFetchInClient(uint64_t jobIdentifier) final;
 
-    void startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
-
     // Messages to the SW context WebProcess
     void startServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
-
+    
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier(); }
 

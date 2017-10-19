@@ -1,5 +1,38 @@
 2017-10-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, revert r223650 as it caused crashes on the bots.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * StorageProcess/StorageProcess.cpp:
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::remove):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp: Removed.
+        * WebProcess/Storage/ServiceWorkerClientFetch.h: Removed.
+        * WebProcess/Storage/ServiceWorkerClientFetch.messages.in: Removed.
+        * WebProcess/Storage/ServiceWorkerContextManager.cpp: Removed.
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didReceiveMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWorkerContextConnection):
+        (WebKit::WebProcess::startServiceWorkerContext):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
+2017-10-19  Chris Dumez  <cdumez@apple.com>
+
         http/tests/workers/service/basic-register.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=178494
         <rdar://problem/35065315>

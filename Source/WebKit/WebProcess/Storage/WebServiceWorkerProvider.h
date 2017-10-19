@@ -27,7 +27,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ServiceWorkerClientFetch.h"
 #include <WebCore/ServiceWorkerProvider.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -37,19 +36,12 @@ class WebServiceWorkerProvider final : public WebCore::ServiceWorkerProvider {
 public:
     static WebServiceWorkerProvider& singleton();
 
-    void handleFetch(WebCore::ResourceLoader&, WebCore::CachedResource*, PAL::SessionID, ServiceWorkerClientFetch::Callback&&);
-    bool cancelFetch(uint64_t fetchIdentifier);
-    void fetchFinished(uint64_t fetchIdentifier);
-
-    void didReceiveServiceWorkerClientFetchMessage(IPC::Connection&, IPC::Decoder&);
-
 private:
     friend NeverDestroyed<WebServiceWorkerProvider>;
     WebServiceWorkerProvider();
 
     WebCore::SWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID) final;
 
-    HashMap<uint64_t, Ref<ServiceWorkerClientFetch>> m_ongoingFetchTasks;
 }; // class WebServiceWorkerProvider
 
 } // namespace WebKit
