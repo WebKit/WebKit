@@ -1,5 +1,15 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223294. rdar://problem/34958928
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; add definitions for IOSurface methods missing on some platforms.
+
+            * platform/graphics/cv/VideoTextureCopierCV.cpp:
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223289. rdar://problem/34958928
 
     2017-10-13  Jer Noble  <jer.noble@apple.com>

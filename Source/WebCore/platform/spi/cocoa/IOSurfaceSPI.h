@@ -81,6 +81,8 @@ Boolean IOSurfaceIsInUse(IOSurfaceRef buffer);
 IOReturn IOSurfaceLock(IOSurfaceRef buffer, uint32_t options, uint32_t *seed);
 IOSurfaceRef IOSurfaceLookupFromMachPort(mach_port_t);
 IOReturn IOSurfaceUnlock(IOSurfaceRef buffer, uint32_t options, uint32_t *seed);
+size_t IOSurfaceGetWidthOfPlane(IOSurfaceRef buffer, size_t planeIndex);
+size_t IOSurfaceGetHeightOfPlane(IOSurfaceRef buffer, size_t planeIndex);
 
 WTF_EXTERN_C_END
 

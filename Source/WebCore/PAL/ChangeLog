@@ -1,3 +1,13 @@
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223294. rdar://problem/34958928
+
+    2017-10-13  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; add definitions for IOSurface methods missing on some platforms.
+
+            * pal/spi/cocoa/IOSurfaceSPI.h:
+
 2017-08-09  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220473. rdar://problem/33810961
