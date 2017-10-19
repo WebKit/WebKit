@@ -5631,6 +5631,10 @@ void SpeculativeJIT::compile(Node* node)
         unreachable(node);
         break;
 
+    case CheckStructureOrEmpty:
+        DFG_CRASH(m_jit.graph(), node, "CheckStructureOrEmpty only used in 64-bit DFG");
+        break;
+
     case LastNodeType:
     case Phi:
     case Upsilon:

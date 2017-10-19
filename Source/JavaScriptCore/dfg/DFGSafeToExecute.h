@@ -36,12 +36,13 @@ class SafeToExecuteEdge {
 public:
     SafeToExecuteEdge(AbstractStateType& state)
         : m_state(state)
-        , m_result(true)
     {
     }
     
     void operator()(Node*, Edge edge)
     {
+        m_maySeeEmptyChild |= !!(m_state.forNode(edge).m_type & SpecEmpty);
+
         switch (edge.useKind()) {
         case UntypedUse:
         case Int32Use:
@@ -110,9 +111,11 @@ public:
     }
     
     bool result() const { return m_result; }
+    bool maySeeEmptyChild() const { return m_maySeeEmptyChild; }
 private:
     AbstractStateType& m_state;
-    bool m_result;
+    bool m_result { true };
+    bool m_maySeeEmptyChild { false };
 };
 
 // Determines if it's safe to execute a node within the given abstract state. This may
@@ -133,6 +136,24 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     DFG_NODE_DO_TO_CHILDREN(graph, node, safeToExecuteEdge);
     if (!safeToExecuteEdge.result())
         return false;
+
+    if (safeToExecuteEdge.maySeeEmptyChild()) {
+        // We conservatively assume if the empty value flows into a node,
+        // it might not be able to handle it (e.g, crash). In general, the bytecode generator
+        // emits code in such a way that most node types don't need to worry about the empty value
+        // because they will never see it. However, code motion has to consider the empty
+        // value so it does not insert/move nodes to a place where they will crash. E.g, the
+        // type check hoisting phase needs to insert CheckStructureOrEmpty instead of CheckStructure
+        // for hoisted structure checks because it can not guarantee that a particular local is not
+        // the empty value.
+        switch (node->op()) {
+        case CheckNotEmpty:
+        case CheckStructureOrEmpty:
+            break;
+        default:
+            return false;
+        }
+    }
 
     // NOTE: This tends to lie when it comes to effectful nodes, because it knows that they aren't going to
     // get hoisted anyway.
@@ -213,6 +234,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case DefineDataProperty:
     case DefineAccessorProperty:
     case CheckStructure:
+    case CheckStructureOrEmpty:
     case GetExecutable:
     case GetButterfly:
     case CallDOMGetter:

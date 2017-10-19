@@ -177,8 +177,14 @@ public:
                     Edge child1 = node->child1();
                     
                     if (iter->value.m_structure) {
+                        // Note: On 64-bit platforms, cell checks allow the empty value to flow through.
+                        // This means that this structure check may see the empty value as input. We need
+                        // to emit a node that explicitly handles the empty value. Most of the time, CheckStructureOrEmpty
+                        // will be folded to CheckStructure because AI proves that the incoming value is
+                        // definitely not empty.
+                        static_assert(is64Bit() || !(SpecCellCheck & SpecEmpty), "");
                         insertionSet.insertNode(
-                            indexForChecks, SpecNone, CheckStructure,
+                            indexForChecks, SpecNone, is64Bit() ? CheckStructureOrEmpty : CheckStructure,
                             originForChecks.withSemantic(origin.semantic),
                             OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                             Edge(child1.node(), CellUse));

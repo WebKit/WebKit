@@ -1,5 +1,67 @@
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221607. rdar://problem/35041474
+
+    2017-09-04  Saam Barati  <sbarati@apple.com>
+
+            typeCheckHoistingPhase may emit a CheckStructure on the empty value which leads to a dereference of zero on 64 bit platforms
+            https://bugs.webkit.org/show_bug.cgi?id=176317
+
+            Reviewed by Keith Miller.
+
+            It turns out that TypeCheckHoistingPhase may hoist a CheckStructure up to
+            the SetLocal of a particular value where the value is the empty JSValue.
+            On 64-bit platforms, the empty value is zero. This means that the empty value
+            passes a cell check. This will lead to a crash when we dereference null to load
+            the value's structure. This patch teaches TypeCheckHoistingPhase to be conservative
+            in the structure checks it hoists. On 64-bit platforms, instead of emitting a
+            CheckStructure node, we now emit a CheckStructureOrEmpty node. This node allows
+            the empty value to flow through. If the value isn't empty, it'll perform the normal
+            structure check that CheckStructure performs. For now, we only emit CheckStructureOrEmpty
+            on 64-bit platforms since a cell check on 32-bit platforms does not allow the empty
+            value to flow through.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGArgumentsEliminationPhase.cpp:
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::convertCheckStructureOrEmptyToCheckStructure):
+            (JSC::DFG::Node::hasStructureSet):
+            * dfg/DFGNodeType.h:
+            * dfg/DFGObjectAllocationSinkingPhase.cpp:
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::SafeToExecuteEdge::SafeToExecuteEdge):
+            (JSC::DFG::SafeToExecuteEdge::operator()):
+            (JSC::DFG::SafeToExecuteEdge::maySeeEmptyChild):
+            (JSC::DFG::safeToExecute):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::emitStructureCheck):
+            (JSC::DFG::SpeculativeJIT::compileCheckStructure):
+            * dfg/DFGSpeculativeJIT.h:
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGTypeCheckHoistingPhase.cpp:
+            (JSC::DFG::TypeCheckHoistingPhase::run):
+            * dfg/DFGValidate.cpp:
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCheckStructureOrEmpty):
+
+2017-10-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223409. rdar://problem/34792148
 
     2017-10-16  JF Bastien  <jfbastien@apple.com>

@@ -886,6 +886,7 @@ private:
                 m_heap.escape(node->child1().node());
             break;
 
+        case CheckStructureOrEmpty:
         case CheckStructure: {
             Allocation* allocation = m_heap.onlyLocalAllocation(node->child1().node());
             if (allocation && allocation->isObjectAllocation()) {

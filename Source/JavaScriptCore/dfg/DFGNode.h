@@ -422,6 +422,12 @@ public:
         m_opInfo = set;
     }
 
+    void convertCheckStructureOrEmptyToCheckStructure()
+    {
+        ASSERT(op() == CheckStructureOrEmpty);
+        setOpAndDefaultFlags(CheckStructure);
+    }
+
     void convertToCheckStructureImmediate(Node* structure)
     {
         ASSERT(op() == CheckStructure);
@@ -1623,6 +1629,7 @@ public:
     {
         switch (op()) {
         case CheckStructure:
+        case CheckStructureOrEmpty:
         case CheckStructureImmediate:
         case MaterializeNewObject:
             return true;
