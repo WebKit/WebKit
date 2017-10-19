@@ -77,6 +77,30 @@ TEST(PasteWebArchive, ExposesHTMLTypeInDataTransfer)
     EXPECT_WK_STREQ("hello, world", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 }
 
+TEST(PasteWebArchive, SanitizesHTML)
+{
+    auto* url = [NSURL URLWithString:@"file:///some-file.html"];
+    auto* markup = [@"<!DOCTYPE html><html><body><meta content=\"secret\"><b onmouseover=\"dangerousCode()\">hello</b>"
+        "<!-- secret-->, world<script>dangerousCode()</script></html>" dataUsingEncoding:NSUTF8StringEncoding];
+    auto mainResource = adoptNS([[WebResource alloc] initWithData:markup URL:url MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
+    auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:nil subframeArchives:nil]);
+
+    [[NSPasteboard generalPasteboard] declareTypes:@[WebArchivePboardType] owner:nil];
+    [[NSPasteboard generalPasteboard] setData:[archive data] forType:WebArchivePboardType];
+
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("hello, world", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+    [webView stringByEvaluatingJavaScript:@"editor.focus(); getSelection().setPosition(editor, 0)"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('bold')"].boolValue);
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary')"];
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('bold')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"editor.innerHTML.includes('secret')"].boolValue);
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"editor.innerHTML.includes('dangerousCode')"].boolValue);
+}
+
 #endif // WK_API_ENABLED && PLATFORM(MAC)
 
 

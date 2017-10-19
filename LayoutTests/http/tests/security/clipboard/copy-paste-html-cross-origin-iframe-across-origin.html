@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<div id="container">
+<button onclick="runTest()">Copy</button>
+<div><br></div>
+<div id="source" contenteditable>
+    hello, <meta content="some secret"><!-- secret -->
+    <img onclick="dangerousCode()" src="resources/apple.gif"><br>
+    <iframe class="same-origin-frame" src="resources/content-to-copy.html" width=80 height=80></iframe>
+    <iframe class="cross-origin-frame" src="http://localhost:8080/security/clipboard/resources/content-to-copy.html" width="100" height="100"></iframe>
+</div>
+<iframe id="destinationFrame" src="http://localhost:8000/security/clipboard/resources/subdirectory/paste-html.html"></iframe>
+</div>
+<script>
+
+description('This tests copying and pasting HTML by the default action. WebKit should sanitize the HTML across origin.');
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setCustomPasteboardDataEnabled(true);
+
+function runTest() {
+    document.getElementById('source').focus();
+    document.execCommand('selectAll');
+    document.execCommand('copy');
+    getSelection().removeAllRanges();
+    setTimeout(() => {
+        destinationFrame.postMessage({type: 'paste'}, '*');
+    }, 0);
+}
+
+window.onmessage = function (event) {
+    if (event.data.type == 'pasted') {
+        html = event.data.html;
+        debug('html in DataTransfer');
+        shouldBeTrue('html.includes("hello")');
+        shouldBeTrue('fragment = (new DOMParser).parseFromString(html, "text/html"); img = fragment.querySelector("img"); !!img');
+        shouldBeEqualToString('new URL(img.src).protocol', 'blob:');
+        shouldBeEqualToString('new URL(fragment.querySelector(".same-origin-frame").src).protocol', 'blob:');
+        shouldBeEqualToString('new URL(fragment.querySelector(".cross-origin-frame").src).protocol', 'blob:');
+    } else if (event.data.type == 'checkedState') {
+        frames = event.data.frames;
+        shouldBe('frames.length', '2');
+        shouldBeEqualToString('new URL(frames[0].src).protocol', 'blob:');
+        shouldBeTrue('frames[0].canAccessContentDocument');
+        shouldBeTrue('frames[0].hasImage');
+        shouldBe('frames[0].imageWidth', '80');
+        shouldBeEqualToString('new URL(frames[1].src).protocol', 'blob:');
+        shouldBeTrue('frames[1].canAccessContentDocument');
+        shouldBeTrue('frames[1].hasImage');
+        shouldBe('frames[1].imageWidth', '80');
+        if (window.testRunner)
+            container.remove();
+        finishJSTest();
+    }
+}
+
+if (window.testRunner)
+    window.onload = runTest;
+
+setTimeout(finishJSTest, 3000);
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

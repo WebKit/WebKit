@@ -33,9 +33,21 @@ namespace WebCore {
 
 class ArchiveResource;
 
-class WebContentReader final : public PasteboardWebContentReader {
+class FrameWebContentReader : public PasteboardWebContentReader {
 public:
     Frame& frame;
+
+    FrameWebContentReader(Frame& frame)
+        : frame(frame)
+    {
+    }
+
+protected:
+    bool shouldSanitize() const;
+};
+
+class WebContentReader final : public FrameWebContentReader {
+public:
     Range& context;
     const bool allowPlainText;
 
@@ -43,7 +55,7 @@ public:
     bool madeFragmentFromPlainText;
 
     WebContentReader(Frame& frame, Range& context, bool allowPlainText)
-        : frame(frame)
+        : FrameWebContentReader(frame)
         , context(context)
         , allowPlainText(allowPlainText)
         , madeFragmentFromPlainText(false)
@@ -65,19 +77,16 @@ private:
     bool readPlainText(const String&) override;
 };
 
-class WebContentMarkupReader final : public PasteboardWebContentReader {
+class WebContentMarkupReader final : public FrameWebContentReader {
 public:
-    Frame& frame;
     String markup;
 
     explicit WebContentMarkupReader(Frame& frame)
-        : frame(frame)
+        : FrameWebContentReader(frame)
     {
     }
 
 private:
-    bool shouldSanitize() const;
-
 #if PLATFORM(COCOA)
     bool readWebArchive(SharedBuffer&) override;
     bool readFilenames(const Vector<String>&) override { return false; }

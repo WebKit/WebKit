@@ -1135,8 +1135,11 @@ editing/pasteboard/ [ Pass Failure ]
 [ Debug ] editing/selection/4975120.html [ Skip ] # Debug Assertion
 
 # Custom pasteboard data is not supported on Windows.
+editing/pasteboard/clipboard-customData.html [ Skip ]
 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Skip ]
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Skip ]
+http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
+http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
 
 webkit.org/b/140783 [ Release ] editing/pasteboard/copy-standalone-image.html [ Failure ImageOnlyFailure ]
 webkit.org/b/140783 [ Debug ] editing/pasteboard/copy-standalone-image.html [ Skip ] # Debug Assertion
@@ -1154,8 +1157,6 @@ editing/pasteboard/data-transfer-items-image-png.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-file.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]
-# TODO Custom MIME type support in DataTransfer is not yet implemented.
-editing/pasteboard/clipboard-customData.html [ Skip ]
 # TODO Windows does not have global selection.
 editing/pasteboard/paste-global-selection.html [ Skip ]
 webkit.org/b/116564 editing/pasteboard/copy-without-selection.html [ Skip ]

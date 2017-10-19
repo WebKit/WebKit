@@ -1689,6 +1689,7 @@ static bool decodeClientTypesAndData(Decoder& decoder, Vector<String>& types, Ve
 
 void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const PasteboardWebContent& content)
 {
+    encoder << content.contentOrigin;
     encoder << content.canSmartCopyOrDelete;
     encoder << content.dataInStringFormat;
     encoder << content.dataInHTMLFormat;
@@ -1703,6 +1704,8 @@ void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const Pastebo
 
 bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWebContent& content)
 {
+    if (!decoder.decode(content.contentOrigin))
+        return false;
     if (!decoder.decode(content.canSmartCopyOrDelete))
         return false;
     if (!decoder.decode(content.dataInStringFormat))

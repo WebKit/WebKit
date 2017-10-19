@@ -50,6 +50,7 @@ public:
         ~WebContent();
 
 #if PLATFORM(COCOA)
+        String contentOrigin;
         bool canSmartCopyOrDelete;
         RefPtr<SharedBuffer> dataInWebArchiveFormat;
         RefPtr<SharedBuffer> dataInRTFDFormat;

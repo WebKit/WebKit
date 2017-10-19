@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: line 233: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+This tests draggin and dropping HTML by the default action. WebKit should not sanitize the HTML in the same document.
+To manually test, drag & drop the content in the block above to the blue box on the right.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS html = event.dataTransfer.getData("text/html"); html.includes("Drag this,") is true
+PASS destination.innerHTML = html; img = destination.querySelector("img"); !!img is true
+PASS new URL(img.src).protocol is "http:"
+PASS html.includes("http://localhost:8000/security/clipboard/resources/content-to-copy.html") is true
+PASS html.includes("secret") is false
+destination.innerHTML = ""
+PASS source.innerHTML is ""
+PASS destination.textContent.includes("Drag this,") is true
+PASS destination.innerHTML.includes("secret") is false
+PASS destination.innerHTML.includes("dangerousCode") is false
+PASS destination.querySelector("img"); !!img is true
+PASS new URL(img.src).protocol is "http:"
+PASS destination.querySelector("iframe").contentDocument is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

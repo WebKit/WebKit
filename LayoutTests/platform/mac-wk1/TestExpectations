@@ -17,6 +17,7 @@ editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-ori
 editing/pasteboard/drag-end-crash-accessing-item-list.html [ Pass ]
 editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Pass ]
 editing/pasteboard/data-transfer-items-drop-file.html [ Pass ]
+http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

@@ -1,3 +1,16 @@
+2017-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't expose raw HTML in pasteboard to the web content
+        https://bugs.webkit.org/show_bug.cgi?id=178422
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test case for sanitizing web archive in the system pasteboard to strip privacy sensitive information
+        such as local file paths and potentially harmful scripts like event handlers serialized by WebKit prior to r223462.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteWebArchive.mm:
+        (PasteWebArchive.SanitizesHTML):
+
 2017-10-18  Youenn Fablet  <youenn@apple.com>
 
         TestController should clear all fetch caches when resetting its state

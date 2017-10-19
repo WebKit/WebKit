@@ -1,0 +1,24 @@
+This tests copying and pasting HTML by the default action. WebKit should sanitize the HTML across origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+html in DataTransfer
+PASS html.includes("hello") is true
+PASS fragment = (new DOMParser).parseFromString(html, "text/html"); img = fragment.querySelector("img"); !!img is true
+PASS new URL(img.src).protocol is "blob:"
+PASS new URL(fragment.querySelector(".same-origin-frame").src).protocol is "blob:"
+PASS new URL(fragment.querySelector(".cross-origin-frame").src).protocol is "blob:"
+PASS frames.length is 2
+PASS new URL(frames[0].src).protocol is "blob:"
+PASS frames[0].canAccessContentDocument is true
+PASS frames[0].hasImage is true
+PASS frames[0].imageWidth is 80
+PASS new URL(frames[1].src).protocol is "blob:"
+PASS frames[1].canAccessContentDocument is true
+PASS frames[1].hasImage is true
+PASS frames[1].imageWidth is 80
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

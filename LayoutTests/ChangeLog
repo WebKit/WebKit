@@ -1,3 +1,32 @@
+2017-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't expose raw HTML in pasteboard to the web content
+        https://bugs.webkit.org/show_bug.cgi?id=178422
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to copy & paste web contents within the same origin as well as cross origin.
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-get-data-on-drop-rich-text-expected.txt: Now contains DOCTYPE.
+        * editing/pasteboard/data-transfer-get-data-on-paste-rich-text-expected.txt: Ditto.
+        * editing/pasteboard/onpaste-text-html-expected.txt: Rebaselined as now inline styles are stripped.
+        * editing/pasteboard/onpaste-text-html.html: Strip away the inline style data since they differ on each platform.
+        * http/tests/misc/copy-resolves-urls-expected.txt:
+        * http/tests/misc/copy-resolves-urls.html: Now uses blob URL for the pasted image as expected.
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin-expected.txt: Added.
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html: Added.
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin-expected.txt: Added.
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html: Added.
+        * http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin-expected.txt: Added.
+        * http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html: Added.
+        * http/tests/security/clipboard/resources/content-to-copy.html: Added.
+        * http/tests/security/clipboard/resources/subdirectory/paste-html.html: Added.
+        * platform/ios/TestExpectations: Unskip tests that have started passing.
+        * platform/mac-wk1/TestExpectations: Unskip the drag & drop test which only works in Mac WK1.
+        * platform/win/TestExpectations: Skip the newly added tests since we don't support custom pasteboard
+        data on Windows port.
+
 2017-10-18  Chris Dumez  <cdumez@apple.com>
 
         Implement ServiceWorkerRegistration.scope / updateViaCache

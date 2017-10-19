@@ -20,7 +20,7 @@ function paste(ev)
 {
     console.log("text/plain: " + ev.clipboardData.getData("text/plain"));
     // Remove the font name because it varies depending on the platform.
-    console.log("text/html: " + removeFontName(ev.clipboardData.getData("text/html")));
+    console.log("text/html: " + ev.clipboardData.getData("text/html").replace(/style="[^"]+"/, 'style="..."'));
     if (ev.clipboardData.getData("text/html") != undefined)
         document.getElementById("results").innerHTML = "PASS";
 }

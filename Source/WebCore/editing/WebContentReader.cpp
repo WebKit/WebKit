@@ -39,9 +39,10 @@ void WebContentReader::addFragment(Ref<DocumentFragment>&& newFragment)
         fragment->appendChild(newFragment.get());
 }
 
-bool WebContentMarkupReader::shouldSanitize() const
+bool FrameWebContentReader::shouldSanitize() const
 {
-    return frame.document() && frame.document()->originIdentifierForPasteboard() != contentOrigin;
+    ASSERT(frame.document());
+    return frame.document()->originIdentifierForPasteboard() != contentOrigin;
 }
 
 }

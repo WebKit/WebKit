@@ -283,6 +283,10 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     if (!content.dataInStringFormat.isEmpty())
         addRepresentationsForPlainText(representationsToRegister.get(), content.dataInStringFormat);
 
+    PasteboardCustomData customData;
+    customData.origin = content.contentOrigin;
+    [representationsToRegister addData:customData.createSharedBuffer()->createNSData().get() forType:@(PasteboardCustomData::cocoaType())];
+
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
 }
 

@@ -76,6 +76,7 @@ editing/pasteboard/data-transfer-get-data-on-drop-url.html [ Skip ]
 editing/pasteboard/data-transfer-is-unique-for-dragenter-and-dragleave.html [ Skip ]
 editing/pasteboard/data-transfer-set-data-sanitize-html-when-dragging-in-null-origin.html [ Skip ]
 editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html [ Skip ]
+http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Skip ]
 
 editing/pasteboard/drag-end-crash-accessing-item-list.html [ Skip ]
 editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Skip ]

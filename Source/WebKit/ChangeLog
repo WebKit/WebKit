@@ -1,3 +1,16 @@
+2017-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't expose raw HTML in pasteboard to the web content
+        https://bugs.webkit.org/show_bug.cgi?id=178422
+
+        Reviewed by Wenson Hsieh.
+
+        Encode & decode the origin string of the copied content written into the system pasteboard.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PasteboardWebContent>::encode):
+        (IPC::ArgumentCoder<PasteboardWebContent>::decode):
+
 2017-10-18  Chris Dumez  <cdumez@apple.com>
 
         Implement ServiceWorkerRegistration.scope / updateViaCache

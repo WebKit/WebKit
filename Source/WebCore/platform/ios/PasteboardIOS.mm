@@ -226,6 +226,7 @@ Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(Pastebo
 
 void Pasteboard::read(PasteboardWebContentReader& reader)
 {
+    reader.contentOrigin = readOrigin();
     if (respectsUTIFidelities()) {
         readRespectingUTIFidelities(reader);
         return;
@@ -237,8 +238,6 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
     if (!numberOfItems)
         return;
-
-    reader.contentOrigin = readOrigin();
 
     NSArray *types = supportedWebContentPasteboardTypes();
     int numberOfTypes = [types count];
