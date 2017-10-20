@@ -164,10 +164,14 @@ WKRect WebInspectorProxy::inspectorWindowFrame()
     return WKRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
-void WebInspectorProxy::closeTimerFired()
+void WebInspectorProxy::closeFrontendAfterInactivityTimerFired()
+{
+    closeFrontend();
+}
+
+void WebInspectorProxy::closeFrontend()
 {
     ASSERT(!m_isAttached || !m_inspectorWindow);
-
     if (m_inspectorView) {
         m_inspectorView->_page->close();
         m_inspectorView = nil;
@@ -268,7 +272,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
     ASSERT(inspectedPage());
 
-    m_closeTimer.stop();
+    m_closeFrontendAfterInactivityTimer.stop();
 
     if (m_inspectorView) {
         ASSERT(m_objCAdapter);
@@ -352,21 +356,21 @@ void WebInspectorProxy::platformDidClose()
         m_inspectorWindow = nil;
     }
 
-    m_closeTimer.startOneShot(webViewCloseTimeout);
+    m_closeFrontendAfterInactivityTimer.startOneShot(webViewCloseTimeout);
 }
 
 void WebInspectorProxy::platformDidCloseForCrash()
 {
-    m_closeTimer.stop();
+    m_closeFrontendAfterInactivityTimer.stop();
 
-    closeTimerFired();
+    closeFrontend();
 }
 
 void WebInspectorProxy::platformInvalidate()
 {
-    m_closeTimer.stop();
+    m_closeFrontendAfterInactivityTimer.stop();
 
-    closeTimerFired();
+    closeFrontend();
 }
 
 void WebInspectorProxy::platformHide()

@@ -1,3 +1,31 @@
+2017-10-02  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: consolidate code that hosts the Inspector page inside a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=177661
+        <rdar://problem/34740286>
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch refactors some Cocoa code pathas.
+        Rename the timer that closes the WebView so it's more obvious what it is for.
+        Extract the common code to close the frontend window so its not implemented by
+        the timer callback.
+
+        In later patches, this will be extracted further into platform methods to open/close
+        the frontend and window, like how it is for RemoteWebInspectorProxy.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::closeFrontendAfterInactivityTimerFired):
+        (WebKit::WebInspectorProxy::closeFrontend):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformDidClose):
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorProxy::platformInvalidate):
+        (WebKit::WebInspectorProxy::closeTimerFired): Deleted.
+
 2017-09-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: consolidate code that hosts the Inspector page inside a WKWebView

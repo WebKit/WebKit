@@ -105,7 +105,8 @@ public:
     void setInspectorWindowFrame(WKRect&);
     WKRect inspectorWindowFrame();
 
-    void closeTimerFired();
+    void closeFrontend();
+    void closeFrontendAfterInactivityTimerFired();
 
     void attachmentViewDidChange(NSView *oldView, NSView *newView);
 #endif
@@ -236,7 +237,7 @@ private:
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_objCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
-    RunLoop::Timer<WebInspectorProxy> m_closeTimer;
+    RunLoop::Timer<WebInspectorProxy> m_closeFrontendAfterInactivityTimer;
     String m_urlString;
 #elif PLATFORM(GTK)
     std::unique_ptr<WebInspectorProxyClient> m_client;
