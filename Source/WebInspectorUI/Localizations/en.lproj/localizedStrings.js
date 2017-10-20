@@ -747,6 +747,7 @@ localizedStrings["Reset"] = "Reset";
 localizedStrings["Resource"] = "Resource";
 localizedStrings["Resource Size"] = "Resource Size";
 localizedStrings["Resource Type"] = "Resource Type";
+localizedStrings["Resource does not have timing data"] = "Resource does not have timing data";
 localizedStrings["Resource failed to load."] = "Resource failed to load.";
 localizedStrings["Resource has no content"] = "Resource has no content";
 localizedStrings["Resource has no timing data"] = "Resource has no timing data";
