@@ -2293,6 +2293,7 @@
 		52F52E1114A0134F00ACC397 /* NSScrollerImpDetails.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */; };
 		5317612213C516690026E454 /* StyleFlexibleBoxData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5317612013C516690026E454 /* StyleFlexibleBoxData.cpp */; };
 		5317612313C516690026E454 /* StyleFlexibleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5317612113C516690026E454 /* StyleFlexibleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		532042021F9A9F1000B81B2A /* UserAgentScriptsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB6D3017C9259500C60B34 /* UserAgentScriptsData.cpp */; };
 		5351D4B01DF916B4008010CD /* FileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5351D4AE1DF916AC008010CD /* FileHandle.cpp */; };
 		5351D4B11DF916B4008010CD /* FileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5351D4AF1DF916AC008010CD /* FileHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */; };
@@ -32787,6 +32788,7 @@
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,
 				514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */,
 				7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */,
+				532042021F9A9F1000B81B2A /* UserAgentScriptsData.cpp in Sources */,
 				26FAE4CC1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp in Sources */,
 				26C15CF61857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp in Sources */,
 				E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */,

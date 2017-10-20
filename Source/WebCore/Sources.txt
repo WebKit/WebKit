@@ -143,7 +143,6 @@ PlugInsResourcesData.cpp
 SVGElementFactory.cpp
 StyleBuilder.cpp
 StylePropertyShorthandFunctions.cpp
-UserAgentScriptsData.cpp
 UserAgentStyleSheetsData.cpp
 WebCoreJSBuiltinInternals.cpp
 WebCoreJSBuiltins.cpp
