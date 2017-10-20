@@ -61,7 +61,7 @@ Interpreter::Interpreter(const char* fileName, bool shouldFreeAllObjects, bool u
     fstat(m_fd, &buf);
 
     m_opCount = buf.st_size / sizeof(Op);
-    assert(m_opCount * sizeof(Op) == buf.st_size);
+    assert(m_opCount * sizeof(Op) == static_cast<size_t>(buf.st_size));
 
     size_t maxSlot = 0;
 

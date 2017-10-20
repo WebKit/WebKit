@@ -1,3 +1,13 @@
+2017-10-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wsign-compare triggered by MallocBench
+        https://bugs.webkit.org/show_bug.cgi?id=178544
+
+        Reviewed by Ryosuke Niwa.
+
+        * MallocBench/MallocBench/Interpreter.cpp:
+        (Interpreter::Interpreter):
+
 2017-10-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for MallocBench in Linux 32bit
