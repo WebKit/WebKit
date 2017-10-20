@@ -37,10 +37,12 @@
 - (void)_download:(_WKDownload *)download didReceiveServerRedirectToURL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response;
 - (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length;
-- (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite;
+- (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler;
 - (void)_downloadDidFinish:(_WKDownload *)download;
 - (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error;
 - (void)_downloadDidCancel:(_WKDownload *)download;
+
+- (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite WK_API_DEPRECATED_WITH_REPLACEMENT("_download:decideDestinationWithSuggestedFilename:completionHandler:", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 @end
 
 #endif

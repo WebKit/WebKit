@@ -63,6 +63,7 @@ private:
         bool downloadDidReceiveResponse : 1;
         bool downloadDidReceiveData : 1;
         bool downloadDecideDestinationWithSuggestedFilenameAllowOverwrite : 1;
+        bool downloadDecideDestinationWithSuggestedFilenameCompletionHandler : 1;
         bool downloadDidFinish : 1;
         bool downloadDidFail : 1;
         bool downloadDidCancel : 1;

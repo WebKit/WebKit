@@ -1,3 +1,23 @@
+2017-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce completionHandler-based SPI for _WKDownloadDelegate.decideDestinationWithSuggestedFilename
+        https://bugs.webkit.org/show_bug.cgi?id=178560
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::didStart):
+        (WebKit::DownloadClient::didReceiveResponse):
+        (WebKit::DownloadClient::didReceiveData):
+        (WebKit::DownloadClient::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadClient::didFinish):
+        (WebKit::DownloadClient::didFail):
+        (WebKit::DownloadClient::didCancel):
+        (WebKit::DownloadClient::willSendRequest):
+
 2017-10-19  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerContextManager should be an IPC::MessageReceiver
