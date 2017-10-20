@@ -549,13 +549,6 @@ void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(uint64_t load
 #endif
 
 #if USE(NETWORK_SESSION)
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void NetworkProcess::continueCanAuthenticateAgainstProtectionSpaceDownload(DownloadID downloadID, bool canAuthenticate)
-{
-    downloadManager().continueCanAuthenticateAgainstProtectionSpace(downloadID, canAuthenticate);
-}
-#endif
-
 void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
 {
     downloadManager().continueWillSendRequest(downloadID, WTFMove(request));

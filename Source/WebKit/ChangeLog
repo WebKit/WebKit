@@ -1,3 +1,79 @@
+2017-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize API::DownloadClient
+        https://bugs.webkit.org/show_bug.cgi?id=178547
+
+        Reviewed by Andy Estes.
+
+        Use more C++ references instead of pointers because they're never null.
+
+        Remove canAuthenticateAgainstProtectionSpace because there are no implementations
+        except the default implementation which always returns true and we don't intend to
+        add this to the SPI because that's just a legacy call anyways from when NSURLConnection
+        hadn't fully evolved, and we're moving away from NSURLConnection, especially in our API design.
+
+        Separate the NetworkSession-only and pre-NetworkSession-only callbacks.  All the synchronous
+        IPC messages are only used in the pre-NetworkSession code, so once we remove it we can remove them!
+
+        Make API::DownloadClient calls that NetworkSession uses use a completion handler so we will be able to
+        design an asynchronous API.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::continueCanAuthenticateAgainstProtectionSpace): Deleted.
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::canAuthenticateAgainstProtectionSpaceAsync):
+        (WebKit::PendingDownload::continueCanAuthenticateAgainstProtectionSpace): Deleted.
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::continueCanAuthenticateAgainstProtectionSpaceDownload): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didStart):
+        (API::DownloadClient::didReceiveAuthenticationChallenge):
+        (API::DownloadClient::didReceiveResponse):
+        (API::DownloadClient::didReceiveData):
+        (API::DownloadClient::shouldDecodeSourceDataOfMIMEType):
+        (API::DownloadClient::decideDestinationWithSuggestedFilename):
+        (API::DownloadClient::didCreateDestination):
+        (API::DownloadClient::didFinish):
+        (API::DownloadClient::didFail):
+        (API::DownloadClient::didCancel):
+        (API::DownloadClient::processDidCrash):
+        (API::DownloadClient::willSendRequest):
+        (API::DownloadClient::canAuthenticateAgainstProtectionSpace): Deleted.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/API/glib/WebKitDownloadClient.cpp:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didStart):
+        (WebKit::DownloadClient::didReceiveResponse):
+        (WebKit::DownloadClient::didReceiveData):
+        (WebKit::DownloadClient::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadClient::didFinish):
+        (WebKit::DownloadClient::didFail):
+        (WebKit::DownloadClient::didCancel):
+        (WebKit::DownloadClient::willSendRequest):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::processDidClose):
+        (WebKit::DownloadProxy::didStart):
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        (WebKit::DownloadProxy::willSendRequest):
+        (WebKit::DownloadProxy::didReceiveResponse):
+        (WebKit::DownloadProxy::didReceiveData):
+        (WebKit::DownloadProxy::shouldDecodeSourceDataOfMIMEType):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadProxy::didCreateDestination):
+        (WebKit::DownloadProxy::didFinish):
+        (WebKit::DownloadProxy::didFail):
+        (WebKit::DownloadProxy::didCancel):
+        (WebKit::DownloadProxy::canAuthenticateAgainstProtectionSpace): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
 2017-10-19  Nan Wang  <n_wang@apple.com>
 
         AX: Provide a way for Accessibility to cache the selection while retrieving rects for speak selection

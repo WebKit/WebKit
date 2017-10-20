@@ -56,59 +56,58 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadDidReceiveServerRedirectToURL = [delegate respondsToSelector:@selector(_download:didReceiveServerRedirectToURL:)];
 }
 
-void DownloadClient::didStart(WebProcessPool*, DownloadProxy* downloadProxy)
+void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
 {
     if (m_delegateMethods.downloadDidStart)
-        [m_delegate.get() _downloadDidStart:wrapper(*downloadProxy)];
+        [m_delegate.get() _downloadDidStart:wrapper(downloadProxy)];
 }
 
-void DownloadClient::didReceiveResponse(WebProcessPool*, DownloadProxy* downloadProxy, const WebCore::ResourceResponse& response)
+void DownloadClient::didReceiveResponse(WebProcessPool&, DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
     if (m_delegateMethods.downloadDidReceiveResponse)
-        [m_delegate.get() _download:wrapper(*downloadProxy) didReceiveResponse:response.nsURLResponse()];
+        [m_delegate.get() _download:wrapper(downloadProxy) didReceiveResponse:response.nsURLResponse()];
 }
 
-void DownloadClient::didReceiveData(WebProcessPool*, DownloadProxy* downloadProxy, uint64_t length)
+void DownloadClient::didReceiveData(WebProcessPool&, DownloadProxy& downloadProxy, uint64_t length)
 {
     if (m_delegateMethods.downloadDidReceiveData)
-        [m_delegate.get() _download:wrapper(*downloadProxy) didReceiveData:length];
+        [m_delegate.get() _download:wrapper(downloadProxy) didReceiveData:length];
 }
 
-String DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool*, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwriteParam)
+void DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool&, DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler)
 {
     if (!m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite)
-        return String();
-    
+        return completionHandler(AllowOverwrite::No, { });
+
     BOOL allowOverwrite = NO;
-    NSString *destination = [m_delegate.get() _download:wrapper(*downloadProxy) decideDestinationWithSuggestedFilename:filename allowOverwrite:&allowOverwrite];
-    allowOverwriteParam = allowOverwrite;
-    return destination;
+    NSString *destination = [m_delegate.get() _download:wrapper(downloadProxy) decideDestinationWithSuggestedFilename:filename allowOverwrite:&allowOverwrite];
+    completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
 }
 
-void DownloadClient::didFinish(WebProcessPool*, DownloadProxy* downloadProxy)
+void DownloadClient::didFinish(WebProcessPool&, DownloadProxy& downloadProxy)
 {
     if (m_delegateMethods.downloadDidFinish)
-        [m_delegate.get() _downloadDidFinish:wrapper(*downloadProxy)];
+        [m_delegate.get() _downloadDidFinish:wrapper(downloadProxy)];
 }
 
-void DownloadClient::didFail(WebProcessPool*, DownloadProxy* downloadProxy, const WebCore::ResourceError& error)
+void DownloadClient::didFail(WebProcessPool&, DownloadProxy& downloadProxy, const WebCore::ResourceError& error)
 {
     if (m_delegateMethods.downloadDidFail)
-        [m_delegate.get() _download:wrapper(*downloadProxy) didFailWithError:error.nsError()];
+        [m_delegate.get() _download:wrapper(downloadProxy) didFailWithError:error.nsError()];
 }
 
-void DownloadClient::didCancel(WebProcessPool*, DownloadProxy* downloadProxy)
+void DownloadClient::didCancel(WebProcessPool&, DownloadProxy& downloadProxy)
 {
     if (m_delegateMethods.downloadDidCancel)
-        [m_delegate.get() _downloadDidCancel:wrapper(*downloadProxy)];
+        [m_delegate.get() _downloadDidCancel:wrapper(downloadProxy)];
 }
 
-void DownloadClient::willSendRequest(WebProcessPool*, DownloadProxy* downloadProxy, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, WTF::Function<void(const WebCore::ResourceRequest&)>&& callback)
+void DownloadClient::willSendRequest(WebProcessPool&, DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, Function<void(WebCore::ResourceRequest&&)>&& callback)
 {
     if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
-        [m_delegate.get() _download:wrapper(*downloadProxy) didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];
+        [m_delegate.get() _download:wrapper(downloadProxy) didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];
 
-    callback(request);
+    callback(WTFMove(request));
 }
 
 } // namespace WebKit

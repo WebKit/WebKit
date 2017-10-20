@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Download_h
-#define Download_h
+#pragma once
 
 #include "DownloadID.h"
 #include "MessageSender.h"
@@ -104,9 +103,6 @@ public:
 #if USE(NETWORK_SESSION)
     void setSandboxExtension(RefPtr<SandboxExtension>&& sandboxExtension) { m_sandboxExtension = WTFMove(sandboxExtension); }
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);
-#endif
 #else
     const WebCore::ResourceRequest& request() const { return m_request; }
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
@@ -152,10 +148,6 @@ private:
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
 #endif
     PAL::SessionID m_sessionID;
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    std::optional<WebCore::AuthenticationChallenge> m_challenge;
-    ChallengeCompletionHandler m_challengeCompletionHandler;
-#endif
 #else // USE(NETWORK_SESSION)
     WebCore::ResourceRequest m_request;
     String m_responseMIMEType;
@@ -174,5 +166,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // Download_h

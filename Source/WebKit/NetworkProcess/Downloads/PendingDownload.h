@@ -49,9 +49,6 @@ public:
     PendingDownload(std::unique_ptr<NetworkLoad>&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);
-#endif
     void cancel();
 
 private:    

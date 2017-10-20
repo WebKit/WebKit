@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DownloadClient_h
-#define DownloadClient_h
+#pragma once
 
 #import "WKFoundation.h"
 
@@ -41,21 +40,21 @@ class ResourceResponse;
 }
 
 namespace WebKit {
-    
+
 class DownloadClient final : public API::DownloadClient {
 public:
     explicit DownloadClient(id <_WKDownloadDelegate>);
     
 private:
     // From API::DownloadClient
-    void didStart(WebProcessPool*, DownloadProxy*) final;
-    void didReceiveResponse(WebProcessPool*, DownloadProxy*, const WebCore::ResourceResponse&) final;
-    void didReceiveData(WebProcessPool*, DownloadProxy*, uint64_t length) final;
-    String decideDestinationWithSuggestedFilename(WebProcessPool*, DownloadProxy*, const String& filename, bool& allowOverwriteParam) final;
-    void didFinish(WebProcessPool*, DownloadProxy*) final;
-    void didFail(WebProcessPool*, DownloadProxy*, const WebCore::ResourceError&) final;
-    void didCancel(WebProcessPool*, DownloadProxy*) final;
-    void willSendRequest(WebProcessPool*, DownloadProxy*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, WTF::Function<void(const WebCore::ResourceRequest&)>&&) final;
+    void didStart(WebProcessPool&, DownloadProxy&) final;
+    void didReceiveResponse(WebProcessPool&, DownloadProxy&, const WebCore::ResourceResponse&) final;
+    void didReceiveData(WebProcessPool&, DownloadProxy&, uint64_t length) final;
+    void decideDestinationWithSuggestedFilename(WebProcessPool&, DownloadProxy&, const String& suggestedFilename, Function<void(AllowOverwrite, String)>&&) final;
+    void didFinish(WebProcessPool&, DownloadProxy&) final;
+    void didFail(WebProcessPool&, DownloadProxy&, const WebCore::ResourceError&) final;
+    void didCancel(WebProcessPool&, DownloadProxy&) final;
+    void willSendRequest(WebProcessPool&, DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, Function<void(WebCore::ResourceRequest&&)>&&) final;
 
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
@@ -74,5 +73,3 @@ private:
 } // namespace WebKit
 
 #endif
-
-#endif // DownloadClient_h

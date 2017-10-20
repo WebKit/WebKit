@@ -172,101 +172,104 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             initialize(client);
         }
     private:
-        void didStart(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void didStart(WebProcessPool& processPool, DownloadProxy& downloadProxy) final
         {
             if (!m_client.didStart)
                 return;
 
-            m_client.didStart(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.didStart(toAPI(&processPool), toAPI(&downloadProxy), m_client.base.clientInfo);
         }
 
-        void didReceiveAuthenticationChallenge(WebProcessPool* processPool, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy) override
+        void didReceiveAuthenticationChallenge(WebProcessPool& processPool, DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallengeProxy) final
         {
             if (!m_client.didReceiveAuthenticationChallenge)
                 return;
 
-            m_client.didReceiveAuthenticationChallenge(toAPI(processPool), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.base.clientInfo);
+            m_client.didReceiveAuthenticationChallenge(toAPI(&processPool), toAPI(&downloadProxy), toAPI(&authenticationChallengeProxy), m_client.base.clientInfo);
         }
 
-        void didReceiveResponse(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceResponse& response) override
+        void didReceiveResponse(WebProcessPool& processPool, DownloadProxy& downloadProxy, const ResourceResponse& response) final
         {
             if (!m_client.didReceiveResponse)
                 return;
 
-            m_client.didReceiveResponse(toAPI(processPool), toAPI(downloadProxy), toAPI(API::URLResponse::create(response).ptr()), m_client.base.clientInfo);
+            m_client.didReceiveResponse(toAPI(&processPool), toAPI(&downloadProxy), toAPI(API::URLResponse::create(response).ptr()), m_client.base.clientInfo);
         }
 
-        void didReceiveData(WebProcessPool* processPool, DownloadProxy* downloadProxy, uint64_t length) override
+        void didReceiveData(WebProcessPool& processPool, DownloadProxy& downloadProxy, uint64_t length) final
         {
             if (!m_client.didReceiveData)
                 return;
 
-            m_client.didReceiveData(toAPI(processPool), toAPI(downloadProxy), length, m_client.base.clientInfo);
+            m_client.didReceiveData(toAPI(&processPool), toAPI(&downloadProxy), length, m_client.base.clientInfo);
         }
 
-        bool shouldDecodeSourceDataOfMIMEType(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& mimeType) override
+#if !USE(NETWORK_SESSION)
+        bool shouldDecodeSourceDataOfMIMEType(WebProcessPool& processPool, DownloadProxy& downloadProxy, const String& mimeType) final
         {
             if (!m_client.shouldDecodeSourceDataOfMIMEType)
                 return true;
 
-            return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(processPool), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.base.clientInfo);
+            return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(&processPool), toAPI(&downloadProxy), toAPI(mimeType.impl()), m_client.base.clientInfo);
         }
+#endif
 
-        String decideDestinationWithSuggestedFilename(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite) override
+        void decideDestinationWithSuggestedFilename(WebProcessPool& processPool, DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, WTF::String)>&& completionHandler) final
         {
             if (!m_client.decideDestinationWithSuggestedFilename)
-                return String();
+                return completionHandler(AllowOverwrite::No, { });
 
-            WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(processPool), toAPI(downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
-            return toWTFString(destination.get());
+            bool allowOverwrite = false;
+            WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(&processPool), toAPI(&downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
+            completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, toWTFString(destination.get()));
         }
 
-        void didCreateDestination(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& path) override
+        void didCreateDestination(WebProcessPool& processPool, DownloadProxy& downloadProxy, const String& path) final
         {
             if (!m_client.didCreateDestination)
                 return;
 
-            m_client.didCreateDestination(toAPI(processPool), toAPI(downloadProxy), toAPI(path.impl()), m_client.base.clientInfo);
+            m_client.didCreateDestination(toAPI(&processPool), toAPI(&downloadProxy), toAPI(path.impl()), m_client.base.clientInfo);
         }
 
-        void didFinish(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void didFinish(WebProcessPool& processPool, DownloadProxy& downloadProxy) final
         {
             if (!m_client.didFinish)
                 return;
 
-            m_client.didFinish(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.didFinish(toAPI(&processPool), toAPI(&downloadProxy), m_client.base.clientInfo);
         }
 
-        void didFail(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceError& error) override
+        void didFail(WebProcessPool& processPool, DownloadProxy& downloadProxy, const ResourceError& error) final
         {
             if (!m_client.didFail)
                 return;
 
-            m_client.didFail(toAPI(processPool), toAPI(downloadProxy), toAPI(error), m_client.base.clientInfo);
+            m_client.didFail(toAPI(&processPool), toAPI(&downloadProxy), toAPI(error), m_client.base.clientInfo);
         }
         
-        void didCancel(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void didCancel(WebProcessPool& processPool, DownloadProxy& downloadProxy) final
         {
             if (!m_client.didCancel)
                 return;
             
-            m_client.didCancel(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.didCancel(toAPI(&processPool), toAPI(&downloadProxy), m_client.base.clientInfo);
         }
         
-        void processDidCrash(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
+        void processDidCrash(WebProcessPool& processPool, DownloadProxy& downloadProxy) final
         {
             if (!m_client.processDidCrash)
                 return;
             
-            m_client.processDidCrash(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.processDidCrash(toAPI(&processPool), toAPI(&downloadProxy), m_client.base.clientInfo);
         }
 
-        void willSendRequest(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceRequest& request, const ResourceResponse&, WTF::Function<void(const ResourceRequest&)>&& callback) override
+        void willSendRequest(WebProcessPool& processPool, DownloadProxy& downloadProxy, ResourceRequest&& request, const ResourceResponse&, Function<void(ResourceRequest&&)>&& callback) final
         {
             if (m_client.didReceiveServerRedirect)
-                m_client.didReceiveServerRedirect(toAPI(processPool), toAPI(downloadProxy), toURLRef(request.url().string().impl()), m_client.base.clientInfo);
+                m_client.didReceiveServerRedirect(toAPI(&processPool), toAPI(&downloadProxy), toURLRef(request.url().string().impl()), m_client.base.clientInfo);
 
-            callback(request);
+            callback(WTFMove(request));
         }
 
 

@@ -160,31 +160,8 @@ void Download::didReceiveChallenge(const WebCore::AuthenticationChallenge& chall
         return;
     }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    m_challenge = challenge;
-    m_challengeCompletionHandler = WTFMove(completionHandler);
-    send(Messages::DownloadProxy::CanAuthenticateAgainstProtectionSpace(challenge.protectionSpace()));
-#else
     NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*this, challenge, WTFMove(completionHandler));
-#endif
 }
-
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void Download::continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate)
-{
-    ASSERT(m_challengeCompletionHandler);
-    auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
-    if (!canAuthenticate) {
-        if (NetworkSession::allowsSpecificHTTPSCertificateForHost(*m_challenge))
-            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
-        else
-            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
-        return;
-    }
-
-    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*this, *m_challenge, WTFMove(completionHandler));
-}
-#endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 #endif // USE(NETWORK_SESSION)
 
 #if !USE(NETWORK_SESSION)

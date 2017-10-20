@@ -86,21 +86,6 @@ void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::uni
     m_downloads.add(downloadID, WTFMove(download));
 }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void DownloadManager::continueCanAuthenticateAgainstProtectionSpace(DownloadID downloadID, bool canAuthenticate)
-{
-    if (auto* pendingDownload = m_pendingDownloads.get(downloadID)) {
-        pendingDownload->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
-        return;
-    }
-    if (auto* download = m_downloads.get(downloadID)) {
-        download->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-#endif
-
 void DownloadManager::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
 {
     auto* pendingDownload = m_pendingDownloads.get(downloadID);

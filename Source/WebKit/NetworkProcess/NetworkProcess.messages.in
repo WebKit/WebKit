@@ -51,9 +51,6 @@ messages -> NetworkProcess LegacyReceiver {
     ContinueCanAuthenticateAgainstProtectionSpace(uint64_t loaderID, bool canAuthenticate)
 #endif
 #if USE(NETWORK_SESSION)
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    ContinueCanAuthenticateAgainstProtectionSpaceDownload(WebKit::DownloadID downloadID, bool canAuthenticate)
-#endif
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
 #endif
     ContinueDecidePendingDownloadDestination(WebKit::DownloadID downloadID, String destination, WebKit::SandboxExtension::Handle sandboxExtensionHandle, bool allowOverwrite)

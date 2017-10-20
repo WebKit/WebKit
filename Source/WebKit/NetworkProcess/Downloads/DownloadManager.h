@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DownloadManager_h
-#define DownloadManager_h
+#pragma once
 
 #include "DownloadID.h"
 #include "NetworkDataTask.h"
@@ -81,9 +80,6 @@ public:
     void startDownload(NetworkConnectionToWebProcess*, PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
 #if USE(NETWORK_SESSION)
     void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
-#endif
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void willDecidePendingDownloadDestination(NetworkDataTask&, ResponseCompletionHandler&&);
 #endif
@@ -117,5 +113,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // DownloadManager_h
