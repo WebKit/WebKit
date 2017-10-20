@@ -962,8 +962,15 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     if (coreObject->canSetFocusAttribute())
         atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
 
-    if (coreObject->isFocused() || isTextWithCaret(coreObject))
+    // According to the Core AAM, if the element which is focused has a valid aria-activedescendant,
+    // we should not expose the focused state on the element which is actually focused, but instead
+    // on its active descendant.
+    if ((coreObject->isFocused() && !coreObject->activeDescendant()) || isTextWithCaret(coreObject))
         atk_state_set_add_state(stateSet, ATK_STATE_FOCUSED);
+    else if (coreObject->isActiveDescendantOfFocusedContainer()) {
+        atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
+        atk_state_set_add_state(stateSet, ATK_STATE_FOCUSED);
+    }
 
     if (coreObject->orientation() == AccessibilityOrientationHorizontal)
         atk_state_set_add_state(stateSet, ATK_STATE_HORIZONTAL);

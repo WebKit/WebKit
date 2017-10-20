@@ -280,6 +280,11 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         atk_object_notify_state_change(axObject, ATK_STATE_REQUIRED, coreObject->isRequired());
         break;
 
+    case AXActiveDescendantChanged:
+        if (AccessibilityObject* descendant = coreObject->activeDescendant())
+            platformHandleFocusedUIElementChanged(nullptr, descendant->node());
+        break;
+
     default:
         break;
     }
