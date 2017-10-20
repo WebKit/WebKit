@@ -29,6 +29,11 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
+#include "APINavigationAction.h"
+#include "WKArray.h"
+#include "WKContextMenuItem.h"
+#include "WKMutableArray.h"
+#include "WebFramePolicyListenerProxy.h"
 #include "WebInspectorProxyClient.h"
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -52,11 +57,6 @@ static void inspectorViewDestroyed(GtkWidget*, gpointer userData)
     inspectorProxy->close();
 }
 
-static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
-{
-    return std::max<unsigned long long>(expectedUsage, currentDatabaseUsage * 1.25);
-}
-
 void WebInspectorProxy::setClient(std::unique_ptr<WebInspectorProxyClient>&& client)
 {
     m_client = WTFMove(client);
@@ -66,6 +66,69 @@ void WebInspectorProxy::updateInspectorWindowTitle() const
 {
     ASSERT(m_inspectorWindow);
     webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_inspectorWindow), !m_inspectedURLString.isEmpty() ? m_inspectedURLString.utf8().data() : nullptr);
+}
+
+static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
+{
+    return std::max<unsigned long long>(expectedUsage, currentDatabaseUsage * 1.25);
+}
+
+static void webProcessDidCrash(WKPageRef, const void* clientInfo)
+{
+    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
+    ASSERT(webInspectorProxy);
+    webInspectorProxy->closeForCrash();
+}
+
+static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActionRef navigationActionRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
+{
+    // Allow non-main frames to navigate anywhere.
+    API::FrameInfo* sourceFrame = toImpl(navigationActionRef)->sourceFrame();
+    if (sourceFrame && !sourceFrame->isMainFrame()) {
+        toImpl(listenerRef)->use({ });
+        return;
+    }
+
+    const WebInspectorProxy* webInspectorProxy = static_cast<const WebInspectorProxy*>(clientInfo);
+    ASSERT(webInspectorProxy);
+
+    WebCore::ResourceRequest request = toImpl(navigationActionRef)->request();
+
+    // Allow loading of the main inspector file.
+    if (WebInspectorProxy::isMainOrTestInspectorPage(request.url())) {
+        toImpl(listenerRef)->use({ });
+        return;
+    }
+
+    // Prevent everything else from loading in the inspector's page.
+    toImpl(listenerRef)->ignore();
+
+    // And instead load it in the inspected page.
+    webInspectorProxy->inspectedPage()->loadRequest(WTFMove(request));
+}
+
+static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef proposedMenuRef, WKArrayRef* newMenuRef, WKHitTestResultRef, WKTypeRef, const void*)
+{
+    WKMutableArrayRef menuItems = WKMutableArrayCreate();
+
+    size_t count = WKArrayGetSize(proposedMenuRef);
+    for (size_t i = 0; i < count; ++i) {
+        WKContextMenuItemRef contextMenuItem = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(proposedMenuRef, i));
+        switch (WKContextMenuItemGetTag(contextMenuItem)) {
+        case kWKContextMenuItemTagOpenLinkInNewWindow:
+        case kWKContextMenuItemTagOpenImageInNewWindow:
+        case kWKContextMenuItemTagOpenFrameInNewWindow:
+        case kWKContextMenuItemTagOpenMediaInNewWindow:
+        case kWKContextMenuItemTagDownloadLinkToDisk:
+        case kWKContextMenuItemTagDownloadImageToDisk:
+            break;
+        default:
+            WKArrayAppendItem(menuItems, contextMenuItem);
+            break;
+        }
+    }
+
+    *newMenuRef = menuItems;
 }
 
 WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
@@ -141,9 +204,48 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
         nullptr, // unavailablePluginButtonClicked
     };
 
+    WKPageNavigationClientV0 navigationClient = {
+        { 0, this },
+        decidePolicyForNavigationAction,
+        nullptr, // decidePolicyForNavigationResponse
+        nullptr, // decidePolicyForPluginLoad
+        nullptr, // didStartProvisionalNavigation
+        nullptr, // didReceiveServerRedirectForProvisionalNavigation
+        nullptr, // didFailProvisionalNavigation
+        nullptr, // didCommitNavigation
+        nullptr, // didFinishNavigation
+        nullptr, // didFailNavigation
+        nullptr, // didFailProvisionalLoadInSubframe
+        nullptr, // didFinishDocumentLoad
+        nullptr, // didSameDocumentNavigation
+        nullptr, // renderingProgressDidChange
+        nullptr, // canAuthenticateAgainstProtectionSpace
+        nullptr, // didReceiveAuthenticationChallenge
+        webProcessDidCrash,
+        nullptr, // copyWebCryptoMasterKey
+
+        nullptr, // didBeginNavigationGesture
+        nullptr, // willEndNavigationGesture
+        nullptr, // didEndNavigationGesture
+        nullptr, // didRemoveNavigationGestureSnapshot
+    };
+
+    WKPageContextMenuClientV3 contextMenuClient = {
+        { 3, this },
+        nullptr, // getContextMenuFromProposedMenu_deprecatedForUseWithV0
+        nullptr, // customContextMenuItemSelected
+        nullptr, // contextMenuDismissed
+        getContextMenuFromProposedMenu,
+        nullptr, // showContextMenu
+        nullptr, // hideContextMenu
+    };
+
     WebPageProxy* inspectorPage = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
     ASSERT(inspectorPage);
+
     WKPageSetPageUIClient(toAPI(inspectorPage), &uiClient.base);
+    WKPageSetPageNavigationClient(toAPI(inspectorPage), &navigationClient.base);
+    WKPageSetPageContextMenuClient(toAPI(inspectorPage), &contextMenuClient.base);
 
     return inspectorPage;
 }

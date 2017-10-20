@@ -27,13 +27,8 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
-#include "APINavigationAction.h"
 #include "APIProcessPoolConfiguration.h"
-#include "WKArray.h"
-#include "WKContextMenuItem.h"
-#include "WKMutableArray.h"
 #include "WebAutomationSession.h"
-#include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorInterruptDispatcherMessages.h"
 #include "WebInspectorMessages.h"
@@ -88,7 +83,7 @@ void WebInspectorProxy::invalidate()
 {
     m_inspectedPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());
 
-    didClose();
+    closeFrontendPageAndWindow();
     platformInvalidate();
 
     m_inspectedPage = nullptr;
@@ -153,7 +148,7 @@ void WebInspectorProxy::close()
 
     m_inspectedPage->process().send(Messages::WebInspector::Close(), m_inspectedPage->pageID());
 
-    didClose();
+    closeFrontendPageAndWindow();
 }
 
 void WebInspectorProxy::closeForCrash()
@@ -327,64 +322,6 @@ bool WebInspectorProxy::isMainOrTestInspectorPage(const URL& url)
     return url.protocol() == testPageURL.protocol() && decodeURLEscapeSequences(url.path()) == decodeURLEscapeSequences(testPageURL.path());
 }
 
-static void webProcessDidCrash(WKPageRef, const void* clientInfo)
-{
-    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
-    ASSERT(webInspectorProxy);
-    webInspectorProxy->closeForCrash();
-}
-
-static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActionRef navigationActionRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
-{
-    // Allow non-main frames to navigate anywhere.
-    API::FrameInfo* sourceFrame = toImpl(navigationActionRef)->sourceFrame();
-    if (sourceFrame && !sourceFrame->isMainFrame()) {
-        toImpl(listenerRef)->use({ });
-        return;
-    }
-
-    const WebInspectorProxy* webInspectorProxy = static_cast<const WebInspectorProxy*>(clientInfo);
-    ASSERT(webInspectorProxy);
-
-    WebCore::ResourceRequest request = toImpl(navigationActionRef)->request();
-
-    // Allow loading of the main inspector file.
-    if (WebInspectorProxy::isMainOrTestInspectorPage(request.url())) {
-        toImpl(listenerRef)->use({ });
-        return;
-    }
-
-    // Prevent everything else from loading in the inspector's page.
-    toImpl(listenerRef)->ignore();
-
-    // And instead load it in the inspected page.
-    webInspectorProxy->inspectedPage()->loadRequest(WTFMove(request));
-}
-
-static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef proposedMenuRef, WKArrayRef* newMenuRef, WKHitTestResultRef, WKTypeRef, const void*)
-{
-    WKMutableArrayRef menuItems = WKMutableArrayCreate();
-
-    size_t count = WKArrayGetSize(proposedMenuRef);
-    for (size_t i = 0; i < count; ++i) {
-        WKContextMenuItemRef contextMenuItem = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(proposedMenuRef, i));
-        switch (WKContextMenuItemGetTag(contextMenuItem)) {
-        case kWKContextMenuItemTagOpenLinkInNewWindow:
-        case kWKContextMenuItemTagOpenImageInNewWindow:
-        case kWKContextMenuItemTagOpenFrameInNewWindow:
-        case kWKContextMenuItemTagOpenMediaInNewWindow:
-        case kWKContextMenuItemTagDownloadLinkToDisk:
-        case kWKContextMenuItemTagDownloadImageToDisk:
-            break;
-        default:
-            WKArrayAppendItem(menuItems, contextMenuItem);
-            break;
-        }
-    }
-
-    *newMenuRef = menuItems;
-}
-
 void WebInspectorProxy::createFrontendPage()
 {
     if (m_inspectorPage)
@@ -396,45 +333,6 @@ void WebInspectorProxy::createFrontendPage()
         return;
 
     trackInspectorPage(m_inspectorPage);
-
-    WKPageNavigationClientV0 navigationClient = {
-        { 0, this },
-        decidePolicyForNavigationAction,
-        nullptr, // decidePolicyForNavigationResponse
-        nullptr, // decidePolicyForPluginLoad
-        nullptr, // didStartProvisionalNavigation
-        nullptr, // didReceiveServerRedirectForProvisionalNavigation
-        nullptr, // didFailProvisionalNavigation
-        nullptr, // didCommitNavigation
-        nullptr, // didFinishNavigation
-        nullptr, // didFailNavigation
-        nullptr, // didFailProvisionalLoadInSubframe
-        nullptr, // didFinishDocumentLoad
-        nullptr, // didSameDocumentNavigation
-        nullptr, // renderingProgressDidChange
-        nullptr, // canAuthenticateAgainstProtectionSpace
-        nullptr, // didReceiveAuthenticationChallenge
-        webProcessDidCrash,
-        nullptr, // copyWebCryptoMasterKey
-
-        nullptr, // didBeginNavigationGesture
-        nullptr, // willEndNavigationGesture
-        nullptr, // didEndNavigationGesture
-        nullptr, // didRemoveNavigationGestureSnapshot
-    };
-
-    WKPageContextMenuClientV3 contextMenuClient = {
-        { 3, this },
-        nullptr, // getContextMenuFromProposedMenu_deprecatedForUseWithV0
-        nullptr, // customContextMenuItemSelected
-        nullptr, // contextMenuDismissed
-        getContextMenuFromProposedMenu,
-        nullptr, // showContextMenu
-        nullptr, // hideContextMenu
-    };
-
-    WKPageSetPageNavigationClient(toAPI(m_inspectorPage), &navigationClient.base);
-    WKPageSetPageContextMenuClient(toAPI(m_inspectorPage), &contextMenuClient.base);
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
@@ -507,6 +405,11 @@ void WebInspectorProxy::open()
 }
 
 void WebInspectorProxy::didClose()
+{
+    closeFrontendPageAndWindow();
+}
+
+void WebInspectorProxy::closeFrontendPageAndWindow()
 {
     if (!m_inspectorPage)
         return;

@@ -45,8 +45,7 @@ OBJC_CLASS NSURL;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS WKWebInspectorProxyObjCAdapter;
-OBJC_CLASS WKWebInspectorWKWebView;
-OBJC_CLASS WKWebViewConfiguration;
+OBJC_CLASS WKInspectorViewController;
 #endif
 
 namespace WebCore {
@@ -92,7 +91,6 @@ public:
     void closeForCrash();
 
 #if PLATFORM(MAC) && WK_API_ENABLED
-    static RetainPtr<WKWebViewConfiguration> createFrontendConfiguration(WebPageProxy*, bool underTest);
     static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame);
 
     void updateInspectorWindowTitle() const;
@@ -139,6 +137,8 @@ public:
     bool isElementSelectionActive() const { return m_elementSelectionActive; }
     void toggleElementSelection();
 
+    bool isUnderTest() const { return m_underTest; }
+
     // Provided by platform WebInspectorProxy implementations.
     static String inspectorPageURL();
     static String inspectorTestPageURL();
@@ -155,6 +155,7 @@ private:
     explicit WebInspectorProxy(WebPageProxy*);
 
     void createFrontendPage();
+    void closeFrontendPageAndWindow();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -202,8 +203,6 @@ private:
     bool canAttach() const { return m_canAttach; }
     bool shouldOpenAttached();
 
-    bool isUnderTest() const { return m_underTest; }
-
     void open();
 
     unsigned inspectionLevel() const;
@@ -232,7 +231,7 @@ private:
     AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
 
 #if PLATFORM(MAC) && WK_API_ENABLED
-    RetainPtr<WKWebInspectorWKWebView> m_inspectorView;
+    RetainPtr<WKInspectorViewController> m_inspectorViewController;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_objCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;

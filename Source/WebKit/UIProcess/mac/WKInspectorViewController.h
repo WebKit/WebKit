@@ -46,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithInspectedPage:(WebKit::WebPageProxy* _Nullable)inspectedPage;
 
++ (BOOL)viewIsInspectorWebView:(NSView *)view;
+
 @end
 
 @protocol WKInspectorViewControllerDelegate <NSObject>

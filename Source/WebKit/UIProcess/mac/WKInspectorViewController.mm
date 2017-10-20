@@ -143,6 +143,11 @@ using namespace WebKit;
     return configuration.autorelease();
 }
 
++ (BOOL)viewIsInspectorWebView:(NSView *)view
+{
+    return [view isKindOfClass:[WKInspectorWKWebView class]];
+}
+
 // MARK: WKUIDelegate methods
 
 - (void)_webView:(WKWebView *)webView getWindowFrameWithCompletionHandler:(void (^)(CGRect))completionHandler

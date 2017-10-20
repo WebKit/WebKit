@@ -6,6 +6,92 @@
 
         Reviewed by Joseph Pecoraro.
 
+        Move setup and delegates of the inspector frontend page into implementations of
+        WebInspectorProxy::platformCreateFrontendPage. The Mac implementation
+        will be subsumed by WKInspectorViewController, while the GTK implementation
+        is inherited from the cross-platform version that uses C API. Eventually the
+        GTK version should use GTK API rather than the soon to be deprecated C API.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createFrontendPage):
+        (WebKit::webProcessDidCrash): Deleted.
+        (WebKit::decidePolicyForNavigationAction): Deleted.
+        (WebKit::getContextMenuFromProposedMenu): Deleted.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::exceededDatabaseQuota):
+        (WebKit::webProcessDidCrash):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::getContextMenuFromProposedMenu):
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::exceededDatabaseQuota):
+        (WebKit::webProcessDidCrash):
+        (WebKit::decidePolicyForNavigationAction):
+        (WebKit::getContextMenuFromProposedMenu):
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+
+2017-10-02  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: consolidate code that hosts the Inspector page inside a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=177661
+        <rdar://problem/34740286>
+
+        Reviewed by Joseph Pecoraro.
+
+        Adopt WKInspectorViewController in WebInspectorProxyMac to set up the
+        frontend's web view.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::invalidate):
+        (WebKit::WebInspectorProxy::close):
+        (WebKit::WebInspectorProxy::didClose):
+        (WebKit::WebInspectorProxy::closeFrontendPageAndWindow):
+        Make closeFrontendPageAndWindow into the method that does work.
+        Only use didClose() as the IPC message entry point.
+
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::isUnderTest const): Make public.
+
+        * UIProcess/mac/WKInspectorViewController.h:
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (+[WKInspectorViewController viewIsInspectorWebView:]):
+        Abstract away the -isInstanceOfClass: check for WKInspectorWKWebView.
+        Clients shouldn't need to know whether we use a subclass or what its name is.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter inspectorViewControllerInspectorDidCrash:]):
+        (-[WKWebInspectorProxyObjCAdapter inspectorViewControllerInspectorIsUnderTest:]):
+        Hook up view controller delegates.
+
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorProxy::closeFrontendPage):
+        New implementation based on the view controller.
+
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::platformIsFront):
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        Adjust to get the WKWebView out of the view controller for code that needs
+        to do something with the NSView, such as get/set the frame.
+
+        (WebKit::WebInspectorProxy::createFrontendConfiguration): Deleted.
+        (WebKit::exceededDatabaseQuota): Deleted.
+        (WebKit::webProcessDidCrash): Deleted.
+        (WebKit::decidePolicyForNavigationAction): Deleted.
+        (WebKit::getContextMenuFromProposedMenu): Deleted.
+
+2017-10-02  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: consolidate code that hosts the Inspector page inside a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=177661
+        <rdar://problem/34740286>
+
+        Reviewed by Joseph Pecoraro.
+
         Introduce new platform methods to open and close the frontend page and window.
         This matches how RemoteWebInspectorProxy divides work up into platform methods.
         Move existing code from platformDidClose, platformOpen, and other methods into
