@@ -104,15 +104,6 @@ class RunTests(AbstractStep):
                 _log.info("Running JavaScriptCore tests")
                 self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True, cwd=self._tool.scm().checkout_root)
 
-        bindings_tests_command = self._tool.deprecated_port().run_bindings_tests_command()
-        if bindings_tests_command:
-            _log.info("Running bindings generation tests")
-            args = bindings_tests_command
-            try:
-                self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
-            except ScriptError, e:
-                _log.info("Error running run-bindings-tests: %s" % e.message_with_output())
-
         _log.info("Running run-webkit-tests")
         self._run_webkit_tests()
 

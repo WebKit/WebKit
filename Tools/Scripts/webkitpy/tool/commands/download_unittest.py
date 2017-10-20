@@ -103,7 +103,6 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 """
         self.assert_execute_outputs(BuildAndTest(), [], options=self._default_options(), expected_logs=expected_logs)
@@ -144,7 +143,6 @@ Message2."
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
 Updating bug 50000
@@ -171,8 +169,6 @@ Running Perl unit tests
 MOCK run_and_throw_if_fail: ['mock-test-webkitperl'], cwd=/mock-checkout
 Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['mock-run-javacriptcore-tests'], cwd=/mock-checkout
-Running bindings generation tests
-MOCK run_and_throw_if_fail: ['mock-run-bindings-tests'], cwd=/mock-checkout
 Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--quiet'], cwd=/mock-checkout
 Committed r49824: <https://trac.webkit.org/changeset/49824>
@@ -190,7 +186,6 @@ No bug id provided.
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
 Updating bug 50000
@@ -221,7 +216,6 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
 Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
@@ -238,7 +232,6 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
 Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
@@ -248,7 +241,6 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
 Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
@@ -265,7 +257,6 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
 Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
@@ -275,7 +266,6 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
-Running bindings generation tests
 Running run-webkit-tests
 Committed r49824: <https://trac.webkit.org/changeset/49824>
 Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.

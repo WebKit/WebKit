@@ -1,3 +1,20 @@
+2017-10-20  Aakash Jain  <aakash_jain@apple.com>
+
+        Do not run binding tests on multiple EWSes
+        https://bugs.webkit.org/show_bug.cgi?id=178599
+
+        Reviewed by Alexey Proskuryakov. 
+
+        Remove old code which runs bindings tests and ignore it's result. We now have
+        a dedicated bindings test EWS.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run): Removed bindings tests code.
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py: Updated unit-tests.
+        (RunTestsTest.test_webkit_run_unit_tests): Ditto.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py: Ditto.
+        * Scripts/webkitpy/tool/commands/download_unittest.py: Ditto.
+
 2017-10-20  Youenn Fablet  <youenn@apple.com>
 
         WebsiteDataStoreCustomPaths.mm is failing after r223718
