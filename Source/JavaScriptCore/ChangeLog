@@ -1,5 +1,18 @@
 2017-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ARM64] static_cast<int32_t>() in BinaryOpNode::emitBytecode() prevents op_unsigned emission
+        https://bugs.webkit.org/show_bug.cgi?id=178379
+
+        Reviewed by Saam Barati.
+
+        We reuse jsNumber's checking mechanism here to precisely check the generated number is within uint32_t
+        in bytecode compiler. This is reasonable since the NumberNode will generate the exact this JSValue.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+
+2017-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] ScriptFetcher should be notified directly from module pipeline
         https://bugs.webkit.org/show_bug.cgi?id=178340
 

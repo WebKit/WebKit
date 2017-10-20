@@ -1993,8 +1993,8 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
             if (node->isBinaryOpNode() && static_cast<BinaryOpNode*>(node)->opcodeID() == op_urshift)
                 return UInt32Result::UInt32;
             if (node->isNumber() && static_cast<NumberNode*>(node)->isIntegerNode()) {
-                int32_t value = static_cast<int32_t>(static_cast<IntegerNode*>(node)->value());
-                if (value >= 0)
+                auto value = jsNumber(static_cast<NumberNode*>(node)->value());
+                if (value.isInt32() && value.asInt32() >= 0)
                     return UInt32Result::Constant;
             }
             return std::nullopt;
