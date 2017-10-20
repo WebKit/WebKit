@@ -299,7 +299,7 @@ public:
     void setProvisionalLoadErrorBeingHandledURL(const URL& url) { m_provisionalLoadErrorBeingHandledURL = url; }
 
     bool isAlwaysOnLoggingAllowed() const;
-    bool shouldSuppressKeyboardInput() const;
+    bool shouldSuppressTextInputFromEditing() const;
 
 private:
     enum FormSubmissionCacheLoadPolicy {

@@ -539,12 +539,12 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 
 - (BOOL)_shouldSuppressKeyboardInputDuringProvisionalNavigation
 {
-    return _preferences->shouldSuppressKeyboardInputDuringProvisionalNavigation();
+    return _preferences->shouldSuppressTextInputFromEditingDuringProvisionalNavigation();
 }
 
 - (void)_setShouldSuppressKeyboardInputDuringProvisionalNavigation:(BOOL)shouldSuppress
 {
-    _preferences->setShouldSuppressKeyboardInputDuringProvisionalNavigation(shouldSuppress);
+    _preferences->setShouldSuppressTextInputFromEditingDuringProvisionalNavigation(shouldSuppress);
 }
 
 - (BOOL)_loadsImagesAutomatically

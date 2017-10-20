@@ -9,8 +9,10 @@
             testRunner.dumpAsText();
             testRunner.dumpChildFramesAsText();
             testRunner.waitUntilDone();
-            internals.settings.setShouldSuppressKeyboardInputDuringProvisionalNavigation(true);
+            internals.settings.setShouldSuppressTextInputFromEditingDuringProvisionalNavigation(true);
         }
+
+        runBeforeTest(window);
 
         waitForProvisionalNavigation(function () {
             console.log("Provisional navigation started.");

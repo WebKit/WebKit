@@ -1,3 +1,16 @@
+function runBeforeTest(window)
+{
+    var document = window.document;
+
+    document.body.addEventListener("beforecopy", function (e) { e.preventDefault(); });
+    document.body.addEventListener("copy", function (e) {
+        e.clipboardData.setData("text/plain", "d");
+        e.preventDefault();
+    });
+
+    document.execCommand("copy");
+}
+
 function runTest(window)
 {
     function eventHandler(event)
@@ -14,6 +27,7 @@ function runTest(window)
     window.addEventListener("textInput", eventHandler, true);
     window.addEventListener("beforeinput", eventHandler, true);
     window.addEventListener("input", eventHandler, true);
+    window.addEventListener("paste", eventHandler, true);
 
     var document = window.document;
 
@@ -37,6 +51,9 @@ function runTest(window)
 
     console.log("Inserting text \"c\".");
     textInputController.insertText("c");
+
+    console.log("Pasting text \"d\".");
+    document.execCommand("Paste");
 
     console.log("Input element value after text input events: \"" + textInput.value + "\".");
 }

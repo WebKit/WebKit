@@ -39,6 +39,7 @@
 #include "EventHandler.h"
 #include "FormatBlockCommand.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLFontElement.h"
 #include "HTMLHRElement.h"
@@ -46,6 +47,7 @@
 #include "HTMLNames.h"
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "RenderBox.h"
@@ -74,7 +76,7 @@ public:
     TriState (*state)(Frame&, Event*);
     String (*value)(Frame&, Event*);
     bool isTextInsertion;
-    bool (*allowExecutionWhenDisabled)(EditorCommandSource);
+    bool (*allowExecutionWhenDisabled)(Frame&, EditorCommandSource);
 };
 
 typedef HashMap<String, const EditorInternalCommand*, ASCIICaseInsensitiveHash> CommandMap;
@@ -1491,17 +1493,17 @@ static String valueFormatBlock(Frame& frame, Event*)
 
 // allowExecutionWhenDisabled functions
 
-static bool allowExecutionWhenDisabled(EditorCommandSource)
+static bool allowExecutionWhenDisabled(Frame&, EditorCommandSource)
 {
     return true;
 }
 
-static bool doNotAllowExecutionWhenDisabled(EditorCommandSource)
+static bool doNotAllowExecutionWhenDisabled(Frame&, EditorCommandSource)
 {
     return false;
 }
 
-static bool allowExecutionWhenDisabledCopyCut(EditorCommandSource source)
+static bool allowExecutionWhenDisabledCopyCut(Frame&, EditorCommandSource source)
 {
     switch (source) {
     case CommandFromMenuOrKeyBinding:
@@ -1513,6 +1515,13 @@ static bool allowExecutionWhenDisabledCopyCut(EditorCommandSource source)
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+static bool allowExecutionWhenDisabledPaste(Frame& frame, EditorCommandSource)
+{
+    if (frame.mainFrame().loader().shouldSuppressTextInputFromEditing())
+        return false;
+    return true;
 }
 
 // Map of functions
@@ -1626,9 +1635,9 @@ static const CommandMap& createCommandMap()
         { "MoveWordRightAndModifySelection", { executeMoveWordRightAndModifySelection, supportedFromMenuOrKeyBinding, enabledVisibleSelectionOrCaretBrowsing, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Outdent", { executeOutdent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "OverWrite", { executeToggleOverwrite, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "Paste", { executePaste, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
-        { "PasteAndMatchStyle", { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
-        { "PasteAsPlainText", { executePasteAsPlainText, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "Paste", { executePaste, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledPaste } },
+        { "PasteAndMatchStyle", { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledPaste } },
+        { "PasteAsPlainText", { executePasteAsPlainText, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabledPaste } },
         { "Print", { executePrint, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Redo", { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "RemoveFormat", { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
@@ -1828,7 +1837,7 @@ bool Editor::Command::allowExecutionWhenDisabled() const
 {
     if (!isSupported() || !m_frame)
         return false;
-    return m_command->allowExecutionWhenDisabled(m_source);
+    return m_command->allowExecutionWhenDisabled(*m_frame, m_source);
 }
 
 } // namespace WebCore

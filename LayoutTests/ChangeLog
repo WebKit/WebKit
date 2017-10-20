@@ -1,3 +1,29 @@
+2017-10-20  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223708. rdar://problem/34771406
+
+    2017-10-19  Tim Horton  <timothy_horton@apple.com>
+
+            Expand r209943 to suppress paste during provisional navigation as well
+            https://bugs.webkit.org/show_bug.cgi?id=178429
+            <rdar://problem/33952830>
+
+            Reviewed by Dean Jackson.
+
+            * http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt:
+            * http/tests/navigation/keyboard-events-during-provisional-navigation.html:
+            * http/tests/navigation/keyboard-events-during-provisional-subframe-navigation-expected.txt:
+            * http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html:
+            * http/tests/navigation/resources/keyboard-events-after-navigation.html:
+            * http/tests/navigation/resources/keyboard-events-test.js:
+            (runBeforeTest):
+            (runTest):
+            Copy a "d" to the clipboard before running the test, and paste it while running.
+            I put the copy before running the test so that if someone comes along and
+            blacklists copy during provisional load as well, the test for this behavior
+            still actually tests the paste portion.
+            Also ensure that paste events are not triggered during provisional navigation.
+
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223565. rdar://problem/35041490

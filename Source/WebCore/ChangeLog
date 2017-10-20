@@ -1,3 +1,43 @@
+2017-10-20  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223708. rdar://problem/34771406
+
+    2017-10-19  Tim Horton  <timothy_horton@apple.com>
+
+            Expand r209943 to suppress paste during provisional navigation as well
+            https://bugs.webkit.org/show_bug.cgi?id=178429
+            <rdar://problem/33952830>
+
+            Reviewed by Dean Jackson.
+
+            No new tests; adjusted an existing test to cover this case.
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::canPaste const):
+            Disable pasting during provisional navigation, like r209943 did for
+            various other forms of text input.
+
+            (WebCore::Editor::shouldInsertText const):
+            * dom/EventDispatcher.cpp:
+            (WebCore::shouldSuppressEventDispatchInDOM):
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::shouldSuppressTextInputFromEditing const):
+            (WebCore::FrameLoader::shouldSuppressKeyboardInput const): Deleted.
+            * loader/FrameLoader.h:
+            * page/Settings.in:
+            Rename the setting to be about editing-related text input, not "keyboard" input.
+
+            * editing/EditorCommand.cpp:
+            (WebCore::allowExecutionWhenDisabled):
+            (WebCore::doNotAllowExecutionWhenDisabled):
+            (WebCore::allowExecutionWhenDisabledCopyCut):
+            (WebCore::allowExecutionWhenDisabledPaste):
+            (WebCore::createCommandMap):
+            (WebCore::Editor::Command::allowExecutionWhenDisabled const):
+            Completely disable execution of paste events when in no-text-input-from-editing mode.
+            Otherwise, even though canPaste was false and we wouldn't do a default paste action,
+            we would still dispatch the paste event to the DOM.
+
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223442. rdar://problem/34745623
