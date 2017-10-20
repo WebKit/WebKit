@@ -1,3 +1,13 @@
+2017-10-20  Mark Lam  <mark.lam@apple.com>
+
+        Add a test case for r214334.
+        https://bugs.webkit.org/show_bug.cgi?id=169941
+        <rdar://problem/31221258>
+
+        Reviewed by JF Bastien.
+
+        * stress/regress-169941.js: Added.
+
 2017-10-19  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: no VM / JS version of everything but Instance
