@@ -228,6 +228,45 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     EXPECT_FALSE(fileExists(databaseDirectoryPath));
 }
 
+TEST(DatabaseTracker, DeleteOriginWithMissingEntryInDatabasesTable)
+{
+    // Test the case where there is an entry in the Origins table but not
+    // the Databases table. There is an actual database on disk.
+    // The information should still be removed from the Origins table, and the
+    // database should be deleted from disk.
+    NSString *webSQLDirectory = createTemporaryDirectory(@"WebSQL");
+    String databaseDirectoryPath(webSQLDirectory.UTF8String);
+
+    std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
+    SecurityOriginData origin("https", "webkit.org", 443);
+
+    databaseTracker->setQuota(origin, 5242880);
+    EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
+
+    String databasePath = pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    EXPECT_TRUE(fileExists(databasePath));
+
+    EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
+
+    String originPath = pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    EXPECT_TRUE(makeAllDirectories(originPath));
+    EXPECT_TRUE(fileExists(originPath));
+
+    String webDatabasePath = pathByAppendingComponent(originPath, "database.db");
+    createFileAtPath(webDatabasePath);
+
+    EXPECT_TRUE(databaseTracker->deleteOrigin(origin));
+
+    EXPECT_FALSE(fileExists(webDatabasePath));
+    EXPECT_FALSE(fileExists(originPath));
+
+    EXPECT_TRUE(databaseTracker->origins().isEmpty());
+    EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
+
+    removeDirectoryAndAllContents(databaseDirectoryPath);
+    EXPECT_FALSE(fileExists(databaseDirectoryPath));
+}
+
 TEST(DatabaseTracker, DeleteDatabase)
 {
     // Test the expected case. There is an entry in the Databases table
