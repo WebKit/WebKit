@@ -45,7 +45,7 @@ for (let buffer of buffers) {
     assertEq(buffer.byteLength, 2*64*1024);
 
     // This shouldn't neuter the buffer since it fails.
-    assertThrows(() => memory.grow(1000), Error, "Out of memory"); 
+    assertThrows(() => memory.grow(1000), RangeError, "WebAssembly.Memory.grow would exceed the memory's declared maximum size");
     assertEq(buffer.byteLength, 2*64*1024);
     assertEq(memory.buffer, buffer);
 }

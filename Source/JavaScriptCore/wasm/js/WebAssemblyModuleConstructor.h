@@ -30,8 +30,11 @@
 #include "InternalFunction.h"
 #include "JSObject.h"
 
+#include <wtf/Vector.h>
+
 namespace JSC {
 
+class JSWebAssemblyModule;
 class WebAssemblyModulePrototype;
 
 class WebAssemblyModuleConstructor : public InternalFunction {
@@ -44,7 +47,7 @@ public:
 
     DECLARE_INFO;
 
-    static JSValue createModule(ExecState*, JSValue buffer, Structure*);
+    static JSWebAssemblyModule* createModule(ExecState*, Vector<uint8_t>&& buffer);
 
 protected:
     void finishCreation(VM&, WebAssemblyModulePrototype*);

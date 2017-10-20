@@ -29,11 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
-#include "FrameTracers.h"
 #include "HeapCellInlines.h"
 #include "JITExceptions.h"
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyRuntimeError.h"
 #include "LinkBuffer.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmContext.h"
@@ -48,46 +46,18 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&
 
     // The thing that jumps here must move ExceptionType into the argumentGPR1 before jumping here.
     // We're allowed to use temp registers here. We are not allowed to use callee saves.
-    jit.loadWasmContext(GPRInfo::argumentGPR2);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, Context::offsetOfVM()), GPRInfo::argumentGPR0);
+    jit.loadWasmContextInstance(GPRInfo::argumentGPR2);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::argumentGPR0);
     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     CCallHelpers::Call call = jit.call();
     jit.jump(GPRInfo::returnValueGPR);
     jit.breakpoint(); // We should not reach this.
 
-    void* (*throwWasmException)(ExecState*, Wasm::ExceptionType, Wasm::Context*) = [] (ExecState* exec, Wasm::ExceptionType type, Wasm::Context* wasmContext) -> void* {
-        VM* vm = wasmContext->vm();
-        NativeCallFrameTracer tracer(vm, exec);
-
-        {
-            auto throwScope = DECLARE_THROW_SCOPE(*vm);
-            JSGlobalObject* globalObject = wasmContext->globalObject();
-
-            JSObject* error; 
-            if (type == ExceptionType::StackOverflow)
-                error = createStackOverflowError(exec, globalObject);
-            else
-                error = JSWebAssemblyRuntimeError::create(exec, *vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
-            throwException(exec, throwScope, error);
-        }
-
-        genericUnwind(vm, exec);
-        ASSERT(!!vm->callFrameForCatch);
-        ASSERT(!!vm->targetMachinePCForThrow);
-        // FIXME: We could make this better:
-        // This is a total hack, but the llint (both op_catch and handleUncaughtException)
-        // require a cell in the callee field to load the VM. (The baseline JIT does not require
-        // this since it is compiled with a constant VM pointer.) We could make the calling convention
-        // for exceptions first load callFrameForCatch info call frame register before jumping
-        // to the exception handler. If we did this, we could remove this terrible hack.
-        // https://bugs.webkit.org/show_bug.cgi?id=170440
-        bitwise_cast<uint64_t*>(exec)[CallFrameSlot::callee] = bitwise_cast<uint64_t>(wasmContext->webAssemblyToJSCallee());
-        return vm->targetMachinePCForThrow;
-    };
-
+    ThrowWasmException throwWasmException = Thunks::singleton().throwWasmException();
+    RELEASE_ASSERT(throwWasmException);
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    linkBuffer.link(call, throwWasmException);
+    linkBuffer.link(call, FunctionPtr(throwWasmException));
     return FINALIZE_CODE(linkBuffer, ("Throw exception from Wasm"));
 }
 
@@ -119,8 +89,10 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
 #endif
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
-    jit.loadWasmContext(GPRInfo::argumentGPR0);
-    jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(runOMGPlanForIndex)), GPRInfo::argumentGPR2);
+    jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
+    typedef void (*Run)(JSWebAssemblyInstance*, uint32_t);
+    Run run = OMGPlan::runForIndex;
+    jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(run)), GPRInfo::argumentGPR2);
     jit.call(GPRInfo::argumentGPR2);
 
     ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
@@ -140,6 +112,19 @@ Thunks& Thunks::singleton()
 {
     ASSERT(thunks);
     return *thunks;
+}
+
+void Thunks::setThrowWasmException(ThrowWasmException throwWasmException)
+{
+    auto locker = holdLock(m_lock);
+    // The thunks are unique for the entire process, therefore changing the throwing function changes it for all uses of WebAssembly.
+    RELEASE_ASSERT(!m_throwWasmException || m_throwWasmException == throwWasmException);
+    m_throwWasmException = throwWasmException;
+}
+
+ThrowWasmException Thunks::throwWasmException()
+{
+    return m_throwWasmException;
 }
 
 MacroAssemblerCodeRef Thunks::stub(ThunkGenerator generator)

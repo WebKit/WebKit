@@ -143,7 +143,7 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
     jit.abortWithReason(DFGUnreasonableOSREntryJumpDestination);
 
     ok.link(&jit);
-    jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(*vm);
+    jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
     jit.emitMaterializeTagCheckRegisters();
 
     jit.jump(GPRInfo::regT1);

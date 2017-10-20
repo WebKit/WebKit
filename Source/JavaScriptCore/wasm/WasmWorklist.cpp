@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "WasmWorklist.h"
 
@@ -172,13 +173,13 @@ void Worklist::completePlanSynchronously(Plan& plan)
     plan.waitForCompletion();
 }
 
-void Worklist::stopAllPlansForVM(VM& vm)
+void Worklist::stopAllPlansForContext(Context& context)
 {
     LockHolder locker(*m_lock);
     Vector<QueueElement> elements;
     while (!m_queue.isEmpty()) {
         QueueElement element = m_queue.dequeue();
-        bool didCancel = element.plan->tryRemoveVMAndCancelIfLast(vm);
+        bool didCancel = element.plan->tryRemoveContextAndCancelIfLast(context);
         if (!didCancel)
             elements.append(WTFMove(element));
     }
@@ -188,7 +189,7 @@ void Worklist::stopAllPlansForVM(VM& vm)
 
     for (auto& thread : m_threads) {
         if (thread->element.plan) {
-            bool didCancel = thread->element.plan->tryRemoveVMAndCancelIfLast(vm);
+            bool didCancel = thread->element.plan->tryRemoveContextAndCancelIfLast(context);
             if (didCancel) {
                 // We don't have to worry about the deadlocking since the thread can't block without checking for a new plan and must hold the lock to do so.
                 thread->synchronize.wait(*m_lock);

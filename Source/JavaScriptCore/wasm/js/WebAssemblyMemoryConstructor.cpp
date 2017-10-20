@@ -96,13 +96,18 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
         }
     }
 
-    RefPtr<Wasm::Memory> memory = Wasm::Memory::create(vm, initialPageCount, maximumPageCount);
+    auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+
+    RefPtr<Wasm::Memory> memory = Wasm::Memory::create(initialPageCount, maximumPageCount,
+        [&vm] (Wasm::Memory::NotifyPressure) { vm.heap.collectAsync(CollectionScope::Full); },
+        [&vm] (Wasm::Memory::SyncTryToReclaim) { vm.heap.collectSync(CollectionScope::Full); },
+        [&vm, jsMemory] (Wasm::Memory::GrowSuccess, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });
     if (!memory)
         return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
 
-    auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), adoptRef(*memory.leakRef()));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-
+    jsMemory->adopt(memory.releaseNonNull());
+    
     return JSValue::encode(jsMemory);
 }
 

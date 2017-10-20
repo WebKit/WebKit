@@ -48,26 +48,23 @@ public:
         return &vm.eagerlySweptDestructibleObjectSpace;
     }
 
-    static JSWebAssemblyMemory* create(ExecState*, VM&, Structure*, Ref<Wasm::Memory>&&);
+    static JSWebAssemblyMemory* create(ExecState*, VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
 
+    void adopt(Ref<Wasm::Memory>&&);
     Wasm::Memory& memory() { return m_memory.get(); }
     JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
-    Wasm::PageCount grow(VM&, ExecState*, uint32_t delta, bool shouldThrowExceptionsOnFailure);
-
-    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memoryBase); }
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memorySize); }
+    Wasm::PageCount grow(VM&, ExecState*, uint32_t delta);
+    void growSuccessCallback(VM&, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount);
 
 private:
-    JSWebAssemblyMemory(VM&, Structure*, Ref<Wasm::Memory>&&);
+    JSWebAssemblyMemory(VM&, Structure*);
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    void* m_memoryBase;
-    size_t m_memorySize;
     Ref<Wasm::Memory> m_memory;
     WriteBarrier<JSArrayBuffer> m_bufferWrapper;
     RefPtr<ArrayBuffer> m_buffer;

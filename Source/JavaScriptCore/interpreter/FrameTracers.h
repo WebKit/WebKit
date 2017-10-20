@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-struct VMEntryFrame;
+struct EntryFrame;
 
 class SuspendExceptionScope {
 public:
@@ -74,33 +74,33 @@ public:
     {
         ASSERT(vm);
         ASSERT(callFrame);
-        ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm->topVMEntryFrame));
+        ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm->topEntryFrame));
         vm->topCallFrame = callFrame;
     }
 };
 
 class NativeCallFrameTracerWithRestore {
 public:
-    ALWAYS_INLINE NativeCallFrameTracerWithRestore(VM* vm, VMEntryFrame* vmEntryFrame, CallFrame* callFrame)
+    ALWAYS_INLINE NativeCallFrameTracerWithRestore(VM* vm, EntryFrame* EntryFrame, CallFrame* callFrame)
         : m_vm(vm)
     {
         ASSERT(vm);
         ASSERT(callFrame);
-        m_savedTopVMEntryFrame = vm->topVMEntryFrame;
+        m_savedTopEntryFrame = vm->topEntryFrame;
         m_savedTopCallFrame = vm->topCallFrame;
-        vm->topVMEntryFrame = vmEntryFrame;
+        vm->topEntryFrame = EntryFrame;
         vm->topCallFrame = callFrame;
     }
 
     ALWAYS_INLINE ~NativeCallFrameTracerWithRestore()
     {
-        m_vm->topVMEntryFrame = m_savedTopVMEntryFrame;
+        m_vm->topEntryFrame = m_savedTopEntryFrame;
         m_vm->topCallFrame = m_savedTopCallFrame;
     }
 
 private:
     VM* m_vm;
-    VMEntryFrame* m_savedTopVMEntryFrame;
+    EntryFrame* m_savedTopEntryFrame;
     CallFrame* m_savedTopCallFrame;
 };
 

@@ -1,3 +1,19 @@
+2017-10-19  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: no VM / JS version of everything but Instance
+        https://bugs.webkit.org/show_bug.cgi?id=177473
+
+        Reviewed by Filip Pizlo, Saam Barati.
+
+        - Exceeding max on memory growth now returns a range error as per
+        spec. This is a (very minor) breaking change: it used to throw OOM
+        error. Update the corresponding test.
+
+        * wasm/js-api/memory-grow.js:
+        (assertEq):
+        * wasm/js-api/table.js:
+        (assert.throws):
+
 2017-10-19  Mark Lam  <mark.lam@apple.com>
 
         Stringifier::appendStringifiedValue() is missing an exception check.

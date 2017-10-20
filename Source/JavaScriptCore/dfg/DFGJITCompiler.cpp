@@ -149,7 +149,7 @@ void JITCompiler::compileExceptionHandlers()
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
-        copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm());
+        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
 
         // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
@@ -169,7 +169,7 @@ void JITCompiler::compileExceptionHandlers()
     if (!m_exceptionChecks.empty()) {
         m_exceptionChecks.link(this);
 
-        copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm());
+        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
 
         // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
         move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);

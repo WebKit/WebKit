@@ -29,7 +29,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "IdentifierInlines.h"
-#include "JSWebAssemblyTable.h"
 #include "WasmMemoryInformation.h"
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
@@ -265,7 +264,7 @@ auto ModuleParser::parseTableHelper(bool isImport) -> PartialResult
     PartialResult limits = parseResizableLimits(initial, maximum);
     if (UNLIKELY(!limits))
         return limits.getUnexpected();
-    WASM_PARSER_FAIL_IF(!JSWebAssemblyTable::isValidSize(initial), "Table's initial page count of ", initial, " is invalid");
+    WASM_PARSER_FAIL_IF(initial > maxTableEntries, "Table's initial page count of ", initial, " is too big, maximum ", maxTableEntries);
 
     ASSERT(!maximum || *maximum >= initial);
 

@@ -161,11 +161,13 @@ EncodedJSValue JSC_HOST_CALL webAssemblyModuleExports(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* exec)
 {
     VM& vm = exec->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    return JSValue::encode(WebAssemblyModuleConstructor::createModule(exec, exec->argument(0), structure));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, exec->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    scope.release();
+    return JSValue::encode(WebAssemblyModuleConstructor::createModule(exec, WTFMove(source)));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* exec)
@@ -175,16 +177,16 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* exec)
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "WebAssembly.Module"));
 }
 
-JSValue WebAssemblyModuleConstructor::createModule(ExecState* exec, JSValue buffer, Structure* structure)
+JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(ExecState* exec, Vector<uint8_t>&& buffer)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, buffer);
-    RETURN_IF_EXCEPTION(scope, { });
+    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     scope.release();
-    return JSWebAssemblyModule::createStub(vm, exec, structure, Wasm::Module::validateSync(vm, WTFMove(source)));
+    return JSWebAssemblyModule::createStub(vm, exec, structure, Wasm::Module::validateSync(&vm.wasmContext, WTFMove(buffer)));
 }
 
 WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -770,7 +770,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     ASSERT(regT0 == returnValueGPR);
-    copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(*vm());
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     callOperationNoExceptionCheck(operationThrow, regT1, regT0);
     jumpToExceptionHandler(*vm());
@@ -831,7 +831,7 @@ void JIT::emitSlow_op_to_string(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(*vm());
+    restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
 
     move(TrustedImmPtr(m_vm), regT3);
     // operationThrow returns the callFrame for the handler.

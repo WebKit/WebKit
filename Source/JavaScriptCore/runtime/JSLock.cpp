@@ -144,6 +144,7 @@ void JSLock::didAcquireLock()
     m_vm->setStackPointerAtVMEntry(p);
 
     m_vm->setLastStackTop(thread.savedLastStackTop());
+    ASSERT(thread.stack().contains(m_vm->lastStackTop()));
 
     m_vm->heap.machineThreads().addCurrentThread();
 #if ENABLE(WEBASSEMBLY)

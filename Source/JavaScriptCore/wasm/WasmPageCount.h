@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,11 @@ public:
     static bool isValid(uint32_t pageCount)
     {
         return pageCount <= maxPageCount;
+    }
+    
+    bool isValid() const
+    {
+        return isValid(m_pageCount);
     }
 
     static PageCount fromBytes(uint64_t bytes)

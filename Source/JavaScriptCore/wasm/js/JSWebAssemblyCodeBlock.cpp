@@ -31,9 +31,8 @@
 #include "JSCInlines.h"
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyMemory.h"
-#include "JSWebAssemblyModule.h"
-#include "WasmBinding.h"
 #include "WasmModuleInformation.h"
+#include "WasmToJS.h"
 
 #include <wtf/CurrentTime.h>
 
@@ -41,11 +40,10 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyCodeBlock::s_info = { "WebAssemblyCodeBlock", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyCodeBlock) };
 
-JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, JSWebAssemblyModule* module)
+JSWebAssemblyCodeBlock* JSWebAssemblyCodeBlock::create(VM& vm, Ref<Wasm::CodeBlock> codeBlock, const Wasm::ModuleInformation& moduleInformation)
 {
-    const Wasm::ModuleInformation& moduleInformation = module->module().moduleInformation();
-    auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap, allocationSize(moduleInformation.importFunctionCount()))) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
-    result->finishCreation(vm, module);
+    auto* result = new (NotNull, allocateCell<JSWebAssemblyCodeBlock>(vm.heap)) JSWebAssemblyCodeBlock(vm, WTFMove(codeBlock), moduleInformation);
+    result->finishCreation(vm);
     return result;
 }
 
@@ -58,7 +56,7 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
     m_wasmToJSExitStubs.reserveCapacity(m_codeBlock->functionImportCount());
     for (unsigned importIndex = 0; importIndex < m_codeBlock->functionImportCount(); ++importIndex) {
         Wasm::SignatureIndex signatureIndex = moduleInformation.importFunctionSignatureIndices.at(importIndex);
-        auto binding = Wasm::wasmToJs(&vm, m_callLinkInfos, signatureIndex, importIndex);
+        auto binding = Wasm::wasmToJS(&vm, m_callLinkInfos, signatureIndex, importIndex);
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {
             case Wasm::BindingFailure::OutOfMemory:
@@ -68,24 +66,17 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
             RELEASE_ASSERT_NOT_REACHED();
         }
         m_wasmToJSExitStubs.uncheckedAppend(binding.value());
-        importWasmToJSStub(importIndex) = m_wasmToJSExitStubs[importIndex].code().executableAddress();
     }
 }
 
-void JSWebAssemblyCodeBlock::finishCreation(VM& vm, JSWebAssemblyModule* module)
+void JSWebAssemblyCodeBlock::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    m_module.set(vm, this, module);
 }
 
 void JSWebAssemblyCodeBlock::destroy(JSCell* cell)
 {
     static_cast<JSWebAssemblyCodeBlock*>(cell)->JSWebAssemblyCodeBlock::~JSWebAssemblyCodeBlock();
-}
-
-bool JSWebAssemblyCodeBlock::isSafeToRun(JSWebAssemblyMemory* memory) const
-{
-    return m_codeBlock->isSafeToRun(memory->memory().mode());
 }
 
 void JSWebAssemblyCodeBlock::clearJSCallICs(VM& vm)
@@ -100,7 +91,6 @@ void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_module);
 
     visitor.addUnconditionalFinalizer(&thisObject->m_unconditionalFinalizer);
 }

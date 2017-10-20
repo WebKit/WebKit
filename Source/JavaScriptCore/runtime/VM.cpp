@@ -185,7 +185,7 @@ VM::VM(VMType vmType, HeapType heapType)
 #endif
     , vmType(vmType)
     , clientData(0)
-    , topVMEntryFrame(nullptr)
+    , topEntryFrame(nullptr)
     , topCallFrame(CallFrame::noCaller())
     , promiseDeferredTimer(std::make_unique<PromiseDeferredTimer>(*this))
     , m_atomicStringTable(vmType == Default ? Thread::current().atomicStringTable() : new AtomicStringTable)
@@ -370,7 +370,7 @@ VM::~VM()
     promiseDeferredTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
     if (Wasm::existingWorklistOrNull())
-        Wasm::ensureWorklist().stopAllPlansForVM(*this);
+        Wasm::ensureWorklist().stopAllPlansForContext(wasmContext);
 #endif
     if (UNLIKELY(m_watchdog))
         m_watchdog->willDestroyVM(this);
@@ -767,11 +767,12 @@ void logSanitizeStack(VM* vm)
 {
     if (Options::verboseSanitizeStack() && vm->topCallFrame) {
         int dummy;
+        auto& stackBounds = Thread::current().stack();
         dataLog(
-            "Sanitizing stack with top call frame at ", RawPointer(vm->topCallFrame),
+            "Sanitizing stack for VM = ", RawPointer(vm), " with top call frame at ", RawPointer(vm->topCallFrame),
             ", current stack pointer at ", RawPointer(&dummy), ", in ",
-            pointerDump(vm->topCallFrame->codeBlock()), " and last code origin = ",
-            vm->topCallFrame->codeOrigin(), "\n");
+            pointerDump(vm->topCallFrame->codeBlock()), ", last code origin = ",
+            vm->topCallFrame->codeOrigin(), ", last stack top = ", RawPointer(vm->lastStackTop()), ", in stack range [", RawPointer(stackBounds.origin()), ", ", RawPointer(stackBounds.end()), "]\n");
     }
 }
 
@@ -921,6 +922,11 @@ void QueuedTask::run()
 void sanitizeStackForVM(VM* vm)
 {
     logSanitizeStack(vm);
+    if (vm->topCallFrame) {
+        auto& stackBounds = Thread::current().stack();
+        ASSERT(vm->currentThreadIsHoldingAPILock());
+        ASSERT_UNUSED(stackBounds, stackBounds.contains(vm->lastStackTop()));
+    }
 #if !ENABLE(JIT)
     vm->interpreter->cloopStack().sanitizeStack();
 #else

@@ -57,7 +57,7 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
     std::call_once(staticPinnedRegisterInfoFlag, [] () {
         Vector<PinnedSizeRegisterInfo> sizeRegisters;
         GPRReg baseMemoryPointer = InvalidGPRReg;
-        GPRReg wasmContextPointer = InvalidGPRReg;
+        GPRReg wasmContextInstancePointer = InvalidGPRReg;
 
         // FIXME: We should support more than one memory size register, and we should allow different
         //        WebAssembly.Instance to have different pins. Right now we take a vector with only one entry.
@@ -65,27 +65,27 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         //        see: https://bugs.webkit.org/show_bug.cgi?id=162952
         Vector<unsigned> pinnedSizes = { 0 };
         unsigned numberOfPinnedRegisters = pinnedSizes.size() + 1;
-        if (!useFastTLSForContext())
+        if (!Context::useFastTLS())
             ++numberOfPinnedRegisters;
         Vector<GPRReg> pinnedRegs = getPinnedRegisters(numberOfPinnedRegisters);
 
         baseMemoryPointer = pinnedRegs.takeLast();
-        if (!useFastTLSForContext())
-            wasmContextPointer = pinnedRegs.takeLast();
+        if (!Context::useFastTLS())
+            wasmContextInstancePointer = pinnedRegs.takeLast();
 
         ASSERT(pinnedSizes.size() == pinnedRegs.size());
         for (unsigned i = 0; i < pinnedSizes.size(); ++i)
             sizeRegisters.append({ pinnedRegs[i], pinnedSizes[i] });
-        staticPinnedRegisterInfo.construct(WTFMove(sizeRegisters), baseMemoryPointer, wasmContextPointer);
+        staticPinnedRegisterInfo.construct(WTFMove(sizeRegisters), baseMemoryPointer, wasmContextInstancePointer);
     });
 
     return staticPinnedRegisterInfo.get();
 }
 
-PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegisters, GPRReg baseMemoryPointer, GPRReg wasmContextPointer)
+PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegisters, GPRReg baseMemoryPointer, GPRReg wasmContextInstancePointer)
     : sizeRegisters(WTFMove(sizeRegisters))
     , baseMemoryPointer(baseMemoryPointer)
-    , wasmContextPointer(wasmContextPointer)
+    , wasmContextInstancePointer(wasmContextInstancePointer)
 {
 }
 

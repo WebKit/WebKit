@@ -406,7 +406,7 @@ static void recomputeDependentOptions()
         Options::useWebAssembly() = false;
 
     if (!Options::useWebAssembly())
-        Options::useWebAssemblyFastTLS() = false;
+        Options::useFastTLSForWasmContext() = false;
     
     if (Options::dumpDisassembly()
         || Options::dumpDFGDisassembly()

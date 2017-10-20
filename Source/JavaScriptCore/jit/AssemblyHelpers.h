@@ -360,28 +360,28 @@ public:
     void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR)
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-        loadPtr(Address(vmGPR, VM::topVMEntryFrameOffset()), vmGPR);
-        copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(vmGPR);
+        loadPtr(Address(vmGPR, VM::topEntryFrameOffset()), vmGPR);
+        copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(vmGPR);
 #else
         UNUSED_PARAM(vmGPR);
 #endif
     }
 
-    void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(VM& vm, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
+    void copyCalleeSavesToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
         GPRReg temp1 = usedRegisters.getFreeGPR(0);
-        loadPtr(&vm.topVMEntryFrame, temp1);
-        copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(temp1);
+        loadPtr(&topEntryFrame, temp1);
+        copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(temp1);
 #else
-        UNUSED_PARAM(vm);
+        UNUSED_PARAM(topEntryFrame);
         UNUSED_PARAM(usedRegisters);
 #endif
     }
 
-    void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(VM&);
+    void restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*&);
 
-    void copyCalleeSavesFromFrameOrRegisterToVMEntryFrameCalleeSavesBuffer(VM& vm, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
+    void copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
         GPRReg temp1 = usedRegisters.getFreeGPR(0);
@@ -392,8 +392,8 @@ public:
         ASSERT(codeBlock());
 
         // Copy saved calleeSaves on stack or unsaved calleeSaves in register to vm calleeSave buffer
-        loadPtr(&vm.topVMEntryFrame, temp1);
-        addPtr(TrustedImm32(VMEntryFrame::calleeSaveRegistersBufferOffset()), temp1);
+        loadPtr(&topEntryFrame, temp1);
+        addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), temp1);
 
         RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
         RegisterAtOffsetList* currentCalleeSaves = codeBlock()->calleeSaveRegisters();
@@ -401,12 +401,12 @@ public:
         unsigned registerCount = allCalleeSaves->size();
 
         for (unsigned i = 0; i < registerCount; i++) {
-            RegisterAtOffset vmEntry = allCalleeSaves->at(i);
-            if (dontCopyRegisters.get(vmEntry.reg()))
+            RegisterAtOffset entry = allCalleeSaves->at(i);
+            if (dontCopyRegisters.get(entry.reg()))
                 continue;
-            RegisterAtOffset* currentFrameEntry = currentCalleeSaves->find(vmEntry.reg());
+            RegisterAtOffset* currentFrameEntry = currentCalleeSaves->find(entry.reg());
 
-            if (vmEntry.reg().isGPR()) {
+            if (entry.reg().isGPR()) {
                 GPRReg regToStore;
                 if (currentFrameEntry) {
                     // Load calleeSave from stack into temp register
@@ -414,9 +414,9 @@ public:
                     loadPtr(Address(framePointerRegister, currentFrameEntry->offset()), regToStore);
                 } else
                     // Just store callee save directly
-                    regToStore = vmEntry.reg().gpr();
+                    regToStore = entry.reg().gpr();
 
-                storePtr(regToStore, Address(temp1, vmEntry.offset()));
+                storePtr(regToStore, Address(temp1, entry.offset()));
             } else {
                 FPRReg fpRegToStore;
                 if (currentFrameEntry) {
@@ -425,13 +425,13 @@ public:
                     loadDouble(Address(framePointerRegister, currentFrameEntry->offset()), fpRegToStore);
                 } else
                     // Just store callee save directly
-                    fpRegToStore = vmEntry.reg().fpr();
+                    fpRegToStore = entry.reg().fpr();
 
-                storeDouble(fpRegToStore, Address(temp1, vmEntry.offset()));
+                storeDouble(fpRegToStore, Address(temp1, entry.offset()));
             }
         }
 #else
-        UNUSED_PARAM(vm);
+        UNUSED_PARAM(topEntryFrame);
         UNUSED_PARAM(usedRegisters);
 #endif
     }
@@ -1646,14 +1646,14 @@ public:
 #endif
 
 #if ENABLE(WEBASSEMBLY)
-    void loadWasmContext(GPRReg dst);
-    void storeWasmContext(GPRReg src);
-    static bool loadWasmContextNeedsMacroScratchRegister();
-    static bool storeWasmContextNeedsMacroScratchRegister();
+    void loadWasmContextInstance(GPRReg dst);
+    void storeWasmContextInstance(GPRReg src);
+    static bool loadWasmContextInstanceNeedsMacroScratchRegister();
+    static bool storeWasmContextInstanceNeedsMacroScratchRegister();
 #endif
 
 protected:
-    void copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);
+    void copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);
 
     CodeBlock* m_codeBlock;
     CodeBlock* m_baselineCodeBlock;
