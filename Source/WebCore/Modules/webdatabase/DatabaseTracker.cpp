@@ -824,10 +824,9 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
             return false;
 
         databaseNames = databaseNamesNoLock(origin);
-        if (databaseNames.isEmpty()) {
+        if (databaseNames.isEmpty())
             LOG_ERROR("Unable to retrieve list of database names for origin %s", origin.databaseIdentifier().utf8().data());
-            return false;
-        }
+
         if (!canDeleteOrigin(origin)) {
             LOG_ERROR("Tried to delete an origin (%s) while either creating database in it or already deleting it", origin.databaseIdentifier().utf8().data());
             ASSERT_NOT_REACHED();
@@ -843,6 +842,20 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
             // Even if the file can't be deleted, we want to try and delete the rest, don't return early here.
             LOG_ERROR("Unable to delete file for database %s in origin %s", name.utf8().data(), origin.databaseIdentifier().utf8().data());
             failedToDeleteAnyDatabaseFile = true;
+        }
+    }
+
+    // If databaseNames is empty, delete everything in the directory containing the databases for this origin.
+    // This condition indicates that we previously tried to remove the origin but didn't get all of the way
+    // through the deletion process. Because we have lost track of the databases for this origin,
+    // we can assume that no other process is accessing them. This means it should be safe to delete them outright.
+    if (databaseNames.isEmpty()) {
+#if PLATFORM(COCOA)
+        RELEASE_LOG_ERROR(DatabaseTracker, "Unable to retrieve list of database names for origin");
+#endif
+        for (const auto& file : listDirectory(originPath(origin), "*")) {
+            if (!deleteFile(file))
+                failedToDeleteAnyDatabaseFile = true;
         }
     }
 
