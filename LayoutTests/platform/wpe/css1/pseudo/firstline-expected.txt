@@ -29,7 +29,7 @@ layer at (0,0) size 785x655
       RenderBlock {P} at (0,284) size 769x72
         RenderText {#text} at (0,0) size 762x53
           text run at (0,0) width 604: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
-          text run at (604,0) width 154: "Thus, if the first line is"
+          text run at (603,0) width 155: "Thus, if the first line is"
           text run at (0,18) width 762: "not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test (although"
           text run at (0,36) width 165: "the problem might be that "
         RenderInline {CODE} at (0,0) size 80x15
@@ -67,7 +67,7 @@ layer at (0,0) size 785x655
               RenderBlock {P} at (4,163) size 747x72
                 RenderText {#text} at (0,0) size 744x53
                   text run at (0,0) width 604: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
-                  text run at (604,0) width 140: "Thus, if the first line"
+                  text run at (603,0) width 141: "Thus, if the first line"
                   text run at (0,18) width 712: "is not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test"
                   text run at (0,36) width 229: "(although the problem might be that "
                 RenderInline {CODE} at (0,0) size 80x15
