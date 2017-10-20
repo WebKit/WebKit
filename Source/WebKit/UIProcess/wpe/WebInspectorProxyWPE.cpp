@@ -31,23 +31,18 @@
 
 namespace WebKit {
 
-WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
+WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 {
     notImplemented();
     return nullptr;
 }
 
-void WebInspectorProxy::createInspectorWindow()
+void WebInspectorProxy::platformCreateFrontendWindow()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformOpen()
-{
-    notImplemented();
-}
-
-void WebInspectorProxy::platformDidClose()
+void WebInspectorProxy::platformCloseFrontendPageAndWindow()
 {
     notImplemented();
 }

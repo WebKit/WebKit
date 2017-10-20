@@ -164,43 +164,19 @@ WKRect WebInspectorProxy::inspectorWindowFrame()
     return WKRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
-void WebInspectorProxy::closeFrontendAfterInactivityTimerFired()
+void WebInspectorProxy::updateInspectorWindowTitle() const
 {
-    closeFrontend();
-}
+    if (!m_inspectorWindow)
+        return;
 
-void WebInspectorProxy::closeFrontend()
-{
-    ASSERT(!m_isAttached || !m_inspectorWindow);
-    if (m_inspectorView) {
-        m_inspectorView->_page->close();
-        m_inspectorView = nil;
+    unsigned level = inspectionLevel();
+    if (level > 1) {
+        NSString *debugTitle = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector [%d] — %@", "Web Inspector window title when inspecting Web Inspector"), level, (NSString *)m_urlString];
+        [m_inspectorWindow setTitle:debugTitle];
+    } else {
+        NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_urlString];
+        [m_inspectorWindow setTitle:title];
     }
-
-    if (m_objCAdapter) {
-        [[NSNotificationCenter defaultCenter] removeObserver:m_objCAdapter.get()];
-
-        [m_objCAdapter invalidate];
-        m_objCAdapter = nil;
-    }
-}
-
-void WebInspectorProxy::createInspectorWindow()
-{
-    ASSERT(!m_inspectorWindow);
-
-    NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
-    NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
-
-    m_inspectorWindow = WebInspectorProxy::createFrontendWindow(savedWindowFrame);
-    [m_inspectorWindow setDelegate:m_objCAdapter.get()];
-
-    NSView *contentView = [m_inspectorWindow contentView];
-    [m_inspectorView setFrame:[contentView bounds]];
-    [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [contentView addSubview:m_inspectorView.get()];
-
-    updateInspectorWindowTitle();
 }
 
 RetainPtr<WKWebViewConfiguration> WebInspectorProxy::createFrontendConfiguration(WebPageProxy* page, bool underTest)
@@ -253,22 +229,7 @@ RetainPtr<NSWindow> WebInspectorProxy::createFrontendWindow(NSRect savedWindowFr
     return window;
 }
 
-void WebInspectorProxy::updateInspectorWindowTitle() const
-{
-    if (!m_inspectorWindow)
-        return;
-
-    unsigned level = inspectionLevel();
-    if (level > 1) {
-        NSString *debugTitle = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector [%d] — %@", "Web Inspector window title when inspecting Web Inspector"), level, (NSString *)m_urlString];
-        [m_inspectorWindow setTitle:debugTitle];
-    } else {
-        NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_urlString];
-        [m_inspectorWindow setTitle:title];
-    }
-}
-
-WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
+WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 {
     ASSERT(inspectedPage());
 
@@ -319,36 +280,46 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return m_inspectorView->_page.get();
 }
 
-bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
+void WebInspectorProxy::platformCreateFrontendWindow()
 {
-    if ([m_inspectorWindow styleMask] & NSWindowStyleMaskFullScreen)
-        return false;
+    ASSERT(!m_inspectorWindow);
 
-    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
-    if ([inspectedView isKindOfClass:[WKWebInspectorWKWebView class]])
-        return webProcessCanAttach;
+    NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
+    NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
 
-    static const float minimumAttachedHeight = 250;
-    static const float maximumAttachedHeightRatio = 0.75;
-    static const float minimumAttachedWidth = 500;
+    m_inspectorWindow = WebInspectorProxy::createFrontendWindow(savedWindowFrame);
+    [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
-    NSRect inspectedViewFrame = inspectedView.frame;
+    NSView *contentView = [m_inspectorWindow contentView];
+    [m_inspectorView setFrame:[contentView bounds]];
+    [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [contentView addSubview:m_inspectorView.get()];
 
-    float maximumAttachedHeight = NSHeight(inspectedViewFrame) * maximumAttachedHeightRatio;
-    return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= NSWidth(inspectedViewFrame);
+    updateInspectorWindowTitle();
 }
 
-void WebInspectorProxy::platformOpen()
+void WebInspectorProxy::closeFrontendPage()
 {
-    if (m_isAttached)
-        platformAttach();
-    else
-        createInspectorWindow();
+    ASSERT(!m_isAttached || !m_inspectorWindow);
+    if (m_inspectorView) {
+        m_inspectorView->_page->close();
+        m_inspectorView = nil;
+    }
 
-    platformBringToFront();
+    if (m_objCAdapter) {
+        [[NSNotificationCenter defaultCenter] removeObserver:m_objCAdapter.get()];
+
+        [m_objCAdapter invalidate];
+        m_objCAdapter = nil;
+    }
 }
 
-void WebInspectorProxy::platformDidClose()
+void WebInspectorProxy::closeFrontendAfterInactivityTimerFired()
+{
+    closeFrontendPage();
+}
+
+void WebInspectorProxy::platformCloseFrontendPageAndWindow()
 {
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
@@ -363,14 +334,14 @@ void WebInspectorProxy::platformDidCloseForCrash()
 {
     m_closeFrontendAfterInactivityTimer.stop();
 
-    closeFrontend();
+    closeFrontendPage();
 }
 
 void WebInspectorProxy::platformInvalidate()
 {
     m_closeFrontendAfterInactivityTimer.stop();
 
-    closeFrontend();
+    closeFrontendPage();
 }
 
 void WebInspectorProxy::platformHide()
@@ -393,7 +364,7 @@ void WebInspectorProxy::platformBringToFront()
     // then we need to reopen the Inspector to get it attached to the right window.
     // This can happen when dragging tabs to another window in Safari.
     if (m_isAttached && m_inspectorView.get().window != inspectedPage()->platformWindow()) {
-        platformOpen();
+        open();
         return;
     }
 
@@ -411,6 +382,25 @@ bool WebInspectorProxy::platformIsFront()
 {
     // FIXME <rdar://problem/10937688>: this will not return false for a background tab in Safari, only a background window.
     return m_isVisible && [m_inspectorView.get().window isMainWindow];
+}
+
+bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
+{
+    if ([m_inspectorWindow styleMask] & NSWindowStyleMaskFullScreen)
+        return false;
+
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
+    if ([inspectedView isKindOfClass:[WKWebInspectorWKWebView class]])
+        return webProcessCanAttach;
+
+    static const float minimumAttachedHeight = 250;
+    static const float maximumAttachedHeightRatio = 0.75;
+    static const float minimumAttachedWidth = 500;
+
+    NSRect inspectedViewFrame = inspectedView.frame;
+
+    float maximumAttachedHeight = NSHeight(inspectedViewFrame) * maximumAttachedHeightRatio;
+    return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= NSWidth(inspectedViewFrame);
 }
 
 void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
@@ -672,9 +662,7 @@ void WebInspectorProxy::platformDetach()
     if (!m_isVisible)
         return;
 
-    createInspectorWindow();
-
-    platformBringToFront();
+    open();
 }
 
 void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)

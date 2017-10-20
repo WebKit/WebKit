@@ -6,6 +6,84 @@
 
         Reviewed by Joseph Pecoraro.
 
+        Introduce new platform methods to open and close the frontend page and window.
+        This matches how RemoteWebInspectorProxy divides work up into platform methods.
+        Move existing code from platformDidClose, platformOpen, and other methods into
+        the new platform methods. Move some identical platform code into WebInspectorProxy.cpp.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::connect):
+        (WebKit::WebInspectorProxy::showConsole):
+        (WebKit::WebInspectorProxy::showResources):
+        (WebKit::WebInspectorProxy::showTimelines):
+        (WebKit::WebInspectorProxy::showMainResourceForFrame):
+        (WebKit::WebInspectorProxy::createFrontendPage):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::open):
+        (WebKit::WebInspectorProxy::didClose):
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage): Renamed.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::updateInspectorWindowTitle const):
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        Do everything necessary to set up the frontend page WebView.
+
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow):
+        Do everything necessary to set up the detached NSWindow for the frontend.
+
+        (WebKit::WebInspectorProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Deleted.
+        (WebKit::WebInspectorProxy::createInspectorWindow): Deleted.
+        (WebKit::WebInspectorProxy::platformOpen): Deleted.
+        (WebKit::WebInspectorProxy::platformDidClose): Deleted.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::updateInspectorWindowTitle const):
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage): Added.
+        Do everything necessary to set up the frontend page WebView.
+
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow): Added.
+        Do everything necessary to set up the detached NSWindow for the frontend.
+
+        (WebKit::WebInspectorProxy::closeFrontendPage):
+        (WebKit::WebInspectorProxy::closeFrontendAfterInactivityTimerFired):
+        (WebKit::WebInspectorProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorProxy::platformInvalidate):
+        (WebKit::WebInspectorProxy::platformBringToFront): Carry through renamings.
+
+        (WebKit::WebInspectorProxy::platformDetach):
+        Defer to the general open() method to create a window if needed and bring it to front.
+
+        (WebKit::WebInspectorProxy::platformCanAttach): Move this below open/close code.
+
+        (WebKit::WebInspectorProxy::closeFrontend): Deleted.
+        (WebKit::WebInspectorProxy::createInspectorWindow): Deleted.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Deleted.
+        (WebKit::WebInspectorProxy::platformOpen): Deleted.
+        (WebKit::WebInspectorProxy::platformDidClose): Deleted.
+        Defer to the general open() method to create a window if needed and bring it to front.
+
+        * UIProcess/wpe/WebInspectorProxyWPE.cpp:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Deleted.
+        (WebKit::WebInspectorProxy::createInspectorWindow): Deleted.
+        (WebKit::WebInspectorProxy::platformOpen): Deleted.
+        (WebKit::WebInspectorProxy::platformDidClose): Deleted.
+        Update stubs.
+
+2017-10-02  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: consolidate code that hosts the Inspector page inside a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=177661
+        <rdar://problem/34740286>
+
+        Reviewed by Joseph Pecoraro.
+
         This patch refactors some Cocoa code pathas.
         Rename the timer that closes the WebView so it's more obvious what it is for.
         Extract the common code to close the frontend window so its not implemented by

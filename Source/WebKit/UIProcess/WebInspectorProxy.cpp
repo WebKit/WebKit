@@ -114,7 +114,7 @@ void WebInspectorProxy::connect()
     m_showMessageSent = true;
     m_ignoreFirstBringToFront = true;
 
-    eagerlyCreateInspectorPage();
+    createFrontendPage();
 
     m_inspectedPage->process().send(Messages::WebInspectorInterruptDispatcher::NotifyNeedDebuggerBreak(), 0);
     m_inspectedPage->process().send(Messages::WebInspector::Show(), m_inspectedPage->pageID());
@@ -168,7 +168,7 @@ void WebInspectorProxy::showConsole()
     if (!m_inspectedPage)
         return;
 
-    eagerlyCreateInspectorPage();
+    createFrontendPage();
 
     m_inspectedPage->process().send(Messages::WebInspector::ShowConsole(), m_inspectedPage->pageID());
 }
@@ -178,7 +178,7 @@ void WebInspectorProxy::showResources()
     if (!m_inspectedPage)
         return;
 
-    eagerlyCreateInspectorPage();
+    createFrontendPage();
 
     m_inspectedPage->process().send(Messages::WebInspector::ShowResources(), m_inspectedPage->pageID());
 }
@@ -188,7 +188,7 @@ void WebInspectorProxy::showTimelines()
     if (!m_inspectedPage)
         return;
 
-    eagerlyCreateInspectorPage();
+    createFrontendPage();
 
     m_inspectedPage->process().send(Messages::WebInspector::ShowTimelines(), m_inspectedPage->pageID());
 }
@@ -198,7 +198,7 @@ void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
     if (!m_inspectedPage)
         return;
 
-    eagerlyCreateInspectorPage();
+    createFrontendPage();
 
     m_inspectedPage->process().send(Messages::WebInspector::ShowMainResourceForFrame(frame->frameID()), m_inspectedPage->pageID());
 }
@@ -385,12 +385,12 @@ static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef propose
     *newMenuRef = menuItems;
 }
 
-void WebInspectorProxy::eagerlyCreateInspectorPage()
+void WebInspectorProxy::createFrontendPage()
 {
     if (m_inspectorPage)
         return;
 
-    m_inspectorPage = platformCreateInspectorPage();
+    m_inspectorPage = platformCreateFrontendPage();
     ASSERT(m_inspectorPage);
     if (!m_inspectorPage)
         return;
@@ -447,7 +447,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
         return;
 
     m_underTest = underTest;
-    eagerlyCreateInspectorPage();
+    createFrontendPage();
 
     ASSERT(m_inspectorPage);
     if (!m_inspectorPage)
@@ -498,7 +498,12 @@ void WebInspectorProxy::open()
     m_isVisible = true;
     m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->pageID());
 
-    platformOpen();
+    if (m_isAttached)
+        platformAttach();
+    else
+        platformCreateFrontendWindow();
+
+    platformBringToFront();
 }
 
 void WebInspectorProxy::didClose()
@@ -528,7 +533,7 @@ void WebInspectorProxy::didClose()
 
     m_connectionIdentifier = IPC::Attachment();
 
-    platformDidClose();
+    platformCloseFrontendPageAndWindow();
 }
 
 void WebInspectorProxy::frontendLoaded()
@@ -609,18 +614,18 @@ bool WebInspectorProxy::shouldOpenAttached()
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && !WK_API_ENABLED)
 
-WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
+WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 {
     notImplemented();
     return nullptr;
 }
 
-void WebInspectorProxy::platformOpen()
+void WebInspectorProxy::platformCreateFrontendWindow()
 {
     notImplemented();
 }
 
-void WebInspectorProxy::platformDidClose()
+void WebInspectorProxy::platformCloseFrontendPageAndWindow()
 {
     notImplemented();
 }

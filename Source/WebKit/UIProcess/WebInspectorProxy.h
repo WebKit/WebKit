@@ -95,7 +95,6 @@ public:
     static RetainPtr<WKWebViewConfiguration> createFrontendConfiguration(WebPageProxy*, bool underTest);
     static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame);
 
-    void createInspectorWindow();
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange(CGFloat = 0);
     void windowFrameDidChange();
@@ -105,7 +104,7 @@ public:
     void setInspectorWindowFrame(WKRect&);
     WKRect inspectorWindowFrame();
 
-    void closeFrontend();
+    void closeFrontendPage();
     void closeFrontendAfterInactivityTimerFired();
 
     void attachmentViewDidChange(NSView *oldView, NSView *newView);
@@ -155,14 +154,15 @@ public:
 private:
     explicit WebInspectorProxy(WebPageProxy*);
 
-    void eagerlyCreateInspectorPage();
+    void createFrontendPage();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    WebPageProxy* platformCreateInspectorPage();
-    void platformOpen();
-    void platformDidClose();
+    WebPageProxy* platformCreateFrontendPage();
+    void platformCreateFrontendWindow();
+    void platformCloseFrontendPageAndWindow();
+
     void platformDidCloseForCrash();
     void platformInvalidate();
     void platformBringToFront();
@@ -211,7 +211,6 @@ private:
     WebPreferences& inspectorPagePreferences() const;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    void createInspectorWindow();
     void updateInspectorWindowTitle() const;
 #endif
 
