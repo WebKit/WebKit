@@ -1424,6 +1424,7 @@ void FrameView::layout(bool allowSubtreeLayout)
     SetForScope<LayoutPhase> layoutPhaseRestorer(m_layoutPhase, InPreLayout);
     // Every scroll that happens during layout is programmatic.
     SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+    SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
     m_layoutTimer.stop();
     m_delayedLayout = false;
@@ -1441,59 +1442,57 @@ void FrameView::layout(bool allowSubtreeLayout)
     Document& document = *frame().document();
     RenderElement* layoutRoot = nullptr;
     bool isSubtreeLayout = false;
-    {
-        SetForScope<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
-        // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
-        if (!isLayoutNested() && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening())
-            performPostLayoutTasks();
+    // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
+    if (!isLayoutNested() && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening())
+        performPostLayoutTasks();
 
-        updateStyleForLayout();
-        if (hasOneRef())
-            return;
+    updateStyleForLayout();
+    if (hasOneRef())
+        return;
 
-        m_layoutPhase = InPreLayout;
+    m_layoutPhase = InPreLayout;
 
-        autoSizeIfEnabled();
+    autoSizeIfEnabled();
 
-        layoutRoot = m_subtreeLayoutRoot ? m_subtreeLayoutRoot : document.renderView();
-        if (!layoutRoot)
-            return;
-        isSubtreeLayout = m_subtreeLayoutRoot;
-        m_needsFullRepaint = !isSubtreeLayout && (m_firstLayout || downcast<RenderView>(*layoutRoot).printing());
+    layoutRoot = m_subtreeLayoutRoot ? m_subtreeLayoutRoot : document.renderView();
+    if (!layoutRoot)
+        return;
+    isSubtreeLayout = m_subtreeLayoutRoot;
+    m_needsFullRepaint = !isSubtreeLayout && (m_firstLayout || downcast<RenderView>(*layoutRoot).printing());
 
-        if (!isSubtreeLayout) {
-            if (auto* body = document.bodyOrFrameset()) {
-                if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled() && body->renderer())
-                    body->renderer()->setChildNeedsLayout();
-            }
-#if !LOG_DISABLED
-            if (m_firstLayout && !frame().ownerElement())
-                LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs\n", this, document.timeSinceDocumentCreation().value());
-#endif
-            if (m_firstLayout) {
-                m_lastViewportSize = sizeForResizeEvent();
-                m_lastZoomFactor = layoutRoot->style().zoom();
-                m_firstLayoutCallbackPending = true;
-            }
-            adjustScrollbarsForLayout(m_firstLayout);
-
-            auto oldSize = m_size;
-            m_size = layoutSize();
-            if (oldSize != m_size) {
-                LOG(Layout, "  layout size changed from %.3fx%.3f to %.3fx%.3f", oldSize.width().toFloat(), oldSize.height().toFloat(), m_size.width().toFloat(), m_size.height().toFloat());
-                m_needsFullRepaint = true;
-                if (!m_firstLayout)
-                    markRootOrBodyRendererDirty();
-            }
-            m_layoutPhase = InPreLayout;
-            m_firstLayout = false;
+    if (!isSubtreeLayout) {
+        if (auto* body = document.bodyOrFrameset()) {
+            if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled() && body->renderer())
+                body->renderer()->setChildNeedsLayout();
         }
+#if !LOG_DISABLED
+        if (m_firstLayout && !frame().ownerElement())
+            LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs\n", this, document.timeSinceDocumentCreation().value());
+#endif
+        if (m_firstLayout) {
+            m_lastViewportSize = sizeForResizeEvent();
+            m_lastZoomFactor = layoutRoot->style().zoom();
+            m_firstLayoutCallbackPending = true;
+        }
+        adjustScrollbarsForLayout(m_firstLayout);
 
-        ASSERT(allowSubtreeLayout || !isSubtreeLayout);
-        ASSERT(m_layoutPhase == InPreLayout);
+        auto oldSize = m_size;
+        m_size = layoutSize();
+        if (oldSize != m_size) {
+            LOG(Layout, "  layout size changed from %.3fx%.3f to %.3fx%.3f", oldSize.width().toFloat(), oldSize.height().toFloat(), m_size.width().toFloat(), m_size.height().toFloat());
+            m_needsFullRepaint = true;
+            if (!m_firstLayout)
+                markRootOrBodyRendererDirty();
+        }
+        m_layoutPhase = InPreLayout;
+        m_firstLayout = false;
+    }
 
-        forceLayoutParentViewIfNeeded();
+    ASSERT(allowSubtreeLayout || !isSubtreeLayout);
+    ASSERT(m_layoutPhase == InPreLayout);
 
+    forceLayoutParentViewIfNeeded();
+    {
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(m_subtreeLayoutRoot);
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(&layoutRoot->view());
 #ifndef NDEBUG
@@ -1502,12 +1501,10 @@ void FrameView::layout(bool allowSubtreeLayout)
         m_layoutPhase = InRenderTreeLayout;
         layoutRoot->layout();
         ASSERT(m_layoutPhase == InRenderTreeLayout);
-
 #if ENABLE(TEXT_AUTOSIZING)
         applyTextSizingIfNeeded(*layoutRoot);
 #endif
         m_subtreeLayoutRoot = nullptr;
-        // Close block here to end the scope of changeSchedulingEnabled and SubtreeLayoutStateMaintainer.
     }
     if (!isSubtreeLayout && !downcast<RenderView>(*layoutRoot).printing()) {
         // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
