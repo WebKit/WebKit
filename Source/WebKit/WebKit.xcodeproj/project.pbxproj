@@ -1461,6 +1461,8 @@
 		99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99249AD31F1F1E3300B62FBB /* AutomationFrontendDispatchers.cpp */; };
 		99249AD61F1F1E5F00B62FBB /* AutomationFrontendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 99249AD41F1F1E3300B62FBB /* AutomationFrontendDispatchers.h */; };
 		9946EF861E7B027000541E79 /* WebAutomationSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */; };
+		994BADF31F7D781100B571E7 /* WKInspectorViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */; };
+		994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */; };
 		9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */; };
 		9955A6ED1C7980CA00EB6A93 /* WebAutomationSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */; };
 		9955A6EF1C79810800EB6A93 /* Automation.json in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6E91C7980BB00EB6A93 /* Automation.json */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3837,6 +3839,8 @@
 		99249AD31F1F1E3300B62FBB /* AutomationFrontendDispatchers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AutomationFrontendDispatchers.cpp; sourceTree = "<group>"; };
 		99249AD41F1F1E3300B62FBB /* AutomationFrontendDispatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomationFrontendDispatchers.h; sourceTree = "<group>"; };
 		9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionIOS.mm; sourceTree = "<group>"; };
+		994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorViewController.h; sourceTree = "<group>"; };
+		994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorViewController.mm; sourceTree = "<group>"; };
 		9955A6E91C7980BB00EB6A93 /* Automation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Automation.json; sourceTree = "<group>"; };
 		9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAutomationSession.cpp; sourceTree = "<group>"; };
 		9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSession.h; sourceTree = "<group>"; };
@@ -7809,6 +7813,8 @@
 				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
 				9321D5851A38EE3C008052BE /* WKImmediateActionController.h */,
 				9321D5871A38EE74008052BE /* WKImmediateActionController.mm */,
+				994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */,
+				994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */,
 				0FCB4E5C18BBE3D9000FCFC9 /* WKPrintingView.h */,
 				0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */,
 				513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */,
@@ -9120,6 +9126,7 @@
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,
 				BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */,
 				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
+				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
 				BC407627124FF0400068F20A /* WKCertificateInfoMac.h in Headers */,
@@ -10617,6 +10624,7 @@
 				2D5C9D0519C81D8F00B3C5C1 /* WebPageOverlay.cpp in Sources */,
 				BC111B0F112F5E4F00337BAB /* WebPageProxy.cpp in Sources */,
 				1AC0273F196622D600C12B75 /* WebPageProxyCocoa.mm in Sources */,
+				994BADF31F7D781100B571E7 /* WKInspectorViewController.mm in Sources */,
 				2DA944AF1884E9BA00ED86DB /* WebPageProxyIOS.mm in Sources */,
 				BC857E8712B71EBB00EDEB2E /* WebPageProxyMac.mm in Sources */,
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,

@@ -1,3 +1,75 @@
+2017-09-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: consolidate code that hosts the Inspector page inside a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=177661
+        <rdar://problem/34740286>
+
+        Reviewed by Joseph Pecoraro.
+
+        Move code that sets up and controls the inspector WebView into WKInspectorViewController.
+        This will be shared between RemoteWebInspectorProxy and WebInspectorProxy eventually,
+        but for now just pull out code from RemoteWebInspectorProxy. The next patch will move
+        over WebInspectorProxy.
+
+        WKInspectorViewController uses the ObjC API for setting up the WKWebView's delegates.
+        Previously, a WKWebView was used but the delegates were set up using the C API. In
+        a few cases it uses delegate methods to ask the owning [Remote]WebInspectorProxy some
+        things. In general, WKInspectorViewController doesn't dig into any internals of
+        WebPageProxy or WebInspectorProxy; that is delegated to the client.
+
+        * UIProcess/RemoteWebInspectorProxy.h:
+        (WebKit::RemoteWebInspectorProxy::isUnderTest const): Add a method stub for now.
+        We might want to enable tests for a _WKRemoteWebInspectorViewController-based UI
+        in the future, and WebInspectorProxy has the same method. Add this and connect it
+        to the view controller delegate method.
+
+        (WebKit::RemoteWebInspectorProxy::webView const):
+        This returns a plain WKWebView type now.
+
+        * UIProcess/mac/RemoteWebInspectorProxyMac.mm:
+        (-[WKRemoteWebInspectorProxyObjCAdapter inspectorViewControllerInspectorDidCrash:]):
+        (-[WKRemoteWebInspectorProxyObjCAdapter inspectorViewControllerInspectorIsUnderTest:]):
+        (-[WKRemoteWebInspectorProxyObjCAdapter webViewWebContentProcessDidTerminate:]): Deleted.
+        (-[WKRemoteWebInspectorProxyObjCAdapter webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+        Make the ObjCAdapter forward view controller delegate calls to the C++ class.
+        It no longer needs to be the delegate of the WebView, as the view controller handles that.
+
+        (WebKit::RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow):
+        Clean up and move WKWebView setup code into the view controller.
+
+        (WebKit::RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow):
+        The m_inspectorPage is closed by the caller before calling this method, so we don't need to do it here.
+
+        (WebKit::RemoteWebInspectorProxy::platformBringToFront):
+        (WebKit::RemoteWebInspectorProxy::platformSave):
+        (WebKit::RemoteWebInspectorProxy::platformAppend):
+        (WebKit::RemoteWebInspectorProxy::platformStartWindowDrag):
+        Use webView() instead of m_webView.
+
+        * UIProcess/mac/WKInspectorViewController.h: Added.
+        * UIProcess/mac/WKInspectorViewController.mm: Added.
+        (-[WKInspectorWKWebView tag]):
+        (-[WKInspectorViewController initWithInspectedPage:]):
+        (-[WKInspectorViewController dealloc]):
+        (-[WKInspectorViewController delegate]):
+        (-[WKInspectorViewController webView]):
+        (-[WKInspectorViewController setDelegate:]):
+        (-[WKInspectorViewController configuration]):
+        (-[WKInspectorViewController _webView:getWindowFrameWithCompletionHandler:]):
+        (-[WKInspectorViewController _webView:setWindowFrame:]):
+        (-[WKInspectorViewController webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+        (-[WKInspectorViewController _webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:]):
+        (-[WKInspectorViewController webViewWebContentProcessDidTerminate:]):
+        (-[WKInspectorViewController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        Move code from RemoteWebInspectorProxyMac into here.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createFrontendWindow):
+        Remove commented out code left over from the last time that this method got moved around.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new class.
+
 2017-10-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Drop 'CoordinatedGraphics' as a platform prefix from generate-forwarding-headers.pl

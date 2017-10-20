@@ -31,9 +31,9 @@
 #import "RemoteWebInspectorProxyMessages.h"
 #import "RemoteWebInspectorUIMessages.h"
 #import "WKFrameInfo.h"
+#import "WKInspectorViewController.h"
 #import "WKNavigationAction.h"
 #import "WKNavigationDelegate.h"
-#import "WKWebInspectorWKWebView.h"
 #import "WKWebViewInternal.h"
 #import "WebInspectorProxy.h"
 #import "WebPageGroup.h"
@@ -42,7 +42,7 @@
 
 using namespace WebKit;
 
-@interface WKRemoteWebInspectorProxyObjCAdapter : NSObject <WKNavigationDelegate> {
+@interface WKRemoteWebInspectorProxyObjCAdapter : NSObject <WKInspectorViewControllerDelegate> {
     RemoteWebInspectorProxy* _inspectorProxy;
 }
 - (instancetype)initWithRemoteWebInspectorProxy:(RemoteWebInspectorProxy*)inspectorProxy;
@@ -60,51 +60,39 @@ using namespace WebKit;
     return self;
 }
 
-- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+- (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController
 {
     _inspectorProxy->closeFromCrash();
 }
 
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+- (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController
 {
-    // Allow non-main frames to navigate anywhere.
-    if (!navigationAction.targetFrame.isMainFrame) {
-        decisionHandler(WKNavigationActionPolicyAllow);
-        return;
-    }
-
-    // Allow loading of the main inspector file.
-    if (WebInspectorProxy::isMainOrTestInspectorPage(navigationAction.request.URL)) {
-        decisionHandler(WKNavigationActionPolicyAllow);
-        return;
-    }
-
-    // Prevent everything else.
-    decisionHandler(WKNavigationActionPolicyCancel);
+    return _inspectorProxy->isUnderTest();
 }
 
 @end
 
 namespace WebKit {
 
+WKWebView *RemoteWebInspectorProxy::webView() const
+{
+    return m_inspectorView.get().webView;
+}
+
 WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
 {
-    NSRect initialFrame = NSMakeRect(0, 0, WebInspectorProxy::initialWindowWidth, WebInspectorProxy::initialWindowHeight);
-    auto configuration = WebInspectorProxy::createFrontendConfiguration(nullptr, false);
-
     m_objCAdapter = adoptNS([[WKRemoteWebInspectorProxyObjCAdapter alloc] initWithRemoteWebInspectorProxy:this]);
 
-    m_webView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialFrame configuration:configuration.get()]);
-    [m_webView setNavigationDelegate:m_objCAdapter.get()];
+    m_inspectorView = adoptNS([[WKInspectorViewController alloc] initWithInspectedPage:nil]);
+    [m_inspectorView.get() setDelegate:m_objCAdapter.get()];
 
     m_window = WebInspectorProxy::createFrontendWindow(NSZeroRect);
 
-    NSView *contentView = [m_window contentView];
-    [m_webView setFrame:[contentView bounds]];
-    [m_webView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [contentView addSubview:m_webView.get()];
+    NSView *contentView = m_window.get().contentView;
+    [webView() setFrame:contentView.bounds];
+    [contentView addSubview:webView()];
 
-    return m_webView->_page.get();
+    return webView()->_page.get();
 }
 
 void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
@@ -115,22 +103,19 @@ void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow()
         m_window = nil;
     }
 
-    if (m_webView) {
-        WebPageProxy* inspectorPage = m_webView->_page.get();
-        inspectorPage->close();
-        [m_webView setNavigationDelegate:nil];
-        m_webView = nil;
+    if (m_inspectorView) {
+        [m_inspectorView.get() setDelegate:nil];
+        m_inspectorView = nil;
     }
 
     if (m_objCAdapter)
         m_objCAdapter = nil;
 }
 
-
 void RemoteWebInspectorProxy::platformBringToFront()
 {
     [m_window makeKeyAndOrderFront:nil];
-    [m_window makeFirstResponder:m_webView.get()];
+    [m_window makeFirstResponder:webView()];
 }
 
 void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
@@ -168,8 +153,7 @@ void RemoteWebInspectorProxy::platformSave(const String& suggestedURL, const Str
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
-        WebPageProxy* inspectorPage = m_webView->_page.get();
-        inspectorPage->process().send(Messages::RemoteWebInspectorUI::DidSave([actualURL absoluteString]), inspectorPage->pageID());
+        m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::DidSave([actualURL absoluteString]), m_inspectorPage->pageID());
     };
 
     if (!forceSaveDialog) {
@@ -215,13 +199,13 @@ void RemoteWebInspectorProxy::platformAppend(const String& suggestedURL, const S
     [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     [handle closeFile];
 
-    WebPageProxy* inspectorPage = m_webView->_page.get();
+    WebPageProxy* inspectorPage = webView()->_page.get();
     inspectorPage->process().send(Messages::RemoteWebInspectorUI::DidAppend([actualURL absoluteString]), inspectorPage->pageID());
 }
 
 void RemoteWebInspectorProxy::platformStartWindowDrag()
 {
-    m_webView->_page->startWindowDrag();
+    webView()->_page->startWindowDrag();
 }
 
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String& url)

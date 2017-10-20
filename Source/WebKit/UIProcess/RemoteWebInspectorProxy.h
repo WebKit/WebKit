@@ -35,8 +35,9 @@
 #if PLATFORM(MAC)
 OBJC_CLASS NSURL;
 OBJC_CLASS NSWindow;
+OBJC_CLASS WKInspectorViewController;
 OBJC_CLASS WKRemoteWebInspectorProxyObjCAdapter;
-OBJC_CLASS WKWebInspectorWKWebView;
+OBJC_CLASS WKWebView;
 #endif
 
 namespace WebKit {
@@ -61,6 +62,8 @@ public:
 
     void setClient(RemoteWebInspectorProxyClient* client) { m_client = client; }
 
+    bool isUnderTest() const { return false; }
+
     void invalidate();
 
     void load(const String& debuggableType, const String& backendCommandsURL);
@@ -71,7 +74,7 @@ public:
 
 #if PLATFORM(MAC)
     NSWindow *window() const { return m_window.get(); }
-    WKWebInspectorWKWebView *webView() const { return m_webView.get(); }
+    WKWebView *webView() const;
 #endif
 
 #if PLATFORM(GTK)
@@ -111,7 +114,7 @@ private:
     WebPageProxy* m_inspectorPage { nullptr };
 
 #if PLATFORM(MAC)
-    RetainPtr<WKWebInspectorWKWebView> m_webView;
+    RetainPtr<WKInspectorViewController> m_inspectorView;
     RetainPtr<NSWindow> m_window;
     RetainPtr<WKRemoteWebInspectorProxyObjCAdapter> m_objCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;

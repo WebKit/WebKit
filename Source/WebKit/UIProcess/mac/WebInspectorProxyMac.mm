@@ -222,9 +222,7 @@ RetainPtr<WKWebViewConfiguration> WebInspectorProxy::createFrontendConfiguration
 RetainPtr<NSWindow> WebInspectorProxy::createFrontendWindow(NSRect savedWindowFrame)
 {
     NSRect windowFrame = !NSIsEmptyRect(savedWindowFrame) ? savedWindowFrame : NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
-
     auto window = adoptNS([[NSWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO]);
-    // [window setDelegate:m_inspectorProxyObjCAdapter.get()];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setReleasedWhenClosed:NO];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];

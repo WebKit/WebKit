@@ -1,0 +1,215 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WKInspectorViewController.h"
+
+#if PLATFORM(MAC) && WK_API_ENABLED
+
+#import "WKFrameInfo.h"
+#import "WKNavigationAction.h"
+#import "WKNavigationDelegate.h"
+#import "WKOpenPanelParameters.h"
+#import "WKPreferencesPrivate.h"
+#import "WKProcessPoolInternal.h"
+#import "WKUIDelegatePrivate.h"
+#import "WKWebView.h"
+#import "WKWebViewConfigurationPrivate.h"
+#import "WeakObjCPtr.h"
+#import "WebInspectorProxy.h"
+#import "WebInspectorUtilities.h"
+#import "WebPageProxy.h"
+
+// FIXME: this should be declared in the ObjC API; currently it's in the C SPI.
+const NSInteger WKInspectorViewTag = 1000;
+
+using namespace WebKit;
+
+// Clients need to be able to tell whether a subview is a docked inspector view, so override the tag.
+@interface WKInspectorWKWebView : WKWebView
+@end
+
+@implementation WKInspectorWKWebView
+- (NSInteger)tag
+{
+    return WKInspectorViewTag;
+}
+@end
+
+@interface WKInspectorViewController () <WKUIDelegate, WKNavigationDelegate>
+@end
+
+@implementation WKInspectorViewController {
+    WebPageProxy* _inspectedPage;
+    RetainPtr<WKInspectorWKWebView> _webView;
+    WebKit::WeakObjCPtr<id <WKInspectorViewControllerDelegate>> _delegate;
+}
+
+- (instancetype)initWithInspectedPage:(WebKit::WebPageProxy* _Nullable)inspectedPage
+{
+    if (!(self = [super init]))
+        return nil;
+
+    // The (local) inspected page is nil if the controller is hosting a Remote Web Inspector view.
+    _inspectedPage = inspectedPage;
+
+    return self;
+}
+
+- (void)dealloc
+{
+    if (_webView) {
+        [_webView setUIDelegate:nil];
+        [_webView setNavigationDelegate:nil];
+        _webView = nil;
+    }
+
+    [super dealloc];
+}
+
+- (id <WKInspectorViewControllerDelegate>)delegate
+{
+    return _delegate.getAutoreleased();
+}
+
+- (WKWebView *)webView
+{
+    // Construct lazily so the client can set the delegate before the WebView is created.
+    if (!_webView) {
+        NSRect initialFrame = NSMakeRect(0, 0, WebInspectorProxy::initialWindowWidth, WebInspectorProxy::initialWindowHeight);
+        _webView = adoptNS([[WKInspectorWKWebView alloc] initWithFrame:initialFrame configuration:[self configuration]]);
+        [_webView setUIDelegate:self];
+        [_webView setNavigationDelegate:self];
+        [_webView _setAutomaticallyAdjustsContentInsets:NO];
+        [_webView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    }
+
+    return _webView.get();
+}
+
+- (void)setDelegate:(id <WKInspectorViewControllerDelegate>)delegate
+{
+    _delegate = delegate;
+}
+
+- (WKWebViewConfiguration *)configuration
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    WKPreferences *preferences = configuration.get().preferences;
+    preferences._allowFileAccessFromFileURLs = YES;
+    [configuration _setAllowUniversalAccessFromFileURLs:YES];
+    preferences._storageBlockingPolicy = _WKStorageBlockingPolicyAllowAll;
+    preferences._javaScriptRuntimeFlags = 0;
+
+#ifndef NDEBUG
+    // Allow developers to inspect the Web Inspector in debug builds without changing settings.
+    preferences._developerExtrasEnabled = YES;
+    preferences._logsPageMessagesToSystemConsoleEnabled = YES;
+#endif
+
+    if (!!_delegate && [_delegate respondsToSelector:@selector(inspectorViewControllerInspectorIsUnderTest:)]) {
+        if ([_delegate inspectorViewControllerInspectorIsUnderTest:self]) {
+            preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
+            preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+        }
+    }
+
+    [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool(inspectorLevelForPage(_inspectedPage)))];
+    [configuration _setGroupIdentifier:inspectorPageGroupIdentifierForPage(_inspectedPage)];
+
+    return configuration.autorelease();
+}
+
+// MARK: WKUIDelegate methods
+
+- (void)_webView:(WKWebView *)webView getWindowFrameWithCompletionHandler:(void (^)(CGRect))completionHandler
+{
+    if (!_webView.get().window)
+        completionHandler(CGRectZero);
+    else
+        completionHandler(NSRectToCGRect([webView frame]));
+}
+
+- (void)_webView:(WKWebView *)webView setWindowFrame:(CGRect)frame
+{
+    if (!_webView.get().window)
+        return;
+
+    [_webView.get().window setFrame:NSRectFromCGRect(frame) display:YES];
+}
+
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler
+{
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    openPanel.allowsMultipleSelection = parameters.allowsMultipleSelection;
+
+    auto reportSelectedFiles = ^(NSInteger result) {
+        if (result == NSModalResponseOK)
+            completionHandler(openPanel.URLs);
+        else
+            completionHandler(nil);
+    };
+
+    if (_webView.get().window)
+        [openPanel beginSheetModalForWindow:_webView.get().window completionHandler:reportSelectedFiles];
+    else
+        reportSelectedFiles([openPanel runModal]);
+}
+
+- (void)_webView:(WKWebView *)webView decideDatabaseQuotaForSecurityOrigin:(WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota currentOriginUsage:(unsigned long long)currentOriginUsage currentDatabaseUsage:(unsigned long long)currentUsage expectedUsage:(unsigned long long)expectedUsage decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler
+{
+    decisionHandler(std::max<unsigned long long>(expectedUsage, currentUsage * 1.25));
+}
+
+// MARK: WKNavigationDelegate methods
+
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+{
+    if (!!_delegate && [_delegate respondsToSelector:@selector(inspectorViewControllerInspectorDidCrash:)])
+        [_delegate inspectorViewControllerInspectorDidCrash:self];
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    // Allow non-main frames to navigate anywhere.
+    if (!navigationAction.targetFrame.isMainFrame) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        return;
+    }
+
+    // Allow loading of the main inspector file.
+    if (WebInspectorProxy::isMainOrTestInspectorPage(navigationAction.request.URL)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        return;
+    }
+
+    // Prevent everything else.
+    decisionHandler(WKNavigationActionPolicyCancel);
+}
+
+@end
+
+#endif // PLATFORM(MAC) && WK_API_ENABLED
