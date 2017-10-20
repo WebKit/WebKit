@@ -1,5 +1,128 @@
 2017-10-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab: Metrics Detail View
+        https://bugs.webkit.org/show_bug.cgi?id=178323
+        <rdar://problem/34071929>
+
+        Reviewed by Devin Rousso.
+
+        Provide a Metrics detail view for resources in the Network tab.
+        This detail view shows:
+        
+          - Transfer Size information (Header + Body bytes)
+          - Resource Size information (Compression, MIME)
+          - Timing information (ResourceTiming, Waterfall breakdown)
+
+        The display of timing information isn't quite final. But this
+        is a good starting point for all the information.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New resources and strings.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.shouldTreatMIMETypeAsText):
+        Helper for detecting text resources.
+
+        * UserInterface/Images/Receiving.svg: Added.
+        * UserInterface/Images/Sending.svg: Added.
+        * UserInterface/Images/gtk/Receiving.svg: Added.
+        * UserInterface/Images/gtk/Sending.svg: Added.
+        Same images for main and linux ports with different licenses.
+
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView):
+        (WI.NetworkResourceDetailView.prototype.metricsContentViewGoToHeaders):
+        (WI.NetworkResourceDetailView.prototype.metricsContentViewGoToRequestBody):
+        (WI.NetworkResourceDetailView.prototype.metricsContentViewGoToResponseBody):
+        (WI.NetworkResourceDetailView.prototype.initialLayout):
+        (WI.NetworkResourceDetailView.prototype._showPreferredContentView):
+        (WI.NetworkResourceDetailView.prototype._showContentViewForNavigationItem):
+        Replace "Timing" and "Details" stubs with a single "Metrics" section.
+        Handle delegate cases from the Metrics content view.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.displayNameForResource):
+        (WI.NetworkTableContentView.prototype._displayType): Deleted.
+        (WI.NetworkTableContentView.prototype._entryForResource):
+        Promote this to a static helper in case anyone else wants it.
+
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.networkResourceDetailViewClose):
+        Reorder code a bit to reduce work since hiding the detail view currently
+        forces a layout.
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView):
+        (WI.ResourceHeadersContentView.prototype._refreshRequestDataSection):
+        (WI.ResourceHeadersContentView.prototype._resourceResponseReceived):
+        (WI.ResourceHeadersContentView.prototype._goToRequestDataClicked): Deleted.
+        Simplify by making the delegate required.
+
+        * UserInterface/Views/ResourceMetricsContentView.css: Added.
+        (.resource-metrics):
+        (.resource-metrics > .content):
+        (.resource-metrics > .content .label):
+        General metrics styles.
+
+        (.resource-metrics > .content > section):
+        (.resource-metrics > .content > section .subtitle):
+        (.resource-metrics > .content > section:not(:last-of-type)):
+        (.resource-metrics > .content > section.split):
+        (.resource-metrics > .content > section.split > .subsection):
+        (.resource-metrics > .content > section.split > .subsection > table):
+        (.resource-metrics > .content > section.split > .divider):
+        (.resource-metrics > .content > section.network > .subsection > .container):
+        (.resource-metrics > .content > section.network .bytes-group):
+        (.resource-metrics > .content > section.network .bytes):
+        (body[dir=ltr] .resource-metrics > .content > section.network table > tr > td.label):
+        (body[dir=rtl] .resource-metrics > .content > section.network table > tr > td.label):
+        (.resource-metrics > .content > section.network .suffix):
+        (.resource-metrics > .content > section.network img):
+        (.resource-metrics > .content > section.network .go-to-arrow):
+        (.resource-metrics > .content > section.network .warning):
+        Styles for Sizes sections.
+
+        (.resource-metrics > .content > section.timing):
+        (.resource-metrics > .content > section.timing .subtitle):
+        (.resource-metrics > .content > section.timing > ul):
+        (.resource-metrics > .content > section.timing > ul > li):
+        (.resource-metrics > .content > section.timing > .waterfall):
+        (.resource-metrics > .content > section.timing > .waterfall .block):
+        (.resource-metrics > .content > section.timing > ul > li > .row-label):
+        (body[dir=ltr] .resource-metrics > .content > section.timing > ul > li > .row-label):
+        (body[dir=rtl] .resource-metrics > .content > section.timing > ul > li > .row-label):
+        (.resource-metrics > .content > section.timing > ul > li > .time-label):
+        (.resource-metrics > .content > section.timing > ul > li.total .block):
+        (.resource-metrics > .content > section.timing > ul > li.total .time-label):
+        (.resource-metrics > .content > section.timing .indeterminate-progress-spinner):
+        (.resource-metrics > .content > section.timing .empty):
+        Styles for Timing section.
+
+        * UserInterface/Views/ResourceMetricsContentView.js: Added.
+        (WI.ResourceMetricsContentView):
+        (WI.ResourceMetricsContentView.prototype.initialLayout.createSizeComponents):
+        (WI.ResourceMetricsContentView.prototype.initialLayout):
+        (WI.ResourceMetricsContentView.prototype.layout):
+        (WI.ResourceMetricsContentView.prototype.closed):
+        (WI.ResourceMetricsContentView.prototype._sizeComponents):
+        (WI.ResourceMetricsContentView.prototype._refreshTransferSizeSections.appendGoToArrow):
+        (WI.ResourceMetricsContentView.prototype._refreshTransferSizeSections):
+        (WI.ResourceMetricsContentView.prototype._refreshResourceSizeSection):
+        (WI.ResourceMetricsContentView.prototype._refreshTimingSection.createBlock):
+        (WI.ResourceMetricsContentView.prototype._refreshTimingSection.createTimeLabel):
+        (WI.ResourceMetricsContentView.prototype._refreshTimingSection.createRow):
+        (WI.ResourceMetricsContentView.prototype._refreshTimingSection):
+        (WI.ResourceMetricsContentView.prototype._resourceSizeDidChange):
+        (WI.ResourceMetricsContentView.prototype._resourceTransferSizeDidChange):
+        (WI.ResourceMetricsContentView.prototype._resourceMetricsDidChange):
+        (WI.ResourceMetricsContentView.prototype._resourceTimestampsDidChange):
+        Metrics content. This just creates all of the elements, and saves a
+        few to get populated with data later on.
+
+2017-10-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab - Improve graphical representation of network waterfall
         https://bugs.webkit.org/show_bug.cgi?id=147897
         <rdar://problem/27482198>

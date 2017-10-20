@@ -115,6 +115,21 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     // Static
 
+    static displayNameForResource(resource)
+    {
+        if (resource.type === WI.Resource.Type.Image || resource.type === WI.Resource.Type.Font) {
+            let fileExtension;
+            if (resource.mimeType)
+                fileExtension = WI.fileExtensionForMIMEType(resource.mimeType);
+            if (!fileExtension)
+                fileExtension = WI.fileExtensionForURL(resource.url);
+            if (fileExtension)
+                return fileExtension;
+        }
+
+        return WI.NetworkTableContentView.shortDisplayNameForResourceType(resource.type).toLowerCase();
+    }
+
     static shortDisplayNameForResourceType(type)
     {
         switch (type) {
@@ -192,12 +207,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     closed()
     {
-        this._hidePopover();
-        this._hideResourceDetailView();
-
         for (let detailView of this._resourceDetailViewMap.values())
             detailView.dispose();
         this._resourceDetailViewMap.clear();
+
+        this._hidePopover();
+        this._hideResourceDetailView();
 
         WI.Frame.removeEventListener(null, null, this);
         WI.Resource.removeEventListener(null, null, this);
@@ -222,11 +237,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateWaterfallTimelineRuler();
 
         if (this._table) {
-            this._hidePopover();
-            this._hideResourceDetailView();
             this._selectedResource = null;
             this._table.clearSelectedRow();
             this._table.reloadData();
+            this._hidePopover();
+            this._hideResourceDetailView();
         }
     }
 
@@ -234,9 +249,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     networkResourceDetailViewClose(resourceDetailView)
     {
-        this._hideResourceDetailView();
         this._selectedResource = null;
         this._table.clearSelectedRow();
+        this._hideResourceDetailView();
     }
 
     // Table dataSource
@@ -1099,21 +1114,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
     }
 
-    _displayType(resource)
-    {
-        if (resource.type === WI.Resource.Type.Image || resource.type === WI.Resource.Type.Font) {
-            let fileExtension;
-            if (resource.mimeType)
-                fileExtension = WI.fileExtensionForMIMEType(resource.mimeType);
-            if (!fileExtension)
-                fileExtension = WI.fileExtensionForURL(resource.url);
-            if (fileExtension)
-                return fileExtension;
-        }
-
-        return WI.NetworkTableContentView.shortDisplayNameForResourceType(resource.type).toLowerCase();
-    }
-
     _entryForResource(resource)
     {
         // FIXME: <https://webkit.org/b/143632> Web Inspector: Resources with the same name in different folders aren't distinguished
@@ -1126,7 +1126,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             scheme: resource.urlComponents.scheme ? resource.urlComponents.scheme.toLowerCase() : "",
             method: resource.requestMethod,
             type: resource.type,
-            displayType: this._displayType(resource),
+            displayType: WI.NetworkTableContentView.displayNameForResource(resource),
             mimeType: resource.mimeType,
             status: resource.statusCode,
             cached: resource.cached,

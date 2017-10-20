@@ -30,13 +30,14 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         super(null);
 
         console.assert(resource instanceof WI.Resource);
+        console.assert(delegate);
 
         this._resource = resource;
         this._resource.addEventListener(WI.Resource.Event.MetricsDidChange, this._resourceMetricsDidChange, this);
         this._resource.addEventListener(WI.Resource.Event.RequestHeadersDidChange, this._resourceRequestHeadersDidChange, this);
         this._resource.addEventListener(WI.Resource.Event.ResponseReceived, this._resourceResponseReceived, this);
 
-        this._delegate = delegate || null;
+        this._delegate = delegate;
 
         this._searchQuery = null;
         this._searchResults = null;
@@ -406,7 +407,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             this._appendKeyValuePair(detailsElement, WI.UIString("Encoding"), encoding);
 
         let goToButton = detailsElement.appendChild(WI.createGoToArrowButton());
-        goToButton.addEventListener("click", this._goToRequestDataClicked.bind(this));
+        goToButton.addEventListener("click", () => { this._delegate.headersContentViewGoToRequestData(this); });
         this._appendKeyValuePair(detailsElement, WI.UIString("Request Data"), goToButton);
     }
 
@@ -480,11 +481,5 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._needsSummaryRefresh = true;
         this._needsResponseHeadersRefresh = true;
         this.needsLayout();
-    }
-
-    _goToRequestDataClicked(event)
-    {
-        if (this._delegate)
-            this._delegate.headersContentViewGoToRequestData(this);
     }
 };

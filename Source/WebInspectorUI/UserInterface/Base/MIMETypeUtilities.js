@@ -131,3 +131,18 @@ WI.fileExtensionForMIMEType = function(mimeType)
 
     return null;
 };
+
+WI.shouldTreatMIMETypeAsText = function(mimeType)
+{
+    if (mimeType.startsWith("text/"))
+        return true;
+
+    if (mimeType.endsWith("+json") || mimeType.endsWith("+xml"))
+        return true;
+
+    // Various script and JSON mime types.
+    if (mimeType.startsWith("application/"))
+        return mimeType.endsWith("script") || mimeType.endsWith("json");
+
+    return false;
+};
