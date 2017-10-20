@@ -251,30 +251,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
-        if (window.NetworkAgent) {
-            experimentalSettingsView.addSetting(WI.UIString("Network Tab:"), WI.settings.experimentalEnableNewNetworkTab, WI.UIString("New Network Tab"));
-            experimentalSettingsView.addSeparator();
-
-            // Ensure the toggled network tab is open after reloading the frontend.
-            // Put it in the same place as the existing network tab or just at the end.
-            WI.settings.experimentalEnableNewNetworkTab.addEventListener(WI.Setting.Event.Changed, () => {
-                let newNetworkTableEnabled = WI.settings.experimentalEnableNewNetworkTab.value;
-                let incomingTabIdentifier = newNetworkTableEnabled ? WI.NetworkTabContentView.Type : WI.LegacyNetworkTabContentView.Type;
-                let outgoingTabIdentifier = newNetworkTableEnabled ? WI.LegacyNetworkTabContentView.Type : WI.NetworkTabContentView.Type;
-
-                let tabs = WI._openTabsSetting.value.slice();
-                tabs.remove(incomingTabIdentifier);
-
-                let index = tabs.indexOf(outgoingTabIdentifier);
-                if (index !== -1)
-                    tabs.insertAtIndex(incomingTabIdentifier, index);
-                else
-                    tabs.push(incomingTabIdentifier);
-
-                WI._openTabsSetting.value = tabs;
-            });
-        }
-
         if (window.LayerTreeAgent) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
             experimentalSettingsView.addSeparator();
@@ -296,7 +272,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         listenForChange(WI.settings.experimentalShowCanvasContextsInResources);
         listenForChange(WI.settings.experimentalSpreadsheetStyleEditor);
-        listenForChange(WI.settings.experimentalEnableNewNetworkTab);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableCanvasTab);
 

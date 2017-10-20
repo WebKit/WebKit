@@ -431,7 +431,6 @@ WI.contentLoaded = function()
         WI.DebuggerTabContentView,
         WI.ElementsTabContentView,
         WI.LayersTabContentView,
-        WI.LegacyNetworkTabContentView,
         WI.NetworkTabContentView,
         WI.NewTabContentView,
         WI.RecordingTabContentView,
@@ -988,16 +987,9 @@ WI.showStorageTab = function()
 
 WI.showNetworkTab = function()
 {
-    let tabContentView;
-    if (WI.settings.experimentalEnableNewNetworkTab.value) {
-        tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.NetworkTabContentView);
-        if (!tabContentView)
-            tabContentView = new WI.NetworkTabContentView;
-    } else {
-        tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.LegacyNetworkTabContentView);
-        if (!tabContentView)
-            tabContentView = new WI.LegacyNetworkTabContentView;
-    }
+    let tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.NetworkTabContentView);
+    if (!tabContentView)
+        tabContentView = new WI.NetworkTabContentView;
 
     this.tabBrowser.showTabForContentView(tabContentView);
 };

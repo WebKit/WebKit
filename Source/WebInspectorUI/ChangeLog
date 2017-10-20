@@ -1,3 +1,34 @@
+2017-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Turn on the new tab by default, remove the legacy network tab
+        https://bugs.webkit.org/show_bug.cgi?id=178559
+        <rdar://problem/34985503>
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/LegacyNetworkSidebarPanel.css: Removed.
+        * UserInterface/Views/LegacyNetworkSidebarPanel.js: Removed.
+        * UserInterface/Views/LegacyNetworkTabContentView.js: Removed.
+        * UserInterface/Views/NetworkGridContentView.css: Removed.
+        * UserInterface/Views/NetworkGridContentView.js: Removed.
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        Remove LegacyNetwork tab, its NetworkGridContentView, and associated content.
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView.isTabAllowed):
+        Simplify now that this is the only Network tab.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        Remove experimental setting.
+
+
 2017-10-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed localized strings update.

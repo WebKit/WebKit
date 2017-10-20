@@ -130,5 +130,4 @@ WI.settings = {
     experimentalSpreadsheetStyleEditor: new WI.Setting("experimental-spreadsheet-style-editor", false),
     experimentalEnableCanvasTab: new WI.Setting("experimental-enable-canvas-tab", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
-    experimentalEnableNewNetworkTab: new WI.Setting("experimental-enable-new-network-tab", false),
 };
