@@ -31,6 +31,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
 #include "IDBConnectionProxy.h"
+#include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
 #include "Performance.h"
 #include "ScheduledAction.h"
@@ -47,7 +48,6 @@
 #include "WorkerThread.h"
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>
-
 
 namespace WebCore {
 using namespace Inspector;
@@ -392,6 +392,16 @@ CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
     if (!m_cacheStorageConnection)
         m_cacheStorageConnection = WorkerCacheStorageConnection::create(*this);
     return *m_cacheStorageConnection;
+}
+
+void WorkerGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+{
+    ImageBitmap::createPromise(*this, WTFMove(source), WTFMove(options), WTFMove(promise));
+}
+
+void WorkerGlobalScope::createImageBitmap(ImageBitmap::Source&& source, int sx, int sy, int sw, int sh, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+{
+    ImageBitmap::createPromise(*this, WTFMove(source), WTFMove(options), sx, sy, sw, sh, WTFMove(promise));
 }
 
 } // namespace WebCore

@@ -1,9 +1,9 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL createImageBitmap with a HTMLImageElement source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLImageElement source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLImageElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+PASS createImageBitmap with a HTMLImageElement source and sw set to 0 rejects with a RangeError. 
+PASS createImageBitmap with a HTMLImageElement source and sh set to 0 rejects with a RangeError. 
+FAIL createImageBitmap with a HTMLImageElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
 TIMEOUT createImageBitmap with a HTMLVideoElement source and sw set to 0 rejects with a RangeError. Test timed out
 NOTRUN createImageBitmap with a HTMLVideoElement source and sh set to 0 rejects with a RangeError. 
 NOTRUN createImageBitmap with a HTMLVideoElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. 

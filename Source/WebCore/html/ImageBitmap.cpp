@@ -219,6 +219,7 @@ private:
         , m_rect(WTFMove(rect))
         , m_promise(WTFMove(promise))
     {
+        suspendIfNeeded();
     }
 
     void start(ScriptExecutionContext& scriptExecutionContext)

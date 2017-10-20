@@ -1743,6 +1743,26 @@ void DOMWindow::cancelAnimationFrame(int id)
     document->cancelAnimationFrame(id);
 }
 
+void DOMWindow::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+{
+    auto* document = this->document();
+    if (!document) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+    ImageBitmap::createPromise(*document, WTFMove(source), WTFMove(options), WTFMove(promise));
+}
+
+void DOMWindow::createImageBitmap(ImageBitmap::Source&& source, int sx, int sy, int sw, int sh, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+{
+    auto* document = this->document();
+    if (!document) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+    ImageBitmap::createPromise(*document, WTFMove(source), WTFMove(options), sx, sy, sw, sh, WTFMove(promise));
+}
+
 bool DOMWindow::isSecureContext() const
 {
     auto* document = this->document();

@@ -48,8 +48,10 @@ class ImageBitmap : public ScriptWrappable, public RefCounted<ImageBitmap> {
 public:
     using Source = Variant<
         RefPtr<HTMLImageElement>,
+#if ENABLE(VIDEO)
+        RefPtr<HTMLVideoElement>,
+#endif
         RefPtr<HTMLCanvasElement>,
-        RefPtr<HTMLVideoElement>, // FIXME: Make conditional
         RefPtr<ImageBitmap>,
         RefPtr<Blob>,
         RefPtr<ImageData>

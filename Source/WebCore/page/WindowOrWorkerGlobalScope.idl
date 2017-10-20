@@ -25,6 +25,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
+#else
+typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
+#endif
+
+typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
+
 [
     NoInterfaceObject,
 ] interface WindowOrWorkerGlobalScope {
@@ -44,4 +52,8 @@
 
     // Secure Contexts
     [EnabledAtRuntime=IsSecureContextAttribute] readonly attribute boolean isSecureContext;
+
+    // ImageBitmap.
+    Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);
+    Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
 };
