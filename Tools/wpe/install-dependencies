@@ -247,7 +247,9 @@ function installDependenciesWithDnf {
         libxslt-devel \
         ninja-build \
         patch \
-        ruby
+        perl-Time-HiRes \
+        perl-version \
+        ruby \
         sqlite-devel \
         zlib-devel"
 
@@ -263,7 +265,7 @@ function installDependenciesWithDnf {
         psmisc \
         pulseaudio-utils \
         python2-psutil \
-        python-gobject-base
+        python-gobject-base \
         ruby \
         rubygem-highline \
         rubygem-json"
