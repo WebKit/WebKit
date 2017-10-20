@@ -859,6 +859,9 @@ void VTTCue::removeDisplayTree()
 
     if (!hasDisplayTree())
         return;
+
+    // The display tree is never exposed to author scripts so it's safe to dispatch events here.
+    NoEventDispatchAssertion::EventAllowedScope allowedScope(displayTreeInternal());
     displayTreeInternal().remove();
 }
 

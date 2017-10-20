@@ -31,6 +31,7 @@
 #include "ElementIterator.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "NoEventDispatchAssertion.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGDocumentExtensions.h"
@@ -214,8 +215,10 @@ static inline bool isDisallowedElement(const Element& element)
 
 void SVGUseElement::clearShadowTree()
 {
-    if (auto root = userAgentShadowRoot())
+    if (auto root = userAgentShadowRoot()) {
+        NoEventDispatchAssertion::EventAllowedScope scope(*root);
         root->removeChildren();
+    }
 }
 
 void SVGUseElement::buildPendingResource()
