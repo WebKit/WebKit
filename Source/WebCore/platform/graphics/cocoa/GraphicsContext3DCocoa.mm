@@ -657,21 +657,19 @@ void GraphicsContext3D::checkGPUStatus()
 #endif
 }
 
-void GraphicsContext3D::endPaint()
+#if PLATFORM(IOS)
+void GraphicsContext3D::presentRenderbuffer()
 {
     makeContextCurrent();
     if (m_attrs.antialias)
         resolveMultisamplingIfNecessary();
-#if PLATFORM(IOS)
-    // This is the place where we actually push our current rendering
-    // results to the compositor on iOS. On macOS it comes from the
-    // calling function, which is inside WebGLLayer.
+
     ::glFlush();
     ::glBindRenderbuffer(GL_RENDERBUFFER, m_texture);
     [static_cast<EAGLContext*>(m_contextObj) presentRenderbuffer:GL_RENDERBUFFER];
     [EAGLContext setCurrentContext:nil];
-#endif
 }
+#endif
 
 bool GraphicsContext3D::texImageIOSurface2D(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, IOSurfaceRef surface, GC3Duint plane)
 {
