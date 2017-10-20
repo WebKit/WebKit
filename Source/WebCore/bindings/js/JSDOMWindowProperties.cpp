@@ -85,7 +85,7 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, ExecState* stat
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
         return true;
-    JSValue proto = thisObject->getPrototypeDirect();
+    JSValue proto = thisObject->getPrototypeDirect(state->vm());
     if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
         return false;
 

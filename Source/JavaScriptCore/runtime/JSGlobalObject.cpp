@@ -1026,7 +1026,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         }
     }
 
-    resetPrototype(vm, getPrototypeDirect());
+    resetPrototype(vm, getPrototypeDirect(vm));
 }
 
 bool JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -1096,11 +1096,11 @@ void JSGlobalObject::clearGlobalScopeExtension()
     m_globalScopeExtension.clear();
 }
 
-static inline JSObject* lastInPrototypeChain(JSObject* object)
+static inline JSObject* lastInPrototypeChain(VM& vm, JSObject* object)
 {
     JSObject* o = object;
-    while (o->getPrototypeDirect().isObject())
-        o = asObject(o->getPrototypeDirect());
+    while (o->getPrototypeDirect(vm).isObject())
+        o = asObject(o->getPrototypeDirect(vm));
     return o;
 }
 
@@ -1150,13 +1150,14 @@ inline void ObjectsWithBrokenIndexingFinder::visit(JSCell* cell)
     // VM. But we have to be careful, since there may be objects that claim to belong to
     // a different global object that have prototypes from our global object.
     bool foundGlobalObject = false;
+    VM& vm = m_globalObject->vm();
     for (JSObject* current = object; ;) {
         if (current->globalObject() == m_globalObject) {
             foundGlobalObject = true;
             break;
         }
         
-        JSValue prototypeValue = current->getPrototypeDirect();
+        JSValue prototypeValue = current->getPrototypeDirect(vm);
         if (prototypeValue.isNull())
             break;
         current = asObject(prototypeValue);
@@ -1227,7 +1228,7 @@ void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
 {
     setPrototypeDirect(vm, prototype);
 
-    JSObject* oldLastInPrototypeChain = lastInPrototypeChain(this);
+    JSObject* oldLastInPrototypeChain = lastInPrototypeChain(vm, this);
     JSObject* objectPrototype = m_objectPrototype.get();
     if (oldLastInPrototypeChain != objectPrototype)
         oldLastInPrototypeChain->setPrototypeDirect(vm, objectPrototype);
@@ -1526,7 +1527,7 @@ void JSGlobalObject::finishCreation(VM& vm)
     structure()->setGlobalObject(vm, this);
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
     init(vm);
-    setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect(), PureForwardingProxyType), this));
+    setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect(vm), PureForwardingProxyType), this));
 }
 
 void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)

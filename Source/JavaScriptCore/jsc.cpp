@@ -996,7 +996,7 @@ public:
             VM& vm = exec->vm();
             NativeCallFrameTracer tracer(&vm, exec);
             JSObject* object = static_cast<JSObject*>(pointer);
-            return JSValue::encode(object->getPrototypeDirect());
+            return JSValue::encode(object->getPrototypeDirect(vm));
         }
 
         static Ref<DOMJIT::CallDOMGetterSnippet> callDOMGetter()
@@ -1023,7 +1023,7 @@ private:
         VM& vm = exec->vm();
         JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
         RELEASE_ASSERT(thisObject);
-        return JSValue::encode(thisObject->getPrototypeDirect());
+        return JSValue::encode(thisObject->getPrototypeDirect(vm));
     }
 };
 
@@ -2211,7 +2211,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState* exec)
     if (!target.isObject())
         return JSValue::encode(jsUndefined());
     JSObject* jsTarget = asObject(target.asCell());
-    Structure* structure = JSProxy::createStructure(vm, exec->lexicalGlobalObject(), jsTarget->getPrototypeDirect(), ImpureProxyType);
+    Structure* structure = JSProxy::createStructure(vm, exec->lexicalGlobalObject(), jsTarget->getPrototypeDirect(vm), ImpureProxyType);
     JSProxy* proxy = JSProxy::create(vm, structure, jsTarget);
     return JSValue::encode(proxy);
 }

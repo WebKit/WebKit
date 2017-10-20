@@ -112,7 +112,7 @@ static EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValu
 bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     if (!element->globalObject()->world().isNormal()) {
-        JSC::JSValue proto = element->getPrototypeDirect();
+        JSC::JSValue proto = element->getPrototypeDirect(exec->vm());
         if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
             return false;
     }

@@ -282,7 +282,7 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
             return jsCast<JSDOMWindow*>(object);
         if (classInfo == JSDOMWindowProxy::info())
             return jsCast<JSDOMWindowProxy*>(object)->window();
-        value = object->getPrototypeDirect();
+        value = object->getPrototypeDirect(vm);
     }
     return nullptr;
 }

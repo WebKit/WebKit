@@ -114,7 +114,7 @@ void WorkerScriptController::initScript()
     }
     
     ASSERT(m_workerGlobalScopeWrapper->globalObject() == m_workerGlobalScopeWrapper);
-    ASSERT(asObject(m_workerGlobalScopeWrapper->getPrototypeDirect())->globalObject() == m_workerGlobalScopeWrapper);
+    ASSERT(asObject(m_workerGlobalScopeWrapper->getPrototypeDirect(*m_vm))->globalObject() == m_workerGlobalScopeWrapper);
 
     m_consoleClient = std::make_unique<WorkerConsoleClient>(*m_workerGlobalScope);
     m_workerGlobalScopeWrapper->setConsoleClient(m_consoleClient.get());

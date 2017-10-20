@@ -202,7 +202,7 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(ExecState* exec, JSObject* thisObjec
     }
 
     return !thisObject->hasCustomProperties()
-        && arrayPrototype == thisObject->getPrototypeDirect()
+        && arrayPrototype == thisObject->getPrototypeDirect(globalObject->vm())
         && globalObject->arraySpeciesWatchpoint().stateOnJSThread() == IsWatched;
 }
 

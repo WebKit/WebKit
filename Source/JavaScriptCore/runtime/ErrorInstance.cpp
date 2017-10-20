@@ -162,7 +162,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
             nameValue = nameSlot.getValue(exec, namePropertName);
             break;
         }
-        currentObj = obj->getPrototypeDirect();
+        currentObj = obj->getPrototypeDirect(vm);
     }
     scope.assertNoException();
 

@@ -531,7 +531,7 @@ String JSObject::calculatedClassName(JSObject* object)
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     ExecState* exec = globalObject->globalExec();
-    PropertySlot slot(object->getPrototypeDirect(), PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(object->getPrototypeDirect(vm), PropertySlot::InternalMethodType::VMInquiry);
     PropertyName constructor(vm.propertyNames->constructor);
     if (object->getPropertySlot(exec, constructor, slot)) {
         EXCEPTION_ASSERT(!scope.exception());
@@ -1671,7 +1671,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
 
     ASSERT(methodTable(vm)->toThis(this, exec, NotStrictMode) == this);
 
-    if (this->getPrototypeDirect() == prototype)
+    if (this->getPrototypeDirect(vm) == prototype)
         return true;
 
     bool isExtensible = this->isExtensible(exec);
@@ -1690,7 +1690,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
         // https://bugs.webkit.org/show_bug.cgi?id=161534
         if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType))
             break; // We're done. Set the prototype.
-        nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
+        nextPrototype = asObject(nextPrototype)->getPrototypeDirect(vm);
     }
     setPrototypeDirect(vm, prototype);
     return true;
@@ -1701,9 +1701,9 @@ bool JSObject::setPrototype(JSObject* object, ExecState* exec, JSValue prototype
     return object->setPrototypeWithCycleCheck(exec->vm(), exec, prototype, shouldThrowIfCantSet);
 }
 
-JSValue JSObject::getPrototype(JSObject* object, ExecState*)
+JSValue JSObject::getPrototype(JSObject* object, ExecState* exec)
 {
-    return object->getPrototypeDirect();
+    return object->getPrototypeDirect(exec->vm());
 }
 
 bool JSObject::setPrototype(VM& vm, ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
@@ -2538,6 +2538,7 @@ void JSObject::deallocateSparseIndexMap()
 
 bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, JSValue thisValue, unsigned i, JSValue value, bool shouldThrow, bool& putResult)
 {
+    VM& vm = exec->vm();
     for (JSObject* current = this; ;) {
         // This has the same behavior with respect to prototypes as JSObject::put(). It only
         // allows a prototype to intercept a put if (a) the prototype declares the property
@@ -2559,7 +2560,7 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, J
             return true;
         }
         
-        JSValue prototypeValue = current->getPrototypeDirect();
+        JSValue prototypeValue = current->getPrototypeDirect(vm);
         if (prototypeValue.isNull())
             return false;
         
@@ -2569,7 +2570,7 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, J
 
 bool JSObject::attemptToInterceptPutByIndexOnHole(ExecState* exec, unsigned i, JSValue value, bool shouldThrow, bool& putResult)
 {
-    JSValue prototypeValue = getPrototypeDirect();
+    JSValue prototypeValue = getPrototypeDirect(exec->vm());
     if (prototypeValue.isNull())
         return false;
     
@@ -3680,7 +3681,7 @@ bool JSObject::anyObjectInChainMayInterceptIndexedAccesses() const
         if (current->structure(vm)->mayInterceptIndexedAccesses())
             return true;
         
-        JSValue prototype = current->getPrototypeDirect();
+        JSValue prototype = current->getPrototypeDirect(vm);
         if (prototype.isNull())
             return false;
         
@@ -3694,7 +3695,7 @@ bool JSObject::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyNa
         return anyObjectInChainMayInterceptIndexedAccesses();
     
     for (JSObject* current = this; ;) {
-        JSValue prototype = current->getPrototypeDirect();
+        JSValue prototype = current->getPrototypeDirect(vm);
         if (prototype.isNull())
             return false;
         

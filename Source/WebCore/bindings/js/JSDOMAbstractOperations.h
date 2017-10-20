@@ -72,7 +72,7 @@ static bool isVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObject, J
     //    1. If prototype is not a named properties object, and prototype has an own property named P, then return false.
     // FIXME: Implement checking for 'named properties object'.
     //    2. Set prototype to be the value of the internal [[Prototype]] property of prototype.
-    auto prototype = thisObject.getPrototypeDirect();
+    auto prototype = thisObject.getPrototypeDirect(state.vm());
     if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&state, propertyName, slot))
         return false;
 
@@ -112,7 +112,7 @@ static auto accessVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObjec
     //    1. If prototype is not a named properties object, and prototype has an own property named P, then return false.
     // FIXME: Implement checking for 'named properties object'.
     //    2. Set prototype to be the value of the internal [[Prototype]] property of prototype.
-    auto prototype = thisObject.getPrototypeDirect();
+    auto prototype = thisObject.getPrototypeDirect(state.vm());
     if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&state, propertyName, slot))
         return std::nullopt;
 

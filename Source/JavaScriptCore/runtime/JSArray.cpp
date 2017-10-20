@@ -1292,10 +1292,10 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     if (structure->mayInterceptIndexedAccesses())
         return false;
 
-    if (getPrototypeDirect() != globalObject->arrayPrototype())
+    VM& vm = globalObject->vm();
+    if (getPrototypeDirect(vm) != globalObject->arrayPrototype())
         return false;
 
-    VM& vm = globalObject->vm();
     if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
         return false;
 

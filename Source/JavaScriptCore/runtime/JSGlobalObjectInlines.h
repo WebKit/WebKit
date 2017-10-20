@@ -35,20 +35,20 @@ namespace JSC {
 ALWAYS_INLINE bool JSGlobalObject::objectPrototypeIsSane()
 {
     return !hasIndexedProperties(m_objectPrototype->indexingType())
-        && m_objectPrototype->getPrototypeDirect().isNull();
+        && m_objectPrototype->getPrototypeDirect(vm()).isNull();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
     return !hasIndexedProperties(m_arrayPrototype->indexingType())
-        && m_arrayPrototype->getPrototypeDirect() == m_objectPrototype.get()
+        && m_arrayPrototype->getPrototypeDirect(vm()) == m_objectPrototype.get()
         && objectPrototypeIsSane();
 }
 
 ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSane()
 {
     return !hasIndexedProperties(m_stringPrototype->indexingType())
-        && m_stringPrototype->getPrototypeDirect() == m_objectPrototype.get()
+        && m_stringPrototype->getPrototypeDirect(vm()) == m_objectPrototype.get()
         && objectPrototypeIsSane();
 }
 

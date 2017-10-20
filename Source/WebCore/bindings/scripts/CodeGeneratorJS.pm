@@ -954,7 +954,7 @@ sub GeneratePut
         my $overrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins");
         if (!$overrideBuiltins) {
             push(@$outputArray, "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };\n");
-            push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect();\n");
+            push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect(state->vm());\n");
             push(@$outputArray, "        if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))) {\n");
             $additionalIndent .= "    ";
         }
@@ -1023,7 +1023,7 @@ sub GeneratePutByIndex
         my $additionalIndent = "";
         if (!$overrideBuiltins) {
             push(@$outputArray, "    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };\n");
-            push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect();\n");
+            push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect(state->vm());\n");
             push(@$outputArray, "    if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))) {\n");
             $additionalIndent .= "    ";
         }
@@ -7114,7 +7114,7 @@ sub GenerateConstructorHelperMethods
     # of whether the interface was declared with the [NoInterfaceObject] extended attribute.
     # https://heycam.github.io/webidl/#interface-prototype-object
     if (ShouldUseGlobalObjectPrototype($interface)) {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     } elsif ($interface->isCallback) {
         push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
     } else {

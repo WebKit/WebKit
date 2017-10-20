@@ -243,13 +243,14 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
     if (!cachedPrototypeChain)
         return false;
 
+    VM& vm = globalObject->vm();
     JSValue prototype = prototypeForLookup(globalObject, base);
     WriteBarrier<Structure>* cachedStructure = cachedPrototypeChain->head();
     while (*cachedStructure && !prototype.isNull()) {
-        if (asObject(prototype)->structure() != cachedStructure->get())
+        if (asObject(prototype)->structure(vm) != cachedStructure->get())
             return false;
         ++cachedStructure;
-        prototype = asObject(prototype)->getPrototypeDirect();
+        prototype = asObject(prototype)->getPrototypeDirect(vm);
     }
     return prototype.isNull() && !*cachedStructure;
 }

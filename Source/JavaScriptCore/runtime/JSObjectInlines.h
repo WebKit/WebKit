@@ -73,7 +73,7 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInline(VM& vm, PropertyName proper
         if (obj->structure(vm)->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || obj->methodTable(vm)->getPrototype != defaultGetPrototype)
             return false;
 
-        prototype = obj->getPrototypeDirect();
+        prototype = obj->getPrototypeDirect(vm);
         if (prototype.isNull())
             return true;
 
@@ -116,7 +116,7 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
             return true;
         JSValue prototype;
         if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = object->getPrototypeDirect();
+            prototype = object->getPrototypeDirect(vm);
         else {
             prototype = object->getPrototype(vm, exec);
             RETURN_IF_EXCEPTION(scope, false);
@@ -150,7 +150,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
         }
         JSValue prototype;
         if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
-            prototype = object->getPrototypeDirect();
+            prototype = object->getPrototypeDirect(vm);
         else {
             prototype = object->getPrototype(vm, exec);
             RETURN_IF_EXCEPTION(scope, false);

@@ -56,10 +56,10 @@ bool JSSet::isIteratorProtocolFastAndNonObservable()
     if (structure == globalObject->setStructure())
         return true;
 
-    if (getPrototypeDirect() != globalObject->jsSetPrototype())
+    VM& vm = globalObject->vm();
+    if (getPrototypeDirect(vm) != globalObject->jsSetPrototype())
         return false;
 
-    VM& vm = globalObject->vm();
     if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
         return false;
 

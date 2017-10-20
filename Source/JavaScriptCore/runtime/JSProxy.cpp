@@ -46,7 +46,7 @@ void JSProxy::visitChildren(JSCell* cell, SlotVisitor& visitor)
 void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
 {
     m_target.set(vm, this, globalObject);
-    setPrototypeDirect(vm, globalObject->getPrototypeDirect());
+    setPrototypeDirect(vm, globalObject->getPrototypeDirect(vm));
 }
 
 String JSProxy::className(const JSObject* object)

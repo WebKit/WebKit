@@ -224,7 +224,7 @@ bool JSTestNamedAndIndexedSetterWithIdentifier::put(JSCell* cell, ExecState* sta
 
     if (!propertyName.isSymbol()) {
         PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
-        JSValue prototype = thisObject->getPrototypeDirect();
+        JSValue prototype = thisObject->getPrototypeDirect(state->vm());
         if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))) {
             auto throwScope = DECLARE_THROW_SCOPE(state->vm());
             auto nativeValue = convert<IDLDOMString>(*state, value);
@@ -252,7 +252,7 @@ bool JSTestNamedAndIndexedSetterWithIdentifier::putByIndex(JSCell* cell, ExecSta
 
     auto propertyName = Identifier::from(state, index);
     PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
-    JSValue prototype = thisObject->getPrototypeDirect();
+    JSValue prototype = thisObject->getPrototypeDirect(state->vm());
     if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))) {
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
         auto nativeValue = convert<IDLDOMString>(*state, value);
