@@ -32,6 +32,10 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOriginData.h>
 
+#if PLATFORM(IOS)
+#import <WebCore/FileSystemIOS.h>
+#endif
+
 using namespace WebCore;
 
 namespace TestWebKitAPI {
@@ -56,10 +60,6 @@ TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
     if (fileStillExists)
         deleteFile(databaseFilePath);
 }
-
-#endif // PLATFORM(IOS)
-
-#if PLATFORM(COCOA)
 
 static void addToDatabasesTable(const String& databasePath, const SecurityOriginData& origin, const String& newDatabaseName, const String& newDatabasePath)
 {
@@ -340,7 +340,7 @@ TEST(DatabaseTracker, DeleteDatabaseWhenDatabaseDoesNotExist)
     EXPECT_FALSE(fileExists(databaseDirectoryPath));
 }
 
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(IOS)
 
 } // namespace TestWebKitAPI
 

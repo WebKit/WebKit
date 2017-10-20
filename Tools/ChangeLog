@@ -1,5 +1,23 @@
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/34745623
+
+    Unreviewed build fix after merging r223427 and r223442.
+
+    * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+    Import the necessary header file, and guard the tests to only run on iOS because
+    createTemporaryDirectory() only exists on iOS.
+
+    2017-10-19  Maureen Daum  <mdaum@apple.com>
+
+            Unreviewed build fix after merging r223427 and r223442.
+
+            * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+            Import the necessary header file, and guard the tests to only run on iOS because
+            createTemporaryDirectory() only exists on iOS.
+
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223442. rdar://problem/34745623
 
     2017-10-16  Maureen Daum  <mdaum@apple.com>
