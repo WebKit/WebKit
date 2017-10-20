@@ -128,8 +128,6 @@ static void freeData(void *, const void *data, size_t /* size */)
     if (!_context)
         return;
 
-    _context->endPaint();
-
 #if PLATFORM(MAC)
     _context->prepareTexture();
     if (_drawingBuffer) {
@@ -138,6 +136,8 @@ static void freeData(void *, const void *data, size_t /* size */)
         [self reloadValueForKeyPath:@"contents"];
         [self bindFramebufferToNextAvailableSurface];
     }
+#else
+    _context->presentRenderbuffer();
 #endif
 
     _context->markLayerComposited();

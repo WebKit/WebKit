@@ -198,7 +198,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
 #endif
 
 #if PLATFORM(IOS)
-    endPaint();
+    presentRenderbuffer();
 #endif
 }
 

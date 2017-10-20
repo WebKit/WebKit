@@ -1,3 +1,40 @@
+2017-10-20  Dean Jackson  <dino@apple.com>
+
+        Cherry-pick r223707 and r223711. rdar://problem/35099869
+
+    2017-10-19  Dean Jackson  <dino@apple.com>
+
+            Avoid duplicate multisample resolve before WebGL compositing
+            https://bugs.webkit.org/show_bug.cgi?id=178537
+            <rdar://problem/35080724>
+
+            Fix iOS build.
+
+            * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+            (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+
+    2017-10-19  Dean Jackson  <dino@apple.com>
+
+            Avoid duplicate multisample resolve before WebGL compositing
+            https://bugs.webkit.org/show_bug.cgi?id=178537
+            <rdar://problem/35080724>
+
+            Reviewed by Jer Noble.
+
+            Both endPaint and prepareTexture were doing the MSAA resolve
+            into the renderbuffer, and being called on macOS before compositing.
+            Without that step, endPaint became unnecessary on iOS so I renamed
+            it presentRenderbuffer.
+
+            Covered by existing tests.
+
+            * platform/graphics/GraphicsContext3D.h:
+            * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+            (WebCore::GraphicsContext3D::presentRenderbuffer):
+            (WebCore::GraphicsContext3D::endPaint): Deleted.
+            * platform/graphics/cocoa/WebGLLayer.mm:
+            (-[WebGLLayer display]):
+
 2017-10-20  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223708. rdar://problem/34771406
