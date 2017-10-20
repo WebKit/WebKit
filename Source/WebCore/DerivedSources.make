@@ -57,6 +57,7 @@ VPATH = \
     $(WebCore)/Modules/webdriver \
     $(WebCore)/Modules/websockets \
     $(WebCore)/Modules/webvr \
+    $(WebCore)/animation \
     $(WebCore)/bindings/js \
     $(WebCore)/crypto \
     $(WebCore)/crypto/keys \
@@ -341,6 +342,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webvr/VRLayerInit.idl \
     $(WebCore)/Modules/webvr/VRPose.idl \
     $(WebCore)/Modules/webvr/VRStageParameters.idl \
+    $(WebCore)/animation/AnimationTimeline.idl \
+    $(WebCore)/animation/DocumentTimeline.idl \
+    $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \
@@ -1398,6 +1402,7 @@ PREPROCESS_IDLS_SCRIPTS = \
 
 IDL_INCLUDES = \
     $(WebCore)/Modules \
+    $(WebCore)/animation \
     $(WebCore)/css \
     $(WebCore)/crypto \
     $(WebCore)/dom \

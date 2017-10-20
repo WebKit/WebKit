@@ -158,10 +158,8 @@ public:
     bool animationTriggersEnabled() const { return m_areAnimationTriggersEnabled; }
 #endif
 
-#if ENABLE(WEB_ANIMATIONS)
     void setWebAnimationsEnabled(bool areEnabled) { m_areWebAnimationsEnabled = areEnabled; }
     bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
-#endif
 
 #if ENABLE(WEBGL2)
     void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
@@ -305,9 +303,7 @@ private:
     bool m_isWritableStreamAPIEnabled { false };
 #endif
 
-#if ENABLE(WEB_ANIMATIONS)
     bool m_areWebAnimationsEnabled { false };
-#endif
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };

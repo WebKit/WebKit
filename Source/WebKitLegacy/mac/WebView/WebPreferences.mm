@@ -643,9 +643,7 @@ public:
 #endif
         [NSNumber numberWithBool:NO], WebKitDirectoryUploadEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSGridLayoutEnabledPreferenceKey,
-#if ENABLE(WEB_ANIMATIONS)
         [NSNumber numberWithBool:NO], WebKitWebAnimationsEnabledPreferenceKey,
-#endif
 
 #if PLATFORM(IOS)
         [NSNumber numberWithBool:NO], WebKitVisualViewportEnabledPreferenceKey,

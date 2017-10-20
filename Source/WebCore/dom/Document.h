@@ -30,6 +30,7 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
+#include "DocumentTimeline.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
@@ -1364,6 +1365,8 @@ public:
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
+    DocumentTimeline& timeline();
+        
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1821,6 +1824,8 @@ private:
 
     bool m_hasStorageAccess { false };
     bool m_grantStorageAccessOverride { false };
+
+    RefPtr<DocumentTimeline> m_timeline;
 };
 
 Element* eventTargetElementForDocument(Document*);

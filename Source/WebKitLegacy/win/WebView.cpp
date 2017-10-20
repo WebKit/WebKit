@@ -5205,12 +5205,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setModernMediaControlsEnabled(!!enabled);
 
-#if ENABLE(WEB_ANIMATIONS)
     hr = prefsPrivate->webAnimationsEnabled(&enabled);
     if (FAILED(hr))
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(!!enabled);
-#endif
 
     hr = prefsPrivate->userTimingEnabled(&enabled);
     if (FAILED(hr))

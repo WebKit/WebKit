@@ -50,6 +50,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/Modules/webvr"
     "${WEBCORE_DIR}/accessibility"
+    "${WEBCORE_DIR}/animation"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bridge"
@@ -416,6 +417,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webvr/VRLayerInit.idl
     Modules/webvr/VRPose.idl
     Modules/webvr/VRStageParameters.idl
+
+    animation/AnimationTimeline.idl
+    animation/DocumentTimeline.idl
+    animation/WebAnimation.idl
 
     crypto/CryptoAlgorithmParameters.idl
     crypto/CryptoKey.idl
@@ -1262,6 +1267,10 @@ set(WebCore_SOURCES
     accessibility/AccessibilityTree.cpp
     accessibility/AccessibilityTreeItem.cpp
 
+    animation/AnimationTimeline.cpp
+    animation/DocumentTimeline.cpp
+    animation/WebAnimation.cpp
+
     bindings/js/CachedModuleScriptLoader.cpp
     bindings/js/CachedScriptFetcher.cpp
     bindings/js/CallTracer.cpp
@@ -1269,6 +1278,7 @@ set(WebCore_SOURCES
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
     bindings/js/IDBBindingUtilities.cpp
+    bindings/js/JSAnimationTimelineCustom.cpp
     bindings/js/JSAttrCustom.cpp
     bindings/js/JSAudioTrackCustom.cpp
     bindings/js/JSAudioTrackListCustom.cpp

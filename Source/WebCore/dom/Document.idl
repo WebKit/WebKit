@@ -210,6 +210,8 @@ typedef (
     void releaseEvents();
 
     [Replaceable] readonly attribute HTMLAllCollection all; /* [SameObject] */
+
+    [EnabledAtRuntime=WebAnimations] readonly attribute DocumentTimeline timeline;
 };
 
 enum DocumentReadyState { "loading", "interactive", "complete" };

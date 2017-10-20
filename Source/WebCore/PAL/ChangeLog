@@ -1,3 +1,14 @@
+2017-10-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Provide basic timeline and animation interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=178526
+
+        Reviewed by Dean Jackson.
+
+        Remove the WEB_ANIMATIONS compile-time flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-10-19  Daniel Bates  <dabates@apple.com>
 
         Use "= default" to denote default constructor or destructor

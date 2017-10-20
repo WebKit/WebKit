@@ -180,10 +180,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
 #endif
 
-#if ENABLE(WEB_ANIMATIONS)
     if (preference == "WebKitWebAnimationsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
-#endif
 
     if (preference == "WebKitCacheAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(enabled);
@@ -601,11 +599,7 @@ void InjectedBundle::setCSSAnimationTriggersEnabled(bool enabled)
 
 void InjectedBundle::setWebAnimationsEnabled(bool enabled)
 {
-#if ENABLE(WEB_ANIMATIONS)
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
 }
 
 } // namespace WebKit

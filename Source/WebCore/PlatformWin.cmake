@@ -144,6 +144,7 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     .
     accessibility
+    animation
     bindings
     bridge
     contentextensions

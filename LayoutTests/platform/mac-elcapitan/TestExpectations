@@ -10,3 +10,4 @@ media/modern-media-controls/media-controller/media-controller-inline-to-fullscre
 
 webkit.org/b/176229 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html [ Pass Failure ]
 
+webkit.org/b/178526 webarchive/adopt-attribute-styled-node-webarchive.html [ Crash ]

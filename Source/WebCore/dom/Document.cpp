@@ -7373,4 +7373,11 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
     m_consoleMessageListener = listener;
 }
 
+DocumentTimeline& Document::timeline()
+{
+    if (!m_timeline)
+        m_timeline = DocumentTimeline::create();
+    return *m_timeline;
+}
+
 } // namespace WebCore

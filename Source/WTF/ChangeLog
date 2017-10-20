@@ -1,3 +1,14 @@
+2017-10-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Provide basic timeline and animation interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=178526
+
+        Reviewed by Dean Jackson.
+
+        Remove the WEB_ANIMATIONS compile-time flag.
+
+        * wtf/FeatureDefines.h:
+
 2017-10-19  Keith Miller  <keith_miller@apple.com>
 
         REGRESSION (r223476): WebCore exports symbols with names belonging to other frameworks
