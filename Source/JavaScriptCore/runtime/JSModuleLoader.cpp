@@ -309,7 +309,7 @@ JSValue JSModuleLoader::notifyCompleted(ExecState* exec, JSValue scriptFetcher, 
     if (!fetcher)
         return jsUndefined();
 
-    Identifier moduleKey = jsValueToModuleKey(exec, key);
+    auto moduleKey = jsValueToModuleKey(exec, key);
     fetcher->notifyLoadCompleted(*moduleKey.impl());
     return jsUndefined();
 }
