@@ -205,7 +205,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filenam
         return;
 
     String suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(m_suggestedFilename.isEmpty() ? filename : m_suggestedFilename, mimeType);
-    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*m_processPool, *this, filename, [reply = WTFMove(reply)] (AllowOverwrite allowOverwrite, String destination) {
+    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*m_processPool, *this, suggestedFilename, [reply = WTFMove(reply)] (AllowOverwrite allowOverwrite, String destination) {
         SandboxExtension::Handle sandboxExtensionHandle;
         if (!destination.isNull())
             SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
