@@ -54,7 +54,7 @@ public:
 private:
     ServiceWorkerClientFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, Ref<IPC::Connection>&&, Callback&&);
 
-    void didReceiveResponse(const WebCore::ResourceResponse&);
+    void didReceiveResponse(WebCore::ResourceResponse&&);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didFinish();
     void didFail();

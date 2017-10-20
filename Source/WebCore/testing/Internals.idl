@@ -96,6 +96,7 @@ enum EventThrottlingBehavior {
     [MayThrowException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
+    DOMString fetchResponseSource(FetchResponse response);
     DOMString xhrResponseSource(XMLHttpRequest xhr);
     boolean isSharingStyleSheetContents(HTMLLinkElement a, HTMLLinkElement b);
     boolean isStyleSheetLoadingSubresources(HTMLLinkElement link);

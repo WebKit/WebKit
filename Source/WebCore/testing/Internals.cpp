@@ -638,6 +638,8 @@ static String responseSourceToString(const ResourceResponse& response)
         return "Unknown";
     case ResourceResponse::Source::Network:
         return "Network";
+    case ResourceResponse::Source::ServiceWorker:
+        return "Service worker";
     case ResourceResponse::Source::DiskCache:
         return "Disk cache";
     case ResourceResponse::Source::DiskCacheAfterValidation:
@@ -654,6 +656,11 @@ static String responseSourceToString(const ResourceResponse& response)
 String Internals::xhrResponseSource(XMLHttpRequest& request)
 {
     return responseSourceToString(request.resourceResponse());
+}
+
+String Internals::fetchResponseSource(FetchResponse& response)
+{
+    return responseSourceToString(response.resourceResponse());
 }
 
 bool Internals::isSharingStyleSheetContents(HTMLLinkElement& a, HTMLLinkElement& b)

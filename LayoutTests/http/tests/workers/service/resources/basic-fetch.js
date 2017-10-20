@@ -12,9 +12,15 @@ async function test()
         console.log("test1 status code: " + response.status);
         console.log("test1 status text: " + response.statusText);
 
+        if (window.internals)
+            console.log("test1 source: " + internals.fetchResponseSource(response));
+
         var response = await fetch("test2");
         console.log("test2 status code: " + response.status);
         console.log("test2 status text: " + response.statusText);
+
+        if (window.internals)
+            console.log("test2 source: " + internals.fetchResponseSource(response));
 
         try {
             response = await fetch("test3");

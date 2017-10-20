@@ -45,7 +45,7 @@ ServiceWorkerClientFetch::ServiceWorkerClientFetch(WebServiceWorkerProvider& ser
 {
 }
 
-void ServiceWorkerClientFetch::didReceiveResponse(const WebCore::ResourceResponse& response)
+void ServiceWorkerClientFetch::didReceiveResponse(WebCore::ResourceResponse&& response)
 {
     auto protectedThis = makeRef(*this);
 
@@ -66,6 +66,7 @@ void ServiceWorkerClientFetch::didReceiveResponse(const WebCore::ResourceRespons
         return;
     }
 
+    response.setSource(ResourceResponse::Source::ServiceWorker);
     m_loader->didReceiveResponse(response);
     if (auto callback = WTFMove(m_callback))
         callback(Result::Succeeded);

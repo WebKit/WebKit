@@ -468,6 +468,11 @@ String DiagnosticLoggingKeys::diskCacheAfterValidationKey()
     return ASCIILiteral("diskCacheAfterValidation");
 }
 
+String DiagnosticLoggingKeys::serviceWorkerKey()
+{
+    return ASCIILiteral("serviceWorker");
+}
+
 String DiagnosticLoggingKeys::reloadKey()
 {
     return ASCIILiteral("reload");

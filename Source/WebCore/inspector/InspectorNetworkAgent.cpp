@@ -274,6 +274,9 @@ static Inspector::Protocol::Network::Response::Source responseSource(ResourceRes
     case ResourceResponse::Source::DiskCache:
     case ResourceResponse::Source::DiskCacheAfterValidation:
         return Inspector::Protocol::Network::Response::Source::DiskCache;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=178597. Add an Inspector ServiceWorker source.
+    case ResourceResponse::Source::ServiceWorker:
+        return Inspector::Protocol::Network::Response::Source::Unknown;
     }
 
     ASSERT_NOT_REACHED();

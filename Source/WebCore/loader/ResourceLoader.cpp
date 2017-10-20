@@ -429,6 +429,9 @@ static void logResourceResponseSource(Frame* frame, ResourceResponse::Source sou
     case ResourceResponse::Source::DiskCacheAfterValidation:
         sourceKey = DiagnosticLoggingKeys::diskCacheAfterValidationKey();
         break;
+    case ResourceResponse::Source::ServiceWorker:
+        sourceKey = DiagnosticLoggingKeys::serviceWorkerKey();
+        break;
     case ResourceResponse::Source::MemoryCache:
     case ResourceResponse::Source::MemoryCacheAfterValidation:
     case ResourceResponse::Source::Unknown:
