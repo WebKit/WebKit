@@ -43,7 +43,7 @@ public:
 private:
     void updateQuotesUpTo(RenderQuote*);
     
-    static bool needsPseudoElement(Element&, const std::optional<Style::ElementUpdate>&);
+    bool needsPseudoElement(const std::optional<Style::ElementUpdate>&);
 
     RenderTreeUpdater& m_updater;
     RenderQuote* m_previousUpdatedQuote { nullptr };

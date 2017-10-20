@@ -99,7 +99,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
-    if (!needsPseudoElement(current, update)) {
+    if (!needsPseudoElement(update)) {
         if (pseudoElement) {
             if (pseudoId == BEFORE)
                 current.clearBeforePseudoElement();
@@ -144,12 +144,11 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         ListItem::updateMarker(downcast<RenderListItem>(*pseudoRenderer));
 }
 
-bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(Element& current, const std::optional<Style::ElementUpdate>& update)
+bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const std::optional<Style::ElementUpdate>& update)
 {
-    ASSERT(!current.isPseudoElement());
     if (!update)
         return false;
-    if (!current.renderer() || !current.renderer()->canHaveGeneratedChildren())
+    if (!m_updater.renderTreePosition().parent().canHaveGeneratedChildren())
         return false;
     if (!pseudoElementRendererIsNeeded(update->style.get()))
         return false;

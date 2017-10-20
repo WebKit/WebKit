@@ -75,31 +75,92 @@ RenderObject* RenderTreePosition::previousSiblingRenderer(const Text& textNode) 
 
 RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
 {
+    ASSERT(!node.renderer());
+
     auto* parentElement = m_parent.element();
     if (!parentElement)
         return nullptr;
-    if (node.isAfterPseudoElement())
+    // FIXME: PlugingReplacement shadow trees are very wrong.
+    if (parentElement == &node)
         return nullptr;
 
+    Vector<Element*, 30> elementStack;
+
+    // In the common case ancestor == parentElement immediately and this just pushes parentElement into stack.
+    auto* ancestor = is<PseudoElement>(node) ? downcast<PseudoElement>(node).hostElement() : node.parentElementInComposedTree();
+    while (true) {
+        elementStack.append(ancestor);
+        if (ancestor == parentElement)
+            break;
+        ancestor = ancestor->parentElementInComposedTree();
+        ASSERT(ancestor);
+    }
+    elementStack.reverse();
+
     auto composedDescendants = composedTreeDescendants(*parentElement);
-    auto it = node.isBeforePseudoElement() ? composedDescendants.begin() : composedDescendants.at(node);
+
+    auto initializeIteratorConsideringPseudoElements = [&] {
+        if (is<PseudoElement>(node)) {
+            auto* host = downcast<PseudoElement>(node).hostElement();
+            if (node.isBeforePseudoElement()) {
+                if (host != parentElement)
+                    return composedDescendants.at(*host).traverseNext();
+                return composedDescendants.begin();
+            }
+            ASSERT(node.isAfterPseudoElement());
+            elementStack.removeLast();
+            if (host != parentElement)
+                return composedDescendants.at(*host).traverseNextSkippingChildren();
+            return composedDescendants.end();
+        }
+        return composedDescendants.at(node).traverseNextSkippingChildren();
+    };
+
+    auto pushCheckingForAfterPseudoElementRenderer = [&] (Element& element) -> RenderElement* {
+        ASSERT(!element.isPseudoElement());
+        if (auto* before = element.beforePseudoElement()) {
+            if (auto* renderer = before->renderer())
+                return renderer;
+        }
+        elementStack.append(&element);
+        return nullptr;
+    };
+
+    auto popCheckingForAfterPseudoElementRenderers = [&] (unsigned iteratorDepthToMatch) -> RenderElement* {
+        while (elementStack.size() > iteratorDepthToMatch) {
+            auto& element = *elementStack.takeLast();
+            if (auto* after = element.afterPseudoElement()) {
+                if (auto* renderer = after->renderer())
+                    return renderer;
+            }
+        }
+        return nullptr;
+    };
+
+    auto it = initializeIteratorConsideringPseudoElements();
     auto end = composedDescendants.end();
 
     while (it != end) {
-        auto& node = *it;
-        bool hasDisplayContents = is<Element>(node) && downcast<Element>(node).hasDisplayContents();
-        if (hasDisplayContents) {
-            it.traverseNext();
-            continue;
-        }
+        if (auto* renderer = popCheckingForAfterPseudoElementRenderers(it.depth()))
+            return renderer;
+
         if (auto* renderer = it->renderer())
             return renderer;
-        
+
+        if (is<Element>(*it)) {
+            auto& element = downcast<Element>(*it);
+            if (element.hasDisplayContents()) {
+                if (auto* renderer = pushCheckingForAfterPseudoElementRenderer(element))
+                    return renderer;
+                it.traverseNext();
+                continue;
+            }
+        }
+
         it.traverseNextSkippingChildren();
     }
-    if (PseudoElement* after = parentElement->afterPseudoElement())
-        return after->renderer();
-    return nullptr;
+
+    return popCheckingForAfterPseudoElementRenderers(0);
 }
 
 }

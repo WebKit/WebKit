@@ -227,6 +227,8 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
 
 ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
+    if (elementUpdate.style->display() == NONE)
+        return { };
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return { };
 

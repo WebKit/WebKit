@@ -418,7 +418,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
         RenderObject* first = parentRenderer.firstChild();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
-        RenderObject* nextRenderer = renderTreePosition.nextSiblingRenderer(textNode);
+        RenderObject* nextRenderer = textNode.renderer() ? textNode.renderer() : renderTreePosition.nextSiblingRenderer(textNode);
         if (!first || nextRenderer == first) {
             // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
             return false;

@@ -1,3 +1,12 @@
+2017-10-19  Antti Koivisto  <antti@apple.com>
+
+        Support ::before/::after pseudo elements on elements with display:contents
+        https://bugs.webkit.org/show_bug.cgi?id=178513
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/cssom/getComputedStyle-pseudo-expected.txt:
+
 2017-10-19  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Only process shipping options if shipping is requested, and throw an exception on duplicate shipping option IDs

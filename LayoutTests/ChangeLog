@@ -1,3 +1,12 @@
+2017-10-19  Antti Koivisto  <antti@apple.com>
+
+        Support ::before/::after pseudo elements on elements with display:contents
+        https://bugs.webkit.org/show_bug.cgi?id=178513
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: Enable imported/w3c/web-platform-tests/css/css-display-3/display-contents-before-after-001.html
+
 2017-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] ScriptFetcher should be notified directly from module pipeline
