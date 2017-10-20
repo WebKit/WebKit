@@ -320,6 +320,9 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
 
     const GLint64 TIMEOUT_IGNORED                              = -1;
 
+    /* WebGL-specific enums */
+    const GLenum MAX_CLIENT_WAIT_TIMEOUT_WEBGL                 = 0x9247;
+
     /* Buffer objects */
     void bufferData(GLenum target, ArrayBufferView data, GLenum usage, GLuint srcOffset, optional GLuint length = 0);
     void bufferSubData(GLenum target, GLintptr dstByteOffset, ArrayBufferView srcData, GLuint srcOffset, optional GLuint length = 0);

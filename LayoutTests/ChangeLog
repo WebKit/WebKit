@@ -1,3 +1,13 @@
+2017-10-20  Ms2ger  <Ms2ger@igalia.com>
+
+        Add the MAX_CLIENT_WAIT_TIMEOUT_WEBGL constant to WebGL2RenderingContext.
+        https://bugs.webkit.org/show_bug.cgi?id=178572
+
+        Reviewed by Žan Doberšek.
+
+        * fast/canvas/webgl/webgl2/constants-expected.txt:
+        * fast/canvas/webgl/webgl2/constants.html:
+
 2017-10-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Managing failure expectations for
