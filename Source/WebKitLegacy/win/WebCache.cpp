@@ -245,7 +245,7 @@ HRESULT WebCache::disabled(_Out_ BOOL* disabled)
 HRESULT WebCache::cacheFolder(__deref_out_opt BSTR* location)
 {
 #if USE(CURL)
-    String cacheFolder = WebCore::CurlCacheManager::getInstance().cacheDirectory();
+    String cacheFolder = WebCore::CurlCacheManager::singleton().cacheDirectory();
     *location = WebCore::BString(cacheFolder).release();
     return S_OK;
 #elif USE(CFURLCONNECTION)
@@ -261,7 +261,7 @@ HRESULT WebCache::setCacheFolder(_In_ BSTR location)
 {
 #if USE(CURL)
     String cacheFolder(location, SysStringLen(location));
-    WebCore::CurlCacheManager::getInstance().setCacheDirectory(cacheFolder);
+    WebCore::CurlCacheManager::singleton().setCacheDirectory(cacheFolder);
     return S_OK;
 #elif USE(CFURLCONNECTION)
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());

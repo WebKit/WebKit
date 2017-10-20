@@ -37,16 +37,17 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 #define IO_BUFFERSIZE 4096
 
 namespace WebCore {
 
-CurlCacheManager& CurlCacheManager::getInstance()
+CurlCacheManager& CurlCacheManager::singleton()
 {
-    static CurlCacheManager instance;
-    return instance;
+    static NeverDestroyed<CurlCacheManager> sharedInstance;
+    return sharedInstance;
 }
 
 CurlCacheManager::CurlCacheManager()

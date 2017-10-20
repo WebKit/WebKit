@@ -157,4 +157,4 @@ private:
     NetworkLoadMetrics m_networkLoadMetrics;
 };
 
-}
+} // namespace WebCore

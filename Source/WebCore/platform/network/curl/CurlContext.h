@@ -92,7 +92,7 @@ private:
 
 class CurlContext : public CurlGlobal {
     WTF_MAKE_NONCOPYABLE(CurlContext);
-
+    friend NeverDestroyed<CurlContext>;
 public:
     struct ProxyInfo {
         String host;
@@ -104,11 +104,7 @@ public:
         const String url() const;
     };
 
-    static CurlContext& singleton()
-    {
-        static CurlContext shared;
-        return shared;
-    }
+    static CurlContext& singleton();
 
     virtual ~CurlContext();
 
@@ -141,7 +137,6 @@ private:
 
     CurlContext();
     void initCookieSession();
-
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
@@ -296,4 +291,4 @@ private:
     CurlSList m_requestHeaders;
 };
 
-}
+} // namespace WebCore

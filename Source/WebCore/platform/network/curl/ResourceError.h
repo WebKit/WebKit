@@ -61,5 +61,4 @@ private:
     unsigned m_sslErrors { 0 };
 };
 
-}
-
+} // namespace WebCore

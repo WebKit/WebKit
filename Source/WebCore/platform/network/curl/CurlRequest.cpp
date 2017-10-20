@@ -152,7 +152,7 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->setUrl(m_request.url());
     m_curlHandle->appendRequestHeaders(m_request.httpHeaderFields());
 
-    auto method = m_request.httpMethod();
+    const auto& method = m_request.httpMethod();
     if (method == "GET")
         m_curlHandle->enableHttpGetRequest();
     else if (method == "POST")

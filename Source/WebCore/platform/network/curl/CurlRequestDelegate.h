@@ -41,4 +41,4 @@ public:
     virtual void curlDidFailWithError(const ResourceError&) = 0;
 };
 
-}
+} // namespace WebCore

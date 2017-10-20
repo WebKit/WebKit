@@ -156,14 +156,14 @@ Ref<CurlRequest> ResourceHandleCurlDelegate::createCurlRequest(ResourceRequest& 
 
     bool hasCacheHeaders = request.httpHeaderFields().contains(HTTPHeaderName::IfModifiedSince) || request.httpHeaderFields().contains(HTTPHeaderName::IfNoneMatch);
     if (!hasCacheHeaders) {
-        auto& cache = CurlCacheManager::getInstance();
+        auto& cache = CurlCacheManager::singleton();
         URL cacheUrl = request.url();
         cacheUrl.removeFragmentIdentifier();
 
         if (cache.isCached(cacheUrl)) {
             cache.addCacheEntryClient(cacheUrl, m_handle);
 
-            for (auto entry : cache.requestHeaders(cacheUrl))
+            for (const auto& entry : cache.requestHeaders(cacheUrl))
                 request.addHTTPHeaderField(entry.key, entry.value);
 
             m_addedCacheValidationHeaders = true;
@@ -218,7 +218,7 @@ void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& rece
             URL cacheUrl = m_currentRequest.url();
             cacheUrl.removeFragmentIdentifier();
 
-            if (CurlCacheManager::getInstance().getCachedResponse(cacheUrl, response())) {
+            if (CurlCacheManager::singleton().getCachedResponse(cacheUrl, response())) {
                 if (m_addedCacheValidationHeaders) {
                     response().setHTTPStatusCode(200);
                     response().setHTTPStatusText("OK");
@@ -226,7 +226,7 @@ void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& rece
             }
         }
 
-        CurlCacheManager::getInstance().didReceiveResponse(*m_handle, response());
+        CurlCacheManager::singleton().didReceiveResponse(*m_handle, response());
 
         auto protectedThis = makeRef(*m_handle);
         m_handle->didReceiveResponse(ResourceResponse(response()));
@@ -243,7 +243,7 @@ void ResourceHandleCurlDelegate::curlDidReceiveBuffer(Ref<SharedBuffer>&& buffer
     if (m_multipartHandle)
         m_multipartHandle->contentReceived(buffer->data(), buffer->size());
     else if (m_handle->client()) {
-        CurlCacheManager::getInstance().didReceiveData(*m_handle, buffer->data(), buffer->size());
+        CurlCacheManager::singleton().didReceiveData(*m_handle, buffer->data(), buffer->size());
         m_handle->client()->didReceiveBuffer(m_handle, WTFMove(buffer), buffer->size());
     }
 }
@@ -262,7 +262,7 @@ void ResourceHandleCurlDelegate::curlDidComplete()
         m_multipartHandle->contentEnded();
 
     if (m_handle->client()) {
-        CurlCacheManager::getInstance().didFinishLoading(*m_handle);
+        CurlCacheManager::singleton().didFinishLoading(*m_handle);
         m_handle->client()->didFinishLoading(m_handle);
     }
 }
@@ -274,7 +274,7 @@ void ResourceHandleCurlDelegate::curlDidFailWithError(const ResourceError& resou
     if (cancelledOrClientless())
         return;
 
-    CurlCacheManager::getInstance().didFail(*m_handle);
+    CurlCacheManager::singleton().didFail(*m_handle);
     m_handle->client()->didFail(m_handle, resourceError);
 }
 

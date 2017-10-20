@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CurlCacheManager_h
-#define CurlCacheManager_h
+#pragma once
 
 #include "CurlCacheEntry.h"
 #include "ResourceHandle.h"
@@ -37,9 +36,9 @@
 namespace WebCore {
 
 class CurlCacheManager {
-
+    friend NeverDestroyed<CurlCacheManager>;
 public:
-    static CurlCacheManager& getInstance();
+    static CurlCacheManager& singleton();
 
     void setCacheDirectory(const String&);
     const String& cacheDirectory() { return m_cacheDir; }
@@ -80,6 +79,4 @@ private:
     void readCachedData(const String&, ResourceHandle*, ResourceResponse&);
 };
 
-}
-
-#endif // CurlCacheManager_h
+} // namespace WebCore

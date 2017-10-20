@@ -30,6 +30,8 @@
 
 #if USE(CURL)
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 /*
@@ -76,6 +78,12 @@ public:
 private:
     HashMap<CURL*, CurlJobClient*> m_activeJobs;
 };
+
+CurlJobManager& CurlJobManager::singleton()
+{
+    static NeverDestroyed<CurlJobManager> sharedInstance;
+    return sharedInstance;
+}
 
 bool CurlJobManager::add(CurlJobClient* client)
 {

@@ -67,9 +67,9 @@ private:
 
     SSLCertificateFlags convertToSSLCertificateFlags(const unsigned&);
 
-    CurlHandle* m_curlHandle { nullptr };
+    CurlHandle* m_curlHandle { };
     String m_hostName;
     int m_sslErrors { 0 };
 };
 
-}
+} // namespace WebCore

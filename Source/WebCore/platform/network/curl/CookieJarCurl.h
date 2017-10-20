@@ -53,4 +53,4 @@ class CookieJarCurlFileSystem : public CookieJarCurl {
     void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point) override;
 };
 
-}
+} // namespace WebCore

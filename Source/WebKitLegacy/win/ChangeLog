@@ -1,3 +1,16 @@
+2017-10-20  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Clean up old style code in old curl files.
+        https://bugs.webkit.org/show_bug.cgi?id=178569
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCache.cpp:
+        (WebCache::cacheFolder):
+        (WebCache::setCacheFolder):
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2017-10-19  Sam Weinig  <sam@webkit.org>
 
         [Settings] Move global settings into their own file

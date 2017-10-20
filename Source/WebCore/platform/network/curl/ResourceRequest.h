@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceRequest_h
-#define ResourceRequest_h
+#pragma once
 
 #include "ResourceRequestBase.h"
 
@@ -33,56 +32,54 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 
 namespace WebCore {
 
-    class ResourceRequest : public ResourceRequestBase {
-    public:
-        ResourceRequest(const String& url)
-            : ResourceRequestBase(URL(ParsedURLString, url), UseProtocolCachePolicy)
-        {
-        }
+class ResourceRequest : public ResourceRequestBase {
+public:
+    ResourceRequest(const String& url)
+        : ResourceRequestBase(URL(ParsedURLString, url), UseProtocolCachePolicy)
+    {
+    }
 
-        ResourceRequest(const URL& url)
-            : ResourceRequestBase(url, UseProtocolCachePolicy)
-        {
-        }
+    ResourceRequest(const URL& url)
+        : ResourceRequestBase(url, UseProtocolCachePolicy)
+    {
+    }
 
-        ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
-            : ResourceRequestBase(url, policy)
-        {
-            setHTTPReferrer(referrer);
-        }
+    ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
+        : ResourceRequestBase(url, policy)
+    {
+        setHTTPReferrer(referrer);
+    }
 
-        ResourceRequest()
-            : ResourceRequestBase(URL(), UseProtocolCachePolicy)
-        {
-        }
+    ResourceRequest()
+        : ResourceRequestBase(URL(), UseProtocolCachePolicy)
+    {
+    }
 
-        ResourceRequest(CFURLRequestRef)
-            : ResourceRequestBase()
-        {
-        }
+    ResourceRequest(CFURLRequestRef)
+        : ResourceRequestBase()
+    {
+    }
 
-        void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+    void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
 
-        // Needed for compatibility.
-        CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const { return 0; }
+    // Needed for compatibility.
+    CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const { return 0; }
 
-        // The following two stubs are for compatibility with CFNetwork, and are not used.
-        static bool httpPipeliningEnabled() { return false; }
-        static void setHTTPPipeliningEnabled(bool) { }
+    // The following two stubs are for compatibility with CFNetwork, and are not used.
+    static bool httpPipeliningEnabled() { return false; }
+    static void setHTTPPipeliningEnabled(bool) { }
 
-    private:
-        friend class ResourceRequestBase;
+private:
+    friend class ResourceRequestBase;
 
-        void doUpdatePlatformRequest() { }
-        void doUpdateResourceRequest() { }
-        void doUpdatePlatformHTTPBody() { }
-        void doUpdateResourceHTTPBody() { }
+    void doUpdatePlatformRequest() { }
+    void doUpdateResourceRequest() { }
+    void doUpdatePlatformHTTPBody() { }
+    void doUpdateResourceHTTPBody() { }
 
-        void doPlatformSetAsIsolatedCopy(const ResourceRequest&) { }
+    void doPlatformSetAsIsolatedCopy(const ResourceRequest&) { }
 
-        static bool s_httpPipeliningEnabled;
-    };
+    static bool s_httpPipeliningEnabled;
+};
 
 } // namespace WebCore
-
-#endif // ResourceRequest_h

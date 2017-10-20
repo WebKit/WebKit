@@ -68,7 +68,7 @@ bool ResourceResponse::isAppendableHeader(const String &key)
     if (key.startsWith("x-", /* caseSensitive */ false))
         return true;
 
-    for (auto& header : appendableHeaders) {
+    for (const auto& header : appendableHeaders) {
         if (equalIgnoringASCIICase(key, header))
             return true;
     }
@@ -81,7 +81,7 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
 {
     setHTTPStatusCode(response.statusCode);
 
-    for (auto header : response.headers)
+    for (const auto& header : response.headers)
         appendHTTPHeaderField(header);
 
     setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());

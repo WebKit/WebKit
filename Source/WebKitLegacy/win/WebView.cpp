@@ -513,7 +513,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     CFIndex cacheMemoryCapacity = 0;
     CFIndex cacheDiskCapacity = 0;
 #elif USE(CURL)
-    cacheDirectory = CurlCacheManager::getInstance().cacheDirectory();
+    cacheDirectory = CurlCacheManager::singleton().cacheDirectory();
     long cacheMemoryCapacity = 0;
     long cacheDiskCapacity = 0;
 #endif
@@ -684,7 +684,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     CFURLCacheSetMemoryCapacity(cfurlCache.get(), cacheMemoryCapacity);
     CFURLCacheSetDiskCapacity(cfurlCache.get(), cacheDiskCapacity);
 #elif USE(CURL)
-    CurlCacheManager::getInstance().setStorageSizeLimit(cacheDiskCapacity);
+    CurlCacheManager::singleton().setStorageSizeLimit(cacheDiskCapacity);
 #endif
 
     s_didSetCacheModel = true;

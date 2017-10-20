@@ -51,14 +51,10 @@ public:
 
 class CurlJobManager {
     WTF_MAKE_NONCOPYABLE(CurlJobManager);
+    friend NeverDestroyed<CurlJobManager>;
 public:
-    static CurlJobManager& singleton()
-    {
-        static CurlJobManager shared;
-        return shared;
-    }
+    static CurlJobManager& singleton();
 
-    CurlJobManager() = default;
     ~CurlJobManager() { stopThread(); }
 
     bool add(CurlJobClient*);
@@ -67,6 +63,8 @@ public:
     void callOnJobThread(WTF::Function<void()>&&);
 
 private:
+    CurlJobManager() = default;
+
     void startThreadIfNeeded();
     void stopThreadIfNoMoreJobRunning();
     void stopThread();
@@ -84,4 +82,4 @@ private:
     bool m_runThread { false };
 };
 
-}
+} // namespace WebCore

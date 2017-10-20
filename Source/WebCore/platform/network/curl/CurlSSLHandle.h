@@ -63,5 +63,4 @@ private:
     HashMap<String, ClientCertificate, ASCIICaseInsensitiveHash> m_allowedClientHosts;
 };
 
-
-}
+} // namespace WebCore

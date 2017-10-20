@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CertificateInfo_h
-#define CertificateInfo_h
+#pragma once
 
 #include "NotImplemented.h"
 
@@ -37,6 +36,4 @@ public:
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
 };
 
-}
-
-#endif
+} // namespace WebCore

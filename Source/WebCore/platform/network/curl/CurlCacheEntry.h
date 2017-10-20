@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CurlCacheEntry_h
-#define CurlCacheEntry_h
+#pragma once
 
 #include "FileSystem.h"
 #include "HTTPHeaderMap.h"
@@ -97,6 +96,4 @@ private:
     bool closeContentFile();
 };
 
-}
-
-#endif // CurlCacheEntry_h
+} // namespace WebCore
