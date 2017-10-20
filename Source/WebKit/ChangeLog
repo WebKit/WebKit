@@ -1,3 +1,20 @@
+2017-10-20  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI to _WKDownloadDelegate missing from WKContextDownloadClient
+        https://bugs.webkit.org/show_bug.cgi?id=178566
+        <rdar://problem/23041906>
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::didReceiveAuthenticationChallenge):
+        (WebKit::DownloadClient::shouldDecodeSourceDataOfMIMEType):
+        (WebKit::DownloadClient::didCreateDestination):
+        (WebKit::DownloadClient::processDidCrash):
+
 2017-10-20  Youenn Fablet  <youenn@apple.com>
 
         ResourceResponse should have a ServiceWorker source

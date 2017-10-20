@@ -41,6 +41,10 @@
 - (void)_downloadDidFinish:(_WKDownload *)download;
 - (void)_download:(_WKDownload *)download didFailWithError:(NSError *)error;
 - (void)_downloadDidCancel:(_WKDownload *)download;
+- (void)_download:(_WKDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_download:(_WKDownload *)download didCreateDestination:(NSString *)destination WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_downloadProcessDidCrash:(_WKDownload *)download WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (BOOL)_download:(_WKDownload *)download shouldDecodeSourceDataOfMIMEType:(NSString *)MIMEType WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite WK_API_DEPRECATED_WITH_REPLACEMENT("_download:decideDestinationWithSuggestedFilename:completionHandler:", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 @end

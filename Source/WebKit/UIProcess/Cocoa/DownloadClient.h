@@ -55,6 +55,12 @@ private:
     void didFail(WebProcessPool&, DownloadProxy&, const WebCore::ResourceError&) final;
     void didCancel(WebProcessPool&, DownloadProxy&) final;
     void willSendRequest(WebProcessPool&, DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, Function<void(WebCore::ResourceRequest&&)>&&) final;
+    void didReceiveAuthenticationChallenge(WebProcessPool&, DownloadProxy&, AuthenticationChallengeProxy&) final;
+#if !USE(NETWORK_SESSION)
+    bool shouldDecodeSourceDataOfMIMEType(WebProcessPool&, DownloadProxy&, const String&) final;
+#endif
+    void didCreateDestination(WebProcessPool&, DownloadProxy&, const String&) final;
+    void processDidCrash(WebProcessPool&, DownloadProxy&) final;
 
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
@@ -68,6 +74,10 @@ private:
         bool downloadDidFail : 1;
         bool downloadDidCancel : 1;
         bool downloadDidReceiveServerRedirectToURL : 1;
+        bool downloadDidReceiveAuthenticationChallengeCompletionHandler : 1;
+        bool downloadShouldDecodeSourceDataOfMIMEType : 1;
+        bool downloadDidCreateDestination : 1;
+        bool downloadProcessDidCrash : 1;
     } m_delegateMethods;
 };
 

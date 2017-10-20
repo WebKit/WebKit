@@ -28,9 +28,13 @@
 
 #if WK_API_ENABLED
 
+#import "AuthenticationChallengeProxy.h"
+#import "AuthenticationDecisionListener.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DownloadProxy.h"
+#import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
+#import "WebCredential.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKDownloadInternal.h"
 #import <WebCore/ResourceError.h>
@@ -57,6 +61,10 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadDidFail = [delegate respondsToSelector:@selector(_download:didFailWithError:)];
     m_delegateMethods.downloadDidCancel = [delegate respondsToSelector:@selector(_downloadDidCancel:)];
     m_delegateMethods.downloadDidReceiveServerRedirectToURL = [delegate respondsToSelector:@selector(_download:didReceiveServerRedirectToURL:)];
+    m_delegateMethods.downloadDidReceiveAuthenticationChallengeCompletionHandler = [delegate respondsToSelector:@selector(_download:didReceiveAuthenticationChallenge:completionHandler:)];
+    m_delegateMethods.downloadShouldDecodeSourceDataOfMIMEType = [delegate respondsToSelector:@selector(_download:shouldDecodeSourceDataOfMIMEType:)];
+    m_delegateMethods.downloadDidCreateDestination = [delegate respondsToSelector:@selector(_download:didCreateDestination:)];
+    m_delegateMethods.downloadProcessDidCrash = [delegate respondsToSelector:@selector(_downloadProcessDidCrash:)];
 }
 
 void DownloadClient::didStart(WebProcessPool&, DownloadProxy& downloadProxy)
@@ -75,6 +83,66 @@ void DownloadClient::didReceiveData(WebProcessPool&, DownloadProxy& downloadProx
 {
     if (m_delegateMethods.downloadDidReceiveData)
         [m_delegate _download:wrapper(downloadProxy) didReceiveData:length];
+}
+
+void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, DownloadProxy& downloadProxy, AuthenticationChallengeProxy& authenticationChallenge)
+{
+    if (!m_delegateMethods.downloadDidReceiveAuthenticationChallengeCompletionHandler) {
+        authenticationChallenge.listener()->performDefaultHandling();
+        return;
+    }
+
+    [m_delegate _download:wrapper(downloadProxy) didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:BlockPtr<void(NSURLSessionAuthChallengeDisposition, NSURLCredential *)>::fromCallable([authenticationChallenge = makeRef(authenticationChallenge), checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        switch (disposition) {
+        case NSURLSessionAuthChallengeUseCredential: {
+            RefPtr<WebCredential> webCredential;
+            if (credential)
+                webCredential = WebCredential::create(WebCore::Credential(credential));
+            
+            authenticationChallenge->listener()->useCredential(webCredential.get());
+            break;
+        }
+            
+        case NSURLSessionAuthChallengePerformDefaultHandling:
+            authenticationChallenge->listener()->performDefaultHandling();
+            break;
+            
+        case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
+            authenticationChallenge->listener()->cancel();
+            break;
+            
+        case NSURLSessionAuthChallengeRejectProtectionSpace:
+            authenticationChallenge->listener()->rejectProtectionSpaceAndContinue();
+            break;
+            
+        default:
+            [NSException raise:NSInvalidArgumentException format:@"Invalid NSURLSessionAuthChallengeDisposition (%ld)", (long)disposition];
+        }
+    }).get()];
+}
+
+#if !USE(NETWORK_SESSION)
+bool DownloadClient::shouldDecodeSourceDataOfMIMEType(WebProcessPool&, DownloadProxy& downloadProxy, const String& mimeType)
+{
+    if (m_delegateMethods.downloadShouldDecodeSourceDataOfMIMEType)
+        return [m_delegate _download:wrapper(downloadProxy) shouldDecodeSourceDataOfMIMEType:mimeType];
+    return true;
+}
+#endif
+
+void DownloadClient::didCreateDestination(WebProcessPool&, DownloadProxy& downloadProxy, const String& destination)
+{
+    if (m_delegateMethods.downloadDidCreateDestination)
+        [m_delegate _download:wrapper(downloadProxy) didCreateDestination:destination];
+}
+
+void DownloadClient::processDidCrash(WebProcessPool&, DownloadProxy& downloadProxy)
+{
+    if (m_delegateMethods.downloadProcessDidCrash)
+        [m_delegate _downloadProcessDidCrash:wrapper(downloadProxy)];
 }
 
 void DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool&, DownloadProxy& downloadProxy, const String& filename, Function<void(AllowOverwrite, String)>&& completionHandler)
