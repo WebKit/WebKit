@@ -1,3 +1,26 @@
+2017-10-20  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223708. rdar://problem/34771406
+
+    2017-10-19  Tim Horton  <timothy_horton@apple.com>
+
+            Expand r209943 to suppress paste during provisional navigation as well
+            https://bugs.webkit.org/show_bug.cgi?id=178429
+            <rdar://problem/33952830>
+
+            Reviewed by Dean Jackson.
+
+            * Shared/WebPreferencesDefinitions.h:
+            * UIProcess/API/C/WKPreferences.cpp:
+            (WKPreferencesSetShouldSuppressKeyboardInputDuringProvisionalNavigation):
+            (WKPreferencesGetShouldSuppressKeyboardInputDuringProvisionalNavigation):
+            * UIProcess/API/Cocoa/WKPreferences.mm:
+            (-[WKPreferences _shouldSuppressKeyboardInputDuringProvisionalNavigation]):
+            (-[WKPreferences _setShouldSuppressKeyboardInputDuringProvisionalNavigation:]):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::updatePreferences):
+            Adjust to the changed preference name, except at the SPI level.
+
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223565. rdar://problem/35041490
