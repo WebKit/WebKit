@@ -827,3 +827,5 @@ webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled
 
 webkit.org/b/178536 [ HighSierra ] http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass Timeout ]
 
+webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
+
