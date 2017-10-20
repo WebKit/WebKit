@@ -22,7 +22,15 @@ description('This tests draggin and dropping HTML by the default action. WebKit 
     + 'To manually test, drag & drop the content in the block above to the blue box on the right.');
 jsTestIsAsync = true;
 
-window.onload = () => {
+let loadCount = 0;
+window.onmessage = (event) => {
+    if (!loadCount++)
+        runTest()
+    else
+        checkFrameAccess();
+}
+
+function runTest() {
     document.getElementById('source').focus();
     document.execCommand('selectAll');
     if (window.testRunner) {
@@ -58,8 +66,6 @@ function doDrop(event) {
         }
     });
     observer.observe(destination, {childList: true, subtree: true});
-
-    window.onmessage = checkFrameAccess;
 }
 
 function checkFrameAccess() {

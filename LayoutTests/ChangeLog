@@ -1,3 +1,20 @@
+2017-10-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=178606
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by the race condition during the page loading of iframes.
+
+        Waiting for message event wasn't doing anything useful because it was receiving the message from
+        source iframe before the drag & drop had started.
+
+        Fixed the bug by waiting for the second message event. Also replaced the wait for load event
+        by the wait for the first message event for clarity.
+
+        * http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html:
+
 2017-10-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Rebaseline compositing tests
