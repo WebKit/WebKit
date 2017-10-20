@@ -7,7 +7,8 @@ layer at (50,166) size 321x20
   RenderBlock (positioned) {P} at (50,166) size 321x20
     RenderText {#text} at (0,0) size 321x19
       text run at (0,0) width 321: "You should see a single green square, with no red."
-layer at (8,8) size 100x100
+layer at (58,58) size 100x100
   RenderBlock (positioned) {DIV} at (8,8) size 100x100 [bgcolor=#FF0000]
-layer at (8,8) size 100x100
+layer at (58,58) size 100x100
   RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+scrolled to 50,50

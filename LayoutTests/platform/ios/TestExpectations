@@ -82,6 +82,9 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 fast/events/wheelevent-in-text-node.html [ Skip ]
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Skip ]
 
+# This test requires alpha-channel video support.
+compositing/video/video-background-color.html [ WontFix ]
+
 # Not supported on iOS
 fast/mediastream
 fast/speechsynthesis
@@ -619,48 +622,6 @@ http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ F
 # HTTP test that assert:
 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
 
-# Compositing tests that fail:
-compositing/checkerboard.html [ Failure ]
-compositing/geometry/fixed-position-flipped-writing-mode.html [ Failure ]
-compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
-compositing/geometry/limit-layer-bounds-overflow-repaint.html [ Failure ]
-compositing/geometry/tall-page-composited.html [ Failure ]
-compositing/iframes/composited-iframe-scroll.html [ Failure ]
-compositing/iframes/iframe-content-flipping.html [ Failure ]
-compositing/iframes/nested-iframe-scrolling.html [ Failure ]
-compositing/images/direct-image-object-fit.html [ Failure ]
-compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
-compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Failure ]
-compositing/reflections/direct-image-object-fit-reflected.html [ Failure ]
-compositing/repaint/page-scale-repaint.html [ Failure ]
-compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
-compositing/visible-rect/3d-transform-style.html [ Failure ]
-compositing/visible-rect/iframe-no-layers.html [ Failure ]
-compositing/backing/child-layer-no-backing.html [ Failure ]
-compositing/geometry/preserve-3d-switching.html [ Failure ]
-
-# Compositing tests that fail and rely on media loading:
-compositing/geometry/clipped-video-controller.html
-compositing/geometry/video-fixed-scrolling.html
-compositing/geometry/video-opacity-overlay.html
-compositing/reflections/load-video-in-reflection.html
-compositing/self-painting-layers.html
-compositing/self-painting-layers2.html
-compositing/video-page-visibility.html
-compositing/video/video-background-color.html
-compositing/video/video-object-fit.html
-compositing/video/video-poster.html
-compositing/video/video-reflection.html
-compositing/visibility/visibility-simple-video-layer.html
-
-# Compositing tests that time out:
-compositing/layer-creation/animation-overlap-with-children.html
-compositing/overflow/ancestor-overflow.html
-compositing/tiling/huge-layer-img.html
-
 # <rdar://problem/19191637> compositing/layer-creation/deep-tree.html fails
 compositing/layer-creation/deep-tree.html
 
@@ -669,6 +630,39 @@ compositing/geometry/outline-change.html
 compositing/geometry/partial-layout-update.html
 fast/dom/HTMLObjectElement/children-changed.html
 fast/events/menu-keydown-on-hidden-element.html
+
+# Compositing tests to triage
+webkit.org/b/178487 compositing/visibility/visibility-simple-video-layer.html [ Skip ]
+webkit.org/b/178487 compositing/backing/form-controls-backing.html [ Failure ]
+webkit.org/b/178487 compositing/checkerboard.html [ Failure ]
+webkit.org/b/178487 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
+webkit.org/b/178487 compositing/fixed-with-fixed-layout.html [ Failure ]
+webkit.org/b/178487 compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
+webkit.org/b/178487 compositing/geometry/video-fixed-scrolling.html [ Pass Failure ]
+webkit.org/b/178487 compositing/iframes/composited-iframe-scroll.html [ Failure ]
+webkit.org/b/178487 compositing/iframes/iframe-content-flipping.html [ Failure ]
+webkit.org/b/178487 compositing/iframes/layout-on-compositing-change.html [ Failure ]
+webkit.org/b/178487 compositing/iframes/nested-iframe-scrolling.html [ Failure ]
+webkit.org/b/178487 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
+webkit.org/b/178487 compositing/layer-creation/fixed-overlap-extent.html [ Failure ]
+webkit.org/b/178487 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+webkit.org/b/178487 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+webkit.org/b/178487 compositing/layer-creation/fixed-position-out-of-view.html [ Failure ]
+webkit.org/b/178487 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
+webkit.org/b/178487 compositing/layer-creation/will-change-layer-creation.html [ Failure ]
+webkit.org/b/178487 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
+webkit.org/b/178487 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure ]
+webkit.org/b/178487 compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
+webkit.org/b/178487 compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Failure ]
+webkit.org/b/178487 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+webkit.org/b/178487 compositing/video/video-object-fit.html [ Failure ]
+webkit.org/b/178487 compositing/video/video-poster.html [ Failure ]
+webkit.org/b/178487 compositing/masks/compositing-clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/178487 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/178487 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/178487 compositing/video/video-clip-change-src.html [ ImageOnlyFailure ]
 
 # CSS tests that flake:
 css2.1/20110323/replaced-intrinsic-001.htm [ Failure Pass ]
@@ -2145,10 +2139,6 @@ fast/forms/plaintext-mode-1.html [ Skip ]
 
 # Latest iOS failures as of Sept 1, 2015
 accessibility/ios-simulator/table-cell-ranges.html [ Failure ]
-compositing/backing/form-controls-backing.html [ Failure ]
-compositing/fixed-with-fixed-layout.html [ Failure ]
-compositing/geometry/ancestor-overflow-change.html [ Failure ]
-compositing/layer-creation/will-change-layer-creation.html [ Failure ]
 css3/scroll-snap/nested-elements.html [ Failure ]
 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
 fast/css/text-overflow-ellipsis-text-align-center.html [ Failure ]
@@ -2175,34 +2165,7 @@ fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 
 # Skip tests that time out:
-compositing/video/video-clip-change-src.html [ Skip ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Skip ]
-compositing/images/content-image-change.html [ Skip ]
-compositing/images/content-image.html [ Skip ]
-compositing/images/direct-image-background-color.html [ Skip ]
-compositing/layer-creation/fixed-overlap-extent-rtl.html [ Skip ]
-compositing/layer-creation/fixed-overlap-extent.html [ Skip ]
-compositing/layer-creation/fixed-position-and-transform.html [ Skip ]
-compositing/masks/cease-tiled-mask.html [ Skip ]
-compositing/masks/compositing-clip-path-mask-change.html [ Skip ]
-compositing/overflow/automatically-opt-into-composited-scrolling.html [ Skip ]
-compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Skip ]
-compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Skip ]
-compositing/overlap-blending/nested-overlap-overflow.html [ Skip ]
-compositing/overlap-blending/nested-overlap.html [ Skip ]
-compositing/patterns/direct-pattern-compositing-cover.html [ Skip ]
-compositing/patterns/direct-pattern-compositing-hidden-radial-gradient.html [ Skip ]
-compositing/reflections/nested-reflection-anchor-point.html [ Skip ]
-compositing/reflections/nested-reflection-mask-change.html [ Skip ]
-compositing/reflections/nested-reflection-on-overflow.html [ Skip ]
-compositing/repaint/clipped-layer-size-change.html [ Skip ]
-compositing/repaint/fixed-background-scroll.html [ Skip ]
-compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Skip ]
-compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Skip ]
-compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Skip ]
-compositing/rtl/rtl-absolute-overflow-scrolled.html [ Skip ]
-compositing/rtl/rtl-absolute-overflow.html [ Skip ]
-compositing/rtl/rtl-fixed-overflow-scrolled.html [ Skip ]
 http/tests/messaging/cross-domain-message-event-dispatch.html [ Skip ]
 http/tests/messaging/cross-domain-message-send.html [ Skip ]
 http/tests/ssl/ping-with-unsafe-redirect.html [ Skip ]

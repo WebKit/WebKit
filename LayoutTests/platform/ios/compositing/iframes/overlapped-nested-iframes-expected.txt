@@ -154,6 +154,7 @@
           )
         )
         (GraphicsLayer
+          (position 0.00 100.00)
           (bounds 800.00 120.00)
         )
       )

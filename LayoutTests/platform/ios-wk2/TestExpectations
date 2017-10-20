@@ -69,25 +69,7 @@ webkit.org/b/170713 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-0
 animations/animation-direction-normal.html [ Pass Crash ]
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
-# Compositing tests that fail:
-compositing/iframes/layout-on-compositing-change.html [ Failure ]
-compositing/geometry/fixed-position.html [ Failure ]
-compositing/iframes/invisible-nested-iframe-show.html [ Failure ]
-compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
-compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
-compositing/overflow/fixed-position-ancestor-clip.html [ Failure ]
-compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
-compositing/reflections/nested-reflection-on-overflow.html [ Failure ]
-compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
-
 webkit.org/b/157105 compositing/contents-scale/incremental-change.html [ Pass ImageOnlyFailure ]
-
-# Compositing test that time out:
-compositing/checkerboard.html
-compositing/contents-scale/animating.html
-compositing/layer-creation/animation-overlap-with-children.html
-compositing/overflow/scroll-ancestor-update.html
-compositing/visible-rect/animated.html
 
 # CSS tests that fail:
 css3/blending/blend-mode-simple-composited.html [ Failure ]
@@ -1217,8 +1199,6 @@ platform/ios/ios/fast/coordinates/touch-event-zoomed.html
 platform/ios/ios/fast/coordinates/touch-event.html
 
 # Flaky tests:
-compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure Pass ]
-compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Failure Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Failure Pass ]
 fast/dom/inline-event-attributes-release.html [ Failure Pass ]
@@ -1391,7 +1371,6 @@ tables/mozilla_expected_failures/bugs/bug3517.html [ Failure ImageOnlyFailure Pa
 transitions/svg-text-shadow-transition.html [ Failure Pass ]
 
 # Flaky tests that time out:
-compositing/transitions/transform-on-large-layer.html
 css3/filters/animation-from-initial-values-with-color-matrix.html
 fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
@@ -1454,7 +1433,6 @@ fast/forms/validation-message-appearance.html [ Skip ]
 fast/forms/validation-message-on-textarea.html  [ Skip ]
 
 # Flaky as of 06/08/2015
-compositing/overflow/overflow-positioning.html [ Failure ImageOnlyFailure Pass ]
 editing/deleting/delete-3775172-fix.html [ Failure ImageOnlyFailure Pass ]
 editing/deleting/delete-3857753-fix.html [ Failure Pass ]
 editing/deleting/delete-3865854-fix.html [ Failure Pass ]
@@ -1550,14 +1528,8 @@ fast/loader/iframe-meta-refresh-base-blank.html [ Failure Pass ]
 fast/loader/iframe-set-location-base-blank.html [ Failure Pass ]
 fast/loader/refresh-iframe-base-blank.html [ Failure Pass ]
 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
-compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html [ Timeout Pass ]
 
 # Failures as of 06/08/2015
-compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure ]
-compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
-compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Failure ]
-compositing/visible-rect/iframe-with-layers-outside-viewport.html [ Failure ]
-compositing/visible-rect/mask-layer-coverage.html [ Failure ]
 css2.1/t09-c5526c-display-00-e.html [ Failure ]
 css2.1/t1202-counter-04-b.html [ Failure ]
 css2.1/t1202-counters-04-b.html [ Failure ]
@@ -1583,7 +1555,6 @@ http/tests/navigation/postredirect-basic.html [ Failure ]
 http/tests/navigation/postredirect-goback1.html [ Failure ]
 
 platform/ios/ios/fast/text/underline-scaling.html [ Failure ]
-compositing/masks/compositing-clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
 fast/borders/dashed-border-on-subpixel-position.html [ ImageOnlyFailure ]
 fast/borders/dotted-border-on-subpixel-position.html [ ImageOnlyFailure ]
 fast/forms/select/select-painting.html [ ImageOnlyFailure ]
@@ -1622,12 +1593,6 @@ fast/images/animated-gif-webkit-transform.html
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # Latest iOS failures as of Sept 1, 2015
-compositing/iframes/overlapped-nested-iframes.html [ Failure Pass ]
-compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure Pass ]
-compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure Pass ]
-compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Pass ]
-compositing/layer-creation/translate-scale-transition-overlap.html [ Failure Pass ]
-compositing/layer-creation/translate-transition-overlap.html [ Failure Pass ]
 editing/execCommand/4641880-1.html [ Failure Pass ]
 editing/execCommand/4641880-2.html [ Failure Pass ]
 editing/execCommand/create-list-with-hr.html [ Failure Pass ]
@@ -1699,9 +1664,6 @@ transitions/zero-duration-with-non-zero-delay-end.html [ Failure Pass ]
 fast/css-grid-layout/flex-content-sized-columns-resize.html [ Skip ]
 fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
 
-compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
-compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
-compositing/layer-creation/fixed-position-out-of-view.html [ Failure ]
 css2.1/t0805-c5518-brdr-t-01-e.html [ Failure ]
 css2.1/t0805-c5519-brdr-r-00-a.html [ Failure ]
 css2.1/t0805-c5520-brdr-b-01-e.html [ Failure ]

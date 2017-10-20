@@ -7,8 +7,9 @@
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
-          (position 5.00 5.00)
-          (bounds 106.00 106.00)
+          (position 8.00 8.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
         )
       )

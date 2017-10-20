@@ -1,3 +1,49 @@
+2017-10-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] Rebaseline compositing tests
+        https://bugs.webkit.org/show_bug.cgi?id=178492
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/compositing/backing/child-layer-no-backing-expected.txt: Added.
+        * platform/ios/compositing/contents-scale/animating-expected.txt:
+        * platform/ios/compositing/geometry/ancestor-overflow-change-expected.txt:
+        * platform/ios/compositing/geometry/fixed-position-expected.txt:
+        * platform/ios/compositing/geometry/fixed-position-flipped-writing-mode-expected.txt: Added.
+        * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Added.
+        * platform/ios/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt: Added.
+        * platform/ios/compositing/geometry/preserve-3d-switching-expected.txt: Added.
+        * platform/ios/compositing/geometry/tall-page-composited-expected.txt: Added.
+        * platform/ios/compositing/geometry/video-fixed-scrolling-expected.txt: Added.
+        * platform/ios/compositing/geometry/video-opacity-overlay-expected.txt: Added.
+        * platform/ios/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/ios/compositing/iframes/overlapped-nested-iframes-expected.txt: Renamed from LayoutTests/platform/ios-wk2/compositing/iframes/overlapped-nested-iframes-expected.txt.
+        * platform/ios/compositing/images/direct-image-object-fit-expected.txt: Added.
+        * platform/ios/compositing/layer-creation/animation-overlap-with-children-expected.txt: Removed.
+        * platform/ios/compositing/layer-creation/fixed-position-and-transform-expected.txt: Renamed from LayoutTests/platform/ios-wk2/compositing/layer-creation/fixed-position-and-transform-expected.txt.
+        * platform/ios/compositing/overflow/ancestor-overflow-expected.txt:
+        * platform/ios/compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt: Added.
+        * platform/ios/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt: Added.
+        * platform/ios/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt: Added.
+        * platform/ios/compositing/overflow/composited-scrolling-creates-a-stacking-container-expected.txt:
+        * platform/ios/compositing/overflow/fixed-position-ancestor-clip-expected.txt:
+        * platform/ios/compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor-expected.txt: Added.
+        * platform/ios/compositing/reflections/direct-image-object-fit-reflected-expected.txt: Added.
+        * platform/ios/compositing/reflections/load-video-in-reflection-expected.txt: Added.
+        * platform/ios/compositing/reflections/nested-reflection-on-overflow-expected.txt:
+        * platform/ios/compositing/repaint/page-scale-repaint-expected.txt: Added.
+        * platform/ios/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Renamed from LayoutTests/platform/ios-wk2/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt.
+        * platform/ios/compositing/rtl/rtl-overflow-scrolling-expected.txt: Added.
+        * platform/ios/compositing/self-painting-layers-expected.txt: Added.
+        * platform/ios/compositing/tiling/huge-layer-img-expected.txt: Added.
+        * platform/ios/compositing/visible-rect/3d-transform-style-expected.txt: Added.
+        * platform/ios/compositing/visible-rect/animated-expected.txt: Added.
+        * platform/ios/compositing/visible-rect/iframe-no-layers-expected.txt: Added.
+        * platform/ios/compositing/visible-rect/iframe-with-layers-outside-viewport-expected.txt: Added.
+        * platform/ios/compositing/visible-rect/mask-layer-coverage-expected.txt: Added.
+
 2017-10-20  Matt Lewis  <jlewis3@apple.com>
 
         Marked plugins/js-from-destroy.html as flaky.

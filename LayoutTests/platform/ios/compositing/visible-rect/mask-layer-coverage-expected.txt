@@ -1,4 +1,3 @@
-Box
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -16,16 +15,23 @@ Box
       (contentsScale 2.00)
       (children 1
         (GraphicsLayer
-          (position 18.00 10.00)
-          (anchor 0.00 0.00)
-          (bounds 100.00 100.00)
+          (position 8.00 8.00)
+          (bounds 44.00 42.00)
           (contentsOpaque 1)
-          (drawsContent 1)
-          (transform [1.50 0.00 0.00 0.00] [0.00 1.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
-          (visible rect 0.00, 0.00 100.00 x 100.00)
-          (coverage rect -12.00, -6.67 533.33 x 400.00)
+          (mask layer)
+            (GraphicsLayer
+              (bounds 44.00 42.00)
+              (drawsContent 1)
+              (visible rect 0.00, 0.00 44.00 x 42.00)
+              (coverage rect -8.00, -8.00 800.00 x 600.00)
+              (intersects coverage rect 1)
+              (contentsScale 2.00)
+            )
+          (visible rect 0.00, 0.00 44.00 x 42.00)
+          (coverage rect -8.00, -8.00 800.00 x 600.00)
           (intersects coverage rect 1)
           (contentsScale 2.00)
+          (contents layer 0.00, 0.00 44.00 x 42.00)
         )
       )
     )

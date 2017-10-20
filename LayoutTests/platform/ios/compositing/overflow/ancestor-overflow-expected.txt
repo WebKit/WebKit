@@ -29,7 +29,7 @@ layer at (28,259) size 142x142 clip at (29,260) size 140x140 scrollHeight 171
     RenderBlock {DIV} at (11,11) size 122x122 [border: (1px solid #0000FF)]
 layer at (214,259) size 142x142 clip at (215,260) size 140x140
   RenderBlock {DIV} at (206,207) size 142x142 [border: (1px solid #000000)]
-layer at (50,94) size 100x150 backgroundClip at (29,73) size 140x140 clip at (29,73) size 140x140 outlineClip at (29,73) size 140x140
+layer at (50,94) size 100x150 backgroundClip at (29,73) size 140x140 clip at (29,73) size 140x140
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
 layer at (225,83) size 122x122
   RenderBlock (positioned) {DIV} at (225,83) size 122x122 [border: (1px solid #0000FF)]
@@ -39,9 +39,9 @@ layer at (400,72) size 142x142 clip at (401,73) size 140x140 scrollHeight 171
   RenderBlock (relative positioned) {DIV} at (392,20) size 142x142 [border: (1px solid #000000)]
 layer at (411,83) size 122x122
   RenderBlock (positioned) {DIV} at (11,11) size 122x122 [border: (1px solid #0000FF)]
-layer at (422,94) size 100x150 backgroundClip at (401,73) size 140x140 clip at (401,73) size 140x140 outlineClip at (401,73) size 140x140
+layer at (422,94) size 100x150 backgroundClip at (401,73) size 140x140 clip at (401,73) size 140x140
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
-layer at (50,281) size 100x150 backgroundClip at (29,260) size 140x140 clip at (29,260) size 140x140 outlineClip at (29,260) size 140x140
+layer at (50,281) size 100x150 backgroundClip at (29,260) size 140x140 clip at (29,260) size 140x140
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
 layer at (225,270) size 122x122
   RenderBlock (positioned) {DIV} at (225,270) size 122x122 [border: (1px solid #0000FF)]
@@ -51,5 +51,5 @@ layer at (400,259) size 142x142 clip at (401,260) size 140x140 scrollHeight 171
   RenderBlock (relative positioned) {DIV} at (392,207) size 142x142 [border: (1px solid #000000)]
 layer at (411,270) size 122x122
   RenderBlock (positioned) {DIV} at (11,11) size 122x122 [border: (1px solid #0000FF)]
-layer at (422,281) size 100x150 backgroundClip at (401,260) size 140x140 clip at (401,260) size 140x140 outlineClip at (401,260) size 140x140
+layer at (422,281) size 100x150 backgroundClip at (401,260) size 140x140 clip at (401,260) size 140x140
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
