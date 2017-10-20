@@ -1929,33 +1929,6 @@ GraphicsLayer* RenderLayerCompositor::rootGraphicsLayer() const
     return m_rootContentLayer.get();
 }
 
-GraphicsLayer* RenderLayerCompositor::scrollLayer() const
-{
-    return m_scrollLayer.get();
-}
-
-GraphicsLayer* RenderLayerCompositor::clipLayer() const
-{
-    return m_clipLayer.get();
-}
-
-GraphicsLayer* RenderLayerCompositor::rootContentLayer() const
-{
-    return m_rootContentLayer.get();
-}
-
-#if ENABLE(RUBBER_BANDING)
-GraphicsLayer* RenderLayerCompositor::headerLayer() const
-{
-    return m_layerForHeader.get();
-}
-
-GraphicsLayer* RenderLayerCompositor::footerLayer() const
-{
-    return m_layerForFooter.get();
-}
-#endif
-
 void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 {
     LOG(Compositing, "RenderLayerCompositor %p setIsInWindow %d", this, isInWindow);
@@ -2829,16 +2802,6 @@ void RenderLayerCompositor::resetTrackedRepaintRects()
             layer.resetTrackedRepaints();
         });
     }
-}
-
-void RenderLayerCompositor::setTracksRepaints(bool tracksRepaints)
-{
-    m_isTrackingRepaints = tracksRepaints;
-}
-
-bool RenderLayerCompositor::isTrackingRepaints() const
-{
-    return m_isTrackingRepaints;
 }
 
 float RenderLayerCompositor::deviceScaleFactor() const
@@ -4061,26 +4024,6 @@ RefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor
     return DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(displayID);
 }
 #endif
-
-void RenderLayerCompositor::startTrackingLayerFlushes()
-{
-    m_layerFlushCount = 0;
-}
-
-unsigned RenderLayerCompositor::layerFlushCount() const
-{
-    return m_layerFlushCount;
-}
-
-void RenderLayerCompositor::startTrackingCompositingUpdates()
-{
-    m_compositingUpdateCount = 0;
-}
-
-unsigned RenderLayerCompositor::compositingUpdateCount() const
-{
-    return m_compositingUpdateCount;
-}
 
 #if ENABLE(CSS_SCROLL_SNAP)
 void RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView)
