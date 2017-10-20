@@ -67,7 +67,8 @@ public:
 
     // Methods operating on all cached resources
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) const;
-    void resourceDestroyed(RenderSVGResourceContainer&);
+    // Returns true if the resource-to-be-destroyed is one of our resources.
+    bool resourceDestroyed(RenderSVGResourceContainer&);
 
 #if ENABLE(TREE_DEBUGGING)
     void dump(const RenderObject*);
@@ -97,6 +98,8 @@ private:
     bool setFill(RenderSVGResourceContainer*);
     bool setStroke(RenderSVGResourceContainer*);
     bool setLinkedResource(RenderSVGResourceContainer*);
+    
+    bool isEmpty() const { return !m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource; }
 
     // From SVG 1.1 2nd Edition
     // clipper: 'container elements' and 'graphics elements'
@@ -106,16 +109,10 @@ private:
     struct ClipperFilterMaskerData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        ClipperFilterMaskerData()
-            : clipper(0)
-            , filter(0)
-            , masker(0)
-        {
-        }
-
-        RenderSVGResourceClipper* clipper;
-        RenderSVGResourceFilter* filter;
-        RenderSVGResourceMasker* masker;
+        ClipperFilterMaskerData() = default;
+        RenderSVGResourceClipper* clipper { nullptr };
+        RenderSVGResourceFilter* filter { nullptr };
+        RenderSVGResourceMasker* masker { nullptr };
     };
 
     // From SVG 1.1 2nd Edition
@@ -123,16 +120,10 @@ private:
     struct MarkerData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        MarkerData()
-            : markerStart(0)
-            , markerMid(0)
-            , markerEnd(0)
-        {
-        }
-
-        RenderSVGResourceMarker* markerStart;
-        RenderSVGResourceMarker* markerMid;
-        RenderSVGResourceMarker* markerEnd;
+        MarkerData() = default;
+        RenderSVGResourceMarker* markerStart { nullptr };
+        RenderSVGResourceMarker* markerMid { nullptr };
+        RenderSVGResourceMarker* markerEnd { nullptr };
     };
 
     // From SVG 1.1 2nd Edition
@@ -142,14 +133,9 @@ private:
     struct FillStrokeData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        FillStrokeData()
-            : fill(0)
-            , stroke(0)
-        {
-        }
-
-        RenderSVGResourceContainer* fill;
-        RenderSVGResourceContainer* stroke;
+        FillStrokeData() = default;
+        RenderSVGResourceContainer* fill { nullptr };
+        RenderSVGResourceContainer* stroke { nullptr };
     };
 
     std::unique_ptr<ClipperFilterMaskerData> m_clipperFilterMaskerData;
