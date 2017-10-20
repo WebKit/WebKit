@@ -33,6 +33,12 @@
 
 namespace WebCore {
 
+// Convenience function to improve code readability, as WebPDemuxGetFrame is +1 based.
+bool webpFrameAtIndex(WebPDemuxer* demuxer, size_t index, WebPIterator* webpFrame)
+{
+    return WebPDemuxGetFrame(demuxer, index + 1, webpFrame);
+}
+
 WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
 {
@@ -85,41 +91,36 @@ size_t WEBPImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex, WebPD
     if (!frameIndex)
         return 0;
 
-    // Check the most probable scenario first: the previous frame is complete, so we can decode the requested one.
-    if (m_frameBufferCache[frameIndex - 1].isComplete())
-        return frameIndex;
+    // Go backwards and find the first complete frame.
+    size_t firstIncompleteFrame = frameIndex;
+    for (; firstIncompleteFrame; --firstIncompleteFrame) {
+        if (m_frameBufferCache[firstIncompleteFrame - 1].isComplete())
+            break;
+    }
 
-    // Check if the requested frame can be rendered without dependencies. This happens if the frame
-    // fills the whole area and doesn't have alpha.
-    WebPIterator webpFrame;
-    if (WebPDemuxGetFrame(demuxer, frameIndex + 1, &webpFrame)) {
+    // Check if there are any independent frames between firstIncompleteFrame and frameIndex.
+    for (size_t firstIndependentFrame = frameIndex; firstIndependentFrame > firstIncompleteFrame ; --firstIndependentFrame) {
+        WebPIterator webpFrame;
+        if (!webpFrameAtIndex(demuxer, firstIndependentFrame, &webpFrame))
+            continue;
+
         IntRect frameRect(webpFrame.x_offset, webpFrame.y_offset, webpFrame.width, webpFrame.height);
-        if (frameRect.contains(IntRect(IntPoint(), size())) && !webpFrame.has_alpha)
-            return frameIndex;
+        if (!frameRect.contains({ { }, size() }))
+            continue;
+
+        // This frame covers the whole area and doesn't have alpha, so it can be rendered without
+        // dependencies.
+        if (!webpFrame.has_alpha)
+            return firstIndependentFrame;
+
+        // This frame covers the whole area and its disposalMethod is RestoreToBackground, which means
+        // that the next frame will be rendered on top of a transparent background, and can be decoded
+        // without dependencies. This can only be checked for frames prior to frameIndex.
+        if (firstIndependentFrame < frameIndex && m_frameBufferCache[firstIndependentFrame].disposalMethod() == ImageFrame::DisposalMethod::RestoreToBackground)
+            return firstIndependentFrame + 1;
     }
 
-    // Go backwards in the list of frames, until we find the first complete frame or a frame that
-    // doesn't depend on previous frames.
-    for (size_t i = frameIndex - 1; i > 0; i--) {
-        // This frame is complete, so we can start the decoding from the next one.
-        if (m_frameBufferCache[i].isComplete())
-            return i + 1;
-
-        if (WebPDemuxGetFrame(demuxer, i + 1, &webpFrame)) {
-            IntRect frameRect(webpFrame.x_offset, webpFrame.y_offset, webpFrame.width, webpFrame.height);
-            // This frame is not complete, but it fills the whole size and its disposal method is
-            // RestoreToBackground. This means that we will draw the next frame on an initially transparent
-            // buffer, so there's no dependency. We can start decoding from the next frame.
-            if (frameRect.contains(IntRect(IntPoint(), size())) && (m_frameBufferCache[i].disposalMethod() == ImageFrame::DisposalMethod::RestoreToBackground))
-                return i + 1;
-
-            // This frame is not complete, but it fills the whole size and doesn't have alpha,
-            // so it doesn't depend on former frames. We can start decoding from here.
-            if (frameRect.contains(IntRect(IntPoint(), size())) && !webpFrame.has_alpha)
-                return i;
-        }
-    }
-    return 0;
+    return firstIncompleteFrame;
 }
 
 void WEBPImageDecoder::decode(size_t frameIndex, bool allDataReceived)
@@ -143,12 +144,12 @@ void WEBPImageDecoder::decode(size_t frameIndex, bool allDataReceived)
 
     // It is a fatal error if all data is received and we have decoded all frames available but the file is truncated.
     if (frameIndex >= m_frameBufferCache.size() - 1 && allDataReceived && demuxer && demuxerState != WEBP_DEMUX_DONE) {
+        WebPDemuxDelete(demuxer);
         setFailed();
         return;
     }
 
-    size_t startFrame = findFirstRequiredFrameToDecode(frameIndex, demuxer);
-    for (size_t i = startFrame; i <= frameIndex; i++)
+    for (size_t i = findFirstRequiredFrameToDecode(frameIndex, demuxer); i <= frameIndex; i++)
         decodeFrame(i, demuxer);
 
     WebPDemuxDelete(demuxer);
@@ -160,7 +161,7 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
         return;
 
     WebPIterator webpFrame;
-    if (!WebPDemuxGetFrame(demuxer, frameIndex + 1, &webpFrame))
+    if (!webpFrameAtIndex(demuxer, frameIndex, &webpFrame))
         return;
 
     const uint8_t* dataBytes = reinterpret_cast<const uint8_t*>(webpFrame.fragment.bytes);
@@ -184,7 +185,8 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
     decoderBuffer.u.RGBA.stride = webpFrame.width * sizeof(RGBA32);
     decoderBuffer.u.RGBA.size = decoderBuffer.u.RGBA.stride * webpFrame.height;
     decoderBuffer.is_external_memory = 1;
-    decoderBuffer.u.RGBA.rgba = reinterpret_cast<uint8_t*>(fastMalloc(decoderBuffer.u.RGBA.size));
+    std::unique_ptr<unsigned char[]> p(new uint8_t[decoderBuffer.u.RGBA.size]());
+    decoderBuffer.u.RGBA.rgba = p.get();
     if (!decoderBuffer.u.RGBA.rgba) {
         setFailed();
         return;
@@ -192,7 +194,6 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
 
     WebPIDecoder* decoder = WebPINewDecoder(&decoderBuffer);
     if (!decoder) {
-        fastFree(decoderBuffer.u.RGBA.rgba);
         setFailed();
         return;
     }
@@ -205,6 +206,7 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
     case VP8_STATUS_SUSPENDED:
         if (!isAllDataReceived()) {
             applyPostProcessing(frameIndex, decoder, decoderBuffer, blend);
+            buffer.setDecodingStatus(DecodingStatus::Partial);
             break;
         }
         // Fallthrough.
@@ -213,7 +215,6 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
     }
 
     WebPIDelete(decoder);
-    fastFree(decoderBuffer.u.RGBA.rgba);
 }
 
 bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* webpFrame)
@@ -227,10 +228,7 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
     IntRect frameRect(webpFrame->x_offset, webpFrame->y_offset, webpFrame->width, webpFrame->height);
 
     // Make sure the frameRect doesn't extend outside the buffer.
-    if (frameRect.maxX() > size().width())
-        frameRect.setWidth(size().width() - webpFrame->x_offset);
-    if (frameRect.maxY() > size().height())
-        frameRect.setHeight(size().height() - webpFrame->y_offset);
+    frameRect.intersect({ { }, size() });
 
     if (!frameIndex || !m_frameBufferCache[frameIndex - 1].backingStore()) {
         // This frame doesn't rely on any previous data.
@@ -254,7 +252,6 @@ bool WEBPImageDecoder::initFrameBuffer(size_t frameIndex, const WebPIterator* we
 
     buffer.setHasAlpha(webpFrame->has_alpha);
     buffer.backingStore()->setFrameRect(frameRect);
-    buffer.setDecodingStatus(DecodingStatus::Partial);
 
     return true;
 }
@@ -352,11 +349,10 @@ void WEBPImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     //   * We don't clear any frame from which a future initFrameBuffer() call will copy bitmap data.
     //
     // In WEBP every frame depends on the previous one or none. That means that frames after clearBeforeFrame
-    // won't need any frame before them to render, so we can clear them all. If we find a buffer that is partial,
-    // don't delete it as it's being decoded.
+    // won't need any frame before them to render, so we can clear them all.
     for (int i = clearBeforeFrame - 1; i >= 0; i--) {
         ImageFrame& buffer = m_frameBufferCache[i];
-        if (buffer.isComplete() || buffer.isInvalid())
+        if (!buffer.isInvalid())
             buffer.clear();
     }
 }

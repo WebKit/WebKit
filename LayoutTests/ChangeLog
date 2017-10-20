@@ -1,3 +1,14 @@
+2017-10-20  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Fix review comments on WEBPImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=178080
+
+        Reviewed by Said Abou-Hallawa.
+
+        Adjusted test duration.
+
+        * fast/images/animated-webp.html:
+
 2017-10-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Rebaselining CSS tests that were affected
