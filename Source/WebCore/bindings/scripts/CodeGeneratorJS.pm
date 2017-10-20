@@ -5255,8 +5255,16 @@ sub GenerateSerializerDefinition
 
         if ($codeGenerator->IsInterfaceType($attribute->type)) {
             my $attributeInterfaceName = $attribute->type->name;
-            push(@implContent, "    auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(state, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject, throwScope);\n");
-            push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}SerializedValue);\n");
+            if ($attribute->type->isNullable) {
+                push(@implContent, "    if (!${name}Value.isNull()) {\n");
+                push(@implContent, "        auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(state, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject, throwScope);\n");
+                push(@implContent, "        result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}SerializedValue);\n");
+                push(@implContent, "    } else\n");
+                push(@implContent, "        result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
+            } else {
+                push(@implContent, "    auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(state, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject, throwScope);\n");
+                push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}SerializedValue);\n");
+            }
         } else {
             push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
         }

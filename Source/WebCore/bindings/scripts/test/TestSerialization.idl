@@ -35,6 +35,7 @@ interface TestSerialization {
 
     attribute TestSerializationInheritFinal seventhDirectlySerializableAttribute;
     attribute TestSerializationIndirectInheritance eighthIndirectlyAttribute;
+    attribute TestSerializationInheritFinal? ninthOptionalDirectlySerializableAttribute;
 
     serializer = { attribute };
 };

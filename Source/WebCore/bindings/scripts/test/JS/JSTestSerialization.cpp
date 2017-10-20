@@ -25,6 +25,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
@@ -67,6 +68,8 @@ JSC::EncodedJSValue jsTestSerializationSeventhDirectlySerializableAttribute(JSC:
 bool setJSTestSerializationSeventhDirectlySerializableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestSerializationEighthIndirectlyAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestSerializationEighthIndirectlyAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestSerializationNinthOptionalDirectlySerializableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestSerializationNinthOptionalDirectlySerializableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestSerializationPrototype : public JSC::JSNonFinalObject {
 public:
@@ -123,6 +126,7 @@ static const HashTableValue JSTestSerializationPrototypeTableValues[] =
     { "sixthTypedefAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationSixthTypedefAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationSixthTypedefAttribute) } },
     { "seventhDirectlySerializableAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationSeventhDirectlySerializableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationSeventhDirectlySerializableAttribute) } },
     { "eighthIndirectlyAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationEighthIndirectlyAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationEighthIndirectlyAttribute) } },
+    { "ninthOptionalDirectlySerializableAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationNinthOptionalDirectlySerializableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationNinthOptionalDirectlySerializableAttribute) } },
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestSerializationPrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
@@ -450,6 +454,37 @@ bool setJSTestSerializationEighthIndirectlyAttribute(ExecState* state, EncodedJS
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationEighthIndirectlyAttributeSetter>(*state, thisValue, encodedValue, "eighthIndirectlyAttribute");
 }
 
+static inline JSValue jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLNullable<IDLInterface<TestSerializationInheritFinal>>>(state, *thisObject.globalObject(), throwScope, impl.ninthOptionalDirectlySerializableAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestSerializationNinthOptionalDirectlySerializableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "ninthOptionalDirectlySerializableAttribute");
+}
+
+static inline bool setJSTestSerializationNinthOptionalDirectlySerializableAttributeSetter(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLNullable<IDLInterface<TestSerializationInheritFinal>>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestSerialization", "ninthOptionalDirectlySerializableAttribute", "TestSerializationInheritFinal"); });
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(state, throwScope, [&] {
+        return impl.setNinthOptionalDirectlySerializableAttribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+bool setJSTestSerializationNinthOptionalDirectlySerializableAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationNinthOptionalDirectlySerializableAttributeSetter>(*state, thisValue, encodedValue, "ninthOptionalDirectlySerializableAttribute");
+}
+
 JSC::JSObject* JSTestSerialization::serialize(ExecState& state, JSTestSerialization& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
 {
     auto& vm = state.vm();
@@ -484,6 +519,14 @@ JSC::JSObject* JSTestSerialization::serialize(ExecState& state, JSTestSerializat
     throwScope.assertNoException();
     auto* eighthIndirectlyAttributeSerializedValue = JSTestSerializationIndirectInheritance::serialize(state, *jsCast<JSTestSerializationIndirectInheritance*>(eighthIndirectlyAttributeValue), globalObject, throwScope);
     result->putDirect(vm, Identifier::fromString(&vm, "eighthIndirectlyAttribute"), eighthIndirectlyAttributeSerializedValue);
+
+    auto ninthOptionalDirectlySerializableAttributeValue = jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter(state, thisObject, throwScope);
+    throwScope.assertNoException();
+    if (!ninthOptionalDirectlySerializableAttributeValue.isNull()) {
+        auto* ninthOptionalDirectlySerializableAttributeSerializedValue = JSTestSerializationInheritFinal::serialize(state, *jsCast<JSTestSerializationInheritFinal*>(ninthOptionalDirectlySerializableAttributeValue), globalObject, throwScope);
+        result->putDirect(vm, Identifier::fromString(&vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeSerializedValue);
+    } else
+        result->putDirect(vm, Identifier::fromString(&vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeValue);
 
     return result;
 }
