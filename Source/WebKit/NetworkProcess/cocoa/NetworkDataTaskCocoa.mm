@@ -240,9 +240,8 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         }
 #endif
     }
-    
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
+    if (m_storedCredentials == WebCore::StoredCredentials::AllowStoredCredentials) {
         String requiredStoragePartition = m_session->networkStorageSession().cookieStoragePartition(request);
         if (shouldChangePartition(requiredStoragePartition, m_task.get()._storagePartitionIdentifier)) {
             LOG(NetworkSession, "%llu %s cookies for redirected URL %s", [m_task taskIdentifier], (requiredStoragePartition.isEmpty() ? "Not partitioning" : "Partitioning"), request.url().string().utf8().data());
