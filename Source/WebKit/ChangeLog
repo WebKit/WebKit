@@ -1,3 +1,14 @@
+2017-10-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Drop 'CoordinatedGraphics' as a platform prefix from generate-forwarding-headers.pl
+        https://bugs.webkit.org/show_bug.cgi?id=178575
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/generate-forwarding-headers.pl: Remove CoordinatedGraphics as
+        a supported platform prefix. No one invokes the script with this
+        argument anymore.
+
 2017-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Introduce completionHandler-based SPI for _WKDownloadDelegate.decideDestinationWithSuggestedFilename
