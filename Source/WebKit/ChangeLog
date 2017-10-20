@@ -6,6 +6,45 @@
 
         Reviewed by Joseph Pecoraro.
 
+        Modernize the ObjC adapter and related code a bit before it is hooked
+        into WKInspectorViewController.
+
+        * UIProcess/API/C/mac/WKInspectorPrivateMac.h: No need for the
+        ivar to be declared here, move to @implementation.
+
+        * UIProcess/WebInspectorProxy.h: Simplify the name to match modern convention.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter inspectorRef]):
+        (-[WKWebInspectorProxyObjCAdapter initWithWebInspectorProxy:]):
+        (-[WKWebInspectorProxyObjCAdapter invalidate]):
+        (-[WKWebInspectorProxyObjCAdapter windowDidMove:]):
+        (-[WKWebInspectorProxyObjCAdapter windowDidResize:]):
+        (-[WKWebInspectorProxyObjCAdapter windowWillClose:]):
+        (-[WKWebInspectorProxyObjCAdapter windowDidEnterFullScreen:]):
+        (-[WKWebInspectorProxyObjCAdapter windowDidExitFullScreen:]):
+        (-[WKWebInspectorProxyObjCAdapter inspectedViewFrameDidChange:]):
+        Remove unnecessary casts to and from void*.
+
+        (WebKit::WebInspectorProxy::attachmentViewDidChange):
+        (WebKit::WebInspectorProxy::setInspectorWindowFrame):
+        (WebKit::WebInspectorProxy::closeTimerFired):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Fix uses of member variable m_objCAdapter.
+
+        (-[WKWebInspectorProxyObjCAdapter close]): Deleted.
+        Rename this to invalidate to match modern convention. In this context,
+        'close' might trick someone into thinking that this closes a window/page.
+
+2017-09-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: consolidate code that hosts the Inspector page inside a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=177661
+        <rdar://problem/34740286>
+
+        Reviewed by Joseph Pecoraro.
+
         Move code that sets up and controls the inspector WebView into WKInspectorViewController.
         This will be shared between RemoteWebInspectorProxy and WebInspectorProxy eventually,
         but for now just pull out code from RemoteWebInspectorProxy. The next patch will move

@@ -59,58 +59,66 @@ static const Seconds webViewCloseTimeout { 1_min };
 
 @interface WKWebInspectorProxyObjCAdapter ()
 
-- (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
-- (void)close;
+- (instancetype)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
+- (void)invalidate;
 
 @end
 
-@implementation WKWebInspectorProxyObjCAdapter
+@implementation WKWebInspectorProxyObjCAdapter {
+    WebInspectorProxy* _inspectorProxy;
+}
 
 - (WKInspectorRef)inspectorRef
 {
-    return toAPI(static_cast<WebInspectorProxy*>(_inspectorProxy));
+    return toAPI(_inspectorProxy);
 }
 
-- (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy
+- (instancetype)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy
 {
     ASSERT_ARG(inspectorProxy, inspectorProxy);
 
     if (!(self = [super init]))
         return nil;
 
-    _inspectorProxy = static_cast<void*>(inspectorProxy); // Not retained to prevent cycles
+    // Unretained to avoid a reference cycle.
+    _inspectorProxy = inspectorProxy;
 
     return self;
 }
 
-- (void)close
+- (void)invalidate
 {
     _inspectorProxy = nullptr;
 }
 
 - (void)windowDidMove:(NSNotification *)notification
 {
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->windowFrameDidChange();
+    if (_inspectorProxy)
+        _inspectorProxy->windowFrameDidChange();
 }
 
 - (void)windowDidResize:(NSNotification *)notification
 {
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->windowFrameDidChange();
+    if (_inspectorProxy)
+        _inspectorProxy->windowFrameDidChange();
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->close();
+    if (_inspectorProxy)
+        _inspectorProxy->close();
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->windowFullScreenDidChange();
+    if (_inspectorProxy)
+        _inspectorProxy->windowFullScreenDidChange();
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
-    static_cast<WebInspectorProxy*>(_inspectorProxy)->windowFullScreenDidChange();
+    if (_inspectorProxy)
+        _inspectorProxy->windowFullScreenDidChange();
 }
 
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
@@ -121,9 +129,8 @@ static const Seconds webViewCloseTimeout { 1_min };
     // of the time the views will already have the correct frames because of autoresizing masks.
 
     dispatch_after(DISPATCH_TIME_NOW, dispatch_get_main_queue(), ^{
-        if (!_inspectorProxy)
-            return;
-        static_cast<WebInspectorProxy*>(_inspectorProxy)->inspectedViewFrameDidChange();
+        if (_inspectorProxy)
+            _inspectorProxy->inspectedViewFrameDidChange();
     });
 }
 
@@ -133,8 +140,8 @@ namespace WebKit {
 
 void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get() name:NSViewFrameDidChangeNotification object:oldView];
-    [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:newView];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_objCAdapter.get() name:NSViewFrameDidChangeNotification object:oldView];
+    [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:newView];
 
     if (m_isAttached)
         attach(m_attachmentSide);
@@ -144,6 +151,7 @@ void WebInspectorProxy::setInspectorWindowFrame(WKRect& frame)
 {
     if (m_isAttached)
         return;
+
     [m_inspectorWindow setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
 }
 
@@ -165,11 +173,11 @@ void WebInspectorProxy::closeTimerFired()
         m_inspectorView = nil;
     }
 
-    if (m_inspectorProxyObjCAdapter) {
-        [[NSNotificationCenter defaultCenter] removeObserver:m_inspectorProxyObjCAdapter.get()];
+    if (m_objCAdapter) {
+        [[NSNotificationCenter defaultCenter] removeObserver:m_objCAdapter.get()];
 
-        [m_inspectorProxyObjCAdapter close];
-        m_inspectorProxyObjCAdapter = nil;
+        [m_objCAdapter invalidate];
+        m_objCAdapter = nil;
     }
 }
 
@@ -181,7 +189,7 @@ void WebInspectorProxy::createInspectorWindow()
     NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
 
     m_inspectorWindow = WebInspectorProxy::createFrontendWindow(savedWindowFrame);
-    [m_inspectorWindow setDelegate:m_inspectorProxyObjCAdapter.get()];
+    [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
     NSView *contentView = [m_inspectorWindow contentView];
     [m_inspectorView setFrame:[contentView bounds]];
@@ -263,12 +271,12 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_closeTimer.stop();
 
     if (m_inspectorView) {
-        ASSERT(m_inspectorProxyObjCAdapter);
+        ASSERT(m_objCAdapter);
         return m_inspectorView->_page.get();
     }
 
     ASSERT(!m_inspectorView);
-    ASSERT(!m_inspectorProxyObjCAdapter);
+    ASSERT(!m_objCAdapter);
 
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
 
@@ -296,10 +304,10 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
     }
 
-    m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
-    ASSERT(m_inspectorProxyObjCAdapter);
+    m_objCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
+    ASSERT(m_objCAdapter);
 
-    [[NSNotificationCenter defaultCenter] addObserver:m_inspectorProxyObjCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
+    [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
 
     auto configuration = WebInspectorProxy::createFrontendConfiguration(inspectedPage(), isUnderTest());
     m_inspectorView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialRect configuration:configuration.get()]);
