@@ -1,3 +1,17 @@
+2017-10-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening. Adding GTK+-specific baselines for a bunch
+        of HTTP tests, and adding failure expectations for some others.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/security/contentSecurityPolicy/1.1: Added.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt: Added.
+        * platform/gtk/http/tests/security/module-no-mime-type-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Added.
+
 2017-10-20  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Update expectations for webkitConvertPoint.html
