@@ -1,3 +1,22 @@
+2017-10-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r222709 and r223572.
+        https://bugs.webkit.org/show_bug.cgi?id=178587
+
+        Still getting mac-wk2 EWS bots stuck (Requested by ap on
+        #webkit).
+
+        Reverted changesets:
+
+        "Log stack-trace for run-webkit-tests when interrupted"
+        https://bugs.webkit.org/show_bug.cgi?id=176393
+        https://trac.webkit.org/changeset/222709
+
+        "webkitpy: Hang when workers write to the same stack trace
+        file"
+        https://bugs.webkit.org/show_bug.cgi?id=178402
+        https://trac.webkit.org/changeset/223572
+
 2017-10-19  Nan Wang  <n_wang@apple.com>
 
         AX: Provide a way for Accessibility to cache the selection while retrieving rects for speak selection
