@@ -1383,28 +1383,35 @@ void FrameView::updateStyleForLayout()
     document.updateStyleIfNeeded();
 }
 
+bool FrameView::canPerformLayout() const
+{
+    if (isInRenderTreeLayout())
+        return false;
+
+    if (layoutDisallowed())
+        return false;
+
+    if (isPainting())
+        return false;
+
+    if (!m_subtreeLayoutRoot && !frame().document()->renderView())
+        return false;
+
+    return true;
+}
+
 void FrameView::layout(bool allowSubtreeLayout)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
-
-    LOG(Layout, "FrameView %p (%dx%d) layout, main frameview %d, allowSubtreeLayout=%d", this, size().width(), size().height(), frame().isMainFrame(), allowSubtreeLayout);
-    if (isInRenderTreeLayout()) {
-        LOG(Layout, "  in render tree layout, bailing");
-        return;
-    }
-
-    if (layoutDisallowed()) {
-        LOG(Layout, "  is disallowed, bailing");
-        return;
-    }
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
     ASSERT(!isPainting());
-    if (isPainting()) {
-        LOG(Layout, "  in painting, bailing");
-        return;
-    }
     ASSERT(frame().view() == this);
     ASSERT(frame().document());
     ASSERT(frame().document()->pageCacheState() == Document::NotInPageCache);
+
+    if (!canPerformLayout()) {
+        LOG(Layout, "  is not allowed, bailing");
+        return;
+    }
     // Protect the view from being deleted during layout (in recalcStyle).
     Ref<FrameView> protectedThis(*this);
     TraceScope tracingScope(LayoutStart, LayoutEnd);

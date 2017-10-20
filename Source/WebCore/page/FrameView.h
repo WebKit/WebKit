@@ -769,6 +769,7 @@ private:
     bool isFrameFlatteningValidForThisFrame() const;
     
     void markRootOrBodyRendererDirty() const;
+    bool canPerformLayout() const;
 
     bool qualifiesAsVisuallyNonEmpty() const;
     bool isViewForDocumentInFrame() const;
