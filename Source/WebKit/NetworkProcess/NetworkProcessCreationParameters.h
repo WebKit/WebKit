@@ -27,6 +27,7 @@
 
 #include "Attachment.h"
 #include "CacheModel.h"
+#include "NetworkSessionCreationParameters.h"
 #include "SandboxExtension.h"
 #include <wtf/ProcessID.h>
 #include <wtf/Vector.h>
@@ -50,6 +51,7 @@ struct NetworkProcessCreationParameters {
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
 
+    NetworkSessionCreationParameters defaultSessionParameters;
     bool privateBrowsingEnabled { false };
     CacheModel cacheModel { CacheModelDocumentViewer };
     int64_t diskCacheSizeOverride { -1 };
@@ -87,7 +89,6 @@ struct NetworkProcessCreationParameters {
     uint64_t nsURLCacheDiskCapacity;
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
-    bool allowsCellularAccess { true };
 #if PLATFORM(IOS)
     String ctDataConnectionServiceType;
 #endif

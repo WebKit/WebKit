@@ -45,25 +45,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<NetworkSession> NetworkSession::create(PAL::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
+Ref<NetworkSession> NetworkSession::create(NetworkSessionCreationParameters&& parameters)
 {
 #if PLATFORM(COCOA)
-    return NetworkSessionCocoa::create(sessionID, customProtocolManager);
+    return NetworkSessionCocoa::create(WTFMove(parameters));
 #endif
 #if USE(SOUP)
-    UNUSED_PARAM(customProtocolManager);
-    return NetworkSessionSoup::create(sessionID);
-#endif
-}
-
-NetworkSession& NetworkSession::defaultSession()
-{
-#if PLATFORM(COCOA)
-    return NetworkSessionCocoa::defaultSession();
-#else
-    ASSERT(RunLoop::isMain());
-    static NetworkSession* session = &NetworkSession::create(PAL::SessionID::defaultSessionID()).leakRef();
-    return *session;
+    return NetworkSessionSoup::create(WTFMove(parameters));
 #endif
 }
 

@@ -101,6 +101,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 
 @interface NSMutableURLRequest ()
 - (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
+- (void)setBoundInterfaceIdentifier:(NSString *)identifier;
 @end
 
 @interface NSURLResponse ()

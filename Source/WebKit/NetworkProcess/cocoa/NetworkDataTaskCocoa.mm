@@ -116,6 +116,12 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         m_storedCredentialsPolicy = WebCore::StoredCredentialsPolicy::DoNotUse;
     }
 
+    if (!cocoaSession.m_boundInterfaceIdentifier.isNull()) {
+        NSMutableURLRequest *mutableRequest = [[nsRequest mutableCopy] autorelease];
+        [mutableRequest setBoundInterfaceIdentifier:cocoaSession.m_boundInterfaceIdentifier];
+        nsRequest = mutableRequest;
+    }
+
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
         m_task = [cocoaSession.m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
         ASSERT(!cocoaSession.m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));

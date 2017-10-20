@@ -46,8 +46,9 @@ using namespace WebCore;
 
 namespace WebKit {
     
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(PAL::SessionID sessionID)
+void WebFrameNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
 {
+    auto sessionID = parameters.networkSessionParameters.sessionID;
     ASSERT(sessionID.isEphemeral());
 
     if (WebCore::NetworkStorageSession::storageSession(sessionID))
@@ -61,14 +62,14 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(PAL::SessionID sess
 
     NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(sessionID);
-    SessionTracker::setSession(sessionID, WTFMove(networkSession));
+    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 #endif
 }
 
 void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
-    if (NetworkStorageSession::storageSession(parameters.sessionID))
+    auto sessionID = parameters.networkSessionParameters.sessionID;
+    if (NetworkStorageSession::storageSession(sessionID))
         return;
 
     String base;
@@ -81,11 +82,10 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePa
 
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
-    NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
+    NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(parameters.sessionID);
-    SessionTracker::setSession(parameters.sessionID, WTFMove(networkSession));
+    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 #endif
 }
 

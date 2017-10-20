@@ -32,6 +32,7 @@
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
+#include "SessionTracker.h"
 #include <pal/SessionID.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
@@ -57,7 +58,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& frameID, con
     parameters.contentSniffingPolicy = DoNotSniffContent;
     parameters.request = m_originalRequest;
 #if USE(NETWORK_SESSION)
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), NetworkSession::defaultSession());
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *SessionTracker::networkSession(PAL::SessionID::defaultSessionID()));
 #else
     m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters));
 #endif

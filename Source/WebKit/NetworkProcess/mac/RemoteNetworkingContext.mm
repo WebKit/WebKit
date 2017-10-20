@@ -30,6 +30,7 @@
 #import "LegacyCustomProtocolManager.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
+#import "NetworkSessionCreationParameters.h"
 #import "SessionTracker.h"
 #import "WebErrors.h"
 #import "WebsiteDataStoreParameters.h"
@@ -82,9 +83,10 @@ ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& reque
 
 void RemoteNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
 {
-    ASSERT(parameters.sessionID.isEphemeral());
+    auto sessionID = parameters.networkSessionParameters.sessionID;
+    ASSERT(sessionID.isEphemeral());
 
-    if (NetworkStorageSession::storageSession(parameters.sessionID))
+    if (NetworkStorageSession::storageSession(sessionID))
         return;
 
     String base;
@@ -93,21 +95,22 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParam
     else
         base = SessionTracker::getIdentifierBase();
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()));
+    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 
-    auto* session = NetworkStorageSession::storageSession(parameters.sessionID);
+    auto* session = NetworkStorageSession::storageSession(sessionID);
     for (const auto& cookie : parameters.pendingCookies)
         session->setCookie(cookie);
 
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(parameters.sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
-    SessionTracker::setSession(parameters.sessionID, WTFMove(networkSession));
+    parameters.networkSessionParameters.legacyCustomProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>();
+    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 #endif
 }
 
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
-    if (NetworkStorageSession::storageSession(parameters.sessionID))
+    auto sessionID = parameters.networkSessionParameters.sessionID;
+    if (NetworkStorageSession::storageSession(sessionID))
         return;
 
     String base;
@@ -122,9 +125,9 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     if (!parameters.uiProcessCookieStorageIdentifier.isEmpty())
         uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
-    NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
+    NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 
-    auto* session = NetworkStorageSession::storageSession(parameters.sessionID);
+    auto* session = NetworkStorageSession::storageSession(sessionID);
     for (const auto& cookie : parameters.pendingCookies)
         session->setCookie(cookie);
 
@@ -135,8 +138,8 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     }
 
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(parameters.sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
-    SessionTracker::setSession(parameters.sessionID, WTFMove(networkSession));
+    parameters.networkSessionParameters.legacyCustomProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>();
+    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 #endif
 }
 

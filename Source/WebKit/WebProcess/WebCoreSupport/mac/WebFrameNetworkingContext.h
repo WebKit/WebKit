@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFrameNetworkingContext_h
-#define WebFrameNetworkingContext_h
+#pragma once
 
 #include "HTTPCookieAcceptPolicy.h"
 #include "WebFrame.h"
@@ -43,7 +42,7 @@ public:
     }
 
     // FIXME: remove platform-specific code and use SessionTracker
-    static void ensurePrivateBrowsingSession(PAL::SessionID);
+    static void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);
@@ -65,5 +64,3 @@ private:
 };
 
 }
-
-#endif

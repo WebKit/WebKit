@@ -1401,7 +1401,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
     // FIXME: Implement cookies.
     WebsiteDataStoreParameters parameters;
-    parameters.sessionID = m_sessionID;
+    parameters.networkSessionParameters.sessionID = m_sessionID;
     return parameters;
 }
 #endif

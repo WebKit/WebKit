@@ -251,6 +251,26 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->websiteDataStore().setCacheStorageDirectory(directory);
 }
 
+- (void)_setBoundInterfaceIdentifier:(NSString *)identifier
+{
+    _websiteDataStore->websiteDataStore().setBoundInterfaceIdentifier(identifier);
+}
+
+- (NSString *)_boundInterfaceIdentifier
+{
+    return _websiteDataStore->websiteDataStore().boundInterfaceIdentifier();
+}
+
+- (void)_setAllowsCellularAccess:(BOOL)allows
+{
+    _websiteDataStore->websiteDataStore().setAllowsCellularAccess(allows ? WebKit::AllowsCellularAccess::Yes : WebKit::AllowsCellularAccess::No);
+}
+
+- (BOOL)_allowsCellularAccess
+{
+    return _websiteDataStore->websiteDataStore().allowsCellularAccess() == WebKit::AllowsCellularAccess::Yes;
+}
+
 - (void)_resourceLoadStatisticsSetLastSeen:(double)seconds forHost:(NSString *)host
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();

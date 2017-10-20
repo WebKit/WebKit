@@ -39,6 +39,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkSession.h"
+#include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
 #include "ServiceWorkerContextManager.h"
 #include "ServiceWorkerContextManagerMessages.h"
@@ -71,6 +72,7 @@
 #include "WebSocketStream.h"
 #include "WebToStorageProcessConnection.h"
 #include "WebsiteData.h"
+#include "WebsiteDataStoreParameters.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
@@ -264,6 +266,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
     platformInitializeWebProcess(WTFMove(parameters));
+
+#if USE(NETWORK_SESSION)
+    SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create({ }));
+#endif
 
     // Match the QoS of the UIProcess and the scrolling thread but use a slightly lower priority.
     WTF::Thread::setCurrentThreadIsUserInteractive(-1);
@@ -511,7 +517,7 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
 void WebProcess::ensurePrivateBrowsingSession(PAL::SessionID sessionID)
 {
-    WebFrameNetworkingContext::ensurePrivateBrowsingSession(sessionID);
+    WebFrameNetworkingContext::ensurePrivateBrowsingSession({ { }, { }, { }, { }, { }, { }, { sessionID, { }, { }, AllowsCellularAccess::Yes }});
 }
 
 void WebProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
@@ -565,7 +571,10 @@ void WebProcess::clearCachedCredentials()
 {
     NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
 #if USE(NETWORK_SESSION)
-    NetworkSession::defaultSession().clearCredentials();
+    if (auto* networkSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID()))
+        networkSession->clearCredentials();
+    else
+        ASSERT_NOT_REACHED();
 #endif
 }
 

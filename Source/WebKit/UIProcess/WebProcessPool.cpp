@@ -424,6 +424,11 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     NetworkProcessCreationParameters parameters;
 
+    if (withWebsiteDataStore) {
+        auto websiteDataStoreParameters = withWebsiteDataStore->parameters();
+        parameters.defaultSessionParameters = websiteDataStoreParameters.networkSessionParameters;
+    }
+    
     parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
 
     parameters.cacheModel = cacheModel();
@@ -460,8 +465,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     String parentBundleDirectory = this->parentBundleDirectory();
     if (!parentBundleDirectory.isEmpty())
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
-
-    parameters.allowsCellularAccess = m_configuration->allowsCellularAccess();
 #endif
 
 #if OS(LINUX)
@@ -623,7 +626,7 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
 {
     if (networkProcess()) {
         if (privateBrowsingEnabled)
-            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }}), 0);
+            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession({ { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { }, AllowsCellularAccess::Yes }}), 0);
         else
             networkProcess()->send(Messages::NetworkProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()), 0);
     }
@@ -679,7 +682,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 
 WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDataStore)
 {
-    ensureNetworkProcess();
+    ensureNetworkProcess(&websiteDataStore);
 
     Ref<WebProcessProxy> process = WebProcessProxy::create(*this, websiteDataStore);
 
@@ -1000,7 +1003,7 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
     if (sessionID.isEphemeral()) {
         // FIXME: Merge NetworkProcess::EnsurePrivateBrowsingSession and NetworkProcess::AddWebsiteDataStore into one message type.
         // They do basically the same thing.
-        ASSERT(page.websiteDataStore().parameters().sessionID == sessionID);
+        ASSERT(page.websiteDataStore().parameters().networkSessionParameters.sessionID == sessionID);
         sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::EnsurePrivateBrowsingSession(sessionID), 0);
     } else if (sessionID != PAL::SessionID::defaultSessionID()) {

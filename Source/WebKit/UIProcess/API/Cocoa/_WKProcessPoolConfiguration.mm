@@ -200,12 +200,11 @@
 
 - (BOOL)allowsCellularAccess
 {
-    return _processPoolConfiguration->allowsCellularAccess();
+    return YES;
 }
 
 - (void)setAllowsCellularAccess:(BOOL)allowsCellularAccess
 {
-    _processPoolConfiguration->setAllowsCellularAccess(allowsCellularAccess);
 }
 
 - (BOOL)shouldCaptureAudioInUIProcess

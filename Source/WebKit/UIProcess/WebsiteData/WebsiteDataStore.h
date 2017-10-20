@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NetworkSessionCreationParameters.h"
 #include "WebProcessLifetimeObserver.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/SecurityOriginData.h>
@@ -141,6 +142,12 @@ public:
     void enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback);
 
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback);
+    
+    void setBoundInterfaceIdentifier(String&& identifier) { m_boundInterfaceIdentifier = WTFMove(identifier); }
+    const String& boundInterfaceIdentifier() { return m_boundInterfaceIdentifier; }
+    
+    void setAllowsCellularAccess(AllowsCellularAccess allows) { m_allowsCellularAccess = allows; }
+    AllowsCellularAccess allowsCellularAccess() { return m_allowsCellularAccess; }
 
 private:
     explicit WebsiteDataStore(PAL::SessionID);
@@ -186,6 +193,9 @@ private:
     RetainPtr<CFHTTPCookieStorageRef> m_cfCookieStorage;
 #endif
     HashSet<WebCore::Cookie> m_pendingCookies;
+    
+    String m_boundInterfaceIdentifier;
+    AllowsCellularAccess m_allowsCellularAccess { AllowsCellularAccess::Yes };
 };
 
 }

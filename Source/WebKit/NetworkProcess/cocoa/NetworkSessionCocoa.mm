@@ -35,6 +35,7 @@
 #import "Logging.h"
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
+#import "NetworkSessionCreationParameters.h"
 #import "SessionTracker.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/Credential.h>
@@ -483,9 +484,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 namespace WebKit {
     
-static bool allowsCellularAccess { true };
 static bool usesNetworkCache { false };
-static LegacyCustomProtocolManager* legacyCustomProtocolManager;
 
 #if !ASSERT_DISABLED
 static bool sessionsCreated = false;
@@ -526,12 +525,6 @@ static String& globalCTDataConnectionServiceType()
     return ctDataConnectionServiceType.get();
 }
 #endif
-
-void NetworkSessionCocoa::setLegacyCustomProtocolManager(LegacyCustomProtocolManager* customProtocolManager)
-{
-    ASSERT(!sessionsCreated);
-    legacyCustomProtocolManager = customProtocolManager;
-}
     
 void NetworkSessionCocoa::setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&& data)
 {
@@ -550,11 +543,6 @@ void NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(const String& 
     ASSERT(!sessionsCreated);
     globalSourceApplicationSecondaryIdentifier() = identifier;
 }
-    
-void NetworkSessionCocoa::setAllowsCellularAccess(bool value)
-{
-    allowsCellularAccess = value;
-}
 
 void NetworkSessionCocoa::setUsesNetworkCache(bool value)
 {
@@ -569,20 +557,14 @@ void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 }
 #endif
 
-Ref<NetworkSession> NetworkSessionCocoa::create(PAL::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
+Ref<NetworkSession> NetworkSessionCocoa::create(NetworkSessionCreationParameters&& parameters)
 {
-    return adoptRef(*new NetworkSessionCocoa(sessionID, customProtocolManager));
+    return adoptRef(*new NetworkSessionCocoa(WTFMove(parameters)));
 }
 
-NetworkSession& NetworkSessionCocoa::defaultSession()
-{
-    ASSERT(RunLoop::isMain());
-    static NetworkSession* session = &NetworkSessionCocoa::create(PAL::SessionID::defaultSessionID(), legacyCustomProtocolManager).leakRef();
-    return *session;
-}
-
-NetworkSessionCocoa::NetworkSessionCocoa(PAL::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
-    : NetworkSession(sessionID)
+NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& parameters)
+    : NetworkSession(parameters.sessionID)
+    , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
 {
     relaxAdoptionRequirement();
 
@@ -598,7 +580,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(PAL::SessionID sessionID, LegacyCustomP
         configuration._suppressedAutoAddedHTTPHeaders = [NSSet setWithObject:@"Content-Type"];
 #endif
 
-    if (!allowsCellularAccess)
+    if (parameters.allowsCellularAccess == AllowsCellularAccess::No)
         configuration.allowsCellularAccess = NO;
 
     if (usesNetworkCache)
@@ -623,8 +605,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(PAL::SessionID sessionID, LegacyCustomP
         configuration._CTDataConnectionServiceType = ctDataConnectionServiceType;
 #endif
 
-    if (customProtocolManager)
-        customProtocolManager->registerProtocolClass(configuration);
+    if (parameters.legacyCustomProtocolManager)
+        parameters.legacyCustomProtocolManager->registerProtocolClass(configuration);
     
 #if HAVE(TIMINGDATAOPTIONS)
     configuration._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
@@ -632,7 +614,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(PAL::SessionID sessionID, LegacyCustomP
     setCollectsTimingData();
 #endif
 
-    auto* storageSession = WebCore::NetworkStorageSession::storageSession(sessionID);
+    auto* storageSession = WebCore::NetworkStorageSession::storageSession(parameters.sessionID);
     RELEASE_ASSERT(storageSession);
     if (CFHTTPCookieStorageRef storage = storageSession->cookieStorage().get())
         configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];

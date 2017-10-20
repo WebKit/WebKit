@@ -39,13 +39,12 @@ class NetworkStorageSession;
 
 namespace WebKit {
 
-class LegacyCustomProtocolManager;
 class NetworkDataTask;
+struct NetworkSessionCreationParameters;
 
 class NetworkSession : public RefCounted<NetworkSession> {
 public:
-    static Ref<NetworkSession> create(PAL::SessionID, LegacyCustomProtocolManager* = nullptr);
-    static NetworkSession& defaultSession();
+    static Ref<NetworkSession> create(NetworkSessionCreationParameters&&);
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();

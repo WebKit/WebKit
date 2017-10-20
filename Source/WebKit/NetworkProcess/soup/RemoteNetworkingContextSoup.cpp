@@ -50,13 +50,14 @@ bool RemoteNetworkingContext::isValid() const
 
 void RemoteNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
 {
-    ASSERT(parameters.sessionID.isEphemeral());
+    auto sessionID = parameters.networkSessionParameters.sessionID;
+    ASSERT(sessionID.isEphemeral());
 
-    if (NetworkStorageSession::storageSession(parameters.sessionID))
+    if (NetworkStorageSession::storageSession(sessionID))
         return;
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(parameters.sessionID, String::number(parameters.sessionID.sessionID()));
-    SessionTracker::setSession(parameters.sessionID, NetworkSession::create(parameters.sessionID));
+    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
+    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 }
 
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)

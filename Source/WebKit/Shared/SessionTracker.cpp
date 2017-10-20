@@ -66,14 +66,11 @@ static HashMap<PAL::SessionID, RefPtr<NetworkSession>>& staticSessionMap()
 
 NetworkSession* SessionTracker::networkSession(PAL::SessionID sessionID)
 {
-    if (sessionID == PAL::SessionID::defaultSessionID())
-        return &NetworkSession::defaultSession();
     return staticSessionMap().get(sessionID);
 }
 
 void SessionTracker::setSession(PAL::SessionID sessionID, Ref<NetworkSession>&& session)
 {
-    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
     staticSessionMap().set(sessionID, WTFMove(session));
 }
 #endif

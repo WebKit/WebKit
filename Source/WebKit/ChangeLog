@@ -1,5 +1,101 @@
 2017-10-20  Alex Christensen  <achristensen@webkit.org>
 
+        Expose _boundInterfaceIdentifier and _allowsCellularAccess to WKWebsiteDataStorePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=178418
+        <rdar://problem/29599569>
+
+        Reviewed by Tim Horton.
+        
+        In r213747 I introduced allowsCellularAccess to _WKProcessPoolConfiguration because there
+        was no way to add parameters to the default (and other) NetworkSession constructors.  Since
+        clients have not adopted this SPI, we can introduce such a way in NetworkSessionCreationParameters
+        and move the SPI to WKWebsiteDataStore, which is where it and other NetworkSession properties
+        ought to be instead of making them WKProcessPool global.
+
+        We also need to expose access to NSURLRequest.boundInterfaceIdentifier.  Instead of serializing and
+        deserializing that property for each NSURLRequest and then having subresources mysteriously jump back
+        to having no bound interface identifiers, I'm adding this to WKWebsiteDataStore, too, to make it a
+        session networking property.
+        
+        I manually verified that these properties are being set properly with a custom test app and added logs.
+        Unfortunately, these properties don't do anything under circumstances anywhere close to what we test.
+        The architecture change of having NetworkSessionCreationParameters is verified to not have a change in
+        behavior by existing tests, such as any test that uses TestProtocol (which we should eventually remove).
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::clearCachedCredentials):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::create):
+        (WebKit::NetworkSession::defaultSession): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSessionCreationParameters.h: Added.
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier):
+        (WebKit::NetworkSessionCocoa::create):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::setLegacyCustomProtocolManager): Deleted.
+        (WebKit::NetworkSessionCocoa::setAllowsCellularAccess): Deleted.
+        (WebKit::NetworkSessionCocoa::defaultSession): Deleted.
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * Shared/SessionTracker.cpp:
+        (WebKit::SessionTracker::networkSession):
+        (WebKit::SessionTracker::setSession):
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setBoundInterfaceIdentifier:]):
+        (-[WKWebsiteDataStore _boundInterfaceIdentifier]):
+        (-[WKWebsiteDataStore _setAllowsCellularAccess:]):
+        (-[WKWebsiteDataStore _allowsCellularAccess]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration allowsCellularAccess]):
+        (-[_WKProcessPoolConfiguration setAllowsCellularAccess:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::setBoundInterfaceIdentifier):
+        (WebKit::WebsiteDataStore::boundInterfaceIdentifier):
+        (WebKit::WebsiteDataStore::setAllowsCellularAccess):
+        (WebKit::WebsiteDataStore::allowsCellularAccess):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensurePrivateBrowsingSession):
+        (WebKit::WebProcess::clearCachedCredentials):
+
+2017-10-20  Alex Christensen  <achristensen@webkit.org>
+
         Add ObjC SPI to _WKDownloadDelegate missing from WKContextDownloadClient
         https://bugs.webkit.org/show_bug.cgi?id=178566
         <rdar://problem/23041906>

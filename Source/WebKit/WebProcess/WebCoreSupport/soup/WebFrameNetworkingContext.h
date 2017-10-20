@@ -43,7 +43,7 @@ public:
         return adoptRef(*new WebFrameNetworkingContext(frame));
     }
 
-    static void ensurePrivateBrowsingSession(PAL::SessionID);
+    static void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     WebFrameLoaderClient* webFrameLoaderClient() const;
