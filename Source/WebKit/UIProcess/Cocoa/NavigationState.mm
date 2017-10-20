@@ -819,53 +819,53 @@ bool NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace(We
     if (!navigationDelegate)
         return false;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView canAuthenticateAgainstProtectionSpace:protectionSpace->protectionSpace().nsSpace()];
+#pragma clang diagnostic pop
 }
 
-void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy* authenticationChallenge)
+void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy& authenticationChallenge)
 {
     if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler) {
         auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
         if (!navigationDelegate) {
-            authenticationChallenge->listener()->performDefaultHandling();
+            authenticationChallenge.listener()->performDefaultHandling();
             return;
         }
 
-        RefPtr<AuthenticationChallengeProxy> challenge = authenticationChallenge;
-        RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:didReceiveAuthenticationChallenge:completionHandler:));
-        [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(*authenticationChallenge)
-            completionHandler:[challenge, checker](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
-                if (checker->completionHandlerHasBeenCalled())
-                    return;
-                checker->didCallCompletionHandler();
+        auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:didReceiveAuthenticationChallenge:completionHandler:));
+        [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:BlockPtr<void(NSURLSessionAuthChallengeDisposition, NSURLCredential *)>::fromCallable([challenge = makeRef(authenticationChallenge), checker = WTFMove(checker)](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
 
-                switch (disposition) {
-                case NSURLSessionAuthChallengeUseCredential: {
-                    RefPtr<WebCredential> webCredential;
-                    if (credential)
-                        webCredential = WebCredential::create(WebCore::Credential(credential));
+            switch (disposition) {
+            case NSURLSessionAuthChallengeUseCredential: {
+                RefPtr<WebCredential> webCredential;
+                if (credential)
+                    webCredential = WebCredential::create(WebCore::Credential(credential));
 
-                    challenge->listener()->useCredential(webCredential.get());
-                    break;
-                }
-
-                case NSURLSessionAuthChallengePerformDefaultHandling:
-                    challenge->listener()->performDefaultHandling();
-                    break;
-
-                case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
-                    challenge->listener()->cancel();
-                    break;
-
-                case NSURLSessionAuthChallengeRejectProtectionSpace:
-                    challenge->listener()->rejectProtectionSpaceAndContinue();
-                    break;
-
-                default:
-                    [NSException raise:NSInvalidArgumentException format:@"Invalid NSURLSessionAuthChallengeDisposition (%ld)", (long)disposition];
-                }
+                challenge->listener()->useCredential(webCredential.get());
+                break;
             }
-        ];
+
+            case NSURLSessionAuthChallengePerformDefaultHandling:
+                challenge->listener()->performDefaultHandling();
+                break;
+
+            case NSURLSessionAuthChallengeCancelAuthenticationChallenge:
+                challenge->listener()->cancel();
+                break;
+
+            case NSURLSessionAuthChallengeRejectProtectionSpace:
+                challenge->listener()->rejectProtectionSpaceAndContinue();
+                break;
+
+            default:
+                [NSException raise:NSInvalidArgumentException format:@"Invalid NSURLSessionAuthChallengeDisposition (%ld)", (long)disposition];
+            }
+        }).get()];
         return;
     }
 
@@ -876,7 +876,10 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
     if (!navigationDelegate)
         return;
 
-    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(*authenticationChallenge)];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(authenticationChallenge)];
+#pragma clang diagnostic pop
 }
 
 void NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, ProcessTerminationReason)

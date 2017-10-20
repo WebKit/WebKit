@@ -60,8 +60,8 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
 
-- (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
-- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+- (BOOL)_webView:(WKWebView *)webView canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace WK_API_DEPRECATED_WITH_REPLACEMENT("webView:didReceiveAuthenticationChallenge:completionHandler:", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge WK_API_DEPRECATED_WITH_REPLACEMENT("webView:didReceiveAuthenticationChallenge:completionHandler:", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 - (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
 - (void)_webViewWebProcessDidBecomeResponsive:(WKWebView *)webView;

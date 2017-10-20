@@ -5824,9 +5824,9 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t frameID, Ref<
     MESSAGE_CHECK(frame);
 
     if (m_navigationClient)
-        m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.ptr());
+        m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());
     else
-        m_loaderClient->didReceiveAuthenticationChallengeInFrame(*this, *frame, authenticationChallenge.ptr());
+        m_loaderClient->didReceiveAuthenticationChallengeInFrame(*this, *frame, authenticationChallenge.get());
 }
 
 void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Ref<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply>&& reply)

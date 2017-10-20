@@ -1148,12 +1148,12 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             return m_client.canAuthenticateAgainstProtectionSpaceInFrame(toAPI(&page), toAPI(&frame), toAPI(protectionSpace), m_client.base.clientInfo);
         }
 
-        void didReceiveAuthenticationChallengeInFrame(WebPageProxy& page, WebFrameProxy& frame, AuthenticationChallengeProxy* authenticationChallenge) override
+        void didReceiveAuthenticationChallengeInFrame(WebPageProxy& page, WebFrameProxy& frame, AuthenticationChallengeProxy& authenticationChallenge) override
         {
             if (!m_client.didReceiveAuthenticationChallengeInFrame)
                 return;
 
-            m_client.didReceiveAuthenticationChallengeInFrame(toAPI(&page), toAPI(&frame), toAPI(authenticationChallenge), m_client.base.clientInfo);
+            m_client.didReceiveAuthenticationChallengeInFrame(toAPI(&page), toAPI(&frame), toAPI(&authenticationChallenge), m_client.base.clientInfo);
         }
 
         void didStartProgress(WebPageProxy& page) override
@@ -2235,11 +2235,11 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             return m_client.canAuthenticateAgainstProtectionSpace(toAPI(&page), toAPI(protectionSpace), m_client.base.clientInfo);
         }
         
-        void didReceiveAuthenticationChallenge(WebPageProxy& page, AuthenticationChallengeProxy* authenticationChallenge) override
+        void didReceiveAuthenticationChallenge(WebPageProxy& page, AuthenticationChallengeProxy& authenticationChallenge) override
         {
             if (!m_client.didReceiveAuthenticationChallenge)
                 return;
-            m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(authenticationChallenge), m_client.base.clientInfo);
+            m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(&authenticationChallenge), m_client.base.clientInfo);
         }
 
         void processDidTerminate(WebPageProxy& page, WebKit::ProcessTerminationReason reason) override

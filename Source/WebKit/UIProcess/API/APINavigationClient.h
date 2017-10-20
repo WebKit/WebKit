@@ -82,7 +82,7 @@ public:
     virtual void renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
 
     virtual bool canAuthenticateAgainstProtectionSpace(WebKit::WebPageProxy&, WebKit::WebProtectionSpace*) { return false; }
-    virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy*) { }
+    virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy&) { }
 
     // FIXME: These function should not be part of this client.
     virtual void processDidTerminate(WebKit::WebPageProxy&, WebKit::ProcessTerminationReason) { }

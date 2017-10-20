@@ -105,9 +105,9 @@ private:
         webkitBackForwardListChanged(webkit_web_view_get_back_forward_list(m_webView), addedItem, WTFMove(removedItems));
     }
 
-    void didReceiveAuthenticationChallengeInFrame(WebPageProxy&, WebFrameProxy&, AuthenticationChallengeProxy* authenticationChallenge) override
+    void didReceiveAuthenticationChallengeInFrame(WebPageProxy&, WebFrameProxy&, AuthenticationChallengeProxy& authenticationChallenge) override
     {
-        webkitWebViewHandleAuthenticationChallenge(m_webView, authenticationChallenge);
+        webkitWebViewHandleAuthenticationChallenge(m_webView, &authenticationChallenge);
     }
 
     void processDidCrash(WebPageProxy&) override

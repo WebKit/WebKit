@@ -1,5 +1,27 @@
 2017-10-19  Alex Christensen  <achristensen@webkit.org>
 
+        Modernize authentication challenge handling in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=178555
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didReceiveAuthenticationChallengeInFrame):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didReceiveAuthenticationChallenge):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+
+2017-10-19  Alex Christensen  <achristensen@webkit.org>
+
         Modernize API::DownloadClient
         https://bugs.webkit.org/show_bug.cgi?id=178547
 
