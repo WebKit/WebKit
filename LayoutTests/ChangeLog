@@ -1,3 +1,13 @@
+2017-10-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Mark http/tests/navigation/keyboard-events-during-provisional-navigation.html and
+        http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html as failures.
+        https://bugs.webkit.org/show_bug.cgi?id=178549
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-10-20  Ms2ger  <Ms2ger@igalia.com>
 
         Add the MAX_CLIENT_WAIT_TIMEOUT_WEBGL constant to WebGL2RenderingContext.

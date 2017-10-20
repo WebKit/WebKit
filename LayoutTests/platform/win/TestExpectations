@@ -3803,3 +3803,6 @@ webkit.org/b/178341 animations/play-state-in-shorthand.html [ Pass Failure ]
 webkit.org/b/178341 animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/178413 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
+
+webkit.org/b/178549 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
+webkit.org/b/178549 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
