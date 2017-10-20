@@ -82,7 +82,7 @@ namespace WebCore {
         bool hasPendingActivity();
 
         // Sends a message and optional cloned port to the remote port.
-        void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>);
+        void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&);
 
         // Extracts a message from the message queue for this port.
         std::unique_ptr<EventData> takeMessageFromRemote();

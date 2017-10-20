@@ -55,7 +55,7 @@ private:
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
     void postMessageToPageInspector(const String&) final { };
     void workerGlobalScopeDestroyed() final { };
-    void postMessageToWorkerObject(RefPtr<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>) final { };
+    void postMessageToWorkerObject(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) final { };
     void confirmMessageFromWorkerObject(bool) final { };
     void reportPendingActivity(bool) final { };
 };
