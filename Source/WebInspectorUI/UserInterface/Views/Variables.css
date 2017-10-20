@@ -103,6 +103,13 @@
     --network-pseudo-header-color: hsl(312, 35%, 51%);
     --network-error-color: hsl(0, 54%, 50%);
 
+    --network-queue-color: hsl(0, 0%, 54%);
+    --network-dns-color: hsl(265, 82%, 60%);
+    --network-connect-color: hsl(46, 92%, 62%);
+    --network-secure-color: hsl(352, 81%, 59%);
+    --network-request-color: hsl(118, 56%, 65%);
+    --network-response-color: hsl(202, 61%, 59%);
+
     --even-zebra-stripe-row-background-color: white;
     --odd-zebra-stripe-row-background-color: hsl(0, 0%, 95%);
     --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03)) top left / 100% 40px;

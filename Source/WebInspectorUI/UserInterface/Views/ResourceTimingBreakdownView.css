@@ -1,0 +1,119 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.resource-timing-breakdown {
+    width: 300px;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.resource-timing-breakdown .waterfall {
+    position: relative;
+    height: 40px;
+}
+
+.resource-timing-breakdown .waterfall .block {
+    top: 12px;
+    min-width: 3px;
+    height: 12px;
+}
+
+.resource-timing-breakdown .waterfall .block.request,
+.resource-timing-breakdown .waterfall .block.response {
+    top: 4px;
+    height: 28px;
+}
+
+body[dir=ltr] .resource-timing-breakdown .waterfall .block:matches(.queue, .request) {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+body[dir=ltr] .resource-timing-breakdown .waterfall .block.response {
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+body[dir=rtl] .resource-timing-breakdown .waterfall .block:matches(.queue, .request) {
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+body[dir=rtl] .resource-timing-breakdown .waterfall .block.response {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.resource-timing-breakdown .numbers {
+    display: inline-block;
+    -webkit-margin-start: 20px;
+    text-align: start;
+}
+
+.resource-timing-breakdown .numbers > p {
+    margin: 5px 0;
+}
+
+.resource-timing-breakdown .numbers > p > .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    -webkit-margin-start: 12px;
+    -webkit-margin-end: 3px;
+    border: 1px solid hsla(0, 0%, 25%, 0.4);
+    border-radius: 2px;
+}
+
+.resource-timing-breakdown .numbers .swatch.queue {
+    background-color: var(--network-queue-color);
+}
+
+.resource-timing-breakdown .numbers .swatch.dns {
+    background-color: var(--network-dns-color);
+}
+
+.resource-timing-breakdown .numbers .swatch.connect {
+    background-color: var(--network-connect-color);
+}
+
+.resource-timing-breakdown .numbers .swatch.secure {
+    background-color: var(--network-secure-color);
+}
+
+.resource-timing-breakdown .numbers .swatch.request {
+    background-color: var(--network-request-color);
+}
+
+.resource-timing-breakdown .numbers .swatch.response {
+    background-color: var(--network-response-color);
+}
+
+.resource-timing-breakdown .numbers > p > .label {
+    font-weight: bold;
+}
+
+.resource-timing-breakdown .numbers > p.total {
+    margin-top: 15px;
+}

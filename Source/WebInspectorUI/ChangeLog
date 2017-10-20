@@ -1,3 +1,123 @@
+2017-10-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Improve graphical representation of network waterfall
+        https://bugs.webkit.org/show_bug.cgi?id=147897
+        <rdar://problem/27482198>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and resources.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Global styles.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table .header .cell.waterfall):
+        (.network-table .timeline-ruler):
+        (.network-table .timeline-ruler > .header):
+        Styles for having a TimelineRuler in the Waterfall's table header.
+
+        (.network-table :not(.header) .cell.waterfall):
+        (.network-table :not(.header) .cell.waterfall .waterfall-container):
+        (.waterfall .block):
+        (.waterfall .block.request,):
+        (.waterfall .block.mouse):
+        (.waterfall .block.queue):
+        (.waterfall .block.dns):
+        (.waterfall .block.connect):
+        (.waterfall .block.secure):
+        (.waterfall .block.request):
+        (.waterfall .block.response):
+        Waterfall styles inside the Network Table.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.tablePopulateCell):
+        (WI.NetworkTableContentView.prototype.initialLayout):
+        (WI.NetworkTableContentView.prototype._updateWaterfallTimelineRuler):
+        (WI.NetworkTableContentView.prototype._updateEntryForResource):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFinish):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFail):
+        (WI.NetworkTableContentView.prototype._networkTimelineRecordAdded):
+        (WI.NetworkTableContentView.prototype._tableWaterfallColumnDidChangeWidth):
+        Update the TimelineRuler and Waterfall column when the column's
+        size changes or the time bounds change. The time bounds right now
+        are the earliest and latest time of resources. Later we hope to
+        bound this by a timeline selection.
+
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForResource):
+        (WI.NetworkTableContentView.prototype._handleMousedownWaterfall):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.appendBlock):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        (WI.NetworkTableContentView.prototype._hidePopover):
+        Create and manage a popover for the waterfall column.
+
+        * UserInterface/Views/Popover.js:
+        (WI.Popover):
+        (WI.Popover.prototype.get element):
+        (WI.Popover.prototype.get visible):
+        (WI.Popover.prototype.get backgroundStyle):
+        (WI.Popover.prototype.set backgroundStyle):
+        (WI.Popover.prototype._drawBackground):
+        Provide an option to have a white background popover.
+
+        * UserInterface/Views/ResourceTimingBreakdownView.css: Added.
+        (.resource-timing-breakdown):
+        (.resource-timing-breakdown .waterfall):
+        (.resource-timing-breakdown .waterfall .block):
+        (.resource-timing-breakdown .waterfall .block.request):
+        (body[dir=ltr] .resource-timing-breakdown .waterfall .block.queue,):
+        (body[dir=ltr] .resource-timing-breakdown .waterfall .block.response):
+        (body[dir=rtl] .resource-timing-breakdown .waterfall .block.queue,):
+        (body[dir=rtl] .resource-timing-breakdown .waterfall .block.response):
+        (.resource-timing-breakdown .numbers):
+        (body[dir=ltr] .resource-timing-breakdown .numbers):
+        (body[dir=rtl] .resource-timing-breakdown .numbers):
+        Waterfall styles and sizes in the popover's breakdown view.
+
+        (.resource-timing-breakdown .numbers > p):
+        (.resource-timing-breakdown .numbers > p > .swatch):
+        (.resource-timing-breakdown .numbers .swatch.queue):
+        (.resource-timing-breakdown .numbers .swatch.dns):
+        (.resource-timing-breakdown .numbers .swatch.connect):
+        (.resource-timing-breakdown .numbers .swatch.secure):
+        (.resource-timing-breakdown .numbers .swatch.request):
+        (.resource-timing-breakdown .numbers .swatch.response):
+        (.resource-timing-breakdown .numbers > p > .label):
+        (.resource-timing-breakdown .numbers > p.total):
+        Number and label styles in the popover's breakdown view.
+
+        * UserInterface/Views/ResourceTimingBreakdownView.js: Added.
+        (WI.ResourceTimingBreakdownView):
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout):
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.appendBlock):
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.appendRow):
+        Show a section for a waterfall visualization and a section for the numbers.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.reloadVisibleColumnCells):
+        (WI.Table.prototype.cellForRowAndColumn):
+        (WI.Table.prototype.addColumn):
+        (WI.Table.prototype.showColumn):
+        (WI.Table.prototype.hideColumn):
+        (WI.Table.prototype.resizerDragging):
+        (WI.Table.prototype.resizerDragEnded):
+        (WI.Table.prototype._resizeColumnsAndFiller):
+        (WI.Table.prototype._applyColumnWidths):
+        (WI.Table.prototype._positionHeaderViews):
+        * UserInterface/Views/TableColumn.js:
+        (WI.TableColumn.prototype.get headerView):
+        Provide a way to include a WI.View with a TableColumn Header. This
+        matches what we do with DataGrid, and ends up being pretty concise.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header):
+        Make the height a variable so that other code can work off of it.
+
 2017-10-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Remove superfluous file External/.eslintrc

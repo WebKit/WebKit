@@ -238,6 +238,23 @@ WI.Table = class Table extends WI.View
         this._cachedRows.delete(rowIndex);
     }
 
+    reloadVisibleColumnCells(column)
+    {
+        let columnIndex = this._visibleColumns.indexOf(column);
+        if (columnIndex === -1)
+            return;
+
+        for (let rowIndex = this._visibleRowIndexStart; rowIndex < this._visibleRowIndexEnd; ++rowIndex) {
+            let row = this._cachedRows.get(rowIndex);
+            if (!row)
+                continue;
+            let cell = row.children[columnIndex];
+            if (!cell)
+                continue;
+            this._delegate.tablePopulateCell(this, cell, column, rowIndex);
+        }
+    }
+
     reloadCell(rowIndex, columnIdentifier)
     {
         let column = this._columnSpecs.get(columnIdentifier);
@@ -297,6 +314,22 @@ WI.Table = class Table extends WI.View
         return this._columnSpecs.get(identifier);
     }
 
+    cellForRowAndColumn(rowIndex, column)
+    {
+        if (!this._isRowVisible(rowIndex))
+            return null;
+
+        let row = this._cachedRows.get(rowIndex);
+        if (!row)
+            return null;
+
+        let columnIndex = this._visibleColumns.indexOf(column);
+        if (columnIndex === -1)
+            return null;
+
+        return row.children[columnIndex];
+    }
+
     addColumn(column)
     {
         this._columnSpecs.set(column.identifier, column);
@@ -309,6 +342,8 @@ WI.Table = class Table extends WI.View
             this._visibleColumns.push(column);
             this._headerElement.appendChild(this._createHeaderCell(column));
             this._fillerRow.appendChild(this._createFillerCell(column));
+            if (column.headerView)
+                this.addSubview(column.headerView);
         }
 
         // Restore saved user-specified column visibility.
@@ -355,6 +390,9 @@ WI.Table = class Table extends WI.View
 
         this._headerElement.insertBefore(this._createHeaderCell(column), this._headerElement.children[newColumnIndex]);
         this._fillerRow.insertBefore(this._createFillerCell(column), this._fillerRow.children[newColumnIndex]);
+
+        if (column.headerView)
+            this.addSubview(column.headerView);
 
         // We haven't yet done any layout, nothing to do.
         if (!this._columnWidths)
@@ -415,6 +453,9 @@ WI.Table = class Table extends WI.View
 
         this._headerElement.removeChild(this._headerElement.children[columnIndex]);
         this._fillerRow.removeChild(this._fillerRow.children[columnIndex]);
+
+        if (column.headerView)
+            this.removeSubview(column.headerView);
 
         // We haven't yet done any layout, nothing to do.
         if (!this._columnWidths)
@@ -567,6 +608,7 @@ WI.Table = class Table extends WI.View
         this._widthGeneration++;
 
         this._applyColumnWidths();
+        this._positionHeaderViews();
     }
 
     resizerDragEnded(resizer)
@@ -581,6 +623,7 @@ WI.Table = class Table extends WI.View
         this._resizeOriginalColumnWidths = null;
 
         this._positionResizerElements();
+        this._positionHeaderViews();
     }
 
     // Private
@@ -869,6 +912,7 @@ WI.Table = class Table extends WI.View
         this._updateFillerRowWithNewHeight();
         this._applyColumnWidths();
         this._positionResizerElements();
+        this._positionHeaderViews();
     }
 
     _updateVisibleRows()
@@ -976,9 +1020,6 @@ WI.Table = class Table extends WI.View
 
     _applyColumnWidths()
     {
-        for (let i = 0; i < this._visibleColumns.length; ++i)
-            this._visibleColumns[i].width = this._columnWidths[i];
-
         for (let i = 0; i < this._headerElement.children.length; ++i)
             this._headerElement.children[i].style.width = this._columnWidths[i] + "px";
 
@@ -987,6 +1028,10 @@ WI.Table = class Table extends WI.View
                 row.children[i].style.width = this._columnWidths[i] + "px";
             row.__widthGeneration = this._widthGeneration;
         }
+
+        // Update Table Columns after cells since events may respond to this.
+        for (let i = 0; i < this._visibleColumns.length; ++i)
+            this._visibleColumns[i].width = this._columnWidths[i];
 
         // Create missing cells after we've sized.
         for (let row of this._listElement.children) {
@@ -1039,6 +1084,29 @@ WI.Table = class Table extends WI.View
         for (let i = 0; i < resizersNeededCount; ++i) {
             totalWidth += this._columnWidths[i];
             this._resizers[i].element.style[positionAttribute] = (totalWidth - columnResizerAdjustment) + "px";
+        }
+    }
+
+    _positionHeaderViews()
+    {
+        if (!this.subviews.length)
+            return;
+
+        let offset = 0;
+        let updates = [];
+        for (let i = 0; i < this._visibleColumns.length; ++i) {
+            let column = this._visibleColumns[i];
+            let width = this._columnWidths[i];
+            if (column.headerView)
+                updates.push({headerView: column.headerView, offset, width});
+            offset += width;
+        }
+
+        let styleProperty = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
+        for (let {headerView, offset, width} of updates) {
+            headerView.element.style.setProperty(styleProperty, offset + "px");
+            headerView.element.style.width = width + "px";
+            headerView.updateLayout(WI.View.LayoutReason.Resize);
         }
     }
 

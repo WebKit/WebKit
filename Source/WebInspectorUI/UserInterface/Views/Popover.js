@@ -37,6 +37,7 @@ WI.Popover = class Popover extends WI.Object
         this._anchorPoint = new WI.Point;
         this._preferredEdges = null;
         this._resizeHandler = null;
+        this._backgroundStyle = WI.Popover.BackgroundStyle.Default;
 
         this._contentNeedsUpdate = false;
         this._dismissing = false;
@@ -51,19 +52,16 @@ WI.Popover = class Popover extends WI.Object
 
     // Public
 
-    get element()
+    get element() { return this._element; }
+
+    get visible()
     {
-        return this._element;
+        return this._element.parentNode === document.body && !this._element.classList.contains(WI.Popover.FadeOutClassName);
     }
 
     get frame()
     {
         return this._frame;
-    }
-
-    get visible()
-    {
-        return this._element.parentNode === document.body && !this._element.classList.contains(WI.Popover.FadeOutClassName);
     }
 
     set frame(frame)
@@ -74,6 +72,18 @@ WI.Popover = class Popover extends WI.Object
         this._element.style.height = frame.size.height + "px";
         this._element.style.backgroundSize = frame.size.width + "px " + frame.size.height + "px";
         this._frame = frame;
+    }
+
+    get backgroundStyle()
+    {
+        return this._backgroundStyle;
+    }
+
+    set backgroundStyle(style)
+    {
+        console.assert(Object.values(WI.Popover.BackgroundStyle).includes(style));
+
+        this._backgroundStyle = style;
     }
 
     set content(content)
@@ -424,7 +434,7 @@ WI.Popover = class Popover extends WI.Object
         ctx.clip();
 
         // Panel background color fill.
-        ctx.fillStyle = "rgb(236, 236, 236)";
+        ctx.fillStyle = this._backgroundStyle === WI.Popover.BackgroundStyle.White ? "white" : "rgb(236, 236, 236)";
         ctx.fillRect(0, 0, width, height);
 
         // Stroke.
@@ -580,6 +590,11 @@ WI.Popover = class Popover extends WI.Object
             WI.quickConsole.keyboardShortcutDisabled = true;
         }
     }
+};
+
+WI.Popover.BackgroundStyle = {
+    Default: "popover-background-default",
+    White: "popover-background-white",
 };
 
 WI.Popover.FadeOutClassName = "fade-out";

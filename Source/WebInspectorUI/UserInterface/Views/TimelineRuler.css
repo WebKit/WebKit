@@ -61,7 +61,9 @@ body[dir=rtl] .timeline-ruler > .markers > :matches(.divider, .marker) {
     top: 0;
     left: 0;
     right: 0;
-    height: 23px;
+    height: var(--timeline-ruler-height);
+
+    --timeline-ruler-height: 23px;
 }
 
 
