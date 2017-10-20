@@ -916,6 +916,8 @@
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
 		41FAF5F91E3C1025001AE678 /* LibWebRTCResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FAF5F71E3C0B47001AE678 /* LibWebRTCResolver.cpp */; };
 		4450AEC01DC3FAE5009943F2 /* SharedMemoryCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */; };
+		460F488F1F996F7100CF4B87 /* ServiceWorkerContextManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460F488D1F996F6C00CF4B87 /* ServiceWorkerContextManagerMessageReceiver.cpp */; };
+		460F48901F996F7100CF4B87 /* ServiceWorkerContextManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F488E1F996F6C00CF4B87 /* ServiceWorkerContextManagerMessages.h */; };
 		462107D81F38DBDB00DD7810 /* PingLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 462107D71F38DBD300DD7810 /* PingLoad.cpp */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
@@ -1032,9 +1034,7 @@
 		5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7E016138E2900D03ED3 /* NetworkProcess.h */; };
 		5179556D162877B100FA43B6 /* NetworkProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510CC7EA16138E7200D03ED3 /* NetworkProcessProxy.cpp */; };
 		5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7EB16138E7200D03ED3 /* NetworkProcessProxy.h */; };
-		617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchConnectionMessageReceiver.cpp */; };
 		517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */; };
-		617A52D91F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 617A52D61F43A9B600DCDC0A /* ServiceWorkerClientFetchMessages.h */; };
 		517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */; };
 		517A53041F4793C600DCDC0A /* WebSWClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */; };
 		517A53051F4793C600DCDC0A /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
@@ -1210,6 +1210,7 @@
 		5CD286581E7235D10094FDC8 /* WKContentRuleListStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE85B1F1C88E6430070BFCE /* PingLoad.h */; };
 		5CFECB041E1ED1CC00F88504 /* LegacyCustomProtocolManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */; };
+		617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */; };
 		636353A51E9858DF0009F8AF /* _WKGeolocationCoreLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63C32C251E9810D900699BD0 /* _WKGeolocationPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */; };
 		63C32C261E9810D900699BD0 /* _WKGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3217,6 +3218,8 @@
 		41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCResolver.h; path = Network/webrtc/LibWebRTCResolver.h; sourceTree = "<group>"; };
 		41FAF5F71E3C0B47001AE678 /* LibWebRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCResolver.cpp; path = Network/webrtc/LibWebRTCResolver.cpp; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
+		460F488D1F996F6C00CF4B87 /* ServiceWorkerContextManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerContextManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		460F488E1F996F6C00CF4B87 /* ServiceWorkerContextManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerContextManagerMessages.h; sourceTree = "<group>"; };
 		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PingLoad.cpp; path = NetworkProcess/PingLoad.cpp; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
@@ -3344,9 +3347,7 @@
 		516A4A5B120A2CCD00C05B7F /* APIError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIError.h; sourceTree = "<group>"; };
 		517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKApplicationCacheManager.cpp; sourceTree = "<group>"; };
 		517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKApplicationCacheManager.h; sourceTree = "<group>"; };
-		617A52D61F43A9B600DCDC0A /* ServiceWorkerFetchClientMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnectionMessages.h; sourceTree = "<group>"; };
 		517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnectionMessages.h; sourceTree = "<group>"; };
-		617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerClientFetchMessageReceiver.cpp; sourceTree = "<group>"; };
 		517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		517A53021F4793B200DCDC0A /* WebSWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWClientConnection.h; sourceTree = "<group>"; };
 		517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWClientConnection.cpp; sourceTree = "<group>"; };
@@ -3564,6 +3565,7 @@
 		5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyCustomProtocolManager.cpp; path = NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerClientFetchMessageReceiver.cpp; sourceTree = "<group>"; };
 		63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKGeolocationPosition.mm; sourceTree = "<group>"; };
 		63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPosition.h; sourceTree = "<group>"; };
 		63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPositionInternal.h; sourceTree = "<group>"; };
@@ -8027,7 +8029,9 @@
 				1BBBE49E19B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp */,
 				E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */,
 				E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */,
-				617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchConnectionMessageReceiver.cpp */,
+				617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */,
+				460F488D1F996F6C00CF4B87 /* ServiceWorkerContextManagerMessageReceiver.cpp */,
+				460F488E1F996F6C00CF4B87 /* ServiceWorkerContextManagerMessages.h */,
 				2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */,
 				2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */,
 				1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */,
@@ -8800,6 +8804,7 @@
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				4131F3D51F96E9350059995A /* ServiceWorkerContextManager.h in Headers */,
+				460F48901F996F7100CF4B87 /* ServiceWorkerContextManagerMessages.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
@@ -10390,8 +10395,9 @@
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				514D9F5819119D35000063A7 /* ServicesController.mm in Sources */,
 				4131F3D11F96BCCC0059995A /* ServiceWorkerClientFetch.cpp in Sources */,
-				617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchConnectionMessageReceiver.cpp in Sources */,
+				617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */,
 				4131F3D41F96E9350059995A /* ServiceWorkerContextManager.cpp in Sources */,
+				460F488F1F996F7100CF4B87 /* ServiceWorkerContextManagerMessageReceiver.cpp in Sources */,
 				1AFDE6591954A42B00C48FFA /* SessionState.cpp in Sources */,
 				1A002D48196B345D00B9AD44 /* SessionStateCoding.mm in Sources */,
 				1A7284481959F8040007BCE5 /* SessionStateConversion.cpp in Sources */,

@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Connection.h"
+#include "MessageReceiver.h"
 #include <WebCore/ServiceWorkerThread.h>
 #include <wtf/HashMap.h>
 
@@ -39,17 +40,19 @@ struct ServiceWorkerContextData;
 
 namespace WebKit {
 
-class ServiceWorkerContextManager {
+class ServiceWorkerContextManager : public IPC::MessageReceiver {
 public:
     explicit ServiceWorkerContextManager(Ref<IPC::Connection>&& connection)
         : m_connectionToStorageProcess(WTFMove(connection))
     {
     }
 
-    void startServiceWorkerContext(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
-    void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
+    void startServiceWorker(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
+    void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
+
     Ref<IPC::Connection> m_connectionToStorageProcess;
     HashMap<uint64_t, RefPtr<WebCore::ServiceWorkerThread>> m_workerThreadMap;
 };

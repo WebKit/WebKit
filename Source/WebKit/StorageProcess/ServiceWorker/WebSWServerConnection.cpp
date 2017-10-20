@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerClientFetchMessages.h"
+#include "ServiceWorkerContextManagerMessages.h"
 #include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -88,7 +89,7 @@ void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
 
 void WebSWServerConnection::startServiceWorkerContext(const ServiceWorkerContextData& data)
 {
-    if (sendToContextProcess(Messages::WebProcess::StartServiceWorkerContext(identifier(), data)))
+    if (sendToContextProcess(Messages::ServiceWorkerContextManager::StartServiceWorker(identifier(), data)))
         return;
 
     m_pendingContextDatas.append(data);
@@ -96,7 +97,7 @@ void WebSWServerConnection::startServiceWorkerContext(const ServiceWorkerContext
 
 void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
 {
-    sendToContextProcess(Messages::WebProcess::StartFetchInServiceWorker(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
+    sendToContextProcess(Messages::ServiceWorkerContextManager::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
 }
 
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)

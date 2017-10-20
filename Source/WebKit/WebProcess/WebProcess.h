@@ -300,8 +300,6 @@ private:
 #endif
 #if ENABLE(SERVICE_WORKER)
     void getWorkerContextConnection();
-    void startServiceWorkerContext(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
-    void startFetchInServiceWorker(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
 #endif
 
     void releasePageCache();

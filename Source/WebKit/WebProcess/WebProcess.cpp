@@ -41,6 +41,7 @@
 #include "NetworkSession.h"
 #include "PluginProcessConnectionManager.h"
 #include "ServiceWorkerContextManager.h"
+#include "ServiceWorkerContextManagerMessages.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "StorageProcessMessages.h"
@@ -662,6 +663,15 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
         ChildProcess::didReceiveMessage(connection, decoder);
         return;
     }
+
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::ServiceWorkerContextManager::messageReceiverName()) {
+        ASSERT(m_serviceWorkerManager);
+        if (m_serviceWorkerManager)
+            m_serviceWorkerManager->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
 
     LOG_ERROR("Unhandled web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
 }
@@ -1648,24 +1658,6 @@ void WebProcess::getWorkerContextConnection()
     m_serviceWorkerManager =  ServiceWorkerContextManager(WTFMove(workerContextConnection));
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidGetWorkerContextConnection(connectionClientPort), 0);
 }
-
-void WebProcess::startServiceWorkerContext(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
-{
-    ASSERT(m_serviceWorkerManager);
-    if (!m_serviceWorkerManager)
-        return;
-
-    m_serviceWorkerManager->startServiceWorkerContext(serverConnectionIdentifier, data);
-}
-
-void WebProcess::startFetchInServiceWorker(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
-{
-    if (!m_serviceWorkerManager)
-        return;
-
-    m_serviceWorkerManager->startFetch(serverConnectionIdentifier, fetchIdentifier, serviceWorkerIdentifier, request, options);
-}
-
 #endif
 
 } // namespace WebKit

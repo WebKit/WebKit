@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void ServiceWorkerContextManager::startServiceWorkerContext(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
+void ServiceWorkerContextManager::startServiceWorker(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
 {
     // FIXME: Provide a sensical session ID.
     auto thread = ServiceWorkerThread::create(serverConnectionIdentifier, data, SessionID::defaultSessionID());

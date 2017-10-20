@@ -684,6 +684,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Plugins/PluginProxy.messages.in
 
     WebProcess/Storage/ServiceWorkerClientFetch.messages.in
+    WebProcess/Storage/ServiceWorkerContextManager.messages.in
     WebProcess/Storage/WebSWClientConnection.messages.in
 
     WebProcess/UserContent/WebUserContentController.messages.in

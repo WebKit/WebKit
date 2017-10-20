@@ -1,3 +1,31 @@
+2017-10-19  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkerContextManager should be an IPC::MessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=178552
+
+        Reviewed by Youenn Fablet.
+
+        ServiceWorkerContextManager should be an IPC::MessageReceiver, to avoid putting too many
+        ServiceWorker related methods on WebProcess class.
+
+        * DerivedSources.make:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startServiceWorkerContext):
+        (WebKit::WebSWServerConnection::startFetch):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/ServiceWorkerContextManager.cpp:
+        (WebKit::ServiceWorkerContextManager::startFetchInServiceWorker):
+        (WebKit::ServiceWorkerContextManager::startFetch): Deleted.
+        * WebProcess/Storage/ServiceWorkerContextManager.h:
+        * WebProcess/Storage/ServiceWorkerContextManager.messages.in: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        (WebKit::WebProcess::getWorkerContextConnection):
+        (WebKit::WebProcess::startServiceWorkerContext): Deleted.
+        (WebKit::WebProcess::startFetchInServiceWorker): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Modernize authentication challenge handling in WebKit
