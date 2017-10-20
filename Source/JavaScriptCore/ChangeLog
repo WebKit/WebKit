@@ -1,3 +1,14 @@
+2017-10-19  Mark Lam  <mark.lam@apple.com>
+
+        Stringifier::appendStringifiedValue() is missing an exception check.
+        https://bugs.webkit.org/show_bug.cgi?id=178386
+        <rdar://problem/35027610>
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
 2017-10-19  Saam Barati  <sbarati@apple.com>
 
         REGRESSION(r223691): DFGByteCodeParser.cpp:1483:83: warning: comparison is always false due to limited range of data type [-Wtype-limits]

@@ -355,7 +355,9 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     }
 
     if (value.isString()) {
-        builder.appendQuotedJSONString(asString(value)->value(m_exec));
+        const String& string = asString(value)->value(m_exec);
+        RETURN_IF_EXCEPTION(scope, StringifyFailed);
+        builder.appendQuotedJSONString(string);
         return StringifySucceeded;
     }
 
