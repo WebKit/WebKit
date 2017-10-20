@@ -1,3 +1,15 @@
+2017-10-20  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Update expectations for webkitConvertPoint.html
+        https://bugs.webkit.org/show_bug.cgi?id=178582
+
+        Reviewed by Michael Catanzaro.
+
+        This at least makes the test useful as a regression test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/Window/webkitConvertPoint-expected.txt:
+
 2017-10-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Events missing and state incorrect for aria-activedescendant
