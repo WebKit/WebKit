@@ -182,6 +182,7 @@ public:
 
 private:
     WEBCORE_EXPORT JSDOMWindowProxy* initScript(DOMWrapperWorld&);
+    void setupModuleScriptHandlers(LoadableModuleScript&, JSC::JSInternalPromise&, DOMWrapperWorld&);
 
     void disconnectPlatformScriptObjects();
 

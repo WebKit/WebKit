@@ -28,14 +28,9 @@
 
 #include "Document.h"
 #include "Frame.h"
-#include "JSDOMExceptionHandling.h"
-#include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
-#include "WebCoreJSClientData.h"
-#include <heap/StrongInlines.h>
-#include <runtime/CatchScope.h>
 
 namespace WebCore {
 
@@ -72,39 +67,6 @@ void LoadableModuleScript::notifyLoadCompleted(UniquedStringImpl& moduleKey)
     m_moduleKey = &moduleKey;
     m_isLoaded = true;
     notifyClientFinished();
-}
-
-void LoadableModuleScript::notifyLoadFailed(JSC::ExecState* exec, JSC::JSValue errorValue)
-{
-    JSC::VM& vm = exec->vm();
-    if (errorValue.isObject()) {
-        auto* object = JSC::asObject(errorValue);
-        if (JSC::JSValue failureKindValue = object->getDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName())) {
-            // This is host propagated error in the module loader pipeline.
-            switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
-            case ModuleFetchFailureKind::WasErrored:
-                notifyLoadFailed(LoadableScript::Error {
-                    LoadableScript::ErrorType::CachedScript,
-                    std::nullopt
-                });
-                break;
-            case ModuleFetchFailureKind::WasCanceled:
-                notifyLoadWasCanceled();
-                break;
-            }
-            return;
-        }
-    }
-
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-    notifyLoadFailed(LoadableScript::Error {
-        LoadableScript::ErrorType::CachedScript,
-        LoadableScript::ConsoleMessage {
-            MessageSource::JS,
-            MessageLevel::Error,
-            retrieveErrorMessage(*exec, vm, errorValue, scope),
-        }
-    });
 }
 
 void LoadableModuleScript::notifyLoadFailed(LoadableScript::Error&& error)

@@ -90,16 +90,16 @@ public:
         task.run(exec);
     }
 
-    static void loadModule(JSC::ExecState& state, const String& moduleName, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
+    static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const String& moduleName, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
     {
         JSMainThreadExecState currentState(&state);
-        JSC::loadModule(&state, moduleName, parameters, scriptFetcher);
+        return *JSC::loadModule(&state, moduleName, parameters, scriptFetcher);
     }
 
-    static void loadModule(JSC::ExecState& state, const JSC::SourceCode& sourceCode, JSC::JSValue scriptFetcher)
+    static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const JSC::SourceCode& sourceCode, JSC::JSValue scriptFetcher)
     {
         JSMainThreadExecState currentState(&state);
-        JSC::loadModule(&state, sourceCode, scriptFetcher);
+        return *JSC::loadModule(&state, sourceCode, scriptFetcher);
     }
 
     static JSC::JSValue linkAndEvaluateModule(JSC::ExecState& state, const JSC::Identifier& moduleKey, JSC::JSValue scriptFetcher, NakedPtr<JSC::Exception>& returnedException)

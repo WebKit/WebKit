@@ -1,3 +1,26 @@
+2017-10-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r223744, r223750, and r223751.
+        https://bugs.webkit.org/show_bug.cgi?id=178594
+
+        These caused consistent failures in test that existed and were
+        added in the patches. (Requested by mlewis13 on #webkit).
+
+        Reverted changesets:
+
+        "[JSC] ScriptFetcher should be notified directly from module
+        pipeline"
+        https://bugs.webkit.org/show_bug.cgi?id=178340
+        https://trac.webkit.org/changeset/223744
+
+        "Unreviewed, fix changed line number in test expect files"
+        https://bugs.webkit.org/show_bug.cgi?id=178340
+        https://trac.webkit.org/changeset/223750
+
+        "Unreviewed, follow up to reflect comments"
+        https://bugs.webkit.org/show_bug.cgi?id=178340
+        https://trac.webkit.org/changeset/223751
+
 2017-10-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Adding GTK+-specific baselines for a bunch

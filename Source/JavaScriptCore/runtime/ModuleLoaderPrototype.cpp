@@ -56,8 +56,6 @@ static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolve(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolveSync(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeGetModuleNamespaceObject(ExecState*);
-static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeNotifyCompleted(ExecState*);
-static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeNotifyFailed(ExecState*);
 
 }
 
@@ -92,8 +90,6 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
     resolve                        moduleLoaderPrototypeResolve                        DontEnum|Function 2
     resolveSync                    moduleLoaderPrototypeResolveSync                    DontEnum|Function 2
     fetch                          moduleLoaderPrototypeFetch                          DontEnum|Function 3
-    notifyCompleted                moduleLoaderPrototypeNotifyCompleted                DontEnum|Function 2
-    notifyFailed                   moduleLoaderPrototypeNotifyFailed                   DontEnum|Function 2
 @end
 */
 
@@ -172,24 +168,6 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeNotifyCompleted(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
-    if (!loader)
-        return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->notifyCompleted(exec, exec->argument(0), exec->argument(1)));
-}
-
-EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeNotifyFailed(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
-    if (!loader)
-        return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->notifyFailed(exec, exec->argument(0), exec->argument(1)));
 }
 
 // ------------------------------ Hook Functions ---------------------------

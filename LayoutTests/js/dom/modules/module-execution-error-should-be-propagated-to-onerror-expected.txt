@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 19: Error: module is executed.
 Test window.onerror will be fired when the inlined module throws an error.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
