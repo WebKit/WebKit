@@ -849,7 +849,9 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
     // If we failed to delete any database file, don't remove the origin from the tracker
     // database because we didn't successfully remove all of its data.
     if (failedToDeleteAnyDatabaseFile) {
+#if PLATFORM(COCOA)
         RELEASE_LOG_ERROR(DatabaseTracker, "Failed to delete database for origin");
+#endif
         return false;
     }
 

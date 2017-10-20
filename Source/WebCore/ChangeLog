@@ -1,5 +1,16 @@
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223438. rdar://problem/34745623
+
+    2017-10-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed attempt to fix the Windows debug build.
+
+            * Modules/webdatabase/DatabaseTracker.cpp:
+            (WebCore::DatabaseTracker::deleteOrigin):
+
+2017-10-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223427. rdar://problem/34745623
 
     2017-10-16  Maureen Daum  <mdaum@apple.com>
