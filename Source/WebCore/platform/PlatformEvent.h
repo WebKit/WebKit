@@ -123,9 +123,7 @@ protected:
 
     // Explicit protected destructor so that people don't accidentally
     // delete a PlatformEvent.
-    ~PlatformEvent()
-    {
-    }
+    ~PlatformEvent() = default;
 
     unsigned m_type;
     OptionSet<Modifier> m_modifiers;

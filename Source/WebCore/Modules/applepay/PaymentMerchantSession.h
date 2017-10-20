@@ -41,16 +41,9 @@ namespace WebCore {
 
 class PaymentMerchantSession {
 public:
-    PaymentMerchantSession()
-    {
-    }
-
+    PaymentMerchantSession() = default;
     explicit PaymentMerchantSession(PKPaymentMerchantSession *pkPaymentMerchantSession)
         : m_pkPaymentMerchantSession(pkPaymentMerchantSession)
-    {
-    }
-
-    ~PaymentMerchantSession()
     {
     }
 

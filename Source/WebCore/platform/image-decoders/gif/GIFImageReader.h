@@ -188,10 +188,6 @@ public:
         , m_isDataSizeDefined(false)
     {
     }
-    
-    ~GIFFrameContext()
-    {
-    }
 
     void addLzwBlock(size_t position, size_t size)
     {
@@ -238,10 +234,6 @@ public:
         , m_loopCount(cLoopCountNotSeen)
         , m_currentDecodingFrame(0)
         , m_parseCompleted(false)
-    {
-    }
-
-    ~GIFImageReader()
     {
     }
 

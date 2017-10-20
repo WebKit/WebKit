@@ -64,10 +64,6 @@ public:
     {
     }
 
-    ~ControlStates()
-    {
-    }
-
     States states() const { return m_states; }
     void setStates(States newStates)
     {

@@ -124,10 +124,6 @@ public:
         { 
         }
 
-        ~RenderBlockFlowRareData()
-        {
-        }
-
         static LayoutUnit positiveMarginBeforeDefault(const RenderBlock& block)
         { 
             return std::max<LayoutUnit>(block.marginBefore(), 0);
