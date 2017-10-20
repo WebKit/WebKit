@@ -737,6 +737,7 @@ private:
     void sendResizeEventIfNeeded();
 
     void adjustScrollbarsForLayout(bool firstLayout);
+    void updateStyleForLayout();
 
     void handleDeferredScrollbarsUpdateAfterDirectionChange();
 

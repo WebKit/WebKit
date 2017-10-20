@@ -1363,6 +1363,26 @@ void FrameView::adjustScrollbarsForLayout(bool isFirstLayout)
         setScrollbarModes(hMode, vMode);
 }
 
+void FrameView::updateStyleForLayout()
+{
+    Document& document = *frame().document();
+    // Viewport-dependent media queries may cause us to need completely different style information.
+    auto* styleResolver = document.styleScope().resolverIfExists();
+    if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
+        LOG(Layout, "  hasMediaQueriesAffectedByViewportChange, enqueueing style recalc");
+        document.styleScope().didChangeStyleSheetEnvironment();
+        // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
+        InspectorInstrumentation::mediaQueryResultChanged(document);
+    }
+    document.evaluateMediaQueryList();
+    // If there is any pagination to apply, it will affect the RenderView's style, so we should
+    // take care of that now.
+    applyPaginationToViewport();
+    // Always ensure our style info is up-to-date. This can happen in situations where
+    // the layout beats any sort of style recalc update that needs to occur.
+    document.updateStyleIfNeeded();
+}
+
 void FrameView::layout(bool allowSubtreeLayout)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
@@ -1420,23 +1440,7 @@ void FrameView::layout(bool allowSubtreeLayout)
         if (!isLayoutNested() && m_postLayoutTasksTimer.isActive() && !isInChildFrameWithFrameFlattening())
             performPostLayoutTasks();
 
-        // Viewport-dependent media queries may cause us to need completely different style information.
-        auto* styleResolver = document.styleScope().resolverIfExists();
-        if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
-            LOG(Layout, "  hasMediaQueriesAffectedByViewportChange, enqueueing style recalc");
-            document.styleScope().didChangeStyleSheetEnvironment();
-            // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
-            InspectorInstrumentation::mediaQueryResultChanged(document);
-        }
-        document.evaluateMediaQueryList();
-        // If there is any pagination to apply, it will affect the RenderView's style, so we should
-        // take care of that now.
-        applyPaginationToViewport();
-        // Always ensure our style info is up-to-date. This can happen in situations where
-        // the layout beats any sort of style recalc update that needs to occur.
-        document.updateStyleIfNeeded();
-        // If there is only one ref to this view left, then its going to be destroyed as soon as we exit,
-        // so there's no point to continuing to layout
+        updateStyleForLayout();
         if (hasOneRef())
             return;
 
