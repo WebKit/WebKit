@@ -1,3 +1,10 @@
+2017-10-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Managing failure expectations for
+        a set of failing HTTP tests.
+
+        * platform/wpe/TestExpectations:
+
 2017-10-20  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Fix review comments on WEBPImageDecoder
