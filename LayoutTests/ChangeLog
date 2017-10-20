@@ -1,3 +1,11 @@
+2017-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, fix changed line number in test expect files
+        https://bugs.webkit.org/show_bug.cgi?id=178340
+
+        * http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt:
+        * http/tests/security/module-no-mime-type-expected.txt:
+
 2017-10-19  Antti Koivisto  <antti@apple.com>
 
         Support ::before/::after pseudo elements on elements with display:contents
