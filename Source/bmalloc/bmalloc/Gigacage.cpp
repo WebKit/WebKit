@@ -240,10 +240,15 @@ bool isDisablingPrimitiveGigacageDisabled()
 bool shouldBeEnabled()
 {
     static std::once_flag onceFlag;
-    static bool cached;
+    static bool cached = false;
     std::call_once(
         onceFlag,
         [] {
+#if BCPU(ARM64)
+            // FIXME: Make WasmBench run with gigacage on iOS and re-enable on ARM64:
+            // https://bugs.webkit.org/show_bug.cgi?id=178557
+            return;
+#endif
             bool result = GIGACAGE_ENABLED && !PerProcess<Environment>::get()->isDebugHeapEnabled();
             if (!result)
                 return;
