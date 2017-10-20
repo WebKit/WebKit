@@ -61,8 +61,8 @@ JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const Str
 JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const SourceCode&, JSValue scriptFetcher);
 
 // Fetch the module source, and instantiate the module record.
-JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const String& moduleName, JSValue parameters, JSValue scriptFetcher);
-JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const SourceCode&, JSValue scriptFetcher);
+JS_EXPORT_PRIVATE void loadModule(ExecState*, const String& moduleName, JSValue parameters, JSValue scriptFetcher);
+JS_EXPORT_PRIVATE void loadModule(ExecState*, const SourceCode&, JSValue scriptFetcher);
 
 // Link and evaluate the already linked module. This function is called in a sync manner.
 JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(ExecState*, const Identifier& moduleKey, JSValue scriptFetcher);

@@ -183,17 +183,17 @@ JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const SourceCode& sour
     return globalObject->moduleLoader()->loadAndEvaluateModule(exec, key, jsUndefined(), scriptFetcher);
 }
 
-JSInternalPromise* loadModule(ExecState* exec, const String& moduleName, JSValue parameters, JSValue scriptFetcher)
+void loadModule(ExecState* exec, const String& moduleName, JSValue parameters, JSValue scriptFetcher)
 {
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
-    return exec->vmEntryGlobalObject()->moduleLoader()->loadModule(exec, identifierToJSValue(vm, Identifier::fromString(exec, moduleName)), parameters, scriptFetcher);
+    exec->vmEntryGlobalObject()->moduleLoader()->loadModule(exec, identifierToJSValue(vm, Identifier::fromString(exec, moduleName)), parameters, scriptFetcher);
 }
 
-JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source, JSValue scriptFetcher)
+void loadModule(ExecState* exec, const SourceCode& source, JSValue scriptFetcher)
 {
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
@@ -208,9 +208,9 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source, JSValue
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     // FIXME: Introduce JSSourceCode object to wrap around this source.
     globalObject->moduleLoader()->provideFetch(exec, key, source);
-    RETURN_IF_EXCEPTION(scope, rejectPromise(exec, globalObject));
+    RETURN_IF_EXCEPTION(scope, void());
 
-    return globalObject->moduleLoader()->loadModule(exec, key, jsUndefined(), scriptFetcher);
+    globalObject->moduleLoader()->loadModule(exec, key, jsUndefined(), scriptFetcher);
 }
 
 JSValue linkAndEvaluateModule(ExecState* exec, const Identifier& moduleKey, JSValue scriptFetcher)

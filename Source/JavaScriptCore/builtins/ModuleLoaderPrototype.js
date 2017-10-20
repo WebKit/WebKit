@@ -320,9 +320,15 @@ function loadModule(moduleName, parameters, fetcher)
     // For example, take the "jquery" and return the URL for the resource.
     return this.resolve(moduleName, @undefined, fetcher).then((key) => {
         return this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher);
-    }).then((entry) => {
-        return entry.key;
-    });
+    }).then(
+        (entry) => {
+            this.notifyCompleted(fetcher, entry.key);
+            return entry;
+        },
+        (error) => {
+            this.notifyFailed(fetcher, error);
+            throw error;
+        });
 }
 
 function linkAndEvaluateModule(key, fetcher)
@@ -341,8 +347,8 @@ function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
 
-    return this.loadModule(moduleName, parameters, fetcher).then((key) => {
-        return this.linkAndEvaluateModule(key, fetcher);
+    return this.loadModule(moduleName, parameters, fetcher).then((entry) => {
+        return this.linkAndEvaluateModule(entry.key, fetcher);
     });
 }
 

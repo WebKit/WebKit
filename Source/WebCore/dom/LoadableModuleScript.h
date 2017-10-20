@@ -53,14 +53,16 @@ public:
     void load(Document&, const URL& rootURL);
     void load(Document&, const ScriptSourceCode&);
 
-    void notifyLoadCompleted(UniquedStringImpl&);
-    void notifyLoadFailed(LoadableScript::Error&&);
-    void notifyLoadWasCanceled();
-
     UniquedStringImpl* moduleKey() const { return m_moduleKey.get(); }
+
+    void notifyLoadCompleted(UniquedStringImpl&) final;
+    void notifyLoadFailed(JSC::ExecState*, JSC::JSValue) final;
 
 private:
     LoadableModuleScript(const String& nonce, const String& integrity, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree);
+
+    void notifyLoadFailed(LoadableScript::Error&&);
+    void notifyLoadWasCanceled();
 
     Ref<ModuleFetchParameters> m_parameters;
     RefPtr<UniquedStringImpl> m_moduleKey;

@@ -1,3 +1,40 @@
+2017-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] ScriptFetcher should be notified directly from module pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=178340
+
+        Reviewed by Sam Weinig.
+
+        Previously, we use JSStdFunction to let WebCore inform the module pipeline results.
+        We setup JSStdFunction to the resulted promise of the module pipeline. It is super
+        ad-hoc since JSStdFunction's lambda need extra-careful to make it non-cyclic-referenced.
+        JSStdFunction's lambda can capture variables, but they are not able to be marked by GC.
+
+        But now, we have ScriptFetcher. It is introduced after we implemented the module pipeline
+        notification mechanism by using JSStdFunction. But it is appropriate one to receive notification
+        from the module pipeline by observer style.
+
+        This patch removes the above ad-hoc JSStdFunction use. And now ScriptFetcher receives
+        completion/failure notifications from the module pipeline.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (loadModule):
+        (loadAndEvaluateModule):
+        * runtime/Completion.cpp:
+        (JSC::loadModule):
+        * runtime/Completion.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::jsValueToModuleKey):
+        (JSC::JSModuleLoader::notifyCompleted):
+        (JSC::JSModuleLoader::notifyFailed):
+        * runtime/JSModuleLoader.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeNotifyCompleted):
+        (JSC::moduleLoaderPrototypeNotifyFailed):
+        * runtime/ScriptFetcher.h:
+        (JSC::ScriptFetcher::notifyLoadCompleted):
+        (JSC::ScriptFetcher::notifyLoadFailed):
+
 2017-10-19  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: no VM / JS version of everything but Instance

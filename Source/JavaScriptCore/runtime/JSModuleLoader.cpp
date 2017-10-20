@@ -39,6 +39,7 @@
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleRecord.h"
+#include "JSScriptFetcher.h"
 #include "JSSourceCode.h"
 #include "ModuleAnalyzer.h"
 #include "ModuleLoaderPrototype.h"
@@ -289,6 +290,40 @@ JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(ExecState* exe
 
     scope.release();
     return moduleRecord->getModuleNamespace(exec);
+}
+
+static Identifier jsValueToModuleKey(ExecState* exec, JSValue value)
+{
+    if (value.isSymbol())
+        return Identifier::fromUid(jsCast<Symbol*>(value)->privateName());
+    ASSERT(value.isString());
+    return asString(value)->toIdentifier(exec);
+}
+
+JSValue JSModuleLoader::notifyCompleted(ExecState* exec, JSValue scriptFetcher, JSValue key)
+{
+    auto* fetcherWrapper = jsDynamicCast<JSScriptFetcher*>(exec->vm(), scriptFetcher);
+    if (!fetcherWrapper)
+        return jsUndefined();
+    auto* fetcher = fetcherWrapper->fetcher();
+    if (!fetcher)
+        return jsUndefined();
+
+    Identifier moduleKey = jsValueToModuleKey(exec, key);
+    fetcher->notifyLoadCompleted(*moduleKey.impl());
+    return jsUndefined();
+}
+
+JSValue JSModuleLoader::notifyFailed(ExecState* exec, JSValue scriptFetcher, JSValue errorValue)
+{
+    auto* fetcherWrapper = jsDynamicCast<JSScriptFetcher*>(exec->vm(), scriptFetcher);
+    if (!fetcherWrapper)
+        return jsUndefined();
+    auto* fetcher = fetcherWrapper->fetcher();
+    if (!fetcher)
+        return jsUndefined();
+    fetcher->notifyLoadFailed(exec, errorValue);
+    return jsUndefined();
 }
 
 } // namespace JSC

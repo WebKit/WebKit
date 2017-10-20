@@ -40,7 +40,6 @@
 #include "JSMainThreadExecState.h"
 #include "LoadableModuleScript.h"
 #include "MainFrame.h"
-#include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
 #include "NP_jsobject.h"
 #include "Page.h"
@@ -62,7 +61,6 @@
 #include <runtime/JSInternalPromise.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSModuleRecord.h>
-#include <runtime/JSNativeStdFunction.h>
 #include <runtime/JSScriptFetchParameters.h>
 #include <runtime/JSScriptFetcher.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -199,8 +197,7 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = *windowProxy(world);
     auto& state = *proxy.window()->globalExec();
 
-    auto& promise = JSMainThreadExecState::loadModule(state, moduleName, JSC::JSScriptFetchParameters::create(state.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
-    setupModuleScriptHandlers(moduleScript, promise, world);
+    JSMainThreadExecState::loadModule(state, moduleName, JSC::JSScriptFetchParameters::create(state.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
 }
 
 void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const String& moduleName, Ref<ModuleFetchParameters>&& topLevelFetchParameters)
@@ -215,8 +212,7 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = *windowProxy(world);
     auto& state = *proxy.window()->globalExec();
 
-    auto& promise = JSMainThreadExecState::loadModule(state, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
-    setupModuleScriptHandlers(moduleScript, promise, world);
+    JSMainThreadExecState::loadModule(state, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(state.vm(), { &moduleScript }));
 }
 
 void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const ScriptSourceCode& sourceCode)
@@ -362,68 +358,6 @@ JSDOMWindowProxy* ScriptController::initScript(DOMWrapperWorld& world)
     m_frame.loader().dispatchDidClearWindowObjectInWorld(world);
 
     return &windowProxy;
-}
-
-static Identifier jsValueToModuleKey(ExecState* exec, JSValue value)
-{
-    if (value.isSymbol())
-        return Identifier::fromUid(jsCast<Symbol*>(value)->privateName());
-    ASSERT(value.isString());
-    return asString(value)->toIdentifier(exec);
-}
-
-void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScriptRef, JSInternalPromise& promise, DOMWrapperWorld& world)
-{
-    auto& proxy = *windowProxy(world);
-    auto& state = *proxy.window()->globalExec();
-
-    // It is not guaranteed that either fulfillHandler or rejectHandler is eventually called.
-    // For example, if the page load is canceled, the DeferredPromise used in the module loader pipeline will stop executing JS code.
-    // Thus the promise returned from this function could remain unresolved.
-
-    RefPtr<LoadableModuleScript> moduleScript(&moduleScriptRef);
-
-    auto& fulfillHandler = *JSNativeStdFunction::create(state.vm(), proxy.window(), 1, String(), [moduleScript](ExecState* exec) {
-        Identifier moduleKey = jsValueToModuleKey(exec, exec->argument(0));
-        moduleScript->notifyLoadCompleted(*moduleKey.impl());
-        return JSValue::encode(jsUndefined());
-    });
-
-    auto& rejectHandler = *JSNativeStdFunction::create(state.vm(), proxy.window(), 1, String(), [moduleScript](ExecState* exec) {
-        VM& vm = exec->vm();
-        JSValue errorValue = exec->argument(0);
-        if (errorValue.isObject()) {
-            auto* object = JSC::asObject(errorValue);
-            if (JSValue failureKindValue = object->getDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName())) {
-                // This is host propagated error in the module loader pipeline.
-                switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
-                case ModuleFetchFailureKind::WasErrored:
-                    moduleScript->notifyLoadFailed(LoadableScript::Error {
-                        LoadableScript::ErrorType::CachedScript,
-                        std::nullopt
-                    });
-                    break;
-                case ModuleFetchFailureKind::WasCanceled:
-                    moduleScript->notifyLoadWasCanceled();
-                    break;
-                }
-                return JSValue::encode(jsUndefined());
-            }
-        }
-
-        auto scope = DECLARE_CATCH_SCOPE(vm);
-        moduleScript->notifyLoadFailed(LoadableScript::Error {
-            LoadableScript::ErrorType::CachedScript,
-            LoadableScript::ConsoleMessage {
-                MessageSource::JS,
-                MessageLevel::Error,
-                retrieveErrorMessage(*exec, vm, errorValue, scope),
-            }
-        });
-        return JSValue::encode(jsUndefined());
-    });
-
-    promise.then(&state, &fulfillHandler, &rejectHandler);
 }
 
 TextPosition ScriptController::eventHandlerPosition() const

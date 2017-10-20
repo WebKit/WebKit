@@ -25,13 +25,19 @@
 
 #pragma once
 
+#include "JSCJSValue.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC {
 
+class ExecState;
+
 class ScriptFetcher : public RefCounted<ScriptFetcher> {
 public:
     virtual ~ScriptFetcher() { }
+
+    virtual void notifyLoadCompleted(UniquedStringImpl&) { }
+    virtual void notifyLoadFailed(ExecState*, JSValue) { }
 };
 
 } // namespace JSC
