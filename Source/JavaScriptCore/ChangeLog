@@ -1,5 +1,20 @@
 2017-10-21  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r223731. rdar://problem/35100279
+
+    2017-10-19  Mark Lam  <mark.lam@apple.com>
+
+            Stringifier::appendStringifiedValue() is missing an exception check.
+            https://bugs.webkit.org/show_bug.cgi?id=178386
+            <rdar://problem/35027610>
+
+            Reviewed by Saam Barati.
+
+            * runtime/JSONObject.cpp:
+            (JSC::Stringifier::appendStringifiedValue):
+
+2017-10-21  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r223645. rdar://problem/34820875
 
     2017-10-18  Mark Lam  <mark.lam@apple.com>
