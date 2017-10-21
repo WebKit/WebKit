@@ -57,13 +57,6 @@
         {
             "name": "clearMessages",
             "description": "Clears console messages collected in the browser."
-        },
-        {
-            "name": "setMonitoringXHREnabled",
-            "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued.",
-            "parameters": [
-                { "name": "enabled", "type": "boolean", "description": "Monitoring enabled state." }
-            ]
         }
     ],
     "events": [

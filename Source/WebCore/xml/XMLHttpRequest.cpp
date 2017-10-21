@@ -43,7 +43,6 @@
 #include "ParsedContentType.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
-#include "ScriptController.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -54,7 +53,6 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
-#include <interpreter/StackVisitor.h>
 #include <mutex>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
@@ -280,12 +278,6 @@ String XMLHttpRequest::responseURL() const
     return responseURL.string();
 }
 
-void XMLHttpRequest::setLastSendLineAndColumnNumber(unsigned lineNumber, unsigned columnNumber)
-{
-    m_lastSendLineNumber = lineNumber;
-    m_lastSendColumnNumber = columnNumber;
-}
-
 XMLHttpRequestUpload* XMLHttpRequest::upload()
 {
     if (!m_upload)
@@ -433,47 +425,7 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     return std::nullopt;
 }
 
-namespace {
-
-// FIXME: This should be abstracted out, so that any IDL function can be passed the line/column/url tuple.
-
-// FIXME: This should probably use ShadowChicken so that we get the right frame even when it did a tail call.
-// https://bugs.webkit.org/show_bug.cgi?id=155688
-
-class SendFunctor {
-public:
-    SendFunctor() = default;
-
-    unsigned line() const { return m_line; }
-    unsigned column() const { return m_column; }
-    String url() const { return m_url; }
-
-    JSC::StackVisitor::Status operator()(JSC::StackVisitor& visitor) const
-    {
-        if (!m_hasSkippedFirstFrame) {
-            m_hasSkippedFirstFrame = true;
-            return JSC::StackVisitor::Continue;
-        }
-
-        unsigned line = 0;
-        unsigned column = 0;
-        visitor->computeLineAndColumn(line, column);
-        m_line = line;
-        m_column = column;
-        m_url = visitor->sourceURL();
-        return JSC::StackVisitor::Done;
-    }
-
-private:
-    mutable bool m_hasSkippedFirstFrame { false };
-    mutable unsigned m_line { 0 };
-    mutable unsigned m_column { 0 };
-    mutable String m_url;
-};
-
-}
-
-ExceptionOr<void> XMLHttpRequest::send(JSC::ExecState& state, std::optional<SendTypes>&& sendType)
+ExceptionOr<void> XMLHttpRequest::send(std::optional<SendTypes>&& sendType)
 {
     InspectorInstrumentation::willSendXMLHttpRequest(scriptExecutionContext(), url());
 
@@ -490,11 +442,6 @@ ExceptionOr<void> XMLHttpRequest::send(JSC::ExecState& state, std::optional<Send
             [this] (const String& string) -> ExceptionOr<void> { return send(string); }
         );
     }
-
-    SendFunctor functor;
-    state.iterate(functor);
-    setLastSendLineAndColumnNumber(functor.line(), functor.column());
-    setLastSendURL(functor.url());
 
     return result;
 }
@@ -992,7 +939,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier)
     std::optional<String> decodedText;
     if (!m_binaryResponseBuilder)
         decodedText = m_responseBuilder.toStringPreserveCapacity();
-    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), identifier, decodedText, m_url, m_lastSendURL, m_lastSendLineNumber, m_lastSendColumnNumber);
+    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), identifier, decodedText);
 
     bool hadLoader = m_loader;
     m_loader = nullptr;

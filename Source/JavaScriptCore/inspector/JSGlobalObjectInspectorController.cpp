@@ -35,13 +35,13 @@
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorBackendDispatcher.h"
+#include "InspectorConsoleAgent.h"
 #include "InspectorFrontendChannel.h"
 #include "InspectorFrontendRouter.h"
 #include "InspectorHeapAgent.h"
 #include "InspectorScriptProfilerAgent.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
-#include "JSGlobalObjectConsoleAgent.h"
 #include "JSGlobalObjectConsoleClient.h"
 #include "JSGlobalObjectDebuggerAgent.h"
 #include "JSGlobalObjectRuntimeAgent.h"
@@ -83,7 +83,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto inspectorAgent = std::make_unique<InspectorAgent>(context);
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(context);
     auto heapAgent = std::make_unique<InspectorHeapAgent>(context);
-    auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(context, heapAgent.get());
+    auto consoleAgent = std::make_unique<InspectorConsoleAgent>(context, heapAgent.get());
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, consoleAgent.get());
     auto scriptProfilerAgent = std::make_unique<InspectorScriptProfilerAgent>(context);
 

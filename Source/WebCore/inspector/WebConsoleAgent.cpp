@@ -46,11 +46,6 @@ WebConsoleAgent::WebConsoleAgent(AgentContext& context, InspectorHeapAgent* heap
 {
 }
 
-void WebConsoleAgent::setMonitoringXHREnabled(ErrorString&, bool enabled)
-{
-    m_monitoringXHREnabled = enabled;
-}
-
 void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
 {
     for (auto& message : m_consoleMessages) {
@@ -63,17 +58,6 @@ void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
     }
 
     static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).discardInjectedScriptsFor(window);
-}
-
-void WebConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber)
-{
-    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
-        return;
-
-    if (m_monitoringXHREnabled) {
-        String message = "XHR finished loading: \"" + url + "\".";
-        addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Debug, message, sendURL, sendLineNumber, sendColumnNumber, nullptr, requestIdentifier));
-    }
 }
 
 void WebConsoleAgent::didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse& response)
