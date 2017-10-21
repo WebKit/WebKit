@@ -66,8 +66,8 @@ Ref<HTMLSourceElement> HTMLSourceElement::create(Document& document)
 Node::InsertedIntoResult HTMLSourceElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
-    // FIXME: This code is wrong if an ancestor of the parent had been inserted.
-    if (auto* parent = parentElement()) {
+    RefPtr<Element> parent = parentElement();
+    if (parent == &parentOfInsertedTree) {
 #if ENABLE(VIDEO)
         if (is<HTMLMediaElement>(*parent))
             downcast<HTMLMediaElement>(*parent).sourceWasAdded(*this);
@@ -80,21 +80,17 @@ Node::InsertedIntoResult HTMLSourceElement::insertedInto(InsertionType insertion
 }
 
 void HTMLSourceElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
-{
-    // FIXME: This code is wrong if an ancestor of the parent had been removed.
-    RefPtr<Element> parent = parentElement();
-    if (!parent && is<Element>(parentOfRemovedTree))
-        parent = &downcast<Element>(parentOfRemovedTree);
-    if (parent) {
+{        
+    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    if (!parentNode() && is<Element>(parentOfRemovedTree)) {
 #if ENABLE(VIDEO)
-        if (is<HTMLMediaElement>(*parent))
-            downcast<HTMLMediaElement>(*parent).sourceWasRemoved(*this);
+        if (is<HTMLMediaElement>(parentOfRemovedTree))
+            downcast<HTMLMediaElement>(parentOfRemovedTree).sourceWasRemoved(*this);
         else
 #endif
-        if (is<HTMLPictureElement>(*parent))
-            downcast<HTMLPictureElement>(*parent).sourcesChanged();
+        if (is<HTMLPictureElement>(parentOfRemovedTree))
+            downcast<HTMLPictureElement>(parentOfRemovedTree).sourcesChanged();
     }
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 }
 
 void HTMLSourceElement::scheduleErrorEvent()

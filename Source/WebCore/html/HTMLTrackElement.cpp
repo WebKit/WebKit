@@ -80,13 +80,10 @@ Node::InsertedIntoResult HTMLTrackElement::insertedInto(InsertionType insertionT
 {
     HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
 
-    // FIXME: This code is wrong. If HTMLTrackElement can be any descendent of HTMLMediaElement, then check ancestors of parentOfInsertedTree.
-    // If HTMLMediaElement only supports HTMLTrackElement which is an immediate child, then check parentNode() instead.
-    if (is<HTMLMediaElement>(parentOfInsertedTree))
+    if (parentNode() == &parentOfInsertedTree && is<HTMLMediaElement>(parentOfInsertedTree)) {
         downcast<HTMLMediaElement>(parentOfInsertedTree).didAddTextTrack(*this);
-
-    // Since we've moved to a new parent, we may now be able to load.
-    scheduleLoad();
+        scheduleLoad();
+    }
 
     return InsertedIntoResult::Done;
 }
@@ -95,9 +92,7 @@ void HTMLTrackElement::removedFrom(RemovalType removalType, ContainerNode& paren
 {
     HTMLElement::removedFrom(removalType, parentOfRemovedTree);
 
-    // FIXME: This code is wrong. If HTMLTrackElement can be any descendent of HTMLMediaElement, then check ancestors of parentOfInsertedTree.
-    // If HTMLMediaElement only supports HTMLTrackElement which is an immediate child, then check parentNode() instead.
-    if (is<HTMLMediaElement>(parentOfRemovedTree))
+    if (!parentNode() && is<HTMLMediaElement>(parentOfRemovedTree))
         downcast<HTMLMediaElement>(parentOfRemovedTree).didRemoveTextTrack(*this);
 }
 
