@@ -114,7 +114,7 @@ public:
     bool layoutPending() const;
     bool isInLayout() const { return m_layoutPhase != OutsideLayout; }
     bool isInRenderTreeLayout() const { return m_layoutPhase == InRenderTreeLayout; }
-    bool inPaintableState() { return m_layoutPhase != InRenderTreeLayout && m_layoutPhase != InViewSizeAdjust && m_layoutPhase != InPostLayout; }
+    bool inPaintableState() const { return m_layoutPhase != InRenderTreeLayout && m_layoutPhase != InViewSizeAdjust && (m_layoutPhase != InPostLayout || m_inPerformPostLayoutTasks); }
 
     RenderElement* subtreeLayoutRoot() const { return m_subtreeLayoutRoot; }
     void clearSubtreeLayoutRoot() { m_subtreeLayoutRoot = nullptr; }
@@ -659,8 +659,7 @@ private:
         InPreLayout,
         InRenderTreeLayout,
         InViewSizeAdjust,
-        InPostLayout,
-        InPostLayerPositionsUpdatedAfterLayout,
+        InPostLayout
     };
     LayoutPhase layoutPhase() const { return m_layoutPhase; }
 
