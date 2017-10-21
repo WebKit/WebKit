@@ -41,13 +41,27 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             return pathComponent;
         }
 
+        this._requestContentView = null;
+        this._responseContentView = null;
+        this._customResponseContentView = null;
+        this._customResponseContentViewConstructor = null;
+
         this._requestPathComponent = createPathComponent.call(this, WI.UIString("Request"), WI.ResourceClusterContentView.RequestIconStyleClassName, WI.ResourceClusterContentView.RequestIdentifier);
         this._responsePathComponent = createPathComponent.call(this, WI.UIString("Response"), WI.ResourceClusterContentView.ResponseIconStyleClassName, WI.ResourceClusterContentView.ResponseIdentifier);
+        this._customResponsePathComponent = createPathComponent.call(this, WI.UIString("Custom"), WI.ResourceClusterContentView.ResponseIconStyleClassName, WI.ResourceClusterContentView.CustomResponseIdentifier);
 
-        this._requestPathComponent.nextSibling = this._responsePathComponent;
-        this._responsePathComponent.previousSibling = this._requestPathComponent;
+        if (this._canShowRequestContentView()) {
+            this._requestPathComponent.nextSibling = this._responsePathComponent;
+            this._responsePathComponent.previousSibling = this._requestPathComponent;
+        }
+
+        // FIXME: Since a custom response content view may only become available after a response is received
+        // we need to figure out a way to restore / prefer the custom content view. For example if users
+        // always want to prefer the JSON view to the normal Response text view.
 
         this._currentContentViewSetting = new WI.Setting("resource-current-view-" + this._resource.url.hash, WI.ResourceClusterContentView.ResponseIdentifier);
+
+        this._tryEnableCustomResponseContentView();
     }
 
     // Public
@@ -114,17 +128,28 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         return this._requestContentView;
     }
 
+    get customResponseContentView()
+    {
+        if (!this._canShowCustomResponseContentView())
+            return null;
+
+        if (!this._customResponseContentView)
+            this._customResponseContentView = new this._customResponseContentViewConstructor(this._resource);
+
+        return this._customResponseContentView;
+    }
+
     get selectionPathComponents()
     {
-        var currentContentView = this._contentViewContainer.currentContentView;
+        let currentContentView = this._contentViewContainer.currentContentView;
         if (!currentContentView)
             return [];
 
-        if (!this._canShowRequestContentView())
+        if (!this._canShowRequestContentView() && !this._canShowCustomResponseContentView())
             return currentContentView.selectionPathComponents;
 
         // Append the current view's path components to the path component representing the current view.
-        var components = [this._pathComponentForContentView(currentContentView)];
+        let components = [this._pathComponentForContentView(currentContentView)];
         return components.concat(currentContentView.selectionPathComponents);
     }
 
@@ -152,7 +177,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     restoreFromCookie(cookie)
     {
-        var contentView = this._showContentViewForIdentifier(cookie[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey]);
+        let contentView = this._showContentViewForIdentifier(cookie[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey]);
         if (typeof contentView.revealPosition === "function" && "lineNumber" in cookie && "columnNumber" in cookie)
             contentView.revealPosition(new WI.SourceCodePosition(cookie.lineNumber, cookie.columnNumber));
     }
@@ -174,7 +199,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             this._forceUnformatted = forceUnformatted;
         }
 
-        var responseContentView = this._showContentViewForIdentifier(WI.ResourceClusterContentView.ResponseIdentifier);
+        let responseContentView = this._showContentViewForIdentifier(WI.ResourceClusterContentView.ResponseIdentifier);
         if (typeof responseContentView.revealPosition === "function")
             responseContentView.revealPosition(positionToReveal, textRangeToSelect, forceUnformatted);
         return responseContentView;
@@ -184,7 +209,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     _canShowRequestContentView()
     {
-        var requestData = this._resource.requestData;
+        let requestData = this._resource.requestData;
         if (!requestData)
             return false;
 
@@ -193,6 +218,11 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             return false;
 
         return true;
+    }
+
+    _canShowCustomResponseContentView()
+    {
+        return !!this._customResponseContentViewConstructor;
     }
 
     _pathComponentForContentView(contentView)
@@ -204,6 +234,8 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             return this._requestPathComponent;
         if (contentView === this._responseContentView)
             return this._responsePathComponent;
+        if (contentView === this._customResponseContentView)
+            return this._customResponsePathComponent;
         console.error("Unknown contentView.");
         return null;
     }
@@ -217,20 +249,25 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             return WI.ResourceClusterContentView.RequestIdentifier;
         if (contentView === this._responseContentView)
             return WI.ResourceClusterContentView.ResponseIdentifier;
+        if (contentView === this._customResponseContentView)
+            return WI.ResourceClusterContentView.CustomResponseIdentifier;
         console.error("Unknown contentView.");
         return null;
     }
 
     _showContentViewForIdentifier(identifier)
     {
-        var contentViewToShow = null;
+        let contentViewToShow = null;
 
         switch (identifier) {
         case WI.ResourceClusterContentView.RequestIdentifier:
-            contentViewToShow = this._canShowRequestContentView() ? this.requestContentView : null;
+            contentViewToShow = this.requestContentView;
             break;
         case WI.ResourceClusterContentView.ResponseIdentifier:
             contentViewToShow = this.responseContentView;
+            break;
+        case WI.ResourceClusterContentView.CustomResponseIdentifier:
+            contentViewToShow = this.customResponseContentView;
             break;
         }
 
@@ -255,7 +292,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         // content view with the new one. Make a new ResourceContentView which will use the new resource type to make the correct
         // concrete ResourceContentView subclass.
 
-        var currentResponseContentView = this._responseContentView;
+        let currentResponseContentView = this._responseContentView;
         if (!currentResponseContentView)
             return;
 
@@ -266,6 +303,8 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     _resourceLoadingDidFinish(event)
     {
+        this._tryEnableCustomResponseContentView();
+
         if ("_positionToReveal" in this) {
             if (this._contentViewContainer.currentContentView === this._responseContentView)
                 this._responseContentView.revealPosition(this._positionToReveal, this._textRangeToSelect, this._forceUnformatted);
@@ -275,6 +314,34 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
             delete this._forceUnformatted;
         }
     }
+
+    _tryEnableCustomResponseContentView()
+    {
+        if (!this._resource.hasResponse())
+            return;
+
+        this._customResponseContentViewConstructor = this._customContentViewConstructorForResource(this._resource);
+        if (!this._customResponseContentViewConstructor)
+            return;
+
+        console.assert(this._customResponseContentViewConstructor.customContentViewDisplayName, "Custom Response ContentViews should have a static customContentViewDisplayName method.", this._customResponseContentViewConstructor);
+
+        this._responsePathComponent.nextSibling = this._customResponsePathComponent;
+        this._customResponsePathComponent.previousSibling = this._responsePathComponent;
+        this._customResponsePathComponent.displayName = this._customResponseContentViewConstructor.customContentViewDisplayName();
+
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
+    }
+
+    _customContentViewConstructorForResource(resource)
+    {
+        let mimeType = this._resource.mimeType;
+        let fileExtension = WI.fileExtensionForMIMEType(mimeType);
+        if (fileExtension === "json")
+            return WI.JSONResourceContentView;
+
+        return null;
+    }
 };
 
 WI.ResourceClusterContentView.ContentViewIdentifierCookieKey = "resource-cluster-content-view-identifier";
@@ -283,3 +350,4 @@ WI.ResourceClusterContentView.RequestIconStyleClassName = "request-icon";
 WI.ResourceClusterContentView.ResponseIconStyleClassName = "response-icon";
 WI.ResourceClusterContentView.RequestIdentifier = "request";
 WI.ResourceClusterContentView.ResponseIdentifier = "response";
+WI.ResourceClusterContentView.CustomResponseIdentifier = "custom-response";

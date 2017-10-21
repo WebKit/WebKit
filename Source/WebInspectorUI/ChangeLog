@@ -1,5 +1,48 @@
 2017-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: preview content view for MIME type application/json should be a collapsible tree outline
+        https://bugs.webkit.org/show_bug.cgi?id=158938
+        <rdar://problem/26891128>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New files and strings.
+
+        * UserInterface/Views/JSONResourceContentView.css: Added.
+        (.content-view.resource.json):
+        (.content-view.resource.json .object-tree .prototype-property):
+        Some padding and scrolling for the JSON content view.
+
+        * UserInterface/Views/JSONResourceContentView.js: Added.
+        (WI.JSONResourceContentView):
+        (WI.JSONResourceContentView.customContentViewDisplayName):
+        (WI.JSONResourceContentView.prototype.contentAvailable):
+        (WI.JSONResourceContentView.prototype.closed):
+        JSON view evaluates the JSON content on the page and shows an ObjectTree
+        for the resulting object.
+
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WI.ResourceClusterContentView):
+        (WI.ResourceClusterContentView.prototype.get customResponseContentView):
+        (WI.ResourceClusterContentView.prototype.get selectionPathComponents):
+        (WI.ResourceClusterContentView.prototype.restoreFromCookie):
+        (WI.ResourceClusterContentView.prototype.showResponse):
+        (WI.ResourceClusterContentView.prototype._canShowRequestContentView):
+        (WI.ResourceClusterContentView.prototype._canShowCustomResponseContentView):
+        (WI.ResourceClusterContentView.prototype._pathComponentForContentView):
+        (WI.ResourceClusterContentView.prototype._identifierForContentView):
+        (WI.ResourceClusterContentView.prototype._showContentViewForIdentifier):
+        (WI.ResourceClusterContentView.prototype._resourceTypeDidChange):
+        (WI.ResourceClusterContentView.prototype._resourceLoadingDidFinish):
+        (WI.ResourceClusterContentView.prototype._tryEnableCustomResponseContentView):
+        (WI.ResourceClusterContentView.prototype._customContentViewConstructorForResource):
+        Allow a custom content view to be used for a resource based on the response.
+        Currently the only custom content view is the JSON content view.
+
+2017-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab - Turn on the new tab by default, remove the legacy network tab
         https://bugs.webkit.org/show_bug.cgi?id=178559
         <rdar://problem/34985503>
