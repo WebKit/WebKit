@@ -32,6 +32,7 @@
 #include "ExceptionOr.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
+#include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -41,10 +42,17 @@
 #include "IntRect.h"
 #include "JSImageBitmap.h"
 #include "LayoutSize.h"
+#include "RenderElement.h"
 #include "SharedBuffer.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+#if PLATFORM(COCOA)
+static RenderingMode bufferRenderingMode = Accelerated;
+#else
+static RenderingMode bufferRenderingMode = Unaccelerated;
+#endif
 
 Ref<ImageBitmap> ImageBitmap::create()
 {
@@ -69,6 +77,11 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         return;
     }
 
+    if (sw < 0 || sh < 0) {
+        promise.reject(RangeError, "Cannot create ImageBitmap with a negative width or height");
+        return;
+    }
+
     WTF::switchOn(source,
         [&] (auto& specificSource) {
             createPromise(scriptExecutionContext, specificSource, WTFMove(options), IntRect { sx, sy, sw, sh }, WTFMove(promise));
@@ -78,12 +91,17 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
-    UNUSED_PARAM(imageElement);
     UNUSED_PARAM(options);
     UNUSED_PARAM(rect);
 
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
+
+    auto* cachedImage = imageElement->cachedImage();
+    if (!cachedImage || !imageElement->complete()) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap that is not completely available");
+        return;
+    }
 
     // 3. If image's media data has no intrinsic dimensions (e.g. it's a vector graphic
     //    with no specified content size), and both or either of the resizeWidth and
@@ -103,6 +121,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
     //    abort these steps.
 
     // 7. Create a new ImageBitmap object.
+
     auto imageBitmap = create();
 
     // 8. Let the ImageBitmap object's bitmap data be a copy of image's media data, cropped to
@@ -111,13 +130,26 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
     //    one that the format defines is to be used when animation is not supported or is disabled),
     //    or, if there is no such image, the first frame of the animation.
 
+    // FIXME: Move this into a separate function and handle the cropping/resizing.
+    auto bitmapData = ImageBuffer::create(FloatSize(imageElement->width(), imageElement->height()), bufferRenderingMode);
+
+    auto imageForRender = imageElement->cachedImage()->imageForRenderer(imageElement->renderer());
+    if (!imageForRender) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered");
+        return;
+    }
+    FloatRect drawRect(FloatPoint(), FloatSize(imageElement->width(), imageElement->height()));
+    bitmapData->context().drawImage(*imageForRender, drawRect, drawRect);
+
+    imageBitmap->m_bitmapData = WTFMove(bitmapData);
+
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
     //    bitmap to false.
 
     // 10. Return a new promise, but continue running these steps in parallel.
-
     // 11. Resolve the promise with the new ImageBitmap object as the value.
+
     return promise.resolve(WTFMove(imageBitmap));
 }
 
@@ -146,6 +178,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElemen
     return promise.resolve(WTFMove(imageBitmap));
 }
 
+#if ENABLE(VIDEO)
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement>& videoElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
     UNUSED_PARAM(videoElement);
@@ -177,6 +210,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement
     // 8. Resolve the promise with the new ImageBitmap object as the value.
     return promise.resolve(WTFMove(imageBitmap));
 }
+#endif
 
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {

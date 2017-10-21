@@ -1,3 +1,20 @@
+2017-10-21  Dean Jackson  <dino@apple.com>
+
+        createImageBitmap with basic HTMLImageElement
+        https://bugs.webkit.org/show_bug.cgi?id=178619
+        <rdar://problem/35104118>
+
+        Reviewed by Antoine Quint.
+
+        Make a better test for createImageBitmap. This will be
+        submitted to Web Platform Tests.
+
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-expected.txt: Added.
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap.html: Added.
+        * http/wpt/common/canvas-tests.css: Added.
+        * http/wpt/common/canvas-tests.js: Added.
+        * http/wpt/images/pattern.png: Added.
+
 2017-10-21  Antti Koivisto  <antti@apple.com>
 
         Support ::before/::after pseudo elements with display:contents
