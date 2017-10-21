@@ -28,6 +28,7 @@ bindings/js/CommonVM.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
+bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
 bindings/js/JSAudioTrackCustom.cpp
 bindings/js/JSAudioTrackListCustom.cpp
@@ -161,6 +162,7 @@ JSAesGcmParams.cpp
 JSAesKeyParams.cpp
 JSAnalyserNode.cpp
 JSAnimationEvent.cpp
+JSAnimationTimeline.cpp
 JSAttr.cpp
 JSAudioBuffer.cpp
 JSAudioBufferCallback.cpp
@@ -254,6 +256,7 @@ JSCryptoRsaHashedKeyAlgorithm.cpp
 JSCryptoRsaKeyAlgorithm.cpp
 JSCustomElementRegistry.cpp
 JSCustomEvent.cpp
+JSDocumentTimeline.cpp
 JSDOMApplicationCache.cpp
 JSDOMCSSNamespace.cpp
 JSDOMCache.cpp
@@ -830,6 +833,7 @@ JSVideoTrackMediaSource.cpp
 JSVisibilityState.cpp
 JSVoidCallback.cpp
 JSWaveShaperNode.cpp
+JSWebAnimation.cpp
 JSWebGPUBuffer.cpp
 JSWebGPUCommandBuffer.cpp
 JSWebGPUCommandQueue.cpp

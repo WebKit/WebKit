@@ -2813,12 +2813,8 @@
 		71025ED01F99F0CE004A250C /* DocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EC51F99F096004A250C /* DocumentTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71025ED21F99F0CE004A250C /* WebAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025EC31F99F096004A250C /* WebAnimation.cpp */; };
 		71025ED31F99F0CE004A250C /* WebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EC21F99F096004A250C /* WebAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		71025ED61F99F14C004A250C /* JSAnimationTimelineCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025ED51F99F147004A250C /* JSAnimationTimelineCustom.cpp */; };
-		71025EDD1F99F1EC004A250C /* JSAnimationTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025EDA1F99F1A7004A250C /* JSAnimationTimeline.cpp */; };
 		71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */; };
-		71025EDF1F99F1EC004A250C /* JSDocumentTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025EDB1F99F1A8004A250C /* JSDocumentTimeline.cpp */; };
 		71025EE01F99F1EC004A250C /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */; };
-		71025EE11F99F1EC004A250C /* JSWebAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025ED71F99F1A6004A250C /* JSWebAnimation.cpp */; };
 		71025EE21F99F1EC004A250C /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED81F99F1A6004A250C /* JSWebAnimation.h */; };
 		7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */; };
 		7118FED515685CC60030B79A /* JSSVGViewSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 7118FED315685CC60030B79A /* JSSVGViewSpec.h */; };
@@ -28043,6 +28039,7 @@
 				467302021C4EFE7800BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */,
+				31815A311F9A6C8F00FCBF89 /* ImageBitmap.h in Headers */,
 				7C7903B31F86F95C00463A70 /* ImageBitmapRenderingContext.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
 				22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */,
@@ -30287,7 +30284,6 @@
 				0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */,
 				B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */,
 				A7151BD812F1558F005A0F64 /* TextCheckerClient.h in Headers */,
-				31815A311F9A6C8F00FCBF89 /* ImageBitmap.h in Headers */,
 				A77D0012133B0AEB00D6658C /* TextChecking.h in Headers */,
 				A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */,
 				B2C3DA3A0D006C1D00EF6F26 /* TextCodec.h in Headers */,
@@ -32196,8 +32192,6 @@
 				1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */,
 				AD9FF6E11908391D003B61E0 /* IOSurfacePoolCocoa.mm in Sources */,
 				07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */,
-				71025EDD1F99F1EC004A250C /* JSAnimationTimeline.cpp in Sources */,
-				71025ED61F99F14C004A250C /* JSAnimationTimelineCustom.cpp in Sources */,
 				A1DF5A9A1F7EC8C00058A477 /* JSApplePayContactField.cpp in Sources */,
 				1ADFDFEC1E71E455008F5D34 /* JSApplePayError.cpp in Sources */,
 				7C6579EF1E00856600E3A27A /* JSApplePayLineItem.cpp in Sources */,
@@ -32223,7 +32217,6 @@
 				1AE96A941D1A0DDD00B86768 /* JSApplePayValidateMerchantEvent.cpp in Sources */,
 				E3B7C0631DC34160001FB0B8 /* JSDocumentDOMJIT.cpp in Sources */,
 				E3975B791EC9AF3F00847717 /* JSDocumentFragmentDOMJIT.cpp in Sources */,
-				71025EDF1F99F1EC004A250C /* JSDocumentTimeline.cpp in Sources */,
 				41AF379D1F8DB1B500111C31 /* JSDOMPromise.cpp in Sources */,
 				E3975B7A1EC9AF3F00847717 /* JSElementDOMJIT.cpp in Sources */,
 				E3975B7B1EC9AF3F00847717 /* JSEventDOMJIT.cpp in Sources */,
@@ -32234,7 +32227,6 @@
 				538EC9421F99CE47004D22A8 /* JSTouch.cpp in Sources */,
 				538EC9451F99CE51004D22A8 /* JSTouchEvent.cpp in Sources */,
 				538EC9441F99CE4D004D22A8 /* JSTouchList.cpp in Sources */,
-				71025EE11F99F1EC004A250C /* JSWebAnimation.cpp in Sources */,
 				83B74EF51F3E0BF200996BC7 /* KeepaliveRequestTracker.cpp in Sources */,
 				85031B430A44EFC700F992E0 /* KeyboardEvent.cpp in Sources */,
 				517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */,
@@ -32788,7 +32780,6 @@
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,
 				514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */,
 				7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */,
-				532042021F9A9F1000B81B2A /* UserAgentScriptsData.cpp in Sources */,
 				26FAE4CC1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp in Sources */,
 				26C15CF61857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp in Sources */,
 				E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */,
@@ -33511,6 +33502,7 @@
 				5D5975B71963637B00D00878 /* UserAgent.mm in Sources */,
 				26255F0018878DFF0006E1FD /* UserAgentIOS.mm in Sources */,
 				26255F0418878E110006E1FD /* UserAgentMac.mm in Sources */,
+				532042021F9A9F1000B81B2A /* UserAgentScriptsData.cpp in Sources */,
 				1AE79D42188DB61F002239C2 /* UserContentController.cpp in Sources */,
 				7C3F01C21C8E5AC200ADD962 /* UserContentProvider.cpp in Sources */,
 				BCACF3BC1072921A00C0C8A3 /* UserContentURLPattern.cpp in Sources */,
