@@ -83,3 +83,25 @@ PASS: Promise from teardownExceptionTestSuite.runTestCases() should reject.
 Stack Trace: (suppressed)
 PASS: Promise from teardownFailureTestSuite.runTestCases() should reject.
 
+== Running test suite: AsyncTestSuite.AsyncFunctionSuccess
+-- Running test case: AsyncFunctionSuccess
+PASS: Promise from asyncFunctionSuccessTestSuite.runTestCases() should succeed.
+PASS: Promise did evaluate the async test function.
+PASS: Resolved value should be 42.
+
+== Running test suite: AsyncTestSuite.AsyncFunctionExplicitFailure
+-- Running test case: AsyncFunctionFailure
+!! EXCEPTION: AsyncFunctionFailure Exception Message
+Stack Trace: (suppressed)
+PASS: Promise from asyncFunctionExplicitFailureTestSuite.runTestCases() should reject.
+PASS: Promise did evaluate the async test function.
+PASS: Rejected value should be thrown exception.
+
+== Running test suite: AsyncTestSuite.AsyncFunctionRuntimeFailure
+-- Running test case: AsyncFunctionFailure
+!! EXCEPTION: undefined is not an object (evaluating '({}).x.x')
+Stack Trace: (suppressed)
+PASS: Promise from asyncFunctionRuntimeFailureTestSuite.runTestCases() should reject.
+PASS: Promise did evaluate the async test function.
+PASS: Rejected value should be a runtime exception.
+

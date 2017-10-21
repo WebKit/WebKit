@@ -1,3 +1,63 @@
+2017-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Support `async test() { ... }` in Inspector Test Suites
+        https://bugs.webkit.org/show_bug.cgi?id=178614
+
+        Reviewed by Devin Rousso.
+
+        Add the ability to have test functions be async functions. A successful
+        async test function just needs to complete evaluation. To indicate
+        failure it should throw an exception.
+
+            suite.addTestCase({
+                name: "ExceptionOfNormal",
+                async test() {
+                    InspectorTest.expectThat(...);
+                }
+            });
+
+            suite.addTestCase({
+                name: "ExampleOfRejection",
+                async test() {
+                    let value = await SomeAgent.method();
+                    if (value.error)
+                        throw "Exception";
+                    ...
+                }
+            });
+
+        Using async test functions has the added benefit that a runtime exception
+        inside of asynchronous test code will reject the current test case instead
+        of timing out. For example...
+        
+            suite.addTestCase({
+                name: "ExampleOfRejectionThroughRuntimeException",
+                async test() {
+                    let arr = [];
+                    arr.this.does.not.exist;
+                }
+            });
+        
+        ... should will lead to a failure instead of a timeout.
+        
+        This should allow us to structure some common tests more naturally, like so:
+
+            suite.addTestCase({
+                name: "ExampleOfNormalAsyncTest",
+                async test() {
+                    InspectorTest.evaluateInPage(`...`);
+                    let event = await WI.Manager.awaitEvent(...);
+                    let resource = event.data.resource;
+                    InspectorTest.expectEqual(...);
+                    InspectorTest.expectEqual(...);
+                    InspectorTest.expectEqual(...);
+                }
+            });
+
+        * inspector/unit-tests/async-test-suite-expected.txt:
+        * inspector/unit-tests/async-test-suite.html:
+        * inspector/unit-tests/target-manager.html:
+
 2017-10-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html is flaky

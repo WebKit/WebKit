@@ -150,6 +150,8 @@ AsyncTestSuite = class AsyncTestSuite extends TestSuite
                 priorLogCount = this._harness.logCount;
                 this._harness.log(`-- Running test case: ${testcase.name}`);
                 this.runCount++;
+                if (testcase.test[Symbol.toStringTag] === "AsyncFunction")
+                    return testcase.test();
                 return new Promise(testcase.test);
             });
 
