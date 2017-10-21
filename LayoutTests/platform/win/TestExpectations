@@ -1272,6 +1272,19 @@ editing/secure-input [ Skip ]
 
 editing/deleting/delete-start-block.html [ Failure ]
 
+editing/deleting/delete-ligature-001.html [ Failure ]
+editing/deleting/delete-ligature-002.html [ Failure ]
+editing/deleting/regional-indicators.html [ Failure ]
+editing/deleting/delete-emoji-1.html [ Failure ]
+editing/deleting/delete-emoji-2.html [ Failure ]
+editing/deleting/delete-emoji-3.html [ Failure ]
+editing/deleting/delete-emoji-4.html [ Failure ]
+editing/deleting/delete-emoji-5.html [ Failure ]
+editing/deleting/delete-emoji-6.html [ Failure ]
+editing/deleting/delete-emoji-7.html [ Failure ]
+editing/deleting/delete-emoji-8.html [ Failure ]
+editing/deleting/delete-emoji-9.html [ Failure ]
+
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
 # Many of these may also be wrong due to form element differences in theme (i.e rounded vs. square buttons)
