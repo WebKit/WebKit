@@ -253,7 +253,7 @@ list(APPEND WebCore_SOURCES
     page/cocoa/PerformanceLoggingCocoa.mm
     page/cocoa/ResourceUsageOverlayCocoa.mm
     page/cocoa/ResourceUsageThreadCocoa.mm
-    page/cocoa/SettingsCocoa.mm
+    page/cocoa/SettingsBaseCocoa.mm
     page/cocoa/UserAgent.mm
 
     page/mac/ChromeMac.mm
