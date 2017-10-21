@@ -64,8 +64,8 @@ private:
 
     void willRecalcStyle(Style::Change) final;
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     std::unique_ptr<Length[]> m_rowLengths;
     std::unique_ptr<Length[]> m_colLengths;

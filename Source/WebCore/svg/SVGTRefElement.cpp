@@ -231,7 +231,7 @@ void SVGTRefElement::buildPendingResource()
     // Remove any existing event listener.
     m_targetListener->detach();
 
-    // If we're not yet in a document, this function will be called again from insertedInto().
+    // If we're not yet in a document, this function will be called again from insertedIntoAncestor().
     if (!isConnected())
         return;
 
@@ -256,12 +256,12 @@ void SVGTRefElement::buildPendingResource()
     updateReferencedText(target.get());
 }
 
-Node::InsertedIntoResult SVGTRefElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGTRefElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedInto(insertionType, parentOfInsertedTree);
+    SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
-        return InsertedIntoResult::NeedsPostInsertionCallback;
-    return InsertedIntoResult::Done;
+        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::Done;
 }
 
 void SVGTRefElement::didFinishInsertingNode()
@@ -269,9 +269,9 @@ void SVGTRefElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGTRefElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void SVGTRefElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    SVGElement::removedFrom(removalType, parentOfRemovedTree);
+    SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
         m_targetListener->detach();
 }

@@ -39,8 +39,8 @@ public:
 private:
     HTMLTitleElement(const QualifiedName&, Document&);
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
     void childrenChanged(const ChildChange&) final;
 
     StringWithDirection computedTextWithDirection();

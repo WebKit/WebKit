@@ -68,10 +68,10 @@ void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomicSt
         HTMLElement::parseAttribute(name, value);
 }
 
-Node::InsertedIntoResult HTMLScriptElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLScriptElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
-    return ScriptElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    return ScriptElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
 void HTMLScriptElement::didFinishInsertingNode()

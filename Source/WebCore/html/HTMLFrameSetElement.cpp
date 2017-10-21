@@ -208,20 +208,20 @@ void HTMLFrameSetElement::willRecalcStyle(Style::Change)
         renderer()->setNeedsLayout();
 }
 
-Node::InsertedIntoResult HTMLFrameSetElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLFrameSetElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         if (RefPtr<Frame> frame = document().frame())
             frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());
     }
 
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void HTMLFrameSetElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLFrameSetElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument) {
         if (RefPtr<Frame> frame = document().frame())
             frame->loader().client().dispatchDidBecomeFrameset(document().isFrameSet());

@@ -274,7 +274,7 @@ static void removeInvalidElementToAncestorFromInsertionPoint(const HTMLFormContr
         ancestor.removeInvalidDescendant(element);
 }
 
-Node::InsertedIntoResult HTMLFormControlElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     m_dataListAncestorState = Unknown;
     setNeedsWillValidateCheck();
@@ -282,9 +282,9 @@ Node::InsertedIntoResult HTMLFormControlElement::insertedInto(InsertionType inse
         addInvalidElementToAncestorFromInsertionPoint(*this, &parentOfInsertedTree);
     if (document().hasDisabledFieldsetElement())
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
-    FormAssociatedElement::insertedInto(insertionType, parentOfInsertedTree);
-    return InsertedIntoResult::NeedsPostInsertionCallback;
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    FormAssociatedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLFormControlElement::didFinishInsertingNode()
@@ -292,7 +292,7 @@ void HTMLFormControlElement::didFinishInsertingNode()
     resetFormOwner();
 }
 
-void HTMLFormControlElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     bool wasMatchingInvalidPseudoClass = willValidate() && !isValidFormControlElement();
 
@@ -300,11 +300,11 @@ void HTMLFormControlElement::removedFrom(RemovalType removalType, ContainerNode&
     if (m_disabledByAncestorFieldset)
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     m_dataListAncestorState = Unknown;
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
-    FormAssociatedElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormAssociatedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (wasMatchingInvalidPseudoClass)
-        removeInvalidElementToAncestorFromInsertionPoint(*this, &parentOfRemovedTree);
+        removeInvalidElementToAncestorFromInsertionPoint(*this, &oldParentOfRemovedTree);
 }
 
 void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool changed)

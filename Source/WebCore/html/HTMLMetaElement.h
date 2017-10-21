@@ -39,7 +39,7 @@ private:
     HTMLMetaElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
 
     void process();
 };

@@ -147,7 +147,7 @@ private:
     void typeAheadFind(KeyboardEvent&);
     void saveLastSelection();
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
 
     bool isOptionalFormControl() const final { return !isRequiredFormControl(); }
     bool isRequiredFormControl() const final;

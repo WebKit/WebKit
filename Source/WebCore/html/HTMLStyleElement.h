@@ -54,8 +54,8 @@ private:
     HTMLStyleElement(const QualifiedName&, Document&, bool createdByParser);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
     void childrenChanged(const ChildChange&) final;
 
     bool isLoading() const { return m_styleSheetOwner.isLoading(); }

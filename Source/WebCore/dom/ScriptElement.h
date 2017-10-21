@@ -81,11 +81,11 @@ protected:
     bool forceAsync() const { return m_forceAsync; }
 
     // Helper functions used by our parent classes.
-    Node::InsertedIntoResult insertedInto(Node::InsertionType insertionType, ContainerNode&) const
+    Node::InsertedIntoAncestorResult insertedIntoAncestor(Node::InsertionType insertionType, ContainerNode&) const
     {
         if (insertionType.connectedToDocument && !m_parserInserted)
-            return Node::InsertedIntoResult::NeedsPostInsertionCallback;
-        return Node::InsertedIntoResult::Done;
+            return Node::InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+        return Node::InsertedIntoAncestorResult::Done;
     }
 
     void didFinishInsertingNode();

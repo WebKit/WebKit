@@ -274,13 +274,13 @@ void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<URL>& urls) 
     addSubresourceURL(urls, sheet()->baseURL());
 }
 
-Node::InsertedIntoResult ProcessingInstruction::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult ProcessingInstruction::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    CharacterData::insertedInto(insertionType, parentOfInsertedTree);
+    CharacterData::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
-        return InsertedIntoResult::Done;
+        return InsertedIntoAncestorResult::Done;
     document().styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
-    return InsertedIntoResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void ProcessingInstruction::didFinishInsertingNode()
@@ -288,9 +288,9 @@ void ProcessingInstruction::didFinishInsertingNode()
     checkStyleSheet();
 }
 
-void ProcessingInstruction::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void ProcessingInstruction::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    CharacterData::removedFrom(removalType, parentOfRemovedTree);
+    CharacterData::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (!removalType.disconnectedFromDocument)
         return;
     

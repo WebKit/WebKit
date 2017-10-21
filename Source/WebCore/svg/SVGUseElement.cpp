@@ -104,20 +104,20 @@ void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString
     SVGURIReference::parseAttribute(name, value);
 }
 
-Node::InsertedIntoResult SVGUseElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGGraphicsElement::insertedInto(insertionType, parentOfInsertedTree);
+    SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         SVGExternalResourcesRequired::insertedIntoDocument(this);
         invalidateShadowTree();
         updateExternalDocument();
     }
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void SVGUseElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void SVGUseElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    SVGGraphicsElement::removedFrom(removalType, parentOfRemovedTree);
+    SVGGraphicsElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     clearShadowTree();
     updateExternalDocument();
 }

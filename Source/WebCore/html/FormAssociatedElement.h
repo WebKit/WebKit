@@ -90,8 +90,8 @@ public:
 protected:
     FormAssociatedElement(HTMLFormElement*);
 
-    void insertedInto(Node::InsertionType, ContainerNode&);
-    void removedFrom(Node::RemovalType, ContainerNode&);
+    void insertedIntoAncestor(Node::InsertionType, ContainerNode&);
+    void removedFromAncestor(Node::RemovalType, ContainerNode&);
     void didMoveToNewDocument(Document& oldDocument);
 
     void setForm(HTMLFormElement*);

@@ -68,7 +68,7 @@ void FormAssociatedElement::didMoveToNewDocument(Document&)
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::insertedInto(Node::InsertionType insertionType, ContainerNode&)
+void FormAssociatedElement::insertedIntoAncestor(Node::InsertionType insertionType, ContainerNode&)
 {
     HTMLElement& element = asHTMLElement();
     if (m_formSetByParser) {
@@ -88,7 +88,7 @@ void FormAssociatedElement::insertedInto(Node::InsertionType insertionType, Cont
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::removedFrom(Node::RemovalType, ContainerNode&)
+void FormAssociatedElement::removedFromAncestor(Node::RemovalType, ContainerNode&)
 {
     m_formAttributeTargetObserver = nullptr;
 

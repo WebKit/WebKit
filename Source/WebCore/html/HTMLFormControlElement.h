@@ -136,9 +136,9 @@ protected:
     virtual void readOnlyAttributeChanged();
     virtual void requiredAttributeChanged();
     void didAttachRenderers() override;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     bool supportsFocus() const override;

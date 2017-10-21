@@ -551,8 +551,8 @@ public:
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
     void childrenChanged(const ChildChange&) override;
     void removeAllEventListeners() final;
     virtual void parserDidSetAttributes();

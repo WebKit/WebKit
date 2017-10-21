@@ -52,7 +52,7 @@ public:
     int minLength() const { return m_minLength; }
     ExceptionOr<void> setMinLength(int);
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
 
     // The derived class should return true if placeholder processing is needed.
     bool isPlaceholderVisible() const { return m_isPlaceholderVisible; }

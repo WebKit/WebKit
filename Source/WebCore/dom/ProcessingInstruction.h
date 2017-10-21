@@ -58,9 +58,9 @@ private:
     NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     void checkStyleSheet();
     void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) override;

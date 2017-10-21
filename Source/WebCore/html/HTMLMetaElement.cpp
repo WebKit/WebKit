@@ -60,12 +60,12 @@ void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomicStri
         HTMLElement::parseAttribute(name, value);
 }
 
-Node::InsertedIntoResult HTMLMetaElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLMetaElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
         process();
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
 void HTMLMetaElement::process()

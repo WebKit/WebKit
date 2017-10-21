@@ -58,8 +58,8 @@ private:
     void requestImageResource();
 
     void buildPendingResource() override;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEImageElement)
         DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)

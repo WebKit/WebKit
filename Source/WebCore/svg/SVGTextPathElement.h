@@ -121,8 +121,8 @@ private:
     void clearResourceReferences();
 
     void buildPendingResource() override;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     static bool isSupportedAttribute(const QualifiedName&);
     void parseAttribute(const QualifiedName&, const AtomicString&) override;

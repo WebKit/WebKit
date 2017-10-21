@@ -872,11 +872,11 @@ bool HTMLMediaElement::childShouldCreateRenderer(const Node& child) const
 #endif
 }
 
-Node::InsertedIntoResult HTMLMediaElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLMediaElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         m_inActiveDocument = true;
 
@@ -894,7 +894,7 @@ Node::InsertedIntoResult HTMLMediaElement::insertedInto(InsertionType insertionT
         m_mediaSession->canProduceAudioChanged();
     }
 
-    return InsertedIntoResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLMediaElement::didFinishInsertingNode()
@@ -931,7 +931,7 @@ void HTMLMediaElement::pauseAfterDetachedTask()
     }
 }
 
-void HTMLMediaElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -941,7 +941,7 @@ void HTMLMediaElement::removedFrom(RemovalType removalType, ContainerNode& paren
         m_pauseAfterDetachedTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::pauseAfterDetachedTask, this));
     }
 
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
 void HTMLMediaElement::willAttachRenderers()

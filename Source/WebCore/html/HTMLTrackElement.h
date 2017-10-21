@@ -65,8 +65,8 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     bool isURLAttribute(const Attribute&) const final;
 

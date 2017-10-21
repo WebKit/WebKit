@@ -350,9 +350,9 @@ private:
 
     void willChangeForm() final;
     void didChangeForm() final;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     bool hasCustomFocusLogic() const final;

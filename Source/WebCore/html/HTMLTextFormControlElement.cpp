@@ -78,14 +78,14 @@ bool HTMLTextFormControlElement::childShouldCreateRenderer(const Node& child) co
     return hasShadowRootParent(child) && HTMLFormControlElementWithState::childShouldCreateRenderer(child);
 }
 
-Node::InsertedIntoResult HTMLTextFormControlElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLTextFormControlElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    InsertedIntoResult InsertedIntoResult = HTMLFormControlElementWithState::insertedInto(insertionType, parentOfInsertedTree);
+    InsertedIntoAncestorResult InsertedIntoAncestorResult = HTMLFormControlElementWithState::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         String initialValue = value();
         setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? emptyString() : initialValue);
     }
-    return InsertedIntoResult;
+    return InsertedIntoAncestorResult;
 }
 
 void HTMLTextFormControlElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection direction)

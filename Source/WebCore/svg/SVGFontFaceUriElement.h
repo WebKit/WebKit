@@ -42,7 +42,7 @@ private:
     
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void childrenChanged(const ChildChange&) final;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     void loadFont();

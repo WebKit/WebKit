@@ -313,11 +313,11 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
         renderFallbackContent();
 }
 
-Node::InsertedIntoResult HTMLObjectElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLObjectElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLPlugInImageElement::insertedInto(insertionType, parentOfInsertedTree);
-    FormAssociatedElement::insertedInto(insertionType, parentOfInsertedTree);
-    return InsertedIntoResult::NeedsPostInsertionCallback;
+    HTMLPlugInImageElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    FormAssociatedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLObjectElement::didFinishInsertingNode()
@@ -325,10 +325,10 @@ void HTMLObjectElement::didFinishInsertingNode()
     resetFormOwner();
 }
 
-void HTMLObjectElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLObjectElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    HTMLPlugInImageElement::removedFrom(removalType, parentOfRemovedTree);
-    FormAssociatedElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLPlugInImageElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    FormAssociatedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
 void HTMLObjectElement::childrenChanged(const ChildChange& change)

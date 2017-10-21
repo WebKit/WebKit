@@ -50,7 +50,7 @@ private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
 

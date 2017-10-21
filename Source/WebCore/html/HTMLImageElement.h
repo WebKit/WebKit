@@ -120,8 +120,8 @@ private:
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     bool isFormAssociatedElement() const final { return false; }
     FormNamedItem* asFormNamedItem() final { return this; }

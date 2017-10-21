@@ -50,16 +50,16 @@ Ref<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLTitleElement(tagName, document));
 }
 
-Node::InsertedIntoResult HTMLTitleElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLTitleElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     document().titleElementAdded(*this);
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void HTMLTitleElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLTitleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     document().titleElementRemoved(*this);
 }
 

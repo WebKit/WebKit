@@ -1560,13 +1560,13 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent& event)
         listBoxOnChange();
 }
 
-Node::InsertedIntoResult HTMLSelectElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLSelectElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     // When the element is created during document parsing, it won't have any
     // items yet - but for innerHTML and related methods, this method is called
     // after the whole subtree is constructed.
     recalcListItems();
-    return HTMLFormControlElementWithState::insertedInto(insertionType, parentOfInsertedTree);
+    return HTMLFormControlElementWithState::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
 void HTMLSelectElement::accessKeySetSelectedIndex(int index)

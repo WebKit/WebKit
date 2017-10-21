@@ -63,9 +63,9 @@ Ref<HTMLSourceElement> HTMLSourceElement::create(Document& document)
     return create(sourceTag, document);
 }
 
-Node::InsertedIntoResult HTMLSourceElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLSourceElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     RefPtr<Element> parent = parentElement();
     if (parent == &parentOfInsertedTree) {
 #if ENABLE(VIDEO)
@@ -76,20 +76,20 @@ Node::InsertedIntoResult HTMLSourceElement::insertedInto(InsertionType insertion
         if (is<HTMLPictureElement>(*parent))
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
     }
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void HTMLSourceElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLSourceElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {        
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
-    if (!parentNode() && is<Element>(parentOfRemovedTree)) {
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    if (!parentNode() && is<Element>(oldParentOfRemovedTree)) {
 #if ENABLE(VIDEO)
-        if (is<HTMLMediaElement>(parentOfRemovedTree))
-            downcast<HTMLMediaElement>(parentOfRemovedTree).sourceWasRemoved(*this);
+        if (is<HTMLMediaElement>(oldParentOfRemovedTree))
+            downcast<HTMLMediaElement>(oldParentOfRemovedTree).sourceWasRemoved(*this);
         else
 #endif
-        if (is<HTMLPictureElement>(parentOfRemovedTree))
-            downcast<HTMLPictureElement>(parentOfRemovedTree).sourcesChanged();
+        if (is<HTMLPictureElement>(oldParentOfRemovedTree))
+            downcast<HTMLPictureElement>(oldParentOfRemovedTree).sourcesChanged();
     }
 }
 

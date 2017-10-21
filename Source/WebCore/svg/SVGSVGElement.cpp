@@ -467,7 +467,7 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
     return createRenderer<RenderSVGViewportContainer>(*this, WTFMove(style));
 }
 
-Node::InsertedIntoResult SVGSVGElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument) {
         document().accessSVGExtensions().addTimeContainer(this);
@@ -480,16 +480,16 @@ Node::InsertedIntoResult SVGSVGElement::insertedInto(InsertionType insertionType
         if (!document().parsing() && !document().processingLoadEvent() && document().loadEventFinished() && !m_timeContainer->isStarted())
             m_timeContainer->begin();
     }
-    return SVGGraphicsElement::insertedInto(insertionType, parentOfInsertedTree);
+    return SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
-void SVGSVGElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void SVGSVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument) {
         document().accessSVGExtensions().removeTimeContainer(this);
         pauseAnimations();
     }
-    SVGGraphicsElement::removedFrom(removalType, parentOfRemovedTree);
+    SVGGraphicsElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
 void SVGSVGElement::pauseAnimations()

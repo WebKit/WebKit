@@ -86,12 +86,12 @@ void SVGMPathElement::clearResourceReferences()
     document().accessSVGExtensions().removeAllTargetReferencesForElement(this);
 }
 
-Node::InsertedIntoResult SVGMPathElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGMPathElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedInto(insertionType, parentOfInsertedTree);
+    SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
-        return InsertedIntoResult::NeedsPostInsertionCallback;
-    return InsertedIntoResult::Done;
+        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::Done;
 }
 
 void SVGMPathElement::didFinishInsertingNode()
@@ -99,10 +99,10 @@ void SVGMPathElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGMPathElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void SVGMPathElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    SVGElement::removedFrom(removalType, parentOfRemovedTree);
-    notifyParentOfPathChange(&parentOfRemovedTree);
+    SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    notifyParentOfPathChange(&oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
         clearResourceReferences();
 }

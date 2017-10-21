@@ -1241,7 +1241,7 @@ Node& Node::getRootNode(const GetRootNodeOptions& options) const
     return options.composed ? shadowIncludingRoot() : rootNode();
 }
 
-Node::InsertedIntoResult Node::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument)
         setFlag(IsConnectedFlag);
@@ -1250,10 +1250,10 @@ Node::InsertedIntoResult Node::insertedInto(InsertionType insertionType, Contain
 
     invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
 
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void Node::removedFrom(RemovalType removalType, ContainerNode&)
+void Node::removedFromAncestor(RemovalType removalType, ContainerNode&)
 {
     if (removalType.disconnectedFromDocument)
         clearFlag(IsConnectedFlag);

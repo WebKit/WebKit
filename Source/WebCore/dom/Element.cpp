@@ -1629,9 +1629,9 @@ RenderPtr<RenderElement> Element::createElementRenderer(RenderStyle&& style, con
     return RenderElement::createFor(*this, WTFMove(style));
 }
 
-Node::InsertedIntoResult Element::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    ContainerNode::insertedInto(insertionType, parentOfInsertedTree);
+    ContainerNode::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
@@ -1644,7 +1644,7 @@ Node::InsertedIntoResult Element::insertedInto(InsertionType insertionType, Cont
     }
 
     if (!parentOfInsertedTree.isInTreeScope())
-        return InsertedIntoResult::Done;
+        return InsertedIntoAncestorResult::Done;
 
     bool becomeConnected = insertionType.connectedToDocument;
     TreeScope* newScope = &parentOfInsertedTree.treeScope();
@@ -1680,10 +1680,10 @@ Node::InsertedIntoResult Element::insertedInto(InsertionType insertionType, Cont
             CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
     }
 
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void Element::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement())
@@ -1696,8 +1696,8 @@ void Element::removedFrom(RemovalType removalType, ContainerNode& parentOfRemove
 
     setSavedLayerScrollPosition(ScrollPosition());
 
-    if (parentOfRemovedTree.isInTreeScope()) {
-        TreeScope* oldScope = &parentOfRemovedTree.treeScope();
+    if (oldParentOfRemovedTree.isInTreeScope()) {
+        TreeScope* oldScope = &oldParentOfRemovedTree.treeScope();
         Document* oldDocument = removalType.disconnectedFromDocument ? &oldScope->documentScope() : nullptr;
         HTMLDocument* oldHTMLDocument = oldDocument && is<HTMLDocument>(*oldDocument) ? &downcast<HTMLDocument>(*oldDocument) : nullptr;
         if (!removalType.treeScopeChanged)
@@ -1734,11 +1734,11 @@ void Element::removedFrom(RemovalType removalType, ContainerNode& parentOfRemove
     }
 
     if (!parentNode()) {
-        if (auto* shadowRoot = parentOfRemovedTree.shadowRoot())
+        if (auto* shadowRoot = oldParentOfRemovedTree.shadowRoot())
             shadowRoot->hostChildElementDidChange(*this);
     }
 
-    ContainerNode::removedFrom(removalType, parentOfRemovedTree);
+    ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (hasPendingResources())
         document().accessSVGExtensions().removeElementFromPendingResources(this);

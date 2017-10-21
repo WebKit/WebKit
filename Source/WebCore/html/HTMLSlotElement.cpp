@@ -48,28 +48,28 @@ HTMLSlotElement::HTMLSlotElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(slotTag));
 }
 
-HTMLSlotElement::InsertedIntoResult HTMLSlotElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    auto insertionResult = HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
-    ASSERT_UNUSED(insertionResult, insertionResult == InsertedIntoResult::Done);
+    auto insertionResult = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    ASSERT_UNUSED(insertionResult, insertionResult == InsertedIntoAncestorResult::Done);
 
     if (insertionType.treeScopeChanged && isInShadowTree()) {
         if (auto shadowRoot = containingShadowRoot())
             shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void HTMLSlotElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (removalType.treeScopeChanged && parentOfRemovedTree.isInShadowTree()) {
-        auto* oldShadowRoot = parentOfRemovedTree.containingShadowRoot();
+    if (removalType.treeScopeChanged && oldParentOfRemovedTree.isInShadowTree()) {
+        auto* oldShadowRoot = oldParentOfRemovedTree.containingShadowRoot();
         ASSERT(oldShadowRoot);
         oldShadowRoot->removeSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
 void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)

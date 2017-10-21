@@ -340,16 +340,16 @@ void HTMLLinkElement::clearSheet()
     m_sheet = nullptr;
 }
 
-Node::InsertedIntoResult HTMLLinkElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLLinkElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
-        return InsertedIntoResult::Done;
+        return InsertedIntoAncestorResult::Done;
 
     m_styleScope = &Style::Scope::forNode(*this);
     m_styleScope->addStyleSheetCandidateNode(*this, m_createdByParser);
 
-    return InsertedIntoResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLLinkElement::didFinishInsertingNode()
@@ -357,9 +357,9 @@ void HTMLLinkElement::didFinishInsertingNode()
     process();
 }
 
-void HTMLLinkElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLLinkElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (!removalType.disconnectedFromDocument)
         return;
 

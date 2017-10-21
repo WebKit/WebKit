@@ -293,7 +293,7 @@ void HTMLImageElement::didAttachRenderers()
         renderImage.setImageSizeForAltText();
 }
 
-Node::InsertedIntoResult HTMLImageElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (m_formSetByParser) {
         m_form = m_formSetByParser;
@@ -313,7 +313,7 @@ Node::InsertedIntoResult HTMLImageElement::insertedInto(InsertionType insertionT
     }
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
-    Node::InsertedIntoResult insertNotificationRequest = HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    Node::InsertedIntoAncestorResult insertNotificationRequest = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
     if (insertionType.connectedToDocument && !m_parsedUsemap.isNull())
         document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
@@ -331,7 +331,7 @@ Node::InsertedIntoResult HTMLImageElement::insertedInto(InsertionType insertionT
     return insertNotificationRequest;
 }
 
-void HTMLImageElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (m_form)
         m_form->removeImgElement(this);
@@ -343,7 +343,7 @@ void HTMLImageElement::removedFrom(RemovalType removalType, ContainerNode& paren
         setPictureElement(nullptr);
 
     m_form = nullptr;
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
 HTMLPictureElement* HTMLImageElement::pictureElement() const

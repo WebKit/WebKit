@@ -138,12 +138,12 @@ void HTMLFrameElementBase::setNameAndOpenURL()
     openURL();
 }
 
-Node::InsertedIntoResult HTMLFrameElementBase::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLFrameElementBase::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLFrameOwnerElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLFrameOwnerElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
-        return InsertedIntoResult::NeedsPostInsertionCallback;
-    return InsertedIntoResult::Done;
+        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::Done;
 }
 
 void HTMLFrameElementBase::didFinishInsertingNode()

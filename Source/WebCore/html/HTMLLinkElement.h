@@ -81,9 +81,9 @@ private:
     static void processCallback(Node*);
     void clearSheet();
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&);
 

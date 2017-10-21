@@ -45,8 +45,8 @@ private:
 
     void buildPendingResource() final;
     void clearResourceReferences();
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;

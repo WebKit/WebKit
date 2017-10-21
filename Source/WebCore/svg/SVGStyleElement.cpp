@@ -113,17 +113,17 @@ void SVGStyleElement::finishParsingChildren()
     SVGElement::finishParsingChildren();
 }
 
-Node::InsertedIntoResult SVGStyleElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGStyleElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    auto result = SVGElement::insertedInto(insertionType, parentOfInsertedTree);
+    auto result = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
         m_styleSheetOwner.insertedIntoDocument(*this);
     return result;
 }
 
-void SVGStyleElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void SVGStyleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    SVGElement::removedFrom(removalType, parentOfRemovedTree);
+    SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
         m_styleSheetOwner.removedFromDocument(*this);
 }

@@ -71,12 +71,12 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGElement::svgAttributeChanged(attrName);
 }
 
-Node::InsertedIntoResult SVGScriptElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGScriptElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedInto(insertionType, parentOfInsertedTree);
+    SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
         SVGExternalResourcesRequired::insertedIntoDocument(this);
-    return ScriptElement::insertedInto(insertionType, parentOfInsertedTree);
+    return ScriptElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
 void SVGScriptElement::didFinishInsertingNode()

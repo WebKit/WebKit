@@ -58,8 +58,8 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     void childrenChanged(const ChildChange&) final;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) final;
-    void removedFrom(RemovalType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 

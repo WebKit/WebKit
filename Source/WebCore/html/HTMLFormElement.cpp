@@ -121,21 +121,21 @@ bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
     return formIsTablePart;
 }
 
-Node::InsertedIntoResult HTMLFormElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLFormElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
         document().didAssociateFormControl(this);
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void HTMLFormElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLFormElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     Node& root = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope is outdated.
     Vector<FormAssociatedElement*> associatedElements(m_associatedElements);
     for (auto& associatedElement : associatedElements)
         associatedElement->formOwnerRemovedFromTree(root);
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
 void HTMLFormElement::handleLocalEvents(Event& event)

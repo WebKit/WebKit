@@ -1503,13 +1503,13 @@ void HTMLInputElement::didChangeForm()
     addToRadioButtonGroup();
 }
 
-Node::InsertedIntoResult HTMLInputElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLTextFormControlElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLTextFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
-    return InsertedIntoResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void HTMLInputElement::didFinishInsertingNode()
@@ -1519,11 +1519,11 @@ void HTMLInputElement::didFinishInsertingNode()
         addToRadioButtonGroup();
 }
 
-void HTMLInputElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument && !form())
         removeFromRadioButtonGroup();
-    HTMLTextFormControlElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLTextFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ASSERT(!isConnected());
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();

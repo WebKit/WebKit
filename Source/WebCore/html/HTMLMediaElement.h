@@ -588,9 +588,9 @@ private:
     bool isMouseFocusable() const override;
     bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override;
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
     void didRecalcStyle(Style::Change) override;
 
     void willBecomeFullscreenElement() override;

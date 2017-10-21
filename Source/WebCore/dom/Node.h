@@ -433,7 +433,7 @@ public:
 
     virtual const RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO);
 
-    enum class InsertedIntoResult {
+    enum class InsertedIntoAncestorResult {
         Done,
         NeedsPostInsertionCallback,
     };
@@ -450,7 +450,7 @@ public:
     };
     // Called *after* this node or its ancestor is inserted into a new parent (may or may not be a part of document) by scripts or parser.
     // insertedInto **MUST NOT** invoke scripts. Return NeedsPostInsertionCallback and implement didFinishInsertingNode instead to run scripts.
-    virtual InsertedIntoResult insertedInto(InsertionType, ContainerNode& parentOfInsertedTree);
+    virtual InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree);
     virtual void didFinishInsertingNode() { }
 
     struct RemovalType {
@@ -463,7 +463,7 @@ public:
         bool disconnectedFromDocument { false };
         bool treeScopeChanged { false };
     };
-    virtual void removedFrom(RemovalType, ContainerNode& parentOfRemovedTree);
+    virtual void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree);
 
 #if ENABLE(TREE_DEBUGGING)
     virtual void formatForDebugger(char* buffer, unsigned length) const;

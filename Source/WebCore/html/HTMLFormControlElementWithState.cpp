@@ -38,18 +38,18 @@ HTMLFormControlElementWithState::HTMLFormControlElementWithState(const Qualified
 
 HTMLFormControlElementWithState::~HTMLFormControlElementWithState() = default;
 
-Node::InsertedIntoResult HTMLFormControlElementWithState::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLFormControlElementWithState::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument && !containingShadowRoot())
         document().formController().registerFormElementWithState(this);
-    return HTMLFormControlElement::insertedInto(insertionType, parentOfInsertedTree);
+    return HTMLFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
-void HTMLFormControlElementWithState::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLFormControlElementWithState::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (removalType.disconnectedFromDocument && !containingShadowRoot() && !parentOfRemovedTree.containingShadowRoot())
+    if (removalType.disconnectedFromDocument && !containingShadowRoot() && !oldParentOfRemovedTree.containingShadowRoot())
         document().formController().unregisterFormElementWithState(this);
-    HTMLFormControlElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
 bool HTMLFormControlElementWithState::shouldAutocomplete() const

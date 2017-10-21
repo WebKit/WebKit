@@ -365,12 +365,12 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
     ASSERT_NOT_REACHED();
 }
 
-void SVGElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
         updateRelativeLengthsInformation(false, this);
 
-    StyledElement::removedFrom(removalType, parentOfRemovedTree);
+    StyledElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (removalType.disconnectedFromDocument) {
         document().accessSVGExtensions().clearTargetDependencies(*this);
@@ -981,12 +981,12 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-Node::InsertedIntoResult SVGElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    StyledElement::insertedInto(insertionType, parentOfInsertedTree);
+    StyledElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     updateRelativeLengthsInformation();
     buildPendingResourcesIfNeeded();
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
 void SVGElement::buildPendingResourcesIfNeeded()
@@ -1063,7 +1063,7 @@ AffineTransform SVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope
 
 void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement* element)
 {
-    // If we're not yet in a document, this function will be called again from insertedInto(). Do nothing now.
+    // If we're not yet in a document, this function will be called again from insertedIntoAncestor(). Do nothing now.
     if (!isConnected())
         return;
 

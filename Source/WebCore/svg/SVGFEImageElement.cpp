@@ -150,10 +150,10 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-Node::InsertedIntoResult SVGFEImageElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult SVGFEImageElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGFilterPrimitiveStandardAttributes::insertedInto(insertionType, parentOfInsertedTree);
-    return InsertedIntoResult::NeedsPostInsertionCallback;
+    SVGFilterPrimitiveStandardAttributes::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
 void SVGFEImageElement::didFinishInsertingNode()
@@ -161,9 +161,9 @@ void SVGFEImageElement::didFinishInsertingNode()
     buildPendingResource();
 }
 
-void SVGFEImageElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void SVGFEImageElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    SVGFilterPrimitiveStandardAttributes::removedFrom(removalType, parentOfRemovedTree);
+    SVGFilterPrimitiveStandardAttributes::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
         clearResourceReferences();
 }

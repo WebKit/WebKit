@@ -76,24 +76,24 @@ Ref<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLTrackElement(tagName, document));
 }
 
-Node::InsertedIntoResult HTMLTrackElement::insertedInto(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+Node::InsertedIntoAncestorResult HTMLTrackElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedInto(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
     if (parentNode() == &parentOfInsertedTree && is<HTMLMediaElement>(parentOfInsertedTree)) {
         downcast<HTMLMediaElement>(parentOfInsertedTree).didAddTextTrack(*this);
         scheduleLoad();
     }
 
-    return InsertedIntoResult::Done;
+    return InsertedIntoAncestorResult::Done;
 }
 
-void HTMLTrackElement::removedFrom(RemovalType removalType, ContainerNode& parentOfRemovedTree)
+void HTMLTrackElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    HTMLElement::removedFrom(removalType, parentOfRemovedTree);
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
-    if (!parentNode() && is<HTMLMediaElement>(parentOfRemovedTree))
-        downcast<HTMLMediaElement>(parentOfRemovedTree).didRemoveTextTrack(*this);
+    if (!parentNode() && is<HTMLMediaElement>(oldParentOfRemovedTree))
+        downcast<HTMLMediaElement>(oldParentOfRemovedTree).didRemoveTextTrack(*this);
 }
 
 void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -44,8 +44,8 @@ private:
     bool childShouldCreateRenderer(const Node&) const override;
     bool rendererIsNeeded(const RenderStyle&) override;
 
-    InsertedIntoResult insertedInto(InsertionType, ContainerNode&) override;
-    void removedFrom(RemovalType, ContainerNode&) override;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
     void didFinishInsertingNode() override;
 
     void clearTarget() override;
