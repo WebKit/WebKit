@@ -1,3 +1,66 @@
+2017-10-21  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223578. rdar://problem/34891313
+
+    2017-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Delete button doesn't fully delete certain emoji
+            https://bugs.webkit.org/show_bug.cgi?id=178096
+            <rdar://problem/34785106>
+
+            Reviewed by Simon Fraser.
+
+            * editing/deleting/delete-emoji-1.html: Added.
+            * editing/deleting/delete-emoji-2.html: Added.
+            * editing/deleting/delete-emoji-3.html: Added.
+            * editing/deleting/delete-emoji-4.html: Added.
+            * editing/deleting/delete-emoji-5.html: Added.
+            * editing/deleting/delete-emoji-6.html: Added.
+            * editing/deleting/delete-emoji-7.html: Added.
+            * editing/deleting/delete-emoji-8.html: Added.
+            * editing/deleting/delete-emoji-9.html: Added.
+            * editing/deleting/delete-emoji.html:
+            * platform/ios/editing/deleting/delete-emoji-1-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-2-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-3-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-4-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-5-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-6-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-7-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-8-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-9-expected.txt: Added.
+            * platform/ios/editing/deleting/delete-emoji-expected.txt:
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-2-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-3-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-4-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-5-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-6-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-7-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-8-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-9-expected.txt: Added.
+            * platform/mac-elcapitan/editing/deleting/delete-emoji-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-1-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-2-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-3-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-4-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-5-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-6-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-7-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-8-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-9-expected.txt: Added.
+            * platform/mac-sierra/editing/deleting/delete-emoji-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-1-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-2-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-3-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-4-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-5-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-6-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-7-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-8-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-9-expected.txt: Added.
+            * platform/mac/editing/deleting/delete-emoji-expected.txt:
+            * platform/win/TestExpectations:
+
 2017-10-20  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223708. rdar://problem/34771406
