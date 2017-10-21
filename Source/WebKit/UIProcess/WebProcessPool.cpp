@@ -427,6 +427,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     if (withWebsiteDataStore) {
         auto websiteDataStoreParameters = withWebsiteDataStore->parameters();
         parameters.defaultSessionParameters = websiteDataStoreParameters.networkSessionParameters;
+
+        // FIXME: This isn't conceptually correct, but it's needed to preserve behavior introduced in r213241.
+        // We should separate the concept of the default session from the currently used persistent session.
         parameters.defaultSessionParameters.sessionID = PAL::SessionID::defaultSessionID();
     }
     

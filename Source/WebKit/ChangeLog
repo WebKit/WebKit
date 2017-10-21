@@ -1,5 +1,14 @@
 2017-10-20  Alex Christensen  <achristensen@webkit.org>
 
+        Add FIXME comment after r223803
+        https://bugs.webkit.org/show_bug.cgi?id=178418
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        We need some work to better support customized persistent data stores.  Add a comment indicating such.
+
+2017-10-20  Alex Christensen  <achristensen@webkit.org>
+
         Fix API tests after r223791.
         https://bugs.webkit.org/show_bug.cgi?id=178418
 
