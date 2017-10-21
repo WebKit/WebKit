@@ -1,3 +1,12 @@
+2017-10-21  Antti Koivisto  <antti@apple.com>
+
+        Support ::before/::after pseudo elements with display:contents
+        https://bugs.webkit.org/show_bug.cgi?id=178584
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: Enable imported/w3c/web-platform-tests/css/css-display-3/display-contents-before-after-002.html
+
 2017-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Support `async test() { ... }` in Inspector Test Suites

@@ -1269,7 +1269,6 @@ webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-co
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-before-after-001.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-table-002-none.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-flex-003.html [ ImageOnlyFailure ]
-webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-before-after-002.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-table-001-inline.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-002-none.html [ ImageOnlyFailure ]
 webkit.org/b/157477 imported/w3c/web-platform-tests/css/css-display-3/display-contents-flex-002.html [ ImageOnlyFailure ]

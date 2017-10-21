@@ -789,6 +789,22 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
     return tagNames.get().contains(element.localName());
 }
 
+static void adjustDisplayContentsStyle(RenderStyle& style, const Element* element)
+{
+    bool displayContentsEnabled = is<HTMLSlotElement>(element) || RuntimeEnabledFeatures::sharedFeatures().displayContentsEnabled();
+    if (!displayContentsEnabled) {
+        style.setDisplay(INLINE);
+        return;
+    }
+    if (!element) {
+        if (style.styleType() != BEFORE && style.styleType() != AFTER)
+            style.setDisplay(NONE);
+        return;
+    }
+    if (hasEffectiveDisplayNoneForDisplayContents(*element))
+        style.setDisplay(NONE);
+}
+
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
 {
     // If the composed tree parent has display:contents, the parent box style will be different from the parent style.
@@ -799,13 +815,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     // Cache our original display.
     style.setOriginalDisplay(style.display());
 
-    if (style.display() == CONTENTS) {
-        bool elementSupportsDisplayContents = is<HTMLSlotElement>(element) || RuntimeEnabledFeatures::sharedFeatures().displayContentsEnabled();
-        if (!elementSupportsDisplayContents)
-            style.setDisplay(INLINE);
-        else if (!element || hasEffectiveDisplayNoneForDisplayContents(*element))
-            style.setDisplay(NONE);
-    }
+    if (style.display() == CONTENTS)
+        adjustDisplayContentsStyle(style, element);
 
     if (style.display() != NONE && style.display() != CONTENTS) {
         if (element) {
