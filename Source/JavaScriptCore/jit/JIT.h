@@ -245,8 +245,6 @@ namespace JSC {
             jit.privateCompileHasIndexedProperty(byValInfo, returnAddress, arrayMode);
         }
 
-        static CodeRef compileCTINativeCall(VM*, NativeFunction);
-
         static unsigned frameRegisterCountFor(CodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
@@ -265,8 +263,6 @@ namespace JSC {
 
         void privateCompileHasIndexedProperty(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
-        Label privateCompileCTINativeCall(VM*, bool isConstruct = false);
-        CodeRef privateCompileCTINativeCall(VM*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         // Add a call out from JIT code, without an exception check.

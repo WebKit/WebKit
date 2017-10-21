@@ -1,3 +1,26 @@
+2017-10-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove per-host-function CTI stub in 32bit environment
+        https://bugs.webkit.org/show_bug.cgi?id=178581
+
+        Reviewed by Saam Barati.
+
+        JIT::privateCompileCTINativeCall only exists in 32bit environment and it is almost the same to native call CTI stub.
+        The only difference is that it embed the address of the host function directly in the generated stub. This means
+        that we have per-host-function CTI stub only in 32bit environment.
+
+        This patch just removes it and use one CTI stub instead. This design is the same to the current 64bit implementation.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::compileCTINativeCall): Deleted.
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall): Deleted.
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+
 2017-10-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Provide basic timeline and animation interfaces

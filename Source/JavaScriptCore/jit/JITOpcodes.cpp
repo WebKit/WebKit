@@ -51,11 +51,6 @@ namespace JSC {
 
 #if USE(JSVALUE64)
 
-JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction)
-{
-    return vm->getCTIStub(nativeCallGenerator);
-}
-
 void JIT::emit_op_mov(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

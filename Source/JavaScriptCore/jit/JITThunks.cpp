@@ -116,7 +116,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
         MacroAssemblerCodeRef entry = generator(vm);
         forCall = adoptRef(new DirectJITCode(entry, entry.code(), JITCode::HostCallThunk));
     } else
-        forCall = adoptRef(new NativeJITCode(JIT::compileCTINativeCall(vm, function), JITCode::HostCallThunk));
+        forCall = adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeCall(vm)), JITCode::HostCallThunk));
     
     Ref<JITCode> forConstruct = adoptRef(*new NativeJITCode(MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), JITCode::HostCallThunk));
     
