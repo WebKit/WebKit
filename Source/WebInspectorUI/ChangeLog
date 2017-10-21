@@ -1,3 +1,20 @@
+2017-10-20  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: scrolling the editor while debugging shouldn't trigger popovers
+        https://bugs.webkit.org/show_bug.cgi?id=178325
+
+        Reviewed by Devin Rousso.
+
+        Ignore the next "mousemove" event immediately following a "mousewheel",
+        when determining the hovered item for purposes of triggering a popover.
+
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        (WI.CodeMirrorTokenTrackingController):
+        (WI.CodeMirrorTokenTrackingController.prototype._startTracking):
+        (WI.CodeMirrorTokenTrackingController.prototype._stopTracking):
+        (WI.CodeMirrorTokenTrackingController.prototype.handleEvent):
+        (WI.CodeMirrorTokenTrackingController.prototype._mouseMovedOverEditor):
+
 2017-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: preview content view for MIME type application/json should be a collapsible tree outline
