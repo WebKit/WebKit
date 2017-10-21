@@ -427,6 +427,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     if (withWebsiteDataStore) {
         auto websiteDataStoreParameters = withWebsiteDataStore->parameters();
         parameters.defaultSessionParameters = websiteDataStoreParameters.networkSessionParameters;
+        parameters.defaultSessionParameters.sessionID = PAL::SessionID::defaultSessionID();
     }
     
     parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
@@ -682,7 +683,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 
 WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDataStore)
 {
-    ensureNetworkProcess(&websiteDataStore);
+    ensureNetworkProcess();
 
     Ref<WebProcessProxy> process = WebProcessProxy::create(*this, websiteDataStore);
 
