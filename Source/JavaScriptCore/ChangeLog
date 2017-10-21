@@ -1,3 +1,22 @@
+2017-10-21  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223645. rdar://problem/34820875
+
+    2017-10-18  Mark Lam  <mark.lam@apple.com>
+
+            RegExpObject::defineOwnProperty() does not need to compare values if no descriptor value is specified.
+            https://bugs.webkit.org/show_bug.cgi?id=177600
+            <rdar://problem/34710985>
+
+            Reviewed by Saam Barati.
+
+            According to http://www.ecma-international.org/ecma-262/8.0/#sec-validateandapplypropertydescriptor,
+            section 9.1.6.3-7.a.ii, we should only check if the value is the same if the
+            descriptor value is present.
+
+            * runtime/RegExpObject.cpp:
+            (JSC::RegExpObject::defineOwnProperty):
+
 2017-10-18  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221607. rdar://problem/35041474

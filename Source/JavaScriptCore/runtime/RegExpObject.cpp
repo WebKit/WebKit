@@ -115,7 +115,7 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
         if (!regExp->m_lastIndexIsWritable) {
             if (descriptor.writablePresent() && descriptor.writable())
                 return typeError(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
-            if (!sameValue(exec, regExp->getLastIndex(), descriptor.value()))
+            if (descriptor.value() && !sameValue(exec, regExp->getLastIndex(), descriptor.value()))
                 return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyChangeError));
             return true;
         }
