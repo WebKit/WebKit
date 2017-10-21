@@ -1,3 +1,15 @@
+2017-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on ccache for Mac cmake builds by default
+        https://bugs.webkit.org/show_bug.cgi?id=177059
+
+        Reviewed by Sam Weinig.
+
+        * Source/cmake/WebKitCCache.cmake: Added.
+        * Source/cmake/WebKitCommon.cmake:
+        Turn on ccache for Mac CMake builds (Makefile and Ninja generators only)
+        if it's installed, making use of CMake's ability to wrap the compiler invocation.
+
 2017-10-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Provide basic timeline and animation interfaces

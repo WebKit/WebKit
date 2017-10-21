@@ -66,6 +66,7 @@ my $shouldRunStaticAnalyzer = 0;
 my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
+my $useCCache = -1;
 
 my @features = getFeatureOptionList();
 
@@ -120,6 +121,8 @@ Usage: $programName [options] [options to pass to build system]
 
   --skip-library-update             Skip the check to see if windows libraries are up to date
 
+  --[no-]use-ccache                 Enable (or disable) CCache, if available
+
 EOF
 
 my %options = (
@@ -136,7 +139,8 @@ my %options = (
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
     'default-cmake-features' => \$defaultCMakeFeatures,
-    'skip-library-update' => \$skipLibraryUpdate
+    'skip-library-update' => \$skipLibraryUpdate,
+    'use-ccache!' => \$useCCache,
 );
 
 # Build usage text and options list from features
@@ -154,6 +158,12 @@ if ($showHelp) {
 }
 
 $ENV{'VERBOSE'} = 1 if $verbose;
+
+if ($useCCache == 1) {
+    $ENV{'WK_USE_CCACHE'} = "YES";
+} elsif ($useCCache == 0) {
+    $ENV{'WK_USE_CCACHE'} = "NO";
+}
 
 checkRequiredSystemConfig();
 setConfiguration();

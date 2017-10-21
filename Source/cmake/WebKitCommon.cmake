@@ -52,6 +52,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(WebKitPackaging)
     include(WebKitMacros)
     include(WebKitFS)
+    include(WebKitCCache)
     include(WebKitCompilerFlags)
     include(WebKitFeatures)
 

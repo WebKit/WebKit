@@ -1,3 +1,22 @@
+2017-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on ccache for Mac cmake builds by default
+        https://bugs.webkit.org/show_bug.cgi?id=177059
+
+        Reviewed by Sam Weinig.
+
+        * ccache/ccache-clang:
+        * ccache/ccache-wrapper: Added.
+        Add a pass-through ccache wrapper to be used with CMake, in addition
+        to the existing faux-clang wrappers.
+
+        * Scripts/build-webkit:
+        Add --use-ccache and --no-use-ccache option, which will define
+        WK_USE_CCACHE to YES or NO, respectively, which the underlying
+        build systems respect. We do not define WK_USE_CCACHE if the option
+        is not specified, because the underlying build systems have different
+        default values.
+
 2017-10-20  Aakash Jain  <aakash_jain@apple.com>
 
         Do not run binding tests on multiple EWSes

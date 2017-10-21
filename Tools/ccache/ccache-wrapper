@@ -23,15 +23,4 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-position=1
-while [[ $position -le $# ]]; do
-    case "${!position}" in
-    -isysroot)
-        position=$(($position + 1))
-        sdk="${!position}"
-        break
-        ;;
-    esac
-    position=$(($position + 1))
-done
-$(dirname "$0")/ccache-wrapper $(xcrun -f -sdk "$sdk" "${_XCRUN_TOOL:-clang}") "$@"
+CCACHE_SLOPPINESS="pch_defines,time_macros" ccache "$@"
