@@ -158,13 +158,35 @@ Path::Path(const Path& other)
             entry->Release();
     }
 }
+    
+Path::Path(Path&& other)
+{
+    m_path = other.m_path;
+    m_activePath = other.m_activePath;
+    m_activePathGeometry = other.m_activePathGeometry;
+    other.m_path = nullptr;
+    other.m_activePath = nullptr;
+    other.m_activePathGeometry = nullptr;
+}
 
 Path& Path::operator=(const Path& other)
 {
     m_path = other.m_path;
     m_activePath = other.m_activePath;
     m_activePathGeometry = other.m_activePathGeometry;
+    return *this;
+}
 
+Path& Path::operator=(Path&& other)
+{
+    if (this == &other)
+        return *this;
+    m_path = other.m_path;
+    m_activePath = other.m_activePath;
+    m_activePathGeometry = other.m_activePathGeometry;
+    other.m_path = nullptr;
+    other.m_activePath = nullptr;
+    other.m_activePathGeometry = nullptr;
     return *this;
 }
 

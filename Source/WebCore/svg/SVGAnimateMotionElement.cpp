@@ -96,8 +96,7 @@ bool SVGAnimateMotionElement::hasValidAttributeName()
 void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::pathAttr) {
-        m_path = Path();
-        buildPathFromString(value, m_path);
+        m_path = buildPathFromString(value);
         updateAnimationPath();
         return;
     }
@@ -125,7 +124,7 @@ void SVGAnimateMotionElement::updateAnimationPath()
     for (auto& mPath : childrenOfType<SVGMPathElement>(*this)) {
         SVGPathElement* pathElement = mPath.pathElement();
         if (pathElement) {
-            updatePathFromGraphicsElement(pathElement, m_animationPath);
+            m_animationPath = pathFromGraphicsElement(pathElement);
             foundMPath = true;
             break;
         }

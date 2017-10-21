@@ -39,14 +39,16 @@
 
 namespace WebCore {
 
-bool buildPathFromString(const String& d, Path& result)
+Path buildPathFromString(const String& d)
 {
     if (d.isEmpty())
-        return true;
+        return { };
 
-    SVGPathBuilder builder(result);
+    Path path;
+    SVGPathBuilder builder(path);
     SVGPathStringSource source(d);
-    return SVGPathParser::parse(source, builder);
+    SVGPathParser::parse(source, builder);
+    return path;
 }
 
 String buildStringFromPath(const Path& path)
@@ -130,14 +132,16 @@ bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&& pathSeg, SVGPath
     return ok;
 }
 
-bool buildPathFromByteStream(const SVGPathByteStream& stream, Path& result)
+Path buildPathFromByteStream(const SVGPathByteStream& stream)
 {
     if (stream.isEmpty())
-        return true;
+        return { };
 
-    SVGPathBuilder builder(result);
+    Path path;
+    SVGPathBuilder builder(path);
     SVGPathByteStreamSource source(stream);
-    return SVGPathParser::parse(source, builder);
+    SVGPathParser::parse(source, builder);
+    return path;
 }
 
 bool buildSVGPathSegListValuesFromByteStream(const SVGPathByteStream& stream, SVGPathElement& element, SVGPathSegListValues& result, PathParsingMode parsingMode)

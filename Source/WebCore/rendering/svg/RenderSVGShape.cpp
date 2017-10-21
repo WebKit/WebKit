@@ -75,10 +75,7 @@ RenderSVGShape::~RenderSVGShape() = default;
 
 void RenderSVGShape::updateShapeFromElement()
 {
-    m_path = std::make_unique<Path>();
-    ASSERT(RenderSVGShape::isEmpty());
-
-    updatePathFromGraphicsElement(&graphicsElement(), path());
+    m_path = std::make_unique<Path>(pathFromGraphicsElement(&graphicsElement()));
     processMarkerPositions();
 
     m_fillBoundingBox = calculateObjectBoundingBox();

@@ -58,9 +58,7 @@ public:
 
     static Ref<Path2D> create(const String& pathData)
     {
-        Path path;
-        buildPathFromString(pathData, path);
-        return create(path);
+        return create(buildPathFromString(pathData));
     }
 
     ExceptionOr<void> addPath(Path2D&, DOMMatrix2DInit&&);

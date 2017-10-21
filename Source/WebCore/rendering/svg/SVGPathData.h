@@ -24,6 +24,6 @@ namespace WebCore {
 class SVGElement;
 class Path;
 
-void updatePathFromGraphicsElement(SVGElement*, Path&);
+Path pathFromGraphicsElement(SVGElement*);
 
 } // namespace WebCore

@@ -225,6 +225,7 @@ void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     if (name == SVGNames::dAttr) {
         if (!buildSVGPathByteStreamFromString(value, m_pathByteStream, UnalteredParsing))
             document().accessSVGExtensions().reportError("Problem parsing d=\"" + value + "\"");
+        m_cachedPath = std::nullopt;
         return;
     }
 
@@ -304,6 +305,19 @@ const SVGPathByteStream& SVGPathElement::pathByteStream() const
 
     return *animatedPathByteStream;
 }
+    
+Path SVGPathElement::pathForByteStream() const
+{
+    const auto& pathByteStreamToUse = pathByteStream();
+
+    if (&pathByteStreamToUse == &m_pathByteStream) {
+        if (!m_cachedPath)
+            m_cachedPath = buildPathFromByteStream(m_pathByteStream);
+        return *m_cachedPath;
+    }
+    
+    return buildPathFromByteStream(pathByteStreamToUse);
+}
 
 Ref<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* contextElement)
 {
@@ -382,6 +396,7 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role, ListModification li
             appendSVGPathByteStreamFromSVGPathSeg(m_pathSegList.value.last().copyRef(), m_pathByteStream, UnalteredParsing);
         } else
             buildSVGPathByteStreamFromSVGPathSegListValues(m_pathSegList.value, m_pathByteStream, UnalteredParsing);
+        m_cachedPath = std::nullopt;
         break;
     case PathSegUndefinedRole:
         return;

@@ -102,7 +102,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
             return false;
         // Fallback to masking, if there is more than one clipping path.
         if (clipPath.isEmpty()) {
-            styled.toClipPath(clipPath);
+            clipPath = styled.toClipPath();
             clipRule = svgStyle.clipRule();
         } else
             return false;

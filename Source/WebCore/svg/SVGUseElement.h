@@ -64,7 +64,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
     void willRecalcStyle(Style::Change) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    void toClipPath(Path&) override;
+    Path toClipPath() override;
     bool haveLoadedRequiredResources() override;
     void finishParsingChildren() override;
     bool selfHasRelativeLengths() const override;

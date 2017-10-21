@@ -49,16 +49,15 @@ Path RenderSVGTextPath::layoutPath() const
     
     SVGPathElement& pathElement = downcast<SVGPathElement>(*targetElement);
     
-    Path pathData;
-    updatePathFromGraphicsElement(&pathElement, pathData);
+    Path path = pathFromGraphicsElement(&pathElement);
 
     // Spec:  The transform attribute on the referenced 'path' element represents a
     // supplemental transformation relative to the current user coordinate system for
     // the current 'text' element, including any adjustments to the current user coordinate
     // system due to a possible transform attribute on the current 'text' element.
     // http://www.w3.org/TR/SVG/text.html#TextPathElement
-    pathData.transform(pathElement.animatedLocalTransform());
-    return pathData;
+    path.transform(pathElement.animatedLocalTransform());
+    return path;
 }
 
 float RenderSVGTextPath::startOffset() const

@@ -61,6 +61,12 @@ Path::Path(const Path& other)
     cairo_append_path(cr, pathCopy);
     cairo_path_destroy(pathCopy);
 }
+    
+Path::Path(Path&& other)
+{
+    m_path = other.m_path;
+    other.m_path = nullptr;
+}
 
 PlatformPathPtr Path::ensurePlatformPath()
 {
@@ -87,6 +93,17 @@ Path& Path::operator=(const Path& other)
         cairo_path_destroy(pathCopy);
     }
 
+    return *this;
+}
+    
+Path& Path::operator=(Path&& other)
+{
+    if (this == &other)
+        return *this;
+    if (m_path)
+        delete m_path;
+    m_path = other.m_path;
+    other.m_path = nullptr;
     return *this;
 }
 

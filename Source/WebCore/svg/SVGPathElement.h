@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "Path.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGExternalResourcesRequired.h"
@@ -52,8 +53,7 @@ class SVGPathSegCurvetoQuadraticSmoothRel;
 class SVGPathSegList;
 class SVGPoint;
 
-class SVGPathElement final : public SVGGraphicsElement,
-                             public SVGExternalResourcesRequired {
+class SVGPathElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
 public:
     static Ref<SVGPathElement> create(const QualifiedName&, Document&);
     
@@ -88,6 +88,7 @@ public:
     RefPtr<SVGPathSegList> animatedNormalizedPathSegList();
 
     const SVGPathByteStream& pathByteStream() const;
+    Path pathForByteStream() const;
 
     void pathSegListChanged(SVGPathSegRole, ListModification = ListModificationUnknown);
 
@@ -131,6 +132,7 @@ private:
 
 private:
     SVGPathByteStream m_pathByteStream;
+    mutable std::optional<Path> m_cachedPath;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegListValues> m_pathSegList;
     WeakPtrFactory<SVGPathElement> m_weakPtrFactory;
     bool m_isAnimValObserved;

@@ -113,12 +113,30 @@ Path::Path(const Path& other)
     m_path = other.m_path ? CGPathCreateMutableCopy(other.m_path) : 0;
 }
 
+Path::Path(Path&& other)
+{
+    m_path = other.m_path;
+    other.m_path = nullptr;
+}
+    
 Path& Path::operator=(const Path& other)
 {
-    CGMutablePathRef path = other.m_path ? CGPathCreateMutableCopy(other.m_path) : 0;
+    if (this == &other)
+        return *this;
     if (m_path)
         CGPathRelease(m_path);
-    m_path = path;
+    m_path = other.m_path ? CGPathCreateMutableCopy(other.m_path) : nullptr;
+    return *this;
+}
+
+Path& Path::operator=(Path&& other)
+{
+    if (this == &other)
+        return *this;
+    if (m_path)
+        CGPathRelease(m_path);
+    m_path = other.m_path;
+    other.m_path = nullptr;
     return *this;
 }
 
