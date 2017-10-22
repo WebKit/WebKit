@@ -716,6 +716,11 @@ namespace JSC {
         void linkAllSlowCasesForBytecodeOffset(Vector<SlowCaseEntry>& slowCases,
             Vector<SlowCaseEntry>::iterator&, unsigned bytecodeOffset);
 
+        void linkAllSlowCases(Vector<SlowCaseEntry>::iterator& iter)
+        {
+            linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+        }
+
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
 #if OS(WINDOWS) && CPU(X86_64)
         MacroAssembler::Call appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr&);

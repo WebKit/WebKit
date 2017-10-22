@@ -247,8 +247,7 @@ void JIT::emit_op_unsigned(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_unsigned(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter);
-    linkSlowCase(iter);
+    linkAllSlowCases(iter);
     
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_unsigned);
     slowPathCall.call();
@@ -284,18 +283,21 @@ void JIT::emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, Relat
         emitJumpSlowCaseIfNotInt(regT0);
         int32_t op2imm = getOperandConstantInt(op2);
         addJump(branch32(condition, regT0, Imm32(op2imm)), target);
-    } else if (isOperandConstantInt(op1)) {
+        return;
+    }
+    if (isOperandConstantInt(op1)) {
         emitGetVirtualRegister(op2, regT1);
         emitJumpSlowCaseIfNotInt(regT1);
         int32_t op1imm = getOperandConstantInt(op1);
         addJump(branch32(commute(condition), regT1, Imm32(op1imm)), target);
-    } else {
-        emitGetVirtualRegisters(op1, regT0, op2, regT1);
-        emitJumpSlowCaseIfNotInt(regT0);
-        emitJumpSlowCaseIfNotInt(regT1);
-
-        addJump(branch32(condition, regT0, regT1), target);
+        return;
     }
+
+    emitGetVirtualRegisters(op1, regT0, op2, regT1);
+    emitJumpSlowCaseIfNotInt(regT0);
+    emitJumpSlowCaseIfNotInt(regT1);
+
+    addJump(branch32(condition, regT0, regT1), target);
 }
 
 void JIT::emit_compareUnsignedAndJump(int op1, int op2, unsigned target, RelationalCondition condition)
@@ -347,10 +349,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
     // - constant int immediate to floating-point number
     // - floating-point number to floating-point number.
     if (isOperandConstantChar(op1) || isOperandConstantChar(op2)) {
-        linkSlowCase(iter);
-        linkSlowCase(iter);
-        linkSlowCase(iter);
-        linkSlowCase(iter);
+        linkAllSlowCases(iter);
 
         emitGetVirtualRegister(op1, argumentGPR0);
         emitGetVirtualRegister(op2, argumentGPR1);
@@ -360,7 +359,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
     }
 
     if (isOperandConstantInt(op2)) {
-        linkSlowCase(iter);
+        linkAllSlowCases(iter);
 
         if (supportsFloatingPoint()) {
             Jump fail1 = emitJumpIfNotNumber(regT0);
@@ -382,8 +381,11 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
         emitGetVirtualRegister(op2, regT1);
         callOperation(operation, regT0, regT1);
         emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
-    } else if (isOperandConstantInt(op1)) {
-        linkSlowCase(iter);
+        return;
+    }
+
+    if (isOperandConstantInt(op1)) {
+        linkAllSlowCases(iter);
 
         if (supportsFloatingPoint()) {
             Jump fail1 = emitJumpIfNotNumber(regT1);
@@ -405,31 +407,32 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
         emitGetVirtualRegister(op1, regT2);
         callOperation(operation, regT2, regT1);
         emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
-    } else {
-        linkSlowCase(iter);
-
-        if (supportsFloatingPoint()) {
-            Jump fail1 = emitJumpIfNotNumber(regT0);
-            Jump fail2 = emitJumpIfNotNumber(regT1);
-            Jump fail3 = emitJumpIfInt(regT1);
-            add64(tagTypeNumberRegister, regT0);
-            add64(tagTypeNumberRegister, regT1);
-            move64ToDouble(regT0, fpRegT0);
-            move64ToDouble(regT1, fpRegT1);
-
-            emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
-
-            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jless));
-
-            fail1.link(this);
-            fail2.link(this);
-            fail3.link(this);
-        }
-
-        linkSlowCase(iter);
-        callOperation(operation, regT0, regT1);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
+        return;
     }
+
+    linkSlowCase(iter); // LHS is not Int.
+
+    if (supportsFloatingPoint()) {
+        Jump fail1 = emitJumpIfNotNumber(regT0);
+        Jump fail2 = emitJumpIfNotNumber(regT1);
+        Jump fail3 = emitJumpIfInt(regT1);
+        add64(tagTypeNumberRegister, regT0);
+        add64(tagTypeNumberRegister, regT1);
+        move64ToDouble(regT0, fpRegT0);
+        move64ToDouble(regT1, fpRegT1);
+
+        emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
+
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jless));
+
+        fail1.link(this);
+        fail2.link(this);
+        fail3.link(this);
+    }
+
+    linkSlowCase(iter); // RHS is not Int.
+    callOperation(operation, regT0, regT1);
+    emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
 }
 
 void JIT::emit_op_inc(Instruction* currentInstruction)
@@ -445,8 +448,8 @@ void JIT::emit_op_inc(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter);
-    linkSlowCase(iter);
+    linkAllSlowCases(iter);
+
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_inc);
     slowPathCall.call();
 }
@@ -464,8 +467,8 @@ void JIT::emit_op_dec(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter);
-    linkSlowCase(iter);
+    linkAllSlowCases(iter);
+
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_dec);
     slowPathCall.call();
 }
@@ -507,11 +510,8 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
+    linkAllSlowCases(iter);
+
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
     slowPathCall.call();
 }
@@ -545,7 +545,7 @@ void JIT::emit_op_negate(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITNegIC* negIC = bitwise_cast<JITNegIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow(negIC, currentInstruction, operationArithNegateProfiledOptimize, operationArithNegateProfiled, operationArithNegateOptimize);
@@ -603,7 +603,7 @@ void JIT::emit_op_bitand(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitand);
     slowPathCall.call();
@@ -616,7 +616,7 @@ void JIT::emit_op_bitor(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitor);
     slowPathCall.call();
@@ -629,7 +629,7 @@ void JIT::emit_op_bitxor(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitxor);
     slowPathCall.call();
@@ -642,7 +642,7 @@ void JIT::emit_op_lshift(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_lshift);
     slowPathCall.call();
@@ -707,7 +707,7 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_rshift);
     slowPathCall.call();
@@ -720,7 +720,7 @@ void JIT::emit_op_urshift(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_urshift);
     slowPathCall.call();
@@ -741,7 +741,7 @@ void JIT::emit_op_add(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITAddIC* addIC = bitwise_cast<JITAddIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow(addIC, currentInstruction, operationValueAddProfiledOptimize, operationValueAddProfiled, operationValueAddOptimize);
@@ -1048,7 +1048,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
     slowPathCall.call();
@@ -1064,7 +1064,7 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
 
     JITMulIC* mulIC = bitwise_cast<JITMulIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow(mulIC, currentInstruction, operationValueMulProfiledOptimize, operationValueMulProfiled, operationValueMulOptimize);
@@ -1080,7 +1080,8 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+    linkAllSlowCases(iter);
+
     JITSubIC* subIC = bitwise_cast<JITSubIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow(subIC, currentInstruction, operationValueSubProfiledOptimize, operationValueSubProfiled, operationValueSubOptimize);
 }

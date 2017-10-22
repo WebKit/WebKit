@@ -864,10 +864,8 @@ ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&
 
 ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeOffset(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, unsigned bytecodeOffset)
 {
-    while (iter != slowCases.end() && iter->to == bytecodeOffset) {
-        iter->from.link(this);
-        ++iter;
-    }
+    while (iter != slowCases.end() && iter->to == bytecodeOffset)
+        linkSlowCase(iter);
 }
 
 ALWAYS_INLINE void JIT::addSlowCase(Jump jump)

@@ -124,25 +124,8 @@ void JIT::emit_compareUnsigned(int dst, int op1, int op2, RelationalCondition co
 
 void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
-    if (isOperandConstantChar(op1) || isOperandConstantChar(op2)) {
-        linkSlowCase(iter);
-        linkSlowCase(iter);
-        linkSlowCase(iter);
-        linkSlowCase(iter);
-    } else {
-        if (!supportsFloatingPoint()) {
-            if (!isOperandConstantInt(op1) && !isOperandConstantInt(op2))
-                linkSlowCase(iter); // int32 check
-            linkSlowCase(iter); // int32 check
-        } else {
-            if (!isOperandConstantInt(op1)) {
-                linkSlowCase(iter); // double check
-                linkSlowCase(iter); // int32 check
-            }
-            if (isOperandConstantInt(op1) || !isOperandConstantInt(op2))
-                linkSlowCase(iter); // double check
-        }
-    }
+    linkAllSlowCases(iter);
+
     emitLoad(op1, regT1, regT0);
     emitLoad(op2, regT3, regT2);
     callOperation(operation, regT1, regT0, regT3, regT2);
@@ -163,8 +146,7 @@ void JIT::emit_op_unsigned(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_unsigned(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter);
-    linkSlowCase(iter);
+    linkAllSlowCases(iter);
     
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_unsigned);
     slowPathCall.call();
@@ -183,8 +165,7 @@ void JIT::emit_op_inc(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter); // int32 check
-    linkSlowCase(iter); // overflow check
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_inc);
     slowPathCall.call();
@@ -203,8 +184,7 @@ void JIT::emit_op_dec(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkSlowCase(iter); // int32 check
-    linkSlowCase(iter); // overflow check
+    linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_dec);
     slowPathCall.call();
@@ -380,11 +360,8 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
 #if CPU(X86)
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
+    linkAllSlowCases(iter);
+
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
     slowPathCall.call();
 #else
