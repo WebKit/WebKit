@@ -1314,7 +1314,7 @@ static void applyTextSizingIfNeeded(RenderElement& layoutRoot)
 }
 #endif
 
-bool FrameView::handleLayoutWithFrameFlatteningIfNeeded(bool allowSubtreeLayout)
+bool FrameView::handleLayoutWithFrameFlatteningIfNeeded()
 {
     if (!isInChildFrameWithFrameFlattening())
         return false;
@@ -1323,7 +1323,7 @@ bool FrameView::handleLayoutWithFrameFlatteningIfNeeded(bool allowSubtreeLayout)
         LOG_WITH_STREAM(MediaQueries, stream << "FrameView " << this << " snapshotting size " <<  ScrollView::layoutSize() << " for media queries");
         m_frameFlatteningViewSizeForMediaQuery = ScrollView::layoutSize();
     }
-    startLayoutAtMainFrameViewIfNeeded(allowSubtreeLayout);
+    startLayoutAtMainFrameViewIfNeeded();
     auto* layoutRoot = m_subtreeLayoutRoot ? m_subtreeLayoutRoot : frame().document()->renderView();
     return !layoutRoot || !layoutRoot->needsLayout();
 }
@@ -1399,7 +1399,7 @@ bool FrameView::canPerformLayout() const
     return true;
 }
 
-void FrameView::layout(bool allowSubtreeLayout)
+void FrameView::layout()
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
     ASSERT(!isPainting());
@@ -1425,14 +1425,12 @@ void FrameView::layout(bool allowSubtreeLayout)
     m_layoutTimer.stop();
     m_delayedLayout = false;
     m_setNeedsLayoutWasDeferred = false;
-    if (!allowSubtreeLayout && m_subtreeLayoutRoot)
-        convertSubtreeLayoutToFullLayout();
 #if PLATFORM(IOS)
-    if (updateFixedPositionLayoutRect())
-        allowSubtreeLayout = false;
+    if (updateFixedPositionLayoutRect() && subtreeLayoutRoot())
+        convertSubtreeLayoutToFullLayout();
 #endif
 
-    if (handleLayoutWithFrameFlatteningIfNeeded(allowSubtreeLayout))
+    if (handleLayoutWithFrameFlatteningIfNeeded())
         return;
 
     Document& document = *frame().document();
@@ -1484,7 +1482,6 @@ void FrameView::layout(bool allowSubtreeLayout)
             m_firstLayout = false;
         }
 
-        ASSERT(allowSubtreeLayout || !isSubtreeLayout);
         ASSERT(m_layoutPhase == InPreLayout);
         forceLayoutParentViewIfNeeded();
     }
@@ -4285,7 +4282,7 @@ bool FrameView::isInChildFrameWithFrameFlattening() const
     return false;
 }
 
-void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtreeLayout)
+void FrameView::startLayoutAtMainFrameViewIfNeeded()
 {
     // When we start a layout at the child level as opposed to the topmost frame view and this child
     // frame requires flattening, we need to re-initiate the layout at the topmost view. Layout
@@ -4306,7 +4303,7 @@ void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtreeLayout)
         parentView = parentView->parentFrameView();
 
     LOG(Layout, "  frame flattening, starting from root");
-    parentView->layout(allowSubtreeLayout);
+    parentView->layout();
 }
 
 void FrameView::updateControlTints()
@@ -4705,9 +4702,11 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& minSize, const In
     setScrollbarModes(ScrollbarAuto, ScrollbarAuto);
 }
 
-void FrameView::forceLayout(bool allowSubtree)
+void FrameView::forceLayout(bool allowSubtreeLayout)
 {
-    layout(allowSubtree);
+    if (!allowSubtreeLayout && subtreeLayoutRoot())
+        convertSubtreeLayoutToFullLayout();
+    layout();
 }
 
 void FrameView::forceLayoutForPagination(const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkFactor, AdjustViewSizeOrNot shouldAdjustViewSize)

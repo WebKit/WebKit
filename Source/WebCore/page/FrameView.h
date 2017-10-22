@@ -104,7 +104,7 @@ public:
     void setContentsSize(const IntSize&) final;
     void updateContentsSize() final;
 
-    void layout(bool allowSubtree = true);
+    void layout();
     WEBCORE_EXPORT bool didFirstLayout() const;
     void layoutTimerFired();
     void scheduleRelayout();
@@ -402,7 +402,7 @@ public:
     WEBCORE_EXPORT void setAutoSizeFixedMinimumHeight(int);
     IntSize autoSizingIntrinsicContentSize() const { return m_autoSizeContentSize; }
 
-    WEBCORE_EXPORT void forceLayout(bool allowSubtree = false);
+    WEBCORE_EXPORT void forceLayout(bool allowSubtreeLayout = false);
     WEBCORE_EXPORT void forceLayoutForPagination(const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkFactor, AdjustViewSizeOrNot);
 
     // FIXME: This method is retained because of embedded WebViews in AppKit.  When a WebView is embedded inside
@@ -762,8 +762,8 @@ private:
 
     FrameView* parentFrameView() const;
 
-    bool handleLayoutWithFrameFlatteningIfNeeded(bool allowSubtreeLayout);
-    void startLayoutAtMainFrameViewIfNeeded(bool allowSubtreeLayout);
+    bool handleLayoutWithFrameFlatteningIfNeeded();
+    void startLayoutAtMainFrameViewIfNeeded();
     bool frameFlatteningEnabled() const;
     bool isFrameFlatteningValidForThisFrame() const;
     
