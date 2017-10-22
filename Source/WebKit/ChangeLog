@@ -1,3 +1,10 @@
+2017-10-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence a -Wunused-but-set-variable warning
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2017-10-20  Alex Christensen  <achristensen@webkit.org>
 
         Add FIXME comment after r223803

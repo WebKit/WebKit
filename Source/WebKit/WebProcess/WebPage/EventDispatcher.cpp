@@ -90,7 +90,9 @@ void EventDispatcher::initializeConnection(IPC::Connection* connection)
 
 void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 {
+#if PLATFORM(COCOA) || ENABLE(ASYNC_SCROLLING)
     PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
+#endif
 
 #if PLATFORM(COCOA)
     switch (wheelEvent.phase()) {
