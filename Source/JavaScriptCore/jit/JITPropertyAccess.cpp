@@ -335,12 +335,6 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, notIndex, badType, mode, profile, done, done));
 }
 
-void JIT::emit_op_put_by_val_with_this(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_put_by_val_with_this);
-    slowPathCall.call();
-}
-
 JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType, IndexingType indexingShape)
 {
     int value = currentInstruction[3].u.operand;
@@ -658,12 +652,6 @@ void JIT::emit_op_get_by_id_with_this(Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg);
 }
 
-void JIT::emit_op_get_by_val_with_this(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_by_val_with_this);
-    slowPathCall.call();
-}
-
 void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int resultVReg = currentInstruction[1].u.operand;
@@ -729,12 +717,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     m_putByIds.append(gen);
 }
 
-void JIT::emit_op_put_by_id_with_this(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_put_by_id_with_this);
-    slowPathCall.call();
-}
-
 void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int baseVReg = currentInstruction[1].u.operand;
@@ -767,12 +749,6 @@ void JIT::emitResolveClosure(int dst, int scope, bool needsVarInjectionChecks, u
     for (unsigned i = 0; i < depth; ++i)
         loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
     emitPutVirtualRegister(dst);
-}
-
-void JIT::emit_op_resolve_scope_for_hoisting_func_decl_in_eval(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_resolve_scope_for_hoisting_func_decl_in_eval);
-    slowPathCall.call();
 }
 
 void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
@@ -1833,18 +1809,6 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     }
     
     return slowCases;
-}
-
-void JIT::emit_op_define_data_property(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_define_data_property);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_define_accessor_property(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_define_accessor_property);
-    slowPathCall.call();
 }
 
 } // namespace JSC

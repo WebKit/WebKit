@@ -348,12 +348,6 @@ void JIT::emit_op_set_function_name(Instruction* currentInstruction)
     callOperation(operationSetFunctionName, regT1, regT3, regT2);
 }
 
-void JIT::emit_op_strcat(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_strcat);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_not(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -690,12 +684,6 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
     jumpToExceptionHandler(*vm());
 }
 
-void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_push_with_scope);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_to_number(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -800,21 +788,9 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 #endif // ENABLE(DFG_JIT)
 }
 
-void JIT::emit_op_assert(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_assert);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_identity_with_profile(Instruction*)
 {
     // We don't need to do anything here...
-}
-
-void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_lexical_environment);
-    slowPathCall.call();
 }
 
 void JIT::emit_op_get_parent_scope(Instruction* currentInstruction)

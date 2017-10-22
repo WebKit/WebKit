@@ -472,7 +472,7 @@ void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 /* ------------------------------ BEGIN: OP_MOD ------------------------------ */
 
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86_64)
 
 void JIT::emit_op_mod(Instruction* currentInstruction)
 {
@@ -516,7 +516,7 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     slowPathCall.call();
 }
 
-#else // CPU(X86) || CPU(X86_64)
+#else // CPU(X86_64)
 
 void JIT::emit_op_mod(Instruction* currentInstruction)
 {
@@ -529,7 +529,7 @@ void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
     UNREACHABLE_FOR_PLATFORM();
 }
 
-#endif // CPU(X86) || CPU(X86_64)
+#endif // CPU(X86_64)
 
 /* ------------------------------ END: OP_MOD ------------------------------ */
 
@@ -1083,12 +1083,6 @@ void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>
     linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
     JITSubIC* subIC = bitwise_cast<JITSubIC*>(m_instructionToMathIC.get(currentInstruction));
     emitMathICSlow(subIC, currentInstruction, operationValueSubProfiledOptimize, operationValueSubProfiled, operationValueSubOptimize);
-}
-
-void JIT::emit_op_pow(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_pow);
-    slowPathCall.call();
 }
 
 /* ------------------------------ END: OP_ADD, OP_SUB, OP_MUL, OP_POW ------------------------------ */

@@ -324,12 +324,6 @@ void JIT::emit_op_set_function_name(Instruction* currentInstruction)
     callOperation(operationSetFunctionName, regT0, regT1);
 }
 
-void JIT::emit_op_strcat(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_strcat);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_not(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
@@ -460,12 +454,6 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
     jumpToExceptionHandler(*vm());
 }
 
-void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_push_with_scope);
-    slowPathCall.call();
-}
-
 void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqType type)
 {
     int dst = currentInstruction[1].u.operand;
@@ -578,21 +566,9 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 #endif // ENABLE(DFG_JIT)
 }
 
-void JIT::emit_op_assert(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_assert);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_identity_with_profile(Instruction*)
 {
     // We don't need to do anything here...
-}
-
-void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_lexical_environment);
-    slowPathCall.call();
 }
 
 void JIT::emit_op_get_parent_scope(Instruction* currentInstruction)
@@ -970,12 +946,6 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
 #endif
 }
 
-void JIT::emit_op_throw_static_error(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_throw_static_error);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_check_traps(Instruction*)
 {
     addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->needTrapHandlingAddress())));
@@ -1126,18 +1096,6 @@ void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
     int size = currentInstruction[3].u.operand;
     const JSValue* values = codeBlock()->constantBuffer(valuesIndex);
     callOperation(operationNewArrayBufferWithProfile, dst, currentInstruction[4].u.arrayAllocationProfile, values, size);
-}
-
-void JIT::emit_op_new_array_with_spread(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_new_array_with_spread);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_spread(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_spread);
-    slowPathCall.call();
 }
 
 #if USE(JSVALUE64)
@@ -1438,36 +1396,12 @@ void JIT::emit_op_log_shadow_chicken_tail(Instruction* currentInstruction)
 
 #endif // USE(JSVALUE64)
 
-void JIT::emit_op_get_enumerable_length(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_enumerable_length);
-    slowPathCall.call();
-}
-
 void JIT::emitSlow_op_has_structure_property(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_has_structure_property);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_has_generic_property(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_has_generic_property);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_get_property_enumerator(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_property_enumerator);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_to_index_string(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_index_string);
     slowPathCall.call();
 }
 
@@ -1481,24 +1415,6 @@ void JIT::emit_op_profile_control_flow(Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_create_direct_arguments(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_direct_arguments);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_create_scoped_arguments(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_scoped_arguments);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_create_cloned_arguments(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_cloned_arguments);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_argument_count(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -1507,12 +1423,6 @@ void JIT::emit_op_argument_count(Instruction* currentInstruction)
     JSValueRegs result = JSValueRegs::withTwoAvailableRegs(regT0, regT1);
     boxInt32(regT0, result);
     emitPutVirtualRegister(dst, result);
-}
-
-void JIT::emit_op_create_rest(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_rest);
-    slowPathCall.call();
 }
 
 void JIT::emit_op_get_rest_length(Instruction* currentInstruction)
@@ -1565,12 +1475,6 @@ void JIT::emit_op_get_argument(Instruction* currentInstruction)
     done.link(this);
     emitValueProfilingSite();
     emitPutVirtualRegister(dst, resultRegs);
-}
-
-void JIT::emit_op_unreachable(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_unreachable);
-    slowPathCall.call();
 }
 
 } // namespace JSC

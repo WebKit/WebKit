@@ -379,7 +379,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-#if CPU(X86) || CPU(X86_64)
+#if CPU(X86)
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);

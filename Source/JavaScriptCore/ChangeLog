@@ -1,3 +1,57 @@
+2017-10-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Clean up baseline slow path
+        https://bugs.webkit.org/show_bug.cgi?id=178646
+
+        Reviewed by Saam Barati.
+
+        If the given op is just calling a slow path function, we should use DEFINE_SLOW_OP instead.
+        It is good since (1) we can reduce the manual emitting code and (2) it can clarify which
+        function is implemented as a slow path call. This patch is an attempt to reduce 32bit specific
+        code in baseline JIT.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_pow): Deleted.
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_strcat): Deleted.
+        (JSC::JIT::emit_op_push_with_scope): Deleted.
+        (JSC::JIT::emit_op_assert): Deleted.
+        (JSC::JIT::emit_op_create_lexical_environment): Deleted.
+        (JSC::JIT::emit_op_throw_static_error): Deleted.
+        (JSC::JIT::emit_op_new_array_with_spread): Deleted.
+        (JSC::JIT::emit_op_spread): Deleted.
+        (JSC::JIT::emit_op_get_enumerable_length): Deleted.
+        (JSC::JIT::emit_op_has_generic_property): Deleted.
+        (JSC::JIT::emit_op_get_property_enumerator): Deleted.
+        (JSC::JIT::emit_op_to_index_string): Deleted.
+        (JSC::JIT::emit_op_create_direct_arguments): Deleted.
+        (JSC::JIT::emit_op_create_scoped_arguments): Deleted.
+        (JSC::JIT::emit_op_create_cloned_arguments): Deleted.
+        (JSC::JIT::emit_op_create_rest): Deleted.
+        (JSC::JIT::emit_op_unreachable): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_strcat): Deleted.
+        (JSC::JIT::emit_op_push_with_scope): Deleted.
+        (JSC::JIT::emit_op_assert): Deleted.
+        (JSC::JIT::emit_op_create_lexical_environment): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val_with_this): Deleted.
+        (JSC::JIT::emit_op_get_by_val_with_this): Deleted.
+        (JSC::JIT::emit_op_put_by_id_with_this): Deleted.
+        (JSC::JIT::emit_op_resolve_scope_for_hoisting_func_decl_in_eval): Deleted.
+        (JSC::JIT::emit_op_define_data_property): Deleted.
+        (JSC::JIT::emit_op_define_accessor_property): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_resolve_scope_for_hoisting_func_decl_in_eval): Deleted.
+        (JSC::JIT::emit_op_get_by_val_with_this): Deleted.
+        (JSC::JIT::emit_op_put_by_id_with_this): Deleted.
+        (JSC::JIT::emit_op_put_by_val_with_this): Deleted.
+
 2017-10-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused Console.setMonitoringXHREnabled
