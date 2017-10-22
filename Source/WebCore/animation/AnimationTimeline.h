@@ -27,6 +27,7 @@
 #pragma once
 
 #include "WebAnimation.h"
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -40,6 +41,7 @@ public:
     bool isDocumentTimeline() const { return m_classType == DocumentTimelineClass; }
     void addAnimation(Ref<WebAnimation>&&);
     void removeAnimation(Ref<WebAnimation>&&);
+    WEBCORE_EXPORT String description();
 
     virtual ~AnimationTimeline();
 

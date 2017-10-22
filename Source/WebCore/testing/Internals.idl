@@ -560,4 +560,6 @@ enum EventThrottlingBehavior {
     [Conditional=SERVICE_WORKER] ExtendableEvent createTrustedExtendableEvent();
 
     boolean hasServiceWorkerRegisteredForOrigin(DOMString origin);
+
+    [EnabledAtRuntime=WebAnimations] DOMString timelineDescription(AnimationTimeline timeline);
 };

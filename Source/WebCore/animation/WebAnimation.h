@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -39,6 +40,7 @@ public:
     ~WebAnimation();
 
     AnimationTimeline* timeline() const { return m_timeline.get(); }
+    String description();
 
 private:
     WebAnimation(AnimationTimeline*);

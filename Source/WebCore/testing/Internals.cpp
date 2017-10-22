@@ -4245,4 +4245,9 @@ Ref<ExtendableEvent> Internals::createTrustedExtendableEvent()
 }
 #endif
 
+String Internals::timelineDescription(AnimationTimeline& timeline)
+{
+    return timeline.description();
+}
+
 } // namespace WebCore

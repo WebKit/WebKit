@@ -28,6 +28,8 @@
 #include "AnimationTimeline.h"
 
 #include "DocumentTimeline.h"
+#include <wtf/text/TextStream.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -48,6 +50,21 @@ void AnimationTimeline::addAnimation(Ref<WebAnimation>&& animation)
 void AnimationTimeline::removeAnimation(Ref<WebAnimation>&& animation)
 {
     m_animations.remove(WTFMove(animation));
+}
+
+String AnimationTimeline::description()
+{
+    TextStream stream;
+    int count = 1;
+    stream << (m_classType == DocumentTimelineClass ? "DocumentTimeline" : "AnimationTimeline") << " with " << m_animations.size() << " animations:";
+    stream << "\n";
+    for (const auto& animation : m_animations) {
+        writeIndent(stream, 1);
+        stream << count << ". " << animation->description();
+        stream << "\n";
+        count++;
+    }
+    return stream.release();
 }
 
 } // namespace WebCore

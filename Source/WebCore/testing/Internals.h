@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class AnimationTimeline;
 class AudioContext;
 class CacheStorageConnection;
 class DOMRect;
@@ -616,6 +617,8 @@ public:
 #endif
 
     bool hasServiceWorkerRegisteredForOrigin(const String&);
+
+    String timelineDescription(AnimationTimeline&);
 
 private:
     explicit Internals(Document&);

@@ -1,0 +1,12 @@
+<script src="../resources/js-test-pre.js"></script>
+<script>
+
+description("Constructing an Animation with a timeline should add the animation to the timeline.");
+
+new Animation(document.timeline);
+new Animation();
+new Animation(document.timeline);
+debug(internals.timelineDescription(document.timeline));
+
+</script>
+<script src="../resources/js-test-post.js"></script>

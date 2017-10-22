@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebAnimation.h"
+#include <wtf/text/WTFString.h>
 
 #include "AnimationTimeline.h"
 
@@ -32,7 +33,12 @@ namespace WebCore {
 
 Ref<WebAnimation> WebAnimation::create(AnimationTimeline* timeline)
 {
-    return adoptRef(*new WebAnimation(timeline));
+    auto result = adoptRef(*new WebAnimation(timeline));
+
+    if (timeline)
+        timeline->addAnimation(result.copyRef());
+    
+    return result;
 }
 
 WebAnimation::WebAnimation(AnimationTimeline* timeline)
@@ -42,6 +48,13 @@ WebAnimation::WebAnimation(AnimationTimeline* timeline)
 
 WebAnimation::~WebAnimation()
 {
+    if (m_timeline)
+        m_timeline->removeAnimation(*this);
+}
+
+String WebAnimation::description()
+{
+    return "Animation";
 }
 
 } // namespace WebCore
