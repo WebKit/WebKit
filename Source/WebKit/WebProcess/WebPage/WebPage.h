@@ -511,6 +511,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return *m_userMediaPermissionRequestManager; }
+    void prepareToSendUserMediaPermissionRequest();
 #endif
 
     void elementDidFocus(WebCore::Node*);

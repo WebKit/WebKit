@@ -99,6 +99,7 @@
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
@@ -110,7 +111,15 @@
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/SetForScope.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/TextStream.h>
+
+#if ENABLE(MEDIA_STREAM)
+#import "CelestialSPI.h"
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
+SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
+#endif
 
 using namespace WebCore;
 
@@ -3408,6 +3417,22 @@ String WebPage::platformUserAgent(const URL&) const
 void WebPage::didReceivePasswordForQuickLookDocument(const String& password)
 {
     WebPreviewLoaderClient::didReceivePassword(password, m_pageID);
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+void WebPage::prepareToSendUserMediaPermissionRequest()
+{
+    static std::once_flag once;
+    std::call_once(once, [] {
+        if (!canLoadAVSystemController_PIDToInheritApplicationStateFrom())
+            return;
+
+        NSError *error = nil;
+        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(WebCore::presentingApplicationPID()) forKey:getAVSystemController_PIDToInheritApplicationStateFrom() error:&error];
+        if (error)
+            WTFLogAlways("Failed to set up PID proxying: %s", error.localizedDescription.UTF8String);
+    });
 }
 #endif
 

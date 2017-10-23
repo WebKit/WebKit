@@ -1,3 +1,26 @@
+2017-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WebProcess::initializeWebProcess spends ~150ms spinning up AVSystemController on some devices
+        https://bugs.webkit.org/show_bug.cgi?id=178640
+        <rdar://problem/35113105>
+
+        Reviewed by Youenn Fablet.
+
+        In r213933, we added a mechanism to allow the web process to drive media capture, by setting an attribute on the
+        shared AVSystemController. This requires us to fault in the Celestial framework, which is a slight performance
+        hit on some hardware. Instead of doing this at the start of every web process launch, we can just do this work
+        lazily, the first time the web process requests permissions for user media access.
+
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::requestUserMediaAccess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::prepareToSendUserMediaPermissionRequest):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::prepareToSendUserMediaPermissionRequest):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2017-10-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, silence a -Wunused-but-set-variable warning

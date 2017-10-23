@@ -43,6 +43,7 @@ void WebUserMediaClient::pageDestroyed()
 
 void WebUserMediaClient::requestUserMediaAccess(UserMediaRequest& request)
 {
+    m_page.prepareToSendUserMediaPermissionRequest();
     m_page.userMediaPermissionRequestManager().startUserMediaRequest(request);
 }
 
