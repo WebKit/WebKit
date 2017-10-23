@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !PLATFORM(IOS_SIMULATOR)
 static RenderingMode bufferRenderingMode = Accelerated;
 #else
 static RenderingMode bufferRenderingMode = Unaccelerated;
