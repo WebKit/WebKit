@@ -203,7 +203,7 @@ endmacro()
 
 
 macro(GENERATE_SETTINGS_MACROS _infile _outfile)
-    set(NAMES_GENERATOR ${WEBCORE_DIR}/Scripts/GenerateSettings.py)
+    set(NAMES_GENERATOR ${WEBCORE_DIR}/Scripts/GenerateSettings.rb)
 
     # Do not list the output in more than one independent target that may
     # build in parallel or the two instances of the rule may conflict.
@@ -216,14 +216,11 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
     )
 
     set(GENERATE_SETTINGS_SCRIPTS
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsHeaderFile.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsIDLFile.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsImplementationFile.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettingsHeaderFile.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettingsImplementationFile.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettings.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/Settings.py
-        ${WEBCORE_DIR}/Scripts/GenerateSettings/__init__.py
+        ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb
+        ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb
+        ${WEBCORE_DIR}/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
+        ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.cpp.erb
+        ${WEBCORE_DIR}/Scripts/SettingsTemplates/Settings.h.erb
     )
 
     set(_args BYPRODUCTS ${_extra_output})
@@ -231,7 +228,7 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${GENERATE_SETTINGS_SCRIPTS} ${SCRIPTS_BINDINGS}
-        COMMAND ${PYTHON_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
+        COMMAND ${RUBY_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM ${_args})
 endmacro()
 

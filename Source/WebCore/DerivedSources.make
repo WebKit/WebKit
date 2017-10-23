@@ -1372,18 +1372,15 @@ JSMathMLElementWrapperFactory%cpp JSMathMLElementWrapperFactory%h MathMLElementF
 # Internal Settings
 
 GENERATE_SETTINGS_SCRIPTS = \
-    $(WebCore)/Scripts/GenerateSettings/GenerateInternalSettingsHeaderFile.py \
-    $(WebCore)/Scripts/GenerateSettings/GenerateInternalSettingsIDLFile.py \
-    $(WebCore)/Scripts/GenerateSettings/GenerateInternalSettingsImplementationFile.py \
-    $(WebCore)/Scripts/GenerateSettings/GenerateSettings.py \
-    $(WebCore)/Scripts/GenerateSettings/GenerateSettingsHeaderFile.py \
-    $(WebCore)/Scripts/GenerateSettings/GenerateSettingsImplementationFile.py \
-    $(WebCore)/Scripts/GenerateSettings/Settings.py \
-    $(WebCore)/Scripts/GenerateSettings/__init__.py
+    $(WebCore)/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb \
+    $(WebCore)/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb \
+    $(WebCore)/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb \
+    $(WebCore)/Scripts/SettingsTemplates/Settings.cpp.erb \
+    $(WebCore)/Scripts/SettingsTemplates/Settings.h.erb
 
 all : InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h Settings.cpp Settings.h
-InternalSettingsGenerated%idl InternalSettingsGenerated%cpp InternalSettingsGenerated%h Settings%cpp Settings%h : $(WebCore)/Scripts/GenerateSettings.py $(GENERATE_SETTINGS_SCRIPTS) page/Settings.in
-	$(PYTHON) $< --input $(WebCore)/page/Settings.in
+InternalSettingsGenerated%idl InternalSettingsGenerated%cpp InternalSettingsGenerated%h Settings%cpp Settings%h : $(WebCore)/Scripts/GenerateSettings.rb $(GENERATE_SETTINGS_SCRIPTS) page/Settings.yaml
+	$(RUBY) $< --input $(WebCore)/page/Settings.yaml
 
 # --------
 

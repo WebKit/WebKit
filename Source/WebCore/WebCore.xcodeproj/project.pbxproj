@@ -10908,8 +10908,6 @@
 		7C39C36E1DDBA3E000FEFB29 /* SVGPathSegListValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegListValues.cpp; sourceTree = "<group>"; };
 		7C39C36F1DDBA3E000FEFB29 /* SVGPathSegListValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegListValues.h; sourceTree = "<group>"; };
 		7C39C3701DDBA44000FEFB29 /* SVGPathSegList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegList.cpp; sourceTree = "<group>"; };
-		7C3A8C5E1F7D72B400F46E84 /* GenerateSettings */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GenerateSettings; path = Scripts/GenerateSettings; sourceTree = "<group>"; };
-		7C3A8C601F7D72B500F46E84 /* GenerateSettings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = GenerateSettings.py; path = Scripts/GenerateSettings.py; sourceTree = "<group>"; };
 		7C3A91E51C963B8800D1A7E3 /* ClipboardAccessPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardAccessPolicy.h; sourceTree = "<group>"; };
 		7C3B796F1908757B00B47A2D /* UserMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessageHandler.cpp; sourceTree = "<group>"; };
 		7C3B79701908757B00B47A2D /* UserMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandler.h; sourceTree = "<group>"; };
@@ -11121,6 +11119,7 @@
 		7CD344121F3108E2000DCD49 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
 		7CD494CA1A86EB1D000A87EC /* RenderAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderAttachment.cpp; sourceTree = "<group>"; };
 		7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderAttachment.h; sourceTree = "<group>"; };
+		7CDE73961F9BD59500390312 /* Settings.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Settings.yaml; sourceTree = "<group>"; };
 		7CDE8EBC1F193BC500168FE7 /* CSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleDeclaration.cpp; sourceTree = "<group>"; };
 		7CE191471F2A98AF00272F78 /* FetchRequestInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchRequestInit.h; sourceTree = "<group>"; };
 		7CE191491F2A98B000272F78 /* FetchRequestInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchRequestInit.idl; sourceTree = "<group>"; };
@@ -14051,7 +14050,6 @@
 		BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWrapperWorld.cpp; sourceTree = "<group>"; };
 		BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElementCustom.cpp; sourceTree = "<group>"; };
 		BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleDeclarationCustom.cpp; sourceTree = "<group>"; };
-		BC59DEF8169DEDC30016AC34 /* Settings.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Settings.in; sourceTree = "<group>"; };
 		BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSReflectValue.cpp; sourceTree = "<group>"; };
 		BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSReflectValue.h; sourceTree = "<group>"; };
 		BC5A86810C33676000EEA649 /* DOMSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMSelection.cpp; sourceTree = "<group>"; };
@@ -17532,9 +17530,7 @@
 			isa = PBXGroup;
 			children = (
 				F48389791E1DD23A0076B7EA /* EditingHistory */,
-				7C3A8C5E1F7D72B400F46E84 /* GenerateSettings */,
 				3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */,
-				7C3A8C601F7D72B500F46E84 /* GenerateSettings.py */,
 				37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */,
 			);
 			name = Scripts;
@@ -19571,7 +19567,7 @@
 				BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */,
 				974D2DA2146A535D00D51F8B /* SecurityPolicy.cpp */,
 				974D2DA3146A535D00D51F8B /* SecurityPolicy.h */,
-				BC59DEF8169DEDC30016AC34 /* Settings.in */,
+				7CDE73961F9BD59500390312 /* Settings.yaml */,
 				7CC6609B1F93057900D500E9 /* SettingsBase.cpp */,
 				7CC660991F93057800D500E9 /* SettingsBase.h */,
 				7C6EFEEA1F946A2E00FFAD41 /* SettingsDefaultValues.h */,
