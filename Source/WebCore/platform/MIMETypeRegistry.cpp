@@ -36,8 +36,11 @@
 #if USE(CG)
 #include "ImageSourceCG.h"
 #include "UTIRegistry.h"
-#include "UTIUtilities.h"
 #include <wtf/RetainPtr.h>
+#endif
+
+#if USE(CG) && PLATFORM(COCOA)
+#include "UTIUtilities.h"
 #endif
 
 #if USE(CG) && !PLATFORM(IOS)
@@ -85,8 +88,10 @@ static void initializeSupportedImageMIMETypes()
         }
     }
 
+#if PLATFORM(COCOA)
     for (auto& mime : *supportedImageMIMETypes)
         ASSERT_UNUSED(mime, allowedImageUTIs().contains(UTIFromMIMEType(mime)));
+#endif
 #endif
 
     // Favicons don't have a MIME type in the registry either.
