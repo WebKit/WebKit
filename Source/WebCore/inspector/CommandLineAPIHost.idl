@@ -49,6 +49,8 @@
 [
     JSGenerateToJSObject
 ] dictionary ListenerEntry {
-    required object function;
+    required object listener;
     required boolean useCapture;
+    required boolean passive;
+    required boolean once;
 };

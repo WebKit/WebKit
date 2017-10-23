@@ -93,7 +93,7 @@ static Vector<CommandLineAPIHost::ListenerEntry> listenerEntriesFromListenerInfo
 {
     VM& vm = state.vm();
 
-    Vector<CommandLineAPIHost::ListenerEntry> entires;
+    Vector<CommandLineAPIHost::ListenerEntry> entries;
     for (auto& eventListener : listenerInfo.eventListenerVector) {
         auto jsListener = JSEventListener::cast(&eventListener->callback());
         if (!jsListener) {
@@ -109,15 +109,15 @@ static Vector<CommandLineAPIHost::ListenerEntry> listenerEntriesFromListenerInfo
         if (!function)
             continue;
 
-        entires.append({ JSC::Strong<JSC::JSObject>(vm, function), eventListener->useCapture() });
+        entries.append({ JSC::Strong<JSC::JSObject>(vm, function), eventListener->useCapture(), eventListener->isPassive(), eventListener->isOnce() });
     }
 
-    return entires;
+    return entries;
 }
 
 auto CommandLineAPIHost::getEventListeners(JSC::ExecState& state, Node* node) -> EventListenersRecord
 {
-    if (m_domAgent)
+    if (!m_domAgent)
         return { };
 
     if (!node)

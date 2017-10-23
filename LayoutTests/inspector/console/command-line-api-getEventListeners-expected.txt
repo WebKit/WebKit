@@ -1,0 +1,51 @@
+Test for CommandLineAPI getEventListeners.
+
+
+== Running test suite: Console.CommandLineAPI.getEventListeners
+-- Running test case: Console.CommandLineAPI.getEventListeners.Undefined
+{}
+
+-- Running test case: Console.CommandLineAPI.getEventListeners.Null
+{}
+
+-- Running test case: Console.CommandLineAPI.getEventListeners.String
+TypeError: Argument 1 ('node') to CommandLineAPIHost.getEventListeners must be an instance of Node
+
+-- Running test case: Console.CommandLineAPI.getEventListeners.NodeNoListeners
+{}
+
+-- Running test case: Console.CommandLineAPI.getEventListeners.NodeWithListeners
+{
+  "click": [
+    {
+      "listener": "<function onclickHandler>",
+      "once": false,
+      "passive": false,
+      "useCapture": false
+    },
+    {
+      "listener": "<function clickHandler>",
+      "once": false,
+      "passive": false,
+      "useCapture": true
+    }
+  ],
+  "hover": [
+    {
+      "listener": "<function hoverHandler>",
+      "once": true,
+      "passive": true,
+      "useCapture": false
+    }
+  ],
+  "fake": [
+    {
+      "listener": "<function fakeHandler>",
+      "once": false,
+      "passive": false,
+      "useCapture": false
+    }
+  ]
+}
+
+
