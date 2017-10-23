@@ -1,3 +1,11 @@
+2017-10-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Unskip the SVG tests and generate the
+        required platform-specific baselines.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/svg: Added ~800 baselines.
+
 2017-10-23  Youenn Fablet  <youenn@apple.com>
 
         TestController should clear all fetch caches when resetting its state
