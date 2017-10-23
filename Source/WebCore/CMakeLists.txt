@@ -977,119 +977,6 @@ else ()
 endif ()
 
 set(WebCore_SOURCES
-    bindings/js/CachedModuleScriptLoader.cpp
-    bindings/js/CachedScriptFetcher.cpp
-    bindings/js/CallTracer.cpp
-    bindings/js/CommonVM.cpp
-    bindings/js/DOMWrapperWorld.cpp
-    bindings/js/GCController.cpp
-    bindings/js/IDBBindingUtilities.cpp
-    bindings/js/JSAnimationTimelineCustom.cpp
-    bindings/js/JSAttrCustom.cpp
-    bindings/js/JSAudioTrackCustom.cpp
-    bindings/js/JSAudioTrackListCustom.cpp
-    bindings/js/JSBlobCustom.cpp
-    bindings/js/JSCSSRuleCustom.cpp
-    bindings/js/JSCSSRuleListCustom.cpp
-    bindings/js/JSCSSStyleDeclarationCustom.cpp
-    bindings/js/JSDOMConvertDate.cpp
-    bindings/js/JSDOMConvertNumbers.cpp
-    bindings/js/JSDOMConvertStrings.cpp
-    bindings/js/JSDOMConvertWebGL.cpp
-    bindings/js/JSDOMIterator.cpp
-    bindings/js/JSDeprecatedCSSOMValueCustom.cpp
-    bindings/js/JSCallbackData.cpp
-    bindings/js/JSCanvasRenderingContext2DCustom.cpp
-    bindings/js/JSCustomElementInterface.cpp
-    bindings/js/JSCustomElementRegistryCustom.cpp
-    bindings/js/JSCustomEventCustom.cpp
-    bindings/js/JSCustomXPathNSResolver.cpp
-    bindings/js/JSDOMBindingSecurity.cpp
-    bindings/js/JSDOMBuiltinConstructorBase.cpp
-    bindings/js/JSDOMConstructorBase.cpp
-    bindings/js/JSDOMConstructorWithDocument.cpp
-    bindings/js/JSDOMQuadCustom.cpp
-    bindings/js/JSDOMExceptionHandling.cpp
-    bindings/js/JSDOMGlobalObject.cpp
-    bindings/js/JSDOMGlobalObjectTask.cpp
-    bindings/js/JSDOMGuardedObject.cpp
-    bindings/js/JSDOMMapLike.cpp
-    bindings/js/JSDOMPromise.cpp
-    bindings/js/JSDOMPromiseDeferred.cpp
-    bindings/js/JSDOMWindowBase.cpp
-    bindings/js/JSDOMWindowCustom.cpp
-    bindings/js/JSDOMWindowProperties.cpp
-    bindings/js/JSDOMWindowProxy.cpp
-    bindings/js/JSDOMWrapper.cpp
-    bindings/js/JSDOMWrapperCache.cpp
-    bindings/js/JSDocumentCustom.cpp
-    bindings/js/JSDocumentFragmentCustom.cpp
-    bindings/js/JSElementCustom.cpp
-    bindings/js/JSErrorHandler.cpp
-    bindings/js/JSEventCustom.cpp
-    bindings/js/JSEventListener.cpp
-    bindings/js/JSEventTargetCustom.cpp
-    bindings/js/JSFileSystemEntryCustom.cpp
-    bindings/js/JSHTMLCollectionCustom.cpp
-    bindings/js/JSHTMLDocumentCustom.cpp
-    bindings/js/JSHTMLElementCustom.cpp
-    bindings/js/JSHTMLTemplateElementCustom.cpp
-    bindings/js/JSHistoryCustom.cpp
-    bindings/js/JSIDBCursorCustom.cpp
-    bindings/js/JSIDBCursorWithValueCustom.cpp
-    bindings/js/JSIDBIndexCustom.cpp
-    bindings/js/JSIDBObjectStoreCustom.cpp
-    bindings/js/JSIDBTransactionCustom.cpp
-    bindings/js/JSImageDataCustom.cpp
-    bindings/js/JSLazyEventListener.cpp
-    bindings/js/JSLocationCustom.cpp
-    bindings/js/JSMainThreadExecState.cpp
-    bindings/js/JSMediaStreamTrackCustom.cpp
-    bindings/js/JSMessageChannelCustom.cpp
-    bindings/js/JSMessageEventCustom.cpp
-    bindings/js/JSMessagePortCustom.cpp
-    bindings/js/JSMutationObserverCustom.cpp
-    bindings/js/JSNodeCustom.cpp
-    bindings/js/JSNodeIteratorCustom.cpp
-    bindings/js/JSNodeListCustom.cpp
-    bindings/js/JSPerformanceEntryCustom.cpp
-    bindings/js/JSPluginElementFunctions.cpp
-    bindings/js/JSPopStateEventCustom.cpp
-    bindings/js/JSReadableStreamPrivateConstructors.cpp
-    bindings/js/JSReadableStreamSourceCustom.cpp
-    bindings/js/JSSVGPathSegCustom.cpp
-    bindings/js/JSStyleSheetCustom.cpp
-    bindings/js/JSTextCustom.cpp
-    bindings/js/JSTextTrackCueCustom.cpp
-    bindings/js/JSTextTrackCustom.cpp
-    bindings/js/JSTextTrackListCustom.cpp
-    bindings/js/JSTrackCustom.cpp
-    bindings/js/JSTreeWalkerCustom.cpp
-    bindings/js/JSVideoTrackCustom.cpp
-    bindings/js/JSVideoTrackListCustom.cpp
-    bindings/js/JSWebGL2RenderingContextCustom.cpp
-    bindings/js/JSWebGLRenderingContextCustom.cpp
-    bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp
-    bindings/js/JSWebGPURenderingContextCustom.cpp
-    bindings/js/JSWorkerGlobalScopeBase.cpp
-    bindings/js/JSWorkerGlobalScopeCustom.cpp
-    bindings/js/JSXMLDocumentCustom.cpp
-    bindings/js/JSXMLHttpRequestCustom.cpp
-    bindings/js/JSXPathNSResolverCustom.cpp
-    bindings/js/JSXPathResultCustom.cpp
-    bindings/js/ReadableStream.cpp
-    bindings/js/ReadableStreamDefaultController.cpp
-    bindings/js/ScheduledAction.cpp
-    bindings/js/ScriptCachedFrameData.cpp
-    bindings/js/ScriptController.cpp
-    bindings/js/ScriptModuleLoader.cpp
-    bindings/js/ScriptState.cpp
-    bindings/js/StructuredClone.cpp
-    bindings/js/SerializedScriptValue.cpp
-    bindings/js/WebCoreJSClientData.cpp
-    bindings/js/WebCoreTypedArrayController.cpp
-    bindings/js/WorkerScriptController.cpp
-
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp
     bridge/npruntime.cpp
@@ -2895,10 +2782,6 @@ set(WebCore_IDL_FILES
 if (ENABLE_ALLINONE_BUILD)
     message(STATUS "All-in-One build is enabled.")
     set(allInOnes
-        accessibility/AccessibilityAllInOne.cpp
-
-        bindings/js/JSBindingsAllInOne.cpp
-
         css/CSSAllInOne.cpp
 
         dom/DOMAllInOne.cpp
