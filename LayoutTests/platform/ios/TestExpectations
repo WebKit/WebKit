@@ -95,7 +95,9 @@ mhtml
 fast/forms/file/file-input-capture.html
 
 # Spelling and grammar markers are not supported
-webkit.org/b/105616 editing/spelling/spelling-marker-includes-hyphen.html [ WontFix ]
+editing/spelling/spelling-marker-includes-hyphen.html [ WontFix ]
+editing/spelling/spelling-markers-in-overlapping-lines.html [ WontFix ]
+editing/spelling/spelling-markers-in-overlapping-lines-large-font.html [ WontFix ]
 
 # Plugins are not supported on iOS
 plugins

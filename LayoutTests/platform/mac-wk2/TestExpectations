@@ -209,6 +209,8 @@ webkit.org/b/105616 editing/mac/spelling/removing-underline-after-accepting-auto
 webkit.org/b/105616 editing/mac/spelling/accept-candidate-allows-autocorrect-on-next-word.html [ Failure ]
 webkit.org/b/105616 editing/mac/spelling/accept-unseen-candidate-records-acceptance.html [ Failure ]
 webkit.org/b/105616 editing/spelling/spelling-marker-includes-hyphen.html [ ImageOnlyFailure ]
+webkit.org/b/105616 editing/spelling/spelling-markers-in-overlapping-lines.html [ ImageOnlyFailure ]
+webkit.org/b/105616 editing/spelling/spelling-markers-in-overlapping-lines-large-font.html [ ImageOnlyFailure ]
 
 # [WK2] [Mac] Support drag in mouse events for WebKit2 EventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=68552>
