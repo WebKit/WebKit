@@ -1,3 +1,14 @@
+2017-10-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [JSC] Remove !(OS(LINUX) && CPU(ARM64)) guards in RegisterState.h
+        https://bugs.webkit.org/show_bug.cgi?id=178452
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/RegisterState.h: Re-enable the custom RegisterState and
+        ALLOCATE_AND_GET_REGISTER_STATE definitions on ARM64 Linux. These don't
+        cause any crashes nowadays.
+
 2017-10-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][Baseline] Use linkAllSlowCasesForBytecodeOffset as much as possible to simplify slow cases handling
