@@ -158,7 +158,7 @@ Platform3DObject TextureMapperGLData::getStaticVBO(GC3Denum target, GC3Dsizeiptr
 Ref<TextureMapperShaderProgram> TextureMapperGLData::getShaderProgram(TextureMapperShaderProgram::Options options)
 {
     auto addResult = m_sharedGLData->m_programs.ensure(options,
-        [this, options] { return TextureMapperShaderProgram::create(Ref<GraphicsContext3D>(m_context), options); });
+        [this, options] { return TextureMapperShaderProgram::create(options); });
     return *addResult.iterator->value;
 }
 
@@ -352,9 +352,8 @@ static float* gaussianKernel()
     return kernel;
 }
 
-static void prepareFilterProgram(TextureMapperShaderProgram& program, const FilterOperation& operation, unsigned pass, const IntSize& size, GC3Duint contentTexture)
+static void prepareFilterProgram(GraphicsContext3D* context, TextureMapperShaderProgram& program, const FilterOperation& operation, unsigned pass, const IntSize& size, GC3Duint contentTexture)
 {
-    Ref<GraphicsContext3D> context = program.context();
     context->useProgram(program.programID());
 
     switch (operation.type()) {
@@ -474,7 +473,7 @@ void TextureMapperGL::drawTexture(Platform3DObject texture, Flags flags, const I
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)
-        prepareFilterProgram(program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
+        prepareFilterProgram(m_context3D.get(), program.get(), *filter.get(), data().filterInfo->pass, textureSize, filterContentTextureID);
 
     drawTexturedQuadWithProgram(program.get(), texture, flags, textureSize, targetRect, modelViewMatrix, opacity);
 }
@@ -626,7 +625,7 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
     TextureMapperShaderProgram::Options options = optionsForFilterType(filter.type(), pass);
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
-    prepareFilterProgram(program.get(), filter, pass, sampler.contentSize(), contentTexture ? static_cast<const BitmapTextureGL*>(contentTexture)->id() : 0);
+    prepareFilterProgram(m_context3D.get(), program.get(), filter, pass, sampler.contentSize(), contentTexture ? static_cast<const BitmapTextureGL*>(contentTexture)->id() : 0);
     FloatRect targetRect(IntPoint::zero(), sampler.contentSize());
     drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sampler).id(), 0, IntSize(1, 1), targetRect, TransformationMatrix(), 1);
 }

@@ -52,6 +52,9 @@ private:
     RefPtr<TextureMapperShaderProgram> m_shaderProgram;
     GLuint m_framebuffer { 0 };
     GLuint m_vbo { 0 };
+#if !USE(OPENGL_ES_2)
+    GLuint m_vao { 0 };
+#endif
     bool m_flipY { false };
     ImageOrientation m_orientation;
     IntSize m_size;

@@ -27,9 +27,6 @@
 #include "ImageOrientation.h"
 #include "TextureMapperShaderProgram.h"
 
-// FIXME: Remove after TextureMapperShaderProgram drops GraphicsContext3D usage.
-#include "GraphicsContext3D.h"
-
 namespace WebCore {
 
 VideoTextureCopierGStreamer::VideoTextureCopierGStreamer(ColorConversion colorConversion)
@@ -38,14 +35,16 @@ VideoTextureCopierGStreamer::VideoTextureCopierGStreamer(ColorConversion colorCo
     ASSERT(previousContext);
     PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->makeContextCurrent();
 
-    {
-        // FIXME: Remove after TextureMapperShaderProgram drops GraphicsContext3D usage.
-        auto context3D = GraphicsContext3D::createForCurrentGLContext();
-        m_shaderProgram = TextureMapperShaderProgram::create(*context3D, TextureMapperShaderProgram::Texture);
-    }
+    m_shaderProgram = TextureMapperShaderProgram::create(TextureMapperShaderProgram::Texture);
 
     glGenFramebuffers(1, &m_framebuffer);
     glGenTextures(1, &m_resultTexture);
+
+#if !USE(OPENGL_ES_2)
+    // For OpenGL > 3.2 we need to have a VAO.
+    if (GLContext::current()->version() >= 320)
+        glGenVertexArrays(1, &m_vao);
+#endif
 
     static const GLfloat vertices[] = { 0, 0, 1, 0, 1, 1, 0, 1 };
     glGenBuffers(1, &m_vbo);
@@ -66,6 +65,10 @@ VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer()
     glDeleteFramebuffers(1, &m_framebuffer);
     glDeleteBuffers(1, &m_vbo);
     glDeleteTextures(1, &m_resultTexture);
+#if !USE(OPENGL_ES_2)
+    if (m_vao)
+        glDeleteVertexArrays(1, &m_vao);
+#endif
     m_shaderProgram = nullptr;
 
     if (previousContext)
@@ -193,6 +196,10 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(GLuint input
     m_shaderProgram->setMatrix(m_shaderProgram->textureColorSpaceMatrixLocation(), m_colorConversionMatrix);
 
     // Perform the copy.
+#if !USE(OPENGL_ES_2)
+    if (GLContext::current()->version() >= 320 && m_vao)
+        glBindVertexArray(m_vao);
+#endif
     glEnableVertexAttribArray(m_shaderProgram->vertexLocation());
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glVertexAttribPointer(m_shaderProgram->vertexLocation(), 2, GL_FLOAT, false, 0, 0);

@@ -24,6 +24,7 @@
 
 #if USE(TEXTURE_MAPPER_GL)
 
+#include "GLContext.h"
 #include "Logging.h"
 #include "TextureMapperGL.h"
 #include <wtf/text/StringBuilder.h>
@@ -50,18 +51,37 @@ static inline bool compositingLogEnabled()
         GLSL_DIRECTIVE(define TextureSpaceMatrixPrecision mediump) \
     GLSL_DIRECTIVE(endif)
 
-static const char* vertexTemplate =
-    TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
-    STRINGIFY(
-        precision TextureSpaceMatrixPrecision float;
-        attribute vec4 a_vertex;
-        uniform mat4 u_modelViewMatrix;
-        uniform mat4 u_projectionMatrix;
-        uniform mat4 u_textureSpaceMatrix;
 
+// Input/output variables definition for both GLES and OpenGL < 3.2.
+// The default precision directive is only needed for GLES.
+static const char* vertexTemplateLT320Vars =
+#if USE(OPENGL_ES_2)
+    TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
+#endif
+    STRINGIFY(
+#if USE(OPENGL_ES_2)
+        precision TextureSpaceMatrixPrecision float;
+#endif
+        attribute vec4 a_vertex;
         varying vec2 v_texCoord;
         varying vec2 v_transformedTexCoord;
         varying float v_antialias;
+    );
+
+// Input/output variables definition for OpenGL >= 3.2.
+static const char* vertexTemplateGE320Vars =
+    STRINGIFY(
+        in vec4 a_vertex;
+        out vec2 v_texCoord;
+        out vec2 v_transformedTexCoord;
+        out float v_antialias;
+    );
+
+static const char* vertexTemplateCommon =
+    STRINGIFY(
+        uniform mat4 u_modelViewMatrix;
+        uniform mat4 u_projectionMatrix;
+        uniform mat4 u_textureSpaceMatrix;
 
         void noop(inout vec2 dummyParameter) { }
 
@@ -136,22 +156,48 @@ static const char* vertexTemplate =
     GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_STEP 0.2)
 
 
-static const char* fragmentTemplate =
+// Common header for all versions. We define the matrices variables here to keep the precision
+// directives scope: the first one applies to the matrices variables and the next one to the
+// rest of them. The precision is only used in GLES.
+static const char* fragmentTemplateHeaderCommon =
     RECT_TEXTURE_DIRECTIVE
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
+#if USE(OPENGL_ES_2)
     TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
+#endif
     STRINGIFY(
+#if USE(OPENGL_ES_2)
         precision TextureSpaceMatrixPrecision float;
+#endif
         uniform mat4 u_textureSpaceMatrix;
         uniform mat4 u_textureColorSpaceMatrix;
+#if USE(OPENGL_ES_2)
         precision mediump float;
-        uniform SamplerType s_sampler;
-        uniform sampler2D s_contentTexture;
-        uniform float u_opacity;
+#endif
+    );
+
+// Input/output variables definition for both GLES and OpenGL < 3.2.
+static const char* fragmentTemplateLT320Vars =
+    STRINGIFY(
         varying float v_antialias;
         varying vec2 v_texCoord;
         varying vec2 v_transformedTexCoord;
+    );
+
+// Input/output variables definition for OpenGL >= 3.2.
+static const char* fragmentTemplateGE320Vars =
+    STRINGIFY(
+        in float v_antialias;
+        in vec2 v_texCoord;
+        in vec2 v_transformedTexCoord;
+    );
+
+static const char* fragmentTemplateCommon =
+    STRINGIFY(
+        uniform SamplerType s_sampler;
+        uniform sampler2D s_contentTexture;
+        uniform float u_opacity;
         uniform float u_filterAmount;
         uniform vec2 u_blurRadius;
         uniform vec2 u_shadowOffset;
@@ -305,7 +351,7 @@ static const char* fragmentTemplate =
         }
     );
 
-Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(Ref<GraphicsContext3D>&& context, TextureMapperShaderProgram::Options options)
+Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapperShaderProgram::Options options)
 {
 #define SET_APPLIER_FROM_OPTIONS(Applier) \
     optionsApplierBuilder.append(\
@@ -330,45 +376,124 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(Ref<GraphicsC
     SET_APPLIER_FROM_OPTIONS(ContentTexture);
     SET_APPLIER_FROM_OPTIONS(ManualRepeat);
 
+    unsigned glVersion = GLContext::current()->version();
     StringBuilder vertexShaderBuilder;
+
+    // OpenGL >= 3.2 requires a #version directive at the beginning of the code.
+#if !USE(OPENGL_ES_2)
+    if (glVersion >= 320)
+        vertexShaderBuilder.append(GLSL_DIRECTIVE(version 150));
+#endif
+
+    // Append the options.
     vertexShaderBuilder.append(optionsApplierBuilder.toString());
-    vertexShaderBuilder.append(vertexTemplate);
+
+    // Append the appropriate input/output variable definitions.
+#if USE(OPENGL_ES_2)
+    vertexShaderBuilder.append(vertexTemplateLT320Vars);
+#else
+    if (glVersion >= 320)
+        vertexShaderBuilder.append(vertexTemplateGE320Vars);
+    else
+        vertexShaderBuilder.append(vertexTemplateLT320Vars);
+#endif
+
+    // Append the common code.
+    vertexShaderBuilder.append(vertexTemplateCommon);
 
     StringBuilder fragmentShaderBuilder;
-    fragmentShaderBuilder.append(optionsApplierBuilder.toString());
-    fragmentShaderBuilder.append(fragmentTemplate);
 
-    return adoptRef(*new TextureMapperShaderProgram(WTFMove(context), vertexShaderBuilder.toString(), fragmentShaderBuilder.toString()));
+    // OpenGL >= 3.2 requires a #version directive at the beginning of the code.
+#if !USE(OPENGL_ES_2)
+    if (glVersion >= 320)
+        fragmentShaderBuilder.append(GLSL_DIRECTIVE(version 150));
+#endif
+
+    // Append the options.
+    fragmentShaderBuilder.append(optionsApplierBuilder.toString());
+
+    // Append the common header.
+    fragmentShaderBuilder.append(fragmentTemplateHeaderCommon);
+
+    // Append the appropriate input/output variable definitions.
+#if USE(OPENGL_ES_2)
+    fragmentShaderBuilder.append(fragmentTemplateLT320Vars);
+#else
+    if (glVersion >= 320)
+        fragmentShaderBuilder.append(fragmentTemplateGE320Vars);
+    else
+        fragmentShaderBuilder.append(fragmentTemplateLT320Vars);
+#endif
+
+    // Append the common code.
+    fragmentShaderBuilder.append(fragmentTemplateCommon);
+
+    return adoptRef(*new TextureMapperShaderProgram(vertexShaderBuilder.toString(), fragmentShaderBuilder.toString()));
 }
 
-TextureMapperShaderProgram::TextureMapperShaderProgram(Ref<GraphicsContext3D>&& context, const String& vertex, const String& fragment)
-    : m_context(WTFMove(context))
+#if !LOG_DISABLED
+static CString getShaderLog(GLuint shader)
 {
-    m_vertexShader = m_context->createShader(GraphicsContext3D::VERTEX_SHADER);
-    m_context->shaderSource(m_vertexShader, vertex);
+    GLint logLength = 0;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+    if (!logLength)
+        return { };
 
-    m_fragmentShader = m_context->createShader(GraphicsContext3D::FRAGMENT_SHADER);
-    m_context->shaderSource(m_fragmentShader, fragment);
+    auto info = std::make_unique<GLchar[]>(logLength);
+    GLsizei infoLength = 0;
+    glGetShaderInfoLog(shader, logLength, &infoLength, info.get());
 
-    m_id = m_context->createProgram();
-    m_context->compileShader(m_vertexShader);
-    m_context->compileShader(m_fragmentShader);
-    m_context->attachShader(m_id, m_vertexShader);
-    m_context->attachShader(m_id, m_fragmentShader);
-    m_context->linkProgram(m_id);
+    size_t stringLength = std::max(infoLength, 0);
+    return { info.get(), stringLength };
+}
 
-    if (!compositingLogEnabled())
+static CString getProgramLog(GLuint program)
+{
+    GLint logLength = 0;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+    if (!logLength)
+        return { };
+
+    auto info = std::make_unique<GLchar[]>(logLength);
+    GLsizei infoLength = 0;
+    glGetProgramInfoLog(program, logLength, &infoLength, info.get());
+
+    size_t stringLength = std::max(infoLength, 0);
+    return { info.get(), stringLength };
+}
+#endif
+
+TextureMapperShaderProgram::TextureMapperShaderProgram(const String& vertex, const String& fragment)
+{
+    m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    {
+        CString vertexCString = vertex.utf8();
+        const char* data = vertexCString.data();
+        int length = vertexCString.length();
+        glShaderSource(m_vertexShader, 1, &data, &length);
+    }
+    glCompileShader(m_vertexShader);
+
+    m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    {
+        CString fragmentCString = fragment.utf8();
+        const char* data = fragmentCString.data();
+        int length = fragmentCString.length();
+        glShaderSource(m_fragmentShader, 1, &data, &length);
+    }
+    glCompileShader(m_fragmentShader);
+
+    m_id = glCreateProgram();
+    glAttachShader(m_id, m_vertexShader);
+    glAttachShader(m_id, m_fragmentShader);
+    glLinkProgram(m_id);
+
+    if (!compositingLogEnabled() || glGetError() == GL_NO_ERROR)
         return;
 
-    if (m_context->getError() == GraphicsContext3D::NO_ERROR)
-        return;
-
-    String log = m_context->getShaderInfoLog(m_vertexShader);
-    LOG(Compositing, "Vertex shader log: %s\n", log.utf8().data());
-    log = m_context->getShaderInfoLog(m_fragmentShader);
-    LOG(Compositing, "Fragment shader log: %s\n", log.utf8().data());
-    log = m_context->getProgramInfoLog(m_id);
-    LOG(Compositing, "Program log: %s\n", log.utf8().data());
+    LOG(Compositing, "Vertex shader log: %s\n", getShaderLog(m_vertexShader).data());
+    LOG(Compositing, "Fragment shader log: %s\n", getShaderLog(m_fragmentShader).data());
+    LOG(Compositing, "Program log: %s\n", getProgramLog(m_id).data());
 }
 
 TextureMapperShaderProgram::~TextureMapperShaderProgram()
@@ -376,29 +501,30 @@ TextureMapperShaderProgram::~TextureMapperShaderProgram()
     if (!m_id)
         return;
 
-    m_context->detachShader(m_id, m_vertexShader);
-    m_context->deleteShader(m_vertexShader);
-    m_context->detachShader(m_id, m_fragmentShader);
-    m_context->deleteShader(m_fragmentShader);
-    m_context->deleteProgram(m_id);
+    glDetachShader(m_id, m_vertexShader);
+    glDeleteShader(m_vertexShader);
+    glDetachShader(m_id, m_fragmentShader);
+    glDeleteShader(m_fragmentShader);
+    glDeleteProgram(m_id);
 }
 
-void TextureMapperShaderProgram::setMatrix(GC3Duint location, const TransformationMatrix& matrix)
+void TextureMapperShaderProgram::setMatrix(GLuint location, const TransformationMatrix& matrix)
 {
     TransformationMatrix::FloatMatrix4 floatMatrix;
     matrix.toColumnMajorFloatArray(floatMatrix);
-    m_context->uniformMatrix4fv(location, 1, false, floatMatrix);
+    glUniformMatrix4fv(location, 1, false, floatMatrix);
 }
 
-GC3Duint TextureMapperShaderProgram::getLocation(const AtomicString& name, VariableType type)
+GLuint TextureMapperShaderProgram::getLocation(const AtomicString& name, VariableType type)
 {
     auto addResult = m_variables.ensure(name,
         [this, &name, type] {
+            CString nameCString = name.string().utf8();
             switch (type) {
             case UniformVariable:
-                return m_context->getUniformLocation(m_id, name);
+                return glGetUniformLocation(m_id, nameCString.data());
             case AttribVariable:
-                return m_context->getAttribLocation(m_id, name);
+                return glGetAttribLocation(m_id, nameCString.data());
             }
             ASSERT_NOT_REACHED();
             return 0;
