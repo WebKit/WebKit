@@ -140,6 +140,7 @@ imported/w3c/web-platform-tests/service-workers [ Skip ]
 imported/w3c/web-platform-tests/service-workers/stub-4.6.2-cache.html [ Pass ]
 imported/w3c/web-platform-tests/service-workers/stub-4.6.3-cache-storage.html [ Pass ]
 imported/w3c/web-platform-tests/service-workers/cache-storage [ Pass ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker [ Skip ]
 
 # textarea.animate is not supported
 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-018.html [ Skip ]
