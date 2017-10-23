@@ -185,63 +185,39 @@ inline const FontCascade& InlineTextBox::lineFont() const
     return combinedText() ? combinedText()->textCombineFont() : lineStyle().fontCascade();
 }
 
-// FIXME: This function should return the same rectangle as localSelectionRectWithClampedPositions(..., ..., SelectionRectRounding::None),
-// which represents the rectange of the selected text on the page. We need to update all callers to expect this change.
-// See <https://bugs.webkit.org/show_bug.cgi?id=138913> for more details.
-LayoutRect InlineTextBox::localSelectionRect(unsigned startPosition, unsigned endPosition) const
+// FIXME: Share more code with paintSelection().
+LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
 {
-    if (startPosition > endPosition || endPosition < m_start || startPosition > end() + 1)
-        return { };
-    return localSelectionRectWithClampedPositions(clampedOffset(startPosition), clampedOffset(endPosition), SelectionRectRounding::EnclosingIntRect);
-}
+    unsigned sPos = clampedOffset(startPos);
+    unsigned ePos = clampedOffset(endPos);
 
-LayoutRect InlineTextBox::localSelectionRectWithClampedPositions(unsigned clampedStartPosition, unsigned clampedEndPosition, SelectionRectRounding roundingStrategy) const
-{
-    if (clampedStartPosition > clampedEndPosition)
+    if (sPos >= ePos && !(startPos == endPos && startPos >= start() && startPos <= (start() + len())))
         return { };
 
-    auto selectionTop = root().selectionTopAdjustedForPrecedingBlock();
-    auto selectionBottom = this->selectionBottom();
+    LayoutUnit selectionTop = this->selectionTop();
+    LayoutUnit selectionHeight = this->selectionHeight();
 
     auto text = this->text();
     TextRun textRun = createTextRun(text);
 
-    // Use same y positioning and height as used for selected text on the page, so that when some or all of this
-    // subrange is selected on the page there are no pieces sticking out.
-    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
-    auto selectionHeight = root().selectionHeightAdjustedForPrecedingBlock();
-    LayoutRect selectionRect { LayoutPoint { logicalLeft(), logicalTop() - deltaY }, LayoutSize { m_logicalWidth, selectionHeight } };
-
+    LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid computing the font width when the entire line box is selected as an optimization.
-    if (clampedStartPosition || clampedEndPosition != textRun.length())
-        lineFont().adjustSelectionRectForText(textRun, selectionRect, clampedStartPosition, clampedEndPosition);
+    if (sPos || ePos != textRun.length())
+        lineFont().adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    // FIXME: The computation of the snapped selection rect differs from the computation of this rect
+    // in paintSelection(). See <https://bugs.webkit.org/show_bug.cgi?id=138913>.
+    IntRect snappedSelectionRect = enclosingIntRect(selectionRect);
+    LayoutUnit logicalWidth = snappedSelectionRect.width();
+    if (snappedSelectionRect.x() > logicalRight())
+        logicalWidth  = 0;
+    else if (snappedSelectionRect.maxX() > logicalRight())
+        logicalWidth = logicalRight() - snappedSelectionRect.x();
 
-    LayoutUnit selectionLeft;
-    LayoutUnit selectionWidth;
-    if (roundingStrategy == SelectionRectRounding::EnclosingIntRect) {
-        auto snappedSelectionRect = enclosingIntRect(selectionRect);
-        selectionLeft = snappedSelectionRect.x();
-        selectionWidth = snappedSelectionRect.width();
-        if (snappedSelectionRect.x() > logicalRight())
-            selectionWidth = 0;
-        else if (snappedSelectionRect.maxX() > logicalRight())
-            selectionWidth = logicalRight() - snappedSelectionRect.x();
-    } else {
-        selectionLeft = selectionRect.x();
-        selectionWidth = selectionRect.width();
-    }
+    LayoutPoint topPoint = isHorizontal() ? LayoutPoint(snappedSelectionRect.x(), selectionTop) : LayoutPoint(selectionTop, snappedSelectionRect.x());
+    LayoutUnit width = isHorizontal() ? logicalWidth : selectionHeight;
+    LayoutUnit height = isHorizontal() ? selectionHeight : logicalWidth;
 
-    LayoutPoint location;
-    LayoutSize size;
-    if (isHorizontal()) {
-        location = { selectionLeft, selectionTop };
-        size = { selectionWidth, selectionHeight };
-    } else {
-        location = { selectionTop, selectionLeft };
-        size = { selectionHeight, selectionWidth };
-    }
-
-    return { location, size };
+    return LayoutRect(topPoint, LayoutSize(width, height));
 }
 
 void InlineTextBox::deleteLine()
@@ -429,7 +405,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     LayoutUnit paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
     LayoutUnit paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
     
-    LayoutPoint localPaintOffset { paintOffset };
+    FloatPoint localPaintOffset(paintOffset);
     
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
@@ -496,12 +472,12 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
         if (containsComposition && !useCustomUnderlines)
-            paintCompositionBackground(context, localPaintOffset);
+            paintCompositionBackground(context, boxOrigin);
 
-        paintDocumentMarkers(context, localPaintOffset, true);
+        paintDocumentMarkers(context, boxOrigin, true);
 
         if (haveSelection && !useCustomUnderlines)
-            paintSelection(context, localPaintOffset, selectionPaintStyle.fillColor);
+            paintSelection(context, boxOrigin, selectionPaintStyle.fillColor);
     }
 
     // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
@@ -603,7 +579,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     if (paintInfo.phase == PaintPhaseForeground) {
-        paintDocumentMarkers(context, localPaintOffset, false);
+        paintDocumentMarkers(context, boxOrigin, false);
 
         if (useCustomUnderlines)
             paintCompositionUnderlines(context, boxOrigin);
@@ -647,7 +623,7 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
     return { clampedOffset(start), clampedOffset(end) };
 }
 
-void InlineTextBox::paintSelection(GraphicsContext& context, const LayoutPoint& paintOffset, const Color& textColor)
+void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const Color& textColor)
 {
 #if ENABLE(TEXT_SELECTION)
     if (context.paintingDisabled())
@@ -674,19 +650,29 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const LayoutPoint& 
 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
-    auto selectionRect = localSelectionRectWithClampedPositions(selectionStart, selectionEnd);
-    selectionRect.moveBy(paintOffset);
+    auto text = this->text();
+    TextRun textRun = createTextRun(text);
+
+    const RootInlineBox& rootBox = root();
+    LayoutUnit selectionBottom = rootBox.selectionBottom();
+    LayoutUnit selectionTop = rootBox.selectionTopAdjustedForPrecedingBlock();
+
+    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
+    LayoutUnit selectionHeight = std::max<LayoutUnit>(0, selectionBottom - selectionTop);
+
+    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selectionHeight);
+    lineFont().adjustSelectionRectForText(textRun, selectionRect, selectionStart, selectionEnd);
 
     // FIXME: Support painting combined text.
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), isLeftToRightDirection()), c);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c);
 #else
     UNUSED_PARAM(context);
-    UNUSED_PARAM(paintOffset);
+    UNUSED_PARAM(boxOrigin);
     UNUSED_PARAM(textColor);
 #endif
 }
 
-inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context, const LayoutPoint& paintOffset, const Color& color, unsigned startOffset, unsigned endOffset)
+inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const Color& color, unsigned startOffset, unsigned endOffset)
 {
     startOffset = clampedOffset(startOffset);
     endOffset = clampedOffset(endOffset);
@@ -696,24 +682,30 @@ inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context,
     GraphicsContextStateSaver stateSaver { context };
     updateGraphicsContext(context, TextPaintStyle { color }); // Don't draw text at all!
 
-    auto selectionRect = localSelectionRectWithClampedPositions(startOffset, endOffset);
-    selectionRect.moveBy(paintOffset);
+    // Use same y positioning and height as for selection, so that when the selection and this subrange are on
+    // the same word there are no pieces sticking out.
+    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
+    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
+
+    auto text = this->text();
+    TextRun textRun = createTextRun(text);
+    lineFont().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
 
     // FIXME: Support painting combined text.
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), isLeftToRightDirection()), color);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), color);
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const LayoutPoint& paintOffset)
+void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin)
 {
-    paintTextSubrangeBackground(context, paintOffset, renderer().frame().editor().compositionStart(), renderer().frame().editor().compositionEnd(), Color::compositionFill);
+    paintTextSubrangeBackground(context, boxOrigin, renderer().frame().editor().compositionStart(), renderer().frame().editor().compositionEnd(), Color::compositionFill);
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const LayoutPoint& paintOffset, const MarkerSubrange& subrange, bool isActiveMatch)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkerSubrange& subrange, bool isActiveMatch)
 {
     if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
         return;
     auto highlightColor = isActiveMatch ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
-    paintTextSubrangeBackground(context, paintOffset, highlightColor, subrange.startOffset, subrange.endOffset);
+    paintTextSubrangeBackground(context, boxOrigin, highlightColor, subrange.startOffset, subrange.endOffset);
 }
 
 static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
@@ -766,7 +758,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const TextRun& tex
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const LayoutPoint& paintOffset, const MarkerSubrange& subrange)
+void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkerSubrange& subrange)
 {
     // Never print spelling/grammar markers (5327887)
     if (renderer().document().printing())
@@ -774,6 +766,9 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const LayoutPo
 
     if (m_truncation == cFullTruncation)
         return;
+
+    float start = 0; // start of line to draw, relative to tx
+    float width = m_logicalWidth; // how much line to draw
 
     // Determine whether we need to measure text
     bool markerSpansWholeBox = true;
@@ -784,23 +779,24 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const LayoutPo
     if (m_truncation != cNoTruncation)
         markerSpansWholeBox = false;
 
-    FloatPoint location;
-    float width;
-    if (markerSpansWholeBox) {
-        location = locationIncludingFlipping();
-        width = m_logicalWidth;
-    } else {
+    if (!markerSpansWholeBox) {
         unsigned startPosition = clampedOffset(subrange.startOffset);
         unsigned endPosition = clampedOffset(subrange.endOffset);
 
-        // We round to the nearest enclosing integral rect to avoid truncating the dot decoration on Cocoa platforms.
-        // FIXME: Find a better place to ensure that the Cocoa dots are not truncated.
-        auto selectionRect = localSelectionRectWithClampedPositions(startPosition, endPosition, SelectionRectRounding::EnclosingIntRect);
-        location = selectionRect.location();
-        width = selectionRect.width();
-    }
-    location.moveBy(paintOffset);
+        // Calculate start & width
+        int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
+        int selHeight = selectionHeight();
+        FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
+        auto text = this->text();
+        TextRun run = createTextRun(text);
 
+        LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
+        lineFont().adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
+        IntRect markerRect = enclosingIntRect(selectionRect);
+        start = markerRect.x() - startPoint.x();
+        width = markerRect.width();
+    }
+    
     auto lineStyleForSubrangeType = [] (MarkerSubrange::Type type) {
         switch (type) {
         case MarkerSubrange::SpellingError:
@@ -840,11 +836,10 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const LayoutPo
         underlineOffset = baseline + 2;
     }
     // FIXME: Support painting combined text.
-    location.move(0, underlineOffset);
-    context.drawLineForDocumentMarker(location, width, lineStyleForSubrangeType(subrange.type));
+    context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForSubrangeType(subrange.type));
 }
 
-void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const LayoutPoint& paintOffset, bool background)
+void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, bool background)
 {
     if (!renderer().textNode())
         return;
@@ -938,9 +933,9 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const LayoutP
 
     for (auto& subrange : subdivide(subranges, OverlapStrategy::Frontmost)) {
         if (subrange.type == MarkerSubrange::TextMatch)
-            paintTextMatchMarker(context, paintOffset, subrange, subrange.marker->isActiveMatch());
+            paintTextMatchMarker(context, boxOrigin, subrange, subrange.marker->isActiveMatch());
         else
-            paintDocumentMarker(context, paintOffset, subrange);
+            paintDocumentMarker(context, boxOrigin, subrange);
     }
 }
 

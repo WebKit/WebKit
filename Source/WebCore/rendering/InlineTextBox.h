@@ -110,7 +110,7 @@ private:
 public:
     FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }
 
-    virtual LayoutRect localSelectionRect(unsigned startPosition, unsigned endPosition) const;
+    virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
     bool isSelected(unsigned startPosition, unsigned endPosition) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
 
@@ -152,20 +152,17 @@ public:
 private:
     void paintDecoration(GraphicsContext&, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
         TextDecoration, TextPaintStyle, const ShadowData*, const FloatRect& clipOutRect);
-    void paintSelection(GraphicsContext&, const LayoutPoint& paintOffset, const Color&);
+    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const Color&);
 
-    void paintDocumentMarker(GraphicsContext&, const LayoutPoint& paintOffset, const MarkerSubrange&);
-    void paintDocumentMarkers(GraphicsContext&, const LayoutPoint& paintOffset, bool background);
-    void paintTextMatchMarker(GraphicsContext&, const LayoutPoint& paintOffset, const MarkerSubrange&, bool isActiveMatch);
+    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkerSubrange&);
+    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, bool background);
+    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkerSubrange&, bool isActiveMatch);
 
-    void paintCompositionBackground(GraphicsContext&, const LayoutPoint& paintOffset);
+    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin);
     void paintCompositionUnderlines(GraphicsContext&, const FloatPoint& boxOrigin) const;
     void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&) const;
 
-    void paintTextSubrangeBackground(GraphicsContext&, const LayoutPoint& paintOffset, const Color&, unsigned startOffset, unsigned endOffset);
-
-    enum class SelectionRectRounding { None, EnclosingIntRect };
-    LayoutRect localSelectionRectWithClampedPositions(unsigned clampedStartPosition, unsigned clampedEndPosition, SelectionRectRounding = SelectionRectRounding::None) const;
+    void paintTextSubrangeBackground(GraphicsContext&, const FloatPoint& boxOrigin, const Color&, unsigned startOffset, unsigned endOffset);
 
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
