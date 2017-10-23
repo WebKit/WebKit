@@ -36,6 +36,7 @@
 #if USE(CG)
 #include "ImageSourceCG.h"
 #include "UTIRegistry.h"
+#include "UTIUtilities.h"
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -60,42 +61,41 @@ static HashSet<String, ASCIICaseInsensitiveHash>* supportedJavaScriptMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedNonImageMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedMediaMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* pdfMIMETypes;
-static HashSet<String, ASCIICaseInsensitiveHash>* pdfAndPostScriptMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* unsupportedTextMIMETypes;
 
 static void initializeSupportedImageMIMETypes()
 {
 #if USE(CG)
-    HashSet<String>& imageUTIs = allowedImageUTIs();
-    for (auto& imageUTI : imageUTIs) {
-        String mimeType = MIMETypeForImageSourceType(imageUTI);
+    supportedImageResourceMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
+    supportedImageMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
+
+    // This represents the subset of allowed image UTIs for which CoreServices has a corresponding MIME type. Keep this in sync with allowedImageUTIs().
+    static const char* const allowedImageMIMETypes[] = { "image/tiff", "image/gif", "image/jpeg", "image/vnd.microsoft.icon", "image/jp2", "image/png", "image/bmp" };
+    for (auto& mimeType : allowedImageMIMETypes) {
+        supportedImageMIMETypes->add(ASCIILiteral { mimeType });
+        supportedImageResourceMIMETypes->add(ASCIILiteral { mimeType });
+    }
+
+#ifndef NDEBUG
+    for (auto& uti : allowedImageUTIs()) {
+        auto mimeType = MIMETypeForImageSourceType(uti);
         if (!mimeType.isEmpty()) {
-            supportedImageMIMETypes->add(mimeType);
-            supportedImageResourceMIMETypes->add(mimeType);
+            ASSERT(supportedImageMIMETypes->contains(mimeType));
+            ASSERT(supportedImageResourceMIMETypes->contains(mimeType));
         }
     }
 
-    // On Tiger and Leopard, com.microsoft.bmp doesn't have a MIME type in the registry.
-    supportedImageMIMETypes->add("image/bmp");
-    supportedImageResourceMIMETypes->add("image/bmp");
+    for (auto& mime : *supportedImageMIMETypes)
+        ASSERT_UNUSED(mime, allowedImageUTIs().contains(UTIFromMIMEType(mime)));
+#endif
 
     // Favicons don't have a MIME type in the registry either.
-    supportedImageMIMETypes->add("image/vnd.microsoft.icon");
     supportedImageMIMETypes->add("image/x-icon");
-    supportedImageResourceMIMETypes->add("image/vnd.microsoft.icon");
     supportedImageResourceMIMETypes->add("image/x-icon");
 
     //  We only get one MIME type per UTI, hence our need to add these manually
     supportedImageMIMETypes->add("image/pjpeg");
     supportedImageResourceMIMETypes->add("image/pjpeg");
-
-    //  We don't want to try to treat all binary data as an image
-    supportedImageMIMETypes->remove("application/octet-stream");
-    supportedImageResourceMIMETypes->remove("application/octet-stream");
-
-    //  Don't treat pdf/postscript as images directly
-    supportedImageMIMETypes->remove("application/pdf");
-    supportedImageMIMETypes->remove("application/postscript");
 
 #if PLATFORM(IOS)
     // Add malformed image mimetype for compatibility with Mail and to handle malformed mimetypes from the net
@@ -203,6 +203,8 @@ static void initializeSupportedJavaScriptMIMETypes()
         "text/x-javascript",
         "text/x-ecmascript"
     };
+
+    supportedJavaScriptMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
     for (auto* type : types)
         supportedJavaScriptMIMETypes->add(type);
 }
@@ -213,13 +215,10 @@ static void initializePDFMIMETypes()
         "application/pdf",
         "text/pdf"
     };
+
+    pdfMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
     for (auto& type : types)
         pdfMIMETypes->add(type);
-}
-
-static void initializePostScriptMIMETypes()
-{
-    pdfAndPostScriptMIMETypes->add("application/postscript");
 }
 
 static void initializeSupportedNonImageMimeTypes()
@@ -247,6 +246,10 @@ static void initializeSupportedNonImageMimeTypes()
         // This can result in cross-site scripting vulnerabilities.
     };
 
+    if (!supportedJavaScriptMIMETypes)
+        initializeSupportedJavaScriptMIMETypes();
+
+    supportedNonImageMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash> { *supportedJavaScriptMIMETypes };
     for (auto& type : types)
         supportedNonImageMIMETypes->add(type);
 
@@ -415,30 +418,10 @@ static void initializeUnsupportedTextMIMETypes()
         "text/vnd.sun.j2me.app-descriptor",
 #endif
     };
-    for (auto& type : types)
-        unsupportedTextMIMETypes->add(ASCIILiteral { type });
-}
-
-static void initializeMIMETypeRegistry()
-{
-    supportedJavaScriptMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
-    initializeSupportedJavaScriptMIMETypes();
-
-    supportedNonImageMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>(*supportedJavaScriptMIMETypes);
-    initializeSupportedNonImageMimeTypes();
-
-    supportedImageResourceMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
-    supportedImageMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
-    initializeSupportedImageMIMETypes();
-
-    pdfMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
-    initializePDFMIMETypes();
-
-    pdfAndPostScriptMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>(*pdfMIMETypes);
-    initializePostScriptMIMETypes();
 
     unsupportedTextMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
-    initializeUnsupportedTextMIMETypes();
+    for (auto& type : types)
+        unsupportedTextMIMETypes->add(ASCIILiteral { type });
 }
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
@@ -458,7 +441,7 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
     if (!supportedImageMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeSupportedImageMIMETypes();
     return supportedImageMIMETypes->contains(getNormalizedMIMEType(mimeType));
 }
 
@@ -472,7 +455,7 @@ bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
     if (!supportedImageResourceMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeSupportedImageMIMETypes();
     return supportedImageResourceMIMETypes->contains(getNormalizedMIMEType(mimeType));
 }
 
@@ -492,7 +475,7 @@ bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
     if (!supportedJavaScriptMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeSupportedNonImageMimeTypes();
     return supportedJavaScriptMIMETypes->contains(mimeType);
 }
 
@@ -537,7 +520,7 @@ bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
     if (!supportedNonImageMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeSupportedNonImageMimeTypes();
     return supportedNonImageMIMETypes->contains(mimeType);
 }
 
@@ -560,7 +543,7 @@ bool MIMETypeRegistry::isUnsupportedTextMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
     if (!unsupportedTextMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeUnsupportedTextMIMETypes();
     return unsupportedTextMIMETypes->contains(mimeType);
 }
 
@@ -618,11 +601,7 @@ bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isPDFOrPostScriptMIMEType(const String& mimeType)
 {
-    if (mimeType.isEmpty())
-        return false;
-    if (!pdfAndPostScriptMIMETypes)
-        initializeMIMETypeRegistry();
-    return pdfAndPostScriptMIMETypes->contains(mimeType);
+    return isPDFMIMEType(mimeType) || mimeType == "application/postscript";
 }
 
 bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
@@ -630,7 +609,7 @@ bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
     if (!pdfMIMETypes)
-        initializeMIMETypeRegistry();
+        initializePDFMIMETypes();
     return pdfMIMETypes->contains(mimeType);
 }
 
@@ -651,14 +630,14 @@ bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageMIMETypes()
 {
     if (!supportedImageMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeSupportedImageMIMETypes();
     return *supportedImageMIMETypes;
 }
 
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageResourceMIMETypes()
 {
     if (!supportedImageResourceMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeSupportedImageMIMETypes();
     return *supportedImageResourceMIMETypes;
 }
 
@@ -672,7 +651,7 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageMI
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedNonImageMIMETypes()
 {
     if (!supportedNonImageMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeSupportedNonImageMimeTypes();
     return *supportedNonImageMIMETypes;
 }
 
@@ -687,21 +666,14 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedMediaMI
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getPDFMIMETypes()
 {
     if (!pdfMIMETypes)
-        initializeMIMETypeRegistry();
+        initializePDFMIMETypes();
     return *pdfMIMETypes;
-}
-
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getPDFAndPostScriptMIMETypes()
-{
-    if (!pdfAndPostScriptMIMETypes)
-        initializeMIMETypeRegistry();
-    return *pdfAndPostScriptMIMETypes;
 }
 
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getUnsupportedTextMIMETypes()
 {
     if (!unsupportedTextMIMETypes)
-        initializeMIMETypeRegistry();
+        initializeUnsupportedTextMIMETypes();
     return *unsupportedTextMIMETypes;
 }
 

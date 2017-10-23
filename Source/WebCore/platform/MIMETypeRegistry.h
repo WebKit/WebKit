@@ -111,7 +111,6 @@ public:
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedNonImageMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedMediaMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getPDFMIMETypes();
-    static HashSet<String, ASCIICaseInsensitiveHash>& getPDFAndPostScriptMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getUnsupportedTextMIMETypes();
 
     // FIXME: WebKit coding style says we should not have the word "get" in the name of this function.
