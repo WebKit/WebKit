@@ -70,6 +70,10 @@ public:
 
     bool isDetached() const { return m_detached; }
 
+    ImageBuffer* buffer() { return m_bitmapData.get(); }
+
+    bool originClean() const { return m_originClean; }
+
 private:
     friend class PendingImageBitmap;
 
@@ -87,6 +91,7 @@ private:
 
     std::unique_ptr<ImageBuffer> m_bitmapData;
     bool m_detached { false };
+    bool m_originClean { false };
 };
 
 }

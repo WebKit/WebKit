@@ -1669,10 +1669,47 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLVideoElement& video, c
 
 #endif
 
-ExceptionOr<void> CanvasRenderingContext2D::drawImage(ImageBitmap&, const FloatRect&, const FloatRect&)
+ExceptionOr<void> CanvasRenderingContext2D::drawImage(ImageBitmap& imageBitmap, const FloatRect& srcRect, const FloatRect& dstRect)
 {
-    // FIXME: Implement.
-    return Exception { TypeError };
+    if (!imageBitmap.width() || !imageBitmap.height())
+        return Exception { InvalidStateError };
+
+    if (!srcRect.width() || !srcRect.height())
+        return Exception { IndexSizeError };
+
+    FloatRect srcBitmapRect = FloatRect(FloatPoint(), FloatSize(imageBitmap.width(), imageBitmap.height()));
+
+    if (!srcBitmapRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
+        return { };
+
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return { };
+    if (!state().hasInvertibleTransform)
+        return { };
+
+    ImageBuffer* buffer = imageBitmap.buffer();
+    if (!buffer)
+        return { };
+
+    checkOrigin(&imageBitmap);
+
+    if (rectContainsCanvas(dstRect)) {
+        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        didDrawEntireCanvas();
+    } else if (isFullCanvasCompositeMode(state().globalComposite)) {
+        fullCanvasCompositedDrawImage(*buffer, dstRect, srcRect, state().globalComposite);
+        didDrawEntireCanvas();
+    } else if (state().globalComposite == CompositeCopy) {
+        clearCanvas();
+        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        didDrawEntireCanvas();
+    } else {
+        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        didDraw(dstRect);
+    }
+
+    return { };
 }
 
 void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement& imageElement, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, const String& compositeOperation)

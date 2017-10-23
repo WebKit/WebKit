@@ -1,0 +1,8 @@
+
+PASS drawImage of ImageBitmap 
+PASS drawImage of ImageBitmap with cropping 
+PASS drawImage of ImageBitmap with cropping and different origin 
+PASS drawImage of ImageBitmap with cropping and different non-zero origin 
+PASS drawImage throws with InvalidStateError if the ImageBitmap is closed 
+PASS drawImage throws with IndexSizeError if the source rectangle of the ImageBitmap is empty 
+

@@ -89,6 +89,21 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     );
 }
 
+static bool taintsOrigin(CachedImage& cachedImage)
+{
+    auto* image = cachedImage.image();
+    if (!image)
+        return false;
+
+    if (!image->hasSingleSecurityOrigin())
+        return true;
+
+    if (!cachedImage.isCORSSameOrigin())
+        return true;
+
+    return false;
+}
+
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
     UNUSED_PARAM(options);
@@ -146,6 +161,8 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
     //    bitmap to false.
+
+    imageBitmap->m_originClean = !taintsOrigin(*cachedImage);
 
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.

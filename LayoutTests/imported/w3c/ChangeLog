@@ -1,3 +1,15 @@
+2017-10-22  Dean Jackson  <dino@apple.com>
+
+        Implement drawImage(ImageBitmap) on 2d canvas
+        https://bugs.webkit.org/show_bug.cgi?id=178653
+        <rdar://problem/35104360>
+
+        Reviewed by Antoine Quint.
+
+        Update expected results now that drawImage is implemented.
+
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt:
+
 2017-10-20  Dean Jackson  <dino@apple.com>
 
         Add createImageBitmap to Window and Worker
