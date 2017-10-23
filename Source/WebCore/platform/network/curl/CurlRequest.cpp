@@ -51,7 +51,7 @@ void CurlRequest::setUserPass(const String& user, const String& password)
     ASSERT(isMainThread());
 
     m_user = user.isolatedCopy();
-    m_password = user.isolatedCopy();
+    m_password = password.isolatedCopy();
 }
 
 void CurlRequest::start(bool isSyncRequest)
@@ -168,7 +168,7 @@ CURL* CurlRequest::setupTransfer()
 
     if (!m_user.isEmpty() || !m_password.isEmpty()) {
         m_curlHandle->enableHttpAuthentication(CURLAUTH_ANY);
-        m_curlHandle->setHttpAuthUserPass(m_user.latin1().data(), m_password.latin1().data());
+        m_curlHandle->setHttpAuthUserPass(m_user, m_password);
     }
 
     m_curlHandle->setHeaderCallbackFunction(didReceiveHeaderCallback, this);
@@ -254,6 +254,16 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (m_cancelled)
         return 0;
 
+    // libcurl sends all headers that libcurl received to application.
+    // So, in digest authentication, a block of response headers are received twice consecutively from libcurl.
+    // For example, when authentication succeeds, the first block is "401 Authorization", and the second block is "200 OK".
+    // Also, "100 Continue" and "200 Connection Established" do the same behavior.
+    // In this process, deletes the first block to send a correct headers to WebCore.
+    if (m_didReceiveResponse) {
+        m_didReceiveResponse = false;
+        m_response = CurlResponse { };
+    }
+
     auto receiveBytes = static_cast<size_t>(header.length());
 
     // The HTTP standard requires to use \r\n but for compatibility it recommends to accept also \n.
@@ -270,18 +280,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (auto code = m_curlHandle->getHttpConnectCode())
         httpConnectCode = *code;
 
-    if ((100 <= statusCode) && (statusCode < 200)) {
-        // Just return when receiving http info, e.g. HTTP/1.1 100 Continue.
-        // If not, the request might be cancelled, because the MIME type will be empty for this response.
-        m_response = CurlResponse { };
-        return receiveBytes;
-    }
-
-    if (!statusCode && (httpConnectCode == 200)) {
-        // Comes here when receiving 200 Connection Established. Just return.
-        m_response = CurlResponse { };
-        return receiveBytes;
-    }
+    m_didReceiveResponse = true;
 
     m_response.url = m_request.url();
     m_response.statusCode = statusCode;
