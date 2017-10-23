@@ -64,11 +64,14 @@ private:
     void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
     void updateBeforeDescendants(Element&, const Style::ElementUpdates*);
     void updateAfterDescendants(Element&, const Style::ElementUpdates*);
+    bool textRendererIsNeeded(const Text& textNode);
+    void storePreviousRenderer(Node&);
 
     struct Parent {
         Element* element { nullptr };
         const Style::ElementUpdates* updates { nullptr };
         std::optional<RenderTreePosition> renderTreePosition;
+        RenderObject* previousChildRenderer { nullptr };
 
         Parent(ContainerNode& root);
         Parent(Element&, const Style::ElementUpdates*);

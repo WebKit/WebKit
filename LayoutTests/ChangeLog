@@ -1,3 +1,13 @@
+2017-10-23  Antti Koivisto  <antti@apple.com>
+
+        Remember previous child renderer during render tree update
+        https://bugs.webkit.org/show_bug.cgi?id=178659
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/block/float/float-not-removed-from-pre-block-expected.txt:
+        * platform/mac/fast/css-generated-content/details-summary-before-after-expected.txt:
+
 2017-10-23  Daniel Bates  <dabates@apple.com>
 
         Add tests to ensure spelling error dots are drawn in the correct place in bottom-to-top

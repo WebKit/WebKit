@@ -177,6 +177,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
             if ((parent().updates && parent().updates->update.change == Style::Detach) || textUpdate || m_invalidatedWhitespaceOnlyTextSiblings.contains(&text))
                 updateTextRenderer(text, textUpdate);
 
+            storePreviousRenderer(text);
             it.traverseNextSkippingChildren();
             continue;
         }
@@ -188,12 +189,15 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         // We hop through display: contents elements in findRenderingRoot, so
         // there may be other updates down the tree.
         if (!elementUpdates && !element.hasDisplayContents()) {
+            storePreviousRenderer(element);
             it.traverseNextSkippingChildren();
             continue;
         }
 
         if (elementUpdates)
             updateElementRenderer(element, elementUpdates->update);
+
+        storePreviousRenderer(element);
 
         bool mayHaveRenderedDescendants = element.renderer() || (element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent()));
         if (!mayHaveRenderedDescendants) {
@@ -384,9 +388,9 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
         cache->updateCacheAfterNodeIsAttached(&element);
 }
 
-static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition& renderTreePosition)
+bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
 {
-    const RenderElement& parentRenderer = renderTreePosition.parent();
+    const RenderElement& parentRenderer = renderTreePosition().parent();
     if (!parentRenderer.canHaveChildren())
         return false;
     if (parentRenderer.element() && !parentRenderer.element()->childShouldCreateRenderer(textNode))
@@ -403,7 +407,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
 
-    RenderObject* previousRenderer = renderTreePosition.previousSiblingRenderer(textNode);
+    auto* previousRenderer = parent().previousChildRenderer;
     if (previousRenderer && previousRenderer->isBR()) // <span><br/> <br/></span>
         return false;
 
@@ -418,7 +422,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
         RenderObject* first = parentRenderer.firstChild();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
-        RenderObject* nextRenderer = textNode.renderer() ? textNode.renderer() : renderTreePosition.nextSiblingRenderer(textNode);
+        RenderObject* nextRenderer = textNode.renderer() ? textNode.renderer() :  renderTreePosition().nextSiblingRenderer(textNode);
         if (!first || nextRenderer == first) {
             // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
             return false;
@@ -459,7 +463,7 @@ static void createTextRenderer(Text& textNode, RenderTreePosition& renderTreePos
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)
 {
     auto* existingRenderer = text.renderer();
-    bool needsRenderer = textRendererIsNeeded(text, renderTreePosition());
+    bool needsRenderer = textRendererIsNeeded(text);
 
     if (existingRenderer && textUpdate && textUpdate->inheritedDisplayContentsStyle) {
         if (existingRenderer->inlineWrapperForDisplayContents() || *textUpdate->inheritedDisplayContentsStyle) {
@@ -509,6 +513,15 @@ void RenderTreeUpdater::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(
             continue;
         m_invalidatedWhitespaceOnlyTextSiblings.add(&textSibling);
     }
+}
+
+void RenderTreeUpdater::storePreviousRenderer(Node& node)
+{
+    auto* renderer = node.renderer();
+    if (!renderer)
+        return;
+    ASSERT(parent().previousChildRenderer != renderer);
+    parent().previousChildRenderer = renderer;
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root)

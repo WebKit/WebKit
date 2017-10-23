@@ -49,7 +49,6 @@ public:
     void invalidateNextSibling() { m_hasValidNextSibling = false; }
     void invalidateNextSibling(const RenderObject&);
 
-    RenderObject* previousSiblingRenderer(const Text&) const;
     RenderObject* nextSiblingRenderer(const Node&) const;
 
 private:

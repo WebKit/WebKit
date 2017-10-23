@@ -56,23 +56,6 @@ void RenderTreePosition::invalidateNextSibling(const RenderObject& siblingRender
         m_hasValidNextSibling = false;
 }
 
-RenderObject* RenderTreePosition::previousSiblingRenderer(const Text& textNode) const
-{
-    if (textNode.renderer())
-        return textNode.renderer()->previousSibling();
-
-    auto* parentElement = m_parent.element();
-
-    auto composedChildren = composedTreeChildren(*parentElement);
-    for (auto it = composedChildren.at(textNode), end = composedChildren.end(); it != end; --it) {
-        if (auto* renderer = it->renderer())
-            return renderer;
-    }
-    if (auto* before = parentElement->beforePseudoElement())
-        return before->renderer();
-    return nullptr;
-}
-
 RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
 {
     ASSERT(!node.renderer());
