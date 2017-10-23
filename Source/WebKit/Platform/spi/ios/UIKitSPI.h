@@ -982,7 +982,6 @@ extern NSString * const UIKeyboardIsLocalUserInfoKey;
 extern UIApplication *UIApp;
 BOOL _UIApplicationIsExtension(void);
 void _UIApplicationLoadWebKit(void);
-BOOL _UIApplicationUsesLegacyUI(void);
 
 void UIImageDataWriteToSavedPhotosAlbum(NSData *imageData, id completionTarget, SEL completionSelector, void *contextInfo);
 
