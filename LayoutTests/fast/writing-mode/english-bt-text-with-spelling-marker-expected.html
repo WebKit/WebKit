@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+
+#expected {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    font: 20px/1 Ahem;
+}
+</style>
+</head>
+<body>
+<div id="expected" contenteditable="true"></div>
+<script>
+var expected = document.getElementById("expected");
+
+// When inserting multiple words we need to type each character in order for the spell checker to be triggered.
+typeText("mispelled a", expected);
+
+function typeText(text, element)
+{
+    element.focus();
+    for (var i = 0; i < text.length; ++i)
+        document.execCommand("InsertText", false, text[i]);
+    element.blur();
+}
+</script>
+</body>
+</html>

@@ -98,6 +98,8 @@ fast/forms/file/file-input-capture.html
 editing/spelling/spelling-marker-includes-hyphen.html [ WontFix ]
 editing/spelling/spelling-markers-in-overlapping-lines.html [ WontFix ]
 editing/spelling/spelling-markers-in-overlapping-lines-large-font.html [ WontFix ]
+fast/writing-mode/english-bt-text-with-spelling-marker.html [ WontFix ]
+fast/writing-mode/english-rl-text-with-spelling-marker.html [ WontFix ]
 
 # Plugins are not supported on iOS
 plugins

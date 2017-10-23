@@ -1,3 +1,19 @@
+2017-10-23  Daniel Bates  <dabates@apple.com>
+
+        Add tests to ensure spelling error dots are drawn in the correct place in bottom-to-top
+        and right-to-left writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=178671
+
+        Reviewed by Simon Fraser.
+
+        * fast/writing-mode/english-bt-text-with-spelling-marker-expected.html: Added.
+        * fast/writing-mode/english-bt-text-with-spelling-marker.html: Added.
+        * fast/writing-mode/english-rl-text-with-spelling-marker-expected.html: Added.
+        * fast/writing-mode/english-rl-text-with-spelling-marker.html: Added.
+        * platform/ios/TestExpectations: Skip the test on iOS as it does not support spelling and grammar
+        marker painting.
+        * platform/mac-wk2/TestExpectations: Mark the test as an image failure until we fix <https://bugs.webkit.org/show_bug.cgi?id=105616>.
+
 2017-10-22  Dean Jackson  <dino@apple.com>
 
         Implement drawImage(ImageBitmap) on 2d canvas
