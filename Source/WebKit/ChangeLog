@@ -1,3 +1,12 @@
+2017-10-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, suppress deprecation warnings to fix the build.
+        <rdar://problem/35131949>
+
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectTableViewController tableView:cellForRowAtIndexPath:]):
+        (-[WKSelectPopover initWithView:hasGroups:]):
+
 2017-10-23  Youenn Fablet  <youenn@apple.com>
 
         TestController should clear all fetch caches when resetting its state

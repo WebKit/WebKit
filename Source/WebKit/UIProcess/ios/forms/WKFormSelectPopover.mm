@@ -264,8 +264,11 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     ASSERT(textRect.size.width > 0.0);
     
     // Assume all cells have the same available text width.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGFloat initialFontSize = _UIApplicationUsesLegacyUI() ? UITableViewCellDefaultFontSize : cell.textLabel.font.pointSize;
     UIFont *font = _UIApplicationUsesLegacyUI() ? [UIFont boldSystemFontOfSize:initialFontSize] : cell.textLabel.font;
+#pragma clang diagnostic pop
     ASSERT(initialFontSize);
     if (textRect.size.width != _maximumTextWidth || _fontSize == 0) {
         _maximumTextWidth = textRect.size.width;
@@ -390,12 +393,18 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     UIViewController *popoverViewController = _tableViewController.get();
     UINavigationController *navController = nil;
     NSString *title = view.assistedNodeInformation.title;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL needsNavigationController = (self.view && _UIApplicationUsesLegacyUI()) || [title length];
+#pragma clang diagnostic pop
     if (needsNavigationController) {
         navController = [[UINavigationController alloc] initWithRootViewController:_tableViewController.get()];
         popoverViewController = navController;
         
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (self.view.assistedNodeInformation.isMultiSelect && _UIApplicationUsesLegacyUI())
+#pragma clang diagnostic pop
             _tableViewController.get().navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_userActionDismissedPopover:)] autorelease];
     }
     
