@@ -613,6 +613,7 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void waitForFetchEventToFinish(FetchEvent&, DOMPromiseDeferred<IDLInterface<FetchResponse>>&&);
     void waitForExtendableEventToFinish(ExtendableEvent&, DOMPromiseDeferred<void>&&);
+    Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
     Ref<ExtendableEvent> createTrustedExtendableEvent();
 #endif
 

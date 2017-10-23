@@ -120,6 +120,11 @@ void WebSWServerConnection::didFailFetch(uint64_t fetchIdentifier)
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFail { }, fetchIdentifier);
 }
 
+void WebSWServerConnection::didNotHandleFetch(uint64_t fetchIdentifier)
+{
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
+}
+
 template<typename U> bool WebSWServerConnection::sendToContextProcess(U&& message)
 {
     if (!m_contextConnection)

@@ -33,6 +33,13 @@
 
 namespace WebCore {
 
+Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
+{
+    FetchEvent::Init init;
+    init.request = FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { });
+    return FetchEvent::create("fetch", WTFMove(init), Event::IsTrusted::Yes);
+}
+
 FetchEvent::FetchEvent(const AtomicString& type, Init&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(type, initializer, isTrusted)
     , m_request(initializer.request.releaseNonNull())
@@ -42,10 +49,16 @@ FetchEvent::FetchEvent(const AtomicString& type, Init&& initializer, IsTrusted i
 {
 }
 
+FetchEvent::~FetchEvent()
+{
+    if (auto callback = WTFMove(m_onResponse))
+        callback(nullptr);
+}
+
 ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
 {
-    if (isBeingDispatched())
-        return Exception { InvalidStateError, ASCIILiteral("Event is being dispatched") };
+    if (!isBeingDispatched())
+        return Exception { InvalidStateError, ASCIILiteral("Event is not being dispatched") };
 
     if (m_respondWithEntered)
         return Exception { InvalidStateError, ASCIILiteral("Event respondWith flag is set") };
@@ -68,7 +81,7 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
     return { };
 }
 
-void FetchEvent::onResponse(WTF::Function<void()>&& callback)
+void FetchEvent::onResponse(CompletionHandler<void(FetchResponse*)>&& callback)
 {
     ASSERT(!m_onResponse);
     m_onResponse = WTFMove(callback);
@@ -77,15 +90,15 @@ void FetchEvent::onResponse(WTF::Function<void()>&& callback)
 void FetchEvent::respondWithError()
 {
     m_respondWithError = true;
-    processResponse();
+    processResponse(nullptr);
 }
 
-void FetchEvent::processResponse()
+void FetchEvent::processResponse(FetchResponse* response)
 {
     m_respondPromise = nullptr;
     m_waitToRespond = false;
     if (auto callback = WTFMove(m_onResponse))
-        callback();
+        callback(response);
 }
 
 void FetchEvent::promiseIsSettled()
@@ -107,45 +120,7 @@ void FetchEvent::promiseIsSettled()
         return;
     }
 
-    m_response = WTFMove(response);
-
-    // FIXME: We should process the response and send the body in streaming.
-    if (m_response->hasReadableStreamBody()) {
-        m_response->consumeBodyFromReadableStream([this, protectedThis = makeRef(*this)] (ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
-            if (result.hasException()) {
-                respondWithError();
-                return;
-            }
-            m_responseBody = result.releaseReturnValue();
-            processResponse();
-        });
-        return;
-    }
-    if (m_response->isLoading()) {
-        m_response->consumeBodyWhenLoaded([this, protectedThis = makeRef(*this)] (ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
-            if (result.hasException()) {
-                respondWithError();
-                return;
-            }
-            m_responseBody = result.releaseReturnValue();
-            processResponse();
-        });
-        return;
-    }
-
-    auto body = m_response->consumeBody();
-    WTF::switchOn(body, 
-        [] (Ref<FormData>&) {
-            // FIXME: Support FormData response bodies.
-        },
-        [this] (Ref<SharedBuffer>& buffer) {
-            m_responseBody = WTFMove(buffer);
-        }, 
-        [] (std::nullptr_t&) {
-        }
-    );
-
-    processResponse();
+    processResponse(response);
 }
 
 } // namespace WebCore

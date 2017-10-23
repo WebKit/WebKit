@@ -411,6 +411,12 @@ void StorageProcess::didFailFetch(uint64_t serverConnectionIdentifier, uint64_t 
         connection->didFailFetch(fetchIdentifier);
 }
 
+void StorageProcess::didNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
+{
+    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
+        connection->didNotHandleFetch(fetchIdentifier);
+}
+
 void StorageProcess::didReceiveFetchResponse(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const WebCore::ResourceResponse& response)
 {
     if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))

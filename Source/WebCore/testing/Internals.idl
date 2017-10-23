@@ -557,6 +557,7 @@ enum EventThrottlingBehavior {
 
     [Conditional=SERVICE_WORKER] Promise<Response> waitForFetchEventToFinish(FetchEvent event);
     [Conditional=SERVICE_WORKER] Promise<void> waitForExtendableEventToFinish(ExtendableEvent event);
+    [Conditional=SERVICE_WORKER, CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
     [Conditional=SERVICE_WORKER] ExtendableEvent createTrustedExtendableEvent();
 
     boolean hasServiceWorkerRegisteredForOrigin(DOMString origin);

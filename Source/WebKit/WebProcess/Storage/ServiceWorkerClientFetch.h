@@ -58,6 +58,7 @@ private:
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didFinish();
     void didFail();
+    void didNotHandle();
 
     IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
     uint64_t messageSenderDestinationID() final { return m_identifier; }

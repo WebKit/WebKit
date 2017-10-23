@@ -52,7 +52,6 @@ public:
     using Mode = FetchOptions::Mode;
     using Redirect = FetchOptions::Redirect;
 
-
     static ExceptionOr<Ref<FetchRequest>> create(ScriptExecutionContext&, Info&&, Init&&);
     static Ref<FetchRequest> create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer) { return adoptRef(*new FetchRequest(context, WTFMove(body), WTFMove(headers), WTFMove(request), WTFMove(options), WTFMove(referrer))); }
 
@@ -92,7 +91,6 @@ private:
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
-
 
     ResourceRequest m_request;
     FetchOptions m_options;

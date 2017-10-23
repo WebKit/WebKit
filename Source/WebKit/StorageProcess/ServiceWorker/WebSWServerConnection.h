@@ -55,6 +55,7 @@ public:
     void didReceiveFetchData(uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
     void didFinishFetch(uint64_t fetchIdentifier);
     void didFailFetch(uint64_t fetchIdentifier);
+    void didNotHandleFetch(uint64_t fetchIdentifier);
 
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)

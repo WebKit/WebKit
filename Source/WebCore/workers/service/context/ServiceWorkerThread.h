@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ServiceWorkerContextData.h"
+#include "ServiceWorkerFetch.h"
 #include "WorkerThread.h"
 #include <wtf/Identified.h>
 
@@ -46,6 +47,8 @@ public:
     virtual ~ServiceWorkerThread();
 
     WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
+
+    WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, FetchOptions&&);
 
 protected:
     Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID) final;

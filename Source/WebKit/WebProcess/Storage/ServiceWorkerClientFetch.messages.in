@@ -27,6 +27,7 @@ messages -> ServiceWorkerClientFetch {
     DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
     DidFinish()
     DidFail()
+    DidNotHandle()
 }
 
 #endif // ENABLE(SERVICE_WORKER)

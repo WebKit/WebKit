@@ -1,3 +1,19 @@
+2017-10-23  Youenn Fablet  <youenn@apple.com>
+
+        TestController should clear all fetch caches when resetting its state
+        https://bugs.webkit.org/show_bug.cgi?id=178486
+        <rdar://problem/35066305>
+
+        Reviewed by Chris Dumez.
+
+        Beefing up the test by using fetch event handler to return responses
+        previously hard coded in ServiceWorkerContextManager.
+
+        * http/tests/workers/service/basic-fetch.https-expected.txt:
+        * http/tests/workers/service/resources/basic-fetch-worker.js:
+        (event.event.request.url.indexOf):
+        * http/tests/workers/service/resources/basic-fetch.js:
+
 2017-10-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark compositing/visible-rect/iframe-no-layers.html as a flaky failure.

@@ -6,7 +6,7 @@
 <script>
 // FIXME: Should be run on a service worker.
 test(() => {
-    var event = new FetchEvent('FetchEvent', { request : new Request('') });
+    var event = internals.createBeingDispatchedFetchEvent();
     event.respondWith(undefined);
     assert_throws('InvalidStateError', () => event.respondWith(undefined));
 }, "FetchEvent respondWith should throw if called twice");
@@ -21,7 +21,7 @@ test(() => {
 promise_test(async t => {
     if (!window.internals)
           return Promise.reject("test require internals");
-    var event = new FetchEvent('FetchEvent', { request : new Request('') });
+    var event = internals.createBeingDispatchedFetchEvent();
     var promise = internals.waitForFetchEventToFinish(event);
     event.respondWith(undefined);
     return promise_rejects(t, new TypeError, promise);
@@ -30,7 +30,7 @@ promise_test(async t => {
 promise_test(async t => {
     if (!window.internals)
         return Promise.reject("test require internals");
-    var event = new FetchEvent('FetchEvent', { request : new Request('') });
+    var event = internals.createBeingDispatchedFetchEvent();
     var promise = internals.waitForFetchEventToFinish(event);
     event.respondWith(new Request(''));
     return promise_rejects(t, new TypeError, promise);
@@ -39,7 +39,7 @@ promise_test(async t => {
 promise_test(async t => {
     if (!window.internals)
         return Promise.reject("test require internals");
-    var event = new FetchEvent('FetchEvent', { request : new Request('') });
+    var event = internals.createBeingDispatchedFetchEvent();
     var promise = internals.waitForFetchEventToFinish(event);
     event.respondWith(new Promise((resolve, reject) => {
         resolve(new Request(''));
@@ -50,7 +50,7 @@ promise_test(async t => {
 promise_test(async t => {
     if (!window.internals)
         return Promise.reject("test require internals");
-    var event = new FetchEvent('FetchEvent', { request : new Request('') });
+    var event = internals.createBeingDispatchedFetchEvent();
     var promise = internals.waitForFetchEventToFinish(event);
     event.respondWith(new Promise((resolve, reject) => {
         reject('not good');
@@ -61,7 +61,7 @@ promise_test(async t => {
 promise_test(async t => {
     if (!window.internals)
          return Promise.reject("test require internals");
-    var event = new FetchEvent('FetchEvent', { request : new Request('') });
+    var event = internals.createBeingDispatchedFetchEvent();
     var response = new Response;
     event.respondWith(response);
     assert_true(response === await internals.waitForFetchEventToFinish(event));

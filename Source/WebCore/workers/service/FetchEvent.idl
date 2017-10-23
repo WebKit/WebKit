@@ -29,8 +29,8 @@
     Conditional=SERVICE_WORKER,
     JSCustomMarkFunction,
     EnabledAtRuntime=ServiceWorker,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(ServiceWorker,Worker,Window),
-    ExportToWrappedFunction,
     JSGenerateToNativeObject
 ] interface FetchEvent : ExtendableEvent {
     [SameObject] readonly attribute FetchRequest request;

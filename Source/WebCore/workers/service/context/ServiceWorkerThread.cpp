@@ -30,6 +30,7 @@
 
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "SecurityOrigin.h"
+#include "ServiceWorkerFetch.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
@@ -74,6 +75,7 @@ ServiceWorkerThread::ServiceWorkerThread(uint64_t serverConnectionIdentifier, co
     , m_data(data.isolatedCopy())
     , m_workerObjectProxy(ServiceWorkerThreadProxy::sharedDummyProxy())
 {
+    AtomicString::init();
 }
 
 ServiceWorkerThread::~ServiceWorkerThread() = default;
@@ -87,6 +89,15 @@ void ServiceWorkerThread::runEventLoop()
 {
     // FIXME: There will be ServiceWorker specific things to do here.
     WorkerThread::runEventLoop();
+}
+
+void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client, ResourceRequest&& request, FetchOptions&& options)
+{
+    // FIXME: instead of directly using runLoop(), we should be using something like WorkerGlobalScopeProxy.
+    // FIXME: request and options come straigth from IPC so are already isolated. We should be able to take benefit of that.
+    runLoop().postTaskForMode([client = WTFMove(client), request = request.isolatedCopy(), options = options.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+        ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), downcast<WorkerGlobalScope>(context), WTFMove(request), WTFMove(options));
+    }, WorkerRunLoop::defaultMode());
 }
 
 } // namespace WebCore

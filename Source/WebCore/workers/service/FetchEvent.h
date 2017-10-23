@@ -29,9 +29,11 @@
 
 #include "ExtendableEvent.h"
 #include "FetchRequest.h"
-#include "FetchResponse.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
+
+class FetchResponse;
 
 class FetchEvent final : public ExtendableEvent {
 public:
@@ -42,29 +44,30 @@ public:
         String targetClientId;
     };
 
+    WEBCORE_EXPORT static Ref<FetchEvent> createForTesting(ScriptExecutionContext&);
+
     static Ref<FetchEvent> create(const AtomicString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new FetchEvent(type, WTFMove(initializer), isTrusted));
     }
+    ~FetchEvent();
 
     EventInterface eventInterface() const final { return FetchEventInterfaceType; }
 
     ExceptionOr<void> respondWith(Ref<DOMPromise>&&);
 
-    WEBCORE_EXPORT void onResponse(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void onResponse(CompletionHandler<void(FetchResponse*)>&&);
 
     FetchRequest& request() { return m_request.get(); }
     const String& clientId() const { return m_clientId; }
     const String& reservedClientId() const { return m_reservedClientId; }
     const String& targetClientId() const { return m_targetClientId; }
 
-    FetchResponse* response() { return m_response.get(); }
-
 private:
-    FetchEvent(const AtomicString&, Init&&, IsTrusted);
+    WEBCORE_EXPORT FetchEvent(const AtomicString&, Init&&, IsTrusted);
 
     void promiseIsSettled();
-    void processResponse();
+    void processResponse(FetchResponse*);
     void respondWithError();
 
     Ref<FetchRequest> m_request;
@@ -77,9 +80,7 @@ private:
     bool m_respondWithError { false };
     RefPtr<DOMPromise> m_respondPromise;
 
-    WTF::Function<void()> m_onResponse;
-    RefPtr<FetchResponse> m_response;
-    RefPtr<SharedBuffer> m_responseBody;
+    CompletionHandler<void(FetchResponse*)> m_onResponse;
 };
 
 } // namespace WebCore

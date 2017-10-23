@@ -4224,8 +4224,8 @@ uint64_t Internals::responseSizeWithPadding(FetchResponse& response) const
 #if ENABLE(SERVICE_WORKER)
 void Internals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
 {
-    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] () mutable {
-        if (auto* response = event->response())
+    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] (FetchResponse* response) mutable {
+        if (response)
             promise.resolve(*response);
         else
             promise.reject(TypeError, ASCIILiteral("fetch event responded with error"));
@@ -4243,6 +4243,14 @@ Ref<ExtendableEvent> Internals::createTrustedExtendableEvent()
 {
     return ExtendableEvent::create("ExtendableEvent", { }, Event::IsTrusted::Yes);
 }
+
+Ref<FetchEvent> Internals::createBeingDispatchedFetchEvent(ScriptExecutionContext& context)
+{
+    auto event = FetchEvent::createForTesting(context);
+    event->setEventPhase(Event::CAPTURING_PHASE);
+    return event;
+}
+
 #endif
 
 String Internals::timelineDescription(AnimationTimeline& timeline)

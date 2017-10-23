@@ -51,7 +51,7 @@ public:
 
 private:
     void startServiceWorker(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
-    void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
+    void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     HashMap<uint64_t, RefPtr<WebCore::ServiceWorkerThread>> m_workerThreadMap;

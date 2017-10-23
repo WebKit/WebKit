@@ -1,3 +1,46 @@
+2017-10-23  Youenn Fablet  <youenn@apple.com>
+
+        TestController should clear all fetch caches when resetting its state
+        https://bugs.webkit.org/show_bug.cgi?id=178486
+        <rdar://problem/35066305>
+
+        Reviewed by Chris Dumez.
+
+        Adding a new DidNotHandle message to disambiguate with the DidFail fetch case.
+        With DidNotHandle, the loading should go the network process.
+        With DidFail, the loading should return a network error.
+
+        On receiving an order to start a fetch, ServiceWorkerThread will dispatch a fetch event.
+        The client of this event will retrieve the response and return it to the WebProcess through IPC.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::didNotHandleFetch):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didNotHandleFetch):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didFail):
+        (WebKit::ServiceWorkerClientFetch::didNotHandle):
+        * WebProcess/Storage/ServiceWorkerClientFetch.h:
+        * WebProcess/Storage/ServiceWorkerClientFetch.messages.in:
+        * WebProcess/Storage/ServiceWorkerContextManager.cpp:
+        (WebKit::ServiceWorkerContextManager::startFetch):
+        * WebProcess/Storage/ServiceWorkerContextManager.h:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp: Added.
+        (WebKit::WebServiceWorkerFetchTaskClient::~WebServiceWorkerFetchTaskClient):
+        (WebKit::WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveResponse):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFail):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFinish):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::startFetchInServiceWorker):
+        * WebProcess/WebProcess.h:
+
 2017-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WebProcess::initializeWebProcess spends ~150ms spinning up AVSystemController on some devices

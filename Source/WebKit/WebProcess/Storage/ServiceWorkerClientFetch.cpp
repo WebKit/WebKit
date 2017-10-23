@@ -88,6 +88,17 @@ void ServiceWorkerClientFetch::didFinish()
 
 void ServiceWorkerClientFetch::didFail()
 {
+    auto protectedThis = makeRef(*this);
+    m_loader->didFail({ });
+
+    if (auto callback = WTFMove(m_callback))
+        callback(Result::Succeeded);
+
+    m_serviceWorkerProvider.fetchFinished(m_identifier);
+}
+
+void ServiceWorkerClientFetch::didNotHandle()
+{
     if (auto callback = WTFMove(m_callback))
         callback(Result::Unhandled);
 

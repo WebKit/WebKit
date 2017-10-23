@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "StorageProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebServiceWorkerFetchTaskClient.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <pal/SessionID.h>
@@ -55,41 +56,16 @@ void ServiceWorkerContextManager::startServiceWorker(uint64_t serverConnectionId
     m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextStarted(serverConnectionIdentifier, data.registrationKey, threadIdentifier, data.workerID), 0);
 }
 
-void ServiceWorkerContextManager::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
+void ServiceWorkerContextManager::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options)
 {
-    UNUSED_PARAM(serviceWorkerIdentifier);
-
-    // FIXME: Hard coding some fetches for testing purpose until we implement the creation of fetch event.
-    if (request.url().string().contains("test1")) {
-        ResourceResponse response;
-        response.setURL(request.url());
-        response.setHTTPStatusCode(200);
-        response.setHTTPStatusText(ASCIILiteral("Hello from service worker"));
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidReceiveFetchResponse(serverConnectionIdentifier, fetchIdentifier, response), 0);
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidFinishFetch(serverConnectionIdentifier, fetchIdentifier), 0);
-        return;
-    }
-    if (request.url().string().contains("test2")) {
-        ResourceResponse response;
-        response.setURL(request.url());
-        response.setHTTPStatusCode(500);
-        response.setHTTPStatusText(ASCIILiteral("Error from service worker"));
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidReceiveFetchResponse(serverConnectionIdentifier, fetchIdentifier, response), 0);
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidFinishFetch(serverConnectionIdentifier, fetchIdentifier), 0);
-        return;
-    }
-    if (request.url().string().contains("test3")) {
-        ResourceResponse response;
-        response.setURL(request.url());
-        response.setHTTPStatusCode(500);
-        response.setHTTPStatusText(ASCIILiteral("Error from service worker"));
-        response.setType(ResourceResponse::Type::Error);
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidReceiveFetchResponse(serverConnectionIdentifier, fetchIdentifier, response), 0);
-        m_connectionToStorageProcess->send(Messages::StorageProcess::DidFinishFetch(serverConnectionIdentifier, fetchIdentifier), 0);
+    auto serviceWorkerThread = m_workerThreadMap.get(serviceWorkerIdentifier);
+    if (!serviceWorkerThread) {
+        m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch(serverConnectionIdentifier, fetchIdentifier), 0);
         return;
     }
 
-    m_connectionToStorageProcess->send(Messages::StorageProcess::DidFailFetch(serverConnectionIdentifier, fetchIdentifier), 0);
+    auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serverConnectionIdentifier, fetchIdentifier);
+    serviceWorkerThread->postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
 }
 
 } // namespace WebCore
