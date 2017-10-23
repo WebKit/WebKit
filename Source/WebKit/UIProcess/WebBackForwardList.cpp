@@ -374,14 +374,11 @@ void WebBackForwardList::clear()
 
     m_currentIndex = 0;
 
-    if (currentItem) {
-        m_entries.shrink(1);
-        m_entries[0] = currentItem.releaseNonNull();
-    } else {
-        m_entries.clear();
+    m_entries.clear();
+    if (currentItem)
+        m_entries.append(currentItem.releaseNonNull());
+    else
         m_hasCurrentIndex = false;
-    }
-
     m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
