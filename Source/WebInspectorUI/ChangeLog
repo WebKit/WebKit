@@ -1,3 +1,91 @@
+2017-10-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Please support HAR Export for network traffic
+        https://bugs.webkit.org/show_bug.cgi?id=146692
+        <rdar://problem/7463672>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New resources.
+
+        * UserInterface/Base/Platform.js:
+        Include a build number as well.
+        
+        * UserInterface/Base/URLUtilities.js:
+        (parseLocationQueryParameters): Deleted.
+        Remove unused function.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WI.FrameResourceManager.prototype.frameDidNavigate):
+        (WI.FrameResourceManager.prototype.resourceRequestWillBeSent):
+        (WI.FrameResourceManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WI.FrameResourceManager.prototype.resourceRequestDidReceiveResponse):
+        (WI.FrameResourceManager.prototype._addNewResourceToFrameOrTarget):
+        Pass along a walltime.
+
+        * UserInterface/Protocol/NetworkObserver.js:
+        (WI.NetworkObserver.prototype.requestWillBeSent):
+        Pass along a walltime. This new parameter shifts old parameters.
+
+        * UserInterface/Controllers/HARBuilder.js: Added.
+        (WI.HARBuilder.async.buildArchive):
+        (WI.HARBuilder.creator):
+        (WI.HARBuilder.pages):
+        (WI.HARBuilder.pageTimings):
+        (WI.HARBuilder.entry):
+        (WI.HARBuilder.request):
+        (WI.HARBuilder.response):
+        (WI.HARBuilder.cookies):
+        (WI.HARBuilder.headers):
+        (WI.HARBuilder.content):
+        (WI.HARBuilder.postData):
+        (WI.HARBuilder.cache):
+        (WI.HARBuilder.timings):
+        (WI.HARBuilder.ipAddress):
+        (WI.HARBuilder.date):
+        (WI.HARBuilder.fetchType):
+        HAR construction and helpers.
+
+        * UserInterface/Models/Cookie.js:
+        (WI.Cookie.prototype.expirationDate):
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.get queryStringParameters):
+        (WI.Resource.prototype.get requestFormParameters):
+        (WI.Resource.prototype.get requestSentWalltime):
+        (WI.Resource.prototype.get requestSentDate):
+        (WI.Resource.prototype.hasRequestFormParameters):
+        Helpers for HAR generation and sub-sets of data.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype._processContent):
+        Capture the raw, unmodified, base64 encoded flag and content. This ends
+        up getting used by HAR generation and is otherwise lost.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.json):
+        Helper for just logging JSON data with a filter. This defaults to
+        a reasonable 2 space indent for JSON logs in our test output.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.get saveData):
+        (WI.DOMTreeContentView.get saveData.saveHandler): Deleted.
+        Drive-by simplify while looking at other save handlers.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.get supportsSave):
+        (WI.NetworkTableContentView.prototype.get saveData):
+        (WI.NetworkTableContentView.prototype.tableCellContextMenuClicked):
+        (WI.NetworkTableContentView.prototype._HARResources):
+        (WI.NetworkTableContentView.prototype._exportHAR):
+        Provide a context menu and save keyboard handler to export a HAR.
+        This matches other browsers.
+
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WI.ResourceClusterContentView.prototype._canShowRequestContentView):
+        Use code that is now available in Resource.
+
 2017-10-20  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: scrolling the editor while debugging shouldn't trigger popovers

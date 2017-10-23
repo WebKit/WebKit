@@ -1429,6 +1429,7 @@ webkit.org/b/168415 [ ElCapitan ] http/wpt/resource-timing/rt-cors.worker.html [
 
 # Request Header networking data not available without Network Session.
 [ ElCapitan ] http/tests/inspector/network/resource-request-headers.html [ Failure ]
+[ ElCapitan ] http/tests/inspector/network/har/har-page.html [ Failure ]
 
 [ ElCapitan ] http/tests/inspector/network/ping-type.html [ Skip ]
 

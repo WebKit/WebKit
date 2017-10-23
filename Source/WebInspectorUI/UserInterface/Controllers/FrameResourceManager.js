@@ -85,7 +85,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
             // If the frame wasn't known before now, then the main resource was loaded instantly (about:blank, etc.)
             // Make a new resource (which will make the frame). Mark will mark it as loaded at the end too since we
             // don't expect any more events about the load finishing for these frames.
-            var frameResource = this._addNewResourceToFrameOrTarget(null, framePayload.id, framePayload.loaderId, framePayload.url, null, null, null, null, null, framePayload.name, framePayload.securityOrigin);
+            var frameResource = this._addNewResourceToFrameOrTarget(null, framePayload.id, framePayload.loaderId, framePayload.url, null, null, null, null, null, null, framePayload.name, framePayload.securityOrigin);
             frame = frameResource.parentFrame;
             frameWasLoadedInstantly = true;
 
@@ -163,7 +163,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
             this._mainFrameDidChange(oldMainFrame);
     }
 
-    resourceRequestWillBeSent(requestIdentifier, frameIdentifier, loaderIdentifier, request, type, redirectResponse, timestamp, initiator, targetId)
+    resourceRequestWillBeSent(requestIdentifier, frameIdentifier, loaderIdentifier, request, type, redirectResponse, timestamp, walltime, initiator, targetId)
     {
         // Called from WI.NetworkObserver.
 
@@ -191,7 +191,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         var initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
 
         // This is a new request, make a new resource and add it to the right frame.
-        resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, request.url, type, request.method, request.headers, request.postData, elapsedTime, null, null, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp, targetId);
+        resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, request.url, type, request.method, request.headers, request.postData, elapsedTime, walltime, null, null, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp, targetId);
 
         // Associate the resource with the requestIdentifier so it can be found in future loading events.
         this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
@@ -327,7 +327,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         let response = cachedResourcePayload.response;
         const responseSource = NetworkAgent.ResponseSource.MemoryCache;
 
-        let resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, "GET", null, null, elapsedTime, null, null, initiatorSourceCodeLocation);
+        let resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, "GET", null, null, elapsedTime, null, null, null, initiatorSourceCodeLocation);
         resource.updateForResponse(cachedResourcePayload.url, response.mimeType, cachedResourcePayload.type, response.headers, response.status, response.statusText, elapsedTime, response.timing, responseSource);
         resource.increaseSize(cachedResourcePayload.bodySize, elapsedTime);
         resource.increaseTransferSize(cachedResourcePayload.bodySize);
@@ -374,7 +374,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         // If we haven't found an existing Resource by now, then it is a resource that was loading when the inspector
         // opened and we just missed the resourceRequestWillBeSent for it. So make a new resource and add it.
         if (!resource) {
-            resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, response.url, type, null, response.requestHeaders, null, elapsedTime, null, null, null);
+            resource = this._addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, response.url, type, null, response.requestHeaders, null, elapsedTime, null, null, null, null);
 
             // Associate the resource with the requestIdentifier so it can be found in future loading events.
             this._resourceRequestIdentifierMap.set(requestIdentifier, resource);
@@ -498,7 +498,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
 
     // Private
 
-    _addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, url, type, requestMethod, requestHeaders, requestData, elapsedTime, frameName, frameSecurityOrigin, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp, targetId)
+    _addNewResourceToFrameOrTarget(requestIdentifier, frameIdentifier, loaderIdentifier, url, type, requestMethod, requestHeaders, requestData, elapsedTime, walltime, frameName, frameSecurityOrigin, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp, targetId)
     {
         console.assert(!this._waitingForMainFrameResourceTreePayload);
 
@@ -512,7 +512,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
             else if (type === PageAgent.ResourceType.Document && frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === loaderIdentifier)
                 resource = frame.provisionalMainResource;
             else {
-                resource = new WI.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
+                resource = new WI.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, walltime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
                 if (resource.target === WI.mainTarget)
                     this._addResourceToFrame(frame, resource);
                 else if (resource.target)
@@ -523,7 +523,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         } else {
             // This is a new request for a new frame, which is always the main resource.
             console.assert(!targetId);
-            resource = new WI.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
+            resource = new WI.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, walltime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
             frame = new WI.Frame(frameIdentifier, frameName, frameSecurityOrigin, loaderIdentifier, resource);
             this._frameIdentifierMap.set(frame.id, frame);
 

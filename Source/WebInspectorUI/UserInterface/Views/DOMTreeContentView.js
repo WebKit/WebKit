@@ -214,12 +214,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     get saveData()
     {
-        function saveHandler(forceSaveAs)
-        {
-            WI.archiveMainFrame();
-        }
-
-        return {customSaveHandler: saveHandler};
+        return {customSaveHandler: () => { WI.archiveMainFrame(); }};
     }
 
     get supportsSearch()

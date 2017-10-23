@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    function HARJSONFilter(key, value) {
+        // Filter out the creator.version / browser.version but leave a top level version.
+        if ((key === "creator" || key === "browser") && value.version) {
+            value.version = "<filtered>";
+            return value;
+        }
+        return value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("HAR.Basic");
+
+    suite.addTestCase({
+        name: "HAR.Basic.Empty",
+        description: "Should be able to generate a HAR with no resources.",
+        async test() {
+            let har = await WI.HARBuilder.buildArchive([]);
+            InspectorTest.json(har, HARJSONFilter);
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.Basic.FakeResources",
+        description: "Should be able to generate a HAR with resources.",
+        async test() {
+            // FIXME: We should have an easier way to construct a Resource with mock data.
+            const url = "https://example.com/fake.js";
+            const mimeType = "text/javascript";
+            const type = WI.Resource.Type.Script;
+            const loaderIdentifier = undefined;
+            const targetId = undefined;
+            const requestIdentifier = undefined;
+            const requestMethod = "GET";
+            const requestHeaders = {"Test-Request-Header": "Test Request Header Value"};
+            const responseHeaders = {"Test-Response-Header": "Test Response Header Value"};
+            const statusCode = 200;
+            const statusText = "OK";
+            const source = "network";
+            const requestData = null;
+            const requestSentWalltime = 1508723752694 / 1000; // Sun Oct 22 2017 18:55:52 GMT-0700, when this test was written.
+            const initiatorSourceCodeLocation = null;
+            const timestamp = undefined;
+            const size = 1234;
+            const timingData = {
+                startTime: 1,
+                domainLookupStart: 100,
+                domainLookupEnd: 200,
+                connectStart: 300,
+                connectEnd: 400,
+                secureConnectionStart: 350,
+                requestStart: 500,
+                responseStart: 600,
+                responseEnd: 700,
+            };
+            const metrics = {
+                protocol: "http/1.1",
+                priority: "medium",
+                remoteAddress: "12.34.56.78:443",
+                connectionIdentifier: 123,
+                requestHeaderBytesSent: 100,
+                requestBodyBytesSent: 0,
+                responseHeaderBytesReceived: 200,
+                responseBodyBytesReceived: 800,
+                responseBodyDecodedSize: 1234,
+                requestHeaders,
+            };
+
+            let bareResource = new WI.Resource(url, mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp, requestSentWalltime, initiatorSourceCodeLocation, timestamp);
+            bareResource.markAsFinished(undefined);
+
+            let fullResource = new WI.Resource(url, mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp, requestSentWalltime, initiatorSourceCodeLocation, timestamp);
+            fullResource.updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, timestamp, timingData, source);
+            fullResource.increaseSize(size);
+            fullResource.updateWithMetrics(metrics);
+            fullResource.markAsFinished(1.7);
+
+            let har = await WI.HARBuilder.buildArchive([bareResource, fullResource]);
+            InspectorTest.json(har, HARJSONFilter);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Basic tests for HAR.</p>
+</body>
+</html>

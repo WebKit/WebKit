@@ -184,6 +184,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         return items;
     }
 
+    get supportsSave()
+    {
+        return this._filteredEntries.some((entry) => entry.resource.finished);
+    }
+
+    get saveData()
+    {
+        return {customSaveHandler: () => { this._exportHAR(); }};
+    }
+
     shown()
     {
         super.shown();
@@ -295,6 +305,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let entry = this._filteredEntries[rowIndex];
         let contextMenu = WI.ContextMenu.createFromEvent(event);
         WI.appendContextMenuItemsForSourceCode(contextMenu, entry.resource);
+
+        contextMenu.appendSeparator();
+        contextMenu.appendItem(WI.UIString("Export HAR"), this._exportHAR);
     }
 
     tableSelectedRowChanged(table, rowIndex)
@@ -1358,6 +1371,33 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         this._table.selectRow(rowIndex);
+    }
+
+    _HARResources()
+    {
+        let resources = this._filteredEntries.map((x) => x.resource);
+        const supportedHARSchemes = new Set(["http", "https", "ws", "wss"]);
+        return resources.filter((resource) => resource.finished && supportedHARSchemes.has(resource.urlComponents.scheme));
+    }
+
+    _exportHAR()
+    {
+        let resources = this._HARResources();
+        if (!resources.length) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        WI.HARBuilder.buildArchive(resources).then((har) => {
+            let mainFrame = WI.frameResourceManager.mainFrame;
+            let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
+            let url = "web-inspector:///" + encodeURI(archiveName) + ".har";
+            WI.saveDataToFile({
+                url,
+                content: JSON.stringify(har, null, 2),
+                forceSaveAs: true,
+            });
+        }).catch(handlePromiseException);
     }
 
     _waterfallPopoverContentForResource(resource)

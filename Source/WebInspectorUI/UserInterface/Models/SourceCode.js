@@ -194,12 +194,13 @@ WI.SourceCode = class SourceCode extends WI.Object
     _processContent(parameters)
     {
         // Different backend APIs return one of `content, `body`, `text`, or `scriptSource`.
-        var content = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
-        var error = parameters.error;
+        let rawContent = parameters.content || parameters.body || parameters.text || parameters.scriptSource;
+        let content = rawContent;
+        let error = parameters.error;
         if (parameters.base64Encoded)
             content = content ? decodeBase64ToBlob(content, this.mimeType) : "";
 
-        var revision = this.revisionForRequestedContent;
+        let revision = this.revisionForRequestedContent;
 
         this._ignoreRevisionContentDidChangeEvent = true;
         revision.content = content || null;
@@ -213,6 +214,8 @@ WI.SourceCode = class SourceCode extends WI.Object
             error,
             sourceCode: this,
             content,
+            rawContent,
+            rawBase64Encoded: parameters.base64Encoded,
         });
     }
 };

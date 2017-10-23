@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    function HARJSONFilter(key, value) {
+        // Filter out the creator.version / browser.version but leave a top level version.
+        if ((key === "creator" || key === "browser") && value.version) {
+            value.version = "<filtered>";
+            return value;
+        }
+
+        // Headers include dynamic data.
+        if (key === "headers")
+            return "<filtered>";
+
+        // Dates would change between test runs.
+        if (key.endsWith("DateTime"))
+            return "<filtered>";
+
+        // Size data may or may not be available, but could change based on headers.
+        if (key.endsWith("Size"))
+            return "<filtered>";
+
+        // Connection identifier could be different.
+        if (key === "connection")
+            return "<filtered>";
+
+        // Cache may or may not have been used.
+        if (key === "_fetchType")
+            return "<filtered>";
+
+        // Since cache may or may not be used, timing data may be variable.
+        // NOTE: SSL should always be -1 for this test case.
+        if (key === "time")
+            return "<filtered>";
+        if (key === "timings") {
+            value.blocked = "<filtered>";
+            value.dns = "<filtered>";
+            value.connect = "<filtered>";
+            value.send = "<filtered>";
+            value.wait = "<filtered>";
+            value.receive = "<filtered>";
+        }
+
+        // PageTimings can be variable.
+        if (key === "onContentLoad" || key === "onLoad")
+            return "<filtered>";
+
+        return value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("HAR.Page");
+
+    suite.addTestCase({
+        name: "HAR.Basic.Page",
+        description: "Should be able to generate a HAR with all of this test page's resources.",
+        async test() {
+            InspectorTest.reloadPage({ignoreCache: true});
+            await InspectorTest.awaitEvent("LoadComplete");
+
+            let resources = [];
+            resources.push(WI.frameResourceManager.mainFrame.mainResource);
+            for (let resource of WI.frameResourceManager.mainFrame.resourceCollection.items)
+                resources.push(resource);
+
+            let har = await WI.HARBuilder.buildArchive(resources);
+            InspectorTest.json(har, HARJSONFilter);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>HAR Page Test.</p>
+<script>
+window.addEventListener("load", () => {
+    TestPage.dispatchEventToFrontend("LoadComplete");
+});
+</script>
+</body>
+</html>

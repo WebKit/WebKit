@@ -213,8 +213,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         if (!requestData)
             return false;
 
-        var requestDataContentType = this._resource.requestDataContentType;
-        if (requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
+        if (!this._resource.hasRequestFormParameters())
             return false;
 
         return true;

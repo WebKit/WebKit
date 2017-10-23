@@ -53,6 +53,18 @@ WI.Cookie = class Cookie
         }
     }
 
+    // Public
+
+    expirationDate(requestSentDate)
+    {
+        if (this.maxAge) {
+            let startDate = requestSentDate || new Date;
+            return new Date(startDate.getTime() + (this.maxAge * 1000));
+        }
+
+        return this.expires;
+    }
+
     // Static
 
     // RFC 6265 defines the HTTP Cookie and Set-Cookie header fields:

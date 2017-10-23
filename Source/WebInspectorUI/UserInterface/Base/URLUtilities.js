@@ -186,12 +186,6 @@ function absoluteURL(partialURL, baseURL)
     return baseURLPrefix + resolveDotsInPath(basePath + partialURL);
 }
 
-function parseLocationQueryParameters(arrayResult)
-{
-    // The first character is always the "?".
-    return parseQueryString(window.location.search.substring(1), arrayResult);
-}
-
 function parseQueryString(queryString, arrayResult)
 {
     if (!queryString)

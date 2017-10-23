@@ -1,3 +1,23 @@
+2017-10-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Please support HAR Export for network traffic
+        https://bugs.webkit.org/show_bug.cgi?id=146692
+        <rdar://problem/7463672>
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/network/har/har-basic-expected.txt: Added.
+        * http/tests/inspector/network/har/har-basic.html: Added.
+        * http/tests/inspector/network/har/har-page-expected.txt: Added.
+        * http/tests/inspector/network/har/har-page.html: Added.
+        Tests with mock resources / data and real resources.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip on platforms that cannot provide complete metrics, so some optional
+        fields may be missing.
+
 2017-10-23  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Resolve PaymentRequest.show()'s accept promise when a payment is authorized
