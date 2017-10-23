@@ -2912,3 +2912,5 @@ webkit.org/b/177547 imported/w3c/web-platform-tests/fetch/security/dangling-mark
 
 # macOS only test
 fast/canvas/webgl/large-drawing-buffer-resize.html [ Skip ]
+
+webkit.org/b/178669 compositing/visible-rect/iframe-no-layers.html [ Pass Failure ]

@@ -1,3 +1,12 @@
+2017-10-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark compositing/visible-rect/iframe-no-layers.html as a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=178669
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-10-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r219675): Web Inspector: CommandLineAPI getEventListeners does not work
