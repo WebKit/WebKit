@@ -1,3 +1,12 @@
+2017-10-23  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/35045445>
+        Update README to reference WebKit build archives, instead of 'nightly'
+
+        Reviewed by Aakash Jain.
+
+        * WebKitArchiveSupport/README:
+
 2017-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Turn on ccache for Mac cmake builds by default
