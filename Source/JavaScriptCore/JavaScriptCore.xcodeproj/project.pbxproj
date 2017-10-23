@@ -1335,6 +1335,7 @@
 		A5FD007A189B051000633231 /* ConsoleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0078189B051000633231 /* ConsoleMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD007E189B0B4C00633231 /* ScriptCallStackFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD007C189B0B4C00633231 /* ScriptCallStackFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD0082189B191A00633231 /* InspectorConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */; };
 		A700873A17CBE85300C3E643 /* MapConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A700873817CBE85300C3E643 /* MapConstructor.h */; };
 		A700873E17CBE8D300C3E643 /* MapPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A700873C17CBE8D300C3E643 /* MapPrototype.h */; };
 		A700874217CBE8EB00C3E643 /* JSMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A700874017CBE8EB00C3E643 /* JSMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3956,6 +3957,8 @@
 		A5FD007C189B0B4C00633231 /* ScriptCallStackFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStackFactory.h; sourceTree = "<group>"; };
 		A5FD007F189B191A00633231 /* InspectorConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorConsoleAgent.cpp; sourceTree = "<group>"; };
 		A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorConsoleAgent.h; sourceTree = "<group>"; };
+		A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectConsoleAgent.cpp; sourceTree = "<group>"; };
+		A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectConsoleAgent.h; sourceTree = "<group>"; };
 		A700873717CBE85300C3E643 /* MapConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapConstructor.cpp; sourceTree = "<group>"; };
 		A700873817CBE85300C3E643 /* MapConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapConstructor.h; sourceTree = "<group>"; };
 		A700873B17CBE8D300C3E643 /* MapPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapPrototype.cpp; sourceTree = "<group>"; };
@@ -7557,6 +7560,8 @@
 				A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */,
 				A55165D01BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.cpp */,
 				A55165D11BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.h */,
+				A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */,
+				A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */,
 				A57D23E71891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp */,
 				A57D23E81891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h */,
 				A50E4B5F18809DD50068A46D /* JSGlobalObjectRuntimeAgent.cpp */,
@@ -8759,6 +8764,7 @@
 				797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */,
 				BC18C4210E16F5CD00B34460 /* JSGlobalObject.h in Headers */,
 				996B731D1BDA08EF00331B84 /* JSGlobalObject.lut.h in Headers */,
+				A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */,
 				A5C3A1A618C0490200C9593A /* JSGlobalObjectConsoleClient.h in Headers */,
 				A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */,
 				A57D23EA1891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h in Headers */,

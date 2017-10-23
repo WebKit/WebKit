@@ -61,6 +61,7 @@ public:
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
     void clearMessages(ErrorString&) override;
+    void setMonitoringXHREnabled(ErrorString&, bool enabled) override = 0;
 
     bool enabled() const { return m_enabled; }
     void reset();

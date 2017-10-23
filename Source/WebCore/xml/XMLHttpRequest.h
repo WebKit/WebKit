@@ -35,6 +35,7 @@
 namespace JSC {
 class ArrayBuffer;
 class ArrayBufferView;
+class ExecState;
 }
 
 namespace WebCore {
@@ -79,7 +80,7 @@ public:
     ExceptionOr<void> open(const String& method, const String& url);
     ExceptionOr<void> open(const String& method, const URL&, bool async);
     ExceptionOr<void> open(const String& method, const String&, bool async, const String& user, const String& password);
-    ExceptionOr<void> send(std::optional<SendTypes>&&);
+    ExceptionOr<void> send(JSC::ExecState&, std::optional<SendTypes>&&);
     void abort();
     ExceptionOr<void> setRequestHeader(const String& name, const String& value);
     ExceptionOr<void> overrideMimeType(const String& override);
@@ -107,6 +108,9 @@ public:
     ResponseType responseType() const;
 
     String responseURL() const;
+
+    void setLastSendLineAndColumnNumber(unsigned lineNumber, unsigned columnNumber);
+    void setLastSendURL(const String& url) { m_lastSendURL = url; }
 
     XMLHttpRequestUpload* upload();
     XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
@@ -214,6 +218,9 @@ private:
     // Used for progress event tracking.
     long long m_receivedLength { 0 };
 
+    unsigned m_lastSendLineNumber { 0 };
+    unsigned m_lastSendColumnNumber { 0 };
+    String m_lastSendURL;
     std::optional<ExceptionCode> m_exceptionCode;
 
     XMLHttpRequestProgressEventThrottle m_progressEventThrottle;
