@@ -152,7 +152,7 @@ void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, 
                                       const String &keyIdentifier, unsigned location,
                                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
 
     initUIEvent(type, canBubble, cancelable, view, 0);

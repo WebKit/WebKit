@@ -129,7 +129,7 @@ MouseEvent::~MouseEvent() = default;
 
 void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
 
     initUIEvent(type, canBubble, cancelable, view, detail);

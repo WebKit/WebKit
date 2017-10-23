@@ -165,6 +165,8 @@ public:
     Event* underlyingEvent() const { return m_underlyingEvent.get(); }
     void setUnderlyingEvent(Event*);
 
+    // Returns true if the dispatch flag is set.
+    // https://dom.spec.whatwg.org/#dispatch-flag
     bool isBeingDispatched() const { return eventPhase(); }
 
     virtual EventTarget* relatedTarget() const { return nullptr; }
@@ -177,7 +179,6 @@ protected:
     Event(const AtomicString& type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget();
-    bool dispatched() const { return m_target; }
 
 private:
     AtomicString m_type;

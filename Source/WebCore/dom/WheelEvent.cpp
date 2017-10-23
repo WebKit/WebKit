@@ -66,7 +66,7 @@ WheelEvent::WheelEvent(const PlatformWheelEvent& event, DOMWindow* view)
 
 void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow* view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
     
     initUIEvent(eventNames().wheelEvent, true, true, view, 0);

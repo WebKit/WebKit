@@ -67,7 +67,7 @@ void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
         DOMWindow* view, int screenX, int screenY, int clientX, int clientY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
 
     initUIEvent(type, true, true, view, 0);

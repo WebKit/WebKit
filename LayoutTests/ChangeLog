@@ -1,3 +1,15 @@
+2017-10-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop confusing Event::dispatched() method
+        https://bugs.webkit.org/show_bug.cgi?id=178670
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * fast/events/initEvent-after-dispatching-expected.txt: Added.
+        * fast/events/initEvent-after-dispatching.html: Added.
+
 2017-10-23  Antti Koivisto  <antti@apple.com>
 
         Remember previous child renderer during render tree update

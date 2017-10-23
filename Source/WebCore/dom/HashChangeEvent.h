@@ -49,7 +49,7 @@ public:
 
     void initHashChangeEvent(const AtomicString& eventType, bool canBubble, bool cancelable, const String& oldURL, const String& newURL)
     {
-        if (dispatched())
+        if (isBeingDispatched())
             return;
 
         initEvent(eventType, canBubble, cancelable);

@@ -67,7 +67,7 @@ EventInterface OverflowEvent::eventInterface() const
 
 void OverflowEvent::initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow)
 {
-    if (dispatched())
+    if (isBeingDispatched())
         return;
 
     initEvent(eventNames().overflowchangedEvent, false, false);
