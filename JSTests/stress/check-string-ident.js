@@ -1,5 +1,5 @@
+// Skipped due to flakiness, used defaultNoEagerRun before.
 //@ skip
-//@ defaultNoEagerRun
 
 const o = { baz: 20 };
 function foo(p) {

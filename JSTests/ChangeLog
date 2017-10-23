@@ -1,3 +1,14 @@
+2017-10-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        stress/check-string-ident.js is improperly skipped
+        https://bugs.webkit.org/show_bug.cgi?id=178642
+
+        Reviewed by Saam Barati.
+
+        * stress/check-string-ident.js: Drop the defaultNoEagerRun directive
+        since it enforces the run-jsc-stress-tests script to still set up the
+        test to run, despite the skip directive that's used before.
+
 2017-10-20  Mark Lam  <mark.lam@apple.com>
 
         Add a test case for r214334.
