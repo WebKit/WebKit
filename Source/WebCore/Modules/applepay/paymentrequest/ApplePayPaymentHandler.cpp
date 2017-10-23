@@ -290,6 +290,7 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
 {
     auto applePayPayment = payment.toApplePayPayment();
     auto& execState = *document().execState();
+    auto lock = JSC::JSLockHolder { &execState };
     auto details = JSC::Strong<JSC::JSObject> { execState.vm(), asObject(toJS<IDLDictionary<ApplePayPayment>>(execState, *JSC::jsCast<JSDOMGlobalObject*>(execState.lexicalGlobalObject()), applePayPayment)) };
     const auto& shippingContact = applePayPayment.shippingContact.value_or(ApplePayPaymentContact());
     m_paymentRequest->accept(WTF::get<URL>(m_identifier).string(), WTFMove(details), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
