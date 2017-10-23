@@ -977,44 +977,6 @@ else ()
 endif ()
 
 set(WebCore_SOURCES
-    accessibility/AXObjectCache.cpp
-    accessibility/AccessibilityARIAGrid.cpp
-    accessibility/AccessibilityARIAGridCell.cpp
-    accessibility/AccessibilityARIAGridRow.cpp
-    accessibility/AccessibilityAttachment.cpp
-    accessibility/AccessibilityImageMapLink.cpp
-    accessibility/AccessibilityLabel.cpp
-    accessibility/AccessibilityList.cpp
-    accessibility/AccessibilityListBox.cpp
-    accessibility/AccessibilityListBoxOption.cpp
-    accessibility/AccessibilityMathMLElement.cpp
-    accessibility/AccessibilityMediaControls.cpp
-    accessibility/AccessibilityMenuList.cpp
-    accessibility/AccessibilityMenuListOption.cpp
-    accessibility/AccessibilityMenuListPopup.cpp
-    accessibility/AccessibilityMockObject.cpp
-    accessibility/AccessibilityNodeObject.cpp
-    accessibility/AccessibilityObject.cpp
-    accessibility/AccessibilityProgressIndicator.cpp
-    accessibility/AccessibilityRenderObject.cpp
-    accessibility/AccessibilitySVGElement.cpp
-    accessibility/AccessibilitySVGRoot.cpp
-    accessibility/AccessibilityScrollView.cpp
-    accessibility/AccessibilityScrollbar.cpp
-    accessibility/AccessibilitySlider.cpp
-    accessibility/AccessibilitySpinButton.cpp
-    accessibility/AccessibilityTable.cpp
-    accessibility/AccessibilityTableCell.cpp
-    accessibility/AccessibilityTableColumn.cpp
-    accessibility/AccessibilityTableHeaderContainer.cpp
-    accessibility/AccessibilityTableRow.cpp
-    accessibility/AccessibilityTree.cpp
-    accessibility/AccessibilityTreeItem.cpp
-
-    animation/AnimationTimeline.cpp
-    animation/DocumentTimeline.cpp
-    animation/WebAnimation.cpp
-
     bindings/js/CachedModuleScriptLoader.cpp
     bindings/js/CachedScriptFetcher.cpp
     bindings/js/CallTracer.cpp

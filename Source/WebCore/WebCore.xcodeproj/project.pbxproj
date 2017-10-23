@@ -965,7 +965,6 @@
 		26FAE4CD1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */; };
 		26FAE4CE1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FAE4CA1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp */; };
 		26FAE4CF1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26FAE4CB1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h */; };
-		2914E3071CAB5A440049966F /* AccessibilityAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2914E3051CAB5A440049966F /* AccessibilityAttachment.cpp */; };
 		2914E3081CAB5A440049966F /* AccessibilityAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2914E3061CAB5A440049966F /* AccessibilityAttachment.h */; };
 		2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2917B55E1473496C0052C9D0 /* LayerFlushScheduler.cpp */; };
 		2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2917B55F1473496C0052C9D0 /* LayerFlushScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1000,8 +999,6 @@
 		29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812460FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm */; };
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
 		29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */; };
-		29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */; };
-		29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */; };
 		29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */; };
 		29FAF4B6195AB08900A522DC /* TextUndoInsertionMarkupMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2B365C841525119E0091D27B /* RenderSVGEllipse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B4235A015250F6000DBBCD8 /* RenderSVGEllipse.h */; };
@@ -1406,29 +1403,6 @@
 		37E3524B12450C5200BAF5D9 /* InputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37E3524A12450C5200BAF5D9 /* InputType.cpp */; };
 		37E3524D12450C6600BAF5D9 /* InputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E3524C12450C6600BAF5D9 /* InputType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F567CE165358F400DDE92B /* PopupOpeningObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3772B09516535856000A49CA /* PopupOpeningObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		37F57AB91A50726900876F98 /* AccessibilityARIAGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CA9D131822EC00D12F2A /* AccessibilityARIAGrid.cpp */; };
-		37F57ABA1A50726F00876F98 /* AccessibilityARIAGridCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CA9E131822EC00D12F2A /* AccessibilityARIAGridCell.cpp */; };
-		37F57ABB1A50727300876F98 /* AccessibilityARIAGridRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CA9F131822EC00D12F2A /* AccessibilityARIAGridRow.cpp */; };
-		37F57ABC1A50727700876F98 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA0131822EC00D12F2A /* AccessibilityImageMapLink.cpp */; };
-		37F57ABC1A50728400876F98 /* AccessibilityMathMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981ABC4131822EC00D12F2A /* AccessibilityMathMLElement.cpp */; };
-		37F57ABD1A50727A00876F98 /* AccessibilityList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA1131822EC00D12F2A /* AccessibilityList.cpp */; };
-		37F57ABE1A50727E00876F98 /* AccessibilityListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA2131822EC00D12F2A /* AccessibilityListBox.cpp */; };
-		37F57ABF1A50728100876F98 /* AccessibilityListBoxOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA3131822EC00D12F2A /* AccessibilityListBoxOption.cpp */; };
-		37F57AC01A50728400876F98 /* AccessibilityMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA4131822EC00D12F2A /* AccessibilityMediaControls.cpp */; };
-		37F57AC11A50728700876F98 /* AccessibilityNodeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2985709215CC532D006355CD /* AccessibilityNodeObject.cpp */; };
-		37F57AC21A50728B00876F98 /* AccessibilityObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA5131822EC00D12F2A /* AccessibilityObject.cpp */; };
-		37F57AC31A50728F00876F98 /* AccessibilityProgressIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A409C982116D0DDD007197BD /* AccessibilityProgressIndicator.cpp */; };
-		37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA6131822EC00D12F2A /* AccessibilityRenderObject.cpp */; };
-		37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA7131822EC00D12F2A /* AccessibilityScrollbar.cpp */; };
-		37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA8131822EC00D12F2A /* AccessibilityScrollView.cpp */; };
-		37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA9131822EC00D12F2A /* AccessibilitySlider.cpp */; };
-		37F57AC91A5072CC00876F98 /* AccessibilitySVGRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC08CF015F941FC00F1E188 /* AccessibilitySVGRoot.cpp */; };
-		37F57ACA1A5072CF00876F98 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAA131822EC00D12F2A /* AccessibilityTable.cpp */; };
-		37F57ACB1A5072D100876F98 /* AccessibilityTableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAB131822EC00D12F2A /* AccessibilityTableCell.cpp */; };
-		37F57ACC1A5072D500876F98 /* AccessibilityTableColumn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAC131822EC00D12F2A /* AccessibilityTableColumn.cpp */; };
-		37F57ACD1A5072D700876F98 /* AccessibilityTableHeaderContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAD131822EC00D12F2A /* AccessibilityTableHeaderContainer.cpp */; };
-		37F57ACE1A5072DA00876F98 /* AccessibilityTableRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAE131822EC00D12F2A /* AccessibilityTableRow.cpp */; };
-		37F57ACF1A5072DD00876F98 /* AXObjectCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAF131822EC00D12F2A /* AXObjectCache.cpp */; };
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FD4297118368460093C029 /* TreeDepthLimit.h */; };
@@ -2619,7 +2593,6 @@
 		65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323609D1DE65000BE325 /* JSCanvasPattern.h */; };
 		65E0E9441133C89F00B4CB10 /* JSDOMWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
-		69A6CBAC1C6BE42C00B836E9 /* AccessibilitySVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 697101071C6BE1550018C7F1 /* AccessibilitySVGElement.cpp */; };
 		69A6CBAD1C6BE42C00B836E9 /* AccessibilitySVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 697101081C6BE1550018C7F1 /* AccessibilitySVGElement.h */; };
 		6A22E8701F10418600F546C3 /* InspectorCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A22E86F1F10418600F546C3 /* InspectorCanvas.h */; };
 		6A22E8731F1042C400F546C3 /* InspectorCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A22E8721F1042C400F546C3 /* InspectorCanvas.cpp */; };
@@ -2686,11 +2659,8 @@
 		6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */; };
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
 		709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		71025ECC1F99F0CE004A250C /* AnimationTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025EC61F99F096004A250C /* AnimationTimeline.cpp */; };
 		71025ECD1F99F0CE004A250C /* AnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EC71F99F096004A250C /* AnimationTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		71025ECF1F99F0CE004A250C /* DocumentTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025EC41F99F096004A250C /* DocumentTimeline.cpp */; };
 		71025ED01F99F0CE004A250C /* DocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EC51F99F096004A250C /* DocumentTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		71025ED21F99F0CE004A250C /* WebAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71025EC31F99F096004A250C /* WebAnimation.cpp */; };
 		71025ED31F99F0CE004A250C /* WebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EC21F99F096004A250C /* WebAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */; };
 		71025EE01F99F1EC004A250C /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */; };
@@ -2729,11 +2699,8 @@
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
 		7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */; };
 		7694563D1214D97C0007CBAE /* JSDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7694563B1214D97C0007CBAE /* JSDOMTokenList.h */; };
-		76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */; };
 		76CDD2F31103DA6600680521 /* AccessibilityMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2ED1103DA6600680521 /* AccessibilityMenuList.h */; };
-		76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76CDD2EE1103DA6600680521 /* AccessibilityMenuListPopup.cpp */; };
 		76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */; };
-		76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */; };
 		76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */; };
 		76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FC2B0812370DA0006A991A /* DOMTokenList.cpp */; };
 		76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FC2B0912370DA0006A991A /* DOMTokenList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4490,9 +4457,7 @@
 		A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80060A19516E00A8EF5F /* MediaList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */; };
-		A91C9FBE1B6586DE00AFFD54 /* AccessibilityTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A91C9FBC1B6586DE00AFFD54 /* AccessibilityTree.cpp */; };
 		A91C9FBF1B6586DE00AFFD54 /* AccessibilityTree.h in Headers */ = {isa = PBXBuildFile; fileRef = A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */; };
-		A91C9FC21B659A6700AFFD54 /* AccessibilityTreeItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */; };
 		A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */; };
 		A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9787CB31F5F5C6500C551C6 /* AccessibilityMediaObject.cpp */; };
 		A9C6E4E30D745E05006442E9 /* DOMMimeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */; };
@@ -6250,7 +6215,6 @@
 		F50664F7157F52DC00AC226F /* FormController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50664F5157F52DC00AC226F /* FormController.cpp */; };
 		F50664F8157F52DC00AC226F /* FormController.h in Headers */ = {isa = PBXBuildFile; fileRef = F50664F6157F52DC00AC226F /* FormController.h */; };
 		F513A3EA15FF4841001526DB /* ValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F513A3E915FF4841001526DB /* ValidationMessageClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F52A8FD71D0A8D0E0073CF42 /* AccessibilityLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F52A8FD51D0A88010073CF42 /* AccessibilityLabel.cpp */; };
 		F52AD5E41534245F0059FBE6 /* EmptyClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */; };
 		F544F78815CFB2A800AF33A8 /* PlatformLocale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */; };
 		F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F544F78715CFB2A800AF33A8 /* PlatformLocale.h */; };
@@ -30959,41 +30923,9 @@
 				7CD0E2B91F80A4820016A4CE /* AbortController.cpp in Sources */,
 				7CD0E2C01F80A56E0016A4CE /* AbortSignal.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
-				37F57AB91A50726900876F98 /* AccessibilityARIAGrid.cpp in Sources */,
-				37F57ABA1A50726F00876F98 /* AccessibilityARIAGridCell.cpp in Sources */,
-				37F57ABB1A50727300876F98 /* AccessibilityARIAGridRow.cpp in Sources */,
-				2914E3071CAB5A440049966F /* AccessibilityAttachment.cpp in Sources */,
-				37F57ABC1A50727700876F98 /* AccessibilityImageMapLink.cpp in Sources */,
-				F52A8FD71D0A8D0E0073CF42 /* AccessibilityLabel.cpp in Sources */,
-				37F57ABD1A50727A00876F98 /* AccessibilityList.cpp in Sources */,
-				37F57ABE1A50727E00876F98 /* AccessibilityListBox.cpp in Sources */,
-				37F57ABF1A50728100876F98 /* AccessibilityListBoxOption.cpp in Sources */,
-				37F57ABC1A50728400876F98 /* AccessibilityMathMLElement.cpp in Sources */,
-				37F57AC01A50728400876F98 /* AccessibilityMediaControls.cpp in Sources */,
 				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
-				76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */,
-				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
-				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
-				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
-				37F57AC11A50728700876F98 /* AccessibilityNodeObject.cpp in Sources */,
-				37F57AC21A50728B00876F98 /* AccessibilityObject.cpp in Sources */,
 				AAA728F616D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm in Sources */,
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
-				37F57AC31A50728F00876F98 /* AccessibilityProgressIndicator.cpp in Sources */,
-				37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */,
-				37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */,
-				37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */,
-				37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */,
-				29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */,
-				69A6CBAC1C6BE42C00B836E9 /* AccessibilitySVGElement.cpp in Sources */,
-				37F57AC91A5072CC00876F98 /* AccessibilitySVGRoot.cpp in Sources */,
-				37F57ACA1A5072CF00876F98 /* AccessibilityTable.cpp in Sources */,
-				37F57ACB1A5072D100876F98 /* AccessibilityTableCell.cpp in Sources */,
-				37F57ACC1A5072D500876F98 /* AccessibilityTableColumn.cpp in Sources */,
-				37F57ACD1A5072D700876F98 /* AccessibilityTableHeaderContainer.cpp in Sources */,
-				37F57ACE1A5072DA00876F98 /* AccessibilityTableRow.cpp in Sources */,
-				A91C9FBE1B6586DE00AFFD54 /* AccessibilityTree.cpp in Sources */,
-				A91C9FC21B659A6700AFFD54 /* AccessibilityTreeItem.cpp in Sources */,
 				7C52229A1E1DAE20002CB8F7 /* ActiveDOMCallback.cpp in Sources */,
 				7CD0BA041B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
@@ -31006,7 +30938,6 @@
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
 				319848021A1D818100A13318 /* AnimationEvent.cpp in Sources */,
 				49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */,
-				71025ECC1F99F0CE004A250C /* AnimationTimeline.cpp in Sources */,
 				93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */,
 				A1DF5AB51F8078F30058A477 /* ApplePayContactField.cpp in Sources */,
 				1ADFDFE01E71D8EE008F5D34 /* ApplePayError.cpp in Sources */,
@@ -31078,7 +31009,6 @@
 				CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */,
 				070363E7181A1CDC00C074A5 /* AVVideoCaptureSource.mm in Sources */,
 				F45C231D1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp in Sources */,
-				37F57ACF1A5072DD00876F98 /* AXObjectCache.cpp in Sources */,
 				AAA728F916D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm in Sources */,
 				29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */,
 				BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */,
@@ -31467,7 +31397,6 @@
 				4A4F48A916B0DFC000EDBB29 /* DocumentRuleSets.cpp in Sources */,
 				AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */,
 				0B9056190F2578BE0095FF6A /* DocumentThreadableLoader.cpp in Sources */,
-				71025ECF1F99F0CE004A250C /* DocumentTimeline.cpp in Sources */,
 				A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */,
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
 				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
@@ -33285,7 +33214,6 @@
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
-				71025ED21F99F0CE004A250C /* WebAnimation.cpp in Sources */,
 				E18536851F50906100FE091B /* WebArchiveResourceFromNSAttributedString.mm in Sources */,
 				E18C35431F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm in Sources */,
 				CDE667A41E4BBF1500E8154A /* WebAudioBufferList.cpp in Sources */,
