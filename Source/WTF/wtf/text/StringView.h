@@ -451,22 +451,16 @@ inline bool StringView::contains(UChar character) const
 inline void StringView::getCharactersWithUpconvert(LChar* destination) const
 {
     ASSERT(is8Bit());
-    auto characters8 = this->characters8();
-    for (unsigned i = 0; i < m_length; ++i)
-        destination[i] = characters8[i];
+    StringImpl::copyChars(destination, characters8(), m_length);
 }
 
 inline void StringView::getCharactersWithUpconvert(UChar* destination) const
 {
     if (is8Bit()) {
-        auto characters8 = this->characters8();
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = characters8[i];
+        StringImpl::copyChars(destination, characters8(), m_length);
         return;
     }
-    auto characters16 = this->characters16();
-    for (unsigned i = 0; i < m_length; ++i)
-        destination[i] = characters16[i];
+    StringImpl::copyChars(destination, characters16(), m_length);
 }
 
 inline StringView::UpconvertedCharacters::UpconvertedCharacters(const StringView& string)

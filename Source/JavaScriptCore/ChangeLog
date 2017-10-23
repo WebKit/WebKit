@@ -1,3 +1,32 @@
+2017-10-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use fastJoin in Array#toString
+        https://bugs.webkit.org/show_bug.cgi?id=178062
+
+        Reviewed by Darin Adler.
+
+        Array#toString()'s fast path uses original join operation.
+        But this should use fastJoin if possible.
+        This patch adds a fast path using fastJoin in Array#toString.
+        And we also extend fastJoin to perform fast joining for int32
+        arrays.
+
+                                             baseline                  patched
+
+        double-array-to-string          126.6157+-5.8625     ^    103.7343+-4.4968        ^ definitely 1.2206x faster
+        int32-array-to-string            64.7792+-2.6524           61.2390+-2.1749          might be 1.0578x faster
+        contiguous-array-to-string       62.6224+-2.6388     ^     56.9899+-2.0852        ^ definitely 1.0988x faster
+
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::fastJoin):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::appendWithoutSideEffects):
+        (JSC::JSStringJoiner::appendInt32):
+        (JSC::JSStringJoiner::appendDouble):
+
 2017-10-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [JSC] Remove !(OS(LINUX) && CPU(ARM64)) guards in RegisterState.h

@@ -37,6 +37,8 @@ public:
     ~JSStringJoiner();
 
     void append(ExecState&, JSValue);
+    void appendNumber(VM&, int32_t);
+    void appendNumber(VM&, double);
     bool appendWithoutSideEffects(ExecState&, JSValue);
     void appendEmptyString();
 
@@ -121,11 +123,11 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(ExecState& state, JS
     }
 
     if (value.isInt32()) {
-        append8Bit(state.vm().numericStrings.add(value.asInt32()));
+        appendNumber(state.vm(), value.asInt32());
         return true;
     }
     if (value.isDouble()) {
-        append8Bit(state.vm().numericStrings.add(value.asDouble()));
+        appendNumber(state.vm(), value.asDouble());
         return true;
     }
     if (value.isTrue()) {
@@ -147,6 +149,16 @@ ALWAYS_INLINE void JSStringJoiner::append(ExecState& state, JSValue value)
         JSString* jsString = value.toString(&state);
         append(jsString->viewWithUnderlyingString(&state));
     }
+}
+
+ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, int32_t value)
+{
+    append8Bit(vm.numericStrings.add(value));
+}
+
+ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, double value)
+{
+    append8Bit(vm.numericStrings.add(value));
 }
 
 } // namespace JSC
