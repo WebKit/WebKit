@@ -36,16 +36,17 @@ namespace WebCore {
 
 struct ApplePayPaymentContact;
 
-class PaymentContact {
+class WEBCORE_EXPORT PaymentContact {
 public:
     PaymentContact() = default;
     explicit PaymentContact(PKContact *pkContact)
         : m_pkContact(pkContact)
     {
     }
+    virtual ~PaymentContact() = default;
 
     static PaymentContact fromApplePayPaymentContact(unsigned version, const ApplePayPaymentContact&);
-    ApplePayPaymentContact toApplePayPaymentContact() const;
+    virtual ApplePayPaymentContact toApplePayPaymentContact() const;
 
     PKContact *pkContact() const { return m_pkContact.get(); }
 

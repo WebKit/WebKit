@@ -563,4 +563,5 @@ enum EventThrottlingBehavior {
     boolean hasServiceWorkerRegisteredForOrigin(DOMString origin);
 
     [EnabledAtRuntime=WebAnimations] DOMString timelineDescription(AnimationTimeline timeline);
+    [Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
 };

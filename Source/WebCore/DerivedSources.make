@@ -908,6 +908,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/testing/MockCDMFactory.idl \
     $(WebCore)/testing/MockContentFilterSettings.idl \
     $(WebCore)/testing/MockPageOverlay.idl \
+    $(WebCore)/testing/MockPaymentAddress.idl \
+    $(WebCore)/testing/MockPaymentCoordinator.idl \
     $(WebCore)/testing/TypeConversions.idl \
     $(WebCore)/workers/AbstractWorker.idl \
     $(WebCore)/workers/DedicatedWorkerGlobalScope.idl \

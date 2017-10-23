@@ -28,13 +28,28 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "PaymentRequest.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-void PaymentResponse::complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&& promise)
+PaymentResponse::PaymentResponse(PaymentRequest& request)
+    : m_request { request }
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented") });
+}
+
+PaymentResponse::~PaymentResponse() = default;
+
+void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
+{
+    if (m_completeCalled) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
+
+    m_completeCalled = true;
+    m_request->complete(WTFMove(result));
+    promise.resolve();
 }
 
 } // namespace WebCore

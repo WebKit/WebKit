@@ -28,38 +28,45 @@
 #if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
 
 #include "ApplePayRequest.h"
+#include "ContextDestructionObserver.h"
 #include "PaymentHandler.h"
+#include "PaymentRequest.h"
 #include "PaymentSession.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-class PaymentRequest;
+class PaymentCoordinator;
 
-class ApplePayPaymentHandler final : public PaymentHandler, public PaymentSession {
+class ApplePayPaymentHandler final : public PaymentHandler, public PaymentSession, private ContextDestructionObserver {
 public:
     static bool handlesIdentifier(const PaymentRequest::MethodIdentifier&);
     static bool hasActiveSession(Document&);
 
 private:
     friend class PaymentHandler;
-    explicit ApplePayPaymentHandler(PaymentRequest&);
+    explicit ApplePayPaymentHandler(Document&, const PaymentRequest::MethodIdentifier&, PaymentRequest&);
+
+    Document& document();
+    PaymentCoordinator& paymentCoordinator();
 
     // PaymentHandler
-    ExceptionOr<void> convertData(JSC::ExecState&, JSC::JSValue&&) final;
-    ExceptionOr<void> show(Document&) final;
-    void hide(Document&) final;
-    void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) final;
+    ExceptionOr<void> convertData(JSC::JSValue&&) final;
+    ExceptionOr<void> show() final;
+    void hide() final;
+    void canMakePayment(WTF::Function<void(bool)>&& completionHandler) final;
+    void complete(std::optional<PaymentComplete>&&) final;
 
     // PaymentSession
     void validateMerchant(const URL&) final;
-    void didAuthorizePayment(const Payment&) final { }
-    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) final { }
-    void didSelectShippingContact(const PaymentContact&) final { }
+    void didAuthorizePayment(const Payment&) final;
+    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) final;
+    void didSelectShippingContact(const PaymentContact&) final;
     void didSelectPaymentMethod(const PaymentMethod&) final { }
     void didCancelPaymentSession() final { }
 
+    PaymentRequest::MethodIdentifier m_identifier;
     Ref<PaymentRequest> m_paymentRequest;
     std::optional<ApplePayRequest> m_applePayRequest;
 };

@@ -1,3 +1,29 @@
+2017-10-23  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Resolve PaymentRequest.show()'s accept promise when a payment is authorized
+        https://bugs.webkit.org/show_bug.cgi?id=178609
+        <rdar://problem/33542813>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html: Copied from imported/w3c/web-platform-tests/payment-request/PaymentAddress/attributes-and-toJSON-method-manual.https.html.
+        * http/tests/paymentrequest/payment-response-complete-method.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-complete-method.https.html: Copied from imported/w3c/web-platform-tests/payment-request/payment-response/complete-method-manual.https.html.
+        * http/tests/paymentrequest/payment-response-methodName-attribute.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-methodName-attribute.https.html: Copied from imported/w3c/web-platform-tests/payment-request/payment-response/methodName-attribute-manual.https.html.
+        * http/tests/paymentrequest/payment-response-payerEmail-attribute.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-payerEmail-attribute.https.html: Copied from imported/w3c/web-platform-tests/payment-request/payment-response/payerEmail-attribute-manual.https.html.
+        * http/tests/paymentrequest/payment-response-payerName-attribute.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-payerName-attribute.https.html: Copied from imported/w3c/web-platform-tests/payment-request/payment-response/payerName-attribute-manual.https.html.
+        * http/tests/paymentrequest/payment-response-payerPhone-attribute.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-payerPhone-attribute.https.html: Copied from imported/w3c/web-platform-tests/payment-request/payment-response/payerPhone-attribute-manual.https.html.
+        * http/tests/paymentrequest/resources/helpers.js: Copied from imported/w3c/web-platform-tests/payment-request/payment-response/helpers.js.
+        (test):
+        (async.getPaymentResponse):
+        (async.getPaymentRequestResponse):
+        (async.runTest):
+
 2017-10-23  Chris Dumez  <cdumez@apple.com>
 
         Drop confusing Event::dispatched() method

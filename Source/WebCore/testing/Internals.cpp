@@ -513,8 +513,11 @@ Internals::Internals(Document& document)
     setConsoleMessageListener(nullptr);
 
 #if ENABLE(APPLE_PAY)
-    if (auto frame = document.frame())
-        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*new MockPaymentCoordinator(frame->mainFrame())));
+    auto* frame = document.frame();
+    if (frame && frame->isMainFrame()) {
+        m_mockPaymentCoordinator = new MockPaymentCoordinator(frame->mainFrame());
+        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator));
+    }
 #endif
 }
 
@@ -4257,5 +4260,12 @@ String Internals::timelineDescription(AnimationTimeline& timeline)
 {
     return timeline.description();
 }
+
+#if ENABLE(APPLE_PAY)
+MockPaymentCoordinator& Internals::mockPaymentCoordinator() const
+{
+    return *m_mockPaymentCoordinator;
+}
+#endif
 
 } // namespace WebCore

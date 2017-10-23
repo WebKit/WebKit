@@ -189,10 +189,12 @@ static ApplePayPaymentContact convert(PKContact *contact)
     NSPersonNameComponents *name = contact.name;
     result.givenName = name.givenName;
     result.familyName = name.familyName;
+    result.localizedName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name style:NSPersonNameComponentsFormatterStyleDefault options:0];
 
     NSPersonNameComponents *phoneticName = name.phoneticRepresentation;
     result.phoneticGivenName = phoneticName.givenName;
     result.phoneticFamilyName = phoneticName.familyName;
+    result.localizedPhoneticName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name style:NSPersonNameComponentsFormatterStyleDefault options:NSPersonNameComponentsFormatterPhonetic];
 
     CNPostalAddress *postalAddress = contact.postalAddress;
     if (postalAddress.street.length) {

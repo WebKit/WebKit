@@ -42,6 +42,7 @@ class Document;
 class PaymentAddress;
 class PaymentHandler;
 class PaymentResponse;
+enum class PaymentComplete;
 enum class PaymentShippingType;
 struct PaymentMethodData;
 
@@ -65,6 +66,11 @@ public:
 
     const PaymentOptions& paymentOptions() const { return m_options; }
     const PaymentDetailsInit& paymentDetails() const { return m_details; }
+
+    void shippingAddressChanged(Ref<PaymentAddress>&&);
+    void shippingOptionChanged(const String& shippingOption);
+    void accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
+    void complete(std::optional<PaymentComplete>&&);
 
     using MethodIdentifier = Variant<String, URL>;
     using RefCounted<PaymentRequest>::ref;

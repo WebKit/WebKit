@@ -73,6 +73,7 @@ class MemoryInfo;
 class MockCDMFactory;
 class MockContentFilterSettings;
 class MockPageOverlay;
+class MockPaymentCoordinator;
 class NodeList;
 class Page;
 class Range;
@@ -618,6 +619,10 @@ public:
 #endif
 
     bool hasServiceWorkerRegisteredForOrigin(const String&);
+        
+#if ENABLE(APPLE_PAY)
+    MockPaymentCoordinator& mockPaymentCoordinator() const;
+#endif
 
     String timelineDescription(AnimationTimeline&);
 
@@ -642,6 +647,10 @@ private:
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+
+#if ENABLE(APPLE_PAY)
+    MockPaymentCoordinator* m_mockPaymentCoordinator { nullptr };
+#endif
 };
 
 } // namespace WebCore

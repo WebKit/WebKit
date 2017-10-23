@@ -30,12 +30,14 @@
 
 #include "ApplePayPaymentHandler.h"
 #include "Document.h"
+#include "JSPaymentResponse.h"
 #include "PaymentAddress.h"
 #include "PaymentCurrencyAmount.h"
 #include "PaymentDetailsInit.h"
 #include "PaymentHandler.h"
 #include "PaymentMethodData.h"
 #include "PaymentOptions.h"
+#include "PaymentResponse.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
@@ -376,11 +378,11 @@ void PaymentRequest::show(Document& document, ShowPromise&& promise)
             return;
         }
 
-        auto handler = PaymentHandler::create(*this, paymentMethod.identifier);
+        auto handler = PaymentHandler::create(document, *this, paymentMethod.identifier);
         if (!handler)
             continue;
 
-        auto result = handler->convertData(*document.execState(), data.releaseReturnValue());
+        auto result = handler->convertData(data.releaseReturnValue());
         if (result.hasException()) {
             m_showPromise->reject(result.releaseException());
             return;
@@ -395,7 +397,7 @@ void PaymentRequest::show(Document& document, ShowPromise&& promise)
         return;
     }
 
-    auto exception = selectedPaymentHandler->show(document);
+    auto exception = selectedPaymentHandler->show();
     if (exception.hasException()) {
         m_showPromise->reject(exception.releaseException());
         return;
@@ -413,7 +415,7 @@ void PaymentRequest::stop()
 
     if (auto paymentHandler = std::exchange(m_activePaymentHandler, nullptr)) {
         unsetPendingActivity(this);
-        paymentHandler->hide(downcast<Document>(*scriptExecutionContext()));
+        paymentHandler->hide();
     }
 
     ASSERT(m_state == State::Interactive);
@@ -445,15 +447,15 @@ void PaymentRequest::canMakePayment(Document& document, CanMakePaymentPromise&& 
         if (data.hasException())
             continue;
 
-        auto handler = PaymentHandler::create(*this, paymentMethod.identifier);
+        auto handler = PaymentHandler::create(document, *this, paymentMethod.identifier);
         if (!handler)
             continue;
 
-        auto exception = handler->convertData(*document.execState(), data.releaseReturnValue());
+        auto exception = handler->convertData(data.releaseReturnValue());
         if (exception.hasException())
             continue;
 
-        handler->canMakePayment(document, [promise = WTFMove(promise)](bool canMakePayment) mutable {
+        handler->canMakePayment([promise = WTFMove(promise)](bool canMakePayment) mutable {
             promise.resolve(canMakePayment);
         });
         return;
@@ -478,12 +480,59 @@ bool PaymentRequest::canSuspendForDocumentSuspension() const
 {
     switch (m_state) {
     case State::Created:
-    case State::Closed:
         ASSERT(!m_activePaymentHandler);
         return true;
     case State::Interactive:
+    case State::Closed:
         return !m_activePaymentHandler;
     }
+}
+
+void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddress)
+{
+    ASSERT(m_state == State::Interactive);
+    m_shippingAddress = WTFMove(shippingAddress);
+    // FIXME: run the PaymentRequest updated algorithm.
+}
+
+void PaymentRequest::shippingOptionChanged(const String& shippingOption)
+{
+    ASSERT(m_state == State::Interactive);
+    m_shippingOption = shippingOption;
+    // FIXME: run the PaymentRequest updated algorithm.
+}
+
+void PaymentRequest::accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone)
+{
+    ASSERT(m_state == State::Interactive);
+
+    auto response = PaymentResponse::create(*this);
+    response->setRequestId(m_details.id);
+    response->setMethodName(methodName);
+    response->setDetails(WTFMove(details));
+
+    if (m_options.requestShipping) {
+        response->setShippingAddress(shippingAddress.ptr());
+        response->setShippingOption(m_shippingOption);
+    }
+
+    if (m_options.requestPayerName)
+        response->setPayerName(payerName);
+
+    if (m_options.requestPayerEmail)
+        response->setPayerEmail(payerEmail);
+
+    if (m_options.requestPayerPhone)
+        response->setPayerPhone(payerPhone);
+
+    m_showPromise->resolve(response.get());
+    m_state = State::Closed;
+}
+
+void PaymentRequest::complete(std::optional<PaymentComplete>&& result)
+{
+    ASSERT(m_state == State::Closed);
+    std::exchange(m_activePaymentHandler, nullptr)->complete(WTFMove(result));
 }
 
 } // namespace WebCore

@@ -1,0 +1,90 @@
+<!doctype html>
+<meta charset="utf8">
+<link rel="help" href="https://www.w3.org/TR/payment-request/#paymentaddress-interface">
+<title>
+  PaymentResponse.prototype.shippingAddress
+</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/helpers.js"></script>
+<script>
+const options = { requestShipping: true };
+function runTest(button, expected = {}) {
+  button.disabled = true;
+  promise_test(async () => {
+    const { response } = await getPaymentRequestResponse(options);
+    await response.complete();
+    assert_idl_attribute(response, "shippingAddress");
+    const { shippingAddress: addr } = response;
+    assert_true(
+      addr instanceof PaymentAddress,
+      "Expect instance of PaymentAddress"
+    );
+    // An [ISO3166] alpha-2 code. The canonical form is upper case.
+    const { country } = addr;
+    assert_equals(country.length, 2, "Expected length is 2");
+    assert_true(/^[A-Z]{2}$/.test(country), "Canonical form is upper case");
+    assert_true(
+      addr.addressLine instanceof Array,
+      "Expected addressLine to be an array"
+    );
+    assert_throws(
+      new TypeError(),
+      () => {
+        addr.addressLine.push("this must throw");
+      },
+      "Array must be frozen"
+    );
+    for (let [attr, expectedValue] of Object.entries(expected)) {
+      assert_idl_attribute(addr, attr);
+      const msg = `Expected paymentAddress.${attr} to equal ${expectedValue}.`;
+      //.toString() flattens array addressLine,
+      //.toLowerCase() because case can't be enforced for some attributes
+      const actualValue = addr[attr].toString().toLowerCase();
+      expectedValue = expectedValue.toString().toLowerCase();
+      assert_equals(actualValue, expectedValue, msg);
+    }
+    // Check toJSON result
+    for (let [prop, jsonValue] of Object.entries(addr.toJSON())) {
+      const actualValue = jsonValue.toString().toLowerCase();
+      const expectedValue = expected[prop].toString().toLowerCase();
+      const msg = `Expected JSON ${prop} to be ${expectedValue}`;
+      assert_equals(actualValue, expectedValue, msg);
+    }
+  }, button.textContent.trim());
+  done();
+}
+</script>
+<ol>
+  <li>
+    <button id="button">
+      If the requestShipping member is true, then shippingAddress's PaymentAddress must match the expected values.
+    </button>
+  </li>
+</ol>
+<script>
+    const address = {
+        countryCode: 'AF',
+        addressLines: ['1 wpt street'],
+        locality: 'Kabul',
+        postalCode: '1001',
+        localizedName: 'web platform test',
+        phoneNumber: '+93555555555',
+    };
+    internals.mockPaymentCoordinator.setShippingAddress(address);
+
+    const expectedAddress = {
+        country: address.countryCode,
+        addressLine: address.addressLines,
+        region: '',
+        city: address.locality,
+        dependentLocality: '',
+        postalCode: address.postalCode,
+        sortingCode: '',
+        languageCode: '',
+        organization: '',
+        recipient: address.localizedName,
+        phone: address.phoneNumber,
+    };
+    runTest(document.getElementById("button"), expectedAddress);
+</script>

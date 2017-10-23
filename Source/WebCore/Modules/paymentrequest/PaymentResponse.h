@@ -32,21 +32,49 @@
 #include "PaymentComplete.h"
 
 namespace WebCore {
+    
+class Document;
+class PaymentRequest;
 
 class PaymentResponse final : public RefCounted<PaymentResponse> {
 public:
+    static Ref<PaymentResponse> create(PaymentRequest& request)
+    {
+        return adoptRef(*new PaymentResponse(request));
+    }
+
+    ~PaymentResponse();
+
     const String& requestId() const { return m_requestId; }
+    void setRequestId(const String& requestId) { m_requestId = requestId; }
+
     const String& methodName() const { return m_methodName; }
+    void setMethodName(const String& methodName) { m_methodName = methodName; }
+
     const JSC::Strong<JSC::JSObject>& details() const { return m_details; }
+    void setDetails(JSC::Strong<JSC::JSObject>&& details) { m_details = WTFMove(details); }
+
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
+    void setShippingAddress(PaymentAddress* shippingAddress) { m_shippingAddress = shippingAddress; }
+
     const String& shippingOption() const { return m_shippingOption; }
+    void setShippingOption(const String& shippingOption) { m_shippingOption = shippingOption; }
+
     const String& payerName() const { return m_payerName; }
+    void setPayerName(const String& payerName) { m_payerName = payerName; }
+
     const String& payerEmail() const { return m_payerEmail; }
+    void setPayerEmail(const String& payerEmail) { m_payerEmail = payerEmail; }
+
     const String& payerPhone() const { return m_payerPhone; }
+    void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
 
     void complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
 
 private:
+    explicit PaymentResponse(PaymentRequest&);
+
+    Ref<PaymentRequest> m_request;
     String m_requestId;
     String m_methodName;
     JSC::Strong<JSC::JSObject> m_details;
@@ -55,6 +83,7 @@ private:
     String m_payerName;
     String m_payerEmail;
     String m_payerPhone;
+    bool m_completeCalled { false };
 };
 
 } // namespace WebCore

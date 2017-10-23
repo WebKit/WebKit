@@ -26,6 +26,7 @@
 [
     Conditional=PAYMENT_REQUEST,
     EnabledBySetting=PaymentRequest,
+    Exposed=Window,
     ImplementationLacksVTable,
     SecureContext
 ] interface PaymentAddress {

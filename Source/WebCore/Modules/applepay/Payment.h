@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct ApplePayPayment;
 
-class Payment {
+class WEBCORE_EXPORT Payment {
 public:
     Payment() = default;
 
@@ -44,7 +44,9 @@ public:
     {
     }
 
-    ApplePayPayment toApplePayPayment() const;
+    virtual ~Payment() = default;
+
+    virtual ApplePayPayment toApplePayPayment() const;
 
     PKPayment *pkPayment() const { return m_pkPayment.get(); }
 

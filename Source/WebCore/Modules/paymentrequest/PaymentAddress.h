@@ -35,6 +35,11 @@ namespace WebCore {
 
 class PaymentAddress final : public RefCounted<PaymentAddress> {
 public:
+    template <typename... Args> static Ref<PaymentAddress> create(Args&&... args)
+    {
+        return adoptRef(*new PaymentAddress(std::forward<Args>(args)...));
+    }
+
     const String& country() const { return m_country; }
     const Vector<String>& addressLine() const { return m_addressLine; }
     const String& region() const { return m_region; }
@@ -48,6 +53,8 @@ public:
     const String& phone() const { return m_phone; }
 
 private:
+    PaymentAddress(const String& country, const Vector<String>& addressLine, const String& region, const String& city, const String& dependentLocality, const String& postalCode, const String& sortingCode, const String& languageCode, const String& organization, const String& recipient, const String& phone);
+
     String m_country;
     Vector<String> m_addressLine;
     String m_region;

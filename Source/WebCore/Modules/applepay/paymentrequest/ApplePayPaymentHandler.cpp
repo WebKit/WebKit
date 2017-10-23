@@ -31,16 +31,21 @@
 #include "ApplePayContactField.h"
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayMerchantValidationEvent.h"
+#include "ApplePayPayment.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "JSApplePayPayment.h"
 #include "JSApplePayRequest.h"
 #include "LinkIconCollector.h"
 #include "MainFrame.h"
 #include "Page.h"
+#include "Payment.h"
+#include "PaymentAuthorizationStatus.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
 #include "PaymentRequestValidator.h"
+#include "PaymentResponse.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -61,12 +66,25 @@ static inline PaymentCoordinator& paymentCoordinator(Document& document)
 
 bool ApplePayPaymentHandler::hasActiveSession(Document& document)
 {
-    return paymentCoordinator(document).hasActiveSession();
+    return WebCore::paymentCoordinator(document).hasActiveSession();
 }
 
-ApplePayPaymentHandler::ApplePayPaymentHandler(PaymentRequest& paymentRequest)
-    : m_paymentRequest { paymentRequest }
+ApplePayPaymentHandler::ApplePayPaymentHandler(Document& document, const PaymentRequest::MethodIdentifier& identifier, PaymentRequest& paymentRequest)
+    : ContextDestructionObserver { &document }
+    , m_identifier { identifier }
+    , m_paymentRequest { paymentRequest }
 {
+    ASSERT(handlesIdentifier(m_identifier));
+}
+
+Document& ApplePayPaymentHandler::document()
+{
+    return downcast<Document>(*scriptExecutionContext());
+}
+
+PaymentCoordinator& ApplePayPaymentHandler::paymentCoordinator()
+{
+    return WebCore::paymentCoordinator(document());
 }
 
 static ExceptionOr<void> validate(const PaymentCurrencyAmount& amount, const String& expectedCurrency)
@@ -140,10 +158,11 @@ static ExceptionOr<ApplePaySessionPaymentRequest::ShippingMethod> convertAndVali
     return { WTFMove(result) };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::ExecState& execState, JSC::JSValue&& data)
+ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::JSValue&& data)
 {
-    auto throwScope = DECLARE_THROW_SCOPE(execState.vm());
-    auto applePayRequest = convertDictionary<ApplePayRequest>(execState, WTFMove(data));
+    auto& context = *scriptExecutionContext();
+    auto throwScope = DECLARE_THROW_SCOPE(context.vm());
+    auto applePayRequest = convertDictionary<ApplePayRequest>(*context.execState(), WTFMove(data));
     if (throwScope.exception())
         return Exception { ExistingExceptionError };
 
@@ -151,7 +170,7 @@ ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::ExecState& execState,
     return { };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
+ExceptionOr<void> ApplePayPaymentHandler::show()
 {
     auto validatedRequest = convertAndValidate(m_applePayRequest->version, *m_applePayRequest);
     if (validatedRequest.hasException())
@@ -203,16 +222,16 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
         return exception.releaseException();
 
     Vector<URL> linkIconURLs;
-    for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
+    for (auto& icon : LinkIconCollector { document() }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
         linkIconURLs.append(icon.url);
 
-    paymentCoordinator(document).beginPaymentSession(*this, document.url(), linkIconURLs, request);
+    paymentCoordinator().beginPaymentSession(*this, document().url(), linkIconURLs, request);
     return { };
 }
 
-void ApplePayPaymentHandler::hide(Document& document)
+void ApplePayPaymentHandler::hide()
 {
-    paymentCoordinator(document).abortPaymentSession();
+    paymentCoordinator().abortPaymentSession();
 }
 
 static bool shouldDiscloseApplePayCapability(Document& document)
@@ -224,20 +243,66 @@ static bool shouldDiscloseApplePayCapability(Document& document)
     return document.settings().applePayCapabilityDisclosureAllowed();
 }
 
-void ApplePayPaymentHandler::canMakePayment(Document& document, WTF::Function<void(bool)>&& completionHandler)
+void ApplePayPaymentHandler::canMakePayment(Function<void(bool)>&& completionHandler)
 {
-    if (!shouldDiscloseApplePayCapability(document)) {
-        completionHandler(paymentCoordinator(document).canMakePayments());
+    if (!shouldDiscloseApplePayCapability(document())) {
+        completionHandler(paymentCoordinator().canMakePayments());
         return;
     }
 
-    paymentCoordinator(document).canMakePaymentsWithActiveCard(m_applePayRequest->merchantIdentifier, document.domain(), WTFMove(completionHandler));
+    paymentCoordinator().canMakePaymentsWithActiveCard(m_applePayRequest->merchantIdentifier, document().domain(), WTFMove(completionHandler));
+}
+
+void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
+{
+    if (!result) {
+        paymentCoordinator().completePaymentSession(std::nullopt);
+        return;
+    }
+
+    PaymentAuthorizationResult authorizationResult;
+    switch (*result) {
+    case PaymentComplete::Fail:
+    case PaymentComplete::Unknown:
+        authorizationResult.status = PaymentAuthorizationStatus::Failure;
+        authorizationResult.errors.append({ PaymentError::Code::Unknown, { }, std::nullopt });
+        break;
+    case PaymentComplete::Success:
+        authorizationResult.status = PaymentAuthorizationStatus::Success;
+        break;
+    }
+
+    paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
 }
 
 void ApplePayPaymentHandler::validateMerchant(const URL& validationURL)
 {
     if (validationURL.isValid())
         m_paymentRequest->dispatchEvent(ApplePayMerchantValidationEvent::create(eventNames().applepayvalidatemerchantEvent, validationURL).get());
+}
+
+static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
+{
+    return PaymentAddress::create(contact.countryCode, contact.addressLines.value_or(Vector<String>()), contact.administrativeArea, contact.locality, contact.subLocality, contact.postalCode, String(), String(), String(), contact.localizedName, contact.phoneNumber);
+}
+
+void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
+{
+    auto applePayPayment = payment.toApplePayPayment();
+    auto& execState = *document().execState();
+    auto details = JSC::Strong<JSC::JSObject> { execState.vm(), asObject(toJS<IDLDictionary<ApplePayPayment>>(execState, *JSC::jsCast<JSDOMGlobalObject*>(execState.lexicalGlobalObject()), applePayPayment)) };
+    const auto& shippingContact = applePayPayment.shippingContact.value_or(ApplePayPaymentContact());
+    m_paymentRequest->accept(WTF::get<URL>(m_identifier).string(), WTFMove(details), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
+}
+
+void ApplePayPaymentHandler::didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+{
+    m_paymentRequest->shippingOptionChanged(shippingMethod.identifier);
+}
+
+void ApplePayPaymentHandler::didSelectShippingContact(const PaymentContact& shippingContact)
+{
+    m_paymentRequest->shippingAddressChanged(convert(shippingContact.toApplePayPaymentContact()));
 }
 
 } // namespace WebCore

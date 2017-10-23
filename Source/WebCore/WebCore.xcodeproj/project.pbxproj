@@ -3872,6 +3872,12 @@
 		A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */; };
 		A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */; };
 		A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A146D31A1F99BCF800D29196 /* JSMockPaymentCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A146D3191F99BCBB00D29196 /* JSMockPaymentCoordinator.cpp */; };
+		A146D31B1F99BCFB00D29196 /* JSMockPaymentCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = A146D3181F99BCBA00D29196 /* JSMockPaymentCoordinator.h */; };
+		A146D3211F99CB1A00D29196 /* MockPaymentAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = A146D31C1F99C9C200D29196 /* MockPaymentAddress.h */; };
+		A146D3221F99D0EC00D29196 /* JSMockPaymentAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A146D3201F99CA3E00D29196 /* JSMockPaymentAddress.cpp */; };
+		A146D3231F99D0EF00D29196 /* JSMockPaymentAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = A146D31F1F99CA3D00D29196 /* JSMockPaymentAddress.h */; };
+		A146D3251F99D69800D29196 /* MockPaymentContact.h in Headers */ = {isa = PBXBuildFile; fileRef = A146D3241F99D69800D29196 /* MockPaymentContact.h */; };
 		A14832B0187F618D00DA63A6 /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = A148328C187F508700DA63A6 /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = A148328D187F508700DA63A6 /* WAKAppKitStubs.m */; };
 		A14832B2187F61ED00DA63A6 /* WAKClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = A148328E187F508700DA63A6 /* WAKClipView.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3906,6 +3912,7 @@
 		A149786E1ABAF33800CEF7E4 /* ContentFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A149786C1ABAF33800CEF7E4 /* ContentFilter.cpp */; };
 		A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A149786D1ABAF33800CEF7E4 /* ContentFilter.h */; };
 		A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */; };
+		A14BB0A01F9813B800605A35 /* MockPayment.h in Headers */ = {isa = PBXBuildFile; fileRef = A14BB09E1F9813B800605A35 /* MockPayment.h */; };
 		A15D75151E68F7C400A35FBC /* BlobCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A15D75121E68F7B100A35FBC /* BlobCallback.cpp */; };
 		A15D75161E68F7C800A35FBC /* BlobCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A15D75131E68F7B100A35FBC /* BlobCallback.h */; };
 		A15D751B1E68F8A300A35FBC /* JSBlobCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A15D75181E68F83600A35FBC /* JSBlobCallback.h */; };
@@ -3951,6 +3958,7 @@
 		A1CC567B1F4614AD00A4555B /* JSPaymentResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56641F46146700A4555B /* JSPaymentResponse.h */; };
 		A1CC567D1F4614B200A4555B /* JSPaymentShippingOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56591F46145C00A4555B /* JSPaymentShippingOption.h */; };
 		A1CC567F1F4614B700A4555B /* JSPaymentShippingType.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56501F46145300A4555B /* JSPaymentShippingType.h */; };
+		A1CFE0321F9E71290065C345 /* PaymentAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CFE0311F9E71290065C345 /* PaymentAddress.cpp */; };
 		A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE712B18612AC100734192 /* TouchEvents.cpp */; };
 		A1DF5A7F1F7EBD0B0058A477 /* ApplePayRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A7C1F7EBD0B0058A477 /* ApplePayRequest.h */; };
 		A1DF5A861F7EBDF20058A477 /* ApplePayMerchantCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A831F7EBDF20058A477 /* ApplePayMerchantCapability.h */; };
@@ -12129,6 +12137,14 @@
 		A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPreviewLoaderClient.h; sourceTree = "<group>"; };
 		A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFilterUnblockHandlerCocoa.mm; sourceTree = "<group>"; };
 		A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFilterUnblockHandler.h; sourceTree = "<group>"; };
+		A146D3161F99B53D00D29196 /* MockPaymentCoordinator.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockPaymentCoordinator.idl; sourceTree = "<group>"; };
+		A146D3181F99BCBA00D29196 /* JSMockPaymentCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockPaymentCoordinator.h; sourceTree = "<group>"; };
+		A146D3191F99BCBB00D29196 /* JSMockPaymentCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockPaymentCoordinator.cpp; sourceTree = "<group>"; };
+		A146D31C1F99C9C200D29196 /* MockPaymentAddress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPaymentAddress.h; sourceTree = "<group>"; };
+		A146D31E1F99C9C200D29196 /* MockPaymentAddress.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockPaymentAddress.idl; sourceTree = "<group>"; };
+		A146D31F1F99CA3D00D29196 /* JSMockPaymentAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockPaymentAddress.h; sourceTree = "<group>"; };
+		A146D3201F99CA3E00D29196 /* JSMockPaymentAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockPaymentAddress.cpp; sourceTree = "<group>"; };
+		A146D3241F99D69800D29196 /* MockPaymentContact.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPaymentContact.h; sourceTree = "<group>"; };
 		A148328C187F508700DA63A6 /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKAppKitStubs.h; sourceTree = "<group>"; };
 		A148328D187F508700DA63A6 /* WAKAppKitStubs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WAKAppKitStubs.m; sourceTree = "<group>"; };
 		A148328E187F508700DA63A6 /* WAKClipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKClipView.h; sourceTree = "<group>"; };
@@ -12163,6 +12179,7 @@
 		A149786C1ABAF33800CEF7E4 /* ContentFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentFilter.cpp; sourceTree = "<group>"; };
 		A149786D1ABAF33800CEF7E4 /* ContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFilter.h; sourceTree = "<group>"; };
 		A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformContentFilter.h; sourceTree = "<group>"; };
+		A14BB09E1F9813B800605A35 /* MockPayment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPayment.h; sourceTree = "<group>"; };
 		A15D75121E68F7B100A35FBC /* BlobCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobCallback.cpp; sourceTree = "<group>"; };
 		A15D75131E68F7B100A35FBC /* BlobCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobCallback.h; sourceTree = "<group>"; };
 		A15D75141E68F7B100A35FBC /* BlobCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlobCallback.idl; sourceTree = "<group>"; };
@@ -12226,6 +12243,7 @@
 		A1CC56631F46146600A4555B /* JSPaymentCurrencyAmount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentCurrencyAmount.h; sourceTree = "<group>"; };
 		A1CC56641F46146700A4555B /* JSPaymentResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentResponse.h; sourceTree = "<group>"; };
 		A1CC56651F46146800A4555B /* JSPaymentAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentAddress.h; sourceTree = "<group>"; };
+		A1CFE0311F9E71290065C345 /* PaymentAddress.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentAddress.cpp; sourceTree = "<group>"; };
 		A1DE712B18612AC100734192 /* TouchEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchEvents.cpp; sourceTree = "<group>"; };
 		A1DF5A7C1F7EBD0B0058A477 /* ApplePayRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayRequest.h; sourceTree = "<group>"; };
 		A1DF5A7E1F7EBD0B0058A477 /* ApplePayRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayRequest.idl; sourceTree = "<group>"; };
@@ -17500,8 +17518,13 @@
 				2D6F3E8C1C1ECB1C0061DBD4 /* MockPageOverlay.idl */,
 				2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */,
 				2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */,
+				A14BB09E1F9813B800605A35 /* MockPayment.h */,
+				A146D31C1F99C9C200D29196 /* MockPaymentAddress.h */,
+				A146D31E1F99C9C200D29196 /* MockPaymentAddress.idl */,
+				A146D3241F99D69800D29196 /* MockPaymentContact.h */,
 				A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */,
 				A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */,
+				A146D3161F99B53D00D29196 /* MockPaymentCoordinator.idl */,
 				A14061891E2ECA0A0032B34E /* MockPreviewLoaderClient.cpp */,
 				A140618A1E2ECA0A0032B34E /* MockPreviewLoaderClient.h */,
 				EB081CD81696084400553730 /* TypeConversions.h */,
@@ -17532,6 +17555,10 @@
 				A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */,
 				2D6F3E921C1F85550061DBD4 /* JSMockPageOverlay.cpp */,
 				2D6F3E931C1F85550061DBD4 /* JSMockPageOverlay.h */,
+				A146D3201F99CA3E00D29196 /* JSMockPaymentAddress.cpp */,
+				A146D31F1F99CA3D00D29196 /* JSMockPaymentAddress.h */,
+				A146D3191F99BCBB00D29196 /* JSMockPaymentCoordinator.cpp */,
+				A146D3181F99BCBA00D29196 /* JSMockPaymentCoordinator.h */,
 				EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */,
 				EBF5121B1696496C0056BD25 /* JSTypeConversions.h */,
 			);
@@ -21261,6 +21288,7 @@
 		A1F76B0E1F44C0CF0014C318 /* paymentrequest */ = {
 			isa = PBXGroup;
 			children = (
+				A1CFE0311F9E71290065C345 /* PaymentAddress.cpp */,
 				A1F76B401F44CF7F0014C318 /* PaymentAddress.h */,
 				A1F76B421F44CF7F0014C318 /* PaymentAddress.idl */,
 				A1F76B581F44D3B20014C318 /* PaymentComplete.h */,
@@ -26673,6 +26701,8 @@
 				538EC9331F99B9F7004D22A8 /* JSMockCDMFactory.h in Headers */,
 				A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */,
 				538EC9341F99B9F7004D22A8 /* JSMockPageOverlay.h in Headers */,
+				A146D3231F99D0EF00D29196 /* JSMockPaymentAddress.h in Headers */,
+				A146D31B1F99BCFB00D29196 /* JSMockPaymentCoordinator.h in Headers */,
 				EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */,
 				CDC26B41160A8CCE0026757B /* LegacyMockCDM.h in Headers */,
 				A1BF6B831AA96C7D00AF4A8A /* MockContentFilter.h in Headers */,
@@ -26682,6 +26712,9 @@
 				4157EBFB1E3AB67F00AC9FE9 /* MockLibWebRTCPeerConnection.h in Headers */,
 				2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */,
 				2D97F04819DD4140001EE9C3 /* MockPageOverlayClient.h in Headers */,
+				A14BB0A01F9813B800605A35 /* MockPayment.h in Headers */,
+				A146D3211F99CB1A00D29196 /* MockPaymentAddress.h in Headers */,
+				A146D3251F99D69800D29196 /* MockPaymentContact.h in Headers */,
 				A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */,
 				A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
@@ -30898,6 +30931,8 @@
 				CDF4B7321E03D06000E235A2 /* JSMockCDMFactory.cpp in Sources */,
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
 				2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */,
+				A146D3221F99D0EC00D29196 /* JSMockPaymentAddress.cpp in Sources */,
+				A146D31A1F99BCF800D29196 /* JSMockPaymentCoordinator.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* LegacyMockCDM.cpp in Sources */,
 				CDF4B7311E03D00700E235A2 /* MockCDMFactory.cpp in Sources */,
@@ -32207,6 +32242,7 @@
 				2D5002FB1B56D7990020AAF7 /* PathUtilities.cpp in Sources */,
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
+				A1CFE0321F9E71290065C345 /* PaymentAddress.cpp in Sources */,
 				1A8A646C1D19FF8700D0E00F /* PaymentCocoa.mm in Sources */,
 				1A8A646D1D19FF8700D0E00F /* PaymentContactCocoa.mm in Sources */,
 				1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */,
