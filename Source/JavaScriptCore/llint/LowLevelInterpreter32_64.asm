@@ -579,20 +579,7 @@ macro functionArityCheck(doneLabel, slowPath)
     jmp _llint_throw_from_slow_path_trampoline
 
 .noError:
-    # r1 points to ArityCheckData.
-    loadp CommonSlowPaths::ArityCheckData::thunkToCall[r1], t3
-    btpz t3, .proceedInline
-    
-    loadp CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], a0
-    call t3
-    if ASSERT_ENABLED
-        loadp ReturnPC[cfr], t0
-        loadp [t0], t0
-    end
-    jmp .continue
-
-.proceedInline:
-    loadi CommonSlowPaths::ArityCheckData::paddedStackSpace[r1], t1
+    move r1, t1 # r1 contains slotsToAdd.
     btiz t1, .continue
     loadi PayloadOffset + ArgumentCount[cfr], t2
     addi CallFrameHeaderSlots, t2

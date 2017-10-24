@@ -45,11 +45,6 @@ namespace JSC {
 
 namespace CommonSlowPaths {
 
-struct ArityCheckData {
-    unsigned paddedStackSpace;
-    void* thunkToCall;
-};
-
 ALWAYS_INLINE int numberOfExtraSlots(int argumentCountIncludingThis)
 {
     int frameSize = argumentCountIncludingThis + CallFrame::headerSizeInRegisters;

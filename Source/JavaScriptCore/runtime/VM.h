@@ -147,9 +147,6 @@ namespace FTL {
 class Thunks;
 }
 #endif // ENABLE(FTL_JIT)
-namespace CommonSlowPaths {
-struct ArityCheckData;
-}
 namespace Profiler {
 class Database;
 }
@@ -480,7 +477,6 @@ public:
     }
 
 #endif // ENABLE(JIT)
-    std::unique_ptr<CommonSlowPaths::ArityCheckData> arityCheckData;
 #if ENABLE(FTL_JIT)
     std::unique_ptr<FTL::Thunks> ftlThunks;
 #endif

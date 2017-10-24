@@ -292,7 +292,6 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(JIT)
     jitStubs = std::make_unique<JITThunks>();
 #endif
-    arityCheckData = std::make_unique<CommonSlowPaths::ArityCheckData>();
 
 #if ENABLE(FTL_JIT)
     ftlThunks = std::make_unique<FTL::Thunks>();
