@@ -73,10 +73,6 @@ SizesAttributeParser::SizesAttributeParser(const String& attribute, const Docume
     , m_length(0)
     , m_lengthWasSet(false)
 {
-    // Ensure iframes have correct view size.
-    if (m_document.ownerElement())
-        m_document.ownerElement()->document().updateLayoutIgnorePendingStylesheets();
-
     m_isValid = parse(CSSTokenizer(attribute).tokenRange());
 }
 
