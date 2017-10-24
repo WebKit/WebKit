@@ -72,6 +72,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetButterfly:
     case GetButterflyWithoutCaging:
     case NewObject:
+    case NewStringObject:
     case NewArray:
     case NewArrayWithSpread:
     case Spread:

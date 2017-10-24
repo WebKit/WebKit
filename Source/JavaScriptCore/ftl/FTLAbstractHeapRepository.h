@@ -66,6 +66,7 @@ namespace JSC { namespace FTL {
     macro(JSCell_typeInfoFlags, JSCell::typeInfoFlagsOffset()) \
     macro(JSCell_typeInfoType, JSCell::typeInfoTypeOffset()) \
     macro(JSCell_usefulBytes, JSCell::indexingTypeAndMiscOffset()) \
+    macro(JSDestructibleObject_classInfo, JSDestructibleObject::classInfoOffset()) \
     macro(JSFunction_executable, JSFunction::offsetOfExecutable()) \
     macro(JSFunction_scope, JSFunction::offsetOfScopeChain()) \
     macro(JSFunction_rareData, JSFunction::offsetOfRareData()) \

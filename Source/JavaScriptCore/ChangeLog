@@ -1,3 +1,20 @@
+2017-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Support NewStringObject
+        https://bugs.webkit.org/show_bug.cgi?id=178737
+
+        Reviewed by Saam Barati.
+
+        FTL should support NewStringObject and encourage use of NewStringObject in DFG pipeline.
+        After this change, we can convert `CallObjectConstructor(String)` to `NewStringObject(String)`.
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+
 2017-10-24  Guillaume Emont  <guijemont@igalia.com>
 
         [mips] fix offsets of branches that have to go over a jump
