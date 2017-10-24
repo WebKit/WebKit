@@ -362,9 +362,6 @@ webkit.org/b/174674 fast/events/zoom-dblclick.html [ Failure ]
 
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
-# ENABLE_PROXIMITY_EVENTS is OFF in WPE.
-fast/events/constructors/device-proximity-event-constructor.html [ Skip ]
-
 # ENABLE_DRAG_SUPPORT is OFF in WPE.
 fast/events/5056619.html [ Skip ]
 fast/events/before-input-events-prevent-drag-and-drop.html [ Skip ]
@@ -898,8 +895,6 @@ webkit.org/b/178316 http/tests/cache-storage [ Skip ]
 
 webkit.org/b/178577 http/tests/dom/document-attributes-null-handling.html [ Failure ]
 webkit.org/b/178578 http/tests/images/hidpi-srcset-copy.html [ Failure ]
-
-http/tests/dom/document-attributes-null-handling [ Failure ]
 
 webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
 

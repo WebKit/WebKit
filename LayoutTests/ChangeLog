@@ -1,5 +1,20 @@
 2017-10-24  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [WPE] Remove expectations for tests which do not exist anymore
+        https://bugs.webkit.org/show_bug.cgi?id=178717
+
+        Unreviewed WPE test gardening.
+
+        This avoids the following warning being emitted by run-webkit-tests:
+
+          --lint-test-files warnings:
+          LayoutTests/platform/wpe/TestExpectations:366 Path does not exist. fast/events/constructors/device-proximity-event-constructor.html
+          LayoutTests/platform/wpe/TestExpectations:902 Path does not exist. http/tests/dom/document-attributes-null-handling
+
+        * platform/wpe/TestExpectations:
+
+2017-10-24  Adrian Perez de Castro  <aperez@igalia.com>
+
         Unreviewed GTK+ test gardening.
 
         * platform/gtk/TestExpectations:
