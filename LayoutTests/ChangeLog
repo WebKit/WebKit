@@ -1,3 +1,13 @@
+2017-10-24  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash at -[WebAccessibilityObjectWrapper _accessibilityMinValue] + 24
+        https://bugs.webkit.org/show_bug.cgi?id=178697
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/slider-min-value-crash-expected.txt: Added.
+        * accessibility/ios-simulator/slider-min-value-crash.html: Added.
+
 2017-10-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed WPE test gardening

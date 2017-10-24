@@ -1085,11 +1085,17 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
 - (CGFloat)_accessibilityMinValue
 {
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    
     return m_object->minValueForRange();
 }
 
 - (CGFloat)_accessibilityMaxValue
 {
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    
     return m_object->maxValueForRange();
 }
 
