@@ -92,12 +92,12 @@ public:
     Wasm::CodeBlock& wasmCodeBlock() const { return *m_instance->codeBlock(); }
     static ptrdiff_t offsetOfWasmTable() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_wasmTable); }
     static ptrdiff_t offsetOfCallee() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_callee); }
-    static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_vm); }
     static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_globals); }
     static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_codeBlock); }
     static ptrdiff_t offsetOfWasmCodeBlock() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_wasmCodeBlock); }
     static ptrdiff_t offsetOfCachedStackLimit() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedStackLimit); }
     static ptrdiff_t offsetOfWasmMemory() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_wasmMemory); }
+    static ptrdiff_t offsetOfTopEntryFramePointer() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_topEntryFramePointer); }
     void* cachedStackLimit() const { RELEASE_ASSERT(m_instance->cachedStackLimit() == m_cachedStackLimit); return m_cachedStackLimit; }
     void setCachedStackLimit(void* limit) { m_instance->setCachedStackLimit(limit); m_cachedStackLimit = limit; }
     Wasm::Memory* wasmMemory() { return m_wasmMemory; }
@@ -134,6 +134,7 @@ private:
     Wasm::Memory* m_wasmMemory { nullptr };
     Wasm::Table* m_wasmTable { nullptr };
     uint64_t* m_globals { nullptr };
+    EntryFrame** m_topEntryFramePointer { nullptr };
 
     unsigned m_numImportFunctions;
 };

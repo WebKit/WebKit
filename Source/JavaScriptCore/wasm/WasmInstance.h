@@ -40,9 +40,9 @@ namespace JSC { namespace Wasm {
 
 class Instance : public ThreadSafeRefCounted<Instance> {
 public:
-    static Ref<Instance> create(Ref<Module>&& module)
+    static Ref<Instance> create(Ref<Module>&& module, EntryFrame** topEntryFramePointer)
     {
-        return adoptRef(*new Instance(WTFMove(module)));
+        return adoptRef(*new Instance(WTFMove(module), topEntryFramePointer));
     }
 
     void finalizeCreation(Ref<CodeBlock>&& codeBlock)
@@ -65,6 +65,8 @@ public:
     double loadF64Global(unsigned i) const { return bitwise_cast<double>(loadI64Global(i)); }
     void setGlobal(unsigned i, int64_t bits) { m_globals.get()[i] = bits; }
 
+    static ptrdiff_t offsetOfTopEntryFramePointer() { return OBJECT_OFFSETOF(Instance, m_topEntryFramePointer); }
+
     static ptrdiff_t offsetOfCachedStackLimit() { return OBJECT_OFFSETOF(Instance, m_cachedStackLimit); }
     void* cachedStackLimit() const { return m_cachedStackLimit; }
     void setCachedStackLimit(void* limit) { m_cachedStackLimit = limit; }
@@ -72,13 +74,14 @@ public:
     friend class JSC::JSWebAssemblyInstance; // FIXME remove this once refactored https://webkit.org/b/177472.
 
 private:
-    Instance(Ref<Module>&&);
+    Instance(Ref<Module>&&, EntryFrame**);
 
     Ref<Module> m_module;
     RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;
     RefPtr<Table> m_table;
     MallocPtr<uint64_t> m_globals;
+    EntryFrame** m_topEntryFramePointer { nullptr };
     void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
 };
 

@@ -367,15 +367,24 @@ public:
 #endif
     }
 
-    void copyCalleeSavesToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
+    void copyCalleeSavesToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+        const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() };
         GPRReg temp1 = usedRegisters.getFreeGPR(0);
         loadPtr(&topEntryFrame, temp1);
         copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(temp1);
 #else
         UNUSED_PARAM(topEntryFrame);
-        UNUSED_PARAM(usedRegisters);
+#endif
+    }
+    
+    void copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRReg topEntryFrame)
+    {
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+        copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(topEntryFrame);
+#else
+        UNUSED_PARAM(topEntryFrame);
 #endif
     }
 
@@ -395,7 +404,7 @@ public:
         loadPtr(&topEntryFrame, temp1);
         addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), temp1);
 
-        RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
+        RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
         RegisterAtOffsetList* currentCalleeSaves = codeBlock()->calleeSaveRegisters();
         RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
         unsigned registerCount = allCalleeSaves->size();

@@ -56,6 +56,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, unsig
     , m_wasmModule(m_instance->module())
     , m_wasmTable(m_instance->m_table.get())
     , m_globals(m_instance->m_globals.get())
+    , m_topEntryFramePointer(m_instance->m_topEntryFramePointer)
     , m_numImportFunctions(numImportFunctions)
 {
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
