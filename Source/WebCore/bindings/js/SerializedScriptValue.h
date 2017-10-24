@@ -73,8 +73,8 @@ public:
     static Ref<SerializedScriptValue> nullValue();
 
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, SerializationErrorMode = SerializationErrorMode::Throwing);
-    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, Vector<RefPtr<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing);
-    JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, Vector<RefPtr<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing);
+    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing);
+    JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing);
 
     static uint32_t wireFormatVersion();
 
