@@ -26,8 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LegacyWebArchive.h"
+#import "config.h"
+#import "LegacyWebArchive.h"
+
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 namespace WebCore {
 
@@ -42,14 +44,13 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
         return ResourceResponse();
     
     NSURLResponse *response = nil;
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData];
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
-    // Because of <rdar://problem/34063313> we can't use this for decoding in older OS's.
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData((NSData *)responseData);
     @try {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
         response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:LegacyWebArchiveResourceResponseKey];
 #else
-    @try {
+        // Because of <rdar://problem/34063313> we can't use secure coding for decoding in older OS's.
+        [unarchiver setRequiresSecureCoding:NO];
         id responseObject = [unarchiver decodeObjectForKey:LegacyWebArchiveResourceResponseKey];
         if ([responseObject isKindOfClass:[NSURLResponse class]])
             response = responseObject;
@@ -59,8 +60,7 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
         LOG_ERROR("Failed to decode NS(HTTP)URLResponse: %@", exception);
         response = nil;
     }
-    [unarchiver release];
-    
+
     return ResourceResponse(response);
 }
 
@@ -73,15 +73,14 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
     CFMutableDataRef responseData = CFDataCreateMutable(0, 0);
 
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:(NSMutableData *)responseData];
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:(NSMutableData *)responseData]);
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
     // Because of <rdar://problem/34063313> we can't use this for encoding in older OS's.
     [archiver setRequiresSecureCoding:YES];
 #endif
     [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
     [archiver finishEncoding];
-    [archiver release];
-    
+
     return adoptCF(responseData);
 }
 
