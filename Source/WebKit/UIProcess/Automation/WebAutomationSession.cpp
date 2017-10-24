@@ -663,8 +663,12 @@ void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
 
 void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page)
 {
-    if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID()))
+    if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID())) {
         callback->sendSuccess(InspectorObject::create());
+
+        if (m_pendingKeyboardEventsFlushedCallbacksPerPage.isEmpty())
+            m_simulatingUserInteraction = false;
+    }
 }
 
 void WebAutomationSession::willClosePage(const WebPageProxy& page)
@@ -1284,7 +1288,7 @@ static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protoco
 
     RELEASE_ASSERT_NOT_REACHED();
 }
-#endif // USE(APPKIT)
+#endif // USE(APPKIT) || PLATFORM(GTK)
 
 void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const Inspector::InspectorArray& keyModifierStrings, Ref<PerformMouseInteractionCallback>&& callback)
 {
@@ -1338,7 +1342,7 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
             .setY(y - page->topContentInset())
             .release());
     });
-#endif // USE(APPKIT)
+#endif // USE(APPKIT) || PLATFORM(GTK)
 }
 
 void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const Inspector::InspectorArray& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback)
@@ -1411,9 +1415,12 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
         callbackInMap->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
     callbackInMap = WTFMove(callback);
 
+    // This is cleared when all keyboard events are flushed.
+    m_simulatingUserInteraction = true;
+
     for (auto& action : actionsToPerform)
         action();
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(COCOA) || PLATFORM(GTK)
 }
 
 void WebAutomationSession::takeScreenshot(ErrorString& errorString, const String& handle, const String* optionalFrameHandle, const String* optionalNodeHandle, const bool* optionalScrollIntoViewIfNeeded, Ref<TakeScreenshotCallback>&& callback)

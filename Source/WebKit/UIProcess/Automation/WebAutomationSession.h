@@ -156,6 +156,7 @@ public:
 #endif
 
     // Event Simulation Support.
+    bool isSimulatingUserInteraction() const { return m_simulatingUserInteraction; }
 #if PLATFORM(MAC)
     bool wasEventSynthesizedForAutomation(NSEvent *);
     void markEventAsSynthesizedForAutomation(NSEvent *);
@@ -259,6 +260,8 @@ private:
 
     bool m_permissionForGetUserMedia { true };
 
+    // True if a synthesized key event is still being processed.
+    bool m_simulatingUserInteraction { false };
 
     // Keep track of currently active modifiers across multiple keystrokes.
     // Most platforms do not track current modifiers from synthesized events.

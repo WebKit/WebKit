@@ -1,5 +1,37 @@
 2017-10-23  Brian Burg  <bburg@apple.com>
 
+        [Cocoa] Web Automation: add SPI to tell whether the automation session is currently simulating user interactions
+        https://bugs.webkit.org/show_bug.cgi?id=178616
+
+        Reviewed by Joseph Pecoraro.
+
+        This is needed to disambiguate whether an action (such as selectAll:) came from
+        a user clicking on "Edit > Select All" in a menu or whether it was produced by
+        simulating the keystrokes to produce the chord for "Command + a". Some clients,
+        such as Safari, would allow the latter but not the former during automation.
+
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession isSimulatingUserInteraction]):
+        Add new SPI property that's backed by the same WebAutomationSession method.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::keyboardEventsFlushedForPage):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        Set m_simulatingUserInteraction prior to sending the synthesized events. It will
+        be cleared when keyboardEventsFlushedForPage() is called by WebPageProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+        Notify the automation session that the key event queue was flushed *after* giving
+        delegates a chance to do something with the key event. This is necessary so that
+        any actions that are created from the NSEvent by the delegates are handled prior
+        to the automation session finishing its keyboard interaction command.
+
+2017-10-23  Brian Burg  <bburg@apple.com>
+
         [Mac] Web Automation: key modifiers for synthesized NSEvents are incorrect
         https://bugs.webkit.org/show_bug.cgi?id=178615
 

@@ -97,6 +97,11 @@
     return _session->isPaired();
 }
 
+- (BOOL)isSimulatingUserInteraction
+{
+    return _session->isSimulatingUserInteraction();
+}
+
 #if PLATFORM(MAC)
 - (BOOL)wasEventSynthesizedForAutomation:(NSEvent *)event
 {
