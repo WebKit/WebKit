@@ -1,3 +1,17 @@
+2017-10-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] generate-forwarding-headers.pl should also scan derived sources in WebKit framework
+        https://bugs.webkit.org/show_bug.cgi?id=178579
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake: When generating forwarding headers, derived sources
+        should be scanned as well. The DERIVED_SOURCES_WEBKIT_DIR value has to
+        be passed as an include path to the generate-forward-headers.pl script
+        to achieve that. This target then also has to depend on all the derived
+        source files to be generated before this can be performed.
+        * PlatformWPE.cmake: Ditto.
+
 2017-10-23  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Automation: add SPI to tell whether the automation session is currently simulating user interactions
