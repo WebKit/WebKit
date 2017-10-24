@@ -126,7 +126,7 @@ static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSi
     sourceRectangle.setWidth(std::min(sourceRectangle.width(), inputSize.width()));
     sourceRectangle.setHeight(std::min(sourceRectangle.height(), inputSize.height()));
 
-    return sourceRectangle;
+    return { WTFMove(sourceRectangle) };
 }
 
 static IntSize outputSizeForSourceRectangle(IntRect sourceRectangle, ImageBitmapOptions& options)
