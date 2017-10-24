@@ -235,7 +235,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     {
         if (textField.value.trim() === "")
             this._remove();
-        else
+        else if (textField === this._valueTextField)
             this._renderValue(this._valueElement.textContent);
     }
 

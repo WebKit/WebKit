@@ -1,3 +1,15 @@
+2017-10-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Inline widgets don't hide when starting editing by tabbing from property name
+        https://bugs.webkit.org/show_bug.cgi?id=178638
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        Blur event on the property name text field caused WI.SpreadsheetStyleProperty.prototype._renderValue,
+        which displayed inline swatches. Display inline swatches only after blur event on the property value.
+
 2017-10-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Please support HAR Export for network traffic
