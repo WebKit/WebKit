@@ -535,6 +535,15 @@ bool MediaPlayerPrivateMediaFoundation::endGetEvent(IMFAsyncResult* asyncResult)
         break;
     }
 
+    case MESessionStarted: {
+        callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
+            if (!weakPtr)
+                return;
+            weakPtr->onSessionStarted();
+        });
+        break;
+    }
+
     case MEBufferingStarted: {
         callOnMainThread([weakPtr = m_weakPtrFactory.createWeakPtr(*this)] {
             if (!weakPtr)
@@ -917,6 +926,11 @@ void MediaPlayerPrivateMediaFoundation::onBufferingStarted()
 }
 
 void MediaPlayerPrivateMediaFoundation::onBufferingStopped()
+{
+    updateReadyState();
+}
+
+void MediaPlayerPrivateMediaFoundation::onSessionStarted()
 {
     updateReadyState();
 }

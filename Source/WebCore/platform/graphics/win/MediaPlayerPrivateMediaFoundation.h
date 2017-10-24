@@ -151,6 +151,7 @@ private:
     void onTopologySet();
     void onBufferingStarted();
     void onBufferingStopped();
+    void onSessionStarted();
     void onSessionEnded();
 
     LPCWSTR registerVideoWindowClass();
