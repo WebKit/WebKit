@@ -46,6 +46,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
     'webgl': 'WebGL',  # Canvas.ContextType.webgl
     'webgl2': 'WebGL2',  # Canvas.ContextType.webgl2
     'webgpu': 'WebGPU',  # Canvas.ContextType.webgpu
+    'webrtc': 'WebRTC',  # Console.ChannelSource.webrtc
 }
 
 # These objects are built manually by creating and setting InspectorValues.

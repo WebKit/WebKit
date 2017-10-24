@@ -229,6 +229,28 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         zoomEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => { WI.setZoomFactor(zoomEditor.value); });
         WI.settings.zoomFactor.addEventListener(WI.Setting.Event.Changed, () => { zoomEditor.value = WI.getZoomFactor().maxDecimals(2); });
 
+        if (WI.LogManager.supportsLogChannels()) {
+            const logLevels = [
+                [WI.LoggingChannel.Level.Off, WI.UIString("Off")],
+                [WI.LoggingChannel.Level.Log, WI.UIString("Log")],
+                [WI.LoggingChannel.Level.Error, WI.UIString("Error")],
+                [WI.LoggingChannel.Level.Warning, WI.UIString("Warning")],
+                [WI.LoggingChannel.Level.Info, WI.UIString("Info")],
+                [WI.LoggingChannel.Level.Debug, WI.UIString("Debug")],
+            ];
+            const editorLabels = {
+                media: WI.UIString("Media Logging:"),
+                webrtc: WI.UIString("WebRTC Logging:"),
+            };
+
+            let channels = WI.logManager.customLoggingChannels;
+            for (let channel of channels) {
+                let logEditor = generalSettingsView.addGroupWithCustomSetting(editorLabels[channel.source], WI.SettingEditor.Type.Select, {values: logLevels});
+                logEditor.value = channel.level;
+                logEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, () => { ConsoleAgent.setLoggingChannelLevel(channel.source, logEditor.value); });
+            }
+        }
+
         this.addSettingsView(generalSettingsView);
     }
 

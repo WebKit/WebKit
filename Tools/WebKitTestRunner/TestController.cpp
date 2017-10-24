@@ -1051,6 +1051,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
         if (key == "enableInspectorAdditions")
             testOptions.enableInspectorAdditions = parseBooleanTestHeaderValue(value);
+        if (key == "dumpJSConsoleLogInStdErr")
+            testOptions.dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
@@ -1190,7 +1192,7 @@ bool TestController::runTest(const char* inputLine)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
     if (command.timeout > 0)
         m_currentInvocation->setCustomTimeout(command.timeout);
-    m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr);
+    m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr);
 
     platformWillRunTest(*m_currentInvocation);
 

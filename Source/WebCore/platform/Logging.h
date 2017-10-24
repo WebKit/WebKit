@@ -109,4 +109,6 @@ WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
+WEBCORE_EXPORT WTFLogChannel* getLogChannel(const String& name);
+
 } // namespace WebCore

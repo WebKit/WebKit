@@ -160,10 +160,6 @@
     color: hsl(0, 75%, 45%);
 }
 
-.console-debug-level .console-message-text {
-    color: blue;
-}
-
 .console-warning-level {
     background-color: hsl(50, 100%, 94%);
     border-color: hsl(40, 100%, 90%);

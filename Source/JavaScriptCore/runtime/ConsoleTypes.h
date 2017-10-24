@@ -39,6 +39,8 @@ enum class MessageSource {
     Security,
     ContentBlocker,
     Other,
+    Media,
+    WebRTC,
 };
 
 enum class MessageType {

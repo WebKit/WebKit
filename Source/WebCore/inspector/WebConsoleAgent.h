@@ -43,6 +43,9 @@ public:
 
     void frameWindowDiscarded(DOMWindow*);
 
+    void getLoggingChannels(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>>&) final;
+    void setLoggingChannelLevel(ErrorString&, const String& channel, const String& level) final;
+
     void didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse&);
     void didFailLoading(unsigned long requestIdentifier, const ResourceError&);
 };

@@ -119,10 +119,13 @@ public:
 
     inline bool willLog(const WTFLogChannel& channel, WTFLogLevel level) const
     {
-        if (level != WTFLogLevelAlways && level > channel.level)
+        if (!m_enabled)
             return false;
 
-        if (channel.level != WTFLogLevelAlways && channel.state == WTFLogChannelOff)
+        if (level <= WTFLogLevelError)
+            return true;
+
+        if (channel.state == WTFLogChannelOff || level > channel.level)
             return false;
 
         return m_enabled;
@@ -182,6 +185,9 @@ private:
 #else
         os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
 #endif
+
+        if (channel.state == WTFLogChannelOff || level > channel.level)
+            return;
 
         for (Observer& observer : observers())
             observer.didLogMessage(channel, level, logMessage);

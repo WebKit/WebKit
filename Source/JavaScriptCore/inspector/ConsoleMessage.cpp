@@ -119,22 +119,24 @@ void ConsoleMessage::autogenerateMetadata(JSC::ExecState* state)
     }
 }
 
-static Inspector::Protocol::Console::ConsoleMessage::Source messageSourceValue(MessageSource source)
+static Inspector::Protocol::Console::ChannelSource messageSourceValue(MessageSource source)
 {
     switch (source) {
-    case MessageSource::XML: return Inspector::Protocol::Console::ConsoleMessage::Source::XML;
-    case MessageSource::JS: return Inspector::Protocol::Console::ConsoleMessage::Source::Javascript;
-    case MessageSource::Network: return Inspector::Protocol::Console::ConsoleMessage::Source::Network;
-    case MessageSource::ConsoleAPI: return Inspector::Protocol::Console::ConsoleMessage::Source::ConsoleAPI;
-    case MessageSource::Storage: return Inspector::Protocol::Console::ConsoleMessage::Source::Storage;
-    case MessageSource::AppCache: return Inspector::Protocol::Console::ConsoleMessage::Source::Appcache;
-    case MessageSource::Rendering: return Inspector::Protocol::Console::ConsoleMessage::Source::Rendering;
-    case MessageSource::CSS: return Inspector::Protocol::Console::ConsoleMessage::Source::CSS;
-    case MessageSource::Security: return Inspector::Protocol::Console::ConsoleMessage::Source::Security;
-    case MessageSource::ContentBlocker: return Inspector::Protocol::Console::ConsoleMessage::Source::ContentBlocker;
-    case MessageSource::Other: return Inspector::Protocol::Console::ConsoleMessage::Source::Other;
+    case MessageSource::XML: return Inspector::Protocol::Console::ChannelSource::XML;
+    case MessageSource::JS: return Inspector::Protocol::Console::ChannelSource::Javascript;
+    case MessageSource::Network: return Inspector::Protocol::Console::ChannelSource::Network;
+    case MessageSource::ConsoleAPI: return Inspector::Protocol::Console::ChannelSource::ConsoleAPI;
+    case MessageSource::Storage: return Inspector::Protocol::Console::ChannelSource::Storage;
+    case MessageSource::AppCache: return Inspector::Protocol::Console::ChannelSource::Appcache;
+    case MessageSource::Rendering: return Inspector::Protocol::Console::ChannelSource::Rendering;
+    case MessageSource::CSS: return Inspector::Protocol::Console::ChannelSource::CSS;
+    case MessageSource::Security: return Inspector::Protocol::Console::ChannelSource::Security;
+    case MessageSource::ContentBlocker: return Inspector::Protocol::Console::ChannelSource::ContentBlocker;
+    case MessageSource::Other: return Inspector::Protocol::Console::ChannelSource::Other;
+    case MessageSource::Media: return Inspector::Protocol::Console::ChannelSource::Media;
+    case MessageSource::WebRTC: return Inspector::Protocol::Console::ChannelSource::WebRTC;
     }
-    return Inspector::Protocol::Console::ConsoleMessage::Source::Other;
+    return Inspector::Protocol::Console::ChannelSource::Other;
 }
 
 static Inspector::Protocol::Console::ConsoleMessage::Type messageTypeValue(MessageType type)

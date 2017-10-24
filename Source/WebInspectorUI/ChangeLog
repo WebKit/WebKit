@@ -1,3 +1,48 @@
+2017-10-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Web Inspector: Enable WebKit logging configuration and display
+        https://bugs.webkit.org/show_bug.cgi?id=177027
+        <rdar://problem/33964767>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Add new localized strings.
+
+        * UserInterface/Controllers/LogManager.js:
+        (WI.LogManager): Initialize _loggingChannelSources, fetch _customLoggingChannels.
+        (WI.LogManager.supportsLogChannels): New.
+        (WI.LogManager.prototype.get customLoggingChannels): New.
+        (WI.LogManager.prototype.get logChannelSources): New.
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/ConsoleMessage.js: Add Media and WebRTC.
+
+        * UserInterface/Models/IssueMessage.js:
+        (WI.IssueMessage): Add media and webrtc.
+
+        * UserInterface/Models/LoggingChannel.js: Added.
+        (WI.LoggingChannel):
+        (WI.LoggingChannel.fromPayload):
+        (WI.LoggingChannel.prototype.get source):
+        (WI.LoggingChannel.prototype.get level):
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView): Add new scope buttons for "Log", "Info", and "Debug". Create log channel
+            scope buttons once logging has started.
+        (WI.LogContentView.prototype.get navigationItems): Add the log message scope bar when necessary.
+        (WI.LogContentView.prototype._scopeFromMessageSource): New.
+        (WI.LogContentView.prototype._scopeFromMessageLevel): Don't group Info, Log, and Debug.
+        (WI.LogContentView.prototype._messageAdded): Force a UI update the first time a WebKit log
+            message is added.
+
+        (WI.LogContentView.prototype._messageShouldBeVisible): New, deal with message source bar buttons.
+        (WI.LogContentView.prototype._messageSourceBarSelectionDidChange): New.
+        (WI.LogContentView.prototype._filterMessageElements): Deal with message source bar buttons.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView): Create and initialize menus
+            for each log channel.
+
 2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: TypeError: null is not an object (evaluating 'this.treeOutline.isXMLMimeType')

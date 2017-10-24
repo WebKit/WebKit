@@ -32,6 +32,7 @@
 // Test.
 InspectorBackend.registerEnum("Test.UncastedAnimals", {Pigs: "Pigs", Cows: "Cows", Cats: "Cats", Hens: "Hens"});
 InspectorBackend.registerEnum("Test.CastedAnimals", {Ducks: "Ducks", Hens: "Hens", Crows: "Crows", Flamingos: "Flamingos"});
+InspectorBackend.activateDomain("Test");
 ### End File: InspectorBackendCommands.js
 
 ### Begin File: TestAlternateBackendDispatchers.h

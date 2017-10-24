@@ -1,3 +1,24 @@
+2017-10-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Web Inspector: Enable WebKit logging configuration and display
+        https://bugs.webkit.org/show_bug.cgi?id=177027
+        <rdar://problem/33964767>
+
+        Reviewed by Joseph Pecoraro.
+
+        Allow new 'dumpJSConsoleLogInStdErr' test header to redirect log console output to stderr.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2017-10-24  Alex Christensen  <achristensen@webkit.org>
 
         Apply custom header fields from WebsitePolicies to same-domain requests

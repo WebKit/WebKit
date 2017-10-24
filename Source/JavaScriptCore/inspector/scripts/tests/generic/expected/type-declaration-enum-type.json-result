@@ -32,6 +32,7 @@
 // Runtime.
 InspectorBackend.registerEnum("Runtime.FarmAnimals", {Pigs: "Pigs", Cows: "Cows", Cats: "Cats", Hens: "Hens"});
 InspectorBackend.registerEnum("Runtime.TwoLeggedAnimals", {Ducks: "Ducks", Hens: "Hens", Crows: "Crows", Flamingos: "Flamingos"});
+InspectorBackend.activateDomain("Runtime");
 ### End File: InspectorBackendCommands.js
 
 ### Begin File: TestAlternateBackendDispatchers.h

@@ -66,6 +66,8 @@ WI.IssueMessage = class IssueMessage extends WI.Object
         case "appcache":
         case "rendering":
         case "other":
+        case "media":
+        case "webrtc":
             this._type = WI.IssueMessage.Type.OtherIssue;
             break;
 

@@ -80,6 +80,18 @@ void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, enabledChannelsString.utf8().data());
 }
 
+WTFLogChannel* getLogChannel(const String& name)
+{
+    return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
+}
+
+#else
+
+WTFLogChannel* getLogChannel(const String&)
+{
+    return nullptr;
+}
+
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 } // namespace WebCore

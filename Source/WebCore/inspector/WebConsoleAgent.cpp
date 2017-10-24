@@ -29,6 +29,7 @@
 
 #include "CommandLineAPIHost.h"
 #include "DOMWindow.h"
+#include "Logging.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptState.h"
@@ -44,6 +45,100 @@ using namespace Inspector;
 WebConsoleAgent::WebConsoleAgent(AgentContext& context, InspectorHeapAgent* heapAgent)
     : InspectorConsoleAgent(context, heapAgent)
 {
+}
+
+void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>>& channels)
+{
+    static const struct ChannelTable {
+        NeverDestroyed<String> name;
+        Inspector::Protocol::Console::ChannelSource source;
+    } channelTable[] = {
+        { MAKE_STATIC_STRING_IMPL("WebRTC"), Inspector::Protocol::Console::ChannelSource::WebRTC },
+        { MAKE_STATIC_STRING_IMPL("Media"), Inspector::Protocol::Console::ChannelSource::Media },
+    };
+
+    channels = Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>::create();
+
+    size_t length = WTF_ARRAY_LENGTH(channelTable);
+    for (size_t i = 0; i < length; ++i) {
+        auto* logChannel = getLogChannel(channelTable[i].name);
+        if (!logChannel)
+            return;
+
+        Inspector::Protocol::Console::ChannelLevel level;
+        if (logChannel->state == WTFLogChannelOff)
+            level = Inspector::Protocol::Console::ChannelLevel::Off;
+        else {
+            switch (logChannel->level) {
+            case WTFLogLevelAlways:
+                level = Inspector::Protocol::Console::ChannelLevel::Log;
+                break;
+            case WTFLogLevelError:
+                level = Inspector::Protocol::Console::ChannelLevel::Error;
+                break;
+            case WTFLogLevelWarning:
+                level = Inspector::Protocol::Console::ChannelLevel::Warning;
+                break;
+            case WTFLogLevelInfo:
+                level = Inspector::Protocol::Console::ChannelLevel::Info;
+                break;
+            case WTFLogLevelDebug:
+                level = Inspector::Protocol::Console::ChannelLevel::Debug;
+                break;
+            }
+        }
+
+        auto channel = Inspector::Protocol::Console::Channel::create()
+            .setSource(channelTable[i].source)
+            .setLevel(level)
+            .release();
+        channels->addItem(WTFMove(channel));
+    }
+}
+
+static std::optional<std::pair<WTFLogChannelState, WTFLogLevel>> channelConfigurationForString(const String& levelString)
+{
+    WTFLogChannelState state;
+    WTFLogLevel level;
+
+    if (equalIgnoringASCIICase(levelString, "off")) {
+        state = WTFLogChannelOff;
+        level = WTFLogLevelError;
+    } else {
+        state = WTFLogChannelOn;
+        if (equalIgnoringASCIICase(levelString, "log"))
+            level = WTFLogLevelAlways;
+        else if (equalIgnoringASCIICase(levelString, "error"))
+            level = WTFLogLevelError;
+        else if (equalIgnoringASCIICase(levelString, "warning"))
+            level = WTFLogLevelWarning;
+        else if (equalIgnoringASCIICase(levelString, "info"))
+            level = WTFLogLevelInfo;
+        else if (equalIgnoringASCIICase(levelString, "debug"))
+            level = WTFLogLevelDebug;
+        else
+            return std::nullopt;
+    }
+
+    return { { state, level } };
+}
+
+void WebConsoleAgent::setLoggingChannelLevel(ErrorString& errorString, const String& channelName, const String& channelLevel)
+{
+    auto* channel = getLogChannel(channelName.utf8().data());
+    if (!channel) {
+        errorString = ASCIILiteral("Logging channel not found");
+        return;
+    }
+
+    auto configuration = channelConfigurationForString(channelLevel);
+    if (!configuration) {
+        errorString = ASCIILiteral("Invalid logging level");
+        return;
+    }
+
+    channel->state = configuration.value().first;
+    channel->level = configuration.value().second;
 }
 
 void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)

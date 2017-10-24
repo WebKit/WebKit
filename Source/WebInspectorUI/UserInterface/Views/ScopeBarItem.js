@@ -25,7 +25,7 @@
 
 WI.ScopeBarItem = class ScopeBarItem extends WI.Object
 {
-    constructor(id, label, exclusive, className)
+    constructor(id, label, exclusive, className, hidden)
     {
         super();
 
@@ -39,10 +39,12 @@ WI.ScopeBarItem = class ScopeBarItem extends WI.Object
         this._id = id;
         this._label = label;
         this._exclusive = exclusive;
+        this._hidden = !!hidden;
 
         this._selectedSetting = new WI.Setting("scopebaritem-" + id, false);
 
         this._element.classList.toggle("selected", this._selectedSetting.value);
+        this._element.classList.toggle("hidden", this._hidden);
     }
 
     // Public
@@ -86,6 +88,21 @@ WI.ScopeBarItem = class ScopeBarItem extends WI.Object
         this._selectedSetting.value = selected;
 
         this.dispatchEventToListeners(WI.ScopeBarItem.Event.SelectionChanged, {withModifier});
+    }
+
+    get hidden()
+    {
+        return this._hidden;
+    }
+
+    set hidden(flag)
+    {
+        if (this._hidden === flag)
+            return;
+
+        this._hidden = flag;
+
+        this._element.classList.toggle("hidden", flag);
     }
 
     // Private

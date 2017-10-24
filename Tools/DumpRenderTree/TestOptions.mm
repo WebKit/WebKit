@@ -96,6 +96,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
         else if (key == "enableInspectorAdditions")
             this->enableInspectorAdditions = parseBooleanTestHeaderValue(value);
+        else if (key == "dumpJSConsoleLogInStdErr")
+            this->dumpJSConsoleLogInStdErr = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

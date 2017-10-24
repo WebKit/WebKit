@@ -4,11 +4,32 @@
     "workerSupported": true,
     "types": [
         {
+            "id": "ChannelSource",
+            "type": "string",
+            "enum": ["xml", "javascript", "network", "console-api", "storage", "appcache", "rendering", "css", "security", "content-blocker", "media", "webrtc", "other"],
+            "description": "Channels for different types of log messages."
+        },
+        {
+            "id": "ChannelLevel",
+            "type": "string",
+            "enum": ["off", "log", "error", "warning", "info", "debug"],
+            "description": "Level of logging."
+        },
+        {
+            "id": "Channel",
+            "description": "Logging channel.",
+            "type": "object",
+            "properties": [
+                { "name": "source", "$ref": "ChannelSource" },
+                { "name": "level", "$ref": "ChannelLevel" }
+            ]
+        },
+        {
             "id": "ConsoleMessage",
             "type": "object",
             "description": "Console message.",
             "properties": [
-                { "name": "source", "type": "string", "enum": ["xml", "javascript", "network", "console-api", "storage", "appcache", "rendering", "css", "security", "content-blocker", "other"], "description": "Message source." },
+                { "name": "source", "$ref": "ChannelSource"},
                 { "name": "level", "type": "string", "enum": ["log", "info", "warning", "error", "debug"], "description": "Message severity." },
                 { "name": "text", "type": "string", "description": "Message text." },
                 { "name": "type", "type": "string", "optional": true, "enum": ["log", "dir", "dirxml", "table", "trace", "clear", "startGroup", "startGroupCollapsed", "endGroup", "assert", "timing", "profile", "profileEnd"], "description": "Console message type." },
@@ -57,7 +78,22 @@
         {
             "name": "clearMessages",
             "description": "Clears console messages collected in the browser."
-        }
+        },
+        {
+            "name": "getLoggingChannels",
+            "description": "List of the different message sources that are non-default logging channels.",
+            "returns": [
+                { "name": "channels", "type": "array", "items": { "$ref": "Channel"}, "description": "Logging channels." }
+            ]
+         },
+         {
+            "name": "setLoggingChannelLevel",
+            "description": "Modify the level of a channel.",
+            "parameters": [
+                { "name": "source", "$ref": "ChannelSource", "description": "Logging channel to modify." },
+                { "name": "level", "$ref": "ChannelLevel", "description": "New level." }
+            ]
+         }
     ],
     "events": [
         {

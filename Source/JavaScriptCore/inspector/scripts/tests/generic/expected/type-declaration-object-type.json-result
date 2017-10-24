@@ -33,6 +33,7 @@
 InspectorBackend.registerEnum("Database.MouseButton", {None: "None", Left: "Left", Middle: "Middle", Right: "Right"});
 InspectorBackend.registerEnum("Database.OptionalParameterBundleDirectionality", {LTR: "LTR", RTL: "RTL"});
 InspectorBackend.registerEnum("Database.ParameterBundleDirectionality", {LTR: "LTR", RTL: "RTL"});
+InspectorBackend.activateDomain("Database");
 ### End File: InspectorBackendCommands.js
 
 ### Begin File: TestAlternateBackendDispatchers.h

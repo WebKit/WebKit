@@ -1,3 +1,16 @@
+2017-10-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Web Inspector: Enable WebKit logging configuration and display
+        https://bugs.webkit.org/show_bug.cgi?id=177027
+        <rdar://problem/33964767>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/console/webcore-logging-expected.txt: Added.
+        * inspector/console/webcore-logging.html: Added.
+        * platform/mac/TestExpectations: Skip new test on Yosemite and ElCapitan.
+        * platform/win/TestExpectations: Skip new test.
+
 2017-10-24  Dean Jackson  <dino@apple.com>
 
         Implement resizing options for ImageBitmap rendering

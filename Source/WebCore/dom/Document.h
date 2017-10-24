@@ -51,6 +51,7 @@
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
+#include <pal/Logger.h>
 #include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -70,10 +71,6 @@
 namespace JSC {
 class ExecState;
 class InputCursor;
-}
-
-namespace PAL {
-class Logger;
 }
 
 namespace WebCore {
@@ -307,7 +304,8 @@ class Document
     , public ScriptExecutionContext
     , public FontSelectorClient
     , public FrameDestructionObserver
-    , public Supplementable<Document> {
+    , public Supplementable<Document>
+    , public PAL::Logger::Observer {
 public:
     static Ref<Document> create(Frame* frame, const URL& url)
     {
@@ -1357,7 +1355,7 @@ public:
     TextAutoSizing& textAutoSizing();
 #endif
 
-    PAL::Logger& logger() const;
+    PAL::Logger& logger();
 
     bool hasStorageAccess() const { return m_hasStorageAccess; };
     void requestStorageAccess(Ref<DeferredPromise>&& passedPromise);
@@ -1658,6 +1656,8 @@ private:
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
 
     void notifyMediaCaptureOfVisibilityChanged();
+
+    void didLogMessage(const WTFLogChannel&, WTFLogLevel, const String&) final;
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
     std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;

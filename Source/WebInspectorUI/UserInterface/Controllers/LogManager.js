@@ -34,9 +34,35 @@ WI.LogManager = class LogManager extends WI.Object
         this._isNewPageOrReload = false;
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+
+        this._customLoggingChannels = [];
+        this._loggingChannelSources = [];
+
+        if (WI.LogManager.supportsLogChannels()) {
+            this._loggingChannelSources = [WI.ConsoleMessage.MessageSource.Media, WI.ConsoleMessage.MessageSource.WebRTC];
+            ConsoleAgent.getLoggingChannels((error, channels) => {
+                if (error)
+                    return;
+
+                for (let channel of channels)
+                    console.assert(this._loggingChannelSources.includes(channel.source));
+
+                this._customLoggingChannels = channels.map(WI.LoggingChannel.fromPayload);
+            });
+        }
+    }
+
+    // Static
+
+    static supportsLogChannels()
+    {
+        return !!ConsoleAgent.getLoggingChannels;
     }
 
     // Public
+
+    get customLoggingChannels() { return this._customLoggingChannels; }
+    get logChannelSources() { return this._loggingChannelSources; }
 
     messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {

@@ -70,11 +70,25 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             new WI.ScopeBarItem(WI.LogContentView.Scopes.All, WI.UIString("All"), true),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Errors, WI.UIString("Errors"), false, "errors"),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Warnings, WI.UIString("Warnings"), false, "warnings"),
-            new WI.ScopeBarItem(WI.LogContentView.Scopes.Logs, WI.UIString("Logs"), false, "logs")
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Logs, WI.UIString("Logs"), false, "logs"),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Infos, WI.UIString("Infos"), false, "infos", true),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), false, "debugs", true),            
         ];
 
         this._scopeBar = new WI.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
+
+        this._hasNonDefaultLogChannelMessage = false;
+        if (WI.LogManager.supportsLogChannels()) {
+            let messageChannelBarItems = [
+                new WI.ScopeBarItem(WI.LogContentView.Scopes.AllChannels, WI.UIString("All"), true),
+                new WI.ScopeBarItem(WI.LogContentView.Scopes.Media, WI.UIString("Media"), false, "media"),
+                new WI.ScopeBarItem(WI.LogContentView.Scopes.WebRTC, WI.UIString("WebRTC"), false, "webrtc")
+            ];
+
+            this._messageSourceBar = new WI.ScopeBar("message-channel-scope-bar", messageChannelBarItems, messageChannelBarItems[0]);
+            this._messageSourceBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._messageSourceBarSelectionDidChange, this);
+        }
 
         this._garbageCollectNavigationItem = new WI.ButtonNavigationItem("garbage-collect", WI.UIString("Collect garbage"), "Images/NavigationItemGarbageCollect.svg", 16, 16);
         this._garbageCollectNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
@@ -103,6 +117,10 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     get navigationItems()
     {
         let navigationItems = [this._scopeBar];
+
+        if (this._hasNonDefaultLogChannelMessage && this._messageSourceBar)
+            navigationItems.push(this._messageSourceBar);
+
         if (HeapAgent.gc)
             navigationItems.push(this._garbageCollectNavigationItem);
 
@@ -346,25 +364,35 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._clearProvisionalState();
     }
 
-    _scopeFromMessageLevel(level)
+    _scopeFromMessageSource(source)
     {
-        var messageLevel;
-
-        switch (level) {
-        case WI.ConsoleMessage.MessageLevel.Warning:
-            messageLevel = WI.LogContentView.Scopes.Warnings;
-            break;
-        case WI.ConsoleMessage.MessageLevel.Error:
-            messageLevel = WI.LogContentView.Scopes.Errors;
-            break;
-        case WI.ConsoleMessage.MessageLevel.Log:
-        case WI.ConsoleMessage.MessageLevel.Info:
-        case WI.ConsoleMessage.MessageLevel.Debug:
-            messageLevel = WI.LogContentView.Scopes.Logs;
-            break;
+        switch (source) {
+        case WI.ConsoleMessage.MessageSource.Media:
+            return WI.LogContentView.Scopes.Media;
+        case WI.ConsoleMessage.MessageSource.WebRTC:
+            return WI.LogContentView.Scopes.WebRTC;
         }
 
-        return messageLevel;
+        return undefined;
+    }
+
+    _scopeFromMessageLevel(level)
+    {
+        switch (level) {
+        case WI.ConsoleMessage.MessageLevel.Warning:
+            return WI.LogContentView.Scopes.Warnings;
+        case WI.ConsoleMessage.MessageLevel.Error:
+            return WI.LogContentView.Scopes.Errors;
+        case WI.ConsoleMessage.MessageLevel.Log:
+            return WI.LogContentView.Scopes.Logs;
+        case WI.ConsoleMessage.MessageLevel.Info:
+            return this._hasNonDefaultLogChannelMessage ? WI.LogContentView.Scopes.Infos : WI.LogContentView.Scopes.Logs;
+        case WI.ConsoleMessage.MessageLevel.Debug:
+            return this._hasNonDefaultLogChannelMessage ? WI.LogContentView.Scopes.Debugs : WI.LogContentView.Scopes.Logs;
+        }
+        console.assert(false, "This should not be reached.");
+
+        return undefined;
     }
 
     _markScopeBarItemUnread(level)
@@ -380,10 +408,18 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _messageAdded(event)
     {
+        let message = event.data.message;
         if (this._startedProvisionalLoad)
-            this._provisionalMessages.push(event.data.message);
+            this._provisionalMessages.push(message);
 
-        this._logViewController.appendConsoleMessage(event.data.message);
+        if (!this._hasNonDefaultLogChannelMessage && WI.logManager.logChannelSources.includes(message.source)) {
+            this._hasNonDefaultLogChannelMessage = true;
+            this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+            this._scopeBar.item(WI.LogContentView.Scopes.Infos).hidden = false;
+            this._scopeBar.item(WI.LogContentView.Scopes.Debugs).hidden = false;
+        }
+
+        this._logViewController.appendConsoleMessage(message);
     }
 
     _previousMessageRepeatCountUpdated(event)
@@ -740,33 +776,52 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }
     }
 
-    _scopeBarSelectionDidChange(event)
+    _messageShouldBeVisible(message)
     {
-        var item = this._scopeBar.selectedItems[0];
+        let messageSource = this._messageSourceBar && this._scopeFromMessageSource(message.source);
+        if (messageSource && !this._messageSourceBar.item(messageSource).selected && !this._messageSourceBar.item(WI.LogContentView.Scopes.AllChannels).selected)
+            return false;
 
-        if (item.id === WI.LogContentView.Scopes.All) {
-            for (var item of this._scopeBar.items)
+        let messageLevel = this._scopeFromMessageLevel(message.level);
+        if (messageLevel)
+            return this._scopeBar.item(messageLevel).selected || this._scopeBar.item(WI.LogContentView.Scopes.All).selected;
+
+        return true;
+    }
+
+    _messageSourceBarSelectionDidChange(event)
+    {
+        let selectedItem = this._messageSourceBar.selectedItems[0];
+        if (selectedItem.id === WI.LogContentView.Scopes.AllChannels) {
+            for (let item of this._messageSourceBar.items)
                 item.element.classList.remove("unread");
         } else
-            item.element.classList.remove("unread");
+            selectedItem.element.classList.remove("unread");
+
+        this._filterMessageElements(this._allMessageElements());
+    }
+
+    _scopeBarSelectionDidChange(event)
+    {
+        let selectedItem = this._scopeBar.selectedItems[0];
+
+        if (selectedItem.id === WI.LogContentView.Scopes.All) {
+            for (let item of this._scopeBar.items)
+                item.element.classList.remove("unread");
+        } else
+            selectedItem.element.classList.remove("unread");
 
         this._filterMessageElements(this._allMessageElements());
     }
 
     _filterMessageElements(messageElements)
     {
-        var showsAll = this._scopeBar.item(WI.LogContentView.Scopes.All).selected;
-
         messageElements.forEach(function(messageElement) {
-            var visible = showsAll || messageElement.__commandView instanceof WI.ConsoleCommandView || messageElement.__message instanceof WI.ConsoleCommandResultMessage;
-            if (!visible) {
-                var messageLevel = this._scopeFromMessageLevel(messageElement.__message.level);
+            let visible = messageElement.__commandView instanceof WI.ConsoleCommandView || messageElement.__message instanceof WI.ConsoleCommandResultMessage;
+            if (!visible)
+                visible = this._messageShouldBeVisible(messageElement.__message);
 
-                if (messageLevel)
-                    visible = this._scopeBar.item(messageLevel).selected;
-            }
-
-            var classList = messageElement.classList;
+            let classList = messageElement.classList;
             if (visible)
                 classList.remove(WI.LogContentView.FilteredOutStyleClassName);
             else {
@@ -1080,7 +1135,12 @@ WI.LogContentView.Scopes = {
     All: "log-all",
     Errors: "log-errors",
     Warnings: "log-warnings",
-    Logs: "log-logs"
+    Logs: "log-logs",
+    Infos: "log-infos",
+    Debugs: "log-debugs",
+    AllChannels: "log-all-channels",
+    Media: "log-media",
+    WebRTC: "log-webrtc",
 };
 
 WI.LogContentView.ItemWrapperStyleClassName = "console-item";

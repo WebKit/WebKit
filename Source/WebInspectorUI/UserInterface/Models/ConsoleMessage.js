@@ -109,6 +109,8 @@ WI.ConsoleMessage.MessageSource = {
     CSS: "css",
     Security: "security",
     Other: "other",
+    Media: "media",
+    WebRTC: "webrtc",
 };
 
 WI.ConsoleMessage.MessageType = {

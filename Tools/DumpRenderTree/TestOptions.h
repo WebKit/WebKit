@@ -38,6 +38,7 @@ struct TestOptions {
     bool layerBackedWebView { false };
     bool enableIsSecureContextAttribute { true };
     bool enableInspectorAdditions { false };
+    bool dumpJSConsoleLogInStdErr { false };
 
     TestOptions(NSURL*, const TestCommand&);
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;

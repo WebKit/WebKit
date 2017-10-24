@@ -31,6 +31,7 @@
 
 // TypeDomain.
 InspectorBackend.registerEnum("TypeDomain.TypeDomainEnum", {Shared: "shared", Red: "red", Green: "green", Blue: "blue"});
+InspectorBackend.activateDomain("TypeDomain");
 
 // CommandDomain.
 InspectorBackend.registerCommand("CommandDomain.commandWithEnumReturnValue", [], ["returnValue"]);

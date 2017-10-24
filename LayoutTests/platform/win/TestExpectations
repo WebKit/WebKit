@@ -3770,6 +3770,9 @@ webkit.org/b/177109 fast/css/display-contents-style-update.html [ ImageOnlyFailu
 
 webkit.org/b/177212 accessibility/crash-table-recursive-layout.html [ Failure ]
 
+# Release logging not supported
+inspector/console/webcore-logging.html [ Skip ]
+
 webkit.org/b/177216 fast/images/animated-image-mp4.html [ Skip ]
 
 webkit.org/b/177234 http/wpt/resource-timing/rt-cors.html [ Skip ]

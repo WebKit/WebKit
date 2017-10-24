@@ -72,6 +72,9 @@ public:
     void takeHeapSnapshot(const String& title);
     void count(JSC::ExecState*, Ref<ScriptArguments>&&);
 
+    void getLoggingChannels(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>>&) override;
+    void setLoggingChannelLevel(ErrorString&, const String& channel, const String& level) override;
+
 protected:
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);
 

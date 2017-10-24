@@ -51,6 +51,7 @@ struct TestOptions {
     bool enableIsSecureContextAttribute { true };
     bool enableInspectorAdditions { false };
     bool shouldShowTouches { false };
+    bool dumpJSConsoleLogInStdErr { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -74,7 +75,8 @@ struct TestOptions {
             || enablePointerLock != options.enablePointerLock
             || enableCredentialManagement != options.enableCredentialManagement
             || enableIsSecureContextAttribute != options.enableIsSecureContextAttribute
-            || enableInspectorAdditions != options.enableInspectorAdditions)
+            || enableInspectorAdditions != options.enableInspectorAdditions
+            || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr)
             return false;
 
         return true;

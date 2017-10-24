@@ -31,6 +31,7 @@
 
 // Debugger.
 InspectorBackend.registerEnum("Debugger.Reason", {Died: "Died", Fainted: "Fainted", Hungry: "Hungry"});
+InspectorBackend.activateDomain("Debugger");
 ### End File: InspectorBackendCommands.js
 
 ### Begin File: TestAlternateBackendDispatchers.h
