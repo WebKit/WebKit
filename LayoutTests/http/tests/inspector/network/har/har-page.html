@@ -13,6 +13,16 @@ function test()
             return value;
         }
 
+        // Cache may or may not have been used so remove optional fields which may or may not be set.
+        if (key === "connection")
+            return undefined;
+        if (key === "serverIPAddress")
+            return undefined;
+        if (key === "_transferSize")
+            return undefined;
+        if (key === "_fetchType")
+            return undefined;
+
         // Headers include dynamic data.
         if (key === "headers")
             return "<filtered>";
@@ -25,23 +35,9 @@ function test()
         if (key.endsWith("Size"))
             return "<filtered>";
 
-        // Connection identifier could be different.
-        if (key === "connection")
-            return "<filtered>";
-
         // Reduce the file contents.
         if (key === "text")
             return "<filtered text (" + value.length + ")>";
-
-        // Cache may or may not have been used so remove optional fields which may or may not be set.
-        if (key === "connection")
-            return undefined;
-        if (key === "serverIPAddress")
-            return undefined;
-        if (key === "_transferSize")
-            return undefined;
-        if (key === "_fetchType")
-            return undefined;        
 
         // Since cache may or may not be used, timing data may be variable.
         // NOTE: SSL should always be -1 for this test case.

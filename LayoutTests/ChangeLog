@@ -1,3 +1,11 @@
+2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed test gardening. Improved attempt to reduce flakiness of inspector/network/har tests.
+
+        * http/tests/inspector/network/har/har-page-expected.txt:
+        * http/tests/inspector/network/har/har-page.html:
+        Earlier filters were taking affect, so move these checks up.
+
 2017-10-24  Antti Koivisto  <antti@apple.com>
 
         Create inline wrappers for before/after pseudo elements that have display:contents
