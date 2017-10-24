@@ -147,11 +147,11 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
         const minimumHeight = 64;
         const maximumHeight = this.element.parentNode.offsetHeight - 100;
 
-        height = Number.constrain(height, minimumHeight, maximumHeight);
-        if (height === this.element.style.height)
+        let heightCSSValue = Number.constrain(height, minimumHeight, maximumHeight) + "px";
+        if (this.element.style.height === heightCSSValue)
             return;
 
-        this.element.style.height = height + "px";
+        this.element.style.height = heightCSSValue;
 
         this.dispatchEventToListeners(WI.ConsoleDrawer.Event.Resized);
     }
