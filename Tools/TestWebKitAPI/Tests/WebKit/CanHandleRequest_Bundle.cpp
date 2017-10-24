@@ -56,7 +56,7 @@ static bool canHandleURL(const char* url)
 
 static bool runTest()
 {
-    return canHandleURL("about:blank") && canHandleURL("emptyscheme://") && !canHandleURL("notascheme://");
+    return !WKBundlePageCanHandleRequest(nullptr) && canHandleURL("about:blank") && canHandleURL("emptyscheme://") && !canHandleURL("notascheme://");
 }
 
 void CanHandleRequestTest::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef)

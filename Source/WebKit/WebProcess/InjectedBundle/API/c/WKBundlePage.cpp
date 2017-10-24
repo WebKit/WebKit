@@ -422,6 +422,8 @@ bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 
 bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)
 {
+    if (!requestRef)
+        return false;
     return WebPage::canHandleRequest(toImpl(requestRef)->resourceRequest());
 }
 
