@@ -1,3 +1,16 @@
+2017-10-24  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: !m_serviceWorkerManager in WebProcess::getWorkerContextConnection() on API tests
+        https://bugs.webkit.org/show_bug.cgi?id=178586
+        <rdar://problem/35115902>
+
+        Reviewed by Brady Eidson.
+
+       Covered by API tests no longer crashing.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getWorkerContextProcessConnection): Sending a worker context process connection message only at creation of the service worker process.
+
 2017-10-24  Brent Fulgham  <bfulgham@apple.com>
 
         Adopt new secure coding APIs

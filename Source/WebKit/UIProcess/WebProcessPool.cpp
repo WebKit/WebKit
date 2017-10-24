@@ -589,13 +589,13 @@ void WebProcessPool::getWorkerContextProcessConnection(StorageProcessProxy& prox
 {
     ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
     
-    if (!m_workerContextProcess) {
-        if (!m_websiteDataStore)
-            m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-        auto& newProcess = createNewWebProcess(m_websiteDataStore->websiteDataStore());
-        m_workerContextProcess = &newProcess;
-    }
-    
+    if (m_workerContextProcess)
+        return;
+
+    if (!m_websiteDataStore)
+        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
+    auto& newProcess = createNewWebProcess(m_websiteDataStore->websiteDataStore());
+    m_workerContextProcess = &newProcess;
     m_workerContextProcess->send(Messages::WebProcess::GetWorkerContextConnection(), 0);
 }
 
