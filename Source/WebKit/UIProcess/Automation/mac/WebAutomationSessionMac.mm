@@ -445,9 +445,6 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
 
     auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
 
-    NSEventModifierFlags existingModifiers = [NSEvent modifierFlags];
-    NSEventModifierFlags updatedModifiers = 0;
-
     // FIXME: this timestamp is not even close to matching native events. Find out how to get closer.
     NSTimeInterval timestamp = [NSDate timeIntervalSinceReferenceDate];
     NSWindow *window = page.platformWindow();
@@ -457,14 +454,14 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
     switch (interaction) {
     case Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress: {
         NSEventType eventType = isStickyModifier ? NSEventTypeFlagsChanged : NSEventTypeKeyDown;
-        updatedModifiers = existingModifiers | changedModifiers;
-        [eventsToBeSent addObject:[NSEvent keyEventWithType:eventType location:eventPosition modifierFlags:updatedModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
+        m_currentModifiers |= changedModifiers;
+        [eventsToBeSent addObject:[NSEvent keyEventWithType:eventType location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
         break;
     }
     case Inspector::Protocol::Automation::KeyboardInteractionType::KeyRelease: {
         NSEventType eventType = isStickyModifier ? NSEventTypeFlagsChanged : NSEventTypeKeyUp;
-        updatedModifiers = existingModifiers & ~changedModifiers;
-        [eventsToBeSent addObject:[NSEvent keyEventWithType:eventType location:eventPosition modifierFlags:updatedModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
+        m_currentModifiers &= ~changedModifiers;
+        [eventsToBeSent addObject:[NSEvent keyEventWithType:eventType location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
         break;
     }
     case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey: {
@@ -473,9 +470,9 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
         if (isStickyModifier)
             return;
 
-        updatedModifiers = existingModifiers | changedModifiers;
-        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyDown location:eventPosition modifierFlags:updatedModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
-        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyUp location:eventPosition modifierFlags:updatedModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
+        m_currentModifiers |= changedModifiers;
+        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyDown location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
+        [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyUp location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters charactersIgnoringModifiers:unmodifiedCharacters isARepeat:NO keyCode:keyCode]];
         break;
     }
     }
@@ -535,7 +532,6 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     // This API should move more towards that direction in the future.
     NSString *text = keySequence;
 
-    NSEventModifierFlags modifiers = [NSEvent modifierFlags];
     NSTimeInterval timestamp = [NSDate timeIntervalSinceReferenceDate];
     NSWindow *window = page.platformWindow();
     NSInteger windowNumber = window.windowNumber;
@@ -546,9 +542,9 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
         // For ASCII characters that are produced using Shift on a US-108 key keyboard layout,
         // WebDriver expects these to be delivered as [shift-down, key-down, key-up, shift-up]
         // keystrokes unless the shift key is already pressed down from an earlier interaction.
-        BOOL shiftAlreadyPressed = modifiers & NSEventModifierFlagShift;
+        BOOL shiftAlreadyPressed = m_currentModifiers & NSEventModifierFlagShift;
         BOOL shouldPressShift = !shiftAlreadyPressed && substringRange.length == 1 && characterIsProducedUsingShift(substring);
-        NSEventModifierFlags modifiersForKeystroke = shouldPressShift ? modifiers | NSEventModifierFlagShift : modifiers;
+        NSEventModifierFlags modifiersForKeystroke = shouldPressShift ? m_currentModifiers | NSEventModifierFlagShift : m_currentModifiers;
 
         if (shouldPressShift)
             [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeFlagsChanged location:eventPosition modifierFlags:modifiersForKeystroke timestamp:timestamp windowNumber:windowNumber context:nil characters:@"" charactersIgnoringModifiers:@"" isARepeat:NO keyCode:kVK_Shift]];
@@ -557,7 +553,7 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
         [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyUp location:eventPosition modifierFlags:modifiersForKeystroke timestamp:timestamp windowNumber:windowNumber context:nil characters:substring charactersIgnoringModifiers:substring isARepeat:NO keyCode:0]];
         
         if (shouldPressShift)
-            [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeFlagsChanged location:eventPosition modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:@"" charactersIgnoringModifiers:@"" isARepeat:NO keyCode:kVK_Shift]];
+            [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeFlagsChanged location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:@"" charactersIgnoringModifiers:@"" isARepeat:NO keyCode:kVK_Shift]];
     }];
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());

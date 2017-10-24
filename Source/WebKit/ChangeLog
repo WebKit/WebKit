@@ -1,3 +1,28 @@
+2017-10-23  Brian Burg  <bburg@apple.com>
+
+        [Mac] Web Automation: key modifiers for synthesized NSEvents are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=178615
+
+        Reviewed by Joseph Pecoraro.
+
+        In both PLATFORM(MAC) platform methods for simulating keyboard interactions,
+        we errantly relied on +[NSEvent modifierFlags] to get the current state of
+        sticky modifiers when creating synthesized events. This is incorrect for two reasons:
+        modifierFlags is never updated when simulating a sequence of events (because
+        all the events are synthesized before any are delivered); and the NSEvent class
+        method only reflects the modifier state of the primary physical keyboard, which
+        is not affected by synthesized NSEvents that happen to have modifier flags.
+
+        Instead, just keep our own m_currentModifiers state in the session and compute
+        the necessary NSEventModifierFlags to put on each synthesized event. This aligns
+        the implementation with the treatment of sticky keys in the iOS and GTK platform methods.
+
+        * UIProcess/Automation/WebAutomationSession.h: Every port gets this variable now.
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        Use and update m_currentModifiers.
+
 2017-10-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix ASAN test after r222824
