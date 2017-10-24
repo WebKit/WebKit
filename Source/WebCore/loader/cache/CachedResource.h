@@ -283,7 +283,8 @@ public:
     unsigned long identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
     static ResourceLoadPriority defaultPriorityForResourceType(Type);
 
-    void setOriginalRequestHeaders(std::optional<HTTPHeaderMap>&& originalRequestHeaders) { m_originalRequestHeaders = WTFMove(originalRequestHeaders); }
+    void setOriginalRequest(std::unique_ptr<ResourceRequest>&& originalRequest) { m_originalRequest = WTFMove(originalRequest); }
+    const std::unique_ptr<ResourceRequest>& originalRequest() const { return m_originalRequest; }
 
 protected:
     // CachedResource constructor that may be used when the CachedResource can already be filled with response data.
@@ -300,7 +301,7 @@ protected:
     // FIXME: Make the rest of these data members private and use functions in derived classes instead.
     HashCountedSet<CachedResourceClient*> m_clients;
     ResourceRequest m_resourceRequest;
-    std::optional<HTTPHeaderMap> m_originalRequestHeaders; // Needed by Ping loads.
+    std::unique_ptr<ResourceRequest> m_originalRequest; // Needed by Ping loads.
     RefPtr<SubresourceLoader> m_loader;
     ResourceLoaderOptions m_options;
     ResourceResponse m_response;
