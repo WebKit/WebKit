@@ -1,3 +1,17 @@
+2017-10-24  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Layer mutations should be purely based on layerId, not based on nodeId
+        https://bugs.webkit.org/show_bug.cgi?id=178554
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/LayerTreeManager.js:
+        (WI.LayerTreeManager.prototype.layerTreeMutations):
+        Looking for special cases involving nodeIds is incorrect, as nodeIds need not be unique in the layer list (such
+        as when an element and a pseudo-element thereof each give rise to a layer). A layer object marked "preserved" in
+        this way shares no data with its predecessor, meaning that no consumer can act upon this so-called preservation.
+        A preserved layer should be nothing more or less than a recycled layerId (the thing that *is* unique).
+
 2017-10-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: Inline widgets don't hide when starting editing by tabbing from property name
