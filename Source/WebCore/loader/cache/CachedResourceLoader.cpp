@@ -765,8 +765,23 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 #endif
 
-    // FIXME: Add custom headers to first-party requests.
-    // https://bugs.webkit.org/show_bug.cgi?id=177629
+    if (frame() && m_documentLoader && !m_documentLoader->customHeaderFields().isEmpty()) {
+        bool sameOriginRequest = false;
+        auto requestedOrigin = SecurityOrigin::create(url);
+        if (type == CachedResource::Type::MainResource) {
+            if (frame()->isMainFrame())
+                sameOriginRequest = true;
+            else if (auto* topDocument = frame()->mainFrame().document())
+                sameOriginRequest = topDocument->securityOrigin().isSameSchemeHostPort(requestedOrigin.get());
+        } else if (document()) {
+            sameOriginRequest = document()->topDocument().securityOrigin().isSameSchemeHostPort(requestedOrigin.get())
+                && document()->securityOrigin().isSameSchemeHostPort(requestedOrigin.get());
+        }
+        if (sameOriginRequest) {
+            for (auto& field : m_documentLoader->customHeaderFields())
+                request.resourceRequest().addHTTPHeaderField(field.name(), field.value());
+        }
+    }
 
     LoadTiming loadTiming;
     loadTiming.markStartTimeAndFetchStart();

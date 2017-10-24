@@ -149,8 +149,7 @@ void ResourceRequestBase::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
     
     m_cachePolicy = cachePolicy;
     
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 double ResourceRequestBase::timeoutInterval() const
@@ -169,8 +168,7 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
 
     m_timeoutInterval = timeoutInterval;
     
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 const URL& ResourceRequestBase::firstPartyForCookies() const
@@ -208,8 +206,7 @@ void ResourceRequestBase::setHTTPMethod(const String& httpMethod)
 
     m_httpMethod = httpMethod;
     
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 const HTTPHeaderMap& ResourceRequestBase::httpHeaderFields() const
@@ -239,8 +236,7 @@ void ResourceRequestBase::setHTTPHeaderField(const String& name, const String& v
 
     m_httpHeaderFields.set(name, value);
     
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::setHTTPHeaderField(HTTPHeaderName name, const String& value)
@@ -249,8 +245,7 @@ void ResourceRequestBase::setHTTPHeaderField(HTTPHeaderName name, const String& 
 
     m_httpHeaderFields.set(name, value);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::clearHTTPAuthorization()
@@ -260,8 +255,7 @@ void ResourceRequestBase::clearHTTPAuthorization()
     if (!m_httpHeaderFields.remove(HTTPHeaderName::Authorization))
         return;
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 String ResourceRequestBase::httpContentType() const
@@ -280,8 +274,7 @@ void ResourceRequestBase::clearHTTPContentType()
 
     m_httpHeaderFields.remove(HTTPHeaderName::ContentType);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 String ResourceRequestBase::httpReferrer() const
@@ -305,8 +298,7 @@ void ResourceRequestBase::clearHTTPReferrer()
 
     m_httpHeaderFields.remove(HTTPHeaderName::Referer);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 String ResourceRequestBase::httpOrigin() const
@@ -330,8 +322,7 @@ void ResourceRequestBase::clearHTTPOrigin()
 
     m_httpHeaderFields.remove(HTTPHeaderName::Origin);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 bool ResourceRequestBase::hasHTTPHeader(HTTPHeaderName name) const
@@ -355,8 +346,7 @@ void ResourceRequestBase::clearHTTPUserAgent()
 
     m_httpHeaderFields.remove(HTTPHeaderName::UserAgent);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 String ResourceRequestBase::httpAccept() const
@@ -375,8 +365,7 @@ void ResourceRequestBase::clearHTTPAccept()
 
     m_httpHeaderFields.remove(HTTPHeaderName::Accept);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::clearHTTPAcceptEncoding()
@@ -385,8 +374,7 @@ void ResourceRequestBase::clearHTTPAcceptEncoding()
 
     m_httpHeaderFields.remove(HTTPHeaderName::AcceptEncoding);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2, const String& encoding3)
@@ -402,8 +390,7 @@ void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(con
     if (!encoding3.isNull())
         m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(encoding3);
     
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 FormData* ResourceRequestBase::httpBody() const
@@ -421,8 +408,7 @@ void ResourceRequestBase::setHTTPBody(RefPtr<FormData>&& httpBody)
 
     m_resourceRequestBodyUpdated = true;
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestBodyUpdated = false;
+    m_platformRequestBodyUpdated = false;
 }
 
 bool ResourceRequestBase::allowCookies() const
@@ -441,8 +427,7 @@ void ResourceRequestBase::setAllowCookies(bool allowCookies)
 
     m_allowCookies = allowCookies;
     
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 ResourceLoadPriority ResourceRequestBase::priority() const
@@ -461,8 +446,7 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
 
     m_priority = priority;
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::addHTTPHeaderFieldIfNotPresent(HTTPHeaderName name, const String& value)
@@ -472,8 +456,7 @@ void ResourceRequestBase::addHTTPHeaderFieldIfNotPresent(HTTPHeaderName name, co
     if (!m_httpHeaderFields.addIfNotPresent(name, value))
         return;
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::addHTTPHeaderField(HTTPHeaderName name, const String& value)
@@ -482,8 +465,7 @@ void ResourceRequestBase::addHTTPHeaderField(HTTPHeaderName name, const String& 
 
     m_httpHeaderFields.add(name, value);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 void ResourceRequestBase::addHTTPHeaderField(const String& name, const String& value)
@@ -492,8 +474,7 @@ void ResourceRequestBase::addHTTPHeaderField(const String& name, const String& v
 
     m_httpHeaderFields.add(name, value);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 bool ResourceRequestBase::hasHTTPHeaderField(HTTPHeaderName headerName) const
@@ -507,8 +488,7 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
 
     m_httpHeaderFields = WTFMove(headerFields);
 
-    if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
+    m_platformRequestUpdated = false;
 }
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
