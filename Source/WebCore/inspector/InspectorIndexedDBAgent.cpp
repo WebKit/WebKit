@@ -625,6 +625,8 @@ void InspectorIndexedDBAgent::requestData(ErrorString& errorString, const String
     dataLoader->start(idbFactory, &document->securityOrigin(), databaseName);
 }
 
+namespace {
+
 class ClearObjectStoreListener final : public EventListener {
     WTF_MAKE_NONCOPYABLE(ClearObjectStoreListener);
 public:
@@ -712,6 +714,8 @@ private:
     const String m_objectStoreName;
     Ref<ClearObjectStoreCallback> m_requestCallback;
 };
+
+} // anonymous namespace
 
 void InspectorIndexedDBAgent::clearObjectStore(ErrorString& errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, Ref<ClearObjectStoreCallback>&& requestCallback)
 {
