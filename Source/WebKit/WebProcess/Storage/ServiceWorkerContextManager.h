@@ -29,7 +29,7 @@
 
 #include "Connection.h"
 #include "MessageReceiver.h"
-#include <WebCore/ServiceWorkerThread.h>
+#include <WebCore/ServiceWorkerThreadProxy.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -39,23 +39,23 @@ struct ServiceWorkerContextData;
 }
 
 namespace WebKit {
+struct WebPreferencesStore;
 
 class ServiceWorkerContextManager : public IPC::MessageReceiver {
 public:
-    explicit ServiceWorkerContextManager(Ref<IPC::Connection>&& connection)
-        : m_connectionToStorageProcess(WTFMove(connection))
-    {
-    }
+    ServiceWorkerContextManager(Ref<IPC::Connection>&&, const WebPreferencesStore&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
+    void updatePreferences(const WebPreferencesStore&);
+
     void startServiceWorker(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
     void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&);
     void postMessageToServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
-    HashMap<uint64_t, RefPtr<WebCore::ServiceWorkerThread>> m_workerThreadMap;
+    HashMap<uint64_t, RefPtr<WebCore::ServiceWorkerThreadProxy>> m_workerMap;
 };
 
 } // namespace WebKit

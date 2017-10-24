@@ -67,6 +67,7 @@ private:
     // requests and to send callbacks back to WorkerGlobalScope.
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
     bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
+    Ref<CacheStorageConnection> createCacheStorageConnection() final;
 
     void workerThreadCreated(DedicatedWorkerThread&);
 

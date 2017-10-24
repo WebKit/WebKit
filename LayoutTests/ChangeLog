@@ -1,3 +1,15 @@
+2017-10-24  Youenn Fablet  <youenn@apple.com>
+
+        Enable service worker to use cache storage api
+        https://bugs.webkit.org/show_bug.cgi?id=178684
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/workers/service/resources/service-worker-cache-api-worker.js: Added.
+        * http/tests/workers/service/resources/service-worker-cache-api.js: Added.
+        * http/tests/workers/service/service-worker-cache-api.https-expected.txt: Added.
+        * http/tests/workers/service/service-worker-cache-api.https.html: Added.
+
 2017-10-24  Matt Lewis  <jlewis3@apple.com>
 
         Skipped imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/011.html on High Sierra Release.

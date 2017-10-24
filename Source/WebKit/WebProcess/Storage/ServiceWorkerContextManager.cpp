@@ -31,11 +31,16 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "StorageProcessMessages.h"
+#include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPreferencesKeys.h"
+#include "WebPreferencesStore.h"
+#include "WebProcess.h"
 #include "WebServiceWorkerFetchTaskClient.h"
 #include <WebCore/MessagePortChannel.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <pal/SessionID.h>
 
@@ -44,41 +49,51 @@ using namespace WebCore;
 
 namespace WebKit {
 
+ServiceWorkerContextManager::ServiceWorkerContextManager(Ref<IPC::Connection>&& connection, const WebPreferencesStore& store)
+    : m_connectionToStorageProcess(WTFMove(connection))
+{
+    updatePreferences(store);
+}
+
+void ServiceWorkerContextManager::updatePreferences(const WebPreferencesStore& store)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::cacheAPIEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
+}
+
 void ServiceWorkerContextManager::startServiceWorker(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
 {
     // FIXME: Provide a sensical session ID.
-    auto thread = ServiceWorkerThread::create(serverConnectionIdentifier, data, SessionID::defaultSessionID());
-    auto threadIdentifier = thread->identifier();
-    auto result = m_workerThreadMap.add(threadIdentifier, WTFMove(thread));
-    ASSERT(result.isNewEntry);
-
-    result.iterator->value->start();
+    auto serviceWorker = ServiceWorkerThreadProxy::create(serverConnectionIdentifier, data, SessionID::defaultSessionID(), WebProcess::singleton().cacheStorageProvider());
+    auto serviceWorkerIdentifier = serviceWorker->identifier();
+    auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorker));
+    ASSERT_UNUSED(result, result.isNewEntry);
 
     LOG(ServiceWorker, "Context process PID: %i started worker thread %s\n", getpid(), data.workerID.utf8().data());
 
-    m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextStarted(serverConnectionIdentifier, data.registrationKey, threadIdentifier, data.workerID), 0);
+    m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextStarted(serverConnectionIdentifier, data.registrationKey, serviceWorkerIdentifier, data.workerID), 0);
 }
 
 void ServiceWorkerContextManager::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options)
 {
-    auto serviceWorkerThread = m_workerThreadMap.get(serviceWorkerIdentifier);
-    if (!serviceWorkerThread) {
+    auto serviceWorker = m_workerMap.get(serviceWorkerIdentifier);
+    if (!serviceWorker) {
         m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch(serverConnectionIdentifier, fetchIdentifier), 0);
         return;
     }
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serverConnectionIdentifier, fetchIdentifier);
-    serviceWorkerThread->postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
+    serviceWorker->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
 }
 
 void ServiceWorkerContextManager::postMessageToServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin)
 {
-    auto* workerThread = m_workerThreadMap.get(serviceWorkerIdentifier);
-    if (!workerThread)
+    auto* serviceWorker = m_workerMap.get(serviceWorkerIdentifier);
+    if (!serviceWorker)
         return;
 
     // FIXME: We should pass valid MessagePortChannels.
-    workerThread->postMessageToServiceWorkerGlobalScope(SerializedScriptValue::adopt(message.vector()), nullptr, sourceOrigin);
+    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(SerializedScriptValue::adopt(message.vector()), nullptr, sourceOrigin);
 }
 
 } // namespace WebCore

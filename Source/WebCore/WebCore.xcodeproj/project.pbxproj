@@ -565,7 +565,7 @@
 		185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = 185BCF270F3279CE000EA262 /* ThreadTimers.h */; };
 		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
 		188604B40F2E654A000B6443 /* DOMTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 188604B20F2E654A000B6443 /* DOMTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; };
+		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */; };
 		1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */; };
 		197B180C1506353200E4ADA8 /* SVGRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 197B180B150634C000E4ADA8 /* SVGRenderingContext.h */; };
@@ -1383,6 +1383,8 @@
 		41103AAD1E39791000769F14 /* RealtimeIncomingAudioSourceCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 41103AA91E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.h */; };
 		41103AAE1E39791000769F03 /* RealtimeIncomingAudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41103AAA1E39790A00769F03 /* RealtimeIncomingAudioSource.cpp */; };
 		41103AAE1E39791000769F14 /* RealtimeIncomingAudioSourceCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41103AAA1E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.cpp */; };
+		4112B5421F9F9CA000E67875 /* ServiceWorkerThreadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4112B5411F9F9C9C00E67875 /* ServiceWorkerThreadProxy.cpp */; };
+		4112B5431F9F9CA000E67875 /* ServiceWorkerThreadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4112B53F1F9F9C9B00E67875 /* ServiceWorkerThreadProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4123081B138C429700BCCFCA /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F19B1A08245E5A001E9ABC /* WebCore.framework */; };
 		41230913138C42FF00BCCFCA /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		4129C9971F59B963009D7403 /* FetchBodySource.h in Headers */ = {isa = PBXBuildFile; fileRef = 413015D61C7B570400091C6F /* FetchBodySource.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8232,6 +8234,8 @@
 		41103AA91E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeIncomingAudioSourceCocoa.h; sourceTree = "<group>"; };
 		41103AAA1E39790A00769F03 /* RealtimeIncomingAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeIncomingAudioSource.cpp; sourceTree = "<group>"; };
 		41103AAA1E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeIncomingAudioSourceCocoa.cpp; sourceTree = "<group>"; };
+		4112B53F1F9F9C9B00E67875 /* ServiceWorkerThreadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerThreadProxy.h; sourceTree = "<group>"; };
+		4112B5411F9F9C9C00E67875 /* ServiceWorkerThreadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerThreadProxy.cpp; sourceTree = "<group>"; };
 		41189EF71AD8232800B90A0D /* ReadableStreamDefaultController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultController.idl; sourceTree = "<group>"; };
 		41189EF71AD8232800B93F64 /* ReadableByteStreamController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableByteStreamController.idl; sourceTree = "<group>"; };
 		41189EF71AD8232800B95672 /* ReadableStreamBYOBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamBYOBRequest.idl; sourceTree = "<group>"; };
@@ -18178,6 +18182,8 @@
 				419ACF8E1F97E7D5009F1A83 /* ServiceWorkerFetch.h */,
 				517C87111F8EE72F00EB8076 /* ServiceWorkerThread.cpp */,
 				517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */,
+				4112B5411F9F9C9C00E67875 /* ServiceWorkerThreadProxy.cpp */,
+				4112B53F1F9F9C9B00E67875 /* ServiceWorkerThreadProxy.h */,
 			);
 			path = context;
 			sourceTree = "<group>";
@@ -29580,6 +29586,7 @@
 				517A53291F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.h in Headers */,
 				51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */,
 				51BCCE301F8F179E006BA0ED /* ServiceWorkerThread.h in Headers */,
+				4112B5431F9F9CA000E67875 /* ServiceWorkerThreadProxy.h in Headers */,
 				51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
 				46EF142A1F97B7D800C2A524 /* ServiceWorkerWindowClient.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
@@ -32108,6 +32115,7 @@
 				517A53281F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.cpp in Sources */,
 				51F645A21F4BF53C00B54DED /* ServiceWorkerRegistrationOptions.cpp in Sources */,
 				51BCCE2F1F8F1795006BA0ED /* ServiceWorkerThread.cpp in Sources */,
+				4112B5421F9F9CA000E67875 /* ServiceWorkerThreadProxy.cpp in Sources */,
 				46EF142E1F97B7D800C2A524 /* ServiceWorkerWindowClient.cpp in Sources */,
 				7CD58DFD1F9565A800112791 /* Settings.cpp in Sources */,
 				7CC660A21F93CB9000D500E9 /* SettingsBase.cpp in Sources */,

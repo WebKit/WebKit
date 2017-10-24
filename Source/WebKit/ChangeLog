@@ -1,3 +1,32 @@
+2017-10-24  Youenn Fablet  <youenn@apple.com>
+
+        Enable service worker to use cache storage api
+        https://bugs.webkit.org/show_bug.cgi?id=178684
+
+        Reviewed by Brady Eidson.
+
+        Passing the WebPreferences store of the default page group of the WebProcessPool to its ServiceWorker process.
+        ServiceWorkerContextManager then uses it to initialize the preferences accordingly.
+        Patch is covered by new test which is using cache api previously disabled and now enabled through the store.
+
+        Made use of the new ServiceWorkerThreadProxy in ServiceWorkerContextManager to enable a cache storage connection.
+        Fixed the default size of quota in WebsiteDataStore.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getWorkerContextProcessConnection):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/Storage/ServiceWorkerContextManager.cpp:
+        (WebKit::ServiceWorkerContextManager::ServiceWorkerContextManager):
+        (WebKit::ServiceWorkerContextManager::updatePreferences):
+        (WebKit::ServiceWorkerContextManager::startServiceWorker):
+        (WebKit::ServiceWorkerContextManager::startFetch):
+        * WebProcess/Storage/ServiceWorkerContextManager.h:
+        (WebKit::ServiceWorkerContextManager::ServiceWorkerContextManager): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWorkerContextConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-10-24  Alex Christensen  <achristensen@webkit.org>
 
         Selecting and right-clicking URL-like strings with IDNA-disallowed characters in host or authority causes rendering engine crash

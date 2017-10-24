@@ -68,9 +68,11 @@ enum class ShouldClearFirst { No, Yes };
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>  {
 public:
+    constexpr static uint64_t defaultCacheStoragePerOriginQuota = 20 * 1024 * 1024;
+
     struct Configuration {
         String cacheStorageDirectory;
-        uint64_t cacheStoragePerOriginQuota;
+        uint64_t cacheStoragePerOriginQuota { defaultCacheStoragePerOriginQuota };
         String networkCacheDirectory;
         String applicationCacheDirectory;
         String applicationCacheFlatFileSubdirectoryName;
@@ -87,8 +89,6 @@ public:
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Configuration, PAL::SessionID);
     virtual ~WebsiteDataStore();
-
-    constexpr static uint64_t defaultCacheStoragePerOriginQuota = 20 * 1024 * 1024;
 
     bool isPersistent() const { return !m_sessionID.isEphemeral(); }
     PAL::SessionID sessionID() const { return m_sessionID; }

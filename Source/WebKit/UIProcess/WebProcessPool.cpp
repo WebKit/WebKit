@@ -596,7 +596,7 @@ void WebProcessPool::getWorkerContextProcessConnection(StorageProcessProxy& prox
         m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
     auto& newProcess = createNewWebProcess(m_websiteDataStore->websiteDataStore());
     m_workerContextProcess = &newProcess;
-    m_workerContextProcess->send(Messages::WebProcess::GetWorkerContextConnection(), 0);
+    m_workerContextProcess->send(Messages::WebProcess::GetWorkerContextConnection(m_defaultPageGroup->preferences().store()), 0);
 }
 
 void WebProcessPool::didGetWorkerContextProcessConnection(const IPC::Attachment& connection)

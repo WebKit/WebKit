@@ -1640,7 +1640,7 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcess::getWorkerContextConnection()
+void WebProcess::getWorkerContextConnection(const WebPreferencesStore& store)
 {
     ASSERT(!m_serviceWorkerManager);
 
@@ -1664,7 +1664,7 @@ void WebProcess::getWorkerContextConnection()
 
     auto workerContextConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
     workerContextConnection->open();
-    m_serviceWorkerManager =  ServiceWorkerContextManager(WTFMove(workerContextConnection));
+    m_serviceWorkerManager =  ServiceWorkerContextManager(WTFMove(workerContextConnection), store);
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidGetWorkerContextConnection(connectionClientPort), 0);
 }
 #endif

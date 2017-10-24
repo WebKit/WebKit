@@ -299,7 +299,7 @@ private:
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    void getWorkerContextConnection();
+    void getWorkerContextConnection(const WebPreferencesStore&);
 #endif
 
     void releasePageCache();

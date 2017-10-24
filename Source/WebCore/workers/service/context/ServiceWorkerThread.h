@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class CacheStorageProvider;
 class ContentSecurityPolicyResponseHeaders;
 class MessagePortChannel;
 class SerializedScriptValue;
@@ -60,7 +61,7 @@ protected:
     void runEventLoop() override;
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID);
+    WEBCORE_EXPORT ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, WorkerLoaderProxy&);
 
     uint64_t m_serverConnectionIdentifier;
     ServiceWorkerContextData m_data;

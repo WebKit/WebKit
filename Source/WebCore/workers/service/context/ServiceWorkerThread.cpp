@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "CacheStorageProvider.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "ExtendableMessageEvent.h"
 #include "SecurityOrigin.h"
@@ -43,17 +44,15 @@ using namespace PAL;
 
 namespace WebCore {
 
-class ServiceWorkerThreadProxy : public WorkerLoaderProxy, public WorkerObjectProxy {
+class DummyServiceWorkerThreadProxy : public WorkerObjectProxy {
 public:
-    static ServiceWorkerThreadProxy& sharedDummyProxy()
+    static DummyServiceWorkerThreadProxy& shared()
     {
-        static NeverDestroyed<ServiceWorkerThreadProxy> proxy;
+        static NeverDestroyed<DummyServiceWorkerThreadProxy> proxy;
         return proxy;
     }
 
 private:
-    void postTaskToLoader(ScriptExecutionContext::Task&&) final { };
-    bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String&) final { return false; };
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
     void postMessageToPageInspector(const String&) final { };
     void workerGlobalScopeDestroyed() final { };
@@ -70,11 +69,11 @@ private:
 // FIXME: Use a valid user agent
 // FIXME: Use valid runtime flags
 
-ServiceWorkerThread::ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID)
-    : WorkerThread(data.scriptURL, data.workerID, ASCIILiteral("WorkerUserAgent"), data.script, ServiceWorkerThreadProxy::sharedDummyProxy(), ServiceWorkerThreadProxy::sharedDummyProxy(), WorkerThreadStartMode::Normal, ContentSecurityPolicyResponseHeaders { }, false, SecurityOrigin::create(data.scriptURL).get(), MonotonicTime::now(), nullptr, nullptr, JSC::RuntimeFlags::createAllEnabled(), SessionID::defaultSessionID())
+ServiceWorkerThread::ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID, WorkerLoaderProxy& loaderProxy)
+    : WorkerThread(data.scriptURL, data.workerID, ASCIILiteral("WorkerUserAgent"), data.script, loaderProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, ContentSecurityPolicyResponseHeaders { }, false, SecurityOrigin::create(data.scriptURL).get(), MonotonicTime::now(), nullptr, nullptr, JSC::RuntimeFlags::createAllEnabled(), SessionID::defaultSessionID())
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_data(data.isolatedCopy())
-    , m_workerObjectProxy(ServiceWorkerThreadProxy::sharedDummyProxy())
+    , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())
 {
     AtomicString::init();
 }

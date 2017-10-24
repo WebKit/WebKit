@@ -91,12 +91,9 @@ static Record fromCrossThreadRecordData(CrossThreadRecordData&& data)
 Ref<WorkerCacheStorageConnection> WorkerCacheStorageConnection::create(WorkerGlobalScope& scope)
 {
     auto connection = adoptRef(*new WorkerCacheStorageConnection(scope));
-    connection->m_proxy.postTaskToLoader([protectedConnection = makeRef(connection.get())](ScriptExecutionContext& context) mutable {
+    callOnMainThread([protectedConnection = connection.copyRef()]() mutable {
         ASSERT(isMainThread());
-        Document& document = downcast<Document>(context);
-
-        ASSERT(document.page());
-        protectedConnection->m_mainThreadConnection = document.page()->cacheStorageProvider().createCacheStorageConnection(document.page()->sessionID());
+        protectedConnection->m_mainThreadConnection = protectedConnection->m_proxy.createCacheStorageConnection();
     });
     return connection;
 }
@@ -111,12 +108,12 @@ WorkerCacheStorageConnection::WorkerCacheStorageConnection(WorkerGlobalScope& sc
 WorkerCacheStorageConnection::~WorkerCacheStorageConnection()
 {
     if (m_mainThreadConnection)
-        m_proxy.postTaskToLoader([mainThreadConnection = WTFMove(m_mainThreadConnection)](ScriptExecutionContext&) mutable { });
+        callOnMainThread([mainThreadConnection = WTFMove(m_mainThreadConnection)]() mutable { });
 }
 
 void WorkerCacheStorageConnection::doOpen(uint64_t requestIdentifier, const String& origin, const String& cacheName)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()](ScriptExecutionContext&) mutable {
+    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()]() mutable {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
@@ -131,7 +128,7 @@ void WorkerCacheStorageConnection::doOpen(uint64_t requestIdentifier, const Stri
 
 void WorkerCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier](ScriptExecutionContext&) mutable {
+    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier]() mutable {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
@@ -147,7 +144,7 @@ void WorkerCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t
 
 void WorkerCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, origin = origin.isolatedCopy(), updateCounter](ScriptExecutionContext&) mutable {
+    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, origin = origin.isolatedCopy(), updateCounter]() mutable {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
@@ -168,7 +165,7 @@ void WorkerCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, 
 
 void WorkerCacheStorageConnection::reference(uint64_t cacheIdentifier)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), cacheIdentifier](ScriptExecutionContext&) {
+    callOnMainThread([this, protectedThis = makeRef(*this), cacheIdentifier]() {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
@@ -178,7 +175,7 @@ void WorkerCacheStorageConnection::reference(uint64_t cacheIdentifier)
 
 void WorkerCacheStorageConnection::dereference(uint64_t cacheIdentifier)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), cacheIdentifier](ScriptExecutionContext&) {
+    callOnMainThread([this, protectedThis = makeRef(*this), cacheIdentifier]() {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
@@ -213,7 +210,7 @@ static inline RecordsOrError recordsOrErrorFromRecordsData(Expected<Vector<Cross
 
 void WorkerCacheStorageConnection::doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier, const URL& url)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, url = url.isolatedCopy()](ScriptExecutionContext&) mutable {
+    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, url = url.isolatedCopy()]() mutable {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
@@ -228,7 +225,7 @@ void WorkerCacheStorageConnection::doRetrieveRecords(uint64_t requestIdentifier,
 
 void WorkerCacheStorageConnection::doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options = options.isolatedCopy()](ScriptExecutionContext&) mutable {
+    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options = options.isolatedCopy()]() mutable {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
@@ -244,7 +241,7 @@ void WorkerCacheStorageConnection::doBatchDeleteOperation(uint64_t requestIdenti
 
 void WorkerCacheStorageConnection::doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<Record>&& records)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, recordsData = recordsDataFromRecords(records)](ScriptExecutionContext&) mutable {
+    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, recordsData = recordsDataFromRecords(records)]() mutable {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 

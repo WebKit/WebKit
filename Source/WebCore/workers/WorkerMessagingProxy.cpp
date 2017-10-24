@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WorkerMessagingProxy.h"
 
+#include "CacheStorageProvider.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "DedicatedWorkerGlobalScope.h"
@@ -36,6 +37,7 @@
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
+#include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
 #include "WorkerInspectorProxy.h"
@@ -131,6 +133,13 @@ void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
     // FIXME: In case of nested workers, this should go directly to the root Document context.
     ASSERT(m_scriptExecutionContext->isDocument());
     m_scriptExecutionContext->postTask(WTFMove(task));
+}
+
+Ref<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnection()
+{
+    ASSERT(isMainThread());
+    auto& document = downcast<Document>(*m_scriptExecutionContext);
+    return document.page()->cacheStorageProvider().createCacheStorageConnection(document.page()->sessionID());
 }
 
 bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
