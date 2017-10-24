@@ -43,10 +43,10 @@ HAR Page Test.
           "cookies": [],
           "headers": "<filtered>",
           "content": {
-            "size": 2923,
+            "size": 2915,
             "compression": 0,
             "mimeType": "text/html",
-            "text": "<filtered text (2923)>"
+            "text": "<filtered text (2915)>"
           },
           "redirectURL": "",
           "headersSize": "<filtered>",

@@ -1,3 +1,10 @@
+2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed test gardening. Update inspector/network/har tests.
+
+        * http/tests/inspector/network/har/har-page-expected.txt:
+        Size of the test file changed and results needed to be updated.
+
 2017-10-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip fast/html/marquee-reparent-check.html on macOS debug.
