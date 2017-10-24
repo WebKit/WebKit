@@ -1,0 +1,1007 @@
+
+JavaScriptEnabled:
+  type: bool
+  defaultValue: true
+
+JavaScriptMarkupEnabled:
+  type: bool
+  defaultValue: true
+
+LoadsImagesAutomatically:
+  type: bool
+  defaultValue: true
+
+LoadsSiteIconsIgnoringImageLoadingPreference:
+  type: bool
+  defaultValue: false
+
+PluginsEnabled:
+  type: bool
+  defaultValue: false
+
+JavaEnabled:
+  type: bool
+  defaultValue: false
+
+JavaEnabledForLocalFiles:
+  type: bool
+  defaultValue: false
+
+OfflineWebApplicationCacheEnabled:
+  type: bool
+  defaultValue: true
+
+LocalStorageEnabled:
+  type: bool
+  defaultValue: true
+
+DatabasesEnabled:
+  type: bool
+  defaultValue: true
+
+XSSAuditorEnabled:
+  type: bool
+  defaultValue: true
+
+PrivateBrowsingEnabled:
+  type: bool
+  defaultValue: false
+
+TextAreasAreResizable:
+  type: bool
+  defaultValue: DEFAULT_TEXT_AREAS_ARE_RESIZABLE
+
+JavaScriptCanOpenWindowsAutomatically:
+  type: bool
+  defaultValue: DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY
+
+HyperlinkAuditingEnabled:
+  type: bool
+  defaultValue: true
+
+NeedsSiteSpecificQuirks:
+  type: bool
+  defaultValue: false
+
+AcceleratedCompositingEnabled:
+  type: bool
+  defaultValue: true
+
+ForceCompositingMode:
+  type: bool
+  defaultValue: false
+
+CanvasUsesAcceleratedDrawing:
+  type: bool
+  defaultValue: DEFAULT_CANVAS_USES_ACCELERATED_DRAWING
+
+WebGLEnabled:
+  type: bool
+  defaultValue: true
+
+ForceSoftwareWebGLRendering:
+  type: bool
+  defaultValue: false
+
+Accelerated2dCanvasEnabled:
+  type: bool
+  defaultValue: false
+
+CSSAnimationTriggersEnabled:
+  type: bool
+  defaultValue: true
+
+ForceFTPDirectoryListings:
+  type: bool
+  defaultValue: false
+
+TabsToLinks:
+  type: bool
+  defaultValue: DEFAULT_WEBKIT_TABSTOLINKS_ENABLED
+
+DNSPrefetchingEnabled:
+  type: bool
+  defaultValue: false
+
+DOMTimersThrottlingEnabled:
+  type: bool
+  defaultValue: true
+
+WebArchiveDebugModeEnabled:
+  type: bool
+  defaultValue: false
+
+LocalFileContentSniffingEnabled:
+  type: bool
+  defaultValue: false
+
+UsesPageCache:
+  type: bool
+  defaultValue: true
+
+PageCacheSupportsPlugins:
+  type: bool
+  defaultValue: true
+
+AuthorAndUserStylesEnabled:
+  type: bool
+  defaultValue: true
+
+PaginateDuringLayoutEnabled:
+  type: bool
+  defaultValue: false
+
+DOMPasteAllowed:
+  type: bool
+  defaultValue: false
+
+JavaScriptCanAccessClipboard:
+  type: bool
+  defaultValue: false
+
+ShouldPrintBackgrounds:
+  type: bool
+  defaultValue: DEFAULT_SHOULD_PRINT_BACKGROUNDS
+
+LinkPreconnect:
+  type: bool
+  defaultValue: DEFAULT_LINK_PRECONNECT_ENABLED
+
+FullScreenEnabled:
+  type: bool
+  defaultValue: false
+
+AsynchronousSpellCheckingEnabled:
+  type: bool
+  defaultValue: false
+
+WebSecurityEnabled:
+  type: bool
+  defaultValue: true
+
+AllowUniversalAccessFromFileURLs:
+  type: bool
+  defaultValue: false
+
+AllowFileAccessFromFileURLs:
+  type: bool
+  defaultValue: false
+
+AVFoundationEnabled:
+  type: bool
+  defaultValue: true
+  getter: isAVFoundationEnabled
+
+AVFoundationNSURLSessionEnabled:
+  type: bool
+  defaultValue: true
+  getter: isAVFoundationNSURLSessionEnabled
+
+GStreamerEnabled:
+  type: bool
+  defaultValue: true
+  getter: isGStreamerEnabled
+
+RequiresUserGestureForMediaPlayback:
+  type: bool
+  defaultValue: false
+
+RequiresUserGestureForVideoPlayback:
+  type: bool
+  defaultValue: false
+
+RequiresUserGestureForAudioPlayback:
+  type: bool
+  defaultValue: DEFAULT_REQUIRES_USER_GESTURE_FOR_AUDIO_PLAYBACK
+
+RequiresUserGestureToLoadVideo:
+  type: bool
+  defaultValue: false
+
+MainContentUserGestureOverrideEnabled:
+  type: bool
+  defaultValue: false
+
+MediaUserGestureInheritsFromDocument:
+  type: bool
+  defaultValue: false
+
+AllowsInlineMediaPlayback:
+  type: bool
+  defaultValue: DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK
+
+AllowsInlineMediaPlaybackAfterFullscreen:
+  type: bool
+  defaultValue: DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK_AFTER_FULLSCREEN
+
+InlineMediaPlaybackRequiresPlaysInlineAttribute:
+  type: bool
+  defaultValue: DEFAULT_INLINE_MEDIA_PLAYBACK_REQUIRES_PLAYS_INLINE_ATTRIBUTE
+
+InvisibleAutoplayNotPermitted:
+  type: bool
+  defaultValue: DEFAULT_INVISIBLE_AUTOPLAY_NOT_PERMITTED
+
+MediaDataLoadsAutomatically:
+  type: bool
+  defaultValue: DEFAULT_MEDIA_DATA_LOADS_AUTOMATICALLY
+
+AllowsPictureInPictureMediaPlayback:
+  type: bool
+  defaultValue: DEFAULT_ALLOWS_PICTURE_IN_PICTURE_MEDIA_PLAYBACK
+
+AllowsAirPlayForMediaPlayback:
+  type: bool
+  defaultValue: true
+
+MediaControlsScaleWithPageZoom:
+  type: bool
+  defaultValue: DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM
+
+InspectorStartsAttached:
+  type: bool
+  defaultValue: true
+
+ShowsToolTipOverTruncatedText:
+  type: bool
+  defaultValue: false
+
+MockScrollbarsEnabled:
+  type: bool
+  defaultValue: false
+
+WebAudioEnabled:
+  type: bool
+  defaultValue: true
+
+AttachmentElementEnabled:
+  type: bool
+  defaultValue: false
+
+SuppressesIncrementalRendering:
+  type: bool
+  defaultValue: false
+
+BackspaceKeyNavigationEnabled:
+  type: bool
+  defaultValue: DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED
+
+CaretBrowsingEnabled:
+  type: bool
+  defaultValue: false
+
+ShouldDisplaySubtitles:
+  type: bool
+  defaultValue: false
+
+ShouldDisplayCaptions:
+  type: bool
+  defaultValue: false
+
+ShouldDisplayTextDescriptions:
+  type: bool
+  defaultValue: false
+
+NotificationsEnabled:
+  type: bool
+  defaultValue: true
+
+ShouldRespectImageOrientation:
+  type: bool
+  defaultValue: DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION
+
+WantsBalancedSetDefersLoadingBehavior:
+  type: bool
+  defaultValue: false
+
+RequestAnimationFrameEnabled:
+  type: bool
+  defaultValue: true
+
+DiagnosticLoggingEnabled:
+  type: bool
+  defaultValue: false
+
+AsynchronousPluginInitializationEnabled:
+  type: bool
+  defaultValue: false
+
+AsynchronousPluginInitializationEnabledForAllPlugins:
+  type: bool
+  defaultValue: false
+
+ArtificialPluginInitializationDelayEnabled:
+  type: bool
+  defaultValue: false
+
+TabToLinksEnabled:
+  type: bool
+  defaultValue: false
+
+ScrollingPerformanceLoggingEnabled:
+  type: bool
+  defaultValue: false
+
+ScrollAnimatorEnabled:
+  type: bool
+  defaultValue: DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED
+
+ForceUpdateScrollbarsOnMainThreadForPerformanceTesting:
+  type: bool
+  defaultValue: false
+
+CookieEnabled:
+  type: bool
+  defaultValue: true
+
+PlugInSnapshottingEnabled:
+  type: bool
+  defaultValue: false
+
+SnapshotAllPlugIns:
+  type: bool
+  defaultValue: false
+
+AutostartOriginPlugInSnapshottingEnabled:
+  type: bool
+  defaultValue: true
+
+PrimaryPlugInSnapshotDetectionEnabled:
+  type: bool
+  defaultValue: true
+
+PDFPluginEnabled:
+  type: bool
+  defaultValue: DEFAULT_PDFPLUGIN_ENABLED
+
+UsesEncodingDetector:
+  type: bool
+  defaultValue: false
+
+TextAutosizingEnabled:
+  type: bool
+  defaultValue: WebCore::Settings::defaultTextAutosizingEnabled()
+
+AggressiveTileRetentionEnabled:
+  type: bool
+  defaultValue: false
+
+TemporaryTileCohortRetentionEnabled:
+  type: bool
+  defaultValue: DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED
+
+QTKitEnabled:
+  type: bool
+  defaultValue: WebCore::DeprecatedGlobalSettings::isQTKitEnabled()
+  getter: isQTKitEnabled
+
+PageVisibilityBasedProcessSuppressionEnabled:
+  type: bool
+  defaultValue: true
+
+SmartInsertDeleteEnabled:
+  type: bool
+  defaultValue: true
+
+SelectTrailingWhitespaceEnabled:
+  type: bool
+  defaultValue: false
+
+ShowsURLsInToolTipsEnabled:
+  type: bool
+  defaultValue: false
+
+AcceleratedCompositingForOverflowScrollEnabled:
+  type: bool
+  defaultValue: false
+
+HiddenPageDOMTimerThrottlingEnabled:
+  type: bool
+  defaultValue: DEFAULT_HIDDEN_PAGE_DOM_TIMER_THROTTLING_ENABLED
+
+HiddenPageDOMTimerThrottlingAutoIncreases:
+  type: bool
+  defaultValue: false
+
+HiddenPageCSSAnimationSuspensionEnabled:
+  type: bool
+  defaultValue: DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED
+
+LowPowerVideoAudioBufferSizeEnabled:
+  type: bool
+  defaultValue: false
+
+ThreadedScrollingEnabled:
+  type: bool
+  defaultValue: true
+
+SimpleLineLayoutEnabled:
+  type: bool
+  defaultValue: true
+
+SubpixelCSSOMElementMetricsEnabled:
+  type: bool
+  defaultValue: false
+
+UseGiantTiles:
+  type: bool
+  defaultValue: false
+
+MediaDevicesEnabled:
+  type: bool
+  defaultValue: false
+
+MediaStreamEnabled:
+  type: bool
+  defaultValue: true
+
+PeerConnectionEnabled:
+  type: bool
+  defaultValue: WebCore::LibWebRTCProvider::webRTCAvailable()
+
+UseLegacyTextAlignPositionedElementBehavior:
+  type: bool
+  defaultValue: false
+
+SpatialNavigationEnabled:
+  type: bool
+  defaultValue: false
+
+MediaSourceEnabled:
+  type: bool
+  defaultValue: true
+
+ViewGestureDebuggingEnabled:
+  type: bool
+  defaultValue: false
+
+ShouldConvertPositionStyleOnCopy:
+  type: bool
+  defaultValue: false
+
+Standalone:
+  type: bool
+  defaultValue: false
+
+TelephoneNumberParsingEnabled:
+  type: bool
+  defaultValue: false
+
+AllowMultiElementImplicitSubmission:
+  type: bool
+  defaultValue: false
+
+AlwaysUseAcceleratedOverflowScroll:
+  type: bool
+  defaultValue: false
+
+PasswordEchoEnabled:
+  type: bool
+  defaultValue: DEFAULT_PASSWORD_ECHO_ENABLED
+
+ImageControlsEnabled:
+  type: bool
+  defaultValue: false
+
+EnableInheritURIQueryComponent:
+  type: bool
+  defaultValue: false
+
+ServiceControlsEnabled:
+  type: bool
+  defaultValue: false
+
+DeferredCSSParserEnabled:
+  type: bool
+  defaultValue: false
+
+HTTPEquivEnabled:
+  type: bool
+  defaultValue: true
+
+MockCaptureDevicesEnabled:
+  type: bool
+  defaultValue: false
+
+MockCaptureDevicesPromptEnabled:
+  type: bool
+  defaultValue: true
+
+MediaCaptureRequiresSecureConnection:
+  type: bool
+  defaultValue: true
+
+EnumeratingAllNetworkInterfacesEnabled:
+  type: bool
+  defaultValue: false
+
+ICECandidateFilteringEnabled:
+  type: bool
+  defaultValue: true
+
+ShadowDOMEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Shadow DOM"
+  humanReadableDescription: "HTML Shadow DOM prototype"
+
+FetchAPIEnabled:
+  type: bool
+  defaultValue: true
+
+DownloadAttributeEnabled:
+  type: bool
+  defaultValue: true
+
+SelectionPaintingWithoutSelectionGapsEnabled:
+  type: bool
+  defaultValue: false
+
+ApplePayEnabled:
+  type: bool
+  defaultValue: false
+
+ApplePayCapabilityDisclosureAllowed:
+  type: bool
+  defaultValue: true
+
+VisualViewportEnabled:
+  type: bool
+  defaultValue: true
+
+NeedsStorageAccessFromFileURLsQuirk:
+  type: bool
+  defaultValue: true
+
+LargeImageAsyncDecodingEnabled:
+  type: bool
+  defaultValue: true
+
+AnimatedImageAsyncDecodingEnabled:
+  type: bool
+  defaultValue: true
+
+CustomElementsEnabled:
+  type: bool
+  defaultValue: true
+
+EncryptedMediaAPIEnabled:
+  type: bool
+  defaultValue: false
+
+MediaPreloadingEnabled:
+  type: bool
+  defaultValue: false
+
+IntersectionObserverEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Intersection Observer"
+  humanReadableDescription: "Enable Intersection Observer support"
+
+InteractiveFormValidationEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "HTML Interactive Form Validation"
+  humanReadableDescription: "HTML interactive form validation"
+
+ShouldSuppressTextInputFromEditingDuringProvisionalNavigation:
+  type: bool
+  defaultValue: false
+
+CSSGridLayoutEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "CSS Grid"
+  humanReadableDescription: "CSS Grid Layout Module support"
+
+GamepadsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Gamepads"
+  humanReadableDescription: "Web Gamepad API support"
+
+InputEventsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Input Events"
+  humanReadableDescription: "Enable InputEvents support"
+
+CredentialManagementEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Credential Management"
+  humanReadableDescription: "Enable Credential Management support"
+
+ModernMediaControlsEnabled:
+  type: bool
+  defaultValue: DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED
+  humanReadableName: "Modern Media Controls"
+  humanReadableDescription: "Use modern media controls look"
+
+ResourceTimingEnabled:
+  type: bool
+  defaultValue: DEFAULT_RESOURCE_TIMING_ENABLED
+  humanReadableName: "Resource Timing"
+  humanReadableDescription: "Enable ResourceTiming API"
+
+UserTimingEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "User Timing"
+  humanReadableDescription: "Enable UserTiming API"
+
+BeaconAPIEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Beacon API"
+  humanReadableDescription: "Beacon API"
+
+LegacyEncryptedMediaAPIEnabled:
+  type: bool
+  defaultValue: DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED
+  humanReadableName: "Enable Legacy EME API"
+  humanReadableDescription: "Enable legacy EME API"
+
+AllowMediaContentTypesRequiringHardwareSupportAsFallback:
+  type: bool
+  defaultValue: DEFAULT_ALLOW_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT_AS_FALLBACK
+  humanReadableName: "Allow Media Content Types Requirining Hardware As Fallback"
+  humanReadableDescription: "Allow Media Content Types Requirining Hardware As Fallback"
+
+InspectorAdditionsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Inspector Additions"
+  humanReadableDescription: "Enable additional page APIs used by the Web Inspector frontend page"
+
+DirectoryUploadEnabled:
+  type: bool
+  defaultValue: DEFAULT_DIRECTORY_UPLOAD_ENABLED
+  humanReadableName: "Directory Upload"
+  humanReadableDescription: "input.webkitdirectory / dataTransferItem.webkitGetAsEntry()"
+
+DataTransferItemsEnabled:
+  type: bool
+  defaultValue: DEFAULT_DATA_TRANSFER_ITEMS_ENABLED
+  humanReadableName: "Data Transfer Items"
+  humanReadableDescription: "Enables DataTransferItem in the clipboard API"
+
+CustomPasteboardDataEnabled:
+  type: bool
+  defaultValue: WebCore::DeprecatedGlobalSettings::defaultCustomPasteboardDataEnabled()
+  humanReadableName: "Custom pateboard data"
+  humanReadableDescription: "Enable custom clipboard types and better security model for clipboard API."
+
+WebVREnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "WebVR"
+  humanReadableDescription: "WebVR Module support"
+
+ViewportFitEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Viewport Fit"
+  humanReadableDescription: "Enable viewport-fit viewport parameter"
+
+IncrementalRenderingSuppressionTimeout:
+  type: double
+  defaultValue: 5
+
+MinimumFontSize:
+  type: double
+  defaultValue: 0
+
+MinimumLogicalFontSize:
+  type: double
+  defaultValue: 9
+
+MinimumZoomFontSize:
+  type: double
+  defaultValue: WebCore::Settings::defaultMinimumZoomFontSize()
+
+DefaultFontSize:
+  type: double
+  defaultValue: 16
+
+DefaultFixedFontSize:
+  type: double
+  defaultValue: 13
+
+LayoutInterval:
+  type: double
+  defaultValue: -1
+
+MaxParseDuration:
+  type: double
+  defaultValue: -1
+
+PasswordEchoDuration:
+  type: double
+  defaultValue: 2
+
+FontSmoothingLevel:
+  type: uint32_t
+  defaultValue: FontSmoothingLevelMedium
+
+LayoutFallbackWidth:
+  type: uint32_t
+  defaultValue: 980
+
+DeviceWidth:
+  type: uint32_t
+  defaultValue: 0
+
+DeviceHeight:
+  type: uint32_t
+  defaultValue: 0
+
+EditableLinkBehavior:
+  type: uint32_t
+  defaultValue: WebCore::EditableLinkNeverLive
+
+InspectorAttachedHeight:
+  type: uint32_t
+  defaultValue: 300
+
+InspectorAttachedWidth:
+  type: uint32_t
+  defaultValue: 750
+
+InspectorAttachmentSide:
+  type: uint32_t
+  defaultValue: 0
+
+StorageBlockingPolicy:
+  type: uint32_t
+  defaultValue: WebCore::SecurityOrigin::BlockThirdPartyStorage
+
+JavaScriptRuntimeFlags:
+  type: uint32_t
+  defaultValue: 0
+
+DataDetectorTypes:
+  type: uint32_t
+  defaultValue: 0
+
+UserInterfaceDirectionPolicy:
+  type: uint32_t
+  defaultValue: 0
+
+SystemLayoutDirection:
+  type: uint32_t
+  defaultValue: 0
+
+FrameFlattening:
+  type: uint32_t
+  defaultValue: DEFAULT_FRAME_FLATTENING
+
+StandardFontFamily:
+  type: String
+  defaultValue: DEFAULT_STANDARD_FONT_FAMILY
+
+CursiveFontFamily:
+  type: String
+  defaultValue: DEFAULT_CURSIVE_FONT_FAMILY
+
+FantasyFontFamily:
+  type: String
+  defaultValue: DEFAULT_FANTASY_FONT_FAMILY
+
+FixedFontFamily:
+  type: String
+  defaultValue: DEFAULT_FIXED_FONT_FAMILY
+
+SansSerifFontFamily:
+  type: String
+  defaultValue: DEFAULT_SANS_SERIF_FONT_FAMILY
+
+SerifFontFamily:
+  type: String
+  defaultValue: DEFAULT_SERIF_FONT_FAMILY
+
+PictographFontFamily:
+  type: String
+  defaultValue: DEFAULT_PICTOGRAPH_FONT_FAMILY
+
+DefaultTextEncodingName:
+  type: String
+  defaultValue: defaultTextEncodingNameForSystemLanguage()
+
+FTPDirectoryTemplatePath:
+  type: String
+  defaultValue: '""'
+
+MediaContentTypesRequiringHardwareSupport:
+  type: String
+  defaultValue: WebCore::Settings::defaultMediaContentTypesRequiringHardwareSupport()
+
+InspectorWindowFrame:
+  type: String
+  defaultValue: '""'
+  webkitOnly: true
+
+
+# Debug Preferences
+
+
+AcceleratedDrawingEnabled:
+  type: bool
+  defaultValue: DEFAULT_ACCELERATED_DRAWING_ENABLED
+  category: debug
+
+SubpixelAntialiasedLayerTextEnabled:
+  type: bool
+  defaultValue: DEFAULT_SUBPIXEL_ANTIALIASED_LAYER_TEXT_ENABLED
+  category: debug
+
+DisplayListDrawingEnabled:
+  type: bool
+  defaultValue: false
+  category: debug
+
+CompositingBordersVisible:
+  type: bool
+  defaultValue: false
+  category: debug
+
+CompositingRepaintCountersVisible:
+  type: bool
+  defaultValue: false
+  category: debug
+
+TiledScrollingIndicatorVisible:
+  type: bool
+  defaultValue: false
+  category: debug
+
+SimpleLineLayoutDebugBordersEnabled:
+  type: bool
+  defaultValue: false
+  category: debug
+
+DeveloperExtrasEnabled:
+  type: bool
+  defaultValue: false
+  category: debug
+
+LogsPageMessagesToSystemConsoleEnabled:
+  type: bool
+  defaultValue: false
+  category: debug
+
+IgnoreViewportScalingConstraints:
+  type: bool
+  defaultValue: true
+  category: debug
+
+ForceAlwaysUserScalable:
+  type: bool
+  defaultValue: false
+  category: debug
+
+ResourceUsageOverlayVisible:
+  type: bool
+  defaultValue: false
+  category: debug
+
+VisibleDebugOverlayRegions:
+  type: uint32_t
+  defaultValue: 0
+  category: debug
+
+
+# For experimental features:
+# The type should be boolean.
+# You must provide a humanReadableName and humanReadableName for all experimental features. They
+#   are the text exposed to the user from the WebKit client.
+# The default value may be either false (for unstable features) or
+#   DEFAULT_EXPERIMENTAL_FEATURES_ENABLED (for features that are ready for
+#   wider testing).
+
+
+AsyncFrameScrollingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Async Frame Scrolling"
+  humanReadableDescription: "Perform frame scrolling in a dedicated thread or process"
+  category: experimental
+
+CacheAPIEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Cache API"
+  humanReadableDescription: "Enable Cache API"
+  category: experimental
+
+ConstantPropertiesEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Constant Properties"
+  humanReadableDescription: "Enable CSS constant() properties"
+  category: experimental
+
+DisplayContentsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS display: contents"
+  humanReadableDescription: "Enable CSS display: contents support"
+  category: experimental
+
+SpringTimingFunctionEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "CSS Spring Animations"
+  humanReadableDescription: "CSS Spring Animation prototype"
+  category: experimental
+
+LinkPreloadEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Link Preload"
+  humanReadableDescription: "Link preload support"
+  category: experimental
+
+PaymentRequestEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Payment Request"
+  humanReadableDescription: "W3C Payment Request API"
+  category: experimental
+
+WebRTCLegacyAPIDisabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Remove Legacy WebRTC API"
+  humanReadableDescription: "Remove Legacy WebRTC API"
+  category: experimental
+
+IsSecureContextAttributeEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Secure Contexts API"
+  humanReadableDescription: "Enable Secure Contexts API"
+  category: experimental
+
+ServiceWorkersEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ServiceWorkers"
+  humanReadableDescription: "Enable ServiceWorkers"
+  category: experimental
+
+StorageAccessAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Storage Access API"
+  humanReadableDescription: "Enable Storage Access API"
+  category: experimental
+
+SubresourceIntegrityEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "SubresourceIntegrity"
+  humanReadableDescription: "Enable SubresourceIntegrity"
+  category: experimental
+
+WebAnimationsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Animations"
+  humanReadableDescription: "Web Animations prototype"
+  category: experimental
+
+WebGL2Enabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "WebGL 2.0"
+  humanReadableDescription: "WebGL 2 prototype"
+  category: experimental
+
+WebGPUEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "WebGPU"
+  humanReadableDescription: "WebGPU prototype"
+  category: experimental

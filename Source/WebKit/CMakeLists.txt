@@ -902,6 +902,21 @@ list(APPEND WebKit_HEADERS
     ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxyScriptSource.h
 )
 
+set(WebKit_WEB_PREFERENCES_TEMPLATES
+    ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesDefinitions.h
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/Shared/WebPreferences.yaml
+    DEPENDS ${WebKit_WEB_PREFERENCES_TEMPLATES}
+    COMMAND ${RUBY_EXECUTABLE} ${WEBKIT_DIR}/Scripts/GeneratePreferences.rb --input ${WEBKIT_DIR}/Shared/WebPreferences.yaml --outputDir "${DERIVED_SOURCES_WEBKIT_DIR}"
+    VERBATIM)
+
+list(APPEND WebKit_HEADERS
+    ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesDefinitions.h
+)
+
 list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
 WEBKIT_FRAMEWORK(WebKit)

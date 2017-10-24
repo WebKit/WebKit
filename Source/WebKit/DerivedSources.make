@@ -284,3 +284,15 @@ all : $(firstword $(AUTOMATION_PROTOCOL_OUTPUT_FILES))
 	$(DELETE) $(basename $(notdir $<)).min.js
 
 all : WebAutomationSessionProxyScriptSource.h
+
+# WebPreferences generation
+
+WEB_PREFERENCES_TEMPLATES = \
+    $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb \
+#
+
+all : WebPreferencesDefinitions.h
+
+WebPreferencesDefinitions%h : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WebKit2)/Shared/WebPreferences.yaml
+	$(RUBY) $< --input $(WebKit2)/Shared/WebPreferences.yaml
+

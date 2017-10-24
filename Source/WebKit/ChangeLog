@@ -1,3 +1,40 @@
+2017-10-24  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Add initial support for generating preferences related code
+        https://bugs.webkit.org/show_bug.cgi?id=178656
+
+        Reviewed by Dean Jackson.
+
+        As a first step towards getting off the macros in WebPreferencesDefinitions.h
+        and reducing the overhead of adding a preference, this change generates adds
+        WebPreferences.yaml where preference changes will go, and generates much of
+        WebPreferencesDefinitions.h from it (all the custom defaults moved to 
+        WebPreferencesDefinitionsBase.h). Subsequent changes will remove the need for 
+        the macros in WebPreferencesDefinitions.h entirely.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebKit.xcodeproj/project.pbxproj:
+        
+            Add new files / rules to generate WebPreferencesDefinitions.h.
+        
+        * Scripts/GeneratePreferences.rb: Added.
+        * Scripts/PreferencesTemplates: Added.
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb: Added.
+        
+            Add scripts and template to generate WebPreferencesDefinitions.h from
+            WebPreferences.yaml.
+
+        * Shared/WebPreferences.yaml: Added.
+        
+            Configuration file for preferences.
+        
+        * Shared/WebPreferencesDefinitions.h: Removed.
+        * Shared/WebPreferencesDefinitionsBase.h: Copied from Source/WebKit/Shared/WebPreferencesDefinitions.h.
+        
+            Moved custom defaults to new WebPreferencesDefinitionsBase.h. Removed the need for 
+            FOR_EACH_WEBKIT_STRING_PREFERENCE by using custom defaults for the font family values.
+
 2017-10-24  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r223889.
