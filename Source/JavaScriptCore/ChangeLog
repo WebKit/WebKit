@@ -1,3 +1,15 @@
+2017-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use emitDumbVirtualCall in 32bit JIT
+        https://bugs.webkit.org/show_bug.cgi?id=178644
+
+        Reviewed by Mark Lam.
+
+        This patch aligns 32bit JIT op_call_eval slow case to 64bit version by using emitDumbVirtualCall.
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+
 2017-10-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop ArityCheckData

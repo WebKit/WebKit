@@ -212,12 +212,8 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
-    move(TrustedImmPtr(info), regT2);
-
     emitLoad(callee, regT1, regT0);
-    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(m_vm, *info);
-    info->setSlowStub(createJITStubRoutine(virtualThunk, *m_vm, nullptr, true));
-    emitNakedCall(virtualThunk.code());
+    emitDumbVirtualCall(*vm(), info);
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
