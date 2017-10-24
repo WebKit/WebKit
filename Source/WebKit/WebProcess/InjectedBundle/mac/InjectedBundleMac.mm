@@ -34,7 +34,6 @@
 #import "WKWebProcessPlugInInternal.h"
 #import "WebProcessCreationParameters.h"
 #import <Foundation/NSBundle.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
@@ -86,7 +85,8 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if (parameters.bundleParameterData) {
         auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(parameters.bundleParameterData->bytes())) length:parameters.bundleParameterData->size() freeWhenDone:NO]);
 
-        auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
+        auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:bundleParameterData.get()]);
+        [unarchiver setRequiresSecureCoding:YES];
 
         NSDictionary *dictionary = nil;
         @try {
@@ -160,7 +160,8 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
 #if WK_API_ENABLED
     auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(value.data())) length:value.size() freeWhenDone:NO]);
 
-    auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:bundleParameterData.get()]);
+    [unarchiver setRequiresSecureCoding:YES];
 
     id parameter = nil;
     @try {
@@ -182,7 +183,8 @@ void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
 #if WK_API_ENABLED
     auto bundleParametersData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(value.data())) length:value.size() freeWhenDone:NO]);
 
-    auto unarchiver = secureUnarchiverFromData(bundleParametersData.get());
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:bundleParametersData.get()]);
+    [unarchiver setRequiresSecureCoding:YES];
 
     NSDictionary *parameters = nil;
     @try {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #import "ArgumentCodersCF.h"
 #import "WebCoreArgumentCoders.h"
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
@@ -74,7 +73,8 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     if (isDataDetectorLink) {
         encoder << dataDetectorIdentifier;
         RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
-        auto archiver = secureArchiverFromMutableData(data.get());
+        RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+        [archiver setRequiresSecureCoding:YES];
         [archiver encodeObject:dataDetectorResults.get() forKey:@"dataDetectorResults"];
         [archiver finishEncoding];
         
@@ -168,7 +168,8 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         if (!IPC::decode(decoder, data))
             return false;
         
-        auto unarchiver = secureUnarchiverFromData((NSData *)data.get());
+        RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
+        [unarchiver setRequiresSecureCoding:YES];
         @try {
             result.dataDetectorResults = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:@[ [NSArray class], getDDScannerResultClass()] ] forKey:@"dataDetectorResults"];
         } @catch (NSException *exception) {
