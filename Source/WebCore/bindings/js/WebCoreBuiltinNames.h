@@ -32,6 +32,8 @@ namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(Animation) \
+    macro(AnimationEffect) \
+    macro(AnimationEffectTiming) \
     macro(AnimationTimeline) \
     macro(ApplePaySession) \
     macro(AttachmentElement) \
@@ -75,6 +77,7 @@ namespace WebCore {
     macro(InputEvent) \
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
+    macro(KeyframeEffect) \
     macro(MediaEncryptedEvent) \
     macro(MediaKeyMessageEvent) \
     macro(MediaKeySession) \

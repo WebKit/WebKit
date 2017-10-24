@@ -26,12 +26,15 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class AnimationEffect;
 class AnimationTimeline;
 
 class WebAnimation final : public RefCounted<WebAnimation> {
@@ -39,12 +42,21 @@ public:
     static Ref<WebAnimation> create(AnimationTimeline*);
     ~WebAnimation();
 
+    AnimationEffect* effect() const { return m_effect.get(); }
+    void setEffect(RefPtr<AnimationEffect>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
+    std::optional<double> bindingsStartTime() const;
+    void setBindingsStartTime(std::optional<double>);
+    std::optional<MonotonicTime> startTime() const { return m_startTime; }
+    void setStartTime(MonotonicTime& startTime) { m_startTime = startTime; }
+
     String description();
 
 private:
     WebAnimation(AnimationTimeline*);
+    RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
+    std::optional<MonotonicTime> m_startTime;
 };
 
 } // namespace WebCore

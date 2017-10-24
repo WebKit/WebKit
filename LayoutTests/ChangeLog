@@ -1,3 +1,26 @@
+2017-10-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Add basic timing and target properties
+        https://bugs.webkit.org/show_bug.cgi?id=178674
+
+        Reviewed by Dean Jackson.
+
+        Add new tests to check the behavior of the newly exposed interfaces,
+        constructors and properties.
+
+        * webanimations/animation-effect-expected.txt: Added.
+        * webanimations/animation-effect-timing-expected.txt: Added.
+        * webanimations/animation-effect-timing.html: Added.
+        * webanimations/animation-effect.html: Added.
+        * webanimations/animation-interface-effect-property-expected.txt: Added.
+        * webanimations/animation-interface-effect-property.html: Added.
+        * webanimations/animation-interface-start-time-property-expected.txt: Added.
+        * webanimations/animation-interface-start-time-property.html: Added.
+        * webanimations/keyframe-effect-expected.txt: Added.
+        * webanimations/keyframe-effect-interface-timing-duration-expected.txt: Added.
+        * webanimations/keyframe-effect-interface-timing-duration.html: Added.
+        * webanimations/keyframe-effect.html: Added.
+
 2017-10-24  Nan Wang  <n_wang@apple.com>
 
         AX: Crash at -[WebAccessibilityObjectWrapper _accessibilityMinValue] + 24

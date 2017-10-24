@@ -25,9 +25,10 @@
 
 #include "config.h"
 #include "WebAnimation.h"
-#include <wtf/text/WTFString.h>
 
+#include "AnimationEffect.h"
 #include "AnimationTimeline.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -50,6 +51,26 @@ WebAnimation::~WebAnimation()
 {
     if (m_timeline)
         m_timeline->removeAnimation(*this);
+}
+
+void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
+{
+    m_effect = WTFMove(effect);
+}
+
+std::optional<double> WebAnimation::bindingsStartTime() const
+{
+    if (m_startTime)
+        return m_startTime->secondsSinceEpoch().value();
+    return std::nullopt;
+}
+
+void WebAnimation::setBindingsStartTime(std::optional<double> startTime)
+{
+    if (startTime == std::nullopt)
+        m_startTime = std::nullopt;
+    else
+        m_startTime = MonotonicTime::fromRawSeconds(startTime.value());
 }
 
 String WebAnimation::description()

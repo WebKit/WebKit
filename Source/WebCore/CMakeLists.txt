@@ -418,8 +418,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webvr/VRPose.idl
     Modules/webvr/VRStageParameters.idl
 
+    animation/AnimationEffect.idl
+    animation/AnimationEffectTiming.idl
     animation/AnimationTimeline.idl
     animation/DocumentTimeline.idl
+    animation/KeyframeEffect.idl
     animation/WebAnimation.idl
 
     crypto/CryptoAlgorithmParameters.idl

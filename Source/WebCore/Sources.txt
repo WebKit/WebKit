@@ -311,10 +311,12 @@ accessibility/AccessibilityTableRow.cpp
 accessibility/AccessibilityTree.cpp
 accessibility/AccessibilityTreeItem.cpp
 
+animation/AnimationEffect.cpp
+animation/AnimationEffectTiming.cpp
 animation/AnimationTimeline.cpp
 animation/DocumentTimeline.cpp
+animation/KeyframeEffect.cpp
 animation/WebAnimation.cpp
-
 
 bindings/js/CachedModuleScriptLoader.cpp
 bindings/js/CachedScriptFetcher.cpp
@@ -323,6 +325,7 @@ bindings/js/CommonVM.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
+bindings/js/JSAnimationEffectCustom.cpp
 bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
 bindings/js/JSAudioTrackCustom.cpp
@@ -905,6 +908,8 @@ JSAesGcmParams.cpp
 JSAesKeyParams.cpp
 JSAnalyserNode.cpp
 JSAnimationEvent.cpp
+JSAnimationEffect.cpp
+JSAnimationEffectTiming.cpp
 JSAnimationTimeline.cpp
 JSAttr.cpp
 JSAudioBuffer.cpp
@@ -1221,6 +1226,7 @@ JSIntersectionObserverCallback.cpp
 JSIntersectionObserverEntry.cpp
 JSJsonWebKey.cpp
 JSKeyboardEvent.cpp
+JSKeyframeEffect.cpp
 JSLocation.cpp
 JSLongRange.cpp
 JSMediaController.cpp

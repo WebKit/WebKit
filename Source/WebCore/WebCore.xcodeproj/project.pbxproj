@@ -2554,6 +2554,12 @@
 		7134496D146941B300720312 /* SVGLengthContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7134496B146941B300720312 /* SVGLengthContext.cpp */; };
 		7134496E146941B300720312 /* SVGLengthContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134496C146941B300720312 /* SVGLengthContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71537A01146BD9D7008BD615 /* SVGPathData.h in Headers */ = {isa = PBXBuildFile; fileRef = 715379FF146BD9D6008BD615 /* SVGPathData.h */; };
+		71556CB21F9F09BA00E78D08 /* AnimationEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 71556CAD1F9F099D00E78D08 /* AnimationEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71556CB31F9F09BA00E78D08 /* AnimationEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 71556CAE1F9F099D00E78D08 /* AnimationEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71556CB41F9F09BA00E78D08 /* KeyframeEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 71556CAA1F9F099B00E78D08 /* KeyframeEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71556CBC1F9F0A4900E78D08 /* JSAnimationEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 71556CB81F9F09FC00E78D08 /* JSAnimationEffect.h */; };
+		71556CBD1F9F0A4900E78D08 /* JSAnimationEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 71556CB91F9F09FD00E78D08 /* JSAnimationEffectTiming.h */; };
+		71556CBE1F9F0A4900E78D08 /* JSKeyframeEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 71556CB71F9F09FC00E78D08 /* JSKeyframeEffect.h */; };
 		7157F062150B6564006EAABD /* SVGAnimatedTransformList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7157F061150B6564006EAABD /* SVGAnimatedTransformList.cpp */; };
 		71A1B6081DEE5AD70073BCFB /* modern-media-controls-localized-strings.js in Resources */ = {isa = PBXBuildFile; fileRef = 71A1B6061DEE5A820073BCFB /* modern-media-controls-localized-strings.js */; };
 		71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */; };
@@ -9919,6 +9925,22 @@
 		7152CEC31DD2236B00FD5962 /* slider-thumb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "slider-thumb@2x.png"; sourceTree = "<group>"; };
 		715379FE146BD9D6008BD615 /* SVGPathData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathData.cpp; sourceTree = "<group>"; };
 		715379FF146BD9D6008BD615 /* SVGPathData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathData.h; sourceTree = "<group>"; };
+		71556CA81F9F099B00E78D08 /* KeyframeEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyframeEffect.cpp; sourceTree = "<group>"; };
+		71556CAA1F9F099B00E78D08 /* KeyframeEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyframeEffect.h; sourceTree = "<group>"; };
+		71556CAB1F9F099C00E78D08 /* KeyframeEffect.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = KeyframeEffect.idl; sourceTree = "<group>"; };
+		71556CAC1F9F099D00E78D08 /* AnimationEffectTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffectTiming.cpp; sourceTree = "<group>"; };
+		71556CAD1F9F099D00E78D08 /* AnimationEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEffect.h; sourceTree = "<group>"; };
+		71556CAE1F9F099D00E78D08 /* AnimationEffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationEffectTiming.h; sourceTree = "<group>"; };
+		71556CAF1F9F099E00E78D08 /* AnimationEffectTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationEffectTiming.idl; sourceTree = "<group>"; };
+		71556CB01F9F099E00E78D08 /* AnimationEffect.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimationEffect.idl; sourceTree = "<group>"; };
+		71556CB11F9F099F00E78D08 /* AnimationEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffect.cpp; sourceTree = "<group>"; };
+		71556CB51F9F09DC00E78D08 /* JSAnimationEffectCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectCustom.cpp; sourceTree = "<group>"; };
+		71556CB61F9F09FC00E78D08 /* JSKeyframeEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyframeEffect.cpp; sourceTree = "<group>"; };
+		71556CB71F9F09FC00E78D08 /* JSKeyframeEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSKeyframeEffect.h; sourceTree = "<group>"; };
+		71556CB81F9F09FC00E78D08 /* JSAnimationEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimationEffect.h; sourceTree = "<group>"; };
+		71556CB91F9F09FD00E78D08 /* JSAnimationEffectTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnimationEffectTiming.h; sourceTree = "<group>"; };
+		71556CBA1F9F09FD00E78D08 /* JSAnimationEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffect.cpp; sourceTree = "<group>"; };
+		71556CBB1F9F09FE00E78D08 /* JSAnimationEffectTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectTiming.cpp; sourceTree = "<group>"; };
 		7157E3D11DC1EE4B0094550E /* scrubbing-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "scrubbing-support.js"; sourceTree = "<group>"; };
 		7157F061150B6564006EAABD /* SVGAnimatedTransformList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTransformList.cpp; sourceTree = "<group>"; };
 		716C8DF11E48B269005BD0DA /* volume-down-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-down-support.js"; sourceTree = "<group>"; };
@@ -16097,10 +16119,16 @@
 		1221E0581C02B409006A1A00 /* Animation */ = {
 			isa = PBXGroup;
 			children = (
+				71556CBA1F9F09FD00E78D08 /* JSAnimationEffect.cpp */,
+				71556CB81F9F09FC00E78D08 /* JSAnimationEffect.h */,
+				71556CBB1F9F09FE00E78D08 /* JSAnimationEffectTiming.cpp */,
+				71556CB91F9F09FD00E78D08 /* JSAnimationEffectTiming.h */,
 				71025EDA1F99F1A7004A250C /* JSAnimationTimeline.cpp */,
 				71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */,
 				71025EDB1F99F1A8004A250C /* JSDocumentTimeline.cpp */,
 				71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */,
+				71556CB61F9F09FC00E78D08 /* JSKeyframeEffect.cpp */,
+				71556CB71F9F09FC00E78D08 /* JSKeyframeEffect.h */,
 				71025ED71F99F1A6004A250C /* JSWebAnimation.cpp */,
 				71025ED81F99F1A6004A250C /* JSWebAnimation.h */,
 			);
@@ -19303,12 +19331,21 @@
 		71025EC11F99F096004A250C /* animation */ = {
 			isa = PBXGroup;
 			children = (
+				71556CB11F9F099F00E78D08 /* AnimationEffect.cpp */,
+				71556CAD1F9F099D00E78D08 /* AnimationEffect.h */,
+				71556CB01F9F099E00E78D08 /* AnimationEffect.idl */,
+				71556CAC1F9F099D00E78D08 /* AnimationEffectTiming.cpp */,
+				71556CAE1F9F099D00E78D08 /* AnimationEffectTiming.h */,
+				71556CAF1F9F099E00E78D08 /* AnimationEffectTiming.idl */,
 				71025EC61F99F096004A250C /* AnimationTimeline.cpp */,
 				71025EC71F99F096004A250C /* AnimationTimeline.h */,
 				71025EC91F99F096004A250C /* AnimationTimeline.idl */,
 				71025EC41F99F096004A250C /* DocumentTimeline.cpp */,
 				71025EC51F99F096004A250C /* DocumentTimeline.h */,
 				71025ECA1F99F096004A250C /* DocumentTimeline.idl */,
+				71556CA81F9F099B00E78D08 /* KeyframeEffect.cpp */,
+				71556CAA1F9F099B00E78D08 /* KeyframeEffect.h */,
+				71556CAB1F9F099C00E78D08 /* KeyframeEffect.idl */,
 				71025EC31F99F096004A250C /* WebAnimation.cpp */,
 				71025EC21F99F096004A250C /* WebAnimation.h */,
 				71025EC81F99F096004A250C /* WebAnimation.idl */,
@@ -19557,6 +19594,7 @@
 		7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */ = {
 			isa = PBXGroup;
 			children = (
+				71556CB51F9F09DC00E78D08 /* JSAnimationEffectCustom.cpp */,
 				71025ED51F99F147004A250C /* JSAnimationTimelineCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
@@ -26559,6 +26597,8 @@
 				490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
+				71556CB21F9F09BA00E78D08 /* AnimationEffect.h in Headers */,
+				71556CB31F9F09BA00E78D08 /* AnimationEffectTiming.h in Headers */,
 				319848011A1D817B00A13318 /* AnimationEvent.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
 				71025ECD1F99F0CE004A250C /* AnimationTimeline.h in Headers */,
@@ -27826,6 +27866,8 @@
 				57B5F8101E5E2A4E00F34F90 /* JSAesGcmParams.h in Headers */,
 				576814451E70CB1F00E77754 /* JSAesKeyParams.h in Headers */,
 				FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */,
+				71556CBC1F9F0A4900E78D08 /* JSAnimationEffect.h in Headers */,
+				71556CBD1F9F0A4900E78D08 /* JSAnimationEffectTiming.h in Headers */,
 				3198480C1A1E6CE800A13318 /* JSAnimationEvent.h in Headers */,
 				71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */,
 				A1DF5A991F7EC8C00058A477 /* JSApplePayContactField.h in Headers */,
@@ -28187,6 +28229,7 @@
 				0F4710E81DB700C7002DCEC3 /* JSIntersectionObserverEntry.h in Headers */,
 				57E2335B1DC7D5E500F28D01 /* JSJsonWebKey.h in Headers */,
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
+				71556CBE1F9F0A4900E78D08 /* JSKeyframeEffect.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
 				93A806201E03B585008A1F26 /* JSLongRange.h in Headers */,
@@ -28635,6 +28678,7 @@
 				A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */,
 				265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */,
 				316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */,
+				71556CB41F9F09BA00E78D08 /* KeyframeEffect.h in Headers */,
 				BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */,
 				E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,

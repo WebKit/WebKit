@@ -29,5 +29,7 @@
     ImplementationLacksVTable,
     Constructor(optional AnimationTimeline? timeline)
 ] interface WebAnimation {
+    attribute AnimationEffect? effect;
     readonly attribute AnimationTimeline? timeline;
+    [ImplementedAs=bindingsStartTime] attribute double? startTime;
 };
