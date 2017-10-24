@@ -959,3 +959,13 @@ Bug(WPE) svg/text/select-text-svgfont.html [ Failure ]
 Bug(WPE) svg/text/offset-square-svg-font.html [ ImageOnlyFailure ]
 webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
+webkit.org/b/178704 svg/as-image/svg-as-image-canvas.html [ Crash ]
+webkit.org/b/178704 svg/css/svg-resource-fragment-identifier-img-src.html [ Crash ]
+
+webkit.org/b/178703 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.html [ Crash ]
+webkit.org/b/178707 imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html [ Timeout ]
+
+webkit.org/b/178705 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
+webkit.org/b/178705 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
+
+webkit.org/b/178706 media/media-source/media-source-paint-to-canvas.html [ Failure ]
