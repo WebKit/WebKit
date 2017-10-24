@@ -2999,7 +2999,7 @@ webkit.org/b/160249 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/160251 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
 webkit.org/b/161583 accessibility/auto-fill-types.html [ Failure ]
-webkit.org/b/161584 accessibility/children-changed-sends-notification.html [ Failure ]
+webkit.org/b/161584 accessibility/children-changed-sends-notification.html [ Failure Crash ]
 
 webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
@@ -3306,7 +3306,7 @@ webkit.org/b/178454 editing/pasteboard/pasting-empty-html-falls-back-to-text.htm
 webkit.org/b/178454 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Failure ]
 webkit.org/b/178454 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
 
-webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Failure ]
+webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/178456 media/audio-playback-volume-changes-with-restrictions.html [ Failure ]
 
