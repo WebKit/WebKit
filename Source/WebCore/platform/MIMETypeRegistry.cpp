@@ -68,10 +68,10 @@ static HashSet<String, ASCIICaseInsensitiveHash>* unsupportedTextMIMETypes;
 
 static void initializeSupportedImageMIMETypes()
 {
-#if USE(CG)
     supportedImageResourceMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
     supportedImageMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
 
+#if USE(CG)
     // This represents the subset of allowed image UTIs for which CoreServices has a corresponding MIME type. Keep this in sync with allowedImageUTIs().
     static const char* const allowedImageMIMETypes[] = { "image/tiff", "image/gif", "image/jpeg", "image/vnd.microsoft.icon", "image/jp2", "image/png", "image/bmp" };
     for (auto& mimeType : allowedImageMIMETypes) {
