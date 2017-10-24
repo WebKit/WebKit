@@ -10,17 +10,17 @@ const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
-function makeReport(rootFile, buildRequestId = 1)
+function makeReport(rootFile, buildRequestId = 1, repositoryList = ['WebKit'], buildTime = '2017-05-10T02:54:08.666')
 {
     return {
         slaveName: 'someSlave',
         slavePassword: 'somePassword',
         builderName: 'someBuilder',
         buildNumber: 123,
-        buildTime: '2017-05-10T02:54:08.666',
+        buildTime: buildTime,
         buildRequest: buildRequestId,
         rootFile: rootFile,
-        repositoryList: '["WebKit"]',
+        repositoryList: JSON.stringify(repositoryList),
     };
 }
 
@@ -65,6 +65,48 @@ function createTestGroupWihPatch()
         const set2 = new CustomCommitSet;
         set2.setRevisionForRepository(webkit, '191622');
         set2.setRevisionForRepository(shared, '80229');
+        return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]);
+    }).then((task) => {
+        return TestGroup.findAllByTask(task.id())[0];
+    }).then((group) => {
+        return db.query('UPDATE analysis_test_groups SET testgroup_author = $1', ['someUser']).then(() => group);
+    });
+}
+
+function createTestGroupWithPatchAndOwnedCommits()
+{
+    const triggerableConfiguration = {
+        'slaveName': 'sync-slave',
+        'slavePassword': 'password',
+        'triggerable': 'build-webkit',
+        'configurations': [
+            {test: MockData.someTestId(), platform: MockData.somePlatformId()},
+        ],
+        'repositoryGroups': [
+            {name: 'webkit', repositories: [
+                {repository: MockData.webkitRepositoryId(), acceptsPatch: true}
+            ]}
+        ]
+    };
+
+    const db = TestServer.database();
+    return MockData.addMockData(db).then(() => {
+        return Promise.all([TemporaryFile.makeTemporaryFile('patch.dat', 'patch file'), Manifest.fetch()]);
+    }).then((result) => {
+        const patchFile = result[0];
+        return Promise.all([UploadedFile.uploadFile(patchFile), TestServer.remoteAPI().postJSON('/api/update-triggerable/', triggerableConfiguration)]);
+    }).then((result) => {
+        const patchFile = result[0];
+        const someTest = Test.findById(MockData.someTestId());
+        const webkit = Repository.findById(MockData.webkitRepositoryId());
+        const ownedSJC = Repository.findById(MockData.ownedJSCRepositoryId());
+        const set1 = new CustomCommitSet;
+        set1.setRevisionForRepository(webkit, '191622', patchFile);
+        set1.setRevisionForRepository(ownedSJC, 'owned-jsc-6161', null, '191622');
+        const set2 = new CustomCommitSet;
+        set2.setRevisionForRepository(webkit, '192736');
+        set2.setRevisionForRepository(ownedSJC, 'owned-jsc-9191', null, '192736');
+
         return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]);
     }).then((task) => {
         return TestGroup.findAllByTask(task.id())[0];
@@ -196,6 +238,160 @@ describe('/api/upload-root/', function () {
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
         }).then((response) => {
             assert.equal(response['status'], 'InvalidRepositoryList');
+        });
+    });
+
+    it('should reject when using invalid key to specify an owned repository', () => {
+        let webkit;
+        let webkitPatch;
+        let ownedJSC;
+        let testGroup;
+        let buildRequest;
+        let otherBuildRequest;
+        let uploadedRoot;
+        return createTestGroupWithPatchAndOwnedCommits().then((group) => {
+            webkit = Repository.findById(MockData.webkitRepositoryId());
+            ownedJSC = Repository.findById(MockData.ownedJSCRepositoryId());
+
+            testGroup = group;
+            buildRequest = testGroup.buildRequests()[0];
+            assert.equal(testGroup.buildRequests().length, 6);
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert(!buildRequest.hasFinished());
+            assert(buildRequest.isPending());
+            assert.equal(buildRequest.buildId(), null);
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+            webkitPatch = commitSet.patchForRepository(webkit);
+            assert(webkitPatch instanceof UploadedFile);
+            assert.equal(webkitPatch.filename(), 'patch.dat');
+            assert.equal(commitSet.rootForRepository(webkit), null);
+            assert.equal(commitSet.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+            assert.equal(commitSet.patchForRepository(ownedJSC), null);
+            assert.equal(commitSet.rootForRepository(ownedJSC), null);
+            assert.deepEqual(commitSet.allRootFiles(), []);
+
+            otherBuildRequest = testGroup.buildRequests()[1];
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '192736');
+            assert.equal(otherCommitSet.patchForRepository(webkit), null);
+            assert.equal(otherCommitSet.rootForRepository(webkit), null);
+            assert.equal(otherCommitSet.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+            assert.equal(otherCommitSet.patchForRepository(ownedJSC), null);
+            assert.equal(otherCommitSet.rootForRepository(ownedJSC), null);
+            assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+            return addSlaveAndCreateRootFile();
+        }).then((rootFile) => {
+            const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
+            return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        }).then((response) => {
+            assert.equal(response['status'], 'OK');
+            const uploadedRootRawData = response['uploadedFile'];
+            uploadedRoot = UploadedFile.ensureSingleton(uploadedRootRawData.id, uploadedRootRawData);
+            assert.equal(uploadedRoot.filename(), 'some.dat');
+            return TestGroup.fetchForTask(buildRequest.testGroup().task().id(), true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group, testGroup);
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const updatedBuildRequest = testGroup.buildRequests()[0];
+            assert.equal(updatedBuildRequest, buildRequest);
+
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert(!buildRequest.hasFinished());
+            assert.equal(buildRequest.buildId(), null);
+
+            assert.deepEqual(buildRequest.commitSet().allRootFiles(), [uploadedRoot]);
+            assert.deepEqual(otherBuildRequest.commitSet().allRootFiles(), []);
+            return TemporaryFile.makeTemporaryFile('JavaScriptCore-Root.dat', 'JavaScript Content 0');
+        }).then((rootFile) => {
+            const report = makeReport(rootFile, buildRequest.id(), [{ownerRepositoryWrongKey: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666');
+            return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidKeyForRepository');
+        });
+    });
+
+    it('should reject when reporting an invalid owned repository', () => {
+        let webkit;
+        let webkitPatch;
+        let ownedJSC;
+        let testGroup;
+        let buildRequest;
+        let otherBuildRequest;
+        let uploadedRoot;
+        return createTestGroupWithPatchAndOwnedCommits().then((group) => {
+            webkit = Repository.findById(MockData.webkitRepositoryId());
+            ownedJSC = Repository.findById(MockData.ownedJSCRepositoryId());
+
+            testGroup = group;
+            buildRequest = testGroup.buildRequests()[0];
+            assert.equal(testGroup.buildRequests().length, 6);
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert(!buildRequest.hasFinished());
+            assert(buildRequest.isPending());
+            assert.equal(buildRequest.buildId(), null);
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+            webkitPatch = commitSet.patchForRepository(webkit);
+            assert(webkitPatch instanceof UploadedFile);
+            assert.equal(webkitPatch.filename(), 'patch.dat');
+            assert.equal(commitSet.rootForRepository(webkit), null);
+            assert.equal(commitSet.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+            assert.equal(commitSet.patchForRepository(ownedJSC), null);
+            assert.equal(commitSet.rootForRepository(ownedJSC), null);
+            assert.deepEqual(commitSet.allRootFiles(), []);
+
+            otherBuildRequest = testGroup.buildRequests()[1];
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '192736');
+            assert.equal(otherCommitSet.patchForRepository(webkit), null);
+            assert.equal(otherCommitSet.rootForRepository(webkit), null);
+            assert.equal(otherCommitSet.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+            assert.equal(otherCommitSet.patchForRepository(ownedJSC), null);
+            assert.equal(otherCommitSet.rootForRepository(ownedJSC), null);
+            assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+            return addSlaveAndCreateRootFile();
+        }).then((rootFile) => {
+            const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
+            return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        }).then((response) => {
+            assert.equal(response['status'], 'OK');
+            const uploadedRootRawData = response['uploadedFile'];
+            uploadedRoot = UploadedFile.ensureSingleton(uploadedRootRawData.id, uploadedRootRawData);
+            assert.equal(uploadedRoot.filename(), 'some.dat');
+            return TestGroup.fetchForTask(buildRequest.testGroup().task().id(), true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group, testGroup);
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const updatedBuildRequest = testGroup.buildRequests()[0];
+            assert.equal(updatedBuildRequest, buildRequest);
+
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert(!buildRequest.hasFinished());
+            assert.equal(buildRequest.buildId(), null);
+
+            assert.deepEqual(buildRequest.commitSet().allRootFiles(), [uploadedRoot]);
+            assert.deepEqual(otherBuildRequest.commitSet().allRootFiles(), []);
+            return TemporaryFile.makeTemporaryFile('JavaScriptCore-Root.dat', 'JavaScript Content 0');
+        }).then((rootFile) => {
+            const report = makeReport(rootFile, buildRequest.id(), [{ownerRepository: 'WebKit2', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666');
+            return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        }).then((response) => {
+            assert.equal(response['status'], 'InvalidRepository');
         });
     });
 
@@ -424,17 +620,18 @@ describe('/api/upload-root/', function () {
         });
     });
 
-    it('should update all commit set items in the repository listed', () => {
+    it('should only set build requests as complete when all roots are built', () => {
         let webkit;
         let webkitPatch;
-        let shared;
+        let ownedJSC;
         let testGroup;
         let buildRequest;
         let otherBuildRequest;
         let uploadedRoot;
-        return createTestGroupWihPatch().then((group) => {
+        let jscRoot;
+        return createTestGroupWithPatchAndOwnedCommits().then((group) => {
             webkit = Repository.findById(MockData.webkitRepositoryId());
-            shared = Repository.findById(MockData.sharedRepositoryId());
+            ownedJSC = Repository.findById(MockData.ownedJSCRepositoryId());
 
             testGroup = group;
             buildRequest = testGroup.buildRequests()[0];
@@ -442,7 +639,7 @@ describe('/api/upload-root/', function () {
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
             assert(!buildRequest.hasFinished());
-            assert(buildRequest.isPending()); 
+            assert(buildRequest.isPending());
             assert.equal(buildRequest.buildId(), null);
 
             const commitSet = buildRequest.commitSet();
@@ -451,25 +648,24 @@ describe('/api/upload-root/', function () {
             assert(webkitPatch instanceof UploadedFile);
             assert.equal(webkitPatch.filename(), 'patch.dat');
             assert.equal(commitSet.rootForRepository(webkit), null);
-            assert.equal(commitSet.revisionForRepository(shared), '80229');
-            assert.equal(commitSet.patchForRepository(shared), null);
-            assert.equal(commitSet.rootForRepository(shared), null);
+            assert.equal(commitSet.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+            assert.equal(commitSet.patchForRepository(ownedJSC), null);
+            assert.equal(commitSet.rootForRepository(ownedJSC), null);
             assert.deepEqual(commitSet.allRootFiles(), []);
 
             otherBuildRequest = testGroup.buildRequests()[1];
             const otherCommitSet = otherBuildRequest.commitSet();
-            assert.equal(otherCommitSet.revisionForRepository(webkit), '191622');
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '192736');
             assert.equal(otherCommitSet.patchForRepository(webkit), null);
             assert.equal(otherCommitSet.rootForRepository(webkit), null);
-            assert.equal(otherCommitSet.revisionForRepository(shared), '80229');
-            assert.equal(otherCommitSet.patchForRepository(shared), null);
-            assert.equal(otherCommitSet.rootForRepository(shared), null);
+            assert.equal(otherCommitSet.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+            assert.equal(otherCommitSet.patchForRepository(ownedJSC), null);
+            assert.equal(otherCommitSet.rootForRepository(ownedJSC), null);
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
             return addSlaveAndCreateRootFile();
         }).then((rootFile) => {
-            const report = makeReport(rootFile, buildRequest.id());
-            report.repositoryList = '["WebKit", "Shared"]';
+            const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
         }).then((response) => {
             assert.equal(response['status'], 'OK');
@@ -488,13 +684,38 @@ describe('/api/upload-root/', function () {
 
             assert(buildRequest.isBuild());
             assert(!buildRequest.isTest());
-            assert(buildRequest.hasFinished());
-            assert(!buildRequest.isPending()); 
-            assert.notEqual(buildRequest.buildId(), null);
+            assert(!buildRequest.hasFinished());
+            assert.equal(buildRequest.buildId(), null);
 
             assert.deepEqual(buildRequest.commitSet().allRootFiles(), [uploadedRoot]);
             assert.deepEqual(otherBuildRequest.commitSet().allRootFiles(), []);
+            return TemporaryFile.makeTemporaryFile('JavaScriptCore-Root.dat', 'JavaScript Content 0');
+        }).then((rootFile) => {
+            const report = makeReport(rootFile, buildRequest.id(), [{ownerRepository: 'WebKit', ownedRepository: 'JavaScriptCore'}], '2017-05-10T02:54:09.666');
+            return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        }).then((response) => {
+            assert.equal(response['status'], 'OK');
+            const uploadedRootRawData = response['uploadedFile'];
+            jscRoot = UploadedFile.ensureSingleton(uploadedRootRawData.id, uploadedRootRawData);
+            assert.equal(jscRoot.filename(), 'JavaScriptCore-Root.dat');
+            return TestGroup.fetchForTask(buildRequest.testGroup().task().id(), true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group, testGroup);
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const updatedBuildRequest = testGroup.buildRequests()[0];
+            assert.equal(updatedBuildRequest, buildRequest);
+
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert(buildRequest.hasFinished());
+            assert(!buildRequest.isPending());
+            assert.notEqual(buildRequest.buildId(), null);
+
+            assert.deepEqual(buildRequest.commitSet().allRootFiles(), [uploadedRoot, jscRoot]);
+            assert.deepEqual(otherBuildRequest.commitSet().allRootFiles(), []);
         });
     });
-
 });

@@ -1,3 +1,19 @@
+2017-10-20  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Update perf dashboard upload logic to support uploading binaries from owned commits.
+        https://bugs.webkit.org/show_bug.cgi?id=178610
+
+        Reviewed by Ryosuke Niwa.
+
+        Update build requests to 'completed' only when all commit set items are satisfied.
+        Extend 'repositoryList' parameter to be able to specified own commit information.
+        Items in 'repositoryList' can either be a string for top level repository,
+        or a dictionary with two keys: 'ownerRepository' and 'ownedRepository'.
+
+        * public/api/upload-root.php: Extend upload logic for support uploading binaries from owned commits.
+        * server-tests/api-upload-root-tests.js: Added unit tests.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Added unit tests.
+
 2017-10-05  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add try-bot button on perf analysis status page.
