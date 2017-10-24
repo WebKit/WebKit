@@ -77,13 +77,13 @@ public:
 
     // These two callee getters are only valid once the callees have been populated.
 
-    Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    Callee& embedderEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
 
-        auto callee = m_jsCallees.get(calleeIndex);
+        auto callee = m_embedderCallees.get(calleeIndex);
         RELEASE_ASSERT(callee);
         return *callee;
     }
@@ -123,7 +123,7 @@ private:
     MemoryMode m_mode;
     Vector<RefPtr<Callee>> m_callees;
     Vector<RefPtr<Callee>> m_optimizedCallees;
-    HashMap<uint32_t, RefPtr<Callee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsCallees;
+    HashMap<uint32_t, RefPtr<Callee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
     Vector<void*> m_wasmIndirectCallEntryPoints;
     Vector<TierUpCount> m_tierUpCounts;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;

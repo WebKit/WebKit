@@ -278,11 +278,6 @@ struct InternalFunction {
     Entrypoint entrypoint;
 };
 
-struct WasmExitStubs {
-    MacroAssemblerCodeRef wasmToJs;
-    MacroAssemblerCodeRef wasmToWasm;
-};
-
 using WasmEntrypointLoadLocation = void**;
 
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts

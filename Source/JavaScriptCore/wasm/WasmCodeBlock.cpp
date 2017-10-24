@@ -61,9 +61,9 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
         m_optimizedCallees.resize(m_calleeCount);
         m_wasmIndirectCallEntryPoints.resize(m_calleeCount);
 
-        m_plan->initializeCallees([&] (unsigned calleeIndex, RefPtr<Wasm::Callee>&& jsEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
-            if (jsEntrypointCallee) {
-                auto result = m_jsCallees.set(calleeIndex, WTFMove(jsEntrypointCallee));
+        m_plan->initializeCallees([&] (unsigned calleeIndex, RefPtr<Wasm::Callee>&& embedderEntrypointCallee, Ref<Wasm::Callee>&& wasmEntrypointCallee) {
+            if (embedderEntrypointCallee) {
+                auto result = m_embedderCallees.set(calleeIndex, WTFMove(embedderEntrypointCallee));
                 ASSERT_UNUSED(result, result.isNewEntry);
             }
             m_callees[calleeIndex] = WTFMove(wasmEntrypointCallee);

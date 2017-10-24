@@ -1358,7 +1358,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
 {
     auto result = std::make_unique<InternalFunction>();
 
-    compilationContext.jsEntrypointJIT = std::make_unique<CCallHelpers>();
+    compilationContext.embedderEntrypointJIT = std::make_unique<CCallHelpers>();
     compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>();
 
     Procedure procedure;

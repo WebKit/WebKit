@@ -36,7 +36,7 @@ namespace JSC { namespace Wasm {
 
 std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& compilationContext, const Signature& signature, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
 {
-    CCallHelpers& jit = *compilationContext.jsEntrypointJIT;
+    CCallHelpers& jit = *compilationContext.embedderEntrypointJIT;
 
     auto result = std::make_unique<InternalFunction>();
     jit.emitFunctionPrologue();

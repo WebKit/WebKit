@@ -49,8 +49,8 @@ enum class CompilationMode {
 };
 
 struct CompilationContext {
-    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> jsEntrypointByproducts;
+    std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
+    std::unique_ptr<B3::OpaqueByproducts> embedderEntrypointByproducts;
     std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
     std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
 };

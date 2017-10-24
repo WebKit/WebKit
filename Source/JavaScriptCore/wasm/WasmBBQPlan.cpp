@@ -313,15 +313,15 @@ void BBQPlan::complete(const AbstractLocker& locker)
             }
 
             if (auto embedderToWasmInternalFunction = m_embedderToWasmInternalFunctions.get(functionIndex)) {
-                LinkBuffer linkBuffer(*context.jsEntrypointJIT, nullptr, JITCompilationCanFail);
+                LinkBuffer linkBuffer(*context.embedderEntrypointJIT, nullptr, JITCompilationCanFail);
                 if (UNLIKELY(linkBuffer.didFailToAllocate())) {
                     Base::fail(locker, makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
                     return;
                 }
 
                 embedderToWasmInternalFunction->entrypoint.compilation = std::make_unique<B3::Compilation>(
-                    FINALIZE_CODE(linkBuffer, ("JavaScript->WebAssembly entrypoint[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
-                    WTFMove(context.jsEntrypointByproducts));
+                    FINALIZE_CODE(linkBuffer, ("Embedder->WebAssembly entrypoint[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
+                    WTFMove(context.embedderEntrypointByproducts));
             }
         }
 

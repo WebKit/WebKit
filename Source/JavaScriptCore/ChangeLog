@@ -1,3 +1,27 @@
+2017-10-24  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: NFC renames of things that aren't JS-specific
+        https://bugs.webkit.org/show_bug.cgi?id=178738
+
+        Reviewed by Saam Barati.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::embedderEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::jsEntrypointCalleeFromFunctionIndexSpace): Deleted.
+        * wasm/WasmFormat.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2017-10-24  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win][JSCOnly] Make jsconly build testapi and dlls and copy dlls when running tests
