@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../editing/editing.js"></script>
 <style>
 @font-face {
     font-family: Ahem;
@@ -28,8 +29,8 @@ typeText("mispelled a", expected);
 function typeText(text, element)
 {
     element.focus();
-    for (var i = 0; i < text.length; ++i)
-        document.execCommand("InsertText", false, text[i]);
+    for (const c of text)
+        typeCharacterCommand(c);
     element.blur();
 }
 </script>

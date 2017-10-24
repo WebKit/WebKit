@@ -1,3 +1,16 @@
+2017-10-24  Daniel Bates  <dabates@apple.com>
+
+        Test fast/writing-mode/english-bt-text-with-spelling-marker.html should wait for editing commands to complete
+        https://bugs.webkit.org/show_bug.cgi?id=178759
+
+        Reviewed by Ryosuke Niwa.
+
+        Make use of typeCharacterCommand() from (LayoutTests/editing/editing.js) to type each character
+        with a delay and delay test completion until all characters have been typed.
+
+        * fast/writing-mode/english-bt-text-with-spelling-marker-expected.html:
+        * fast/writing-mode/english-bt-text-with-spelling-marker.html:
+
 2017-10-24  Youenn Fablet  <youenn@apple.com>
 
         Enable service worker to use cache storage api
