@@ -1983,16 +1983,6 @@ set(WebCore_IDL_FILES
 if (ENABLE_ALLINONE_BUILD)
     message(STATUS "All-in-One build is enabled.")
     set(allInOnes
-        dom/DOMAllInOne.cpp
-
-        editing/EditingAllInOne.cpp
-
-        html/HTMLElementsAllInOne.cpp
-
-        inspector/InspectorAllInOne.cpp
-
-        loader/appcache/ApplicationCacheAllInOne.cpp
-
         mathml/MathMLAllInOne.cpp
 
         platform/text/TextAllInOne.cpp
