@@ -69,39 +69,25 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
     ASSERT(!lastQuote);
 }
 
-static void createContentRenderers(PseudoElement& pseudoElement, const RenderStyle& style, RenderTreePosition& renderTreePosition)
+static void createContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
 {
     ASSERT(style.contentData());
 
     for (const ContentData* content = style.contentData(); content; content = content->next()) {
-        auto child = content->createContentRenderer(renderTreePosition.parent().document(), style);
-        pseudoElement.contentRenderers().append(makeWeakPtr(*child));
-        if (renderTreePosition.parent().isChildAllowed(*child, style))
-            renderTreePosition.insert(WTFMove(child));
+        auto child = content->createContentRenderer(pseudoRenderer.document(), style);
+        if (pseudoRenderer.isChildAllowed(*child, style))
+            pseudoRenderer.addChild(WTFMove(child));
     }
 }
 
-static void updateStyleForContentRenderers(PseudoElement& pseudoElement, const RenderStyle& style)
+static void updateStyleForContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
 {
-    for (auto& contentRenderer : pseudoElement.contentRenderers()) {
-        if (!contentRenderer)
-            continue;
+    for (auto& contentRenderer : descendantsOfType<RenderElement>(pseudoRenderer)) {
         // We only manage the style for the generated content which must be images or text.
-        if (!is<RenderImage>(*contentRenderer) && !is<RenderQuote>(*contentRenderer))
+        if (!is<RenderImage>(contentRenderer) && !is<RenderQuote>(contentRenderer))
             continue;
-        auto createdStyle = RenderStyle::createStyleInheritingFromPseudoStyle(style);
-        downcast<RenderElement>(*contentRenderer).setStyle(WTFMove(createdStyle));
+        contentRenderer.setStyle(RenderStyle::createStyleInheritingFromPseudoStyle(style));
     }
-}
-
-static void removeAndDestroyContentRenderers(PseudoElement& pseudoElement)
-{
-    for (auto& contentRenderer : pseudoElement.contentRenderers()) {
-        if (!contentRenderer)
-            continue;
-        contentRenderer->removeFromParentAndDestroy();
-    }
-    pseudoElement.contentRenderers().clear();
 }
 
 void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, const std::optional<Style::ElementUpdate>& update, PseudoId pseudoId)
@@ -113,8 +99,6 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
 
     if (!needsPseudoElement(update)) {
         if (pseudoElement) {
-            removeAndDestroyContentRenderers(*pseudoElement);
-
             if (pseudoId == BEFORE)
                 current.clearBeforePseudoElement();
             else
@@ -142,29 +126,20 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     m_updater.updateElementRenderer(*pseudoElement, *update);
 
     auto* pseudoElementRenderer = pseudoElement->renderer();
-    if (!pseudoElementRenderer && update->style->display() != CONTENTS)
+    if (!pseudoElementRenderer)
         return;
 
-    auto renderTreePosition = pseudoElementRenderer ? RenderTreePosition(*pseudoElementRenderer) : m_updater.renderTreePosition();
-
-    if (update->change == Style::Detach) {
-        removeAndDestroyContentRenderers(*pseudoElement);
-
-        if (pseudoElementRenderer)
-            renderTreePosition.moveToLastChild();
-        else
-            renderTreePosition.computeNextSibling(*pseudoElement);
-
-        createContentRenderers(*pseudoElement, *update->style, renderTreePosition);
-    } else
-        updateStyleForContentRenderers(*pseudoElement, *update->style);
+    if (update->change == Style::Detach)
+        createContentRenderers(*pseudoElementRenderer, *update->style);
+    else
+        updateStyleForContentRenderers(*pseudoElementRenderer, *update->style);
 
     if (m_updater.renderView().hasQuotesNeedingUpdate()) {
-        for (auto& child : descendantsOfType<RenderQuote>(renderTreePosition.parent()))
+        for (auto& child : descendantsOfType<RenderQuote>(*pseudoElementRenderer))
             updateQuotesUpTo(&child);
     }
-    if (is<RenderListItem>(renderTreePosition.parent()))
-        ListItem::updateMarker(downcast<RenderListItem>(renderTreePosition.parent()));
+    if (is<RenderListItem>(*pseudoElementRenderer))
+        ListItem::updateMarker(downcast<RenderListItem>(*pseudoElementRenderer));
 }
 
 bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const std::optional<Style::ElementUpdate>& update)

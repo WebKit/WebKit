@@ -44,8 +44,6 @@ public:
     bool canStartSelection() const override { return false; }
     bool canContainRangeEndPoint() const override { return false; }
 
-    auto& contentRenderers() { return m_contentRenderers; }
-
     static String pseudoElementNameForEvents(PseudoId);
 
 private:
@@ -55,7 +53,6 @@ private:
 
     Element* m_hostElement;
     PseudoId m_pseudoId;
-    Vector<WeakPtr<RenderObject>> m_contentRenderers;
 };
 
 const QualifiedName& pseudoElementTagName();

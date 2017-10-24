@@ -352,6 +352,13 @@ void RenderStyle::copyNonInheritedFrom(const RenderStyle& other)
     ASSERT(zoom() == initialZoom());
 }
 
+void RenderStyle::copyContentFrom(const RenderStyle& other)
+{
+    if (!other.m_rareNonInheritedData->content)
+        return;
+    m_rareNonInheritedData.access().content = other.m_rareNonInheritedData->content->clone();
+}
+
 bool RenderStyle::operator==(const RenderStyle& other) const
 {
     // compare everything except the pseudoStyle pointer

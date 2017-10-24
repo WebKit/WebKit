@@ -159,6 +159,7 @@ public:
 
     void inheritFrom(const RenderStyle& inheritParent);
     void copyNonInheritedFrom(const RenderStyle&);
+    void copyContentFrom(const RenderStyle&);
 
     ContentPosition resolvedJustifyContentPosition(const StyleContentAlignmentData& normalValueBehavior) const;
     ContentDistributionType resolvedJustifyContentDistribution(const StyleContentAlignmentData& normalValueBehavior) const;
