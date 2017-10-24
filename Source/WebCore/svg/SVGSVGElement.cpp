@@ -341,6 +341,7 @@ Ref<NodeList> SVGSVGElement::getIntersectionList(SVGRect& rect, SVGElement* refe
 
 Ref<NodeList> SVGSVGElement::getEnclosureList(SVGRect& rect, SVGElement* referenceElement)
 {
+    document().updateLayoutIgnorePendingStylesheets();
     return collectIntersectionOrEnclosureList(rect, referenceElement, checkEnclosure);
 }
 
