@@ -1,3 +1,24 @@
+2017-10-24  David Kilzer  <ddkilzer@apple.com>
+
+        Need to pass non-nil argument to SimulateCrash() in bmalloc::logVMFailure()
+        <https://webkit.org/b/178740>
+        <rdar://problem/35154943>
+
+        Reviewed by Saam Barati.
+
+        * bmalloc/BPlatform.h:
+        (BUNUSED_PARAM): Define macro.
+        * bmalloc/Logging.cpp:
+        (SimulateCrash): Change third argument of SimulateCrash() to
+        CFStringRef since it's an NSString * in Objective-C.
+        (bmalloc::logVMFailure): Create a CFStringRef to use as a
+        description string.  Use new vmSize parameter to log size.
+        * bmalloc/Logging.h:
+        (bmalloc::logVMFailure): Update function signature to take a
+        size_t parameter representing vmSize.
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate): Pass vmSize into logVMFailure().
+
 2017-10-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, roll out r222731

@@ -216,3 +216,8 @@
 #if (BPLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || BPLATFORM(IOS)
 #define BUSE_OS_LOG 1
 #endif
+
+/* BUNUSED_PARAM */
+#if !defined(BUNUSED_PARAM)
+#define BUNUSED_PARAM(variable) (void)variable
+#endif

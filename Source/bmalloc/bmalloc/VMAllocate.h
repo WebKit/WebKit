@@ -123,7 +123,7 @@ inline void* tryVMAllocate(size_t vmSize)
     vmValidate(vmSize);
     void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, BMALLOC_VM_TAG, 0);
     if (result == MAP_FAILED) {
-        logVMFailure();
+        logVMFailure(vmSize);
         return nullptr;
     }
     return result;

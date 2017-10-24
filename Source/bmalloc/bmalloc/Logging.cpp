@@ -32,22 +32,27 @@
 #endif
 
 #if BPLATFORM(IOS)
+#include <CoreFoundation/CoreFoundation.h>
 #include <mach/exception_types.h>
 #include <objc/objc.h>
 #include <unistd.h>
 
 #include "BSoftLinking.h"
 BSOFT_LINK_PRIVATE_FRAMEWORK(CrashReporterSupport);
-BSOFT_LINK_FUNCTION(CrashReporterSupport, SimulateCrash, BOOL, (pid_t pid, mach_exception_data_type_t exceptionCode, id description), (pid, exceptionCode, description));
+BSOFT_LINK_FUNCTION(CrashReporterSupport, SimulateCrash, BOOL, (pid_t pid, mach_exception_data_type_t exceptionCode, CFStringRef description), (pid, exceptionCode, description));
 #endif
 
 namespace bmalloc {
 
-void logVMFailure()
+void logVMFailure(size_t vmSize)
 {
 #if BPLATFORM(IOS)
     const mach_exception_data_type_t kExceptionCode = 0xc105ca11;
-    SimulateCrash(getpid(), kExceptionCode, nullptr);
+    CFStringRef description = CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("bmalloc failed to mmap %lu bytes"), vmSize);
+    SimulateCrash(getpid(), kExceptionCode, description);
+    CFRelease(description);
+#else
+    BUNUSED_PARAM(vmSize);
 #endif
 }
 
