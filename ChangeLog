@@ -1,3 +1,12 @@
+2017-10-24  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win][JSCOnly] Make jsconly build testapi and dlls and copy dlls when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=177279
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2017-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Turn on ccache for Mac cmake builds by default

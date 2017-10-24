@@ -1567,6 +1567,14 @@ def prepareBundle
         if frameworkPath
             source = frameworkPath
             destination = Pathname.new(".vm")
+        elsif $hostOS == "windows"
+            # Make sure to copy dll along with jsc on Windows
+            source = [originalJSCPath] + Dir.glob(File.dirname(originalJSCPath) + "/jscLib.dll")
+            destination = $jscPath.dirname
+
+            Dir.chdir($outputDir) {
+                FileUtils.mkdir_p destination
+            }
         else
             source = originalJSCPath
             destination = $jscPath

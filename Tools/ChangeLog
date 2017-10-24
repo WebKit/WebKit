@@ -1,3 +1,13 @@
+2017-10-24  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win][JSCOnly] Make jsconly build testapi and dlls and copy dlls when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=177279
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/build-jsc:
+        * Scripts/run-jsc-stress-tests:
+
 2017-10-23  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/35045445>
