@@ -56,6 +56,8 @@ private:
     ExceptionOr<void> show() final;
     void hide() final;
     void canMakePayment(WTF::Function<void(bool)>&& completionHandler) final;
+    ExceptionOr<void> shippingAddressUpdated(const String& error) final;
+    ExceptionOr<void> shippingOptionUpdated() final;
     void complete(std::optional<PaymentComplete>&&) final;
 
     // PaymentSession

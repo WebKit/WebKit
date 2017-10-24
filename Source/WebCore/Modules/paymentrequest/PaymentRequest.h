@@ -41,6 +41,7 @@ namespace WebCore {
 class Document;
 class PaymentAddress;
 class PaymentHandler;
+class PaymentRequestUpdateEvent;
 class PaymentResponse;
 enum class PaymentComplete;
 enum class PaymentShippingType;
@@ -69,6 +70,7 @@ public:
 
     void shippingAddressChanged(Ref<PaymentAddress>&&);
     void shippingOptionChanged(const String& shippingOption);
+    ExceptionOr<void> updateWith(PaymentRequestUpdateEvent&, Ref<DOMPromise>&&);
     void accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void complete(std::optional<PaymentComplete>&&);
 
@@ -90,6 +92,10 @@ private:
 
     PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption);
 
+    void dispatchUpdateEvent(const AtomicString& type);
+    void settleDetailsPromise(const AtomicString& type);
+    void abortWithException(Exception&&);
+
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "PaymentRequest"; }
     bool canSuspendForDocumentSuspension() const final;
@@ -110,6 +116,8 @@ private:
     State m_state { State::Created };
     std::optional<ShowPromise> m_showPromise;
     RefPtr<PaymentHandler> m_activePaymentHandler;
+    RefPtr<DOMPromise> m_detailsPromise;
+    bool m_isUpdating { false };
 };
 
 std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier);

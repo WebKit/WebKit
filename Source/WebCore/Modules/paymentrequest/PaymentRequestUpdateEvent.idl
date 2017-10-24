@@ -27,7 +27,8 @@
     Conditional=PAYMENT_REQUEST,
     Constructor(DOMString type, optional PaymentRequestUpdateEventInit eventInitDict),
     EnabledBySetting=PaymentRequest,
+    Exposed=Window,
     SecureContext
 ] interface PaymentRequestUpdateEvent : Event {
-    void updateWith(Promise<PaymentDetailsUpdate> detailsPromise);
+    [MayThrowException] void updateWith(Promise<PaymentDetailsUpdate> detailsPromise);
 };

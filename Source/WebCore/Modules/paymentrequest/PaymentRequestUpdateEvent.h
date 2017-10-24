@@ -28,15 +28,35 @@
 #if ENABLE(PAYMENT_REQUEST)
 
 #include "Event.h"
+#include "PaymentRequestUpdateEventInit.h"
 
 namespace WebCore {
 
 class DOMPromise;
+class PaymentRequest;
+struct PaymentRequestUpdateEventInit;
 
 class PaymentRequestUpdateEvent final : public Event {
 public:
+    template <typename... Args> static Ref<PaymentRequestUpdateEvent> create(Args&&... args)
+    {
+        return adoptRef(*new PaymentRequestUpdateEvent(std::forward<Args>(args)...));
+    }
     ~PaymentRequestUpdateEvent();
-    void updateWith(Ref<DOMPromise>&&);
+    ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
+
+    bool waitForUpdate() const { return m_waitForUpdate; }
+    void setWaitForUpdate(bool waitForUpdate) { m_waitForUpdate = waitForUpdate; }
+
+private:
+    PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequestUpdateEventInit&&);
+    PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequest&);
+
+    // Event
+    EventInterface eventInterface() const final;
+
+    RefPtr<PaymentRequest> m_paymentRequest;
+    bool m_waitForUpdate { false };
 };
 
 } // namespace WebCore

@@ -1,9 +1,5 @@
 
 PASS Let target be the request which is dispatching the event. 
-FAIL Calling .updateWith() with an undispatched untrusted event throws "InvalidStateError" assert_throws: untrusted event of type "just a test" must throw "InvalidStateError" function "() => {
-        ev.updateWith(Promise.resolve());
-      }" threw object "TypeError: ev.updateWith is not a function. (In 'ev.updateWith(Promise.resolve())', 'ev.updateWith' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL Calling .updateWith() with a dispatched, untrusted event, throws "InvalidStateError" assert_throws: untrusted event of type "just a test" must throw "InvalidStateError" function "() => {
-        ev.updateWith(Promise.resolve())
-      }" threw object "TypeError: ev.updateWith is not a function. (In 'ev.updateWith(Promise.resolve())', 'ev.updateWith' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS Calling .updateWith() with an undispatched untrusted event throws "InvalidStateError" 
+PASS Calling .updateWith() with a dispatched, untrusted event, throws "InvalidStateError" 
 

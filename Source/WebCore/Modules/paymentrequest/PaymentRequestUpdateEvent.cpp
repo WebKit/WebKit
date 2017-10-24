@@ -28,12 +28,31 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "PaymentRequest.h"
+
 namespace WebCore {
+
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequestUpdateEventInit&& eventInit)
+    : Event { type, WTFMove(eventInit), IsTrusted::No }
+{
+}
+
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequest& paymentRequest)
+    : Event { type, false, false }
+    , m_paymentRequest { &paymentRequest }
+{
+}
 
 PaymentRequestUpdateEvent::~PaymentRequestUpdateEvent() = default;
 
-void PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&&)
+ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detailsPromise)
 {
+    return m_paymentRequest->updateWith(*this, WTFMove(detailsPromise));
+}
+
+EventInterface PaymentRequestUpdateEvent::eventInterface() const
+{
+    return PaymentRequestUpdateEventInterfaceType;
 }
 
 } // namespace WebCore

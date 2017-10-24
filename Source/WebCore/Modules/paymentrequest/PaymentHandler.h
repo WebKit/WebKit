@@ -48,6 +48,8 @@ public:
     virtual ExceptionOr<void> show() = 0;
     virtual void hide() = 0;
     virtual void canMakePayment(WTF::Function<void(bool)>&& completionHandler) = 0;
+    virtual ExceptionOr<void> shippingAddressUpdated(const String& error) = 0;
+    virtual ExceptionOr<void> shippingOptionUpdated() = 0;
     virtual void complete(std::optional<PaymentComplete>&&) = 0;
 };
 

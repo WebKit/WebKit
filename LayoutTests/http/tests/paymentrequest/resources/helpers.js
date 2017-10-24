@@ -94,7 +94,10 @@ async function getPaymentRequestResponse(options, id) {
   const request = new PaymentRequest(methods, details, options);
   request.onshippingaddresschange = ev => ev.updateWith(details);
   request.onshippingoptionchange = ev => ev.updateWith(details);
-  request.onapplepayvalidatemerchant = ev => ev.complete({});
+  request.onapplepayvalidatemerchant = ev => {
+      ev.complete({});
+      internals.mockPaymentCoordinator.acceptPayment();
+  };
   const response = await request.show();
   return { request, response };
 }

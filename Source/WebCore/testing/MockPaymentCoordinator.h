@@ -39,6 +39,8 @@ public:
     explicit MockPaymentCoordinator(MainFrame&);
 
     void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTFMove(shippingAddress); }
+    void changeShippingOption(String&& shippingOption);
+    void acceptPayment();
 
     void ref() const { }
     void deref() const { }

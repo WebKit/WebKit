@@ -62,14 +62,14 @@ bool MockPaymentCoordinator::canMakePayments()
 
 void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, Function<void(bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() {
+    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
         completionHandler(true);
     });
 }
 
 void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, Function<void(bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() {
+    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
         completionHandler(true);
     });
 }
@@ -101,9 +101,23 @@ void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSes
     dispatchIfShowing([mainFrame = makeRef(m_mainFrame), shippingAddress = m_shippingAddress]() {
         ApplePayPaymentContact contact = shippingAddress;
         mainFrame->paymentCoordinator().didSelectShippingContact(MockPaymentContact { WTFMove(contact) });
+    });
+}
 
+void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
+{
+    dispatchIfShowing([mainFrame = makeRef(m_mainFrame), shippingOption = WTFMove(shippingOption)]() mutable {
+        ApplePaySessionPaymentRequest::ShippingMethod shippingMethod;
+        shippingMethod.identifier = WTFMove(shippingOption);
+        mainFrame->paymentCoordinator().didSelectShippingMethod(shippingMethod);
+    });
+}
+
+void MockPaymentCoordinator::acceptPayment()
+{
+    dispatchIfShowing([mainFrame = makeRef(m_mainFrame), shippingAddress = m_shippingAddress]() mutable {
         ApplePayPayment payment;
-        payment.shippingContact = shippingAddress;
+        payment.shippingContact = WTFMove(shippingAddress);
         mainFrame->paymentCoordinator().didAuthorizePayment(MockPayment { WTFMove(payment) });
     });
 }

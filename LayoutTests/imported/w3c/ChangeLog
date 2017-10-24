@@ -1,3 +1,12 @@
+2017-10-24  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the "PaymentRequest updated" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=178689
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/payment-request/payment-request-update-event-updatewith-method.https-expected.txt:
+
 2017-10-22  Dean Jackson  <dino@apple.com>
 
         Implement drawImage(ImageBitmap) on 2d canvas

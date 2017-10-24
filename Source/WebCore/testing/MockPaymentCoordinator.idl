@@ -28,4 +28,6 @@
     NoInterfaceObject,
 ] interface MockPaymentCoordinator {
     void setShippingAddress(MockPaymentAddress shippingAddress);
+    void changeShippingOption(DOMString shippingOption);
+    void acceptPayment();
 };

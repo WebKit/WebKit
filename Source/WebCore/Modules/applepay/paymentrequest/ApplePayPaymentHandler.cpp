@@ -253,6 +253,53 @@ void ApplePayPaymentHandler::canMakePayment(Function<void(bool)>&& completionHan
     paymentCoordinator().canMakePaymentsWithActiveCard(m_applePayRequest->merchantIdentifier, document().domain(), WTFMove(completionHandler));
 }
 
+static ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> convertAndValidate(const PaymentDetailsInit& details)
+{
+    String currency = details.total.amount.currency;
+    auto total = convertAndValidate(details.total, currency);
+    if (total.hasException())
+        return total.releaseException();
+
+    auto lineItems = convertAndValidate(details.displayItems, currency);
+    if (lineItems.hasException())
+        return lineItems.releaseException();
+
+    return ApplePaySessionPaymentRequest::TotalAndLineItems { total.releaseReturnValue(), lineItems.releaseReturnValue() };
+}
+
+ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(const String& error)
+{
+    ShippingContactUpdate update;
+
+    if (m_paymentRequest->paymentOptions().requestShipping && m_paymentRequest->paymentDetails().shippingOptions.isEmpty()) {
+        PaymentError paymentError;
+        paymentError.code = PaymentError::Code::ShippingContactInvalid;
+        paymentError.message = error;
+        update.errors.append(WTFMove(paymentError));
+    }
+
+    auto newTotalAndLineItems = convertAndValidate(m_paymentRequest->paymentDetails());
+    if (newTotalAndLineItems.hasException())
+        return newTotalAndLineItems.releaseException();
+    update.newTotalAndLineItems = newTotalAndLineItems.releaseReturnValue();
+
+    paymentCoordinator().completeShippingContactSelection(WTFMove(update));
+    return { };
+}
+
+ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
+{
+    ShippingMethodUpdate update;
+
+    auto newTotalAndLineItems = convertAndValidate(m_paymentRequest->paymentDetails());
+    if (newTotalAndLineItems.hasException())
+        return newTotalAndLineItems.releaseException();
+    update.newTotalAndLineItems = newTotalAndLineItems.releaseReturnValue();
+
+    paymentCoordinator().completeShippingMethodSelection(WTFMove(update));
+    return { };
+}
+
 void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
 {
     if (!result) {
