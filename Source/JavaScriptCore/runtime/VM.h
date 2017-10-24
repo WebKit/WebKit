@@ -478,8 +478,6 @@ public:
     {
         return jitStubs->ctiStub(this, generator);
     }
-    
-    static RegisterAtOffsetList* getAllCalleeSaveRegisterOffsets();
 
 #endif // ENABLE(JIT)
     std::unique_ptr<CommonSlowPaths::ArityCheckData> arityCheckData;

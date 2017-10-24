@@ -47,8 +47,9 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&
     // The thing that jumps here must move ExceptionType into the argumentGPR1 before jumping here.
     // We're allowed to use temp registers here. We are not allowed to use callee saves.
     jit.loadWasmContextInstance(GPRInfo::argumentGPR2);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::argumentGPR0);
-    jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, JSWebAssemblyInstance::offsetOfTopEntryFramePointer()), GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR0);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     CCallHelpers::Call call = jit.call();
     jit.jump(GPRInfo::returnValueGPR);

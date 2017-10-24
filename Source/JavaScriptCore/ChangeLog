@@ -1,3 +1,68 @@
+2017-10-23  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: topEntryFrame on Wasm::Instance
+        https://bugs.webkit.org/show_bug.cgi?id=178690
+
+        Reviewed by Saam Barati.
+
+        topEntryFrame is usually on VM, but for a no-VM WebAssembly we
+        need to hold topEntryFrame elsewhere, and generated code cannot
+        hard-code where topEntryFrame live. Do this at creation time of
+        Wasm::Instance, and then generated code will just load from
+        wherever Wasm::Instance was told topEntryFrame is. In a JavaScript
+        embedding this is still from VM, so all of the unwinding machinery
+        stays the same.
+
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::DFG::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::copyCalleeSavesToEntryFrameCalleeSavesBuffer const):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBuffer):
+        The default parameter was never non-defaulted from any of the
+        callers. The new version calls the impl directly because it
+        doesn't have VM and doesn't hard-code the address of
+        topEntryFrame.
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::vmCalleeSaveRegisterOffsets): This was weird on
+        VM because it's not really VM-specific.
+        * jit/RegisterSet.h:
+        * runtime/VM.cpp:
+        (JSC::VM::getAllCalleeSaveRegisterOffsets): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::getCTIStub):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        * wasm/WasmInstance.h: topEntryFramePointer will eventually live
+        here for real. Right now it's mirrored in JSWebAssemblyInstance
+        because that's the acting Context.
+        (JSC::Wasm::Instance::create):
+        (JSC::Wasm::Instance::offsetOfTopEntryFramePointer):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        * wasm/js/JSWebAssemblyInstance.h: Mirror Wasm::Instance temporarily.
+        (JSC::JSWebAssemblyInstance::offsetOfCallee):
+        (JSC::JSWebAssemblyInstance::offsetOfTopEntryFramePointer):
+        (JSC::JSWebAssemblyInstance::offsetOfVM): Deleted.
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::instantiate):
+
 2017-10-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Please support HAR Export for network traffic

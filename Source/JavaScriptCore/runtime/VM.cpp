@@ -996,20 +996,6 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
 }
 #endif
 
-#if ENABLE(JIT)
-RegisterAtOffsetList* VM::getAllCalleeSaveRegisterOffsets()
-{
-    static RegisterAtOffsetList* result;
-
-    static std::once_flag calleeSavesFlag;
-    std::call_once(calleeSavesFlag, [] () {
-        result = new RegisterAtOffsetList(RegisterSet::vmCalleeSaveRegisters(), RegisterAtOffsetList::ZeroBased);
-    });
-
-    return result;
-}
-#endif // ENABLE(JIT)
-
 #if USE(CF)
 void VM::registerRunLoopTimer(JSRunLoopTimer* timer)
 {

@@ -409,7 +409,7 @@ static void compileStub(
 
     RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
     RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
-    RegisterAtOffsetList* vmCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
+    RegisterAtOffsetList* vmCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet vmCalleeSavesToSkip = RegisterSet::stackRegisters();
     if (exit.isExceptionHandler()) {
         jit.loadPtr(&vm->topEntryFrame, GPRInfo::regT1);

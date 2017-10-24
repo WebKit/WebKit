@@ -585,7 +585,7 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
 void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-    RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
+    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->size();
 
@@ -880,7 +880,7 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), calleeSavesBuffer);
 
-    RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
+    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->size();
     

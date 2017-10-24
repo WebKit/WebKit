@@ -671,7 +671,7 @@ private:
         if (!currentCalleeSaves)
             return;
 
-        RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
+        RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
         RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
         intptr_t* frame = reinterpret_cast<intptr_t*>(m_callFrame->registers());
 
