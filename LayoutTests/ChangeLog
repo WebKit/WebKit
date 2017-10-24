@@ -1,3 +1,12 @@
+2017-10-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed test gardening. Try to reduce flakiness of inspector/network/har tests.
+
+        * http/tests/inspector/network/har/har-page-expected.txt:
+        * http/tests/inspector/network/har/har-page.html:
+        Remove properties which may sometimes be optional.
+        Filter contents which are shared across tests and might change.
+
 2017-10-23  Youenn Fablet  <youenn@apple.com>
 
         Multiple imported layout tests are crashing and timing out.
