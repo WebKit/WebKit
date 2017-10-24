@@ -955,6 +955,10 @@ void MediaPlayer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& t
 
 bool MediaPlayer::isAvailable()
 {
+#if PLATFORM(IOS)
+    if (DeprecatedGlobalSettings::isAVFoundationEnabled())
+        return true;
+#endif
     return !installedMediaEngines().isEmpty();
 }
 
