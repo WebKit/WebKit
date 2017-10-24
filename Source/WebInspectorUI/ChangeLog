@@ -1,5 +1,22 @@
 2017-10-24  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: allow ShaderProgram to be shown in CanvasContentView
+        https://bugs.webkit.org/show_bug.cgi?id=178714
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.inspect):
+        Allow ShaderProgram to show the related Canvas information.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype.canShowRepresentedObject):
+        (WI.CanvasTabContentView.prototype.showRepresentedObject):
+        (WI.CanvasTabContentView.prototype._canvasTreeOutlineSelectionDidChange):
+        If a ShaderProgram is selected in the path component, display a ShaderProgramContentView.
+
+2017-10-24  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: remove canvases from Resources and experimental setting/UI
         https://bugs.webkit.org/show_bug.cgi?id=178711
 

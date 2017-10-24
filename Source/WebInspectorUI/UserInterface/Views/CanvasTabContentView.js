@@ -90,7 +90,9 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     canShowRepresentedObject(representedObject)
     {
-        return representedObject instanceof WI.CanvasCollection || representedObject instanceof WI.Recording;
+        return representedObject instanceof WI.CanvasCollection
+            || representedObject instanceof WI.Recording
+            || representedObject instanceof WI.ShaderProgram;
     }
 
     showRepresentedObject(representedObject, cookie)
@@ -99,7 +101,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
         this.navigationSidebarPanel.recording = null;
 
-        if (representedObject instanceof WI.CanvasCollection) {
+        if (representedObject instanceof WI.CanvasCollection || representedObject instanceof WI.ShaderProgram) {
             this._overviewNavigationItem.hidden = true;
             WI.navigationSidebar.collapsed = true;
             return;
@@ -194,7 +196,9 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
         if (this.canShowRepresentedObject(representedObject)) {
             this.showRepresentedObject(representedObject);
-            this._updateActionIndex(0);
+
+            if (representedObject instanceof WI.Recording)
+                this._updateActionIndex(0);
             return;
         }
 

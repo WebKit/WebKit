@@ -42,7 +42,13 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (!(objects instanceof Array))
             objects = [objects];
 
-        objects = objects.map((object) => object instanceof WI.Recording ? object.source : object);
+        objects = objects.map((object) => {
+            if (object instanceof WI.Recording)
+                return object.source;
+            if (object instanceof WI.ShaderProgram)
+                return object.canvas;
+            return object;
+        });
 
         this.canvas = objects.find((object) => object instanceof WI.Canvas);
 
