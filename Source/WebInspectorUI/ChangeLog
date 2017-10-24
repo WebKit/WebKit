@@ -1,3 +1,15 @@
+2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: TypeError: null is not an object (evaluating 'this.treeOutline.isXMLMimeType')
+        https://bugs.webkit.org/show_bug.cgi?id=178745
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WI.DOMTreeUpdater.prototype._updateModifiedNodes):
+        An earlier tree element update might have caused this other tree element's
+        waiting to be updated to actually be removed. So just skip past them.
+
 2017-10-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add Recording.svg

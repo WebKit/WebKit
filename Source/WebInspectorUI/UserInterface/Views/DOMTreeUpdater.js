@@ -120,8 +120,10 @@ WI.DOMTreeUpdater.prototype = {
         this._recentlyDeletedNodes.forEach(markNodeParentForUpdate);
 
         for (let parentTreeElement of parentElementsToUpdate) {
-            parentTreeElement.updateTitle();
-            parentTreeElement.updateChildren();
+            if (parentTreeElement.treeOutline) {
+                parentTreeElement.updateTitle();
+                parentTreeElement.updateChildren();
+            }
         }
 
         for (let node of this._recentlyModifiedNodes.values()) {
