@@ -3807,3 +3807,5 @@ webkit.org/b/178413 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 
 webkit.org/b/178549 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
 webkit.org/b/178549 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
+
+webkit.org/b/178724 fast/css-generated-content/details-summary-before-after.html [ Failure ]
