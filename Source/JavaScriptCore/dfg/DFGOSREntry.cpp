@@ -313,7 +313,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     // 6) Copy our callee saves to buffer.
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     RegisterAtOffsetList* registerSaveLocations = codeBlock->calleeSaveRegisters();
-    RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
+    RegisterAtOffsetList* allCalleeSaves = VM::getAllCalleeSaveRegisterOffsets();
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
 
     unsigned registerCount = registerSaveLocations->size();

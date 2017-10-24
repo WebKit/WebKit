@@ -406,7 +406,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
                 // 1. Emit less code.
                 // 2. Try to speed things up by skipping stack checks.
                 minimumParentCheckSize,
-                // This allows us to elide stack checks in the Wasm -> Embedder call IC stub. Since these will
+                // This allows us to elide stack checks in the Wasm -> JS call IC stub. Since these will
                 // spill all arguments to the stack, we ensure that a stack check here covers the
                 // stack that such a stub would use.
                 (Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jscCallingConvention().headerSizeInBytes()).unsafeGet()
@@ -1109,7 +1109,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         isWasmBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
         // FIXME: Let's remove this indirection by creating a PIC friendly IC
-        // for calls out to the embedder. This shouldn't be that hard to do. We could probably
+        // for calls out to JS. This shouldn't be that hard to do. We could probably
         // implement the IC to be over Context*.
         // https://bugs.webkit.org/show_bug.cgi?id=170375
         Value* jumpDestination = isEmbedderBlock->appendNew<MemoryValue>(m_proc,
@@ -1169,8 +1169,8 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
 
     m_makesCalls = true;
     // Note: call indirect can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
-    // WebAssemblyWrapperFunction is like calling into the embedder, we conservatively assume all call indirects
-    // can be to the embedder for our stack check calculation.
+    // WebAssemblyWrapperFunction is like calling into JS, we conservatively assume all call indirects
+    // can be to JS for our stack check calculation.
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     ExpressionType callableFunctionBuffer;

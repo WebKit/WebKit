@@ -29,9 +29,8 @@
 #if ENABLE(JIT)
 
 #include "GPRInfo.h"
-#include "JSCInlines.h"
 #include "MacroAssembler.h"
-#include "RegisterAtOffsetList.h"
+#include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -199,16 +198,6 @@ RegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.set(FPRInfo::fpRegCS6);
     result.set(FPRInfo::fpRegCS7);
 #endif
-    return result;
-}
-
-RegisterAtOffsetList* RegisterSet::vmCalleeSaveRegisterOffsets()
-{
-    static RegisterAtOffsetList* result;
-    static std::once_flag calleeSavesFlag;
-    std::call_once(calleeSavesFlag, [] () {
-        result = new RegisterAtOffsetList(vmCalleeSaveRegisters(), RegisterAtOffsetList::ZeroBased);
-    });
     return result;
 }
 

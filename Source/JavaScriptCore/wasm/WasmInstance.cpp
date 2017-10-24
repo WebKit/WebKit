@@ -40,10 +40,9 @@ size_t globalMemoryByteSize(Module& module)
 }
 }
 
-Instance::Instance(Ref<Module>&& module, EntryFrame** topEntryFramePointer)
+Instance::Instance(Ref<Module>&& module)
     : m_module(WTFMove(module))
     , m_globals(MallocPtr<uint64_t>::malloc(globalMemoryByteSize(m_module.get())))
-    , m_topEntryFramePointer(topEntryFramePointer)
 {
 }
 
