@@ -1,5 +1,16 @@
 2017-10-24  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [GTK] Unskip layout tests editing/deleting/delete-emoji-1.html & editing/deleting/delete-emoji-1.html
+        https://bugs.webkit.org/show_bug.cgi?id=178742
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Updated expectations for the emoji deletion layout tests.
+        * platform/gtk/editing/deleting/delete-emoji-1-expected.txt: Added.
+        * platform/gtk/editing/deleting/delete-emoji-expected.txt: Added.
+
+2017-10-24  Adrian Perez de Castro  <aperez@igalia.com>
+
         [WPE] Remove expectations for tests which do not exist anymore
         https://bugs.webkit.org/show_bug.cgi?id=178717
 

@@ -1027,7 +1027,14 @@ webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
 
 # Missing support for new emoji
-webkit.org/b/160120 editing/deleting/delete-emoji.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-2.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-3.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-4.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-5.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-6.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-7.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-8.html [ Skip ]
+webkit.org/b/160120 editing/deleting/delete-emoji-9.html [ Skip ]
 webkit.org/b/160120 fast/text/emoji-single-parent-family.html [ Skip ]
 webkit.org/b/160120 editing/caret/emoji.html [ Skip ]
 
