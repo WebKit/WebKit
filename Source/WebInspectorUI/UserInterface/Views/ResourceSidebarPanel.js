@@ -48,12 +48,6 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
             scopeBarItems.push(scopeBarItem);
         }
 
-        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value) {
-            let canvasesScopeBarItem = new WI.ScopeBarItem(scopeItemPrefix + WI.Canvas.ResourceSidebarType, WI.UIString("Canvases"));
-            canvasesScopeBarItem[WI.ResourceSidebarPanel.ResourceTypeSymbol] = WI.Canvas.ResourceSidebarType;
-            scopeBarItems.insertAtIndex(canvasesScopeBarItem, scopeBarItems.length - 1);
-        }
-
         this._scopeBar = new WI.ScopeBar("resource-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
@@ -235,9 +229,6 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
             if (treeElement instanceof WI.ScriptTreeElement)
                 return selectedScopeBarItem[WI.ResourceSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Script;
-
-            if (treeElement instanceof WI.CanvasTreeElement || treeElement instanceof WI.ShaderProgramTreeElement)
-                return selectedScopeBarItem[WI.ResourceSidebarPanel.ResourceTypeSymbol] === WI.Canvas.ResourceSidebarType;
 
             if (treeElement instanceof WI.CSSStyleSheetTreeElement)
                 return selectedScopeBarItem[WI.ResourceSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Stylesheet;
@@ -464,9 +455,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         if (treeElement instanceof WI.FolderTreeElement
             || treeElement instanceof WI.ResourceTreeElement
             || treeElement instanceof WI.ScriptTreeElement
-            || treeElement instanceof WI.CSSStyleSheetTreeElement
-            || treeElement instanceof WI.CanvasTreeElement
-            || treeElement instanceof WI.ShaderProgramTreeElement) {
+            || treeElement instanceof WI.CSSStyleSheetTreeElement) {
             const cookie = null;
             const options = {
                 ignoreNetworkTab: true,

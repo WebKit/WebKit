@@ -68,8 +68,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     static isTabAllowed()
     {
-        // FIXME: remove experimental setting check once <https://webkit.org/b/175485> is complete.
-        return !!window.CanvasAgent && WI.settings.experimentalEnableCanvasTab.value;
+        return !!window.CanvasAgent;
     }
 
     // Public

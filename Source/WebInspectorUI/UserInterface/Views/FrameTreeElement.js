@@ -48,9 +48,6 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         this.registerFolderizeSettings("frames", WI.UIString("Frames"), this._frame.childFrameCollection, WI.FrameTreeElement);
         this.registerFolderizeSettings("extra-scripts", WI.UIString("Extra Scripts"), this._frame.extraScriptCollection, WI.ScriptTreeElement);
 
-        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value)
-            this.registerFolderizeSettings("canvases", WI.UIString("Canvases"), this._frame.canvasCollection, WI.CanvasTreeElement);
-
         function forwardingConstructor(representedObject, ...extraArguments) {
             if (representedObject instanceof WI.CSSStyleSheet)
                 return new WI.CSSStyleSheetTreeElement(representedObject, ...extraArguments);
@@ -119,21 +116,11 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         WI.GeneralTreeElement.prototype.onattach.call(this);
 
         WI.cssStyleManager.addEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
-
-        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value) {
-            this._frame.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, this._canvasWasAdded, this);
-            this._frame.canvasCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
-        }
     }
 
     ondetach()
     {
         WI.cssStyleManager.removeEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
-
-        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value) {
-            this._frame.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, this._canvasWasAdded, this);
-            this._frame.canvasCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
-        }
 
         super.ondetach();
     }
@@ -189,11 +176,6 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         for (let extraScript of this._frame.extraScriptCollection.items) {
             if (extraScript.sourceURL || extraScript.sourceMappingURL)
                 this.addChildForRepresentedObject(extraScript);
-        }
-
-        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value) {
-            for (let canvas of this._frame.canvasCollection.items)
-                this.addChildForRepresentedObject(canvas);
         }
 
         const doNotCreateIfMissing = true;
@@ -271,15 +253,5 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
             return;
 
         this.addRepresentedObjectToNewChildQueue(event.data.styleSheet);
-    }
-
-    _canvasWasAdded(event)
-    {
-        this.addRepresentedObjectToNewChildQueue(event.data.item);
-    }
-
-    _canvasWasRemoved(event)
-    {
-        this.removeChildForRepresentedObject(event.data.item);
     }
 };

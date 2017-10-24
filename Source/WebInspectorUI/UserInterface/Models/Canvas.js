@@ -292,8 +292,6 @@ WI.Canvas.ContextType = {
     WebGPU: "webgpu",
 };
 
-WI.Canvas.ResourceSidebarType = "resource-type-canvas";
-
 WI.Canvas.Event = {
     MemoryChanged: "canvas-memory-changed",
     CSSCanvasClientNodesChanged: "canvas-css-canvas-client-nodes-changed",

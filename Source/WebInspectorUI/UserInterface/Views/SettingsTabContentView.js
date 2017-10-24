@@ -239,13 +239,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
-        if (window.CanvasAgent) {
-            let canvasSettingsGroup = experimentalSettingsView.addGroup(WI.UIString("Canvas:"));
-            canvasSettingsGroup.addSetting(WI.settings.experimentalEnableCanvasTab, WI.UIString("Enable Canvas Tab"));
-            canvasSettingsGroup.addSetting(WI.settings.experimentalShowCanvasContextsInResources, WI.UIString("Show Contexts in Resources Tab"));
-            experimentalSettingsView.addSeparator();
-        }
-
         if (window.CSSAgent) {
             experimentalSettingsView.addSetting(WI.UIString("Styles Panel:"), WI.settings.experimentalSpreadsheetStyleEditor, WI.UIString("Spreadsheet Style Editor"));
             experimentalSettingsView.addSeparator();
@@ -270,10 +263,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             });
         }
 
-        listenForChange(WI.settings.experimentalShowCanvasContextsInResources);
         listenForChange(WI.settings.experimentalSpreadsheetStyleEditor);
         listenForChange(WI.settings.experimentalEnableLayersTab);
-        listenForChange(WI.settings.experimentalEnableCanvasTab);
 
         this.addSettingsView(experimentalSettingsView);
     }

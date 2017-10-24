@@ -1086,8 +1086,7 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         || representedObject instanceof WI.Resource
         || representedObject instanceof WI.Script
         || representedObject instanceof WI.CSSStyleSheet
-        || representedObject instanceof WI.Canvas
-        || representedObject instanceof WI.ShaderProgram)
+        || (representedObject instanceof WI.Collection && !(representedObject instanceof WI.CanvasCollection)))
         return WI.ResourcesTabContentView;
 
     // FIXME: Move these to a Storage tab.
