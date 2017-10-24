@@ -76,12 +76,8 @@
     content: url(../Images/Beacon.svg);
 }
 
-.canvas.canvas-2d .icon {
-    content: url(../Images/Canvas2D.svg);
-}
-
-.canvas:matches(.webgl, .webgl2, .webgpu) .icon {
-    content: url(../Images/Canvas3D.svg);
+.canvas .icon {
+    content: url(../Images/Canvas.svg);
 }
 
 .shader-program .icon {

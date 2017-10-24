@@ -53,12 +53,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
             this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
         }
-
-        this._previewContainer = this.element.appendChild(document.createElement("div"));
-        this._previewContainer.classList.add("preview-container");
-
-        this._messageElement = this.element.appendChild(document.createElement("div"));
-        this._messageElement.classList.add("message");
     }
 
     // Static
@@ -107,12 +101,16 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         if (!this.representedObject)
             return;
 
+        if (this._index === index)
+            return;
+
         this.representedObject.actions.then((actions) => {
             console.assert(index >= 0 && index < actions.length);
-            if (index < 0 || index >= actions.length || index === this._index)
+            if (index < 0 || index >= actions.length)
                 return;
 
             this._index = index;
+            this._updateSliderValue();
 
             if (this.representedObject.type === WI.Recording.Type.Canvas2D)
                 this._generateContentCanvas2D(index, actions, options);
@@ -136,13 +134,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
     }
 
-    get supplementalRepresentedObjects()
-    {
-        let supplementalRepresentedObjects = super.supplementalRepresentedObjects;
-        if (this.representedObject)
-            supplementalRepresentedObjects.push(this.representedObject);
-        return supplementalRepresentedObjects;
-    }
 
     get supportsSave()
     {
@@ -160,6 +151,34 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             content: JSON.stringify(this.representedObject.toJSON()),
             forceSaveAs: true,
         };
+    }
+
+    // Protected
+
+    initialLayout()
+    {
+        let previewHeader = this.element.appendChild(document.createElement("header"));
+
+        let sliderContainer = previewHeader.appendChild(document.createElement("div"));
+        sliderContainer.className = "slider-container hidden";
+
+        this._previewContainer = this.element.appendChild(document.createElement("div"));
+        this._previewContainer.className = "preview-container";
+
+        this._sliderValueElement = sliderContainer.appendChild(document.createElement("div"));
+        this._sliderValueElement.className = "slider-value";
+
+        this._sliderElement = sliderContainer.appendChild(document.createElement("input"));
+        this._sliderElement.addEventListener("input", this._sliderChanged.bind(this));
+        this._sliderElement.type = "range";
+        this._sliderElement.min = 0;
+        this._sliderElement.max = 0;
+
+        this.representedObject.actions.then(() => {
+            sliderContainer.classList.remove("hidden");
+            this._sliderElement.max = this.representedObject.visualActionIndexes.length;
+            this._updateSliderValue();
+        });
     }
 
     // Private
@@ -396,7 +415,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
 
         this._previewContainer.removeChildren();
-        this._messageElement.removeChildren();
 
         if (showCanvasPath) {
             indexOfLastBeginPathAction = this._index;
@@ -481,6 +499,22 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._snapshots[snapshotIndex].element.classList.toggle("show-grid", activated);
     }
 
+    _updateSliderValue()
+    {
+        if (!this._sliderElement)
+            return;
+
+        let visualActionIndexes = this.representedObject.visualActionIndexes;
+        let visualActionIndex = 0;
+        if (this._index > 0) {
+            while (visualActionIndex < visualActionIndexes.length && visualActionIndexes[visualActionIndex] <= this._index)
+                visualActionIndex++;
+        }
+
+        this._sliderElement.value = visualActionIndex;
+        this._sliderValueElement.textContent = WI.UIString("%d of %d").format(visualActionIndex, visualActionIndexes.length);
+    }
+
     _showPathButtonClicked(event)
     {
         WI.settings.showCanvasPath.value = !this._showPathButtonNavigationItem.activated;
@@ -494,6 +528,21 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         this._updateImageGrid();
     }
+
+    _sliderChanged()
+    {
+        let index = 0;
+
+        let visualActionIndex = parseInt(this._sliderElement.value) - 1;
+        if (visualActionIndex !== -1)
+            index = this.representedObject.visualActionIndexes[visualActionIndex];
+
+        this.dispatchEventToListeners(WI.RecordingContentView.Event.RecordingActionIndexChanged, {index});
+    }
 };
 
 WI.RecordingContentView.SnapshotInterval = 5000;
+
+WI.RecordingContentView.Event = {
+    RecordingActionIndexChanged: "recording-action-index-changed",
+};

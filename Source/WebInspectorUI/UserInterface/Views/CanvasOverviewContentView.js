@@ -33,8 +33,6 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
         this.element.classList.add("canvas-overview");
 
-        this._canvasTreeOutline = new WI.TreeOutline;
-
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh-all", WI.UIString("Refresh all"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.disabled = true;
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshPreviews, this);
@@ -43,8 +41,6 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
         this._showGridButtonNavigationItem.disabled = true;
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
-
-        this._selectedCanvasPathComponent = null;
 
         this.selectionEnabled = true;
     }
@@ -59,14 +55,18 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     get selectionPathComponents()
     {
         let components = [];
-        let canvas = this.supplementalRepresentedObjects[0];
-        if (canvas) {
-            let treeElement = this._canvasTreeOutline.findTreeElement(canvas);
-            console.assert(treeElement);
-            if (treeElement) {
-                let pathComponent = new WI.GeneralTreeElementPathComponent(treeElement, canvas);
-                pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._selectedPathComponentChanged, this);
-                components.push(pathComponent);
+
+        if (this.supplementalRepresentedObjects.length) {
+            let [canvas] = this.supplementalRepresentedObjects;
+            let tabContentView = WI.tabBrowser.selectedTabContentView;
+            if (tabContentView) {
+                let treeElement = tabContentView.treeElementForRepresentedObject(canvas);
+                console.assert(treeElement);
+                if (treeElement) {
+                    let pathComponent = new WI.GeneralTreeElementPathComponent(treeElement);
+                    pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._selectionPathComponentsChanged, this);
+                    components.push(pathComponent);
+                }
             }
         }
 
@@ -84,29 +84,12 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     contentViewAdded(contentView)
     {
-        let canvas = contentView.representedObject;
-        let treeElement = this._canvasTreeOutline.findTreeElement(canvas);
-        console.assert(!treeElement, "Already added tree element for canvas.", canvas);
-        if (treeElement)
-            return;
-
-        treeElement = new WI.CanvasTreeElement(canvas);
-        this._canvasTreeOutline.appendChild(treeElement);
-
         contentView.element.addEventListener("mouseenter", this._contentViewMouseEnter);
         contentView.element.addEventListener("mouseleave", this._contentViewMouseLeave);
     }
 
     contentViewRemoved(contentView)
     {
-        let canvas = contentView.representedObject;
-        let treeElement = this._canvasTreeOutline.findTreeElement(canvas);
-        console.assert(treeElement, "Missing tree element for canvas.", canvas);
-        if (!treeElement)
-            return;
-
-        this._canvasTreeOutline.removeChild(treeElement);
-
         contentView.element.removeEventListener("mouseenter", this._contentViewMouseEnter);
         contentView.element.removeEventListener("mouseleave", this._contentViewMouseLeave);
     }
@@ -137,7 +120,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             canvasContentView.refresh();
     }
 
-    _selectedPathComponentChanged(event)
+    _selectionPathComponentsChanged(event)
     {
         let pathComponent = event.data.pathComponent;
         if (pathComponent.representedObject instanceof WI.Canvas)
@@ -151,16 +134,6 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _supplementalRepresentedObjectsDidChange()
     {
-        function createCanvasPathComponent(canvas) {
-            return new WI.HierarchicalPathComponent(canvas.displayName, "canvas", canvas);
-        }
-
-        let currentCanvas = this.supplementalRepresentedObjects[0];
-        if (currentCanvas)
-            this._selectedCanvasPathComponent = createCanvasPathComponent(currentCanvas);
-        else
-            this._selectedCanvasPathComponent = null;
-
         this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 

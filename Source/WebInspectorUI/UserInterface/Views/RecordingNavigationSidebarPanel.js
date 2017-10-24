@@ -88,6 +88,9 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
             });
 
             this._exportButton.disabled = !actions.length;
+
+            let index = this._recording[WI.RecordingNavigationSidebarPanel.SelectedActionIndexSymbol] || 0;
+            this.updateActionIndex(index);
         });
     }
 
@@ -97,31 +100,23 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
             return;
 
         this._recording.actions.then((actions) => {
-            console.assert(index >= 0 && index < actions.length);
-            if (index < 0 || index >= actions.length)
+            let recordingAction = actions[index];
+            console.assert(recordingAction, "Invalid recording action index.", index);
+            if (!recordingAction)
                 return;
 
-            let treeOutline = this.contentTreeOutline;
-            if (!(actions[0] instanceof WI.RecordingInitialStateAction) || index) {
-                treeOutline = treeOutline.children[0];
-                while (index > treeOutline.children.length) {
-                    index -= treeOutline.children.length;
-                    treeOutline = treeOutline.nextSibling;
-                }
+            let treeElement = this.contentTreeOutline.findTreeElement(recordingAction);
+            console.assert(treeElement, "Missing tree element for recording action.", recordingAction);
+            if (!treeElement)
+                return;
 
-                // Must subtract one from the final result since the initial state is considered index 0.
-                --index;
-            }
-
-            let treeElementToSelect = treeOutline.children[index];
-            if (treeElementToSelect.parent && !treeElementToSelect.parent.expanded)
-                treeElementToSelect = treeElementToSelect.parent;
+            this._recording[WI.RecordingNavigationSidebarPanel.SelectedActionIndexSymbol] = index;
 
             const omitFocus = false;
             const selectedByUser = false;
-            let suppressOnSelect = !(treeElementToSelect instanceof WI.FolderTreeElement);
+            const suppressOnSelect = true;
             const suppressOnDeselect = true;
-            treeElementToSelect.revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
+            treeElement.revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
         });
     }
 
@@ -202,6 +197,8 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
         WI.saveDataToFile(this.contentBrowser.currentContentView.saveData, forceSaveAs);
     }
 };
+
+WI.RecordingNavigationSidebarPanel.SelectedActionIndexSymbol = Symbol("selected-action-index");
 
 WI.RecordingNavigationSidebarPanel.Event = {
     Import: "recording-navigation-sidebar-panel-import",

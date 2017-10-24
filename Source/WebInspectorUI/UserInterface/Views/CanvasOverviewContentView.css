@@ -52,7 +52,7 @@
 }
 
 .content-view.canvas-overview .content-view.canvas > header {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .content-view.canvas-overview .content-view.canvas.is-recording > header {
@@ -74,7 +74,7 @@
 }
 
 .content-view.canvas-overview .content-view.canvas > header .subtitle::before {
-    content: " \2014 ";
+    content: " — ";
 }
 
 .content-view.canvas-overview .content-view.canvas.is-recording > header > .titles > .title {
@@ -94,7 +94,7 @@
     border: none;
 }
 
-.content-view.canvas-overview .content-view.canvas:not(:hover, .is-recording) > header > .navigation-bar {
+.content-view.canvas-overview .content-view.canvas:not(:hover, .is-recording, .selected) > header > .navigation-bar {
     visibility: hidden;
 }
 
@@ -129,11 +129,55 @@
     position: static;
 }
 
-.content-view.canvas-overview .content-view.canvas > footer {
-    /* FIXME: this can be removed once <https://webkit.org/b/177606> is complete.*/
-    justify-content: flex-end;
+.content-view.canvas-overview .content-view.canvas > footer > .recordings {
+    position: absolute;
+    display: flex;
+    align-items: center;
+}
+
+.content-view.canvas-overview .content-view.canvas > footer > .recordings::before {
+    display: inline-block;
+    width: 16px;
+    margin-top: 3px;
+    -webkit-padding-end: 4px;
+    content: url(../Images/Recording.svg);
+}
+
+.content-view.canvas-overview .content-view.canvas > footer > .recordings > select {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    opacity: 0;
+    -webkit-appearance: none;
+}
+
+.content-view.canvas-overview .content-view.canvas > footer .recordings > select:focus {
+    -webkit-margin-start: 11px;
+}
+
+.content-view.canvas-overview .content-view.canvas > footer > .flexible-space {
+    flex: 1;
 }
 
 .content-view.canvas-overview .content-view.canvas > footer .memory-cost {
     -webkit-padding-start: 4px;
+}
+
+.popover-content > .tree-outline .item.recording > .icon {
+    content: url(../Images/Recording.svg);
+}
+
+.popover-content > .tree-outline .item.recording:hover {
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
+    border-radius: 3px;
+}
+
+.popover-content > .tree-outline .item.recording:hover > .icon {
+    filter: invert();
 }

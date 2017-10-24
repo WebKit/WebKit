@@ -1,3 +1,157 @@
+2017-10-24  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Show recordings in CanvasTabContentView
+        https://bugs.webkit.org/show_bug.cgi?id=177606
+        <rdar://problem/34715819>
+
+        Reviewed by Brian Burg.
+
+        Original patch by Matt Baker <mattbaker@apple.com>.
+
+        This patch folds canvas recordings into the new Canvas tab, which now
+        supports showing both CanvasCollections and Recordings.
+
+        When viewing recordings, a back button is shown at the start of the
+        navigation bar, allowing the user to return to the overview. It has been
+        styled with a back arrow, to make its function as clear as possible.
+        Like other navigation path components, the item for the recording can
+        clicked to select another recording taken from the same canvas.
+
+        The recording action scrubber has been moved from the content browser's
+        navigation bar to a more prominent location in the recording content view.
+        Selecting a frame tree element in the navigation sidebar no longer selects
+        the last action for that frame. This was changed to prevent the scrubber
+        position from behaving non-monotonically when selecting actions in sequential
+        order.
+
+        While this patch retains support for importing recordings, the feature
+        is not polished. Currently it is not possible to return to an imported
+        recording after leaving closing the view. In the future we may want to
+        consider including a navigation sidebar panel for the overview, which
+        could list canvas recordings (and eventually shaders).
+
+        * .eslintrc:
+        Drive-by: remove duplicate key.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.tabContentViewClassForRepresentedObject):
+        * UserInterface/Main.html:
+        * UserInterface/Views/RecordingTabContentView.js: Removed.
+        Remove RecordingTabContentView.
+
+        * UserInterface/Images/Recording.svg:
+        New recording icon, used for tree elements and canvas preview UI.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+        (WI.Recording.prototype.get visualActionIndexes):
+        Visual action indexes should be computed by the recording.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.refresh):
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype._recordingStopped):
+        (WI.CanvasContentView.prototype._handleRecordingSelectElementChange):
+        New UI for showing CanvasContentView as a CollectionView item. Includes
+        recordings button and select for choosing a recording to view.
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas > header):
+        Switch to 13px, which is more frequently used.
+
+        (.content-view.canvas-overview .content-view.canvas > header .subtitle::before):
+        Switch to literal em dash. Surrounding spaces were ignored when using
+        the backslash-escaped character.
+
+        (.content-view.canvas-overview .content-view.canvas:not(:hover, .is-recording, .selected) > header > .navigation-bar):
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings):
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings::before):
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings > select):
+        (.content-view.canvas-overview .content-view.canvas > footer .recordings > select:focus):
+        (.content-view.canvas-overview .content-view.canvas > footer > .flexible-space):
+        (.popover-content > .tree-outline .item.recording > .icon):
+        (.popover-content > .tree-outline .item.recording:hover):
+        (.popover-content > .tree-outline .item.recording:hover > .icon):
+        (.content-view.canvas-overview .content-view.canvas:not(:hover, .is-recording) > header > .navigation-bar): Deleted.
+        (.content-view.canvas-overview .content-view.canvas > footer): Deleted.
+        New styles for the recording picker.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype.get selectionPathComponents):
+        (WI.CanvasOverviewContentView.prototype.contentViewAdded):
+        (WI.CanvasOverviewContentView.prototype.contentViewRemoved):
+        (WI.CanvasOverviewContentView.prototype._supplementalRepresentedObjectsDidChange):
+        (WI.CanvasOverviewContentView.prototype._selectedPathComponentChanged): Deleted.
+        (WI.CanvasOverviewContentView.prototype._supplementalRepresentedObjectsDidChange.createCanvasPathComponent): Deleted.
+        Canvas tree elements are now managed by CanvasTabContentView, which is
+        now responsible for maintaining the tree of canvas objects. For now the
+        tree holds canvases and recordings, but will eventually include shader programs.
+
+        * UserInterface/Views/CanvasTabContentView.css:
+        (.content-view.tab.canvas .navigation-bar > .item .recording > .icon):
+        (.content-view.tab.canvas .navigation-bar > .item > .canvas-overview > .icon): Deleted.
+        Add styles for recording path components.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype.treeElementForRepresentedObject):
+        (WI.CanvasTabContentView.prototype.canShowRepresentedObject):
+        (WI.CanvasTabContentView.prototype.showRepresentedObject):
+        (WI.CanvasTabContentView.prototype.shown):
+        (WI.CanvasTabContentView.prototype.restoreStateFromCookie):
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype.detached):
+        (WI.CanvasTabContentView.prototype._canvasAdded):
+        (WI.CanvasTabContentView.prototype._canvasRemoved):
+        (WI.CanvasTabContentView.prototype._canvasTreeOutlineSelectionDidChange):
+        (WI.CanvasTabContentView.prototype._recordingStopped):
+        (WI.CanvasTabContentView.prototype._navigationSidebarImport):
+        (WI.CanvasTabContentView.prototype._navigationSidebarTreeOutlineSelectionChanged):
+        (WI.CanvasTabContentView.prototype._recordingAdded):
+        (WI.CanvasTabContentView.prototype._recordingActionIndexChanged):
+        (WI.CanvasTabContentView.prototype._updateActionIndex):
+        (WI.CanvasTabContentView.prototype.restoreFromCookie): Deleted.
+        (WI.CanvasTabContentView.prototype._overviewPathComponentClicked): Deleted.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,):
+        (body:not(.window-inactive, .window-docked-inactive) :matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,): Deleted.
+
+        * UserInterface/Views/RecordingContentView.css:
+        (.content-view:not(.tab).recording):
+        (.content-view:not(.tab).recording > header):
+        (.content-view:not(.tab).recording > header > .slider-container):
+        (.content-view:not(.tab).recording > header > .slider-container > input[type=range]):
+        (.content-view:not(.tab).recording > header > .slider-container > input[type=range]::-webkit-slider-runnable-track):
+        (.content-view:not(.tab).recording > header > .slider-container > input[type=range]::-webkit-slider-thumb):
+        (.content-view:not(.tab).recording > .preview-container):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.initialLayout):
+        (WI.RecordingContentView.prototype.async._generateContentCanvas2D):
+        (WI.RecordingContentView.prototype._updateSliderValue):
+        (WI.RecordingContentView.prototype._sliderChanged):
+        (WI.RecordingContentView.prototype.get supplementalRepresentedObjects): Deleted.
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.prototype.set recording):
+        (WI.RecordingNavigationSidebarPanel.prototype.updateActionIndex):
+
+        * UserInterface/Views/ResourceIcons.css:
+        (.canvas .icon):
+        (.canvas.canvas-2d .icon): Deleted.
+        (.canvas:matches(.webgl, .webgl2, .webgpu) .icon): Deleted.
+
 2017-10-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layer mutations should be purely based on layerId, not based on nodeId

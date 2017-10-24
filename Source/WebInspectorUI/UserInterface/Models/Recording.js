@@ -35,13 +35,14 @@ WI.Recording = class Recording
         this._displayName = WI.UIString("Recording");
 
         this._swizzle = [];
+        this._visualActionIndexes = [];
         this._source = null;
 
         let actions = [new WI.RecordingInitialStateAction].concat(...this._frames.map((frame) => frame.actions));
         this._actions = Promise.all(actions.map((action) => action.swizzle(this))).then(() => {
-            for (let action of actions) {
+            actions.forEach((action, index) => {
                 if (!action.valid)
-                    continue;
+                    return;
 
                 let prototype = null;
                 if (this._type === WI.Recording.Type.Canvas2D)
@@ -58,7 +59,10 @@ WI.Recording = class Recording
                         WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(this._name));
                     }
                 }
-            }
+
+                if (action.isVisual)
+                    this._visualActionIndexes.push(index);
+            });
 
             return actions;
         });
@@ -169,6 +173,7 @@ WI.Recording = class Recording
     get initialState() { return this._initialState; }
     get frames() { return this._frames; }
     get data() { return this._data; }
+    get visualActionIndexes() { return this._visualActionIndexes; }
 
     get actions() { return this._actions; }
 

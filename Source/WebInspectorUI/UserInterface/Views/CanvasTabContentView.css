@@ -27,11 +27,11 @@
     opacity: 0.7;
 }
 
-.content-view.tab.canvas .navigation-bar > .item > .canvas-overview > .icon {
-    content: url(../Images/CanvasOverview.svg);
-}
-
 /* FIXME: this can be removed once <https://webkit.org/b/177606> is complete. */
 .content-view.tab.canvas .navigation-bar > .item .canvas .icon {
     content: url(../Images/Canvas.svg);
+}
+
+.content-view.tab.canvas .navigation-bar > .item .recording > .icon {
+    content: url(../Images/Recording.svg);
 }

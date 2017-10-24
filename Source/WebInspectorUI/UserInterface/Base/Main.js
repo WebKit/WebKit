@@ -433,7 +433,6 @@ WI.contentLoaded = function()
         WI.LayersTabContentView,
         WI.NetworkTabContentView,
         WI.NewTabContentView,
-        WI.RecordingTabContentView,
         WI.ResourcesTabContentView,
         WI.SearchTabContentView,
         WI.SettingsTabContentView,
@@ -1102,7 +1101,7 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         return WI.CanvasTabContentView;
 
     if (representedObject instanceof WI.Recording)
-        return WI.RecordingTabContentView;
+        return WI.CanvasTabContentView;
 
     return null;
 };
