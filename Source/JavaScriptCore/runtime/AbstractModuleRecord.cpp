@@ -35,6 +35,9 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 
 namespace JSC {
+namespace AbstractModuleRecordInternal {
+static const bool verbose = false;
+} // namespace AbstractModuleRecordInternal
 
 const ClassInfo AbstractModuleRecord::s_info = { "AbstractModuleRecord", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AbstractModuleRecord) };
 
@@ -177,6 +180,7 @@ struct AbstractModuleRecord::ResolveQuery {
         static bool equal(const ResolveQuery&, const ResolveQuery&);
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
+    using HashTraits = WTF::CustomHashTraits<ResolveQuery>;
 
     ResolveQuery(AbstractModuleRecord* moduleRecord, UniquedStringImpl* exportName)
         : moduleRecord(moduleRecord)
@@ -209,6 +213,15 @@ struct AbstractModuleRecord::ResolveQuery {
     bool isDeletedValue() const
     {
         return exportName.isHashTableDeletedValue();
+    }
+
+    void dump(PrintStream& out) const
+    {
+        if (!moduleRecord) {
+            out.print("<empty>");
+            return;
+        }
+        out.print(moduleRecord->moduleKey(), " \"", exportName.get(), "\"");
     }
 
     // The module record is not marked from the GC. But these records are reachable from the JSGlobalObject.
@@ -245,7 +258,10 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // http://www.ecma-international.org/ecma-262/6.0/#sec-resolveexport
+    if (AbstractModuleRecordInternal::verbose)
+        dataLog("Resolving ", root, "\n");
+
+    // https://tc39.github.io/ecma262/#sec-resolveexport
 
     // How to avoid C++ recursion in this function:
     // This function avoids C++ recursion of the naive ResolveExport implementation.
@@ -480,16 +496,28 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
     //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
     //  5. Once we see star links, even if we have not yet traversed that star link path, we should disable caching.
 
-    typedef WTF::HashSet<ResolveQuery, ResolveQuery::Hash, WTF::CustomHashTraits<ResolveQuery>> ResolveSet;
+    using ResolveSet = WTF::HashSet<ResolveQuery, ResolveQuery::Hash, ResolveQuery::HashTraits>;
     enum class Type { Query, IndirectFallback, GatherStars };
     struct Task {
         ResolveQuery query;
         Type type;
     };
 
+    auto typeString = [] (Type type) -> const char* {
+        switch (type) {
+        case Type::Query:
+            return "Query";
+        case Type::IndirectFallback:
+            return "IndirectFallback";
+        case Type::GatherStars:
+            return "GatherStars";
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    };
+
     Vector<Task, 8> pendingTasks;
     ResolveSet resolveSet;
-    HashSet<AbstractModuleRecord*> starSet;
 
     Vector<Resolution, 8> frames;
 
@@ -500,7 +528,7 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
     // Call when the query is not resolved in the current module.
     // It will enqueue the star resolution requests. Return "false" if the error occurs.
     auto resolveNonLocal = [&](const ResolveQuery& query) -> bool {
-        // http://www.ecma-international.org/ecma-262/6.0/#sec-resolveexport
+        // https://tc39.github.io/ecma262/#sec-resolveexport
         // section 15.2.1.16.3, step 6
         // If the "default" name is not resolved in the current module, we need to throw an error and stop resolution immediately,
         // Rationale to this error: A default export cannot be provided by an export *.
@@ -509,16 +537,11 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
         if (query.exportName == vm.propertyNames->defaultKeyword.impl())
             return false;
 
-        // step 7, If exportStarSet contains module, then return null.
-        if (!starSet.add(query.moduleRecord).isNewEntry)
-            return true;
-
         // Enqueue the task to gather the results of the stars.
         // And append the new Resolution frame to gather the local result of the stars.
         pendingTasks.append(Task { query, Type::GatherStars });
         foundStarLinks = true;
         frames.append(Resolution::notFound());
-
 
         // Enqueue the tasks in reverse order.
         for (auto iterator = query.moduleRecord->starExportEntries().rbegin(), end = query.moduleRecord->starExportEntries().rend(); iterator != end; ++iterator) {
@@ -562,6 +585,9 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
     while (!pendingTasks.isEmpty()) {
         const Task task = pendingTasks.takeLast();
         const ResolveQuery& query = task.query;
+
+        if (AbstractModuleRecordInternal::verbose)
+            dataLog("    ", typeString(task.type), " ", task.query, "\n");
 
         switch (task.type) {
         case Type::Query: {
