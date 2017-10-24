@@ -54,6 +54,7 @@ static RenderingMode bufferRenderingMode = Accelerated;
 static RenderingMode bufferRenderingMode = Unaccelerated;
 #endif
 
+
 Ref<ImageBitmap> ImageBitmap::create()
 {
     return adoptRef(*new ImageBitmap);
@@ -104,11 +105,112 @@ static bool taintsOrigin(CachedImage& cachedImage)
     return false;
 }
 
+// https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
+static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSize, ImageBitmapOptions& options, std::optional<IntRect> rect)
+{
+    // 2. If either or both of resizeWidth and resizeHeight members of options are less
+    //    than or equal to 0, then return a promise rejected with "InvalidStateError"
+    //    DOMException and abort these steps.
+    if ((options.resizeWidth && options.resizeWidth.value() <= 0) || (options.resizeHeight && options.resizeHeight.value() <= 0))
+        return Exception { InvalidStateError, "Invalid resize dimensions" };
+
+    // 3. If sx, sy, sw and sh are specified, let sourceRectangle be a rectangle whose
+    //    corners are the four points (sx, sy), (sx+sw, sy),(sx+sw, sy+sh), (sx,sy+sh).
+    //    Otherwise let sourceRectangle be a rectangle whose corners are the four points
+    //    (0,0), (width of input, 0), (width of input, height of input), (0, height of
+    //    input).
+    auto sourceRectangle = rect.value_or(IntRect { 0, 0, inputSize.width(), inputSize.height() });
+
+    // 4. Clip sourceRectangle to the dimensions of input.
+
+    sourceRectangle.setWidth(std::min(sourceRectangle.width(), inputSize.width()));
+    sourceRectangle.setHeight(std::min(sourceRectangle.height(), inputSize.height()));
+
+    return sourceRectangle;
+}
+
+static IntSize outputSizeForSourceRectangle(IntRect sourceRectangle, ImageBitmapOptions& options)
+{
+    // 5. Let outputWidth be determined as follows:
+    auto outputWidth = [&] () -> int {
+        if (options.resizeWidth)
+            return options.resizeWidth.value();
+        if (options.resizeHeight)
+            return ceil(sourceRectangle.width() * static_cast<double>(options.resizeHeight.value()) / sourceRectangle.height());
+        return sourceRectangle.width();
+    }();
+
+    // 6. Let outputHeight be determined as follows:
+    auto outputHeight = [&] () -> int {
+        if (options.resizeHeight)
+            return options.resizeHeight.value();
+        if (options.resizeWidth)
+            return ceil(sourceRectangle.height() * static_cast<double>(options.resizeWidth.value()) / sourceRectangle.width());
+        return sourceRectangle.height();
+    }();
+
+    return { outputWidth, outputHeight };
+}
+
+static InterpolationQuality interpolationQualityForResizeQuality(ImageBitmapOptions::ResizeQuality resizeQuality)
+{
+    switch (resizeQuality) {
+    case ImageBitmapOptions::ResizeQuality::Pixelated:
+        return InterpolationNone;
+    case ImageBitmapOptions::ResizeQuality::Low:
+        return InterpolationDefault; // Low is the default.
+    case ImageBitmapOptions::ResizeQuality::Medium:
+        return InterpolationMedium;
+    case ImageBitmapOptions::ResizeQuality::High:
+        return InterpolationHigh;
+    }
+}
+
+// FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
+
+// 7. Place input on an infinite transparent black grid plane, positioned so that its
+//    top left corner is at the origin of the plane, with the x-coordinate increasing
+//    to the right, and the y-coordinate increasing down, and with each pixel in the
+//    input image data occupying a cell on the plane's grid.
+
+// 8. Let output be the rectangle on the plane denoted by sourceRectangle.
+
+// 9. Scale output to the size specified by outputWidth and outputHeight. The user
+//    agent should use the value of the resizeQuality option to guide the choice of
+//    scaling algorithm.
+
+// 10. If the value of the imageOrientation member of options is "flipY", output must
+//     be flipped vertically, disregarding any image orientation metadata of the source
+//     (such as EXIF metadata), if any.
+
+// 11. If image is an img element or a Blob object, let val be the value of the
+//     colorSpaceConversion member of options, and then run these substeps:
+//
+//     1. If val is "default", the color space conversion behavior is implementation-specific,
+//        and should be chosen according to the color space that the implementation uses for
+//        drawing images onto the canvas.
+//
+//     2. If val is "none", output must be decoded without performing any color space
+//        conversions. This means that the image decoding algorithm must ignore color profile
+//        metadata embedded in the source data as well as the display device color profile.
+
+// 12. Let val be the value of premultiplyAlpha member of options, and then run these substeps:
+//
+//     1. If val is "default", the alpha premultiplication behavior is implementation-specific,
+//        and should be chosen according to implementation deems optimal for drawing images
+//        onto the canvas.
+//
+//     2. If val is "premultiply", the output that is not premultiplied by alpha must have its
+//        color components multiplied by alpha and that is premultiplied by alpha must be left
+//        untouched.
+//
+//     3. If val is "none", the output that is not premultiplied by alpha must be left untouched
+//        and that is premultiplied by alpha must have its color components divided by alpha.
+
+// 13. Return output.
+
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(rect);
-
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
 
@@ -123,17 +225,35 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
     //    resizeHeight options are not specified, then return a promise rejected with
     //    an "InvalidStateError" DOMException and abort these steps.
 
+    auto imageSize = cachedImage->imageSizeForRenderer(imageElement->renderer(), 1.0f);
+    if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions");
+        return;
+    }
+
     // 4. If image's media data has no intrinsic dimensions (e.g. it's a vector graphics
     //    with no specified content size), it should be rendered to a bitmap of the size
     //    specified by the resizeWidth and the resizeHeight options.
 
+    if (!imageSize.width() && !imageSize.height()) {
+        imageSize.setWidth(options.resizeWidth.value());
+        imageSize.setHeight(options.resizeHeight.value());
+    }
+
     // 5. If the sw and sh arguments are not specified and image's media data has both or
     //    either of its intrinsic width and intrinsic height values equal to 0, then return
     //    a promise rejected with an "InvalidStateError" DOMException and abort these steps.
-
     // 6. If the sh argument is not specified and image's media data has an intrinsic height
     //    of 0, then return a promise rejected with an "InvalidStateError" DOMException and
     //    abort these steps.
+
+    // FIXME: It's unclear how these steps can happen, since step 4 required setting a
+    // width and height for the image.
+
+    if (!rect && (!imageSize.width() || !imageSize.height())) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing dimensions");
+        return;
+    }
 
     // 7. Create a new ImageBitmap object.
 
@@ -145,16 +265,26 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
     //    one that the format defines is to be used when animation is not supported or is disabled),
     //    or, if there is no such image, the first frame of the animation.
 
-    // FIXME: Move this into a separate function and handle the cropping/resizing.
-    auto bitmapData = ImageBuffer::create(FloatSize(imageElement->width(), imageElement->height()), bufferRenderingMode);
+    auto sourceRectangle = croppedSourceRectangleWithFormatting(roundedIntSize(imageSize), options, WTFMove(rect));
+    if (sourceRectangle.hasException()) {
+        promise.reject(sourceRectangle.releaseException());
+        return;
+    }
 
-    auto imageForRender = imageElement->cachedImage()->imageForRenderer(imageElement->renderer());
+    auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
+    auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
+
+    auto imageForRender = cachedImage->imageForRenderer(imageElement->renderer());
     if (!imageForRender) {
         promise.reject(InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered");
         return;
     }
-    FloatRect drawRect(FloatPoint(), FloatSize(imageElement->width(), imageElement->height()));
-    bitmapData->context().drawImage(*imageForRender, drawRect, drawRect);
+
+    FloatRect destRect(FloatPoint(), outputSize);
+    ImagePaintingOptions paintingOptions;
+    paintingOptions.m_interpolationQuality = interpolationQualityForResizeQuality(options.resizeQuality);
+
+    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), paintingOptions);
 
     imageBitmap->m_bitmapData = WTFMove(bitmapData);
 

@@ -91,7 +91,7 @@ private:
 
     std::unique_ptr<ImageBuffer> m_bitmapData;
     bool m_detached { false };
-    bool m_originClean { false };
+    bool m_originClean { true };
 };
 
 }

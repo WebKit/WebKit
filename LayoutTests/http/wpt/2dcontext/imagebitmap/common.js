@@ -57,10 +57,22 @@ function initializeImageData(imgData, width, height)
             imgData.data[i * width * 4 + j * 4 + 2] = 255;
 }
 
+function createCanvasOfSize(width, height)
+{
+    const c = document.createElement("canvas");
+    c.width = width;
+    c.height = height;
+    return c;
+}
+
 function create9x9CanvasWith2dContext()
 {
-    let c = document.createElement("canvas");
-    c.width = 9;
-    c.height = 9;
+    const c = createCanvasOfSize(9, 9);
+    return [c, c.getContext("2d")];
+}
+
+function create18x18CanvasWith2dContext()
+{
+    const c = createCanvasOfSize(18, 18);
     return [c, c.getContext("2d")];
 }

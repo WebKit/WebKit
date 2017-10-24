@@ -1,3 +1,27 @@
+2017-10-24  Dean Jackson  <dino@apple.com>
+
+        Implement resizing options for ImageBitmap rendering
+        https://bugs.webkit.org/show_bug.cgi?id=178687
+        <rdar://problem/35135417>
+
+        Reviewed by Sam Weinig.
+
+        More ImageBitmap tests, this time focusing on sizing.
+
+        * http/wpt/2dcontext/imagebitmap/common.js:
+        (createCanvasOfSize):
+        (create9x9CanvasWith2dContext):
+        (create18x18CanvasWith2dContext):
+
+            Helper functions.
+
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-sizing-expected.txt: Added.
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-sizing.html: Added.
+        * http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap.html:
+        * http/wpt/2dcontext/imagebitmap/resources/target-blue-dot-no-intrinsic.svg: Added.
+        * http/wpt/2dcontext/imagebitmap/resources/target-blue-dot.png: Renamed from LayoutTests/http/wpt/2dcontext/imagebitmap/target-blue-dot.png.
+        * http/wpt/2dcontext/imagebitmap/resources/target-blue-dot.svg: Added.
+
 2017-10-24  Chris Dumez  <cdumez@apple.com>
 
         Add initial implementation for serviceWorker.postMessage()

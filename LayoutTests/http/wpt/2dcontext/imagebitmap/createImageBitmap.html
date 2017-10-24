@@ -30,7 +30,7 @@
 
     promise_test(function() {
         return new Promise(function(resolve, reject) {
-            var img = new Image();
+            let img = new Image();
             img.onload = function() { resolve(img); };
             img.src = "/images/pattern.png";
         }).then(function(img) {
@@ -43,7 +43,7 @@
 
     promise_test(function() {
         return new Promise(function(resolve, reject) {
-            var img = new Image();
+            let img = new Image();
             img.onload = function() { resolve(img); };
             img.src = "/images/pattern.png";
         }).then(function(img) {
