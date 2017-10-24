@@ -1,3 +1,17 @@
+2017-10-24  David Kilzer  <ddkilzer@apple.com>
+
+        [Regression] Webkit "-apple-system" font fallback token handles font weights of PingFang incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=177345
+        <rdar://problem/32975942>
+
+        Unreviewed fix to move tests into LayoutTests.
+
+        If these tests start failing, please roll out this commit and
+        r223589.
+
+        * fast/text/system-ui-chinese-bold-fallback-expected.html: Renamed from fast/text/system-ui-chinese-bold-fallback-expected.html.
+        * fast/text/system-ui-chinese-bold-fallback.html: Renamed from fast/text/system-ui-chinese-bold-fallback.html.
+
 2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed test gardening. Improved attempt to reduce flakiness of inspector/network/har tests.
