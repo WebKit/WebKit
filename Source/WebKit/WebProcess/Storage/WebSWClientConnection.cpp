@@ -28,12 +28,14 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerClientFetch.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSWOriginTable.h"
 #include "WebSWServerConnectionMessages.h"
+#include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerFetchResult.h>
 #include <WebCore/ServiceWorkerJobData.h>
 
@@ -64,6 +66,11 @@ void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobD
 void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
 {
     send(Messages::WebSWServerConnection::FinishFetchingScriptInServer(result));
+}
+
+void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, Ref<SerializedScriptValue>&& scriptValue, const String& sourceOrigin)
+{
+    send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(serviceWorkerIdentifier, IPC::DataReference { scriptValue->data() }, sourceOrigin));
 }
 
 bool WebSWClientConnection::hasServiceWorkerRegisteredForOrigin(const SecurityOrigin& origin) const

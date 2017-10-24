@@ -28,10 +28,49 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "MessagePort.h"
+#include "SWClientConnection.h"
+#include "ScriptExecutionContext.h"
+#include "SerializedScriptValue.h"
+#include "ServiceWorkerProvider.h"
+#include <runtime/JSCJSValueInlines.h>
+
 namespace WebCore {
 
-ExceptionOr<void> ServiceWorker::postMessage(JSC::ExecState&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&&)
+ServiceWorker::ServiceWorker(ScriptExecutionContext& context, uint64_t serviceWorkerIdentifier)
+    : ContextDestructionObserver(&context)
+    , m_identifier(serviceWorkerIdentifier)
 {
+}
+
+ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+{
+    if (state() == State::Redundant)
+        return Exception { InvalidStateError, ASCIILiteral("Service Worker state is redundant") };
+
+    // FIXME: Invoke Run Service Worker algorithm with serviceWorker as the argument.
+
+    auto* execState = context.execState();
+    ASSERT(execState);
+
+    Vector<RefPtr<MessagePort>> ports;
+    auto message = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
+    if (message.hasException())
+        return message.releaseException();
+
+    // Disentangle the port in preparation for sending it to the remote context.
+    auto channelsOrException = MessagePort::disentanglePorts(WTFMove(ports));
+    if (channelsOrException.hasException())
+        return channelsOrException.releaseException();
+
+    // FIXME: Support sending the channels.
+    auto channels = channelsOrException.releaseReturnValue();
+    if (channels && !channels->isEmpty())
+        return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
+
+    auto& swConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
+    swConnection.postMessageToServiceWorkerGlobalScope(m_identifier, message.releaseReturnValue(), context.origin());
+
     return { };
 }
 
@@ -42,7 +81,7 @@ const String& ServiceWorker::scriptURL() const
 
 ServiceWorker::State ServiceWorker::state() const
 {
-    return State::Redundant;
+    return State::Activated;
 }
 
 EventTargetInterface ServiceWorker::eventTargetInterface() const
@@ -52,7 +91,7 @@ EventTargetInterface ServiceWorker::eventTargetInterface() const
 
 ScriptExecutionContext* ServiceWorker::scriptExecutionContext() const
 {
-    return nullptr;
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 } // namespace WebCore

@@ -34,7 +34,7 @@
 ] interface ServiceWorker : EventTarget {
     readonly attribute USVString scriptURL;
     readonly attribute ServiceWorkerState state;
-    [CallWith=ScriptState, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
+    [CallWith=ScriptExecutionContext, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
 
     // event
     attribute EventHandler onstatechange;

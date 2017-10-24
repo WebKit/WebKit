@@ -28,12 +28,15 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DataReference.h"
 #include "Logging.h"
 #include "StorageProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebServiceWorkerFetchTaskClient.h"
+#include <WebCore/MessagePortChannel.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SerializedScriptValue.h>
 #include <pal/SessionID.h>
 
 using namespace PAL;
@@ -66,6 +69,16 @@ void ServiceWorkerContextManager::startFetch(uint64_t serverConnectionIdentifier
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serverConnectionIdentifier, fetchIdentifier);
     serviceWorkerThread->postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
+}
+
+void ServiceWorkerContextManager::postMessageToServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin)
+{
+    auto* workerThread = m_workerThreadMap.get(serviceWorkerIdentifier);
+    if (!workerThread)
+        return;
+
+    // FIXME: We should pass valid MessagePortChannels.
+    workerThread->postMessageToServiceWorkerGlobalScope(SerializedScriptValue::adopt(message.vector()), nullptr, sourceOrigin);
 }
 
 } // namespace WebCore

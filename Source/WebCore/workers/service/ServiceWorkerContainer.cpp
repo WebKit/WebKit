@@ -38,6 +38,7 @@
 #include "ScopeGuard.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "ServiceWorker.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
@@ -74,7 +75,14 @@ void ServiceWorkerContainer::derefEventTarget()
 
 ServiceWorker* ServiceWorkerContainer::controller() const
 {
-    return nullptr;
+    auto* context = scriptExecutionContext();
+    if (!context || !context->selectedServiceWorkerIdentifier()) {
+        m_controller = nullptr;
+        return nullptr;
+    }
+    if (!m_controller || m_controller->identifier() != context->selectedServiceWorkerIdentifier())
+        m_controller = ServiceWorker::create(*context, context->selectedServiceWorkerIdentifier());
+    return m_controller.get();
 }
 
 void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)

@@ -37,6 +37,15 @@ ExtendableEvent::ExtendableEvent(const AtomicString& type, const ExtendableEvent
 {
 }
 
+ExtendableEvent::ExtendableEvent(const AtomicString& type, bool bubbles, bool cancelable)
+    : Event(type, bubbles, cancelable)
+{
+}
+
+ExtendableEvent::~ExtendableEvent()
+{
+}
+
 ExceptionOr<void> ExtendableEvent::waitUntil(Ref<DOMPromise>&& promise)
 {
     if (!isTrusted())

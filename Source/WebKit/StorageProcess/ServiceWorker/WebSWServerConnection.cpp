@@ -100,6 +100,11 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, uint64_t servic
     sendToContextProcess(Messages::ServiceWorkerContextManager::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
 }
 
+void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin)
+{
+    sendToContextProcess(Messages::ServiceWorkerContextManager::PostMessageToServiceWorkerGlobalScope(identifier(), serviceWorkerIdentifier, message, sourceOrigin));
+}
+
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)
 {
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response }, fetchIdentifier);

@@ -922,6 +922,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/workers/WorkerType.idl \
     $(WebCore)/workers/service/ExtendableEvent.idl \
     $(WebCore)/workers/service/ExtendableEventInit.idl \
+    $(WebCore)/workers/service/ExtendableMessageEvent.idl \
     $(WebCore)/workers/service/FetchEvent.idl \
     $(WebCore)/workers/service/ServiceWorker.idl \
     $(WebCore)/workers/service/ServiceWorkerClient.idl \

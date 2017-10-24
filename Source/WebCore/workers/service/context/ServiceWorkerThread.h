@@ -35,8 +35,12 @@
 namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
+class MessagePortChannel;
+class SerializedScriptValue;
 class WorkerObjectProxy;
 struct ServiceWorkerContextData;
+
+using MessagePortChannelArray = Vector<std::unique_ptr<MessagePortChannel>, 1>;
 
 class ServiceWorkerThread : public WorkerThread, public ThreadSafeIdentified<ServiceWorkerThread> {
 public:
@@ -49,6 +53,7 @@ public:
     WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
 
     WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, FetchOptions&&);
+    WEBCORE_EXPORT void postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&, const String& sourceOrigin);
 
 protected:
     Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID) final;

@@ -1,0 +1,4 @@
+PASS: Status code is 200
+PASS: Status text is Worker received the message event. messageEvent.origin was https://127.0.0.1:8443
+PASS: Source is Service worker
+

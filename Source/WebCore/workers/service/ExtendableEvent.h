@@ -42,6 +42,8 @@ public:
         return adoptRef(*new ExtendableEvent(type, initializer, isTrusted));
     }
 
+    ~ExtendableEvent();
+
     EventInterface eventInterface() const override { return ExtendableEventInterfaceType; }
 
     ExceptionOr<void> waitUntil(Ref<DOMPromise>&&);
@@ -50,6 +52,7 @@ public:
 
 protected:
     WEBCORE_EXPORT ExtendableEvent(const AtomicString&, const ExtendableEventInit&, IsTrusted);
+    ExtendableEvent(const AtomicString&, bool bubbles, bool cancelable);
 
     WeakPtr<ExtendableEvent> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 

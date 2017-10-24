@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "ExtendableMessageEvent.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -98,6 +99,17 @@ void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client
     runLoop().postTaskForMode([client = WTFMove(client), request = request.isolatedCopy(), options = options.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), downcast<WorkerGlobalScope>(context), WTFMove(request), WTFMove(options));
     }, WorkerRunLoop::defaultMode());
+}
+
+void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, const String& sourceOrigin)
+{
+    ScriptExecutionContext::Task task([channels = WTFMove(channels), message = WTFMove(message), sourceOrigin = sourceOrigin.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+        auto ports = MessagePort::entanglePorts(serviceWorkerGlobalScope, WTFMove(channels));
+        serviceWorkerGlobalScope.dispatchEvent(ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message), sourceOrigin));
+        serviceWorkerGlobalScope.thread().workerObjectProxy().confirmMessageFromWorkerObject(serviceWorkerGlobalScope.hasPendingActivity());
+    });
+    runLoop().postTask(WTFMove(task));
 }
 
 } // namespace WebCore

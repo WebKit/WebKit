@@ -11,6 +11,7 @@ CloseEvent
 CompositionEvent
 CustomEvent
 ExtendableEvent conditional=SERVICE_WORKER
+ExtendableMessageEvent conditional=SERVICE_WORKER
 ErrorEvent
 FetchEvent conditional=SERVICE_WORKER
 FocusEvent

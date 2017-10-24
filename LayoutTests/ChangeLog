@@ -1,3 +1,17 @@
+2017-10-24  Chris Dumez  <cdumez@apple.com>
+
+        Add initial implementation for serviceWorker.postMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=178534
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/basic-ServiceWorker-postMessage.https-expected.txt: Added.
+        * http/tests/workers/service/basic-ServiceWorker-postMessage.https.html: Added.
+        * http/tests/workers/service/resources/basic-ServiceWorker-postMessage-worker.js: Added.
+        * http/tests/workers/service/resources/basic-ServiceWorker-postMessage.js: Added.
+
 2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed test gardening. Update inspector/network/har tests.

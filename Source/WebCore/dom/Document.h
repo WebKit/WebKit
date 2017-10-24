@@ -863,7 +863,7 @@ public:
 
     WEBCORE_EXPORT String referrer() const;
 
-    WEBCORE_EXPORT String origin() const;
+    WEBCORE_EXPORT String origin() const final;
 
     WEBCORE_EXPORT String domain() const;
     ExceptionOr<void> setDomain(const String& newDomain);

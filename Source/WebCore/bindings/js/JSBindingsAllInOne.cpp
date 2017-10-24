@@ -62,6 +62,7 @@
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"
 #include "JSEventTargetCustom.cpp"
+#include "JSExtendableMessageEventCustom.cpp"
 #include "JSFileSystemEntryCustom.cpp"
 #include "JSHTMLCollectionCustom.cpp"
 #include "JSHTMLDocumentCustom.cpp"

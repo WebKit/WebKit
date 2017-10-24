@@ -2955,6 +2955,7 @@
 		830784B21C52EE2C00104D1D /* XMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 830784B11C52EE1900104D1D /* XMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		830A36BD1DAC5FAD006D7D09 /* JSMouseEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */; };
 		83120C701C56F3F6001CB112 /* HTMLDataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */; };
+		83102B271F9EADD900E404B9 /* JSExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */; };
 		83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */; };
 		8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */ = {isa = PBXBuildFile; fileRef = 8321507B1F27EA150095B136 /* NavigatorBeacon.h */; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
@@ -2998,6 +2999,8 @@
 		837964CF1F8DB69D00218EA0 /* GeolocationPositionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */; };
 		837A80131E1E127300026B9F /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 837A80111E1E127300026B9F /* Localizable.stringsdict */; };
 		837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */; };
+		837FB3441F9EA06D00D0FC31 /* ExtendableMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 837FB3421F9EA06700D0FC31 /* ExtendableMessageEvent.cpp */; };
+		837FB3451F9EA06D00D0FC31 /* ExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */; };
 		8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */; };
 		838867351D13BA5F003697D0 /* RenderObjectEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 838867341D13BA59003697D0 /* RenderObjectEnums.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		838EF5381DC149E2008F0C39 /* IDBTransactionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 838EF5361DC149DA008F0C39 /* IDBTransactionMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10720,6 +10723,9 @@
 		830784B11C52EE1900104D1D /* XMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocument.h; sourceTree = "<group>"; };
 		830A36BA1DAC5FA7006D7D09 /* JSMouseEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEventInit.cpp; sourceTree = "<group>"; };
 		830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMouseEventInit.h; sourceTree = "<group>"; };
+		83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExtendableMessageEvent.h; sourceTree = "<group>"; };
+		83102B251F9EADC200E404B9 /* JSExtendableMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExtendableMessageEvent.cpp; sourceTree = "<group>"; };
+		831C46C31F9EE5E000EBD450 /* JSExtendableMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExtendableMessageEventCustom.cpp; sourceTree = "<group>"; };
 		831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataElement.cpp; sourceTree = "<group>"; };
 		8321507A1F27EA150095B136 /* NavigatorBeacon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBeacon.cpp; sourceTree = "<group>"; };
 		8321507B1F27EA150095B136 /* NavigatorBeacon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatorBeacon.h; sourceTree = "<group>"; };
@@ -10803,6 +10809,9 @@
 		837A80121E1E127300026B9F /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = English; path = English.lproj/Localizable.stringsdict; sourceTree = SOURCE_ROOT; };
 		837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ValidationBubbleIOS.mm; sourceTree = "<group>"; };
 		837DFB341EBFEA7000601385 /* ElementCSSInlineStyle.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementCSSInlineStyle.idl; sourceTree = "<group>"; };
+		837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendableMessageEvent.h; sourceTree = "<group>"; };
+		837FB3421F9EA06700D0FC31 /* ExtendableMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendableMessageEvent.cpp; sourceTree = "<group>"; };
+		837FB3431F9EA06800D0FC31 /* ExtendableMessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExtendableMessageEvent.idl; sourceTree = "<group>"; };
 		8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilder.h; sourceTree = "<group>"; };
 		8386A96E19F61E4F00E1EC4A /* StyleBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBuilder.cpp; sourceTree = "<group>"; };
 		838867341D13BA59003697D0 /* RenderObjectEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderObjectEnums.h; sourceTree = "<group>"; };
@@ -18179,6 +18188,8 @@
 				7E4C96D81AD4483500365A53 /* JSExtendableEvent.cpp */,
 				7E4C96D91AD4483500365A53 /* JSExtendableEvent.h */,
 				7E4C96D81AD4483500365A54 /* JSExtendableEventInit.cpp */,
+				83102B251F9EADC200E404B9 /* JSExtendableMessageEvent.cpp */,
+				83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */,
 				7E4C96D81AD4483500365A52 /* JSFetchEvent.cpp */,
 				7E4C96D91AD4483500365A52 /* JSFetchEvent.h */,
 				51F886BE1F32920700C193EF /* JSNavigatorServiceWorker.cpp */,
@@ -18270,6 +18281,9 @@
 				41AF378E1F8C1E7C00111C31 /* ExtendableEvent.idl */,
 				4131F3B41F955BC30059995A /* ExtendableEventInit.h */,
 				4131F3B51F955BC50059995A /* ExtendableEventInit.idl */,
+				837FB3421F9EA06700D0FC31 /* ExtendableMessageEvent.cpp */,
+				837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */,
+				837FB3431F9EA06800D0FC31 /* ExtendableMessageEvent.idl */,
 				41AF37941F8DA49500111C31 /* FetchEvent.cpp */,
 				41AF37881F8C1E7900111C31 /* FetchEvent.h */,
 				41AF378D1F8C1E7B00111C31 /* FetchEvent.idl */,
@@ -19739,6 +19753,7 @@
 			isa = PBXGroup;
 			children = (
 				DEC2975D1B4DEB2A005F5945 /* JSCustomEventCustom.cpp */,
+				831C46C31F9EE5E000EBD450 /* JSExtendableMessageEventCustom.cpp */,
 				4131F3B11F9552810059995A /* JSFetchEventCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
@@ -27343,6 +27358,7 @@
 				935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */,
 				51F645621F45398F00B54DED /* ExceptionData.h in Headers */,
 				93D196311D6CAB7600FC7E47 /* ExceptionOr.h in Headers */,
+				837FB3451F9EA06D00D0FC31 /* ExtendableMessageEvent.h in Headers */,
 				31DCDF441DA1C45400EA5B93 /* ExtendedColor.h in Headers */,
 				6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */,
 				6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */,
@@ -28087,6 +28103,7 @@
 				46B63F6C1C6E8D19002E914B /* JSEventTargetCustom.h in Headers */,
 				724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */,
 				7E4C96DD1AD4483500365A53 /* JSExtendableEvent.h in Headers */,
+				83102B271F9EADD900E404B9 /* JSExtendableMessageEvent.h in Headers */,
 				5C4304B6191AEF46000E2BC0 /* JSEXTShaderTextureLOD.h in Headers */,
 				7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */,
 				77D50FF61ED4D99B00DA4C87 /* JSFederatedCredential.h in Headers */,
@@ -31097,6 +31114,7 @@
 				262EC41D1D110B9000BA78FC /* EventTrackingRegions.cpp in Sources */,
 				724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */,
 				41AF37991F8DADAA00111C31 /* ExtendableEvent.cpp in Sources */,
+				837FB3441F9EA06D00D0FC31 /* ExtendableMessageEvent.cpp in Sources */,
 				31DCDF431DA1C45400EA5B93 /* ExtendedColor.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
 				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,

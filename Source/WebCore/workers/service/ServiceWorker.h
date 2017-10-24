@@ -27,11 +27,12 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include <heap/Strong.h>
+#include <wtf/RefCounted.h>
 
 namespace JSC {
-class ExecState;
 class JSValue;
 }
 
@@ -39,9 +40,13 @@ namespace WebCore {
 
 class Frame;
 
-class ServiceWorker final : public EventTargetWithInlineData {
+class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
-    static Ref<ServiceWorker> create(Frame& frame) { return adoptRef(*new ServiceWorker(frame)); }
+    static Ref<ServiceWorker> create(ScriptExecutionContext& context, uint64_t serviceWorkerIdentifier)
+    {
+        return adoptRef(*new ServiceWorker(context, serviceWorkerIdentifier));
+    }
+
     virtual ~ServiceWorker() = default;
 
     enum class State {
@@ -55,15 +60,22 @@ public:
     const String& scriptURL() const;
     State state() const;
 
-    ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
+
+    uint64_t identifier() const { return m_identifier; }
+
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
-    explicit ServiceWorker(Frame&);
+    ServiceWorker(ScriptExecutionContext&, uint64_t serviceWorkerIdentifier);
 
     virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+
+    uint64_t m_identifier;
 };
 
 } // namespace WebCore

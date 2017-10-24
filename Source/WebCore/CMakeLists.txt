@@ -801,6 +801,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     workers/service/ExtendableEvent.idl
     workers/service/ExtendableEventInit.idl
+    workers/service/ExtendableMessageEvent.idl
     workers/service/FetchEvent.idl
     workers/service/ServiceWorker.idl
     workers/service/ServiceWorkerClient.idl
@@ -2247,6 +2248,7 @@ set(WebCore_SOURCES
     workers/WorkerThread.cpp
 
     workers/service/ExtendableEvent.cpp
+    workers/service/ExtendableMessageEvent.cpp
     workers/service/FetchEvent.cpp
     workers/service/ServiceWorker.cpp
     workers/service/ServiceWorkerClient.cpp

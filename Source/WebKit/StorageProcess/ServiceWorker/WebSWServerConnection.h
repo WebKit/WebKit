@@ -65,6 +65,8 @@ private:
 
     void startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
 
+    void postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin);
+
     // Messages to the SW context WebProcess
     void startServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
 

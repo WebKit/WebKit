@@ -58,6 +58,11 @@ EventTargetInterface ServiceWorkerGlobalScope::eventTargetInterface() const
     return ServiceWorkerGlobalScopeEventTargetInterfaceType;
 }
 
+ServiceWorkerThread& ServiceWorkerGlobalScope::thread()
+{
+    return static_cast<ServiceWorkerThread&>(WorkerGlobalScope::thread());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

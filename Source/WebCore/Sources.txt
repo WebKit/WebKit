@@ -370,6 +370,7 @@ bindings/js/JSErrorHandler.cpp
 bindings/js/JSEventCustom.cpp
 bindings/js/JSEventListener.cpp
 bindings/js/JSEventTargetCustom.cpp
+bindings/js/JSExtendableMessageEventCustom.cpp
 bindings/js/JSFileSystemEntryCustom.cpp
 bindings/js/JSHTMLCollectionCustom.cpp
 bindings/js/JSHTMLDocumentCustom.cpp
@@ -1080,6 +1081,7 @@ JSEventSource.cpp
 JSEventTarget.cpp
 JSExtendableEvent.cpp
 JSExtendableEventInit.cpp
+JSExtendableMessageEvent.cpp
 JSFederatedCredential.cpp
 JSFederatedCredentialInit.cpp
 JSFederatedCredentialRequestOptions.cpp
