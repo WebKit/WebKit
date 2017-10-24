@@ -840,7 +840,7 @@ void HTMLMediaElement::finishParsingChildren()
     m_parsingInProgress = false;
 
 #if ENABLE(VIDEO_TRACK)
-    if (descendantsOfType<HTMLTrackElement>(*this).first())
+    if (childrenOfType<HTMLTrackElement>(*this).first())
         scheduleDelayedAction(ConfigureTextTracks);
 #endif
 }
