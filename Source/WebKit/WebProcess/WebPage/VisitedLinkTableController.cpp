@@ -112,7 +112,7 @@ void VisitedLinkTableController::allVisitedLinkStateChanged()
 
 void VisitedLinkTableController::removeAllVisitedLinks()
 {
-    m_visitedLinkTable.clear();
+    m_visitedLinkTable.setSharedMemory(nullptr);
 
     invalidateStylesForAllLinks();
 }

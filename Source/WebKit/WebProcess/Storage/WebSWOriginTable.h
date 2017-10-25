@@ -28,7 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SharedMemory.h"
-#include "SharedStringHashTable.h"
+#include "SharedStringHashTableReadOnly.h"
 
 namespace WebCore {
 class SecurityOrigin;
@@ -44,7 +44,7 @@ public:
     void setSharedMemory(const SharedMemory::Handle&);
 
 private:
-    SharedStringHashTable m_serviceWorkerOriginTable;
+    SharedStringHashTableReadOnly m_serviceWorkerOriginTable;
 };
 
 } // namespace WebKit

@@ -181,6 +181,7 @@ set(WebKit_SOURCES
     Shared/ShareableBitmap.cpp
     Shared/ShareableResource.cpp
     Shared/SharedStringHashStore.cpp
+    Shared/SharedStringHashTableReadOnly.cpp
     Shared/SharedStringHashTable.cpp
     Shared/StatisticsData.cpp
     Shared/UpdateInfo.cpp

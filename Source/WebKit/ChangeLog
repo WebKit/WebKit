@@ -1,3 +1,40 @@
+2017-10-25  Chris Dumez  <cdumez@apple.com>
+
+        Make SharedStringHashTable less error prone
+        https://bugs.webkit.org/show_bug.cgi?id=178764
+
+        Reviewed by Youenn Fablet.
+
+        SharedStringHashTable is backed by SharedMemory and this SharedMemory
+        may be readonly (and is when used in the WebContent process). As a result,
+        some of the operations on SharedStringHashTable that write to this shared
+        memory will crash if called and the SharedMemory is readonly.
+
+        To make this less error prone, introduce a new SharedStringHashTableReadOnly
+        base class for SharedStringHashTable and only keep the operations that
+        write to the shared memory on SharedStringHashTableReadOnly (namely, add() /
+        remove() / clear(). Update VisitedLinkTableController and WebSWOriginTable
+        to use SharedStringHashTableReadOnly since they are instantiated in the
+        WebContent process and use readonly shared memory.
+
+        * Shared/SharedStringHashTable.cpp:
+        (WebKit::SharedStringHashTableReadOnly::SharedStringHashTableReadOnly):
+        (WebKit::SharedStringHashTableReadOnly::~SharedStringHashTableReadOnly):
+        (WebKit::SharedStringHashTableReadOnly::setSharedMemory):
+        (WebKit::doubleHash):
+        (WebKit::SharedStringHashTableReadOnly::contains const):
+        (WebKit::SharedStringHashTableReadOnly::findSlot const):
+        (WebKit::SharedStringHashTable::SharedStringHashTable):
+        (WebKit::SharedStringHashTable::~SharedStringHashTable):
+        (WebKit::SharedStringHashTable::add):
+        (WebKit::SharedStringHashTable::remove):
+        (WebKit::SharedStringHashTable::clear):
+        * Shared/SharedStringHashTable.h:
+        * WebProcess/Storage/WebSWOriginTable.h:
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::removeAllVisitedLinks):
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+
 2017-10-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Remove GLib API functions which use Cairo

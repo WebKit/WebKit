@@ -28,9 +28,9 @@
 
 #include "SharedMemory.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+
+using namespace WebCore;
 
 SharedStringHashTable::SharedStringHashTable()
 {
@@ -40,39 +40,6 @@ SharedStringHashTable::~SharedStringHashTable()
 {
 }
 
-#if !ASSERT_DISABLED
-static inline bool isPowerOf2(unsigned v)
-{
-    // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
-    
-    return !(v & (v - 1)) && v;
-}
-#endif
-
-void SharedStringHashTable::setSharedMemory(Ref<SharedMemory>&& sharedMemory)
-{
-    m_sharedMemory = WTFMove(sharedMemory);
-    
-    ASSERT(m_sharedMemory);
-    ASSERT(!(m_sharedMemory->size() % sizeof(SharedStringHash)));
-
-    m_table = static_cast<SharedStringHash*>(m_sharedMemory->data());
-    m_tableSize = m_sharedMemory->size() / sizeof(SharedStringHash);
-    ASSERT(isPowerOf2(m_tableSize));
-    
-    m_tableSizeMask = m_tableSize - 1;
-}
-
-static inline unsigned doubleHash(unsigned key)
-{
-    key = ~key + (key >> 23);
-    key ^= (key << 12);
-    key ^= (key >> 7);
-    key ^= (key << 2);
-    key ^= (key >> 20);
-    return key;
-}
-    
 bool SharedStringHashTable::add(SharedStringHash sharedStringHash)
 {
     auto* slot = findSlot(sharedStringHash);
@@ -96,50 +63,13 @@ bool SharedStringHashTable::remove(SharedStringHash sharedStringHash)
     return true;
 }
 
-bool SharedStringHashTable::contains(SharedStringHash sharedStringHash) const
-{
-    auto* slot = findSlot(sharedStringHash);
-    return slot && *slot;
-}
-
-SharedStringHash* SharedStringHashTable::findSlot(SharedStringHash sharedStringHash) const
-{
-    if (!m_sharedMemory)
-        return nullptr;
-
-    int k = 0;
-    SharedStringHash* table = m_table;
-    int sizeMask = m_tableSizeMask;
-    unsigned h = static_cast<unsigned>(sharedStringHash);
-    int i = h & sizeMask;
-
-    SharedStringHash* entry;
-    while (1) {
-        entry = table + i;
-
-        // Check if we've reached the end of the table.
-        if (!*entry)
-            return entry;
-
-        if (*entry == sharedStringHash)
-            return entry;
-
-        if (!k)
-            k = 1 | doubleHash(h);
-        i = (i + k) & sizeMask;
-    }
-}
-
 void SharedStringHashTable::clear()
 {
     if (!m_sharedMemory)
         return;
 
     memset(m_sharedMemory->data(), 0, m_sharedMemory->size());
-    m_table = nullptr;
-    m_tableSize = 0;
-    m_tableSizeMask = 0;
-    m_sharedMemory = nullptr;
+    setSharedMemory(nullptr);
 }
 
 } // namespace WebKit

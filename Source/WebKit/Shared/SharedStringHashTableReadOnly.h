@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,30 @@
 
 #pragma once
 
-#include "MessageReceiver.h"
-#include "SharedMemory.h"
-#include "SharedStringHashTableReadOnly.h"
-#include <WebCore/VisitedLinkStore.h>
+#include <WebCore/SharedStringHash.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class VisitedLinkTableController final : public WebCore::VisitedLinkStore , private IPC::MessageReceiver {
+class SharedMemory;
+
+class SharedStringHashTableReadOnly {
 public:
-    static Ref<VisitedLinkTableController> getOrCreate(uint64_t identifier);
-    virtual ~VisitedLinkTableController();
+    SharedStringHashTableReadOnly();
+    ~SharedStringHashTableReadOnly();
 
-private:
-    explicit VisitedLinkTableController(uint64_t identifier);
+    bool contains(WebCore::SharedStringHash) const;
 
-    // WebCore::VisitedLinkStore.
-    bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
-    void addVisitedLink(WebCore::Page&, WebCore::SharedStringHash) override;
+    SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
+    void setSharedMemory(RefPtr<SharedMemory>&&);
 
-    // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+protected:
+    WebCore::SharedStringHash* findSlot(WebCore::SharedStringHash) const;
 
-    void setVisitedLinkTable(const SharedMemory::Handle&);
-    void visitedLinkStateChanged(const Vector<WebCore::SharedStringHash>&);
-    void allVisitedLinkStateChanged();
-    void removeAllVisitedLinks();
-
-    uint64_t m_identifier;
-    SharedStringHashTableReadOnly m_visitedLinkTable;
+    RefPtr<SharedMemory> m_sharedMemory;
+    unsigned m_tableSize { 0 };
+    unsigned m_tableSizeMask { 0 };
+    WebCore::SharedStringHash* m_table { nullptr };
 };
 
 } // namespace WebKit

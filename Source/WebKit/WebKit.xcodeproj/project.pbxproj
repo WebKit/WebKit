@@ -1401,6 +1401,8 @@
 		83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */; };
 		83F1A0791F96E7790045B94E /* WebSWOriginTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F1A0771F96E7700045B94E /* WebSWOriginTable.cpp */; };
 		83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F1A0781F96E7710045B94E /* WebSWOriginTable.h */; };
+		83F9644D1FA0F76E00C47750 /* SharedStringHashTableReadOnly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */; };
+		83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		868160D0187645570021E79D /* WindowServerConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 868160CF187645370021E79D /* WindowServerConnection.mm */; };
 		86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E67A21190F411800004AB7 /* ProcessThrottler.h */; };
@@ -3719,7 +3721,7 @@
 		7CDE73A01F9DA37B00390312 /* WebPreferencesDefinitionsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefinitionsBase.h; sourceTree = "<group>"; };
 		7CDE73A11F9DA41400390312 /* GeneratePreferences.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = GeneratePreferences.rb; sourceTree = "<group>"; };
 		7CDE73A21F9DA59700390312 /* PreferencesTemplates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PreferencesTemplates; sourceTree = "<group>"; };
-		7CDE73A31F9DAB6500390312 /* WebPreferencesDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebPreferencesDefinitions.h; path = WebPreferencesDefinitions.h; sourceTree = "<group>"; };
+		7CDE73A31F9DAB6500390312 /* WebPreferencesDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefinitions.h; sourceTree = "<group>"; };
 		7CE4D2061A46775700C7F152 /* APILegacyContextHistoryClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APILegacyContextHistoryClient.h; sourceTree = "<group>"; };
 		7CE4D2151A49148400C7F152 /* WebProcessPoolCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPoolCocoa.mm; sourceTree = "<group>"; };
 		7CE4D2171A4914A300C7F152 /* WebProcessPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessPool.cpp; sourceTree = "<group>"; };
@@ -3779,6 +3781,8 @@
 		83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebValidationMessageClient.h; sourceTree = "<group>"; };
 		83F1A0771F96E7700045B94E /* WebSWOriginTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWOriginTable.cpp; sourceTree = "<group>"; };
 		83F1A0781F96E7710045B94E /* WebSWOriginTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWOriginTable.h; sourceTree = "<group>"; };
+		83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedStringHashTableReadOnly.cpp; sourceTree = "<group>"; };
+		83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedStringHashTableReadOnly.h; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
@@ -5072,6 +5076,8 @@
 				8313F7E91F7DAE0300B944EB /* SharedStringHashStore.h */,
 				8313F7E81F7DAE0300B944EB /* SharedStringHashTable.cpp */,
 				8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */,
+				83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */,
+				83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */,
 				5272B2881406985D0096A5D0 /* StatisticsData.cpp */,
 				5272B2891406985D0096A5D0 /* StatisticsData.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
@@ -8834,6 +8840,7 @@
 				CD4B4D9D1E765E0000D27092 /* SharedRingBufferStorage.h in Headers */,
 				8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */,
 				8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */,
+				83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */,
 				2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */,
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
@@ -10429,6 +10436,7 @@
 				CD4B4D9C1E765E0000D27092 /* SharedRingBufferStorage.cpp in Sources */,
 				8313F7EB1F7DAE0800B944EB /* SharedStringHashStore.cpp in Sources */,
 				8313F7ED1F7DAE0800B944EB /* SharedStringHashTable.cpp in Sources */,
+				83F9644D1FA0F76E00C47750 /* SharedStringHashTableReadOnly.cpp in Sources */,
 				2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,

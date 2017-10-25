@@ -25,36 +25,18 @@
 
 #pragma once
 
-#include <WebCore/SharedStringHash.h>
-#include <wtf/RefPtr.h>
+#include "SharedStringHashTableReadOnly.h"
 
 namespace WebKit {
 
-class SharedMemory;
-
-class SharedStringHashTable {
+class SharedStringHashTable : public SharedStringHashTableReadOnly {
 public:
     SharedStringHashTable();
     ~SharedStringHashTable();
 
-    void setSharedMemory(Ref<SharedMemory>&&);
-
-    // Can only be called if the underlying shared memory is in read / write mode.
     bool add(WebCore::SharedStringHash);
     bool remove(WebCore::SharedStringHash);
-
-    bool contains(WebCore::SharedStringHash) const;
-
-    SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
     void clear();
-
-private:
-    RefPtr<SharedMemory> m_sharedMemory;
-    WebCore::SharedStringHash* findSlot(WebCore::SharedStringHash) const;
-
-    unsigned m_tableSize { 0 };
-    unsigned m_tableSizeMask { 0 };
-    WebCore::SharedStringHash* m_table { nullptr };
 };
 
 }
