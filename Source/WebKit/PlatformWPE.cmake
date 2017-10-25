@@ -164,7 +164,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/glib/WebKitFormSubmissionRequest.cpp
     UIProcess/API/glib/WebKitGeolocationPermissionRequest.cpp
     UIProcess/API/glib/WebKitGeolocationProvider.cpp
-    UIProcess/API/glib/WebKitIconLoadingClient.cpp
     UIProcess/API/glib/WebKitInjectedBundleClient.cpp
     UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp
     UIProcess/API/glib/WebKitJavascriptResult.cpp
