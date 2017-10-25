@@ -377,6 +377,7 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
 void CurlRequest::didCancelTransfer()
 {
     finalizeTransfer();
+    cleanupDownloadFile();
 }
 
 void CurlRequest::finalizeTransfer()
@@ -610,13 +611,15 @@ const String& CurlRequest::getDownloadedFilePath()
 
 void CurlRequest::writeDataToDownloadFileIfEnabled(const SharedBuffer& buffer)
 {
-    LockHolder locker(m_downloadMutex);
+    {
+        LockHolder locker(m_downloadMutex);
 
-    if (!m_isEnabledDownloadToFile)
-        return;
+        if (!m_isEnabledDownloadToFile)
+            return;
 
-    if (m_downloadFilePath.isEmpty())
-        m_downloadFilePath = openTemporaryFile("download", m_downloadFileHandle);
+        if (m_downloadFilePath.isEmpty())
+            m_downloadFilePath = openTemporaryFile("download", m_downloadFileHandle);
+    }
 
     if (m_downloadFileHandle != invalidPlatformFileHandle)
         writeToFile(m_downloadFileHandle, buffer.data(), buffer.size());
@@ -629,8 +632,18 @@ void CurlRequest::closeDownloadFile()
     if (m_downloadFileHandle == invalidPlatformFileHandle)
         return;
 
-    WebCore::closeFile(m_downloadFileHandle);
+    closeFile(m_downloadFileHandle);
     m_downloadFileHandle = invalidPlatformFileHandle;
+}
+
+void CurlRequest::cleanupDownloadFile()
+{
+    LockHolder locker(m_downloadMutex);
+
+    if (!m_downloadFilePath.isEmpty()) {
+        deleteFile(m_downloadFilePath);
+        m_downloadFilePath = String();
+    }
 }
 
 CURLcode CurlRequest::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData)

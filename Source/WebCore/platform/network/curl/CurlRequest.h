@@ -117,6 +117,7 @@ private:
     // Download
     void writeDataToDownloadFileIfEnabled(const SharedBuffer&);
     void closeDownloadFile();
+    void cleanupDownloadFile();
 
     // Callback functions for curl
     static CURLcode willSetupSslCtxCallback(CURL*, void*, void*);
