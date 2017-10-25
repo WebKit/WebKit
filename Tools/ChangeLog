@@ -1,3 +1,12 @@
+2017-10-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add committer status for Ross Kirsling
+        https://bugs.webkit.org/show_bug.cgi?id=178832
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         When navigating back to a page, compositing layers may not use accelerated drawing
