@@ -461,8 +461,11 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
         return;
 
     if (!inspectorCanvas->hasRecordingData()) {
-        if (forceDispatch)
+        if (forceDispatch) {
             m_frontendDispatcher->recordingFinished(inspectorCanvas->identifier(), nullptr);
+
+            inspectorCanvas->resetRecordingData();
+        }
         return;
     }
 

@@ -1364,3 +1364,7 @@ PASS: The first frame should have 1 action.
 PASS: The action should have 1 parameter.
 PASS: The parameter should be null.
 
+-- Running test case: Canvas.recording2D.NoActions
+PASS: A recording should have been started and stopped once.
+PASS: A recording should have been started and stopped twice.
+

@@ -1,5 +1,16 @@
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Canvas Tab: starting a second recording doesn't show red titlebar if the first recording was empty
+        https://bugs.webkit.org/show_bug.cgi?id=178805
+        <rdar://problem/35176303>
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-2d.html:
+
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: replace TypeVerifier with subclasses of WI.Collection
         https://bugs.webkit.org/show_bug.cgi?id=178045
         <rdar://problem/35174307>
