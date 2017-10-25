@@ -545,6 +545,7 @@ public:
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
+    virtual void finishInitialization();
     virtual ~HTMLMediaElement();
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
