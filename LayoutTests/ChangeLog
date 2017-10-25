@@ -1,3 +1,12 @@
+2017-10-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark http/tests/loading/basic-credentials-sent-automatically.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=159427
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-10-25  Chris Dumez  <cdumez@apple.com>
 
         Add support for unregistering a service worker

@@ -1788,3 +1788,5 @@ webkit.org/b/177826 inspector/dom/csp-big5-hash.html [ Pass Timeout ]
 webkit.org/b/178190 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-worker-origin.htm [ Pass Failure ]
 
 webkit.org/b/178465 [ Debug ] fast/html/marquee-reparent-check.html [ Skip ]
+
+webkit.org/b/159427 http/tests/loading/basic-credentials-sent-automatically.html [ Pass Failure ]
