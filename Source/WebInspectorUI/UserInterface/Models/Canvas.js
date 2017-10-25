@@ -43,6 +43,7 @@ WI.Canvas = class Canvas extends WI.Object
 
         this._cssCanvasClientNodes = null;
         this._shaderProgramCollection = new WI.Collection(WI.Collection.TypeVerifier.ShaderProgram);
+        this._recordingCollection = new WI.RecordingCollection;
 
         this._nextShaderProgramDisplayNumber = 1;
 
@@ -109,6 +110,7 @@ WI.Canvas = class Canvas extends WI.Object
     get cssCanvasName() { return this._cssCanvasName; }
     get contextAttributes() { return this._contextAttributes; }
     get shaderProgramCollection() { return this._shaderProgramCollection; }
+    get recordingCollection() { return this._recordingCollection; }
 
     get isRecording()
     {

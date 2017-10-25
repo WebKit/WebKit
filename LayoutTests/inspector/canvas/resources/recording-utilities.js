@@ -104,7 +104,9 @@ TestPage.registerInitializer(() => {
             InspectorTest.evaluateInPage(`cancelActions()`);
 
             let recording = event.data.recording;
+            InspectorTest.assert(recording.source === canvas, "Recording should be of the given canvas.");
             InspectorTest.assert(recording.source.contextType === type, `Recording should be of a canvas with type "${type}".`);
+            InspectorTest.assert(recording.source.recordingCollection.items.has(recording), "Recording should be in the canvas' list of recordings.");
 
             return recording.actions.then(() => {
                 logRecording(recording, type);

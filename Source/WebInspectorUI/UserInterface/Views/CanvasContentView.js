@@ -128,6 +128,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._recordingSelectElement = this._recordingSelectContainer.appendChild(document.createElement("select"));
         this._recordingSelectElement.addEventListener("change", this._handleRecordingSelectElementChange.bind(this));
 
+        for (let recording of this.representedObject.recordingCollection.items)
+            this._addRecording(recording);
+
         let flexibleSpaceElement = footer.appendChild(document.createElement("div"));
         flexibleSpaceElement.className = "flexible-space";
 
@@ -230,6 +233,20 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._previewContainerElement.appendChild(this._errorElement);
     }
 
+    _addRecording(recording)
+    {
+        let optionElement = this._recordingSelectElement.appendChild(document.createElement("option"));
+        optionElement.textContent = recording.displayName;
+
+        this._recordingOptionElementMap.set(optionElement, recording);
+
+        let recordingCount = this._recordingSelectElement.options.length;
+        this._recordingSelectText.textContent = WI.UIString("View Recordings... (%d)").format(recordingCount);
+        this._recordingSelectContainer.classList.remove("hidden");
+
+        this._recordingSelectElement.selectedIndex = -1;
+    }
+
     _toggleRecording(event)
     {
         if (this.representedObject.isRecording)
@@ -253,20 +270,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         if (canvas !== this.representedObject || !recording)
             return;
 
-        const subtitle = null;
-        let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, subtitle, recording);
-        recordingTreeElement.tooltip = ""; // Tree element tooltips aren't needed in a popover.
-
-        let optionElement = this._recordingSelectElement.appendChild(document.createElement("option"));
-        optionElement.textContent = recording.displayName;
-
-        this._recordingOptionElementMap.set(optionElement, recording);
-
-        let recordingCount = this._recordingSelectElement.options.length;
-        this._recordingSelectText.textContent = WI.UIString("View Recordings... (%d)").format(recordingCount);
-        this._recordingSelectContainer.classList.remove("hidden");
-
-        WI.showRepresentedObject(event.data.recording);
+        this._addRecording(recording);
     }
 
     _handleRecordingSelectElementChange(event)

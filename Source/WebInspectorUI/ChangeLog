@@ -1,3 +1,34 @@
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: preserve Recordings for each Canvas after closing the Canvas tab
+        https://bugs.webkit.org/show_bug.cgi?id=178767
+        <rdar://problem/35167239>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Test.html:
+        Include CollectionTypes for tests.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.recordingFinished):
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas):
+        (WI.Canvas.prototype.get recordingCollection):
+
+        * UserInterface/Models/CollectionTypes.js:
+        (WI.CanvasCollection):
+        (WI.RecordingCollection):
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype._addRecording):
+        (WI.CanvasContentView.prototype._recordingStopped):
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype._recordingAdded):
+
 2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r222181): Web Inspector: Augmenting Agents Domains are not getting activated

@@ -25,11 +25,22 @@
 
 WI.CanvasCollection = class CanvasCollection extends WI.Collection
 {
-    constructor(canvases)
+    constructor(canvases = [])
     {
         super((item) => item instanceof WI.Canvas);
 
         for (let canvas of canvases)
             this.add(canvas);
+    }
+};
+
+WI.RecordingCollection = class RecordingCollection extends WI.Collection
+{
+    constructor(recordings = [])
+    {
+        super((item) => item instanceof WI.Recording);
+
+        for (let recording of recordings)
+            this.add(recording);
     }
 };
