@@ -13,52 +13,90 @@ const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
-function createTriggerable()
+const configWithOneTesterTwoBuilders = {
+    triggerableName: 'build-webkit',
+    lookbackCount: 2,
+    buildRequestArgument: 'build-request-id',
+    slaveName: 'sync-slave',
+    slavePassword: 'password',
+    repositoryGroups: {
+        'webkit': {
+            repositories: {'WebKit': {acceptsPatch: true}},
+            testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
+            buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
+                'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
+                'owned-commits': {'ownedRevisions': 'WebKit'}},
+            acceptsRoots: true,
+        }
+    },
+    types: {
+        'some': {
+            test: ['some test'],
+            properties: {'test': 'some-test'},
+        }
+    },
+    builders: {
+        'builder-1': {
+            builder: 'some tester',
+            properties: {forcescheduler: 'force-ab-tests'},
+        },
+        'builder-2': {
+            builder: 'some builder',
+            properties: {forcescheduler: 'force-ab-builds'},
+        },
+        'builder-3': {
+            builder: 'other builder',
+            properties: {forcescheduler: 'force-ab-builds'},
+        },
+    },
+    buildConfigurations: [
+        {platforms: ['some platform'], builders: ['builder-2', 'builder-3']},
+    ],
+    testConfigurations: [
+        {types: ['some'], platforms: ['some platform'], builders: ['builder-1']},
+    ],
+};
+
+const configWithTwoTesters = {
+    triggerableName: 'build-webkit',
+    lookbackCount: 2,
+    buildRequestArgument: 'build-request-id',
+    slaveName: 'sync-slave',
+    slavePassword: 'password',
+    repositoryGroups: {
+        'webkit': {
+            repositories: {'WebKit': {acceptsPatch: true}},
+            testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
+            buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
+                'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
+                'owned-commits': {'ownedRevisions': 'WebKit'}},
+            acceptsRoots: true,
+        }
+    },
+    types: {
+        'some': {
+            test: ['some test'],
+            properties: {'test': 'some-test'},
+        }
+    },
+    builders: {
+        'builder-1': {
+            builder: 'some tester',
+            properties: {forcescheduler: 'force-ab-tests'},
+        },
+        'builder-2': {
+            builder: 'another tester',
+            properties: {forcescheduler: 'force-ab-builds'},
+        },
+    },
+    testConfigurations: [
+        {types: ['some'], platforms: ['some platform'], builders: ['builder-1', 'builder-2']},
+    ]
+};
+
+function createTriggerable(config = configWithOneTesterTwoBuilders)
 {
     let triggerable;
-    const config = {
-            triggerableName: 'build-webkit',
-            lookbackCount: 2,
-            buildRequestArgument: 'build-request-id',
-            slaveName: 'sync-slave',
-            slavePassword: 'password',
-            repositoryGroups: {
-                'webkit': {
-                    repositories: {'WebKit': {acceptsPatch: true}},
-                    testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
-                    buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
-                        'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
-                        'owned-commits': {'ownedRevisions': 'WebKit'}},
-                    acceptsRoots: true,
-                }
-            },
-            types: {
-                'some': {
-                    test: ['some test'],
-                    properties: {'test': 'some-test'},
-                }
-            },
-            builders: {
-                'builder-1': {
-                    builder: 'some tester',
-                    properties: {forcescheduler: 'force-ab-tests'},
-                },
-                'builder-2': {
-                    builder: 'some builder',
-                    properties: {forcescheduler: 'force-ab-builds'},
-                },
-                'builder-3': {
-                    builder: 'other builder',
-                    properties: {forcescheduler: 'force-ab-builds'},
-                },
-            },
-            buildConfigurations: [
-                {platforms: ['some platform'], builders: ['builder-2', 'builder-3']},
-            ],
-            testConfigurations: [
-                {types: ['some'], platforms: ['some platform'], builders: ['builder-1']},
-            ],
-        };
     return MockData.addMockConfiguration(TestServer.database()).then(() => {
         return Manifest.fetch();
     }).then(() => {
@@ -66,6 +104,18 @@ function createTriggerable()
         return triggerable.initSyncers().then(() => triggerable.updateTriggerable());
     }).then(() => Manifest.fetch()).then(() => {
         return new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, {name: 'sync-slave', password: 'password'}, new MockLogger);
+    });
+}
+
+function createTestGroup(task_name='custom task') {
+    const someTest = Test.findById(MockData.someTestId());
+    const webkit = Repository.findById(MockData.webkitRepositoryId());
+    const set1 = new CustomCommitSet;
+    set1.setRevisionForRepository(webkit, '191622');
+    const set2 = new CustomCommitSet;
+    set2.setRevisionForRepository(webkit, '192736');
+    return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]).then((task) => {
+        return TestGroup.findAllByTask(task.id())[0];
     });
 }
 
@@ -132,6 +182,93 @@ describe('sync-buildbot', function () {
         assert.equal(request.url, url);
         request.resolve(contentToResolve);
     }
+
+    it('should not schedule on another builder if the build was scheduled on one builder before', () => {
+        const requests = MockRemoteAPI.requests;
+        let firstTestGroup;
+        let secondTestGroup;
+        let syncPromise;
+        let triggerable;
+        let taskId = null;
+        let anotherTaskId = null;
+        return createTriggerable(configWithTwoTesters).then((newTriggerable) => {
+            triggerable = newTriggerable;
+            return Promise.all([createTestGroup(), createTestGroup('another custom task')]);
+        }).then((testGroups) => {
+            firstTestGroup = testGroups[0];
+            secondTestGroup = testGroups[1];
+            taskId = firstTestGroup.task().id();
+            anotherTaskId = secondTestGroup.task().id();
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 2);
+            assertAndResolveRequest(requests[0], 'GET', '/json/builders/some%20tester/pendingBuilds', [MockData.pendingBuild({builder: 'some tester', buildRequestId: 5})]);
+            assertAndResolveRequest(requests[1], 'GET', '/json/builders/another%20tester/pendingBuilds', []);
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 4);
+            assertAndResolveRequest(requests[2], 'GET', '/json/builders/some%20tester/builds/?select=-1&select=-2', {
+                [-1]: MockData.runningBuild({builder: 'some tester', buildRequestId: 1})});
+            assertAndResolveRequest(requests[3], 'GET', '/json/builders/another%20tester/builds/?select=-1&select=-2', {});
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 6);
+            assertAndResolveRequest(requests[4], 'GET', '/json/builders/some%20tester/pendingBuilds', []);
+            assertAndResolveRequest(requests[5], 'GET', '/json/builders/another%20tester/pendingBuilds',[]);
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 8);
+            assertAndResolveRequest(requests[6], 'GET', '/json/builders/some%20tester/builds/?select=-1&select=-2', {
+                [-1]: MockData.runningBuild({builder: 'some tester', buildRequestId: 5}),
+                [-2]: MockData.finishedBuild({builder: 'some tester', buildRequestId: 1})
+            });
+            assertAndResolveRequest(requests[7], 'GET', '/json/builders/another%20tester/builds/?select=-1&select=-2', {});
+            return syncPromise;
+        }).then(() => {
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const testGroup = testGroups[0];
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
+
+            const buildRequest = testGroup.buildRequests()[0];
+            assert.equal(testGroup.buildRequests().length, 4);
+            assert(!buildRequest.isBuild());
+            assert(buildRequest.isTest());
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+
+            const otherBuildRequest = testGroup.buildRequests()[1];
+            assert(!otherBuildRequest.isBuild());
+            assert(otherBuildRequest.isTest());
+
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '192736');
+
+            return TestGroup.fetchForTask(anotherTaskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const testGroup = testGroups[0];
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
+
+            const buildRequest = testGroup.buildRequests()[0];
+            assert.equal(testGroup.buildRequests().length, 4);
+            assert(!buildRequest.isBuild());
+            assert(buildRequest.isTest());
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+
+            const otherBuildRequest = testGroup.buildRequests()[1];
+            assert(!otherBuildRequest.isBuild());
+            assert(otherBuildRequest.isTest());
+
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '192736');
+        });
+    });
 
     it('should schedule a build to build a patch', () => {
         const requests = MockRemoteAPI.requests;

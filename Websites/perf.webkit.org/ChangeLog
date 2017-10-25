@@ -1,5 +1,21 @@
 2017-10-24  Dewei Zhu  <dewei_zhu@apple.com>
 
+        Fix a bug in syncing script that test/build syncer is never set.
+        https://bugs.webkit.org/show_bug.cgi?id=178772
+
+        Reviewed by Ryosuke Niwa.
+
+        Neither 'buildSyncer' nor 'testSyncer' is ever set.
+        Added a unit test to cover this case.
+
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        (createTriggerable): Refactor it to allow customized name.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype._pullBuildbotOnAllSyncers): Update syncer info accordingly.
+        (BuildbotTriggerable._testGroupMapForBuildRequests): Initialize build and test syncer to null.
+
+2017-10-24  Dewei Zhu  <dewei_zhu@apple.com>
+
         Owner commit does not necessarily exist in the same commit set for an owned commit.
         https://bugs.webkit.org/show_bug.cgi?id=178763
 
