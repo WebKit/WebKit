@@ -441,12 +441,16 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_haveVisibleTextTrack(false)
     , m_processingPreferenceChange(false)
 #endif
-    , m_mediaSession(std::make_unique<MediaElementSession>(*this))
 {
     allMediaElements().add(this);
 
     LOG(Media, "HTMLMediaElement::HTMLMediaElement(%p)", this);
     setHasCustomStyleResolveCallbacks();
+}
+
+void HTMLMediaElement::finishInitialization()
+{
+    m_mediaSession = std::make_unique<MediaElementSession>(*this);
 
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
@@ -456,6 +460,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager);
     m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePlaybackToControlControlsManager);
 
+    auto& document = this->document();
     auto* page = document.page();
 
     if (document.settings().invisibleAutoplayNotPermitted())

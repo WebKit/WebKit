@@ -44,6 +44,7 @@ inline HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document
 Ref<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     auto element = adoptRef(*new HTMLAudioElement(tagName, document, createdByParser));
+    element->finishInitialization();
     element->suspendIfNeeded();
     return element;
 }
