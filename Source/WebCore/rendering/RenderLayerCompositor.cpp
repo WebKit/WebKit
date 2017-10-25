@@ -362,6 +362,7 @@ void RenderLayerCompositor::setCompositingLayersNeedRebuild(bool needRebuild)
 
 void RenderLayerCompositor::willRecalcStyle()
 {
+    cacheAcceleratedCompositingFlags();
     m_layerNeedsCompositingUpdate = false;
 }
 
@@ -370,7 +371,6 @@ bool RenderLayerCompositor::didRecalcStyleWithNoPendingLayout()
     if (!m_layerNeedsCompositingUpdate)
         return false;
     
-    cacheAcceleratedCompositingFlags();
     return updateCompositingLayers(CompositingUpdateType::AfterStyleChange);
 }
 
@@ -633,6 +633,9 @@ void RenderLayerCompositor::cancelCompositingLayerUpdate()
 bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " updateCompositingLayers " << updateType << " root " << updateRoot);
+
+    if (updateType == CompositingUpdateType::AfterLayout)
+        cacheAcceleratedCompositingFlags(); // Some flags (e.g. forceCompositingMode) depend on layout.
 
     m_updateCompositingLayersTimer.stop();
 

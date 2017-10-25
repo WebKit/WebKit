@@ -33,6 +33,7 @@ namespace WTR {
 
 struct TestOptions {
     bool useThreadedScrolling { false };
+    bool useAcceleratedDrawing { false };
     bool useRemoteLayerTree { false };
     bool shouldShowWebView { false };
     bool useFlexibleViewport { false };
@@ -65,6 +66,7 @@ struct TestOptions {
     bool hasSameInitializationOptions(const TestOptions& options) const
     {
         if (useThreadedScrolling != options.useThreadedScrolling
+            || useAcceleratedDrawing != options.useAcceleratedDrawing
             || overrideLanguages != options.overrideLanguages
             || useMockScrollbars != options.useMockScrollbars
             || needsSiteSpecificQuirks != options.needsSiteSpecificQuirks
