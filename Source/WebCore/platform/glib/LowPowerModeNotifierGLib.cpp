@@ -36,7 +36,7 @@ void LowPowerModeNotifier::updateState()
 {
     UpDeviceLevel warningLevel;
     g_object_get(G_OBJECT(m_device.get()), "warning-level", &warningLevel, nullptr);
-    m_lowPowerModeEnabled = warningLevel > UP_DEVICE_LEVEL_DISCHARGING && warningLevel <= UP_DEVICE_LEVEL_ACTION;
+    m_lowPowerModeEnabled = warningLevel > UP_DEVICE_LEVEL_NONE && warningLevel <= UP_DEVICE_LEVEL_ACTION;
 }
 
 void LowPowerModeNotifier::warningLevelCallback(LowPowerModeNotifier* notifier)
