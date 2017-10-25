@@ -6452,17 +6452,23 @@ bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
         return false;
 
     if (renderer().isRenderReplaced() || hasOverflowControls()) {
-        if (request)
-            request->setHasPaintedContent();
-        return true;
+        if (!request)
+            return true;
+
+        request->setHasPaintedContent();
+        if (request->isSatisfied())
+            return true;
     }
 
     if (hasVisibleBoxDecorationsOrBackground()) {
-        if (request)
-            request->setHasPaintedContent();
-        return true;
+        if (!request)
+            return true;
+
+        request->setHasPaintedContent();
+        if (request->isSatisfied())
+            return true;
     }
-    
+
     PaintedContentRequest localRequest;
     if (!request)
         request = &localRequest;
