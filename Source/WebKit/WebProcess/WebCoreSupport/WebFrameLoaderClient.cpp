@@ -105,7 +105,22 @@ WebFrameLoaderClient::WebFrameLoaderClient()
 WebFrameLoaderClient::~WebFrameLoaderClient()
 {
 }
-    
+
+uint64_t WebFrameLoaderClient::pageID() const
+{
+    return m_frame && m_frame->page() ? m_frame->page()->pageID() : 0;
+}
+
+uint64_t WebFrameLoaderClient::frameID() const
+{
+    return m_frame ? m_frame->frameID() : 0;
+}
+
+PAL::SessionID WebFrameLoaderClient::sessionID() const
+{
+    return m_frame && m_frame->page() ? m_frame->page()->sessionID() : PAL::SessionID::defaultSessionID();
+}
+
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
     m_frame->invalidate();

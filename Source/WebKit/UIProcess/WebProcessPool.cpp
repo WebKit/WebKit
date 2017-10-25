@@ -46,6 +46,7 @@
 #include "NetworkProcessProxy.h"
 #include "PerActivityStateCPUUsageSampler.h"
 #include "SandboxExtension.h"
+#include "ServiceWorkerProcessProxy.h"
 #include "StatisticsData.h"
 #include "StorageProcessCreationParameters.h"
 #include "StorageProcessMessages.h"
@@ -588,15 +589,18 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
 void WebProcessPool::getWorkerContextProcessConnection(StorageProcessProxy& proxy)
 {
     ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
-    
-    if (m_workerContextProcess)
+
+    if (m_serviceWorkerProcess)
         return;
 
     if (!m_websiteDataStore)
         m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-    auto& newProcess = createNewWebProcess(m_websiteDataStore->websiteDataStore());
-    m_workerContextProcess = &newProcess;
-    m_workerContextProcess->send(Messages::WebProcess::GetWorkerContextConnection(m_defaultPageGroup->preferences().store()), 0);
+
+    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, m_websiteDataStore->websiteDataStore());
+    m_serviceWorkerProcess = serviceWorkerProcessProxy.ptr();
+    initializeNewWebProcess(serviceWorkerProcessProxy.get(), m_websiteDataStore->websiteDataStore());
+    m_processes.append(WTFMove(serviceWorkerProcessProxy));
+    m_serviceWorkerProcess->start(m_defaultPageGroup->preferences().store());
 }
 
 void WebProcessPool::didGetWorkerContextProcessConnection(const IPC::Attachment& connection)
@@ -686,9 +690,16 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 
 WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDataStore)
 {
-    ensureNetworkProcess();
+    auto processProxy = WebProcessProxy::create(*this, websiteDataStore);
+    auto& process = processProxy.get();
+    initializeNewWebProcess(process, websiteDataStore);
+    m_processes.append(WTFMove(processProxy));
+    return process;
+}
 
-    Ref<WebProcessProxy> process = WebProcessProxy::create(*this, websiteDataStore);
+void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
+{
+    ensureNetworkProcess();
 
     WebProcessCreationParameters parameters;
 
@@ -811,21 +822,19 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
     RefPtr<API::Object> injectedBundleInitializationUserData = m_injectedBundleClient->getInjectedBundleInitializationUserData(*this);
     if (!injectedBundleInitializationUserData)
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
-    parameters.initializationUserData = UserData(process->transformObjectsToHandles(injectedBundleInitializationUserData.get()));
+    parameters.initializationUserData = UserData(process.transformObjectsToHandles(injectedBundleInitializationUserData.get()));
 
-    process->send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
+    process.send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
 
 #if PLATFORM(COCOA)
-    process->send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
+    process.send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
 #endif
 
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
-        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID()), 0);
+        process.send(Messages::WebProcess::EnsurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID()), 0);
 
     if (m_automationSession)
-        process->send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
-
-    m_processes.append(process.ptr());
+        process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
 
     ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
 
@@ -833,8 +842,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
     // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
     Inspector::RemoteInspector::singleton(); 
 #endif
-
-    return process;
 }
 
 void WebProcessPool::warmInitialProcess()  
@@ -916,8 +923,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_processWithPageCache == process)
         m_processWithPageCache = nullptr;
 #if ENABLE(SERVICE_WORKER)
-    if (m_workerContextProcess == process)
-        m_workerContextProcess = nullptr;
+    if (m_serviceWorkerProcess == process)
+        m_serviceWorkerProcess = nullptr;
 #endif
 
     static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
@@ -949,7 +956,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
         if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
             continue;
 #if ENABLE(SERVICE_WORKER)
-        if (process.get() == m_workerContextProcess)
+        if (process.get() == m_serviceWorkerProcess)
             continue;
 #endif
         // Choose the process with fewest pages.
@@ -992,7 +999,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         process = &createNewWebProcessRespectingProcessCountLimit(pageConfiguration->websiteDataStore()->websiteDataStore());
 
 #if ENABLE(SERVICE_WORKER)
-    ASSERT(process.get() != m_workerContextProcess);
+    ASSERT(process.get() != m_serviceWorkerProcess);
 #endif
 
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));

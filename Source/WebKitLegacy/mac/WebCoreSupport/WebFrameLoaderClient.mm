@@ -202,6 +202,24 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 {
 }
 
+uint64_t WebFrameLoaderClient::pageID() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+}
+
+uint64_t WebFrameLoaderClient::frameID() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+}
+
+PAL::SessionID WebFrameLoaderClient::sessionID() const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return PAL::SessionID::defaultSessionID();
+}
+
 void WebFrameLoaderClient::frameLoaderDestroyed()
 {
     [m_webFrame.get() _clearCoreFrame];

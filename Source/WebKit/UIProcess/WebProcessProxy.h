@@ -192,9 +192,11 @@ public:
     void didExceedActiveMemoryLimit();
     void didExceedInactiveMemoryLimit();
 
-private:
+protected:
+    static uint64_t generatePageID();
     explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore&);
 
+private:
     // From ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;

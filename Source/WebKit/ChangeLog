@@ -1,3 +1,59 @@
+2017-10-25  Youenn Fablet  <youenn@apple.com>
+
+        Enable ServiceWorker to fetch resources
+        https://bugs.webkit.org/show_bug.cgi?id=178673
+
+        Reviewed by Brady Eidson.
+
+        ServiceWorkerContextManager makes use of the new ServiceWorkerThreadProxy.
+        It creates the necessary environment for the thread to make use of network loads, web sockets and cache storage.
+        Fetch is functional with these changes.
+
+        ServiceWorkerProcessProxy is introduced as a UIProcess proxy to the service worker process.
+        This process proxy is responsible to give the pageID used by all service worker thread instances for network loads.
+        ServiceWorkerContextManager is responsible to give a unique frameID for all service worker threads.
+        This is necessary as these two ids are currently needed for any network load.
+
+        ServiceWorkerThreadProxy creates its own FrameLoaderClient which is now used to get pageID, frameID and sessionID.
+
+        * UIProcess/ServiceWorkerProcessProxy.cpp: Added.
+        (WebKit::ServiceWorkerProcessProxy::ServiceWorkerProcessProxy):
+        (WebKit::m_serviceWorkerPageID):
+        (WebKit::ServiceWorkerProcessProxy::~ServiceWorkerProcessProxy):
+        (WebKit::ServiceWorkerProcessProxy::start):
+        * UIProcess/ServiceWorkerProcessProxy.h: Added.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getWorkerContextProcessConnection):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::generatePageID):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Storage/ServiceWorkerContextManager.cpp:
+        (WebKit::ServiceWorkerContextManager::ServiceWorkerContextManager):
+        (WebKit::ServiceWorkerContextManager::startServiceWorker):
+        (WebKit::ServiceWorkerContextManager::startFetch):
+        * WebProcess/Storage/ServiceWorkerContextManager.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::pageID const):
+        (WebKit::WebFrameLoaderClient::frameID const):
+        (WebKit::WebFrameLoaderClient::sessionID const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWorkerContextConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-10-25  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Add WebKit platform files for wincairo webkit

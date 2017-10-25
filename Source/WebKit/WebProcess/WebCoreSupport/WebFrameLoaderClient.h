@@ -51,6 +51,10 @@ public:
 
     void applyToDocumentLoader(const WebsitePolicies&);
 
+    uint64_t pageID() const final;
+    uint64_t frameID() const final;
+    PAL::SessionID sessionID() const final;
+
 private:
     void frameLoaderDestroyed() final;
 

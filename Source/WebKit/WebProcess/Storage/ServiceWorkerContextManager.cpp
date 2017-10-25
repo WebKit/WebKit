@@ -33,24 +33,58 @@
 #include "StorageProcessMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDocumentLoader.h"
 #include "WebPreferencesKeys.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include "WebServiceWorkerFetchTaskClient.h"
+#include "WebSocketProvider.h"
+#include <WebCore/EditorClient.h>
+#include <WebCore/EmptyClients.h>
+#include <WebCore/EmptyFrameLoaderClient.h>
+#include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/MessagePortChannel.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
+#include <WebCore/PageConfiguration.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <pal/SessionID.h>
+
+#if USE(QUICK_LOOK)
+#include <WebCore/PreviewLoaderClient.h>
+#endif
 
 using namespace PAL;
 using namespace WebCore;
 
 namespace WebKit {
 
-ServiceWorkerContextManager::ServiceWorkerContextManager(Ref<IPC::Connection>&& connection, const WebPreferencesStore& store)
+class ServiceWorkerFrameLoaderClient final : public EmptyFrameLoaderClient {
+public:
+    ServiceWorkerFrameLoaderClient(PAL::SessionID sessionID, uint64_t pageID, uint64_t frameID)
+        : m_sessionID(sessionID)
+        , m_pageID(pageID)
+        , m_frameID(frameID)
+    {
+    }
+
+private:
+    Ref<DocumentLoader> createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData) final
+    {
+        return WebDocumentLoader::create(request, substituteData);
+    }
+
+    PAL::SessionID sessionID() const final { return m_sessionID; }
+    uint64_t pageID() const final { return m_pageID; }
+    uint64_t frameID() const final { return m_frameID; }
+
+    PAL::SessionID m_sessionID;
+    uint64_t m_pageID { 0 };
+    uint64_t m_frameID { 0 };
+};
+
+ServiceWorkerContextManager::ServiceWorkerContextManager(Ref<IPC::Connection>&& connection, uint64_t pageID, const WebPreferencesStore& store)
     : m_connectionToStorageProcess(WTFMove(connection))
+    , m_pageID(pageID)
 {
     updatePreferences(store);
 }
@@ -64,9 +98,21 @@ void ServiceWorkerContextManager::updatePreferences(const WebPreferencesStore& s
 void ServiceWorkerContextManager::startServiceWorker(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
 {
     // FIXME: Provide a sensical session ID.
-    auto serviceWorker = ServiceWorkerThreadProxy::create(serverConnectionIdentifier, data, SessionID::defaultSessionID(), WebProcess::singleton().cacheStorageProvider());
-    auto serviceWorkerIdentifier = serviceWorker->identifier();
-    auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorker));
+    auto sessionID = PAL::SessionID::defaultSessionID();
+
+    PageConfiguration pageConfiguration {
+        createEmptyEditorClient(),
+        WebSocketProvider::create(),
+        WebCore::LibWebRTCProvider::create(),
+        WebProcess::singleton().cacheStorageProvider()
+    };
+    fillWithEmptyClients(pageConfiguration);
+    auto frameLoaderClient = std::make_unique<ServiceWorkerFrameLoaderClient>(sessionID, m_pageID, ++m_previousServiceWorkerID);
+    pageConfiguration.loaderClientForMainFrame = frameLoaderClient.release();
+
+    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), serverConnectionIdentifier, data, sessionID, WebProcess::singleton().cacheStorageProvider());
+    auto serviceWorkerIdentifier = serviceWorkerThreadProxy->identifier();
+    auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorkerThreadProxy));
     ASSERT_UNUSED(result, result.isNewEntry);
 
     LOG(ServiceWorker, "Context process PID: %i started worker thread %s\n", getpid(), data.workerID.utf8().data());
@@ -76,14 +122,14 @@ void ServiceWorkerContextManager::startServiceWorker(uint64_t serverConnectionId
 
 void ServiceWorkerContextManager::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options)
 {
-    auto serviceWorker = m_workerMap.get(serviceWorkerIdentifier);
-    if (!serviceWorker) {
+    auto serviceWorkerThreadProxy = serviceWorkerIdentifier ? m_workerMap.get(serviceWorkerIdentifier) : nullptr;
+    if (!serviceWorkerThreadProxy) {
         m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch(serverConnectionIdentifier, fetchIdentifier), 0);
         return;
     }
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serverConnectionIdentifier, fetchIdentifier);
-    serviceWorker->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
+    serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
 }
 
 void ServiceWorkerContextManager::postMessageToServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin)

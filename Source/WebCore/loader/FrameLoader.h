@@ -93,9 +93,7 @@ public:
     ~FrameLoader();
 
     WEBCORE_EXPORT void init();
-#if PLATFORM(IOS)
     void initForSynthesizedDocument(const URL&);
-#endif
 
     Frame& frame() const { return m_frame; }
 

@@ -41,17 +41,19 @@ struct ServiceWorkerContextData;
 
 class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorkerThreadProxy>, public WorkerLoaderProxy {
 public:
-    WEBCORE_EXPORT static Ref<ServiceWorkerThreadProxy> create(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
+    WEBCORE_EXPORT static Ref<ServiceWorkerThreadProxy> create(PageConfiguration&&, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
 
     uint64_t identifier() const { return m_serviceWorkerThread->identifier(); }
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
 
 private:
-    ServiceWorkerThreadProxy(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
+    ServiceWorkerThreadProxy(PageConfiguration&&, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
     bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
     Ref<CacheStorageConnection> createCacheStorageConnection() final;
 
+    UniqueRef<Page> m_page;
+    Ref<Document> m_document;
     Ref<ServiceWorkerThread> m_serviceWorkerThread;
     CacheStorageProvider& m_cacheStorageProvider;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;

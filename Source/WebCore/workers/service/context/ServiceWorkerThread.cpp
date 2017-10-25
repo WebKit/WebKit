@@ -61,7 +61,6 @@ private:
     void reportPendingActivity(bool) final { };
 };
 
-// FIXME: Use a valid WorkerLoaderProxy
 // FIXME: Use a valid WorkerReportingProxy
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use a valid IDBConnection

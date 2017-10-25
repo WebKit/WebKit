@@ -43,7 +43,7 @@ struct WebPreferencesStore;
 
 class ServiceWorkerContextManager : public IPC::MessageReceiver {
 public:
-    ServiceWorkerContextManager(Ref<IPC::Connection>&&, const WebPreferencesStore&);
+    ServiceWorkerContextManager(Ref<IPC::Connection>&&, uint64_t pageID, const WebPreferencesStore&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -56,6 +56,8 @@ private:
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     HashMap<uint64_t, RefPtr<WebCore::ServiceWorkerThreadProxy>> m_workerMap;
+    uint64_t m_pageID { 0 };
+    uint64_t m_previousServiceWorkerID { 0 };
 };
 
 } // namespace WebKit

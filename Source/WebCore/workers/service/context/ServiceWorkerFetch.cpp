@@ -69,7 +69,7 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
                 return;
             }
             client->didReceiveData(result.releaseReturnValue().releaseNonNull());
-            client->didFail();
+            client->didFinish();
         });
         return;
     }

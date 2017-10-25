@@ -895,6 +895,8 @@
 		4131F3D51F96E9350059995A /* ServiceWorkerContextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131F3D21F96E9300059995A /* ServiceWorkerContextManager.h */; };
 		4131F3E21F9880840059995A /* WebServiceWorkerFetchTaskClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4131F3E01F98712C0059995A /* WebServiceWorkerFetchTaskClient.cpp */; };
 		4135FBD11F4FB8090074C47B /* CacheStorageEngineCaches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */; };
+		414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */; };
+		414DEDD81F9EDDE50047C40D /* ServiceWorkerProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */; };
 		41897ECF1F415D620016FA42 /* WebCacheStorageConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ECE1F415D5C0016FA42 /* WebCacheStorageConnection.cpp */; };
 		41897ED01F415D650016FA42 /* WebCacheStorageProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ECC1F415D5C0016FA42 /* WebCacheStorageProvider.cpp */; };
 		41897ED11F415D680016FA42 /* WebCacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ECD1F415D5C0016FA42 /* WebCacheStorageConnection.h */; };
@@ -3196,6 +3198,10 @@
 		4131F3E01F98712C0059995A /* WebServiceWorkerFetchTaskClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebServiceWorkerFetchTaskClient.cpp; sourceTree = "<group>"; };
 		4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCaches.cpp; sourceTree = "<group>"; };
 		4135FBD01F4FB7F20074C47B /* CacheStorageEngineCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCaches.h; sourceTree = "<group>"; };
+		414DEDC41F9E4BEB0047C40D /* ServiceWorkerFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerFrameLoaderClient.h; sourceTree = "<group>"; };
+		414DEDC51F9E4BEC0047C40D /* ServiceWorkerFrameLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerFrameLoaderClient.cpp; sourceTree = "<group>"; };
+		414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProcessProxy.h; sourceTree = "<group>"; };
+		414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProcessProxy.cpp; sourceTree = "<group>"; };
 		41897ECB1F415D5C0016FA42 /* WebCacheStorageConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCacheStorageConnection.messages.in; sourceTree = "<group>"; };
 		41897ECC1F415D5C0016FA42 /* WebCacheStorageProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCacheStorageProvider.cpp; sourceTree = "<group>"; };
 		41897ECD1F415D5C0016FA42 /* WebCacheStorageConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageConnection.h; sourceTree = "<group>"; };
@@ -6206,6 +6212,8 @@
 				4131F3CF1F96A9360059995A /* ServiceWorkerClientFetch.messages.in */,
 				4131F3D31F96E9310059995A /* ServiceWorkerContextManager.cpp */,
 				4131F3D21F96E9300059995A /* ServiceWorkerContextManager.h */,
+				414DEDC51F9E4BEC0047C40D /* ServiceWorkerFrameLoaderClient.cpp */,
+				414DEDC41F9E4BEB0047C40D /* ServiceWorkerFrameLoaderClient.h */,
 				4131F3E01F98712C0059995A /* WebServiceWorkerFetchTaskClient.cpp */,
 				419ACF9B1F981D26009F1A83 /* WebServiceWorkerFetchTaskClient.h */,
 				51BEB6291F3A5ACD005029B9 /* WebServiceWorkerProvider.cpp */,
@@ -7003,6 +7011,8 @@
 				51E6C1611F2935CD00FD3437 /* ResourceLoadStatisticsPersistentStorage.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
+				414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */,
+				414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */,
 				51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */,
 				514BDED216C98EDD00E4E25E /* StatisticsRequest.h */,
 				1AA417C912C00CCA002BE67B /* TextChecker.h */,
@@ -8831,6 +8841,7 @@
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				4131F3D51F96E9350059995A /* ServiceWorkerContextManager.h in Headers */,
 				460F48901F996F7100CF4B87 /* ServiceWorkerContextManagerMessages.h in Headers */,
+				414DEDD71F9EDDE50047C40D /* ServiceWorkerProcessProxy.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
@@ -10425,6 +10436,7 @@
 				617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */,
 				4131F3D41F96E9350059995A /* ServiceWorkerContextManager.cpp in Sources */,
 				460F488F1F996F7100CF4B87 /* ServiceWorkerContextManagerMessageReceiver.cpp in Sources */,
+				414DEDD81F9EDDE50047C40D /* ServiceWorkerProcessProxy.cpp in Sources */,
 				1AFDE6591954A42B00C48FFA /* SessionState.cpp in Sources */,
 				1A002D48196B345D00B9AD44 /* SessionStateCoding.mm in Sources */,
 				1A7284481959F8040007BCE5 /* SessionStateConversion.cpp in Sources */,

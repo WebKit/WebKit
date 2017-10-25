@@ -38,6 +38,7 @@ class CacheStorageProvider;
 class ContentSecurityPolicyResponseHeaders;
 class MessagePortChannel;
 class SerializedScriptValue;
+class WorkerLoaderProxy;
 class WorkerObjectProxy;
 struct ServiceWorkerContextData;
 

@@ -77,7 +77,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t generatePageID()
+uint64_t WebProcessProxy::generatePageID()
 {
     static uint64_t uniquePageID;
     return ++uniquePageID;

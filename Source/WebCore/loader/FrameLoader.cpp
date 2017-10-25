@@ -313,17 +313,16 @@ void FrameLoader::init()
     m_progressTracker = std::make_unique<FrameProgressTracker>(m_frame);
 }
 
-#if PLATFORM(IOS)
 void FrameLoader::initForSynthesizedDocument(const URL&)
 {
     // FIXME: We need to initialize the document URL to the specified URL. Currently the URL is empty and hence
     // FrameLoader::checkCompleted() will overwrite the URL of the document to be activeDocumentLoader()->documentURL().
 
-    RefPtr<DocumentLoader> loader = m_client.createDocumentLoader(ResourceRequest(URL(ParsedURLString, emptyString())), SubstituteData());
+    auto loader = m_client.createDocumentLoader(ResourceRequest(URL(ParsedURLString, emptyString())), SubstituteData());
     loader->attachToFrame(m_frame);
     loader->setResponse(ResourceResponse(URL(), ASCIILiteral("text/html"), 0, String()));
     loader->setCommitted(true);
-    setDocumentLoader(loader.get());
+    setDocumentLoader(loader.ptr());
 
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
@@ -338,7 +337,6 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     m_networkingContext = m_client.createNetworkingContext();
     m_progressTracker = std::make_unique<FrameProgressTracker>(m_frame);
 }
-#endif
 
 void FrameLoader::setDefersLoading(bool defers)
 {

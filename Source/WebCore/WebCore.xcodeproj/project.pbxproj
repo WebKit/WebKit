@@ -1347,6 +1347,7 @@
 		413E007C1DB0E70A002341D2 /* MemoryReleaseCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 413E007B1DB0E707002341D2 /* MemoryReleaseCocoa.mm */; };
 		414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B82031D6DF0D90077EBE3 /* StructuredClone.h */; };
 		414C25D71E9EFEDE00BEE141 /* H264VideoToolBoxEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414C25D61E9EF7C000BEE141 /* H264VideoToolBoxEncoder.mm */; };
+		414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		415071581685067300C3C7B3 /* SelectorFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 415071561685067300C3C7B3 /* SelectorFilter.h */; };
 		415080361E3F00AD0051D75D /* LibWebRTCAudioModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */; };
 		415080371E3F00B00051D75D /* LibWebRTCAudioModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */; };
@@ -4291,7 +4292,7 @@
 		B25599850D00D8BA00BB825C /* SVGFEImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598EB0D00D8B900BB825C /* SVGFEImage.h */; };
 		B25599A30D00D8BA00BB825C /* SVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B255990B0D00D8B900BB825C /* SVGImage.cpp */; };
 		B25599A40D00D8BA00BB825C /* SVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990C0D00D8B900BB825C /* SVGImage.h */; };
-		B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990D0D00D8B900BB825C /* EmptyClients.h */; };
+		B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990D0D00D8B900BB825C /* EmptyClients.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */; };
 		B27535590B053814002CE64F /* FloatPointCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352B0B053814002CE64F /* FloatPointCG.cpp */; };
 		B275355A0B053814002CE64F /* FloatRectCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275352C0B053814002CE64F /* FloatRectCG.cpp */; };
@@ -8091,6 +8092,7 @@
 		414B82031D6DF0D90077EBE3 /* StructuredClone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructuredClone.h; sourceTree = "<group>"; };
 		414C25D51E9EF7C000BEE141 /* H264VideoToolBoxEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = H264VideoToolBoxEncoder.h; path = libwebrtc/H264VideoToolBoxEncoder.h; sourceTree = "<group>"; };
 		414C25D61E9EF7C000BEE141 /* H264VideoToolBoxEncoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = H264VideoToolBoxEncoder.mm; path = libwebrtc/H264VideoToolBoxEncoder.mm; sourceTree = "<group>"; };
+		414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyFrameLoaderClient.h; sourceTree = "<group>"; };
 		415071551685067300C3C7B3 /* SelectorFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorFilter.cpp; sourceTree = "<group>"; };
 		415071561685067300C3C7B3 /* SelectorFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorFilter.h; sourceTree = "<group>"; };
 		415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCAudioModule.cpp; path = libwebrtc/LibWebRTCAudioModule.cpp; sourceTree = "<group>"; };
@@ -23882,6 +23884,7 @@
 				9738899F116EA9DC00ADF313 /* DocumentWriter.h */,
 				F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */,
 				B255990D0D00D8B900BB825C /* EmptyClients.h */,
+				414DEDE51F9FE9150047C40D /* EmptyFrameLoaderClient.h */,
 				41AD75391CEF6BCE00A31486 /* FetchOptions.h */,
 				656D37230ADBA5DE00A4554D /* FormState.cpp */,
 				656D37220ADBA5DE00A4554D /* FormState.h */,
@@ -27292,6 +27295,7 @@
 				A8CFF6BE0A156118000A4234 /* EllipsisBox.h in Headers */,
 				F55B3DBC1251F12D003EF269 /* EmailInputType.h in Headers */,
 				B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */,
+				414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */,
 				515BE1901D54F5FB00DD7C68 /* EmptyGamepadProvider.h in Headers */,
 				FD31609312B026F700C1A359 /* EqualPowerPanner.h in Headers */,
 				8371AC3B1F509BE400FBF284 /* ErrorCallback.h in Headers */,

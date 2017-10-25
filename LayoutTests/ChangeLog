@@ -1,3 +1,15 @@
+2017-10-25  Youenn Fablet  <youenn@apple.com>
+
+        Enable ServiceWorker to fetch resources
+        https://bugs.webkit.org/show_bug.cgi?id=178673
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/workers/service/resources/service-worker-fetch-worker.js: Added.
+        * http/tests/workers/service/resources/service-worker-fetch.js: Added.
+        * http/tests/workers/service/service-worker-fetch-expected.txt: Added.
+        * http/tests/workers/service/service-worker-fetch.html: Added.
+
 2017-10-25  Jer Noble  <jer.noble@apple.com>
 
         UNPACK_FLIP_Y is broken for MSE-backed videos

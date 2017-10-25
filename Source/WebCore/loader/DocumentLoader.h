@@ -144,10 +144,9 @@ public:
     const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
 
     const ResourceResponse& response() const { return m_response; }
-#if PLATFORM(IOS)
+
     // FIXME: This method seems to violate the encapsulation of this class.
     void setResponse(const ResourceResponse& response) { m_response = response; }
-#endif
 
     bool isClientRedirect() const { return m_isClientRedirect; }
     void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }

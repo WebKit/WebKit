@@ -85,6 +85,7 @@ class DownloadProxy;
 class HighPerformanceGraphicsUsageSampler;
 class UIGamepad;
 class PerActivityStateCPUUsageSampler;
+class ServiceWorkerProcessProxy;
 class WebAutomationSession;
 class WebContextSupplement;
 class WebPageGroup;
@@ -425,6 +426,7 @@ private:
     void platformInvalidateContext();
 
     WebProcessProxy& createNewWebProcess(WebsiteDataStore&);
+    void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore&);
 
     void requestWebContentStatistics(StatisticsRequest*);
     void requestNetworkingStatistics(StatisticsRequest*);
@@ -484,7 +486,7 @@ private:
 
     WebProcessProxy* m_processWithPageCache;
 #if ENABLE(SERVICE_WORKER)
-    WebProcessProxy* m_workerContextProcess { nullptr };
+    ServiceWorkerProcessProxy* m_serviceWorkerProcess { nullptr };
     bool m_waitingForWorkerContextProcessConnection { false };
 #endif
 

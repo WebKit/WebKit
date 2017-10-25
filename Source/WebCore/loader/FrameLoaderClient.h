@@ -116,7 +116,11 @@ public:
     virtual bool hasWebView() const = 0; // mainly for assertions
 
     virtual void makeRepresentation(DocumentLoader*) = 0;
-    
+
+    virtual uint64_t pageID() const = 0;
+    virtual uint64_t frameID() const = 0;
+    virtual PAL::SessionID sessionID() const = 0;
+
 #if PLATFORM(IOS)
     // Returns true if the client forced the layout.
     virtual bool forceLayoutOnRestoreFromPageCache() = 0;

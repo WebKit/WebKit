@@ -149,17 +149,13 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     ResourceLoadIdentifier identifier = resourceLoader.identifier();
     ASSERT(identifier);
 
-    // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
-    // EmptyFrameLoaderClient shouldn't exist and everything should be using a WebFrameLoaderClient,
-    // but in the meantime we have to make sure not to mis-cast.
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
+    auto& frameLoaderClient = resourceLoader.frameLoader()->client();
 
     WebResourceLoader::TrackingParameters trackingParameters;
-    trackingParameters.pageID = webPage ? webPage->pageID() : 0;
-    trackingParameters.frameID = webFrame ? webFrame->frameID() : 0;
+    trackingParameters.pageID = frameLoaderClient.pageID();
+    trackingParameters.frameID = frameLoaderClient.frameID();
     trackingParameters.resourceID = identifier;
+    auto sessionID = frameLoaderClient.sessionID();
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     // If the DocumentLoader schedules this as an archive resource load,
@@ -206,6 +202,9 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 #endif
 
+    auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    auto* webPage = webFrame ? webFrame->page() : nullptr;
     if (webPage) {
         if (auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying())) {
             LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, URL '%s' will be handled by a UIProcess URL scheme handler.", resourceLoader.url().string().utf8().data());
@@ -217,27 +216,23 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 
 #if ENABLE(SERVICE_WORKER)
-    WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, resource, webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID(), [trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
+    WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, resource, sessionID, [trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
         if (result != ServiceWorkerClientFetch::Result::Unhandled)
             return;
 
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader->url().string().latin1().data());
-        WebProcess::singleton().webLoaderStrategy().scheduleLoadFromNetworkProcess(resourceLoader.get(), resourceLoader->originalRequest(), WTFMove(trackingParameters), shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime);
+        WebProcess::singleton().webLoaderStrategy().scheduleLoadFromNetworkProcess(resourceLoader.get(), resourceLoader->originalRequest(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime);
     });
 #else
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader.url().string().latin1().data());
-    scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
+    scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
 #endif
 }
 
-void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
+void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
 {
     ResourceLoadIdentifier identifier = resourceLoader.identifier();
     ASSERT(identifier);
-
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
 
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()));
 
@@ -246,14 +241,14 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = identifier;
-    loadParameters.webPageID = webPage ? webPage->pageID() : 0;
-    loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
-    loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
+    loadParameters.webPageID = trackingParameters.pageID;
+    loadParameters.webFrameID = trackingParameters.frameID;
+    loadParameters.sessionID = sessionID;
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.storedCredentialsPolicy = storedCredentialsPolicy;
     // If there is no WebFrame then this resource cannot be authenticated with the client.
-    loadParameters.clientCredentialPolicy = (webFrame && webPage && resourceLoader.isAllowedToAskUserForCredentials()) ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
+    loadParameters.clientCredentialPolicy = (loadParameters.webFrameID && loadParameters.webPageID && resourceLoader.isAllowedToAskUserForCredentials()) ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
     loadParameters.defersLoading = resourceLoader.defersLoading();
     loadParameters.needsCertificateInfo = resourceLoader.shouldIncludeCertificateInfo();
@@ -441,8 +436,6 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
 
     WebFrameNetworkingContext* webContext = static_cast<WebFrameNetworkingContext*>(networkingContext);
     WebFrameLoaderClient* webFrameLoaderClient = webContext->webFrameLoaderClient();
-    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
 
     auto* document = frame.document();
     if (!document) {
@@ -455,7 +448,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     loadParameters.identifier = generateLoadIdentifier();
     loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
-    loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
+    loadParameters.sessionID = webFrameLoaderClient ? webFrameLoaderClient->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.mode = options.mode;
     loadParameters.shouldFollowRedirects = options.redirect == FetchOptions::Redirect::Follow;
