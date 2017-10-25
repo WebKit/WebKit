@@ -66,7 +66,7 @@ void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<Inspector::Protoco
             return;
 
         Inspector::Protocol::Console::ChannelLevel level = Inspector::Protocol::Console::ChannelLevel::Off;
-        if (logChannel->state != WTFLogChannelOff)
+        if (logChannel->state != WTFLogChannelOff) {
             switch (logChannel->level) {
             case WTFLogLevelAlways:
                 level = Inspector::Protocol::Console::ChannelLevel::Log;
