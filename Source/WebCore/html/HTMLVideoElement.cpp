@@ -66,6 +66,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     auto videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));
+    videoElement->finishInitialization();
     videoElement->suspendIfNeeded();
     return videoElement;
 }

@@ -1,3 +1,36 @@
+2017-10-25  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223960. rdar://problem/35178892
+
+    2017-10-25  Jer Noble  <jer.noble@apple.com>
+
+            Autoplay muted videos still stop playback of other streaming apps in the background
+            https://bugs.webkit.org/show_bug.cgi?id=177920
+
+            Reviewed by Eric Carlson.
+
+            When creating a new <video> or <audio> element, the global AudioSession can sometimes have
+            its sessionCategory() set to "MediaPlayback", even if the element does not yet have a
+            source. This is because the constructor for the MediaElementSession is called before
+            m_isPlayingToWirelessTarget is initialized, and so in the MediaElementSession constructor,
+            the media element's m_isPlayingToWirelessTarget ivar is sometimes (uninitialized) true.
+
+            We could move the MediaElementSession ivar to the very end of the header, so it's
+            initialized last, but that still leaves the possibility of the MediaElementSession et. all
+            calling into the HTMLMediaElement before it's subclass's constructors have a chance to
+            initialize their own ivars (much less their vtables). So instead, we'll create and set the
+            MediaElementSession in a finishInitialization() method called from the HTMLVideoElement and
+            HTMLAudioElement's create() factory methods.
+
+            * html/HTMLAudioElement.cpp:
+            (WebCore::HTMLAudioElement::create):
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::HTMLMediaElement):
+            (WebCore::HTMLMediaElement::finishInitialization):
+            * html/HTMLMediaElement.h:
+            * html/HTMLVideoElement.cpp:
+            (WebCore::HTMLVideoElement::create):
+
 2017-10-21  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223578. rdar://problem/34891313
