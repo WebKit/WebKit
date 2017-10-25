@@ -1,3 +1,14 @@
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: replace TypeVerifier with subclasses of WI.Collection
+        https://bugs.webkit.org/show_bug.cgi?id=178045
+        <rdar://problem/35174307>
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/collection-expected.txt:
+        * inspector/unit-tests/collection.html:
+
 2017-10-25  Youenn Fablet  <youenn@apple.com>
 
         Add service worker handle fetch support for all subresource requests

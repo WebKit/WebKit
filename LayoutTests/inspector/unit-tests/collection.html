@@ -5,12 +5,26 @@
 <script>
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Collection");
+    class TestCollection extends WI.Collection {
+        objectIsRequiredType(object)
+        {
+            return true;
+        }
+    }
+
+    class StringCollection extends WI.Collection {
+        objectIsRequiredType(object)
+        {
+            return typeof object === "string";
+        }
+    }
+
+    let suite = InspectorTest.createSyncSuite("Collection");
 
     suite.addTestCase({
         name: "WI.Collection.prototype.add",
-        test(resolve, reject) {
-            let collection = new WI.Collection;
+        test() {
+            let collection = new TestCollection;
             collection.add("one");
             collection.add("two");
 
@@ -20,16 +34,16 @@ function test()
 
             InspectorTest.log(collection);
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Collection.prototype.remove",
-        test(resolve, reject) {
+        test() {
             let item = "one";
 
-            let collection = new WI.Collection;
+            let collection = new TestCollection;
             collection.add(item);
             collection.add("two");
 
@@ -39,14 +53,14 @@ function test()
 
             InspectorTest.log(collection);
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
         name: "WI.Collection.prototype.clear",
-        test(resolve, reject) {
-            let collection = new WI.Collection;
+        test() {
+            let collection = new TestCollection;
             collection.add("one");
             collection.add("two");
             collection.add(3);
@@ -57,18 +71,14 @@ function test()
 
             InspectorTest.log(collection);
 
-            resolve();
+            return true;
         }
     });
 
     suite.addTestCase({
-        name: "WI.Collection.prototype.get typeVerifier",
-        test(resolve, reject) {
-            function stringVerifier(object) {
-                return typeof object === "string";
-            }
-
-            let collection = new WI.Collection(stringVerifier);
+        name: "WI.Collection.SpecifiedType",
+        test() {
+            let collection = new StringCollection;
             collection.add("one");
             collection.add("two");
 
@@ -77,9 +87,8 @@ function test()
             collection.add(3);
 
             InspectorTest.log(collection);
-            InspectorTest.expectEqual(collection.typeVerifier, stringVerifier, "typeVerifier is the given function.");
 
-            resolve();
+            return true;
         }
     });
 

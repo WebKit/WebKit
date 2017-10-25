@@ -33,10 +33,7 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
         if (collection.resourceType === WI.Resource.Type.Image)
             contentViewConstructor = WI.ImageResourceContentView;
 
-        const plural = true;
-        let contentPlaceholderText = WI.Resource.displayNameForType(collection.resourceType, plural);
-
-        super(collection, contentViewConstructor, contentPlaceholderText);
+        super(collection, contentViewConstructor);
     }
 
     // Protected

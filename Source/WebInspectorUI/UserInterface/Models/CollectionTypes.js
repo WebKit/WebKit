@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +24,93 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WI.FrameCollection = class FrameCollection extends WI.Collection
+{
+    // Public
+
+    get displayName()
+    {
+        return WI.UIString("Frames");
+    }
+
+    objectIsRequiredType(object)
+    {
+        return object instanceof WI.Frame;
+    }
+};
+
+WI.ScriptCollection = class ScriptCollection extends WI.Collection
+{
+    // Public
+
+    get displayName()
+    {
+        return WI.UIString("Scripts");
+    }
+
+    objectIsRequiredType(object)
+    {
+        return object instanceof WI.Script;
+    }
+};
+
+WI.CSSStyleSheetCollection = class CSSStyleSheetCollection extends WI.Collection
+{
+    // Public
+
+    get displayName()
+    {
+        return WI.UIString("Stylesheets");
+    }
+
+    objectIsRequiredType(object)
+    {
+        return object instanceof WI.CSSStyleSheet;
+    }
+};
+
+
 WI.CanvasCollection = class CanvasCollection extends WI.Collection
 {
-    constructor(canvases = [])
-    {
-        super((item) => item instanceof WI.Canvas);
+    // Public
 
-        for (let canvas of canvases)
-            this.add(canvas);
+    get displayName()
+    {
+        return WI.UIString("Canvases");
+    }
+
+    objectIsRequiredType(object)
+    {
+        return object instanceof WI.Canvas;
+    }
+};
+
+WI.ShaderProgramCollection = class ShaderProgramCollection extends WI.Collection
+{
+    // Public
+
+    get displayName()
+    {
+        return WI.UIString("Shader Programs");
+    }
+
+    objectIsRequiredType(object)
+    {
+        return object instanceof WI.ShaderProgram;
     }
 };
 
 WI.RecordingCollection = class RecordingCollection extends WI.Collection
 {
-    constructor(recordings = [])
-    {
-        super((item) => item instanceof WI.Recording);
+    // Public
 
-        for (let recording of recordings)
-            this.add(recording);
+    get displayName()
+    {
+        return WI.UIString("Recordings");
+    }
+
+    objectIsRequiredType(object)
+    {
+        return object instanceof WI.Recording;
     }
 };

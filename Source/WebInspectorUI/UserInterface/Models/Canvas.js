@@ -42,7 +42,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._memoryCost = memoryCost || NaN;
 
         this._cssCanvasClientNodes = null;
-        this._shaderProgramCollection = new WI.Collection(WI.Collection.TypeVerifier.ShaderProgram);
+        this._shaderProgramCollection = new WI.ShaderProgramCollection;
         this._recordingCollection = new WI.RecordingCollection;
 
         this._nextShaderProgramDisplayNumber = 1;

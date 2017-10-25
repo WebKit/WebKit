@@ -1,29 +1,78 @@
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
-        Web Inspector: Canvas Tab: clicking on a canvas card causes details sidebar to show and mess up card arrangement
-        https://bugs.webkit.org/show_bug.cgi?id=178803
-        <rdar://problem/35176082>
+        Web Inspector: replace TypeVerifier with subclasses of WI.Collection
+        https://bugs.webkit.org/show_bug.cgi?id=178045
+        <rdar://problem/35174307>
 
         Reviewed by Brian Burg.
 
-        * Localizations/en.lproj/localizedStrings.js:
-        * UserInterface/Views/CanvasDetailsSidebarPanel.css:
-        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder):
-        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder > .message):
-        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
-        (WI.CanvasDetailsSidebarPanel):
-        (WI.CanvasDetailsSidebarPanel.prototype.inspect):
-        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
-        (WI.CanvasDetailsSidebarPanel.prototype.layout):
+        * UserInterface/Models/Collection.js:
+        (WI.Collection):
+        (WI.Collection.prototype.get displayName):
+        (WI.Collection.prototype.objectIsRequiredType):
+        (WI.Collection.prototype.add):
+        (WI.Collection.prototype.get typeVerifier): Deleted.
+        Instead of exposing the typeVerifier, we create a public predicate that returns whether the
+        given object matches the expected type of the Collection. Subclasses can override it to
+        limit the scope of the collection to a particular type.
 
-        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
-        (WI.RecordingNavigationSidebarPanel.disallowInstanceForClass): Deleted.
-        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
-        (WI.RecordingStateDetailsSidebarPanel.disallowInstanceForClass): Deleted.
-        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
-        (WI.RecordingTraceDetailsSidebarPanel.disallowInstanceForClass): Deleted.
-        Drive-by: these sidebar panels are now only used by the Canvas tab, so we no longer need to
-        provide support for multiple instances of them.
+        * UserInterface/Models/CollectionTypes.js:
+        (WI.FrameCollection.prototype.get displayName):
+        (WI.FrameCollection.prototype.objectIsRequiredType):
+        (WI.FrameCollection): Deleted.
+        (WI.ScriptCollection.prototype.get displayName):
+        (WI.ScriptCollection.prototype.objectIsRequiredType):
+        (WI.ScriptCollection): Deleted.
+        (WI.CSSStyleSheetCollection.prototype.get displayName):
+        (WI.CSSStyleSheetCollection.prototype.objectIsRequiredType):
+        (WI.CSSStyleSheetCollection): Deleted.
+        (WI.CanvasCollection.prototype.get displayName):
+        (WI.CanvasCollection.prototype.objectIsRequiredType):
+        (WI.CanvasCollection): Deleted.
+        (WI.ShaderProgramCollection.prototype.get displayName):
+        (WI.ShaderProgramCollection.prototype.objectIsRequiredType):
+        (WI.ShaderProgramCollection): Deleted.
+        (WI.RecordingCollection.prototype.get displayName):
+        (WI.RecordingCollection.prototype.objectIsRequiredType):
+        (WI.RecordingCollection): Deleted.
+        * UserInterface/Models/ResourceCollection.js:
+        (WI.ResourceCollection):
+        (WI.ResourceCollection.prototype.get displayName):
+        (WI.ResourceCollection.prototype.objectIsRequiredType):
+        (WI.ResourceCollection.verifierForType): Deleted.
+        * UserInterface/Views/TreeOutlineGroup.js:
+        (WI.TreeOutlineGroup.prototype.objectIsRequiredType):
+        (WI.TreeOutlineGroup): Deleted.
+        Introduce additional subclasses of Collection for other model types. Modify existing
+        subclasses to remove `typeVerifier` and instead extend `objectIsRequiredType`.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas):
+        * UserInterface/Models/Frame.js:
+        (WI.Frame):
+        * UserInterface/Protocol/Target.js:
+        (WI.Target):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WI.ResourceSidebarPanel.prototype._addScript):
+
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView):
+        (WI.CollectionContentView.titleForCollection): Delete.
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView):
+        Require that subclasses of Collection override `get displayName` if the CollectionContentView
+        is not provided with a `contentPlaceholderText`.
+
+        (WI.CollectionContentView.prototype.initialLayout):
+        We don't need to create and add ContentView for each item of the Collection, as this is
+        already done by attached().
+
+        (WI.CollectionContentView.prototype._showContentPlaceholder):
+        Remove the 250ms delay before showing the placeholder TitleView.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WI.FolderizedTreeElement.prototype._settingsForRepresentedObject):
 
 2017-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
@@ -108,6 +157,33 @@
         (WI.SpreadsheetStyleProperty.prototype._update):
         Introduce updateClassNames method. Unlike _update, it doesn't change text selection or focus and
         can be safely called on a property while it's being edited.
+
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: clicking on a canvas card causes details sidebar to show and mess up card arrangement
+        https://bugs.webkit.org/show_bug.cgi?id=178803
+        <rdar://problem/35176082>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CanvasDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder):
+        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder > .message):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel):
+        (WI.CanvasDetailsSidebarPanel.prototype.inspect):
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WI.CanvasDetailsSidebarPanel.prototype.layout):
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.disallowInstanceForClass): Deleted.
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.disallowInstanceForClass): Deleted.
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel.disallowInstanceForClass): Deleted.
+        Drive-by: these sidebar panels are now only used by the Canvas tab, so we no longer need to
+        provide support for multiple instances of them.
 
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 

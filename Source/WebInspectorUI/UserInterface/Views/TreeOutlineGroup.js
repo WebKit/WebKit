@@ -25,11 +25,6 @@
 
 WI.TreeOutlineGroup = class TreeOutlineGroup extends WI.Collection
 {
-    constructor()
-    {
-        super((object) => object instanceof WI.TreeOutline);
-    }
-
     // Static
 
     static groupForTreeOutline(treeOutline)
@@ -38,6 +33,11 @@ WI.TreeOutlineGroup = class TreeOutlineGroup extends WI.Collection
     }
 
     // Public
+
+    objectIsRequiredType(object)
+    {
+        return object instanceof WI.TreeOutline;
+    }
 
     get selectedTreeElement()
     {

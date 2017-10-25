@@ -325,7 +325,7 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
     _settingsForRepresentedObject(representedObject)
     {
         for (let settings of this._folderizeSettingsMap.values()) {
-            if (settings.representedObject.typeVerifier(representedObject))
+            if (settings.representedObject.objectIsRequiredType(representedObject))
                 return settings;
         }
         return null;

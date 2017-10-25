@@ -168,7 +168,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         // we have a ScriptContentView asking for the tree element we will make a ScriptTreeElement on demand and add it.
 
         if (!this._anonymousScriptsFolderTreeElement) {
-            let collection = new WI.Collection(WI.Collection.TypeVerifier.Script);
+            let collection = new WI.ScriptCollection;
             this._anonymousScriptsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Anonymous Scripts"), collection);
         }
 
@@ -320,7 +320,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
         if (script.injected) {
             if (!this._extensionScriptsFolderTreeElement) {
-                let collection = new WI.Collection(WI.Collection.TypeVerifier.Script);
+                let collection = new WI.ScriptCollection;
                 this._extensionScriptsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extension Scripts"), collection);
             }
 
@@ -330,7 +330,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
                 insertIntoTopLevel = true;
             else {
                 if (!this._extraScriptsFolderTreeElement) {
-                    let collection = new WI.Collection(WI.Collection.TypeVerifier.Script);
+                    let collection = new WI.ScriptCollection;
                     this._extraScriptsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extra Scripts"), collection);
                 }
 

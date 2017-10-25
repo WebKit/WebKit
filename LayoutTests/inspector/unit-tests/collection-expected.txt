@@ -14,8 +14,7 @@ Testing all methods of Collection.
 ["one","two",3]
 []
 
--- Running test case: WI.Collection.prototype.get typeVerifier
+-- Running test case: WI.Collection.SpecifiedType
 ["one","two"]
 ["one","two"]
-PASS: typeVerifier is the given function.
 

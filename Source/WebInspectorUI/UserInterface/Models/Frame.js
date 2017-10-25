@@ -38,9 +38,9 @@ WI.Frame = class Frame extends WI.Object
 
         this._resourceCollection = new WI.ResourceCollection;
         this._provisionalResourceCollection = new WI.ResourceCollection;
-        this._extraScriptCollection = new WI.Collection(WI.Collection.TypeVerifier.Script);
+        this._extraScriptCollection = new WI.ScriptCollection;
 
-        this._childFrameCollection = new WI.Collection(WI.Collection.TypeVerifier.Frame);
+        this._childFrameCollection = new WI.FrameCollection;
         this._childFrameIdentifierMap = new Map;
 
         this._parentFrame = null;

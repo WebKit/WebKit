@@ -33,33 +33,12 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
         this.element.classList.add("collection");
 
-        this._contentPlaceholderText = contentPlaceholderText || WI.CollectionContentView.titleForCollection(collection);
+        this._contentPlaceholderText = contentPlaceholderText || collection.displayName;
         this._contentViewConstructor = contentViewConstructor;
         this._contentViewMap = new Map;
         this._handleClickMap = new WeakMap;
         this._selectedItem = null;
         this._selectionEnabled = false;
-    }
-
-    static titleForCollection(collection)
-    {
-        switch (collection.typeVerifier) {
-        case WI.Collection.TypeVerifier.Frame:
-            return WI.UIString("Frames");
-        case WI.Collection.TypeVerifier.Resource:
-            return WI.UIString("Resources");
-        case WI.Collection.TypeVerifier.Script:
-            return WI.UIString("Scripts");
-        case WI.Collection.TypeVerifier.CSSStyleSheet:
-            return WI.UIString("Stylesheets");
-        case WI.Collection.TypeVerifier.Canvas:
-            return WI.UIString("Canvases");
-        case WI.Collection.TypeVerifier.ShaderProgram:
-            return WI.UIString("Shader Programs");
-        }
-
-        console.warn("No default title for Collection type verifier.", collection.typeVerifier);
-        return WI.UIString("Collection");
     }
 
     // Public
@@ -188,9 +167,6 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             this._showContentPlaceholder();
             return;
         }
-
-        for (let item of items)
-            this.addContentViewForItem(item);
     }
 
     attached()
@@ -276,7 +252,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             this._contentPlaceholder = new WI.TitleView(this._contentPlaceholderText);
 
         if (!this._contentPlaceholder.parentView)
-            this.debounce(250).addSubview(this._contentPlaceholder);
+            this.addSubview(this._contentPlaceholder);
     }
 
     _hideContentPlaceholder()

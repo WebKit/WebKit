@@ -28,47 +28,36 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
 {
     constructor(resourceType)
     {
-        super(WI.ResourceCollection.verifierForType(resourceType));
+        super();
 
         this._resourceType = resourceType || null;
         this._resourceURLMap = new Map;
         this._resourcesTypeMap = new Map;
     }
 
-    // Static
-
-    static verifierForType(type) {
-        switch (type) {
-        case WI.Resource.Type.Document:
-            return WI.ResourceCollection.TypeVerifier.Document;
-        case WI.Resource.Type.Stylesheet:
-            return WI.ResourceCollection.TypeVerifier.Stylesheet;
-        case WI.Resource.Type.Image:
-            return WI.ResourceCollection.TypeVerifier.Image;
-        case WI.Resource.Type.Font:
-            return WI.ResourceCollection.TypeVerifier.Font;
-        case WI.Resource.Type.Script:
-            return WI.ResourceCollection.TypeVerifier.Script;
-        case WI.Resource.Type.XHR:
-            return WI.ResourceCollection.TypeVerifier.XHR;
-        case WI.Resource.Type.Fetch:
-            return WI.ResourceCollection.TypeVerifier.Fetch;
-        case WI.Resource.Type.Ping:
-            return WI.ResourceCollection.TypeVerifier.Ping;
-        case WI.Resource.Type.Beacon:
-            return WI.ResourceCollection.TypeVerifier.Beacon;
-        case WI.Resource.Type.WebSocket:
-            return WI.ResourceCollection.TypeVerifier.WebSocket;
-        case WI.Resource.Type.Other:
-            return WI.ResourceCollection.TypeVerifier.Other;
-        default:
-            return WI.Collection.TypeVerifier.Resource;
-        }
-    }
-
     // Public
 
     get resourceType() { return this._resourceType; }
+
+    get displayName()
+    {
+        const plural = true;
+        return this._resourceType ? WI.Resource.displayNameForType(this._resourceType, plural) : WI.UIString("Resources");
+    }
+
+    objectIsRequiredType(object)
+    {
+        if (!(object instanceof WI.Resource))
+            return false;
+
+        if (!this._resourceType)
+            return true;
+
+        if (this._resourceType === WI.Resource.Type.Stylesheet && object instanceof WI.CSSStyleSheet)
+            return true;
+
+        return object.type === this._resourceType;
+    }
 
     resourceForURL(url)
     {
@@ -190,22 +179,4 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
         // this is handled by that sub-collection's own _resourceTypeDidChange handler (via the
         // above if statement).
     }
-};
-
-WI.ResourceCollection.TypeVerifier = {
-    Document: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Document,
-    Stylesheet: (object) => {
-        if (WI.Collection.TypeVerifier.CSSStyleSheet(object))
-            return true;
-        return WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Stylesheet;
-    },
-    Image: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Image,
-    Font: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Font,
-    Script: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Script,
-    XHR: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.XHR,
-    Fetch: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Fetch,
-    Ping: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Ping,
-    Beacon: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Beacon,
-    WebSocket: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.WebSocket,
-    Other: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Other,
 };

@@ -36,7 +36,7 @@ WI.Target = class Target extends WI.Object
         this._executionContext = null;
         this._mainResource = null;
         this._resourceCollection = new WI.ResourceCollection;
-        this._extraScriptCollection = new WI.Collection(WI.Collection.TypeVerifier.Script);
+        this._extraScriptCollection = new WI.ScriptCollection;
 
         this._connection.target = this;
     }
