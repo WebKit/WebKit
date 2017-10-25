@@ -1,3 +1,12 @@
+2017-10-25  Robin Morisset  <rmorisset@apple.com>
+
+        Support the TailBench9000 benchmark in run-jsc-benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=178451
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-benchmarks:
+
 2017-10-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Remove GLib API functions which use Cairo

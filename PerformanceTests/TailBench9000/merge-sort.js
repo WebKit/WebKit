@@ -152,3 +152,6 @@ function TEST_mergeSort()
     
     test(0);
 }
+
+for (var i = 0; i < 3000; ++i)
+    TEST_mergeSort();

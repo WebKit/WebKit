@@ -235,3 +235,6 @@ function TEST_nBody()
     if (ret != expected)
         throw "ERROR: bad result: expected " + expected + " but got " + ret;
 }
+
+for (var i = 0; i < 300; ++i)
+    TEST_nBody();
