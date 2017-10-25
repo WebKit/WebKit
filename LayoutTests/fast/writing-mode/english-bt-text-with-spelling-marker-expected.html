@@ -23,8 +23,8 @@
 <script>
 var expected = document.getElementById("expected");
 
-// When inserting multiple words we need to type each character in order for the spell checker to be triggered.
 typeText("mispelled a", expected);
+queueCommand(() => window.internals && internals.updateEditorUINowIfScheduled()); // Trigger spell checking
 
 function typeText(text, element)
 {
