@@ -1,3 +1,29 @@
+2017-10-25  Youenn Fablet  <youenn@apple.com>
+
+        Move DNS resolution outside of NetworkRTCProvider
+        https://bugs.webkit.org/show_bug.cgi?id=178796
+
+        Reviewed by Geoffrey Garen.
+
+       Tested through manual testing on external STUN servers.
+       Moving NetworkRTCProvider::Resolver into NetworkRTCResolver.
+       Updating the implementation to use a completion handler.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createResolver):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCResolver.cpp:
+        (WebKit::NetworkRTCResolver::NetworkRTCResolver):
+        (WebKit::NetworkRTCResolver::~NetworkRTCResolver):
+        (WebKit::NetworkRTCResolver::start):
+        (WebKit::NetworkRTCResolver::stop):
+        (WebKit::NetworkRTCResolver::completed):
+        (WebKit::NetworkRTCProvider::Resolver::~Resolver): Deleted.
+        (WebKit::NetworkRTCProvider::stop): Deleted.
+        (WebKit::NetworkRTCProvider::resolutionCompleted): Deleted.
+        * NetworkProcess/webrtc/NetworkRTCResolver.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Clear cached gUM prompt state

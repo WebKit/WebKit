@@ -30,7 +30,6 @@
 #include "LibWebRTCSocketClient.h"
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
-#include <CFNetwork/CFHost.h>
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/base/sigslot.h>
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
@@ -45,8 +44,8 @@ class Decoder;
 }
 
 namespace WebKit {
-
 class NetworkConnectionToWebProcess;
+class NetworkRTCResolver;
 class NetworkRTCSocket;
 
 class NetworkRTCProvider : public ThreadSafeRefCounted<NetworkRTCProvider>, public rtc::MessageHandler {
@@ -89,21 +88,7 @@ private:
 
     void OnMessage(rtc::Message*);
 
-    static void resolvedName(CFHostRef, CFHostInfoType, const CFStreamError*, void*);
-
-    struct Resolver {
-        Resolver(uint64_t identifier, NetworkRTCProvider& rtcProvider, RetainPtr<CFHostRef>&& host)
-            : identifier(identifier)
-            , rtcProvider(rtcProvider)
-            , host(WTFMove(host)) { }
-        ~Resolver();
-
-        uint64_t identifier;
-        NetworkRTCProvider& rtcProvider;
-        RetainPtr<CFHostRef> host;
-    };
-
-    HashMap<uint64_t, std::unique_ptr<Resolver>> m_resolvers;
+    HashMap<uint64_t, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
     HashMap<uint64_t, std::unique_ptr<LibWebRTCSocketClient>> m_sockets;
     NetworkConnectionToWebProcess* m_connection;
     bool m_isStarted { true };
