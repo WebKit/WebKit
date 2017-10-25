@@ -164,6 +164,8 @@ static InterpolationQuality interpolationQualityForResizeQuality(ImageBitmapOpti
     case ImageBitmapOptions::ResizeQuality::High:
         return InterpolationHigh;
     }
+    ASSERT_NOT_REACHED();
+    return InterpolationDefault;
 }
 
 // FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
