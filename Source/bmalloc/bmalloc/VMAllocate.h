@@ -193,6 +193,9 @@ inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSABLE));
 #else
     SYSCALL(madvise(p, vmSize, MADV_DONTNEED));
+#if BOS(LINUX)
+    SYSCALL(madvise(p, vmSize, MADV_DONTDUMP));
+#endif
 #endif
 }
 
@@ -203,6 +206,9 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSE));
 #else
     SYSCALL(madvise(p, vmSize, MADV_NORMAL));
+#if BOS(LINUX)
+    SYSCALL(madvise(p, vmSize, MADV_DODUMP));
+#endif
 #endif
 }
 

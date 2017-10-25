@@ -1,3 +1,31 @@
+2017-10-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Linux] Enable Gigacage in x64 Linux environment
+        https://bugs.webkit.org/show_bug.cgi?id=177745
+        <rdar://problem/34773148>
+
+        Reviewed by Yusuke Suzuki.
+
+        Re-enable Gigacage on x86_64 Linux platforms after it was disabled in 223877.
+
+        The cause for the revert was problems with huge coredumps being generated
+        while Gigacage was enabled. The feature virtually allocates about 80GB of
+        memory at the beginning of the process lifetime. This is not a problem in
+        itself since the memory range is marked as not needed through madvise(),
+        but all this memory was still included upon core dump generation on Linux.
+        Since there are reasonable limits enforced upon core dumps, these were
+        being truncated every time, not yielding any useful information.
+
+        To avoid this, on Linux, invocations of madvise() with the MADV_NORMAL and
+        MADV_DONTNEED advice parameters should be accompanied with respectively
+        matching MADV_DODUMP and MADV_DONTDUMP madvise() calls. This correctly
+        avoids core-dumping any memory that's not yet been physically allocated.
+
+        * bmalloc/Gigacage.h:
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmDeallocatePhysicalPages):
+        (bmalloc::vmAllocatePhysicalPages):
+
 2017-10-24  David Kilzer  <ddkilzer@apple.com>
 
         Need to pass non-nil argument to SimulateCrash() in bmalloc::logVMFailure()
