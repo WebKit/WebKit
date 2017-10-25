@@ -221,7 +221,10 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     _propertiesChanged(event)
     {
-        if (!this._isFocused())
+        if (this._isFocused()) {
+            for (let propertyView of this._propertyViews)
+                propertyView.updateClassNames();
+        } else
             this.needsLayout();
     }
 };

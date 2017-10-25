@@ -46,6 +46,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._update();
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this._update, this);
+        property.addEventListener(WI.CSSProperty.Event.Changed, this.updateClassNames, this);
     }
 
     // Public
@@ -70,23 +71,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._element.classList.add("highlighted");
     }
 
-    // Private
-
-    _remove()
+    updateClassNames()
     {
-        this.element.remove();
-        this._property.remove();
-        this.detached();
-
-        if (this._delegate && typeof this._delegate.spreadsheetStylePropertyRemoved === "function")
-            this._delegate.spreadsheetStylePropertyRemoved(this);
-    }
-
-    _update()
-    {
-        this.element.removeChildren();
-        this.element.className = "";
-
         let duplicatePropertyExistsBelow = (cssProperty) => {
             let propertyFound = false;
 
@@ -113,19 +99,39 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (!this._property.valid && this._property.hasOtherVendorNameOrKeyword())
             classNames.push("other-vendor");
-        else if (!this._property.valid) {
+        else if (!this._property.valid && this._property.value !== "") {
             let propertyNameIsValid = false;
             if (WI.CSSCompletions.cssNameCompletions)
                 propertyNameIsValid = WI.CSSCompletions.cssNameCompletions.isValidPropertyName(this._property.name);
 
             if (!propertyNameIsValid || duplicatePropertyExistsBelow(this._property))
-                classNames.push("invalid");
+                classNames.push("invalid-name");
+            else
+                classNames.push("invalid-value");
         }
 
         if (!this._property.enabled)
             classNames.push("disabled");
 
-        this._element.classList.add(...classNames);
+        this._element.className = classNames.join(" ");
+    }
+
+    // Private
+
+    _remove()
+    {
+        this.element.remove();
+        this._property.remove();
+        this.detached();
+
+        if (this._delegate && typeof this._delegate.spreadsheetStylePropertyRemoved === "function")
+            this._delegate.spreadsheetStylePropertyRemoved(this);
+    }
+
+    _update()
+    {
+        this.element.removeChildren();
+        this.updateClassNames();
 
         if (this._property.editable) {
             this._checkboxElement = this.element.appendChild(document.createElement("input"));

@@ -361,10 +361,15 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     {
         let text, name, value, priority, overridden, implicit, anonymous;
         let enabled = true;
-        let valid = true;
+        let valid = false;
         let styleSheetTextRange = this._rangeAfterPropertyAtIndex(insertAfterIndex);
-        let property = new WI.CSSProperty(insertAfterIndex + 1, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
-        property.ownerStyle = this;
+
+        let propertyIndex = insertAfterIndex + 1;
+        let property = new WI.CSSProperty(propertyIndex, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
+
+        this._allProperties.insertAtIndex(property, propertyIndex);
+        const suppressEvents = true;
+        this.update(this._text, this._allProperties, this._styleSheetTextRange, suppressEvents);
 
         return property;
     }

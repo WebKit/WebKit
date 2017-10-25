@@ -75,13 +75,18 @@
     color: var(--syntax-highlight-comment-color) !important;
 }
 
-.spreadsheet-style-declaration-editor .property:matches(.invalid, .other-vendor, .overridden):not(.disabled) {
+.spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) {
     text-decoration: line-through;
     -webkit-text-decoration-color: hsla(0, 0%, 0%, 0.6);
 }
 
-.spreadsheet-style-declaration-editor .property.invalid:not(.disabled) {
-    -webkit-text-decoration-color: hsla(0, 100%, 50%, 0.6);
+.spreadsheet-style-declaration-editor .property.invalid-name:not(.disabled) {
+    -webkit-text-decoration-color: hsla(0, 100%, 50%, 0.5);
+}
+
+.spreadsheet-style-declaration-editor .property.invalid-value:not(.disabled) .value {
+    text-decoration: line-through;
+    -webkit-text-decoration-color: hsla(0, 100%, 50%, 0.5);
 }
 
 .spreadsheet-style-declaration-editor .property.not-inherited {

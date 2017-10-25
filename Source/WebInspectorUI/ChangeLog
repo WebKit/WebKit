@@ -1,3 +1,31 @@
+2017-10-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Newly added invalid property isn't immediately shown as invalid
+        https://bugs.webkit.org/show_bug.cgi?id=178488
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.newBlankProperty):
+        Call this.update to update _properties, _allProperties, _visibleProperties, and _allVisibleProperties.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled)):
+        (.spreadsheet-style-declaration-editor .property.invalid-name:not(.disabled)):
+        (.spreadsheet-style-declaration-editor .property.invalid-value:not(.disabled) .value):
+        When the property name is valid, but the value isn't, display red line-through only for the value.
+        This is how it works in the old styles sidebar as well.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.updateClassNames):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        Introduce updateClassNames method. Unlike _update, it doesn't change text selection or focus and
+        can be safely called on a property while it's being edited.
+
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: preserve Recordings for each Canvas after closing the Canvas tab
