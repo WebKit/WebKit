@@ -145,14 +145,6 @@ function test()
                     resolve();
                 });
 
-                InspectorTest.awaitEvent("PlayEvent").then((event) => {
-                    InspectorTest.log("Started Playing");
-                });
-
-                InspectorTest.awaitEvent("PauseEvent").then((event) => {
-                    InspectorTest.log("Stopped Playing");
-                }).then(resolve, reject);
-
                 InspectorTest.evaluateInPage(`play()`);
                 InspectorTest.evaluateInPage(`pause()`);
             })

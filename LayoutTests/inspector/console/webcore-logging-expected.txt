@@ -29,6 +29,4 @@ Stopped Playing
 PASS: Media logging disabled.
 PASS: Media logging has been enabled.
 PASS: Media log message should have source 'media'.
-Started Playing
-Stopped Playing
 

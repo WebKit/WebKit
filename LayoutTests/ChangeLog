@@ -1,3 +1,14 @@
+2017-10-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Web Inspector: Enable WebKit logging configuration and display
+        https://bugs.webkit.org/show_bug.cgi?id=177027
+        <rdar://problem/33964767>
+
+        Unreviewed, fix flakey test.
+
+        * inspector/console/webcore-logging-expected.txt:
+        * inspector/console/webcore-logging.html:
+
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: preserve Recordings for each Canvas after closing the Canvas tab
