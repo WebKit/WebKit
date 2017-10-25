@@ -1,3 +1,14 @@
+2017-10-25  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r223937): Use of -fobjc-weak causes build failures with older compilers
+        https://bugs.webkit.org/show_bug.cgi?id=178825
+
+        Reviewed by Mark Lam.
+
+        Enable ARC for ARM64_32.  This eliminate the need for setting CLANG_ENABLE_OBJC_WEAK.
+
+        * Configurations/ToolExecutable.xcconfig:
+
 2017-10-25  Keith Miller  <keith_miller@apple.com>
 
         Fix implicit cast of enum, which seems to break the windows build of unified sources.
