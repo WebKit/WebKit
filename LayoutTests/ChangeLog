@@ -1,3 +1,13 @@
+2017-10-24  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Implement a paymentmethodselected event for PaymentRequest
+        https://bugs.webkit.org/show_bug.cgi?id=178765
+
+        Reviewed by Tim Horton.
+
+        * http/tests/ssl/applepay/ApplePayPaymentMethodUpdateEvent.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayPaymentMethodUpdateEvent.https.html: Added.
+
 2017-10-24  Daniel Bates  <dabates@apple.com>
 
         Test fast/writing-mode/english-bt-text-with-spelling-marker.html should wait for editing commands to complete

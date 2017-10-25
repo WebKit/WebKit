@@ -32,6 +32,7 @@
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayMerchantValidationEvent.h"
 #include "ApplePayPayment.h"
+#include "ApplePayPaymentMethodUpdateEvent.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "Document.h"
 #include "EventNames.h"
@@ -44,6 +45,7 @@
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
+#include "PaymentMethod.h"
 #include "PaymentRequestValidator.h"
 #include "PaymentResponse.h"
 #include "Settings.h"
@@ -267,6 +269,21 @@ static ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> convertAndV
     return ApplePaySessionPaymentRequest::TotalAndLineItems { total.releaseReturnValue(), lineItems.releaseReturnValue() };
 }
 
+ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(const AtomicString& eventType, const String& error)
+{
+    if (eventType == eventNames().shippingaddresschangeEvent)
+        return shippingAddressUpdated(error);
+
+    if (eventType == eventNames().shippingoptionchangeEvent)
+        return shippingOptionUpdated();
+
+    if (eventType == eventNames().applepaypaymentmethodchangedEvent)
+        return paymentMethodUpdated();
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(const String& error)
 {
     ShippingContactUpdate update;
@@ -297,6 +314,19 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
     update.newTotalAndLineItems = newTotalAndLineItems.releaseReturnValue();
 
     paymentCoordinator().completeShippingMethodSelection(WTFMove(update));
+    return { };
+}
+
+ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated()
+{
+    PaymentMethodUpdate update;
+
+    auto newTotalAndLineItems = convertAndValidate(m_paymentRequest->paymentDetails());
+    if (newTotalAndLineItems.hasException())
+        return newTotalAndLineItems.releaseException();
+    update.newTotalAndLineItems = newTotalAndLineItems.releaseReturnValue();
+
+    paymentCoordinator().completePaymentMethodSelection(WTFMove(update));
     return { };
 }
 
@@ -351,6 +381,12 @@ void ApplePayPaymentHandler::didSelectShippingMethod(const ApplePaySessionPaymen
 void ApplePayPaymentHandler::didSelectShippingContact(const PaymentContact& shippingContact)
 {
     m_paymentRequest->shippingAddressChanged(convert(shippingContact.toApplePayPaymentContact()));
+}
+
+void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
+{
+    auto event = ApplePayPaymentMethodUpdateEvent::create(eventNames().applepaypaymentmethodchangedEvent, paymentMethod.toApplePayPaymentMethod(), m_paymentRequest.get());
+    m_paymentRequest->dispatchEvent(event.get());
 }
 
 } // namespace WebCore

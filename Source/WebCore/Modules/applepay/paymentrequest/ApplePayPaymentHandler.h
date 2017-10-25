@@ -51,13 +51,16 @@ private:
     Document& document();
     PaymentCoordinator& paymentCoordinator();
 
+    ExceptionOr<void> shippingAddressUpdated(const String& error);
+    ExceptionOr<void> shippingOptionUpdated();
+    ExceptionOr<void> paymentMethodUpdated();
+
     // PaymentHandler
     ExceptionOr<void> convertData(JSC::JSValue&&) final;
     ExceptionOr<void> show() final;
     void hide() final;
     void canMakePayment(WTF::Function<void(bool)>&& completionHandler) final;
-    ExceptionOr<void> shippingAddressUpdated(const String& error) final;
-    ExceptionOr<void> shippingOptionUpdated() final;
+    ExceptionOr<void> detailsUpdated(const AtomicString& eventType, const String& error) final;
     void complete(std::optional<PaymentComplete>&&) final;
 
     // PaymentSession
@@ -65,7 +68,7 @@ private:
     void didAuthorizePayment(const Payment&) final;
     void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) final;
     void didSelectShippingContact(const PaymentContact&) final;
-    void didSelectPaymentMethod(const PaymentMethod&) final { }
+    void didSelectPaymentMethod(const PaymentMethod&) final;
     void didCancelPaymentSession() final { }
 
     PaymentRequest::MethodIdentifier m_identifier;

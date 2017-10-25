@@ -45,4 +45,5 @@
     attribute EventHandler onshippingoptionchange;
 
     [Conditional=APPLE_PAY] attribute EventHandler onapplepayvalidatemerchant;
+    [Conditional=APPLE_PAY] attribute EventHandler onapplepaypaymentmethodchanged;
 };

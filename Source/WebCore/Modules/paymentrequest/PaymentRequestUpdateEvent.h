@@ -36,7 +36,7 @@ class DOMPromise;
 class PaymentRequest;
 struct PaymentRequestUpdateEventInit;
 
-class PaymentRequestUpdateEvent final : public Event {
+class PaymentRequestUpdateEvent : public Event {
 public:
     template <typename... Args> static Ref<PaymentRequestUpdateEvent> create(Args&&... args)
     {
@@ -45,15 +45,14 @@ public:
     ~PaymentRequestUpdateEvent();
     ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
 
-    bool waitForUpdate() const { return m_waitForUpdate; }
-    void setWaitForUpdate(bool waitForUpdate) { m_waitForUpdate = waitForUpdate; }
-
-private:
-    PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequestUpdateEventInit&&);
+protected:
     PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequest&);
 
     // Event
-    EventInterface eventInterface() const final;
+    EventInterface eventInterface() const override;
+
+private:
+    PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequestUpdateEventInit&&);
 
     RefPtr<PaymentRequest> m_paymentRequest;
     bool m_waitForUpdate { false };

@@ -29,5 +29,6 @@
 ] interface MockPaymentCoordinator {
     void setShippingAddress(MockPaymentAddress shippingAddress);
     void changeShippingOption(DOMString shippingOption);
+    void changePaymentMethod(ApplePayPaymentMethod paymentMethod);
     void acceptPayment();
 };

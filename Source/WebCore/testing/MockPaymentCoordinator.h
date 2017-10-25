@@ -31,8 +31,9 @@
 #include "PaymentCoordinatorClient.h"
 
 namespace WebCore {
-    
+
 class MainFrame;
+struct ApplePayPaymentMethod;
 
 class MockPaymentCoordinator final : public PaymentCoordinatorClient {
 public:
@@ -40,6 +41,7 @@ public:
 
     void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTFMove(shippingAddress); }
     void changeShippingOption(String&& shippingOption);
+    void changePaymentMethod(ApplePayPaymentMethod&&);
     void acceptPayment();
 
     void ref() const { }

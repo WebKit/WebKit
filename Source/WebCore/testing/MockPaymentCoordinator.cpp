@@ -31,6 +31,7 @@
 #include "MainFrame.h"
 #include "MockPayment.h"
 #include "MockPaymentContact.h"
+#include "MockPaymentMethod.h"
 #include "PaymentCoordinator.h"
 #include "URL.h"
 #include <wtf/RunLoop.h>
@@ -110,6 +111,13 @@ void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
         ApplePaySessionPaymentRequest::ShippingMethod shippingMethod;
         shippingMethod.identifier = WTFMove(shippingOption);
         mainFrame->paymentCoordinator().didSelectShippingMethod(shippingMethod);
+    });
+}
+
+void MockPaymentCoordinator::changePaymentMethod(ApplePayPaymentMethod&& paymentMethod)
+{
+    dispatchIfShowing([mainFrame = makeRef(m_mainFrame), paymentMethod = WTFMove(paymentMethod)]() mutable {
+        mainFrame->paymentCoordinator().didSelectPaymentMethod(MockPaymentMethod { WTFMove(paymentMethod) });
     });
 }
 

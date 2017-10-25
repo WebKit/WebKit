@@ -524,36 +524,34 @@ void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddres
 {
     ASSERT(m_state == State::Interactive);
     m_shippingAddress = WTFMove(shippingAddress);
-    dispatchUpdateEvent(eventNames().shippingaddresschangeEvent);
+    auto event = PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent, *this);
+    dispatchEvent(event.get());
 }
 
 void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 {
     ASSERT(m_state == State::Interactive);
     m_shippingOption = shippingOption;
-    dispatchUpdateEvent(eventNames().shippingoptionchangeEvent);
-}
-
-void PaymentRequest::dispatchUpdateEvent(const AtomicString& type)
-{
-    if (m_isUpdating)
-        return;
-
-    if (m_state != State::Interactive)
-        return;
-
-    auto event = PaymentRequestUpdateEvent::create(type, *this);
+    auto event = PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent, *this);
     dispatchEvent(event.get());
 }
 
-ExceptionOr<void> PaymentRequest::updateWith(PaymentRequestUpdateEvent& event, Ref<DOMPromise>&& promise)
+bool PaymentRequest::dispatchEvent(Event& event)
 {
     if (!event.isTrusted())
-        return Exception { InvalidStateError };
+        return EventTargetWithInlineData::dispatchEvent(event);
 
-    if (event.waitForUpdate())
-        return Exception { InvalidStateError };
+    if (m_isUpdating)
+        return false;
 
+    if (m_state != State::Interactive)
+        return false;
+
+    return EventTargetWithInlineData::dispatchEvent(event);
+}
+
+ExceptionOr<void> PaymentRequest::updateWith(Event& event, Ref<DOMPromise>&& promise)
+{
     if (m_state != State::Interactive)
         return Exception { InvalidStateError };
 
@@ -562,7 +560,6 @@ ExceptionOr<void> PaymentRequest::updateWith(PaymentRequestUpdateEvent& event, R
 
     event.stopPropagation();
     event.stopImmediatePropagation();
-    event.setWaitForUpdate(true);
     m_isUpdating = true;
 
     m_detailsPromise = WTFMove(promise);
@@ -578,6 +575,9 @@ void PaymentRequest::settleDetailsPromise(const AtomicString& type)
     auto scopeExit = makeScopeExit([&] {
         m_isUpdating = false;
     });
+
+    if (m_state != State::Interactive)
+        return;
 
     if (m_detailsPromise->status() == DOMPromise::Status::Rejected) {
         stop();
@@ -616,12 +616,11 @@ void PaymentRequest::settleDetailsPromise(const AtomicString& type)
     m_details.modifiers = WTFMove(paymentDetailsUpdate.modifiers);
     m_serializedModifierData = WTFMove(std::get<1>(shippingOptionAndModifierData));
 
-    if (type == eventNames().shippingaddresschangeEvent)
-        m_activePaymentHandler->shippingAddressUpdated(paymentDetailsUpdate.error);
-    else if (type == eventNames().shippingoptionchangeEvent)
-        m_activePaymentHandler->shippingOptionUpdated();
-    else
-        ASSERT_NOT_REACHED();
+    auto result = m_activePaymentHandler->detailsUpdated(type, paymentDetailsUpdate.error);
+    if (result.hasException()) {
+        abortWithException(result.releaseException());
+        return;
+    }
 }
 
 void PaymentRequest::accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone)

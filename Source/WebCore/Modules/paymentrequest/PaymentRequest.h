@@ -39,9 +39,9 @@
 namespace WebCore {
 
 class Document;
+class Event;
 class PaymentAddress;
 class PaymentHandler;
-class PaymentRequestUpdateEvent;
 class PaymentResponse;
 enum class PaymentComplete;
 enum class PaymentShippingType;
@@ -70,9 +70,12 @@ public:
 
     void shippingAddressChanged(Ref<PaymentAddress>&&);
     void shippingOptionChanged(const String& shippingOption);
-    ExceptionOr<void> updateWith(PaymentRequestUpdateEvent&, Ref<DOMPromise>&&);
+    ExceptionOr<void> updateWith(Event&, Ref<DOMPromise>&&);
     void accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void complete(std::optional<PaymentComplete>&&);
+
+    // EventTarget
+    bool dispatchEvent(Event&) final;
 
     using MethodIdentifier = Variant<String, URL>;
     using RefCounted<PaymentRequest>::ref;
@@ -92,7 +95,6 @@ private:
 
     PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption);
 
-    void dispatchUpdateEvent(const AtomicString& type);
     void settleDetailsPromise(const AtomicString& type);
     void abortWithException(Exception&&);
 

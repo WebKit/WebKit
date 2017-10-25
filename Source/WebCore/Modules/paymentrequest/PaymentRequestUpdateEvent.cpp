@@ -47,7 +47,18 @@ PaymentRequestUpdateEvent::~PaymentRequestUpdateEvent() = default;
 
 ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detailsPromise)
 {
-    return m_paymentRequest->updateWith(*this, WTFMove(detailsPromise));
+    if (!isTrusted())
+        return Exception { InvalidStateError };
+
+    if (m_waitForUpdate)
+        return Exception { InvalidStateError };
+
+    auto exception = m_paymentRequest->updateWith(*this, WTFMove(detailsPromise));
+    if (exception.hasException())
+        return exception.releaseException();
+
+    m_waitForUpdate = true;
+    return { };
 }
 
 EventInterface PaymentRequestUpdateEvent::eventInterface() const
