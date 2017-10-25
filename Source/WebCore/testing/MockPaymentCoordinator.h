@@ -43,6 +43,7 @@ public:
     void changeShippingOption(String&& shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod&&);
     void acceptPayment();
+    void cancelPayment();
 
     void ref() const { }
     void deref() const { }

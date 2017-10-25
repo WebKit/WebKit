@@ -389,6 +389,11 @@ void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& payment
     m_paymentRequest->dispatchEvent(event.get());
 }
 
+void ApplePayPaymentHandler::didCancelPaymentSession()
+{
+    m_paymentRequest->cancel();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)

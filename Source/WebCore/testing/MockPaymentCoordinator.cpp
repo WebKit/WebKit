@@ -130,6 +130,15 @@ void MockPaymentCoordinator::acceptPayment()
     });
 }
 
+void MockPaymentCoordinator::cancelPayment()
+{
+    dispatchIfShowing([mainFrame = makeRef(m_mainFrame)] {
+        mainFrame->paymentCoordinator().didCancelPaymentSession();
+        ++hideCount;
+        ASSERT(showCount == hideCount);
+    });
+}
+
 void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&&)
 {
     ++hideCount;

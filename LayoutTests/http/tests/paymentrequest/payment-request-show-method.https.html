@@ -65,4 +65,11 @@ promise_test(async t => {
   const acceptPromise = request.show();
   await promise_rejects(t, "NotSupportedError", acceptPromise);
 }, `If payment method consultation produces no supported method of payment, then return a promise rejected with a "NotSupportedError" DOMException.`);
+
+promise_test(async t => {
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
+  const acceptPromise = request.show(); // Sets state to "interactive"
+  internals.mockPaymentCoordinator.cancelPayment();
+  await promise_rejects(t, "AbortError", acceptPromise);
+}, `If the user aborts the payment request algorithm, then return a promise rejected with an "AbortError" DOMException.`);
 </script>

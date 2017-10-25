@@ -31,4 +31,5 @@
     void changeShippingOption(DOMString shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod paymentMethod);
     void acceptPayment();
+    void cancelPayment();
 };

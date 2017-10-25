@@ -73,6 +73,7 @@ public:
     ExceptionOr<void> updateWith(Event&, Ref<DOMPromise>&&);
     void accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void complete(std::optional<PaymentComplete>&&);
+    void cancel();
 
     // EventTarget
     bool dispatchEvent(Event&) final;

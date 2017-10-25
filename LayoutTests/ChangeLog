@@ -1,3 +1,13 @@
+2017-10-25  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the "user aborts the payment request" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=178810
+
+        Reviewed by Tim Horton.
+
+        * http/tests/paymentrequest/payment-request-show-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-show-method.https.html:
+
 2017-10-25  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix flaky test fast/writing-mode/english-bt-text-with-spelling-marker.html following r223938

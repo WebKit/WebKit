@@ -656,6 +656,18 @@ void PaymentRequest::complete(std::optional<PaymentComplete>&& result)
     std::exchange(m_activePaymentHandler, nullptr)->complete(WTFMove(result));
 }
 
+void PaymentRequest::cancel()
+{
+    if (m_state != State::Interactive)
+        return;
+
+    if (m_isUpdating)
+        return;
+
+    m_activePaymentHandler = nullptr;
+    stop();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(PAYMENT_REQUEST)
