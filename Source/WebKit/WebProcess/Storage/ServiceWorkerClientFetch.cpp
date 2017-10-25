@@ -89,7 +89,7 @@ void ServiceWorkerClientFetch::didFinish()
 void ServiceWorkerClientFetch::didFail()
 {
     auto protectedThis = makeRef(*this);
-    m_loader->didFail({ });
+    m_loader->didFail({ ResourceError::Type::General });
 
     if (auto callback = WTFMove(m_callback))
         callback(Result::Succeeded);

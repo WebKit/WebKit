@@ -34,6 +34,7 @@ class WorkerScriptLoaderClient {
 public:
     virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) = 0;
     virtual void notifyFinished() = 0;
+    virtual bool isServiceWorkerClient() const { return false; }
 
 protected:
     virtual ~WorkerScriptLoaderClient() = default;
