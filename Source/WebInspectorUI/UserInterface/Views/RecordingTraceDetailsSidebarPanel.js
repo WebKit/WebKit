@@ -33,13 +33,6 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
         this._action = null;
     }
 
-    // Static
-
-    static disallowInstanceForClass()
-    {
-        return true;
-    }
-
     // Public
 
     inspect(objects)

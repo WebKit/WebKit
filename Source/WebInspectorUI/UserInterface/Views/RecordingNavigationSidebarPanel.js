@@ -38,13 +38,6 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
         this._exportButton = null;
     }
 
-    // Static
-
-    static disallowInstanceForClass()
-    {
-        return true;
-    }
-
     // Public
 
     set recording(recording)

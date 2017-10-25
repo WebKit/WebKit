@@ -33,6 +33,9 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         this._canvas = null;
         this._node = null;
+
+        this._sections = [];
+        this._emptyContentPlaceholder = null;
     }
 
     // Public
@@ -52,7 +55,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         this.canvas = objects.find((object) => object instanceof WI.Canvas);
 
-        return !!this._canvas;
+        return true;
     }
 
     get canvas()
@@ -100,7 +103,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         let identitySection = new WI.DetailsSection("canvas-details", WI.UIString("Identity"));
         identitySection.groups = [new WI.DetailsSectionGroup([this._nameRow, this._typeRow, this._memoryRow])];
-        this.contentView.element.appendChild(identitySection.element);
+        this._sections.push(identitySection);
 
         this._nodeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Node"));
         this._cssCanvasRow = new WI.DetailsSectionSimpleRow(WI.UIString("CSS Canvas"));
@@ -110,28 +113,41 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         let sourceSection = new WI.DetailsSection("canvas-source", WI.UIString("Source"));
         sourceSection.groups = [new WI.DetailsSectionGroup([this._nodeRow, this._cssCanvasRow, this._widthRow, this._heightRow, this._datachedRow])];
-        this.contentView.element.appendChild(sourceSection.element);
+        this._sections.push(sourceSection);
 
         this._attributesDataGridRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Attributes"));
 
         let attributesSection = new WI.DetailsSection("canvas-attributes", WI.UIString("Attributes"));
         attributesSection.groups = [new WI.DetailsSectionGroup([this._attributesDataGridRow])];
-        this.contentView.element.appendChild(attributesSection.element);
+        this._sections.push(attributesSection);
 
         this._cssCanvasClientsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Nodes"));
 
         this._cssCanvasSection = new WI.DetailsSection("canvas-css", WI.UIString("CSS"));
         this._cssCanvasSection.groups = [new WI.DetailsSectionGroup([this._cssCanvasClientsRow])];
         this._cssCanvasSection.element.hidden = true;
-        this.contentView.element.appendChild(this._cssCanvasSection.element);
+        this._sections.push(this._cssCanvasSection);
+
+        this._emptyContentPlaceholder = document.createElement("div");
+        this._emptyContentPlaceholder.className = "empty-content-placeholder";
+
+        let emptyContentPlaceholderMessage = this._emptyContentPlaceholder.appendChild(document.createElement("div"));
+        emptyContentPlaceholderMessage.className = "message";
+        emptyContentPlaceholderMessage.textContent = WI.UIString("No Canvas Selected");
     }
 
     layout()
     {
         super.layout();
 
-        if (!this._canvas)
+        this.contentView.element.removeChildren();
+
+        if (!this._canvas) {
+            this.contentView.element.appendChild(this._emptyContentPlaceholder);
             return;
+        }
+
+        this.contentView.element.append(...this._sections.map(section => section.element));
 
         this._refreshIdentitySection();
         this._refreshSourceSection();

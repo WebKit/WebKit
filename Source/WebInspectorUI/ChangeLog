@@ -1,3 +1,30 @@
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: clicking on a canvas card causes details sidebar to show and mess up card arrangement
+        https://bugs.webkit.org/show_bug.cgi?id=178803
+        <rdar://problem/35176082>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CanvasDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder):
+        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder > .message):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel):
+        (WI.CanvasDetailsSidebarPanel.prototype.inspect):
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WI.CanvasDetailsSidebarPanel.prototype.layout):
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.disallowInstanceForClass): Deleted.
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.disallowInstanceForClass): Deleted.
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel.disallowInstanceForClass): Deleted.
+        Drive-by: these sidebar panels are now only used by the Canvas tab, so we no longer need to
+        provide support for multiple instances of them.
+
 2017-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Display fetch() initiated loads as "fetch" instead of "xhr" in the Network Tab

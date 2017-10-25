@@ -26,3 +26,24 @@
 .sidebar > .panel.details.canvas .details-section > .content .row.simple > .value > .node-link {
     display: block;
 }
+
+.sidebar > .panel.details.canvas > .content > .empty-content-placeholder {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.sidebar > .panel.details.canvas > .content > .empty-content-placeholder > .message {
+    display: inline-block;
+    padding: 5px 15px 6px;
+    font-size: var(--sidebar-no-results-message-font-size);
+    white-space: nowrap;
+    color: var(--text-color-gray-medium);
+}

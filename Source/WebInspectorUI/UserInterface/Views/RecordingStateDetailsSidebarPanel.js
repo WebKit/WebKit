@@ -35,13 +35,6 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
         this._dataGrid = null;
     }
 
-    // Static
-
-    static disallowInstanceForClass()
-    {
-        return true;
-    }
-
     // Public
 
     inspect(objects)
