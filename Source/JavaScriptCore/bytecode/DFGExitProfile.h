@@ -97,7 +97,7 @@ public:
     
     unsigned hash() const
     {
-        return WTF::intHash(m_bytecodeOffset) + m_kind + m_jitType * 7;
+        return WTF::intHash(m_bytecodeOffset) + m_kind + static_cast<std::underlying_type_t<ExitingJITType>>(m_jitType) * 7;
     }
     
     unsigned bytecodeOffset() const { return m_bytecodeOffset; }

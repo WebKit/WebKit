@@ -1,3 +1,13 @@
+2017-10-25  Keith Miller  <keith_miller@apple.com>
+
+        Fix implicit cast of enum, which seems to break the windows build of unified sources.
+        https://bugs.webkit.org/show_bug.cgi?id=178822
+
+        Reviewed by Saam Barati.
+
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::FrequentExitSite::hash const):
+
 2017-10-24  Michael Saboff  <msaboff@apple.com>
 
         Allow OjbC Weak References when building TestAPI
