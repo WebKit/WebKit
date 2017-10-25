@@ -77,6 +77,9 @@ static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConf
     case RTCBundlePolicy::Balanced:
         return webrtc::PeerConnectionInterface::kBundlePolicyBalanced;
     }
+
+    ASSERT_NOT_REACHED();
+    return webrtc::PeerConnectionInterface::kBundlePolicyMaxCompat;
 }
 
 static inline webrtc::PeerConnectionInterface::IceTransportsType iceTransportPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
@@ -87,6 +90,9 @@ static inline webrtc::PeerConnectionInterface::IceTransportsType iceTransportPol
     case RTCIceTransportPolicy::All:
         return webrtc::PeerConnectionInterface::kAll;
     }
+
+    ASSERT_NOT_REACHED();
+    return webrtc::PeerConnectionInterface::kNone;
 }
 
 static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaEndpointConfiguration(MediaEndpointConfiguration&& configuration)
