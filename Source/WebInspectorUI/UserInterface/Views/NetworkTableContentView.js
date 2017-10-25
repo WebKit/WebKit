@@ -144,8 +144,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         case WI.Resource.Type.Script:
             return "JS";
         case WI.Resource.Type.XHR:
-        case WI.Resource.Type.Fetch:
             return "XHR";
+        case WI.Resource.Type.Fetch:
+            return WI.UIString("Fetch");
         case WI.Resource.Type.Ping:
             return WI.UIString("Ping");
         case WI.Resource.Type.Beacon:

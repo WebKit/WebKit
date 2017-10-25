@@ -1,3 +1,15 @@
+2017-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Display fetch() initiated loads as "fetch" instead of "xhr" in the Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=178826
+
+        Reviewed by Youenn Fablet.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.shortDisplayNameForResourceType):
+        Fetch and XHR loads are still grouped under the succinct "XHR" filter, but
+        at least display the better type name in the "Type" column of the table.
+
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: selected canvas card loses selection outline style while recording
