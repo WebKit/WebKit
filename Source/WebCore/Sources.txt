@@ -1799,6 +1799,7 @@ JSScrollToOptions.cpp
 JSSecurityPolicyViolationEvent.cpp
 JSServiceWorker.cpp
 JSServiceWorkerClient.cpp
+JSServiceWorkerClientType.cpp
 JSServiceWorkerClients.cpp
 JSServiceWorkerContainer.cpp
 JSServiceWorkerGlobalScope.cpp

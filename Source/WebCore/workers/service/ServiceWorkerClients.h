@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ActiveDOMObject.h"
+#include "ServiceWorkerClientType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -42,16 +43,9 @@ public:
         return adoptRef(*new ServiceWorkerClients(context));
     }
 
-    enum class ClientType {
-        Window,
-        Worker,
-        Sharedworker,
-        All
-    };
-
     struct ClientQueryOptions {
         bool includeUncontrolled { false };
-        ClientType type { ClientType::Window };
+        ServiceWorkerClientType type { ServiceWorkerClientType::Window };
     };
 
     void get(const String& id, Ref<DeferredPromise>&&);

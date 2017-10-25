@@ -38,12 +38,5 @@
 
 dictionary ClientQueryOptions {
     boolean includeUncontrolled = false;
-    ClientType type = "window";
-};
-
-enum ClientType {
-    "window",
-    "worker",
-    "sharedworker",
-    "all"
+    ServiceWorkerClientType type = "window";
 };

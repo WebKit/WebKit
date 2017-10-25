@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
+#include "ServiceWorkerClientType.h"
 #include <heap/Strong.h>
 #include <wtf/RefCounted.h>
 
@@ -41,6 +42,7 @@ namespace WebCore {
 
 class ServiceWorkerClient : public RefCounted<ServiceWorkerClient>, public ActiveDOMObject {
 public:
+    using Type = ServiceWorkerClientType;
     enum class FrameType {
         Auxiliary,
         TopLevel,
@@ -50,6 +52,7 @@ public:
 
     String url() const;
     FrameType frameType() const;
+    Type type() const;
     String id() const;
 
     ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&& transfer);

@@ -927,6 +927,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/workers/service/FetchEvent.idl \
     $(WebCore)/workers/service/ServiceWorker.idl \
     $(WebCore)/workers/service/ServiceWorkerClient.idl \
+    $(WebCore)/workers/service/ServiceWorkerClientType.idl \
     $(WebCore)/workers/service/ServiceWorkerClients.idl \
     $(WebCore)/workers/service/ServiceWorkerContainer.idl \
     $(WebCore)/workers/service/ServiceWorkerGlobalScope.idl \

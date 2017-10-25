@@ -806,6 +806,7 @@ set(WebCore_NON_SVG_IDL_FILES
     workers/service/FetchEvent.idl
     workers/service/ServiceWorker.idl
     workers/service/ServiceWorkerClient.idl
+    workers/service/ServiceWorkerClientType.idl
     workers/service/ServiceWorkerClients.idl
     workers/service/ServiceWorkerContainer.idl
     workers/service/ServiceWorkerGlobalScope.idl

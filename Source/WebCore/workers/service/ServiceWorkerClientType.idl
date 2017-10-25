@@ -1,0 +1,9 @@
+
+[
+    Conditional=SERVICE_WORKER,
+] enum ServiceWorkerClientType {
+    "window",
+    "worker",
+    "sharedworker",
+    "all"
+};

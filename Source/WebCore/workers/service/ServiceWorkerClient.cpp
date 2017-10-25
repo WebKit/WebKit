@@ -56,6 +56,11 @@ auto ServiceWorkerClient::frameType() const -> FrameType
     return FrameType::None;
 }
 
+auto ServiceWorkerClient::type() const -> Type
+{
+    return Type::Window;
+}
+
 String ServiceWorkerClient::id() const
 {
     return { };

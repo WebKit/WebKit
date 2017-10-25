@@ -31,6 +31,7 @@
 ] interface ServiceWorkerClient {
     readonly attribute USVString url;
     readonly attribute FrameType frameType;
+    readonly attribute ServiceWorkerClientType type;
     readonly attribute DOMString id;
 
     [CallWith=ScriptState, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
