@@ -1,3 +1,23 @@
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: selected canvas card loses selection outline style while recording
+        https://bugs.webkit.org/show_bug.cgi?id=178814
+        <rdar://problem/35177317>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas):
+        (.content-view.canvas-overview .content-view.canvas > :matches(header, .preview, footer)):
+        (.content-view.canvas-overview .content-view.canvas.selected > :matches(.preview, footer),):
+        (.content-view.canvas-overview .content-view.canvas > header):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header):
+        (.content-view.canvas-overview .content-view.canvas > .preview):
+        (.content-view.canvas-overview .content-view.canvas > footer):
+        (.content-view.canvas-overview .content-view.canvas.selected:not(.is-recording)): Deleted.
+        Instead of applying the border to the entire element, apply parts of the border to each of
+        its children so that we can choose what colors to use for each part.
+
 2017-10-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [PARITY] Styles Redesign: Add color gradient, bezier curve, and spring inline widgets

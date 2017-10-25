@@ -34,10 +34,14 @@
     margin: 10px;
     width: 400px;
     background-color: white;
-    border: solid 1px var(--border-color);
 }
 
-.content-view.canvas-overview .content-view.canvas.selected:not(.is-recording) {
+.content-view.canvas-overview .content-view.canvas > :matches(header, .preview, footer) {
+    border: 1px solid var(--border-color);
+}
+
+.content-view.canvas-overview .content-view.canvas.selected > :matches(.preview, footer),
+.content-view.canvas-overview .content-view.canvas.selected:not(.is-recording) > header {
     border-color: var(--selected-background-color);
 }
 
@@ -53,10 +57,12 @@
 
 .content-view.canvas-overview .content-view.canvas > header {
     font-size: 13px;
+    border-bottom: none;
 }
 
 .content-view.canvas-overview .content-view.canvas.is-recording > header {
     background-color: red;
+    border-color: red;
 }
 
 .content-view.canvas-overview .content-view.canvas > header > .titles,
@@ -118,6 +124,8 @@
 
 .content-view.canvas-overview .content-view.canvas > .preview {
     height: 280px;
+    border-top: none;
+    border-bottom: none;
 }
 
 .content-view.canvas-overview .content-view.canvas > .preview > img {
@@ -127,6 +135,10 @@
 
 .content-view.canvas-overview .content-view.canvas > .preview > .message-text-view {
     position: static;
+}
+
+.content-view.canvas-overview .content-view.canvas > footer {
+    border-top: none;
 }
 
 .content-view.canvas-overview .content-view.canvas > footer > .recordings {
