@@ -170,8 +170,6 @@ function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list
         $commit_set = array();
         $repository_list = array();
         $repository_with_patch = array();
-        $required_owner_commits = array();
-        $owner_commits_in_set = array();
         foreach ($revision_set as $repository_id => $data) {
             if ($repository_id == 'customRoots') {
                 $file_id_list = $data;
@@ -219,9 +217,7 @@ function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list
                     exit_with_error('InvalidCommitOwnership', array('commitOwner' => $owner_commit['commit_id'], 'commitOwned' => $commit_id));
                 $repositories_require_build[$repository_id] =  TRUE;
                 $owner_commit_id = $owner_commit['commit_id'];
-                $required_owner_commits[$owner_commit_id] = $commit_id;
-            } else
-                $owner_commits_in_set[$commit_id] = TRUE;
+            }
 
             array_push($commit_set, array('commit' => $commit_id, 'patch_file' => $patch_file_id, 'requires_build' => FALSE, 'commit_owner' => $owner_commit_id));
 
@@ -241,10 +237,6 @@ function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list
                 exit_with_error('PatchNotAccepted', array('repository' => $repository_id, 'repositoryGroup' => $repository_group_id));
         }
 
-        foreach($required_owner_commits as $required_owner_commit => $owned_commit) {
-            if (!array_get($owner_commits_in_set, $required_owner_commit, FALSE))
-                exit_with_error('CommitOwnerMustExistInCommitSet', array('owner_commit' => $required_owner_commit, 'owned_commit' => $owned_commit));
-        }
         array_push($commit_set_list, array('repository_group' => $repository_group_id, 'set' => $commit_set));
     }
 

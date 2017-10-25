@@ -1,3 +1,17 @@
+2017-10-24  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Owner commit does not necessarily exist in the same commit set for an owned commit.
+        https://bugs.webkit.org/show_bug.cgi?id=178763
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the check based on previous incorrect assumption.
+        Added unit tests to cover this change.
+
+        * public/privileged-api/create-test-group.php:
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (return.addTriggerableAndCreateTask.string_appeared_here.then.id.taskId.id.then):
+
 2017-10-20  Dewei Zhu  <dewei_zhu@apple.com>
 
         Update perf dashboard upload logic to support uploading binaries from owned commits.
