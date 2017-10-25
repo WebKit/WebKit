@@ -26,43 +26,35 @@
 #import "config.h"
 #import "AuthenticationManager.h"
 
+#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
 using namespace WebCore;
 
 namespace WebKit {
 
 void AuthenticationManager::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)
 {
-#if !USE(CFURLCONNECTION)
     [authenticationChallenge.sender() useCredential:credential.nsCredential() forAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
-#endif
 }
 
 void AuthenticationManager::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& authenticationChallenge)
 {
-#if !USE(CFURLCONNECTION)
     [authenticationChallenge.sender() continueWithoutCredentialForAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
-#endif
 }
 
 void AuthenticationManager::receivedCancellation(const AuthenticationChallenge& authenticationChallenge)
 {
-#if !USE(CFURLCONNECTION)
     [authenticationChallenge.sender() cancelAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
-#endif
 }
 
 void AuthenticationManager::receivedRequestToPerformDefaultHandling(const AuthenticationChallenge& authenticationChallenge)
 {
-#if !USE(CFURLCONNECTION)
     [authenticationChallenge.sender() performDefaultHandlingForAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
-#endif
 }
 
 void AuthenticationManager::receivedChallengeRejection(const AuthenticationChallenge& authenticationChallenge)
 {
-#if !USE(CFURLCONNECTION)
     [authenticationChallenge.sender() rejectProtectionSpaceAndContinueWithChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
-#endif
 }
 
 }
+#endif
