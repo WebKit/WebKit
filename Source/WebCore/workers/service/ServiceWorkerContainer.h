@@ -60,6 +60,7 @@ public:
     ReadyPromise& ready() { return m_readyPromise; }
 
     void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
+    void removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&&);
     void getRegistration(const String& url, Ref<DeferredPromise>&&);
     void getRegistrations(Ref<DeferredPromise>&&);
 
@@ -73,6 +74,7 @@ private:
 
     void jobFailedWithException(ServiceWorkerJob&, const Exception&) final;
     void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&) final;
+    void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) final;
     void startScriptFetchForJob(ServiceWorkerJob&) final;
     void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) final;
     void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&) final;

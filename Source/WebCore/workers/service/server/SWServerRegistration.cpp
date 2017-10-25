@@ -97,7 +97,7 @@ void SWServerRegistration::scriptContextFailedToStart(SWServer::Connection&, con
 void SWServerRegistration::scriptContextStarted(SWServer::Connection&, uint64_t identifier, const String& workerID)
 {
     UNUSED_PARAM(workerID);
-    resolveCurrentJob(ServiceWorkerRegistrationData { m_registrationKey, identifier, m_scopeURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) });
+    resolveCurrentRegistrationJob(ServiceWorkerRegistrationData { m_registrationKey, identifier, m_scopeURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) });
 }
 
 void SWServerRegistration::startNextJob()
@@ -111,6 +111,9 @@ void SWServerRegistration::startNextJob()
     switch (m_currentJob->type) {
     case ServiceWorkerJobType::Register:
         m_server.postTask(createCrossThreadTask(*this, &SWServerRegistration::runRegisterJob, *m_currentJob));
+        return;
+    case ServiceWorkerJobType::Unregister:
+        m_server.postTask(createCrossThreadTask(*this, &SWServerRegistration::runUnregisterJob, *m_currentJob));
         return;
     }
 
@@ -173,6 +176,29 @@ void SWServerRegistration::runRegisterJob(const ServiceWorkerJobData& job)
     runUpdateJob(job);
 }
 
+void SWServerRegistration::runUnregisterJob(const ServiceWorkerJobData& job)
+{
+    // If the origin of job’s scope url is not job's client's origin, then:
+    if (!protocolHostAndPortAreEqual(job.scopeURL, job.clientCreationURL))
+        return rejectWithExceptionOnMainThread(ExceptionData { SecurityError, ASCIILiteral("Origin of scope URL does not match the client's origin") });
+
+    // Let registration be the result of running "Get Registration" algorithm passing job’s scope url as the argument.
+    // If registration is null, then:
+    if (isEmpty() || m_uninstalling) {
+        // Invoke Resolve Job Promise with job and false.
+        resolveWithUnregistrationResultOnMainThread(false);
+        return;
+    }
+
+    // Set registration’s uninstalling flag.
+    m_uninstalling = true;
+
+    // Invoke Resolve Job Promise with job and true.
+    resolveWithUnregistrationResultOnMainThread(true);
+
+    // FIXME: Invoke Try Clear Registration with registration.
+}
+
 void SWServerRegistration::runUpdateJob(const ServiceWorkerJobData& job)
 {
     // If registration is null (in our parlance "empty") or registration’s uninstalling flag is set, then:
@@ -198,7 +224,13 @@ void SWServerRegistration::rejectWithExceptionOnMainThread(const ExceptionData& 
 void SWServerRegistration::resolveWithRegistrationOnMainThread()
 {
     ASSERT(!isMainThread());
-    m_server.postTaskReply(createCrossThreadTask(*this, &SWServerRegistration::resolveCurrentJob, data()));
+    m_server.postTaskReply(createCrossThreadTask(*this, &SWServerRegistration::resolveCurrentRegistrationJob, data()));
+}
+
+void SWServerRegistration::resolveWithUnregistrationResultOnMainThread(bool unregistrationResult)
+{
+    ASSERT(!isMainThread());
+    m_server.postTaskReply(createCrossThreadTask(*this, &SWServerRegistration::resolveCurrentUnregistrationJob, unregistrationResult));
 }
 
 void SWServerRegistration::startScriptFetchFromMainThread()
@@ -217,12 +249,24 @@ void SWServerRegistration::rejectCurrentJob(const ExceptionData& exceptionData)
     finishCurrentJob();
 }
 
-void SWServerRegistration::resolveCurrentJob(const ServiceWorkerRegistrationData& data)
+void SWServerRegistration::resolveCurrentRegistrationJob(const ServiceWorkerRegistrationData& data)
 {
     ASSERT(isMainThread());
     ASSERT(m_currentJob);
+    ASSERT(m_currentJob->type == ServiceWorkerJobType::Register);
 
-    m_server.resolveJob(*m_currentJob, data);
+    m_server.resolveRegistrationJob(*m_currentJob, data);
+
+    finishCurrentJob();
+}
+
+void SWServerRegistration::resolveCurrentUnregistrationJob(bool unregistrationResult)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_currentJob);
+    ASSERT(m_currentJob->type == ServiceWorkerJobType::Unregister);
+
+    m_server.resolveUnregistrationJob(*m_currentJob, m_registrationKey, unregistrationResult);
 
     finishCurrentJob();
 }

@@ -60,7 +60,8 @@ public:
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
     void rejectJobInClient(uint64_t jobIdentifier, const WebCore::ExceptionData&) final;
-    void resolveJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&) final;
+    void resolveRegistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&) final;
+    void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationKey&, bool unregistrationResult) final;
     void startScriptFetchInClient(uint64_t jobIdentifier) final;
 
     void startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);

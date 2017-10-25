@@ -58,15 +58,18 @@ private:
     void jobTimerFired();
     void startNextJob();
     void rejectCurrentJob(const ExceptionData&);
-    void resolveCurrentJob(const ServiceWorkerRegistrationData&);
+    void resolveCurrentRegistrationJob(const ServiceWorkerRegistrationData&);
+    void resolveCurrentUnregistrationJob(bool unregistrationResult);
     void startScriptFetchForCurrentJob();
     void finishCurrentJob();
 
     void runRegisterJob(const ServiceWorkerJobData&);
+    void runUnregisterJob(const ServiceWorkerJobData&);
     void runUpdateJob(const ServiceWorkerJobData&);
 
     void rejectWithExceptionOnMainThread(const ExceptionData&);
     void resolveWithRegistrationOnMainThread();
+    void resolveWithUnregistrationResultOnMainThread(bool);
     void startScriptFetchFromMainThread();
     bool isEmpty();
     SWServerWorker* getNewestWorker();

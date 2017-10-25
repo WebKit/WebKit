@@ -71,7 +71,7 @@ void SWClientConnection::jobRejectedInServer(uint64_t jobIdentifier, const Excep
     job->failedWithException(exceptionData.toException());
 }
 
-void SWClientConnection::jobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&& registrationData)
+void SWClientConnection::registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&& registrationData)
 {
     auto job = m_scheduledJobs.take(jobIdentifier);
     if (!job) {
@@ -80,6 +80,17 @@ void SWClientConnection::jobResolvedInServer(uint64_t jobIdentifier, ServiceWork
     }
 
     job->resolvedWithRegistration(WTFMove(registrationData));
+}
+
+void SWClientConnection::unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult)
+{
+    auto job = m_scheduledJobs.take(jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %" PRIu64 " resolved in server, but was not found", jobIdentifier);
+        return;
+    }
+
+    job->resolvedWithUnregistrationResult(unregistrationResult);
 }
 
 void SWClientConnection::startScriptFetchForServer(uint64_t jobIdentifier)

@@ -56,6 +56,7 @@ public:
 
     void failedWithException(const Exception&);
     void resolvedWithRegistration(ServiceWorkerRegistrationData&&);
+    void resolvedWithUnregistrationResult(bool);
     void startScriptFetch();
 
     ServiceWorkerJobData data() const { return m_jobData; }

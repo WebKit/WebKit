@@ -66,6 +66,15 @@ void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& 
     m_client->jobResolvedWithRegistration(*this, WTFMove(data));
 }
 
+void ServiceWorkerJob::resolvedWithUnregistrationResult(bool unregistrationResult)
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+
+    m_completed = true;
+    m_client->jobResolvedWithUnregistrationResult(*this, unregistrationResult);
+}
+
 void ServiceWorkerJob::startScriptFetch()
 {
     ASSERT(currentThread() == m_creationThread);

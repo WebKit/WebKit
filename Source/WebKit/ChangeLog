@@ -1,5 +1,21 @@
 2017-10-25  Chris Dumez  <cdumez@apple.com>
 
+        Add support for unregistering a service worker
+        https://bugs.webkit.org/show_bug.cgi?id=178735
+
+        Reviewed by Brady Eidson.
+
+        Add support for unregistering a service worker:
+        - https://w3c.github.io/ServiceWorker/#navigator-service-worker-unregister
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::resolveRegistrationJobInClient):
+        (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
+2017-10-25  Chris Dumez  <cdumez@apple.com>
+
         Make SharedStringHashTable less error prone
         https://bugs.webkit.org/show_bug.cgi?id=178764
 

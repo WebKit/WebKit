@@ -90,16 +90,17 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     auto* context = scriptExecutionContext();
     if (!context || !context->sessionID().isValid()) {
         ASSERT_NOT_REACHED();
+        promise->reject(Exception(InvalidStateError));
         return;
     }
-
-    if (!m_swConnection)
-        m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context->sessionID());
 
     if (relativeScriptURL.isEmpty()) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() cannot be called with an empty script URL") });
         return;
     }
+
+    if (!m_swConnection)
+        m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(scriptExecutionContext()->sessionID());
 
     ServiceWorkerJobData jobData(m_swConnection->identifier());
 
@@ -140,6 +141,30 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
     jobData.type = ServiceWorkerJobType::Register;
     jobData.registrationOptions = options;
+
+    scheduleJob(ServiceWorkerJob::create(*this, WTFMove(promise), WTFMove(jobData)));
+}
+
+void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&& promise)
+{
+    auto* context = scriptExecutionContext();
+    if (!context || !context->sessionID().isValid()) {
+        ASSERT_NOT_REACHED();
+        promise->reject(Exception(InvalidStateError));
+        return;
+    }
+
+    if (!m_swConnection) {
+        ASSERT_NOT_REACHED();
+        promise->reject(Exception(InvalidStateError));
+        return;
+    }
+
+    ServiceWorkerJobData jobData(m_swConnection->identifier());
+    jobData.clientCreationURL = context->url();
+    jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
+    jobData.type = ServiceWorkerJobType::Unregister;
+    jobData.scopeURL = scopeURL;
 
     scheduleJob(ServiceWorkerJob::create(*this, WTFMove(promise), WTFMove(jobData)));
 }
@@ -192,6 +217,25 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
     auto registration = ServiceWorkerRegistration::create(*context, WTFMove(data));
     job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration.get());
+}
+
+void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
+{
+    ScopeGuard guard([this, &job] {
+        jobDidFinish(job);
+    });
+
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        LOG_ERROR("ServiceWorkerContainer::jobResolvedWithUnregistrationResult called but the containers ScriptExecutionContext is gone");
+        return;
+    }
+
+    // FIXME: Implement proper selection of service workers.
+    if (unregistrationResult)
+        context->setSelectedServiceWorkerIdentifier(0);
+
+    job.promise().resolve<IDLBoolean>(unregistrationResult);
 }
 
 void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)

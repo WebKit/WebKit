@@ -67,7 +67,8 @@ public:
     private:
         // Messages to the client WebProcess
         virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
-        virtual void resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&) = 0;
+        virtual void resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&) = 0;
+        virtual void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
         virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
 
         // Messages to the SW host WebProcess
@@ -81,7 +82,8 @@ public:
 
     void scheduleJob(const ServiceWorkerJobData&);
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
-    void resolveJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&);
+    void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&);
+    void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
     void startScriptFetch(const ServiceWorkerJobData&);
 
     void postTask(CrossThreadTask&&);

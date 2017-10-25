@@ -121,14 +121,23 @@ void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionDat
     connection->rejectJobInClient(jobData.identifier(), exceptionData);
 }
 
-void SWServer::resolveJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData)
+void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData)
 {
     LOG(ServiceWorker, "Resolved ServiceWorker job %" PRIu64 "-%" PRIu64 " in server with registration %" PRIu64, jobData.connectionIdentifier(), jobData.identifier(), registrationData.identifier);
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
 
-    connection->resolveJobInClient(jobData.identifier(), registrationData);
+    connection->resolveRegistrationJobInClient(jobData.identifier(), registrationData);
+}
+
+void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
+{
+    auto* connection = m_connections.get(jobData.connectionIdentifier());
+    if (!connection)
+        return;
+
+    connection->resolveUnregistrationJobInClient(jobData.identifier(), registrationKey, unregistrationResult);
 }
 
 void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData)

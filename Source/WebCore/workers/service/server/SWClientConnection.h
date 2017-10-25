@@ -56,7 +56,8 @@ public:
 
 protected:
     WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
-    WEBCORE_EXPORT void jobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&);
+    WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&);
+    WEBCORE_EXPORT void unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult);
     WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
 
 private:

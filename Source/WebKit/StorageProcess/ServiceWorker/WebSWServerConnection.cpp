@@ -75,11 +75,19 @@ void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const Exce
     send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
 }
 
-void WebSWServerConnection::resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
+void WebSWServerConnection::resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
 {
     auto origin = registrationData.key.topOrigin.securityOrigin();
     StorageProcess::singleton().ensureSWOriginStoreForSession(m_sessionID).add(origin);
-    send(Messages::WebSWClientConnection::JobResolvedInServer(jobIdentifier, registrationData));
+    send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobIdentifier, registrationData));
+}
+
+void WebSWServerConnection::resolveUnregistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
+{
+    auto origin = registrationKey.topOrigin.securityOrigin();
+    if (auto* store = StorageProcess::singleton().swOriginStoreForSession(m_sessionID))
+        store->remove(origin);
+    send(Messages::WebSWClientConnection::UnregistrationJobResolvedInServer(jobIdentifier, unregistrationResult));
 }
 
 void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
