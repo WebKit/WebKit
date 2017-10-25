@@ -102,11 +102,11 @@ static TransferFunction transferFunctionFromString(CFStringRef string)
         return TransferFunction::kITU_R_601_4;
     if (string == kCVImageBufferYCbCrMatrix_SMPTE_240M_1995)
         return TransferFunction::kSMPTE_240M_1995;
-    if (string == kCVImageBufferYCbCrMatrix_DCI_P3)
+    if (canLoad_CoreVideo_kCVImageBufferYCbCrMatrix_DCI_P3() && string == kCVImageBufferYCbCrMatrix_DCI_P3)
         return TransferFunction::kDCI_P3;
-    if (string == kCVImageBufferYCbCrMatrix_P3_D65)
+    if (canLoad_CoreVideo_kCVImageBufferYCbCrMatrix_P3_D65() && string == kCVImageBufferYCbCrMatrix_P3_D65)
         return TransferFunction::kP3_D65;
-    if (string == kCVImageBufferYCbCrMatrix_ITU_R_2020)
+    if (canLoad_CoreVideo_kCVImageBufferYCbCrMatrix_ITU_R_2020() && string == kCVImageBufferYCbCrMatrix_ITU_R_2020)
         return TransferFunction::kITU_R_2020;
     return TransferFunction::Unknown;
 }
@@ -396,10 +396,10 @@ bool VideoTextureCopierCV::initializeUVContextObjects()
         "varying vec2 v_uvTextureCoordinate;\n"
         "void main() {\n"
         "   gl_Position = vec4(a_position, 0, 1.0);\n"
-        "   if (u_flipY == 1) {\n"
-        "       gl_Position.y = -gl_Position.y;\n"
-        "   }\n"
         "   vec2 normalizedPosition = a_position * .5 + .5;\n"
+        "   if (u_flipY == 1) {\n"
+        "       normalizedPosition.y = 1.0 - normalizedPosition.y;\n"
+        "   }\n"
 #if PLATFORM(IOS)
         "   v_yTextureCoordinate = normalizedPosition;\n"
         "   v_uvTextureCoordinate = normalizedPosition;\n"
