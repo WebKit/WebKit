@@ -1,3 +1,22 @@
+2017-10-25  Youenn Fablet  <youenn@apple.com>
+
+        Add service worker handle fetch support for all subresource requests
+        https://bugs.webkit.org/show_bug.cgi?id=178769
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/image-fetch.https-expected.txt: Added.
+        * http/tests/workers/service/image-fetch.https.html: Added.
+        * http/tests/workers/service/resources/image-fetch-worker.js: Added.
+        (event.event.request.url.indexOf):
+        (event.event.request.url.endsWith):
+        * http/tests/workers/service/resources/image-fetch.js: Added.
+        (done):
+        (async.loadedImage):
+        (async.erroredImage):
+        (async.logStatus):
+        (async.test):
+
 2017-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Aliasing of text in CSS specs is blocky and ugly

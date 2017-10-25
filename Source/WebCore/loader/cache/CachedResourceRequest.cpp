@@ -273,4 +273,21 @@ void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination des
     m_options.destination = destination;
 }
 
+#if ENABLE(SERVICE_WORKER)
+void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(uint64_t serviceWorkerIdentifier)
+{
+    if (isNonSubresourceRequest(m_options.destination))
+        return;
+    if (isPotentialNavigationOrSubresourceRequest(m_options.destination))
+        return;
+
+    if (m_options.serviceWorkersMode != ServiceWorkersMode::All)
+        return;
+    if (m_options.serviceWorkerIdentifier)
+        return;
+
+    m_options.serviceWorkerIdentifier = serviceWorkerIdentifier;
+}
+#endif
+
 } // namespace WebCore
