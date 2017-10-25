@@ -288,7 +288,7 @@ function installDependenciesWithDnf {
         mesa-libGLES-devel \
         opus-devel \
         orc-devel \
-        perl-libxml-perl \
+        perl-XML-LibXML \
         pulseaudio-libs-devel"
 
     # These are dependencies necessary for using webkit-patch

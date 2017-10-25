@@ -496,7 +496,7 @@ function installDependenciesWithDnf {
         mesa-libEGL-devel \
         mtdev-devel \
         orc-devel \
-        perl-libxml-perl \
+        perl-XML-LibXML \
         ragel \
         systemd-devel \
         xorg-x11-font-utils \
