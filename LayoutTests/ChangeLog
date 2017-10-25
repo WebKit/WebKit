@@ -1,3 +1,18 @@
+2017-10-25  Alex Christensen  <achristensen@webkit.org>
+
+        LayoutTest http/tests/loading/basic-credentials-sent-automatically.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=159427
+
+        Reviewed by Youenn Fablet.
+        
+        Use setTimeout to make load delegate callback printing more deterministic.
+        The important part is that the credentials are printed, and they still are.
+
+        * http/tests/loading/basic-credentials-sent-automatically-expected.txt:
+        * http/tests/loading/basic-credentials-sent-automatically.html:
+        * platform/mac/TestExpectations:
+        * platform/wk2/http/tests/loading/basic-credentials-sent-automatically-expected.txt:
+
 2017-10-25  Youenn Fablet  <youenn@apple.com>
 
         Enable ServiceWorker to fetch resources
