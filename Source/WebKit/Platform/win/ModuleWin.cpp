@@ -24,62 +24,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "Module.h"
 
-#include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
-
-#if USE(CF)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(GLIB)
-typedef struct _GModule GModule;
-#endif
+#include <shlwapi.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
-class Module {
-    WTF_MAKE_NONCOPYABLE(Module);
-public:
-    Module(const String& path);
-    ~Module();
-
-    bool load();
-    // Note: On Mac this leaks the CFBundle to avoid crashes when a bundle is unloaded and there are
-    // live Objective-C objects whose methods come from that bundle.
-    void unload();
-
-#if USE(CF)
-    String bundleIdentifier() const;
-#endif
-
-    template<typename FunctionType> FunctionType functionPointer(const char* functionName) const;
-
-#if USE(CF) && !defined(__LP64__)
-    CFBundleRefNum bundleResourceMap();
-#endif
-
-private:
-    void* platformFunctionPointer(const char* functionName) const;
-
-    String m_path;
-#if PLATFORM(WIN)
-    HMODULE m_module;
-#endif
-#if USE(CF)
-    RetainPtr<CFBundleRef> m_bundle;
-#if !defined(__LP64__)
-    CFBundleRefNum m_bundleResourceMap;
-#endif
-#elif USE(GLIB)
-    GModule* m_handle;
-#endif
-};
-
-template<typename FunctionType> FunctionType Module::functionPointer(const char* functionName) const
+bool Module::load()
 {
-    return reinterpret_cast<FunctionType>(platformFunctionPointer(functionName));
+    ASSERT(!::PathIsRelativeW(m_path.charactersWithNullTermination().data()));
+    m_module = ::LoadLibraryExW(m_path.charactersWithNullTermination().data(), 0, LOAD_WITH_ALTERED_SEARCH_PATH);
+    return m_module;
+}
+
+void Module::unload()
+{
+    if (!m_module)
+        return;
+    ::FreeLibrary(m_module);
+    m_module = 0;
+}
+
+void* Module::platformFunctionPointer(const char* functionName) const
+{
+    if (!m_module)
+        return 0;
+    return ::GetProcAddress(m_module, functionName);
 }
 
 }

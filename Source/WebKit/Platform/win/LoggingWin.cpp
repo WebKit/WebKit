@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,62 +24,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "Logging.h"
 
-#include <wtf/Noncopyable.h>
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
-
-#if USE(CF)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if USE(GLIB)
-typedef struct _GModule GModule;
-#endif
 
 namespace WebKit {
 
-class Module {
-    WTF_MAKE_NONCOPYABLE(Module);
-public:
-    Module(const String& path);
-    ~Module();
+static char* const loggingEnvironmentVariable = "WebKitLogging";
 
-    bool load();
-    // Note: On Mac this leaks the CFBundle to avoid crashes when a bundle is unloaded and there are
-    // live Objective-C objects whose methods come from that bundle.
-    void unload();
-
-#if USE(CF)
-    String bundleIdentifier() const;
-#endif
-
-    template<typename FunctionType> FunctionType functionPointer(const char* functionName) const;
-
-#if USE(CF) && !defined(__LP64__)
-    CFBundleRefNum bundleResourceMap();
-#endif
-
-private:
-    void* platformFunctionPointer(const char* functionName) const;
-
-    String m_path;
-#if PLATFORM(WIN)
-    HMODULE m_module;
-#endif
-#if USE(CF)
-    RetainPtr<CFBundleRef> m_bundle;
-#if !defined(__LP64__)
-    CFBundleRefNum m_bundleResourceMap;
-#endif
-#elif USE(GLIB)
-    GModule* m_handle;
-#endif
-};
-
-template<typename FunctionType> FunctionType Module::functionPointer(const char* functionName) const
+String logLevelString()
 {
-    return reinterpret_cast<FunctionType>(platformFunctionPointer(functionName));
+    DWORD length = GetEnvironmentVariableA(loggingEnvironmentVariable, 0, 0);
+    if (!length)
+        return emptyString();
+
+    auto buffer = std::make_unique<char[]>(length);
+
+    if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.get(), length))
+        return emptyString();
+
+    return String(buffer.get());
 }
 
-}
+} // namespace WebKit
+
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
