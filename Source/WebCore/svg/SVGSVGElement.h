@@ -92,8 +92,8 @@ public: // DOM
 
     Ref<NodeList> getIntersectionList(SVGRect&, SVGElement* referenceElement);
     Ref<NodeList> getEnclosureList(SVGRect&, SVGElement* referenceElement);
-    static bool checkIntersection(const SVGElement*, SVGRect&);
-    static bool checkEnclosure(const SVGElement*, SVGRect&);
+    static bool checkIntersection(RefPtr<SVGElement>&&, SVGRect&);
+    static bool checkEnclosure(RefPtr<SVGElement>&&, SVGRect&);
     void deselectAll();
 
     static Ref<SVGNumber> createSVGNumber();
@@ -153,7 +153,7 @@ private:
 
     Frame* frameForCurrentScale() const;
     void inheritViewAttributes(const SVGViewElement&);
-    Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(const SVGElement*, SVGRect&));
+    Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(RefPtr<SVGElement>&&, SVGRect&));
 
     bool m_useCurrentView { false };
     SVGZoomAndPanType m_zoomAndPan { SVGZoomAndPanMagnify };

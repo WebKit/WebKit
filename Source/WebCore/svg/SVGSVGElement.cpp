@@ -323,7 +323,7 @@ void SVGSVGElement::forceRedraw()
 {
 }
 
-Ref<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(SVGRect& rect, SVGElement* referenceElement, bool (*checkFunction)(const SVGElement*, SVGRect&))
+Ref<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(SVGRect& rect, SVGElement* referenceElement, bool (*checkFunction)(RefPtr<SVGElement>&&, SVGRect&))
 {
     Vector<Ref<Element>> elements;
     for (auto& element : descendantsOfType<SVGElement>(referenceElement ? *referenceElement : *this)) {
@@ -345,14 +345,20 @@ Ref<NodeList> SVGSVGElement::getEnclosureList(SVGRect& rect, SVGElement* referen
     return collectIntersectionOrEnclosureList(rect, referenceElement, checkEnclosure);
 }
 
-bool SVGSVGElement::checkIntersection(const SVGElement* element, SVGRect& rect)
+bool SVGSVGElement::checkIntersection(RefPtr<SVGElement>&& element, SVGRect& rect)
 {
-    return element && RenderSVGModelObject::checkIntersection(element->renderer(), rect.propertyReference());
+    if (!element)
+        return false;
+    element->document().updateLayoutIgnorePendingStylesheets();
+    return RenderSVGModelObject::checkIntersection(element->renderer(), rect.propertyReference());
 }
 
-bool SVGSVGElement::checkEnclosure(const SVGElement* element, SVGRect& rect)
+bool SVGSVGElement::checkEnclosure(RefPtr<SVGElement>&& element, SVGRect& rect)
 {
-    return element && RenderSVGModelObject::checkEnclosure(element->renderer(), rect.propertyReference());
+    if (!element)
+        return false;
+    element->document().updateLayoutIgnorePendingStylesheets();
+    return RenderSVGModelObject::checkEnclosure(element->renderer(), rect.propertyReference());
 }
 
 void SVGSVGElement::deselectAll()

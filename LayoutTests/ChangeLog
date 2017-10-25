@@ -1,3 +1,26 @@
+2017-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        RenderSVGModelObject::checkIntersection triggers layout
+        https://bugs.webkit.org/show_bug.cgi?id=178710
+
+        Reviewed by Simon Fraser.
+
+        Added the support for SVG documents to js-test.js, and added a basic test for checkIntersection
+        and checkEnclosure using it.
+
+        * resources/js-test.js:
+        (ensureRootElement): Added. Creates a foreignObject element inside a SVG document.
+        (moveForeignObjectToTopIfNeeded): Added. In SVG, z-index order is determined by the element order.
+        In order to make the results visible, we move the foreignObject to the top by appending to the end
+        of the document element.
+        (getOrCreate):
+        (debug): Run innerHTML before appendChild as setting namespaceURI before running innerHTML would
+        result in span's being parsed as SVG elements.
+        (insertStyleSheet):
+        (finishJSTest):
+        * svg/custom/check-intersection-basic-expected.txt: Added.
+        * svg/custom/check-intersection-basic.svg: Added.
+
 2017-10-24  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Implement a paymentmethodselected event for PaymentRequest
