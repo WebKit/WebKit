@@ -1,5 +1,20 @@
 2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION(r222181): Web Inspector: Augmenting Agents Domains are not getting activated
+        https://bugs.webkit.org/show_bug.cgi?id=178768
+        <rdar://problem/35081334>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        Simplify event dispatch.
+
+        * UserInterface/Controllers/AppController.js:
+        (WI.AppController.prototype.activateExtraDomains):
+        Pass the domains on.
+
+2017-10-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Console Drawer resizing doesn't match cursor position
         https://bugs.webkit.org/show_bug.cgi?id=178753
         <rdar://problem/35160484>

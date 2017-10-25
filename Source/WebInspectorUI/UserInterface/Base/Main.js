@@ -695,7 +695,7 @@ WI.registerTabClass = function(tabClass)
 
 WI.activateExtraDomains = function(domains)
 {
-    this.notifications.dispatchEventToListeners(WI.Notification.ExtraDomainsActivated, {"domains": domains});
+    this.notifications.dispatchEventToListeners(WI.Notification.ExtraDomainsActivated, {domains});
 
     WI.CSSCompletions.requestCSSCompletions();
 

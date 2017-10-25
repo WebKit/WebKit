@@ -54,6 +54,6 @@ WI.AppController = class AppController extends WI.AppControllerBase
         }
 
         // FIXME: all code within WI.activateExtraDomains should be distributed elsewhere.
-        WI.activateExtraDomains();
+        WI.activateExtraDomains(domains);
     }
 };
