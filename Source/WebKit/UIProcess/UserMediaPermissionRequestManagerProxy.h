@@ -75,6 +75,7 @@ private:
     void getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
 
     void syncWithWebCorePrefs() const;
+    void watchdogTimerFired();
 
     HashMap<uint64_t, RefPtr<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;
     HashMap<uint64_t, Ref<UserMediaPermissionCheckProxy>> m_pendingDeviceRequests;
@@ -95,6 +96,10 @@ private:
         bool isVideoDenied;
     };
     Vector<DeniedRequest> m_deniedRequests;
+
+    WebCore::MediaProducer::MediaStateFlags m_captureState { WebCore::MediaProducer::IsNotPlaying };
+    RunLoop::Timer<UserMediaPermissionRequestManagerProxy> m_watchdogTimer;
+    Seconds m_currentWatchdogInterval;
 };
 
 } // namespace WebKit

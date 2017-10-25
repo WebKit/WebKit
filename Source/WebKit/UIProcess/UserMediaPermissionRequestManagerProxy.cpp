@@ -34,17 +34,16 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UserMediaRequest.h>
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
-#include <WebCore/RealtimeMediaSourceCenterMac.h>
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
 
+static const MediaProducer::MediaStateFlags activeCaptureMask = MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice;
+
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
     , m_rejectionTimer(RunLoop::main(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
+    , m_watchdogTimer(RunLoop::main(), this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
 {
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().addUserMediaPermissionRequestManagerProxy(*this);
@@ -81,7 +80,7 @@ void UserMediaPermissionRequestManagerProxy::clearCachedState()
     invalidatePendingRequests();
 }
 
-Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&& deviceIDHashSalt)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&& deviceIDHashSalt)
 {
     auto request = UserMediaPermissionRequestProxy::create(*this, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDeviceUIDs), WTFMove(videoDeviceUIDs), WTFMove(deviceIDHashSalt));
     m_pendingUserMediaRequests.add(userMediaID, request.ptr());
@@ -94,25 +93,18 @@ static uint64_t toWebCore(UserMediaPermissionRequestProxy::UserMediaAccessDenial
     switch (reason) {
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints:
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::NoConstraints);
-        break;
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled:
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::UserMediaDisabled);
-        break;
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoCaptureDevices:
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::NoCaptureDevices);
-        break;
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint:
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::InvalidConstraint);
-        break;
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::HardwareError:
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::HardwareError);
-        break;
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied:
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::PermissionDenied);
-        break;
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure:
         return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::OtherFailure);
-        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -178,7 +170,7 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(uint64_t frameID)
     m_deniedRequests.clear();
 }
 
-const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(uint64_t frameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
+const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(uint64_t frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
 {
     if (m_page.isMediaStreamCaptureMuted())
         return nullptr;
@@ -207,7 +199,7 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
     return nullptr;
 }
 
-bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(uint64_t mainFrameID, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo)
+bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(uint64_t mainFrameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo)
 {
     for (const auto& deniedRequest : m_deniedRequests) {
         if (!deniedRequest.userMediaDocumentOrigin->isSameSchemeHostPort(userMediaDocumentOrigin))
@@ -253,7 +245,7 @@ static inline void allowRequest(UserMediaPermissionRequestProxy& request)
     request.allow(request.audioDeviceUIDs().isEmpty() ? String() : request.audioDeviceUIDs()[0], request.videoDeviceUIDs().isEmpty() ? String() : request.videoDeviceUIDs()[0]);
 }
 
-void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints)
+void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints)
 {
 #if ENABLE(MEDIA_STREAM)
     if (!UserMediaProcessManager::singleton().captureEnabled()) {
@@ -262,14 +254,14 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         return;
     }
 
-    WebCore::RealtimeMediaSourceCenter::InvalidConstraintsHandler invalidHandler = [this, userMediaID](const String& invalidConstraint) {
+    RealtimeMediaSourceCenter::InvalidConstraintsHandler invalidHandler = [this, userMediaID](const String& invalidConstraint) {
         if (!m_page.isValid())
             return;
 
         denyRequest(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint, invalidConstraint);
     };
 
-    WebCore::RealtimeMediaSourceCenter::ValidConstraintsHandler validHandler = [this, userMediaID, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef()](Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&& deviceIdentifierHashSalt) mutable {
+    RealtimeMediaSourceCenter::ValidConstraintsHandler validHandler = [this, userMediaID, frameID, userMediaDocumentOrigin = userMediaDocumentOrigin.copyRef(), topLevelDocumentOrigin = topLevelDocumentOrigin.copyRef()](Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&& deviceIdentifierHashSalt) mutable {
         if (!m_page.isValid() || !m_page.mainFrame())
             return;
 
@@ -318,7 +310,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
             userMediaAccessWasDenied(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
     };
 
-    auto haveDeviceSaltHandler = [this, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), audioConstraints = WebCore::MediaConstraints(audioConstraints), videoConstraints = WebCore::MediaConstraints(videoConstraints)](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+    auto haveDeviceSaltHandler = [this, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), audioConstraints = MediaConstraints(audioConstraints), videoConstraints = MediaConstraints(videoConstraints)](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
 
         auto request = m_pendingDeviceRequests.take(userMediaID);
         if (!request)
@@ -347,7 +339,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 }
 
 #if ENABLE(MEDIA_STREAM)
-void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
+void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t userMediaID, uint64_t frameID, UserMediaPermissionCheckProxy::CompletionHandler&& handler, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
 {
     auto userMediaOrigin = API::SecurityOrigin::create(userMediaDocumentOrigin.get());
     auto topLevelOrigin = API::SecurityOrigin::create(topLevelDocumentOrigin.get());
@@ -360,7 +352,7 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
 } 
 #endif
 
-void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
+void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
 {
 #if ENABLE(MEDIA_STREAM)
     auto completionHandler = [this](uint64_t userMediaID, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess) {
@@ -391,25 +383,42 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
     // Enable/disable the mock capture devices for the UI process as per the WebCore preferences. Note that
     // this is a noop if the preference hasn't changed since the last time this was called.
     bool mockDevicesEnabled = m_page.preferences().mockCaptureDevicesEnabled();
-    WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(mockDevicesEnabled);
+    MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(mockDevicesEnabled);
 #endif
 }
 
-void UserMediaPermissionRequestManagerProxy::captureStateChanged(WebCore::MediaProducer::MediaStateFlags oldState, WebCore::MediaProducer::MediaStateFlags newState)
+void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducer::MediaStateFlags oldState, MediaProducer::MediaStateFlags newState)
 {
     if (!m_page.isValid())
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    bool wasCapturingAudio = oldState & WebCore::MediaProducer::AudioCaptureMask;
-    bool wasCapturingVideo = oldState & WebCore::MediaProducer::VideoCaptureMask;
-    bool isCapturingAudio = newState & WebCore::MediaProducer::AudioCaptureMask;
-    bool isCapturingVideo = newState & WebCore::MediaProducer::VideoCaptureMask;
+    bool wasCapturingAudio = oldState & MediaProducer::AudioCaptureMask;
+    bool wasCapturingVideo = oldState & MediaProducer::VideoCaptureMask;
+    bool isCapturingAudio = newState & MediaProducer::AudioCaptureMask;
+    bool isCapturingVideo = newState & MediaProducer::VideoCaptureMask;
 
     if ((wasCapturingAudio && !isCapturingAudio) || (wasCapturingVideo && !isCapturingVideo))
         UserMediaProcessManager::singleton().endedCaptureSession(*this);
     if ((!wasCapturingAudio && isCapturingAudio) || (!wasCapturingVideo && isCapturingVideo))
         UserMediaProcessManager::singleton().startedCaptureSession(*this);
+
+    if (m_captureState == (newState & activeCaptureMask))
+        return;
+
+    m_captureState = newState & activeCaptureMask;
+
+    Seconds interval;
+    if (m_captureState & activeCaptureMask)
+        interval = Seconds::fromHours(m_page.preferences().longRunningMediaCaptureStreamRepromptIntervalInHours());
+    else
+        interval = Seconds::fromMinutes(m_page.preferences().inactiveMediaCaptureSteamRepromptIntervalInMinutes());
+
+    if (interval == m_currentWatchdogInterval)
+        return;
+
+    m_currentWatchdogInterval = interval;
+    m_watchdogTimer.startOneShot(m_currentWatchdogInterval);
 #endif
 }
 
@@ -418,6 +427,13 @@ void UserMediaPermissionRequestManagerProxy::processPregrantedRequests()
     for (auto& request : m_pregrantedRequests)
         allowRequest(request.get());
     m_pregrantedRequests.clear();
+}
+
+void UserMediaPermissionRequestManagerProxy::watchdogTimerFired()
+{
+    m_grantedRequests.clear();
+    m_pregrantedRequests.clear();
+    m_currentWatchdogInterval = 0_s;
 }
 
 } // namespace WebKit

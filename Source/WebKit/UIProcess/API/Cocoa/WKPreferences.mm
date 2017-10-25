@@ -612,6 +612,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setMediaCaptureRequiresSecureConnection(requiresSecureConnection);
 }
 
+- (double)_inactiveMediaCaptureSteamRepromptIntervalInMinutes
+{
+    return _preferences->inactiveMediaCaptureSteamRepromptIntervalInMinutes();
+}
+
+- (void)_setInactiveMediaCaptureSteamRepromptIntervalInMinutes:(double)interval
+{
+    _preferences->setInactiveMediaCaptureSteamRepromptIntervalInMinutes(interval);
+}
+
 - (BOOL)_enumeratingAllNetworkInterfacesEnabled
 {
     return _preferences->enumeratingAllNetworkInterfacesEnabled();

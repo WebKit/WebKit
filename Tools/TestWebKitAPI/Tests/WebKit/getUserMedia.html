@@ -1,16 +1,48 @@
-<script>
-    function gotUserMedia(mediaStream)
-    {
-        console.log("Got user media");
-    }
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
 
-    function userMediaError(error)
-    {
-        console.log(error);
-    }
+            let stream = null;
 
-    var constraints = { audio: false, video: true};
-    navigator.mediaDevices.getUserMedia(constraints)
-        .then(gotUserMedia).
-        catch(userMediaError);
-</script>
+            function promptForCapture()
+            {
+                navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+                .then((s) => {
+                      stream = s;
+                      video.srcObject = stream;
+                      console.log("Got user media");
+                })
+                .catch((error) => console.log(`Failed with error: ${error}`));
+            }
+
+            function stop(kind)
+            {
+                let activeTracks = [];
+                stream.getTracks().forEach(track => {
+                    if (!kind || track.kind == kind)
+                        track.stop();
+                    else
+                        activeTracks.push(track);
+                });
+
+                if (!activeTracks.length) {
+                    stream = null;
+                    video.srcObject = null;
+                }
+            }
+
+            function haveStream()
+            {
+                return stream !== null;
+            }
+        </script>
+    <head>
+
+    <body onload="promptForCapture()">
+        <video id="video" controls></video>
+        <p>
+        <button onclick="stop()">Stop</button>
+        </p>
+    </body>
+</html>

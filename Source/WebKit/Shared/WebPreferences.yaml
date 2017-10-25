@@ -822,6 +822,13 @@ InspectorWindowFrame:
   defaultValue: '""'
   webkitOnly: true
 
+InactiveMediaCaptureSteamRepromptIntervalInMinutes:
+    type: double
+    defaultValue: DEFAULT_INTERACTIVE_MNEDIA_CAPTURE_STREAM_REPROMPT_INTERVAL_IN_MINUTES
+
+LongRunningMediaCaptureStreamRepromptIntervalInHours:
+    type: double
+    defaultValue: 24
 
 # Debug Preferences
 

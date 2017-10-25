@@ -1,3 +1,41 @@
+2017-10-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Clear cached gUM prompt state
+        https://bugs.webkit.org/show_bug.cgi?id=178754
+        <rdar://problem/32742356>
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/WebPreferences.yaml: Define new settings.
+
+        * Shared/WebPreferencesDefinitionsBase.h: New default values.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInactiveMediaCaptureSteamRepromptIntervalInMinutes): New.
+        (WKPreferencesGetInactiveMediaCaptureSteamRepromptIntervalInMinutes): Ditto.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _inactiveMediaCaptureSteamRepromptIntervalInMinutes]): Ditto.
+        (-[WKPreferences _setInactiveMediaCaptureSteamRepromptIntervalInMinutes:]): Ditto.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy): Initialize
+        the timer.
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest): Remove unneeded namespace.
+        (WebKit::toWebCore): Remove unneeded breaks.
+        (WebKit::UserMediaPermissionRequestManagerProxy::searchForGrantedRequest const): Remove unneeded namespace.
+        (WebKit::UserMediaPermissionRequestManagerProxy::wasRequestDenied): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs const): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureStateChanged): Set the watchdog timer
+        to the correct interval based on capture state.
+        (WebKit::UserMediaPermissionRequestManagerProxy::watchdogTimerFired): Clear cached state.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
 2017-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         When navigating back to a page, compositing layers may not use accelerated drawing

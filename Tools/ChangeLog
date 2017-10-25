@@ -1,3 +1,20 @@
+2017-10-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Clear cached gUM prompt state
+        https://bugs.webkit.org/show_bug.cgi?id=178754
+        <rdar://problem/32742356>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add new test
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm: Added.
+        (-[GetUserMediaRepromptUIDelegate _webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:]):
+        (-[GetUserMediaRepromptUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+
 2017-10-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add committer status for Ross Kirsling
