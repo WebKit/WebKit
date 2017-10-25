@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ActiveDOMObject.h"
+#include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
 #include "ServiceWorkerClientType.h"
 #include <heap/Strong.h>
@@ -40,7 +40,7 @@ class JSValue;
 
 namespace WebCore {
 
-class ServiceWorkerClient : public RefCounted<ServiceWorkerClient>, public ActiveDOMObject {
+class ServiceWorkerClient : public RefCounted<ServiceWorkerClient>, public ContextDestructionObserver {
 public:
     using Type = ServiceWorkerClientType;
     enum class FrameType {
@@ -50,19 +50,22 @@ public:
         None
     };
 
+    static Ref<ServiceWorkerClient> create(ScriptExecutionContext& context, Type type)
+    {
+        return adoptRef(*new ServiceWorkerClient(context, type));
+    }
+
     String url() const;
     FrameType frameType() const;
-    Type type() const;
+    Type type() const { return m_type; }
     String id() const;
 
     ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&& transfer);
 
 protected:
-    explicit ServiceWorkerClient(ScriptExecutionContext&);
+    ServiceWorkerClient(ScriptExecutionContext&, Type);
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
+    Type m_type;
 };
 
 } // namespace WebCore

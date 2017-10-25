@@ -30,20 +30,10 @@
 
 namespace WebCore {
 
-ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
+ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context, Type type)
+    : ContextDestructionObserver(&context)
+    , m_type(type)
 {
-    suspendIfNeeded();
-}
-
-const char* ServiceWorkerClient::activeDOMObjectName() const
-{
-    return "ServiceWorkerClient";
-}
-
-bool ServiceWorkerClient::canSuspendForDocumentSuspension() const
-{
-    return !hasPendingActivity();
 }
 
 String ServiceWorkerClient::url() const
@@ -54,11 +44,6 @@ String ServiceWorkerClient::url() const
 auto ServiceWorkerClient::frameType() const -> FrameType
 {
     return FrameType::None;
-}
-
-auto ServiceWorkerClient::type() const -> Type
-{
-    return Type::Window;
 }
 
 String ServiceWorkerClient::id() const

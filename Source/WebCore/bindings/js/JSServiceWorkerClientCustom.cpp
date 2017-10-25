@@ -26,38 +26,26 @@
 #include "config.h"
 
 #if ENABLE(SERVICE_WORKER)
-#include "ServiceWorkerWindowClient.h"
+#include "JSServiceWorkerClient.h"
 
-#include "JSDOMPromiseDeferred.h"
+#include "JSServiceWorkerWindowClient.h"
 
 namespace WebCore {
 
-ServiceWorkerWindowClient::ServiceWorkerWindowClient(ScriptExecutionContext& context)
-    : ServiceWorkerClient(context, Type::Window)
+using namespace JSC;
+
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<ServiceWorkerClient>&& client)
 {
+    if (is<ServiceWorkerWindowClient>(client))
+        return createWrapper<ServiceWorkerWindowClient>(globalObject, WTFMove(client));
+    return createWrapper<ServiceWorkerClient>(globalObject, WTFMove(client));
 }
 
-VisibilityState ServiceWorkerWindowClient::visibilityState() const
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, ServiceWorkerClient& client)
 {
-    return VisibilityState::Visible;
-}
-
-bool ServiceWorkerWindowClient::isFocused() const
-{
-    return true;
-}
-
-void ServiceWorkerWindowClient::focus(Ref<DeferredPromise>&& promise)
-{
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("windowClient.focus() is not yet supported") });
-}
-
-void ServiceWorkerWindowClient::navigate(const String& url, Ref<DeferredPromise>&& promise)
-{
-    UNUSED_PARAM(url);
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("windowClient.navigate() is not yet supported") });
+    return wrap(state, globalObject, client);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(SERVICE_WORKER)
+#endif

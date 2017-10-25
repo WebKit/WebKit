@@ -25,6 +25,7 @@
 
 [
     Conditional=SERVICE_WORKER,
+    CustomToJSObject,
     EnabledAtRuntime=ServiceWorker,
     Exposed=ServiceWorker,
     InterfaceName=Client,
