@@ -379,7 +379,8 @@ WI.Color = class Color
             return this._toKeywordString();
         }
 
-        throw "invalid color format";
+        console.error("Invalid color format: " + format);
+        return "";
     }
 
     isKeyword()

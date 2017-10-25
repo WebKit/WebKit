@@ -253,9 +253,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let tokens = WI.tokenizeCSSValue(value);
 
         if (this._property.enabled) {
-            // Don't show color widgets for CSS gradients, show dedicated gradient widgets instead.
-            // FIXME: <https://webkit.org/b/178404> Web Inspector: [PARITY] Styles Redesign: Add bezier curve, color gradient, and CSS variable inline widgets
+            // FIXME: <https://webkit.org/b/178636> Web Inspector: Styles: Make inline widgets work with CSS functions (var(), calc(), etc.)
+            tokens = this._addGradientTokens(tokens);
             tokens = this._addColorTokens(tokens);
+            tokens = this._addTimingFunctionTokens(tokens, "cubic-bezier");
+            tokens = this._addTimingFunctionTokens(tokens, "spring");
         }
 
         tokens = tokens.map((token) => {
@@ -287,48 +289,79 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._valueElement.append(...tokens);
     }
 
+    _createInlineSwatch(type, text, valueObject)
+    {
+        let tokenElement = document.createElement("span");
+        let innerElement = document.createElement("span");
+        innerElement.textContent = text;
+
+        let readOnly = !this._property.editable;
+        let swatch = new WI.InlineSwatch(type, valueObject, readOnly);
+
+        swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
+            let value = event.data.value && event.data.value.toString();
+            if (!value)
+                return;
+
+            innerElement.textContent = value;
+            this._handleValueChange();
+        }, this);
+
+        tokenElement.append(swatch.element, innerElement);
+
+        // Prevent the value from editing when clicking on the swatch.
+        swatch.element.addEventListener("mousedown", (event) => { event.stop(); });
+
+        return tokenElement;
+    }
+
+    _addGradientTokens(tokens)
+    {
+        let gradientRegex = /^(repeating-)?(linear|radial)-gradient$/i;
+        let newTokens = [];
+        let gradientStartIndex = NaN;
+        let openParenthesis = 0;
+
+        for (let i = 0; i < tokens.length; i++) {
+            let token = tokens[i];
+            if (token.type && token.type.includes("atom") && gradientRegex.test(token.value)) {
+                gradientStartIndex = i;
+                openParenthesis = 0;
+            } else if (token.value === "(" && !isNaN(gradientStartIndex))
+                openParenthesis++;
+            else if (token.value === ")" && !isNaN(gradientStartIndex)) {
+                openParenthesis--;
+                if (openParenthesis > 0) {
+                    // Matched a CSS function inside of the gradient.
+                    continue;
+                }
+
+                let rawTokens = tokens.slice(gradientStartIndex, i + 1);
+                let text = rawTokens.map((token) => token.value).join("");
+                let gradient = WI.Gradient.fromString(text);
+                if (gradient)
+                    newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Gradient, text, gradient));
+                else
+                    newTokens.push(...rawTokens);
+
+                gradientStartIndex = NaN;
+            } else if (isNaN(gradientStartIndex))
+                newTokens.push(token);
+        }
+
+        return newTokens;
+    }
+
     _addColorTokens(tokens)
     {
         let newTokens = [];
 
-        let createColorTokenElement = (colorString, color) => {
-            let colorTokenElement = document.createElement("span");
-            colorTokenElement.className = "token-color";
-
-            let innerElement = document.createElement("span");
-            innerElement.className = "token-color-value";
-            innerElement.textContent = colorString;
-
-            if (color) {
-                let readOnly = !this._property.editable;
-                let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
-
-                swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
-                    let value = event.data && event.data.value && event.data.value.toString();
-                    console.assert(value, "Color value is empty.");
-                    if (!value)
-                        return;
-
-                    innerElement.textContent = value;
-                    this._handleValueChange();
-                }, this);
-
-                colorTokenElement.append(swatch.element);
-
-                // Prevent the value from editing when clicking on the swatch.
-                swatch.element.addEventListener("mousedown", (event) => { event.stop(); });
-            }
-
-            colorTokenElement.append(innerElement);
-            return colorTokenElement;
-        };
-
-        let pushPossibleColorToken = (text, ...tokens) => {
+        let pushPossibleColorToken = (text, ...rawTokens) => {
             let color = WI.Color.fromString(text);
             if (color)
-                newTokens.push(createColorTokenElement(text, color));
+                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Color, text, color));
             else
-                newTokens.push(...tokens);
+                newTokens.push(...rawTokens);
         };
 
         let colorFunctionStartIndex = NaN;
@@ -354,6 +387,51 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 pushPossibleColorToken(text, ...rawTokens);
                 colorFunctionStartIndex = NaN;
             } else
+                newTokens.push(token);
+        }
+
+        return newTokens;
+    }
+
+    _addTimingFunctionTokens(tokens, tokenType)
+    {
+        let newTokens = [];
+        let startIndex = NaN;
+        let openParenthesis = 0;
+
+        for (let i = 0; i < tokens.length; i++) {
+            let token = tokens[i];
+            if (token.value === tokenType && token.type && token.type.includes("atom")) {
+                startIndex = i;
+                openParenthesis = 0;
+            } else if (token.value === "(" && !isNaN(startIndex))
+                openParenthesis++;
+            else if (token.value === ")" && !isNaN(startIndex)) {
+
+                openParenthesis--;
+                if (openParenthesis > 0)
+                    continue;
+
+                let rawTokens = tokens.slice(startIndex, i + 1);
+                let text = rawTokens.map((token) => token.value).join("");
+
+                let valueObject;
+                let inlineSwatchType;
+                if (tokenType === "cubic-bezier") {
+                    valueObject = WI.CubicBezier.fromString(text);
+                    inlineSwatchType = WI.InlineSwatch.Type.Bezier;
+                } else if (tokenType === "spring") {
+                    valueObject = WI.Spring.fromString(text);
+                    inlineSwatchType = WI.InlineSwatch.Type.Spring;
+                }
+
+                if (valueObject)
+                    newTokens.push(this._createInlineSwatch(inlineSwatchType, text, valueObject));
+                else
+                    newTokens.push(...rawTokens);
+
+                startIndex = NaN;
+            } else if (isNaN(startIndex))
                 newTokens.push(token);
         }
 

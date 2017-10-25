@@ -1,5 +1,29 @@
 2017-10-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: [PARITY] Styles Redesign: Add color gradient, bezier curve, and spring inline widgets
+        https://bugs.webkit.org/show_bug.cgi?id=178404
+        <rdar://problem/35035992>
+
+        Reviewed by Devin Rousso.
+
+        Add inline widgets for the following CSS values:
+        - Gradients, e.g. `background-image: linear-gradient(yellow, orange)`
+        - Bezier curves, e.g. `transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55)`
+        - Spring functions, e.g. `transition-timing-function: spring(1, 2, 2, 4)`
+
+        * UserInterface/Models/Color.js:
+        (WI.Color.prototype.toString):
+        Don't throw. The are never try/catch blocks on the callsites.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._renderValue):
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        (WI.SpreadsheetStyleProperty.prototype._addGradientTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addColorTokens):
+        (WI.SpreadsheetStyleProperty.prototype._addTimingFunctionTokens):
+
+2017-10-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles Redesign: Newly added invalid property isn't immediately shown as invalid
         https://bugs.webkit.org/show_bug.cgi?id=178488
 
