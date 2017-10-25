@@ -32,6 +32,7 @@
 #import "Logging.h"
 #import "MediaPlayer.h"
 #import "PlatformMediaSession.h"
+#import <wtf/BlockObjCExceptions.h>
 
 #import "MediaRemoteSoftLink.h"
 
@@ -124,6 +125,8 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
     const PlatformMediaSession* currentSession = this->nowPlayingEligibleSession();
 
     LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - currentSession = %p", currentSession);
@@ -202,7 +205,8 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
         MRNowPlayingClientVisibility visibility = currentSession->allowsNowPlayingControlsVisibility() ? MRNowPlayingClientVisibilityAlwaysVisible : MRNowPlayingClientVisibilityNeverVisible;
         MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), visibility);
     }
-#endif
+    END_BLOCK_OBJC_EXCEPTIONS
+#endif // USE(MEDIAREMOTE)
 }
 
 } // namespace WebCore

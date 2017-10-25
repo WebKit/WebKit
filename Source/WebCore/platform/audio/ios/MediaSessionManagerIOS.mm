@@ -40,6 +40,7 @@
 #import <UIKit/UIApplication.h>
 #import <objc/runtime.h>
 #import <pal/spi/ios/MediaPlayerSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
@@ -130,14 +131,19 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 
 MediaSessionManageriOS::MediaSessionManageriOS()
     : PlatformMediaSessionManager()
-    , m_objcObserver(adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]))
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    m_objcObserver = adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]);
+    END_BLOCK_OBJC_EXCEPTIONS
     resetRestrictions();
 }
 
 MediaSessionManageriOS::~MediaSessionManageriOS()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_objcObserver clearCallback];
+    m_objcObserver = nil;
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void MediaSessionManageriOS::resetRestrictions()
@@ -159,7 +165,9 @@ void MediaSessionManageriOS::resetRestrictions()
 
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     return [m_objcObserver hasWirelessTargetsAvailable];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void MediaSessionManageriOS::configureWireLessTargetMonitoring()
@@ -170,10 +178,14 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 
     LOG(Media, "MediaSessionManageriOS::configureWireLessTargetMonitoring - requiresMonitoring = %s", requiresMonitoring ? "true" : "false");
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
     if (requiresMonitoring)
         [m_objcObserver startMonitoringAirPlayRoutes];
     else
         [m_objcObserver stopMonitoringAirPlayRoutes];
+
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& session)
@@ -222,6 +234,7 @@ PlatformMediaSession* MediaSessionManageriOS::nowPlayingEligibleSession()
 
 void MediaSessionManageriOS::updateNowPlayingInfo()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     MPNowPlayingInfoCenter *nowPlaying = (MPNowPlayingInfoCenter *)[getMPNowPlayingInfoCenterClass() defaultCenter];
     const PlatformMediaSession* currentSession = this->nowPlayingEligibleSession();
 
@@ -266,6 +279,7 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
 
     m_nowPlayingActive = true;
     [nowPlaying setNowPlayingInfo:info.get()];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool MediaSessionManageriOS::sessionCanLoadMedia(const PlatformMediaSession& session) const
@@ -278,9 +292,11 @@ bool MediaSessionManageriOS::sessionCanLoadMedia(const PlatformMediaSession& ses
 
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     forEachSession([haveTargets = [m_objcObserver hasWirelessTargetsAvailable]] (PlatformMediaSession& session, size_t) {
         session.externalOutputDeviceAvailableDidChange(haveTargets);
     });
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 } // namespace WebCore
@@ -296,10 +312,14 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 
     RetainPtr<WebMediaSessionHelper> strongSelf = self;
     dispatch_async(dispatch_get_main_queue(), [strongSelf]() {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         RetainPtr<MPVolumeView> volumeView = adoptNS([allocMPVolumeViewInstance() init]);
         callOnWebThreadOrDispatchAsyncOnMainThread([strongSelf, volumeView]() {
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
             [strongSelf setVolumeView:volumeView];
+            END_BLOCK_OBJC_EXCEPTIONS
         });
+        END_BLOCK_OBJC_EXCEPTIONS
     });
 }
 
@@ -339,7 +359,9 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 
     // Now playing won't work unless we turn on the delivery of remote control events.
     dispatch_async(dispatch_get_main_queue(), ^ {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
         [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        END_BLOCK_OBJC_EXCEPTIONS
     });
 
     return self;
