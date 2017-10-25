@@ -368,7 +368,7 @@ WebSWOriginStore* StorageProcess::swOriginStoreForSession(PAL::SessionID session
     return it->value.get();
 }
 
-void StorageProcess::didGetWorkerContextProcessConnection(const IPC::Attachment& encodedConnectionIdentifier)
+void StorageProcess::didGetWorkerContextProcessConnection(IPC::Attachment&& encodedConnectionIdentifier)
 {
     ASSERT(m_waitingForWorkerContextProcessConnection);
     m_waitingForWorkerContextProcessConnection = false;

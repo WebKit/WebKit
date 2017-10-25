@@ -118,6 +118,7 @@ my (
     $registerProtocolHandlerSupport,
     $resolutionMediaQuerySupport,
     $scriptedSpeechSupport,
+    $serviceWorkerSupport,
     $subtleCrypto,
     $svgFontsSupport,
     $systemMallocSupport,
@@ -338,6 +339,9 @@ my @features = (
 
     { option => "scripted-speech", desc => "Toggle Scripted Speech support",
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
+
+    { option => "service-worker", desc => "Toggle Service Worker support",
+      define => "ENABLE_SERVICE_WORKER", default => isAppleCocoaWebKit(), value => \$serviceWorkerSupport },
 
     { option => "subtle-crypto", desc => "Toggle WebCrypto Subtle-Crypto support",
       define => "ENABLE_SUBTLE_CRYPTO", default => (isGtk() || isAppleCocoaWebKit() || isIOSWebKit() || isWPE()), value => \$subtleCrypto },

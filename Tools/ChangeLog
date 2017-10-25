@@ -1,3 +1,15 @@
+2017-10-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Make SERVICE_WORKER feature buildable on GTK, WPE
+        https://bugs.webkit.org/show_bug.cgi?id=178574
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitperl/FeatureList.pm: Add the --service-worker option
+        that enables the SERVICE_WORKER feature flag. For now it's enabled
+        on Apple's Cocoa ports (even when build-webkit isn't used for those
+        builds, the flag is enabled here for consistency).
+
 2017-10-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix name of Perl LibXML package on Fedora

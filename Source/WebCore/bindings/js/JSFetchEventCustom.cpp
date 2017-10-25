@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSFetchEvent.h"
 
+#if ENABLE(SERVICE_WORKER)
+
 namespace WebCore {
 
 void JSFetchEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
@@ -34,3 +36,5 @@ void JSFetchEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 }
 
 }
+
+#endif

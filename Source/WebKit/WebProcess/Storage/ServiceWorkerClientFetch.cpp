@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "WebServiceWorkerProvider.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ResourceError.h>
 
 using namespace WebCore;
 

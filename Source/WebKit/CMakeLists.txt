@@ -539,8 +539,11 @@ set(WebKit_SOURCES
     WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
 
+    WebProcess/Storage/ServiceWorkerClientFetch.cpp
+    WebProcess/Storage/ServiceWorkerContextManager.cpp
     WebProcess/Storage/WebSWClientConnection.cpp
     WebProcess/Storage/WebSWOriginTable.cpp
+    WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
     WebProcess/Storage/WebServiceWorkerProvider.cpp
     WebProcess/Storage/WebToStorageProcessConnection.cpp
 

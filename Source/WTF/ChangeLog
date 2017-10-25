@@ -1,3 +1,13 @@
+2017-10-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Make SERVICE_WORKER feature buildable on GTK, WPE
+        https://bugs.webkit.org/show_bug.cgi?id=178574
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/Identified.h: Explicitly include the <atomic> header since
+        std::atomic<> is used in the ThreadSafeIdentified definition.
+
 2017-10-24  Michael Saboff  <msaboff@apple.com>
 
         WTF: Eliminated PLATFORM checks for HAVE_MACH_EXCEPTIONS

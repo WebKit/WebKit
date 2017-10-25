@@ -129,6 +129,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/workers/service"
+    "${WEBCORE_DIR}/workers/service/context"
     "${WEBCORE_DIR}/workers/service/server"
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
@@ -2123,6 +2124,7 @@ set(WebCore_SOURCES
     workers/service/ServiceWorkerClient.cpp
     workers/service/ServiceWorkerClients.cpp
     workers/service/ServiceWorkerContainer.cpp
+    workers/service/ServiceWorkerContextData.cpp
     workers/service/ServiceWorkerGlobalScope.cpp
     workers/service/ServiceWorkerJob.cpp
     workers/service/ServiceWorkerJobData.cpp
@@ -2132,6 +2134,10 @@ set(WebCore_SOURCES
     workers/service/ServiceWorkerRegistrationKey.cpp
     workers/service/ServiceWorkerRegistrationOptions.cpp
     workers/service/ServiceWorkerWindowClient.cpp
+
+    workers/service/context/ServiceWorkerFetch.cpp
+    workers/service/context/ServiceWorkerThread.cpp
+    workers/service/context/ServiceWorkerThreadProxy.cpp
 
     workers/service/server/SWClientConnection.cpp
     workers/service/server/SWServer.cpp

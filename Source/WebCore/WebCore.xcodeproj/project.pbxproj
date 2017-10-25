@@ -1376,7 +1376,6 @@
 		4129C9AB1F59C573009D7403 /* ReadableStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 418C395B1C8F0A610051C8A3 /* ReadableStreamSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4129C9AF1F59CF5B009D7403 /* ReadableStreamSink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129C9801F5861C7009D7403 /* ReadableStreamSink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4131F3B31F9552860059995A /* JSFetchEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4131F3B11F9552810059995A /* JSFetchEventCustom.cpp */; };
 		4131F3E11F987CC00059995A /* ServiceWorkerFetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 419ACF901F97E7D6009F1A83 /* ServiceWorkerFetch.cpp */; };
 		41380C271F3436AC00155FDA /* DOMCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C251F34369A00155FDA /* DOMCache.h */; };
 		41380C291F3436AC00155FDA /* DOMCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C221F34369000155FDA /* DOMCacheStorage.h */; };
@@ -1440,7 +1439,6 @@
 		41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AD75391CEF6BCE00A31486 /* FetchOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41AF37991F8DADAA00111C31 /* ExtendableEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41AF37921F8DA48A00111C31 /* ExtendableEvent.cpp */; };
 		41AF379B1F8DADAE00111C31 /* FetchEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41AF37941F8DA49500111C31 /* FetchEvent.cpp */; };
-		41AF379D1F8DB1B500111C31 /* JSDOMPromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41AF379C1F8DB1B100111C31 /* JSDOMPromise.cpp */; };
 		41B28B141F8501A600FB52AC /* MediaEndpointConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B28B131F8501A400FB52AC /* MediaEndpointConfiguration.cpp */; };
 		41B28B151F8501D300FB52AC /* MediaEndpointConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B28B121F8501A300FB52AC /* MediaEndpointConfiguration.h */; };
 		41B28B391F860BD600FB52AC /* LibWebRTCProviderCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B28B381F860BD100FB52AC /* LibWebRTCProviderCocoa.cpp */; };
@@ -31552,8 +31550,6 @@
 				1AE96A921D1A0DDD00B86768 /* JSApplePayShippingMethodSelectedEvent.cpp in Sources */,
 				1ADFDFEE1E71E47C008F5D34 /* JSApplePayShippingMethodUpdate.cpp in Sources */,
 				1AE96A941D1A0DDD00B86768 /* JSApplePayValidateMerchantEvent.cpp in Sources */,
-				41AF379D1F8DB1B500111C31 /* JSDOMPromise.cpp in Sources */,
-				4131F3B31F9552860059995A /* JSFetchEventCustom.cpp in Sources */,
 				0FDA7C1E188322FC00C954B5 /* JSGestureEvent.cpp in Sources */,
 				538EC93E1F99BF5A004D22A8 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				538EC9421F99CE47004D22A8 /* JSTouch.cpp in Sources */,

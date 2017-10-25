@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <atomic>
+
 namespace WTF {
 
 template <typename IdentifierType, typename StaticType, typename ClassType>

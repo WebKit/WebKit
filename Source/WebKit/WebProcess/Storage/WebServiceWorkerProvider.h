@@ -31,6 +31,10 @@
 #include <WebCore/ServiceWorkerProvider.h>
 #include <wtf/NeverDestroyed.h>
 
+namespace WebCore {
+class CachedResource;
+}
+
 namespace WebKit {
 
 class WebServiceWorkerProvider final : public WebCore::ServiceWorkerProvider {

@@ -116,7 +116,7 @@ private:
     void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    void didGetWorkerContextProcessConnection(const IPC::Attachment& encodedConnectionIdentifier);
+    void didGetWorkerContextProcessConnection(IPC::Attachment&& encodedConnectionIdentifier);
     void serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
     void serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
 
