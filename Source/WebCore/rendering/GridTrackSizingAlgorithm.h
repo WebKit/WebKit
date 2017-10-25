@@ -228,11 +228,11 @@ protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)
         : m_algorithm(algorithm) { }
 
-    virtual LayoutUnit minLogicalWidthForChild(RenderBox&, Length childMinSize, GridTrackSizingDirection) const = 0;
+    virtual LayoutUnit minLogicalWidthForChild(RenderBox&, Length childMinSize, LayoutUnit availableSize) const = 0;
     virtual void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const = 0;
 
     LayoutUnit logicalHeightForChild(RenderBox&) const;
-    bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection) const;
+    bool updateOverrideContainingBlockContentSizeForChild(RenderBox&, GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
