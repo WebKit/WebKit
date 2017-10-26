@@ -14,7 +14,7 @@ macro(CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE library_name current revisi
     set(${library_name}_VERSION_MICRO ${revision})
     set(${library_name}_VERSION ${${library_name}_VERSION_MAJOR}.${age}.${revision})
 endmacro()
-CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT2 62 0 25)
+CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 62 0 25)
 CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 25 0 7)
 
 # These are shared variables, but we special case their definition so that we can use the

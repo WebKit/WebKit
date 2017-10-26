@@ -1,3 +1,12 @@
+2017-10-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] WebKit library .so version is not being set correctly
+        https://bugs.webkit.org/show_bug.cgi?id=178873
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake: Adjust name of the target for which the .so version gets calculated.
+
 2017-10-24  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win][JSCOnly] Make jsconly build testapi and dlls and copy dlls when running tests
