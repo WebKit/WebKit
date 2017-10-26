@@ -108,6 +108,10 @@ public:
     bool hasPendingUpdate() const { return m_pendingUpdate || m_hasDescendantWithPendingUpdate; }
     void flushPendingUpdate();
 
+#if ENABLE(XSLT)
+    Vector<Ref<ProcessingInstruction>> collectXSLTransforms();
+#endif
+
     StyleResolver& resolver();
     StyleResolver* resolverIfExists();
     void clearResolver();
