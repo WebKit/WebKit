@@ -30,6 +30,7 @@
 #include "Structure.h"
 #include "ThrowScope.h"
 #include <array>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/text/StringView.h>
 
 namespace JSC {
@@ -242,7 +243,8 @@ class JSRopeString final : public JSString {
     friend JSRopeString* jsStringBuilder(VM*);
 
 public:
-    class RopeBuilder {
+    template <class OverflowHandler = CrashOnOverflow>
+    class RopeBuilder : public OverflowHandler {
     public:
         RopeBuilder(VM& vm)
             : m_vm(vm)
@@ -253,10 +255,12 @@ public:
 
         bool append(JSString* jsString)
         {
+            if (UNLIKELY(this->hasOverflowed()))
+                return false;
             if (m_index == JSRopeString::s_maxInternalRopeLength)
                 expand();
             if (static_cast<int32_t>(m_jsString->length() + jsString->length()) < 0) {
-                m_jsString = nullptr;
+                this->overflowed();
                 return false;
             }
             m_jsString->append(m_vm, m_index++, jsString);
@@ -265,13 +269,17 @@ public:
 
         JSRopeString* release()
         {
-            RELEASE_ASSERT(m_jsString);
+            RELEASE_ASSERT(!this->hasOverflowed());
             JSRopeString* tmp = m_jsString;
-            m_jsString = 0;
+            m_jsString = nullptr;
             return tmp;
         }
 
-        unsigned length() const { return m_jsString->length(); }
+        unsigned length() const
+        {
+            ASSERT(!this->hasOverflowed());
+            return m_jsString->length();
+        }
 
     private:
         void expand();

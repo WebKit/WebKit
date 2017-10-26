@@ -334,12 +334,14 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
             JSValue stringTag = toStringTagSlot.getValue(exec, toStringTagSymbol);
             RETURN_IF_EXCEPTION(scope, { });
             if (stringTag.isString()) {
-                JSRopeString::RopeBuilder ropeBuilder(vm);
+                JSRopeString::RopeBuilder<RecordOverflow> ropeBuilder(vm);
                 ropeBuilder.append(vm.smallStrings.objectStringStart());
                 ropeBuilder.append(asString(stringTag));
                 ropeBuilder.append(vm.smallStrings.singleCharacterString(']'));
-                JSString* result = ropeBuilder.release();
+                if (ropeBuilder.hasOverflowed())
+                    return throwOutOfMemoryError(exec, scope);
 
+                JSString* result = ropeBuilder.release();
                 thisObject->structure(vm)->setObjectToStringValue(exec, vm, result, toStringTagSlot);
                 return result;
             }

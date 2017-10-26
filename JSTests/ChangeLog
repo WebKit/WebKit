@@ -1,3 +1,13 @@
+2017-10-26  Mark Lam  <mark.lam@apple.com>
+
+        JSRopeString::RopeBuilder::append() should check for overflows.
+        https://bugs.webkit.org/show_bug.cgi?id=178385
+        <rdar://problem/35027468>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-178385.js: Added.
+
 2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223961.

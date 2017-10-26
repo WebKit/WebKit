@@ -40,11 +40,12 @@ Structure* JSString::createStructure(VM& vm, JSGlobalObject* globalObject, JSVal
     return Structure::create(vm, globalObject, proto, TypeInfo(StringType, StructureFlags), info());
 }
 
-void JSRopeString::RopeBuilder::expand()
+template<>
+void JSRopeString::RopeBuilder<RecordOverflow>::expand()
 {
+    RELEASE_ASSERT(!this->hasOverflowed());
     ASSERT(m_index == JSRopeString::s_maxInternalRopeLength);
     JSString* jsString = m_jsString;
-    RELEASE_ASSERT(jsString);
     m_jsString = jsStringBuilder(&m_vm);
     m_index = 0;
     append(jsString);

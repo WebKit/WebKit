@@ -1,3 +1,24 @@
+2017-10-26  Mark Lam  <mark.lam@apple.com>
+
+        JSRopeString::RopeBuilder::append() should check for overflows.
+        https://bugs.webkit.org/show_bug.cgi?id=178385
+        <rdar://problem/35027468>
+
+        Reviewed by Saam Barati.
+
+        1. Made RopeString check for overflow like the Checked class does.
+        2. Added a missing overflow check in objectProtoFuncToString().
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::RopeBuilder<RecordOverflow>::expand):
+        (JSC::JSRopeString::RopeBuilder::expand): Deleted.
+        * runtime/JSString.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/Operations.h:
+        (JSC::jsStringFromRegisterArray):
+        (JSC::jsStringFromArguments):
+
 2017-10-26  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: no VM / JS version of our implementation
