@@ -1,3 +1,37 @@
+2017-10-26  Eric Carlson  <eric.carlson@apple.com>
+
+        NowPlayingInfo should contain a unique identifier
+        https://bugs.webkit.org/show_bug.cgi?id=178872
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestActiveNowPlayingSessionInfo:]): Take a completion handler.
+        (-[WKWebView _requestActiveNowPlayingSessionInfo]): Deleted.
+        (-[WKWebView _handleActiveNowPlayingSessionInfoResponse:title:duration:elapsedTime:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/PageClient.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestActiveNowPlayingSessionInfo): Ditto.
+        (WebKit::WebPageProxy::nowPlayingInfoCallback): Lookup and call completion handler.
+        (WebKit::WebPageProxy::handleActiveNowPlayingSessionInfoResponse const): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleActiveNowPlayingSessionInfoResponse): Deleted.
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::handleActiveNowPlayingSessionInfoResponse): Deleted.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::requestActiveNowPlayingSessionInfo): Take callback ID. Pass unique ID.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-10-26  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Enable Payment Request whenever Apple Pay is enabled

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,10 +36,11 @@ class MediaSessionManagerMac : public PlatformMediaSessionManager {
 public:
     virtual ~MediaSessionManagerMac();
 
-    bool hasActiveNowPlayingSession() const override { return m_nowPlayingActive; }
-    String lastUpdatedNowPlayingTitle() const override { return m_lastUpdatedNowPlayingTitle; }
-    double lastUpdatedNowPlayingDuration() const override { return m_lastUpdatedNowPlayingDuration; }
-    double lastUpdatedNowPlayingElapsedTime() const override { return m_lastUpdatedNowPlayingElapsedTime; }
+    bool hasActiveNowPlayingSession() const final { return m_nowPlayingActive; }
+    String lastUpdatedNowPlayingTitle() const final { return m_lastUpdatedNowPlayingTitle; }
+    double lastUpdatedNowPlayingDuration() const final { return m_lastUpdatedNowPlayingDuration; }
+    double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
+    uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
 
 private:
     friend class PlatformMediaSessionManager;
@@ -65,6 +66,7 @@ private:
     String m_lastUpdatedNowPlayingTitle;
     double m_lastUpdatedNowPlayingDuration { NAN };
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
+    uint64_t m_lastUpdatedNowPlayingInfoUniqueIdentifier { 0 };
 
     GenericTaskQueue<Timer> m_nowPlayingUpdateTaskQueue;
 };

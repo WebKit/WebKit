@@ -5936,15 +5936,19 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 #endif // PLATFORM(MAC)
 
-- (void)_requestActiveNowPlayingSessionInfo
+- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, NSString*, double, double, NSInteger))callback
 {
-    if (_page)
-        _page->requestActiveNowPlayingSessionInfo();
-}
+    if (!_page) {
+        callback(NO, @"", std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), 0);
+        return;
+    }
 
-- (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession title:(NSString *)title duration:(double)duration elapsedTime:(double)elapsedTime
-{
-    // Overridden by subclasses.
+    auto handler = makeBlockPtr(callback);
+    auto localCallback = WebKit::NowPlayingInfoCallback::create([handler](bool active, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackBase::Error) {
+        handler(active, title, duration, elapsedTime, uniqueIdentifier);
+    });
+
+    _page->requestActiveNowPlayingSessionInfo(WTFMove(localCallback));
 }
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin

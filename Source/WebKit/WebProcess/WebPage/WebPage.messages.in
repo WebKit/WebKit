@@ -437,7 +437,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if PLATFORM(COCOA)
-    RequestActiveNowPlayingSessionInfo()
+    RequestActiveNowPlayingSessionInfo(WebKit::CallbackID callbackID)
 #endif
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)

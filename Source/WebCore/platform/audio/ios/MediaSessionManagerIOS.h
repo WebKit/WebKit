@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,7 @@ private:
     String lastUpdatedNowPlayingTitle() const final { return m_reportedTitle; }
     double lastUpdatedNowPlayingDuration() const final { return m_reportedDuration; }
     double lastUpdatedNowPlayingElapsedTime() const final { return m_reportedCurrentTime; }
+    uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
 
     PlatformMediaSession* nowPlayingEligibleSession();
     
@@ -79,6 +80,7 @@ private:
     double m_reportedRate { 0 };
     double m_reportedDuration { 0 };
     double m_reportedCurrentTime { 0 };
+    uint64_t m_lastUpdatedNowPlayingInfoUniqueIdentifier { 0 };
     String m_reportedTitle;
     bool m_nowPlayingActive { false };
 };

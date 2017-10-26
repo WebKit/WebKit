@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,20 +41,22 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
     m_dataDetectionContext = loadParameters.dataDetectionContext;
 }
 
-void WebPage::requestActiveNowPlayingSessionInfo()
+void WebPage::requestActiveNowPlayingSessionInfo(CallbackID callbackID)
 {
     bool hasActiveSession = false;
     String title = emptyString();
     double duration = NAN;
     double elapsedTime = NAN;
+    uint64_t uniqueIdentifier = 0;
     if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists()) {
         hasActiveSession = sharedManager->hasActiveNowPlayingSession();
         title = sharedManager->lastUpdatedNowPlayingTitle();
         duration = sharedManager->lastUpdatedNowPlayingDuration();
         elapsedTime = sharedManager->lastUpdatedNowPlayingElapsedTime();
+        uniqueIdentifier = sharedManager->lastUpdatedNowPlayingInfoUniqueIdentifier();
     }
 
-    send(Messages::WebPageProxy::HandleActiveNowPlayingSessionInfoResponse(hasActiveSession, title, duration, elapsedTime));
+    send(Messages::WebPageProxy::NowPlayingInfoCallback(hasActiveSession, title, duration, elapsedTime, uniqueIdentifier, callbackID));
 }
 
 } // namespace WebKit
