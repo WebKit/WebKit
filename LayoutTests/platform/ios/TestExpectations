@@ -2839,9 +2839,6 @@ imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failu
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
 
-# <rdar://problem/33602192> Text rendering issues in iOS 11
-fast/text/international/complex-character-based-fallback.html [ Failure ]
-
 # <rdar://problem/33250084> Text rendering issues in iOS 11
 fast/writing-mode/border-vertical-lr.html [ Failure ]
 fast/writing-mode/japanese-lr-text.html [ Failure ]

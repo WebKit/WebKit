@@ -1,3 +1,17 @@
+2017-10-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Update expected results for fast/text/international/complex-character-based-fallback.html
+        https://bugs.webkit.org/show_bug.cgi?id=178884
+        <rdar://problem/33602192>
+
+        Unreviewed.
+
+        Test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/text/international/complex-character-based-fallback-expected.png: Added.
+        * platform/ios/fast/text/international/complex-character-based-fallback-expected.txt:
+
 2017-10-26  Youenn Fablet  <youenn@apple.com>
 
         http/tests/workers/service/service-worker-cache-api.https.html is flaky
