@@ -1,3 +1,21 @@
+2017-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r222090): [HarfBuzz] Arabic shaping is broken except for first word in line
+        https://bugs.webkit.org/show_bug.cgi?id=178625
+
+        Reviewed by Michael Catanzaro.
+
+        Once we find the first space, which has the COMMON script, we split the run, and the next ones keep using
+        COMMON instead of ARABIC because we don't update the current script on every loop iteration. This patch
+        simplifies the script handling by moving the code back to the loop and always breaking in case of different
+        scripts, correctly handling INHERITED and COMMON cases and updating the current script when needed.
+
+        Covered by existing tests. This improves several tests that have been rebaselined.
+
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::findNextRun):
+        (WebCore::scriptsAreCompatibleForCharacters): Deleted.
+
 2017-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Stable] BackingStoreBackendCairoImpl.h:23:10: fatal error: WebCore/HysteresisActivity.h
