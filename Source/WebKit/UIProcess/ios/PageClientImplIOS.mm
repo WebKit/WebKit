@@ -55,7 +55,6 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockPtr.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView->_page->process().connection())
@@ -548,7 +547,8 @@ void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInfor
     NSObject <NSSecureCoding> *userObject = nil;
     if (API::Data* data = static_cast<API::Data*>(userData)) {
         auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(data->bytes())) length:data->size() freeWhenDone:NO]);
-        auto unarchiver = secureUnarchiverFromData(nsData.get());
+        auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:nsData.get()]);
+        [unarchiver setRequiresSecureCoding:YES];
         @try {
             userObject = [unarchiver decodeObjectOfClass:[NSObject class] forKey:@"userObject"];
         } @catch (NSException *exception) {

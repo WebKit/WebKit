@@ -49,7 +49,6 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <sys/param.h>
 
 #if PLATFORM(IOS)
@@ -216,7 +215,9 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
     if (m_bundleParameters) {
         auto data = adoptNS([[NSMutableData alloc] init]);
-        auto keyedArchiver = secureArchiverFromMutableData(data.get());
+        auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+        [keyedArchiver setRequiresSecureCoding:YES];
 
         @try {
             [keyedArchiver encodeObject:m_bundleParameters.get() forKey:@"parameters"];

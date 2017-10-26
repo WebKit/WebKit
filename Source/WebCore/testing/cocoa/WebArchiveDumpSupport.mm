@@ -30,7 +30,6 @@
 #import <CFNetwork/CFHTTPMessage.h>
 #import <CFNetwork/CFNetwork.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -41,14 +40,14 @@ namespace WebCoreTestSupport {
 
 static CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
 {
+    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
     NSURLResponse *response;
-#if USE(NEW_ARCHIVER_API)
-    auto unarchiver = secureUnarchiverFromData((NSData *)responseData);
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
+    // Because of <rdar://problem/34063313> we can't use this for decoding in older OS's.
+    [unarchiver setRequiresSecureCoding:YES];
     @try {
         response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
 #else
-    // Because of <rdar://problem/34063313> we can't use secure coding for decoding in older OS's.
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
     @try {
         response = [unarchiver decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
 #endif

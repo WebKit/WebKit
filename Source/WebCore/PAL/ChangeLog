@@ -1,3 +1,15 @@
+2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r223908.
+
+        Causes LayoutTest crashes with newer SDKs.
+
+        Reverted changeset:
+
+        "Adopt new secure coding APIs"
+        https://bugs.webkit.org/show_bug.cgi?id=178484
+        https://trac.webkit.org/changeset/223908
+
 2017-10-24  Eric Carlson  <eric.carlson@apple.com>
 
         Web Inspector: Enable WebKit logging configuration and display
