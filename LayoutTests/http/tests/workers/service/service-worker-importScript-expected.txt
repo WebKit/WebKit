@@ -1,0 +1,5 @@
+Registering service worker
+Registered service worker
+Status is no status
+PASS
+

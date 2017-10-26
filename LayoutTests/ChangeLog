@@ -1,5 +1,17 @@
 2017-10-26  Youenn Fablet  <youenn@apple.com>
 
+        importScripts in service worker should use ServiceWorkersMode::None
+        https://bugs.webkit.org/show_bug.cgi?id=178888
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/resources/service-worker-importScript-worker.js: Added.
+        * http/tests/workers/service/resources/service-worker-importScript.js: Added.
+        * http/tests/workers/service/service-worker-importScript-expected.txt: Added.
+        * http/tests/workers/service/service-worker-importScript.html: Added.
+
+2017-10-26  Youenn Fablet  <youenn@apple.com>
+
         Implement ServiceWorkerContainer getRegistration
         https://bugs.webkit.org/show_bug.cgi?id=178882
 
