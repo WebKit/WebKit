@@ -710,7 +710,7 @@ webkit.org/b/170960 fast/mediastream/getUserMedia-webaudio.html [ Pass Timeout ]
 
 webkit.org/b/171553 [ Release ] http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 
-webkit.org/b/171763 [ Debug ] compositing/tiling/non-active-window-tiles-size.html [ Pass Failure ]
+webkit.org/b/171763 compositing/tiling/non-active-window-tiles-size.html [ Pass Failure ]
 
 webkit.org/b/171837 [ Debug ] http/tests/security/storage-blocking-loosened-plugin.html [ Pass Failure ]
 
