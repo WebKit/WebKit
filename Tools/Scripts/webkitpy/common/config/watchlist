@@ -174,11 +174,9 @@
             "filename": r"Source/WebCore/svg"
                         r"|Source/WebCore/rendering/svg",
         },
-        "WebInspectorAPI": {
-            "filename": r"Source/WebCore/inspector/InjectedScriptSource.js"
-                        r"|Source/WebCore/inspector/.+\.json"
-                        r"|Source/WebCore/inspector/.+\.idl"
-                        r"|Source/WebCore/page/Console.idl",
+        "WebInspectorBackend": {
+            "filename": r"Source/JavaScriptCore/inspector"
+                        r"|Source/WebCore/inspector",
         },
         "WebInspectorGenerator": {
             "filename": r"Source/JavaScriptCore/inspector/scripts/codegen"
@@ -191,6 +189,10 @@
         "WebSocket": {
             "filename": r"Source/WebCore/Modules/websockets"
                         r"|Source/WebCore/platform/network/(|.+/)SocketStream.*",
+        },
+        "JSBuiltins": {
+            "filename": r"Source/JavaScriptCore/builtins/.*\.js"
+                        r"|Source/WebCore/(?!modern-media-controls)(?!mediacontrols).*\.js",
         },
         "JSBuiltinsGenerator": {
             "filename": r"Source/JavaScriptCore/Scripts/builtins"
@@ -386,9 +388,10 @@
         "WTF": [ "benjamin@webkit.org", "cmarcelo@webkit.org", "cdumez@apple.com", "dbates@webkit.org" ],
         "WebGL": [ "dino@apple.com", "kondapallykalyan@gmail.com", "graouts@webkit.org" ],
         "WebIDL": [ "esprehn+autocc@chromium.org", "cdumez@apple.com", "kondapallykalyan@gmail.com" ],
-        "WebInspectorAPI": [ "joepeck@webkit.org" ],
+        "WebInspectorBackend": [ "joepeck@webkit.org" ],
         "WebInspectorGenerator": [ "bburg@apple.com", "joepeck@webkit.org" ],
         "WebInspectorUIImages": [ "agomez@igalia.com" ],
+        "JSBuiltins": [ "joepeck@webkit.org" ],
         "JSBuiltinsGenerator": [ "bburg@apple.com" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "berto@igalia.com", "cgarcia@igalia.com", "mcatanzaro@igalia.com" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],

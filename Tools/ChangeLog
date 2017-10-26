@@ -1,3 +1,12 @@
+2017-10-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add and update some watchlists
+        https://bugs.webkit.org/show_bug.cgi?id=178304
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223984.
