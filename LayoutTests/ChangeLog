@@ -1,5 +1,16 @@
 2017-10-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] Update expected results for platform/ios/ios/fast/text/opticalFontWith*.html
+        https://bugs.webkit.org/show_bug.cgi?id=178885
+
+        Unreviewed.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+        * platform/ios/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt:
+
+2017-10-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iOS] Update expected results for fast/text/international/complex-character-based-fallback.html
         https://bugs.webkit.org/show_bug.cgi?id=178884
         <rdar://problem/33602192>

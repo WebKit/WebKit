@@ -2852,10 +2852,6 @@ fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
 # <rdar://problem/33630526> http/tests/websocket/tests/hybi/deflate-frame-parameter.html is failing on iOS 11
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 
-# <rdar://problem/33630063> Multiple platform/ios/ios/fast/text/ are failing on iOS 11.
-platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ Failure ]
-platform/ios/ios/fast/text/opticalFontWithWeight.html [ Failure ]
-
 # <rdar://problem/34051745>
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure ]
