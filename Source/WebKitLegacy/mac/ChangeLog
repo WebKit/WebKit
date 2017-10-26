@@ -1,3 +1,21 @@
+2017-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix issues with WebView subframe painting
+        https://bugs.webkit.org/show_bug.cgi?id=178842
+        rdar://problem/34072253
+
+        Reviewed by Daniel Bates.
+        
+        WebHTMLView overrides some NSView internal methods to make sure that AppKit doesn't paint
+        subframes (WebKit controls subframe painting). The method signature of one of these changed in macOS
+        High Sierra, so match the new signature.
+
+        Also rename the 'rect' param to 'displayRect' to match AppKit code.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inGraphicsContext:shouldChangeFontReferenceColor:_recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:topView:shouldChangeFontReferenceColor:]):
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:shouldChangeFontReferenceColor:_recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:topView:shouldChangeFontReferenceColor:]): Deleted.
+
 2017-10-25  Youenn Fablet  <youenn@apple.com>
 
         Enable ServiceWorker to fetch resources
