@@ -1571,7 +1571,6 @@ void Element::parserDidSetAttributes()
 void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
-    Node::didMoveToNewDocument(oldDocument, newDocument);
 
     if (oldDocument.inQuirksMode() != document().inQuirksMode()) {
         // ElementData::m_classNames or ElementData::m_idForStyleResolution need to be updated with the right case.

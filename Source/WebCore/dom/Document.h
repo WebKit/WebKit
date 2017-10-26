@@ -751,7 +751,11 @@ public:
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);
-    void moveNodeIteratorsToNewDocument(Node&, Document&);
+    void moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
+    {
+        if (!m_nodeIterators.isEmpty())
+            moveNodeIteratorsToNewDocumentSlowCase(node, newDocument);
+    }
 
     void attachRange(Range*);
     void detachRange(Range*);
@@ -1422,6 +1426,8 @@ private:
     void updateBaseURL();
 
     void buildAccessKeyMap(TreeScope* root);
+
+    void moveNodeIteratorsToNewDocumentSlowCase(Node&, Document&);
 
     void loadEventDelayTimerFired();
 

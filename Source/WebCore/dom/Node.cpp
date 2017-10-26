@@ -1917,62 +1917,6 @@ EventTargetInterface Node::eventTargetInterface() const
     return NodeEventTargetInterfaceType;
 }
 
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
-class DidMoveToNewDocumentAssertionScope {
-public:
-    DidMoveToNewDocumentAssertionScope(Node& node, Document& oldDocument, Document& newDocument)
-        : m_node(node)
-        , m_oldDocument(oldDocument)
-        , m_newDocument(newDocument)
-        , m_previousScope(s_scope)
-    {
-        s_scope = this;
-    }
-
-    ~DidMoveToNewDocumentAssertionScope()
-    {
-        RELEASE_ASSERT(m_called);
-        s_scope = m_previousScope;
-    }
-
-    static void didRecieveCall(Node& node, Document& oldDocument, Document& newDocument)
-    {
-        RELEASE_ASSERT(s_scope);
-        RELEASE_ASSERT(!s_scope->m_called);
-        RELEASE_ASSERT(&s_scope->m_node == &node);
-        RELEASE_ASSERT(&s_scope->m_oldDocument == &oldDocument);
-        RELEASE_ASSERT(&s_scope->m_newDocument == &newDocument);
-        s_scope->m_called = true;
-    }
-
-private:
-    Node& m_node;
-    Document& m_oldDocument;
-    Document& m_newDocument;
-    bool m_called { false };
-    DidMoveToNewDocumentAssertionScope* m_previousScope;
-
-    static DidMoveToNewDocumentAssertionScope* s_scope;
-};
-
-DidMoveToNewDocumentAssertionScope* DidMoveToNewDocumentAssertionScope::s_scope = nullptr;
-
-#else
-class DidMoveToNewDocumentAssertionScope {
-public:
-    DidMoveToNewDocumentAssertionScope(Node&, Document&, Document&) { }
-    static void didRecieveCall(Node&, Document&, Document&) { }
-};
-#endif
-
-static ALWAYS_INLINE void moveNodeToNewDocument(Node& node, Document& oldDocument, Document& newDocument)
-{
-    ASSERT(!node.isConnected() || &oldDocument != &newDocument);
-    DidMoveToNewDocumentAssertionScope scope(node, oldDocument, newDocument);
-    node.didMoveToNewDocument(oldDocument, newDocument);
-    RELEASE_ASSERT(&node.document() == &newDocument);
-}
-
 template <typename MoveNodeFunction, typename MoveShadowRootFunction>
 static void traverseSubtreeToUpdateTreeScope(Node& root, MoveNodeFunction moveNode, MoveShadowRootFunction moveShadowRoot)
 {
@@ -1993,12 +1937,13 @@ static void traverseSubtreeToUpdateTreeScope(Node& root, MoveNodeFunction moveNo
     }
 }
 
-static void moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
+inline void Node::moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
 {
     traverseSubtreeToUpdateTreeScope(shadowRoot, [&oldDocument, &newDocument](Node& node) {
-        moveNodeToNewDocument(node, oldDocument, newDocument);
+        node.moveNodeToNewDocument(oldDocument, newDocument);
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
-        RELEASE_ASSERT(&innerShadowRoot.document() == &oldDocument);
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
+        innerShadowRoot.moveShadowRootToNewDocument(newDocument);
         moveShadowTreeToNewDocument(innerShadowRoot, oldDocument, newDocument);
     });
 }
@@ -2006,7 +1951,6 @@ static void moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& oldDoc
 void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newScope)
 {
     ASSERT(&oldScope != &newScope);
-    RELEASE_ASSERT(&root.treeScope() == &oldScope);
 
     Document& oldDocument = oldScope.documentScope();
     Document& newDocument = newScope.documentScope();
@@ -2014,22 +1958,22 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
         oldDocument.incrementReferencingNodeCount();
         traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
             ASSERT(!node.isTreeScope());
-            RELEASE_ASSERT(&node.treeScope() == &oldScope);
-            RELEASE_ASSERT(&node.document() == &oldDocument);
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
             node.setTreeScope(newScope);
-            moveNodeToNewDocument(node, oldDocument, newDocument);
+            node.moveNodeToNewDocument(oldDocument, newDocument);
         }, [&](ShadowRoot& shadowRoot) {
             ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == &oldDocument);
-            shadowRoot.setParentTreeScope(newScope);
+            shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
             moveShadowTreeToNewDocument(shadowRoot, oldDocument, newDocument);
         });
         oldDocument.decrementReferencingNodeCount();
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&oldScope.documentScope() == &oldDocument && &newScope.documentScope() == &newDocument);
     } else {
         traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
             ASSERT(!node.isTreeScope());
-            RELEASE_ASSERT(&node.treeScope() == &oldScope);
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
             node.setTreeScope(newScope);
-            if (!node.hasRareData())
+            if (UNLIKELY(!node.hasRareData()))
                 return;
             if (auto* nodeLists = node.rareData()->nodeLists())
                 nodeLists->adoptTreeScope();
@@ -2039,72 +1983,69 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
     }
 }
 
-void Node::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 {
-    RELEASE_ASSERT(&document() == &newDocument);
-    DidMoveToNewDocumentAssertionScope::didRecieveCall(*this, oldDocument, newDocument);
-
     newDocument.incrementReferencingNodeCount();
     oldDocument.decrementReferencingNodeCount();
 
     if (hasRareData()) {
         if (auto* nodeLists = rareData()->nodeLists())
             nodeLists->adoptDocument(oldDocument, newDocument);
+        if (auto* registry = mutationObserverRegistry()) {
+            for (auto& registration : *registry)
+                newDocument.addMutationObserverTypes(registration->mutationTypes());
+        }
+        if (auto* transientRegistry = transientMutationObserverRegistry()) {
+            for (auto& registration : *transientRegistry)
+                newDocument.addMutationObserverTypes(registration->mutationTypes());
+        }
+    } else {
+        ASSERT(!mutationObserverRegistry());
+        ASSERT(!transientMutationObserverRegistry());
     }
 
     oldDocument.moveNodeIteratorsToNewDocument(*this, newDocument);
-
-    if (auto* eventTargetData = this->eventTargetData()) {
-        if (!eventTargetData->eventListenerMap.isEmpty()) {
-            for (auto& type : eventTargetData->eventListenerMap.eventTypes())
-                newDocument.addListenerTypeIfNeeded(type);
-        }
-    }
 
     if (AXObjectCache::accessibilityEnabled()) {
         if (auto* cache = oldDocument.existingAXObjectCache())
             cache->remove(this);
     }
 
-    unsigned numWheelEventHandlers = eventListeners(eventNames().mousewheelEvent).size() + eventListeners(eventNames().wheelEvent).size();
-    for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
-        oldDocument.didRemoveWheelEventHandler(*this);
-        newDocument.didAddWheelEventHandler(*this);
-    }
+    if (auto* eventTargetData = this->eventTargetData()) {
+        if (!eventTargetData->eventListenerMap.isEmpty()) {
+            for (auto& type : eventTargetData->eventListenerMap.eventTypes())
+                newDocument.addListenerTypeIfNeeded(type);
+        }
 
-    unsigned numTouchEventListeners = 0;
-    for (auto& name : eventNames().touchEventNames())
-        numTouchEventListeners += eventListeners(name).size();
+        unsigned numWheelEventHandlers = eventListeners(eventNames().mousewheelEvent).size() + eventListeners(eventNames().wheelEvent).size();
+        for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
+            oldDocument.didRemoveWheelEventHandler(*this);
+            newDocument.didAddWheelEventHandler(*this);
+        }
 
-    for (unsigned i = 0; i < numTouchEventListeners; ++i) {
-        oldDocument.didRemoveTouchEventHandler(*this);
-        newDocument.didAddTouchEventHandler(*this);
+        unsigned numTouchEventListeners = 0;
+        for (auto& name : eventNames().touchEventNames())
+            numTouchEventListeners += eventListeners(name).size();
 
+        for (unsigned i = 0; i < numTouchEventListeners; ++i) {
+            oldDocument.didRemoveTouchEventHandler(*this);
+            newDocument.didAddTouchEventHandler(*this);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
-        oldDocument.removeTouchEventListener(*this);
-        newDocument.addTouchEventListener(*this);
+            oldDocument.removeTouchEventListener(*this);
+            newDocument.addTouchEventListener(*this);
 #endif
-    }
+        }
 
 #if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
-    unsigned numGestureEventListeners = 0;
-    for (auto& name : eventNames().gestureEventNames())
-        numGestureEventListeners += eventListeners(name).size();
+        unsigned numGestureEventListeners = 0;
+        for (auto& name : eventNames().gestureEventNames())
+            numGestureEventListeners += eventListeners(name).size();
 
-    for (unsigned i = 0; i < numGestureEventListeners; ++i) {
-        oldDocument.removeTouchEventHandler(*this);
-        newDocument.addTouchEventHandler(*this);
-    }
+        for (unsigned i = 0; i < numGestureEventListeners; ++i) {
+            oldDocument.removeTouchEventHandler(*this);
+            newDocument.addTouchEventHandler(*this);
+        }
 #endif
-
-    if (auto* registry = mutationObserverRegistry()) {
-        for (auto& registration : *registry)
-            newDocument.addMutationObserverTypes(registration->mutationTypes());
-    }
-
-    if (auto* transientRegistry = transientMutationObserverRegistry()) {
-        for (auto& registration : *transientRegistry)
-            newDocument.addMutationObserverTypes(registration->mutationTypes());
     }
 
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
@@ -2116,6 +2057,9 @@ void Node::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
     ASSERT_WITH_SECURITY_IMPLICATION(!oldDocument.touchEventTargetsContain(*this));
 #endif
 #endif
+
+    if (is<Element>(*this))
+        downcast<Element>(*this).didMoveToNewDocument(oldDocument, newDocument);
 }
 
 static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, Ref<EventListener>&& listener, const EventTarget::AddEventListenerOptions& options)

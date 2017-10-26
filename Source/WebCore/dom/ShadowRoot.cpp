@@ -100,17 +100,20 @@ void ShadowRoot::removedFromAncestor(RemovalType removalType, ContainerNode& old
         document().didRemoveInDocumentShadowRoot(*this);
 }
 
-void ShadowRoot::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+void ShadowRoot::moveShadowRootToNewParentScope(TreeScope& newScope, Document& newDocument)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &oldDocument || &document() == &newDocument);
+    setParentTreeScope(newScope);
+    moveShadowRootToNewDocument(newDocument);
+}
+
+void ShadowRoot::moveShadowRootToNewDocument(Document& newDocument)
+{
     setDocumentScope(newDocument);
-    ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
-    ASSERT_WITH_SECURITY_IMPLICATION(&m_styleScope->document() == &oldDocument);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!parentTreeScope() || &parentTreeScope()->documentScope() == &newDocument);
 
     // Style scopes are document specific.
     m_styleScope = std::make_unique<Style::Scope>(*this);
-
-    DocumentFragment::didMoveToNewDocument(oldDocument, newDocument);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&m_styleScope->document() == &newDocument);
 }
 
 Style::Scope& ShadowRoot::styleScope()

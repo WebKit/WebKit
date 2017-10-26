@@ -260,6 +260,8 @@ public:
     // Clones all attribute-derived data, including subclass specifics (through copyNonAttributeProperties.)
     void cloneDataFromElement(const Element&);
 
+    virtual void didMoveToNewDocument(Document& oldDocument, Document& newDocument);
+
     bool hasEquivalentAttributes(const Element* other) const;
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
@@ -556,7 +558,6 @@ protected:
     void childrenChanged(const ChildChange&) override;
     void removeAllEventListeners() final;
     virtual void parserDidSetAttributes();
-    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     void clearTabIndexExplicitlyIfNeeded();
     void setTabIndexExplicitly(int);

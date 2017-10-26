@@ -491,8 +491,6 @@ public:
     EventTargetInterface eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
 
-    virtual void didMoveToNewDocument(Document& oldDocument, Document& newDocument);
-
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
 
@@ -679,7 +677,9 @@ private:
 
     void* opaqueRootSlow() const;
 
+    static void moveShadowTreeToNewDocument(ShadowRoot&, Document& oldDocument, Document& newDocument);
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
+    void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
 
     int m_refCount;
     mutable uint32_t m_nodeFlags;

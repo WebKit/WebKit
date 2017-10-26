@@ -4048,8 +4048,9 @@ void Document::detachNodeIterator(NodeIterator* ni)
     m_nodeIterators.remove(ni);
 }
 
-void Document::moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
+void Document::moveNodeIteratorsToNewDocumentSlowCase(Node& node, Document& newDocument)
 {
+    ASSERT(!m_nodeIterators.isEmpty());
     for (auto* it : copyToVector(m_nodeIterators)) {
         if (&it->root() == &node) {
             detachNodeIterator(it);
