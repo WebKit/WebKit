@@ -112,3 +112,266 @@ page/scrolling/cocoa/ScrollingStateNode.mm
 page/scrolling/mac/ScrollingThreadMac.mm
 page/scrolling/mac/ScrollingTreeFixedNode.mm
 page/scrolling/mac/ScrollingTreeStickyNode.mm
+
+platform/audio/AudioSession.cpp
+
+platform/audio/cocoa/MediaSessionManagerCocoa.cpp
+
+platform/audio/mac/CAAudioStreamDescription.cpp
+platform/audio/mac/AudioSampleBufferList.cpp
+platform/audio/mac/AudioBusMac.mm
+platform/audio/mac/AudioDestinationMac.cpp
+platform/audio/mac/AudioFileReaderMac.cpp
+platform/audio/mac/AudioHardwareListenerMac.cpp
+platform/audio/mac/AudioSessionMac.cpp
+platform/audio/mac/CARingBuffer.cpp
+platform/audio/mac/FFTFrameMac.cpp
+platform/audio/mac/MediaSessionManagerMac.mm
+
+platform/cf/CFURLExtras.cpp
+platform/cf/FileSystemCF.cpp
+platform/cf/KeyedDecoderCF.cpp
+platform/cf/KeyedEncoderCF.cpp
+platform/cf/MainThreadSharedTimerCF.cpp
+platform/cf/MediaAccessibilitySoftLink.cpp
+platform/cf/RunLoopObserver.cpp
+platform/cf/SharedBufferCF.cpp
+platform/cf/URLCF.cpp
+
+platform/cocoa/PasteboardCocoa.mm
+platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
+platform/cocoa/CoreVideoSoftLink.cpp
+platform/cocoa/FileMonitorCocoa.mm
+platform/cocoa/FileSystemCocoa.mm
+platform/cocoa/KeyEventCocoa.mm
+platform/cocoa/LocalizedStringsCocoa.mm
+platform/cocoa/MIMETypeRegistryCocoa.mm
+platform/cocoa/MachSendRight.cpp
+platform/cocoa/NetworkExtensionContentFilter.mm
+platform/cocoa/ParentalControlsContentFilter.mm
+platform/cocoa/RuntimeApplicationChecksCocoa.mm
+platform/cocoa/ScrollController.mm
+platform/cocoa/ScrollSnapAnimatorState.mm
+platform/cocoa/SearchPopupMenuCocoa.mm
+platform/cocoa/SharedBufferCocoa.mm
+platform/cocoa/SystemVersion.mm
+platform/cocoa/TelephoneNumberDetectorCocoa.cpp
+platform/cocoa/ThemeCocoa.mm
+platform/cocoa/VideoToolboxSoftLink.cpp
+platform/cocoa/WebCoreNSErrorExtras.mm
+
+platform/graphics/MediaPlaybackTargetPicker.cpp
+
+platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
+platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify
+platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm @no-unify
+platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp @no-unify
+platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp @no-unify
+platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp @no-unify
+platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm @no-unify
+
+platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @no-unify
+platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm @no-unify
+platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp @no-unify
+platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm @no-unify
+platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm @no-unify
+platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm @no-unify
+platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @no-unify
+platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp @no-unify
+platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm @no-unify
+platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.mm @no-unify
+
+platform/graphics/ca/GraphicsLayerCA.cpp
+platform/graphics/ca/LayerFlushScheduler.cpp
+platform/graphics/ca/LayerPool.cpp
+platform/graphics/ca/PlatformCAAnimation.cpp
+platform/graphics/ca/PlatformCALayer.cpp
+platform/graphics/ca/TileController.cpp
+platform/graphics/ca/TileCoverageMap.cpp
+platform/graphics/ca/TileGrid.cpp
+platform/graphics/ca/TransformationMatrixCA.cpp
+platform/graphics/ca/cocoa/LayerFlushSchedulerMac.cpp
+platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm
+platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm
+platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
+platform/graphics/ca/cocoa/WebSystemBackdropLayer.mm
+platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
+
+platform/graphics/cg/ColorCG.cpp
+platform/graphics/cg/FloatPointCG.cpp
+platform/graphics/cg/FloatRectCG.cpp
+platform/graphics/cg/FloatSizeCG.cpp
+platform/graphics/cg/GradientCG.cpp
+platform/graphics/cg/GraphicsContext3DCG.cpp
+platform/graphics/cg/GraphicsContextCG.cpp
+platform/graphics/cg/IOSurfacePool.cpp
+platform/graphics/cg/ImageBufferCG.cpp
+platform/graphics/cg/ImageBufferDataCG.cpp
+platform/graphics/cg/ImageCG.cpp
+platform/graphics/cg/ImageDecoderCG.cpp
+platform/graphics/cg/ImageSourceCGMac.mm
+platform/graphics/cg/IntPointCG.cpp
+platform/graphics/cg/IntRectCG.cpp
+platform/graphics/cg/IntSizeCG.cpp
+platform/graphics/cg/NativeImageCG.cpp
+platform/graphics/cg/PDFDocumentImage.cpp
+platform/graphics/cg/PathCG.cpp
+platform/graphics/cg/PatternCG.cpp
+platform/graphics/cg/SubimageCacheWithTimer.cpp
+platform/graphics/cg/TransformationMatrixCG.cpp
+platform/graphics/cg/UTIRegistry.cpp
+
+platform/graphics/cocoa/GPUBufferMetal.mm
+platform/graphics/cocoa/GPUCommandBufferMetal.mm
+platform/graphics/cocoa/GPUCommandQueueMetal.mm
+platform/graphics/cocoa/GPUComputeCommandEncoderMetal.mm
+platform/graphics/cocoa/GPUComputePipelineStateMetal.mm
+platform/graphics/cocoa/GPUDepthStencilDescriptorMetal.mm
+platform/graphics/cocoa/GPUDepthStencilStateMetal.mm
+platform/graphics/cocoa/GPUDeviceMetal.mm
+platform/graphics/cocoa/GPUDrawableMetal.mm
+platform/graphics/cocoa/GPUFunctionMetal.mm
+platform/graphics/cocoa/GPULibraryMetal.mm
+platform/graphics/cocoa/GPURenderCommandEncoderMetal.mm
+platform/graphics/cocoa/GPURenderPassAttachmentDescriptorMetal.mm
+platform/graphics/cocoa/GPURenderPassColorAttachmentDescriptorMetal.mm
+platform/graphics/cocoa/GPURenderPassDepthAttachmentDescriptorMetal.mm
+platform/graphics/cocoa/GPURenderPassDescriptorMetal.mm
+platform/graphics/cocoa/GPURenderPipelineColorAttachmentDescriptorMetal.mm
+platform/graphics/cocoa/GPURenderPipelineDescriptorMetal.mm
+platform/graphics/cocoa/GPURenderPipelineStateMetal.mm
+platform/graphics/cocoa/GPUTextureDescriptorMetal.mm
+platform/graphics/cocoa/GPUTextureMetal.mm
+platform/graphics/cocoa/GraphicsContext3DCocoa.mm
+platform/graphics/cocoa/GraphicsContextCocoa.mm
+platform/graphics/cocoa/FontCacheCoreText.cpp
+platform/graphics/cocoa/FontCascadeCocoa.mm
+platform/graphics/cocoa/FontCocoa.mm
+platform/graphics/cocoa/FontDescriptionCocoa.cpp
+platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
+platform/graphics/cocoa/FontPlatformDataCocoa.mm
+platform/graphics/cocoa/IOSurface.mm
+platform/graphics/cocoa/IOSurfacePoolCocoa.mm
+platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
+platform/graphics/cocoa/WebCoreCALayerExtras.mm
+platform/graphics/cocoa/WebCoreDecompressionSession.mm
+platform/graphics/cocoa/WebGLLayer.mm
+platform/graphics/cocoa/WebGPULayer.mm
+
+platform/graphics/cv/PixelBufferConformerCV.cpp
+platform/graphics/cv/TextureCacheCV.mm
+platform/graphics/cv/VideoTextureCopierCV.cpp
+
+platform/graphics/gpu/Texture.cpp
+platform/graphics/gpu/TilingData.cpp
+
+platform/graphics/mac/ComplexTextControllerCoreText.mm
+platform/graphics/mac/FontCustomPlatformData.cpp
+platform/graphics/mac/GlyphPageMac.cpp
+platform/graphics/mac/ImageMac.mm
+platform/graphics/mac/SimpleFontDataCoreText.cpp
+platform/graphics/mac/WebLayer.mm
+
+platform/graphics/opengl/Extensions3DOpenGL.cpp
+platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
+platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+
+platform/graphics/opentype/OpenTypeCG.cpp
+
+platform/mac/DragDataMac.mm
+platform/mac/LoggingMac.mm
+platform/mac/MediaRemoteSoftLink.cpp
+platform/mac/PublicSuffixMac.mm
+platform/mac/SerializedPlatformRepresentationMac.mm
+platform/mac/StringUtilities.mm
+platform/mac/URLMac.mm
+platform/mac/WebCoreNSStringExtras.mm
+platform/mac/WebCoreNSURLExtras.mm
+platform/mac/WebCoreObjCExtras.mm
+
+platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
+platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp
+
+platform/mock/MediaPlaybackTargetPickerMock.cpp
+platform/mock/MediaPlaybackTargetMock.cpp
+
+platform/network/cf/AuthenticationCF.cpp
+platform/network/cf/CookieJarCFNet.cpp
+platform/network/cf/CookieStorageCFNet.cpp
+platform/network/cf/CredentialStorageCFNet.cpp
+platform/network/cf/DNSCFNet.cpp
+platform/network/cf/FormDataStreamCFNet.cpp
+platform/network/cf/LoaderRunLoopCF.cpp
+platform/network/cf/NetworkStorageSessionCFNet.cpp
+platform/network/cf/ProxyServerCFNet.cpp
+platform/network/cf/ResourceErrorCF.cpp
+platform/network/cf/ResourceRequestCFNet.cpp
+platform/network/cf/ResourceResponseCFNet.cpp
+platform/network/cf/SocketStreamHandleImplCFNet.cpp
+platform/network/cf/SynchronousLoaderClientCFNet.cpp
+platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
+
+platform/network/cocoa/CookieCocoa.mm
+platform/network/cocoa/CookieStorageObserver.mm
+platform/network/cocoa/CredentialCocoa.mm
+platform/network/cocoa/NetworkLoadMetrics.mm
+platform/network/cocoa/NetworkStorageSessionCocoa.mm
+platform/network/cocoa/ProtectionSpaceCocoa.mm
+platform/network/cocoa/ResourceRequestCocoa.mm
+platform/network/cocoa/ResourceResponseCocoa.mm
+platform/network/cocoa/WebCoreNSURLSession.mm @no-unify
+
+platform/network/mac/AuthenticationMac.mm
+platform/network/mac/BlobDataFileReferenceMac.mm
+platform/network/mac/CertificateInfoMac.mm
+platform/network/mac/CookieJarMac.mm
+platform/network/mac/CookieStorageMac.mm
+platform/network/mac/CredentialStorageMac.mm
+platform/network/mac/FormDataStreamMac.mm
+platform/network/mac/ResourceErrorMac.mm
+platform/network/mac/ResourceHandleMac.mm
+platform/network/mac/SynchronousLoaderClient.mm
+platform/network/mac/UTIUtilities.mm
+platform/network/mac/WebCoreResourceHandleAsDelegate.mm
+platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
+platform/network/mac/WebCoreURLResponse.mm
+
+platform/posix/FileSystemPOSIX.cpp
+
+platform/text/cf/HyphenationCF.cpp
+
+platform/text/mac/LocaleMac.mm
+platform/text/mac/TextBoundaries.mm
+
+rendering/RenderThemeCocoa.mm
+rendering/TextAutoSizing.cpp
+
+platform/mediastream/mac/CoreAudioCaptureSource.cpp
+platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp
+platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.cpp
+platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp
+platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
+platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp
+
+platform/audio/mac/AudioSampleDataSource.mm
+
+platform/mediastream/mac/MockRealtimeAudioSourceMac.mm
+platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm
+
+platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
+
+platform/network/cf/ResourceHandleCFNet.cpp
+platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp
