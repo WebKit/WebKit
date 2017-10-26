@@ -30,7 +30,6 @@
 
 struct TestOptions {
     bool enableAttachmentElement { false };
-    bool useAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };

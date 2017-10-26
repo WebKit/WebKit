@@ -110,6 +110,9 @@ public:
 
     bool canRender3DTransforms() const;
 
+    // Copy the accelerated compositing related flags from Settings
+    void cacheAcceleratedCompositingFlags();
+
     // Called when the layer hierarchy needs to be updated (compositing layers have been
     // created, destroyed or re-parented).
     void setCompositingLayersNeedRebuild(bool needRebuild = true);
@@ -357,9 +360,7 @@ private:
 
     void clearBackingForLayerIncludingDescendants(RenderLayer&);
 
-    void cacheAcceleratedCompositingFlags();
-
-    // Repaint the given layer and its descendants.
+    // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);
 
     void computeExtent(const OverlapMap&, const RenderLayer&, OverlapExtent&) const;

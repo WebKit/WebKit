@@ -72,9 +72,6 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
 
 void RemoteLayerBackingStore::ensureBackingStore(FloatSize size, float scale, bool acceleratesDrawing, bool deepColor, bool isOpaque)
 {
-#if !USE(IOSURFACE)
-    acceleratesDrawing = false;
-#endif
     if (m_size == size && m_scale == scale && m_deepColor == deepColor && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
         return;
 
