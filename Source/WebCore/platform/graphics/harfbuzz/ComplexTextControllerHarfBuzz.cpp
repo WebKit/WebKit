@@ -38,7 +38,7 @@ static inline float harfBuzzPositionToFloat(hb_position_t value)
     return static_cast<float>(value) / (1 << 16);
 }
 
-ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd, bool ltr)
+ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd)
     : m_initialAdvance(0, 0)
     , m_font(font)
     , m_characters(characters)
@@ -47,7 +47,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
     , m_indexEnd(indexEnd)
     , m_glyphCount(hb_buffer_get_length(buffer))
     , m_stringLocation(stringLocation)
-    , m_isLTR(ltr)
+    , m_isLTR(HB_DIRECTION_IS_FORWARD(hb_buffer_get_direction(buffer)))
 {
     if (!m_glyphCount)
         return;
@@ -224,7 +224,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
 
         HbUniquePtr<hb_font_t> harfBuzzFont(face->createFont());
         hb_shape(harfBuzzFont.get(), buffer.get(), features.isEmpty() ? nullptr : features.data(), features.size());
-        m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters, stringLocation, length, run.startIndex, run.endIndex, m_run.ltr()));
+        m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters, stringLocation, length, run.startIndex, run.endIndex));
         hb_buffer_reset(buffer.get());
     }
 }
