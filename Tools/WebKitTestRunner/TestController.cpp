@@ -739,10 +739,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetInspectorAdditionsEnabled(preferences, options.enableInspectorAdditions);
 
-#if ENABLE(PAYMENT_REQUEST)
-    WKPreferencesSetPaymentRequestEnabled(preferences, true);
-#endif
-
     WKPreferencesSetStorageAccessAPIEnabled(preferences, true);
 
     platformResetPreferencesToConsistentValues();

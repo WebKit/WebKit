@@ -3393,7 +3393,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(PAYMENT_REQUEST)
-    settings.setPaymentRequestEnabled(store.getBoolValueForKey(WebPreferencesKey::paymentRequestEnabledKey()));
+    settings.setPaymentRequestEnabled(store.getBoolValueForKey(WebPreferencesKey::applePayEnabledKey()));
 #endif
 
     settings.setStorageAccessAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::storageAccessAPIEnabledKey()));

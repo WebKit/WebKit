@@ -1890,16 +1890,6 @@ bool WKPreferencesGetInspectorAdditionsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->inspectorAdditionsEnabled();
 }
 
-void WKPreferencesSetPaymentRequestEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setPaymentRequestEnabled(flag);
-}
-
-bool WKPreferencesGetPaymentRequestEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->paymentRequestEnabled();
-}
-
 void WKPreferencesSetStorageAccessAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setStorageAccessAPIEnabled(flag);

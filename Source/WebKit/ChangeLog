@@ -1,3 +1,18 @@
+2017-10-26  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Enable Payment Request whenever Apple Pay is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=178880
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPaymentRequestEnabled): Deleted.
+        (WKPreferencesGetPaymentRequestEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-10-26  Chris Dumez  <cdumez@apple.com>
 
         Bring back SWContextManager abstraction in WebCore

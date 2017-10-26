@@ -950,13 +950,6 @@ LinkPreloadEnabled:
   humanReadableDescription: "Link preload support"
   category: experimental
 
-PaymentRequestEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Payment Request"
-  humanReadableDescription: "W3C Payment Request API"
-  category: experimental
-
 WebRTCLegacyAPIDisabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
