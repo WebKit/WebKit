@@ -239,7 +239,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/Cocoa/_WKUserContentWorld.mm
     UIProcess/API/Cocoa/_WKUserInitiatedAction.mm
     UIProcess/API/Cocoa/_WKUserStyleSheet.mm
-    UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm
     UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
     UIProcess/API/Cocoa/_WKWebsiteDataSize.mm
     UIProcess/API/Cocoa/_WKWebsiteDataStore.mm

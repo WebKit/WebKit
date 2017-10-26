@@ -1,3 +1,22 @@
+2017-10-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove deprecated WebKit symbols
+        https://bugs.webkit.org/show_bug.cgi?id=178875
+        rdar://problem/31139070
+
+        Reviewed by Dan Bernstein.
+
+        * PlatformMac.cmake:
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKContextSetProcessModel):
+        (WKPageGroupCopyIdentifier): Deleted.
+        (WKPageGroupAddUserContentFilter): Deleted.
+        (WKPageGroupRemoveUserContentFilter): Deleted.
+        * UIProcess/API/C/WKPageGroup.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm: Removed.
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223984.

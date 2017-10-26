@@ -51,28 +51,3 @@ void WKContextSetUsesNetworkProcess(WKContextRef, bool)
 void WKContextSetProcessModel(WKContextRef, WKProcessModel)
 {
 }
-
-WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef)
-{
-    return nullptr;
-}
-
-void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentFilterRef contentFilterRef)
-{
-#if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->userContentController().addContentRuleList(*toImpl(contentFilterRef));
-#else
-    UNUSED_PARAM(pageGroupRef);
-    UNUSED_PARAM(contentFilterRef);
-#endif
-}
-
-void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroupRef, WKStringRef contentFilterNameRef)
-{
-#if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(pageGroupRef)->userContentController().removeContentRuleList(toWTFString(contentFilterNameRef));
-#else
-    UNUSED_PARAM(pageGroupRef);
-    UNUSED_PARAM(contentFilterNameRef);
-#endif
-}

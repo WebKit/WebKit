@@ -49,13 +49,6 @@ WK_EXPORT void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup);
 WK_EXPORT void WKPageGroupAddUserScript(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames, _WKUserScriptInjectionTime);
 WK_EXPORT void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroup);
 
-
-// -- DEPRECATED --
-
-WK_EXPORT WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup) WK_UNAVAILABLE;
-WK_EXPORT void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroup, WKUserContentFilterRef userContentFilter) WK_UNAVAILABLE;
-WK_EXPORT void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroup, WKStringRef userContentFilterName) WK_UNAVAILABLE;
-
 #ifdef __cplusplus
 }
 #endif
