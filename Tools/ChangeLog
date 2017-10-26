@@ -1,3 +1,15 @@
+2017-10-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Clear cached gUM prompt state
+        https://bugs.webkit.org/show_bug.cgi?id=178754
+        <rdar://problem/32742356>
+
+        Unreviewed, fix a flakey test.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMediaReprompt.mm:
+        (-[GetUserMediaRepromptTestView haveStream:]): New, check several times for expected state.
+        (TestWebKitAPI::TEST): Don't assume stream state changes in the page immediately.
+
 2017-10-26  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Enable Payment Request whenever Apple Pay is enabled

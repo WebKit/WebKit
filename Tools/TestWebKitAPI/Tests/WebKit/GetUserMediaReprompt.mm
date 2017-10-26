@@ -58,6 +58,26 @@ static bool wasPrompted = false;
 }
 @end
 
+@interface GetUserMediaRepromptTestView : TestWKWebView
+- (BOOL)haveStream:(BOOL)expected;
+@end
+
+@implementation GetUserMediaRepromptTestView
+- (BOOL)haveStream:(BOOL)expected
+{
+    int retryCount = 10;
+    while (retryCount--) {
+        auto result = [self stringByEvaluatingJavaScript:@"haveStream()"];
+        if (result.boolValue == expected)
+            return YES;
+
+        TestWebKitAPI::Util::spinRunLoop(10);
+    }
+
+    return NO;
+}
+@end
+
 namespace TestWebKitAPI {
 
 TEST(WebKit2, GetUserMediaReprompt)
@@ -68,7 +88,7 @@ TEST(WebKit2, GetUserMediaReprompt)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     preferences._mediaDevicesEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
-    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto webView = [[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
     auto delegate = adoptNS([[GetUserMediaRepromptUIDelegate alloc] init]);
     webView.UIDelegate = delegate.get();
 
@@ -76,23 +96,19 @@ TEST(WebKit2, GetUserMediaReprompt)
     [webView loadTestPageNamed:@"getUserMedia"];
     TestWebKitAPI::Util::run(&wasPrompted);
 
-    auto result = [webView stringByEvaluatingJavaScript:@"haveStream()"];
-    EXPECT_TRUE([result boolValue]);
+    EXPECT_TRUE([webView haveStream:YES]);
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    result = [webView stringByEvaluatingJavaScript:@"haveStream()"];
-    EXPECT_FALSE([result boolValue]);
+    EXPECT_TRUE([webView haveStream:NO]);
 
     wasPrompted = false;
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
-    result = [webView stringByEvaluatingJavaScript:@"haveStream()"];
-    EXPECT_TRUE([result boolValue]);
+    EXPECT_TRUE([webView haveStream:YES]);
     EXPECT_FALSE(wasPrompted);
 
     preferences._inactiveMediaCaptureSteamRepromptIntervalInMinutes = .5 / 60;
     [webView stringByEvaluatingJavaScript:@"stop()"];
-    result = [webView stringByEvaluatingJavaScript:@"haveStream()"];
-    EXPECT_FALSE([result boolValue]);
+    EXPECT_TRUE([webView haveStream:NO]);
 
     // Sleep long enough for the reprompt timer to fire and clear cached state.
     Util::sleep(1);
@@ -100,8 +116,7 @@ TEST(WebKit2, GetUserMediaReprompt)
     wasPrompted = false;
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
     TestWebKitAPI::Util::run(&wasPrompted);
-    result = [webView stringByEvaluatingJavaScript:@"haveStream()"];
-    EXPECT_TRUE([result boolValue]);
+    EXPECT_TRUE([webView haveStream:YES]);
 }
 
 } // namespace TestWebKitAPI
