@@ -216,6 +216,7 @@ static inline bool isDisallowedElement(const Element& element)
 void SVGUseElement::clearShadowTree()
 {
     if (auto root = userAgentShadowRoot()) {
+        // Safe because SVG use element's shadow tree is never used to fire synchronous events during layout or DOM mutations.
         NoEventDispatchAssertion::EventAllowedScope scope(*root);
         root->removeChildren();
     }
@@ -243,12 +244,17 @@ void SVGUseElement::updateShadowTree()
         return;
     }
 
-    cloneTarget(ensureUserAgentShadowRoot(), *target);
-    expandUseElementsInShadowTree();
-    expandSymbolElementsInShadowTree();
-    transferEventListenersToShadowTree();
+    {
+        // Safe because the cloned shadow tree has never been exposed to author scripts.
+        auto& shadowRoot = ensureUserAgentShadowRoot();
+        NoEventDispatchAssertion::EventAllowedScope scope(shadowRoot);
+        cloneTarget(shadowRoot, *target);
+        expandUseElementsInShadowTree();
+        expandSymbolElementsInShadowTree();
+        updateRelativeLengthsInformation();
+    }
 
-    updateRelativeLengthsInformation();
+    transferEventListenersToShadowTree();
 
     // When we invalidate the other shadow trees, it's important that we don't
     // follow any cycles and invalidate ourselves. To avoid that, we temporarily
@@ -430,6 +436,8 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
 void SVGUseElement::cloneTarget(ContainerNode& container, SVGElement& target) const
 {
     Ref<SVGElement> targetClone = static_cast<SVGElement&>(target.cloneElementWithChildren(document()).get());
+    // Safe because the newy cloned nodes in the shadow tree has not been exposed to author scripts yet.
+    NoEventDispatchAssertion::EventAllowedScope scope(targetClone);
     associateClonesWithOriginals(targetClone.get(), target);
     removeDisallowedElementsFromSubtree(targetClone.get());
     removeSymbolElementsFromSubtree(targetClone.get());
@@ -462,6 +470,9 @@ void SVGUseElement::expandUseElementsInShadowTree() const
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
 
         auto replacementClone = SVGGElement::create(document());
+        // Safe because the use element's shadow tree is not exposed to author scripts, and we don't fire synchronous events during layout & DOM layout.
+        NoEventDispatchAssertion::EventAllowedScope scope(replacementClone);
+
         cloneDataAndChildren(replacementClone.get(), originalClone);
 
         replacementClone->removeAttribute(SVGNames::xAttr);
@@ -495,6 +506,8 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
         // 'svg' element will use values of 100% for these attributes.
 
         auto replacementClone = SVGSVGElement::create(document());
+        // Safe because the newly created SVG element and the newly created shadow tree has not been exposed to author scripts yet.
+        NoEventDispatchAssertion::EventAllowedScope scope(replacementClone);
         cloneDataAndChildren(replacementClone.get(), originalClone);
 
         originalClone.parentNode()->replaceChild(replacementClone, originalClone);
@@ -506,6 +519,7 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
 
 void SVGUseElement::transferEventListenersToShadowTree() const
 {
+    // FIXME: Don't directly add event listeners on each descendant. Copy event listeners on the use element instead.
     for (auto& descendant : descendantsOfType<SVGElement>(*userAgentShadowRoot())) {
         if (EventTargetData* data = descendant.correspondingElement()->eventTargetData())
             data->eventListenerMap.copyEventListenersNotCreatedFromMarkupToTarget(&descendant);
