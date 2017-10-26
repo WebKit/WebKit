@@ -1,3 +1,25 @@
+2017-10-25  Alex Christensen  <achristensen@webkit.org>
+
+        Rebase contentextensions test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=178841
+
+        Reviewed by Alexey Proskuryakov.
+
+        They've been marked as flaky for so long that nobody has rebased them.  The URLParser
+        has changed underneath them, DOM error reporting has changed, etc.  The first step to
+        gaining this test coverage back again is rebasing.
+
+        * http/tests/contentextensions/block-everything-if-domain-expected.txt:
+        * http/tests/contentextensions/block-everything-unless-domain-redirect-expected.txt:
+        * http/tests/contentextensions/character-set-basic-support-expected.txt:
+        * http/tests/contentextensions/main-resource-expected.txt:
+        * http/tests/contentextensions/main-resource-redirect-blocked-expected.txt:
+        * http/tests/contentextensions/main-resource-redirect-error-expected.txt:
+        * http/tests/contentextensions/make-https-expected.txt:
+        * http/tests/contentextensions/plugin-doesnt-crash-expected.txt:
+        * http/tests/contentextensions/sync-xhr-blocked-expected.txt:
+        * http/tests/contentextensions/text-track-blocked-expected.txt:
+
 2017-10-26  Matt Lewis  <jlewis3@apple.com>
 
         Skipped webrtc/video-replace-muted-track.html on iOS.

@@ -1,7 +1,11 @@
 CONSOLE MESSAGE: line 25: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/character-set-basic-support.html from loading a resource from http://127.0.0.1:8000/resources/square100.png?BaSiC-TeSt-cAsE
+CONSOLE MESSAGE: line 25: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/square100.png?BaSiC-TeSt-cAsE. Resource blocked by content blocker
 CONSOLE MESSAGE: line 25: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/character-set-basic-support.html from loading a resource from http://127.0.0.1:8000/resources/square100.png?any-scheme-matcher
+CONSOLE MESSAGE: line 25: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/square100.png?any-scheme-matcher. Resource blocked by content blocker
 CONSOLE MESSAGE: line 25: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/character-set-basic-support.html from loading a resource from http://127.0.0.1:8000/resources/square100.png?casesensitive
+CONSOLE MESSAGE: line 25: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/square100.png?casesensitive. Resource blocked by content blocker
 CONSOLE MESSAGE: line 25: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/character-set-basic-support.html from loading a resource from http://127.0.0.1:8000/resources/square100.png?caseSeNsitive
+CONSOLE MESSAGE: line 25: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/square100.png?caseSeNsitive. Resource blocked by content blocker
 Test basic cases of filter using a character set (e.g. [a-z]).
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

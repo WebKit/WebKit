@@ -7,3 +7,4 @@ http://127.0.0.1:8000/resources/redirect.php?url=should-not-load.html - willSend
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/resources/should-not-load.html from loading a resource from http://127.0.0.1:8000/resources/should-not-load.html
 main frame - didFailProvisionalLoadWithError
 main frame - (kWKErrorCodeFrameLoadBlockedByContentBlocker)
+
