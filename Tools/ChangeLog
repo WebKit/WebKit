@@ -1,3 +1,33 @@
+2017-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: Add support to import and run W3C tests
+        https://bugs.webkit.org/show_bug.cgi?id=177304
+
+        Reviewed by Brian Burg.
+
+        WPT has now several WebDriver tests, and new ones are going to be added to cover the whole spec. This patch
+        adds the initial support for running W3C tests. The script import-w3c-webdriver-tests reuses parts of the W3C
+        test downloader to download the tests and required tools from WPT repository into WebDriverTests
+        directory. Tests can be run with run-webdriver-tests, a new script that works similar to other test runner
+        scripts. For now it shows a summary at the end of the execution, there aren't expectations yet, since we are not
+        ready to run those tests in the bots. Once we are ready to properly run the tests, we can add the expectations
+        support and run the tests in the bots.
+
+        * Scripts/import-w3c-webdriver-tests: Added.
+        * Scripts/run-webdriver-tests: Added.
+        * Scripts/webkitpy/style/checker.py: Skip WebDriverTests directory since it only contains third-party python
+        code.
+        * Scripts/webkitpy/thirdparty/__init__.py: Add support to autodownload mozlog and mozprocess since they are
+        required by the WebDriver tests.
+        * Scripts/webkitpy/webdriver_tests/__init__.py: Added.
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver.py: Added.
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_gtk.py: Added.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_result.py: Added.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py: Added.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py: Added.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py: Added.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_web_server.py: Added.
+
 2017-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Clear cached gUM prompt state

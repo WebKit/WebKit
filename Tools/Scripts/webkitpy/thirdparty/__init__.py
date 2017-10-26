@@ -106,6 +106,10 @@ class AutoinstallImportHook(object):
             self.install_chromedriver()
         elif '.geckodriver' in fullname:
             self.install_geckodriver()
+        elif '.mozlog' in fullname:
+            self._install_mozlog()
+        elif '.mozprocess' in fullname:
+            self._install_mozprocess()
 
     def _install_mechanize(self):
         self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
@@ -118,6 +122,16 @@ class AutoinstallImportHook(object):
     def _install_pep8(self):
         self._install("http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
                              "pep8-0.5.0/pep8.py")
+
+    def _install_mozlog(self):
+        self._ensure_autoinstalled_dir_is_in_sys_path()
+        self._install("https://pypi.python.org/packages/10/d5/d286b5dc3f40e32d2a9b3cab0b5b20a05d704958b44b4c5a9aed6472deab/mozlog-3.5.tar.gz#md5=3282c70e7037266f83d8c80119129b75",
+                              "mozlog-3.5/mozlog")
+
+    def _install_mozprocess(self):
+        self._ensure_autoinstalled_dir_is_in_sys_path()
+        self._install("https://pypi.python.org/packages/cb/26/144dbc28d1f40e392f8a0cbee771ba624a61017f016c77ad88424d84b230/mozprocess-0.25.tar.gz#md5=07a04e6ae1a705705e4b44969fe7a182",
+                              "mozprocess-0.25/mozprocess")
 
     def _install_pylint(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()

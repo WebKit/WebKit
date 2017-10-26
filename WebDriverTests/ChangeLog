@@ -1,0 +1,14 @@
+2017-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: Add support to import and run W3C tests
+        https://bugs.webkit.org/show_bug.cgi?id=177304
+
+        Reviewed by Brian Burg.
+
+        Add json file used by the importer and the result of running the importer.
+
+        * imported/w3c/importer.json: Added.
+        * imported/w3c/tools/pytest/: Added.
+        * imported/w3c/tools/webdriver/: Added.
+        * imported/w3c/tools/wptrunner/: Added.
+        * imported/w3c/webdriver/: Added.

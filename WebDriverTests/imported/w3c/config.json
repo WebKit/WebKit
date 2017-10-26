@@ -1,0 +1,10 @@
+{"host": "localhost",
+ "ports":{"http":[8802, null],
+          "https": [null],
+          "ws": [null],
+          "wss": [null]},
+ "doc_root": "%DOC_ROOT%",
+ "check_subdomains": false,
+ "log_level":"debug",
+ "bind_hostname": false
+}

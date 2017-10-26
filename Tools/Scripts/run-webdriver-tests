@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2017 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import logging
+import optparse
+import sys
+
+from webkitpy.common.host import Host
+from webkitpy.webdriver_tests.webdriver_test_runner import WebDriverTestRunner
+from webkitpy.common.system.logutils import configure_logging
+
+_log = logging.getLogger(__name__)
+
+option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
+option_parser.add_option('--verbose', action='store_true', dest='verbose',
+                         help='Show debug message')
+option_parser.add_option('--platform', action='store',
+                         help='Platform to use (e.g., "gtk")')
+option_parser.add_option('--gtk', action='store_const', dest='platform', const='gtk',
+                         help='Alias for --platform=gtk')
+option_parser.add_option('--release', action='store_const', const='Release', dest="configuration",
+                         help='Set the configuration to Release')
+option_parser.add_option('--debug', action='store_const', const='Debug', dest="configuration",
+                         help='Set the configuration to Debug')
+option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
+                         help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
+                              '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.')
+
+options, args = option_parser.parse_args()
+
+configure_logging(logging.DEBUG if options.verbose else logging.INFO)
+
+try:
+    port = Host().port_factory.get(options.platform, options)
+except NotImplementedError, e:
+    _log.error(str(e))
+    sys.exit(-1)
+
+port._display_server = options.display_server
+runner = WebDriverTestRunner(port)
+retval = runner.run(args)
+runner.print_results()
+
+sys.exit(retval)
+
