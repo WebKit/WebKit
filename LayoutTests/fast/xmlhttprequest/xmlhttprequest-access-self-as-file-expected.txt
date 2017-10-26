@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load xmlhttprequest-access-self-as-file-real.html. Cross origin requests are only supported for HTTP.
+Tests that you cannot XHR to the current file URL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+We're checking we can't read the current file.
+
+Exception: A network error occurred.
+Response length: 0
+PASSED: Access was not permitted.
+

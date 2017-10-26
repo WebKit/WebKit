@@ -1,0 +1,40 @@
+CONSOLE MESSAGE: line 25: XMLHttpRequest cannot load [object%20File]. Cross origin requests are only supported for HTTP.
+
+Tests that you cannot XHR to the current file as a file-origin Blob.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Got files: resources/xmlhttprequest-access-self-as-blob-real.html
+PASS Moved to center of file input.
+PASS Drag event received.
+PASS Generated file-origin blob successfully.
+PASS Sent Blob URL to frame.
+PASS Recvied message
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+We're checking we can't read from a file-origin Blob.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS Added a message handler.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+PASS Got the BURL message data
+PASS Executing Blob URL test.
+FAIL Exception:  A network error occurred.
+Response length: 0
+PASS Access was not permitted.
+

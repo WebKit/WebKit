@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 64: XMLHttpRequest cannot load nonexistent.html. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 42: XMLHttpRequest cannot load . Cross origin requests are only supported for HTTP.
 
 Bug 22475: REGRESSION: Async XMLHttpRequest never finishes on nonexistent files anymore
 
@@ -11,4 +13,5 @@ Error handler: readyState = 4
 Doing an XHR to a directory.
 ReadyState handler: readyState = 1
 ReadyState handler: readyState = 4
+Error handler: readyState = 4
 

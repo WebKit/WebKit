@@ -31,6 +31,7 @@
 
 #include "BlobURL.h"
 #include "FileSystem.h"
+#include "ResourceRequest.h"
 #include "URL.h"
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
@@ -314,6 +315,27 @@ bool SecurityOrigin::canRequest(const URL& url) const
         return true;
 
     return false;
+}
+
+bool SecurityOrigin::requestIsSameOrigin(const ResourceRequest& request)
+{
+    if (m_universalAccess)
+        return true;
+
+    if (!canRequest(request.url()))
+        return false;
+
+    if (request.requester() != ResourceRequest::Requester::XHR)
+        return true;
+
+    // XHR to a file URL should never be treated as same-origin.
+    if (request.url().protocolIs("file"))
+        return false;
+
+    if (auto blobOrigin = getCachedOrigin(request.url()))
+        return blobOrigin->protocol() != "file";
+
+    return true;
 }
 
 bool SecurityOrigin::canReceiveDragData(const SecurityOrigin& dragInitiator) const

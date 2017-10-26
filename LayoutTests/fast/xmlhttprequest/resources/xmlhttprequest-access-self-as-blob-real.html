@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console"/>
+<script>
+description("We're checking we can't read from a file-origin Blob.");
+
+window.addEventListener('message', function(event) {
+    testPassed('Got the BURL message data');
+    if ("BURL" in event.data)
+        runTest(event.data.BURL);
+});
+
+testPassed('Added a message handler.');
+
+function runTest(fileBlob) {
+    testPassed('Executing Blob URL test.');
+
+    var xhr = new XMLHttpRequest();
+    try {
+        xhr.open("GET", fileBlob, false);
+        xhr.send("");
+    } catch (e) {
+        testFailed("Exception: " + e.message);
+    }
+
+    debug("Response length: " + xhr.responseText.length);
+    if (xhr.responseText == "")
+        testPassed('Access was not permitted.');
+    else
+        testFailed('We should not have gotten a response.');
+
+    window.parent.postMessage('done', '*');
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

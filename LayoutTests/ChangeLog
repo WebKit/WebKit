@@ -1,3 +1,21 @@
+2017-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+        XMLHttpRequest should not treat file URLs as same origin
+        https://bugs.webkit.org/show_bug.cgi?id=178565
+        <rdar://problem/11115901>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/xmlhttprequest/resources/xmlhttprequest-access-self-as-file-real.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-access-self-as-file.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-access-self-as-file-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-access-self-as-blob-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-access-self-as-blob.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Rebaseline test now that we reject
+          XHR to local file URLs.
+        * platform/ios/fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt: Rebaselined.
+        * platform/wk2/TestExpectations: Skip test since 'beginDragWithFiles' is not supported in WKTR.
+
 2017-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r222090): [HarfBuzz] Arabic shaping is broken except for first word in line
