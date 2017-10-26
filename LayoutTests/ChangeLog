@@ -1,3 +1,21 @@
+2017-10-26  Youenn Fablet  <youenn@apple.com>
+
+        http/tests/workers/service/service-worker-cache-api.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=178877
+
+        Reviewed by Alex Christensen.
+
+        Marking test as PASS/FAIL.
+        Changing test to finish after 10 seconds.
+        Beefing up logging to help identifiying flakiness reason.
+
+        * TestExpectations:
+        * http/tests/workers/service/resources/service-worker-cache-api-worker.js:
+        (event.event.respondWith.promise.then):
+        * http/tests/workers/service/resources/service-worker-cache-api.js:
+        (async.test):
+        * http/tests/workers/service/service-worker-cache-api.https-expected.txt:
+
 2017-10-26  Matt Lewis  <jlewis3@apple.com>
 
         Marked webrtc/video-mute.html as flaky.

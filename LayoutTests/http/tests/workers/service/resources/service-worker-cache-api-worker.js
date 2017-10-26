@@ -29,9 +29,13 @@ self.addEventListener("fetch", (event) => {
         return;
     }
     event.respondWith(promise.then(() => {
-        status = event.request.url.substring(0, event.request.url.length - 18);
+        status = "opening cache for " + event.request.url.substring(0, event.request.url.length - 18);
         return caches.open("test").then((cache) => {
+            status = "matching cache for " + event.request.url.substring(0, event.request.url.length - 18);
             return cache.match(event.request.url.substring(0, event.request.url.length - 18));
+        }).then((response) => {
+            status = "matched cache for " + event.request.url.substring(0, event.request.url.length - 18);
+            return response;
         });
     }));
 });
