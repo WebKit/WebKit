@@ -1,3 +1,13 @@
+2017-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add CanvasOverview.svg and Canvas.svg
+        https://bugs.webkit.org/show_bug.cgi?id=178426
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/Canvas.svg: Added.
+        * UserInterface/Images/gtk/CanvasOverview.svg: Added.
+
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: provide a way to enable/disable event listeners
