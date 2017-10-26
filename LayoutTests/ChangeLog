@@ -1,3 +1,22 @@
+2017-10-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223974. rdar://problem/35178887
+
+    2017-10-25  Jer Noble  <jer.noble@apple.com>
+
+            UNPACK_FLIP_Y is broken for MSE-backed videos
+            https://bugs.webkit.org/show_bug.cgi?id=178774
+
+            Reviewed by Dean Jackson.
+
+            * fast/canvas/webgl/resources/orientation-flipped-fragmented.mp4: Added.
+            * fast/canvas/webgl/resources/orientation-normal-fragmented.mp4: Added.
+            * fast/canvas/webgl/texImage2D-mse-flipY-false-expected.txt: Added.
+            * fast/canvas/webgl/texImage2D-mse-flipY-false.html: Added.
+            * fast/canvas/webgl/texImage2D-mse-flipY-true-expected.txt: Added.
+            * fast/canvas/webgl/texImage2D-mse-flipY-true.html: Added.
+            * platform/ios/TestExpectations:
+
 2017-10-21  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223578. rdar://problem/34891313

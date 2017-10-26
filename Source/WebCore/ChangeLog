@@ -1,3 +1,30 @@
+2017-10-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223974. rdar://problem/35178887
+
+    2017-10-25  Jer Noble  <jer.noble@apple.com>
+
+            UNPACK_FLIP_Y is broken for MSE-backed videos
+            https://bugs.webkit.org/show_bug.cgi?id=178774
+
+            Reviewed by Dean Jackson.
+
+            The global GLSL variable gl_Position can apparently only be set once, and any modifications
+            made after that initial set are ignored. So rather than implement flipping by changing
+            gl_Position.y, flip the texture coordinates instead.
+
+            Drive-by fix: some of the constants used in VideoTextureCopierCV are not defined on older
+            macOS versions, so make them optional.
+
+            Tests: fast/canvas/webgl/texImage2D-mse-flipY-false.html
+                   fast/canvas/webgl/texImage2D-mse-flipY-true.html
+
+            * platform/graphics/cv/VideoTextureCopierCV.cpp:
+            (WebCore::transferFunctionFromString):
+            (WebCore::VideoTextureCopierCV::initializeUVContextObjects):
+            * platform/cocoa/CoreVideoSoftLink.cpp:
+            * platform/cocoa/CoreVideoSoftLink.h:
+
 2017-10-25  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223960. rdar://problem/35178892
