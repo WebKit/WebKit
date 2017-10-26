@@ -541,7 +541,10 @@ public:
 #if !RELEASE_LOG_DISABLED
     const PAL::Logger& logger() const final { return *m_logger.get(); }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    WTFLogChannel& logChannel() const final;
 #endif
+
+    bool willLog(WTFLogLevel) const;
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
@@ -902,13 +905,10 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "HTMLMediaElement"; }
-    WTFLogChannel& logChannel() const final;
 
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const PAL::Logger& mediaPlayerLogger() final { return logger(); }
 #endif
-
-    bool willLog(WTFLogLevel) const;
 
     WeakPtrFactory<HTMLMediaElement> m_weakFactory;
     Timer m_pendingActionTimer;

@@ -169,7 +169,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
         return { };
 
     if (requiresFullscreenForVideoPlayback(element) && !fullscreenPermitted(element)) {
-        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of fullscreen restriction");
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because of fullscreen restriction");
         return MediaPlaybackDenialReason::FullscreenRequired;
     }
 
@@ -196,17 +196,17 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
 #endif
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && element.isVideo() && !element.document().processingUserGestureForMedia()) {
-        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video rate change restriction");
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for video rate change restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !element.muted() && element.volume() && !element.document().processingUserGestureForMedia()) {
-        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of audio rate change restriction");
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for audio rate change restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
     if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && element.isVideo() && !element.document().processingUserGestureForMedia()) {
-        RELEASE_LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE because of video low power mode restriction");
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because of video low power mode restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
@@ -229,14 +229,22 @@ bool MediaElementSession::autoplayPermitted() const
         return true;
 
     auto* renderer = m_element.renderer();
-    if (!renderer)
+    if (!renderer) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element has no renderer");
         return false;
-    if (renderer->style().visibility() != VISIBLE)
+    }
+    if (renderer->style().visibility() != VISIBLE) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is not visible");
         return false;
-    if (renderer->view().frameView().isOffscreen())
+    }
+    if (renderer->view().frameView().isOffscreen()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because frame is offscreen");
         return false;
-    if (renderer->visibleInViewportState() != VisibleInViewportState::Yes)
+    }
+    if (renderer->visibleInViewportState() != VisibleInViewportState::Yes) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is not visible in the viewport");
         return false;
+    }
     return true;
 }
 
@@ -830,6 +838,28 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
     auto page = m_element.document().page();
     return page && page->allowsPlaybackControlsForAutoplayingAudio();
 }
+
+bool MediaElementSession::willLog(WTFLogLevel level) const
+{
+    return m_element.willLog(level);
+}
+
+#if !RELEASE_LOG_DISABLED
+const PAL::Logger& MediaElementSession::logger() const
+{
+    return m_element.logger();
+}
+
+const void* MediaElementSession::logIdentifier() const
+{
+    return m_element.logIdentifier();
+}
+
+WTFLogChannel& MediaElementSession::logChannel() const
+{
+    return m_element.logChannel();
+}
+#endif
 
 }
 
