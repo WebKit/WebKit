@@ -1,5 +1,29 @@
 2017-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][Stable] Crash on WebCore::SharedBuffer::data() on 2.18.1
+        https://bugs.webkit.org/show_bug.cgi?id=178852
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a mutex to control that the image decoders are not used at the same
+        time from the main thread and the decoding thread.
+
+        Backport of the fix to https://bugs.webkit.org/show_bug.cgi?id=178510
+        created by Fujii Hironori <Hironori.Fujii@sony.com>.
+
+        Covered by existent tests.
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex const):
+        (WebCore::ImageDecoder::frameBytesAtIndex const):
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::setData):
+
+2017-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r222090): [HarfBuzz] Arabic shaping is broken except for first word in line
         https://bugs.webkit.org/show_bug.cgi?id=178625
 
