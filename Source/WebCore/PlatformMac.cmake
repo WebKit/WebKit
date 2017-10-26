@@ -157,127 +157,40 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    Modules/plugins/QuickTimePluginReplacement.mm
-    Modules/plugins/YouTubePluginReplacement.cpp
-
     accessibility/mac/AXObjectCacheMac.mm
     accessibility/mac/AccessibilityObjectMac.mm
-    accessibility/mac/WebAccessibilityObjectWrapperBase.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm
-
-    bindings/js/ScriptControllerMac.mm
-
-    bridge/objc/ObjCRuntimeObject.mm
-    bridge/objc/WebScriptObject.mm
-    bridge/objc/objc_class.mm
-    bridge/objc/objc_instance.mm
-    bridge/objc/objc_runtime.mm
-    bridge/objc/objc_utility.mm
-
-    crypto/CommonCryptoUtilities.cpp
-
-    crypto/mac/CommonCryptoDERUtilities.cpp
-    crypto/mac/CryptoAlgorithmAES_CBCMac.cpp
-    crypto/mac/CryptoAlgorithmAES_CFBMac.cpp
-    crypto/mac/CryptoAlgorithmAES_CTRMac.cpp
-    crypto/mac/CryptoAlgorithmAES_GCMMac.cpp
-    crypto/mac/CryptoAlgorithmAES_KWMac.cpp
-    crypto/mac/CryptoAlgorithmECDHMac.cpp
-    crypto/mac/CryptoAlgorithmECDSAMac.cpp
-    crypto/mac/CryptoAlgorithmHKDFMac.cpp
-    crypto/mac/CryptoAlgorithmHMACMac.cpp
-    crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp
-    crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp
-    crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
-    crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
-    crypto/mac/CryptoAlgorithmRSA_PSSMac.cpp
-    crypto/mac/CryptoAlgorithmRegistryMac.cpp
-    crypto/mac/CryptoKeyECMac.cpp
-    crypto/mac/CryptoKeyMac.cpp
-    crypto/mac/CryptoKeyRSAMac.cpp
-    crypto/mac/SerializedCryptoKeyWrapMac.mm
 
     dom/DataTransferMac.mm
     dom/SlotAssignment.cpp
-
-    editing/SelectionRectGatherer.cpp
-    editing/SmartReplaceCF.cpp
-
-    editing/cocoa/DataDetection.mm
-    editing/cocoa/EditorCocoa.mm
-    editing/cocoa/HTMLConverter.mm
-    editing/cocoa/WebArchiveResourceFromNSAttributedString.mm
-    editing/cocoa/WebArchiveResourceWebResourceHandler.mm
-    editing/cocoa/WebContentReaderCocoa.mm
 
     editing/ios/AutofillElements.cpp
 
     editing/mac/AlternativeTextUIController.mm
     editing/mac/DictionaryLookup.mm
     editing/mac/EditorMac.mm
-    editing/mac/FrameSelectionMac.mm
     editing/mac/TextAlternativeWithRange.mm
     editing/mac/TextUndoInsertionMarkupMac.mm
     editing/mac/WebContentReaderMac.mm
 
-    fileapi/FileCocoa.mm
-
     html/HTMLSlotElement.cpp
-
-    html/shadow/ImageControlsRootElement.cpp
-    html/shadow/YouTubeEmbedShadowElement.cpp
 
     html/shadow/mac/ImageControlsButtonElementMac.cpp
     html/shadow/mac/ImageControlsRootElementMac.cpp
 
-    history/mac/HistoryItemMac.mm
-
-    loader/ResourceLoadInfo.cpp
-
-    loader/archive/cf/LegacyWebArchive.cpp
-    loader/archive/cf/LegacyWebArchiveMac.mm
-
-    loader/cocoa/DiskCacheMonitorCocoa.mm
-    loader/cocoa/SubresourceLoaderCocoa.mm
-
-    loader/cf/ResourceLoaderCFNet.cpp
-
-    loader/mac/DocumentLoaderMac.cpp
-    loader/mac/LoaderNSURLExtras.mm
-    loader/mac/ResourceLoaderMac.mm
-
-    page/CaptionUserPreferencesMediaAF.cpp
     page/PageDebuggable.cpp
 
-    page/cocoa/MemoryReleaseCocoa.mm
-    page/cocoa/PerformanceLoggingCocoa.mm
-    page/cocoa/ResourceUsageOverlayCocoa.mm
-    page/cocoa/ResourceUsageThreadCocoa.mm
-    page/cocoa/SettingsBaseCocoa.mm
-    page/cocoa/UserAgent.mm
-
-    page/mac/ChromeMac.mm
-    page/mac/DragControllerMac.mm
     page/mac/EventHandlerMac.mm
-    page/mac/PageMac.mm
     page/mac/ServicesOverlayController.mm
     page/mac/TextIndicatorWindow.mm
     page/mac/UserAgentMac.mm
     page/mac/WheelEventDeltaFilterMac.mm
 
-    page/scrolling/AsyncScrollingCoordinator.cpp
-    page/scrolling/ScrollingMomentumCalculator.cpp
-
-    page/scrolling/cocoa/ScrollingStateNode.mm
-
     page/scrolling/mac/ScrollingCoordinatorMac.mm
     page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
     page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm
-    page/scrolling/mac/ScrollingThreadMac.mm
-    page/scrolling/mac/ScrollingTreeFixedNode.mm
     page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
     page/scrolling/mac/ScrollingTreeMac.cpp
-    page/scrolling/mac/ScrollingTreeStickyNode.mm
 
     platform/CPUMonitor.cpp
     platform/LocalizedStrings.cpp
