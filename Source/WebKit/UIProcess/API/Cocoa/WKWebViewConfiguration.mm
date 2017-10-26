@@ -495,29 +495,6 @@ static NSString *defaultApplicationNameForUserAgent()
 }
 #endif
 
-- (void)_validate
-{
-    if (!self.processPool)
-        [NSException raise:NSInvalidArgumentException format:@"configuration.processPool is nil"];
-
-    if (!self.preferences)
-        [NSException raise:NSInvalidArgumentException format:@"configuration.preferences is nil"];
-
-    if (!self.userContentController)
-        [NSException raise:NSInvalidArgumentException format:@"configuration.userContentController is nil"];
-
-    if (!self.websiteDataStore)
-        [NSException raise:NSInvalidArgumentException format:@"configuration.websiteDataStore is nil"];
-
-    if (!self._visitedLinkStore)
-        [NSException raise:NSInvalidArgumentException format:@"configuration._visitedLinkStore is nil"];
-
-#if PLATFORM(IOS)
-    if (!self._contentProviderRegistry)
-        [NSException raise:NSInvalidArgumentException format:@"configuration._contentProviderRegistry is nil"];
-#endif
-}
-
 @end
 
 @implementation WKWebViewConfiguration (WKPrivate)

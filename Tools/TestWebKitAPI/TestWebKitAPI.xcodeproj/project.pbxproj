@@ -244,6 +244,7 @@
 		5CA1DEC81F71F70100E71BD3 /* HTTPHeaderField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CA1DEC71F71F40700E71BD3 /* HTTPHeaderField.cpp */; };
 		5CA1DED91F74A91A00E71BD3 /* ContentRuleListNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */; };
 		5CB18BA81F5645E300EE23C4 /* ClickAutoFillButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */; };
+		5CB3CE391FA1697F00C3A2D6 /* WKWebViewConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB3CE381FA1691700C3A2D6 /* WKWebViewConfiguration.mm */; };
 		5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */; };
 		5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */; };
 		5E4B1D2E1D404C6100053621 /* WKScrollViewDelegateCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */; };
@@ -1374,6 +1375,7 @@
 		5CA1DEC71F71F40700E71BD3 /* HTTPHeaderField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderField.cpp; sourceTree = "<group>"; };
 		5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentRuleListNotification.mm; sourceTree = "<group>"; };
 		5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClickAutoFillButton.mm; sourceTree = "<group>"; };
+		5CB3CE381FA1691700C3A2D6 /* WKWebViewConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewConfiguration.mm; sourceTree = "<group>"; };
 		5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIDelegate.mm; sourceTree = "<group>"; };
 		5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentExtensionStore.mm; sourceTree = "<group>"; };
 		5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKScrollViewDelegateCrash.mm; path = ../ios/WKScrollViewDelegateCrash.mm; sourceTree = "<group>"; };
@@ -2088,6 +2090,7 @@
 				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
 				5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */,
 				2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */,
+				5CB3CE381FA1691700C3A2D6 /* WKWebViewConfiguration.mm */,
 				7C417F311D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm */,
 				46E66A8F1F0D75590026D83C /* WKWebViewDiagnosticLogging.mm */,
 				2DB647871F4161F70051A89E /* WKWebViewDoesNotLogDuringInitialization.mm */,
@@ -3548,6 +3551,7 @@
 				5182C22E1F2BCE540059BA7C /* WKURLSchemeHandler-leaks.mm in Sources */,
 				514958BE1F7427AC00E87BAD /* WKWebViewAutofillTests.mm in Sources */,
 				2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */,
+				5CB3CE391FA1697F00C3A2D6 /* WKWebViewConfiguration.mm in Sources */,
 				A14FC5851B89739100D107EB /* WKWebViewConfigurationExtras.mm in Sources */,
 				7C417F331D19E14800B8EF53 /* WKWebViewDefaultNavigationDelegate.mm in Sources */,
 				46E66A901F0D75590026D83C /* WKWebViewDiagnosticLogging.mm in Sources */,

@@ -1,3 +1,21 @@
+2017-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Move WKWebViewConfiguration validation to WKWebView construction
+        https://bugs.webkit.org/show_bug.cgi?id=178840
+
+        Reviewed by Tim Horton.
+        
+        I'm trying to remove WKWebViewConfigurationInternal methods so I can make WKWebViewConfiguration
+        a wrapper around an APIObject like all the other API objects.  A small step towards making this easier
+        is to remove the unnecessary method _validate and move its logic to its one callsite.  I added an API test
+        that ensures no change in behavior.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _validate]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h:
+
 2017-10-26  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unneeded block selection calculation code

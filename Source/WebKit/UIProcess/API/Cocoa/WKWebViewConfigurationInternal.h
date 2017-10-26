@@ -38,8 +38,6 @@
 @property (nonatomic, setter=_setContentProviderRegistry:) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 #endif
 
-- (void)_validate;
-
 @end
 
 #endif

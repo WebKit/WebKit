@@ -1,3 +1,14 @@
+2017-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Move WKWebViewConfiguration validation to WKWebView construction
+        https://bugs.webkit.org/show_bug.cgi?id=178840
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewConfiguration.mm: Added.
+        (TEST):
+
 2017-10-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Demonstrate a possible structure of the WebGPU API

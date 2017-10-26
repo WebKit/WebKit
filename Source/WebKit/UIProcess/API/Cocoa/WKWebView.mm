@@ -446,6 +446,29 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 }
 #endif
 
+static void validate(WKWebViewConfiguration *configuration)
+{
+    if (!configuration.processPool)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.processPool is nil"];
+    
+    if (!configuration.preferences)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.preferences is nil"];
+    
+    if (!configuration.userContentController)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.userContentController is nil"];
+    
+    if (!configuration.websiteDataStore)
+        [NSException raise:NSInvalidArgumentException format:@"configuration.websiteDataStore is nil"];
+    
+    if (!configuration._visitedLinkStore)
+        [NSException raise:NSInvalidArgumentException format:@"configuration._visitedLinkStore is nil"];
+    
+#if PLATFORM(IOS)
+    if (!configuration._contentProviderRegistry)
+        [NSException raise:NSInvalidArgumentException format:@"configuration._contentProviderRegistry is nil"];
+#endif
+}
+
 - (void)_initializeWithConfiguration:(WKWebViewConfiguration *)configuration
 {
     if (!configuration)
@@ -462,7 +485,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
         [_configuration setProcessPool:relatedWebViewProcessPool];
     }
 
-    [_configuration _validate];
+    validate(_configuration.get());
 
     WebKit::WebProcessPool& processPool = *[_configuration processPool]->_processPool;
     processPool.setResourceLoadStatisticsEnabled(configuration.websiteDataStore._resourceLoadStatisticsEnabled);
