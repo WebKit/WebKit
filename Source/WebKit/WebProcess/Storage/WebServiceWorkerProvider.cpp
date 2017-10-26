@@ -64,11 +64,12 @@ static inline bool shouldHandleFetch(const WebSWClientConnection& connection, Ca
     if (options.serviceWorkersMode != ServiceWorkersMode::All)
         return false;
 
+    // FIXME: We should probably assert that options.serviceWorkersIdentifier is not null.
     if (isPotentialNavigationOrSubresourceRequest(options.destination))
         return false;
 
     // FIXME: Implement non-subresource request loads.
-    if (isNonSubresourceRequest(options.destination) || !options.serviceWorkerIdentifier)
+    if (isNonSubresourceRequest(options.destination))
         return false;
 
     if (!resource)

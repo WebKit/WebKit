@@ -103,6 +103,11 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
 {
     relaxAdoptionRequirement();
 
+#if ENABLE(SERVICE_WORKER)
+    if (m_options.serviceWorkersMode == ServiceWorkersMode::All && !m_options.serviceWorkerIdentifier)
+        m_options.serviceWorkerIdentifier = document.selectedServiceWorkerIdentifier();
+#endif
+
     // Setting a referrer header is only supported in the async code path.
     ASSERT(m_async || m_referrer.isEmpty());
 

@@ -686,15 +686,9 @@ static inline void logMemoryCacheResourceRequest(Frame* frame, const String& key
 void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourceRequest& request)
 {
     // Implementing step 1 to 7 of https://fetch.spec.whatwg.org/#fetching
-    auto* document = this->document();
 
-    if (document) {
-        if (!request.origin())
-            request.setOrigin(document->securityOrigin());
-#if ENABLE(SERVICE_WORKER)
-        request.setSelectedServiceWorkerIdentifierIfNeeded(document->selectedServiceWorkerIdentifier());
-#endif
-    }
+    if (!request.origin() && document())
+        request.setOrigin(document()->securityOrigin());
 
     request.setAcceptHeaderIfNone(type);
 
