@@ -1,3 +1,16 @@
+2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r223961.
+
+        The change that required this has been rolled out.
+
+        Reverted changeset:
+
+        "Mark test262.yaml/test262/test/language/statements/try/tco-
+        catch.js as passing."
+        https://bugs.webkit.org/show_bug.cgi?id=178592
+        https://trac.webkit.org/changeset/223961
+
 2017-10-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r223691 and r223729.
