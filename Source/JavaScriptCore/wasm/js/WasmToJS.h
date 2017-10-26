@@ -40,9 +40,11 @@ class VM;
 
 namespace Wasm {
 
+class Instance;
+
 Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM*, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex, unsigned importIndex);
 
-void* wasmToJSException(ExecState*, Wasm::ExceptionType, JSWebAssemblyInstance*);
+void* wasmToJSException(ExecState*, Wasm::ExceptionType, Instance*);
 
 } } // namespace JSC::Wasm
 

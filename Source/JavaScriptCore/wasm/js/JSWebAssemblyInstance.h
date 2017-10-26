@@ -32,7 +32,6 @@
 #include "JSWebAssemblyCodeBlock.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyTable.h"
-#include "WasmContext.h"
 #include "WasmInstance.h"
 
 namespace JSC {
@@ -43,7 +42,6 @@ class WebAssemblyToJSCallee;
 
 namespace Wasm {
 class CodeBlock;
-class Table; // FIXME remove this after refactoring. https://webkit.org/b/177472
 }
 
 class JSWebAssemblyInstance : public JSDestructibleObject {
@@ -58,85 +56,44 @@ public:
     void finalizeCreation(VM&, ExecState*, Ref<Wasm::CodeBlock>&&);
     
     Wasm::Instance& instance() { return m_instance.get(); }
-    Wasm::Context* context() const { return &m_vm->wasmContext; }
     JSModuleNamespaceObject* moduleNamespaceObject() { return m_moduleNamespaceObject.get(); }
-    JSWebAssemblyTable* table() { return m_table.get(); }
     WebAssemblyToJSCallee* webAssemblyToJSCallee() { return m_callee.get(); }
 
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
-    void setMemory(VM& vm, JSWebAssemblyMemory* value) { ASSERT(!memory()); m_memory.set(vm, this, value); m_wasmMemory = &memory()->memory(); }
+    void setMemory(VM& vm, JSWebAssemblyMemory* value) {
+        ASSERT(!memory());
+        m_memory.set(vm, this, value);
+        instance().setMemory(makeRef(memory()->memory()));
+    }
     Wasm::MemoryMode memoryMode() { return memory()->memory().mode(); }
 
-    // Tail accessors.
-    static size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(JSWebAssemblyInstance)); }
-    struct ImportFunctionInfo {
-        // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The embedder-specific logic occurs through import function.
-        JSWebAssemblyInstance* targetInstance { nullptr };
-        Wasm::WasmEntrypointLoadLocation wasmEntrypoint { nullptr };
-        void* wasmToEmbedderStubExecutableAddress { nullptr };
-        WriteBarrier<JSObject> importFunction { WriteBarrier<JSObject>() };
-    };
-    ImportFunctionInfo* importFunctionInfo(size_t importFunctionNum)
-    {
-        RELEASE_ASSERT(importFunctionNum < m_numImportFunctions);
-        return &bitwise_cast<ImportFunctionInfo*>(bitwise_cast<char*>(this) + offsetOfTail())[importFunctionNum];
+    JSWebAssemblyTable* table() { return m_table.get(); }
+    void setTable(VM& vm, JSWebAssemblyTable* value) {
+        ASSERT(!table());
+        m_table.set(vm, this, value);
+        instance().setTable(makeRef(*table()->table()));
     }
-    static size_t offsetOfTargetInstance(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, targetInstance); }
-    static size_t offsetOfWasmEntrypoint(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmEntrypoint); }
-    static size_t offsetOfWasmToEmbedderStubExecutableAddress(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmToEmbedderStubExecutableAddress); }
-    static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
-    JSObject* importFunction(unsigned importFunctionNum) { return importFunctionInfo(importFunctionNum)->importFunction.get(); }
 
-    // FIXME remove these after refactoring them out. https://webkit.org/b/177472
-    Wasm::Memory& internalMemory() { return memory()->memory(); }
-    Wasm::CodeBlock& wasmCodeBlock() const { return *m_instance->codeBlock(); }
-    static ptrdiff_t offsetOfWasmTable() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_wasmTable); }
-    static ptrdiff_t offsetOfCallee() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_callee); }
-    static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_globals); }
-    static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_codeBlock); }
-    static ptrdiff_t offsetOfWasmCodeBlock() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_wasmCodeBlock); }
-    static ptrdiff_t offsetOfCachedStackLimit() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedStackLimit); }
-    static ptrdiff_t offsetOfWasmMemory() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_wasmMemory); }
-    static ptrdiff_t offsetOfTopEntryFramePointer() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_topEntryFramePointer); }
-    void* cachedStackLimit() const { RELEASE_ASSERT(m_instance->cachedStackLimit() == m_cachedStackLimit); return m_cachedStackLimit; }
-    void setCachedStackLimit(void* limit) { m_instance->setCachedStackLimit(limit); m_cachedStackLimit = limit; }
-    Wasm::Memory* wasmMemory() { return m_wasmMemory; }
-    Wasm::Module& wasmModule() { return m_wasmModule; }
+    static size_t offsetOfInstance() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_instance); }
+    static size_t offsetOfCallee() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_callee); }
 
 protected:
-    JSWebAssemblyInstance(VM&, Structure*, unsigned numImportFunctions, Ref<Wasm::Instance>&&);
+    JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&);
     void finishCreation(VM&, JSWebAssemblyModule*, JSModuleNamespaceObject*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
-
-    static size_t allocationSize(Checked<size_t> numImportFunctions)
-    {
-        return (offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions).unsafeGet();
-    }
 
 private:
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
     Ref<Wasm::Instance> m_instance;
 
-    VM* m_vm;
     WriteBarrier<JSWebAssemblyModule> m_module;
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
     WriteBarrier<JSWebAssemblyTable> m_table;
     WriteBarrier<WebAssemblyToJSCallee> m_callee;
-    
-    // FIXME remove these after refactoring them out. https://webkit.org/b/177472
-    void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
-    Wasm::CodeBlock* m_wasmCodeBlock { nullptr };
-    Wasm::Module& m_wasmModule;
-    Wasm::Memory* m_wasmMemory { nullptr };
-    Wasm::Table* m_wasmTable { nullptr };
-    uint64_t* m_globals { nullptr };
-    EntryFrame** m_topEntryFramePointer { nullptr };
-
-    unsigned m_numImportFunctions;
 };
 
 } // namespace JSC

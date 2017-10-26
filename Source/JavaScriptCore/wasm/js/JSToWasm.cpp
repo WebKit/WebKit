@@ -112,10 +112,12 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
 
         ptrdiff_t jsOffset = CallFrameSlot::thisArgument * sizeof(EncodedJSValue);
 
-        // vmEntryToWasm passes Wasm::Context*'s instance as the first JS argument when we're
-        // not using fast TLS to hold the Wasm::Context*'s instance.
+        // vmEntryToWasm passes the JSWebAssemblyInstance corresponding to Wasm::Context*'s
+        // instance as the first JS argument when we're not using fast TLS to hold the
+        // Wasm::Context*'s instance.
         if (!Context::useFastTLS()) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmContextInstanceGPR);
+            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
             jsOffset += sizeof(EncodedJSValue);
         }
 
@@ -172,10 +174,10 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
 
         if (!Context::useFastTLS())
-            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfWasmMemory()), baseMemory);
+            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, Instance::offsetOfMemory()), baseMemory);
         else {
             jit.loadWasmContextInstance(baseMemory);
-            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyInstance::offsetOfWasmMemory()), baseMemory);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Instance::offsetOfMemory()), baseMemory);
         }
 
         if (mode != MemoryMode::Signaling) {

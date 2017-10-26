@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSWebAssemblyInstance.h"
 #include "Options.h"
+#include "WasmInstance.h"
 
 #include <mutex>
 #include <wtf/FastTLS.h>
@@ -45,16 +45,16 @@ bool Context::useFastTLS()
 #endif
 }
 
-JSWebAssemblyInstance* Context::load() const
+Instance* Context::load() const
 {
 #if ENABLE(FAST_TLS_JIT)
     if (useFastTLS())
-        return bitwise_cast<JSWebAssemblyInstance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
+        return bitwise_cast<Instance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
 #endif
     return instance;
 }
 
-void Context::store(JSWebAssemblyInstance* inst, void* softStackLimit)
+void Context::store(Instance* inst, void* softStackLimit)
 {
 #if ENABLE(FAST_TLS_JIT)
     if (useFastTLS())

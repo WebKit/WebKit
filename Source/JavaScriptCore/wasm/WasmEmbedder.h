@@ -37,11 +37,11 @@
 namespace JSC {
 
 class ExecState;
-class JSWebAssemblyInstance; // FIXME this should be Wasm::Instance, so should use below. https://webkit.org/b/177472
 
 namespace Wasm {
 
 struct CompilationContext;
+class Instance;
 struct InternalFunction;
 struct ModuleInformation;
 class Signature;
@@ -51,7 +51,7 @@ struct UnlinkedWasmToWasmCall;
 using CreateEmbedderWrapper = WTF::Function<std::unique_ptr<InternalFunction>(CompilationContext&, const Signature&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t)>;
 
 // Called as soon as an exception is detected. The return value is the PC to continue at.
-using ThrowWasmException = void* (*)(ExecState*, Wasm::ExceptionType, JSWebAssemblyInstance*);
+using ThrowWasmException = void* (*)(ExecState*, Wasm::ExceptionType, Instance*);
 
 } } // namespace JSC::Wasm
 

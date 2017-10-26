@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     Structure* instanceStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, instanceStructure, Wasm::Instance::create(Ref<Wasm::Module>(module->module()), &vm.topEntryFrame));
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, instanceStructure, Wasm::Instance::create(&vm.wasmContext, Ref<Wasm::Module>(module->module()), &vm.topEntryFrame));
     RETURN_IF_EXCEPTION(scope, { });
 
     instance->finalizeCreation(vm, exec, module->module().compileSync(&vm.wasmContext, instance->memoryMode(), &Wasm::createJSToWasmWrapper, &Wasm::wasmToJSException));

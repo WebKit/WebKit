@@ -110,7 +110,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
             if (exp.kindIndex < functionImportCount) {
                 unsigned functionIndex = exp.kindIndex;
-                JSObject* functionImport = instance->importFunction(functionIndex);
+                JSObject* functionImport = instance->instance().importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
                 if (isWebAssemblyHostFunction(vm, functionImport))
                     exportedValue = functionImport;
                 else {
@@ -191,7 +191,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
         ASSERT(!signature.argumentCount());
         ASSERT(signature.returnType() == Wasm::Void);
         if (startFunctionIndexSpace < codeBlock->functionImportCount()) {
-            JSObject* startFunction = instance->importFunction(startFunctionIndexSpace);
+            JSObject* startFunction = instance->instance().importFunction<WriteBarrier<JSObject>>(startFunctionIndexSpace)->get();
             m_startFunction.set(vm, this, startFunction);
         } else {
             Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
@@ -295,7 +295,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
             uint32_t functionIndex = element.functionIndices[i];
             Wasm::SignatureIndex signatureIndex = module.signatureIndexFromFunctionIndexSpace(functionIndex);
             if (functionIndex < codeBlock->functionImportCount()) {
-                JSObject* functionImport = jsCast<JSObject*>(m_instance->importFunction(functionIndex));
+                JSObject* functionImport = m_instance->instance().importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
                 if (isWebAssemblyHostFunction(vm, functionImport)) {
                     WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
                     // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.

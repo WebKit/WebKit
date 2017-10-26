@@ -34,11 +34,9 @@
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-class JSWebAssemblyInstance; // FIXME this should be Wasm::Instance https://webkit.org/b/177472
-
-namespace Wasm {
+class Instance;
 
 class Table : public ThreadSafeRefCounted<Table> {
 public:
@@ -50,7 +48,7 @@ public:
     uint32_t size() const { return m_size; }
     std::optional<uint32_t> grow(uint32_t delta) WARN_UNUSED_RETURN;
     void clearFunction(uint32_t);
-    void setFunction(uint32_t, CallableFunction, JSWebAssemblyInstance*); // FIXME make this Wasm::Instance. https://webkit.org/b/177472
+    void setFunction(uint32_t, CallableFunction, Instance*);
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Table, m_size); }
     static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(Table, m_functions); }
@@ -65,7 +63,7 @@ private:
     uint32_t m_size;
     MallocPtr<CallableFunction> m_functions;
     // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
-    MallocPtr<JSWebAssemblyInstance*> m_instances; // FIXME make this a Wasm::Instance. https://webkit.org/b/177472
+    MallocPtr<Instance*> m_instances;
 };
 
 } } // namespace JSC::Wasm

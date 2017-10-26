@@ -1,3 +1,141 @@
+2017-10-26  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: no VM / JS version of our implementation
+        https://bugs.webkit.org/show_bug.cgi?id=177472
+
+        Reviewed by Michael Saboff.
+
+        This patch removes all appearances of "JS" and "VM" in the wasm
+        directory. These now only appear in the wasm/js directory, which
+        is only used in a JS embedding of wasm. It should therefore now be
+        possible to create non-JS embeddings of wasm through JSC, though
+        it'll still require:
+
+          - Mild codegen for wasm<->embedder calls;
+          - A strategy for trap handling (no need for full unwind! Could kill).
+          - Creation of the Wasm::* objects.
+          - Calling convention handling to call the embedder.
+          - Handling of multiple embedders (see #177475, this is optional).
+
+        Most of the patch consists in renaming JSWebAssemblyInstance to
+        Instance, and removing temporary copies which I'd added to make
+        this specific patch very simple.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::wasmAwareLexicalGlobalObject): this one place
+        which needs to know about who "owns" the Wasm::Instance. In a JS
+        embedding it's the JSWebAssemblyInstance.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+        (JSC::Wasm::B3IRGenerator::getGlobal):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmContext.cpp:
+        (JSC::Wasm::Context::load const):
+        (JSC::Wasm::Context::store):
+        * wasm/WasmContext.h:
+        * wasm/WasmEmbedder.h:
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::create):
+        (JSC::Wasm::Instance::extraMemoryAllocated const):
+        * wasm/WasmInstance.h: add an "owner", the Wasm::Context, move the
+        "tail" import information from JSWebAssemblyInstance over to here.
+        (JSC::Wasm::Instance::finalizeCreation):
+        (JSC::Wasm::Instance::owner const):
+        (JSC::Wasm::Instance::offsetOfOwner):
+        (JSC::Wasm::Instance::context const):
+        (JSC::Wasm::Instance::setMemory):
+        (JSC::Wasm::Instance::setTable):
+        (JSC::Wasm::Instance::offsetOfMemory):
+        (JSC::Wasm::Instance::offsetOfGlobals):
+        (JSC::Wasm::Instance::offsetOfTable):
+        (JSC::Wasm::Instance::offsetOfTail):
+        (JSC::Wasm::Instance::numImportFunctions const):
+        (JSC::Wasm::Instance::importFunctionInfo):
+        (JSC::Wasm::Instance::offsetOfTargetInstance):
+        (JSC::Wasm::Instance::offsetOfWasmEntrypoint):
+        (JSC::Wasm::Instance::offsetOfWasmToEmbedderStubExecutableAddress):
+        (JSC::Wasm::Instance::offsetOfImportFunction):
+        (JSC::Wasm::Instance::importFunction):
+        (JSC::Wasm::Instance::allocationSize):
+        (JSC::Wasm::Instance::create): Deleted.
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::runForIndex):
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::Table):
+        (JSC::Wasm::Table::setFunction):
+        * wasm/WasmTable.h:
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyInstance.cpp: delete code that is now on Wasm::Instance
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance): The embedder
+        decides what the import function is. Here we must properly
+        placement-new it to what we've elected (and initialize it later).
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyInstance.h: delete code that is now on Wasm::Instance
+        (JSC::JSWebAssemblyInstance::instance):
+        (JSC::JSWebAssemblyInstance::moduleNamespaceObject):
+        (JSC::JSWebAssemblyInstance::setMemory):
+        (JSC::JSWebAssemblyInstance::table):
+        (JSC::JSWebAssemblyInstance::setTable):
+        (JSC::JSWebAssemblyInstance::offsetOfInstance):
+        (JSC::JSWebAssemblyInstance::offsetOfCallee):
+        (JSC::JSWebAssemblyInstance::context const): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfTail): Deleted.
+        (): Deleted.
+        (JSC::JSWebAssemblyInstance::importFunctionInfo): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfTargetInstance): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfWasmEntrypoint): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfWasmToEmbedderStubExecutableAddress): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfImportFunction): Deleted.
+        (JSC::JSWebAssemblyInstance::importFunction): Deleted.
+        (JSC::JSWebAssemblyInstance::internalMemory): Deleted.
+        (JSC::JSWebAssemblyInstance::wasmCodeBlock const): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfWasmTable): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfGlobals): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfCodeBlock): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfWasmCodeBlock): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfCachedStackLimit): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfWasmMemory): Deleted.
+        (JSC::JSWebAssemblyInstance::offsetOfTopEntryFramePointer): Deleted.
+        (JSC::JSWebAssemblyInstance::cachedStackLimit const): Deleted.
+        (JSC::JSWebAssemblyInstance::setCachedStackLimit): Deleted.
+        (JSC::JSWebAssemblyInstance::wasmMemory): Deleted.
+        (JSC::JSWebAssemblyInstance::wasmModule): Deleted.
+        (JSC::JSWebAssemblyInstance::allocationSize): Deleted.
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::setFunction):
+        * wasm/js/WasmToJS.cpp: One extra indirection to find the JSWebAssemblyInstance.
+        (JSC::Wasm::materializeImportJSCell):
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        (JSC::Wasm::wasmToJSException):
+        * wasm/js/WasmToJS.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::instantiate):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: provide a way to enable/disable event listeners

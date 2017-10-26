@@ -55,7 +55,7 @@ Table::Table(uint32_t initial, std::optional<uint32_t> maximum)
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     m_functions = MallocPtr<Wasm::CallableFunction>::malloc(sizeof(Wasm::CallableFunction) * static_cast<size_t>(size()));
-    m_instances = MallocPtr<JSWebAssemblyInstance*>::malloc(sizeof(JSWebAssemblyInstance*) * static_cast<size_t>(size()));
+    m_instances = MallocPtr<Instance*>::malloc(sizeof(Instance*) * static_cast<size_t>(size()));
     for (uint32_t i = 0; i < size(); ++i) {
         new (&m_functions.get()[i]) CallableFunction();
         ASSERT(m_functions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
@@ -110,7 +110,7 @@ void Table::clearFunction(uint32_t index)
     m_instances.get()[index] = nullptr;
 }
 
-void Table::setFunction(uint32_t index, CallableFunction function, JSWebAssemblyInstance* instance)
+void Table::setFunction(uint32_t index, CallableFunction function, Instance* instance)
 {
     RELEASE_ASSERT(index < size());
     m_functions.get()[index] = function;

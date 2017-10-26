@@ -49,18 +49,12 @@ Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* global
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, unsigned numImportFunctions, Ref<Wasm::Instance>&& instance)
+JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<Wasm::Instance>&& instance)
     : Base(vm, structure)
     , m_instance(WTFMove(instance))
-    , m_vm(&vm)
-    , m_wasmModule(m_instance->module())
-    , m_wasmTable(m_instance->m_table.get())
-    , m_globals(m_instance->m_globals.get())
-    , m_topEntryFramePointer(m_instance->m_topEntryFramePointer)
-    , m_numImportFunctions(numImportFunctions)
 {
-    for (unsigned i = 0; i < m_numImportFunctions; ++i)
-        new (importFunctionInfo(i)) ImportFunctionInfo();
+    for (unsigned i = 0; i < this->instance().numImportFunctions(); ++i)
+        new (this->instance().importFunction<WriteBarrier<JSObject>>(i)) WriteBarrier<JSObject>();
 }
 
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
@@ -93,14 +87,13 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_table);
     visitor.append(thisObject->m_callee);
     visitor.reportExtraMemoryVisited(thisObject->m_instance->extraMemoryAllocated());
-    for (unsigned i = 0; i < thisObject->m_numImportFunctions; ++i)
-        visitor.append(thisObject->importFunctionInfo(i)->importFunction); // This also keeps the functions' JSWebAssemblyInstance alive.
+    for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
+        visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
 }
 
 void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock)
 {
-    m_instance->finalizeCreation(wasmCodeBlock.copyRef());
-    m_wasmCodeBlock = wasmCodeBlock.ptr();
+    m_instance->finalizeCreation(this, wasmCodeBlock.copyRef());
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -119,7 +112,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
         ASSERT(&jsCodeBlock->codeBlock() == wasmCodeBlock.ptr());
         m_codeBlock.set(vm, this, jsCodeBlock);
     } else {
-        jsCodeBlock = JSWebAssemblyCodeBlock::create(vm, WTFMove(wasmCodeBlock), wasmModule().moduleInformation());
+        jsCodeBlock = JSWebAssemblyCodeBlock::create(vm, WTFMove(wasmCodeBlock), module()->module().moduleInformation());
         if (UNLIKELY(!jsCodeBlock->runnable())) {
             throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject()->WebAssemblyLinkErrorStructure(), jsCodeBlock->errorMessage()));
             return;
@@ -128,8 +121,8 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
         m_module->setCodeBlock(vm, memoryMode(), jsCodeBlock);
     }
 
-    for (size_t importFunctionNum = 0; importFunctionNum < m_numImportFunctions; ++importFunctionNum) {
-        ImportFunctionInfo* info = importFunctionInfo(importFunctionNum);
+    for (unsigned importFunctionNum = 0; importFunctionNum < instance().numImportFunctions(); ++importFunctionNum) {
+        auto* info = instance().importFunctionInfo(importFunctionNum);
         info->wasmToEmbedderStubExecutableAddress = m_codeBlock->wasmToEmbedderStubExecutableAddress(importFunctionNum);
     }
 
@@ -171,7 +164,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
 
     JSModuleNamespaceObject* moduleNamespace = moduleRecord->getModuleNamespace(exec);
     // FIXME: These objects could be pretty big we should try to throw OOM here.
-    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap, allocationSize(moduleInformation.importFunctionCount()))) JSWebAssemblyInstance(vm, instanceStructure, moduleInformation.importFunctionCount(), WTFMove(instance));
+    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, instanceStructure, WTFMove(instance));
     jsInstance->finishCreation(vm, jsModule, moduleNamespace);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
@@ -203,7 +196,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
             if (!value.isFunction())
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "import function", "must be callable")));
 
-            JSWebAssemblyInstance* calleeInstance = nullptr;
+            Wasm::Instance* calleeInstance = nullptr;
             Wasm::WasmEntrypointLoadLocation wasmEntrypoint = nullptr;
             JSObject* function = jsCast<JSObject*>(value);
 
@@ -215,7 +208,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
                 Wasm::SignatureIndex importedSignatureIndex;
                 if (wasmFunction) {
                     importedSignatureIndex = wasmFunction->signatureIndex();
-                    calleeInstance = wasmFunction->instance();
+                    calleeInstance = &wasmFunction->instance()->instance();
                     wasmEntrypoint = wasmFunction->wasmEntrypointLoadLocation();
                 }
                 else {
@@ -234,10 +227,11 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
             // Note: adding the JSCell to the instance list fulfills closure requirements b. above (the WebAssembly.Instance wil be kept alive) and v. below (the JSFunction).
 
             ASSERT(numImportFunctions == import.kindIndex);
-            ImportFunctionInfo* info = jsInstance->importFunctionInfo(numImportFunctions++);
+            auto* info = jsInstance->instance().importFunctionInfo(numImportFunctions);
             info->targetInstance = calleeInstance;
             info->wasmEntrypoint = wasmEntrypoint;
-            info->importFunction.set(vm, jsInstance, function);
+            jsInstance->instance().importFunction<WriteBarrier<JSObject>>(numImportFunctions)->set(vm, jsInstance, function);
+            ++numImportFunctions;
             // v. Append closure to imports.
             break;
         }
@@ -265,8 +259,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
 
             // ii. Append v to tables.
             // iii. Append v.[[Table]] to imports.
-            jsInstance->m_table.set(vm, jsInstance, table);
-            jsInstance->m_wasmTable = table->table();
+            jsInstance->setTable(vm, table);
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
             break;
         }
 
@@ -296,7 +290,6 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
 
             // ii. Append v to memories.
             // iii. Append v.[[Memory]] to imports.
-            ASSERT(!jsInstance->m_memory);
             jsInstance->setMemory(vm, memory);
             RETURN_IF_EXCEPTION(throwScope, nullptr);
             break;
@@ -374,8 +367,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
             // If it's defined to be too large, we should have thrown a validation error.
             throwScope.assertNoException();
             ASSERT(table);
-            jsInstance->m_table.set(vm, jsInstance, table);
-            jsInstance->m_wasmTable = table->table();
+            jsInstance->setTable(vm, table);
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
         }
     }
     

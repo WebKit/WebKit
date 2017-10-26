@@ -33,6 +33,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "VMEntryScope.h"
 #include "WasmContext.h"
+#include "WasmInstance.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
@@ -218,7 +219,7 @@ JSGlobalObject* CallFrame::wasmAwareLexicalGlobalObject(VM& vm)
 #if ENABLE(WEBASSEMBLY)
     if (!callee().isWasm())
         return lexicalGlobalObject();
-    return vm.wasmContext.load()->globalObject();
+    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject();
 #else
     UNUSED_PARAM(vm);
     return lexicalGlobalObject();

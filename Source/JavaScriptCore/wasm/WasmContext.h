@@ -27,17 +27,15 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-class JSWebAssemblyInstance;
-
-namespace Wasm {
+class Instance;
 
 struct Context {
-    JSWebAssemblyInstance* instance { nullptr };
+    Instance* instance { nullptr };
 
-    JSWebAssemblyInstance* load() const;
-    void store(JSWebAssemblyInstance*, void* softStackLimit);
+    Instance* load() const;
+    void store(Instance*, void* softStackLimit);
 
     static bool useFastTLS();
 };

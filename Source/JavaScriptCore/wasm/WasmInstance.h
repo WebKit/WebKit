@@ -38,26 +38,34 @@
 
 namespace JSC { namespace Wasm {
 
+struct Context;
+
 class Instance : public ThreadSafeRefCounted<Instance> {
 public:
-    static Ref<Instance> create(Ref<Module>&& module, EntryFrame** topEntryFramePointer)
-    {
-        return adoptRef(*new Instance(WTFMove(module), topEntryFramePointer));
-    }
+    static Ref<Instance> create(Context* context, Ref<Module>&& module, EntryFrame** topEntryFramePointer);
 
-    void finalizeCreation(Ref<CodeBlock>&& codeBlock)
+    void finalizeCreation(void* owner, Ref<CodeBlock>&& codeBlock)
     {
+        m_owner = owner;
         m_codeBlock = WTFMove(codeBlock);
     }
 
     JS_EXPORT_PRIVATE ~Instance();
 
+    template<typename T> T* owner() const { return reinterpret_cast<T*>(m_owner); }
+    static ptrdiff_t offsetOfOwner() { return OBJECT_OFFSETOF(Instance, m_owner); }
+
     size_t extraMemoryAllocated() const;
+
+    Wasm::Context* context() const { return m_context; }
 
     Module& module() { return m_module.get(); }
     CodeBlock* codeBlock() { return m_codeBlock.get(); }
     Memory* memory() { return m_memory.get(); }
     Table* table() { return m_table.get(); }
+    
+    void setMemory(Ref<Memory>&& memory) { m_memory = WTFMove(memory); }
+    void setTable(Ref<Table>&& table) { m_table = WTFMove(table); }
 
     int32_t loadI32Global(unsigned i) const { return m_globals.get()[i]; }
     int64_t loadI64Global(unsigned i) const { return m_globals.get()[i]; }
@@ -65,17 +73,46 @@ public:
     double loadF64Global(unsigned i) const { return bitwise_cast<double>(loadI64Global(i)); }
     void setGlobal(unsigned i, int64_t bits) { m_globals.get()[i] = bits; }
 
+    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Instance, m_memory); }
+    static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
+    static ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(Instance, m_table); }
     static ptrdiff_t offsetOfTopEntryFramePointer() { return OBJECT_OFFSETOF(Instance, m_topEntryFramePointer); }
 
     static ptrdiff_t offsetOfCachedStackLimit() { return OBJECT_OFFSETOF(Instance, m_cachedStackLimit); }
     void* cachedStackLimit() const { return m_cachedStackLimit; }
     void setCachedStackLimit(void* limit) { m_cachedStackLimit = limit; }
 
-    friend class JSC::JSWebAssemblyInstance; // FIXME remove this once refactored https://webkit.org/b/177472.
+    // Tail accessors.
+    static size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(Instance)); }
+    struct ImportFunctionInfo {
+        // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The embedder-specific logic occurs through import function.
+        Instance* targetInstance { nullptr };
+        Wasm::WasmEntrypointLoadLocation wasmEntrypoint { nullptr };
+        void* wasmToEmbedderStubExecutableAddress { nullptr };
+        void* importFunction { nullptr }; // In a JS embedding, this is a WriteBarrier<JSObject>.
+    };
+    unsigned numImportFunctions() const { return m_numImportFunctions; }
+    ImportFunctionInfo* importFunctionInfo(size_t importFunctionNum)
+    {
+        RELEASE_ASSERT(importFunctionNum < m_numImportFunctions);
+        return &bitwise_cast<ImportFunctionInfo*>(bitwise_cast<char*>(this) + offsetOfTail())[importFunctionNum];
+    }
+    static size_t offsetOfTargetInstance(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, targetInstance); }
+    static size_t offsetOfWasmEntrypoint(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmEntrypoint); }
+    static size_t offsetOfWasmToEmbedderStubExecutableAddress(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmToEmbedderStubExecutableAddress); }
+    static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
+    template<typename T> T* importFunction(unsigned importFunctionNum) { return reinterpret_cast<T*>(&importFunctionInfo(importFunctionNum)->importFunction); }
 
 private:
-    Instance(Ref<Module>&&, EntryFrame**);
+    Instance(Context* context, Ref<Module>&&, EntryFrame**);
+    
+    static size_t allocationSize(Checked<size_t> numImportFunctions)
+    {
+        return (offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions).unsafeGet();
+    }
 
+    void* m_owner { nullptr }; // In a JS embedding, this is a JSWebAssemblyInstance*.
+    Context* m_context { nullptr };
     Ref<Module> m_module;
     RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;
@@ -83,6 +120,8 @@ private:
     MallocPtr<uint64_t> m_globals;
     EntryFrame** m_topEntryFramePointer { nullptr };
     void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
+    
+    unsigned m_numImportFunctions { 0 };
 };
 
 } } // namespace JSC::Wasm

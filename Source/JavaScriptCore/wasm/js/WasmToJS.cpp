@@ -40,6 +40,7 @@
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
 #include "WasmExceptionType.h"
+#include "WasmInstance.h"
 
 namespace JSC { namespace Wasm {
 
@@ -49,7 +50,7 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
 {
     // We're calling out of the current WebAssembly.Instance. That Instance has a list of all its import functions.
     jit.loadWasmContextInstance(result);
-    jit.loadPtr(JIT::Address(result, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), result);
+    jit.loadPtr(JIT::Address(result, Instance::offsetOfImportFunction(importIndex)), result);
 }
     
 static Expected<MacroAssemblerCodeRef, BindingFailure> handleBadI64Use(VM* vm, JIT& jit, const Signature& signature, unsigned importIndex)
@@ -82,6 +83,7 @@ static Expected<MacroAssemblerCodeRef, BindingFailure> handleBadI64Use(VM* vm, J
         jit.loadWasmContextInstance(GPRInfo::argumentGPR1);
 
         // Store Callee.
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR1, Instance::offsetOfOwner()), GPRInfo::argumentGPR1);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR1, JSWebAssemblyInstance::offsetOfCallee()), GPRInfo::argumentGPR2);
         jit.storePtr(GPRInfo::argumentGPR2, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 
@@ -277,6 +279,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
             };
         
         jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfCallee()), GPRInfo::argumentGPR0);
         jit.storePtr(GPRInfo::argumentGPR0, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
         
@@ -286,7 +289,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         auto call = jit.call();
         auto noException = jit.emitExceptionCheck(*vm, AssemblyHelpers::InvertedExceptionCheck);
 
-        // exception here.
+        // Exception here.
         jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
         jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         void (*doUnwinding)(ExecState*) = [] (ExecState* exec) -> void {
@@ -459,6 +462,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     }
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfCallee()), GPRInfo::argumentGPR0);
     jit.storePtr(GPRInfo::argumentGPR0, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 
@@ -628,8 +632,9 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data()));
 }
 
-void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, JSWebAssemblyInstance* instance)
+void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* wasmInstance)
 {
+    JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
     VM* vm = instance->vm();
     NativeCallFrameTracer tracer(vm, exec);
 

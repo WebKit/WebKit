@@ -45,7 +45,7 @@ public:
     void work(CompilationEffort) override;
     bool multiThreaded() const override { return false; }
 
-    static void runForIndex(JSWebAssemblyInstance*, uint32_t functionIndex);
+    static void runForIndex(Instance*, uint32_t functionIndex);
 
 private:
     // For some reason friendship doesn't extend to parent classes...

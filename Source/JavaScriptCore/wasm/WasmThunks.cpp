@@ -31,11 +31,11 @@
 #include "CCallHelpers.h"
 #include "HeapCellInlines.h"
 #include "JITExceptions.h"
-#include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmContext.h"
 #include "WasmExceptionType.h"
+#include "WasmInstance.h"
 #include "WasmOMGPlan.h"
 
 namespace JSC { namespace Wasm {
@@ -47,7 +47,7 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&
     // The thing that jumps here must move ExceptionType into the argumentGPR1 before jumping here.
     // We're allowed to use temp registers here. We are not allowed to use callee saves.
     jit.loadWasmContextInstance(GPRInfo::argumentGPR2);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, JSWebAssemblyInstance::offsetOfTopEntryFramePointer()), GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, Instance::offsetOfTopEntryFramePointer()), GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0), GPRInfo::argumentGPR0);
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -91,7 +91,7 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
-    typedef void (*Run)(JSWebAssemblyInstance*, uint32_t);
+    typedef void (*Run)(Instance*, uint32_t);
     Run run = OMGPlan::runForIndex;
     jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(run)), GPRInfo::argumentGPR2);
     jit.call(GPRInfo::argumentGPR2);

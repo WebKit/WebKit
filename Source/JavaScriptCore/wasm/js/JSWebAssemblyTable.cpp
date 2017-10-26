@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "JSWebAssemblyInstance.h"
 
 namespace JSC {
 
@@ -121,13 +122,13 @@ void JSWebAssemblyTable::clearFunction(uint32_t index)
 
 void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyFunction* function)
 {
-    m_table->setFunction(index, function->callableFunction(), function->instance());
+    m_table->setFunction(index, function->callableFunction(), &function->instance()->instance());
     m_jsFunctions.get()[index].set(vm, this, function);
 }
 
 void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyWrapperFunction* function)
 {
-    m_table->setFunction(index, function->callableFunction(), function->instance());
+    m_table->setFunction(index, function->callableFunction(), &function->instance()->instance());
     m_jsFunctions.get()[index].set(vm, this, function);
 }
 

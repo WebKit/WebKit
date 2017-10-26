@@ -31,11 +31,11 @@
 #include "B3Compilation.h"
 #include "B3OpaqueByproducts.h"
 #include "JSCInlines.h"
-#include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
 #include "WasmContext.h"
+#include "WasmInstance.h"
 #include "WasmMachineThreads.h"
 #include "WasmMemory.h"
 #include "WasmValidate.h"
@@ -163,13 +163,13 @@ void OMGPlan::work(CompilationEffort)
     complete(holdLock(m_lock));
 }
 
-void OMGPlan::runForIndex(JSWebAssemblyInstance* instance, uint32_t functionIndex)
+void OMGPlan::runForIndex(Instance* instance, uint32_t functionIndex)
 {
-    Wasm::CodeBlock& codeBlock = instance->wasmCodeBlock();
-    ASSERT(instance->wasmMemory()->mode() == codeBlock.mode());
+    Wasm::CodeBlock& codeBlock = *instance->codeBlock();
+    ASSERT(instance->memory()->mode() == codeBlock.mode());
 
     if (codeBlock.tierUpCount(functionIndex).shouldStartTierUp()) {
-        Ref<Plan> plan = adoptRef(*new OMGPlan(instance->context(), Ref<Wasm::Module>(instance->wasmModule()), functionIndex, codeBlock.mode(), Plan::dontFinalize()));
+        Ref<Plan> plan = adoptRef(*new OMGPlan(instance->context(), Ref<Wasm::Module>(instance->module()), functionIndex, codeBlock.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();
