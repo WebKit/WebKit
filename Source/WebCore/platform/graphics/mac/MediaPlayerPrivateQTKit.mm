@@ -45,6 +45,9 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 SOFT_LINK_FRAMEWORK(QTKit)
 
 SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (timeValue, timeScale))
@@ -1718,5 +1721,7 @@ bool MediaPlayerPrivateQTKit::isCurrentPlaybackTargetWireless() const
 }
 
 @end
+
+#pragma clang diagnostic pop // deprecated-declarations
 
 #endif
