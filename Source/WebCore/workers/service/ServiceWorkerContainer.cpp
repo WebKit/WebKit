@@ -180,9 +180,11 @@ void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
     m_swConnection->scheduleJob(rawJob);
 }
 
-void ServiceWorkerContainer::getRegistration(const String&, Ref<DeferredPromise>&& promise)
+void ServiceWorkerContainer::getRegistration(const String&, RegistrationPromise&& promise)
 {
-    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.getRegistration() is not yet implemented") });
+    // FIXME: Implement getRegistration algorithm, for now pretend there is no registration.
+    // https://bugs.webkit.org/show_bug.cgi?id=178882
+    promise.resolve(nullptr);
 }
 
 void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)

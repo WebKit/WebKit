@@ -61,7 +61,9 @@ public:
 
     void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
     void removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&&);
-    void getRegistration(const String& url, Ref<DeferredPromise>&&);
+
+    using RegistrationPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<ServiceWorkerRegistration>>>;
+    void getRegistration(const String& clientURL, RegistrationPromise&&);
     void getRegistrations(Ref<DeferredPromise>&&);
 
     void startMessages();
