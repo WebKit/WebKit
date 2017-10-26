@@ -29,7 +29,7 @@
 #if USE(CURL)
 
 #include "Credential.h"
-#include "CurlRequestDelegate.h"
+#include "CurlRequestClient.h"
 #include "ResourceRequest.h"
 
 namespace WebCore {
@@ -39,7 +39,7 @@ class MultipartHandle;
 class ResourceHandle;
 class ResourceResponse;
 
-class ResourceHandleCurlDelegate final : public ThreadSafeRefCounted<ResourceHandleCurlDelegate>, public CurlRequestDelegate {
+class ResourceHandleCurlDelegate final : public ThreadSafeRefCounted<ResourceHandleCurlDelegate>, public CurlRequestClient {
 public:
     ResourceHandleCurlDelegate(ResourceHandle*);
     ~ResourceHandleCurlDelegate();

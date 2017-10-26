@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CurlJobManager.h"
+#include "CurlRequestSchedulerClient.h"
 #include "CurlResponse.h"
 #include "CurlSSLVerifier.h"
 #include "FileSystem.h"
@@ -36,22 +36,22 @@
 
 namespace WebCore {
 
-class CurlRequestDelegate;
+class CurlRequestClient;
 class ResourceError;
 class SharedBuffer;
 
-class CurlRequest : public ThreadSafeRefCounted<CurlRequest>, public CurlJobClient {
+class CurlRequest : public ThreadSafeRefCounted<CurlRequest>, public CurlRequestSchedulerClient {
     WTF_MAKE_NONCOPYABLE(CurlRequest);
 
 public:
-    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestDelegate* delegate, bool shouldSuspend = false)
+    static Ref<CurlRequest> create(const ResourceRequest& request, CurlRequestClient* client, bool shouldSuspend = false)
     {
-        return adoptRef(*new CurlRequest(request, delegate, shouldSuspend));
+        return adoptRef(*new CurlRequest(request, client, shouldSuspend));
     }
 
     virtual ~CurlRequest() = default;
 
-    void setDelegate(CurlRequestDelegate* delegate) { m_delegate = delegate;  }
+    void setClient(CurlRequestClient* client) { m_client = client;  }
     void setUserPass(const String&, const String&);
 
     void start(bool isSyncRequest = false);
@@ -78,7 +78,7 @@ private:
         FinishTransfer
     };
 
-    CurlRequest(const ResourceRequest&, CurlRequestDelegate*, bool shouldSuspend);
+    CurlRequest(const ResourceRequest&, CurlRequestClient*, bool shouldSuspend);
 
     void retain() override { ref(); }
     void release() override { deref(); }
@@ -86,7 +86,7 @@ private:
 
     void startWithJobManager();
 
-    void callDelegate(WTF::Function<void(CurlRequestDelegate*)>);
+    void callClient(WTF::Function<void(CurlRequestClient*)>);
 
     // Transfer processing of Request body, Response header/body
     // Called by worker thread in case of async, main thread in case of sync.
@@ -126,7 +126,7 @@ private:
     static size_t didReceiveDataCallback(char*, size_t, size_t, void*);
 
 
-    std::atomic<CurlRequestDelegate*> m_delegate { };
+    std::atomic<CurlRequestClient*> m_client { };
     bool m_isSyncRequest { false };
     bool m_cancelled { false };
 

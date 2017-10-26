@@ -40,7 +40,7 @@ namespace WebCore {
 CurlDownload::~CurlDownload()
 {
     if (m_curlRequest)
-        m_curlRequest->setDelegate(nullptr);
+        m_curlRequest->setClient(nullptr);
 }
 
 void CurlDownload::init(CurlDownloadListener& listener, const URL& url)
@@ -196,7 +196,7 @@ void CurlDownload::willSendRequest()
     }
 
     m_curlRequest->cancel();
-    m_curlRequest->setDelegate(nullptr);
+    m_curlRequest->setClient(nullptr);
 
     m_curlRequest = createCurlRequest(newRequest);
     m_curlRequest->start();

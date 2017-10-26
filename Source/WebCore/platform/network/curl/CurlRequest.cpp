@@ -28,7 +28,8 @@
 
 #if USE(CURL)
 
-#include "CurlRequestDelegate.h"
+#include "CurlRequestClient.h"
+#include "CurlRequestScheduler.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
@@ -36,13 +37,13 @@
 
 namespace WebCore {
 
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestDelegate* delegate, bool shouldSuspend)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend)
     : m_request(request.isolatedCopy())
     , m_shouldSuspend(shouldSuspend)
 {
     ASSERT(isMainThread());
 
-    setDelegate(delegate);
+    setClient(client);
     resolveBlobReferences(m_request);
 }
 
@@ -72,13 +73,13 @@ void CurlRequest::start(bool isSyncRequest)
     auto url = m_request.url().isolatedCopy();
 
     if (!m_isSyncRequest) {
-        // For asynchronous, use CurlJobManager. Curl processes runs on sub thread.
+        // For asynchronous, use CurlRequestScheduler. Curl processes runs on sub thread.
         if (url.isLocalFile())
             invokeDidReceiveResponseForFile(url);
         else
             startWithJobManager();
     } else {
-        // For synchronous, does not use CurlJobManager. Curl processes runs on main thread.
+        // For synchronous, does not use CurlRequestScheduler. Curl processes runs on main thread.
         // curl_easy_perform blocks until the transfer is finished.
         retain();
         if (url.isLocalFile())
@@ -95,7 +96,7 @@ void CurlRequest::startWithJobManager()
 {
     ASSERT(isMainThread());
 
-    CurlJobManager::singleton().add(this);
+    CurlRequestScheduler::singleton().add(this);
 }
 
 void CurlRequest::cancel()
@@ -108,7 +109,7 @@ void CurlRequest::cancel()
     m_cancelled = true;
 
     if (!m_isSyncRequest)
-        CurlJobManager::singleton().cancel(this);
+        CurlRequestScheduler::singleton().cancel(this);
 
     setRequestPaused(false);
     setCallbackPaused(false);
@@ -129,15 +130,15 @@ void CurlRequest::resume()
 }
 
 /* `this` is protected inside this method. */
-void CurlRequest::callDelegate(WTF::Function<void(CurlRequestDelegate*)> task)
+void CurlRequest::callClient(WTF::Function<void(CurlRequestClient*)> task)
 {
     if (isMainThread()) {
-        if (CurlRequestDelegate* delegate = m_delegate)
-            task(delegate);
+        if (CurlRequestClient* client = m_client)
+            task(client);
     } else {
         callOnMainThread([protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
-            if (CurlRequestDelegate* delegate = protectedThis->m_delegate)
-                task(delegate);
+            if (CurlRequestClient* client = protectedThis->m_client)
+                task(client);
         });
     }
 }
@@ -328,9 +329,9 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
     writeDataToDownloadFileIfEnabled(buffer);
 
     if (receiveBytes) {
-        callDelegate([this, buffer = WTFMove(buffer)](CurlRequestDelegate* delegate) mutable {
-            if (delegate)
-                delegate->curlDidReceiveBuffer(WTFMove(buffer));
+        callClient([this, buffer = WTFMove(buffer)](CurlRequestClient* client) mutable {
+            if (client)
+                client->curlDidReceiveBuffer(WTFMove(buffer));
         });
     }
 
@@ -356,9 +357,9 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
                 m_networkLoadMetrics = *metrics;
 
             finalizeTransfer();
-            callDelegate([this](CurlRequestDelegate* delegate) {
-                if (delegate)
-                    delegate->curlDidComplete();
+            callClient([this](CurlRequestClient* client) {
+                if (client)
+                    client->curlDidComplete();
             });
         }
     } else {
@@ -367,9 +368,9 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
             resourceError.setSslErrors(m_sslVerifier.sslErrors());
 
         finalizeTransfer();
-        callDelegate([this, error = resourceError.isolatedCopy()](CurlRequestDelegate* delegate) {
-            if (delegate)
-                delegate->curlDidFailWithError(error);
+        callClient([this, error = resourceError.isolatedCopy()](CurlRequestClient* client) {
+            if (client)
+                client->curlDidFailWithError(error);
         });
     }
 }
@@ -496,7 +497,7 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
 
     if (!m_isSyncRequest) {
         // DidReceiveResponse must not be called immediately
-        CurlJobManager::singleton().callOnJobThread([protectedThis = makeRef(*this)]() {
+        CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this)]() {
             protectedThis->invokeDidReceiveResponse(Action::StartTransfer);
         });
     } else {
@@ -512,9 +513,9 @@ void CurlRequest::invokeDidReceiveResponse(Action behaviorAfterInvoke)
     m_didNotifyResponse = true;
     m_actionAfterInvoke = behaviorAfterInvoke;
 
-    callDelegate([this, response = m_response.isolatedCopy()](CurlRequestDelegate* delegate) {
-        if (delegate)
-            delegate->curlDidReceiveResponse(response);
+    callClient([this, response = m_response.isolatedCopy()](CurlRequestClient* client) {
+        if (client)
+            client->curlDidReceiveResponse(response);
     });
 }
 
@@ -538,7 +539,7 @@ void CurlRequest::completeDidReceiveResponse()
     } else if (m_actionAfterInvoke == Action::FinishTransfer) {
         // Keep the calling thread of didCompleteTransfer()
         if (!m_isSyncRequest) {
-            CurlJobManager::singleton().callOnJobThread([protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
+            CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
                 protectedThis->didCompleteTransfer(finishedResultCode);
             });
         } else
@@ -580,7 +581,7 @@ void CurlRequest::pausedStatusChanged()
         return;
 
     if (!m_isSyncRequest && isMainThread()) {
-        CurlJobManager::singleton().callOnJobThread([protectedThis = makeRef(*this), paused = isPaused()]() {
+        CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this), paused = isPaused()]() {
             if (protectedThis->m_cancelled)
                 return;
 

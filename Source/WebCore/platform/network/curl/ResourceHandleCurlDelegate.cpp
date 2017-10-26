@@ -61,7 +61,7 @@ ResourceHandleCurlDelegate::ResourceHandleCurlDelegate(ResourceHandle* handle)
 ResourceHandleCurlDelegate::~ResourceHandleCurlDelegate()
 {
     if (m_curlRequest)
-        m_curlRequest->setDelegate(nullptr);
+        m_curlRequest->setClient(nullptr);
 }
 
 bool ResourceHandleCurlDelegate::hasHandle() const
@@ -124,7 +124,7 @@ void ResourceHandleCurlDelegate::setAuthentication(const String& user, const Str
 
     bool isSyncRequest = m_curlRequest->isSyncRequest();
     m_curlRequest->cancel();
-    m_curlRequest->setDelegate(nullptr);
+    m_curlRequest->setClient(nullptr);
 
     m_curlRequest = createCurlRequest(m_currentRequest);
     m_curlRequest->setUserPass(user, password);
@@ -390,7 +390,7 @@ void ResourceHandleCurlDelegate::continueAfterWillSendRequest(ResourceRequest&& 
 
     bool isSyncRequest = m_curlRequest->isSyncRequest();
     m_curlRequest->cancel();
-    m_curlRequest->setDelegate(nullptr);
+    m_curlRequest->setClient(nullptr);
 
     m_curlRequest = createCurlRequest(m_currentRequest);
 

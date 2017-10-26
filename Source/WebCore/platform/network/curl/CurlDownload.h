@@ -30,7 +30,7 @@
 #if USE(CURL)
 
 #include "CurlRequest.h"
-#include "CurlRequestDelegate.h"
+#include "CurlRequestClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 
@@ -47,7 +47,7 @@ public:
     virtual void didFail() { }
 };
 
-class CurlDownload : public ThreadSafeRefCounted<CurlDownload>, public CurlRequestDelegate {
+class CurlDownload : public ThreadSafeRefCounted<CurlDownload>, public CurlRequestClient {
 public:
     CurlDownload() = default;
     ~CurlDownload();
