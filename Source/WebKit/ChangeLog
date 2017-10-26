@@ -1,3 +1,12 @@
+2017-10-26  Christopher Reid  <chris.reid@sony.com>
+
+        Remove scopeguard from platform
+        https://bugs.webkit.org/show_bug.cgi?id=178681
+
+        Reviewed by Brady Eidson.
+
+        * Shared/mac/ChildProcessMac.mm:
+
 2017-10-25  Per Arne Vollan  <pvollan@apple.com>
 
         Network process crash under WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge.

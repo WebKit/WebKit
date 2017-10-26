@@ -35,7 +35,6 @@
 #include "Logging.h"
 #include "NavigatorBase.h"
 #include "ResourceError.h"
-#include "ScopeGuard.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorker.h"
@@ -44,6 +43,7 @@
 #include "ServiceWorkerProvider.h"
 #include "URL.h"
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -202,7 +202,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data)
 {
-    ScopeGuard guard([this, &job] {
+    auto guard = WTF::makeScopeExit([this, &job] {
         jobDidFinish(job);
     });
 
@@ -221,7 +221,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
 {
-    ScopeGuard guard([this, &job] {
+    auto guard = WTF::makeScopeExit([this, &job] {
         jobDidFinish(job);
     });
 

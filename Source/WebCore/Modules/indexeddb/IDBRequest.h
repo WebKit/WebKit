@@ -34,6 +34,8 @@
 #include "IDBResourceIdentifier.h"
 #include "IndexedDB.h"
 #include <heap/Strong.h>
+#include <wtf/Function.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -47,7 +49,6 @@ class IDBObjectStore;
 class IDBResultData;
 class IDBTransaction;
 class IDBValue;
-class ScopeGuard;
 class ThreadSafeDataBuffer;
 
 namespace IDBClient {
@@ -170,7 +171,7 @@ private:
 
     RefPtr<IDBCursor> m_pendingCursor;
 
-    std::unique_ptr<ScopeGuard> m_cursorRequestNotifier;
+    std::unique_ptr<WTF::ScopeExit<WTF::Function<void()>>> m_cursorRequestNotifier;
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };

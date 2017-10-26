@@ -45,10 +45,10 @@
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertSequences.h"
 #include "Logging.h"
-#include "ScopeGuard.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
 #include <heap/StrongInlines.h>
+#include <wtf/Scope.h>
 #include <wtf/Variant.h>
 
 
@@ -177,7 +177,7 @@ void IDBRequest::setSource(IDBCursor& cursor)
     ASSERT(!m_cursorRequestNotifier);
 
     m_source = Source { &cursor };
-    m_cursorRequestNotifier = std::make_unique<ScopeGuard>([this]() {
+    m_cursorRequestNotifier = std::make_unique<WTF::ScopeExit<WTF::Function<void()>>>([this]() {
         ASSERT(WTF::holds_alternative<RefPtr<IDBCursor>>(m_source.value()));
         WTF::get<RefPtr<IDBCursor>>(m_source.value())->decrementOutstandingRequestCount();
     });
@@ -487,7 +487,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     m_domError = nullptr;
     m_idbError = IDBError { };
 
-    m_cursorRequestNotifier = std::make_unique<ScopeGuard>([this]() {
+    m_cursorRequestNotifier = std::make_unique<WTF::ScopeExit<WTF::Function<void()>>>([this]() {
         m_pendingCursor->decrementOutstandingRequestCount();
     });
 }

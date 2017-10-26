@@ -41,9 +41,9 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScopeGuard.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WorkQueue.h>
 
@@ -286,7 +286,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
                 PlatformFileHandle file;
                 String tempFilePath = openTemporaryFile(ASCIILiteral("Blob"), file);
 
-                ScopeGuard fileCloser([file]() mutable {
+                auto fileCloser = WTF::makeScopeExit([file]() mutable {
                     closeFile(file);
                 });
                 

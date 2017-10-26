@@ -30,9 +30,9 @@
 #include "WTFStringUtilities.h"
 #include <WebCore/FileMonitor.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/ScopeGuard.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 #include <wtf/StringExtras.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/StringBuffer.h>
@@ -120,7 +120,7 @@ static String readContentsOfFile(const String& path)
 
     StringBuffer<LChar> buffer(bufferSize);
 
-    ScopeGuard fileCloser([source]() {
+    auto fileCloser = WTF::makeScopeExit([source]() {
         PlatformFileHandle handle = source;
         closeFile(handle);
     });

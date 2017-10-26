@@ -1364,7 +1364,6 @@
 		51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51327D5E11A33A2B004F9D65 /* SinkDocument.h */; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		51405C89190B014400754F94 /* SelectionRectGatherer.h in Headers */ = {isa = PBXBuildFile; fileRef = 51405C87190B014400754F94 /* SelectionRectGatherer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		514129901C601ACC0059E714 /* ScopeGuard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5141298F1C601A890059E714 /* ScopeGuard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514129991C6976900059E714 /* IDBRequestCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 514129971C6976150059E714 /* IDBRequestCompletionEvent.h */; };
 		5143B2631DDD15200014FAC6 /* LinkIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = 5143B2621DDD14900014FAC6 /* LinkIcon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5145B10A1BC48E2E00E86219 /* IDBResourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5145B1081BC4890B00E86219 /* IDBResourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7691,7 +7690,6 @@
 		51405C86190B014400754F94 /* SelectionRectGatherer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectionRectGatherer.cpp; sourceTree = "<group>"; };
 		51405C87190B014400754F94 /* SelectionRectGatherer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionRectGatherer.h; sourceTree = "<group>"; };
 		5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorWithValueCustom.cpp; sourceTree = "<group>"; };
-		5141298F1C601A890059E714 /* ScopeGuard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeGuard.h; sourceTree = "<group>"; };
 		514129961C6976150059E714 /* IDBRequestCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBRequestCompletionEvent.cpp; sourceTree = "<group>"; };
 		514129971C6976150059E714 /* IDBRequestCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBRequestCompletionEvent.h; sourceTree = "<group>"; };
 		5141299A1C6C166D0059E714 /* JSIDBIndexCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBIndexCustom.cpp; sourceTree = "<group>"; };
@@ -23523,7 +23521,6 @@
 				293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */,
 				5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */,
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
-				5141298F1C601A890059E714 /* ScopeGuard.h */,
 				BC8AE34C12EA096A00EB3AE6 /* ScrollableArea.cpp */,
 				BC8AE34D12EA096A00EB3AE6 /* ScrollableArea.h */,
 				CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */,
@@ -28811,7 +28808,6 @@
 				5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */,
 				5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */,
 				9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */,
-				514129901C601ACC0059E714 /* ScopeGuard.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
 				A84D82C111D3474800972990 /* ScriptableDocumentParser.h in Headers */,
 				41F1D21F0EF35C2A00DA8753 /* ScriptCachedFrameData.h in Headers */,

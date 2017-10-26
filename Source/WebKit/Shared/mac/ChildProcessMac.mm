@@ -33,7 +33,6 @@
 #import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
 #import <WebCore/FileSystem.h>
-#import <WebCore/ScopeGuard.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
@@ -41,6 +40,7 @@
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
+#import <wtf/Scope.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -84,7 +84,7 @@ static OSStatus enableSandboxStyleFileQuarantine()
 {
     int error;
     qtn_proc_t quarantineProperties = qtn_proc_alloc();
-    ScopeGuard quarantinePropertiesDeleter([quarantineProperties]() {
+    auto quarantinePropertiesDeleter = makeScopeExit([quarantineProperties]() {
         qtn_proc_free(quarantineProperties);
     });
 

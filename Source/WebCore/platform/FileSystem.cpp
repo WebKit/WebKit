@@ -28,8 +28,8 @@
 #include "FileSystem.h"
 
 #include "FileMetadata.h"
-#include "ScopeGuard.h"
 #include <wtf/HexNumber.h>
+#include <wtf/Scope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -213,7 +213,7 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
     static int bufferSize = 1 << 19;
     Vector<char> buffer(bufferSize);
 
-    ScopeGuard fileCloser([source]() {
+    auto fileCloser = WTF::makeScopeExit([source]() {
         PlatformFileHandle handle = source;
         closeFile(handle);
     });

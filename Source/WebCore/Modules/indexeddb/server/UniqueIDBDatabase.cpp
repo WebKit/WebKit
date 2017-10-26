@@ -40,7 +40,6 @@
 #include "IDBTransactionInfo.h"
 #include "IDBValue.h"
 #include "Logging.h"
-#include "ScopeGuard.h"
 #include "SerializedScriptValue.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include <heap/HeapInlines.h>
@@ -49,6 +48,7 @@
 #include <runtime/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 
 
 namespace WebCore {
@@ -984,9 +984,12 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     }
 
     bool usedKeyIsGenerated = false;
-    ScopeGuard generatedKeyResetter;
+    uint64_t keyNumber;
+    auto generatedKeyResetter = WTF::makeScopeExit([this, transactionIdentifier, objectStoreIdentifier, &keyNumber, &usedKeyIsGenerated]() {
+        if (usedKeyIsGenerated)
+            m_backingStore->revertGeneratedKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
+    });
     if (objectStoreInfo->autoIncrement() && !keyData.isValid()) {
-        uint64_t keyNumber;
         error = m_backingStore->generateKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
         if (!error.isNull()) {
             postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
@@ -995,9 +998,6 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
         
         usedKey.setNumberValue(keyNumber);
         usedKeyIsGenerated = true;
-        generatedKeyResetter.enable([this, transactionIdentifier, objectStoreIdentifier, keyNumber]() {
-            m_backingStore->revertGeneratedKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
-        });
     } else
         usedKey = keyData;
 
@@ -1065,7 +1065,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     if (overwriteMode != IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor && objectStoreInfo->autoIncrement() && keyData.type() == IndexedDB::KeyType::Number)
         error = m_backingStore->maybeUpdateKeyGeneratorNumber(transactionIdentifier, objectStoreIdentifier, keyData.number());
 
-    generatedKeyResetter.disable();
+    generatedKeyResetter.release();
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
 }
 
