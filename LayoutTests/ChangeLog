@@ -1,3 +1,12 @@
+2017-10-26  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped webrtc/video-replace-muted-track.html on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=173608
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224019.
