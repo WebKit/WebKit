@@ -1934,3 +1934,5 @@ webkit.org/b/177832 imported/w3c/web-platform-tests/payment-request/rejects_if_n
 
 webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Skip ]
 
+webkit.org/b/177501 webrtc/video-mute.html [ Pass Timeout ]
+
