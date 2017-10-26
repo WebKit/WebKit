@@ -268,6 +268,7 @@ platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebGLLayer.mm
 platform/graphics/cocoa/WebGPULayer.mm
+platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 
 platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/TextureCacheCV.mm
@@ -375,3 +376,52 @@ platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 
 platform/network/cf/ResourceHandleCFNet.cpp
 platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp
+
+
+#if ENABLE_APPLE_PAY
+
+    Modules/applepay/ApplePayContactField.cpp
+    Modules/applepay/ApplePayError.cpp
+    Modules/applepay/ApplePayMerchantCapability.cpp
+    Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp
+    Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp
+    Modules/applepay/ApplePayRequestBase.cpp
+    Modules/applepay/ApplePaySession.cpp
+    Modules/applepay/ApplePaySessionPaymentRequest.cpp
+    Modules/applepay/ApplePayShippingContactSelectedEvent.cpp
+    Modules/applepay/ApplePayShippingMethodSelectedEvent.cpp
+    Modules/applepay/ApplePayValidateMerchantEvent.cpp
+    Modules/applepay/PaymentCoordinator.cpp
+    Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
+    Modules/applepay/PaymentRequestValidator.mm
+
+    Modules/applepay/cocoa/PaymentContactCocoa.mm
+    Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm @no-unify
+    Modules/applepay/cocoa/PaymentMethodCocoa.mm
+    Modules/applepay/cocoa/PaymentCocoa.mm
+
+    JSApplePayContactField.cpp
+    JSApplePayMerchantCapability.cpp
+    JSApplePayRequest.cpp
+    JSApplePayRequestBase.cpp
+    JSApplePayError.cpp
+    JSApplePayLineItem.cpp
+    JSApplePayPayment.cpp
+    JSApplePayPaymentAuthorizationResult.cpp
+    JSApplePayPaymentAuthorizedEvent.cpp
+    JSApplePayPaymentContact.cpp
+    JSApplePayPaymentMethod.cpp
+    JSApplePayPaymentMethodSelectedEvent.cpp
+    JSApplePayPaymentMethodUpdate.cpp
+    JSApplePayPaymentPass.cpp
+    JSApplePayPaymentRequest.cpp
+    JSApplePaySession.cpp
+    JSApplePayShippingContactSelectedEvent.cpp
+    JSApplePayShippingContactUpdate.cpp
+    JSApplePayShippingMethod.cpp
+    JSApplePayShippingMethodSelectedEvent.cpp
+    JSApplePayShippingMethodUpdate.cpp
+    JSApplePayValidateMerchantEvent.cpp
+
+#endif
+

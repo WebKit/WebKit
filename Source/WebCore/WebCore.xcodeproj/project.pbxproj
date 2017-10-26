@@ -492,8 +492,6 @@
 		1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF60D7E2B82007C3983 /* runtime_root.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A58E8651D19D4EB00C0EA73 /* ApplePaySessionPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A58E8641D19D4DF00C0EA73 /* ApplePaySessionPaymentRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A58E8661D19D4F000C0EA73 /* PaymentCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A58E8621D19D3BF00C0EA73 /* PaymentCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A58E8671D19D80E00C0EA73 /* ApplePaySessionPaymentRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A58E8631D19D4DF00C0EA73 /* ApplePaySessionPaymentRequest.cpp */; };
-		1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A58E86B1D19E42D00C0EA73 /* PaymentCoordinator.cpp */; };
 		1A58E86E1D19E42D00C0EA73 /* PaymentCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A58E86C1D19E42D00C0EA73 /* PaymentCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A71D57A0F33819000F9CE4E /* IdentifierRep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A750D5B0A90DEE1000FF215 /* JSTreeWalker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -516,23 +514,13 @@
 		1A8A643A1D19FC5300D0E00F /* Payment.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64371D19FC5300D0E00F /* Payment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8A643B1D19FC5300D0E00F /* PaymentContact.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64381D19FC5300D0E00F /* PaymentContact.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64391D19FC5300D0E00F /* PaymentMethod.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1A8A64511D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A643D1D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.cpp */; };
 		1A8A64521D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A643E1D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.h */; };
-		1A8A64541D19FCFC00D0E00F /* ApplePayPaymentMethodSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64401D19FCFB00D0E00F /* ApplePayPaymentMethodSelectedEvent.cpp */; };
 		1A8A64561D19FCFC00D0E00F /* ApplePayPaymentMethodSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64421D19FCFB00D0E00F /* ApplePayPaymentMethodSelectedEvent.h */; };
-		1A8A64581D19FCFC00D0E00F /* ApplePaySession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64441D19FCFB00D0E00F /* ApplePaySession.cpp */; };
 		1A8A64591D19FCFC00D0E00F /* ApplePaySession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64451D19FCFB00D0E00F /* ApplePaySession.h */; };
-		1A8A645B1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64471D19FCFB00D0E00F /* ApplePayShippingContactSelectedEvent.cpp */; };
 		1A8A645C1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64481D19FCFB00D0E00F /* ApplePayShippingContactSelectedEvent.h */; };
-		1A8A645F1D19FCFC00D0E00F /* ApplePayShippingMethodSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A644B1D19FCFB00D0E00F /* ApplePayShippingMethodSelectedEvent.cpp */; };
 		1A8A64601D19FCFC00D0E00F /* ApplePayShippingMethodSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A644C1D19FCFB00D0E00F /* ApplePayShippingMethodSelectedEvent.h */; };
-		1A8A64621D19FCFC00D0E00F /* ApplePayValidateMerchantEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A644E1D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.cpp */; };
 		1A8A64631D19FCFC00D0E00F /* ApplePayValidateMerchantEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A644F1D19FCFB00D0E00F /* ApplePayValidateMerchantEvent.h */; };
-		1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.mm */; };
 		1A8A64681D19FDFF00D0E00F /* PaymentRequestValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8A64661D19FDFF00D0E00F /* PaymentRequestValidator.h */; };
-		1A8A646C1D19FF8700D0E00F /* PaymentCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A64691D19FF8700D0E00F /* PaymentCocoa.mm */; };
-		1A8A646D1D19FF8700D0E00F /* PaymentContactCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A646A1D19FF8700D0E00F /* PaymentContactCocoa.mm */; };
-		1A8A646E1D19FF8700D0E00F /* PaymentMethodCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A646B1D19FF8700D0E00F /* PaymentMethodCocoa.mm */; };
 		1A8F6B020DB53006001DB794 /* SubstituteResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6B010DB53006001DB794 /* SubstituteResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8F6BBD0DB55CDC001DB794 /* ApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BB20DB55CDC001DB794 /* ApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8F6BBF0DB55CDC001DB794 /* ApplicationCacheGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F6BB40DB55CDC001DB794 /* ApplicationCacheGroup.h */; settings = {ATTRIBUTES = (); }; };
@@ -575,13 +563,6 @@
 		1ACE53EB0A8D18E70022947D /* XMLSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACE53E50A8D18E70022947D /* XMLSerializer.h */; };
 		1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACE53F50A8D19470022947D /* JSXMLSerializer.h */; };
 		1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD8F81911CAB9E900E93E54 /* PlatformStrategies.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1ADA4A1C1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ADA4A1B1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm */; };
-		1ADFDFE01E71D8EE008F5D34 /* ApplePayError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFDFD51E71D8DF008F5D34 /* ApplePayError.cpp */; };
-		1ADFDFEC1E71E455008F5D34 /* JSApplePayError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFDFE11E71DCA0008F5D34 /* JSApplePayError.cpp */; };
-		1ADFDFED1E71E475008F5D34 /* JSApplePayPaymentMethodUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFDFE51E71DCA0008F5D34 /* JSApplePayPaymentMethodUpdate.cpp */; };
-		1ADFDFEE1E71E47C008F5D34 /* JSApplePayShippingMethodUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFDFE91E71DCA0008F5D34 /* JSApplePayShippingMethodUpdate.cpp */; };
-		1ADFDFEF1E71E483008F5D34 /* JSApplePayShippingContactUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFDFE71E71DCA0008F5D34 /* JSApplePayShippingContactUpdate.cpp */; };
-		1ADFDFF01E71E4AC008F5D34 /* JSApplePayPaymentAuthorizationResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFDFE31E71DCA0008F5D34 /* JSApplePayPaymentAuthorizationResult.cpp */; };
 		1AE00D59182DAC8D00087DD7 /* KeyedCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D57182DAC8D00087DD7 /* KeyedCoding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE2AA1F0A1CDAB400B42B25 /* JSHTMLAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */; };
 		1AE2AA230A1CDAB400B42B25 /* JSHTMLBodyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */; };
@@ -607,17 +588,11 @@
 		1AE82FED0CAB07EE002237AE /* JSSQLResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */; };
 		1AE96A881D1A0CEB00B86768 /* PaymentAuthorizationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A861D1A0CEB00B86768 /* PaymentAuthorizationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE96A891D1A0CEB00B86768 /* PaymentMerchantSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1AE96A8A1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A7A1D1A0A8000B86768 /* JSApplePayPaymentAuthorizedEvent.cpp */; };
 		1AE96A8B1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A7B1D1A0A8000B86768 /* JSApplePayPaymentAuthorizedEvent.h */; };
-		1AE96A8C1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A7C1D1A0A8000B86768 /* JSApplePayPaymentMethodSelectedEvent.cpp */; };
 		1AE96A8D1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A7D1D1A0A8000B86768 /* JSApplePayPaymentMethodSelectedEvent.h */; };
-		1AE96A8E1D1A0DDD00B86768 /* JSApplePaySession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A7E1D1A0A8000B86768 /* JSApplePaySession.cpp */; };
 		1AE96A8F1D1A0DDD00B86768 /* JSApplePaySession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A7F1D1A0A8000B86768 /* JSApplePaySession.h */; };
-		1AE96A901D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A801D1A0A8000B86768 /* JSApplePayShippingContactSelectedEvent.cpp */; };
 		1AE96A911D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A811D1A0A8000B86768 /* JSApplePayShippingContactSelectedEvent.h */; };
-		1AE96A921D1A0DDD00B86768 /* JSApplePayShippingMethodSelectedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A821D1A0A8000B86768 /* JSApplePayShippingMethodSelectedEvent.cpp */; };
 		1AE96A931D1A0DDD00B86768 /* JSApplePayShippingMethodSelectedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A831D1A0A8000B86768 /* JSApplePayShippingMethodSelectedEvent.h */; };
-		1AE96A941D1A0DDD00B86768 /* JSApplePayValidateMerchantEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A841D1A0A8000B86768 /* JSApplePayValidateMerchantEvent.cpp */; };
 		1AEF4E67170E160300AB2799 /* CachedFontClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E66170E160300AB2799 /* CachedFontClient.h */; };
 		1AEF4E69170E174800AB2799 /* CachedSVGDocumentClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1413,7 +1388,6 @@
 		51714EA81CF4E4B1004723C4 /* IDBActiveDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EA71CF4DE87004723C4 /* IDBActiveDOMObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51714EAC1CF65951004723C4 /* GCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EA91CF65899004723C4 /* GCObservation.cpp */; };
 		51714EAD1CF65951004723C4 /* GCObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EAA1CF65899004723C4 /* GCObservation.h */; };
-		51714EB01CF665CE004723C4 /* JSGCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */; };
 		51714EB11CF665CE004723C4 /* JSGCObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EAF1CF6654A004723C4 /* JSGCObservation.h */; };
 		51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1532,7 +1506,6 @@
 		51FB5504113E3E9100821176 /* JSCloseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FB5502113E3E9100821176 /* JSCloseEvent.h */; };
 		51FB67DC1AE6B82F00D06C5A /* ContentExtensionStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52131E5B1C4F15760033F802 /* VideoFullscreenInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */; };
-		526724F31CB2FEAD0075974D /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */; };
 		52B0D4BE1C57FD1E0077CE53 /* PlatformView.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B0D4C01C57FD660077CE53 /* VideoFullscreenChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B0D4C21C57FF910077CE53 /* VideoFullscreenInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1693,7 +1666,6 @@
 		538F10A81F9022A4005102CE /* SoftLinkLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F10A31F900BDC005102CE /* SoftLinkLibxslt.cpp */; };
 		53B895AF19DC7ED9009CAA93 /* Microtasks.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B895AD19DC7C37009CAA93 /* Microtasks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */; };
 		53E29E5F167A8A1900586D3D /* InternalSettingsGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */; };
 		53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53ED3FDC167A88E7006762E6 /* JSInternalSettingsGenerated.cpp */; };
 		53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ED3FDD167A88E7006762E6 /* JSInternalSettingsGenerated.h */; };
@@ -2105,21 +2077,14 @@
 		7C6522FB1E00C90900677F22 /* ApplePayPaymentContact.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6522F81E00C90900677F22 /* ApplePayPaymentContact.h */; };
 		7C6523011E00D03400677F22 /* ApplePayPayment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6522FE1E00D03400677F22 /* ApplePayPayment.h */; };
 		7C6523141E00DBB400677F22 /* JSApplePayPayment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C65230A1E00DBB400677F22 /* JSApplePayPayment.h */; };
-		7C6523151E00DBB500677F22 /* JSApplePayPaymentContact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65230B1E00DBB400677F22 /* JSApplePayPaymentContact.cpp */; };
 		7C6523161E00DBB500677F22 /* JSApplePayPaymentContact.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C65230C1E00DBB400677F22 /* JSApplePayPaymentContact.h */; };
-		7C6523171E00DBB500677F22 /* JSApplePayPaymentMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65230D1E00DBB400677F22 /* JSApplePayPaymentMethod.cpp */; };
 		7C6523181E00DBB500677F22 /* JSApplePayPaymentMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C65230E1E00DBB400677F22 /* JSApplePayPaymentMethod.h */; };
-		7C6523191E00DBB500677F22 /* JSApplePayPaymentPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65230F1E00DBB400677F22 /* JSApplePayPaymentPass.cpp */; };
 		7C65231A1E00DBB500677F22 /* JSApplePayPaymentPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6523101E00DBB400677F22 /* JSApplePayPaymentPass.h */; };
-		7C65231E1E018B5A00677F22 /* JSApplePayPayment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C65231D1E018B5A00677F22 /* JSApplePayPayment.cpp */; };
 		7C6579E01E0079F900E3A27A /* ApplePayPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6579DF1E0079F900E3A27A /* ApplePayPaymentRequest.h */; };
 		7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6579E21E00827000E3A27A /* ApplePayLineItem.h */; };
 		7C6579E81E00831600E3A27A /* ApplePayShippingMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6579E71E00831600E3A27A /* ApplePayShippingMethod.h */; };
-		7C6579EF1E00856600E3A27A /* JSApplePayLineItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6579E91E00856600E3A27A /* JSApplePayLineItem.cpp */; };
 		7C6579F01E00856600E3A27A /* JSApplePayLineItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6579EA1E00856600E3A27A /* JSApplePayLineItem.h */; };
-		7C6579F11E00856600E3A27A /* JSApplePayPaymentRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6579EB1E00856600E3A27A /* JSApplePayPaymentRequest.cpp */; };
 		7C6579F21E00856600E3A27A /* JSApplePayPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6579EC1E00856600E3A27A /* JSApplePayPaymentRequest.h */; };
-		7C6579F31E00856600E3A27A /* JSApplePayShippingMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6579ED1E00856600E3A27A /* JSApplePayShippingMethod.cpp */; };
 		7C6579F41E00856600E3A27A /* JSApplePayShippingMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C6579EE1E00856600E3A27A /* JSApplePayShippingMethod.h */; };
 		7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C73FB05191EF416007DE061 /* UserMessageHandlersNamespace.cpp */; };
 		7C73FB08191EF417007DE061 /* UserMessageHandlersNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C73FB06191EF417007DE061 /* UserMessageHandlersNamespace.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2906,22 +2871,14 @@
 		A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE712B18612AC100734192 /* TouchEvents.cpp */; };
 		A1DF5A7F1F7EBD0B0058A477 /* ApplePayRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A7C1F7EBD0B0058A477 /* ApplePayRequest.h */; };
 		A1DF5A861F7EBDF20058A477 /* ApplePayMerchantCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A831F7EBDF20058A477 /* ApplePayMerchantCapability.h */; };
-		A1DF5A8D1F7EC0020058A477 /* JSApplePayMerchantCapability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5A891F7EC0000058A477 /* JSApplePayMerchantCapability.cpp */; };
 		A1DF5A8E1F7EC0020058A477 /* JSApplePayMerchantCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A8A1F7EC0000058A477 /* JSApplePayMerchantCapability.h */; };
 		A1DF5A8F1F7EC0020058A477 /* JSApplePayRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A8B1F7EC0010058A477 /* JSApplePayRequest.h */; };
-		A1DF5A901F7EC0020058A477 /* JSApplePayRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5A8C1F7EC0010058A477 /* JSApplePayRequest.cpp */; };
 		A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A911F7EC4320058A477 /* ApplePayContactField.h */; };
 		A1DF5A991F7EC8C00058A477 /* JSApplePayContactField.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5A971F7EC8BF0058A477 /* JSApplePayContactField.h */; };
-		A1DF5A9A1F7EC8C00058A477 /* JSApplePayContactField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5A981F7EC8C00058A477 /* JSApplePayContactField.cpp */; };
 		A1DF5AA21F7EE1130058A477 /* ApplePayPaymentHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AA01F7EE1130058A477 /* ApplePayPaymentHandler.h */; };
-		A1DF5AA31F7EE1130058A477 /* ApplePayPaymentHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AA11F7EE1130058A477 /* ApplePayPaymentHandler.cpp */; };
 		A1DF5AA61F7F64BB0058A477 /* PaymentHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AA41F7F64BB0058A477 /* PaymentHandler.h */; };
-		A1DF5AA91F8070D40058A477 /* ApplePayMerchantCapability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AA81F8070D40058A477 /* ApplePayMerchantCapability.cpp */; };
 		A1DF5AAD1F8075F00058A477 /* ApplePayRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AAA1F8075F00058A477 /* ApplePayRequestBase.h */; };
-		A1DF5AAE1F8075F10058A477 /* ApplePayRequestBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AAB1F8075F00058A477 /* ApplePayRequestBase.cpp */; };
-		A1DF5AB21F8077530058A477 /* JSApplePayRequestBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AB01F8077520058A477 /* JSApplePayRequestBase.cpp */; };
 		A1DF5AB31F8077530058A477 /* JSApplePayRequestBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF5AB11F8077520058A477 /* JSApplePayRequestBase.h */; };
-		A1DF5AB51F8078F30058A477 /* ApplePayContactField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DF5AB41F8078F30058A477 /* ApplePayContactField.cpp */; };
 		A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1ED778A1BE3293F00DC1791 /* Device.cpp */; };
 		A1ED778D1BE3294000DC1791 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778B1BE3294000DC1791 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1F55DC11F54D2D600EDB75F /* TextEncodingRegistryIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F55DBF1F54D2D600EDB75F /* TextEncodingRegistryIOS.mm */; };
@@ -4343,6 +4300,39 @@
 		DE5F85981FA1ABF4006DB63A /* UnifiedSource48.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85671FA1ABD8006DB63A /* UnifiedSource48.mm */; };
 		DE5F85991FA1ABF4006DB63A /* UnifiedSource49.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F854B1FA1ABBF006DB63A /* UnifiedSource49.mm */; };
 		DE5F859A1FA1ABF4006DB63A /* UnifiedSource50.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F854C1FA1ABC0006DB63A /* UnifiedSource50.mm */; };
+		DE5F85F21FA2386A006DB63A /* UnifiedSource451.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85BB1FA23839006DB63A /* UnifiedSource451.cpp */; };
+		DE5F85F31FA2386A006DB63A /* UnifiedSource452.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C21FA2383F006DB63A /* UnifiedSource452.cpp */; };
+		DE5F85F41FA2386A006DB63A /* UnifiedSource453.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85BD1FA2383A006DB63A /* UnifiedSource453.cpp */; };
+		DE5F85F51FA2386A006DB63A /* UnifiedSource454.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C81FA23846006DB63A /* UnifiedSource454.cpp */; };
+		DE5F85F61FA2386A006DB63A /* UnifiedSource455.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C71FA23845006DB63A /* UnifiedSource455.cpp */; };
+		DE5F85F71FA2386A006DB63A /* UnifiedSource456.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C51FA23843006DB63A /* UnifiedSource456.cpp */; };
+		DE5F85F81FA2386A006DB63A /* UnifiedSource457.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85BE1FA2383B006DB63A /* UnifiedSource457.cpp */; };
+		DE5F85F91FA2386A006DB63A /* UnifiedSource458.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85B81FA23836006DB63A /* UnifiedSource458.cpp */; };
+		DE5F85FA1FA2386A006DB63A /* UnifiedSource459.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D01FA23852006DB63A /* UnifiedSource459.cpp */; };
+		DE5F85FB1FA2386A006DB63A /* UnifiedSource460.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C01FA2383D006DB63A /* UnifiedSource460.cpp */; };
+		DE5F85FC1FA2386A006DB63A /* UnifiedSource461.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CC1FA2384C006DB63A /* UnifiedSource461.cpp */; };
+		DE5F85FD1FA2386A006DB63A /* UnifiedSource462.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85BC1FA2383A006DB63A /* UnifiedSource462.cpp */; };
+		DE5F85FE1FA2386A006DB63A /* UnifiedSource463.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C31FA23840006DB63A /* UnifiedSource463.cpp */; };
+		DE5F85FF1FA2386A006DB63A /* UnifiedSource464.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85B91FA23837006DB63A /* UnifiedSource464.cpp */; };
+		DE5F86001FA2386A006DB63A /* UnifiedSource465.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85BF1FA2383C006DB63A /* UnifiedSource465.cpp */; };
+		DE5F86011FA2386A006DB63A /* UnifiedSource466.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85BA1FA23838006DB63A /* UnifiedSource466.cpp */; };
+		DE5F86021FA2386A006DB63A /* UnifiedSource467.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CB1FA2384B006DB63A /* UnifiedSource467.cpp */; };
+		DE5F86031FA2386A006DB63A /* UnifiedSource468.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85B61FA23835006DB63A /* UnifiedSource468.cpp */; };
+		DE5F86041FA2386A006DB63A /* UnifiedSource469.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85B71FA23835006DB63A /* UnifiedSource469.cpp */; };
+		DE5F86051FA2386A006DB63A /* UnifiedSource470.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C11FA2383E006DB63A /* UnifiedSource470.cpp */; };
+		DE5F86061FA2386A006DB63A /* UnifiedSource471.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C41FA23842006DB63A /* UnifiedSource471.cpp */; };
+		DE5F86071FA2386A006DB63A /* UnifiedSource472.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C91FA23848006DB63A /* UnifiedSource472.cpp */; };
+		DE5F86081FA2386A006DB63A /* UnifiedSource473.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CA1FA2384A006DB63A /* UnifiedSource473.cpp */; };
+		DE5F86091FA2386A006DB63A /* UnifiedSource474.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CD1FA2384D006DB63A /* UnifiedSource474.cpp */; };
+		DE5F860A1FA2386A006DB63A /* UnifiedSource475.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CE1FA2384E006DB63A /* UnifiedSource475.cpp */; };
+		DE5F860B1FA2386A006DB63A /* UnifiedSource476.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D11FA23854006DB63A /* UnifiedSource476.cpp */; };
+		DE5F860C1FA2386A006DB63A /* UnifiedSource477.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85C61FA23844006DB63A /* UnifiedSource477.cpp */; };
+		DE5F860D1FA2386B006DB63A /* UnifiedSource478.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D21FA23856006DB63A /* UnifiedSource478.cpp */; };
+		DE5F860E1FA2386B006DB63A /* UnifiedSource479.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CF1FA23850006DB63A /* UnifiedSource479.cpp */; };
+		DE5F860F1FA2386B006DB63A /* UnifiedSource480.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D31FA23859006DB63A /* UnifiedSource480.cpp */; };
+		DE5F86101FA238D9006DB63A /* PaymentMerchantSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ADA4A1B1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm */; };
+		DE5F86111FA239DA006DB63A /* InternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */; };
+		DE5F86121FA239E7006DB63A /* JSGCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */; };
 		DEBCCDD216646E8200A452E1 /* RenderMediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = DE49B308165F2FE10010338D /* RenderMediaControlElements.h */; };
 		DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DE49B300165F2FC60010338D /* MediaControlElementTypes.h */; };
 		DECA7D931F9E67B500E3B661 /* UnifiedSource131.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DECA7D6D1F9E61CF00E3B661 /* UnifiedSource131.cpp */; };
@@ -13398,6 +13388,36 @@
 		DE5F85691FA1ABDA006DB63A /* UnifiedSource27.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedSource27.mm; sourceTree = "<group>"; };
 		DE5F856A1FA1ABDB006DB63A /* UnifiedSource13.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedSource13.mm; sourceTree = "<group>"; };
 		DE5F856B1FA1ABDB006DB63A /* UnifiedSource6.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedSource6.mm; sourceTree = "<group>"; };
+		DE5F85B61FA23835006DB63A /* UnifiedSource468.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource468.cpp; sourceTree = "<group>"; };
+		DE5F85B71FA23835006DB63A /* UnifiedSource469.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource469.cpp; sourceTree = "<group>"; };
+		DE5F85B81FA23836006DB63A /* UnifiedSource458.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource458.cpp; sourceTree = "<group>"; };
+		DE5F85B91FA23837006DB63A /* UnifiedSource464.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource464.cpp; sourceTree = "<group>"; };
+		DE5F85BA1FA23838006DB63A /* UnifiedSource466.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource466.cpp; sourceTree = "<group>"; };
+		DE5F85BB1FA23839006DB63A /* UnifiedSource451.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource451.cpp; sourceTree = "<group>"; };
+		DE5F85BC1FA2383A006DB63A /* UnifiedSource462.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource462.cpp; sourceTree = "<group>"; };
+		DE5F85BD1FA2383A006DB63A /* UnifiedSource453.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource453.cpp; sourceTree = "<group>"; };
+		DE5F85BE1FA2383B006DB63A /* UnifiedSource457.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource457.cpp; sourceTree = "<group>"; };
+		DE5F85BF1FA2383C006DB63A /* UnifiedSource465.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource465.cpp; sourceTree = "<group>"; };
+		DE5F85C01FA2383D006DB63A /* UnifiedSource460.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource460.cpp; sourceTree = "<group>"; };
+		DE5F85C11FA2383E006DB63A /* UnifiedSource470.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource470.cpp; sourceTree = "<group>"; };
+		DE5F85C21FA2383F006DB63A /* UnifiedSource452.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource452.cpp; sourceTree = "<group>"; };
+		DE5F85C31FA23840006DB63A /* UnifiedSource463.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource463.cpp; sourceTree = "<group>"; };
+		DE5F85C41FA23842006DB63A /* UnifiedSource471.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource471.cpp; sourceTree = "<group>"; };
+		DE5F85C51FA23843006DB63A /* UnifiedSource456.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource456.cpp; sourceTree = "<group>"; };
+		DE5F85C61FA23844006DB63A /* UnifiedSource477.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource477.cpp; sourceTree = "<group>"; };
+		DE5F85C71FA23845006DB63A /* UnifiedSource455.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource455.cpp; sourceTree = "<group>"; };
+		DE5F85C81FA23846006DB63A /* UnifiedSource454.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource454.cpp; sourceTree = "<group>"; };
+		DE5F85C91FA23848006DB63A /* UnifiedSource472.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource472.cpp; sourceTree = "<group>"; };
+		DE5F85CA1FA2384A006DB63A /* UnifiedSource473.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource473.cpp; sourceTree = "<group>"; };
+		DE5F85CB1FA2384B006DB63A /* UnifiedSource467.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource467.cpp; sourceTree = "<group>"; };
+		DE5F85CC1FA2384C006DB63A /* UnifiedSource461.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource461.cpp; sourceTree = "<group>"; };
+		DE5F85CD1FA2384D006DB63A /* UnifiedSource474.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource474.cpp; sourceTree = "<group>"; };
+		DE5F85CE1FA2384E006DB63A /* UnifiedSource475.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource475.cpp; sourceTree = "<group>"; };
+		DE5F85CF1FA23850006DB63A /* UnifiedSource479.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource479.cpp; sourceTree = "<group>"; };
+		DE5F85D01FA23852006DB63A /* UnifiedSource459.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource459.cpp; sourceTree = "<group>"; };
+		DE5F85D11FA23854006DB63A /* UnifiedSource476.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource476.cpp; sourceTree = "<group>"; };
+		DE5F85D21FA23856006DB63A /* UnifiedSource478.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource478.cpp; sourceTree = "<group>"; };
+		DE5F85D31FA23859006DB63A /* UnifiedSource480.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource480.cpp; sourceTree = "<group>"; };
 		DEC2975D1B4DEB2A005F5945 /* JSCustomEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomEventCustom.cpp; sourceTree = "<group>"; };
 		DECA7D6A1F9E61CB00E3B661 /* UnifiedSource144.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource144.cpp; sourceTree = "<group>"; };
 		DECA7D6B1F9E61CC00E3B661 /* UnifiedSource148.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource148.cpp; sourceTree = "<group>"; };
@@ -17903,6 +17923,36 @@
 				DE5F84A61FA1A484006DB63A /* UnifiedSource448.cpp */,
 				DE5F84B01FA1A48E006DB63A /* UnifiedSource449.cpp */,
 				DE5F84B31FA1A491006DB63A /* UnifiedSource450.cpp */,
+				DE5F85BB1FA23839006DB63A /* UnifiedSource451.cpp */,
+				DE5F85C21FA2383F006DB63A /* UnifiedSource452.cpp */,
+				DE5F85BD1FA2383A006DB63A /* UnifiedSource453.cpp */,
+				DE5F85C81FA23846006DB63A /* UnifiedSource454.cpp */,
+				DE5F85C71FA23845006DB63A /* UnifiedSource455.cpp */,
+				DE5F85C51FA23843006DB63A /* UnifiedSource456.cpp */,
+				DE5F85BE1FA2383B006DB63A /* UnifiedSource457.cpp */,
+				DE5F85B81FA23836006DB63A /* UnifiedSource458.cpp */,
+				DE5F85D01FA23852006DB63A /* UnifiedSource459.cpp */,
+				DE5F85C01FA2383D006DB63A /* UnifiedSource460.cpp */,
+				DE5F85CC1FA2384C006DB63A /* UnifiedSource461.cpp */,
+				DE5F85BC1FA2383A006DB63A /* UnifiedSource462.cpp */,
+				DE5F85C31FA23840006DB63A /* UnifiedSource463.cpp */,
+				DE5F85B91FA23837006DB63A /* UnifiedSource464.cpp */,
+				DE5F85BF1FA2383C006DB63A /* UnifiedSource465.cpp */,
+				DE5F85BA1FA23838006DB63A /* UnifiedSource466.cpp */,
+				DE5F85CB1FA2384B006DB63A /* UnifiedSource467.cpp */,
+				DE5F85B61FA23835006DB63A /* UnifiedSource468.cpp */,
+				DE5F85B71FA23835006DB63A /* UnifiedSource469.cpp */,
+				DE5F85C11FA2383E006DB63A /* UnifiedSource470.cpp */,
+				DE5F85C41FA23842006DB63A /* UnifiedSource471.cpp */,
+				DE5F85C91FA23848006DB63A /* UnifiedSource472.cpp */,
+				DE5F85CA1FA2384A006DB63A /* UnifiedSource473.cpp */,
+				DE5F85CD1FA2384D006DB63A /* UnifiedSource474.cpp */,
+				DE5F85CE1FA2384E006DB63A /* UnifiedSource475.cpp */,
+				DE5F85D11FA23854006DB63A /* UnifiedSource476.cpp */,
+				DE5F85C61FA23844006DB63A /* UnifiedSource477.cpp */,
+				DE5F85D21FA23856006DB63A /* UnifiedSource478.cpp */,
+				DE5F85CF1FA23850006DB63A /* UnifiedSource479.cpp */,
+				DE5F85D31FA23859006DB63A /* UnifiedSource480.cpp */,
 			);
 			path = "unified-sources";
 			sourceTree = "<group>";
@@ -29985,7 +30035,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\ncd $SRCROOT\n\nif [ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]; then\nBUILD_SCRIPTS_DIR=\"${SDKROOT}/usr/local/include/wtf/Scripts\"\nelse\nBUILD_SCRIPTS_DIR=\"${BUILT_PRODUCTS_DIR}/usr/local/include/wtf/Scripts\"\nfi\n\nif [ \"${PLATFORM_DISPLAY_NAME}\" == \"macOS\" ]; then\nPLATFORM_NAME=\"Mac\"\nelse\nPLATFORM_NAME=\"IOS\"\nfi\n\nUnifiedSourceCppFileCount=450\nUnifiedSourceMmFileCount=50\n\n/usr/bin/env ruby \"${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb\" \"--derived-sources-path\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\" \"--source-tree-path\" \"${SRCROOT}\" \"--feature-flags\" \"${FEATURE_DEFINES}\" \"--max-cpp-bundle-count\" \"${UnifiedSourceCppFileCount}\" \"--max-obj-c-bundle-count\" \"${UnifiedSourceMmFileCount}\" \"Sources.txt\" \"SourcesCocoa.txt\" \"Sources${PLATFORM_NAME}.txt\" > /dev/null\n";
+			shellScript = "set -e\n\ncd $SRCROOT\n\nif [ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]; then\nBUILD_SCRIPTS_DIR=\"${SDKROOT}/usr/local/include/wtf/Scripts\"\nelse\nBUILD_SCRIPTS_DIR=\"${BUILT_PRODUCTS_DIR}/usr/local/include/wtf/Scripts\"\nfi\n\nif [ \"${PLATFORM_DISPLAY_NAME}\" == \"macOS\" ]; then\nPLATFORM_NAME=\"Mac\"\nelse\nPLATFORM_NAME=\"IOS\"\nfi\n\nUnifiedSourceCppFileCount=480\nUnifiedSourceMmFileCount=50\n\n/usr/bin/env ruby \"${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb\" \"--derived-sources-path\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\" \"--source-tree-path\" \"${SRCROOT}\" \"--feature-flags\" \"${FEATURE_DEFINES}\" \"--max-cpp-bundle-count\" \"${UnifiedSourceCppFileCount}\" \"--max-obj-c-bundle-count\" \"${UnifiedSourceMmFileCount}\" \"Sources.txt\" \"SourcesCocoa.txt\" \"Sources${PLATFORM_NAME}.txt\" > /dev/null\n";
 		};
 		5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -30100,8 +30150,8 @@
 				417DA6D913734E6E007C57FB /* Internals.cpp in Sources */,
 				E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */,
 				A7BF7EDF14C9175A0014489D /* InternalSettings.cpp in Sources */,
-				53E29E5E167A8A1900586D3D /* InternalSettingsGenerated.cpp in Sources */,
-				51714EB01CF665CE004723C4 /* JSGCObservation.cpp in Sources */,
+				DE5F86111FA239DA006DB63A /* InternalSettingsGenerated.cpp in Sources */,
+				DE5F86121FA239E7006DB63A /* JSGCObservation.cpp in Sources */,
 				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
 				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,
@@ -30140,20 +30190,8 @@
 				CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */,
 				31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */,
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
-				A1DF5AB51F8078F30058A477 /* ApplePayContactField.cpp in Sources */,
-				1ADFDFE01E71D8EE008F5D34 /* ApplePayError.cpp in Sources */,
-				A1DF5AA91F8070D40058A477 /* ApplePayMerchantCapability.cpp in Sources */,
 				A1F9296A1F8D9CDB00523AF3 /* ApplePayMerchantValidationEvent.cpp in Sources */,
-				1A8A64511D19FCFB00D0E00F /* ApplePayPaymentAuthorizedEvent.cpp in Sources */,
-				A1DF5AA31F7EE1130058A477 /* ApplePayPaymentHandler.cpp in Sources */,
-				1A8A64541D19FCFC00D0E00F /* ApplePayPaymentMethodSelectedEvent.cpp in Sources */,
 				A1CBEF541F9EEE750028DE7C /* ApplePayPaymentMethodUpdateEvent.cpp in Sources */,
-				A1DF5AAE1F8075F10058A477 /* ApplePayRequestBase.cpp in Sources */,
-				1A8A64581D19FCFC00D0E00F /* ApplePaySession.cpp in Sources */,
-				1A58E8671D19D80E00C0EA73 /* ApplePaySessionPaymentRequest.cpp in Sources */,
-				1A8A645B1D19FCFC00D0E00F /* ApplePayShippingContactSelectedEvent.cpp in Sources */,
-				1A8A645F1D19FCFC00D0E00F /* ApplePayShippingMethodSelectedEvent.cpp in Sources */,
-				1A8A64621D19FCFC00D0E00F /* ApplePayValidateMerchantEvent.cpp in Sources */,
 				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,
 				CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */,
 				CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */,
@@ -30265,30 +30303,8 @@
 				B275357C0B053814002CE64F /* IntPointMac.mm in Sources */,
 				B275357D0B053814002CE64F /* IntRectMac.mm in Sources */,
 				B275357E0B053814002CE64F /* IntSizeMac.mm in Sources */,
-				A1DF5A9A1F7EC8C00058A477 /* JSApplePayContactField.cpp in Sources */,
-				1ADFDFEC1E71E455008F5D34 /* JSApplePayError.cpp in Sources */,
-				7C6579EF1E00856600E3A27A /* JSApplePayLineItem.cpp in Sources */,
-				A1DF5A8D1F7EC0020058A477 /* JSApplePayMerchantCapability.cpp in Sources */,
 				A1F9296F1F8D9F5B00523AF3 /* JSApplePayMerchantValidationEvent.cpp in Sources */,
-				7C65231E1E018B5A00677F22 /* JSApplePayPayment.cpp in Sources */,
-				1ADFDFF01E71E4AC008F5D34 /* JSApplePayPaymentAuthorizationResult.cpp in Sources */,
-				1AE96A8A1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.cpp in Sources */,
-				7C6523151E00DBB500677F22 /* JSApplePayPaymentContact.cpp in Sources */,
-				7C6523171E00DBB500677F22 /* JSApplePayPaymentMethod.cpp in Sources */,
-				1AE96A8C1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.cpp in Sources */,
-				1ADFDFED1E71E475008F5D34 /* JSApplePayPaymentMethodUpdate.cpp in Sources */,
 				A1CBEF611F9F09040028DE7C /* JSApplePayPaymentMethodUpdateEvent.cpp in Sources */,
-				7C6523191E00DBB500677F22 /* JSApplePayPaymentPass.cpp in Sources */,
-				7C6579F11E00856600E3A27A /* JSApplePayPaymentRequest.cpp in Sources */,
-				A1DF5A901F7EC0020058A477 /* JSApplePayRequest.cpp in Sources */,
-				A1DF5AB21F8077530058A477 /* JSApplePayRequestBase.cpp in Sources */,
-				1AE96A8E1D1A0DDD00B86768 /* JSApplePaySession.cpp in Sources */,
-				1AE96A901D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.cpp in Sources */,
-				1ADFDFEF1E71E483008F5D34 /* JSApplePayShippingContactUpdate.cpp in Sources */,
-				7C6579F31E00856600E3A27A /* JSApplePayShippingMethod.cpp in Sources */,
-				1AE96A921D1A0DDD00B86768 /* JSApplePayShippingMethodSelectedEvent.cpp in Sources */,
-				1ADFDFEE1E71E47C008F5D34 /* JSApplePayShippingMethodUpdate.cpp in Sources */,
-				1AE96A941D1A0DDD00B86768 /* JSApplePayValidateMerchantEvent.cpp in Sources */,
 				0FDA7C1E188322FC00C954B5 /* JSGestureEvent.cpp in Sources */,
 				538EC93E1F99BF5A004D22A8 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				538EC9421F99CE47004D22A8 /* JSTouch.cpp in Sources */,
@@ -30362,12 +30378,7 @@
 				4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */,
 				1AF5E4E21E5779B1004A1F01 /* PasteboardWriter.mm in Sources */,
 				A1CFE0321F9E71290065C345 /* PaymentAddress.cpp in Sources */,
-				1A8A646C1D19FF8700D0E00F /* PaymentCocoa.mm in Sources */,
-				1A8A646D1D19FF8700D0E00F /* PaymentContactCocoa.mm in Sources */,
-				1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */,
-				1ADA4A1C1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm in Sources */,
-				1A8A646E1D19FF8700D0E00F /* PaymentMethodCocoa.mm in Sources */,
-				1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.mm in Sources */,
+				DE5F86101FA238D9006DB63A /* PaymentMerchantSessionCocoa.mm in Sources */,
 				2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */,
 				26601EC014B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm in Sources */,
 				BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */,
@@ -30433,7 +30444,6 @@
 				9759E94514EF1CF80026A2DD /* TextTrackCueList.cpp in Sources */,
 				076970861463AD8700F502CF /* TextTrackList.cpp in Sources */,
 				CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */,
-				526724F31CB2FEAD0075974D /* TextTrackRepresentationCocoa.mm in Sources */,
 				29498683195341940072D2BD /* TextUndoInsertionMarkupMac.mm in Sources */,
 				44C991A00F3D210E00586670 /* ThemeIOS.mm in Sources */,
 				BCE659E90EA92FFA007E4533 /* ThemeMac.mm in Sources */,
@@ -30944,6 +30954,36 @@
 				DE5F85321FA1A4F9006DB63A /* UnifiedSource448.cpp in Sources */,
 				DE5F85331FA1A4F9006DB63A /* UnifiedSource449.cpp in Sources */,
 				DE5F85341FA1A4F9006DB63A /* UnifiedSource450.cpp in Sources */,
+				DE5F85F21FA2386A006DB63A /* UnifiedSource451.cpp in Sources */,
+				DE5F85F31FA2386A006DB63A /* UnifiedSource452.cpp in Sources */,
+				DE5F85F41FA2386A006DB63A /* UnifiedSource453.cpp in Sources */,
+				DE5F85F51FA2386A006DB63A /* UnifiedSource454.cpp in Sources */,
+				DE5F85F61FA2386A006DB63A /* UnifiedSource455.cpp in Sources */,
+				DE5F85F71FA2386A006DB63A /* UnifiedSource456.cpp in Sources */,
+				DE5F85F81FA2386A006DB63A /* UnifiedSource457.cpp in Sources */,
+				DE5F85F91FA2386A006DB63A /* UnifiedSource458.cpp in Sources */,
+				DE5F85FA1FA2386A006DB63A /* UnifiedSource459.cpp in Sources */,
+				DE5F85FB1FA2386A006DB63A /* UnifiedSource460.cpp in Sources */,
+				DE5F85FC1FA2386A006DB63A /* UnifiedSource461.cpp in Sources */,
+				DE5F85FD1FA2386A006DB63A /* UnifiedSource462.cpp in Sources */,
+				DE5F85FE1FA2386A006DB63A /* UnifiedSource463.cpp in Sources */,
+				DE5F85FF1FA2386A006DB63A /* UnifiedSource464.cpp in Sources */,
+				DE5F86001FA2386A006DB63A /* UnifiedSource465.cpp in Sources */,
+				DE5F86011FA2386A006DB63A /* UnifiedSource466.cpp in Sources */,
+				DE5F86021FA2386A006DB63A /* UnifiedSource467.cpp in Sources */,
+				DE5F86031FA2386A006DB63A /* UnifiedSource468.cpp in Sources */,
+				DE5F86041FA2386A006DB63A /* UnifiedSource469.cpp in Sources */,
+				DE5F86051FA2386A006DB63A /* UnifiedSource470.cpp in Sources */,
+				DE5F86061FA2386A006DB63A /* UnifiedSource471.cpp in Sources */,
+				DE5F86071FA2386A006DB63A /* UnifiedSource472.cpp in Sources */,
+				DE5F86081FA2386A006DB63A /* UnifiedSource473.cpp in Sources */,
+				DE5F86091FA2386A006DB63A /* UnifiedSource474.cpp in Sources */,
+				DE5F860A1FA2386A006DB63A /* UnifiedSource475.cpp in Sources */,
+				DE5F860B1FA2386A006DB63A /* UnifiedSource476.cpp in Sources */,
+				DE5F860C1FA2386A006DB63A /* UnifiedSource477.cpp in Sources */,
+				DE5F860D1FA2386B006DB63A /* UnifiedSource478.cpp in Sources */,
+				DE5F860E1FA2386B006DB63A /* UnifiedSource479.cpp in Sources */,
+				DE5F860F1FA2386B006DB63A /* UnifiedSource480.cpp in Sources */,
 				868160D518766A0E0021E79D /* UserActivityMac.mm in Sources */,
 				26255F0018878DFF0006E1FD /* UserAgentIOS.mm in Sources */,
 				26255F0418878E110006E1FD /* UserAgentMac.mm in Sources */,
