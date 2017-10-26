@@ -63,11 +63,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._selectorElement = document.createElement("span");
         this._selectorElement.classList.add("selector");
-        this._selectorElement.tabIndex = 0;
         this._headerElement.append(this._selectorElement);
 
-        if (this._style.selectorEditable)
+        if (this._style.selectorEditable) {
             this._selectorTextField = new WI.SpreadsheetSelectorField(this, this._selectorElement);
+            this._selectorElement.tabIndex = 0;
+        }
 
         this._propertiesEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this, this._style);
         this._propertiesEditor.element.classList.add("properties");

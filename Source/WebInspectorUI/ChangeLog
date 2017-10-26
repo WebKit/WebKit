@@ -1,3 +1,18 @@
+2017-10-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Make "Style Attribute" text darker and non-focusable
+        https://bugs.webkit.org/show_bug.cgi?id=178837
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .selector.style-attribute):
+        Use the same shade of gray as in the "Inherited from" sections.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        Only editable selectors should be focusable.
+
 2017-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add CanvasOverview.svg and Canvas.svg

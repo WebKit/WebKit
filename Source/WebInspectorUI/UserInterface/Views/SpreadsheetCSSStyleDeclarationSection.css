@@ -71,7 +71,7 @@
 
 .spreadsheet-css-declaration .selector.style-attribute {
     font: 12px sans-serif;
-    color: hsl(0, 0%, 50%);
+    color: hsl(0, 0%, 30%);
     -webkit-user-modify: read-only;
 }
 
