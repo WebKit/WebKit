@@ -6379,13 +6379,6 @@ void Document::cancelAnimationFrame(int id)
     m_scriptedAnimationController->cancelCallback(id);
 }
 
-void Document::serviceScriptedAnimations(double timestamp)
-{
-    if (!m_scriptedAnimationController)
-        return;
-    m_scriptedAnimationController->serviceScriptedAnimations(timestamp);
-}
-
 void Document::clearScriptedAnimationController()
 {
     // FIXME: consider using ActiveDOMObject.

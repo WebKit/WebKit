@@ -3192,25 +3192,6 @@ void FrameView::scheduleSelectionUpdate()
     scheduleRelayout();
 }
 
-void FrameView::serviceScriptedAnimations()
-{
-    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext()) {
-        frame->view()->serviceScrollAnimations();
-        frame->animation().serviceAnimations();
-    }
-
-    if (!frame().document() || !frame().document()->domWindow())
-        return;
-
-    Vector<RefPtr<Document>> documents;
-    for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext())
-        documents.append(frame->document());
-
-    double timestamp = frame().document()->domWindow()->nowTimestamp();
-    for (auto& document : documents)
-        document->serviceScriptedAnimations(timestamp);
-}
-
 bool FrameView::isTransparent() const
 {
     return m_isTransparent;

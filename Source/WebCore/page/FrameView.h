@@ -144,8 +144,6 @@ public:
     bool useCustomFixedPositionLayoutRect() const { return false; }
 #endif
 
-    WEBCORE_EXPORT void serviceScriptedAnimations();
-
     void willRecalcStyle();
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
