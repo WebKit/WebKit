@@ -213,7 +213,8 @@ _PATH_RULES_SPECIFIER = [
     #
     ([os.path.join('webkitpy', 'thirdparty'),
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
-      os.path.join('Source', 'ThirdParty', 'xdgmime')],
+      os.path.join('Source', 'ThirdParty', 'xdgmime'),
+      os.path.join('Tools', 'WebGPUAPIStructure')],
      ["-",
       "+pep8/W191",  # Tabs
       "+pep8/W291",  # Trailing white space

@@ -1,3 +1,394 @@
+2017-10-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Demonstrate a possible structure of the WebGPU API
+        https://bugs.webkit.org/show_bug.cgi?id=178874
+
+        Reviewed by Dean Jackson.
+
+        Over the past few weeks, we've been putting together an example showing that a WebGPU API
+        which has implicit barriers can work on all three low-level graphics APIs. We've implemented
+        it on top of Vulkan first, because this is the API which has the strictest requirements and
+        is most difficult to use.
+
+        With this API, this is a valid WebGPU snippet:
+
+        auto device = WebGPU::Device::create(hInstance, hWnd);
+        auto& commandQueue = device->getCommandQueue();
+        auto& renderState = device->getRenderState(vertexShader, "main", fragmentShader, "main", { }, { }, { }, nullptr);
+        
+        … later, in the draw() function …
+        
+        auto renderPass = commandQueue->createRenderPass(nullptr);
+        renderPass->setRenderState(renderState);
+        renderPass->setViewport(0, 0, width, height);
+        renderPass->setScissorRect(0, 0, width, height);
+        renderPass->draw(3);
+        commandQueue->commitRenderPass(std::move(renderPass));
+        commandQueue->present();
+
+        This snippet doesn’t hook up any vertex attributes or resources, which means the vertex
+        shader has to say something like ({vec4(…), vec4(…), vec4(…)})[gl_VertexIndex]. It also
+        passes in “nullptr” when creating the render pass, which means “render to the screen, rather
+        than to a frame buffer.” You can also see that it doesn’t attach any resources to the draw
+        call.
+
+        In Direct3D 12 and Vulkan, resources are bound in sets, rather than individually. For
+        example, a set might contain two uniform buffers, a texture, and another uniform buffer. At
+        draw time, you swap in whole sets of resources with a single call. A shader invocation can
+        access a collection of sets. Because all shader resource accesses are indirected through
+        these sets, the shape of these sets needs to be supplied at the time you compile the render
+        state. Here is a snippet which bounds a single set which contains a uniform buffer and a
+        texture:
+
+        auto buffer = device->getBuffer(bufferInitialContents);
+        auto texture = device->getTexture(buffer width, height, WebGPU::PixelFormat::RGBA8, textureInitialContents);
+        // One resource set, which holds a single uniform buffer object and a single texture
+        auto& renderState = device->getRenderState(vertexShader, "main", fragmentShader, "main", { }, { }, { { WebGPU::ResourceType::UniformBufferObject, WebGPU::ResourceType::Texture } }, nullptr);
+        
+        … later, in the draw() function …
+        
+        auto renderPass = commandQueue->createRenderPass(nullptr);
+        renderPass->setRenderState(renderState);
+        renderPass->setResources(0, { WebGPU::UniformBufferObjectReference(buffer.get()), WebGPU::TextureReference(texture.get()) });
+        …
+        renderPass->draw(3);
+        commandQueue->commitRenderPass(std::move(renderPass));
+        commandQueue->present();
+        
+        The first argument to the setResources() call identifies which set to populate with the supplied resources.
+
+        One tenant of the low-level graphics APIs is that, if you’ve enabled double buffering (or
+        triple buffering), the GPU is executing one frame at the same time you are recording the
+        next frame. This often means that you need duplicate resources so the CPU and GPU don’t step
+        on each other’s toes. However, platforms have platform-specific requirements about whether
+        or not they can be double / triple buffered, and we don’t want to expose this to the Web for
+        fear of badly-authored programs.
+
+        To solve this, resources are reference counted, and the return type of getBuffer() is an
+        RAII type called BufferHolder which increments and decrements the reference count
+        automatically. The reference count is also incremented and decremented when the GPU is using
+        the resource in a Pass. When the reference count reaches 0, the resource isn’t destroyed;
+        instead, it’s simply moved to a “free list” which getBuffer() may pull from. Therefore,
+        applications don’t need to know whether the frame buffer is double buffered or triple
+        buffered; they can just getBuffer() each frame, and the correct number of buffers will be
+        created and recycled.
+        
+        {
+            auto buffer = device->getBuffer(bufferSize); // These get recycled
+            … populate the buffer …
+            auto renderPass = commandQueue->createRenderPass(nullptr);
+            renderPass->setRenderState(renderState);
+            renderPass->setResources(0, { WebGPU::UniformBufferObjectReference(buffer.get()) });
+            …
+            renderPass->draw(…);
+            commandQueue->commitRenderPass(std::move(renderPass));
+        }
+        commandQueue->present();
+
+        In Direct3D and Vulkan, vertex buffers and index buffers are not part of the resource sets
+        mentioned above. Instead, you tell the render state about the shape of the vertex and index
+        buffers, and you swap them out independently in the draw loop. Metal and Vulkan have almost
+        identical API to specify this shape of the vertex buffers, so I’ve mostly copied it. In this
+        example, we have two vertex attributes, a vec2 and a vec3, which both come from the same
+        buffer:
+        
+        // { Attribute format, offset within stride, buffer to pull from }
+        std::vector<WebGPU::RenderState::VertexAttribute> vertexAttributes = { {WebGPU::RenderState::VertexFormat::Float2, 0, 0}, {WebGPU::RenderState::VertexFormat::Float3, sizeof(float) * 2, 0} };
+        // A single vertex buffer, with a stride of 5 floats
+        auto& renderState = device->getRenderState(vertexShader, "main", fragmentShader, "main", { sizeof(float) * 5 }, vertexAttributes, resourceTypes, nullptr);
+        
+        … later, in the draw() function …
+        
+        auto renderPass = commandQueue->createRenderPass(nullptr);
+        renderPass->setRenderState(renderState);
+        renderPass->setVertexAttributeBuffers({ vertexBuffer.get() }); // The one vertex buffer which both attributes pull from
+        renderPass->setResources(…);
+        …
+        renderPass->draw(…);
+        commandQueue->commitRenderPass(std::move(renderPass));
+        commandQueue->present();
+
+        You can also tell the RenderState about how many render targets you have and their formats,
+        and then when you create the RenderPass, you specify the specific textures you want to
+        render into.
+
+        std::vector<WebGPU::PixelFormat> colorPixelFormats = { WebGPU::PixelFormat::RGBA8, WebGPU::PixelFormat::RGBA8 }; // Two render targets, with these formats
+        auto& renderState = device->getRenderState(vertexShader, "main", fragmentShader, "main", vertexBufferStrides, vertexAttributes, resourceTypes, &colorPixelFormats);
+        
+        … later, in the draw() function …
+        
+        std::vector<std::reference_wrapper<WebGPU::Texture>> destinationTextures = { texture1->get(), texture2->get() };
+        auto renderPass = commandQueue->createRenderPass(&destinationTextures);
+        renderPass->setRenderState(renderState);
+        …
+        renderPass->draw(…);
+        commandQueue->commitRenderPass(std::move(renderPass));
+        
+        // Now, draw one of the textures to the screen. Note that no synchronization is necessary here!
+        auto renderPass = commandQueue->createRenderPass(nullptr);
+        renderPass->setRenderState(renderState2);
+        renderPass->setResources(0, { WebGPU:: TextureReference(texture1.get()) });
+        …
+        renderPass->draw(…);
+        commandQueue->commitRenderPass(std::move(renderPass));
+        commandQueue->present();
+
+        Just like how in Metal has Render Encoders and Compute Encoders, WebGPU has RenderPasses
+        and ComputePasses.
+
+        auto& computeState = device->getComputeState(computeShader, "main", resourceTypes);
+        …
+        auto computePass = commandQueue->createComputePass();
+        computePass->setComputeState(computeState);
+        computePass->setResources(0, resources);
+        computePass->dispatch(width, height, depth);
+        commandQueue->commitComputePass(std::move(computePass));
+        
+        // Now, draw the resources we just computed. Note that no synchronization is necessary here!
+        auto renderPass = commandQueue->createRenderPass(nullptr);
+        renderPass->setRenderState(renderState);
+        renderPass->setResources(0, resources });
+        …
+        renderPass->draw(…);
+        commandQueue->commitRenderPass(std::move(renderPass));
+        commandQueue->present();
+
+        There are also two other types of passes: one that corresponds to a Metal blit encoder, and
+        one that allows the CPU to change the contents of GPU buffers and textures. This last kind
+        of pass is a little interesting: you can’t just change the contents of a buffer at any time
+        you feel like it, because that resource might be in use by the GPU. Therefore, we need to do
+        the same kind of synchronization that we already do at render pass boundaries.
+
+        In addition, both Vulkan and Direct3D have a concept of a memory heap. A resource might
+        exist inside a heap which is fast, but invisible from the CPU, or in a heap which is slow,
+        but visible by the CPU. Certain operations are not possible from some types of images (e.g.
+        non-tiled textures may not be able to be sampled from). The usual way to get around this
+        problem is to have two resources: a slow staging resource which the CPU can see, and a fast
+        resource which the CPU can’t see. Uploading data is a two-pass algorithm, where the CPU
+        memcpy()s into the slow staging resource, and then a blit command is enqueued on the GPU to
+        copy the contents of the staging resource to the real resource. This requires that the
+        upload have access to the commandQueue so it can possibly enqueue a blit between the staging
+        and real resources. Therefore, a pass is the right level of abstraction for these facilities.
+
+        std::queue<boost::unique_future<std::vector<uint8_t>>> futureQueue; // Promises for data downloads from the GPU
+        
+        … later, in the draw() function …
+        
+        // See if any of the previously-enqueued downloads are finished
+        while (!futureQueue.empty() && futureQueue.front(). has_value()) {
+            std::vector<uint8_t>& data = futureQueue.front().get();
+            // Use the downloaded data
+            futureQueue.pop();
+        }
+        …
+        auto hostAccessPass = commandQueue->createHostAccessPass();
+        hostAccessPass->overwriteBuffer(buffer->get(), bufferContents); // Upload data to a resource
+        
+        futureQueue.emplace(hostAccessPass->getBufferContents(buffer->get()));
+        commandQueue->commitHostAccessPass(std::move(hostAccessPass));
+        
+        You can also issue copy commands between resources entirely on the GPU:
+        
+        auto blitPass = commandQueue->createBlitPass();
+        blitPass->copyTexture(source->get(), destination->get(), sourceX, sourceY, destinationX, destinationY, width, height);
+        commandQueue->commitBlitPass(std::move(blitPass));
+
+        * Scripts/webkitpy/style/checker.py:
+        * WebGPUAPIStructure/Example/Example.cpp: Added.
+        (readFile):
+        (drawWebGPU):
+        (wWinMain):
+        (MyRegisterClass):
+        (InitInstance):
+        (WndProc):
+        * WebGPUAPIStructure/Example/Example.h: Added.
+        * WebGPUAPIStructure/Example/Example.ico: Added.
+        * WebGPUAPIStructure/Example/Example.rc: Added.
+        * WebGPUAPIStructure/Example/Example.vcxproj: Added.
+        * WebGPUAPIStructure/Example/Example.vcxproj.filters: Added.
+        * WebGPUAPIStructure/Example/Example.vcxproj.user: Added.
+        * WebGPUAPIStructure/Example/resource.h: Added.
+        * WebGPUAPIStructure/Example/small.ico: Added.
+        * WebGPUAPIStructure/Example/stdafx.cpp: Added.
+        * WebGPUAPIStructure/Example/stdafx.h: Added.
+        * WebGPUAPIStructure/Example/targetver.h: Added.
+        * WebGPUAPIStructure/WebGPU-Common/WebGPU-Common.vcxproj: Added.
+        * WebGPUAPIStructure/WebGPU-Common/WebGPU-Common.vcxproj.filters: Added.
+        * WebGPUAPIStructure/WebGPU-Common/WebGPU.cpp: Added.
+        (WebGPU::BufferHolder::BufferHolder):
+        (WebGPU::BufferHolder::~BufferHolder):
+        (WebGPU::TextureHolder::TextureHolder):
+        (WebGPU::TextureHolder::~TextureHolder):
+        (WebGPU::SamplerHolder::SamplerHolder):
+        (WebGPU::SamplerHolder::~SamplerHolder):
+        * WebGPUAPIStructure/WebGPU-Common/WebGPU.h: Added.
+        (WebGPU::Queue::~Queue):
+        (WebGPU::RenderState::~RenderState):
+        (WebGPU::ComputeState::~ComputeState):
+        (WebGPU::Buffer::~Buffer):
+        (WebGPU::Texture::~Texture):
+        (WebGPU::Sampler::~Sampler):
+        (WebGPU::TextureReference::TextureReference):
+        (WebGPU::TextureReference::get const):
+        (WebGPU::SamplerReference::SamplerReference):
+        (WebGPU::SamplerReference::get const):
+        (WebGPU::UniformBufferObjectReference::UniformBufferObjectReference):
+        (WebGPU::UniformBufferObjectReference::get const):
+        (WebGPU::ShaderStorageBufferObjectReference::ShaderStorageBufferObjectReference):
+        (WebGPU::ShaderStorageBufferObjectReference::get const):
+        (WebGPU::RenderPass::~RenderPass):
+        (WebGPU::ComputePass::~ComputePass):
+        (WebGPU::BlitPass::~BlitPass):
+        (WebGPU::HostAccessPass::~HostAccessPass):
+        (WebGPU::BufferHolder::get):
+        (WebGPU::TextureHolder::get):
+        (WebGPU::SamplerHolder::get):
+        (WebGPU::Device::~Device):
+        * WebGPUAPIStructure/WebGPU-Vulkan/BlitPassImpl.cpp: Added.
+        (WebGPU::BlitPassImpl::BlitPassImpl):
+        (WebGPU::BlitPassImpl::copyTexture):
+        * WebGPUAPIStructure/WebGPU-Vulkan/BlitPassImpl.h: Added.
+        * WebGPUAPIStructure/WebGPU-Vulkan/BufferImpl.cpp: Added.
+        (WebGPU::BufferImpl::BufferImpl):
+        (WebGPU::BufferImpl::decrementReferenceCount):
+        * WebGPUAPIStructure/WebGPU-Vulkan/BufferImpl.h: Added.
+        (WebGPU::BufferImpl::getBuffer const):
+        (WebGPU::BufferImpl::getDeviceMemory const):
+        (WebGPU::BufferImpl::incrementReferenceCount):
+        (WebGPU::BufferImpl::getLength const):
+        * WebGPUAPIStructure/WebGPU-Vulkan/ComputePassImpl.cpp: Added.
+        (WebGPU::ComputePassImpl::ComputePassImpl):
+        (WebGPU::ComputePassImpl::setComputeState):
+        (WebGPU::ComputePassImpl::setResources):
+        (WebGPU::ComputePassImpl::dispatch):
+        * WebGPUAPIStructure/WebGPU-Vulkan/ComputePassImpl.h: Added.
+        * WebGPUAPIStructure/WebGPU-Vulkan/ComputeStateImpl.cpp: Added.
+        (WebGPU::ComputeStateImpl::ComputeStateImpl):
+        * WebGPUAPIStructure/WebGPU-Vulkan/ComputeStateImpl.h: Added.
+        (WebGPU::ComputeStateImpl::getPipeline const):
+        (WebGPU::ComputeStateImpl::getPipelineLayout const):
+        (WebGPU::ComputeStateImpl::getDescriptorSetLayouts const):
+        * WebGPUAPIStructure/WebGPU-Vulkan/DeviceImpl.cpp: Added.
+        (WebGPU::Device::create):
+        (WebGPU::convertPixelFormat):
+        (WebGPU::convertFormat):
+        (WebGPU::debugReport):
+        (WebGPU::DeviceImpl::DeviceImpl):
+        (WebGPU::DeviceImpl::getCommandQueue):
+        (WebGPU::DeviceImpl::prepareShader):
+        (WebGPU::DeviceImpl::createPipelineLayout):
+        (WebGPU::DeviceImpl::createCompatibleRenderPass):
+        (WebGPU::convertVertexFormat):
+        (WebGPU::DeviceImpl::getRenderState):
+        (WebGPU::DeviceImpl::getComputeState):
+        (WebGPU::DeviceImpl::getBuffer):
+        (WebGPU::DeviceImpl::returnBuffer):
+        (WebGPU::DeviceImpl::getTexture):
+        (WebGPU::DeviceImpl::returnTexture):
+        (WebGPU::DeviceImpl::getSampler):
+        (WebGPU::DeviceImpl::returnSampler):
+        (WebGPU::DeviceImpl::~DeviceImpl):
+        * WebGPUAPIStructure/WebGPU-Vulkan/DeviceImpl.h: Added.
+        (WebGPU::DeviceImpl::UniqueDebugReportCallbackEXT::UniqueDebugReportCallbackEXT):
+        (WebGPU::DeviceImpl::UniqueDebugReportCallbackEXT::operator=):
+        (WebGPU::DeviceImpl::UniqueDebugReportCallbackEXT::~UniqueDebugReportCallbackEXT):
+        (WebGPU::DeviceImpl::UniqueDebugReportCallbackEXT::destroy):
+        (WebGPU::DeviceImpl::TextureParameters::operator== const):
+        (WebGPU::DeviceImpl::TextureParametersHash::operator() const):
+        * WebGPUAPIStructure/WebGPU-Vulkan/HostAccessPassImpl.cpp: Added.
+        (WebGPU::HostAccessPassImpl::HostAccessPassImpl):
+        (WebGPU::HostAccessPassImpl::overwriteBuffer):
+        (WebGPU::HostAccessPassImpl::getBufferContents):
+        (WebGPU::HostAccessPassImpl::execute):
+        * WebGPUAPIStructure/WebGPU-Vulkan/HostAccessPassImpl.h: Added.
+        (WebGPU::HostAccessPassImpl::getFinishedEvent const):
+        * WebGPUAPIStructure/WebGPU-Vulkan/PassImpl.cpp: Added.
+        (WebGPU::PassImpl::PassImpl):
+        (WebGPU::ResourceVisitor::operator()):
+        (WebGPU::ResourceVisitor::getBindings const):
+        (WebGPU::ResourceVisitor::releaseWriteDescriptorSets):
+        (WebGPU::ResourceVisitor::getDescriptorImageInfos const):
+        (WebGPU::ResourceVisitor::getDescriptorBufferInfos const):
+        (WebGPU::ResourceVisitor::getBuffers const):
+        (WebGPU::ResourceVisitor::getTextures const):
+        (WebGPU::ResourceVisitor::getSamplers const):
+        (WebGPU::ResourceVisitor::getImageCount const):
+        (WebGPU::ResourceVisitor::getSamplerCount const):
+        (WebGPU::ResourceVisitor::getUniformBufferCount const):
+        (WebGPU::ResourceVisitor::getStorageBufferCount const):
+        (WebGPU::PassImpl::setResources):
+        (WebGPU::PassImpl::insertBuffer):
+        (WebGPU::PassImpl::insertTexture):
+        (WebGPU::PassImpl::insertSampler):
+        * WebGPUAPIStructure/WebGPU-Vulkan/PassImpl.h: Added.
+        (WebGPU::PassImpl::getCommandBuffer const):
+        (WebGPU::PassImpl::iterateBuffers):
+        (WebGPU::PassImpl::iterateTextures):
+        (WebGPU::PassImpl::ResourceReference::ResourceReference):
+        (WebGPU::PassImpl::ResourceReference::~ResourceReference):
+        (WebGPU::PassImpl::ResourceReference::operator=):
+        (WebGPU::PassImpl::ResourceReference::operator== const):
+        (WebGPU::PassImpl::ResourceReference::get const):
+        (WebGPU::PassImpl::ResourceReference::release):
+        (WebGPU::PassImpl::ResourceReferenceHash::operator() const):
+        * WebGPUAPIStructure/WebGPU-Vulkan/QueueImpl.cpp: Added.
+        (WebGPU::QueueImpl::QueueImpl):
+        (WebGPU::QueueImpl::prepareCurrentFrame):
+        (WebGPU::QueueImpl::createSpecificRenderPass):
+        (WebGPU::QueueImpl::createFramebuffer):
+        (WebGPU::QueueImpl::createRenderPass):
+        (WebGPU::QueueImpl::commitRenderPass):
+        (WebGPU::QueueImpl::createComputePass):
+        (WebGPU::QueueImpl::commitComputePass):
+        (WebGPU::QueueImpl::createBlitPass):
+        (WebGPU::QueueImpl::commitBlitPass):
+        (WebGPU::QueueImpl::createHostAccessPass):
+        (WebGPU::QueueImpl::commitHostAccessPass):
+        (WebGPU::QueueImpl::present):
+        (WebGPU::QueueImpl::commitPass):
+        (WebGPU::QueueImpl::synchronizeResources):
+        (WebGPU::QueueImpl::~QueueImpl):
+        * WebGPUAPIStructure/WebGPU-Vulkan/QueueImpl.h: Added.
+        * WebGPUAPIStructure/WebGPU-Vulkan/RenderPassImpl.cpp: Added.
+        (WebGPU::RenderPassImpl::RenderPassImpl):
+        (WebGPU::RenderPassImpl::setRenderState):
+        (WebGPU::RenderPassImpl::setVertexAttributeBuffers):
+        (WebGPU::RenderPassImpl::setResources):
+        (WebGPU::RenderPassImpl::setViewport):
+        (WebGPU::RenderPassImpl::setScissorRect):
+        (WebGPU::RenderPassImpl::draw):
+        * WebGPUAPIStructure/WebGPU-Vulkan/RenderPassImpl.h: Added.
+        * WebGPUAPIStructure/WebGPU-Vulkan/RenderStateImpl.cpp: Added.
+        (WebGPU::RenderStateImpl::RenderStateImpl):
+        * WebGPUAPIStructure/WebGPU-Vulkan/RenderStateImpl.h: Added.
+        (WebGPU::RenderStateImpl::getPipeline const):
+        (WebGPU::RenderStateImpl::getPipelineLayout const):
+        (WebGPU::RenderStateImpl::getDescriptorSetLayouts const):
+        * WebGPUAPIStructure/WebGPU-Vulkan/SamplerImpl.cpp: Added.
+        (WebGPU::SamplerImpl::SamplerImpl):
+        (WebGPU::SamplerImpl::decrementReferenceCount):
+        * WebGPUAPIStructure/WebGPU-Vulkan/SamplerImpl.h: Added.
+        (WebGPU::SamplerImpl::getSampler):
+        (WebGPU::SamplerImpl::incrementReferenceCount):
+        (WebGPU::SamplerImpl::getFilter):
+        (WebGPU::SamplerImpl::getMipmapMode):
+        (WebGPU::SamplerImpl::getAddressMode):
+        * WebGPUAPIStructure/WebGPU-Vulkan/TextureImpl.cpp: Added.
+        (WebGPU::TextureImpl::TextureImpl):
+        (WebGPU::TextureImpl::decrementReferenceCount):
+        * WebGPUAPIStructure/WebGPU-Vulkan/TextureImpl.h: Added.
+        (WebGPU::TextureImpl::getImage const):
+        (WebGPU::TextureImpl::getImageView const):
+        (WebGPU::TextureImpl::getFormat const):
+        (WebGPU::TextureImpl::incrementReferenceCount):
+        (WebGPU::TextureImpl::getWidth const):
+        (WebGPU::TextureImpl::getHeight const):
+        (WebGPU::TextureImpl::getTransferredToGPU const):
+        (WebGPU::TextureImpl::setTransferredToGPU):
+        * WebGPUAPIStructure/WebGPU-Vulkan/WebGPU-Vulkan.vcxproj: Added.
+        * WebGPUAPIStructure/WebGPU-Vulkan/WebGPU-Vulkan.vcxproj.filters: Added.
+        * WebGPUAPIStructure/WebGPU.sln: Added.
+
 2017-10-26  Eric Carlson  <eric.carlson@apple.com>
 
         NowPlayingInfo should contain a unique identifier
