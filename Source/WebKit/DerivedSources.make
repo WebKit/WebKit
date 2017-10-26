@@ -126,7 +126,6 @@ MESSAGE_RECEIVERS = \
     RemoteWebInspectorUI \
     SecItemShimProxy \
     ServiceWorkerClientFetch \
-    ServiceWorkerContextManager \
     SmartMagnificationController \
     StorageAreaMap \
     StorageManager \
@@ -163,6 +162,7 @@ MESSAGE_RECEIVERS = \
     WebPaymentCoordinator \
     WebPaymentCoordinatorProxy \
     WebSWClientConnection \
+    WebSWContextManagerConnection \
     WebSWServerConnection \
     PlaybackSessionManager \
     PlaybackSessionManagerProxy \

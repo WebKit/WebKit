@@ -1178,6 +1178,7 @@
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
 		465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E045EF1DAA104F00B0D8B9 /* JSUIEventInit.h */; };
+		46658DC91FA24B8700F7DD54 /* SWContextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4672413B1FA24B140088BD6D /* SWContextManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		466ED8D31EDE0144005E43F6 /* JSDOMRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = 466ED8D21EDE0135005E43F6 /* JSDOMRectList.h */; };
 		4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 4671E0641D67A57B00C6B497 /* CanvasPath.h */; };
 		467302021C4EFE7800BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */; };
@@ -7367,6 +7368,8 @@
 		466ED8D21EDE0135005E43F6 /* JSDOMRectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMRectList.h; sourceTree = "<group>"; };
 		4671E0631D67A57B00C6B497 /* CanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPath.cpp; sourceTree = "<group>"; };
 		4671E0641D67A57B00C6B497 /* CanvasPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPath.h; sourceTree = "<group>"; };
+		4672413A1FA24B140088BD6D /* SWContextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWContextManager.cpp; sourceTree = "<group>"; };
+		4672413B1FA24B140088BD6D /* SWContextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWContextManager.h; sourceTree = "<group>"; };
 		467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreOpensDuringUnloadCountIncrementer.h; sourceTree = "<group>"; };
 		4682D1FF1F79782300C863DB /* StoredCredentialsPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoredCredentialsPolicy.h; sourceTree = "<group>"; };
 		468344DC1EDDFA5F00B7795B /* DOMRectList.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMRectList.idl; sourceTree = "<group>"; };
@@ -17263,6 +17266,8 @@
 				517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */,
 				4112B5411F9F9C9C00E67875 /* ServiceWorkerThreadProxy.cpp */,
 				4112B53F1F9F9C9B00E67875 /* ServiceWorkerThreadProxy.h */,
+				4672413A1FA24B140088BD6D /* SWContextManager.cpp */,
+				4672413B1FA24B140088BD6D /* SWContextManager.h */,
 			);
 			path = context;
 			sourceTree = "<group>";
@@ -29385,6 +29390,7 @@
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
 				517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */,
+				46658DC91FA24B8700F7DD54 /* SWContextManager.h in Headers */,
 				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
 				51F645971F4A686F00B54DED /* SWServerRegistration.h in Headers */,
 				517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */,

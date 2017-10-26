@@ -541,8 +541,8 @@ set(WebKit_SOURCES
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
 
     WebProcess/Storage/ServiceWorkerClientFetch.cpp
-    WebProcess/Storage/ServiceWorkerContextManager.cpp
     WebProcess/Storage/WebSWClientConnection.cpp
+    WebProcess/Storage/WebSWContextManagerConnection.cpp
     WebProcess/Storage/WebSWOriginTable.cpp
     WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
     WebProcess/Storage/WebServiceWorkerProvider.cpp
@@ -688,8 +688,8 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Plugins/PluginProxy.messages.in
 
     WebProcess/Storage/ServiceWorkerClientFetch.messages.in
-    WebProcess/Storage/ServiceWorkerContextManager.messages.in
     WebProcess/Storage/WebSWClientConnection.messages.in
+    WebProcess/Storage/WebSWContextManagerConnection.messages.in
 
     WebProcess/UserContent/WebUserContentController.messages.in
 

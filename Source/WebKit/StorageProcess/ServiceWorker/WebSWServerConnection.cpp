@@ -31,13 +31,13 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerClientFetchMessages.h"
-#include "ServiceWorkerContextManagerMessages.h"
 #include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
 #include "WebSWClientConnectionMessages.h"
+#include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWOriginStore.h"
 #include "WebSWServerConnectionMessages.h"
 #include "WebToStorageProcessConnection.h"
@@ -97,7 +97,7 @@ void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
 
 void WebSWServerConnection::startServiceWorkerContext(const ServiceWorkerContextData& data)
 {
-    if (sendToContextProcess(Messages::ServiceWorkerContextManager::StartServiceWorker(identifier(), data)))
+    if (sendToContextProcess(Messages::WebSWContextManagerConnection::StartServiceWorker(identifier(), data)))
         return;
 
     m_pendingContextDatas.append(data);
@@ -105,12 +105,12 @@ void WebSWServerConnection::startServiceWorkerContext(const ServiceWorkerContext
 
 void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
 {
-    sendToContextProcess(Messages::ServiceWorkerContextManager::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
+    sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
 }
 
 void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin)
 {
-    sendToContextProcess(Messages::ServiceWorkerContextManager::PostMessageToServiceWorkerGlobalScope(identifier(), serviceWorkerIdentifier, message, sourceOrigin));
+    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope(serviceWorkerIdentifier, message, sourceOrigin));
 }
 
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)

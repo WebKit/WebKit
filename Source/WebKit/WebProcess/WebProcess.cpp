@@ -41,8 +41,6 @@
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "PluginProcessConnectionManager.h"
-#include "ServiceWorkerContextManager.h"
-#include "ServiceWorkerContextManagerMessages.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "StorageProcessMessages.h"
@@ -68,6 +66,8 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
+#include "WebSWContextManagerConnection.h"
+#include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebSocketStream.h"
 #include "WebToStorageProcessConnection.h"
@@ -674,10 +674,10 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     }
 
 #if ENABLE(SERVICE_WORKER)
-    if (decoder.messageReceiverName() == Messages::ServiceWorkerContextManager::messageReceiverName()) {
-        ASSERT(m_serviceWorkerManager);
-        if (m_serviceWorkerManager)
-            m_serviceWorkerManager->didReceiveMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
+        ASSERT(SWContextManager::singleton().connection());
+        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
+            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
         return;
     }
 #endif
@@ -1642,8 +1642,6 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 #if ENABLE(SERVICE_WORKER)
 void WebProcess::getWorkerContextConnection(uint64_t pageID, const WebPreferencesStore& store)
 {
-    ASSERT(!m_serviceWorkerManager);
-
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
     IPC::Connection::Identifier connectionIdentifier(socketPair.server);
@@ -1664,7 +1662,7 @@ void WebProcess::getWorkerContextConnection(uint64_t pageID, const WebPreference
 
     auto workerContextConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
     workerContextConnection->open();
-    m_serviceWorkerManager = ServiceWorkerContextManager(WTFMove(workerContextConnection), pageID, store);
+    SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(WTFMove(workerContextConnection), pageID, store));
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidGetWorkerContextConnection(connectionClientPort), 0);
 }
 #endif

@@ -30,7 +30,6 @@
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
-#include "ServiceWorkerContextManager.h"
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
@@ -436,9 +435,6 @@ private:
 
 #if PLATFORM(WAYLAND)
     std::unique_ptr<WaylandCompositorDisplay> m_waylandCompositorDisplay;
-#endif
-#if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerContextManager> m_serviceWorkerManager;
 #endif
 };
 
