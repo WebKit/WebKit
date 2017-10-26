@@ -1,3 +1,29 @@
+2017-10-26  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove unneeded block selection calculation code
+        https://bugs.webkit.org/show_bug.cgi?id=178889
+
+        Reviewed by Tim Horton.
+
+        Removing more block selection code. Much of this should have been removed
+        before, as the only things that were using these functions were removed in the
+        last patch. Also remove the code decided if you should move to block mode or not,
+        as the answer now is always NO.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::rangeForBlockAtPoint): Deleted.
+        (WebKit::distanceBetweenRectsForPosition): Deleted.
+        (WebKit::rectsEssentiallyTheSame): Deleted.
+        (WebKit::unionDOMRanges): Deleted.
+        (WebKit::computeEdgeCenter): Deleted.
+        (WebKit::WebPage::expandedRangeFromHandle): Deleted.
+        (WebKit::WebPage::contractedRangeFromHandle): Deleted.
+        (WebKit::WebPage::computeExpandAndShrinkThresholdsForHandle): Deleted.
+        (WebKit::WebPage::switchToBlockSelectionAtPoint): Deleted.
+        (WebKit::WebPage::shouldSwitchToBlockModeForHandle): Deleted.
+
 2017-10-26  Jeremy Jones  <jeremyj@apple.com>
 
         Call setFullscreenClient on iOS.
