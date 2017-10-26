@@ -149,7 +149,9 @@ private:
     int m_pageSize { -1 };
     
     bool m_transactionInProgress { false };
+#ifndef NDEBUG
     bool m_sharable { false };
+#endif
     
     Lock m_authorizerLock;
     RefPtr<DatabaseAuthorizer> m_authorizer;
