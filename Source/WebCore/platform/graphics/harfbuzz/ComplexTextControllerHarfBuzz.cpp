@@ -116,33 +116,6 @@ static std::optional<UScriptCode> characterScript(UChar32 character)
     return script;
 }
 
-static bool scriptsAreCompatibleForCharacters(UScriptCode script, UScriptCode previousScript, UChar32 character, UChar32 previousCharacter)
-{
-    if (script == previousScript)
-        return true;
-
-    if (script == USCRIPT_INHERITED || previousScript == USCRIPT_COMMON)
-        return true;
-
-    if (script == USCRIPT_COMMON) {
-        // §5.1 Handling Characters with the Common Script Property.
-        // Programs must resolve any of the special Script property values, such as Common,
-        // based on the context of the surrounding characters. A simple heuristic uses the
-        // script of the preceding character, which works well in many cases.
-        // http://www.unicode.org/reports/tr24/#Common.
-        //
-        // FIXME: cover all other cases mentioned in the spec (ie. brackets or quotation marks).
-        // https://bugs.webkit.org/show_bug.cgi?id=177003.
-        //
-        // We use a slightly more conservative heuristic than the one proposed in the spec,
-        // using the script of the previous character only if both are ASCII.
-        if (isASCII(character) && isASCII(previousCharacter))
-            return true;
-    }
-
-    return uscript_hasScript(character, previousScript);
-}
-
 struct HBRun {
     unsigned startIndex;
     unsigned endIndex;
@@ -162,8 +135,7 @@ static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length
         return std::nullopt;
 
     unsigned startIndex = offset;
-    UChar32 previousCharacter = character;
-    for (textIterator.advance(clusterLength); textIterator.consume(character, clusterLength); previousCharacter = character, textIterator.advance(clusterLength)) {
+    for (textIterator.advance(clusterLength); textIterator.consume(character, clusterLength); textIterator.advance(clusterLength)) {
         if (FontCascade::treatAsZeroWidthSpace(character))
             continue;
 
@@ -171,7 +143,25 @@ static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length
         if (!nextScript)
             return std::nullopt;
 
-        if (!scriptsAreCompatibleForCharacters(nextScript.value(), currentScript.value(), character, previousCharacter))
+        // §5.1 Handling Characters with the Common Script Property.
+        // Programs must resolve any of the special Script property values, such as Common,
+        // based on the context of the surrounding characters. A simple heuristic uses the
+        // script of the preceding character, which works well in many cases.
+        // http://www.unicode.org/reports/tr24/#Common.
+        //
+        // FIXME: cover all other cases mentioned in the spec (ie. brackets or quotation marks).
+        // https://bugs.webkit.org/show_bug.cgi?id=177003.
+        //
+        // If next script is inherited or common, keep using the current script.
+        if (nextScript == USCRIPT_INHERITED || nextScript == USCRIPT_COMMON)
+            continue;
+        // If current script is inherited or common, set the next script as current.
+        if (currentScript == USCRIPT_INHERITED || currentScript == USCRIPT_COMMON) {
+            currentScript = nextScript;
+            continue;
+        }
+
+        if (currentScript != nextScript && !uscript_hasScript(character, currentScript.value()))
             return std::optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
     }
 

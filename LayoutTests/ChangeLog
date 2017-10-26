@@ -1,3 +1,29 @@
+2017-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r222090): [HarfBuzz] Arabic shaping is broken except for first word in line
+        https://bugs.webkit.org/show_bug.cgi?id=178625
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline several tests that have been improved.
+
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/gtk/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/gtk/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/gtk/fast/text/international/hebrew-vowels-expected.png:
+        * platform/gtk/fast/text/international/hebrew-vowels-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.png:
+        * platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.txt:
+
 2017-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         LayoutTest http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html is a flaky failure
