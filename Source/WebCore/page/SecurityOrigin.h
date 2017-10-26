@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class ResourceRequest;
 class URL;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
@@ -149,8 +148,6 @@ public:
     bool canAccessCookies() const { return !isUnique(); }
     bool canRequestGeolocation() const { return !isUnique(); }
     Policy canShowNotifications() const;
-
-    bool requestIsSameOrigin(const ResourceRequest&);
 
     // The local SecurityOrigin is the most privileged SecurityOrigin.
     // The local SecurityOrigin can script any document, navigate to local

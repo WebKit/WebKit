@@ -196,7 +196,6 @@ fast/events/moving-text-should-fire-drop-and-dragend-events.html
 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 fast/events/ondrop-text-html.html
 editing/pasteboard/drag-drop-url-with-style.html
-fast/xmlhttprequest/xmlhttprequest-access-self-as-blob.html
 
 # WTR needs an implementation for eventSender.continuousMouseScrollBy
 # https://bugs.webkit.org/show_bug.cgi?id=69417
