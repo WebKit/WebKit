@@ -1013,6 +1013,9 @@ void AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad* demuxerS
         GST_TRACE("demuxer-connect-to-appsink message posted to bus");
 
         m_padAddRemoveCondition.wait(m_padAddRemoveLock);
+
+        if (!m_playerPrivate)
+            return;
     }
 
     // Must be done in the thread we were called from (usually streaming thread).
