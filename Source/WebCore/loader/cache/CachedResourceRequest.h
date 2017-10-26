@@ -95,6 +95,10 @@ public:
 
     static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
 
+#if ENABLE(SERVICE_WORKER)
+    void setSelectedServiceWorkerIdentifierIfNeeded(uint64_t serviceWorkerIdentifier);
+#endif
+
 private:
     ResourceRequest m_resourceRequest;
     String m_charset;

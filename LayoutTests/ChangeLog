@@ -1,3 +1,22 @@
+2017-10-26  Youenn Fablet  <youenn@apple.com>
+
+        Add service worker handle fetch support for all subresource requests
+        https://bugs.webkit.org/show_bug.cgi?id=178769
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/image-fetch-expected.txt: Added.
+        * http/tests/workers/service/image-fetch.html: Added.
+        * http/tests/workers/service/resources/image-fetch-worker.js: Added.
+        (event.event.request.url.indexOf):
+        (event.event.request.url.endsWith):
+        * http/tests/workers/service/resources/image-fetch.js: Added.
+        (done):
+        (async.loadedImage):
+        (async.erroredImage):
+        (async.logStatus):
+        (async.test):
+
 2017-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         LayoutTest http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html is a flaky failure
