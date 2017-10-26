@@ -1,3 +1,35 @@
+2017-10-26  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove code to update block selection
+        https://bugs.webkit.org/show_bug.cgi?id=178843
+
+        Reviewed by Tim Horton.
+
+        Removes code for updating block selection, which has been disabled.
+        This code is being slowly pruned to avoid regressions and accidental removal of code that is being used.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didUpdateBlockSelectionWithTouch): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toSelectionHandlePosition): Deleted.
+        (-[WKContentView _didUpdateBlockSelectionWithTouch:withFlags:growThreshold:shrinkThreshold:]): Deleted.
+        (-[WKContentView changeBlockSelectionWithTouchAt:withSelectionTouch:forHandle:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateBlockSelectionWithTouch): Deleted.
+        (WebKit::WebPageProxy::didUpdateBlockSelectionWithTouch): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::shouldExpand): Deleted.
+        (WebKit::WebPage::changeBlockSelection): Deleted.
+        (WebKit::WebPage::updateBlockSelectionWithTouch): Deleted.
+
 2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223994.

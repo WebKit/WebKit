@@ -616,11 +616,6 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
 }
 
-void WebPageProxy::updateBlockSelectionWithTouch(const WebCore::IntPoint point, uint32_t touch, uint32_t handlePosition)
-{
-    m_process->send(Messages::WebPage::UpdateBlockSelectionWithTouch(point, touch, handlePosition), m_pageID);
-}
-
 void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info)
 {
     m_pageClient.positionInformationDidChange(info);
@@ -651,11 +646,6 @@ void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, u
     auto sharedMemoryBuffer = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
     auto buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), imageSize);
     m_pageClient.saveImageToLibrary(WTFMove(buffer));
-}
-
-void WebPageProxy::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
-{
-    m_pageClient.didUpdateBlockSelectionWithTouch(touch, flags, growThreshold, shrinkThreshold);
 }
 
 void WebPageProxy::applicationDidEnterBackground()

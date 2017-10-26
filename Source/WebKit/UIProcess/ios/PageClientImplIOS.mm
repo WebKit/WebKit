@@ -574,11 +574,6 @@ bool PageClientImpl::allowsBlockSelection()
     return [m_webView _allowsBlockSelection];
 }
 
-void PageClientImpl::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
-{
-    [m_contentView _didUpdateBlockSelectionWithTouch:(SelectionTouch)touch withFlags:(SelectionFlags)flags growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
-}
-
 void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect)
 {
     [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect];

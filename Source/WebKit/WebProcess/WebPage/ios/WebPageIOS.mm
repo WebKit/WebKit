@@ -1658,62 +1658,6 @@ void WebPage::computeExpandAndShrinkThresholdsForHandle(const IntPoint& point, S
 
 }
 
-static inline bool shouldExpand(SelectionHandlePosition handlePosition, const IntRect& rect, const IntPoint& point)
-{
-    switch (handlePosition) {
-    case SelectionHandlePosition::Top:
-        return (point.y() < rect.y());
-    case SelectionHandlePosition::Left:
-        return (point.x() < rect.x());
-    case SelectionHandlePosition::Right:
-        return (point.x() > rect.maxX());
-    case SelectionHandlePosition::Bottom:
-        return (point.y() > rect.maxY());
-    }
-}
-
-RefPtr<WebCore::Range> WebPage::changeBlockSelection(const IntPoint& point, SelectionHandlePosition handlePosition, float& growThreshold, float& shrinkThreshold, SelectionFlags& flags)
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    RefPtr<Range> currentRange = m_currentBlockSelection ? m_currentBlockSelection.get() : frame.selection().selection().toNormalizedRange();
-    if (!currentRange)
-        return nullptr;
-    RefPtr<Range> newRange = shouldExpand(handlePosition, selectionBoxForRange(currentRange.get()), point) ? expandedRangeFromHandle(*currentRange, handlePosition) : contractedRangeFromHandle(*currentRange, handlePosition, flags);
-
-    if (newRange) {
-        m_currentBlockSelection = newRange;
-        frame.selection().setSelectedRange(newRange.get(), VP_DEFAULT_AFFINITY, true, UserTriggered);
-    }
-
-    computeExpandAndShrinkThresholdsForHandle(point, handlePosition, growThreshold, shrinkThreshold);
-    return newRange;
-}
-
-void WebPage::updateBlockSelectionWithTouch(const IntPoint& point, uint32_t touch, uint32_t handlePosition)
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    IntPoint adjustedPoint = frame.view()->rootViewToContents(point);
-
-    float growThreshold = 0;
-    float shrinkThreshold = 0;
-    SelectionFlags flags = None;
-
-    switch (static_cast<SelectionTouch>(touch)) {
-    case SelectionTouch::Started:
-        computeExpandAndShrinkThresholdsForHandle(adjustedPoint, static_cast<SelectionHandlePosition>(handlePosition), growThreshold, shrinkThreshold);
-        break;
-    case SelectionTouch::Ended:
-        break;
-    case SelectionTouch::Moved:
-        changeBlockSelection(adjustedPoint, static_cast<SelectionHandlePosition>(handlePosition), growThreshold, shrinkThreshold, flags);
-        break;
-    default:
-        return;
-    }
-
-    send(Messages::WebPageProxy::DidUpdateBlockSelectionWithTouch(touch, static_cast<uint32_t>(flags), growThreshold, shrinkThreshold));
-}
-
 void WebPage::clearSelection()
 {
     m_currentBlockSelection = nullptr;
