@@ -1489,6 +1489,7 @@
 		536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */; };
 		536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */; };
 		537202291FA19AE200016B2B /* FEMorphology.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D671248F0B300D3A9C9 /* FEMorphology.cpp */; };
+		5372022E1FA29C0300016B2B /* JSGestureEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C1C188322FC00C954B5 /* JSGestureEvent.cpp */; };
 		538EC8021F96AF81004D22A8 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7FA1F96AA70004D22A8 /* UnifiedSource1.cpp */; };
 		538EC8031F96AF81004D22A8 /* UnifiedSource1.mm in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7F31F96AA5B004D22A8 /* UnifiedSource1.mm */; };
 		538EC8041F96AF81004D22A8 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7EE1F96AA56004D22A8 /* UnifiedSource2.cpp */; };
@@ -30591,6 +30592,7 @@
 				DECA7E531F9EBD8300E3B661 /* UnifiedSource216.cpp in Sources */,
 				DECA7E541F9EBD8300E3B661 /* UnifiedSource217.cpp in Sources */,
 				DECA7E551F9EBD8300E3B661 /* UnifiedSource218.cpp in Sources */,
+				5372022E1FA29C0300016B2B /* JSGestureEvent.cpp in Sources */,
 				DECA7E561F9EBD8300E3B661 /* UnifiedSource219.cpp in Sources */,
 				DECA7E571F9EBD8300E3B661 /* UnifiedSource220.cpp in Sources */,
 				DECA7E581F9EBD8300E3B661 /* UnifiedSource221.cpp in Sources */,
