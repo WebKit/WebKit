@@ -2955,6 +2955,8 @@ webgl/1.0.2/conformance/reading/read-pixels-test.html [ Skip ]
 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Skip ]
 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ]
 
+fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ]
+fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
 
