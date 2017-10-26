@@ -1,3 +1,49 @@
+2017-10-26  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: canvases overview should support navigation via keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=178800
+        <rdar://problem/35175856>
+
+        Reviewed by Brian Burg.
+
+        Create a KeyboardShorcut for each of the following:
+         - Up: selects the previous canvas in the selected column
+         - Down: selects the next canvas in the selected column
+         - Right: selects the next canvas in the selected row
+         - Left: selects the previous canvas in the selected row
+         - Space: toggle recording of the selected canvas
+         - Shift+Space: toggle single-frame recording of the selected canvas
+
+        The calculation for selected row/colum is based on the `offsetWidth` of the parent element
+        and the selected item's content view element. Since this view uses a flexbox, all of the
+        items are expected to have the same dimensions, meaning that this value is uniform. The
+        intended functionality is that of a spreadsheet, where pressing pressing left/right will
+        never change the selected row and up/down will never change the selected column.
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview):
+        (.content-view.canvas-overview .content-view.canvas):
+        Move margin value to a CSS variable so that it can be easily retrieved via JavaScript.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype.contentViewAdded):
+        (WI.CanvasOverviewContentView.prototype.contentViewRemoved):
+        (WI.CanvasOverviewContentView.prototype.attached):
+        (WI.CanvasOverviewContentView.prototype.detached):
+        (WI.CanvasOverviewContentView.prototype.get _itemMargin):
+        (WI.CanvasOverviewContentView.prototype._changeSelectedItemVertically):
+        (WI.CanvasOverviewContentView.prototype._changeSelectedItemHorizontally):
+        (WI.CanvasOverviewContentView.prototype._updateNavigationItems):
+        (WI.CanvasOverviewContentView.prototype._handleUp):
+        (WI.CanvasOverviewContentView.prototype._handleRight):
+        (WI.CanvasOverviewContentView.prototype._handleDown):
+        (WI.CanvasOverviewContentView.prototype._handleLeft):
+        (WI.CanvasOverviewContentView.prototype._handleSpace):
+        (WI.CanvasOverviewContentView.prototype._supplementalRepresentedObjectsDidChange):
+        Drive-by: call `_updateNavigationItems` whenever an item is added/removed so that if there
+        are no items the navigation items cannot be clicked.
+
 2017-10-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: Make "Style Attribute" text darker and non-focusable

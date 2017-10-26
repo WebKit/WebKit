@@ -34,15 +34,27 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         this.element.classList.add("canvas-overview");
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh-all", WI.UIString("Refresh all"), "Images/ReloadFull.svg", 13, 13);
-        this._refreshButtonNavigationItem.disabled = true;
+        this._refreshButtonNavigationItem.enabled = false;
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshPreviews, this);
 
         this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show transparency grid"), WI.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
         this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
-        this._showGridButtonNavigationItem.disabled = true;
+        this._showGridButtonNavigationItem.enabled = false;
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
 
         this.selectionEnabled = true;
+
+        this._keyboardShortcuts = [
+            new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Up, this._handleUp.bind(this)),
+            new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Right, this._handleRight.bind(this)),
+            new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Down, this._handleDown.bind(this)),
+            new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Left, this._handleLeft.bind(this)),
+            new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this)),
+            new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this)),
+        ];
+
+        for (let shortcut of this._keyboardShortcuts)
+            shortcut.disabled = true;
     }
 
     // Public
@@ -86,12 +98,16 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     {
         contentView.element.addEventListener("mouseenter", this._contentViewMouseEnter);
         contentView.element.addEventListener("mouseleave", this._contentViewMouseLeave);
+
+        this._updateNavigationItems();
     }
 
     contentViewRemoved(contentView)
     {
         contentView.element.removeEventListener("mouseenter", this._contentViewMouseEnter);
         contentView.element.removeEventListener("mouseleave", this._contentViewMouseLeave);
+
+        this._updateNavigationItems();
     }
 
     attached()
@@ -101,6 +117,9 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateShowImageGrid, this);
 
         this.addEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._supplementalRepresentedObjectsDidChange, this);
+
+        for (let shortcut of this._keyboardShortcuts)
+            shortcut.disabled = false;
     }
 
     detached()
@@ -109,15 +128,67 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
         this.removeEventListener(null, null, this);
 
+        for (let shortcut of this._keyboardShortcuts)
+            shortcut.disabled = true;
+
         super.detached();
     }
 
     // Private
 
+    get _itemMargin()
+    {
+        return parseInt(window.getComputedStyle(this.element).getPropertyValue("--item-margin"));
+    }
+
     _refreshPreviews()
     {
         for (let canvasContentView of this.subviews)
             canvasContentView.refresh();
+    }
+
+    _changeSelectedItemVertically(shift)
+    {
+        let itemElementWidth = this.element.firstElementChild.offsetWidth + (2 * this._itemMargin);
+        let itemsPerRow = Math.floor(this.element.offsetWidth / itemElementWidth);
+
+        let items = Array.from(this.representedObject.items);
+        let index = items.indexOf(this._selectedItem);
+        if (index === -1)
+            index = shift < 0 ? items.length + 1 : itemsPerRow;
+
+        index += shift * itemsPerRow;
+        if (index < 0)
+            index = items.length + index;
+
+        this.setSelectedItem(items[index % items.length]);
+    }
+
+    _changeSelectedItemHorizontally(shift)
+    {
+        let itemElementWidth = this.element.firstElementChild.offsetWidth + (2 * this._itemMargin);
+        let itemsPerRow = Math.floor(this.element.offsetWidth / itemElementWidth);
+
+        let items = Array.from(this.representedObject.items);
+        let index = items.indexOf(this._selectedItem);
+        if (index === -1)
+            index = shift >= 0 ? itemsPerRow - 1 : 0;
+
+        let selectedRow = Math.floor(index / itemsPerRow);
+        index += shift;
+        if (index < selectedRow * itemsPerRow)
+            index += itemsPerRow;
+        else if (index >= (selectedRow + 1) * itemsPerRow)
+            index -= itemsPerRow;
+
+        this.setSelectedItem(items[index]);
+    }
+
+    _updateNavigationItems()
+    {
+        let hasItems = !!this.representedObject.items.size;
+        this._refreshButtonNavigationItem.enabled = hasItems;
+        this._showGridButtonNavigationItem.enabled = hasItems;
     }
 
     _selectionPathComponentsChanged(event)
@@ -132,21 +203,49 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
     }
 
-    _supplementalRepresentedObjectsDidChange()
+    _handleUp(event)
     {
-        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
+        this._changeSelectedItemVertically(-1);
     }
 
-    _updateNavigationItems()
+    _handleRight(event)
     {
-        let disabled = !this.representedObject.items.size;
-        this._refreshButtonNavigationItem.disabled = disabled;
-        this._showGridButtonNavigationItem.disabled = disabled;
+        let shift = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? -1 : 1;
+        this._changeSelectedItemHorizontally(shift);
+    }
+
+    _handleDown(event)
+    {
+        this._changeSelectedItemVertically(1);
+    }
+
+    _handleLeft(event)
+    {
+        let shift = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? 1 : -1;
+        this._changeSelectedItemHorizontally(shift);
+    }
+
+    _handleSpace(event)
+    {
+        if (!this._selectedItem)
+            return;
+
+        if (this._selectedItem.isRecording)
+            WI.canvasManager.stopRecording();
+        else if (!WI.canvasManager.recordingCanvas) {
+            let singleFrame = !!event.shiftKey;
+            WI.canvasManager.startRecording(this._selectedItem, singleFrame);
+        }
     }
 
     _updateShowImageGrid()
     {
         this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
+    }
+
+    _supplementalRepresentedObjectsDidChange()
+    {
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _contentViewMouseEnter(event)

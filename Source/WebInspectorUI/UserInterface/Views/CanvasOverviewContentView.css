@@ -27,11 +27,13 @@
     justify-content: center;
     align-items: flex-start;
     background-color: hsl(0, 0%, 90%);
+
+    --item-margin: 10px;
 }
 
 .content-view.canvas-overview .content-view.canvas {
     flex-grow: 0;
-    margin: 10px;
+    margin: var(--item-margin);
     width: 400px;
     background-color: white;
 }
