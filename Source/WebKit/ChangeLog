@@ -1,3 +1,15 @@
+2017-10-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Call setFullscreenClient on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=178089
+
+        Reviewed by Simon Fraser.
+
+        This was only being set for MacOS.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+
 2017-10-26  Eric Carlson  <eric.carlson@apple.com>
 
         NowPlayingInfo should contain a unique identifier

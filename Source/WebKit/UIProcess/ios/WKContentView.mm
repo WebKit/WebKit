@@ -200,6 +200,10 @@ private:
     _page->setUseFixedLayout(true);
     _page->setDelegatesScrolling(true);
 
+#if ENABLE(FULLSCREEN_API) && WK_API_ENABLED
+    _page->setFullscreenClient(std::make_unique<WebKit::FullscreenClient>(_webView));
+#endif
+
     WebProcessPool::statistics().wkViewCount++;
 
     _rootContentView = adoptNS([[UIView alloc] init]);
