@@ -864,6 +864,15 @@
         "description": "This property specifies styling for filters applied to the backdrop of an element."
     },
     {
+        "name": "Font Palettes",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://drafts.csswg.org/css-fonts-4/#propdef-font-palette",
+        "specification": "CSS Fonts Level 4",
+        "description": "Allows setting colors in color fonts from CSS"
+    },
+    {
         "name": "Force Click Events",
         "status": {
             "status": "Supported",
