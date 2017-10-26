@@ -1,5 +1,16 @@
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: provide a way to enable/disable event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=177451
+        <rdar://problem/34994925>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/dom/setEventListenerDisabled-expected.txt: Added.
+        * inspector/dom/setEventListenerDisabled.html: Added.
+
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Canvas Tab: starting a second recording doesn't show red titlebar if the first recording was empty
         https://bugs.webkit.org/show_bug.cgi?id=178805
         <rdar://problem/35176303>

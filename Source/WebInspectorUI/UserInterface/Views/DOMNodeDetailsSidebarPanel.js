@@ -45,16 +45,6 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         super.closed();
     }
 
-    addEventListeners()
-    {
-        this.domNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
-    }
-
-    removeEventListeners()
-    {
-        this.domNode.removeEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
-    }
-
     // Protected
 
     initialLayout()
@@ -167,6 +157,20 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
         // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
         this._attributesDataGridRow.sizeDidChange();
+    }
+
+    attached()
+    {
+        super.attached();
+
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
+    }
+
+    detached()
+    {
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
+
+        super.detached();
     }
 
     // Private
@@ -753,7 +757,8 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
     _eventListenersChanged(event)
     {
-        this._refreshEventListeners();
+        if (event.target === this.domNode || event.target.isAncestor(this.domNode))
+            this._refreshEventListeners();
     }
 
     _attributesChanged(event)

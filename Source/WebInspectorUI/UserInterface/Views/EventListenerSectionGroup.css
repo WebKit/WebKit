@@ -28,3 +28,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.event-listener-section > .content input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+    margin: 0;
+}

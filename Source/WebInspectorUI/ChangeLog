@@ -1,5 +1,41 @@
 2017-10-25  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: provide a way to enable/disable event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=177451
+        <rdar://problem/34994925>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WI.DOMTreeManager.prototype.setEventListenerDisabled):
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.attached):
+        (WI.DOMNodeDetailsSidebarPanel.prototype.detached):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._eventListenersChanged):
+        (WI.DOMNodeDetailsSidebarPanel.prototype.addEventListeners): Deleted.
+        (WI.DOMNodeDetailsSidebarPanel.prototype.removeEventListeners): Deleted.
+        Listen for `WI.DOMNode.Event.EventListenersChanged` on all instances of WI.DOMNode, since we
+        will still want to refresh the event listeners section in the event that an event listener
+        is removed from a parent node.
+
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WI.EventListenerSectionGroup):
+        (WI.EventListenerSectionGroup.prototype._eventText):
+        (WI.EventListenerSectionGroup.prototype._nodeTextOrLink):
+        (WI.EventListenerSectionGroup.prototype._createDisabledToggleElement):
+        (WI.EventListenerSectionGroup.prototype._createDisabledToggleElement.updateTitle):
+        * UserInterface/Views/EventListenerSectionGroup.css:
+        (.event-listener-section > .content input[type="checkbox"]):
+
+        * UserInterface/Views/DetailsSectionSimpleRow.js:
+        (WI.DetailsSectionSimpleRow.prototype.get label):
+        (WI.DetailsSectionSimpleRow.prototype.set label):
+
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: replace TypeVerifier with subclasses of WI.Collection
         https://bugs.webkit.org/show_bug.cgi?id=178045
         <rdar://problem/35174307>

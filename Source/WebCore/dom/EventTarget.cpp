@@ -278,6 +278,9 @@ void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners
         if (event.eventPhase() == Event::BUBBLING_PHASE && registeredListener->useCapture())
             continue;
 
+        if (InspectorInstrumentation::isEventListenerDisabled(*this, event.type(), registeredListener->callback(), registeredListener->useCapture()))
+            continue;
+
         // If stopImmediatePropagation has been called, we just break out immediately, without
         // handling any more events on this target.
         if (event.immediatePropagationStopped())

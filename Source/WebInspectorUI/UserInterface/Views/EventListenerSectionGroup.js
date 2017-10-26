@@ -52,6 +52,9 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         if (this._eventListener.once)
             rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Once"), WI.UIString("Yes")));
 
+        if (DOMAgent.setEventListenerDisabled && this._eventListener.eventListenerId)
+            rows.push(this._createDisabledToggleRow());
+
         this.rows = rows;
     }
 
@@ -103,5 +106,35 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         var fragment = document.createDocumentFragment();
         fragment.append(linkElement, functionName);
         return fragment;
+    }
+
+    _createDisabledToggleRow()
+    {
+        let toggleElement = document.createElement("input");
+        toggleElement.type = "checkbox";
+        toggleElement.checked = !this._eventListener.disabled;
+
+        let updateTitle = () => {
+            if (this._eventListener.disabled)
+                toggleElement.title = WI.UIString("Enable Event Listener");
+            else
+                toggleElement.title = WI.UIString("Disable Event Listener");
+        };
+
+        updateTitle();
+
+        toggleElement.addEventListener("change", (event) => {
+            this._eventListener.disabled = !toggleElement.checked;
+            WI.domTreeManager.setEventListenerDisabled(this._eventListener.eventListenerId, this._eventListener.disabled);
+            updateTitle();
+        });
+
+        let toggleLabel = document.createElement("span");
+        toggleLabel.textContent = WI.UIString("Enabled");
+        toggleLabel.addEventListener("click", (event) => {
+            toggleElement.click();
+        });
+
+        return new WI.DetailsSectionSimpleRow(toggleLabel, toggleElement);
     }
 };

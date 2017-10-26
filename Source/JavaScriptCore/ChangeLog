@@ -1,3 +1,16 @@
+2017-10-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: provide a way to enable/disable event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=177451
+        <rdar://problem/34994925>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/DOM.json:
+        Add `setEventListenerDisabled` command that enables/disables a specific event listener
+        during event dispatch. When a disabled event listener is fired, the listener's callback will
+        not be called.
+
 2017-10-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r223691 and r223729.
