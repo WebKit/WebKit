@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,6 @@ private:
     void updateTextRenderer(Text&, const Style::TextUpdate*);
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void createRenderer(Element&, RenderStyle&&);
-    void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
     void updateBeforeDescendants(Element&, const Style::ElementUpdates*);
     void updateAfterDescendants(Element&, const Style::ElementUpdates*);
     bool textRendererIsNeeded(const Text& textNode);
@@ -71,6 +70,8 @@ private:
         Element* element { nullptr };
         const Style::ElementUpdates* updates { nullptr };
         std::optional<RenderTreePosition> renderTreePosition;
+
+        bool didCreateOrDestroyChildRenderer { false };
         RenderObject* previousChildRenderer { nullptr };
 
         Parent(ContainerNode& root);
@@ -94,8 +95,6 @@ private:
     std::unique_ptr<const Style::Update> m_styleUpdate;
 
     Vector<Parent> m_parentStack;
-
-    HashSet<Text*> m_invalidatedWhitespaceOnlyTextSiblings;
 
     std::unique_ptr<GeneratedContent> m_generatedContent;
 };

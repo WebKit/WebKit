@@ -554,6 +554,11 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
         ASSERT(beforeChildContainer);
 
         if (beforeChildContainer->isAnonymous()) {
+            if (beforeChildContainer->isInline()) {
+                ASSERT(RenderText::findByDisplayContentsInlineWrapperCandidate(*beforeChildContainer) == beforeChild);
+                addChild(WTFMove(newChild), beforeChildContainer);
+                return;
+            }
             // If the requested beforeChild is not one of our children, then this is because
             // there is an anonymous container within this object that contains the beforeChild.
             RenderElement* beforeChildAnonymousContainer = beforeChildContainer;
