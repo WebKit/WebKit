@@ -48,6 +48,19 @@ RefPtr<PaymentHandler> PaymentHandler::create(Document& document, PaymentRequest
     return nullptr;
 }
 
+ExceptionOr<void> PaymentHandler::canCreateSession(Document& document)
+{
+#if ENABLE(APPLE_PAY)
+    auto result = PaymentSession::canCreateSession(document);
+    if (result.hasException())
+        return Exception { SecurityError, result.releaseException().releaseMessage() };
+#else
+    UNUSED_PARAM(document);
+#endif
+
+    return { };
+}
+
 bool PaymentHandler::hasActiveSession(Document& document)
 {
 #if ENABLE(APPLE_PAY)

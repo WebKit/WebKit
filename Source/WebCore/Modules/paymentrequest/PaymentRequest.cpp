@@ -314,7 +314,9 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 // https://www.w3.org/TR/payment-request/#constructor
 ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vector<PaymentMethodData>&& methodData, PaymentDetailsInit&& details, PaymentOptions&& options)
 {
-    // FIXME: Check if this document is allowed to access the PaymentRequest API based on the allowpaymentrequest attribute.
+    auto canCreateSession = PaymentHandler::canCreateSession(document);
+    if (canCreateSession.hasException())
+        return canCreateSession.releaseException();
 
     if (details.id.isNull())
         details.id = createCanonicalUUIDString();

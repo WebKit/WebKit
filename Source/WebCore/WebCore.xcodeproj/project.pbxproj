@@ -2804,6 +2804,7 @@
 		A1BF6B831AA96C7D00AF4A8A /* MockContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1BF6B811AA96C7D00AF4A8A /* MockContentFilter.h */; };
 		A1C150791E3F2B3E0032C98C /* PreviewConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */; };
 		A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C150781E3F2B3E0032C98C /* PreviewConverter.h */; };
+		A1C2C5761FA2851600BA46FA /* PaymentSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C2C5751FA2851600BA46FA /* PaymentSession.cpp */; };
 		A1CBEF531F9EEE750028DE7C /* ApplePayPaymentMethodUpdateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CBEF501F9EEE750028DE7C /* ApplePayPaymentMethodUpdateEvent.h */; };
 		A1CBEF541F9EEE750028DE7C /* ApplePayPaymentMethodUpdateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CBEF511F9EEE750028DE7C /* ApplePayPaymentMethodUpdateEvent.cpp */; };
 		A1CBEF611F9F09040028DE7C /* JSApplePayPaymentMethodUpdateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CBEF5F1F9F09020028DE7C /* JSApplePayPaymentMethodUpdateEvent.cpp */; };
@@ -10604,6 +10605,7 @@
 		A1BF6B811AA96C7D00AF4A8A /* MockContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilter.h; sourceTree = "<group>"; };
 		A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewConverter.mm; sourceTree = "<group>"; };
 		A1C150781E3F2B3E0032C98C /* PreviewConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewConverter.h; sourceTree = "<group>"; };
+		A1C2C5751FA2851600BA46FA /* PaymentSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentSession.cpp; sourceTree = "<group>"; };
 		A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResultCustom.cpp; sourceTree = "<group>"; };
 		A1CBEF501F9EEE750028DE7C /* ApplePayPaymentMethodUpdateEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayPaymentMethodUpdateEvent.h; sourceTree = "<group>"; };
 		A1CBEF511F9EEE750028DE7C /* ApplePayPaymentMethodUpdateEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayPaymentMethodUpdateEvent.cpp; sourceTree = "<group>"; };
@@ -15374,6 +15376,7 @@
 				1A8A64391D19FC5300D0E00F /* PaymentMethod.h */,
 				1A8A64661D19FDFF00D0E00F /* PaymentRequestValidator.h */,
 				1A8A64651D19FDFF00D0E00F /* PaymentRequestValidator.mm */,
+				A1C2C5751FA2851600BA46FA /* PaymentSession.cpp */,
 				A1491DA21F859D870095F5D4 /* PaymentSession.h */,
 			);
 			path = applepay;
@@ -30207,6 +30210,7 @@
 				6A72798C1F16C29C003F39B8 /* InspectorShaderProgram.cpp in Sources */,
 				A1F9296F1F8D9F5B00523AF3 /* JSApplePayMerchantValidationEvent.cpp in Sources */,
 				A1CBEF611F9F09040028DE7C /* JSApplePayPaymentMethodUpdateEvent.cpp in Sources */,
+				5372022E1FA29C0300016B2B /* JSGestureEvent.cpp in Sources */,
 				538EC93E1F99BF5A004D22A8 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				538EC9421F99CE47004D22A8 /* JSTouch.cpp in Sources */,
 				538EC9451F99CE51004D22A8 /* JSTouchEvent.cpp in Sources */,
@@ -30273,6 +30277,7 @@
 				E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */,
 				A1CFE0321F9E71290065C345 /* PaymentAddress.cpp in Sources */,
 				DE5F86101FA238D9006DB63A /* PaymentMerchantSessionCocoa.mm in Sources */,
+				A1C2C5761FA2851600BA46FA /* PaymentSession.cpp in Sources */,
 				26601EC014B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm in Sources */,
 				C5278B0C17F212EA003A2998 /* PlatformPasteboardIOS.mm in Sources */,
 				E45390430EAFD637003695C8 /* PlatformScreenIOS.mm in Sources */,
@@ -30592,7 +30597,6 @@
 				DECA7E531F9EBD8300E3B661 /* UnifiedSource216.cpp in Sources */,
 				DECA7E541F9EBD8300E3B661 /* UnifiedSource217.cpp in Sources */,
 				DECA7E551F9EBD8300E3B661 /* UnifiedSource218.cpp in Sources */,
-				5372022E1FA29C0300016B2B /* JSGestureEvent.cpp in Sources */,
 				DECA7E561F9EBD8300E3B661 /* UnifiedSource219.cpp in Sources */,
 				DECA7E571F9EBD8300E3B661 /* UnifiedSource220.cpp in Sources */,
 				DECA7E581F9EBD8300E3B661 /* UnifiedSource221.cpp in Sources */,

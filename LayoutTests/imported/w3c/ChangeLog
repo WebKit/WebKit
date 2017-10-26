@@ -1,3 +1,16 @@
+2017-10-26  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Restrict API use to secure, same-origin frames
+        https://bugs.webkit.org/show_bug.cgi?id=178887
+
+        Reviewed by Tim Horton.
+
+        The allowpaymentrequest <iframe> attribute is not yet implemented, so the regression in basic.https.html is expected.
+
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-cross-origin.https.sub-expected.txt:
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-same-origin.https-expected.txt:
+        * web-platform-tests/payment-request/allowpaymentrequest/basic.https-expected.txt:
+
 2017-10-24  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement the "PaymentRequest updated" algorithm
