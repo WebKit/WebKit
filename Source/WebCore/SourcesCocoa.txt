@@ -24,7 +24,7 @@
 Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 
-accessibility/mac/WebAccessibilityObjectWrapperBase.mm
+accessibility/mac/WebAccessibilityObjectWrapperBase.mm @no-unify
 
 bindings/js/ScriptControllerMac.mm
 

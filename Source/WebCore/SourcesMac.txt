@@ -20,3 +20,118 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
+
+Modules/mediasession/WebMediaSessionManager.cpp
+
+accessibility/mac/AXObjectCacheMac.mm
+accessibility/mac/AccessibilityObjectMac.mm
+accessibility/mac/WebAccessibilityObjectWrapperMac.mm @no-unify
+
+dom/DataTransferMac.mm
+
+editing/mac/AlternativeTextUIController.mm
+editing/mac/DictionaryLookup.mm
+editing/mac/EditorMac.mm
+editing/mac/TextAlternativeWithRange.mm
+editing/mac/TextUndoInsertionMarkupMac.mm
+editing/mac/WebContentReaderMac.mm
+
+html/shadow/mac/ImageControlsButtonElementMac.cpp
+html/shadow/mac/ImageControlsRootElementMac.cpp
+
+page/mac/EventHandlerMac.mm
+page/mac/ServicesOverlayController.mm
+page/mac/TextIndicatorWindow.mm
+page/mac/UserAgentMac.mm
+page/mac/WheelEventDeltaFilterMac.mm
+
+page/scrolling/mac/ScrollingCoordinatorMac.mm
+page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
+page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm
+page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
+page/scrolling/mac/ScrollingTreeMac.cpp
+
+platform/gamepad/mac/HIDGamepad.cpp
+platform/gamepad/mac/HIDGamepadProvider.cpp
+
+platform/graphics/avfoundation/MediaPlaybackTargetMac.mm @no-unify
+platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp @no-unify
+
+platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm @no-unify
+
+platform/graphics/mac/ColorMac.mm
+platform/graphics/mac/DisplayRefreshMonitorMac.cpp
+platform/graphics/mac/FloatPointMac.mm
+platform/graphics/mac/FloatRectMac.mm
+platform/graphics/mac/FloatSizeMac.mm
+platform/graphics/mac/FontCacheMac.mm
+platform/graphics/mac/IconMac.mm
+platform/graphics/mac/IntPointMac.mm
+platform/graphics/mac/IntRectMac.mm
+platform/graphics/mac/IntSizeMac.mm
+platform/graphics/mac/MediaPlayerPrivateQTKit.mm @no-unify
+platform/graphics/mac/MediaTimeQTKit.mm
+platform/graphics/mac/PDFDocumentImageMac.mm
+
+platform/mac/BlacklistUpdater.mm
+platform/mac/CursorMac.mm
+platform/mac/DragImageMac.mm
+platform/mac/EventLoopMac.mm
+platform/mac/FileSystemMac.mm
+platform/mac/KeyEventMac.mm @no-unify
+platform/mac/PlaybackSessionInterfaceMac.mm @no-unify
+platform/mac/LocalCurrentGraphicsContext.mm
+platform/mac/NSScrollerImpDetails.mm
+platform/mac/PasteboardMac.mm
+platform/mac/PasteboardWriter.mm
+platform/mac/PlatformEventFactoryMac.mm
+platform/mac/PlatformPasteboardMac.mm
+platform/mac/PlatformScreenMac.mm
+platform/mac/PlatformSpeechSynthesizerMac.mm
+platform/mac/PluginBlacklist.mm
+platform/mac/PowerObserverMac.cpp
+platform/mac/RemoteCommandListenerMac.mm
+platform/mac/SSLKeyGeneratorMac.mm
+platform/mac/ScrollAnimatorMac.mm @no-unify
+platform/mac/ScrollViewMac.mm
+platform/mac/ScrollbarThemeMac.mm @no-unify
+platform/mac/SuddenTermination.mm
+platform/mac/ThemeMac.mm
+platform/mac/ThreadCheck.mm @no-unify
+platform/mac/UserActivityMac.mm
+platform/mac/ValidationBubbleMac.mm
+platform/mac/WebCoreFullScreenPlaceholderView.mm
+platform/mac/WebCoreFullScreenWarningView.mm
+platform/mac/WebCoreFullScreenWindow.mm
+platform/mac/WebGLBlacklist.mm
+platform/mac/WebNSAttributedStringExtras.mm
+platform/mac/WebVideoFullscreenController.mm @no-unify
+platform/mac/WebVideoFullscreenHUDWindowController.mm
+platform/mac/WebWindowAnimation.mm
+platform/mac/WidgetMac.mm
+
+platform/network/mac/NetworkStateNotifierMac.cpp
+
+platform/text/mac/TextCodecMac.cpp
+platform/text/mac/TextEncodingRegistryMac.mm
+
+rendering/RenderThemeMac.mm
+
+platform/mediastream/mac/CoreAudioCaptureDevice.cpp
+platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp
+
+platform/mac/VideoFullscreenInterfaceMac.mm
+platform/mac/WebPlaybackControlsManager.mm
+
+platform/mediasession/mac/MediaSessionInterruptionProviderMac.mm
+
+platform/mediastream/mac/AVCaptureDeviceManager.mm @no-unify
+platform/mediastream/mac/AVMediaCaptureSource.mm @no-unify
+platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
+
+#if ENABLE_MAC_GESTURE_EVENTS
+
+    dom/mac/GestureEvents.cpp
+        JSGestureEvent.cpp
+
+#endif
