@@ -150,17 +150,6 @@ void MessageEvent::initMessageEvent(ExecState& state, const AtomicString& type, 
     m_ports = WTFMove(ports);
 }
 
-EventTarget* MessageEvent::source() const
-{
-    if (!m_source)
-        return nullptr;
-
-    return WTF::switchOn(m_source.value(),
-        [] (const RefPtr<DOMWindow>& window) -> EventTarget* { return const_cast<DOMWindow*>(window.get()); },
-        [] (const RefPtr<MessagePort>& messagePort) -> EventTarget* { return const_cast<MessagePort*>(messagePort.get()); }
-    );
-}
-
 RefPtr<SerializedScriptValue> MessageEvent::trySerializeData(ExecState* exec)
 {
     ASSERT(!m_dataAsScriptValue.hasNoValue());

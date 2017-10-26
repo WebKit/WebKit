@@ -26,6 +26,12 @@
  *
  */
 
+#if defined(ENABLE_SERVICE_WORKER) && ENABLE_SERVICE_WORKER
+typedef (DOMWindow or MessagePort or ServiceWorker) MessageEventSource;
+#else
+typedef (DOMWindow or MessagePort) MessageEventSource;
+#endif
+
 [
     Constructor(DOMString type, optional MessageEventInit eventInitDict),
     ConstructorCallWith=ScriptState,
@@ -33,12 +39,12 @@
 ] interface MessageEvent : Event {
     readonly attribute USVString origin;
     readonly attribute DOMString lastEventId;
-    readonly attribute EventTarget? source;
+    readonly attribute MessageEventSource? source;
     [CachedAttribute, CustomGetter] readonly attribute any data;
     readonly attribute FrozenArray<MessagePort> ports;
 
     [CallWith=ScriptState] void initMessageEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false,
-        optional any data = null, optional USVString originArg = "", optional DOMString lastEventId = "", optional (DOMWindow or MessagePort)? source = null,
+        optional any data = null, optional USVString originArg = "", optional DOMString lastEventId = "", optional MessageEventSource? source = null,
         optional sequence<MessagePort> messagePorts = []);
 };
 
@@ -46,6 +52,6 @@ dictionary MessageEventInit : EventInit {
       any data = null;
       USVString origin = "";
       DOMString lastEventId = "";
-      (DOMWindow or MessagePort)? source = null;
+      MessageEventSource? source = null;
       sequence<MessagePort> ports = [];
 };
