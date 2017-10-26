@@ -1,3 +1,16 @@
+2017-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        LayoutTest http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=178828
+
+        Reviewed by Wenson Hsieh.
+
+        When the pasted content's iframe's body isn't available, wait for load event.
+
+        * http/tests/security/clipboard/resources/content-to-copy.html: Always wait for load event before notifying
+        the parent page that it had finish loading.
+        * http/tests/security/clipboard/resources/subdirectory/paste-html.html:
+
 2017-10-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Update expected results for platform/ios/ios/fast/text/opticalFontWith*.html

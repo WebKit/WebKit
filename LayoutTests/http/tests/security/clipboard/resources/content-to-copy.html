@@ -3,7 +3,7 @@
 <body>
 <img src="mozilla.gif">
 <script>
-top.postMessage({type: 'contentLoaded'}, '*');
+window.onload = parent.postMessage({type: 'contentLoaded'}, '*');
 </script>
 </body>
 </html>

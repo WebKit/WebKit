@@ -27,7 +27,7 @@ function doPaste(event) {
                         resolve();
                 }
 
-                if (frame.contentDocument && frame.contentDocument.body.innerHTML == '')
+                if (frame.contentDocument && (!frame.contentDocument.body || frame.contentDocument.body.innerHTML == ''))
                     frame.onload = waitForImage;
                 else
                     waitForImage();
