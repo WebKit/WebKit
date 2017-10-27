@@ -782,7 +782,7 @@ webkit.org/b/175341 accessibility/mac/select-element-selection-with-optgroups.ht
 
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
 
-webkit.org/b/173779 [ Sierra Debug ] fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Pass Failure ]
+webkit.org/b/173779 [ Debug ] fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Pass Failure ]
 
 webkit.org/b/175773 [ Debug ] imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html [ Skip ]
 
