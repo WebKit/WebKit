@@ -53,6 +53,7 @@
         _hasActiveNowPlayingSession = active;
         _lastUpdatedTitle = [title copy];
         _lastUpdatedDuration = duration;
+        _lastUpdatedElapsedTime = elapsedTime;
         _lastUniqueIdentifier = uniqueIdentifier;
 
         _receivedNowPlayingInfoResponse = true;
@@ -72,16 +73,6 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
         finishedWaiting = self.hasActiveNowPlayingSession == hasActiveNowPlayingSession;
     }
-}
-
-- (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession title:(NSString *)title duration:(double)duration elapsedTime:(double)elapsedTime
-{
-    _hasActiveNowPlayingSession = hasActiveSession;
-    _lastUpdatedTitle = [title copy];
-    _lastUpdatedDuration = duration;
-    _lastUpdatedElapsedTime = elapsedTime;
-
-    _receivedNowPlayingInfoResponse = true;
 }
 
 - (void)setWindowVisible:(BOOL)isVisible
