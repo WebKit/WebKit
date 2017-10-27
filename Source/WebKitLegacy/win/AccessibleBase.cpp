@@ -934,7 +934,7 @@ static long MSAARole(AccessibilityRole role)
         return ROLE_SYSTEM_SPINBUTTON;
     case AccessibilityRole::SpinButtonPart:
         return ROLE_SYSTEM_PUSHBUTTON;
-    case Accessibility::Toolbar:
+    case AccessibilityRole::Toolbar:
         return ROLE_SYSTEM_TOOLBAR;
     case AccessibilityRole::UserInterfaceTooltip:
         return ROLE_SYSTEM_TOOLTIP;
