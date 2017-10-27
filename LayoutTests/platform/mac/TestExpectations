@@ -1785,6 +1785,4 @@ webkit.org/b/177388 inspector/canvas/shaderProgram-add-remove-webgl.html [ Pass 
 
 webkit.org/b/177826 inspector/dom/csp-big5-hash.html [ Pass Timeout ]
 
-webkit.org/b/178190 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-worker-origin.htm [ Pass Failure ]
-
 webkit.org/b/178465 [ Debug ] fast/html/marquee-reparent-check.html [ Skip ]
