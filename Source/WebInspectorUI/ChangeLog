@@ -1,5 +1,48 @@
 2017-10-26  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Canvas Tab: canvas path components from old page stick around when page is reloaded
+        https://bugs.webkit.org/show_bug.cgi?id=178806
+        <rdar://problem/35176360>
+
+        Reviewed by Brian Burg.
+
+        Before this change, the CanvasCollection was regenerated each time the Canvas tab was
+        attached. This also caused the invisible TreeOutline, used for the path components and to
+        manage selection, to be reset as well. Whenever the page refreshed, however, the old
+        canvases, and associated recordings, were not removed. This patch reworks all of this logic
+        to create the CanvasCollection on construction of the tab and add/remove canvases as needed.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.canvasAdded):
+        (WI.CanvasManager.prototype.canvasRemoved):
+        (WI.CanvasManager.prototype._removeCanvas):
+        (WI.CanvasManager.prototype._mainResourceDidChange):
+        Replaced the "Cleared" event by instead firing "CanvasRemoved" for every tracked canvas. This
+        massively simplifies the logic for when the page navigates, as everything goes through a
+        single event listener.
+        Drive-by: changed existing event names to remove unnecessary words.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype.detached):
+        (WI.CanvasTabContentView.prototype._addCanvas):
+        (WI.CanvasTabContentView.prototype._removeCanvas):
+        (WI.CanvasTabContentView.prototype._handleCanvasAdded):
+        (WI.CanvasTabContentView.prototype._handleCanvasRemoved):
+        (WI.CanvasTabContentView.prototype._canvasAdded): Deleted.
+        (WI.CanvasTabContentView.prototype._canvasRemoved): Deleted.
+        (WI.CanvasTabContentView.prototype._mainResourceDidChange): Deleted.
+        Rework logic for the way that the CanvasCollection is maintained. It is no longer
+        created/destroyed each time the view is attached/detached, and instead a diff is calculated
+        for the added/existing/removed canvases and the content views are added/removed as such.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype._selectionPathComponentsChanged):
+        Drive-by: if an imported recording is selected on the Canvas Overview view, we should show it.
+
+2017-10-26  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Canvas Tab: canvases overview should support navigation via keyboard
         https://bugs.webkit.org/show_bug.cgi?id=178800
         <rdar://problem/35175856>

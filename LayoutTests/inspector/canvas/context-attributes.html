@@ -20,7 +20,7 @@ function test() {
             name,
             description: "Check that created canvases have the correct type and attributes sent to the frontend.",
             test(resolve, reject) {
-                WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasWasAdded)
+                WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded)
                 .then((event) => {
                     let canvas = event.data.canvas;
                     InspectorTest.log("Added canvas.");

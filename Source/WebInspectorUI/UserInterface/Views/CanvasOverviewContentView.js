@@ -196,6 +196,8 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         let pathComponent = event.data.pathComponent;
         if (pathComponent.representedObject instanceof WI.Canvas)
             this.setSelectedItem(pathComponent.representedObject);
+        else if (pathComponent.representedObject instanceof WI.Recording)
+            WI.showRepresentedObject(pathComponent.representedObject);
     }
 
     _showGridButtonClicked(event)

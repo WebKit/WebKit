@@ -23,7 +23,7 @@ function destroyCanvases() {
     contexts = [];
 
     // Force GC to make sure the canvas element is destroyed, otherwise the frontend
-    // does not receive WI.CanvasManager.Event.CanvasWasRemoved events.
+    // does not receive WI.CanvasManager.Event.CanvasRemoved events.
     setTimeout(() => { GCController.collect(); }, 0);
 }
 
@@ -31,7 +31,7 @@ TestPage.registerInitializer(() => {
     let suite = null;
 
     function awaitCanvasAdded(contextType) {
-        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasWasAdded)
+        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded)
         .then((event) => {
             let canvas = event.data.canvas;
             let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);
@@ -42,7 +42,7 @@ TestPage.registerInitializer(() => {
     }
 
     function awaitCanvasRemoved(canvasIdentifier) {
-        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasWasRemoved)
+        return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasRemoved)
         .then((event) => {
             let canvas = event.data.canvas;
             InspectorTest.expectEqual(canvas.identifier, canvasIdentifier, "Removed canvas has expected ID.");

@@ -1,3 +1,21 @@
+2017-10-26  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: canvas path components from old page stick around when page is reloaded
+        https://bugs.webkit.org/show_bug.cgi?id=178806
+        <rdar://problem/35176360>
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/context-attributes.html:
+        * inspector/canvas/resources/create-context-utilities.js:
+        (destroyCanvases):
+        (TestPage.registerInitializer.awaitCanvasAdded):
+        (TestPage.registerInitializer):
+        * inspector/canvas/resources/shaderProgram-utilities.js:
+        (deleteContext):
+        (TestPage.registerInitializer.window.addParentCanvasRemovedTestCase):
+        (TestPage.registerInitializer):
+
 2017-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         When navigating back to a page, compositing layers may not use accelerated drawing

@@ -37,7 +37,7 @@ function deleteProgram() {
 function deleteContext() {
     context = null;
     // Force GC to make sure the canvas element is destroyed, otherwise the frontend
-    // does not receive WI.CanvasManager.Event.CanvasWasRemoved events.
+    // does not receive WI.CanvasManager.Event.CanvasRemoved events.
     setTimeout(() => { GCController.collect(); }, 0);
 }
 
@@ -112,7 +112,7 @@ TestPage.registerInitializer(() => {
                         InspectorTest.pass("Removed ShaderProgram before Canvas.");
                         resolve();
                     }),
-                    WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasWasRemoved)
+                    WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasRemoved)
                     .then(reject)
                 ])
                 .catch(() => { InspectorTest.fail("Removed Canvas before ShaderProgram."); });
