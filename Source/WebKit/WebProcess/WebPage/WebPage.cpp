@@ -3093,7 +3093,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     setForceAlwaysUserScalable(m_forceAlwaysUserScalable || store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
 
     settings.setUseImageDocumentForSubframePDF(true);
+#if HAVE(AVKIT)
     DeprecatedGlobalSettings::setAVKitEnabled(true);
+#endif
 #endif
 
     if (m_drawingArea)

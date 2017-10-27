@@ -1,3 +1,12 @@
+2017-10-27  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r224077): DeprecatedGlobalSettings::setAVKitEnabled() not protected by HAVE(AVKIT)
+
+        Unreviewed build fix.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Fix build.
+
 2017-10-26  Jeremy Jones  <jeremyj@apple.com>
 
         Implement seek tolerance methods in WebAVPlayerController.
