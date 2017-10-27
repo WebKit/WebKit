@@ -1,3 +1,33 @@
+2017-10-27  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r223993. rdar://problem/34771415
+
+    2017-10-25  Per Arne Vollan  <pvollan@apple.com>
+
+            Network process crash under WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge.
+            https://bugs.webkit.org/show_bug.cgi?id=160234
+            rdar://problem/30675510
+
+            Reviewed by Geoffrey Garen.
+
+            An exception is raised because we call the method rejectProtectionSpaceAndContinueWithChallenge on the CFNetwork
+            challenge sender, which does not implement this optional method. The methods on the authentication challenge
+            sender are deprecated when network session is used, so we should not call them in that case.
+
+            * Shared/Authentication/AuthenticationManager.cpp:
+            (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+            (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+            (WebKit::AuthenticationManager::cancelSingleChallenge):
+            (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+            (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+            * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+            (WebKit::AuthenticationManager::receivedCredential):
+            (WebKit::AuthenticationManager::receivedRequestToContinueWithoutCredential):
+            (WebKit::AuthenticationManager::receivedCancellation):
+            (WebKit::AuthenticationManager::receivedRequestToPerformDefaultHandling):
+            (WebKit::AuthenticationManager::receivedChallengeRejection):
+            * Shared/Authentication/soup/AuthenticationManagerSoup.cpp:
+
 2017-10-20  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223708. rdar://problem/34771406

@@ -227,12 +227,15 @@ void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID
         completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
         return;
     }
+    ASSERT(coreClient);
 #endif
 
     if (coreClient)
         coreClient->receivedCredential(challenge.challenge, credential);
+#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
     else
         receivedCredential(challenge.challenge, credential);
+#endif
 }
 
 void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t challengeID)
@@ -255,12 +258,15 @@ void AuthenticationManager::continueWithoutCredentialForSingleChallenge(uint64_t
         challenge.completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
         return;
     }
+    ASSERT(coreClient);
 #endif
 
     if (coreClient)
         coreClient->receivedRequestToContinueWithoutCredential(challenge.challenge);
+#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
     else
         receivedRequestToContinueWithoutCredential(challenge.challenge);
+#endif
 }
 
 void AuthenticationManager::cancelChallenge(uint64_t challengeID)
@@ -283,12 +289,15 @@ void AuthenticationManager::cancelSingleChallenge(uint64_t challengeID)
         challenge.completionHandler(AuthenticationChallengeDisposition::Cancel, Credential());
         return;
     }
+    ASSERT(coreClient);
 #endif
 
     if (coreClient)
         coreClient->receivedCancellation(challenge.challenge);
+#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
     else
         receivedCancellation(challenge.challenge);
+#endif
 }
 
 void AuthenticationManager::performDefaultHandling(uint64_t challengeID)
@@ -311,12 +320,15 @@ void AuthenticationManager::performDefaultHandlingForSingleChallenge(uint64_t ch
         challenge.completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
         return;
     }
+    ASSERT(coreClient);
 #endif
 
     if (coreClient)
         coreClient->receivedRequestToPerformDefaultHandling(challenge.challenge);
+#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
     else
         receivedRequestToPerformDefaultHandling(challenge.challenge);
+#endif
 }
 
 void AuthenticationManager::rejectProtectionSpaceAndContinue(uint64_t challengeID)
@@ -339,12 +351,15 @@ void AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge(u
         challenge.completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
         return;
     }
+    ASSERT(coreClient);
 #endif
 
     if (coreClient)
         coreClient->receivedChallengeRejection(challenge.challenge);
+#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
     else
         receivedChallengeRejection(challenge.challenge);
+#endif
 }
 
 } // namespace WebKit
