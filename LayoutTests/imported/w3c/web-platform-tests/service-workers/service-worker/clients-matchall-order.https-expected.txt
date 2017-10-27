@@ -1,0 +1,9 @@
+
+FAIL Clients.matchAll() returns non-focused controlled windows in creation order. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Clients.matchAll() returns controlled windows in focus order.  Case 1. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Clients.matchAll() returns controlled windows in focus order.  Case 2. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Clients.matchAll() returns non-focused uncontrolled windows in creation order. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 1. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 2. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Clients.matchAll() returns controlled windows and frames in focus order. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

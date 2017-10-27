@@ -187,9 +187,10 @@ void ServiceWorkerContainer::getRegistration(const String&, RegistrationPromise&
     promise.resolve(nullptr);
 }
 
-void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
+void ServiceWorkerContainer::getRegistrations(RegistrationsPromise&& promise)
 {
-    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.getRegistrations() is not yet implemented") });
+    // FIXME: Implement getRegistrations algorithm, for now pretend there is no registration.
+    promise.resolve({ });
 }
 
 void ServiceWorkerContainer::startMessages()

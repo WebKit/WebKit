@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1406: TypeError: undefined is not an object (evaluating 'self[this.name].prototype')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'self[this.name].prototype')
+
+FAIL ServiceWorkerGlobalScope interface: existence and properties of interface object assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
+FAIL ServiceWorkerGlobalScope interface object length assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
+FAIL ServiceWorkerGlobalScope interface object name assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
+FAIL ServiceWorkerGlobalScope interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ServiceWorkerGlobalScope" expected property "ServiceWorkerGlobalScope" missing
+

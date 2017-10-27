@@ -1,0 +1,12 @@
+
+FAIL normal promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL blank url promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL in scope but not controlled test on installing worker promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL in scope but not controlled test on active worker promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL out of scope promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL cross orgin url promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL invalid url (http://[example.com]) promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL invalid url (view-source://example.com) promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL invalid url (file:///) promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL invalid url (about:blank) promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

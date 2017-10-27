@@ -1,0 +1,4 @@
+
+FAIL Opaque responses should not be reused for XHRs, loading case promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Opaque responses should not be reused for XHRs, done case promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

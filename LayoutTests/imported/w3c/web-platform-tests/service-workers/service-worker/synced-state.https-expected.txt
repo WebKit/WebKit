@@ -1,0 +1,3 @@
+
+FAIL worker objects for the same entity have the same state promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.addEventListener')"
+

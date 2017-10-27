@@ -1,0 +1,15 @@
+
+FAIL initialize global state (service worker registration and caches) promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "follow", non-intercepted request, no server redirect promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "follow", non-intercepted request promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "manual", non-intercepted request promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "error", non-intercepted request promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "follow", no mode change, no server redirect promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "follow", no mode change promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "error", mode change: "follow" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "manual", mode change: "follow" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "follow", mode change: "redirect" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "error", mode change: "manual" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "manual", no mode change promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+PASS restore global state (service worker registration) 
+

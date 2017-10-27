@@ -1,0 +1,4 @@
+
+FAIL Service Worker should respond to fetch event after the hash changes promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Service Worker should respond to fetch event after the pushState promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

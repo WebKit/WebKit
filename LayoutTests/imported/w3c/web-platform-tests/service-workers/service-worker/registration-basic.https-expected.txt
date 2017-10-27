@@ -1,0 +1,5 @@
+
+PASS Registering normal scope 
+FAIL Registering scope with fragment assert_equals: A fragment should be removed from scope expected "https://localhost:9443/service-workers/service-worker/resources/registration/scope-with-fragment" but got "https://localhost:9443/service-workers/service-worker/resources/registration/normal"
+PASS Registering same scope as the script directory 
+

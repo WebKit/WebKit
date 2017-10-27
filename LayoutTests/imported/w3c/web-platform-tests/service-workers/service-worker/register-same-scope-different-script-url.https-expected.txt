@@ -1,0 +1,7 @@
+
+FAIL Register different scripts concurrently assert_unreached: unexpected rejection: null is not an object (evaluating 'registration.installing.scriptURL') Reached unreachable code
+FAIL Register then register new script URL assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Register then register new script URL that 404s assert_unreached: unexpected rejection: null is not an object (evaluating 'registration.active.scriptURL') Reached unreachable code
+FAIL Register then register new script that does not install assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Register same-scope new script url effect on controller assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

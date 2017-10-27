@@ -1,0 +1,19 @@
+  
+
+FAIL Same origin fetch without CORS headers, not exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Same origin fetch without CORS headers, only origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Same origin fetch without CORS headers, headers and origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Same origin fetch without CORS headers, exposed to wrong origin promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Same origin fetch with CORS headers, not exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Same origin fetch with CORS headers, only origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Same origin fetch with CORS headers, headers and origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Same origin fetch with CORS headers, exposed to wrong origin promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch without CORS headers, not exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch with ACEHeaders header, not exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch with ACEHeaders header, only origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch with ACEHeaders header, headers and origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch with ACEHeaders header, exposed to wrong origin promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch without ACEHeaders header, not exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch without ACEHeaders header, only origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+FAIL Cross origin fetch without ACEHeaders header, headers and origin exposed promise_test: Unhandled rejection with value: "failure:TypeError: null is not an object (evaluating 'worker.addEventListener')"
+

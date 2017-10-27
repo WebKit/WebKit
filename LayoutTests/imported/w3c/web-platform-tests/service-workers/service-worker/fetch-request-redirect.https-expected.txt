@@ -1,0 +1,5 @@
+
+FAIL Verify redirect mode of Fetch API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

@@ -1,0 +1,4 @@
+
+FAIL Verify Indexed DB operation in a Service Worker promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.postMessage')"
+PASS clean up: registration 
+

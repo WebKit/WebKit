@@ -1,0 +1,3 @@
+
+FAIL The headers of FetchEvent shouldn't contain freshness headers. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

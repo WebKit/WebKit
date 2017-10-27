@@ -1,0 +1,6 @@
+
+FAIL Post an extendable message from a top-level client promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Post an extendable message from a nested client promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Post loopback extendable messages promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Post extendable messages among service workers promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: line 550: TypeError: this.members[name].test_object is not a function. (In 'this.members[name].test_object(str)', 'this.members[name].test_object' is undefined)
+
+Harness Error (FAIL), message = TypeError: this.members[name].test_object is not a function. (In 'this.members[name].test_object(str)', 'this.members[name].test_object' is undefined)
+
+FAIL FetchEvent interface: existence and properties of interface object assert_equals: prototype of FetchEvent is not Event expected function "function Event() {
+    [native code]
+}" but got function "function ExtendableEvent() {
+    [native code]
+}"
+FAIL FetchEvent interface object length assert_equals: wrong value for FetchEvent.length expected 0 but got 2
+PASS FetchEvent interface object name 
+FAIL FetchEvent interface: existence and properties of interface prototype object assert_equals: prototype of FetchEvent.prototype is not Event.prototype expected object "[object EventPrototype]" but got object "[object ExtendableEventPrototype]"
+PASS FetchEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS FetchEvent interface: attribute request 
+FAIL FetchEvent interface: attribute client assert_true: The prototype object must have a property "client" expected true got false
+FAIL FetchEvent interface: attribute context assert_true: The prototype object must have a property "context" expected true got false
+FAIL FetchEvent interface: attribute isReload assert_true: The prototype object must have a property "isReload" expected true got false
+PASS FetchEvent interface: operation respondWith([object Object]) 
+FAIL FetchEvent interface: operation forwardTo(ScalarValueString) assert_own_property: interface prototype object missing non-static operation expected property "forwardTo" missing
+FAIL FetchEvent interface: operation default() assert_own_property: interface prototype object missing non-static operation expected property "default" missing
+FAIL FetchEvent must be primary interface of throw new Error ('No object defined for the FetchEvent interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL Stringification of throw new Error ('No object defined for the FetchEvent interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: throw new Error ('No object defined for the FetchEvent interface') must inherit property "request" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: throw new Error ('No object defined for the FetchEvent interface') must inherit property "client" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: throw new Error ('No object defined for the FetchEvent interface') must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: throw new Error ('No object defined for the FetchEvent interface') must inherit property "isReload" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: throw new Error ('No object defined for the FetchEvent interface') must inherit property "respondWith([object Object])" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: calling respondWith([object Object]) on throw new Error ('No object defined for the FetchEvent interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: throw new Error ('No object defined for the FetchEvent interface') must inherit property "forwardTo(ScalarValueString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: calling forwardTo(ScalarValueString) on throw new Error ('No object defined for the FetchEvent interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+FAIL FetchEvent interface: throw new Error ('No object defined for the FetchEvent interface') must inherit property "default()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the FetchEvent interface"
+

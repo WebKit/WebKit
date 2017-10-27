@@ -1,0 +1,3 @@
+
+FAIL Recover from a bad service worker by updating after a failed navigation. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

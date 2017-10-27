@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 14: Unhandled Promise Rejection: UnknownError: serviceWorker.getRegistration() is not yet implemented
+CONSOLE MESSAGE: line 1714: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'remote.onerror = function(error) { this_obj.remote_error(error); }')
 
-FAIL General fetch abort tests in a service worker serviceWorker.getRegistration() is not yet implemented
+FAIL General fetch abort tests in a service worker null is not an object (evaluating 'remote.onerror = function(error) { this_obj.remote_error(error); }')
 

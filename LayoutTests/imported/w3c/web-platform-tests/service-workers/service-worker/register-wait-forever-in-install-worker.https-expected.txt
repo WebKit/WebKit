@@ -1,0 +1,3 @@
+
+FAIL register worker that calls waitUntil with a promise that never resolves in oninstall promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'registration.installing.scriptURL')"
+

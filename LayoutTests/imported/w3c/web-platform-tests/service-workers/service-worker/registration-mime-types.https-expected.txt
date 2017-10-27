@@ -1,0 +1,38 @@
+
+FAIL Registering script with no MIME type assert_unreached: Should have rejected: Registration of no MIME type script should fail. Reached unreachable code
+FAIL Registering script with bad MIME type assert_unreached: Should have rejected: Registration of plain text script should fail. Reached unreachable code
+FAIL Registering script that imports script with no MIME type assert_unreached: Should have rejected: Registration of no MIME type imported script should fail. Reached unreachable code
+FAIL Registering script that imports script with bad MIME type assert_unreached: Should have rejected: Registration of plain text imported script should fail. Reached unreachable code
+PASS Registering script with good MIME type application/ecmascript 
+PASS Registering script that imports script with good MIME type application/ecmascript 
+PASS Registering script with good MIME type application/javascript 
+PASS Registering script that imports script with good MIME type application/javascript 
+PASS Registering script with good MIME type application/x-ecmascript 
+PASS Registering script that imports script with good MIME type application/x-ecmascript 
+PASS Registering script with good MIME type application/x-javascript 
+PASS Registering script that imports script with good MIME type application/x-javascript 
+PASS Registering script with good MIME type text/ecmascript 
+PASS Registering script that imports script with good MIME type text/ecmascript 
+PASS Registering script with good MIME type text/javascript 
+PASS Registering script that imports script with good MIME type text/javascript 
+PASS Registering script with good MIME type text/javascript1.0 
+PASS Registering script that imports script with good MIME type text/javascript1.0 
+PASS Registering script with good MIME type text/javascript1.1 
+PASS Registering script that imports script with good MIME type text/javascript1.1 
+PASS Registering script with good MIME type text/javascript1.2 
+PASS Registering script that imports script with good MIME type text/javascript1.2 
+PASS Registering script with good MIME type text/javascript1.3 
+PASS Registering script that imports script with good MIME type text/javascript1.3 
+PASS Registering script with good MIME type text/javascript1.4 
+PASS Registering script that imports script with good MIME type text/javascript1.4 
+PASS Registering script with good MIME type text/javascript1.5 
+PASS Registering script that imports script with good MIME type text/javascript1.5 
+PASS Registering script with good MIME type text/jscript 
+PASS Registering script that imports script with good MIME type text/jscript 
+PASS Registering script with good MIME type text/livescript 
+PASS Registering script that imports script with good MIME type text/livescript 
+PASS Registering script with good MIME type text/x-ecmascript 
+PASS Registering script that imports script with good MIME type text/x-ecmascript 
+PASS Registering script with good MIME type text/x-javascript 
+PASS Registering script that imports script with good MIME type text/x-javascript 
+

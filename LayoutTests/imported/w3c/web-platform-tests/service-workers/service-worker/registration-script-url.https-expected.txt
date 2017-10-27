@@ -1,0 +1,8 @@
+
+PASS Script URL including URL-encoded slash 
+PASS Script URL including uppercase URL-encoded slash 
+PASS Script URL including URL-encoded backslash 
+PASS Script URL including uppercase URL-encoded backslash 
+FAIL Script URL including self-reference promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_newest_worker(registration).scriptURL')"
+FAIL Script URL including parent-reference promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_newest_worker(registration).scriptURL')"
+

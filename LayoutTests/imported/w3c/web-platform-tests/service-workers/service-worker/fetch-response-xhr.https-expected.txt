@@ -1,0 +1,3 @@
+
+FAIL Verify the response of FetchEvent using XMLHttpRequest assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

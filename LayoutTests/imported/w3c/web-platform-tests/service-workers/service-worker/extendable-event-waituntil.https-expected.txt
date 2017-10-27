@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.postMessage')
+CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.postMessage')
+CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.postMessage')
+
+Harness Error (FAIL), message = null is not an object (evaluating 'worker.postMessage')
+
+FAIL Test install event waitUntil fulfilled assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Test ExtendableEvent multiple waitUntil fulfilled. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Test ExtendableEvent waitUntil reject precedence. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Test activate event waitUntil fulfilled assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Test install event waitUntil rejected assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Test activate event waitUntil rejected. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

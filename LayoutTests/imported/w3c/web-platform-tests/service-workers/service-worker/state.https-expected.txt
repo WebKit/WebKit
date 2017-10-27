@@ -1,0 +1,3 @@
+
+FAIL Service Worker state property and "statechange" event null is not an object (evaluating 'sw.addEventListener')
+

@@ -1,0 +1,6 @@
+
+
+FAIL register should use the relevant global of the object it was called on to resolve the script URL and the default scope URL promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL register should use the relevant global of the object it was called on to resolve the script URL and the given scope URL promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL getRegistration should use the relevant global of the object it was called on to resolve the script URL assert_not_equals: the registration from the other frame should not be null got disallowed value null
+

@@ -1,0 +1,58 @@
+CONSOLE MESSAGE: line 550: TypeError: this.members[name].test_object is not a function. (In 'this.members[name].test_object(str)', 'this.members[name].test_object' is undefined)
+
+Harness Error (FAIL), message = TypeError: this.members[name].test_object is not a function. (In 'this.members[name].test_object(str)', 'this.members[name].test_object' is undefined)
+
+FAIL AbstractResponse interface: existence and properties of interface object assert_own_property: self does not have own property "AbstractResponse" expected property "AbstractResponse" missing
+FAIL AbstractResponse interface object length assert_own_property: self does not have own property "AbstractResponse" expected property "AbstractResponse" missing
+FAIL AbstractResponse interface object name assert_own_property: self does not have own property "AbstractResponse" expected property "AbstractResponse" missing
+FAIL AbstractResponse interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AbstractResponse" expected property "AbstractResponse" missing
+FAIL AbstractResponse interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AbstractResponse" expected property "AbstractResponse" missing
+FAIL AbstractResponse must be primary interface of throw new Error ('No object defined for the AbstractResponse interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the AbstractResponse interface"
+FAIL Stringification of throw new Error ('No object defined for the AbstractResponse interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the AbstractResponse interface"
+FAIL OpaqueResponse interface: existence and properties of interface object assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface object length assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface object name assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface: existence and properties of interface prototype object assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface: attribute status assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface: attribute statusText assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface: attribute headers assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse interface: attribute url assert_own_property: self does not have own property "OpaqueResponse" expected property "OpaqueResponse" missing
+FAIL OpaqueResponse must be primary interface of throw new Error ('No object defined for the OpaqueResponse interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the OpaqueResponse interface"
+FAIL Stringification of throw new Error ('No object defined for the OpaqueResponse interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the OpaqueResponse interface"
+FAIL OpaqueResponse interface: throw new Error ('No object defined for the OpaqueResponse interface') must inherit property "status" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the OpaqueResponse interface"
+FAIL OpaqueResponse interface: throw new Error ('No object defined for the OpaqueResponse interface') must inherit property "statusText" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the OpaqueResponse interface"
+FAIL OpaqueResponse interface: throw new Error ('No object defined for the OpaqueResponse interface') must inherit property "headers" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the OpaqueResponse interface"
+FAIL OpaqueResponse interface: throw new Error ('No object defined for the OpaqueResponse interface') must inherit property "url" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the OpaqueResponse interface"
+FAIL CORSResponse interface: existence and properties of interface object assert_own_property: self does not have own property "CORSResponse" expected property "CORSResponse" missing
+FAIL CORSResponse interface object length assert_own_property: self does not have own property "CORSResponse" expected property "CORSResponse" missing
+FAIL CORSResponse interface object name assert_own_property: self does not have own property "CORSResponse" expected property "CORSResponse" missing
+FAIL CORSResponse interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CORSResponse" expected property "CORSResponse" missing
+FAIL CORSResponse interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CORSResponse" expected property "CORSResponse" missing
+FAIL CORSResponse interface: attribute headers assert_own_property: self does not have own property "CORSResponse" expected property "CORSResponse" missing
+FAIL CORSResponse must be primary interface of throw new Error ('No object defined for the CORSResponse interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL Stringification of throw new Error ('No object defined for the CORSResponse interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL CORSResponse interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "headers" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "status" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "statusText" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "headers" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "url" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL Response interface: throw new Error ('No object defined for the CORSResponse interface') must inherit property "toBlob()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the CORSResponse interface"
+FAIL Response interface: existence and properties of interface object assert_own_property: should inherit from AbstractResponse, but self has no such property expected property "AbstractResponse" missing
+PASS Response interface object length 
+PASS Response interface object name 
+FAIL Response interface: existence and properties of interface prototype object assert_own_property: should inherit from AbstractResponse, but self has no such property expected property "AbstractResponse" missing
+PASS Response interface: existence and properties of interface prototype object's "constructor" property 
+FAIL Response interface: attribute status assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+FAIL Response interface: attribute statusText assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS Response interface: attribute headers 
+FAIL Response interface: attribute url assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+FAIL Response interface: operation toBlob() assert_own_property: interface prototype object missing non-static operation expected property "toBlob" missing
+FAIL Response must be primary interface of throw new Error ('No object defined for the Response interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Response interface"
+FAIL Stringification of throw new Error ('No object defined for the Response interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Response interface"
+FAIL Response interface: throw new Error ('No object defined for the Response interface') must inherit property "status" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Response interface"
+FAIL Response interface: throw new Error ('No object defined for the Response interface') must inherit property "statusText" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Response interface"
+FAIL Response interface: throw new Error ('No object defined for the Response interface') must inherit property "headers" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Response interface"
+FAIL Response interface: throw new Error ('No object defined for the Response interface') must inherit property "url" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Response interface"
+FAIL Response interface: throw new Error ('No object defined for the Response interface') must inherit property "toBlob()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Response interface"
+

@@ -1,0 +1,5 @@
+
+FAIL Unregister does not affect existing controller assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Unregister prevents control of subsequent navigations assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Unregister prevents new controllee even if registration is still in use assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

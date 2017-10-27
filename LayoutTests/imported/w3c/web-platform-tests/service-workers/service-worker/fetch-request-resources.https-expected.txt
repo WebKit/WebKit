@@ -1,0 +1,3 @@
+
+FAIL Verify FetchEvent for resources. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

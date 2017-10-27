@@ -1,0 +1,12 @@
+
+FAIL InstallPhaseEvent interface: existence and properties of interface object assert_own_property: self does not have own property "InstallPhaseEvent" expected property "InstallPhaseEvent" missing
+FAIL InstallPhaseEvent interface object length assert_own_property: self does not have own property "InstallPhaseEvent" expected property "InstallPhaseEvent" missing
+FAIL InstallPhaseEvent interface object name assert_own_property: self does not have own property "InstallPhaseEvent" expected property "InstallPhaseEvent" missing
+FAIL InstallPhaseEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "InstallPhaseEvent" expected property "InstallPhaseEvent" missing
+FAIL InstallPhaseEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "InstallPhaseEvent" expected property "InstallPhaseEvent" missing
+FAIL InstallPhaseEvent interface: operation waitUntil([object Object]) assert_own_property: self does not have own property "InstallPhaseEvent" expected property "InstallPhaseEvent" missing
+FAIL InstallPhaseEvent must be primary interface of throw new Error ('No object defined for the InstallPhaseEvent interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the InstallPhaseEvent interface"
+FAIL Stringification of throw new Error ('No object defined for the InstallPhaseEvent interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the InstallPhaseEvent interface"
+FAIL InstallPhaseEvent interface: throw new Error ('No object defined for the InstallPhaseEvent interface') must inherit property "waitUntil([object Object])" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the InstallPhaseEvent interface"
+FAIL InstallPhaseEvent interface: calling waitUntil([object Object]) on throw new Error ('No object defined for the InstallPhaseEvent interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the InstallPhaseEvent interface"
+

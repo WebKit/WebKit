@@ -1,0 +1,14 @@
+
+FAIL Client interface: existence and properties of interface object assert_own_property: self does not have own property "Client" expected property "Client" missing
+FAIL Client interface object length assert_own_property: self does not have own property "Client" expected property "Client" missing
+FAIL Client interface object name assert_own_property: self does not have own property "Client" expected property "Client" missing
+FAIL Client interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Client" expected property "Client" missing
+FAIL Client interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Client" expected property "Client" missing
+FAIL Client interface: attribute id assert_own_property: self does not have own property "Client" expected property "Client" missing
+FAIL Client interface: operation postMessage(any, DOMString, [object Object]) assert_own_property: self does not have own property "Client" expected property "Client" missing
+FAIL Client must be primary interface of throw new Error ('No object defined for the Client interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Client interface"
+FAIL Stringification of throw new Error ('No object defined for the Client interface') assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Client interface"
+FAIL Client interface: throw new Error ('No object defined for the Client interface') must inherit property "id" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Client interface"
+FAIL Client interface: throw new Error ('No object defined for the Client interface') must inherit property "postMessage(any, DOMString, [object Object])" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Client interface"
+FAIL Client interface: calling postMessage(any, DOMString, [object Object]) on throw new Error ('No object defined for the Client interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Client interface"
+

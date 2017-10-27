@@ -1,0 +1,10 @@
+
+FAIL Registering same scope as the script directory without the last slash assert_unreached: Should have rejected: Registering same scope as the script directory without the last slash should fail with SecurityError. Reached unreachable code
+FAIL Registration scope outside the script directory assert_unreached: Should have rejected: Registration scope outside the script directory should fail with SecurityError. Reached unreachable code
+PASS Registering scope outside domain 
+PASS Registering script outside domain 
+FAIL Registering redirected script assert_unreached: Should have rejected: Registration of redirected script should fail. Reached unreachable code
+FAIL Scope including parent-reference and not under the script directory assert_unreached: Should have rejected: Scope not under the script directory should be rejected. Reached unreachable code
+FAIL Script URL including consecutive slashes assert_unreached: Should have rejected: Consecutive slashes in the script url should not be unified. Reached unreachable code
+FAIL Script URL is same-origin filesystem: URL assert_throws: Registering a script which has same-origin filesystem: URL should fail with SecurityError. function "function () { throw e }" threw object "TypeError: serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+

@@ -1,0 +1,3 @@
+
+FAIL Fetch events should not go through uncontrolled page. assert_unreached: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

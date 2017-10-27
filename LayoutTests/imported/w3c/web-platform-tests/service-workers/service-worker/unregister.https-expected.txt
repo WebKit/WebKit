@@ -1,0 +1,4 @@
+
+PASS Unregister twice 
+FAIL Register then unregister assert_unreached: unexpected rejection: assert_equals: unregistration should resolve with true expected true but got false Reached unreachable code
+

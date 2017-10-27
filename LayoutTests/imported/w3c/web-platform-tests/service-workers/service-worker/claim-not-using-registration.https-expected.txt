@@ -1,0 +1,5 @@
+
+
+FAIL Test claim client which is not using registration promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Test claim client when there's a longer-matched registration not already used by the page promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

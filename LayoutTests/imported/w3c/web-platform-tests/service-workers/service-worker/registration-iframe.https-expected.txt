@@ -1,0 +1,5 @@
+
+FAIL register method should use the "relevant global object" to parse its scriptURL and scope - normal case assert_unreached: unexpected rejection: null is not an object (evaluating 'document.body.appendChild') Reached unreachable code
+FAIL register method should use the "relevant global object" to parse its scriptURL and scope - error case assert_unreached: unexpected rejection: undefined is not an object (evaluating 'frame.remove') Reached unreachable code
+FAIL A scope url should start with the given script url assert_unreached: unexpected rejection: assert_equals: The scope set to a non-subdirectory of the scriptURL should reject with SecurityError expected "SecurityError" but got "TypeError" Reached unreachable code
+

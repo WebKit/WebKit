@@ -6,5 +6,5 @@ FAIL ports attribute should be a FrozenArray assert_true: ev.ports should return
 PASS initMessageEvent operation 
 PASS Passing null for ports parameter to initMessageEvent 
 PASS initMessageEvent operation default parameter values 
-FAIL Passing ServiceWorker for source member assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
+FAIL Passing ServiceWorker for source member promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 

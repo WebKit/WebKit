@@ -1,3 +1,14 @@
+2017-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Unskip more Service Workers tests
+        https://bugs.webkit.org/show_bug.cgi?id=178944
+
+        Reviewed by Sam Weinig.
+
+        Unskip all Service Workers tests except for the 39 that are timing out.
+
+        * TestExpectations:
+
 2017-10-27  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted expectations for fast/scrolling/arrow-key-scroll-in-rtl-document.html.

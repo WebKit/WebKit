@@ -1,0 +1,5 @@
+
+FAIL Subsequent registrations resolve to the same registration object assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Subsequent registrations from a different iframe resolve to the different registration object but they refer to the same registration and workers assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Concurrent registrations resolve to the same registration object assert_unreached: unexpected rejection: assert_equals: register should resolve to the same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]" Reached unreachable code
+

@@ -1,0 +1,10 @@
+
+PASS Scope including URL-encoded slash 
+PASS Scope including URL-encoded backslash 
+PASS Scope including URL-encoded multibyte characters 
+FAIL Scope including non-escaped multibyte characters assert_equals: Non-URL-encoded multibyte characters should be available. expected "https://localhost:9443/service-workers/service-worker/resources/%EF%BD%93%EF%BD%83%EF%BD%8F%EF%BD%90%EF%BD%85/non-escaped-multibyte-character-scope" but got "https://localhost:9443/service-workers/service-worker/resources/%ef%bd%93%ef%bd%83%ef%bd%8f%ef%bd%90%ef%bd%85/escaped-multibyte-character-scope"
+FAIL Scope including self-reference assert_equals: Scope including self-reference should be normalized. expected "https://localhost:9443/service-workers/service-worker/resources/scope/self-reference-in-scope" but got "https://localhost:9443/service-workers/service-worker/resources/%ef%bd%93%ef%bd%83%ef%bd%8f%ef%bd%90%ef%bd%85/escaped-multibyte-character-scope"
+FAIL Scope including parent-reference assert_equals: Scope including parent-reference should be normalized. expected "https://localhost:9443/service-workers/service-worker/resources/scope/parent-reference-in-scope" but got "https://localhost:9443/service-workers/service-worker/resources/%ef%bd%93%ef%bd%83%ef%bd%8f%ef%bd%90%ef%bd%85/escaped-multibyte-character-scope"
+FAIL Scope including consecutive slashes assert_equals: Should successfully be registered. expected "https://localhost:9443/service-workers/service-worker/resources/scope////consecutive-slashes-in-scope" but got "https://localhost:9443/service-workers/service-worker/resources/%ef%bd%93%ef%bd%83%ef%bd%8f%ef%bd%90%ef%bd%85/escaped-multibyte-character-scope"
+FAIL Scope URL is same-origin filesystem: URL assert_throws: Registering with the scope that has same-origin filesystem: URL should fail with SecurityError. function "function () { throw e }" threw object "TypeError: Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+

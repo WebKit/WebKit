@@ -1,0 +1,5 @@
+
+FAIL default scope assert_equals: The default scope should be URL("./", script_url) expected "https://localhost:9443/service-workers/service-worker/resources/" but got "https://localhost:9443/service-workers/service-worker/"
+FAIL undefined scope assert_equals: The default scope should be URL("./", script_url) expected "https://localhost:9443/service-workers/service-worker/resources/" but got "https://localhost:9443/service-workers/service-worker/"
+FAIL null scope assert_unreached: register should fail Reached unreachable code
+

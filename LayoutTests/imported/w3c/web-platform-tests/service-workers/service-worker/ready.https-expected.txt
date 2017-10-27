@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: UnknownError: serviceWorker.ready() is not yet implemented
+
+Harness Error (FAIL), message = serviceWorker.ready() is not yet implemented
+
+PASS ready returns the same Promise object 
+PASS ready returns a Promise object in the context of the related document 
+FAIL ready on a controlled document promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL ready on a potential controlled document promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
+FAIL ready on an iframe whose parent registers a new service worker promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
+FAIL ready on an iframe that installs a new service worker promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
+FAIL ready after a longer matched registration registered promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL access ready after it has been resolved promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

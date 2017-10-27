@@ -1,0 +1,15 @@
+
+FAIL initialize global state promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL event.request has the expected headers for same-origin GET. undefined is not an object (evaluating 'frame.contentWindow')
+FAIL event.request has the expected headers for same-origin POST. undefined is not an object (evaluating 'frame.contentWindow')
+FAIL event.request has the expected headers for cross-origin GET. undefined is not an object (evaluating 'frame.contentWindow')
+FAIL event.request has the expected headers for cross-origin POST. undefined is not an object (evaluating 'frame.contentWindow')
+FAIL FetchEvent#request.body contains XHR request data (string) undefined is not an object (evaluating 'frame.contentWindow')
+FAIL FetchEvent#request.body contains XHR request data (blob) undefined is not an object (evaluating 'frame.contentWindow')
+FAIL FetchEvent#request.method is set to XHR method undefined is not an object (evaluating 'frame.contentWindow')
+FAIL XHR using OPTIONS method undefined is not an object (evaluating 'frame.contentWindow')
+FAIL XHR with form data undefined is not an object (evaluating 'frame.contentWindow')
+FAIL XHR with mode/credentials set undefined is not an object (evaluating 'frame.contentWindow')
+FAIL XHR to data URL undefined is not an object (evaluating 'frame.contentWindow')
+PASS restore global state 
+

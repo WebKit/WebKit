@@ -1,0 +1,3 @@
+
+FAIL worker prototype chain should be immutable promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.postMessage')"
+

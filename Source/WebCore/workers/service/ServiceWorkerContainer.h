@@ -64,7 +64,9 @@ public:
 
     using RegistrationPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistration(const String& clientURL, RegistrationPromise&&);
-    void getRegistrations(Ref<DeferredPromise>&&);
+
+    using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
+    void getRegistrations(RegistrationsPromise&&);
 
     void startMessages();
 

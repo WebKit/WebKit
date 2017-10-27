@@ -1,0 +1,18 @@
+
+FAIL initialize global state promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request for a main resource. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request of same origin XHR. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request of CORS-unsupported other origin XHR. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request of CORS-supported other origin XHR. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept only the first request of redirected XHR. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept only the first request for XHR which is redirected to CORS-unsupported other origin. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept only the first request for XHR which is redirected to CORS-supported other origin. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request for image. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request for other origin image. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request for CORS-unsupported other origin image. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept the request for CORS-supported other origin image. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept only the first request for redirected image resource. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept only the first request for image resource which is redirected to other origin. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept only the first request for image resource which is redirected to CORS-unsupported other origin. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL The SW must intercept only the first request for image resource which is redirected to CORS-supported other origin. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

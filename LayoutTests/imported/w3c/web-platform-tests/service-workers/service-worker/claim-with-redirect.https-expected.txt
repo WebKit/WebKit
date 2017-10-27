@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 27: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'r.update')
+  
+
+FAIL Claim works after redirection to another origin assert_equals: expected (string) "updated" but got (undefined) undefined
+

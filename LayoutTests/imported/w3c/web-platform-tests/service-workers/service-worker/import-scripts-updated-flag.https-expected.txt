@@ -1,0 +1,6 @@
+
+FAIL initialize global state promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL import script previously imported at worker evaluation time promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL import script previously imported at worker install time promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL import script not previously imported promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+

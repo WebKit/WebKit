@@ -43,10 +43,10 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(uint64_t serverConnectionIden
 
 ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope() = default;
 
-ServiceWorkerRegistration& ServiceWorkerGlobalScope::registration()
+ServiceWorkerRegistration* ServiceWorkerGlobalScope::registration()
 {
-    // FIXME: Is this method still needed?
-    RELEASE_ASSERT_NOT_REACHED();
+    // FIXME: implement this.
+    return nullptr;
 }
 
 void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&&)

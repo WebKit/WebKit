@@ -1,0 +1,3 @@
+
+FAIL Registration: end-to-end assert_unreached: unexpected rejection: null is not an object (evaluating 'sw.state') Reached unreachable code
+

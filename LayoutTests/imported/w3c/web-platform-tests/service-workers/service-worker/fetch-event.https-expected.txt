@@ -1,0 +1,17 @@
+
+FAIL Service Worker headers in the request of a fetch event assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with string assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with blob body assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with the referrer URL assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with an existing client id assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker does not respond to fetch event assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with null response body assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker fetches other file in fetch event assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with POST form assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Multiple calls of respondWith must throw InvalidStateErrors assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker event.respondWith must set the used flag assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker should expose FetchEvent URL fragments. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with the correct cache types assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker should intercept EventSource assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Service Worker responds to fetch event with the correct integrity_metadata assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+

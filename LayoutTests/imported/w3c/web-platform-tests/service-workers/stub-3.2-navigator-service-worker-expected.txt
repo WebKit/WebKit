@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 498: Partial interface Navigator with no original interface
+
+FAIL Service Workers: navigator.serviceWorker Partial interface Navigator with no original interface
+

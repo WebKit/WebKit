@@ -1,0 +1,3 @@
+
+PASS Rejections are DOMExceptions 
+

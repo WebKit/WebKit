@@ -49,7 +49,7 @@ public:
     bool isServiceWorkerGlobalScope() const final { return true; }
 
     ServiceWorkerClients& clients() { return m_clients.get(); }
-    ServiceWorkerRegistration& registration();
+    ServiceWorkerRegistration* registration();
     
     uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
 
