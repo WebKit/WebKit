@@ -719,7 +719,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
 
-    WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing);
+    WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing || options.useAcceleratedDrawing);
     // FIXME: We should be testing the default.
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
 
@@ -1021,6 +1021,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             String(value.c_str()).split(",", false, testOptions.overrideLanguages);
         if (key == "useThreadedScrolling")
             testOptions.useThreadedScrolling = parseBooleanTestHeaderValue(value);
+        if (key == "useAcceleratedDrawing")
+            testOptions.useAcceleratedDrawing = parseBooleanTestHeaderValue(value);
         if (key == "useFlexibleViewport")
             testOptions.useFlexibleViewport = parseBooleanTestHeaderValue(value);
         if (key == "useDataDetection")

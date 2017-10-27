@@ -1,3 +1,20 @@
+2017-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        When navigating back to a page, compositing layers may not use accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=178749
+        rdar://problem/35158946
+
+        Reviewed by Dean Jackson.
+        
+        Moved iframes/resources/page-cache-helper.html up to compositing/resources/go-back.html.
+
+        * compositing/accelerated-layers-after-back-expected.txt: Added.
+        * compositing/accelerated-layers-after-back.html: Added.
+        * compositing/iframes/page-cache-layer-tree.html:
+        * compositing/page-cache-back-crash.html:
+        * compositing/resources/go-back.html: Renamed from LayoutTests/compositing/iframes/resources/page-cache-helper.html.
+        * platform/ios/compositing/accelerated-layers-after-back-expected.txt: Added.
+
 2017-10-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Update expected results for writing-mode tests
