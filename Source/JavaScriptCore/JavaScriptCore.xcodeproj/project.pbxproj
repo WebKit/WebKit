@@ -821,6 +821,18 @@
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */; };
+		530A66B91FA3E78B0026A545 /* UnifiedSource3.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B11FA3E77A0026A545 /* UnifiedSource3.mm */; };
+		530A66BA1FA3E78B0026A545 /* UnifiedSource4.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B81FA3E77E0026A545 /* UnifiedSource4.mm */; };
+		530A66BB1FA3E78B0026A545 /* UnifiedSource5.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B51FA3E77D0026A545 /* UnifiedSource5.mm */; };
+		530A66BC1FA3E78B0026A545 /* UnifiedSource137.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B21FA3E77B0026A545 /* UnifiedSource137.cpp */; };
+		530A66BD1FA3E78B0026A545 /* UnifiedSource138.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B41FA3E77C0026A545 /* UnifiedSource138.cpp */; };
+		530A66BE1FA3E78B0026A545 /* UnifiedSource139.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66AE1FA3E7780026A545 /* UnifiedSource139.cpp */; };
+		530A66BF1FA3E78B0026A545 /* UnifiedSource140.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B31FA3E77C0026A545 /* UnifiedSource140.cpp */; };
+		530A66C01FA3E78B0026A545 /* UnifiedSource141.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66AF1FA3E7790026A545 /* UnifiedSource141.cpp */; };
+		530A66C11FA3E78B0026A545 /* UnifiedSource142.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B61FA3E77D0026A545 /* UnifiedSource142.cpp */; };
+		530A66C21FA3E78B0026A545 /* UnifiedSource143.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */; };
+		530A66C31FA3E78B0026A545 /* UnifiedSource144.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66AD1FA3E7770026A545 /* UnifiedSource144.cpp */; };
+		530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B01FA3E77A0026A545 /* UnifiedSource145.cpp */; };
 		530FB3021E7A0B6E003C19DD /* WasmWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 530FB3011E7A0B6E003C19DD /* WasmWorklist.h */; };
 		5311BD4B1EA581E500525281 /* WasmOMGPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD491EA581E500525281 /* WasmOMGPlan.h */; };
 		531374BD1D5CE67600AF7A0B /* WasmPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 531374BC1D5CE67600AF7A0B /* WasmPlan.h */; };
@@ -3154,6 +3166,20 @@
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
 		52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyWrapperFunction.cpp; path = js/WebAssemblyWrapperFunction.cpp; sourceTree = "<group>"; };
 		52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyWrapperFunction.h; path = js/WebAssemblyWrapperFunction.h; sourceTree = "<group>"; };
+		530A63401FA3E31C0026A545 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
+		530A63411FA3E31D0026A545 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
+		530A66AD1FA3E7770026A545 /* UnifiedSource144.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource144.cpp; sourceTree = "<group>"; };
+		530A66AE1FA3E7780026A545 /* UnifiedSource139.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource139.cpp; sourceTree = "<group>"; };
+		530A66AF1FA3E7790026A545 /* UnifiedSource141.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource141.cpp; sourceTree = "<group>"; };
+		530A66B01FA3E77A0026A545 /* UnifiedSource145.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource145.cpp; sourceTree = "<group>"; };
+		530A66B11FA3E77A0026A545 /* UnifiedSource3.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedSource3.mm; sourceTree = "<group>"; };
+		530A66B21FA3E77B0026A545 /* UnifiedSource137.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource137.cpp; sourceTree = "<group>"; };
+		530A66B31FA3E77C0026A545 /* UnifiedSource140.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource140.cpp; sourceTree = "<group>"; };
+		530A66B41FA3E77C0026A545 /* UnifiedSource138.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource138.cpp; sourceTree = "<group>"; };
+		530A66B51FA3E77D0026A545 /* UnifiedSource5.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedSource5.mm; sourceTree = "<group>"; };
+		530A66B61FA3E77D0026A545 /* UnifiedSource142.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource142.cpp; sourceTree = "<group>"; };
+		530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource143.cpp; sourceTree = "<group>"; };
+		530A66B81FA3E77E0026A545 /* UnifiedSource4.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedSource4.mm; sourceTree = "<group>"; };
 		530FB3011E7A0B6E003C19DD /* WasmWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmWorklist.h; sourceTree = "<group>"; };
 		530FB3031E7A1146003C19DD /* WasmWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmWorklist.cpp; sourceTree = "<group>"; };
 		5311BD481EA581E500525281 /* WasmOMGPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOMGPlan.cpp; sourceTree = "<group>"; };
@@ -4744,6 +4770,8 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				530A63411FA3E31D0026A545 /* Sources.txt */,
+				530A63401FA3E31C0026A545 /* SourcesCocoa.txt */,
 				8604F4F2143A6C4400B295F5 /* ChangeLog */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
@@ -5826,8 +5854,11 @@
 				536B31981F735E5C0037FC33 /* UnifiedSource1.mm */,
 				536B30D21F71C5380037FC33 /* UnifiedSource2.cpp */,
 				536B31961F735E5B0037FC33 /* UnifiedSource2.mm */,
+				530A66B11FA3E77A0026A545 /* UnifiedSource3.mm */,
 				536B30D31F71C5380037FC33 /* UnifiedSource3.cpp */,
+				530A66B81FA3E77E0026A545 /* UnifiedSource4.mm */,
 				536B30E11F71C5380037FC33 /* UnifiedSource4.cpp */,
+				530A66B51FA3E77D0026A545 /* UnifiedSource5.mm */,
 				536B30E21F71C5380037FC33 /* UnifiedSource5.cpp */,
 				536B30EA1F71C5380037FC33 /* UnifiedSource6.cpp */,
 				536B30E91F71C5380037FC33 /* UnifiedSource7.cpp */,
@@ -5960,6 +5991,15 @@
 				536B31971F735E5B0037FC33 /* UnifiedSource134.cpp */,
 				536B31991F735E5D0037FC33 /* UnifiedSource135.cpp */,
 				535C246B1F7A1777006EC40E /* UnifiedSource136.cpp */,
+				530A66B21FA3E77B0026A545 /* UnifiedSource137.cpp */,
+				530A66B41FA3E77C0026A545 /* UnifiedSource138.cpp */,
+				530A66AE1FA3E7780026A545 /* UnifiedSource139.cpp */,
+				530A66B31FA3E77C0026A545 /* UnifiedSource140.cpp */,
+				530A66AF1FA3E7790026A545 /* UnifiedSource141.cpp */,
+				530A66B61FA3E77D0026A545 /* UnifiedSource142.cpp */,
+				530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */,
+				530A66AD1FA3E7770026A545 /* UnifiedSource144.cpp */,
+				530A66B01FA3E77A0026A545 /* UnifiedSource145.cpp */,
 			);
 			path = "unified-sources";
 			sourceTree = "<group>";
@@ -9641,7 +9681,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\ncd $SRCROOT\n\nif [ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]; then\n    BUILD_SCRIPTS_DIR=\"${SDKROOT}/usr/local/include/wtf/Scripts\"\nelse\n    BUILD_SCRIPTS_DIR=\"${BUILT_PRODUCTS_DIR}/usr/local/include/wtf/Scripts\"\nfi\n\nUnifiedSourceCppFileCount=136\nUnifiedSourceMmFileCount=2\n\n/usr/bin/env ruby \"${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb\" \"--derived-sources-path\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"--source-tree-path\" \"${SRCROOT}\" \"--max-cpp-bundle-count\" \"${UnifiedSourceCppFileCount}\" \"--max-obj-c-bundle-count\" \"${UnifiedSourceMmFileCount}\" \"Sources.txt\" \"SourcesMac.txt\" > /dev/null\n";
+			shellScript = "set -e\n\ncd $SRCROOT\n\nif [ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]; then\n    BUILD_SCRIPTS_DIR=\"${SDKROOT}/usr/local/include/wtf/Scripts\"\nelse\n    BUILD_SCRIPTS_DIR=\"${BUILT_PRODUCTS_DIR}/usr/local/include/wtf/Scripts\"\nfi\n\nUnifiedSourceCppFileCount=145\nUnifiedSourceMmFileCount=5\n\n/usr/bin/env ruby \"${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb\" \"--derived-sources-path\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"--source-tree-path\" \"${SRCROOT}\" \"--max-cpp-bundle-count\" \"${UnifiedSourceCppFileCount}\" \"--max-obj-c-bundle-count\" \"${UnifiedSourceMmFileCount}\" \"Sources.txt\" \"SourcesCocoa.txt\" > /dev/null\n";
 		};
 		5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9860,8 +9900,11 @@
 				536B31571F71C5990037FC33 /* UnifiedSource2.cpp in Sources */,
 				536B319B1F735E780037FC33 /* UnifiedSource2.mm in Sources */,
 				536B31581F71C5990037FC33 /* UnifiedSource3.cpp in Sources */,
+				530A66B91FA3E78B0026A545 /* UnifiedSource3.mm in Sources */,
 				536B31661F71C5990037FC33 /* UnifiedSource4.cpp in Sources */,
+				530A66BA1FA3E78B0026A545 /* UnifiedSource4.mm in Sources */,
 				536B31671F71C5990037FC33 /* UnifiedSource5.cpp in Sources */,
+				530A66BB1FA3E78B0026A545 /* UnifiedSource5.mm in Sources */,
 				536B316F1F71C5990037FC33 /* UnifiedSource6.cpp in Sources */,
 				536B316E1F71C5990037FC33 /* UnifiedSource7.cpp in Sources */,
 				536B313C1F71C5990037FC33 /* UnifiedSource8.cpp in Sources */,
@@ -9993,6 +10036,15 @@
 				536B319C1F735E7D0037FC33 /* UnifiedSource134.cpp in Sources */,
 				536B319D1F735E7D0037FC33 /* UnifiedSource135.cpp in Sources */,
 				535C246C1F7A1778006EC40E /* UnifiedSource136.cpp in Sources */,
+				530A66BC1FA3E78B0026A545 /* UnifiedSource137.cpp in Sources */,
+				530A66BD1FA3E78B0026A545 /* UnifiedSource138.cpp in Sources */,
+				530A66BE1FA3E78B0026A545 /* UnifiedSource139.cpp in Sources */,
+				530A66BF1FA3E78B0026A545 /* UnifiedSource140.cpp in Sources */,
+				530A66C01FA3E78B0026A545 /* UnifiedSource141.cpp in Sources */,
+				530A66C11FA3E78B0026A545 /* UnifiedSource142.cpp in Sources */,
+				530A66C21FA3E78B0026A545 /* UnifiedSource143.cpp in Sources */,
+				530A66C31FA3E78B0026A545 /* UnifiedSource144.cpp in Sources */,
+				530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

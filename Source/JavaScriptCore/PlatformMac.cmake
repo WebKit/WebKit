@@ -6,7 +6,7 @@ list(APPEND JavaScriptCore_LIBRARIES
 )
 
 list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
-    "SourcesMac.txt"
+    "SourcesCocoa.txt"
 )
 
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES

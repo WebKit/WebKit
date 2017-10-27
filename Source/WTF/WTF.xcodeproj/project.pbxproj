@@ -322,6 +322,7 @@
 		51F175291F3D486000C74950 /* PersistentEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentEncoder.cpp; sourceTree = "<group>"; };
 		51F1752A1F3D486000C74950 /* PersistentEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentEncoder.h; sourceTree = "<group>"; };
 		526AEC911F6B4E5C00695F5D /* NoTailCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoTailCalls.h; sourceTree = "<group>"; };
+		530A63481FA3E3A00026A545 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		5311BD511EA71CAD00525281 /* Signals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Signals.cpp; sourceTree = "<group>"; };
 		5311BD551EA7E15A00525281 /* LocklessBag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocklessBag.h; sourceTree = "<group>"; };
 		5311BD571EA7E1A100525281 /* Signals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signals.h; sourceTree = "<group>"; };
@@ -700,6 +701,7 @@
 		5D247B7614689D7600E78B76 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				530A63481FA3E3A00026A545 /* Scripts */,
 				A876DBD6151816E500DADB95 /* wtf */,
 				A8A4748B151A8264004123FF /* config.h */,
 			);

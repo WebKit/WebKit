@@ -1,3 +1,17 @@
+2017-10-27  Keith Miller  <keith_miller@apple.com>
+
+        Add unified source list files and build scripts to Xcode project navigator
+        https://bugs.webkit.org/show_bug.cgi?id=178959
+
+        Reviewed by Andy Estes.
+
+        Also, Add some extra source files for so new .cpp/.mm files don't cause the build
+        to fail right away. We already do this in WebCore.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt: Renamed from Source/JavaScriptCore/SourcesMac.txt.
+
 2017-10-27  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: update arbitrary limits to what browsers use
