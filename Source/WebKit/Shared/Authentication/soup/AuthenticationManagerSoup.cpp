@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuthenticationManager.h"
 
+#if !USE(NETWORK_SESSION)
 using namespace WebCore;
 
 namespace WebKit {
@@ -51,3 +52,4 @@ void AuthenticationManager::receivedChallengeRejection(const AuthenticationChall
 }
 
 }
+#endif
