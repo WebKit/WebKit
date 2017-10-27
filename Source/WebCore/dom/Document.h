@@ -943,7 +943,8 @@ public:
     void popCurrentScript();
 
 #if ENABLE(XSLT)
-    void applyXSLTransform(ProcessingInstruction* pi);
+    void scheduleToApplyXSLTransforms();
+    void applyPendingXSLTransformsNowIfScheduled();
     RefPtr<Document> transformSourceDocument() { return m_transformSourceDocument; }
     void setTransformSourceDocument(Document* doc) { m_transformSourceDocument = doc; }
 
@@ -1549,8 +1550,11 @@ private:
     Vector<RefPtr<HTMLScriptElement>> m_currentScriptStack;
 
 #if ENABLE(XSLT)
+    void applyPendingXSLTransformsTimerFired();
+
     std::unique_ptr<TransformSource> m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
+    Timer m_applyPendingXSLTransformsTimer;
 #endif
 
     String m_xmlEncoding;

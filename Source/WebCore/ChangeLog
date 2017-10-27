@@ -1,3 +1,39 @@
+2017-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Style::Scope::flushPendingUpdate() can replace the entire document in XSLTProcessor::createDocumentFromSource
+        https://bugs.webkit.org/show_bug.cgi?id=178715
+        <rdar://problem/35144665>
+
+        Reviewed by Brent Fulgham.
+
+        Apply XLS tranforms when a 0s timer fires or the document finishes parsing or loading whichever comes first
+        instead of in the middle of collecting a list of stylesheets.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize the newly added timer.
+        (WebCore::Document::implicitClose): Apply any pending XSLT before we fire load events since some of the event
+        handlers may be expecting to see the document after XSLT had been applied.
+        (WebCore::Document::scheduleToApplyXSLTransforms): Added.
+        (WebCore::Document::applyPendingXSLTransformsNowIfScheduled): Added.
+        (WebCore::Document::applyPendingXSLTransformsTimerFired): Added. Moved the logic to apply XSL transforms from
+        Style::Scope::collectActiveStyleSheets, and merged applyXSLTransform into this function.
+        (WebCore::Document::applyXSLTransform): Deleted.
+        (WebCore::Document::finishedParsing): Apply XSLT right before updating the style. This is where used to apply
+        inline XSLT and it happens much earlier than implicitClose.
+        * dom/Document.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet): Schedule XSLT in the document instead of flushing pending
+        stylesheets, which would have synchronously applied XSLT. We can't apply XSLT synchronously here because this
+        function can be called from a non-script-resilient call stack.
+        (WebCore::ProcessingInstruction::sheetLoaded): Ditto.
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::collectXSLTransforms): Added.
+        (WebCore::Style::Scope::collectActiveStyleSheets): Removed the code to apply XSLT. Skip ProcessingInstructions
+        that applies XSLT. Also use RefPtr<StyleSheet> instead of a raw pointer to store StyleSheet.
+        * style/StyleScope.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd): Apply any pending XSLTs synchronously here as the comment suggests.
+
 2017-10-24  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][X11] Windy.com shows always straight wind lines
