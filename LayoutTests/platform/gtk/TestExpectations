@@ -1180,8 +1180,8 @@ webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-rich-text
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Failure ]
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-custom.html [ Failure ]
 webkit.org/b/177633 http/tests/misc/copy-resolves-urls.html [ Failure ]
-webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Failure ]
-webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Failure ]
+webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
+webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures

@@ -1,3 +1,9 @@
+2017-10-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip some copy & paste tests I wrote on GTK since they're are known to timeout/slow.
+
+        * platform/gtk/TestExpectations:
+
 2017-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK][WPE] install-dependencies can't find libapache2-mod-php7.0 on Ubuntu 17.10
