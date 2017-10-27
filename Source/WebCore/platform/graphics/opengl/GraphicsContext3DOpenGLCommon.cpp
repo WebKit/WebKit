@@ -1807,10 +1807,21 @@ void GraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xo
         type = GL_HALF_FLOAT_ARB;
 #endif
 
-    if (m_usingCoreProfile && format == ALPHA) {
-        // We are using a core profile. This means that GL_ALPHA, which is a valid format in WebGL for texSubImage2D
-        // is not supported in OpenGL. We are using GL_RED to back GL_ALPHA, so do it here as well.
-        format = RED;
+    if (m_usingCoreProfile)  {
+        // There are some format values used in WebGL that are deprecated when using a core profile, so we need
+        // to adapt them, as we do in GraphicsContext3D::texImage2D().
+        switch (format) {
+        case ALPHA:
+            // We are using GL_RED to back GL_ALPHA, so do it here as well.
+            format = RED;
+            break;
+        case LUMINANCE_ALPHA:
+            // We are using GL_RG to back GL_LUMINANCE_ALPHA, so do it here as well.
+            format = RG;
+            break;
+        default:
+            break;
+        }
     }
 
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.

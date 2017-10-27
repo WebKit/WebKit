@@ -386,13 +386,30 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
         openGLFormat = GL_RGB;
 #endif
 
-    if (m_usingCoreProfile && openGLInternalFormat == ALPHA) {
-        // We are using a core profile. This means that GL_ALPHA, which is a valid format in WebGL for texImage2D
-        // is not supported in OpenGL. It needs to be backed with a GL_RED plane. We change the formats to GL_RED
-        // (both need to be GL_ALPHA in WebGL) and instruct the texture to swizzle the red component values with
-        // the the alpha component values.
-        openGLInternalFormat = openGLFormat = RED;
-        texParameteri(target, TEXTURE_SWIZZLE_A, RED);
+    if (m_usingCoreProfile) {
+        // There are some format values used in WebGL that are deprecated when using a core profile, so we need
+        // to adapt them.
+        switch (openGLInternalFormat) {
+        case ALPHA:
+            // The format is a simple component containing an alpha value. It needs to be backed with a GL_RED plane.
+            // We change the formats to GL_RED (both need to be GL_ALPHA in WebGL) and instruct the texture to swizzle
+            // the red component values with the alpha component values.
+            openGLInternalFormat = openGLFormat = RED;
+            texParameteri(target, TEXTURE_SWIZZLE_A, RED);
+            break;
+        case LUMINANCE_ALPHA:
+            // The format has 2 components, an alpha one and a luminance one (same value for red, green and blue).
+            // It needs to be backed with a GL_RG plane, using the red component for the colors and the green component
+            // for alpha. We change the formats to GL_RG and swizzle the components.
+            openGLInternalFormat = openGLFormat = RG;
+            texParameteri(target, TEXTURE_SWIZZLE_R, RED);
+            texParameteri(target, TEXTURE_SWIZZLE_G, RED);
+            texParameteri(target, TEXTURE_SWIZZLE_B, RED);
+            texParameteri(target, TEXTURE_SWIZZLE_A, GREEN);
+            break;
+        default:
+            break;
+        }
     }
 
     texImage2DDirect(target, level, openGLInternalFormat, width, height, border, openGLFormat, type, pixels);
