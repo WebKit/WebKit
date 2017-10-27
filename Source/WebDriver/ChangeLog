@@ -1,5 +1,22 @@
 2017-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: deserializeTimeouts should fail if the value is not integer
+        https://bugs.webkit.org/show_bug.cgi?id=178866
+
+        Reviewed by Brian Burg.
+
+        If value is not an integer, or it is less than 0 or greater than 2^64 – 1, return error with error code invalid
+        argument.
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-deserialize-as-a-timeout
+
+        Fixes: imported/w3c/webdriver/tests/sessions/new_session/invalid_capabilities.py::test_invalid_values[timeouts-value59-body0]
+               imported/w3c/webdriver/tests/sessions/new_session/invalid_capabilities.py::test_invalid_values[timeouts-value59-body1]
+
+        * WebDriverService.cpp:
+        (WebDriver::deserializeTimeouts):
+
+2017-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: failing to process capabilities should produce InvalidArgument error not SessionNotCreated
         https://bugs.webkit.org/show_bug.cgi?id=178864
 

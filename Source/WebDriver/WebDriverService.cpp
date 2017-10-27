@@ -283,7 +283,7 @@ static std::optional<Timeouts> deserializeTimeouts(InspectorObject& timeoutsObje
             continue;
 
         int timeoutMS;
-        if (!it->value->asInteger(timeoutMS) || timeoutMS < 0 || timeoutMS > INT_MAX)
+        if (it->value->type() != InspectorValue::Type::Integer || !it->value->asInteger(timeoutMS) || timeoutMS < 0 || timeoutMS > INT_MAX)
             return std::nullopt;
 
         if (it->key == "script")
