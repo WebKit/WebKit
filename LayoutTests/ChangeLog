@@ -1,3 +1,15 @@
+2017-10-27  Chris Dumez  <cdumez@apple.com>
+
+        DOMWindow::dispatchEvent() does not reset the event's dispatch flag
+        https://bugs.webkit.org/show_bug.cgi?id=178897
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage. I have verified that this test is passing in Firefox.
+
+        * fast/events/window-load-initEvent-expected.txt: Added.
+        * fast/events/window-load-initEvent.html: Added.
+
 2017-10-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move TestExpectation for imported/w3c/web-platform-tests/XMLHttpRequest/open-url-worker-origin.htm.

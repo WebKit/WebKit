@@ -2012,6 +2012,10 @@ bool DOMWindow::dispatchEvent(Event& event, EventTarget* target)
 
     InspectorInstrumentation::didDispatchEventOnWindow(cookie);
 
+    event.setCurrentTarget(nullptr);
+    event.setEventPhase(Event::NONE);
+    event.resetPropagationFlags();
+
     return result;
 }
 

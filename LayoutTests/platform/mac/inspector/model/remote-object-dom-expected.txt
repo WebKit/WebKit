@@ -30,12 +30,13 @@ EXPRESSION: window.loadEvent
       {
         "_name": "currentTarget",
         "_type": "object",
-        "_value": "Window"
+        "_subtype": "null",
+        "_value": "null"
       },
       {
         "_name": "eventPhase",
         "_type": "number",
-        "_value": "2"
+        "_value": "0"
       }
     ],
     "_entries": null
