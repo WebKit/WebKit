@@ -1,3 +1,12 @@
+2017-10-27  Matt Lewis  <jlewis3@apple.com>
+
+        Adjusted expectations for multiple media/ Layout Tests.
+        https://bugs.webkit.org/show_bug.cgi?id=176054
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-10-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose the currentTime property on AnimationTimeline
