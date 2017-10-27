@@ -1,3 +1,20 @@
+2017-10-26  Brian Burg  <bburg@apple.com>
+
+        Web Automation: denying user permission for getUserMedia doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=178895
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        The ordering of special cases is incorrect. Safari configures its automation views to
+        allow mock devices and never prompt for them. These checks were before the check for
+        the automation session's getUserMedia permission. Switch these checks.
+
+        Also change the deny reason so that subsequent requests are also denied. This matches
+        behavior when a user denies a permission request on a real dialog. With this change,
+        the DOM error changes from SecurityError to NotAllowedError, which makes more sense.
+
 2017-10-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix GCC warning spam after r224077

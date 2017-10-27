@@ -290,20 +290,20 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 
         auto request = createRequest(userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDeviceUIDs), WTFMove(videoDeviceUIDs), WTFMove(deviceIdentifierHashSalt));
 
-        if (m_page.preferences().mockCaptureDevicesEnabled() && !m_page.preferences().mockCaptureDevicesPromptEnabled()) {
-            allowRequest(request);
-            return;
-        }
-        
         if (m_page.isControlledByAutomation()) {
             if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession()) {
                 if (automationSession->shouldAllowGetUserMediaForPage(m_page))
                     allowRequest(request);
                 else
-                    userMediaAccessWasDenied(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
+                    userMediaAccessWasDenied(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
 
                 return;
             }
+        }
+
+        if (m_page.preferences().mockCaptureDevicesEnabled() && !m_page.preferences().mockCaptureDevicesPromptEnabled()) {
+            allowRequest(request);
+            return;
         }
 
         if (!m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *m_page.process().webFrame(frameID), WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), request.get()))
