@@ -16,6 +16,7 @@ quicklook [ Pass ]
 fast/text-autosizing/ios [ Pass ]
 fast/zooming/ios [ Pass ]
 http/tests/preload/viewport [ Pass ]
+http/tests/gzip-content-encoding [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
