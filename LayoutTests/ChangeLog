@@ -1,3 +1,14 @@
+2017-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK][WPE] install-dependencies can't find libapache2-mod-php7.0 on Ubuntu 17.10
+        https://bugs.webkit.org/show_bug.cgi?id=178854
+
+        Reviewed by Michael Catanzaro.
+
+        * http/conf/debian-httpd-2.2.conf: Removed.
+        * http/conf/debian-httpd-2.4-php7.0.conf: Renamed from LayoutTests/http/conf/debian-httpd-2.4-php7.conf.
+        * http/conf/debian-httpd-2.4-php7.1.conf: Copied from LayoutTests/http/conf/debian-httpd-2.4-php7.conf.
+
 2017-10-26  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: canvas path components from old page stick around when page is reloaded

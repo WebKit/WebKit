@@ -92,7 +92,7 @@ function installDependenciesWithApt {
         curl \
         gdb \
         libapache2-mod-bw \
-        $(aptIfElse libapache2-mod-php7.0 libapache2-mod-php5) \
+        libapache2-mod-php \
         libcgi-pm-perl \
         psmisc \
         pulseaudio-utils \

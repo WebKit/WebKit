@@ -1,3 +1,16 @@
+2017-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK][WPE] install-dependencies can't find libapache2-mod-php7.0 on Ubuntu 17.10
+        https://bugs.webkit.org/show_bug.cgi?id=178854
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._debian_php_version): Return "-php7.1" if libphp7.1.so found.
+        (Port._is_debian_php_version_7): Deleted.
+        * gtk/install-dependencies: Install libapache2-mod-php instead of libapache2-mod-php7.0.
+        * wpe/install-dependencies: Ditto.
+
 2017-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         When navigating back to a page, compositing layers may not use accelerated drawing

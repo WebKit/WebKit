@@ -1201,11 +1201,6 @@ class Port(object):
             return True
         return False
 
-    def _is_debian_php_version_7(self):
-        if self._filesystem.exists("/usr/lib/apache2/modules/libphp7.0.so"):
-            return True
-        return False
-
     def _is_darwin_php_version_7(self):
         if self._filesystem.exists("/usr/libexec/apache2/libphp7.so"):
             return True
@@ -1226,8 +1221,11 @@ class Port(object):
         return re.sub(r'(?:.|\n)*Server version: Apache/(\d+\.\d+)(?:.|\n)*', r'\1', config)
 
     def _debian_php_version(self):
-        if self._is_debian_php_version_7():
-            return "-php7"
+        if self._filesystem.exists("/usr/lib/apache2/modules/libphp7.0.so"):
+            return "-php7.0"
+        elif self._filesystem.exists("/usr/lib/apache2/modules/libphp7.1.so"):
+            return "-php7.1"
+        _log.error("No libphp7.x.so found")
         return ""
 
     def _darwin_php_version(self):
