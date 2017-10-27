@@ -434,10 +434,21 @@ static void printNavigationErrorMessage(Frame* frame, const URL& activeURL, cons
 
 uint64_t Document::s_globalTreeVersion = 0;
 
-HashSet<Document*>& Document::allDocuments()
+static uint64_t generateDocumentIdentifier()
 {
-    static NeverDestroyed<HashSet<Document*>> documents;
+    static uint64_t identifier = 0;
+    return ++identifier;
+}
+
+auto Document::allDocumentsMap() -> DocumentsMap&
+{
+    static NeverDestroyed<DocumentsMap> documents;
     return documents;
+}
+
+auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
+{
+    return allDocumentsMap().values();
 }
 
 static inline int currentOrientation(Frame* frame)
@@ -496,8 +507,10 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
+    , m_identifier(generateDocumentIdentifier())
 {
-    allDocuments().add(this);
+    auto addResult = allDocumentsMap().add(m_identifier, this);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     // We depend on the url getting immediately set in subframes, but we
     // also depend on the url NOT getting immediately set in opened windows.
@@ -547,7 +560,8 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Document::~Document()
 {
-    allDocuments().remove(this);
+    bool wasRemoved = allDocumentsMap().remove(m_identifier);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
 
     ASSERT(!renderView());
     ASSERT(m_pageCacheState != InPageCache);

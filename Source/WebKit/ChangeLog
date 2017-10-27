@@ -1,3 +1,40 @@
+2017-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for serviceWorkerClient.postMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=178794
+
+        Reviewed by Youenn Fablet.
+
+        Add initial support for serviceWorkerClient.postMessage():
+        - https://w3c.github.io/ServiceWorker/#client-postmessage
+
+        It is now possible to do bi-directional communication with a service worker
+        via postMessage().
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ServiceWorkerClientIdentifier>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerClientIdentifier>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::postMessageToServiceWorkerGlobalScope):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorkerClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::postMessageToServiceWorkerClient):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::postMessageToServiceWorkerGlobalScope):
+        (WebKit::WebSWClientConnection::postMessageToServiceWorkerClient):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope):
+        (WebKit::WebSWContextManagerConnection::postMessageToServiceWorkerClient):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-10-27  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r224077): DeprecatedGlobalSettings::setAVKitEnabled() not protected by HAVE(AVKIT)

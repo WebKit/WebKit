@@ -38,6 +38,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "MessagePort.h"
+#include "Navigator.h"
 #include "NoEventDispatchAssertion.h"
 #include "PublicURLManager.h"
 #include "RejectedPromiseTracker.h"
@@ -45,6 +46,7 @@
 #include "ScriptState.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerNavigator.h"
 #include "WorkerThread.h"
 #include <heap/StrongInlines.h>
 #include <inspector/ScriptCallStack.h>
@@ -524,5 +526,19 @@ JSC::ExecState* ScriptExecutionContext::execState()
     WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(this);
     return execStateFromWorkerGlobalScope(workerGlobalScope);
 }
+
+#if ENABLE(SERVICE_WORKER)
+ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
+{
+    NavigatorBase* navigator = nullptr;
+    if (is<Document>(*this)) {
+        if (auto* window = downcast<Document>(*this).domWindow())
+            navigator = window->navigator();
+    } else
+        navigator = &downcast<WorkerGlobalScope>(*this).navigator();
+
+    return navigator ? navigator->serviceWorker() : nullptr;
+}
+#endif
 
 } // namespace WebCore

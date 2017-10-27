@@ -28,7 +28,7 @@ messages -> WebSWServerConnection {
     FinishFetchingScriptInServer(struct WebCore::ServiceWorkerFetchResult result)
 
     StartFetch(uint64_t identifier, uint64_t serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
-    PostMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, IPC::DataReference message, String sourceOrigin)
+    PostMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, IPC::DataReference message, uint64_t sourceScriptExecutionContextIdentifier, String sourceOrigin)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

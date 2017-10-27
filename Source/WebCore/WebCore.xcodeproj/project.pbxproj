@@ -2243,6 +2243,7 @@
 		837964CF1F8DB69D00218EA0 /* GeolocationPositionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */; };
 		837A80131E1E127300026B9F /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 837A80111E1E127300026B9F /* Localizable.stringsdict */; };
 		837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */; };
+		837D46271FA2A8CE0054E1FA /* ServiceWorkerClientIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837FB3451F9EA06D00D0FC31 /* ExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */; };
 		8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */; };
 		838867351D13BA5F003697D0 /* RenderObjectEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 838867341D13BA59003697D0 /* RenderObjectEnums.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9521,6 +9522,7 @@
 		837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GeolocationPositionIOS.mm; path = Modules/geolocation/ios/GeolocationPositionIOS.mm; sourceTree = SOURCE_ROOT; };
 		837A80121E1E127300026B9F /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = English; path = English.lproj/Localizable.stringsdict; sourceTree = SOURCE_ROOT; };
 		837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ValidationBubbleIOS.mm; sourceTree = "<group>"; };
+		837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerClientIdentifier.h; sourceTree = "<group>"; };
 		837DFB341EBFEA7000601385 /* ElementCSSInlineStyle.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementCSSInlineStyle.idl; sourceTree = "<group>"; };
 		837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendableMessageEvent.h; sourceTree = "<group>"; };
 		837FB3421F9EA06700D0FC31 /* ExtendableMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendableMessageEvent.cpp; sourceTree = "<group>"; };
@@ -17313,6 +17315,7 @@
 				46EF14271F97B7BA00C2A524 /* ServiceWorkerClient.cpp */,
 				46EF14241F97B7BA00C2A524 /* ServiceWorkerClient.h */,
 				46EF14281F97B7BA00C2A524 /* ServiceWorkerClient.idl */,
+				837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */,
 				46EF14211F97B7BA00C2A524 /* ServiceWorkerClients.cpp */,
 				46EF14221F97B7BA00C2A524 /* ServiceWorkerClients.h */,
 				46EF14231F97B7BA00C2A524 /* ServiceWorkerClients.idl */,
@@ -28880,6 +28883,7 @@
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				51F1755D1F3EBC8300C74950 /* ServiceWorker.h in Headers */,
 				46EF142D1F97B7D800C2A524 /* ServiceWorkerClient.h in Headers */,
+				837D46271FA2A8CE0054E1FA /* ServiceWorkerClientIdentifier.h in Headers */,
 				46EF142C1F97B7D800C2A524 /* ServiceWorkerClients.h in Headers */,
 				8369FDFC1FA102E300C1FF1F /* ServiceWorkerClientType.h in Headers */,
 				51F1755F1F3EBC8300C74950 /* ServiceWorkerContainer.h in Headers */,

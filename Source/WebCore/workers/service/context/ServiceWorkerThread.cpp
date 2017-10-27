@@ -34,6 +34,7 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "ServiceWorkerWindowClient.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
 #include <pal/SessionID.h>
@@ -99,12 +100,13 @@ void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client
     }, WorkerRunLoop::defaultMode());
 }
 
-void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, const String& sourceOrigin)
+void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
 {
-    ScriptExecutionContext::Task task([channels = WTFMove(channels), message = WTFMove(message), sourceOrigin = sourceOrigin.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::Task task([channels = WTFMove(channels), message = WTFMove(message), sourceIdentifier, sourceOrigin = sourceOrigin.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
         auto ports = MessagePort::entanglePorts(serviceWorkerGlobalScope, WTFMove(channels));
-        serviceWorkerGlobalScope.dispatchEvent(ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message), sourceOrigin));
+        ExtendableMessageEventSource source = RefPtr<ServiceWorkerClient> { ServiceWorkerWindowClient::create(context, sourceIdentifier) };
+        serviceWorkerGlobalScope.dispatchEvent(ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message), sourceOrigin, { }, WTFMove(source)));
         serviceWorkerGlobalScope.thread().workerObjectProxy().confirmMessageFromWorkerObject(serviceWorkerGlobalScope.hasPendingActivity());
     });
     runLoop().postTask(WTFMove(task));

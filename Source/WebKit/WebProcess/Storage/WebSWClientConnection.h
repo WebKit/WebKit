@@ -56,13 +56,15 @@ public:
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
-    void postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, Ref<WebCore::SerializedScriptValue>&&, const String& sourceOrigin) final;
+    void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ScriptExecutionContext& source) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     bool hasServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
     Ref<ServiceWorkerClientFetch> startFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, ServiceWorkerClientFetch::Callback&&);
+
+    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
 
 private:
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);

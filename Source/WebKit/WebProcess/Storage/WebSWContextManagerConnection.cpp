@@ -130,9 +130,14 @@ void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifi
     serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
 }
 
-void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin)
+void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
 {
-    SWContextManager::singleton().postMessageToServiceWorkerGlobalScope(serviceWorkerIdentifier, SerializedScriptValue::adopt(message.vector()), sourceOrigin);
+    SWContextManager::singleton().postMessageToServiceWorkerGlobalScope(destinationServiceWorkerIdentifier, SerializedScriptValue::adopt(message.vector()), sourceIdentifier, sourceOrigin);
+}
+
+void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+{
+    m_connectionToStorageProcess->send(Messages::StorageProcess::PostMessageToServiceWorkerClient(destinationIdentifier, IPC::DataReference { message->data() }, sourceServiceWorkerIdentifier, sourceOrigin), 0);
 }
 
 } // namespace WebCore

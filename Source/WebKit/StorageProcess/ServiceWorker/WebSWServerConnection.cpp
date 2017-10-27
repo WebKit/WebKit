@@ -44,6 +44,7 @@
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
 #include <WebCore/ServiceWorkerRegistrationData.h>
@@ -108,9 +109,10 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, uint64_t servic
     sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin)
+void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin)
 {
-    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope(serviceWorkerIdentifier, message, sourceOrigin));
+    ServiceWorkerClientIdentifier sourceIdentifier { identifier(), sourceScriptExecutionContextIdentifier };
+    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, sourceIdentifier, sourceOrigin });
 }
 
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)
@@ -136,6 +138,11 @@ void WebSWServerConnection::didFailFetch(uint64_t fetchIdentifier)
 void WebSWServerConnection::didNotHandleFetch(uint64_t fetchIdentifier)
 {
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
+}
+
+void WebSWServerConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+{
+    send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationScriptExecutionContextIdentifier, message, sourceServiceWorkerIdentifier, sourceOrigin });
 }
 
 template<typename U> bool WebSWServerConnection::sendToContextProcess(U&& message)

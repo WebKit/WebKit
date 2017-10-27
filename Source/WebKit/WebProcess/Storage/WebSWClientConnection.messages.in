@@ -30,6 +30,7 @@ messages -> WebSWClientConnection {
     StartScriptFetchForServer(uint64_t jobIdentifier)
 
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
+    PostMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, IPC::DataReference message, uint64_t sourceServiceWorkerIdentifier, String sourceOrigin)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -59,14 +59,14 @@ ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(uint64_t se
     return m_workerMap.get(serviceWorkerIdentifier);
 }
 
-void SWContextManager::postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, Ref<SerializedScriptValue>&& message, const String& sourceOrigin)
+void SWContextManager::postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
 {
-    auto* serviceWorker = m_workerMap.get(serviceWorkerIdentifier);
+    auto* serviceWorker = m_workerMap.get(destinationServiceWorkerIdentifier);
     if (!serviceWorker)
         return;
 
     // FIXME: We should pass valid MessagePortChannels.
-    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, sourceOrigin);
+    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, sourceIdentifier, sourceOrigin);
 }
 
 } // namespace WebCore

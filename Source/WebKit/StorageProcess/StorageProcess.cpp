@@ -38,6 +38,7 @@
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/TextEncoding.h>
 #include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
@@ -433,6 +434,12 @@ void StorageProcess::didFinishFetch(uint64_t serverConnectionIdentifier, uint64_
 {
     if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
         connection->didFinishFetch(fetchIdentifier);
+}
+
+void StorageProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+{
+    if (auto* connection = m_swServerConnections.get(destinationIdentifier.serverConnectionIdentifier))
+        connection->postMessageToServiceWorkerClient(destinationIdentifier.scriptExecutionContextIdentifier, message, sourceServiceWorkerIdentifier, sourceOrigin);
 }
 
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)

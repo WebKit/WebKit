@@ -69,7 +69,7 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
     auto& swConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
-    swConnection.postMessageToServiceWorkerGlobalScope(m_identifier, message.releaseReturnValue(), context.origin());
+    swConnection.postMessageToServiceWorkerGlobalScope(m_identifier, message.releaseReturnValue(), context);
 
     return { };
 }

@@ -29,24 +29,10 @@
 #if ENABLE(SERVICE_WORKER)
 #include "DOMWindow.h"
 #include "Document.h"
-#include "Navigator.h"
 #include "ServiceWorkerContainer.h"
 #include "WorkerGlobalScope.h"
-#include "WorkerNavigator.h"
 
 namespace WebCore {
-
-static ServiceWorkerContainer* containerForScriptExecutionContext(ScriptExecutionContext& context)
-{
-    NavigatorBase* navigator = nullptr;
-    if (is<Document>(context)) {
-        if (auto* window = downcast<Document>(context).domWindow())
-            navigator = window->navigator();
-    } else
-        navigator = &downcast<WorkerGlobalScope>(context).navigator();
-
-    return navigator ? navigator->serviceWorker() : nullptr;
-}
 
 ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& registrationData)
     : ActiveDOMObject(&context)
@@ -94,7 +80,7 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    auto* container = containerForScriptExecutionContext(*context);
+    auto* container = context->serviceWorkerContainer();
     if (!container) {
         promise->reject(Exception(InvalidStateError));
         return;

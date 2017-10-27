@@ -347,7 +347,11 @@ public:
 
     void removedLastRef();
 
-    WEBCORE_EXPORT static HashSet<Document*>& allDocuments();
+    uint64_t identifier() const { return m_identifier; }
+
+    using DocumentsMap = HashMap<uint64_t, Document*>;
+    WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
+    WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
 
     MediaQueryMatcher& mediaQueryMatcher();
 
@@ -1835,6 +1839,7 @@ private:
     bool m_grantStorageAccessOverride { false };
 
     RefPtr<DocumentTimeline> m_timeline;
+    uint64_t m_identifier;
 };
 
 Element* eventTargetElementForDocument(Document*);

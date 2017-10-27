@@ -68,6 +68,10 @@ class SecurityOrigin;
 class SocketProvider;
 class URL;
 
+#if ENABLE(SERVICE_WORKER)
+class ServiceWorkerContainer;
+#endif
+
 namespace IDBClient {
 class IDBConnectionProxy;
 }
@@ -234,6 +238,8 @@ public:
 #if ENABLE(SERVICE_WORKER)
     uint64_t selectedServiceWorkerIdentifier() const { return m_serviceWorkerIdentifier; }
     void setSelectedServiceWorkerIdentifier(uint64_t identifier) { m_serviceWorkerIdentifier = identifier; }
+
+    ServiceWorkerContainer* serviceWorkerContainer();
 #endif
 
 protected:

@@ -157,6 +157,10 @@ struct MediaConstraints;
 #if ENABLE(INDEXED_DATABASE)
 using IDBKeyPath = Variant<String, Vector<String>>;
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+struct ServiceWorkerClientIdentifier;
+#endif
 }
 
 namespace IPC {
@@ -476,6 +480,13 @@ template<> struct ArgumentCoder<WebCore::TextCheckingRequestData> {
     static void encode(Encoder&, const WebCore::TextCheckingRequestData&);
     static bool decode(Decoder&, WebCore::TextCheckingRequestData&);
 };
+
+#if ENABLE(SERVICE_WORKER)
+template<> struct ArgumentCoder<WebCore::ServiceWorkerClientIdentifier> {
+    static void encode(Encoder&, const WebCore::ServiceWorkerClientIdentifier&);
+    static bool decode(Decoder&, WebCore::ServiceWorkerClientIdentifier&);
+};
+#endif
 
 template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
     static void encode(Encoder&, const WebCore::TextCheckingResult&);

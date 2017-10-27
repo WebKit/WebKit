@@ -1,3 +1,17 @@
+2017-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for serviceWorkerClient.postMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=178794
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/basic-ServiceWorker-postMessage.https-expected.txt:
+        * http/tests/workers/service/resources/basic-ServiceWorker-postMessage-worker.js:
+        * http/tests/workers/service/resources/basic-ServiceWorker-postMessage.js:
+        (then):
+
 2017-10-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip failing service worker tests that were missed in r224066.

@@ -57,6 +57,8 @@ public:
     void didFailFetch(uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t fetchIdentifier);
 
+    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
+
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
     void rejectJobInClient(uint64_t jobIdentifier, const WebCore::ExceptionData&) final;
@@ -66,7 +68,7 @@ private:
 
     void startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
 
-    void postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, const IPC::DataReference& message, const String& sourceOrigin);
+    void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin);
 
     // Messages to the SW context WebProcess
     void startServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;

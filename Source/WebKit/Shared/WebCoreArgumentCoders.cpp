@@ -65,6 +65,7 @@
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchPopupMenu.h>
+#include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
@@ -1900,6 +1901,27 @@ bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextChecki
     request = TextCheckingRequestData(sequence, text, mask, processType);
     return true;
 }
+
+#if ENABLE(SERVICE_WORKER)
+void ArgumentCoder<ServiceWorkerClientIdentifier>::encode(Encoder& encoder, const ServiceWorkerClientIdentifier& identifier)
+{
+    encoder << identifier.serverConnectionIdentifier << identifier.scriptExecutionContextIdentifier;
+}
+
+bool ArgumentCoder<ServiceWorkerClientIdentifier>::decode(Decoder& decoder, ServiceWorkerClientIdentifier& identifier)
+{
+    uint64_t serverConnectionIdentifier;
+    if (!decoder.decode(serverConnectionIdentifier))
+        return false;
+
+    uint64_t scriptExecutionContextIdentifier;
+    if (!decoder.decode(scriptExecutionContextIdentifier))
+        return false;
+
+    identifier = { serverConnectionIdentifier, scriptExecutionContextIdentifier };
+    return true;
+}
+#endif
 
 void ArgumentCoder<TextCheckingResult>::encode(Encoder& encoder, const TextCheckingResult& result)
 {

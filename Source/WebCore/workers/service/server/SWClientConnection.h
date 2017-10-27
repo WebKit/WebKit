@@ -49,7 +49,7 @@ public:
     void scheduleJob(ServiceWorkerJob&);
     void finishedFetchingScript(ServiceWorkerJob&, const String&);
     void failedFetchingScript(ServiceWorkerJob&, const ResourceError&);
-    virtual void postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, Ref<SerializedScriptValue>&&, const String& sourceOrigin) = 0;
+    virtual void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
 
     virtual uint64_t identifier() const = 0;
     virtual bool hasServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
@@ -59,6 +59,7 @@ protected:
     WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&);
     WEBCORE_EXPORT void unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult);
     WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
+    WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

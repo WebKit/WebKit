@@ -28,7 +28,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Document.h"
 #include "ExceptionData.h"
+#include "MessageEvent.h"
+#include "ServiceWorkerContainer.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
 
@@ -107,6 +110,29 @@ void SWClientConnection::startScriptFetchForServer(uint64_t jobIdentifier)
     }
 
     job->startScriptFetch();
+}
+
+void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+{
+    // FIXME: destinationScriptExecutionContextIdentifier can only identify a Document at the moment.
+    auto* destinationDocument = Document::allDocumentsMap().get(destinationScriptExecutionContextIdentifier);
+    if (!destinationDocument)
+        return;
+
+    auto* container = destinationDocument->serviceWorkerContainer();
+    if (!container)
+        return;
+
+    std::optional<MessageEventSource> source;
+    if (destinationDocument->selectedServiceWorkerIdentifier() == sourceServiceWorkerIdentifier) {
+        ASSERT(container->controller()->identifier() == sourceServiceWorkerIdentifier);
+        source = MessageEventSource { RefPtr<ServiceWorker> { container->controller() } };
+    } else
+        source = MessageEventSource { RefPtr<ServiceWorker> { ServiceWorker::create(*destinationDocument, sourceServiceWorkerIdentifier) } };
+
+    // FIXME: We should pass in ports.
+    auto messageEvent = MessageEvent::create({ }, WTFMove(message), sourceOrigin, { }, WTFMove(source));
+    container->dispatchEvent(messageEvent);
 }
 
 } // namespace WebCore

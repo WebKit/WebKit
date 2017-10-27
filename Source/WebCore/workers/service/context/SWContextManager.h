@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class SerializedScriptValue;
+struct ServiceWorkerClientIdentifier;
 
 class SWContextManager {
 public:
@@ -42,6 +43,8 @@ public:
     class Connection {
     public:
         virtual ~Connection() { }
+
+        virtual void postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin) = 0;
     };
 
     WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);
@@ -49,7 +52,7 @@ public:
 
     WEBCORE_EXPORT void registerServiceWorkerThread(Ref<ServiceWorkerThreadProxy>&&);
     WEBCORE_EXPORT ServiceWorkerThreadProxy* serviceWorkerThreadProxy(uint64_t) const;
-    WEBCORE_EXPORT void postMessageToServiceWorkerGlobalScope(uint64_t serviceWorkerIdentifier, Ref<SerializedScriptValue>&& message, const String& sourceOrigin);
+    WEBCORE_EXPORT void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin);
 
 private:
     SWContextManager() = default;

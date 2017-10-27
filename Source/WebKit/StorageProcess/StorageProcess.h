@@ -37,6 +37,7 @@
 namespace WebCore {
 class SWServer;
 struct SecurityOriginData;
+struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerRegistrationKey;
 }
 
@@ -125,6 +126,8 @@ private:
     void didFinishFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
     void didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
+
+    void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);

@@ -28,11 +28,23 @@
 #if ENABLE(SERVICE_WORKER)
 #include "ServiceWorkerClient.h"
 
+#include "MessagePort.h"
+#include "SWContextManager.h"
+#include "ScriptExecutionContext.h"
+#include "SerializedScriptValue.h"
+#include "ServiceWorkerGlobalScope.h"
+#include "ServiceWorkerThread.h"
+
 namespace WebCore {
 
-ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context, Type type)
+ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context, const Identifier& identifier, Type type)
     : ContextDestructionObserver(&context)
+    , m_identifier(identifier)
     , m_type(type)
+{
+}
+
+ServiceWorkerClient::~ServiceWorkerClient()
 {
 }
 
@@ -48,14 +60,36 @@ auto ServiceWorkerClient::frameType() const -> FrameType
 
 String ServiceWorkerClient::id() const
 {
-    return { };
+    return m_identifier.toString();
 }
 
-ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
-    UNUSED_PARAM(message);
-    UNUSED_PARAM(transfer);
-    return Exception { NotSupportedError, ASCIILiteral("client.postMessage() is not yet supported") };
+    auto* execState = context.execState();
+    ASSERT(execState);
+
+    Vector<RefPtr<MessagePort>> ports;
+    auto message = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
+    if (message.hasException())
+        return message.releaseException();
+
+    // Disentangle the port in preparation for sending it to the remote context.
+    auto channelsOrException = MessagePort::disentanglePorts(WTFMove(ports));
+    if (channelsOrException.hasException())
+        return channelsOrException.releaseException();
+
+    // FIXME: Support sending the channels.
+    auto channels = channelsOrException.releaseReturnValue();
+    if (channels && !channels->isEmpty())
+        return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
+
+    uint64_t sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
+    callOnMainThread([message = message.releaseReturnValue(), destinationIdentifier = m_identifier, sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
+        if (auto* connection = SWContextManager::singleton().connection())
+            connection->postMessageToServiceWorkerClient(destinationIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
+    });
+
+    return { };
 }
 
 } // namespace WebCore

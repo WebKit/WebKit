@@ -25,36 +25,15 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
-#include "ServiceWorkerClient.h"
-#include "VisibilityState.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class DeferredPromise;
+struct ServiceWorkerClientIdentifier {
+    uint64_t serverConnectionIdentifier;
+    uint64_t scriptExecutionContextIdentifier;
 
-class ServiceWorkerWindowClient final : public ServiceWorkerClient {
-public:
-    static Ref<ServiceWorkerWindowClient> create(ScriptExecutionContext& context, const Identifier& identifier)
-    {
-        return adoptRef(*new ServiceWorkerWindowClient(context, identifier));
-    }
-
-    VisibilityState visibilityState() const;
-    bool isFocused() const;
-
-    void focus(Ref<DeferredPromise>&&);
-    void navigate(const String& url, Ref<DeferredPromise>&&);
-
-private:
-    ServiceWorkerWindowClient(ScriptExecutionContext&, const Identifier&);
+    String toString() const { return String::number(serverConnectionIdentifier) + "-" +  String::number(scriptExecutionContextIdentifier); }
 };
 
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ServiceWorkerWindowClient)
-    static bool isType(const WebCore::ServiceWorkerClient& client) { return client.type() == WebCore::ServiceWorkerClientType::Window; }
-SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(SERVICE_WORKER)
+}
