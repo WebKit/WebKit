@@ -49,11 +49,6 @@ void WebPage::platformEditorState(Frame&, EditorState&, IncludePostLayoutDataHin
     notImplemented();
 }
 
-void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
-{
-    notImplemented();
-}
-
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
 {
     notImplemented();

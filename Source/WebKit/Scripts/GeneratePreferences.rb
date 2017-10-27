@@ -67,8 +67,9 @@ class Preference
   attr_accessor :defaultValue
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
-  attr_accessor :webkitOnly
   attr_accessor :category
+  attr_accessor :webcoreBinding
+  attr_accessor :condition
 
   def initialize(name, opts)
     @name = name
@@ -76,9 +77,11 @@ class Preference
     @defaultValue = opts["defaultValue"]
     @humanReadableName = '"' + (opts["humanReadableName"] || "") + '"'
     @humanReadableDescription = '"' + (opts["humanReadableDescription"] || "") + '"'
-    @webkitOnly = opts["webkitOnly"]
     @category = opts["category"]
     @getter = opts["getter"]
+    @webcoreBinding = opts["webcoreBinding"]
+    @webcoreName = opts["webcoreName"]
+    @condition = opts["condition"]
   end
 
   def nameLower
@@ -92,6 +95,23 @@ class Preference
       @name[0].downcase + @name[1..@name.length]
     end
   end
+
+  def webcoreNameUpper
+    if @webcoreName
+      @webcoreName[0].upcase + @webcoreName[1..@webcoreName.length]
+    else
+      @name
+    end
+  end
+
+  def typeUpper
+    if @type == "uint32_t"
+      "UInt32"
+    else
+      @type.capitalize
+    end
+  end
+
 end
 
 class Conditional
@@ -114,16 +134,13 @@ class Preferences
     end
     @preferences.sort! { |x, y| x.name <=> y.name }
     
-    @boolPreferencesNotDebug = @preferences.select { |p| !p.category && !p.webkitOnly && p.type == "bool" }
-    @doublePreferencesNotDebug = @preferences.select { |p| !p.category && !p.webkitOnly && p.type == "double" }
-    @intPreferencesNotDebug = @preferences.select { |p| !p.category && !p.webkitOnly && p.type == "uint32_t" }
-    @stringPreferencesNotDebug = @preferences.select { |p| !p.category && !p.webkitOnly && p.type == "String" }
-    @stringPreferencesNotDebugNotInWebKit = @preferences.select { |p| !p.category && p.webkitOnly && p.type == "String" }
+    @preferencesNotDebug = @preferences.select { |p| !p.category }
+    @preferencesDebug = @preferences.select { |p| p.category == "debug" }
+    @experimentalFeatures = @preferences.select { |p| p.category == "experimental" }
 
-    @boolPreferencesDebug = @preferences.select { |p| p.category == "debug" && !p.webkitOnly && p.type == "bool" }
-    @intPreferencesDebug = @preferences.select { |p| p.category == "debug" && !p.webkitOnly && p.type == "uint32_t" }
-
-    @experimentalFeature = @preferences.select { |p| p.category == "experimental" && !p.webkitOnly }
+    @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
+    @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }
+    @preferencesBoundToRuntimeEnabledFeatures = @preferences.select { |p| p.webcoreBinding == "RuntimeEnabledFeatures" }
   end
 
   def renderToFile(template, file)
@@ -138,3 +155,4 @@ end
 
 preferences = Preferences.new(parsedPreferences)
 preferences.renderToFile("PreferencesTemplates/WebPreferencesDefinitions.h.erb", File.join(options[:outputDirectory], "WebPreferencesDefinitions.h"))
+preferences.renderToFile("PreferencesTemplates/WebPageUpdatePreferences.cpp.erb", File.join(options[:outputDirectory], "WebPageUpdatePreferences.cpp"))

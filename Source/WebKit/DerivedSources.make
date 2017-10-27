@@ -288,11 +288,12 @@ all : WebAutomationSessionProxyScriptSource.h
 # WebPreferences generation
 
 WEB_PREFERENCES_TEMPLATES = \
+    $(WebKit2)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb \
 #
 
-all : WebPreferencesDefinitions.h
+all : WebPreferencesDefinitions.h WebPageUpdatePreferences.cpp
 
-WebPreferencesDefinitions%h : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WebKit2)/Shared/WebPreferences.yaml
+WebPreferencesDefinitions%h WebPageUpdatePreferences%cpp: $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WebKit2)/Shared/WebPreferences.yaml
 	$(RUBY) $< --input $(WebKit2)/Shared/WebPreferences.yaml
 

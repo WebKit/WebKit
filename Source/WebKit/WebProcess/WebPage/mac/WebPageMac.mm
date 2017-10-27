@@ -182,10 +182,6 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
     return 0;
 }
 
-void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
-{
-}
-
 bool WebPage::shouldUsePDFPlugin() const
 {
     return pdfPluginEnabled() && classFromPDFKit(@"PDFLayerController");

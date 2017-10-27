@@ -118,11 +118,6 @@ void WebPage::updateAccessibilityTree()
 }
 #endif
 
-void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
-{
-    notImplemented();
-}
-
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
 {
     if (keyboardEvent.type() != WebEvent::KeyDown && keyboardEvent.type() != WebEvent::RawKeyDown)

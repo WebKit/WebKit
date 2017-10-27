@@ -147,11 +147,6 @@ void WebPage::platformInitializeAccessibility()
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
     send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
 }
-    
-void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
-{
-    notImplemented();
-}
 
 static void computeEditableRootHasContentAndPlainText(const VisibleSelection& selection, EditorState::PostLayoutData& data)
 {

@@ -25,32 +25,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebPage.h"
 
-#include "WebPreferencesDefinitionsBase.h"
+#include "WebPreferencesKeys.h"
+#include "WebPreferencesStore.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
+#include <WebCore/Page.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/Settings.h>
 
-// macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue, HumanReadableName, HumanReadableDescription)
+namespace WebKit {
 
-#define FOR_EACH_WEBKIT_PREFERENCE(macro) \
-<%- for @pref in @preferencesNotDebug do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+void WebPage::updatePreferencesGenerated(const WebPreferencesStore& store)
+{
+    WebCore::Settings& settings = m_page->settings();
+
+<%- for @pref in @preferencesBoundToSetting do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
 <%- end -%>
-    \
-
-
-// Debug Preferences
-
-#define FOR_EACH_WEBKIT_DEBUG_PREFERENCE(macro) \
-<%- for @pref in @preferencesDebug do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
+    settings.set<%= @pref.webcoreNameUpper %>(store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()));
+<%- if @pref.condition -%>
+#endif
 <%- end -%>
-    \
-
-
-// Experimental Features
-
-#define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-<%- for @pref in @experimentalFeatures do -%>
-    macro(<%= @pref.name %>, <%= @pref.nameLower %>, Bool, bool, <%= @pref.defaultValue %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
-    \
+
+<%- for @pref in @preferencesBoundToDeprecatedGlobalSettings do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+    WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>(store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()));
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+
+<%- for @pref in @preferencesBoundToRuntimeEnabledFeatures do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>(store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()));
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+}
+
+}

@@ -1,3 +1,73 @@
+2017-10-26  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Generate the bulk of WebPage::updatePreferences(...)
+        https://bugs.webkit.org/show_bug.cgi?id=178823
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebKit.xcodeproj/project.pbxproj:
+
+            Add new file generation.
+
+        * Scripts/GeneratePreferences.rb:
+        
+            Replace 'webkitOnly' boolean option with a new 'webcoreBinding' option.
+            'webcoreBinding' supports the following values:
+                - none (same as webkit only)
+                - custom (means that you do bind to a webcore concept, but currently it must
+                  be done in a custom manner)
+                - DeprecatedGlobalSettings (binds to a DeprecatedGlobalSettings setting)
+                - RuntimeEnabledFeatures (binds to a RuntimeEnabledFeatures setting)
+            If 'webcoreBinding' is not provided, the preference binds to WebCore Setting
+            of either the same name or the override name provided by the new 'webcoreName'
+            option (we should try to remove the need for 'webcoreName' by unifying with 
+            WebCore on preference/setting naming).
+            
+            A 'condition' option was also added to indicate that the preference is only available
+            when that macro condition is true.
+            
+            Since we are generating most of WebPage::updatePreferences, we can simplify the
+            macros in WebPreferencesDefinitions.h to only have normal/debug/experimental variants
+            and remove the need for per-type macros, which were only used in WebPage::updatePreferences.
+        
+        * Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb: Added.
+        
+            Generates bindings from WebPreferences to WebCore::Settings/DeprecatedGlobalSettings/RuntimeEnabledFeatures.
+            Does not generate a binding if the 'webcoreBinding' option is set to either 'none' or 'custom'.
+        
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+    
+            Simplify down to just normal/debug/experimental macros.
+        
+        * Shared/WebPreferences.yaml:
+        
+            Annotate perferences with new optional 'webcoreBinding', 'webcoreName', and 'condition'
+            options.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        
+            Replace a ton of hand written preference to settings bindings with a call to updatePreferencesGenerated().
+        
+        * WebProcess/WebPage/WebPage.h:
+        
+            Add declaration of updatePreferencesGenerated, remove platformPreferencesDidChange.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformPreferencesDidChange): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformPreferencesDidChange): Deleted.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformPreferencesDidChange): Deleted.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformPreferencesDidChange): Deleted.
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformPreferencesDidChange): Deleted.
+        
+            Remove all the empty platformPreferencesDidChange functions.
+
 2017-10-26  Alex Christensen  <achristensen@webkit.org>
 
         Move WKWebViewConfiguration validation to WKWebView construction
