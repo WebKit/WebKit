@@ -132,6 +132,6 @@ platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
 #if ENABLE_MAC_GESTURE_EVENTS
 
     dom/mac/GestureEvents.cpp
-    JSGestureEvent.cpp @no-unify
+    JSGestureEvent.cpp
 
 #endif

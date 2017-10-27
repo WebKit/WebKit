@@ -70,6 +70,8 @@ editing/cocoa/WebContentReaderCocoa.mm
 
 editing/mac/FrameSelectionMac.mm
 
+editing/ios/AutofillElements.cpp
+
 fileapi/FileCocoa.mm
 
 html/shadow/ImageControlsRootElement.cpp
@@ -149,6 +151,7 @@ platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/MachSendRight.cpp
 platform/cocoa/NetworkExtensionContentFilter.mm
 platform/cocoa/ParentalControlsContentFilter.mm
+platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/ScrollController.mm
 platform/cocoa/ScrollSnapAnimatorState.mm
@@ -157,8 +160,12 @@ platform/cocoa/SharedBufferCocoa.mm
 platform/cocoa/SystemVersion.mm
 platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 platform/cocoa/ThemeCocoa.mm
+platform/cocoa/VideoFullscreenModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreNSErrorExtras.mm
+
+platform/gamepad/cocoa/GameControllerGamepad.mm
+platform/gamepad/cocoa/GameControllerGamepadProvider.mm
 
 platform/graphics/MediaPlaybackTargetPicker.cpp
 

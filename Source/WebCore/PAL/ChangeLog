@@ -1,3 +1,12 @@
+2017-10-27  Keith Miller  <keith_miller@apple.com>
+
+        Move iOS specific sources to unified sources
+        https://bugs.webkit.org/show_bug.cgi?id=178915
+
+        Rubber-stamped by Tim Horton.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h: Add missing pragma once.
+
 2017-10-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223908.
