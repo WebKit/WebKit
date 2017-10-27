@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -257,14 +257,15 @@ static void testFindControllerOptions(FindControllerTest* test, gconstpointer)
     g_assert(test->m_textFound);
 }
 
+// TODO: Rewrite this test to avoid using snapshots so it can be re-enabled
+// for WPE or, alternatively, make snapshots work for WPE as well.
+#if PLATFORM(GTK)
 static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 {
     test->loadHtml(testString, 0);
     test->waitUntilLoadFinished();
 
-#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
-#endif
 
     cairo_surface_t* originalSurface = cairo_surface_reference(
         test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
@@ -292,6 +293,7 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     cairo_surface_destroy(highlightSurface);
     cairo_surface_destroy(unhighlightSurface);
 }
+#endif
 
 static void testFindControllerInstance(FindControllerTest* test, gconstpointer)
 {
@@ -327,7 +329,9 @@ void beforeAll()
     FindControllerTest::add("WebKitFindController", "previous", testFindControllerPrevious);
     FindControllerTest::add("WebKitFindController", "counted-matches", testFindControllerCountedMatches);
     FindControllerTest::add("WebKitFindController", "options", testFindControllerOptions);
+#if PLATFORM(GTK)
     FindControllerTest::add("WebKitFindController", "hide", testFindControllerHide);
+#endif
 }
 
 void afterAll()

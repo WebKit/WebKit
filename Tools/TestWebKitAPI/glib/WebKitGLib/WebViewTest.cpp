@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011, 2017 Igalia S.L.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -352,6 +352,7 @@ bool WebViewTest::javascriptResultIsUndefined(WebKitJavascriptResult* javascript
     return JSValueIsUndefined(context, value);
 }
 
+#if PLATFORM(GTK)
 static void onSnapshotReady(WebKitWebView* web_view, GAsyncResult* res, WebViewTest* test)
 {
     GUniqueOutPtr<GError> error;
@@ -371,6 +372,7 @@ cairo_surface_t* WebViewTest::getSnapshotAndWaitUntilReady(WebKitSnapshotRegion 
     g_main_loop_run(m_mainLoop);
     return m_surface;
 }
+#endif
 
 bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName)
 {

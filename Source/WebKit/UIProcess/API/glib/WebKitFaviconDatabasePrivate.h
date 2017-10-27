@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,5 +27,7 @@ WebKitFaviconDatabase* webkitFaviconDatabaseCreate();
 void webkitFaviconDatabaseOpen(WebKitFaviconDatabase*, const String& path);
 bool webkitFaviconDatabaseIsOpen(WebKitFaviconDatabase*);
 void webkitFaviconDatabaseSetPrivateBrowsingEnabled(WebKitFaviconDatabase*, bool);
+#if PLATFORM(GTK)
 void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase*, const WebCore::LinkIcon&, const String&, Function<void(bool)>&&);
 void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase*, const WebCore::LinkIcon&, API::Data&, const String&);
+#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Igalia S.L.
+ * Copyright (C) 2013, 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -104,10 +104,12 @@ private:
                 webkitWebResourceFailed(resource.get(), resourceError.get());
 
             webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
+#if PLATFORM(GTK)
         } else if (g_str_equal(messageName, "DidGetSnapshot")) {
             API::UInt64* callbackID = static_cast<API::UInt64*>(message.get("CallbackID"));
             WebImage* image = static_cast<WebImage*>(message.get("Snapshot"));
             webKitWebViewDidReceiveSnapshot(webView, callbackID->value(), image);
+#endif
         } else
             ASSERT_NOT_REACHED();
     }

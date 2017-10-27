@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -585,6 +585,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 
 void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageName, API::Dictionary& message)
 {
+#if PLATFORM(GTK)
     if (messageName == String("GetSnapshot")) {
         SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<API::UInt64*>(message.get("SnapshotOptions"))->value());
         uint64_t callbackID = static_cast<API::UInt64*>(message.get("CallbackID"))->value();
@@ -623,6 +624,7 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
         messageReply.set("Snapshot", snapshotImage);
         WebProcess::singleton().injectedBundle()->postMessage("WebPage.DidGetSnapshot", API::Dictionary::create(WTFMove(messageReply)).ptr());
     } else
+#endif
         ASSERT_NOT_REACHED();
 }
 

@@ -2,7 +2,7 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Collabora Ltd.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011, 2017 Igalia S.L.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -151,37 +151,6 @@ typedef enum {
     WEBKIT_INSECURE_CONTENT_RUN,
     WEBKIT_INSECURE_CONTENT_DISPLAYED
 } WebKitInsecureContentEvent;
-
-/**
- * WebKitSnapshotOptions:
- * @WEBKIT_SNAPSHOT_OPTIONS_NONE: Do not include any special options.
- * @WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING: Whether to include in the
- * snapshot the highlight of the selected content.
- * @WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND: Do not fill the background with white before
- * rendering the snapshot. Since 2.8
- *
- * Enum values used to specify options when taking a snapshot
- * from a #WebKitWebView.
- */
-typedef enum {
-  WEBKIT_SNAPSHOT_OPTIONS_NONE = 0,
-  WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING = 1 << 0,
-  WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND = 1 << 1,
-} WebKitSnapshotOptions;
-
-/**
- * WebKitSnapshotRegion:
- * @WEBKIT_SNAPSHOT_REGION_VISIBLE: Specifies a snapshot only for the area that is
- * visible in the webview
- * @WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT: A snapshot of the entire document.
- *
- * Enum values used to specify the region from which to get a #WebKitWebView
- * snapshot
- */
-typedef enum {
-  WEBKIT_SNAPSHOT_REGION_VISIBLE = 0,
-  WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT,
-} WebKitSnapshotRegion;
 
 struct _WebKitWebView {
     GObject parent;
@@ -361,9 +330,6 @@ webkit_web_view_go_to_back_forward_list_item         (WebKitWebView             
 WEBKIT_API const gchar *
 webkit_web_view_get_uri                              (WebKitWebView             *web_view);
 
-WEBKIT_API cairo_surface_t *
-webkit_web_view_get_favicon                          (WebKitWebView             *web_view);
-
 WEBKIT_API const gchar *
 webkit_web_view_get_custom_charset                   (WebKitWebView             *web_view);
 
@@ -477,18 +443,6 @@ WEBKIT_API gboolean
 webkit_web_view_get_tls_info                         (WebKitWebView             *web_view,
                                                       GTlsCertificate          **certificate,
                                                       GTlsCertificateFlags      *errors);
-WEBKIT_API void
-webkit_web_view_get_snapshot                         (WebKitWebView             *web_view,
-                                                      WebKitSnapshotRegion       region,
-                                                      WebKitSnapshotOptions      options,
-                                                      GCancellable              *cancellable,
-                                                      GAsyncReadyCallback        callback,
-                                                      gpointer                   user_data);
-
-WEBKIT_API cairo_surface_t *
-webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
-                                                      GAsyncResult              *result,
-                                                      GError                   **error);
 
 WEBKIT_API WebKitUserContentManager *
 webkit_web_view_get_user_content_manager             (WebKitWebView             *web_view);

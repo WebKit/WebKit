@@ -2,6 +2,7 @@
  * Copyright (C) 2011 Igalia S.L.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2014 Collabora Ltd.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -165,7 +166,11 @@ enum {
     PROP_USER_CONTENT_MANAGER,
     PROP_TITLE,
     PROP_ESTIMATED_LOAD_PROGRESS,
+
+#if PLATFORM(GTK)
     PROP_FAVICON,
+#endif
+
     PROP_URI,
     PROP_ZOOM_LEVEL,
     PROP_IS_LOADING,
@@ -224,14 +229,16 @@ struct _WebKitWebViewPrivate {
 
 #if PLATFORM(GTK)
     GRefPtr<WebKitWebInspector> inspector;
-#endif
 
     RefPtr<cairo_surface_t> favicon;
     GRefPtr<GCancellable> faviconCancellable;
+
     CString faviconURI;
     unsigned long faviconChangedHandlerID;
 
     SnapshotResultsMap snapshotResultsMap;
+#endif
+
     GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
 
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
@@ -433,6 +440,7 @@ static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebVie
     getPage(webView).setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
 }
 
+#if PLATFORM(GTK)
 static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* favicon)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -490,6 +498,7 @@ static void faviconChangedCallback(WebKitFaviconDatabase*, const char* pageURI, 
 
     webkitWebViewUpdateFaviconURI(webView, faviconURI);
 }
+#endif
 
 static bool webkitWebViewIsConstructed(WebKitWebView* webView)
 {
@@ -529,6 +538,7 @@ static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(userAgentChanged), webView);
 }
 
+#if PLATFORM(GTK)
 static void webkitWebViewWatchForChangesInFavicon(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -546,6 +556,7 @@ static void webkitWebViewDisconnectFaviconDatabaseSignalHandlers(WebKitWebView* 
         g_signal_handler_disconnect(webkit_web_context_get_favicon_database(priv->context.get()), priv->faviconChangedHandlerID);
     priv->faviconChangedHandlerID = 0;
 }
+#endif
 
 #if USE(LIBNOTIFY)
 static const char* gNotifyNotificationID = "wk-notify-notification";
@@ -640,7 +651,10 @@ static void webkitWebViewConstructed(GObject* object)
     attachPolicyClientToView(webView);
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
+
+#if PLATFORM(GTK)
     attachIconLoadingClientToView(webView);
+#endif
 
 #if PLATFORM(WPE)
     priv->view->setClient(std::make_unique<WebViewClient>(webView));
@@ -716,9 +730,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_ESTIMATED_LOAD_PROGRESS:
         g_value_set_double(value, webkit_web_view_get_estimated_load_progress(webView));
         break;
+#if PLATFORM(GTK)
     case PROP_FAVICON:
         g_value_set_pointer(value, webkit_web_view_get_favicon(webView));
         break;
+#endif
     case PROP_URI:
         g_value_set_string(value, webkit_web_view_get_uri(webView));
         break;
@@ -748,9 +764,13 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 static void webkitWebViewDispose(GObject* object)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
+
+#if PLATFORM(GTK)
     webkitWebViewCancelFaviconRequest(webView);
-    webkitWebViewDisconnectSettingsSignalHandlers(webView);
     webkitWebViewDisconnectFaviconDatabaseSignalHandlers(webView);
+#endif
+
+    webkitWebViewDisconnectSettingsSignalHandlers(webView);
 
     if (webView->priv->loadObserver) {
         getPage(webView).pageLoadState().removeObserver(*webView->priv->loadObserver);
@@ -898,6 +918,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         _("An estimate of the percent completion for a document load"),
                                                         0.0, 1.0, 0.0,
                                                         WEBKIT_PARAM_READABLE));
+#if PLATFORM(GTK)
     /**
      * WebKitWebView:favicon:
      *
@@ -910,6 +931,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          _("Favicon"),
                                                          _("The favicon associated to the view, if any"),
                                                          WEBKIT_PARAM_READABLE));
+#endif
+
     /**
      * WebKitWebView:uri:
      *
@@ -1906,18 +1929,22 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
     WebKitWebViewPrivate* priv = webView->priv;
     switch (loadEvent) {
     case WEBKIT_LOAD_STARTED:
+#if PLATFORM(GTK)
         webkitWebViewCancelFaviconRequest(webView);
         webkitWebViewWatchForChangesInFavicon(webView);
+#endif
         webkitWebViewCancelAuthenticationRequest(webView);
         priv->loadingResourcesMap.clear();
         priv->mainResource = nullptr;
         break;
+#if PLATFORM(GTK)
     case WEBKIT_LOAD_COMMITTED: {
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
         GUniquePtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.data()));
         webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
         break;
     }
+#endif
     case WEBKIT_LOAD_FINISHED:
         webkitWebViewCancelAuthenticationRequest(webView);
         break;
@@ -1952,6 +1979,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
+#if PLATFORM(GTK)
 void webkitWebViewGetLoadDecisionForIcon(WebKitWebView* webView, const LinkIcon& icon, Function<void(bool)>&& completionHandler)
 {
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webView->priv->context.get());
@@ -1963,6 +1991,7 @@ void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Dat
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webView->priv->context.get());
     webkitFaviconDatabaseSetIconForPageURL(database, icon, iconData, getPage(webView).pageLoadState().activeURL());
 }
+#endif
 
 WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFeatures& windowFeatures, WebKitNavigationAction* navigationAction)
 {
@@ -2813,6 +2842,7 @@ const gchar* webkit_web_view_get_uri(WebKitWebView* webView)
     return webView->priv->activeURI.data();
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_web_view_get_favicon:
  * @web_view: a #WebKitWebView
@@ -2832,6 +2862,7 @@ cairo_surface_t* webkit_web_view_get_favicon(WebKitWebView* webView)
 
     return webView->priv->favicon.get();
 }
+#endif
 
 /**
  * webkit_web_view_get_custom_charset:
@@ -3628,6 +3659,7 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
     return !!certificateInfo.certificate();
 }
 
+#if PLATFORM(GTK)
 void webKitWebViewDidReceiveSnapshot(WebKitWebView* webView, uint64_t callbackID, WebImage* webImage)
 {
     GRefPtr<GTask> task = webView->priv->snapshotResultsMap.take(callbackID);
@@ -3720,6 +3752,7 @@ cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAs
 
     return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
 }
+#endif
 
 void webkitWebViewWebProcessCrashed(WebKitWebView* webView)
 {

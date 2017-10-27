@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011, 2017 Igalia S.L.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -79,7 +79,9 @@ public:
     static bool javascriptResultIsNull(WebKitJavascriptResult*);
     static bool javascriptResultIsUndefined(WebKitJavascriptResult*);
 
+#if PLATFORM(GTK)
     cairo_surface_t* getSnapshotAndWaitUntilReady(WebKitSnapshotRegion, WebKitSnapshotOptions);
+#endif
 
     bool runWebProcessTest(const char* suiteName, const char* testName);
 

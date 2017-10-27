@@ -1,3 +1,30 @@
+2017-10-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Remove GLib API functions which use Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=178205
+
+        Reviewed by Michael Catanzaro.
+
+        Add PLATFORM(GTK) guards for the parts of of the GLib API which use cairo_surface_t (web
+        page snapshots and favicons), and remove the affected function prototypes from public API
+        headers. This way, the WPE version of the API is not tied to Cairo.
+
+        * PlatformWPE.cmake:
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        * UIProcess/API/glib/WebKitFaviconDatabasePrivate.h:
+        * UIProcess/API/glib/WebKitInjectedBundleClient.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkitWebViewGetProperty):
+        (webkitWebViewDispose):
+        (webkit_web_view_class_init):
+        (webkitWebViewLoadChanged):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/wpe/WebKitFaviconDatabase.h:
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkitWebPageDidReceiveMessage):
+
 2017-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.18.1 release.

@@ -1,3 +1,23 @@
+2017-10-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Remove GLib API functions which use Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=178205
+
+        Reviewed by Michael Catanzaro.
+
+        Add PLATFORM(GTK) guards for the API tests (or parts of them) which use cairo_surface_t (web
+        page snapshots and favicons) which are not available in the WPE version of the GLib API.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (testNotInitialized):
+        (testPrivateBrowsing):
+        (testFaviconDatabase):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp:
+        (testFindControllerHide):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2017-10-16  Maureen Daum  <mdaum@apple.com>
 
         If an origin doesn't have databases in the Databases table we should still remove its information from disk in DatabaseTracker::deleteOrigin()

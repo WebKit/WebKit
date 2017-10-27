@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,8 +41,10 @@ public:
 
     ~FaviconDatabaseTest()
     {
+#if PLATFORM(GTK)
         if (m_favicon)
             cairo_surface_destroy(m_favicon);
+#endif
 
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext.get());
         g_signal_handlers_disconnect_matched(database, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
@@ -65,6 +67,7 @@ public:
         test->quitMainLoop();
     }
 
+#if PLATFORM(GTK)
     static void getFaviconCallback(GObject* sourceObject, GAsyncResult* result, void* data)
     {
         FaviconDatabaseTest* test = static_cast<FaviconDatabaseTest*>(data);
@@ -80,9 +83,11 @@ public:
         g_main_loop_run(m_mainLoop);
         g_signal_handler_disconnect(m_webView, handlerID);
     }
+#endif
 
     void getFaviconForPageURIAndWaitUntilReady(const char* pageURI)
     {
+#if PLATFORM(GTK)
         if (m_favicon) {
             cairo_surface_destroy(m_favicon);
             m_favicon = 0;
@@ -90,6 +95,8 @@ public:
 
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext.get());
         webkit_favicon_database_get_favicon(database, pageURI, 0, getFaviconCallback, this);
+#endif
+
         g_main_loop_run(m_mainLoop);
     }
 
@@ -103,6 +110,7 @@ public:
     }
 
     cairo_surface_t* m_favicon;
+
     CString m_faviconURI;
     GUniqueOutPtr<GError> m_error;
     bool m_faviconNotificationReceived;
@@ -189,6 +197,7 @@ static void testPrivateBrowsing(FaviconDatabaseTest* test)
     g_assert(test->m_error);
 }
 
+#if PLATFORM(GTK)
 static void testGetFavicon(FaviconDatabaseTest* test)
 {
     // We need to load the page first to ensure the icon data will be
@@ -231,6 +240,7 @@ static void testGetFavicon(FaviconDatabaseTest* test)
     g_assert(!test->m_favicon);
     g_assert(test->m_error);
 }
+#endif
 
 static void testGetFaviconURI(FaviconDatabaseTest* test)
 {
@@ -241,6 +251,7 @@ static void testGetFaviconURI(FaviconDatabaseTest* test)
     ASSERT_CMP_CSTRING(iconURI.get(), ==, kServer->getURIForPath("/icon/favicon.ico"));
 }
 
+#if PLATFORM(GTK)
 static void testWebViewFavicon(FaviconDatabaseTest* test)
 {
     test->m_faviconURI = CString();
@@ -260,6 +271,7 @@ static void testWebViewFavicon(FaviconDatabaseTest* test)
     g_assert_cmpuint(cairo_image_surface_get_width(iconFromWebView), ==, 16);
     g_assert_cmpuint(cairo_image_surface_get_height(iconFromWebView), ==, 16);
 }
+#endif
 
 static void testFaviconDatabase(FaviconDatabaseTest* test, gconstpointer)
 {
@@ -268,9 +280,13 @@ static void testFaviconDatabase(FaviconDatabaseTest* test, gconstpointer)
     testNotInitialized(test);
     testSetDirectory(test);
     testPrivateBrowsing(test);
+
+#if PLATFORM(GTK)
     testGetFavicon(test);
-    testGetFaviconURI(test);
     testWebViewFavicon(test);
+#endif
+
+    testGetFaviconURI(test);
     testClearDatabase(test);
 }
 
