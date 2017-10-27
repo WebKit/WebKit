@@ -1,4 +1,15 @@
 ==================
+WebKitGTK+  2.18.2
+==================
+
+What's new in WebKitGTK+ 2.18.2?
+
+  - Fix rendering of arabic text.
+  - Fix a crash in the web process when decoding GIF images.
+  - Fix rendering of wind in Windy.com.
+  - Fix several crashes and rendering issues.
+
+==================
 WebKitGTK+  2.18.1
 ==================
 
