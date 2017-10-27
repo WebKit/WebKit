@@ -76,10 +76,6 @@ ThreadData* myThreadData()
 
 } // anonymous namespace
 
-// NOTE: It's a bug to use any memory order other than seq_cst in this code. The cost of seq_cst
-// fencing is negligible on slow paths, so any use of a more relaxed memory model is all risk and no
-// reward.
-
 NEVER_INLINE void WordLockBase::lockSlow()
 {
     unsigned spinCount = 0;
@@ -227,8 +223,7 @@ NEVER_INLINE void WordLockBase::unlockSlow()
     ASSERT(currentWordValue & isLockedBit);
     ASSERT(currentWordValue & isQueueLockedBit);
     ThreadData* queueHead = bitwise_cast<ThreadData*>(currentWordValue & ~queueHeadMask);
-    RELEASE_ASSERT(queueHead);
-    RELEASE_ASSERT(queueHead->shouldPark); // This would have been set before the thread was enqueued, so it must still be set now.
+    ASSERT(queueHead);
 
     ThreadData* newQueueHead = queueHead->nextInQueue;
     // Either this was the only thread on the queue, in which case we delete the queue, or there
@@ -261,12 +256,10 @@ NEVER_INLINE void WordLockBase::unlockSlow()
     {
         std::lock_guard<std::mutex> locker(queueHead->parkingLock);
         queueHead->shouldPark = false;
-        // We have to do the notify while still holding the lock, since otherwise, we could try to
-        // do it after the queueHead has destructed. It's impossible for queueHead to destruct
-        // while we hold the lock, since it is either currently in the wait loop or it's before it
-        // so it has to grab the lock before destructing.
-        queueHead->parkingCondition.notify_one();
     }
+    // Doesn't matter if we notify_all() or notify_one() here since the only thread that could be
+    // waiting is queueHead.
+    queueHead->parkingCondition.notify_one();
 
     // The old queue head can now contend for the lock again. We're done!
 }
