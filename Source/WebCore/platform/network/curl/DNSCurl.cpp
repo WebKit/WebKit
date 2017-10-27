@@ -25,12 +25,23 @@
 
 #include "config.h"
 #include "DNS.h"
+#include "DNSResolveQueue.h"
 
 #if USE(CURL)
 
 #include "NotImplemented.h"
 
 namespace WebCore {
+
+void DNSResolveQueue::updateIsUsingProxy()
+{
+    notImplemented();
+}
+
+void DNSResolveQueue::platformResolve(const String& /* hostname */)
+{
+    notImplemented();
+}
 
 void prefetchDNS(const String& /* hostname */)
 {
