@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,492) size 800x108
   RenderBlock {HTML} at (0,0) size 800x108 [border: (10px solid #800000)]
     RenderBody {BODY} at (18,18) size 764x72
-      RenderText {#text} at (0,6) size 220x45
-        text run at (0,6) width 220: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
-      RenderRuby (inline) {RUBY} at (0,0) size 200x41
-        RenderRubyRun (anonymous) at (220,0) size 80x61
+      RenderText {#text} at (0,10) size 227x41
+        text run at (0,10) width 227: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
+      RenderRuby (inline) {RUBY} at (0,0) size 201x41
+        RenderRubyRun (anonymous) at (226,0) size 81x61
           RenderRubyText {RT} at (0,46) size 80x31
             RenderText {#text} at (0,5) size 80x21
               text run at (0,5) width 80: "\x{3053}\x{3046}\x{304B}\x{304F}"
           RenderRubyBase (anonymous) at (0,0) size 80x61
             RenderText {#text} at (0,10) size 80x41
               text run at (0,10) width 80: "\x{653B}\x{6BBB}"
-        RenderRubyRun (anonymous) at (300,0) size 120x61
+        RenderRubyRun (anonymous) at (306,0) size 121x61
           RenderRubyText {RT} at (0,46) size 120x31
             RenderText {#text} at (2,5) size 116x21
               text run at (2,5) width 116: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}"

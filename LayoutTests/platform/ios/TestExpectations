@@ -2839,16 +2839,6 @@ imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failu
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
 
-# <rdar://problem/33250084> Text rendering issues in iOS 11
-fast/writing-mode/border-vertical-lr.html [ Failure ]
-fast/writing-mode/japanese-lr-text.html [ Failure ]
-fast/writing-mode/japanese-rl-text.html [ Failure ]
-fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure ]
-fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure ]
-fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure ]
-fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
-fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
-
 # <rdar://problem/33630526> http/tests/websocket/tests/hybi/deflate-frame-parameter.html is failing on iOS 11
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 
