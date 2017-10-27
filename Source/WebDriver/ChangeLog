@@ -1,3 +1,18 @@
+2017-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: failing to process capabilities should produce InvalidArgument error not SessionNotCreated
+        https://bugs.webkit.org/show_bug.cgi?id=178864
+
+        Reviewed by Brian Burg.
+
+        Fixes most of the tests in imported/w3c/webdriver/tests/sessions/new_session/invalid_capabilities.py.
+
+        7.2 Processing Capabilities
+        https://w3c.github.io/webdriver/webdriver-spec.html#processing-capabilities
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::processCapabilities const):
+
 2017-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: HTTP status code is not correct for some of the errors
