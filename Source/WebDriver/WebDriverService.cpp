@@ -404,7 +404,8 @@ RefPtr<InspectorObject> WebDriverService::validatedCapabilities(const InspectorO
             if (!platformValidateCapability(it->key, it->value))
                 return nullptr;
             result->setValue(it->key, RefPtr<InspectorValue>(it->value));
-        }
+        } else
+            return nullptr;
     }
     return result;
 }
