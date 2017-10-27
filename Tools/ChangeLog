@@ -1,3 +1,18 @@
+2017-10-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Windows and WebViews are retained after re-configure
+        https://bugs.webkit.org/show_bug.cgi?id=178902
+        <rdar://problem/35211518>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The test runner effectively leaks windows every time a test changes configuration.
+        We give each test it's own AutoreleasePool to fix this problem.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runTest): Add an AutoRelease pool scoping a test run
+        so that when a configuration changes, the old window and WebView are released.
+
 2017-10-27  Eric Carlson  <eric.carlson@apple.com>
 
         NowPlayingInfo should contain a unique identifier

@@ -67,6 +67,7 @@
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>
+#include <wtf/AutodrainedPool.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
@@ -1176,6 +1177,8 @@ TestCommand parseInputLine(const std::string& inputLine)
 
 bool TestController::runTest(const char* inputLine)
 {
+    AutodrainedPool pool;
+    
     WKTextCheckerSetTestingMode(true);
     TestCommand command = parseInputLine(std::string(inputLine));
 
