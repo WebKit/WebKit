@@ -669,6 +669,8 @@ public:
     static bool isARIAInput(AccessibilityRole);
 
     virtual bool supportsARIAOwns() const { return false; }
+    bool isActiveDescendantOfFocusedContainer() const;
+    void ariaActiveDescendantReferencingElements(AccessibilityChildrenVector&) const;
     void ariaControlsElements(AccessibilityChildrenVector&) const;
     void ariaControlsReferencingElements(AccessibilityChildrenVector&) const;
     void ariaDescribedByElements(AccessibilityChildrenVector&) const;

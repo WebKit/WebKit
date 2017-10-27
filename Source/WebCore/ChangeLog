@@ -1,3 +1,29 @@
+2017-10-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Events missing and state incorrect for aria-activedescendant
+        https://bugs.webkit.org/show_bug.cgi?id=178523
+
+        Reviewed by Chris Fleizach.
+
+        When the aria-activedescendant of an element changes, emit object:state-changed:focused.
+        When a focused element has a valid active descendant, do not expose the focused state on
+        the element, but rather on the active descendant. Also expose the focusable state on the
+        active descendant.
+
+        Tests: accessibility/gtk/aria-activedescendant-changed-notification.html
+               accessibility/gtk/aria-activedescendant.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isActiveDescendantOfFocusedContainer const):
+        (WebCore::AccessibilityObject::ariaActiveDescendantReferencingElements const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::shouldNotifyActiveDescendant const):
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkStateSetFromCoreObject):
+
 2017-10-19  Antti Koivisto  <antti@apple.com>
 
         Overlapping text on all CSS fonts specs

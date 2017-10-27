@@ -3406,6 +3406,23 @@ void AccessibilityObject::ariaElementsReferencedByAttribute(AccessibilityChildre
     }
 }
 
+bool AccessibilityObject::isActiveDescendantOfFocusedContainer() const
+{
+    AccessibilityChildrenVector containers;
+    ariaActiveDescendantReferencingElements(containers);
+    for (auto& container : containers) {
+        if (container->isFocused())
+            return true;
+    }
+
+    return false;
+}
+
+void AccessibilityObject::ariaActiveDescendantReferencingElements(AccessibilityChildrenVector& containers) const
+{
+    ariaElementsReferencedByAttribute(containers, aria_activedescendantAttr);
+}
+
 void AccessibilityObject::ariaControlsElements(AccessibilityChildrenVector& ariaControls) const
 {
     ariaElementsFromAttribute(ariaControls, aria_controlsAttr);

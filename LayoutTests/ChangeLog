@@ -1,3 +1,15 @@
+2017-10-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Events missing and state incorrect for aria-activedescendant
+        https://bugs.webkit.org/show_bug.cgi?id=178523
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/gtk/aria-activedescendant-changed-notification-expected.txt: Added.
+        * accessibility/gtk/aria-activedescendant-changed-notification.html: Added.
+        * accessibility/gtk/aria-activedescendant-expected.txt: Added.
+        * accessibility/gtk/aria-activedescendant.html: Added.
+
 2017-10-19  Antti Koivisto  <antti@apple.com>
 
         Overlapping text on all CSS fonts specs

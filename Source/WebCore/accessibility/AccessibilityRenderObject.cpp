@@ -2391,6 +2391,11 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
 
 bool AccessibilityRenderObject::shouldNotifyActiveDescendant() const
 {
+#if PLATFORM(GTK)
+    // According to the Core AAM spec, ATK expects object:state-changed:focused notifications
+    // whenever the active descendant changes.
+    return true;
+#endif
     // We want to notify that the combo box has changed its active descendant,
     // but we do not want to change the focus, because focus should remain with the combo box.
     if (isComboBox())
