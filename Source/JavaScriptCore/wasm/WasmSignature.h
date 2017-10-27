@@ -31,6 +31,7 @@
 #include "WasmOps.h"
 #include <cstdint>
 #include <cstring>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StdLibExtras.h>
@@ -64,9 +65,9 @@ class Signature : public ThreadSafeRefCounted<Signature> {
         return i + reinterpret_cast<Type*>(reinterpret_cast<char*>(this) + sizeof(Signature));
     }
     Type* storage(SignatureArgCount i) const { return const_cast<Signature*>(this)->storage(i); }
-    static size_t allocatedSize(SignatureArgCount argCount)
+    static size_t allocatedSize(Checked<SignatureArgCount> argCount)
     {
-        return sizeof(Signature) + (s_retCount + argCount) * sizeof(Type);
+        return (sizeof(Signature) + (s_retCount + argCount) * sizeof(Type)).unsafeGet();
     }
 
 public:

@@ -30,13 +30,19 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmMemory.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 
 namespace JSC { namespace Wasm {
 
 Segment* Segment::create(I32InitExpr offset, uint32_t sizeInBytes)
 {
-    auto allocated = tryFastCalloc(sizeof(Segment) + sizeInBytes, 1);
+    Checked<uint32_t, RecordOverflow> totalBytesChecked = sizeInBytes;
+    totalBytesChecked += sizeof(Segment);
+    uint32_t totalBytes;
+    if (totalBytesChecked.safeGet(totalBytes) == CheckedState::DidOverflow)
+        return nullptr;
+    auto allocated = tryFastCalloc(totalBytes, 1);
     Segment* segment;
     if (!allocated.getValue(segment))
         return nullptr;

@@ -30,6 +30,7 @@
 
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace JSC {
 
@@ -61,7 +62,7 @@ JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, Ref<Wasm::T
 {
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_jsFunctions = MallocPtr<WriteBarrier<JSObject>>::malloc(sizeof(WriteBarrier<JSObject>) * static_cast<size_t>(size()));
+    m_jsFunctions = MallocPtr<WriteBarrier<JSObject>>::malloc((sizeof(WriteBarrier<JSObject>) * Checked<size_t>(size())).unsafeGet());
     for (uint32_t i = 0; i < size(); ++i)
         new(&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();
 }
@@ -100,7 +101,7 @@ bool JSWebAssemblyTable::grow(uint32_t delta)
         return false;
 
     size_t newSize = grew.value();
-    m_jsFunctions.realloc(sizeof(WriteBarrier<JSObject>) * newSize);
+    m_jsFunctions.realloc((sizeof(WriteBarrier<JSObject>) * Checked<size_t>(newSize)).unsafeGet());
 
     for (size_t i = oldSize; i < newSize; ++i)
         new (&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();

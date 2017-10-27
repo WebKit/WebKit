@@ -1,3 +1,41 @@
+2017-10-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: update arbitrary limits to what browsers use
+        https://bugs.webkit.org/show_bug.cgi?id=178946
+        <rdar://problem/34257412>
+        <rdar://problem/34501154>
+
+        Reviewed by Saam Barati.
+
+        https://github.com/WebAssembly/design/issues/1138 discusses the
+        arbitrary function size limit, which it turns out Chrome and
+        Firefox didn't enforce. We didn't use it because it was
+        ridiculously low and actual programs ran into that limit (bummer
+        for Edge which just shipped it...). Now that we agree on a high
+        arbitrary program limit, let's update it! While I'm doing this
+        there are a few other spots that I polished to use Checked or
+        better check limits overall.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addLocal):
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::Segment::create):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        * wasm/WasmInstance.cpp:
+        * wasm/WasmLimits.h:
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseGlobal):
+        (JSC::Wasm::ModuleParser::parseCode):
+        (JSC::Wasm::ModuleParser::parseData):
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::Signature::allocatedSize):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::Table):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::grow):
+
 2017-10-26  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r222601): We fail to properly backtrack into a sub pattern of a parenthesis with non-zero minimum

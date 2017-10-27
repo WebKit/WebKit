@@ -340,7 +340,8 @@ auto ModuleParser::parseGlobal() -> PartialResult
     uint32_t globalCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(globalCount), "can't get Global section's count");
     WASM_PARSER_FAIL_IF(globalCount > maxGlobals, "Global section's count is too big ", globalCount, " maximum ", maxGlobals);
-    WASM_PARSER_FAIL_IF(!m_info->globals.tryReserveCapacity(globalCount + m_info->firstInternalGlobal), "can't allocate memory for ", globalCount + m_info->firstInternalGlobal, " globals");
+    size_t totalBytes = globalCount + m_info->firstInternalGlobal;
+    WASM_PARSER_FAIL_IF((static_cast<uint32_t>(totalBytes) < globalCount) || !m_info->globals.tryReserveCapacity(totalBytes), "can't allocate memory for ", totalBytes, " globals");
 
     for (uint32_t globalIndex = 0; globalIndex < globalCount; ++globalIndex) {
         Global global;
@@ -474,7 +475,7 @@ auto ModuleParser::parseCode() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(functionSize), "can't get ", i, "th Code function's size");
         WASM_PARSER_FAIL_IF(functionSize > length(), "Code function's size ", functionSize, " exceeds the module's size ", length());
         WASM_PARSER_FAIL_IF(functionSize > length() - m_offset, "Code function's size ", functionSize, " exceeds the module's remaining size", length() - m_offset);
-        WASM_PARSER_FAIL_IF(functionSize > std::numeric_limits<uint32_t>::max(), "Code function's size ", functionSize, " is too big");
+        WASM_PARSER_FAIL_IF(functionSize > maxFunctionSize, "Code function's size ", functionSize, " is too big");
 
         m_info->functionLocationInBinary[i].start = m_offset;
         m_info->functionLocationInBinary[i].end = m_offset + functionSize;
@@ -573,7 +574,7 @@ auto ModuleParser::parseData() -> PartialResult
         WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
         WASM_PARSER_FAIL_IF(initExprType != I32, segmentNumber, "th Data segment's init_expr must produce an i32");
         WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
-        WASM_PARSER_FAIL_IF(dataByteLength == std::numeric_limits<uint32_t>::max(), segmentNumber, "th Data segment's data byte length is too big ", dataByteLength);
+        WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big ", dataByteLength, " maximum ", maxModuleSize);
 
         Segment* segment = Segment::create(makeI32InitExpr(initOpcode, initExprBits), dataByteLength);
         WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);

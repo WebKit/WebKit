@@ -54,8 +54,8 @@ Table::Table(uint32_t initial, std::optional<uint32_t> maximum)
 
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_functions = MallocPtr<Wasm::CallableFunction>::malloc(sizeof(Wasm::CallableFunction) * static_cast<size_t>(size()));
-    m_instances = MallocPtr<Instance*>::malloc(sizeof(Instance*) * static_cast<size_t>(size()));
+    m_functions = MallocPtr<Wasm::CallableFunction>::malloc((sizeof(Wasm::CallableFunction) * Checked<size_t>(size())).unsafeGet());
+    m_instances = MallocPtr<Instance*>::malloc((sizeof(Instance*) * Checked<size_t>(size())).unsafeGet());
     for (uint32_t i = 0; i < size(); ++i) {
         new (&m_functions.get()[i]) CallableFunction();
         ASSERT(m_functions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.

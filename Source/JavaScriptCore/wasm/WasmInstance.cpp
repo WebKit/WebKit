@@ -26,17 +26,18 @@
 #include "config.h"
 #include "WasmInstance.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "Register.h"
 #include "WasmModuleInformation.h"
-
-#if ENABLE(WEBASSEMBLY)
+#include <wtf/CheckedArithmetic.h>
 
 namespace JSC { namespace Wasm {
 
 namespace {
 size_t globalMemoryByteSize(Module& module)
 {
-    return module.moduleInformation().globals.size() * sizeof(Register);
+    return (Checked<size_t>(module.moduleInformation().globals.size()) * sizeof(Register)).unsafeGet();
 }
 }
 
