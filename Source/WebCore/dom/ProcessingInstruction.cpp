@@ -126,7 +126,6 @@ void ProcessingInstruction::checkStyleSheet()
                 URL finalURL(ParsedURLString, m_localHref);
                 m_sheet = XSLStyleSheet::createEmbedded(this, finalURL);
                 m_loading = false;
-                document().scheduleToApplyXSLTransforms();
             }
 #endif
         } else {
@@ -180,7 +179,7 @@ void ProcessingInstruction::checkStyleSheet()
                 document().styleScope().removePendingSheet(*this);
 #if ENABLE(XSLT)
                 if (m_isXSL)
-                    document().scheduleToApplyXSLTransforms();
+                    document().styleScope().flushPendingUpdate();
 #endif
             }
         }
@@ -203,7 +202,7 @@ bool ProcessingInstruction::sheetLoaded()
             document().styleScope().removePendingSheet(*this);
 #if ENABLE(XSLT)
         if (m_isXSL)
-            document().scheduleToApplyXSLTransforms();
+            document().styleScope().flushPendingUpdate();
 #endif
         return true;
     }
