@@ -42,7 +42,9 @@
 #include "VisibleSelection.h"
 
 namespace WebCore {
-    
+
+namespace { // See bug #177808.
+
 struct SelectionData {
     using RendererMap = HashMap<RenderObject*, std::unique_ptr<RenderSelectionInfo>>;
     using RenderBlockMap = HashMap<const RenderBlock*, std::unique_ptr<RenderBlockSelectionInfo>>;
@@ -93,6 +95,8 @@ private:
     RenderObject* m_current { nullptr };
     Vector<RenderMultiColumnSpannerPlaceholder*> m_spannerStack;
 };
+
+} // anonymous namespace
 
 static RenderObject* rendererAfterPosition(const RenderObject& renderer, unsigned offset)
 {
