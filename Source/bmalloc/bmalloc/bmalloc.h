@@ -70,7 +70,7 @@ inline void* tryLargeMemalignVirtual(size_t alignment, size_t size, HeapKind kin
 {
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
     std::lock_guard<StaticMutex> lock(Heap::mutex());
-    return heap.allocateLarge(lock, alignment, size, AllocationKind::Virtual);
+    return heap.tryAllocateLarge(lock, alignment, size, AllocationKind::Virtual);
 }
 
 inline void free(void* object, HeapKind kind = HeapKind::Primary)
