@@ -52,6 +52,7 @@ public:
 private:
     // NetworkLoadClient.
     bool isSynchronous() const final { return false; }
+    bool isAllowedToAskUserForCredentials() const final { return false; }
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
     void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) final;
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
