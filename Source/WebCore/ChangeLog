@@ -1,3 +1,38 @@
+2017-10-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When destroying a resource, register "only" the clients who are losing their resource as having pending resources
+        https://bugs.webkit.org/show_bug.cgi?id=178567
+        <rdar://problem/35064781>
+
+        Reviewed by Simon Fraser.
+
+        SVGResources::resourceDestroyed() will return a bool indicating whether 
+        it had a reference to the destroyed resource or not. If it returns true
+        SVGResourcesCache::resourceDestroyed() will register the client Element
+        as having pending resources.
+
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::paintingResourceFromSVGPaint):
+        (WebCore::SVGResources::removeClientFromCache const):
+        (WebCore::SVGResources::resourceDestroyed):
+        (WebCore::SVGResources::buildSetOfResources):
+        (WebCore::SVGResources::resetClipper):
+        (WebCore::SVGResources::resetFilter):
+        (WebCore::SVGResources::resetMarkerStart):
+        (WebCore::SVGResources::resetMarkerMid):
+        (WebCore::SVGResources::resetMarkerEnd):
+        (WebCore::SVGResources::resetMasker):
+        (WebCore::SVGResources::resetFill):
+        (WebCore::SVGResources::resetStroke):
+        (WebCore::SVGResources::resetLinkedResource):
+        * rendering/svg/SVGResources.h:
+        (WebCore::SVGResources::isEmpty const):
+        (WebCore::SVGResources::ClipperFilterMaskerData::ClipperFilterMaskerData): Deleted.
+        (WebCore::SVGResources::MarkerData::MarkerData): Deleted.
+        (WebCore::SVGResources::FillStrokeData::FillStrokeData): Deleted.
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::resourceDestroyed):
+
 2017-10-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Events missing and state incorrect for aria-activedescendant
