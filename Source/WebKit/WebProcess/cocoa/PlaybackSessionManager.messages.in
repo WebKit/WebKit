@@ -28,7 +28,7 @@ messages -> PlaybackSessionManager {
     TogglePlayState(uint64_t contextId)
     BeginScrubbing(uint64_t contextId)
     EndScrubbing(uint64_t contextId)
-    SeekToTime(uint64_t contextId, double time)
+    SeekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter)
     FastSeek(uint64_t contextId, double time)
     BeginScanningForward(uint64_t contextId)
     BeginScanningBackward(uint64_t contextId)

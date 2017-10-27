@@ -3142,6 +3142,11 @@ void HTMLMediaElement::setCurrentTime(double time)
     setCurrentTime(MediaTime::createWithDouble(time));
 }
 
+void HTMLMediaElement::setCurrentTimeWithTolerance(double time, double toleranceBefore, double toleranceAfter)
+{
+    seekWithTolerance(MediaTime::createWithDouble(time), MediaTime::createWithDouble(toleranceBefore), MediaTime::createWithDouble(toleranceAfter), true);
+}
+
 void HTMLMediaElement::setCurrentTime(const MediaTime& time)
 {
     if (m_mediaController)

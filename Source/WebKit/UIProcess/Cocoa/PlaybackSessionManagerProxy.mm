@@ -86,10 +86,10 @@ void PlaybackSessionModelContext::endScrubbing()
     m_playbackStartedTimeNeedsUpdate = isPlaying();
 }
 
-void PlaybackSessionModelContext::seekToTime(double time)
+void PlaybackSessionModelContext::seekToTime(double time, double toleranceBefore, double toleranceAfter)
 {
     if (m_manager)
-        m_manager->seekToTime(m_contextId, time);
+        m_manager->seekToTime(m_contextId, time, toleranceBefore, toleranceAfter);
 }
 
 void PlaybackSessionModelContext::fastSeek(double time)
@@ -494,9 +494,9 @@ void PlaybackSessionManagerProxy::endScrubbing(uint64_t contextId)
     m_page->send(Messages::PlaybackSessionManager::EndScrubbing(contextId), m_page->pageID());
 }
 
-void PlaybackSessionManagerProxy::seekToTime(uint64_t contextId, double time)
+void PlaybackSessionManagerProxy::seekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter)
 {
-    m_page->send(Messages::PlaybackSessionManager::SeekToTime(contextId, time), m_page->pageID());
+    m_page->send(Messages::PlaybackSessionManager::SeekToTime(contextId, time, toleranceBefore, toleranceAfter), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::fastSeek(uint64_t contextId, double time)

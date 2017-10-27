@@ -62,7 +62,7 @@ public:
     WEBCORE_EXPORT void togglePlayState() final;
     WEBCORE_EXPORT void beginScrubbing() final;
     WEBCORE_EXPORT void endScrubbing() final;
-    WEBCORE_EXPORT void seekToTime(double time) final;
+    WEBCORE_EXPORT void seekToTime(double time, double toleranceBefore, double toleranceAfter) final;
     WEBCORE_EXPORT void fastSeek(double time) final;
     WEBCORE_EXPORT void beginScanningForward() final;
     WEBCORE_EXPORT void beginScanningBackward() final;

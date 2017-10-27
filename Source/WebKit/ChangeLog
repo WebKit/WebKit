@@ -1,3 +1,22 @@
+2017-10-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement seek tolerance methods in WebAVPlayerController.
+        https://bugs.webkit.org/show_bug.cgi?id=178838
+        rdar://problem/33781777
+
+        Reviewed by Eric Carlson.
+
+        This implementes additional methods on WebAVPlayerController that allows AVKit more control over seeking.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::seekToTime):
+        (WebKit::PlaybackSessionManagerProxy::seekToTime):
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::seekToTime):
+
 2017-10-26  Brian Burg  <bburg@apple.com>
 
         Web Automation: denying user permission for getUserMedia doesn't work

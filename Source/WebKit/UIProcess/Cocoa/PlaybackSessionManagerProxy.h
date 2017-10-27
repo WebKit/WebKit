@@ -100,7 +100,7 @@ private:
     void togglePlayState() final;
     void beginScrubbing() final;
     void endScrubbing() final;
-    void seekToTime(double) final;
+    void seekToTime(double, double, double) final;
     void fastSeek(double time) final;
     void beginScanningForward() final;
     void beginScanningBackward() final;
@@ -209,7 +209,7 @@ private:
     void togglePlayState(uint64_t contextId);
     void beginScrubbing(uint64_t contextId);
     void endScrubbing(uint64_t contextId);
-    void seekToTime(uint64_t contextId, double time);
+    void seekToTime(uint64_t contextId, double time, double before, double after);
     void fastSeek(uint64_t contextId, double time);
     void beginScanningForward(uint64_t contextId);
     void beginScanningBackward(uint64_t contextId);

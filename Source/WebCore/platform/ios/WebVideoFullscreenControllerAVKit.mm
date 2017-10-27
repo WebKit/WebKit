@@ -140,7 +140,7 @@ private:
     void togglePlayState() override;
     void beginScrubbing() override;
     void endScrubbing() override;
-    void seekToTime(double) override;
+    void seekToTime(double, double, double) override;
     void fastSeek(double time) override;
     void beginScanningForward() override;
     void beginScanningBackward() override;
@@ -635,13 +635,13 @@ void VideoFullscreenControllerContext::endScrubbing()
     });
 }
 
-void VideoFullscreenControllerContext::seekToTime(double time)
+void VideoFullscreenControllerContext::seekToTime(double time, double toleranceBefore, double toleranceAfter)
 {
     ASSERT(isUIThread());
     RefPtr<VideoFullscreenControllerContext> protectedThis(this);
-    WebThreadRun([protectedThis, this, time] {
+    WebThreadRun([protectedThis, this, time, toleranceBefore, toleranceAfter] {
         if (m_playbackModel)
-            m_playbackModel->seekToTime(time);
+            m_playbackModel->seekToTime(time, toleranceBefore, toleranceAfter);
     });
 }
 

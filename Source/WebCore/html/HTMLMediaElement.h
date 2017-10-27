@@ -226,6 +226,7 @@ public:
 // playback state
     WEBCORE_EXPORT double currentTime() const override;
     void setCurrentTime(double) override;
+    void setCurrentTimeWithTolerance(double, double toleranceBefore, double toleranceAfter);
     double currentTimeForBindings() const { return currentTime(); }
     WEBCORE_EXPORT ExceptionOr<void> setCurrentTimeForBindings(double);
     WEBCORE_EXPORT double getStartDate() const;

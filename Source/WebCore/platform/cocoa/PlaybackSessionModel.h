@@ -48,7 +48,7 @@ public:
     virtual void togglePlayState() = 0;
     virtual void beginScrubbing() = 0;
     virtual void endScrubbing() = 0;
-    virtual void seekToTime(double time) = 0;
+    virtual void seekToTime(double time, double toleranceBefore = 0, double toleranceAfter = 0) = 0;
     virtual void fastSeek(double time) = 0;
     virtual void beginScanningForward() = 0;
     virtual void beginScanningBackward() = 0;

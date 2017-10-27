@@ -218,10 +218,10 @@ void PlaybackSessionModelMediaElement::endScrubbing()
         m_mediaElement->endScrubbing();
 }
 
-void PlaybackSessionModelMediaElement::seekToTime(double time)
+void PlaybackSessionModelMediaElement::seekToTime(double time, double toleranceBefore, double toleranceAfter)
 {
     if (m_mediaElement)
-        m_mediaElement->setCurrentTime(time);
+        m_mediaElement->setCurrentTimeWithTolerance(time, toleranceBefore, toleranceAfter);
 }
 
 void PlaybackSessionModelMediaElement::fastSeek(double time)

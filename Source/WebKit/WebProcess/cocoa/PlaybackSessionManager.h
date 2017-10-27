@@ -146,7 +146,7 @@ protected:
     void togglePlayState(uint64_t contextId);
     void beginScrubbing(uint64_t contextId);
     void endScrubbing(uint64_t contextId);
-    void seekToTime(uint64_t contextId, double time);
+    void seekToTime(uint64_t contextId, double time, double toleranceBefore, double toleranceAfter);
     void fastSeek(uint64_t contextId, double time);
     void beginScanningForward(uint64_t contextId);
     void beginScanningBackward(uint64_t contextId);
