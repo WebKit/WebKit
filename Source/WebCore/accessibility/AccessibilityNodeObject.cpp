@@ -1293,15 +1293,15 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
             String innerText = textForLabelElement(label);
             
             // Only use the <label> text if there's no ARIA override.
-            if (labelObject && !innerText.isEmpty() && !ariaAccessibilityDescription())
-                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement, *labelObject));
+            if (!innerText.isEmpty() && !ariaAccessibilityDescription())
+                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement, labelObject));
             return;
         }
     }
     
     AccessibilityObject* titleUIElement = this->titleUIElement();
     if (titleUIElement)
-        textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement, *titleUIElement));
+        textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement, titleUIElement));
 }
 
 void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrder) const
@@ -1481,11 +1481,9 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
         Vector<Element*> elements;
         ariaLabeledByElements(elements);
         
-        Vector<Ref<AccessibilityObject>> axElements;
-        for (const auto& element : elements) {
-            if (auto axElement = axObjectCache()->getOrCreate(element))
-                axElements.append(*axElement);
-        }
+        Vector<RefPtr<AccessibilityObject>> axElements;
+        for (const auto& element : elements)
+            axElements.append(axObjectCache()->getOrCreate(element));
         
         textOrder.append(AccessibilityText(ariaLabeledBy, AccessibilityTextSource::Alternative, WTFMove(axElements)));
     }

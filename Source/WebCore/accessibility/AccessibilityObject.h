@@ -255,20 +255,20 @@ enum class AccessibilityTextSource {
 struct AccessibilityText {
     String text;
     AccessibilityTextSource textSource;
-    Vector<Ref<AccessibilityObject>> textElements;
+    Vector<RefPtr<AccessibilityObject>> textElements;
     
     AccessibilityText(const String& t, const AccessibilityTextSource& s)
         : text(t)
         , textSource(s)
     { }
 
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, Vector<Ref<AccessibilityObject>> elements)
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, Vector<RefPtr<AccessibilityObject>> elements)
         : text(t)
         , textSource(s)
         , textElements(WTFMove(elements))
     { }
 
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, Ref<AccessibilityObject>&& element)
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, RefPtr<AccessibilityObject>&& element)
         : text(t)
         , textSource(s)
     {
