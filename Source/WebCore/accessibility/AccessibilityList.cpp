@@ -67,7 +67,7 @@ bool AccessibilityList::isUnorderedList() const
     // The ARIA spec says the "list" role is supposed to mimic a UL or OL tag.
     // Since it can't be both, it's probably OK to say that it's an un-ordered list.
     // On the Mac, there's no distinction to the client.
-    if (ariaRoleAttribute() == ListRole)
+    if (ariaRoleAttribute() == AccessibilityRole::List)
         return true;
     
     return node && node->hasTagName(ulTag);
@@ -79,7 +79,7 @@ bool AccessibilityList::isOrderedList() const
         return false;
 
     // ARIA says a directory is like a static table of contents, which sounds like an ordered list.
-    if (ariaRoleAttribute() == DirectoryRole)
+    if (ariaRoleAttribute() == AccessibilityRole::Directory)
         return true;
 
     Node* node = m_renderer->node();
@@ -129,8 +129,8 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     m_ariaRole = determineAriaRoleAttribute();
     
     // Directory is mapped to list for now, but does not adhere to the same heuristics.
-    if (ariaRoleAttribute() == DirectoryRole)
-        return ListRole;
+    if (ariaRoleAttribute() == AccessibilityRole::Directory)
+        return AccessibilityRole::List;
     
     // Heuristic to determine if this list is being used for layout or for content.
     //   1. If it's a named list, like ol or aria=list, then it's a list.
@@ -140,7 +140,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     //   4. If it does not have any listitem children, it's not a list.
     //   5. Otherwise it's a list (for now).
     
-    AccessibilityRole role = ListRole;
+    AccessibilityRole role = AccessibilityRole::List;
     
     // Temporarily set role so that we can query children (otherwise canHaveChildren returns false).
     m_role = role;
@@ -151,12 +151,12 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     const auto& children = this->children();
     // DescriptionLists are always semantically a description list, so do not apply heuristics.
     if (isDescriptionList() && children.size())
-        return DescriptionListRole;
+        return AccessibilityRole::DescriptionList;
 
     for (const auto& child : children) {
-        if (child->ariaRoleAttribute() == ListItemRole)
+        if (child->ariaRoleAttribute() == AccessibilityRole::ListItem)
             listItemCount++;
-        else if (child->roleValue() == ListItemRole) {
+        else if (child->roleValue() == AccessibilityRole::ListItem) {
             RenderObject* listItem = child->renderer();
             if (!listItem)
                 continue;
@@ -168,7 +168,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
                 listItemCount++;
             } else if (listItem->node() && listItem->node()->hasTagName(liTag)) {
                 // Inline elements that are in a list with an explicit role should also count.
-                if (m_ariaRole == ListRole)
+                if (m_ariaRole == AccessibilityRole::List)
                     listItemCount++;
 
                 if (childHasPseudoVisibleListItemMarkers(listItem)) {
@@ -181,18 +181,18 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     
     // Non <ul> lists and ARIA lists only need to have one child.
     // <ul>, <ol> lists need to have visible markers.
-    if (ariaRoleAttribute() != UnknownRole) {
+    if (ariaRoleAttribute() != AccessibilityRole::Unknown) {
         if (!listItemCount)
-            role = ApplicationGroupRole;
+            role = AccessibilityRole::ApplicationGroup;
     } else if (!hasVisibleMarkers)
-        role = GroupRole;
+        role = AccessibilityRole::Group;
 
     return role;
 }
     
 AccessibilityRole AccessibilityList::roleValue() const
 {
-    ASSERT(m_role != UnknownRole);
+    ASSERT(m_role != AccessibilityRole::Unknown);
     return m_role;
 }
     

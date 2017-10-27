@@ -91,7 +91,9 @@ public:
 
 private:
     struct CachedAXObjectAttributes {
-        CachedAXObjectAttributes() : ignored(DefaultBehavior) { }
+        CachedAXObjectAttributes()
+            : ignored(AccessibilityObjectInclusion::DefaultBehavior)
+        { }
 
         AccessibilityObjectInclusion ignored;
     };
@@ -466,7 +468,7 @@ bool nodeHasRole(Node*, const String& role);
 bool isNodeAriaVisible(Node*);
     
 #if !HAVE(ACCESSIBILITY)
-inline AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID) const { return DefaultBehavior; }
+inline AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID) const { return AccessibilityObjectInclusion::DefaultBehavior; }
 inline AccessibilityReplacedText::AccessibilityReplacedText(const VisibleSelection&) { }
 inline void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache*, AXTextEditType, const String&, const VisibleSelection&) { }
 inline void AXComputedObjectAttributeCache::setIgnored(AXID, AccessibilityObjectInclusion) { }

@@ -144,10 +144,10 @@ public:
 protected:
     explicit AccessibilityNodeObject(Node*);
 
-    AccessibilityRole m_ariaRole;
-    mutable AccessibilityRole m_roleForMSAA;
+    AccessibilityRole m_ariaRole { AccessibilityRole::Unknown };
+    mutable AccessibilityRole m_roleForMSAA { AccessibilityRole::Unknown };
 #ifndef NDEBUG
-    bool m_initialized;
+    bool m_initialized { false };
 #endif
 
     bool isDetached() const override { return !m_node; }

@@ -58,9 +58,9 @@ Ref<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject* rendere
 bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
 {
     AccessibilityObjectInclusion decision = defaultObjectInclusion();
-    if (decision == IncludeObject)
+    if (decision == AccessibilityObjectInclusion::IncludeObject)
         return false;
-    if (decision == IgnoreObject)
+    if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
     
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
@@ -128,17 +128,17 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     // role, falling back on the role to be used if we determine here that the element
     // should not be exposed as a cell. Thus if we already know it's a cell, return that.
     AccessibilityRole defaultRole = AccessibilityRenderObject::determineAccessibilityRole();
-    if (defaultRole == ColumnHeaderRole || defaultRole == RowHeaderRole || defaultRole == CellRole || defaultRole == GridCellRole)
+    if (defaultRole == AccessibilityRole::ColumnHeader || defaultRole == AccessibilityRole::RowHeader || defaultRole == AccessibilityRole::Cell || defaultRole == AccessibilityRole::GridCell)
         return defaultRole;
 
     if (!isTableCell())
         return defaultRole;
     if (isColumnHeaderCell())
-        return ColumnHeaderRole;
+        return AccessibilityRole::ColumnHeader;
     if (isRowHeaderCell())
-        return RowHeaderRole;
+        return AccessibilityRole::RowHeader;
 
-    return CellRole;
+    return AccessibilityRole::Cell;
 }
     
 bool AccessibilityTableCell::isTableHeaderCell() const

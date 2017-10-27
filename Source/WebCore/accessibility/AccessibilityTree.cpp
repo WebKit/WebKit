@@ -59,10 +59,10 @@ bool AccessibilityTree::computeAccessibilityIsIgnored() const
 
 AccessibilityRole AccessibilityTree::determineAccessibilityRole()
 {
-    if ((m_ariaRole = determineAriaRoleAttribute()) != TreeRole)
+    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Tree)
         return AccessibilityRenderObject::determineAccessibilityRole();
 
-    return isTreeValid() ? TreeRole : GroupRole;
+    return isTreeValid() ? AccessibilityRole::Tree : AccessibilityRole::Group;
 }
 
 bool AccessibilityTree::nodeHasTreeItemChild(Node& node) const

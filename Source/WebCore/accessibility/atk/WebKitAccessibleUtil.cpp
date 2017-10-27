@@ -96,21 +96,21 @@ String accessibilityTitle(AccessibilityObject* coreObject)
 
     for (const AccessibilityText& text : textOrder) {
         // Once we encounter visible text, or the text from our children that should be used foremost.
-        if (text.textSource == VisibleText || text.textSource == ChildrenText)
+        if (text.textSource == AccessibilityTextSource::Visible || text.textSource == AccessibilityTextSource::Children)
             return text.text;
 
         // If there's an element that labels this object and it's not exposed, then we should use
         // that text as our title.
-        if (text.textSource == LabelByElementText && !coreObject->exposesTitleUIElement())
+        if (text.textSource == AccessibilityTextSource::LabelByElement && !coreObject->exposesTitleUIElement())
             return text.text;
 
-        // Elements of role ToolbarRole will return its title as AlternativeText.
-        if (coreObject->roleValue() == ToolbarRole && text.textSource == AlternativeText)
+        // Elements of role AccessibilityRole::Toolbar will return its title as AccessibilityTextSource::Alternative.
+        if (coreObject->roleValue() == AccessibilityRole::Toolbar && text.textSource == AccessibilityTextSource::Alternative)
             return text.text;
 
         // FIXME: The title tag is used in certain cases for the title. This usage should
         // probably be in the description field since it's not "visible".
-        if (text.textSource == TitleTagText && !titleTagShouldBeUsedInDescriptionField(coreObject))
+        if (text.textSource == AccessibilityTextSource::TitleTag && !titleTagShouldBeUsedInDescriptionField(coreObject))
             return text.text;
     }
 
@@ -124,19 +124,19 @@ String accessibilityDescription(AccessibilityObject* coreObject)
 
     bool visibleTextAvailable = false;
     for (const AccessibilityText& text : textOrder) {
-        if (text.textSource == AlternativeText)
+        if (text.textSource == AccessibilityTextSource::Alternative)
             return text.text;
 
         switch (text.textSource) {
-        case VisibleText:
-        case ChildrenText:
-        case LabelByElementText:
+        case AccessibilityTextSource::Visible:
+        case AccessibilityTextSource::Children:
+        case AccessibilityTextSource::LabelByElement:
             visibleTextAvailable = true;
         default:
             break;
         }
 
-        if (text.textSource == TitleTagText && !visibleTextAvailable)
+        if (text.textSource == AccessibilityTextSource::TitleTag && !visibleTextAvailable)
             return text.text;
     }
 

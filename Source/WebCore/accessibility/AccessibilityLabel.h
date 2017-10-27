@@ -42,7 +42,7 @@ public:
 private:
     explicit AccessibilityLabel(RenderObject*);
     bool computeAccessibilityIsIgnored() const final;
-    AccessibilityRole roleValue() const final { return LabelRole; }
+    AccessibilityRole roleValue() const final { return AccessibilityRole::Label; }
     bool isLabel() const final { return true; }
     String stringValue() const final;
     void updateChildrenIfNecessary() final;

@@ -73,7 +73,7 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
     if (!is<HTMLOptionElement>(element) || !element->inRenderedDocument())
         return nullptr;
 
-    auto& option = downcast<AccessibilityMenuListOption>(*document()->axObjectCache()->getOrCreate(MenuListOptionRole));
+    auto& option = downcast<AccessibilityMenuListOption>(*document()->axObjectCache()->getOrCreate(AccessibilityRole::MenuListOption));
     option.setElement(element);
 
     return &option;

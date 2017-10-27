@@ -51,18 +51,18 @@ Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(RenderObject*
 AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
 {
     if (!m_renderer)
-        return UnknownRole;
+        return AccessibilityRole::Unknown;
 
-    if ((m_ariaRole = determineAriaRoleAttribute()) != UnknownRole)
+    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
         return m_ariaRole;
 
     Node* node = m_renderer->node();
     if (node && node->hasTagName(MathMLNames::mathTag))
-        return DocumentMathRole;
+        return AccessibilityRole::DocumentMath;
 
     // It's not clear which role a platform should choose for a math element.
     // Declaring a math element role should give flexibility to platforms to choose.
-    return MathElementRole;
+    return AccessibilityRole::MathElement;
 }
 
 String AccessibilityMathMLElement::textUnderElement(AccessibilityTextUnderElementMode mode) const
@@ -206,7 +206,7 @@ bool AccessibilityMathMLElement::isMathScriptObject(AccessibilityMathScriptObjec
     if (!parent)
         return false;
 
-    return type == Subscript ? this == parent->mathSubscriptObject() : this == parent->mathSuperscriptObject();
+    return type == AccessibilityMathScriptObjectType::Subscript ? this == parent->mathSubscriptObject() : this == parent->mathSuperscriptObject();
 }
 
 bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType type) const
@@ -221,16 +221,16 @@ bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultis
     // this token is present and in the position corresponding with the type.
 
     AccessibilityMathMultiscriptPairs pairs;
-    if (type == PreSubscript || type == PreSuperscript)
+    if (type == AccessibilityMathMultiscriptObjectType::PreSubscript || type == AccessibilityMathMultiscriptObjectType::PreSuperscript)
         parent->mathPrescripts(pairs);
     else
         parent->mathPostscripts(pairs);
 
     for (const auto& pair : pairs) {
         if (this == pair.first)
-            return (type == PreSubscript || type == PostSubscript);
+            return (type == AccessibilityMathMultiscriptObjectType::PreSubscript || type == AccessibilityMathMultiscriptObjectType::PostSubscript);
         if (this == pair.second)
-            return (type == PreSuperscript || type == PostSuperscript);
+            return (type == AccessibilityMathMultiscriptObjectType::PreSuperscript || type == AccessibilityMathMultiscriptObjectType::PostSuperscript);
     }
 
     return false;

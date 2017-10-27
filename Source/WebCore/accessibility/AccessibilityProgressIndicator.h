@@ -42,7 +42,7 @@ public:
     Element* element() const override;
 
 private:
-    AccessibilityRole roleValue() const override { return ProgressIndicatorRole; }
+    AccessibilityRole roleValue() const override { return AccessibilityRole::ProgressIndicator; }
 
     bool isProgressIndicator() const override { return true; }
 

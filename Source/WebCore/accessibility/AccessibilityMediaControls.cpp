@@ -142,15 +142,15 @@ void AccessibilityMediaControl::accessibilityText(Vector<AccessibilityText>& tex
 {
     String description = accessibilityDescription();
     if (!description.isEmpty())
-        textOrder.append(AccessibilityText(description, AlternativeText));
+        textOrder.append(AccessibilityText(description, AccessibilityTextSource::Alternative));
 
     String title = this->title();
     if (!title.isEmpty())
-        textOrder.append(AccessibilityText(title, AlternativeText));
+        textOrder.append(AccessibilityText(title, AccessibilityTextSource::Alternative));
 
     String helptext = helpText();
     if (!helptext.isEmpty())
-        textOrder.append(AccessibilityText(helptext, HelpText));
+        textOrder.append(AccessibilityText(helptext, AccessibilityTextSource::Help));
 }
     
 
@@ -197,21 +197,20 @@ AccessibilityRole AccessibilityMediaControl::roleValue() const
     case MediaPauseButton:
     case MediaShowClosedCaptionsButton:
     case MediaHideClosedCaptionsButton:
-        return ButtonRole;
+        return AccessibilityRole::Button;
 
     case MediaStatusDisplay:
-        return StaticTextRole;
+        return AccessibilityRole::StaticText;
 
     case MediaTimelineContainer:
-        return GroupRole;
+        return AccessibilityRole::Group;
 
     default:
         break;
     }
 
-    return UnknownRole;
+    return AccessibilityRole::Unknown;
 }
-
 
 
 //

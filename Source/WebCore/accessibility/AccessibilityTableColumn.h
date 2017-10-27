@@ -43,7 +43,7 @@ public:
     
     AccessibilityObject* headerObject();
         
-    AccessibilityRole roleValue() const override { return ColumnRole; }
+    AccessibilityRole roleValue() const override { return AccessibilityRole::Column; }
     
     void setColumnIndex(int columnIndex) { m_columnIndex = columnIndex; }
     int columnIndex() const { return m_columnIndex; }    

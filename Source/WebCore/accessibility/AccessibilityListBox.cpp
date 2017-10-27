@@ -96,9 +96,9 @@ void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector
     }
     
     for (const auto& obj : children) {
-        if (obj->roleValue() != ListBoxOptionRole)
+        if (obj->roleValue() != AccessibilityRole::ListBoxOption)
             continue;
-                
+
         downcast<AccessibilityListBoxOption>(*obj).setSelected(true);
     }
 }
@@ -136,7 +136,7 @@ AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTML
     if (!element || element->hasTagName(hrTag))
         return nullptr;
     
-    AccessibilityObject& listBoxObject = *m_renderer->document().axObjectCache()->getOrCreate(ListBoxOptionRole);
+    AccessibilityObject& listBoxObject = *m_renderer->document().axObjectCache()->getOrCreate(AccessibilityRole::ListBoxOption);
     downcast<AccessibilityListBoxOption>(listBoxObject).setHTMLElement(element);
     
     return &listBoxObject;

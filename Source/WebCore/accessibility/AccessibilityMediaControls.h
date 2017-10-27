@@ -78,7 +78,7 @@ public:
     static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaControlsContainer() = default;
 
-    AccessibilityRole roleValue() const override { return ToolbarRole; }
+    AccessibilityRole roleValue() const override { return AccessibilityRole::Toolbar; }
 
     String helpText() const override;
     String accessibilityDescription() const override;
@@ -96,7 +96,7 @@ public:
     static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeDisplay() = default;
 
-    AccessibilityRole roleValue() const override { return ApplicationTimerRole; }
+    AccessibilityRole roleValue() const override { return AccessibilityRole::ApplicationTimer; }
 
     String stringValue() const override;
     String accessibilityDescription() const override;

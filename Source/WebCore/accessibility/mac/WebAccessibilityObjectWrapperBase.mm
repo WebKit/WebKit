@@ -326,7 +326,7 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
 - (NSString *)baseAccessibilityTitle
 {
     // Static text objects should not have a title. Its content is communicated in its AXValue.
-    if (m_object->roleValue() == StaticTextRole)
+    if (m_object->roleValue() == AccessibilityRole::StaticText)
         return [NSString string];
 
     // A file upload button presents a challenge because it has button text and a value, but the
@@ -340,16 +340,16 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
     
     for (const auto& text : textOrder) {
         // If we have alternative text, then we should not expose a title.
-        if (text.textSource == AlternativeText)
+        if (text.textSource == AccessibilityTextSource::Alternative)
             break;
         
         // Once we encounter visible text, or the text from our children that should be used foremost.
-        if (text.textSource == VisibleText || text.textSource == ChildrenText)
+        if (text.textSource == AccessibilityTextSource::Visible || text.textSource == AccessibilityTextSource::Children)
             return text.text;
         
         // If there's an element that labels this object and it's not exposed, then we should use
         // that text as our title.
-        if (text.textSource == LabelByElementText && !m_object->exposesTitleUIElement())
+        if (text.textSource == AccessibilityTextSource::LabelByElement && !m_object->exposesTitleUIElement())
             return text.text;
     }
     
@@ -360,7 +360,7 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
 {
     // Static text objects should not have a description. Its content is communicated in its AXValue.
     // One exception is the media control labels that have a value and a description. Those are set programatically.
-    if (m_object->roleValue() == StaticTextRole && !m_object->isMediaControlLabel())
+    if (m_object->roleValue() == AccessibilityRole::StaticText && !m_object->isMediaControlLabel())
         return [NSString string];
     
     Vector<AccessibilityText> textOrder;
@@ -369,16 +369,16 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
     NSMutableString *returnText = [NSMutableString string];
     bool visibleTextAvailable = false;
     for (const auto& text : textOrder) {
-        if (text.textSource == AlternativeText) {
+        if (text.textSource == AccessibilityTextSource::Alternative) {
             [returnText appendString:text.text];
             break;
         }
         
         switch (text.textSource) {
         // These are sub-components of one element (Attachment) that are re-combined in OSX and iOS.
-        case TitleText:
-        case SubtitleText:
-        case ActionText: {
+        case AccessibilityTextSource::Title:
+        case AccessibilityTextSource::Subtitle:
+        case AccessibilityTextSource::Action: {
             if (!text.text.length())
                 break;
             if ([returnText length])
@@ -386,16 +386,16 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
             [returnText appendString:text.text];
             break;
         }
-        case VisibleText:
-        case ChildrenText:
-        case LabelByElementText:
+        case AccessibilityTextSource::Visible:
+        case AccessibilityTextSource::Children:
+        case AccessibilityTextSource::LabelByElement:
             visibleTextAvailable = true;
             break;
         default:
             break;
         }
         
-        if (text.textSource == TitleTagText && !visibleTextAvailable) {
+        if (text.textSource == AccessibilityTextSource::TitleTag && !visibleTextAvailable) {
             [returnText appendString:text.text];
             break;
         }
@@ -411,23 +411,23 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
     
     bool descriptiveTextAvailable = false;
     for (const auto& text : textOrder) {
-        if (text.textSource == HelpText || text.textSource == SummaryText)
+        if (text.textSource == AccessibilityTextSource::Help || text.textSource == AccessibilityTextSource::Summary)
             return text.text;
         
         // If an element does NOT have other descriptive text the title tag should be used as its descriptive text.
         // But, if those ARE available, then the title tag should be used for help text instead.
         switch (text.textSource) {
-        case AlternativeText:
-        case VisibleText:
-        case ChildrenText:
-        case LabelByElementText:
+        case AccessibilityTextSource::Alternative:
+        case AccessibilityTextSource::Visible:
+        case AccessibilityTextSource::Children:
+        case AccessibilityTextSource::LabelByElement:
             descriptiveTextAvailable = true;
             break;
         default:
             break;
         }
         
-        if (text.textSource == TitleTagText && descriptiveTextAvailable)
+        if (text.textSource == AccessibilityTextSource::TitleTag && descriptiveTextAvailable)
             return text.text;
     }
     
@@ -498,48 +498,48 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 - (NSString *)ariaLandmarkRoleDescription
 {
     switch (m_object->roleValue()) {
-    case LandmarkBannerRole:
+    case AccessibilityRole::LandmarkBanner:
         return AXARIAContentGroupText(@"ARIALandmarkBanner");
-    case LandmarkComplementaryRole:
+    case AccessibilityRole::LandmarkComplementary:
         return AXARIAContentGroupText(@"ARIALandmarkComplementary");
-    case LandmarkContentInfoRole:
+    case AccessibilityRole::LandmarkContentInfo:
         return AXARIAContentGroupText(@"ARIALandmarkContentInfo");
-    case LandmarkMainRole:
+    case AccessibilityRole::LandmarkMain:
         return AXARIAContentGroupText(@"ARIALandmarkMain");
-    case LandmarkNavigationRole:
+    case AccessibilityRole::LandmarkNavigation:
         return AXARIAContentGroupText(@"ARIALandmarkNavigation");
-    case LandmarkDocRegionRole:
-    case LandmarkRegionRole:
+    case AccessibilityRole::LandmarkDocRegion:
+    case AccessibilityRole::LandmarkRegion:
         return AXARIAContentGroupText(@"ARIALandmarkRegion");
-    case LandmarkSearchRole:
+    case AccessibilityRole::LandmarkSearch:
         return AXARIAContentGroupText(@"ARIALandmarkSearch");
-    case ApplicationAlertRole:
+    case AccessibilityRole::ApplicationAlert:
         return AXARIAContentGroupText(@"ARIAApplicationAlert");
-    case ApplicationAlertDialogRole:
+    case AccessibilityRole::ApplicationAlertDialog:
         return AXARIAContentGroupText(@"ARIAApplicationAlertDialog");
-    case ApplicationDialogRole:
+    case AccessibilityRole::ApplicationDialog:
         return AXARIAContentGroupText(@"ARIAApplicationDialog");
-    case ApplicationLogRole:
+    case AccessibilityRole::ApplicationLog:
         return AXARIAContentGroupText(@"ARIAApplicationLog");
-    case ApplicationMarqueeRole:
+    case AccessibilityRole::ApplicationMarquee:
         return AXARIAContentGroupText(@"ARIAApplicationMarquee");
-    case ApplicationStatusRole:
+    case AccessibilityRole::ApplicationStatus:
         return AXARIAContentGroupText(@"ARIAApplicationStatus");
-    case ApplicationTimerRole:
+    case AccessibilityRole::ApplicationTimer:
         return AXARIAContentGroupText(@"ARIAApplicationTimer");
-    case DocumentRole:
+    case AccessibilityRole::Document:
         return AXARIAContentGroupText(@"ARIADocument");
-    case DocumentArticleRole:
+    case AccessibilityRole::DocumentArticle:
         return AXARIAContentGroupText(@"ARIADocumentArticle");
-    case DocumentMathRole:
+    case AccessibilityRole::DocumentMath:
         return AXARIAContentGroupText(@"ARIADocumentMath");
-    case DocumentNoteRole:
+    case AccessibilityRole::DocumentNote:
         return AXARIAContentGroupText(@"ARIADocumentNote");
-    case UserInterfaceTooltipRole:
+    case AccessibilityRole::UserInterfaceTooltip:
         return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
-    case TabPanelRole:
+    case AccessibilityRole::TabPanel:
         return AXARIAContentGroupText(@"ARIATabPanel");
-    case WebApplicationRole:
+    case AccessibilityRole::WebApplication:
         return AXARIAContentGroupText(@"ARIAWebApplication");
     default:
         return nil;
@@ -652,46 +652,46 @@ struct SearchKeyEntry {
 static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
 {
     const SearchKeyEntry searchKeys[] = {
-        { NSAccessibilityAnyTypeSearchKey, AnyTypeSearchKey },
-        { NSAccessibilityArticleSearchKey, ArticleSearchKey },
-        { NSAccessibilityBlockquoteSameLevelSearchKey, BlockquoteSameLevelSearchKey },
-        { NSAccessibilityBlockquoteSearchKey, BlockquoteSearchKey },
-        { NSAccessibilityBoldFontSearchKey, BoldFontSearchKey },
-        { NSAccessibilityButtonSearchKey, ButtonSearchKey },
-        { NSAccessibilityCheckBoxSearchKey, CheckBoxSearchKey },
-        { NSAccessibilityControlSearchKey, ControlSearchKey },
-        { NSAccessibilityDifferentTypeSearchKey, DifferentTypeSearchKey },
-        { NSAccessibilityFontChangeSearchKey, FontChangeSearchKey },
-        { NSAccessibilityFontColorChangeSearchKey, FontColorChangeSearchKey },
-        { NSAccessibilityFrameSearchKey, FrameSearchKey },
-        { NSAccessibilityGraphicSearchKey, GraphicSearchKey },
-        { NSAccessibilityHeadingLevel1SearchKey, HeadingLevel1SearchKey },
-        { NSAccessibilityHeadingLevel2SearchKey, HeadingLevel2SearchKey },
-        { NSAccessibilityHeadingLevel3SearchKey, HeadingLevel3SearchKey },
-        { NSAccessibilityHeadingLevel4SearchKey, HeadingLevel4SearchKey },
-        { NSAccessibilityHeadingLevel5SearchKey, HeadingLevel5SearchKey },
-        { NSAccessibilityHeadingLevel6SearchKey, HeadingLevel6SearchKey },
-        { NSAccessibilityHeadingSameLevelSearchKey, HeadingSameLevelSearchKey },
-        { NSAccessibilityHeadingSearchKey, HeadingSearchKey },
-        { NSAccessibilityHighlightedSearchKey, HighlightedSearchKey },
-        { NSAccessibilityItalicFontSearchKey, ItalicFontSearchKey },
-        { NSAccessibilityLandmarkSearchKey, LandmarkSearchKey },
-        { NSAccessibilityLinkSearchKey, LinkSearchKey },
-        { NSAccessibilityListSearchKey, ListSearchKey },
-        { NSAccessibilityLiveRegionSearchKey, LiveRegionSearchKey },
-        { NSAccessibilityMisspelledWordSearchKey, MisspelledWordSearchKey },
-        { NSAccessibilityOutlineSearchKey, OutlineSearchKey },
-        { NSAccessibilityPlainTextSearchKey, PlainTextSearchKey },
-        { NSAccessibilityRadioGroupSearchKey, RadioGroupSearchKey },
-        { NSAccessibilitySameTypeSearchKey, SameTypeSearchKey },
-        { NSAccessibilityStaticTextSearchKey, StaticTextSearchKey },
-        { NSAccessibilityStyleChangeSearchKey, StyleChangeSearchKey },
-        { NSAccessibilityTableSameLevelSearchKey, TableSameLevelSearchKey },
-        { NSAccessibilityTableSearchKey, TableSearchKey },
-        { NSAccessibilityTextFieldSearchKey, TextFieldSearchKey },
-        { NSAccessibilityUnderlineSearchKey, UnderlineSearchKey },
-        { NSAccessibilityUnvisitedLinkSearchKey, UnvisitedLinkSearchKey },
-        { NSAccessibilityVisitedLinkSearchKey, VisitedLinkSearchKey }
+        { NSAccessibilityAnyTypeSearchKey, AccessibilitySearchKey::AnyType },
+        { NSAccessibilityArticleSearchKey, AccessibilitySearchKey::Article },
+        { NSAccessibilityBlockquoteSameLevelSearchKey, AccessibilitySearchKey::BlockquoteSameLevel },
+        { NSAccessibilityBlockquoteSearchKey, AccessibilitySearchKey::Blockquote },
+        { NSAccessibilityBoldFontSearchKey, AccessibilitySearchKey::BoldFont },
+        { NSAccessibilityButtonSearchKey, AccessibilitySearchKey::Button },
+        { NSAccessibilityCheckBoxSearchKey, AccessibilitySearchKey::CheckBox },
+        { NSAccessibilityControlSearchKey, AccessibilitySearchKey::Control },
+        { NSAccessibilityDifferentTypeSearchKey, AccessibilitySearchKey::DifferentType },
+        { NSAccessibilityFontChangeSearchKey, AccessibilitySearchKey::FontChange },
+        { NSAccessibilityFontColorChangeSearchKey, AccessibilitySearchKey::FontColorChange },
+        { NSAccessibilityFrameSearchKey, AccessibilitySearchKey::Frame },
+        { NSAccessibilityGraphicSearchKey, AccessibilitySearchKey::Graphic },
+        { NSAccessibilityHeadingLevel1SearchKey, AccessibilitySearchKey::HeadingLevel1 },
+        { NSAccessibilityHeadingLevel2SearchKey, AccessibilitySearchKey::HeadingLevel2 },
+        { NSAccessibilityHeadingLevel3SearchKey, AccessibilitySearchKey::HeadingLevel3 },
+        { NSAccessibilityHeadingLevel4SearchKey, AccessibilitySearchKey::HeadingLevel4 },
+        { NSAccessibilityHeadingLevel5SearchKey, AccessibilitySearchKey::HeadingLevel5 },
+        { NSAccessibilityHeadingLevel6SearchKey, AccessibilitySearchKey::HeadingLevel6 },
+        { NSAccessibilityHeadingSameLevelSearchKey, AccessibilitySearchKey::HeadingSameLevel },
+        { NSAccessibilityHeadingSearchKey, AccessibilitySearchKey::Heading },
+        { NSAccessibilityHighlightedSearchKey, AccessibilitySearchKey::Highlighted },
+        { NSAccessibilityItalicFontSearchKey, AccessibilitySearchKey::ItalicFont },
+        { NSAccessibilityLandmarkSearchKey, AccessibilitySearchKey::Landmark },
+        { NSAccessibilityLinkSearchKey, AccessibilitySearchKey::Link },
+        { NSAccessibilityListSearchKey, AccessibilitySearchKey::List },
+        { NSAccessibilityLiveRegionSearchKey, AccessibilitySearchKey::LiveRegion },
+        { NSAccessibilityMisspelledWordSearchKey, AccessibilitySearchKey::MisspelledWord },
+        { NSAccessibilityOutlineSearchKey, AccessibilitySearchKey::Outline },
+        { NSAccessibilityPlainTextSearchKey, AccessibilitySearchKey::PlainText },
+        { NSAccessibilityRadioGroupSearchKey, AccessibilitySearchKey::RadioGroup },
+        { NSAccessibilitySameTypeSearchKey, AccessibilitySearchKey::SameType },
+        { NSAccessibilityStaticTextSearchKey, AccessibilitySearchKey::StaticText },
+        { NSAccessibilityStyleChangeSearchKey, AccessibilitySearchKey::StyleChange },
+        { NSAccessibilityTableSameLevelSearchKey, AccessibilitySearchKey::TableSameLevel },
+        { NSAccessibilityTableSearchKey, AccessibilitySearchKey::Table },
+        { NSAccessibilityTextFieldSearchKey, AccessibilitySearchKey::TextField },
+        { NSAccessibilityUnderlineSearchKey, AccessibilitySearchKey::Underline },
+        { NSAccessibilityUnvisitedLinkSearchKey, AccessibilitySearchKey::UnvisitedLink },
+        { NSAccessibilityVisitedLinkSearchKey, AccessibilitySearchKey::VisitedLink }
     };
     
     AccessibilitySearchKeyMap* searchKeyMap = new AccessibilitySearchKeyMap;
@@ -704,11 +704,11 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
 static AccessibilitySearchKey accessibilitySearchKeyForString(const String& value)
 {
     if (value.isEmpty())
-        return AnyTypeSearchKey;
+        return AccessibilitySearchKey::AnyType;
     
     static const AccessibilitySearchKeyMap* searchKeyMap = createAccessibilitySearchKeyMap();
     AccessibilitySearchKey searchKey = searchKeyMap->get(value);    
-    return searchKey ? searchKey : AnyTypeSearchKey;
+    return static_cast<int>(searchKey) ? searchKey : AccessibilitySearchKey::AnyType;
 }
 
 AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *parameterizedAttribute)
@@ -721,9 +721,9 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParamet
     NSNumber *visibleOnlyParameter = [parameterizedAttribute objectForKey:@"AXVisibleOnly"];
     id searchKeyParameter = [parameterizedAttribute objectForKey:@"AXSearchKey"];
     
-    AccessibilitySearchDirection direction = SearchDirectionNext;
+    AccessibilitySearchDirection direction = AccessibilitySearchDirection::Next;
     if ([directionParameter isKindOfClass:[NSString class]])
-        direction = [directionParameter isEqualToString:@"AXDirectionNext"] ? SearchDirectionNext : SearchDirectionPrevious;
+        direction = [directionParameter isEqualToString:@"AXDirectionNext"] ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous;
     
     bool immediateDescendantsOnly = false;
     if ([immediateDescendantsOnlyParameter isKindOfClass:[NSNumber class]])

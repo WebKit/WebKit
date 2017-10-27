@@ -43,7 +43,7 @@ void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachm
 
     // If an object is being detached NOT because of the AXObjectCache being destroyed,
     // then it's being removed from the accessibility tree and we should emit a signal.
-    if (detachmentType != CacheDestroyed) {
+    if (detachmentType != AccessibilityDetachmentType::CacheDestroyed) {
         if (obj->document()) {
             // Look for the right object to emit the signal from, but using the implementation
             // of atk_object_get_parent from AtkObject class (which uses a cached pointer if set)
@@ -244,7 +244,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         break;
 
     case AXCurrentChanged:
-        atk_object_notify_state_change(axObject, ATK_STATE_ACTIVE, coreObject->ariaCurrentState() != ARIACurrentFalse);
+        atk_object_notify_state_change(axObject, ATK_STATE_ACTIVE, coreObject->ariaCurrentState() != AccessibilityARIACurrentState::False);
         break;
 
     case AXRowExpanded:

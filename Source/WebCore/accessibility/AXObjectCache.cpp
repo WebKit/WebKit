@@ -120,8 +120,8 @@ static const Seconds accessibilityFocusAriaModalNodeNotificationInterval { 50_ms
 
 AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID id) const
 {
-    HashMap<AXID, CachedAXObjectAttributes>::const_iterator it = m_idMapping.find(id);
-    return it != m_idMapping.end() ? it->value.ignored : DefaultBehavior;
+    auto it = m_idMapping.find(id);
+    return it != m_idMapping.end() ? it->value.ignored : AccessibilityObjectInclusion::DefaultBehavior;
 }
 
 void AXComputedObjectAttributeCache::setIgnored(AXID id, AccessibilityObjectInclusion inclusion)
@@ -203,8 +203,8 @@ AXObjectCache::~AXObjectCache()
     m_focusAriaModalNodeTimer.stop();
 
     for (const auto& object : m_objects.values()) {
-        detachWrapper(object.get(), CacheDestroyed);
-        object->detach(CacheDestroyed);
+        detachWrapper(object.get(), AccessibilityDetachmentType::CacheDestroyed);
+        object->detach(AccessibilityDetachmentType::CacheDestroyed);
         removeAXID(object.get());
     }
 }
@@ -647,31 +647,31 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
     
     // will be filled in...
     switch (role) {
-    case ListBoxOptionRole:
+    case AccessibilityRole::ListBoxOption:
         obj = AccessibilityListBoxOption::create();
         break;
-    case ImageMapLinkRole:
+    case AccessibilityRole::ImageMapLink:
         obj = AccessibilityImageMapLink::create();
         break;
-    case ColumnRole:
+    case AccessibilityRole::Column:
         obj = AccessibilityTableColumn::create();
         break;            
-    case TableHeaderContainerRole:
+    case AccessibilityRole::TableHeaderContainer:
         obj = AccessibilityTableHeaderContainer::create();
         break;   
-    case SliderThumbRole:
+    case AccessibilityRole::SliderThumb:
         obj = AccessibilitySliderThumb::create();
         break;
-    case MenuListPopupRole:
+    case AccessibilityRole::MenuListPopup:
         obj = AccessibilityMenuListPopup::create();
         break;
-    case MenuListOptionRole:
+    case AccessibilityRole::MenuListOption:
         obj = AccessibilityMenuListOption::create();
         break;
-    case SpinButtonRole:
+    case AccessibilityRole::SpinButton:
         obj = AccessibilitySpinButton::create();
         break;
-    case SpinButtonPartRole:
+    case AccessibilityRole::SpinButtonPart:
         obj = AccessibilitySpinButtonPart::create();
         break;
     default:
@@ -699,8 +699,8 @@ void AXObjectCache::remove(AXID axID)
     if (!obj)
         return;
     
-    detachWrapper(obj, ElementDestroyed);
-    obj->detach(ElementDestroyed, this);
+    detachWrapper(obj, AccessibilityDetachmentType::ElementDestroyed);
+    obj->detach(AccessibilityDetachmentType::ElementDestroyed, this);
     removeAXID(obj);
     
     // finally remove the object
@@ -920,7 +920,7 @@ void AXObjectCache::notificationPostTimerFired()
         // the axChildren when the menu is marked as opening.
         if (notification == AXMenuOpened) {
             obj->updateChildrenIfNecessary();
-            if (obj->roleValue() != MenuRole)
+            if (obj->roleValue() != AccessibilityRole::Menu)
                 continue;
         }
         

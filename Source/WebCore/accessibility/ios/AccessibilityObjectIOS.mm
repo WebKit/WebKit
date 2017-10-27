@@ -66,7 +66,7 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     
 AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
-    return DefaultBehavior;
+    return AccessibilityObjectInclusion::DefaultBehavior;
 }
 
 bool AccessibilityObject::hasTouchEventListener() const
@@ -81,7 +81,7 @@ bool AccessibilityObject::hasTouchEventListener() const
 bool AccessibilityObject::isInputTypePopupButton() const
 {
     if (is<HTMLInputElement>(node()))
-        return roleValue() == PopUpButtonRole;
+        return roleValue() == AccessibilityRole::PopUpButton;
     return false;
 }
 

@@ -54,7 +54,7 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
 {
     // Default to horizontal in the unknown case.
     if (!m_renderer)
-        return AccessibilityOrientationHorizontal;
+        return AccessibilityOrientation::Horizontal;
     
     const RenderStyle& style = m_renderer->style();
 
@@ -64,15 +64,15 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
     case SliderHorizontalPart:
     case MediaSliderPart:
     case MediaFullScreenVolumeSliderPart:
-        return AccessibilityOrientationHorizontal;
+        return AccessibilityOrientation::Horizontal;
     
     case SliderThumbVerticalPart: 
     case SliderVerticalPart:
     case MediaVolumeSliderPart:
-        return AccessibilityOrientationVertical;
+        return AccessibilityOrientation::Vertical;
         
     default:
-        return AccessibilityOrientationHorizontal;
+        return AccessibilityOrientation::Horizontal;
     }
 }
     
@@ -84,7 +84,7 @@ void AccessibilitySlider::addChildren()
 
     AXObjectCache* cache = m_renderer->document().axObjectCache();
 
-    auto& thumb = downcast<AccessibilitySliderThumb>(*cache->getOrCreate(SliderThumbRole));
+    auto& thumb = downcast<AccessibilitySliderThumb>(*cache->getOrCreate(AccessibilityRole::SliderThumb));
     thumb.setParent(this);
 
     // Before actually adding the value indicator to the hierarchy,

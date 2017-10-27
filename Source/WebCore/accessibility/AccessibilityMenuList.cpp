@@ -65,7 +65,7 @@ void AccessibilityMenuList::addChildren()
     if (!cache)
         return;
     
-    AccessibilityObject* list = cache->getOrCreate(MenuListPopupRole);
+    AccessibilityObject* list = cache->getOrCreate(AccessibilityRole::MenuListPopup);
     if (!list)
         return;
 

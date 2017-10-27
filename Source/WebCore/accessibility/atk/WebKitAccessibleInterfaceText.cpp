@@ -447,7 +447,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
     AccessibilityObject* coreObject = core(text);
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (coreObject->roleValue() == ColorWellRole) {
+    if (coreObject->roleValue() == AccessibilityRole::ColorWell) {
         int r, g, b;
         coreObject->colorValue(r, g, b);
         return g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.);
@@ -465,7 +465,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
 
     // Prefix a item number/bullet if needed
     int actualEndOffset = endOffset == -1 ? ret.length() : endOffset;
-    if (coreObject->roleValue() == ListItemRole) {
+    if (coreObject->roleValue() == AccessibilityRole::ListItem) {
         RenderObject* objRenderer = coreObject->renderer();
         if (is<RenderListItem>(objRenderer)) {
             String markerText = downcast<RenderListItem>(*objRenderer).markerTextWithSuffix();

@@ -82,32 +82,32 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
 AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
     if (isMenuListPopup() || isMenuListOption())
-        return IgnoreObject;
+        return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (roleValue() == CaptionRole)
-        return IgnoreObject;
+    if (roleValue() == AccessibilityRole::Caption)
+        return AccessibilityObjectInclusion::IgnoreObject;
     
-    if (roleValue() == MarkRole)
-        return IncludeObject;
+    if (roleValue() == AccessibilityRole::Mark)
+        return AccessibilityObjectInclusion::IncludeObject;
 
     // Never expose an unknown object on the Mac. Clients of the AX API will not know what to do with it.
     // Special case is when the unknown object is actually an attachment.
-    if (roleValue() == UnknownRole && !isAttachment())
-        return IgnoreObject;
+    if (roleValue() == AccessibilityRole::Unknown && !isAttachment())
+        return AccessibilityObjectInclusion::IgnoreObject;
     
-    if (roleValue() == InlineRole && !isStyleFormatGroup())
-        return IgnoreObject;
+    if (roleValue() == AccessibilityRole::Inline && !isStyleFormatGroup())
+        return AccessibilityObjectInclusion::IgnoreObject;
 
     if (RenderObject* renderer = this->renderer()) {
         // The legend element is ignored if it lives inside of a fieldset element that uses it to generate alternative text.
         if (renderer->isLegend()) {
             Element* element = this->element();
             if (element && ancestorsOfType<HTMLFieldSetElement>(*element).first())
-                return IgnoreObject;
+                return AccessibilityObjectInclusion::IgnoreObject;
         }
     }
     
-    return DefaultBehavior;
+    return AccessibilityObjectInclusion::DefaultBehavior;
 }
     
 bool AccessibilityObject::caretBrowsingEnabled() const

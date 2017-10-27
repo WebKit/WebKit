@@ -87,7 +87,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObject()
     
     if (parentTable.isAriaTable()) {
         for (const auto& cell : children()) {
-            if (cell->ariaRoleAttribute() == ColumnHeaderRole)
+            if (cell->ariaRoleAttribute() == AccessibilityRole::ColumnHeader)
                 return cell.get();
         }
         

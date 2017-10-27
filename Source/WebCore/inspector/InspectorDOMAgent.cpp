@@ -1728,10 +1728,10 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
 
             supportsChecked = axObject->supportsChecked();
             if (supportsChecked) {
-                int checkValue = axObject->checkboxOrRadioValue(); // Element using aria-checked.
-                if (checkValue == 1)
+                AccessibilityButtonState checkValue = axObject->checkboxOrRadioValue(); // Element using aria-checked.
+                if (checkValue == AccessibilityButtonState::On)
                     checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
-                else if (checkValue == 2)
+                else if (checkValue == AccessibilityButtonState::Mixed)
                     checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::Mixed;
                 else if (axObject->isChecked()) // Native checkbox.
                     checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
@@ -1748,26 +1748,25 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             }
             
             switch (axObject->ariaCurrentState()) {
-            case ARIACurrentFalse:
+            case AccessibilityARIACurrentState::False:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
                 break;
-            case ARIACurrentPage:
+            case AccessibilityARIACurrentState::Page:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Page;
                 break;
-            case ARIACurrentStep:
+            case AccessibilityARIACurrentState::Step:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Step;
                 break;
-            case ARIACurrentLocation:
+            case AccessibilityARIACurrentState::Location:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Location;
                 break;
-            case ARIACurrentDate:
+            case AccessibilityARIACurrentState::Date:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Date;
                 break;
-            case ARIACurrentTime:
+            case AccessibilityARIACurrentState::Time:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Time;
                 break;
-            default:
-            case ARIACurrentTrue:
+            case AccessibilityARIACurrentState::True:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::True;
                 break;
             }

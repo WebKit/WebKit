@@ -66,13 +66,13 @@ AccessibilityObject* AccessibilityImageMapLink::parentObject() const
 AccessibilityRole AccessibilityImageMapLink::roleValue() const
 {
     if (!m_areaElement)
-        return WebCoreLinkRole;
+        return AccessibilityRole::WebCoreLink;
     
     const AtomicString& ariaRole = getAttribute(roleAttr);
     if (!ariaRole.isEmpty())
         return AccessibilityObject::ariaRoleToWebCoreRole(ariaRole);
 
-    return WebCoreLinkRole;
+    return AccessibilityRole::WebCoreLink;
 }
     
 Element* AccessibilityImageMapLink::actionElement() const
@@ -97,15 +97,15 @@ void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& tex
 {
     String description = accessibilityDescription();
     if (!description.isEmpty())
-        textOrder.append(AccessibilityText(description, AlternativeText));
+        textOrder.append(AccessibilityText(description, AccessibilityTextSource::Alternative));
 
     const AtomicString& titleText = getAttribute(titleAttr);
     if (!titleText.isEmpty())
-        textOrder.append(AccessibilityText(titleText, TitleTagText));
+        textOrder.append(AccessibilityText(titleText, AccessibilityTextSource::TitleTag));
 
     const AtomicString& summary = getAttribute(summaryAttr);
     if (!summary.isEmpty())
-        textOrder.append(AccessibilityText(summary, SummaryText));
+        textOrder.append(AccessibilityText(summary, AccessibilityTextSource::Summary));
 }
     
 String AccessibilityImageMapLink::accessibilityDescription() const

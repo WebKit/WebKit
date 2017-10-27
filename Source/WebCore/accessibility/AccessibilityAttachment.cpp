@@ -95,13 +95,13 @@ void AccessibilityAttachment::accessibilityText(Vector<AccessibilityText>& textO
     auto& action = getAttribute(actionAttr);
     
     if (action.length())
-        textOrder.append(AccessibilityText(action, ActionText));
+        textOrder.append(AccessibilityText(action, AccessibilityTextSource::Action));
 
     if (title.length())
-        textOrder.append(AccessibilityText(title, TitleText));
+        textOrder.append(AccessibilityText(title, AccessibilityTextSource::Title));
 
     if (subtitle.length())
-        textOrder.append(AccessibilityText(subtitle, SubtitleText));
+        textOrder.append(AccessibilityText(subtitle, AccessibilityTextSource::Subtitle));
 }
 
 } // namespace WebCore

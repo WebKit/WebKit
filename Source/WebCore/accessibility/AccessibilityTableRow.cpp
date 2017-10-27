@@ -59,10 +59,10 @@ AccessibilityRole AccessibilityTableRow::determineAccessibilityRole()
     if (!isTableRow())
         return AccessibilityRenderObject::determineAccessibilityRole();
 
-    if ((m_ariaRole = determineAriaRoleAttribute()) != UnknownRole)
+    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
         return m_ariaRole;
 
-    return RowRole;
+    return AccessibilityRole::Row;
 }
 
 bool AccessibilityTableRow::isTableRow() const
@@ -80,9 +80,9 @@ AccessibilityObject* AccessibilityTableRow::observableObject() const
 bool AccessibilityTableRow::computeAccessibilityIsIgnored() const
 {    
     AccessibilityObjectInclusion decision = defaultObjectInclusion();
-    if (decision == IncludeObject)
+    if (decision == AccessibilityObjectInclusion::IncludeObject)
         return false;
-    if (decision == IgnoreObject)
+    if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
     
     if (!isTableRow())
