@@ -1,3 +1,15 @@
+2017-10-19  Antti Koivisto  <antti@apple.com>
+
+        Overlapping text on all CSS fonts specs
+        https://bugs.webkit.org/show_bug.cgi?id=177585
+        <rdar://problem/34704078>
+
+        Reviewed by Daniel Bates.
+
+        * fast/html/details-line-height-overlap-expected.html: Added.
+        * fast/html/details-line-height-overlap.html: Added.
+        * platform/ios/fast/shadow-dom/copy-shadow-tree-expected.txt:
+
 2017-08-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Some event handlers not working.

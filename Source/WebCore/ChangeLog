@@ -1,3 +1,32 @@
+2017-10-19  Antti Koivisto  <antti@apple.com>
+
+        Overlapping text on all CSS fonts specs
+        https://bugs.webkit.org/show_bug.cgi?id=177585
+        <rdar://problem/34704078>
+
+        Reviewed by Daniel Bates.
+
+        We were resetting StyleResolver::overrideDocumentElementStyle too early when resolving slot elements.
+        This resulted in 'rem' units being miscomputed.
+
+        Reduction by Zalan.
+
+        Test: fast/html/details-line-height-overlap.html
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Scope::Scope):
+        (WebCore::Style::TreeResolver::Scope::~Scope):
+
+            Only reset overrideDocumentElementStyle when destroying the scope.
+
+        (WebCore::Style::TreeResolver::pushScope):
+        (WebCore::Style::TreeResolver::pushEnclosingScope):
+        (WebCore::Style::TreeResolver::popScope):
+
+            A scope can show up multiple times in scope stack.
+
+        * style/StyleTreeResolver.h:
+
 2017-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Stable] Crash on WebCore::SharedBuffer::data() on 2.18.1

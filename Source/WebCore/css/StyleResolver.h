@@ -155,6 +155,7 @@ public:
 
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return m_mediaQueryEvaluator; }
 
+    RenderStyle* overrideDocumentElementStyle() const { return m_overrideDocumentElementStyle; }
     void setOverrideDocumentElementStyle(RenderStyle* style) { m_overrideDocumentElementStyle = style; }
 
     void addCurrentSVGFontFaceRules();
