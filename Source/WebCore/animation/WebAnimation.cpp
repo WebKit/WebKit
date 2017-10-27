@@ -61,7 +61,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
 std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (m_startTime)
-        return m_startTime->secondsSinceEpoch().value();
+        return m_startTime->value();
     return std::nullopt;
 }
 
@@ -70,7 +70,7 @@ void WebAnimation::setBindingsStartTime(std::optional<double> startTime)
     if (startTime == std::nullopt)
         m_startTime = std::nullopt;
     else
-        m_startTime = MonotonicTime::fromRawSeconds(startTime.value());
+        m_startTime = Seconds(startTime.value());
 }
 
 String WebAnimation::description()

@@ -26,11 +26,11 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
@@ -47,8 +47,8 @@ public:
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     std::optional<double> bindingsStartTime() const;
     void setBindingsStartTime(std::optional<double>);
-    std::optional<MonotonicTime> startTime() const { return m_startTime; }
-    void setStartTime(MonotonicTime& startTime) { m_startTime = startTime; }
+    std::optional<Seconds> startTime() const { return m_startTime; }
+    void setStartTime(Seconds startTime) { m_startTime = startTime; }
 
     String description();
 
@@ -56,7 +56,7 @@ private:
     WebAnimation(AnimationTimeline*);
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
-    std::optional<MonotonicTime> m_startTime;
+    std::optional<Seconds> m_startTime;
 };
 
 } // namespace WebCore
