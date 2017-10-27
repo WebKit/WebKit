@@ -271,7 +271,7 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     if (std::isfinite(duration) && duration != MediaPlayer::invalidTime())
         info.get()[MPMediaItemPropertyPlaybackDuration] = @(duration);
     info.get()[MPNowPlayingInfoPropertyPlaybackRate] = @(rate);
-    info.get()[kMRMediaRemoteNowPlayingInfoUniqueIdentifier] = @(title.existingHash());
+    info.get()[kMRMediaRemoteNowPlayingInfoUniqueIdentifier] = @(title.impl() ? title.impl()->hash() : 0);
 
     if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime())
         info.get()[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(currentTime);

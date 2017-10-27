@@ -178,7 +178,7 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
     auto cfRate = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &rate));
     CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoPlaybackRate, cfRate.get());
 
-    m_lastUpdatedNowPlayingInfoUniqueIdentifier = title.existingHash();
+    m_lastUpdatedNowPlayingInfoUniqueIdentifier = title.impl() ? title.impl()->hash() : 0;
     auto cfIdentifier = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberLongLongType, &m_lastUpdatedNowPlayingInfoUniqueIdentifier));
     CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoUniqueIdentifier, cfIdentifier.get());
 
