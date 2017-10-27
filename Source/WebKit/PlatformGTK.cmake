@@ -1110,7 +1110,7 @@ else ()
     set(PREV_LOADER_LIBRARY_PATH "$ENV{LD_LIBRARY_PATH}")
 endif ()
 
-string(COMPARE EQUAL "${PREV_LOADER_LIBRARY_PATH}" "" ld_library_path_not_exist)
+string(COMPARE EQUAL "${PREV_LOADER_LIBRARY_PATH}" "" ld_library_path_does_not_exist)
 if (ld_library_path_does_not_exist)
     set(INTROSPECTION_ADDITIONAL_LIBRARY_PATH
         "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
