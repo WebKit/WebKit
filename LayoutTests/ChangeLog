@@ -1,3 +1,12 @@
+2017-10-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip failing service worker tests that were missed in r224066.
+        https://trac.webkit.org/changeset/224066/webkit
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-10-27  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer][MSE] Trim space between codecs
