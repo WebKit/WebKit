@@ -837,26 +837,26 @@ const static HashSet<AtomicString>& codecSet()
     return codecTypes;
 }
 
-bool MediaPlayerPrivateGStreamerMSE::supportsCodecs(const String& codecs)
+bool MediaPlayerPrivateGStreamerMSE::supportsCodec(String codec)
 {
-    Vector<String> codecEntries;
-    codecs.split(',', false, codecEntries);
+    // If the codec is named like a mimetype (eg: video/avc) remove the "video/" part.
+    size_t slashIndex = codec.find('/');
+    if (slashIndex != WTF::notFound)
+        codec = codec.substring(slashIndex+1);
 
-    for (String codec : codecEntries) {
-        bool isCodecSupported = false;
+    for (const auto& pattern : codecSet()) {
+        bool codecMatchesPattern = !fnmatch(pattern.string().utf8().data(), codec.utf8().data(), 0);
+        if (codecMatchesPattern)
+            return true;
+    }
 
-        // If the codec is named like a mimetype (eg: video/avc) remove the "video/" part.
-        size_t slashIndex = codec.find('/');
-        if (slashIndex != WTF::notFound)
-            codec = codec.substring(slashIndex+1);
+    return false;
+}
 
-        const char* codecData = codec.utf8().data();
-        for (const auto& pattern : codecSet()) {
-            isCodecSupported = !fnmatch(pattern.string().utf8().data(), codecData, 0);
-            if (isCodecSupported)
-                break;
-        }
-        if (!isCodecSupported)
+bool MediaPlayerPrivateGStreamerMSE::supportsAllCodecs(const Vector<String>& codecs)
+{
+    for (String codec : codecs) {
+        if (!supportsCodec(codec))
             return false;
     }
 
@@ -879,11 +879,11 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
 
     // Spec says we should not return "probably" if the codecs string is empty.
     if (mimeTypeCache().contains(containerType)) {
-        String codecs = parameters.type.parameter(ContentType::codecsParameter());
+        Vector<String> codecs = parameters.type.codecs();
         if (codecs.isEmpty())
             result = MediaPlayer::MayBeSupported;
         else
-            result = supportsCodecs(codecs) ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported;
+            result = supportsAllCodecs(codecs) ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported;
     }
 
     return extendedSupportsType(parameters, result);

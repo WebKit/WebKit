@@ -7,7 +7,7 @@ FAIL Test invalid MIME format "video/webm;codecs" assert_equals: supported expec
 FAIL Test invalid MIME format "video/webm;codecs=" assert_equals: supported expected false but got true
 PASS Test invalid MIME format "video/webm;codecs="" 
 FAIL Test invalid MIME format "video/webm;codecs=""" assert_equals: supported expected false but got true
-FAIL Test invalid MIME format "video/webm;codecs=","" assert_equals: supported expected false but got true
+PASS Test invalid MIME format "video/webm;codecs=","" 
 PASS Test invalid MIME format "" 
 PASS Test invalid MIME format "null" 
 PASS Test invalid MSE MIME media type "xxx" 
@@ -27,7 +27,7 @@ FAIL Test invalid codec ID "audio/mp4;codecs="mp4a.67.3"" assert_equals: support
 PASS Test valid WebM type "video/webm;codecs="vp8"" 
 PASS Test valid WebM type "video/webm;codecs="vorbis"" 
 PASS Test valid WebM type "video/webm;codecs="vp8,vorbis"" 
-FAIL Test valid WebM type "video/webm;codecs="vorbis, vp8"" assert_equals: supported expected true but got false
+PASS Test valid WebM type "video/webm;codecs="vorbis, vp8"" 
 PASS Test valid WebM type "audio/webm;codecs="vorbis"" 
 PASS Test valid WebM type "AUDIO/WEBM;CODECS="vorbis"" 
 PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e"" 
@@ -37,6 +37,6 @@ PASS Test valid MP4 type "audio/mp4;codecs="mp4a.40.5""
 PASS Test valid MP4 type "audio/mp4;codecs="mp4a.67"" 
 PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2"" 
 PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.2"" 
-FAIL Test valid MP4 type "video/mp4;codecs="mp4a.40.2 , avc1.4d001e "" assert_equals: supported expected true but got false
+PASS Test valid MP4 type "video/mp4;codecs="mp4a.40.2 , avc1.4d001e "" 
 PASS Test valid MP4 type "video/mp4;codecs="avc1.4d001e,mp4a.40.5"" 
 

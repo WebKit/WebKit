@@ -1,3 +1,14 @@
+2017-10-27  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MSE] Trim space between codecs
+        https://bugs.webkit.org/show_bug.cgi?id=178160
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update expected test output.
+
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported-expected.txt:
+
 2017-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip some copy & paste tests I wrote on GTK since they're are known to timeout/slow.
