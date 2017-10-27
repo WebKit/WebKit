@@ -1,3 +1,17 @@
+2017-10-26  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r222601): We fail to properly backtrack into a sub pattern of a parenthesis with non-zero minimum
+        https://bugs.webkit.org/show_bug.cgi?id=178890
+
+        Reviewed by Keith Miller.
+
+        We need to let a contained subpattern backtrack before declaring that the containing
+        parenthesis doesn't match.  If the subpattern fails to match backtracking, then we
+        can check to see if we trying to backtrack below the minimum match count.
+        
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+
 2017-10-26  Mark Lam  <mark.lam@apple.com>
 
         JSRopeString::RopeBuilder::append() should check for overflows.

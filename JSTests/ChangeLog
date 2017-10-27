@@ -1,3 +1,14 @@
+2017-10-26  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r222601): We fail to properly backtrack into a sub pattern of a parenthesis with non-zero minimum
+        https://bugs.webkit.org/show_bug.cgi?id=178890
+
+        Reviewed by Keith Miller.
+
+        New regression test.
+
+        * stress/regress-178890.js: Added.
+
 2017-10-26  Mark Lam  <mark.lam@apple.com>
 
         JSRopeString::RopeBuilder::append() should check for overflows.

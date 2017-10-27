@@ -1110,7 +1110,7 @@ public:
         }
 
         case QuantifierGreedy: {
-            if (backTrack->matchAmount == term.atom.quantityMinCount)
+            if (!backTrack->matchAmount)
                 return JSRegExpNoMatch;
 
             ParenthesesDisjunctionContext* context = backTrack->lastContext;
@@ -1136,7 +1136,7 @@ public:
                 popParenthesesDisjunctionContext(backTrack);
                 freeParenthesesDisjunctionContext(context);
 
-                if (result != JSRegExpNoMatch)
+                if (result != JSRegExpNoMatch || backTrack->matchAmount < term.atom.quantityMinCount)
                     return result;
             }
 
