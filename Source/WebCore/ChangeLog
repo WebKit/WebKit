@@ -1,3 +1,27 @@
+2017-10-23  Zalan Bujtas  <zalan@apple.com>
+
+        Call FrameView::scheduleSelectionUpdate when selection needs repainting after layout instead of setting the RenderView dirty.
+        https://bugs.webkit.org/show_bug.cgi?id=178651
+        <rdar://problem/35117448>
+
+        Reviewed by Antti Koivisto.
+
+        Calling setNeedsLayout() on the RenderView to trigger selection update is problematic in 2 different ways:
+        1. marking the root renderer dirty does not trigger layout (this is very specific to the root,
+        other renderers do trigger layout). It means that it works as long as someone else schedules a layout.
+        2. when a subtree layout is already scheduled and we mark the root renderer dirty, the root gets stuck with
+        the dirty flag (since the entry point for the subsequent layout is a descendant of the root and not the root itself).
+
+        This patch addresses these issues by scheduling/converting subtree layout when needed.  
+
+        Covered by fast/dynamic/remove-invisible-node-inside-selection.html/remove-node-inside-selection.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::respondToNodeModification):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleSelectionUpdate):
+        * page/FrameView.h:
+
 2017-10-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         When destroying a resource, register "only" the clients who are losing their resource as having pending resources

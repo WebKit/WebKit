@@ -508,7 +508,7 @@ void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, boo
 
             // Trigger a selection update so the selection will be set again.
             m_pendingSelectionUpdate = true;
-            renderView->setNeedsLayout();
+            renderView->frameView().scheduleSelectionUpdate();
         }
     }
 

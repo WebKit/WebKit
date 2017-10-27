@@ -3192,6 +3192,16 @@ void FrameView::unscheduleRelayout()
     m_delayedLayout = false;
 }
 
+void FrameView::scheduleSelectionUpdate()
+{
+    if (needsLayout())
+        return;
+    // FIXME: We should not need to go through the layout process since selection update does not change dimension/geometry.
+    // However we can't tell at this point if the tree is stable yet, so let's just schedule a root only layout for now.
+    setNeedsLayout();
+    scheduleRelayout();
+}
+
 void FrameView::serviceScriptedAnimations()
 {
     for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext()) {
