@@ -112,7 +112,7 @@ class AutoinstallImportHook(object):
             self._install_mozprocess()
 
     def _install_mechanize(self):
-        self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
+        self._install("https://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
                              "mechanize-0.2.5/mechanize")
 
     def _install_keyring(self):
@@ -120,7 +120,7 @@ class AutoinstallImportHook(object):
                              "keyring-7.3.1/keyring")
 
     def _install_pep8(self):
-        self._install("http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
+        self._install("https://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
                              "pep8-0.5.0/pep8.py")
 
     def _install_mozlog(self):
@@ -142,9 +142,9 @@ class AutoinstallImportHook(object):
             files_to_remove = []
             if sys.platform == 'win32':
                 files_to_remove = ['test/data/write_protected_file.txt']
-            installer.install("http://pypi.python.org/packages/source/l/logilab-common/logilab-common-0.58.1.tar.gz#md5=77298ab2d8bb8b4af9219791e7cee8ce", url_subpath="logilab-common-0.58.1", target_name="logilab/common", files_to_remove=files_to_remove)
-            installer.install("http://pypi.python.org/packages/source/l/logilab-astng/logilab-astng-0.24.1.tar.gz#md5=ddaf66e4d85714d9c47a46d4bed406de", url_subpath="logilab-astng-0.24.1", target_name="logilab/astng")
-            installer.install('http://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', url_subpath="pylint-0.25.1", target_name="pylint")
+            installer.install("https://pypi.python.org/packages/source/l/logilab-common/logilab-common-0.58.1.tar.gz#md5=77298ab2d8bb8b4af9219791e7cee8ce", url_subpath="logilab-common-0.58.1", target_name="logilab/common", files_to_remove=files_to_remove)
+            installer.install("https://pypi.python.org/packages/source/l/logilab-astng/logilab-astng-0.24.1.tar.gz#md5=ddaf66e4d85714d9c47a46d4bed406de", url_subpath="logilab-astng-0.24.1", target_name="logilab/astng")
+            installer.install('https://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', url_subpath="pylint-0.25.1", target_name="pylint")
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
     # and should ideally match the version of BuildBot used at build.webkit.org.
@@ -156,23 +156,23 @@ class AutoinstallImportHook(object):
         # without including other modules as a side effect.
         jinja_dir = self._fs.join(_AUTOINSTALLED_DIR, "jinja2")
         installer = AutoInstaller(append_to_search_path=True, target_dir=jinja_dir)
-        installer.install(url="http://pypi.python.org/packages/source/J/Jinja2/Jinja2-2.6.tar.gz#md5=1c49a8825c993bfdcf55bb36897d28a2",
+        installer.install(url="https://pypi.python.org/packages/source/J/Jinja2/Jinja2-2.6.tar.gz#md5=1c49a8825c993bfdcf55bb36897d28a2",
                                                 url_subpath="Jinja2-2.6/jinja2")
 
         SQLAlchemy_dir = self._fs.join(_AUTOINSTALLED_DIR, "sqlalchemy")
         installer = AutoInstaller(append_to_search_path=True, target_dir=SQLAlchemy_dir)
-        installer.install(url="http://pypi.python.org/packages/source/S/SQLAlchemy/SQLAlchemy-0.7.7.tar.gz#md5=ddf6df7e014cea318fa981364f3f93b9",
+        installer.install(url="https://pypi.python.org/packages/source/S/SQLAlchemy/SQLAlchemy-0.7.7.tar.gz#md5=ddf6df7e014cea318fa981364f3f93b9",
                                                  url_subpath="SQLAlchemy-0.7.7/lib/sqlalchemy")
 
         twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted")
         installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
         installer.install(url="https://pypi.python.org/packages/source/T/Twisted/Twisted-12.1.0.tar.bz2#md5=f396f1d6f5321e869c2f89b2196a9eb5", url_subpath="Twisted-12.1.0/twisted")
 
-        self._install("http://pypi.python.org/packages/source/b/buildbot/buildbot-0.8.6p1.tar.gz#md5=b6727d2810c692062c657492bcbeac6a", "buildbot-0.8.6p1/buildbot")
+        self._install("https://pypi.python.org/packages/source/b/buildbot/buildbot-0.8.6p1.tar.gz#md5=b6727d2810c692062c657492bcbeac6a", "buildbot-0.8.6p1/buildbot")
 
     def _install_coverage(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install(url="http://pypi.python.org/packages/source/c/coverage/coverage-3.5.1.tar.gz#md5=410d4c8155a4dab222f2bc51212d4a24", url_subpath="coverage-3.5.1/coverage")
+        self._install(url="https://pypi.python.org/packages/source/c/coverage/coverage-3.5.1.tar.gz#md5=410d4c8155a4dab222f2bc51212d4a24", url_subpath="coverage-3.5.1/coverage")
 
     def _install_twisted_15_5_0(self):
         twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted_15_5_0")
