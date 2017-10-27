@@ -55,6 +55,7 @@ public:
     WEBCORE_EXPORT int offsetX();
     WEBCORE_EXPORT int offsetY();
     bool isSimulated() const { return m_isSimulated; }
+    void setIsSimulated(bool value) { m_isSimulated = value; }
     int pageX() const final;
     int pageY() const final;
     WEBCORE_EXPORT FloatPoint locationInRootViewCoordinates() const;

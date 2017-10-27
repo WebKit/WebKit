@@ -89,6 +89,8 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_type = eventTypeArg;
     m_canBubble = canBubbleArg;
     m_cancelable = cancelableArg;
+
+    m_underlyingEvent = nullptr;
 }
 
 bool Event::composed() const

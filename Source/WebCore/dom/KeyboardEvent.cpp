@@ -157,6 +157,7 @@ void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, 
 
     initUIEvent(type, canBubble, cancelable, view, 0);
 
+    m_keyEvent = nullptr;
     m_keyIdentifier = keyIdentifier;
     m_location = location;
     m_ctrlKey = ctrlKey;
@@ -164,6 +165,11 @@ void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, 
     m_altKey = altKey;
     m_metaKey = metaKey;
     m_altGraphKey = altGraphKey;
+
+#if PLATFORM(COCOA)
+    m_handledByInputMethod = false;
+    m_keypressCommands = { };
+#endif
 }
 
 bool KeyboardEvent::getModifierState(const String& keyIdentifier) const

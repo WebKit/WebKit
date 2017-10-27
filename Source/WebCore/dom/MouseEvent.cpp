@@ -146,8 +146,8 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
 
     initCoordinates(IntPoint(clientX, clientY));
 
-    // FIXME: m_isSimulated is not set to false here.
-    // FIXME: m_dataTransfer is not set to 0 here.
+    setIsSimulated(false);
+    m_dataTransfer = nullptr;
 }
 
 // FIXME: We need this quirk because iAd Producer is calling this function with a relatedTarget that is not an EventTarget (rdar://problem/30640101).

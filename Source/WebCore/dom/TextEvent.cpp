@@ -112,7 +112,15 @@ void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool can
 
     initUIEvent(type, canBubble, cancelable, view, 0);
 
+    m_inputType = TextEventInputKeyboard;
+
     m_data = data;
+
+    m_pastingFragment = nullptr;
+    m_shouldSmartReplace = false;
+    m_shouldMatchStyle = false;
+    m_mailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote;
+    m_dictationAlternatives = { };
 }
 
 EventInterface TextEvent::eventInterface() const

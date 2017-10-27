@@ -69,13 +69,7 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow* view, i
     if (isBeingDispatched())
         return;
     
-    initUIEvent(eventNames().wheelEvent, true, true, view, 0);
-    
-    m_screenLocation = { screenX, screenY };
-    m_ctrlKey = ctrlKey;
-    m_altKey = altKey;
-    m_shiftKey = shiftKey;
-    m_metaKey = metaKey;
+    initMouseEvent(eventNames().wheelEvent, true, true, view, 0, screenX, screenY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, 0, nullptr);
 
     // Normalize to 120 multiple for compatibility with IE.
     m_wheelDelta = { rawDeltaX * TickMultiplier, rawDeltaY * TickMultiplier };
@@ -84,7 +78,8 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow* view, i
 
     m_deltaMode = DOM_DELTA_PIXEL;
 
-    initCoordinates({ pageX, pageY });
+    m_initializedWithPlatformWheelEvent = false;
+    m_wheelEvent = { };
 }
 
 EventInterface WheelEvent::eventInterface() const

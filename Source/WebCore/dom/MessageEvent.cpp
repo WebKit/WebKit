@@ -144,6 +144,9 @@ void MessageEvent::initMessageEvent(ExecState& state, const AtomicString& type, 
     m_dataAsScriptValue = Deprecated::ScriptValue(state.vm(), data);
     m_dataAsSerializedScriptValue = nullptr;
     m_triedToSerialize = false;
+    m_dataAsString = { };
+    m_dataAsBlob = nullptr;
+    m_dataAsArrayBuffer = nullptr;
     m_origin = origin;
     m_lastEventId = lastEventId;
     m_source = WTFMove(source);
