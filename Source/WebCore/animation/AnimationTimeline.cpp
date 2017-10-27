@@ -52,6 +52,18 @@ void AnimationTimeline::removeAnimation(Ref<WebAnimation>&& animation)
     m_animations.remove(WTFMove(animation));
 }
 
+std::optional<double> AnimationTimeline::bindingsCurrentTime() const
+{
+    if (!m_currentTime)
+        return std::nullopt;
+    return m_currentTime->value();
+}
+
+void AnimationTimeline::setCurrentTime(Seconds currentTime)
+{
+    m_currentTime = currentTime;
+}
+
 String AnimationTimeline::description()
 {
     TextStream stream;

@@ -4261,6 +4261,11 @@ String Internals::timelineDescription(AnimationTimeline& timeline)
     return timeline.description();
 }
 
+void Internals::setTimelineCurrentTime(AnimationTimeline& timeline, double currentTime)
+{
+    timeline.setCurrentTime(Seconds(currentTime));
+}
+
 #if ENABLE(APPLE_PAY)
 MockPaymentCoordinator& Internals::mockPaymentCoordinator() const
 {

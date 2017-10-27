@@ -1,3 +1,16 @@
+2017-10-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose the currentTime property on AnimationTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=178928
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks we can read the document's timeline currentTime
+        property and set it via the internals method.
+
+        * webanimations/timeline-current-time-expected.txt: Added.
+        * webanimations/timeline-current-time.html: Added.
+
 2017-10-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip two tests that are flaky crashes.

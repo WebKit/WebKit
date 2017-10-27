@@ -28,4 +28,5 @@
     ExportMacro=WEBCORE_EXPORT,
     CustomToJSObject
 ] interface AnimationTimeline {
+    [ImplementedAs=bindingsCurrentTime] readonly attribute double? currentTime;
 };

@@ -625,6 +625,7 @@ public:
 #endif
 
     String timelineDescription(AnimationTimeline&);
+    void setTimelineCurrentTime(AnimationTimeline&, double);
 
 private:
     explicit Internals(Document&);
