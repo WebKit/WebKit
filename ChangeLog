@@ -1,3 +1,19 @@
+2017-10-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Use proper shared object versioning for libWPEWebKit.so
+        https://bugs.webkit.org/show_bug.cgi?id=178878
+
+        Reviewed by Michael Catanzaro.
+
+        Move the CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE() to a new CMake include file,
+        and use it both for the GTK+ and WPE ports. Also add a SET_PROJECT_VERSION() macro to
+        unify setting the PROJECT_VERSION* family of variables.
+
+        * Source/cmake/OptionsGTK.cmake: Use the common macros imported from VersioningUtils.cmake.
+        * Source/cmake/OptionsWPE.cmake: Properly assign a shared object version to libWPEWebKit.so,
+        using the common macros from VersioningUtils.cmake.
+        * Source/cmake/VersioningUtils.cmake: Added.
+
 2017-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.18.1 release.
