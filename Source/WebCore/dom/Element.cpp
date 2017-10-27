@@ -341,11 +341,6 @@ Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation 
 Ref<Element> Element::cloneElementWithChildren(Document& targetDocument)
 {
     Ref<Element> clone = cloneElementWithoutChildren(targetDocument);
-
-    // It's safe to dispatch events on the cloned node since author scripts have no access to it yet.
-    // This is needed for SVGUseElement::cloneTarget.
-    NoEventDispatchAssertion::EventAllowedScope allowedScope(clone.get());
-
     cloneChildNodes(clone);
     return clone;
 }
@@ -353,11 +348,6 @@ Ref<Element> Element::cloneElementWithChildren(Document& targetDocument)
 Ref<Element> Element::cloneElementWithoutChildren(Document& targetDocument)
 {
     Ref<Element> clone = cloneElementWithoutAttributesAndChildren(targetDocument);
-
-    // It's safe to dispatch events on the cloned node since author scripts have no access to it yet.
-    // This is needed for SVGUseElement::cloneTarget.
-    NoEventDispatchAssertion::EventAllowedScope allowedScope(clone.get());
-
     // This will catch HTML elements in the wrong namespace that are not correctly copied.
     // This is a sanity check as HTML overloads some of the DOM methods.
     ASSERT(isHTMLElement() == clone->isHTMLElement());
