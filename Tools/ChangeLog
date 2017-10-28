@@ -1,3 +1,24 @@
+2017-10-27  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221233. rdar://problem/35228663
+
+    2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS WK2] Web process crashes after changing selection to the end of the document when speaking a selection
+            https://bugs.webkit.org/show_bug.cgi?id=176011
+            <rdar://problem/32614095>
+
+            Reviewed by Ryosuke Niwa.
+
+            Introduces AccessibilityTests, and adds three new tests that traverse selection-rect-finding codepaths when
+            speaking selected content. See WebKit and WebCore ChangeLogs for more detail.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm: Added.
+            (-[WKWebView rectsAtSelectionOffset:withText:]):
+            (checkCGRectValueAtIndex):
+            (TestWebKitAPI::TEST):
+
 2017-10-19  Jason Marcell  <jmarcell@apple.com>
 
         Apply patch. rdar://problem/34745623

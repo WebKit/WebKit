@@ -146,6 +146,7 @@ int comparePositions(const VisiblePosition&, const VisiblePosition&);
 
 WEBCORE_EXPORT int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>& scope);
 int indexForVisiblePosition(Node&, const VisiblePosition&, bool forSelectionPreservation);
+WEBCORE_EXPORT VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition&, int offset);
 WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope);
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node&, int index); // FIXME: Why do we need this version?
 

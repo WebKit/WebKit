@@ -1092,6 +1092,16 @@ int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, 
     return TextIterator::rangeLength(range.ptr(), forSelectionPreservation);
 }
 
+VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int offset)
+{
+    RefPtr<ContainerNode> root;
+    unsigned startIndex = indexForVisiblePosition(position, root);
+    if (!root)
+        return { };
+
+    return visiblePositionForIndex(startIndex + offset, root.get());
+}
+
 VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
 {
     auto range = TextIterator::rangeFromLocationAndLength(scope, index, 0, true);

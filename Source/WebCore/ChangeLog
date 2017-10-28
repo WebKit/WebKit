@@ -1,3 +1,37 @@
+2017-10-27  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221233. rdar://problem/35228663
+
+    2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS WK2] Web process crashes after changing selection to the end of the document when speaking a selection
+            https://bugs.webkit.org/show_bug.cgi?id=176011
+            <rdar://problem/32614095>
+
+            Reviewed by Ryosuke Niwa.
+
+            Adds a null check to visiblePositionForPositionWithOffset. This is a crash point for accessibility codepaths,
+            since indexForVisiblePosition is not guaranteed to set the given `root` outparam to a non-null value, yet
+            visiblePositionForIndex requires root to be non-null. This causes a crash when selecting some text, hitting
+            'Speak', and then changing the selection to somewhere near the end of the document, since accessibility code
+            will attempt to speak words at an offset past the end of the document. While this is a bug in and of itself, the
+            web process should still handle this case gracefully and not crash. To fix this, we simply bail and return a
+            null VisiblePosition if a root container node was not found.
+
+            Currently, visiblePositionForPositionWithOffset is implemented twice, in WebCore (AXObjectCache.cpp) and also in
+            WebKit (WebPageIOS.mm), as identical static functions. This patch moves this helper into Editing.cpp and removes
+            it from AXObjectCache and WebPageIOS.
+
+            Tests: AccessibilityTests.RectsForSpeakingSelectionBasic
+                   AccessibilityTests.RectsForSpeakingSelectionWithLineWrapping
+                   AccessibilityTests.RectsForSpeakingSelectionDoNotCrashWhenChangingSelection
+
+            * accessibility/AXObjectCache.cpp:
+            (WebCore::visiblePositionForPositionWithOffset): Deleted.
+            * editing/Editing.cpp:
+            (WebCore::visiblePositionForPositionWithOffset):
+            * editing/Editing.h:
+
 2017-10-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r223974. rdar://problem/35178887

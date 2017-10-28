@@ -5372,6 +5372,18 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     } forRequest:infoRequest];
 }
 
+- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler
+{
+    [_contentView _accessibilityRetrieveRectsAtSelectionOffset:offset withText:text completionHandler:[capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::SelectionRect>& selectionRects) {
+        if (!capturedCompletionHandler)
+            return;
+        auto rectValues = adoptNS([[NSMutableArray alloc] initWithCapacity:selectionRects.size()]);
+        for (auto& selectionRect : selectionRects)
+            [rectValues addObject:[NSValue valueWithCGRect:selectionRect.rect()]];
+        capturedCompletionHandler(rectValues.get());
+    }];
+}
+
 - (CGRect)_contentVisibleRect
 {
     return [self convertRect:[self bounds] toView:self._currentContentView];
