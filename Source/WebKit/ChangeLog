@@ -1,5 +1,21 @@
 2017-10-27  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222004. rdar://problem/35225406
+
+    2017-09-13  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Consider phoneticName when encoding ContactFields
+            https://bugs.webkit.org/show_bug.cgi?id=176885
+            <rdar://problem/34176419>
+
+            Reviewed by Tim Horton.
+
+            * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+            (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::encode):
+            (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode):
+
+2017-10-27  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221233. rdar://problem/35228663
 
     2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
