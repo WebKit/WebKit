@@ -28,7 +28,7 @@
     Constructor(DOMString type, optional ExtendableEventInit eventInitDict),
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
-    Exposed=(ServiceWorker,Worker,Window),
+    Exposed=(ServiceWorker,Window),
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface ExtendableEvent : Event {

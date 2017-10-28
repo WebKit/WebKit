@@ -90,6 +90,7 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
 
 void WebSWContextManagerConnection::updatePreferences(const WebPreferencesStore& store)
 {
+    RuntimeEnabledFeatures::sharedFeatures().setServiceWorkerEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::cacheAPIEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
 }

@@ -1,0 +1,21 @@
+* ServiceWorkerGlobalScope properties
+Object.getOwnPropertyDescriptor(self, 'Blob') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'Cache') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'CacheStorage') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'Client') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'Clients') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'ExtendableEvent') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'ExtendableMessageEvent') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'FetchEvent') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'Headers') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'MessageChannel') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'MessageEvent') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'MessagePort') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'Request') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'Response') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'ServiceWorkerGlobalScope') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'WebSocket') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'WindowClient') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'WorkerGlobalScope') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'XMLHttpRequest') returned {"writable":true,"enumerable":false,"configurable":true}
+

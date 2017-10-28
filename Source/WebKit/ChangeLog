@@ -1,3 +1,16 @@
+2017-10-28  Chris Dumez  <cdumez@apple.com>
+
+        self.ExtendableEvent / Client / Clients / WindowClient do not exist in a Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=178976
+
+        Reviewed by Sam Weinig.
+
+        Actually enable the Service Worker RuntimeEnabledFeature in the Service Worker
+        WebProcess.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updatePreferences):
+
 2017-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make postprocess-framework-headers.sh a little easier to read
