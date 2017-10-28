@@ -84,6 +84,7 @@
 		2E1DFDED1D42A51100714A00 /* large-videos-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDEC1D42A41C00714A00 /* large-videos-with-audio.html */; };
 		2E1DFDEF1D42A6F200714A00 /* large-videos-with-audio-autoplay.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDEE1D42A6EB00714A00 /* large-videos-with-audio-autoplay.html */; };
 		2E1DFDF11D42E1E400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */; };
+		2E205BA41F527746005952DD /* AccessibilityTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E205BA31F527746005952DD /* AccessibilityTestsIOS.mm */; };
 		2E54F40D1D7BC84200921ADF /* large-video-mutes-onplaying.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E54F40C1D7BC83900921ADF /* large-video-mutes-onplaying.html */; };
 		2E691AEA1D78B53600129407 /* large-videos-paused-video-hides-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AE81D78B52B00129407 /* large-videos-paused-video-hides-controls.html */; };
 		2E691AEB1D78B53600129407 /* large-videos-playing-video-keeps-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AE91D78B52B00129407 /* large-videos-playing-video-keeps-controls.html */; };
@@ -1086,6 +1087,7 @@
 		2E1DFDEC1D42A41C00714A00 /* large-videos-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-with-audio.html"; sourceTree = "<group>"; };
 		2E1DFDEE1D42A6EB00714A00 /* large-videos-with-audio-autoplay.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-with-audio-autoplay.html"; sourceTree = "<group>"; };
 		2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-seek-to-beginning-and-play-after-ending.html"; sourceTree = "<group>"; };
+		2E205BA31F527746005952DD /* AccessibilityTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTestsIOS.mm; sourceTree = "<group>"; };
 		2E54F40C1D7BC83900921ADF /* large-video-mutes-onplaying.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-mutes-onplaying.html"; sourceTree = "<group>"; };
 		2E691AE81D78B52B00129407 /* large-videos-paused-video-hides-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-paused-video-hides-controls.html"; sourceTree = "<group>"; };
 		2E691AE91D78B52B00129407 /* large-videos-playing-video-keeps-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-playing-video-keeps-controls.html"; sourceTree = "<group>"; };
@@ -2017,6 +2019,7 @@
 			isa = PBXGroup;
 			children = (
 				A1C4FB6F1BACCEFA003742D0 /* Resources */,
+				2E205BA31F527746005952DD /* AccessibilityTestsIOS.mm */,
 				F4D4F3B71E4E36E400BB2767 /* DataInteractionTests.mm */,
 				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
 				F4D7BCD61EA574DD00C421D3 /* PositionInformationTests.mm */,
@@ -3006,6 +3009,7 @@
 				7CEFA9661AC0B9E200B910FD /* _WKUserContentExtensionStore.mm in Sources */,
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
 				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
+				2E205BA41F527746005952DD /* AccessibilityTestsIOS.mm in Sources */,
 				7A909A7D1D877480007E10F8 /* AffineTransform.cpp in Sources */,
 				A1DF74321C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm in Sources */,
 				2DE71AFE1D49C0BD00904094 /* AnimatedResize.mm in Sources */,
