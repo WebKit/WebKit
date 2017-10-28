@@ -480,6 +480,9 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_documentCreationTime(MonotonicTime::now())
     , m_scriptRunner(std::make_unique<ScriptRunner>(*this))
     , m_moduleLoader(std::make_unique<ScriptModuleLoader>(*this))
+#if ENABLE(XSLT)
+    , m_applyPendingXSLTransformsTimer(*this, &Document::applyPendingXSLTransformsTimerFired)
+#endif
     , m_xmlVersion(ASCIILiteral("1.0"))
     , m_constantPropertyMap(std::make_unique<ConstantPropertyMap>(*this))
     , m_documentClasses(documentClasses)
@@ -2739,6 +2742,11 @@ void Document::implicitClose()
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
     RefPtr<Frame> f = frame();
     if (f) {
+#if ENABLE(XSLT)
+        // Apply XSL transforms before load events so that event handlers can access the transformed DOM tree.
+        applyPendingXSLTransformsNowIfScheduled();
+#endif
+
         if (auto* documentLoader = loader())
             documentLoader->startIconLoading();
 
@@ -5065,18 +5073,45 @@ void Document::popCurrentScript()
 
 #if ENABLE(XSLT)
 
-void Document::applyXSLTransform(ProcessingInstruction* pi)
+void Document::scheduleToApplyXSLTransforms()
 {
-    RefPtr<XSLTProcessor> processor = XSLTProcessor::create();
-    processor->setXSLStyleSheet(downcast<XSLStyleSheet>(pi->sheet()));
-    String resultMIMEType;
-    String newSource;
-    String resultEncoding;
-    if (!processor->transformToString(*this, resultMIMEType, newSource, resultEncoding))
+    m_hasPendingXSLTransforms = true;
+    if (!m_applyPendingXSLTransformsTimer.isActive())
+        m_applyPendingXSLTransformsTimer.startOneShot(0_s);
+}
+
+void Document::applyPendingXSLTransformsNowIfScheduled()
+{
+    if (!m_hasPendingXSLTransforms)
         return;
-    // FIXME: If the transform failed we should probably report an error (like Mozilla does).
-    Frame* ownerFrame = frame();
-    processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, this, ownerFrame);
+    m_applyPendingXSLTransformsTimer.stop();
+    applyPendingXSLTransformsTimerFired();
+}
+
+void Document::applyPendingXSLTransformsTimerFired()
+{
+    if (parsing())
+        return;
+
+    m_hasPendingXSLTransforms = false;
+    ASSERT(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    for (auto& processingInstruction : styleScope().collectXSLTransforms()) {
+        ASSERT(processingInstruction->isXSL());
+
+        // Don't apply XSL transforms to already transformed documents -- <rdar://problem/4132806>
+        if (transformSourceDocument() || !processingInstruction->sheet())
+            return;
+
+        auto processor = XSLTProcessor::create();
+        processor->setXSLStyleSheet(downcast<XSLStyleSheet>(processingInstruction->sheet()));
+        String resultMIMEType;
+        String newSource;
+        String resultEncoding;
+        if (!processor->transformToString(*this, resultMIMEType, newSource, resultEncoding))
+            continue;
+        // FIXME: If the transform failed we should probably report an error (like Mozilla does).
+        processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, this, frame());
+    }
 }
 
 void Document::setTransformSource(std::unique_ptr<TransformSource> source)
@@ -5258,6 +5293,8 @@ void Document::finishedParsing()
     ASSERT(!scriptableDocumentParser() || m_readyState != Loading);
     setParsing(false);
 
+    Ref<Document> protectedThis(*this);
+
     if (!m_documentTiming.domContentLoadedEventStart)
         m_documentTiming.domContentLoadedEventStart = MonotonicTime::now();
 
@@ -5267,6 +5304,10 @@ void Document::finishedParsing()
         m_documentTiming.domContentLoadedEventEnd = MonotonicTime::now();
 
     if (RefPtr<Frame> frame = this->frame()) {
+#if ENABLE(XSLT)
+        applyPendingXSLTransformsNowIfScheduled();
+#endif
+
         // FrameLoader::finishedParsing() might end up calling Document::implicitClose() if all
         // resource loads are complete. HTMLObjectElements can start loading their resources from
         // post attach callbacks triggered by resolveStyle(). This means if we parse out an <object>
@@ -5707,6 +5748,10 @@ void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason
     scriptRunner()->suspend();
     m_pendingTasksTimer.stop();
 
+#if ENABLE(XSLT)
+    m_applyPendingXSLTransformsTimer.stop();
+#endif
+
     // Deferring loading and suspending parser is necessary when we need to prevent re-entrant JavaScript execution
     // (e.g. while displaying an alert).
     // It is not currently possible to suspend parser unless loading is deferred, because new data arriving from network
@@ -5726,6 +5771,12 @@ void Document::resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
 
     if (reason == ActiveDOMObject::WillDeferLoading && m_parser)
         m_parser->resumeScheduledTasks();
+
+#if ENABLE(XSLT)
+    if (m_hasPendingXSLTransforms)
+        m_applyPendingXSLTransformsTimer.startOneShot(0_s);
+#endif
+
     if (!m_pendingTasks.isEmpty())
         m_pendingTasksTimer.startOneShot(0_s);
     scriptRunner()->resume();
