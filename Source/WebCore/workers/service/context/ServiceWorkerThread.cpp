@@ -35,6 +35,7 @@
 #include "ServiceWorkerFetch.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerWindowClient.h"
+#include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
 #include <pal/SessionID.h>
@@ -45,7 +46,7 @@ using namespace PAL;
 
 namespace WebCore {
 
-class DummyServiceWorkerThreadProxy : public WorkerObjectProxy {
+class DummyServiceWorkerThreadProxy : public WorkerObjectProxy, public WorkerDebuggerProxy {
 public:
     static DummyServiceWorkerThreadProxy& shared()
     {
@@ -55,7 +56,7 @@ public:
 
 private:
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
-    void postMessageToPageInspector(const String&) final { };
+    void postMessageToDebugger(const String&) final { }
     void workerGlobalScopeDestroyed() final { };
     void postMessageToWorkerObject(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) final { };
     void confirmMessageFromWorkerObject(bool) final { };
@@ -63,6 +64,7 @@ private:
 };
 
 // FIXME: Use a valid WorkerReportingProxy
+// FIXME: Use a valid WorkerDebuggerProxy
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use a valid IDBConnection
 // FIXME: Use a valid SocketProvider
@@ -70,7 +72,7 @@ private:
 // FIXME: Use valid runtime flags
 
 ServiceWorkerThread::ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID, WorkerLoaderProxy& loaderProxy)
-    : WorkerThread(data.scriptURL, data.workerID, ASCIILiteral("WorkerUserAgent"), data.script, loaderProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, ContentSecurityPolicyResponseHeaders { }, false, SecurityOrigin::create(data.scriptURL).get(), MonotonicTime::now(), nullptr, nullptr, JSC::RuntimeFlags::createAllEnabled(), SessionID::defaultSessionID())
+    : WorkerThread(data.scriptURL, data.workerID, ASCIILiteral("WorkerUserAgent"), data.script, loaderProxy, DummyServiceWorkerThreadProxy::shared(), DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, ContentSecurityPolicyResponseHeaders { }, false, SecurityOrigin::create(data.scriptURL).get(), MonotonicTime::now(), nullptr, nullptr, JSC::RuntimeFlags::createAllEnabled(), SessionID::defaultSessionID())
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_data(data.isolatedCopy())
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())

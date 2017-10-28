@@ -28,15 +28,15 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <WebCore/CacheStorageProvider.h>
-#include <WebCore/FrameLoader.h>
-#include <WebCore/MainFrame.h>
+#include "CacheStorageProvider.h"
+#include "FrameLoader.h"
+#include "MainFrame.h"
 #include <pal/SessionID.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-Ref<ServiceWorkerThreadProxy> ServiceWorkerThreadProxy::create(PageConfiguration&& pageConfiguration, uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData& data, PAL::SessionID sessionID, CacheStorageProvider& cacheStorageProvider)
+Ref<ServiceWorkerThreadProxy> ServiceWorkerThreadProxy::create(PageConfiguration&& pageConfiguration, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID sessionID, CacheStorageProvider& cacheStorageProvider)
 {
     auto serviceWorker = adoptRef(*new ServiceWorkerThreadProxy { WTFMove(pageConfiguration), serverConnectionIdentifier, data, sessionID, cacheStorageProvider });
     serviceWorker->m_serviceWorkerThread->start();
@@ -54,7 +54,7 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
     return page;
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData& data, PAL::SessionID sessionID, CacheStorageProvider& cacheStorageProvider)
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID sessionID, CacheStorageProvider& cacheStorageProvider)
     : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data.scriptURL))
     , m_document(*m_page->mainFrame().document())
     , m_serviceWorkerThread(ServiceWorkerThread::create(serverConnectionIdentifier, data, sessionID, *this))

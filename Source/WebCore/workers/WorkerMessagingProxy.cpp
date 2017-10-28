@@ -88,7 +88,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
 
     SocketProvider* socketProvider = document.socketProvider();
 
-    auto thread = DedicatedWorkerThread::create(scriptURL, identifier, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), timeOrigin, proxy, socketProvider, runtimeFlags, sessionID);
+    auto thread = DedicatedWorkerThread::create(scriptURL, identifier, userAgent, sourceCode, *this, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), timeOrigin, proxy, socketProvider, runtimeFlags, sessionID);
 
     workerThreadCreated(thread.get());
     thread->start();
@@ -168,7 +168,7 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
     });
 }
 
-void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
+void WorkerMessagingProxy::postMessageToDebugger(const String& message)
 {
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this), message = message.isolatedCopy()] {
         if (!m_mayBeDestroyed)

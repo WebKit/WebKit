@@ -44,6 +44,7 @@ class SecurityOrigin;
 class SocketProvider;
 class WorkerGlobalScope;
 class WorkerLoaderProxy;
+class WorkerDebuggerProxy;
 class WorkerReportingProxy;
 
 enum class WorkerThreadStartMode {
@@ -67,6 +68,7 @@ public:
     ThreadIdentifier threadID() const { return m_thread ? m_thread->id() : 0; }
     WorkerRunLoop& runLoop() { return m_runLoop; }
     WorkerLoaderProxy& workerLoaderProxy() const { return m_workerLoaderProxy; }
+    WorkerDebuggerProxy& workerDebuggerProxy() const { return m_workerDebuggerProxy; }
     WorkerReportingProxy& workerReportingProxy() const { return m_workerReportingProxy; }
 
     // Number of active worker threads.
@@ -84,7 +86,7 @@ public:
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
 
 protected:
-    WorkerThread(const URL&, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags, PAL::SessionID);
+    WorkerThread(const URL&, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags, PAL::SessionID);
 
     // Factory method for creating a new worker context for the thread.
     virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID) = 0;
@@ -103,6 +105,7 @@ private:
     RefPtr<Thread> m_thread;
     WorkerRunLoop m_runLoop;
     WorkerLoaderProxy& m_workerLoaderProxy;
+    WorkerDebuggerProxy& m_workerDebuggerProxy;
     WorkerReportingProxy& m_workerReportingProxy;
     JSC::RuntimeFlags m_runtimeFlags;
     bool m_pausedForDebugger { false };

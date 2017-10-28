@@ -30,24 +30,19 @@
 
 #pragma once
 
-#include <runtime/ConsoleTypes.h>
-
 namespace WebCore {
 
-    // APIs used by workers to report console activity.
-    class WorkerReportingProxy {
-    public:
-        virtual ~WorkerReportingProxy() = default;
+class WorkerReportingProxy {
+public:
+    virtual ~WorkerReportingProxy() = default;
 
-        virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) = 0;
+    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) = 0;
 
-        virtual void postMessageToPageInspector(const String&) = 0;
+    // Invoked when close() is invoked on the worker context.
+    virtual void workerGlobalScopeClosed() = 0;
 
-        // Invoked when close() is invoked on the worker context.
-        virtual void workerGlobalScopeClosed() = 0;
-
-        // Invoked when the thread has stopped.
-        virtual void workerGlobalScopeDestroyed() = 0;
-    };
+    // Invoked when the thread has stopped.
+    virtual void workerGlobalScopeDestroyed() = 0;
+};
 
 } // namespace WebCore

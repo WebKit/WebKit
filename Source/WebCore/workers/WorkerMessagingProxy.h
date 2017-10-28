@@ -20,12 +20,13 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #include "WorkerGlobalScopeProxy.h"
+#include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
 #include <wtf/MonotonicTime.h>
@@ -36,7 +37,7 @@ namespace WebCore {
 class DedicatedWorkerThread;
 class WorkerInspectorProxy;
 
-class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy {
+class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerMessagingProxy(Worker&);
@@ -52,15 +53,18 @@ private:
     void workerObjectDestroyed() final;
     void notifyNetworkStateChange(bool isOnline) final;
 
-    // Implementations of WorkerObjectProxy.
+    // Implementation of WorkerObjectProxy.
     // (Only use these functions in the worker context thread.)
     void postMessageToWorkerObject(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) final;
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
-    void postMessageToPageInspector(const String&) final;
     void confirmMessageFromWorkerObject(bool hasPendingActivity) final;
     void reportPendingActivity(bool hasPendingActivity) final;
     void workerGlobalScopeClosed() final;
     void workerGlobalScopeDestroyed() final;
+
+    // Implementation of WorkerDebuggerProxy.
+    // (Only use these functions in the worker context thread.)
+    void postMessageToDebugger(const String&) final;
 
     // Implementation of WorkerLoaderProxy.
     // These functions are called on different threads to schedule loading
