@@ -332,6 +332,7 @@ void ArgumentCoder<PaymentRequest::ContactFields>::encode(Encoder& encoder, cons
     encoder << contactFields.phone;
     encoder << contactFields.email;
     encoder << contactFields.name;
+    encoder << contactFields.phoneticName;
 }
 
 bool ArgumentCoder<PaymentRequest::ContactFields>::decode(Decoder& decoder, PaymentRequest::ContactFields& contactFields)
@@ -343,6 +344,8 @@ bool ArgumentCoder<PaymentRequest::ContactFields>::decode(Decoder& decoder, Paym
     if (!decoder.decode(contactFields.email))
         return false;
     if (!decoder.decode(contactFields.name))
+        return false;
+    if (!decoder.decode(contactFields.phoneticName))
         return false;
 
     return true;
