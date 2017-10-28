@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 2663: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
-CONSOLE MESSAGE: line 2663: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
-CONSOLE MESSAGE: line 2663: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
-CONSOLE MESSAGE: line 2663: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
+CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
+CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
+CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
+CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
 
 Harness Error (FAIL), message = Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
 

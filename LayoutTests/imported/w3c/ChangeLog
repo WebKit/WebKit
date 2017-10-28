@@ -1,3 +1,15 @@
+2017-10-28  Chris Dumez  <cdumez@apple.com>
+
+        Update testharness.js to work around our lack of support for MessagePort in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=178977
+
+        Reviewed by Sam Weinig.
+
+        Update testharness.js to work around our lack of support for MessagePort in service workers, similarly
+        to what was already done for Edge.
+
+        * web-platform-tests/resources/testharness.js:
+
 2017-10-27  Chris Dumez  <cdumez@apple.com>
 
         Unskip more Service Workers tests
