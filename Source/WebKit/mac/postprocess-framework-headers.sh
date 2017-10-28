@@ -70,7 +70,10 @@ function rewrite_headers () {
             -e "s/^WK_CLASS_DEPRECATED/WK_EXTERN API_DEPRECATED/"
         )
     else
-        SED_OPTIONS+=(-e 's/WK_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g' -e 's/WK_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g')
+        SED_OPTIONS+=(
+            -e 's/WK_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g'
+            -e 's/WK_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g'
+        )
     fi
 
     SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
