@@ -1,3 +1,25 @@
+2017-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Tweak ES6 generator function to allow inlining
+        https://bugs.webkit.org/show_bug.cgi?id=178935
+
+        Reviewed by Saam Barati.
+
+        We optimize builtins' generator helper functions to allow them inlined in the caller side.
+        This patch adjust the layer between @generatorResume, next(), throw(), and return() to allow
+        them inlined in DFG.
+
+                                       baseline                  patched
+
+        spread-generator.es6      301.2637+-11.1011    ^    260.5905+-14.2258       ^ definitely 1.1561x faster
+        generator.es6             269.6030+-13.2435    ^    148.8840+-6.7614        ^ definitely 1.8108x faster
+
+        * builtins/GeneratorPrototype.js:
+        (globalPrivate.generatorResume):
+        (next):
+        (return):
+        (throw):
+
 2017-10-27  Saam Barati  <sbarati@apple.com>
 
         Bytecode liveness should live on UnlinkedCodeBlock so it can be shared amongst CodeBlocks
