@@ -76,7 +76,7 @@
     content: url(../Images/Beacon.svg);
 }
 
-.canvas .icon {
+.canvas > .icon {
     content: url(../Images/Canvas.svg);
 }
 

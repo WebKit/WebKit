@@ -128,6 +128,10 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._cssCanvasSection.element.hidden = true;
         this._sections.push(this._cssCanvasSection);
 
+        this._backtraceSection = new WI.DetailsSection("canvas-backtrace", WI.UIString("Backtrace"));
+        this._backtraceSection.element.hidden = true;
+        this._sections.push(this._backtraceSection);
+
         this._emptyContentPlaceholder = document.createElement("div");
         this._emptyContentPlaceholder.className = "empty-content-placeholder";
 
@@ -153,6 +157,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._refreshSourceSection();
         this._refreshAttributesSection();
         this._refreshCSSCanvasSection();
+        this._refreshBacktraceSection();
     }
 
     sizeDidChange()
@@ -286,6 +291,18 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
             for (let clientNode of cssCanvasClientNodes)
                 fragment.appendChild(WI.linkifyNodeReference(clientNode));
             this._cssCanvasClientsRow.value = fragment;
+        });
+    }
+
+    _refreshBacktraceSection()
+    {
+        this._backtraceSection.element.hidden = !this._canvas.backtrace.length;
+
+        const showFunctionName = true;
+        this._backtraceSection.groups = this._canvas.backtrace.map((callFrame) => {
+            return {
+                element: new WI.CallFrameView(callFrame, showFunctionName),
+            };
         });
     }
 

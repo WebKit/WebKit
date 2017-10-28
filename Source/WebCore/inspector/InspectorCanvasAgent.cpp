@@ -94,8 +94,9 @@ void InspectorCanvasAgent::enable(ErrorString&)
 
     m_enabled = true;
 
+    const bool captureBacktrace = false;
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values())
-        m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(m_instrumentingAgents));
+        m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(m_instrumentingAgents, captureBacktrace));
 
 #if ENABLE(WEBGL)
     for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
@@ -391,8 +392,10 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(HTMLCanvasElement& ca
     String cssCanvasName = m_canvasToCSSCanvasName.take(&canvasElement);
     auto inspectorCanvas = InspectorCanvas::create(canvasElement, cssCanvasName);
 
-    if (m_enabled)
-        m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(m_instrumentingAgents));
+    if (m_enabled) {
+        const bool captureBacktrace = true;
+        m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(m_instrumentingAgents, captureBacktrace));
+    }
 
     m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), WTFMove(inspectorCanvas));
 }

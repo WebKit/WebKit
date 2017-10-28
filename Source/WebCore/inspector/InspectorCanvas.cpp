@@ -191,7 +191,31 @@ bool InspectorCanvas::hasBufferSpace() const
     return m_bufferUsed < m_bufferLimit;
 }
 
-Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(InstrumentingAgents& instrumentingAgents)
+template <typename T, typename Functor>
+static RefPtr<Inspector::Protocol::Array<T>> iterateCallFrames(const Functor& functor)
+{
+    RefPtr<Inspector::Protocol::Array<T>> callFrames = Inspector::Protocol::Array<T>::create();
+    if (JSC::CallFrame* callFrame = JSMainThreadExecState::currentState()->vm().topCallFrame) {
+        callFrame->iterate([&] (JSC::StackVisitor& visitor) {
+            // Only skip Native frames if they are the first frame.
+            if (!callFrames->length() && visitor->isNativeFrame())
+                return JSC::StackVisitor::Continue;
+
+            unsigned line = 0;
+            unsigned column = 0;
+            visitor->computeLineAndColumn(line, column);
+
+            ScriptCallFrame scriptCallFrame(visitor->functionName(), visitor->sourceURL(), static_cast<JSC::SourceID>(visitor->sourceID()), line, column);
+            RefPtr<T> item = functor(scriptCallFrame);
+            callFrames->addItem(WTFMove(item));
+
+            return JSC::StackVisitor::Continue;
+        });
+    }
+    return callFrames;
+}
+
+Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(InstrumentingAgents& instrumentingAgents, bool captureBacktrace)
 {
     Document& document = m_canvas.document();
     Frame* frame = document.frame();
@@ -257,6 +281,12 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
 
     if (size_t memoryCost = m_canvas.memoryCost())
         canvas->setMemoryCost(memoryCost);
+
+    if (captureBacktrace) {
+        canvas->setBacktrace(iterateCallFrames<Inspector::Protocol::Console::CallFrame>([&] (const ScriptCallFrame& scriptCallFrame) {
+            return scriptCallFrame.buildInspectorObject();
+        }));
+    }
 
     return canvas;
 }
@@ -558,25 +588,9 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
 
     action->addItem(WTFMove(parametersData));
     action->addItem(WTFMove(swizzleTypes));
-
-    RefPtr<Inspector::Protocol::Array<double>> trace = Inspector::Protocol::Array<double>::create();
-    if (JSC::CallFrame* callFrame = JSMainThreadExecState::currentState()->vm().topCallFrame) {
-        callFrame->iterate([&] (JSC::StackVisitor& visitor) {
-            // Only skip Native frames if they are the first frame (e.g. CanvasRenderingContext2D.prototype.save).
-            if (!trace->length() && visitor->isNativeFrame())
-                return JSC::StackVisitor::Continue;
-
-            unsigned line = 0;
-            unsigned column = 0;
-            visitor->computeLineAndColumn(line, column);
-
-            ScriptCallFrame scriptCallFrame(visitor->functionName(), visitor->sourceURL(), static_cast<JSC::SourceID>(visitor->sourceID()), line, column);
-            trace->addItem(indexForData(scriptCallFrame));
-
-            return JSC::StackVisitor::Continue;
-        });
-    }
-    action->addItem(WTFMove(trace));
+    action->addItem(iterateCallFrames<InspectorValue>([&] (const ScriptCallFrame& scriptCallFrame) {
+        return InspectorValue::create(indexForData(scriptCallFrame));
+    }));
 
     return action;
 }

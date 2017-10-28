@@ -125,6 +125,7 @@ localizedStrings["Available Style Sheets"] = "Available Style Sheets";
 localizedStrings["Average Time"] = "Average Time";
 localizedStrings["Back (%s)"] = "Back (%s)";
 localizedStrings["Background"] = "Background";
+localizedStrings["Backtrace"] = "Backtrace";
 localizedStrings["Basis"] = "Basis";
 localizedStrings["Beacon"] = "Beacon";
 localizedStrings["Beacons"] = "Beacons";

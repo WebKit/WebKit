@@ -1,3 +1,14 @@
+2017-10-27  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: no way to see backtrace of where a canvas context was created
+        https://bugs.webkit.org/show_bug.cgi?id=178799
+        <rdar://problem/35175805>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Canvas.json:
+        Add optional `backtrace` to Canvas type that is an array of Console.CallFrame.
+
 2017-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Tweak ES6 generator function to allow inlining

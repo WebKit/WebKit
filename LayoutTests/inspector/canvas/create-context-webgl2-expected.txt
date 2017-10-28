@@ -7,14 +7,32 @@ PASS: CanvasManager should have no canvases.
 
 -- Running test case: Canvas.CreateContextWebGL2.Attached
 PASS: Canvas context should be WebGL2.
+  0: createAttachedCanvas - inspector/canvas/resources/create-context-utilities.js:4:36
+  1: Global Code - [program code]
+  2: evaluateWithScopeExtension - [native code]
+  3: _evaluateOn - [native code]
+  4: _evaluateAndWrap - [native code]
+
 PASS: Removed canvas has expected ID.
 
 -- Running test case: Canvas.CreateContextWebGL2.Detached
 PASS: Canvas context should be WebGL2.
+  0: createDetachedCanvas - inspector/canvas/resources/create-context-utilities.js:8:62
+  1: Global Code - [program code]
+  2: evaluateWithScopeExtension - [native code]
+  3: _evaluateOn - [native code]
+  4: _evaluateAndWrap - [native code]
+
 PASS: Removed canvas has expected ID.
 
 -- Running test case: Canvas.CreateContextWebGL2.CSSCanvas
 Create CSS canvas from -webkit-canvas(css-canvas).
 PASS: Canvas context should be WebGL2.
+  0: createCSSCanvas - inspector/canvas/resources/create-context-utilities.js:12:47
+  1: Global Code - [program code]
+  2: evaluateWithScopeExtension - [native code]
+  3: _evaluateOn - [native code]
+  4: _evaluateAndWrap - [native code]
+
 PASS: Canvas name should equal the identifier passed to -webkit-canvas.
 

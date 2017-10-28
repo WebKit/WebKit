@@ -74,7 +74,7 @@ public:
     bool singleFrame() const { return m_singleFrame; }
     void setSingleFrame(bool singleFrame) { m_singleFrame = singleFrame; }
 
-    Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(InstrumentingAgents&);
+    Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(InstrumentingAgents&, bool captureBacktrace);
 
     ~InspectorCanvas();
 
