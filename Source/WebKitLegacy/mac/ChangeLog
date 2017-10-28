@@ -1,3 +1,18 @@
+2017-10-28  Zalan Bujtas  <zalan@apple.com>
+
+        [FrameView::layout cleanup] Move core layout logic to a separate class.
+        https://bugs.webkit.org/show_bug.cgi?id=178771
+        <rdar://problem/35166542>
+
+        Reviewed by Simon Fraser.
+
+        Move layout code out from FrameView to LayoutContext.
+
+        * WebView/WebClipView.mm:
+        (-[WebClipView _immediateScrollToPoint:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame layoutCount]):
+
 2017-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         Fix issues with WebView subframe painting

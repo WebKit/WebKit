@@ -2213,7 +2213,7 @@ void RenderBlock::insertPositionedObject(RenderBox& positioned)
     // FIXME: Find out if we can do this as part of positioned.setChildNeedsLayout(MarkOnlyThis)
     if (positioned.needsLayout()) {
         // We should turn this bit on only while in layout.
-        ASSERT(posChildNeedsLayout() || view().frameView().isInLayout());
+        ASSERT(posChildNeedsLayout() || view().frameView().layoutContext().isInLayout());
         setPosChildNeedsLayoutBit(true);
     }
     positionedDescendantsMap().addDescendant(*this, positioned, isRenderView() ? PositionedDescendantsMap::MoveDescendantToEnd::Yes

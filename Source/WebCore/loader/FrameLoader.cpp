@@ -1687,7 +1687,7 @@ void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
     // but haven't laid out/painted yet.
     // FIXME: Is this behavior specific to iOS? Or should we expose a setting to toggle this behavior?
     if (m_frame.view() && !m_frame.view()->didFirstLayout())
-        m_frame.view()->layout();
+        m_frame.view()->layoutContext().layout();
 #endif
 
     if (deferCheckLoadComplete)

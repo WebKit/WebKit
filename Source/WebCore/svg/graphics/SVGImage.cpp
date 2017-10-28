@@ -311,7 +311,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     view->resize(containerSize());
 
     if (view->needsLayout())
-        view->layout();
+        view->layoutContext().layout();
 
     view->paint(context, intersection(context.clipBounds(), enclosingIntRect(srcRect)));
 

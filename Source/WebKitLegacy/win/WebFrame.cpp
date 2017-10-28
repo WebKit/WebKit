@@ -916,7 +916,7 @@ HRESULT WebFrame::layout()
     if (!view)
         return E_FAIL;
 
-    view->layout();
+    view->layoutContext().layout();
     return S_OK;
 }
 

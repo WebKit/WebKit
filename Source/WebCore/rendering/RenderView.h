@@ -117,7 +117,7 @@ public:
     }
 #endif
 
-    bool doingFullRepaint() const { return frameView().needsFullRepaint(); }
+    bool doingFullRepaint() const { return frameView().layoutContext().needsFullRepaint(); }
 
     // Subtree push/pop
     void pushLayoutState(RenderObject&);

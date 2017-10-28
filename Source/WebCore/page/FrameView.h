@@ -27,6 +27,7 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
 #include "ContainerNode.h"
+#include "LayoutContext.h"
 #include "LayoutMilestones.h"
 #include "LayoutRect.h"
 #include "Pagination.h"
@@ -69,6 +70,7 @@ class FrameView final : public ScrollView {
 public:
     friend class RenderView;
     friend class Internals;
+    friend class LayoutContext;
 
     WEBCORE_EXPORT static Ref<FrameView> create(Frame&);
     static Ref<FrameView> create(Frame&, const IntSize& initialSize);
@@ -104,27 +106,15 @@ public:
     void setContentsSize(const IntSize&) final;
     void updateContentsSize() final;
 
-    void layout();
-    WEBCORE_EXPORT bool didFirstLayout() const;
-    void layoutTimerFired();
-    void scheduleRelayout();
-    void scheduleRelayoutOfSubtree(RenderElement&);
-    void unscheduleRelayout();
-    void queuePostLayoutCallback(WTF::Function<void ()>&&);
-    bool layoutPending() const;
-    bool isInLayout() const { return m_layoutPhase != OutsideLayout; }
-    bool isInRenderTreeLayout() const { return m_layoutPhase == InRenderTreeLayout; }
-    bool inPaintableState() const { return m_layoutPhase != InRenderTreeLayout && m_layoutPhase != InViewSizeAdjust && (m_layoutPhase != InPostLayout || m_inPerformPostLayoutTasks); }
+    const LayoutContext& layoutContext() const { return m_layoutContext; }
+    LayoutContext& layoutContext() { return m_layoutContext; }
 
-    RenderElement* subtreeLayoutRoot() const { return m_subtreeLayoutRoot.get(); }
-    void clearSubtreeLayoutRoot() { m_subtreeLayoutRoot.clear(); }
-    int layoutCount() const { return m_layoutCount; }
+    WEBCORE_EXPORT bool didFirstLayout() const;
+    void queuePostLayoutCallback(WTF::Function<void ()>&&);
 
     WEBCORE_EXPORT bool needsLayout() const;
     WEBCORE_EXPORT void setNeedsLayout();
     void setViewportConstrainedObjectsNeedLayout();
-
-    bool needsFullRepaint() const { return m_needsFullRepaint; }
 
     WEBCORE_EXPORT bool renderedCharactersExceed(unsigned threshold);
 
@@ -386,9 +376,8 @@ public:
 
     bool isInChildFrameWithFrameFlattening() const;
 
-    void startDisallowingLayout() { ++m_layoutDisallowedCount; }
-    void endDisallowingLayout() { ASSERT(m_layoutDisallowedCount > 0); --m_layoutDisallowedCount; }
-    bool layoutDisallowed() const { return m_layoutDisallowedCount; }
+    void startDisallowingLayout() { layoutContext().startDisallowingLayout(); }
+    void endDisallowingLayout() { layoutContext().endDisallowingLayout(); }
 
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
@@ -661,7 +650,6 @@ private:
         InViewSizeAdjust,
         InPostLayout
     };
-    LayoutPhase layoutPhase() const { return m_layoutPhase; }
 
     bool isFrameView() const final { return true; }
 
@@ -687,7 +675,6 @@ private:
 
     void forceLayoutParentViewIfNeeded();
     void flushPostLayoutTasksQueue();
-    void runOrSchedulePostLayoutTasks();
     void performPostLayoutTasks();
     void autoSizeIfEnabled();
 
@@ -736,7 +723,6 @@ private:
     void sendResizeEventIfNeeded();
 
     void adjustScrollbarsForLayout(bool firstLayout);
-    void updateStyleForLayout();
 
     void handleDeferredScrollbarsUpdateAfterDirectionChange();
 
@@ -762,13 +748,10 @@ private:
 
     FrameView* parentFrameView() const;
 
-    bool handleLayoutWithFrameFlatteningIfNeeded();
-    void startLayoutAtMainFrameViewIfNeeded();
     bool frameFlatteningEnabled() const;
     bool isFrameFlatteningValidForThisFrame() const;
-    
+
     void markRootOrBodyRendererDirty() const;
-    bool canPerformLayout() const;
 
     bool qualifiesAsVisuallyNonEmpty() const;
     bool isViewForDocumentInFrame() const;
@@ -778,11 +761,12 @@ private:
     void removeFromAXObjectCache();
     void notifyWidgets(WidgetNotification);
 
-    void convertSubtreeLayoutToFullLayout();
-
+    void setFrameFlatteningViewSizeForMediaQuery() { m_frameFlatteningViewSizeForMediaQuery = layoutSize(); }
+    bool frameFlatteningViewSizeForMediaQueryIsSet() const { return m_frameFlatteningViewSizeForMediaQuery.has_value(); }
     RenderElement* viewportRenderer() const;
     
-    bool isLayoutNested() const { return m_layoutNestedState == LayoutNestedState::Nested; }
+    void willDoLayout(WeakPtr<RenderElement> layoutRoot);
+    void didLayout(WeakPtr<RenderElement> layoutRoot);
 
     HashSet<Widget*> m_widgetsInRenderTree;
 
@@ -796,28 +780,14 @@ private:
 
     std::unique_ptr<HashSet<const RenderElement*>> m_slowRepaintObjects;
 
-    bool m_needsFullRepaint;
-    
     bool m_canHaveScrollbars;
     bool m_cannotBlitToWindow;
     bool m_isOverlapped { false };
     bool m_contentIsOpaque;
 
-    Timer m_layoutTimer;
-    bool m_delayedLayout;
-    WeakPtr<RenderElement> m_subtreeLayoutRoot;
-
-    LayoutPhase m_layoutPhase;
-    bool m_layoutSchedulingEnabled;
-    bool m_inPerformPostLayoutTasks { false };
-    int m_layoutCount;
-    enum class LayoutNestedState { NotInLayout, NotNested, Nested };
-    LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
-    Timer m_postLayoutTasksTimer;
     Timer m_updateEmbeddedObjectsTimer;
     bool m_firstLayoutCallbackPending;
 
-    bool m_firstLayout;
     bool m_isTransparent;
     Color m_baseBackgroundColor;
     IntSize m_lastViewportSize;
@@ -850,10 +820,6 @@ private:
     
     LayoutPoint m_layoutViewportOrigin;
     std::optional<LayoutRect> m_layoutViewportOverrideRect;
-
-    unsigned m_deferSetNeedsLayoutCount;
-    bool m_setNeedsLayoutWasDeferred;
-    int m_layoutDisallowedCount { 0 };
 
     RefPtr<Node> m_nodeToDraw;
     PaintBehavior m_paintBehavior;
@@ -926,6 +892,8 @@ private:
 
     IntRect* m_cachedWindowClipRect { nullptr };
     Vector<WTF::Function<void ()>> m_postLayoutCallbackQueue;
+
+    LayoutContext m_layoutContext;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

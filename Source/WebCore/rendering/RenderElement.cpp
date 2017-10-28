@@ -1101,7 +1101,7 @@ inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
     if (renderTreeBeingDestroyed())
         return;
 
-    if (view().frameView().subtreeLayoutRoot() != this)
+    if (view().frameView().layoutContext().subtreeLayoutRoot() != this)
         return;
 
     // Normally when a renderer is detached from the tree, the appropriate dirty bits get set
@@ -1111,7 +1111,7 @@ inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
     // This indicates a failure to layout the child, which is why
     // the layout root is still set to |this|. Make sure to clear it
     // since we are getting destroyed.
-    view().frameView().clearSubtreeLayoutRoot();
+    view().frameView().layoutContext().clearSubtreeLayoutRoot();
 }
 
 void RenderElement::willBeDestroyed()
@@ -2171,7 +2171,7 @@ bool RenderElement::hasSelfPaintingLayer() const
 
 bool RenderElement::checkForRepaintDuringLayout() const
 {
-    if (document().view()->needsFullRepaint() || !everHadLayout() || hasSelfPaintingLayer())
+    if (document().view()->layoutContext().needsFullRepaint() || !everHadLayout() || hasSelfPaintingLayer())
         return false;
     return !settings().repaintOutsideLayoutEnabled();
 }

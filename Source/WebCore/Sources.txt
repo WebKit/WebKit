@@ -1280,6 +1280,7 @@ page/FrameView.cpp
 page/History.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
+page/LayoutContext.cpp
 page/Location.cpp
 page/MainFrame.cpp
 page/MemoryRelease.cpp

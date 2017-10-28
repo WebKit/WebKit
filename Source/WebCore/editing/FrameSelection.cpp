@@ -363,7 +363,7 @@ void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectio
         return;
 
     FrameView* frameView = document->view();
-    if (frameView && frameView->layoutPending())
+    if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
     updateAndRevealSelection(intent);

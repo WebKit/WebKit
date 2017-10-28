@@ -333,7 +333,7 @@ RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
         FrameView& frameView = downcast<FrameView>(*m_widget);
         // Check the frame's page to make sure that the frame isn't in the process of being destroyed.
         if ((widgetSizeChanged || frameView.needsLayout()) && frameView.frame().page() && frameView.frame().document())
-            frameView.layout();
+            frameView.layoutContext().layout();
     }
     return ChildWidgetState::Valid;
 }

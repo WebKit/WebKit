@@ -482,12 +482,12 @@ void RenderObject::clearNeedsLayout()
 static void scheduleRelayoutForSubtree(RenderElement& renderer)
 {
     if (is<RenderView>(renderer)) {
-        downcast<RenderView>(renderer).frameView().scheduleRelayout();
+        downcast<RenderView>(renderer).frameView().layoutContext().scheduleLayout();
         return;
     }
 
     if (renderer.isRooted())
-        renderer.view().frameView().scheduleRelayoutOfSubtree(renderer);
+        renderer.view().frameView().layoutContext().scheduleSubtreeLayout(renderer);
 }
 
 void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayout, RenderElement* newRoot)

@@ -674,7 +674,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
                 // Renders referenced by accessibility objects could get destroyed, if TextIterator ends up triggering
                 // style update/layout here. See also AXObjectCache::deferTextChangedIfNeeded().
                 ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->childNeedsStyleRecalc());
-                ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->view()->isInRenderTreeLayout());
+                ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->view()->layoutContext().isInRenderTreeLayout());
                 return plainText(textRange.get(), textIteratorBehaviorForTextRange());
             }
         }
@@ -1446,7 +1446,7 @@ int AccessibilityRenderObject::layoutCount() const
 {
     if (!is<RenderView>(*m_renderer))
         return 0;
-    return downcast<RenderView>(*m_renderer).frameView().layoutCount();
+    return downcast<RenderView>(*m_renderer).frameView().layoutContext().layoutCount();
 }
 
 String AccessibilityRenderObject::text() const

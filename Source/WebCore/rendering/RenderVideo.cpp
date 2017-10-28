@@ -233,7 +233,7 @@ void RenderVideo::updatePlayer()
 
     bool intrinsicSizeChanged;
     intrinsicSizeChanged = updateIntrinsicSize();
-    ASSERT_UNUSED(intrinsicSizeChanged, !intrinsicSizeChanged || !view().frameView().isInRenderTreeLayout());
+    ASSERT_UNUSED(intrinsicSizeChanged, !intrinsicSizeChanged || !view().frameView().layoutContext().isInRenderTreeLayout());
 
     auto mediaPlayer = videoElement().player();
     if (!mediaPlayer)

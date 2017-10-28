@@ -593,7 +593,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
             FrameView& view = downcast<FrameView>(*widget);
             if (RenderView* root = view.frame().contentRenderer()) {
                 if (!(behavior & RenderAsTextDontUpdateLayout))
-                    view.layout();
+                    view.layoutContext().layout();
                 if (RenderLayer* layer = root->layer())
                     writeLayers(ts, *layer, *layer, layer->rect(), indent + 1, behavior);
             }

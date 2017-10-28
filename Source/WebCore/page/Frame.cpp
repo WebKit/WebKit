@@ -255,7 +255,7 @@ void Frame::setView(RefPtr<FrameView>&& view)
         m_doc->prepareForDestruction();
     
     if (m_view)
-        m_view->unscheduleRelayout();
+        m_view->layoutContext().unscheduleLayout();
     
     m_eventHandler->clear();
 
@@ -763,7 +763,7 @@ Frame* Frame::frameForWidget(const Widget& widget)
 void Frame::clearTimers(FrameView *view, Document *document)
 {
     if (view) {
-        view->unscheduleRelayout();
+        view->layoutContext().unscheduleLayout();
         view->frame().animation().suspendAnimationsForDocument(document);
         view->frame().eventHandler().stopAutoscrollTimer();
     }
@@ -992,7 +992,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
 
     if (FrameView* view = this->view()) {
         if (document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
-            view->layout();
+            view->layoutContext().layout();
     }
 }
 
@@ -1041,7 +1041,7 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
     // Frame::clearTimers() suspended animations and pending relayouts.
     animation().resumeAnimationsForDocument(m_doc.get());
     if (m_view)
-        m_view->scheduleRelayout();
+        m_view->layoutContext().scheduleLayout();
 }
 
 void Frame::deviceOrPageScaleFactorChanged()

@@ -1258,7 +1258,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         return;
 
     RefPtr<FrameView> frameView = view();
-    bool needsLayout = frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout());
+    bool needsLayout = frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout());
     if (needsLayout)
         updateLayout();
 
@@ -1850,7 +1850,7 @@ void Document::resolveStyle(ResolveStyleType type)
         updatedCompositingLayers = frameView.updateCompositingLayersAfterStyleChange();
 
         if (m_renderView->needsLayout())
-            frameView.scheduleRelayout();
+            frameView.layoutContext().scheduleLayout();
     }
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
@@ -1923,7 +1923,7 @@ bool Document::updateStyleIfNeeded()
     ASSERT(isMainThread());
     ASSERT(!view() || !view()->isPainting());
 
-    if (!view() || view()->isInRenderTreeLayout())
+    if (!view() || view()->layoutContext().isInRenderTreeLayout())
         return false;
 
     styleScope().flushPendingUpdate();
@@ -1941,7 +1941,7 @@ void Document::updateLayout()
     ASSERT(isMainThread());
 
     RefPtr<FrameView> frameView = view();
-    if (frameView && frameView->isInRenderTreeLayout()) {
+    if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
         return;
@@ -1957,8 +1957,8 @@ void Document::updateLayout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     // Only do a layout if changes have occurred that make it necessary.      
-    if (frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout()))
-        frameView->layout();
+    if (frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()))
+        frameView->layoutContext().layout();
 }
 
 void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)
@@ -2016,7 +2016,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     
     // Check for re-entrancy and assert (same code that is in updateLayout()).
     RefPtr<FrameView> frameView = view();
-    if (frameView && frameView->isInRenderTreeLayout()) {
+    if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
         return true;
@@ -2088,7 +2088,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
                 break;
             }
             
-            if (currRenderer == frameView->subtreeLayoutRoot())
+            if (currRenderer == frameView->layoutContext().subtreeLayoutRoot())
                 break;
         }
     }
@@ -2096,8 +2096,8 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     // Only do a layout if changes have occurred that make it necessary.      
-    if (requireFullLayout && frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout()))
-        frameView->layout();
+    if (requireFullLayout && frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()))
+        frameView->layoutContext().layout();
     
     return requireFullLayout;
 }
@@ -2790,7 +2790,7 @@ void Document::implicitClose()
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
         m_processingLoadEvent = false;
-        view()->unscheduleRelayout();
+        view()->layoutContext().unscheduleLayout();
         return;
     }
 
@@ -2805,7 +2805,7 @@ void Document::implicitClose()
         
         // Always do a layout after loading if needed.
         if (view() && renderView() && (!renderView()->firstChild() || renderView()->needsLayout()))
-            view()->layout();
+            view()->layoutContext().layout();
     }
 
     m_processingLoadEvent = false;
@@ -2862,7 +2862,7 @@ bool Document::shouldScheduleLayout()
     
 bool Document::isLayoutTimerActive()
 {
-    return view() && view()->layoutPending() && !minimumLayoutDelay();
+    return view() && view()->layoutContext().isLayoutPending() && !minimumLayoutDelay();
 }
 
 Seconds Document::minimumLayoutDelay()

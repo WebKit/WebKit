@@ -301,7 +301,7 @@ void InspectorOverlay::update()
     // Position DOM elements.
     overlayPage()->mainFrame().document()->resolveStyle(Document::ResolveStyleType::Rebuild);
     if (overlayView->needsLayout())
-        overlayView->layout();
+        overlayView->layoutContext().layout();
 
     forcePaint();
 }

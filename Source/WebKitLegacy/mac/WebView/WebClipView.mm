@@ -119,7 +119,7 @@ using namespace WebCore;
     if ([webFrameView isKindOfClass:[WebFrameView class]]) {
         if (Frame* coreFrame = core([webFrameView webFrame])) {
             if (FrameView* frameView = coreFrame->view()) {
-                if (!frameView->inPaintableState())
+                if (!frameView->layoutContext().inPaintableState())
                     [self setNeedsDisplay:YES];
             }
         }

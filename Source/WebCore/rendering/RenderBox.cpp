@@ -1624,7 +1624,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     }
 
     ShapeValue* shapeOutsideValue = style().shapeOutside();
-    if (!view().frameView().isInRenderTreeLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
+    if (!view().frameView().layoutContext().isInRenderTreeLayout() && isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image) {
         ShapeOutsideInfo::ensureInfo(*this).markShapeAsDirty();
         markShapeOutsideDependentsForLayout();
     }
@@ -2296,7 +2296,7 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
     }
 
     // If layout is limited to a subtree, the subtree root's logical width does not change.
-    if (element() && !view().frameView().layoutPending() && view().frameView().subtreeLayoutRoot() == this)
+    if (element() && !view().frameView().layoutContext().isLayoutPending() && view().frameView().layoutContext().subtreeLayoutRoot() == this)
         return;
 
     // The parent box is flexing us, so it has increased or decreased our

@@ -238,7 +238,7 @@ void HTMLFormControlElement::didAttachRenderers()
 
         RefPtr<HTMLFormControlElement> element = this;
         auto* frameView = document().view();
-        if (frameView && frameView->isInLayout()) {
+        if (frameView && frameView->layoutContext().isInLayout()) {
             frameView->queuePostLayoutCallback([element] {
                 element->focus();
             });

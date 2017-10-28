@@ -2807,7 +2807,7 @@ static bool rendererNeedsDeferredUpdate(RenderObject& renderer)
 {
     ASSERT(!renderer.beingDestroyed());
     auto& document = renderer.document();
-    return renderer.needsLayout() || document.needsStyleRecalc() || document.inRenderTreeUpdate() || (document.view() && document.view()->isInRenderTreeLayout());
+    return renderer.needsLayout() || document.needsStyleRecalc() || document.inRenderTreeUpdate() || (document.view() && document.view()->layoutContext().isInRenderTreeLayout());
 }
 
 void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
