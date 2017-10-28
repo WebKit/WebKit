@@ -398,10 +398,19 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     setNumParameters(unlinkedCodeBlock->numParameters());
 }
 
+// The main purpose of this function is to generate linked bytecode from unlinked bytecode. The process
+// of linking is taking an abstract representation of bytecode and tying it to a GlobalObject and scope
+// chain. For example, this process allows us to cache the depth of lexical environment reads that reach
+// outside of this CodeBlock's compilation unit. It also allows us to generate particular constants that
+// we can't generate during unlinked bytecode generation. This process is not allowed to generate control
+// flow or introduce new locals. The reason for this is we rely on liveness analysis to be the same for
+// all the CodeBlocks of an UnlinkedCodeBlock. We rely on this fact by caching the liveness analysis
+// inside UnlinkedCodeBlock.
 bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock,
     JSScope* scope)
 {
     Base::finishCreation(vm);
+
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (vm.typeProfiler() || vm.controlFlowProfiler())
@@ -1719,7 +1728,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow(unsigned byte
     // is because the variables that the op_catch defines might be dead, and
     // we can avoid profiling them and extracting them when doing OSR entry
     // into the DFG.
-    FastBitVector liveLocals = bytecodeLiveness.getLivenessInfoAtBytecodeOffset(bytecodeOffset + OPCODE_LENGTH(op_catch));
+    FastBitVector liveLocals = bytecodeLiveness.getLivenessInfoAtBytecodeOffset(this, bytecodeOffset + OPCODE_LENGTH(op_catch));
     Vector<VirtualRegister> liveOperands;
     liveOperands.reserveInitialCapacity(liveLocals.bitCount());
     liveLocals.forEachSetBit([&] (unsigned liveLocal) {
@@ -2852,7 +2861,7 @@ void CodeBlock::validate()
 {
     BytecodeLivenessAnalysis liveness(this); // Compute directly from scratch so it doesn't effect CodeBlock footprint.
     
-    FastBitVector liveAtHead = liveness.getLivenessInfoAtBytecodeOffset(0);
+    FastBitVector liveAtHead = liveness.getLivenessInfoAtBytecodeOffset(this, 0);
     
     if (liveAtHead.numBits() != static_cast<size_t>(m_numCalleeLocals)) {
         beginValidationDidFail();
@@ -3224,17 +3233,6 @@ void CodeBlock::dumpMathICStats()
 
     dataLog("-----------------------\n");
 #endif
-}
-
-BytecodeLivenessAnalysis& CodeBlock::livenessAnalysisSlow()
-{
-    std::unique_ptr<BytecodeLivenessAnalysis> analysis = std::make_unique<BytecodeLivenessAnalysis>(this);
-    {
-        ConcurrentJSLocker locker(m_lock);
-        if (!m_livenessAnalysis)
-            m_livenessAnalysis = WTFMove(analysis);
-        return *m_livenessAnalysis;
-    }
 }
 
 void setPrinter(Printer::PrintRecord& record, CodeBlock* codeBlock)

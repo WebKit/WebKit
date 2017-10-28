@@ -35,22 +35,16 @@ namespace JSC {
 
 class BytecodeBasicBlock;
 
-template<typename Block>
 class BytecodeGraph {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(BytecodeGraph);
 public:
-    typedef Block CodeBlock;
-    typedef typename Block::Instruction Instruction;
     typedef Vector<std::unique_ptr<BytecodeBasicBlock>> BasicBlocksVector;
 
-    typedef WTF::IndexedContainerIterator<BytecodeGraph<Block>> iterator;
+    typedef WTF::IndexedContainerIterator<BytecodeGraph> iterator;
 
-    inline BytecodeGraph(Block*, typename Block::UnpackedInstructions&);
-
-    Block* codeBlock() const { return m_codeBlock; }
-
-    typename Block::UnpackedInstructions& instructions() { return m_instructions; }
+    template <typename CodeBlockType>
+    inline BytecodeGraph(CodeBlockType*, typename CodeBlockType::UnpackedInstructions&);
 
     WTF::IteratorRange<BasicBlocksVector::reverse_iterator> basicBlocksInReverseOrder()
     {
@@ -106,19 +100,14 @@ public:
     BytecodeBasicBlock* last() { return at(size() - 1); }
 
 private:
-    Block* m_codeBlock;
     BasicBlocksVector m_basicBlocks;
-    typename Block::UnpackedInstructions& m_instructions;
 };
 
 
-template<typename Block>
-BytecodeGraph<Block>::BytecodeGraph(Block* codeBlock, typename Block::UnpackedInstructions& instructions)
-    : m_codeBlock(codeBlock)
-    , m_instructions(instructions)
+template<typename CodeBlockType>
+BytecodeGraph::BytecodeGraph(CodeBlockType* codeBlock, typename CodeBlockType::UnpackedInstructions& instructions)
 {
-    ASSERT(m_codeBlock);
-    BytecodeBasicBlock::compute(m_codeBlock, instructions.begin(), instructions.size(), m_basicBlocks);
+    BytecodeBasicBlock::compute(codeBlock, instructions.begin(), instructions.size(), m_basicBlocks);
     ASSERT(m_basicBlocks.size());
 }
 

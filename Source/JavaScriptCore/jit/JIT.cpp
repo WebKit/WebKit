@@ -195,7 +195,7 @@ void JIT::privateCompileMainPass()
             // Instead, we just find the minimum bytecode offset that is reachable, and
             // compile code from that bytecode offset onwards.
 
-            BytecodeGraph<CodeBlock> graph(m_codeBlock, m_instructions);
+            BytecodeGraph graph(m_codeBlock, m_instructions);
             BytecodeBasicBlock* block = graph.findBasicBlockForBytecodeOffset(m_loopOSREntryBytecodeOffset);
             RELEASE_ASSERT(block);
 

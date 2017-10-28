@@ -161,8 +161,10 @@ public:
         IncludeBranch& m_includeBranch;
     };
 
-    BytecodeRewriter(BytecodeGraph<UnlinkedCodeBlock>& graph)
+    BytecodeRewriter(BytecodeGraph& graph, UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions)
         : m_graph(graph)
+        , m_codeBlock(codeBlock)
+        , m_instructions(instructions)
     {
     }
 
@@ -188,12 +190,12 @@ public:
 
     void removeBytecode(unsigned bytecodeOffset)
     {
-        m_insertions.append(Insertion { InsertionPoint(bytecodeOffset, Position::OriginalBytecodePoint), Insertion::Type::Remove, IncludeBranch::No, opcodeLength(m_graph.instructions()[bytecodeOffset].u.opcode), { } });
+        m_insertions.append(Insertion { InsertionPoint(bytecodeOffset, Position::OriginalBytecodePoint), Insertion::Type::Remove, IncludeBranch::No, opcodeLength(m_instructions[bytecodeOffset].u.opcode), { } });
     }
 
     void execute();
 
-    BytecodeGraph<UnlinkedCodeBlock>& graph() { return m_graph; }
+    BytecodeGraph& graph() { return m_graph; }
 
     int adjustAbsoluteOffset(int absoluteOffset)
     {
@@ -215,7 +217,9 @@ private:
     int adjustJumpTarget(InsertionPoint startPoint, InsertionPoint jumpTargetPoint);
     template<typename Iterator> int calculateDifference(Iterator begin, Iterator end);
 
-    BytecodeGraph<UnlinkedCodeBlock>& m_graph;
+    BytecodeGraph& m_graph;
+    UnlinkedCodeBlock* m_codeBlock;
+    UnlinkedCodeBlock::UnpackedInstructions& m_instructions;
     Vector<Insertion, 8> m_insertions;
 };
 

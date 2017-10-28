@@ -1086,7 +1086,7 @@ FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
         return *iter->value;
     
     std::unique_ptr<FullBytecodeLiveness> liveness = std::make_unique<FullBytecodeLiveness>();
-    codeBlock->livenessAnalysis().computeFullLiveness(*liveness);
+    codeBlock->livenessAnalysis().computeFullLiveness(codeBlock, *liveness);
     FullBytecodeLiveness& result = *liveness;
     m_bytecodeLiveness.add(codeBlock, WTFMove(liveness));
     return result;
@@ -1104,7 +1104,7 @@ BytecodeKills& Graph::killsFor(CodeBlock* codeBlock)
         return *iter->value;
     
     std::unique_ptr<BytecodeKills> kills = std::make_unique<BytecodeKills>();
-    codeBlock->livenessAnalysis().computeKills(*kills);
+    codeBlock->livenessAnalysis().computeKills(codeBlock, *kills);
     BytecodeKills& result = *kills;
     m_bytecodeKills.add(codeBlock, WTFMove(kills));
     return result;

@@ -53,13 +53,15 @@ public:
     typedef Vector<YieldData> Yields;
 
     BytecodeGeneratorification(UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
-        : m_graph(codeBlock, instructions)
+        : m_codeBlock(codeBlock)
+        , m_instructions(instructions)
+        , m_graph(m_codeBlock, m_instructions)
         , m_generatorFrameSymbolTable(*codeBlock->vm(), generatorFrameSymbolTable)
         , m_generatorFrameSymbolTableIndex(generatorFrameSymbolTableIndex)
     {
         for (BytecodeBasicBlock* block : m_graph) {
             for (unsigned bytecodeOffset : block->offsets()) {
-                const UnlinkedInstruction* pc = &m_graph.instructions()[bytecodeOffset];
+                const UnlinkedInstruction* pc = &instructions[bytecodeOffset];
                 switch (pc->u.opcode) {
                 case op_enter: {
                     m_enterPoint = bytecodeOffset;
@@ -91,7 +93,7 @@ public:
 
     void run();
 
-    BytecodeGraph<UnlinkedCodeBlock>& graph() { return m_graph; }
+    BytecodeGraph& graph() { return m_graph; }
 
     const Yields& yields() const
     {
@@ -121,10 +123,9 @@ private:
         if (std::optional<Storage> storage = m_storages[index])
             return *storage;
 
-        UnlinkedCodeBlock* codeBlock = m_graph.codeBlock();
         Identifier identifier = Identifier::fromUid(PrivateName());
-        unsigned identifierIndex = codeBlock->numberOfIdentifiers();
-        codeBlock->addIdentifier(identifier);
+        unsigned identifierIndex = m_codeBlock->numberOfIdentifiers();
+        m_codeBlock->addIdentifier(identifier);
         ScopeOffset scopeOffset = m_generatorFrameSymbolTable->takeNextScopeOffset(NoLockingNecessary);
         m_generatorFrameSymbolTable->set(NoLockingNecessary, identifier.impl(), SymbolTableEntry(VarOffset(scopeOffset)));
 
@@ -138,7 +139,9 @@ private:
     }
 
     unsigned m_enterPoint { 0 };
-    BytecodeGraph<UnlinkedCodeBlock> m_graph;
+    UnlinkedCodeBlock* m_codeBlock;
+    UnlinkedCodeBlock::UnpackedInstructions& m_instructions;
+    BytecodeGraph m_graph;
     Vector<std::optional<Storage>> m_storages;
     Yields m_yields;
     Strong<SymbolTable> m_generatorFrameSymbolTable;
@@ -152,15 +155,15 @@ public:
     {
     }
 
-    void run()
+    void run(UnlinkedCodeBlock* codeBlock, UnlinkedCodeBlock::UnpackedInstructions& instructions)
     {
         // Perform modified liveness analysis to determine which locals are live at the merge points.
         // This produces the conservative results for the question, "which variables should be saved and resumed?".
 
-        runLivenessFixpoint(m_generatorification.graph());
+        runLivenessFixpoint(codeBlock, instructions, m_generatorification.graph());
 
         for (YieldData& data : m_generatorification.yields())
-            data.liveness = getLivenessInfoAtBytecodeOffset(m_generatorification.graph(), data.point + opcodeLength(op_yield));
+            data.liveness = getLivenessInfoAtBytecodeOffset(codeBlock, instructions, m_generatorification.graph(), data.point + opcodeLength(op_yield));
     }
 
 private:
@@ -173,18 +176,17 @@ void BytecodeGeneratorification::run()
 
     {
         GeneratorLivenessAnalysis pass(*this);
-        pass.run();
+        pass.run(m_codeBlock, m_instructions);
     }
 
-    UnlinkedCodeBlock* codeBlock = m_graph.codeBlock();
-    BytecodeRewriter rewriter(m_graph);
+    BytecodeRewriter rewriter(m_graph, m_codeBlock, m_instructions);
 
     // Setup the global switch for the generator.
     {
         unsigned nextToEnterPoint = enterPoint() + opcodeLength(op_enter);
-        unsigned switchTableIndex = m_graph.codeBlock()->numberOfSwitchJumpTables();
+        unsigned switchTableIndex = m_codeBlock->numberOfSwitchJumpTables();
         VirtualRegister state = virtualRegisterForArgument(static_cast<int32_t>(JSGeneratorFunction::GeneratorArgument::State));
-        auto& jumpTable = m_graph.codeBlock()->addSwitchJumpTable();
+        auto& jumpTable = m_codeBlock->addSwitchJumpTable();
         jumpTable.min = 0;
         jumpTable.branchOffsets.resize(m_yields.size() + 1);
         jumpTable.branchOffsets.fill(0);
@@ -227,7 +229,7 @@ void BytecodeGeneratorification::run()
                 VirtualRegister operand = virtualRegisterForLocal(index);
                 Storage storage = storageForGeneratorLocal(index);
 
-                UnlinkedValueProfile profile = codeBlock->addValueProfile();
+                UnlinkedValueProfile profile = m_codeBlock->addValueProfile();
                 fragment.appendInstruction(
                     op_get_from_scope,
                     operand.offset(), // dst

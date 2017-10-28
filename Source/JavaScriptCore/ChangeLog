@@ -1,3 +1,79 @@
+2017-10-27  Saam Barati  <sbarati@apple.com>
+
+        Bytecode liveness should live on UnlinkedCodeBlock so it can be shared amongst CodeBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=178949
+
+        Reviewed by Keith Miller.
+
+        This patch stores BytecodeLiveness on UnlinkedCodeBlock instead of CodeBlock
+        so that we don't need to recompute liveness for the same UnlinkedCodeBlock
+        more than once. To do this, this patch solidifies the invariant that CodeBlock
+        linking can't do anything that would change the result of liveness. For example,
+        it can't introduce new locals. This invariant was met my JSC before, because we
+        didn't do anything in bytecode linking that would change liveness. However, it is
+        now a correctness requirement that we don't do anything that would change the
+        result of running liveness. To support this change, I've refactored BytecodeGraph
+        to not be tied to a CodeBlockType*. Things that perform liveness will pass in
+        CodeBlockType* and the instruction stream as needed. This means that we may
+        compute liveness with one CodeBlock*'s instruction stream, and then perform
+        queries on that analysis with a different CodeBlock*'s instruction stream.
+
+        This seems to be a 2% JSBench progression.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::BytecodeGeneratorification):
+        (JSC::BytecodeGeneratorification::graph):
+        (JSC::BytecodeGeneratorification::storageForGeneratorLocal):
+        (JSC::GeneratorLivenessAnalysis::run):
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/BytecodeGraph.h:
+        (JSC::BytecodeGraph::BytecodeGraph):
+        (JSC::BytecodeGraph::codeBlock const): Deleted.
+        (JSC::BytecodeGraph::instructions): Deleted.
+        (JSC::BytecodeGraph<Block>::BytecodeGraph): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::BytecodeLivenessAnalysis):
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        (JSC::BytecodeLivenessAnalysis::operandIsLiveAtBytecodeOffset): Deleted.
+        (JSC::BytecodeLivenessAnalysis::compute): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::BytecodeLivenessPropagation::stepOverInstruction):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBytecodeOffset):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBlock):
+        (JSC::BytecodeLivenessPropagation::getLivenessInfoAtBytecodeOffset):
+        (JSC::BytecodeLivenessPropagation::runLivenessFixpoint):
+        * bytecode/BytecodeRewriter.cpp:
+        (JSC::BytecodeRewriter::applyModification):
+        (JSC::BytecodeRewriter::execute):
+        (JSC::BytecodeRewriter::adjustJumpTargetsInFragment):
+        * bytecode/BytecodeRewriter.h:
+        (JSC::BytecodeRewriter::BytecodeRewriter):
+        (JSC::BytecodeRewriter::removeBytecode):
+        (JSC::BytecodeRewriter::graph):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow):
+        (JSC::CodeBlock::validate):
+        (JSC::CodeBlock::livenessAnalysisSlow): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::livenessAnalysis):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::applyModification):
+        (JSC::UnlinkedCodeBlock::livenessAnalysisSlow):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::livenessAnalysis):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::livenessFor):
+        (JSC::DFG::Graph::killsFor):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2017-10-27  Keith Miller  <keith_miller@apple.com>
 
         Add unified source list files and build scripts to Xcode project navigator

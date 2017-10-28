@@ -38,13 +38,13 @@ void BytecodeRewriter::applyModification()
     for (size_t insertionIndex = m_insertions.size(); insertionIndex--;) {
         Insertion& insertion = m_insertions[insertionIndex];
         if (insertion.type == Insertion::Type::Remove)
-            m_graph.instructions().remove(insertion.index.bytecodeOffset, insertion.length());
+            m_instructions.remove(insertion.index.bytecodeOffset, insertion.length());
         else {
             if (insertion.includeBranch == IncludeBranch::Yes) {
                 int finalOffset = insertion.index.bytecodeOffset + calculateDifference(m_insertions.begin(), m_insertions.begin() + insertionIndex);
                 adjustJumpTargetsInFragment(finalOffset, insertion);
             }
-            m_graph.instructions().insertVector(insertion.index.bytecodeOffset, insertion.instructions);
+            m_instructions.insertVector(insertion.index.bytecodeOffset, insertion.instructions);
         }
     }
     m_insertions.clear();
@@ -56,8 +56,7 @@ void BytecodeRewriter::execute()
         return lhs.index < rhs.index;
     });
 
-    UnlinkedCodeBlock* codeBlock = m_graph.codeBlock();
-    codeBlock->applyModification(*this);
+    m_codeBlock->applyModification(*this, m_instructions);
 }
 
 void BytecodeRewriter::adjustJumpTargetsInFragment(unsigned finalOffset, Insertion& insertion)
@@ -69,8 +68,7 @@ void BytecodeRewriter::adjustJumpTargetsInFragment(unsigned finalOffset, Inserti
         OpcodeID opcodeID = instruction.u.opcode;
         if (isBranch(opcodeID)) {
             unsigned bytecodeOffset = finalOffset + fragmentOffset;
-            UnlinkedCodeBlock* codeBlock = m_graph.codeBlock();
-            extractStoredJumpTargetsForBytecodeOffset(codeBlock, instructionsBegin, fragmentOffset, [&](int32_t& label) {
+            extractStoredJumpTargetsForBytecodeOffset(m_codeBlock, instructionsBegin, fragmentOffset, [&](int32_t& label) {
                 int absoluteOffset = adjustAbsoluteOffset(label);
                 label = absoluteOffset - static_cast<int>(bytecodeOffset);
             });

@@ -28,6 +28,7 @@
 #include "UnlinkedCodeBlock.h"
 
 #include "BytecodeGenerator.h"
+#include "BytecodeLivenessAnalysis.h"
 #include "BytecodeRewriter.h"
 #include "ClassInfo.h"
 #include "CodeCache.h"
@@ -339,15 +340,14 @@ UnlinkedHandlerInfo* UnlinkedCodeBlock::handlerForIndex(unsigned index, Required
     return UnlinkedHandlerInfo::handlerForIndex(m_rareData->m_exceptionHandlers, index, requiredHandler);
 }
 
-void UnlinkedCodeBlock::applyModification(BytecodeRewriter& rewriter)
+void UnlinkedCodeBlock::applyModification(BytecodeRewriter& rewriter, UnpackedInstructions& instructions)
 {
     // Before applying the changes, we adjust the jumps based on the original bytecode offset, the offset to the jump target, and
     // the insertion information.
 
-    BytecodeGraph<UnlinkedCodeBlock>& graph = rewriter.graph();
-    UnlinkedInstruction* instructionsBegin = graph.instructions().begin();
+    UnlinkedInstruction* instructionsBegin = instructions.begin(); // OOPS: make this an accessor on rewriter.
 
-    for (int bytecodeOffset = 0, instructionCount = graph.instructions().size(); bytecodeOffset < instructionCount;) {
+    for (int bytecodeOffset = 0, instructionCount = instructions.size(); bytecodeOffset < instructionCount;) {
         UnlinkedInstruction* current = instructionsBegin + bytecodeOffset;
         OpcodeID opcodeID = current[0].u.opcode;
         extractStoredJumpTargetsForBytecodeOffset(this, instructionsBegin, bytecodeOffset, [&](int32_t& relativeOffset) {
@@ -386,7 +386,7 @@ void UnlinkedCodeBlock::applyModification(BytecodeRewriter& rewriter)
 
     // And recompute the jump target based on the modified unlinked instructions.
     m_jumpTargets.clear();
-    recomputePreciseJumpTargets(this, graph.instructions().begin(), graph.instructions().size(), m_jumpTargets);
+    recomputePreciseJumpTargets(this, instructions.begin(), instructions.size(), m_jumpTargets);
 }
 
 void UnlinkedCodeBlock::shrinkToFit()
@@ -416,6 +416,23 @@ void UnlinkedCodeBlock::shrinkToFit()
 
 void UnlinkedCodeBlock::dump(PrintStream&) const
 {
+}
+
+BytecodeLivenessAnalysis& UnlinkedCodeBlock::livenessAnalysisSlow(CodeBlock* codeBlock)
+{
+    RELEASE_ASSERT(codeBlock->unlinkedCodeBlock() == this);
+
+
+    {
+        auto locker = holdLock(m_lock);
+        if (!m_liveness) {
+            // There is a chance two compiler threads raced to the slow path.
+            // We defend against computing liveness twice.
+            m_liveness = std::make_unique<BytecodeLivenessAnalysis>(codeBlock);
+        }
+    }
+    
+    return *m_liveness;
 }
 
 } // namespace JSC
