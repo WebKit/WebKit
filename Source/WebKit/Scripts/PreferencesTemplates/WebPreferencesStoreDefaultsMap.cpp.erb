@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
+ *
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +26,34 @@
  */
 
 #include "config.h"
-#include "WebPreferencesKeys.h"
+#include "WebPreferencesStore.h"
 
+#include "WebPreferencesDefaultValues.h"
+#include "WebPreferencesKeys.h"
 #include <wtf/NeverDestroyed.h>
 
+// FIXME: These should added via options in WebPreferences.yaml, rather than hardcoded.
+#include "FontSmoothingLevel.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
+#include <WebCore/LibWebRTCProvider.h>
+#include <WebCore/SecurityOrigin.h>
+#include <WebCore/Settings.h>
+#include <WebCore/TextEncodingRegistry.h>
+
+using namespace WebCore;
+
 namespace WebKit {
-namespace WebPreferencesKey {
 
-#define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-        const String& KeyLower##Key() \
-        { \
-            static NeverDestroyed<String> key(MAKE_STATIC_STRING_IMPL(#KeyUpper)); \
-            return key; \
-        }
+WebPreferencesStore::ValueMap& WebPreferencesStore::defaults()
+{
+    static NeverDestroyed<ValueMap> defaults;
+    if (defaults.get().isEmpty()) {
+<%- for @pref in @preferences do -%>
+        defaults.get().set(WebPreferencesKey::<%= @pref.nameLower %>Key(), Value(<%= @pref.type %>(<%= @pref.defaultValue %>)));
+<%- end -%>
+    }
 
-FOR_EACH_WEBKIT_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_KEY_GETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_KEY_GETTERS)
+    return defaults;
+}
 
-#undef DEFINE_KEY_GETTERS
-
-} // namespace WebPreferencesKey
 } // namespace WebKit

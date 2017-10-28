@@ -1,4 +1,3 @@
-
 JavaScriptEnabled:
   type: bool
   defaultValue: true

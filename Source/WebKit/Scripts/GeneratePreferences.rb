@@ -156,3 +156,6 @@ end
 preferences = Preferences.new(parsedPreferences)
 preferences.renderToFile("PreferencesTemplates/WebPreferencesDefinitions.h.erb", File.join(options[:outputDirectory], "WebPreferencesDefinitions.h"))
 preferences.renderToFile("PreferencesTemplates/WebPageUpdatePreferences.cpp.erb", File.join(options[:outputDirectory], "WebPageUpdatePreferences.cpp"))
+preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.h.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.h"))
+preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.cpp"))
+preferences.renderToFile("PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesStoreDefaultsMap.cpp"))

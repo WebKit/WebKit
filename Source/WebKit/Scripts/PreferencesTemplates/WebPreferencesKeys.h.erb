@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
+ *
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +25,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPreferencesKeys_h
-#define WebPreferencesKeys_h
+#pragma once
 
-#include "WebPreferencesDefinitions.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 namespace WebPreferencesKey {
 
-#define DECLARE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) const String& KeyLower##Key();
-
-FOR_EACH_WEBKIT_PREFERENCE(DECLARE_KEY_GETTERS)
-FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DECLARE_KEY_GETTERS)
-FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DECLARE_KEY_GETTERS)
-
-#undef DECLARE_KEY_GETTERS
+<%- for @pref in @preferences do -%>
+const String& <%= @pref.nameLower %>Key();
+<%- end -%>
 
 } // namespace WebPreferencesKey
 } // namespace WebKit
-
-#endif // WebPreferencesKeys_h

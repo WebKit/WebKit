@@ -209,7 +209,6 @@ set(WebKit_SOURCES
     Shared/WebPageGroupData.cpp
     Shared/WebPlatformTouchPoint.cpp
     Shared/WebPopupItem.cpp
-    Shared/WebPreferencesKeys.cpp
     Shared/WebPreferencesStore.cpp
     Shared/WebProcessCreationParameters.cpp
     Shared/WebRenderLayer.cpp
@@ -909,10 +908,13 @@ list(APPEND WebKit_HEADERS
 set(WebKit_WEB_PREFERENCES_TEMPLATES
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
+    ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesKeys.cpp.erb
+    ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb
+    ${WEBKIT_DIR}/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/WebPageUpdatePreferences.cpp ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesDefinitions.h
+    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/WebPageUpdatePreferences.cpp ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesDefinitions.h ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesKeys.cpp ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesKeys.h ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesStoreDefaultsMap.cpp
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Shared/WebPreferences.yaml
     DEPENDS ${WebKit_WEB_PREFERENCES_TEMPLATES}
     COMMAND ${RUBY_EXECUTABLE} ${WEBKIT_DIR}/Scripts/GeneratePreferences.rb --input ${WEBKIT_DIR}/Shared/WebPreferences.yaml --outputDir "${DERIVED_SOURCES_WEBKIT_DIR}"
@@ -920,10 +922,13 @@ add_custom_command(
 
 list(APPEND WebKit_HEADERS
     ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesDefinitions.h
+    ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesKeys.h
 )
 
 list(APPEND WebKit_SOURCES
     ${DERIVED_SOURCES_WEBKIT_DIR}/WebPageUpdatePreferences.cpp
+    ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesKeys.cpp
+    ${DERIVED_SOURCES_WEBKIT_DIR}/WebPreferencesStoreDefaultsMap.cpp
 )
 
 

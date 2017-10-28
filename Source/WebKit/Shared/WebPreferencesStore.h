@@ -179,6 +179,8 @@ struct WebPreferencesStore {
     typedef HashMap<String, Value> ValueMap;
     ValueMap m_values;
     ValueMap m_overridenDefaults;
+
+    static ValueMap& defaults();
 };
 
 } // namespace WebKit

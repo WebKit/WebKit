@@ -26,13 +26,8 @@
 #include "config.h"
 #include "WebPreferencesStore.h"
 
-#include "FontSmoothingLevel.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPreferencesKeys.h"
-#include <WebCore/DeprecatedGlobalSettings.h>
-#include <WebCore/LibWebRTCProvider.h>
-#include <WebCore/Settings.h>
-#include <WebCore/TextEncodingRegistry.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -158,20 +153,6 @@ template<> uint32_t as<uint32_t>(const WebPreferencesStore::Value& value) { retu
 template<> double as<double>(const WebPreferencesStore::Value& value) { return value.asDouble(); }
 
 
-static WebPreferencesStore::ValueMap& defaults()
-{
-    static NeverDestroyed<WebPreferencesStore::ValueMap> defaults;
-    if (defaults.get().isEmpty()) {
-#define DEFINE_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) defaults.get().set(WebPreferencesKey::KeyLower##Key(), WebPreferencesStore::Value((Type)DefaultValue));
-        FOR_EACH_WEBKIT_PREFERENCE(DEFINE_DEFAULTS)
-        FOR_EACH_WEBKIT_DEBUG_PREFERENCE(DEFINE_DEFAULTS)
-        FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(DEFINE_DEFAULTS)
-#undef DEFINE_DEFAULTS
-    }
-
-    return defaults;
-}
-
 template<typename MappedType>
 static MappedType valueForKey(const WebPreferencesStore::ValueMap& values, const WebPreferencesStore::ValueMap& overridenDefaults, const String& key)
 {
@@ -183,7 +164,7 @@ static MappedType valueForKey(const WebPreferencesStore::ValueMap& values, const
     if (overridenDefaultsIt != overridenDefaults.end() && overridenDefaultsIt->value.type() == ToType<MappedType>::value)
         return as<MappedType>(overridenDefaultsIt->value);
 
-    auto& defaultsMap = defaults();
+    auto& defaultsMap = WebPreferencesStore::defaults();
     auto defaultsIt = defaultsMap.find(key);
     if (defaultsIt != defaultsMap.end() && defaultsIt->value.type() == ToType<MappedType>::value)
         return as<MappedType>(defaultsIt->value);

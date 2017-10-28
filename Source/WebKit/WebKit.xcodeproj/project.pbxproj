@@ -1289,8 +1289,6 @@
 		7C4ABED51AA8FCB80088AA37 /* WebCompiledContentRuleListData.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4ABED31AA8FCB80088AA37 /* WebCompiledContentRuleListData.h */; };
 		7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6D37FA172F555F009D2847 /* PageBannerMac.mm */; };
 		7C6E70FB18B2DC7A00F24E2E /* WebProcessCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */; };
-		7C85FD7F19341665000177C4 /* WebPreferencesKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C85FD7D19341665000177C4 /* WebPreferencesKeys.cpp */; };
-		7C85FD8019341665000177C4 /* WebPreferencesKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C85FD7E19341665000177C4 /* WebPreferencesKeys.h */; };
 		7C882DF71C7E9965006BF731 /* _WKUserContentWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C882DF31C7E995E006BF731 /* _WKUserContentWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C882DF81C7E996C006BF731 /* _WKUserContentWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C882DF41C7E995E006BF731 /* _WKUserContentWorld.mm */; };
 		7C882DF91C7E996F006BF731 /* _WKUserContentWorldInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C882DF51C7E995E006BF731 /* _WKUserContentWorldInternal.h */; };
@@ -1319,6 +1317,10 @@
 		7CA254EB182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CA3793E1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CAB937A1D459E510070F540 /* NetworkCacheCodersCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CAB93791D459E4B0070F540 /* NetworkCacheCodersCocoa.cpp */; };
+		7CB100F11FA3858A001729EE /* WebPreferencesKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB100EE1FA2D74A001729EE /* WebPreferencesKeys.cpp */; };
+		7CB100F21FA3858E001729EE /* WebPreferencesDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDE73A31F9DAB6500390312 /* WebPreferencesDefinitions.h */; };
+		7CB100F31FA3858E001729EE /* WebPreferencesKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB100EF1FA2D74B001729EE /* WebPreferencesKeys.h */; };
+		7CB100F41FA38592001729EE /* WebPreferencesStoreDefaultsMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB100F01FA2D784001729EE /* WebPreferencesStoreDefaultsMap.cpp */; };
 		7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */; };
 		7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */; };
 		7CB16FF21724BA28007A0A95 /* com.macromedia.Flash Player.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE51724B9B5007A0A95 /* com.macromedia.Flash Player.plugin.sb */; };
@@ -3669,8 +3671,6 @@
 		7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleCSSStyleDeclarationHandle.h; sourceTree = "<group>"; };
 		7C6D37FA172F555F009D2847 /* PageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageBannerMac.mm; sourceTree = "<group>"; };
 		7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessCocoa.mm; sourceTree = "<group>"; };
-		7C85FD7D19341665000177C4 /* WebPreferencesKeys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesKeys.cpp; sourceTree = "<group>"; };
-		7C85FD7E19341665000177C4 /* WebPreferencesKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesKeys.h; sourceTree = "<group>"; };
 		7C882DF31C7E995E006BF731 /* _WKUserContentWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentWorld.h; sourceTree = "<group>"; };
 		7C882DF41C7E995E006BF731 /* _WKUserContentWorld.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKUserContentWorld.mm; sourceTree = "<group>"; };
 		7C882DF51C7E995E006BF731 /* _WKUserContentWorldInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentWorldInternal.h; sourceTree = "<group>"; };
@@ -3699,6 +3699,9 @@
 		7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextPolicyDelegate.h; sourceTree = "<group>"; };
 		7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentExtensionStorePrivate.h; sourceTree = "<group>"; };
 		7CAB93791D459E4B0070F540 /* NetworkCacheCodersCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheCodersCocoa.cpp; sourceTree = "<group>"; };
+		7CB100EE1FA2D74A001729EE /* WebPreferencesKeys.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesKeys.cpp; sourceTree = "<group>"; };
+		7CB100EF1FA2D74B001729EE /* WebPreferencesKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPreferencesKeys.h; sourceTree = "<group>"; };
+		7CB100F01FA2D784001729EE /* WebPreferencesStoreDefaultsMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesStoreDefaultsMap.cpp; sourceTree = "<group>"; };
 		7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.ist.ds.appleconnect.webplugin.sb; sourceTree = "<group>"; };
 		7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.QuickTime Plugin.plugin.sb"; sourceTree = "<group>"; };
 		7CB16FE41724B9B5007A0A95 /* com.apple.WebKit.plugin-common.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.WebKit.plugin-common.sb.in"; sourceTree = "<group>"; };
@@ -3727,7 +3730,7 @@
 		7CD622751739D863005BD7FF /* PluginSandboxProfile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginSandboxProfile.mm; sourceTree = "<group>"; };
 		7CD622761739D863005BD7FF /* PluginSandboxProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginSandboxProfile.h; sourceTree = "<group>"; };
 		7CDE739F1F9DA37A00390312 /* WebPreferences.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPreferences.yaml; sourceTree = "<group>"; };
-		7CDE73A01F9DA37B00390312 /* WebPreferencesDefinitionsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefinitionsBase.h; sourceTree = "<group>"; };
+		7CDE73A01F9DA37B00390312 /* WebPreferencesDefaultValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefaultValues.h; sourceTree = "<group>"; };
 		7CDE73A11F9DA41400390312 /* GeneratePreferences.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = GeneratePreferences.rb; sourceTree = "<group>"; };
 		7CDE73A21F9DA59700390312 /* PreferencesTemplates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PreferencesTemplates; sourceTree = "<group>"; };
 		7CDE73A31F9DAB6500390312 /* WebPreferencesDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefinitions.h; sourceTree = "<group>"; };
@@ -5144,9 +5147,7 @@
 				BC5744ED12638FB3006F0F12 /* WebPopupItem.cpp */,
 				BC5744EE12638FB3006F0F12 /* WebPopupItem.h */,
 				7CDE739F1F9DA37A00390312 /* WebPreferences.yaml */,
-				7CDE73A01F9DA37B00390312 /* WebPreferencesDefinitionsBase.h */,
-				7C85FD7D19341665000177C4 /* WebPreferencesKeys.cpp */,
-				7C85FD7E19341665000177C4 /* WebPreferencesKeys.h */,
+				7CDE73A01F9DA37B00390312 /* WebPreferencesDefaultValues.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,
 				BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */,
 				BC306823125A6B9400E71278 /* WebProcessCreationParameters.cpp */,
@@ -8145,6 +8146,9 @@
 				1AB1F7941D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp */,
 				1AB1F7951D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h */,
 				7CDE73A31F9DAB6500390312 /* WebPreferencesDefinitions.h */,
+				7CB100EE1FA2D74A001729EE /* WebPreferencesKeys.cpp */,
+				7CB100EF1FA2D74B001729EE /* WebPreferencesKeys.h */,
+				7CB100F01FA2D784001729EE /* WebPreferencesStoreDefaultsMap.cpp */,
 				1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */,
 				1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */,
 				BC3066BC125A442100E71278 /* WebProcessMessageReceiver.cpp */,
@@ -9043,7 +9047,8 @@
 				BC574E631267D080006F0F12 /* WebPopupMenuProxy.h in Headers */,
 				BC5750971268F3C6006F0F12 /* WebPopupMenuProxyMac.h in Headers */,
 				BCD597FF112B57BE00EC8C23 /* WebPreferences.h in Headers */,
-				7C85FD8019341665000177C4 /* WebPreferencesKeys.h in Headers */,
+				7CB100F21FA3858E001729EE /* WebPreferencesDefinitions.h in Headers */,
+				7CB100F31FA3858E001729EE /* WebPreferencesKeys.h in Headers */,
 				BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */,
 				A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */,
 				BC032D9710F437AF0058C15A /* WebProcess.h in Headers */,
@@ -10688,9 +10693,10 @@
 				BCC43AC7127B99DE00317F16 /* WebPopupMenuMac.mm in Sources */,
 				BC5750981268F3C6006F0F12 /* WebPopupMenuProxyMac.mm in Sources */,
 				BCD59800112B57BE00EC8C23 /* WebPreferences.cpp in Sources */,
-				7C85FD7F19341665000177C4 /* WebPreferencesKeys.cpp in Sources */,
+				7CB100F11FA3858A001729EE /* WebPreferencesKeys.cpp in Sources */,
 				BC84EB1812A7100C0083F2DA /* WebPreferencesMac.mm in Sources */,
 				BCD598AD112B7FDF00EC8C23 /* WebPreferencesStore.cpp in Sources */,
+				7CB100F41FA38592001729EE /* WebPreferencesStoreDefaultsMap.cpp in Sources */,
 				A1C512C8190656E500448914 /* WebPreviewLoaderClient.cpp in Sources */,
 				BC111AE4112F5C2600337BAB /* WebProcess.cpp in Sources */,
 				7C6E70FB18B2DC7A00F24E2E /* WebProcessCocoa.mm in Sources */,

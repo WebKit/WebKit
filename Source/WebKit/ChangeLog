@@ -1,3 +1,45 @@
+2017-10-27  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Generate more of the WebKit preferences code
+        https://bugs.webkit.org/show_bug.cgi?id=178945
+
+        Reviewed by Chris Dumez.
+
+        Generate WebPreferencesKeys.{h,cpp} and WebPreferencesStoreDefaultsMap.cpp
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebKit.xcodeproj/project.pbxproj:
+        * Scripts/GeneratePreferences.rb:
+        
+            Generate new files.
+        
+        * Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb:
+        
+            Update include.
+        
+        * Scripts/PreferencesTemplates/WebPreferencesKeys.cpp.erb: Added.
+        * Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb: Added.
+        * Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb: Added.
+
+            Add template files for new generated files.
+
+        * Shared/WebPreferencesDefaultValues.h: Copied from Source/WebKit/Shared/WebPreferencesDefinitionsBase.h.
+        * Shared/WebPreferencesDefinitionsBase.h:
+        
+            Renamed WebPreferencesDefinitionsBase.h to WebPreferencesDefaultValues.h to better indicate what it is.
+        
+        * Shared/WebPreferencesKeys.cpp: Removed.
+        * Shared/WebPreferencesKeys.h: Removed.
+        
+            Replaced with generated versions.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::defaults): Deleted.
+        * Shared/WebPreferencesStore.h:
+        
+            Replace macro driven defaults map with generated WebPreferencesStoreDefaultsMap.cpp.
+
 2017-10-28  Chris Dumez  <cdumez@apple.com>
 
         self.ExtendableEvent / Client / Clients / WindowClient do not exist in a Service Worker
