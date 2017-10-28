@@ -1,3 +1,12 @@
+2017-10-27  Devin Rousso  <webkit@devinrousso.com>
+
+        Create watchlist for files related WebInspector Recording
+        https://bugs.webkit.org/show_bug.cgi?id=178965
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-10-27  Jonathan Bedard  <jbedard@apple.com>
 
         Windows and WebViews are retained after re-configure
