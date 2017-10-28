@@ -35,13 +35,12 @@
 #include "Settings.h"
 #include <inspector/InspectorAgentBase.h>
 
-
 namespace WebCore {
+
 using namespace Inspector;
 
 PageDebuggable::PageDebuggable(Page& page)
     : m_page(page)
-    , m_forcedDeveloperExtrasEnabled(false)
 {
 }
 
