@@ -1,35 +1,71 @@
 /*
-* Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions
-* are met:
-* 1. Redistributions of source code must retain the above copyright
-*    notice, this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-*    notice, this list of conditions and the following disclaimer in the
-*    documentation and/or other materials provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-* PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
-* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-* THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #include "config.h"
 #include "WorkQueue.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
+#include <wtf/win/WorkItemContext.h>
 
 namespace WTF {
+
+void WorkQueue::handleCallback(void* data, BOOLEAN timerOrWaitFired)
+{
+    ASSERT_ARG(data, data);
+    ASSERT_ARG(timerOrWaitFired, !timerOrWaitFired);
+
+    WorkItemContext* context = static_cast<WorkItemContext*>(data);
+    WorkQueue* queue = context->queue();
+
+    RefPtr<WorkItemContext> protector(context);
+    queue->dispatch([protector] {
+        protector->function()();
+    });
+}
+
+void WorkQueue::registerHandle(HANDLE handle, Function<void()>&& function)
+{
+    Ref<WorkItemContext> context = WorkItemContext::create(handle, nullptr, WTFMove(function), this);
+
+    if (!::RegisterWaitForSingleObject(&context->waitHandle().m_handle, handle, handleCallback, context.ptr(), INFINITE, WT_EXECUTEDEFAULT))
+        ASSERT_WITH_MESSAGE(m_timerQueue, "::RegisterWaitForSingleObject %lu", ::GetLastError());
+
+    MutexLocker lock(m_itemsMapLock);
+    ASSERT_ARG(handle, !m_itemsMap.contains(handle));
+    m_itemsMap.set(handle, WTFMove(context));
+}
+
+void WorkQueue::unregisterAndCloseHandle(HANDLE handle)
+{
+    MutexLocker locker(m_itemsMapLock);
+    ASSERT_ARG(handle, m_itemsMap.contains(handle));
+
+    unregisterWaitAndDestroyItemSoon(WTFMove(m_itemsMap.take(handle).value()));
+}
 
 DWORD WorkQueue::workThreadCallback(void* context)
 {
@@ -188,6 +224,28 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
 
     // The timer callback will handle destroying context.
     context.leakRef();
+}
+
+void WorkQueue::unregisterWaitAndDestroyItemSoon(Ref<WorkItemContext>&& workItem)
+{
+    // We're going to make a blocking call to ::UnregisterWaitEx before closing the handle. (The
+    // blocking version of ::UnregisterWaitEx is much simpler than the non-blocking version.) If we
+    // do this on the current thread, we'll deadlock if we're currently in a callback function for
+    // the wait we're unregistering. So instead we do it asynchronously on some other worker thread.
+    ::QueueUserWorkItem(unregisterWaitAndDestroyItemCallback, workItem.ptr(), WT_EXECUTEDEFAULT);
+}
+
+DWORD WINAPI WorkQueue::unregisterWaitAndDestroyItemCallback(void* data)
+{
+    ASSERT_ARG(data, data);
+    WorkItemContext* context = static_cast<WorkItemContext*>(data);
+
+    // Now that we know we're not in a callback function for the wait we're unregistering, we can
+    // make a blocking call to ::UnregisterWaitEx.
+    if (!::UnregisterWaitEx(context->waitHandle().get(), INVALID_HANDLE_VALUE))
+        ASSERT_WITH_MESSAGE(false, "::UnregisterWaitEx failed with '%s'", ::GetLastError());
+
+    return 0;
 }
 
 } // namespace WTF

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,7 @@
 #endif
 
 #if USE(WINDOWS_EVENT_LOOP)
+#include <wtf/HashMap.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 #endif
@@ -48,7 +50,12 @@
 
 namespace WTF {
 
+#if USE(WINDOWS_EVENT_LOOP)
+class WorkItemContext;
+#endif
+
 class WorkQueue final : public FunctionDispatcher {
+
 public:
     enum class Type {
         Serial,
@@ -74,6 +81,9 @@ public:
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
     RunLoop& runLoop() const { return *m_runLoop; }
+#elif USE(WINDOWS_EVENT_LOOP)
+    WTF_EXPORT_PRIVATE void registerHandle(HANDLE, Function<void()>&&);
+    WTF_EXPORT_PRIVATE void unregisterAndCloseHandle(HANDLE);
 #endif
 
 private:
@@ -83,12 +93,16 @@ private:
     void platformInvalidate();
 
 #if USE(WINDOWS_EVENT_LOOP)
+    static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
     static void CALLBACK timerCallback(void* context, BOOLEAN timerOrWaitFired);
     static DWORD WINAPI workThreadCallback(void* context);
 
     bool tryRegisterAsWorkThread();
     void unregisterAsWorkThread();
     void performWorkOnRegisteredWorkThread();
+
+    static void unregisterWaitAndDestroyItemSoon(Ref<WorkItemContext>&&);
+    static DWORD WINAPI unregisterWaitAndDestroyItemCallback(void* context);
 #endif
 
 #if USE(COCOA_EVENT_LOOP)
@@ -99,6 +113,9 @@ private:
 
     Mutex m_functionQueueLock;
     Vector<Function<void()>> m_functionQueue;
+
+    Mutex m_itemsMapLock;
+    HashMap<HANDLE, Ref<WorkItemContext>> m_itemsMap;
 
     HANDLE m_timerQueue;
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)

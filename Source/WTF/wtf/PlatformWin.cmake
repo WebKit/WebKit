@@ -11,6 +11,7 @@ list(APPEND WTF_SOURCES
     win/MemoryFootprintWin.cpp
     win/MemoryPressureHandlerWin.cpp
     win/RunLoopWin.cpp
+    win/WorkItemContext.cpp
     win/WorkQueueWin.cpp
 )
 
