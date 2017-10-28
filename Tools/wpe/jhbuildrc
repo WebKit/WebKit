@@ -23,3 +23,5 @@ import jhbuildrc_common
 jhbuildrc_common.init(globals(), "wpe")
 # Enable builddir != srcdir builds.
 buildroot = os.path.join(os.path.dirname(checkoutroot), "Build")
+
+conditions.add('wpe')

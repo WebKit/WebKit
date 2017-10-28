@@ -1,3 +1,17 @@
+2017-10-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build gst-plugins-base without pango support
+        https://bugs.webkit.org/show_bug.cgi?id=178918
+
+        Reviewed by Carlos Garcia Campos.
+
+        We need to build gst-plugins-base without pango support for WPE. Let's use JHBuild
+        conditions so we can make platform-specific changes in the shared GStreamer moduleset.
+
+        * gstreamer/jhbuild.modules:
+        * gtk/jhbuildrc:
+        * wpe/jhbuildrc:
+
 2017-10-27  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win] Detect Visual Studio 2017 location

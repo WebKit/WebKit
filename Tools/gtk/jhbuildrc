@@ -42,3 +42,5 @@ if 'run' not in sys.argv:
     os.environ['CXXFLAGS'] = '-Wno-error -O2 -g1'
     # For building gstreamer plugins on the Mac.
     os.environ['OBJCFLAGS'] = '-Wno-error -O2 -g1'
+
+conditions.add('gtk')

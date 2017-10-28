@@ -57,6 +57,9 @@
   <autotools id="gst-plugins-base"
              autogen-sh="configure"
              autogenargs="--disable-examples --disable-gtk-doc --disable-introspection">
+    <if condition-set="wpe">
+      <autogenargs value="--disable-pango"/>
+    </if>
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
