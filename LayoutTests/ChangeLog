@@ -1,3 +1,20 @@
+2017-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Unify Font::platformCharWidthInit() with macOS
+        https://bugs.webkit.org/show_bug.cgi?id=178951
+        <rdar://problem/7848198>
+
+        Reviewed by Zalan Bujtas.
+
+        Updating expected results.
+
+        * platform/ios-wk2/fast/forms/search-styled-expected.txt: Removed.
+        * platform/ios-wk2/fast/forms/text-control-intrinsic-widths-expected.txt: Removed.
+        * platform/ios-wk2/fast/forms/textarea-width-expected.txt: Removed.
+        * platform/ios/fast/forms/search-styled-expected.txt:
+        * platform/ios/fast/forms/text-control-intrinsic-widths-expected.txt:
+        * platform/ios/fast/forms/textarea-width-expected.txt:
+
 2017-10-28  Chris Dumez  <cdumez@apple.com>
 
         self.ExtendableEvent / Client / Clients / WindowClient do not exist in a Service Worker
