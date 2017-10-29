@@ -6,3 +6,4 @@ fast/forms/search-vertical-alignment.html [ Skip ]
 fast/forms/number/number-appearance-spinbutton-layer.html [ Skip ]
 
 
+webkit.org/b/155132 http/tests/security/mixedContent/insecure-download-redirects-to-basic-auth-secure-download.https.html [ Skip ]

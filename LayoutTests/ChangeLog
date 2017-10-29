@@ -1,5 +1,20 @@
 2017-10-29  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r224139. rdar://problem/35143359
+
+    2017-10-27  Daniel Bates  <dabates@apple.com>
+
+            Skip test http/tests/security/mixedContent/insecure-download-redirects-to-basic-auth-secure-download.https.html on OS X El Capitan
+
+            For now skip this test that was added in r224134 on OS X El Capitan. OS X El Capitan uses the
+            legacy NSURLDownload code path for downloads. This code path is not happy with the self-signed
+            certificate we use when running HTTPS tests. See <https://bugs.webkit.org/show_bug.cgi?id=155132>
+            for more details.
+
+            * platform/mac-elcapitan/TestExpectations:
+
+2017-10-29  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r224134. rdar://problem/35143359
 
     2017-10-27  Daniel Bates  <dabates@apple.com>
