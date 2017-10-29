@@ -95,8 +95,10 @@ static inline Ref<CSSGradientValue> clone(CSSGradientValue& value)
 {
     if (is<CSSLinearGradientValue>(value))
         return downcast<CSSLinearGradientValue>(value).clone();
-    ASSERT(is<CSSRadialGradientValue>(value));
-    return downcast<CSSRadialGradientValue>(value).clone();
+    if (is<CSSRadialGradientValue>(value))
+        return downcast<CSSRadialGradientValue>(value).clone();
+    ASSERT(is<CSSConicGradientValue>(value));
+    return downcast<CSSConicGradientValue>(value).clone();
 }
 
 Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(const StyleResolver& styleResolver)
@@ -544,9 +546,7 @@ FloatPoint CSSGradientValue::computeEndPoint(CSSPrimitiveValue* horizontal, CSSP
 
 bool CSSGradientValue::isCacheable() const
 {
-    for (size_t i = 0; i < m_stops.size(); ++i) {
-        const CSSGradientColorStop& stop = m_stops[i];
-
+    for (auto& stop : m_stops) {
         if (stop.m_colorIsDerivedFromElement)
             return false;
 
@@ -1272,6 +1272,82 @@ bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
         equalHorizontalAndVerticalSize = !other.m_endHorizontalSize && !other.m_endVerticalSize;
     }
     return equalShape && equalSizingBehavior && equalHorizontalAndVerticalSize && m_stops == other.m_stops;
+}
+
+
+String CSSConicGradientValue::customCSSText() const
+{
+    StringBuilder result;
+
+    if (m_repeating)
+        result.appendLiteral("repeating-conic-gradient(");
+    else
+        result.appendLiteral("conic-gradient(");
+
+    bool wroteSomething = false;
+
+    if (m_angle) {
+        result.appendLiteral("from ");
+        result.append(m_angle->cssText());
+        wroteSomething = true;
+    }
+
+    if (m_firstX && m_firstY) {
+        if (wroteSomething)
+            result.appendLiteral(" ");
+        result.appendLiteral("at ");
+        result.append(m_firstX->cssText());
+        result.append(' ');
+        result.append(m_firstY->cssText());
+        wroteSomething = true;
+    }
+
+    if (wroteSomething)
+        result.appendLiteral(", ");
+
+    bool wroteFirstStop = false;
+    for (auto& stop : m_stops) {
+        if (wroteFirstStop)
+            result.appendLiteral(", ");
+        wroteFirstStop = true;
+        if (!stop.isMidpoint)
+            result.append(stop.m_color->cssText());
+        if (stop.m_position) {
+            if (!stop.isMidpoint)
+                result.append(' ');
+            result.append(stop.m_position->cssText());
+        }
+    }
+    
+    result.append(')');
+    return result.toString();
+}
+
+Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement&, const FloatSize&)
+{
+    // FIXME: Implement.
+    return Gradient::create(FloatPoint { }, FloatPoint { });
+}
+
+bool CSSConicGradientValue::equals(const CSSConicGradientValue& other) const
+{
+    if (m_repeating != other.m_repeating)
+        return false;
+
+    if (!compareCSSValuePtr(m_angle, other.m_angle))
+        return false;
+
+    bool equalXandY = false;
+    if (m_firstX && m_firstY)
+        equalXandY = compareCSSValuePtr(m_firstX, other.m_firstX) && compareCSSValuePtr(m_firstY, other.m_firstY);
+    else if (m_firstX)
+        equalXandY = compareCSSValuePtr(m_firstX, other.m_firstX) && !other.m_firstY;
+    else if (m_firstY)
+        equalXandY = compareCSSValuePtr(m_firstY, other.m_firstY) && !other.m_firstX;
+    else
+        equalXandY = !other.m_firstX && !other.m_firstY;
+
+    return equalXandY && m_stops == other.m_stops;
 }
 
 } // namespace WebCore

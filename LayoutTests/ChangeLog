@@ -1,3 +1,17 @@
+2017-10-29  Sam Weinig  <sam@webkit.org>
+
+        [Conic Gradients] Add support for parsing conic gradients
+        https://bugs.webkit.org/show_bug.cgi?id=178987
+
+        Reviewed by Dean Jackson.
+
+        * http/wpt/css: Added.
+        * http/wpt/css/css-images-4: Added.
+        * http/wpt/css/css-images-4/conic-gradient-parsing-expected.txt: Added.
+        * http/wpt/css/css-images-4/conic-gradient-parsing.html: Added.
+
+            Add tests for basic parsing of conic gradients.
+
 2017-10-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose the currentTime property on Animation

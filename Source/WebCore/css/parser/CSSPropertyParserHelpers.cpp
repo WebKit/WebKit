@@ -356,6 +356,34 @@ RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode
     return nullptr;
 }
 
+static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
+{
+    const CSSParserToken& token = range.peek();
+    if (token.type() == DimensionToken) {
+        switch (token.unitType()) {
+        case CSSPrimitiveValue::UnitType::CSS_DEG:
+        case CSSPrimitiveValue::UnitType::CSS_RAD:
+        case CSSPrimitiveValue::UnitType::CSS_GRAD:
+        case CSSPrimitiveValue::UnitType::CSS_TURN:
+            return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), token.unitType());
+        default:
+            return nullptr;
+        }
+    }
+    if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless))
+        return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSPrimitiveValue::UnitType::CSS_DEG);
+    if (token.type() == PercentageToken)
+        return consumePercent(range, valueRange);
+
+    CalcParser calcParser(range, CalcAngle, valueRange);
+    if (const CSSCalcValue* calculation = calcParser.value()) {
+        if (calculation->category() == CalcAngle)
+            return calcParser.consumeValue();
+    }
+    return nullptr;
+}
+
+
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
 {
     const CSSParserToken& token = range.peek();
@@ -904,9 +932,9 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
     return result;
 }
 
-static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSGradientValue* gradient)
+static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSGradientValue& gradient)
 {
-    bool supportsColorHints = gradient->gradientType() == CSSLinearGradient || gradient->gradientType() == CSSRadialGradient;
+    bool supportsColorHints = gradient.gradientType() == CSSLinearGradient || gradient.gradientType() == CSSRadialGradient;
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
@@ -925,7 +953,7 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
         stop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
         if (!stop.m_color && !stop.m_position)
             return false;
-        gradient->addStop(stop);
+        gradient.addStop(stop);
     } while (consumeCommaIncludingWhitespace(range));
 
     // The last color stop cannot be a color hint.
@@ -933,7 +961,40 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
         return false;
 
     // Must have 2 or more stops to be valid.
-    return gradient->stopCount() >= 2;
+    return gradient.stopCount() >= 2;
+}
+
+// https://www.w3.org/TR/css-images-4/#typedef-angular-color-stop-list
+// FIXME: This should support up to two position hints per color stop.
+static bool consumeAngularGradientColorStops(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSGradientValue& gradient)
+{
+    // The first color stop cannot be a color hint.
+    bool previousStopWasColorHint = true;
+    do {
+        CSSGradientColorStop stop;
+        stop.m_color = consumeColor(range, cssParserMode);
+
+        // Two hints in a row are not allowed.
+        if (!stop.m_color && previousStopWasColorHint)
+            return false;
+        
+        previousStopWasColorHint = !stop.m_color;
+        
+        // FIXME-NEWPARSER: This boolean could be removed. Null checking color would be sufficient.
+        stop.isMidpoint = !stop.m_color;
+
+        stop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
+        if (!stop.m_color && !stop.m_position)
+            return false;
+        gradient.addStop(stop);
+    } while (consumeCommaIncludingWhitespace(range));
+
+    // The last color stop cannot be a color hint.
+    if (previousStopWasColorHint)
+        return false;
+
+    // Must have 2 or more stops to be valid.
+    return gradient.stopCount() >= 2;
 }
 
 static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& args, CSSParserMode cssParserMode, CSSGradientRepeat repeating)
@@ -972,7 +1033,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
     } else {
         consumeCommaIncludingWhitespace(args);
     }
-    if (!consumeGradientColorStops(args, cssParserMode, result.get()))
+    if (!consumeGradientColorStops(args, cssParserMode, *result))
         return nullptr;
 
     return result;
@@ -1059,7 +1120,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
 
     if ((shape || sizeKeyword || horizontalSize || centerX || centerY) && !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    if (!consumeGradientColorStops(args, cssParserMode, result.get()))
+    if (!consumeGradientColorStops(args, cssParserMode, *result))
         return nullptr;
     return result;
 }
@@ -1092,7 +1153,49 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, CSSPars
 
     if (expectComma && !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    if (!consumeGradientColorStops(args, cssParserMode, result.get()))
+    if (!consumeGradientColorStops(args, cssParserMode, *result))
+        return nullptr;
+    return result;
+}
+
+static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParserContext context, CSSGradientRepeat repeating)
+{
+    if (!context.conicGradientsEnabled)
+        return nullptr;
+
+    RefPtr<CSSConicGradientValue> result = CSSConicGradientValue::create(repeating);
+
+    bool expectComma = false;
+    if (args.peek().type() == IdentToken) {
+        if (consumeIdent<CSSValueFrom>(args)) {
+            auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid);
+            if (!angle)
+                return nullptr;
+            result->setAngle(angle.releaseNonNull());
+            expectComma = true;
+        }
+        
+        if (consumeIdent<CSSValueAt>(args)) {
+            RefPtr<CSSPrimitiveValue> centerX;
+            RefPtr<CSSPrimitiveValue> centerY;
+            consumePosition(args, context.mode, UnitlessQuirk::Forbid, centerX, centerY);
+            if (!(centerX && centerY))
+                return nullptr;
+            
+            result->setFirstX(centerX.copyRef());
+            result->setFirstY(centerY.copyRef());
+            
+            // Right now, conic gradients have the same start and end centers.
+            result->setSecondX(centerX.copyRef());
+            result->setSecondY(centerY.copyRef());
+    
+            expectComma = true;
+        }
+    }
+
+    if (expectComma && !consumeCommaIncludingWhitespace(args))
+        return nullptr;
+    if (!consumeAngularGradientColorStops(args, context.mode, *result))
         return nullptr;
     return result;
 }
@@ -1186,6 +1289,10 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, CSSPar
         result = consumeDeprecatedRadialGradient(args, context.mode, NonRepeating);
     else if (id == CSSValueWebkitRepeatingRadialGradient)
         result = consumeDeprecatedRadialGradient(args, context.mode, Repeating);
+    else if (id == CSSValueConicGradient)
+        result = consumeConicGradient(args, context, NonRepeating);
+    else if (id == CSSValueRepeatingConicGradient)
+        result = consumeConicGradient(args, context, Repeating);
     else if (id == CSSValueWebkitCrossFade || id == CSSValueCrossFade)
         result = consumeCrossFade(args, context, id == CSSValueWebkitCrossFade);
     else if (id == CSSValueWebkitCanvas)
@@ -1232,12 +1339,23 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSPar
 
 static bool isGeneratedImage(CSSValueID id)
 {
-    return id == CSSValueLinearGradient || id == CSSValueRadialGradient
-        || id == CSSValueRepeatingLinearGradient || id == CSSValueRepeatingRadialGradient
-        || id == CSSValueWebkitLinearGradient || id == CSSValueWebkitRadialGradient
-        || id == CSSValueWebkitRepeatingLinearGradient || id == CSSValueWebkitRepeatingRadialGradient
-        || id == CSSValueWebkitGradient || id == CSSValueWebkitCrossFade || id == CSSValueWebkitCanvas
-        || id == CSSValueCrossFade || id == CSSValueWebkitNamedImage || id == CSSValueWebkitFilter || id == CSSValueFilter;
+    return id == CSSValueLinearGradient
+        || id == CSSValueRadialGradient
+        || id == CSSValueConicGradient
+        || id == CSSValueRepeatingLinearGradient
+        || id == CSSValueRepeatingRadialGradient
+        || id == CSSValueRepeatingConicGradient
+        || id == CSSValueWebkitLinearGradient
+        || id == CSSValueWebkitRadialGradient
+        || id == CSSValueWebkitRepeatingLinearGradient
+        || id == CSSValueWebkitRepeatingRadialGradient
+        || id == CSSValueWebkitGradient
+        || id == CSSValueWebkitCrossFade
+        || id == CSSValueWebkitCanvas
+        || id == CSSValueCrossFade
+        || id == CSSValueWebkitNamedImage
+        || id == CSSValueWebkitFilter
+        || id == CSSValueFilter;
 }
     
 static bool isValidPrimitiveFilterFunction(CSSValueID filterFunction)

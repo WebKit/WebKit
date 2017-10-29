@@ -105,7 +105,7 @@ public:
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
     bool constantPropertiesEnabled { false };
-    
+    bool conicGradientsEnabled { false };
     bool deferredCSSParserEnabled { false };
 
     URL completeURL(const String& url) const
@@ -139,8 +139,9 @@ struct CSSParserContextHash {
             & key.enforcesCSSMIMETypeInNoQuirksMode         << 5
             & key.useLegacyBackgroundSizeShorthandBehavior  << 6
             & key.springTimingFunctionEnabled               << 7
-            & key.deferredCSSParserEnabled                  << 8
-            & key.mode                                      << 9;
+            & key.conicGradientsEnabled                     << 8
+            & key.deferredCSSParserEnabled                  << 9
+            & key.mode                                      << 10;
         hash ^= WTF::intHash(bits);
         return hash;
     }

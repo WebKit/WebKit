@@ -148,6 +148,8 @@ RefPtr<Image> CSSImageGeneratorValue::image(RenderElement& renderer, const Float
         return downcast<CSSLinearGradientValue>(*this).image(renderer, size);
     case RadialGradientClass:
         return downcast<CSSRadialGradientValue>(*this).image(renderer, size);
+    case ConicGradientClass:
+        return downcast<CSSConicGradientValue>(*this).image(renderer, size);
     default:
         ASSERT_NOT_REACHED();
     }
@@ -169,6 +171,8 @@ bool CSSImageGeneratorValue::isFixedSize() const
         return downcast<CSSLinearGradientValue>(*this).isFixedSize();
     case RadialGradientClass:
         return downcast<CSSRadialGradientValue>(*this).isFixedSize();
+    case ConicGradientClass:
+        return downcast<CSSConicGradientValue>(*this).isFixedSize();
     default:
         ASSERT_NOT_REACHED();
     }
@@ -188,6 +192,8 @@ FloatSize CSSImageGeneratorValue::fixedSize(const RenderElement& renderer)
         return downcast<CSSLinearGradientValue>(*this).fixedSize(renderer);
     case RadialGradientClass:
         return downcast<CSSRadialGradientValue>(*this).fixedSize(renderer);
+    case ConicGradientClass:
+        return downcast<CSSConicGradientValue>(*this).fixedSize(renderer);
     default:
         ASSERT_NOT_REACHED();
     }
@@ -209,6 +215,8 @@ bool CSSImageGeneratorValue::isPending() const
         return downcast<CSSLinearGradientValue>(*this).isPending();
     case RadialGradientClass:
         return downcast<CSSRadialGradientValue>(*this).isPending();
+    case ConicGradientClass:
+        return downcast<CSSConicGradientValue>(*this).isPending();
     default:
         ASSERT_NOT_REACHED();
     }
@@ -230,6 +238,8 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement& renderer) cons
         return downcast<CSSLinearGradientValue>(*this).knownToBeOpaque();
     case RadialGradientClass:
         return downcast<CSSRadialGradientValue>(*this).knownToBeOpaque();
+    case ConicGradientClass:
+        return downcast<CSSConicGradientValue>(*this).knownToBeOpaque();
     default:
         ASSERT_NOT_REACHED();
     }
@@ -253,6 +263,9 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader& cachedResourceL
         break;
     case RadialGradientClass:
         downcast<CSSRadialGradientValue>(*this).loadSubimages(cachedResourceLoader, options);
+        break;
+    case ConicGradientClass:
+        downcast<CSSConicGradientValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
     default:
         ASSERT_NOT_REACHED();

@@ -1155,8 +1155,10 @@ cross-fade
 image-set
 linear-gradient
 radial-gradient
+conic-gradient
 repeating-linear-gradient
 repeating-radial-gradient
+repeating-conic-gradient
 -webkit-canvas
 -webkit-cross-fade
 -webkit-gradient

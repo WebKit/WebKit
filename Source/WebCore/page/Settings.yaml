@@ -509,6 +509,8 @@ shouldConvertInvalidURLsToBlank:
 
 springTimingFunctionEnabled:
   initial: false
+conicGradientsEnabled:
+  initial: false
 
 treatIPAddressAsDomain:
   initial: false

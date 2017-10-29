@@ -41,7 +41,8 @@ enum CSSGradientType {
     CSSPrefixedLinearGradient,
     CSSPrefixedRadialGradient,
     CSSLinearGradient,
-    CSSRadialGradient
+    CSSRadialGradient,
+    CSSConicGradient
 };
 enum CSSGradientRepeat { NonRepeating, Repeating };
 
@@ -225,8 +226,45 @@ private:
     RefPtr<CSSPrimitiveValue> m_endVerticalSize;
 };
 
+class CSSConicGradientValue final : public CSSGradientValue {
+public:
+    static Ref<CSSConicGradientValue> create(CSSGradientRepeat repeat)
+    {
+        return adoptRef(*new CSSConicGradientValue(repeat));
+    }
+
+    Ref<CSSConicGradientValue> clone() const
+    {
+        return adoptRef(*new CSSConicGradientValue(*this));
+    }
+
+    String customCSSText() const;
+
+    void setAngle(RefPtr<CSSPrimitiveValue>&& val) { m_angle = WTFMove(val); }
+
+    // Create the gradient for a given size.
+    Ref<Gradient> createGradient(RenderElement&, const FloatSize&);
+
+    bool equals(const CSSConicGradientValue&) const;
+
+private:
+    CSSConicGradientValue(CSSGradientRepeat repeat)
+        : CSSGradientValue(ConicGradientClass, repeat, CSSConicGradient)
+    {
+    }
+
+    CSSConicGradientValue(const CSSConicGradientValue& other)
+        : CSSGradientValue(other, ConicGradientClass, other.gradientType())
+        , m_angle(other.m_angle)
+    {
+    }
+
+    RefPtr<CSSPrimitiveValue> m_angle; // may be null.
+};
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSGradientValue, isGradientValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSLinearGradientValue, isLinearGradientValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSRadialGradientValue, isRadialGradientValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSConicGradientValue, isConicGradientValue())

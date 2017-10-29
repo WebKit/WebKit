@@ -782,7 +782,7 @@
     {
         "name": "Conic Gradients",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
         "url": "https://www.w3.org/TR/css4-images/#conic-gradients",
         "specification": "CSS Image Values and Replaced Content Module Level 4",
