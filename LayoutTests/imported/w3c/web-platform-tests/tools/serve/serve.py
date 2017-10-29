@@ -279,7 +279,7 @@ def setup_logger(level):
     import logging
     global logger
     logger = logging.getLogger("web-platform-tests")
-    logging.basicConfig(level=getattr(logging, level.upper()))
+    logger.setLevel(getattr(logging, level.upper()))
     set_logger(logger)
 
 

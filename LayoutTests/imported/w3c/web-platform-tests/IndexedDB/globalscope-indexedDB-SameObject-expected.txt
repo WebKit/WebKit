@@ -1,0 +1,3 @@
+
+PASS indexedDB is [SameObject] 
+

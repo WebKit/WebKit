@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/README
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/empty-doctype-ids.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_003.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/foreign_content_004.html

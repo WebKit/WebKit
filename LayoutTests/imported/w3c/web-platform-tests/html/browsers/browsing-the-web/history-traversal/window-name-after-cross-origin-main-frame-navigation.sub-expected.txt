@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/html/browsers/browsing-the-web/history-traversal/support/window-name-test.sub.html?shouldhavename=false&sendmessage=false
+#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 40500)
+FAIL: Timed out waiting for notifyDone to be called
+
+#EOF
+#EOF

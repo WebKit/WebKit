@@ -29,7 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-add-audio-track.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-audio-only.https.html
-/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-finished-add.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-gettrackid.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-id-manual.https.html

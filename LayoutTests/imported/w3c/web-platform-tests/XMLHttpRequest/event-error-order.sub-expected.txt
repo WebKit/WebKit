@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://nonexistent-origin.localhost:8800/ due to access control checks.
-
-FAIL XMLHttpRequest: event - error (order of events) assert_equals: expected "upload.loadstart(0,12,true)" but got "upload.loadstart(0,0,false)"
-

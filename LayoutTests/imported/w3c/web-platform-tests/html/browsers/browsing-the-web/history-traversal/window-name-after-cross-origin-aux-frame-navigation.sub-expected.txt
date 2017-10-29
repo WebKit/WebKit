@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/html/browsers/browsing-the-web/history-traversal/support/window-name-test.sub.html?shouldhavename=true&sendmessage=true
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Test that the window name is correct 
+

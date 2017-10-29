@@ -1,3 +1,14 @@
+2017-10-28  Youenn Fablet  <youenn@apple.com>
+
+        Rebase WPT tests up to a1c0107
+        https://bugs.webkit.org/show_bug.cgi?id=178589
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-default-feature-policy.sub-expected.txt: Added.
+
 2017-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Unify Font::platformCharWidthInit() with macOS

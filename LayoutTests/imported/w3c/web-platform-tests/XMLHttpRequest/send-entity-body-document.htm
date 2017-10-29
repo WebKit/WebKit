@@ -41,14 +41,14 @@
       }
       function init(fr, number, title) { request(fr.contentDocument, number, title) }
     </script>
-    <!-- 
+    <!--
         This test also tests how documents in various encodings are serialized.
         The below IFRAMEs contain:
           * one XML document parsed from a windows-1252 source - content is <ÿ/>
           * one HTML-document parsed from an invalid UTF-8 source, will contain a basic HTML DOM
              with a U+FFFD replacement character for the invalid char
           * one HTML document parsed from a valid Shift-JIS source
-      -->
+     -->
     <iframe src='resources/win-1252-xml.py' onload="init(this, 0, 'XML document, windows-1252')"></iframe>
     <iframe src='resources/invalid-utf8-html.py' onload="init(this, 1, 'HTML document, invalid UTF-8')"></iframe>
     <iframe src='resources/shift-jis-html.py' onload="init(this, 2, 'HTML document, shift-jis')"></iframe>

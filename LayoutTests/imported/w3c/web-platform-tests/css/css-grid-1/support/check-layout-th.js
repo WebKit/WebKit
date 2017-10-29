@@ -69,6 +69,11 @@ function checkExpectedValues(t, node, prefix)
         assert_tolerance(node.scrollHeight, expectedHeight, prefix + "scrollHeight");
     }
 
+    var expectedWidth = checkAttribute(output, node, "data-expected-bounding-client-rect-width");
+    if (expectedWidth) {
+        assert_tolerance(node.getBoundingClientRect().width, expectedWidth, prefix + "getBoundingClientRect().width");
+    }
+
     var expectedOffset = checkAttribute(output, node, "data-total-x");
     if (expectedOffset) {
         var totalLeft = node.clientLeft + node.offsetLeft;
@@ -156,14 +161,15 @@ function checkExpectedValues(t, node, prefix)
     return output.checked;
 }
 
-window.checkLayout = function(selectorList, outputContainer)
+var testNumber = 0;
+
+window.checkLayout = function(selectorList, callDone = true)
 {
     if (!selectorList) {
         console.error("You must provide a CSS selector of nodes to check.");
         return;
     }
     var nodes = document.querySelectorAll(selectorList);
-    var testNumber = 0;
     nodes = Array.prototype.slice.call(nodes);
     nodes.reverse();
     var checkedLayout = false;
@@ -184,7 +190,8 @@ window.checkLayout = function(selectorList, outputContainer)
     if (!checkedLayout) {
         console.error("No valid data-* attributes found in selector list : " + selectorList);
     }
-    done();
+    if (callDone)
+        done();
 };
 
 })();

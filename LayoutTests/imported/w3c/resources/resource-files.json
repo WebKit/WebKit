@@ -68,6 +68,8 @@
         "web-platform-tests/css/css-ui-3/cursor-auto-003.html",
         "web-platform-tests/css/css-ui-3/cursor-auto-004.html",
         "web-platform-tests/css/css-ui-3/cursor-auto-005.html",
+        "web-platform-tests/css/css-ui-3/cursor-auto-006.html",
+        "web-platform-tests/css/css-ui-3/cursor-auto-007.html",
         "web-platform-tests/css/css-ui-3/cursor-border-area.html",
         "web-platform-tests/css/css-ui-3/cursor-box-004.html",
         "web-platform-tests/css/css-ui-3/cursor-box-005.html",

@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+user-select
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -110,6 +110,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-auto-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-auto-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-auto-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-auto-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-auto-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-border-area.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-box-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/cursor-box-005.html

@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/fire-upgradeneeded-event-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/globalscope-indexedDB-SameObject.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-detached.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm
@@ -49,6 +50,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-key.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-primarykey.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-request-source.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-reused.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-source.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm
@@ -170,10 +172,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-arraykeypath.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry-big.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-objectStore-SameObject.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-query-exception-order.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-rename-abort.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-rename-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-rename.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex-request-source.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_count.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_count2.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_count3.htm
@@ -218,6 +222,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-rename-abort.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-rename-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-rename-store.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-request-source.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-transaction-SameObject.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_add.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_add10.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_add11.htm
@@ -299,6 +305,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest-onupgradeneeded.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_error.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbrequest_result.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-db-SameObject.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-objectStore-exception-order.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-objectStore-finished.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbtransaction-oncomplete.htm

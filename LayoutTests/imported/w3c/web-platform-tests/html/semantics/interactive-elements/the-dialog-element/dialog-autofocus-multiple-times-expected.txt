@@ -1,0 +1,4 @@
+      
+
+FAIL autofocus is run every time a dialog is opened assert_equals: expected Element node <button id="outer-button" autofocus=""></button> but got Element node <input id="input2" autofocus=""></input>
+

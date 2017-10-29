@@ -4,9 +4,9 @@
   sync XHR still runs</title>
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
-<!-- 
+<!--
   We run the test in a subframe, because something in the testharness stuff
-  interferes with defer scripts  -->
+  interferes with defer scripts -->
 <script>
   var t = async_test();
   onmessage = t.step_func_done(function(e) {

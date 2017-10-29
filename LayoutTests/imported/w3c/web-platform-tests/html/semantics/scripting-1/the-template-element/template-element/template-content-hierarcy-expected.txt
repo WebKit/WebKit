@@ -1,0 +1,6 @@
+
+PASS Template content should throw when its ancestor is being appended. 
+FAIL Template content should throw exception when its ancestor in a different document but connected via host is being append. assert_throws: Template content should throw if any of ancestor is being appended. function "() => {
+    tmpl.content.appendChild(parent);
+  }" did not throw
+

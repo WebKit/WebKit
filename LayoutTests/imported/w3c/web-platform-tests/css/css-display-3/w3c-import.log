@@ -44,6 +44,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-flex-003-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-generated-content-fieldset-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-generated-content-fieldset-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-inline-flex-001-inline-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-inline-flex-001-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/display-contents-dynamic-inline-flex-001-none-expected.html

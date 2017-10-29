@@ -159,7 +159,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-redirect-scope2.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-redirect-to-http-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-redirect-to-http-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/navigation-redirect-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/notification_icon.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/onactivate-throw-error-from-nested-event-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/onactivate-throw-error-then-cancel-worker.js
@@ -183,6 +182,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-to-client-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-transferables-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/postmessage-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/redirect-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/referer-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/referrer-policy-iframe.html

@@ -453,6 +453,8 @@ webkit.org/b/165062 fast/css-grid-layout/grid-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/165062 fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyFailure ]
 webkit.org/b/149891 imported/w3c/web-platform-tests/css/css-grid-1/grid-layout-properties.html [ Failure ]
 webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid-1/abspos/absolute-positioning-changing-containing-block-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid-1/abspos/grid-item-absolute-positioning-dynamic-001.html [ ImageOnlyFailure ]
 
 # Flaky tests at import time
 imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
@@ -470,6 +472,11 @@ webkit.org/b/172711 css3/parse-alignment-of-root-elements.html [ Failure ]
 # selectors4
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
 webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors4/selectors-dir-selector-rtl-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors4/selector-read-write-type-change-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors4/selector-required-type-change-002.html [ ImageOnlyFailure ]
 
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
@@ -548,6 +555,7 @@ webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-meta
 
 webkit.org/b/178241 imported/w3c/web-platform-tests/fetch/api/basic/integrity.html [ Pass Failure ]
 webkit.org/b/178241 imported/w3c/web-platform-tests/fetch/api/basic/integrity-worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-6.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional-cors.htm [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure ]
@@ -937,6 +945,7 @@ webrtc/datachannel/multiple-connections.html [ Slow ]
 webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
 webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Failure ]
 webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html [ Skip ]
 
 fast/mediastream/RTCPeerConnection-closed-state.html [ Skip ]
 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
@@ -981,6 +990,7 @@ webkit.org/b/148823 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/window-name-after-cross-origin-main-frame-navigation.sub.html [ Timeout ]
 
 # FIXME: The following failures need individual bugs.
 webkit.org/b/148805 imported/w3c/css/css-multicol-1/multicol-inherit-003.xht [ ImageOnlyFailure ]
@@ -1333,6 +1343,7 @@ webkit.org/b/168238 imported/w3c/web-platform-tests/dom/events/EventListener-inv
 
 # Ignore MIME type refused console messages when comparing nosniff tests results as their ordering is non-deterministic.
 imported/w3c/web-platform-tests/fetch/nosniff [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-ascii-case-insensitive.html [ DumpJSConsoleLogInStdErr ]
 
 ########################################
 ### START OF display: contents failures

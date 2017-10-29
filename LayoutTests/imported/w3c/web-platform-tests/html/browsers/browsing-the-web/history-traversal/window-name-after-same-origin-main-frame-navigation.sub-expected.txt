@@ -1,0 +1,3 @@
+
+PASS Test that window name is present 
+

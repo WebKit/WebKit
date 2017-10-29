@@ -49,7 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cssom-view/mouseEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom-view/negativeMargins.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom-view/offsetParent_element_test.html
-/LayoutTests/imported/w3c/web-platform-tests/cssom-view/scrollIntoView-empty-args.html
+/LayoutTests/imported/w3c/web-platform-tests/cssom-view/offsetTopLeftInScrollableParent.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom-view/scrollIntoView-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom-view/scrollIntoView-smooth.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom-view/scrollWidthHeight.xht

@@ -1,8 +1,0 @@
-
-PASS scrollIntoView should behave correctly when the arg is omitted 
-PASS scrollIntoView should behave correctly when the arg is true 
-PASS scrollIntoView should behave correctly when the arg is false 
-FAIL scrollIntoView should behave correctly when the arg is [object Object] assert_approx_equals: verify scroll top expected 757.5 +/- 1 but got 1000
-FAIL scrollIntoView should behave correctly when the arg is null assert_approx_equals: verify scroll top expected 757.5 +/- 1 but got 515
-PASS scrollIntoView should behave correctly when the arg is undefined 
-

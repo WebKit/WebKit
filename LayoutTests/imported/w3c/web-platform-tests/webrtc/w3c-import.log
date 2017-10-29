@@ -96,7 +96,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/getstats.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/identity-helper.js
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/interfaces.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/interfaces.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/no-media-call.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/promises-call.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall.html
