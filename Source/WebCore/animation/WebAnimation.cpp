@@ -126,8 +126,8 @@ void WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
         return;
     }
 
-    std::optional<Seconds> timelineTime = m_timeline->currentTime();
-    if (timelineTime == std::nullopt) {
+    auto timelineTime = m_timeline->currentTime();
+    if (!timelineTime) {
         setStartTime(std::nullopt);
         return;
     }
