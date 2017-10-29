@@ -1,3 +1,46 @@
+2017-10-29  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r224134. rdar://problem/35143359
+
+    2017-10-27  Daniel Bates  <dabates@apple.com>
+
+            Only allow non-mixed content protected subresources to ask for credentials
+            https://bugs.webkit.org/show_bug.cgi?id=178919
+            <rdar://problem/35015245>
+
+            Reviewed by Alex Christensen.
+
+            Only allow non-mixed content protected subresources to ask for credentials. It is not meaningful
+            to allow protected mixed-content subresources to ask for credentials.
+
+            * NetworkProcess/Downloads/PendingDownload.cpp:
+            (WebKit::PendingDownload::PendingDownload): Initialize m_isAllowedToAskUserForCredentials based on
+            the specified resource load parameters or NetworkLoad object.
+            * NetworkProcess/Downloads/PendingDownload.h: Add override for NetworkLoadClient::isAllowedToAskUserForCredentials().
+            * NetworkProcess/NetworkLoad.cpp:
+            (WebKit::NetworkLoad::isAllowedToAskUserForCredentials const): Added.
+            (WebKit::NetworkLoad::completeAuthenticationChallenge): Ask NetworkLoadClient whether the load is
+            allowed to prompt for credentials.
+            (WebKit::NetworkLoad::didReceiveAuthenticationChallenge): Ditto.
+            * NetworkProcess/NetworkLoad.h:
+            * NetworkProcess/NetworkLoadClient.h:
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::NetworkResourceLoader): Initialize m_isAllowedToAskUserForCredentials
+            based on the specified resource load parameters.
+            (WebKit::NetworkResourceLoader::willSendRedirectedRequest): We do not support prompting for credentials
+            for synchronous loads.
+            (WebKit::NetworkResourceLoader::continueWillSendRequest): Modified to take an argument as to whether the
+            load is allowed to ask the user for credentials and updates state.
+            * NetworkProcess/NetworkResourceLoader.h:
+            * NetworkProcess/NetworkResourceLoader.messages.in: Modified message ContinueWillSendRequest to take a
+            boolean as to whether the load is allowed to ask the user for credentials.
+            * NetworkProcess/PreconnectTask.h: Override NetworkLoadClient::isAllowedToAskUserForCredentials()
+            such that we never ask for credentials. This matches our current behavior.
+            * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h: Ditto.
+            * WebProcess/Network/WebResourceLoader.cpp:
+            (WebKit::WebResourceLoader::willSendRequest): Query ResourceLoader as to whether the load is allowed to
+            ask the user for credentials and pass this state to NetworkResourceLoader.
+
 2017-10-27  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222004. rdar://problem/35225406

@@ -207,6 +207,8 @@ private:
     bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
+    bool isMixedContent(const URL&) const;
+
     ResourceRequest m_request;
     ResourceRequest m_originalRequest; // Before redirects.
     RefPtr<SharedBuffer> m_resourceData;
@@ -225,6 +227,7 @@ private:
     CancellationStatus m_cancellationStatus { NotCancelled };
 
     bool m_defersLoading;
+    bool m_canAskClientForCredentials;
     ResourceRequest m_deferredRequest;
     ResourceLoaderOptions m_options;
 

@@ -42,6 +42,7 @@
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "MainFrame.h"
+#include "MixedContentChecker.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
@@ -63,10 +64,11 @@
 namespace WebCore {
 
 ResourceLoader::ResourceLoader(Frame& frame, ResourceLoaderOptions options)
-    : m_frame(&frame)
-    , m_documentLoader(frame.loader().activeDocumentLoader())
-    , m_defersLoading(options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading())
-    , m_options(options)
+    : m_frame { &frame }
+    , m_documentLoader { frame.loader().activeDocumentLoader() }
+    , m_defersLoading { options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading() }
+    , m_canAskClientForCredentials { options.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
+    , m_options { options }
 {
 }
 
@@ -132,6 +134,7 @@ bool ResourceLoader::init(const ResourceRequest& r)
 #endif
     
     m_defersLoading = m_options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
+    m_canAskClientForCredentials = m_options.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials && !isMixedContent(r.url());
 
     if (m_options.securityCheck == DoSecurityCheck && !m_frame->document()->securityOrigin().canDisplay(clientRequest.url())) {
         FrameLoader::reportLocalLoadFailed(m_frame.get(), clientRequest.url().string());
@@ -326,6 +329,16 @@ bool ResourceLoader::isSubresourceLoader()
     return false;
 }
 
+bool ResourceLoader::isMixedContent(const URL& url) const
+{
+    if (MixedContentChecker::isMixedContent(m_frame->document()->securityOrigin(), url))
+        return true;
+    Frame& topFrame = m_frame->tree().top();
+    if (&topFrame != m_frame && MixedContentChecker::isMixedContent(topFrame.document()->securityOrigin(), url))
+        return true;
+    return false;
+}
+
 void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // Protect this in this delegate method since the additional processing can do
@@ -385,6 +398,10 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
 #endif
 
     bool isRedirect = !redirectResponse.isNull();
+
+    if (isMixedContent(m_request.url()) || (isRedirect && isMixedContent(request.url())))
+        m_canAskClientForCredentials = false;
+
     if (isRedirect)
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
 
@@ -682,7 +699,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
 
 bool ResourceLoader::isAllowedToAskUserForCredentials() const
 {
-    if (m_options.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials)
+    if (!m_canAskClientForCredentials)
         return false;
     return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->securityOrigin().canRequest(originalRequest().url()));
 }

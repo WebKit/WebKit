@@ -94,7 +94,7 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, Resou
         if (!protectedThis->m_coreLoader)
             return;
 
-        protectedThis->send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request));
+        protectedThis->send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request, protectedThis->m_coreLoader->isAllowedToAskUserForCredentials()));
     });
 }
 

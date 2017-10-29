@@ -72,7 +72,7 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
-    void continueWillSendRequest(WebCore::ResourceRequest&& newRequest);
+    void continueWillSendRequest(WebCore::ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials);
 
     const WebCore::ResourceResponse& response() const { return m_response; }
 
@@ -90,6 +90,7 @@ public:
     void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override;
 #endif
     bool isSynchronous() const override;
+    bool isAllowedToAskUserForCredentials() const override { return m_isAllowedToAskUserForCredentials; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&) override;
     ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) override;
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
@@ -154,6 +155,7 @@ private:
     bool m_wasStarted { false };
     bool m_didConsumeSandboxExtensions { false };
     bool m_defersLoading { false };
+    bool m_isAllowedToAskUserForCredentials { false };
     size_t m_numBytesReceived { 0 };
 
     unsigned m_retrievedDerivedDataCount { 0 };
