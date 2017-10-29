@@ -82,10 +82,11 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
 }
 
 NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& synchronousReply)
-    : m_parameters(parameters)
-    , m_connection(connection)
-    , m_defersLoading(parameters.defersLoading)
-    , m_bufferingTimer(*this, &NetworkResourceLoader::bufferingTimerFired)
+    : m_parameters { parameters }
+    , m_connection { connection }
+    , m_defersLoading { parameters.defersLoading }
+    , m_isAllowedToAskUserForCredentials { parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
+    , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
 {
     ASSERT(RunLoop::isMain());
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
@@ -463,7 +464,9 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
             m_networkLoad->clearCurrentRequest();
             overridenRequest = ResourceRequest();
         }
-        continueWillSendRequest(WTFMove(overridenRequest));
+        // We do not support prompting for credentials for synchronous loads. If we ever change this policy then
+        // we need to take care to prompt if and only if request and redirectRequest are not mixed content.
+        continueWillSendRequest(WTFMove(overridenRequest), false);
         return;
     }
     send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, redirectResponse));
@@ -476,9 +479,11 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 #endif
 }
 
-void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest)
+void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
     RELEASE_LOG_IF_ALLOWED("continueWillSendRequest: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+
+    m_isAllowedToAskUserForCredentials = isAllowedToAskUserForCredentials;
 
     // If there is a match in the network cache, we need to reuse the original cache policy and partition.
     newRequest.setCachePolicy(originalRequest().cachePolicy());

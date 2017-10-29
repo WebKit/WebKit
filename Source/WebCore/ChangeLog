@@ -1,3 +1,38 @@
+2017-10-29  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r224134. rdar://problem/35143359
+
+    2017-10-27  Daniel Bates  <dabates@apple.com>
+
+            Only allow non-mixed content protected subresources to ask for credentials
+            https://bugs.webkit.org/show_bug.cgi?id=178919
+            <rdar://problem/35015245>
+
+            Reviewed by Alex Christensen.
+
+            Only allow non-mixed content protected subresources to ask for credentials. It is not meaningful
+            to allow protected mixed-content subresources to ask for credentials.
+
+            Tests: http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html
+                   http/tests/security/mixedContent/insecure-script-redirects-to-basic-auth-secure-script.html
+                   http/tests/security/mixedContent/insecure-stylesheet-redirects-to-basic-auth-secure-stylesheet.html
+                   http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html
+                   http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html
+                   http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html
+
+            * loader/ResourceLoader.cpp:
+            (WebCore::ResourceLoader::ResourceLoader): Initialize m_canAskClientForCredentials based on the
+            specified resource loader options.
+            (WebCore::ResourceLoader::init): Update m_canAskClientForCredentials based on the URL of the initial
+            request.
+            (WebCore::ResourceLoader::isMixedContent const): Helper function to check if the specified URL
+            represents a mixed content resource.
+            (WebCore::ResourceLoader::willSendRequestInternal): If the original request or the redirect request
+            is mixed content then update state such that we will disallow asking for credentials.
+            (WebCore::ResourceLoader::isAllowedToAskUserForCredentials const): Modified to use m_canAskClientForCredentials
+            when determining whether the request is allowed to ask for credentials.
+            * loader/ResourceLoader.h:
+
 2017-10-27  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221233. rdar://problem/35228663

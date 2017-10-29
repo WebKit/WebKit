@@ -41,6 +41,8 @@ namespace WebKit {
 PendingDownload::PendingDownload(NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
     : m_networkLoad(std::make_unique<NetworkLoad>(*this, WTFMove(parameters), networkSession))
 {
+    m_isAllowedToAskUserForCredentials = parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
+
     m_networkLoad->setPendingDownloadID(downloadID);
     m_networkLoad->setPendingDownload(*this);
     m_networkLoad->setSuggestedFilename(suggestedName);
@@ -51,6 +53,8 @@ PendingDownload::PendingDownload(NetworkLoadParameters&& parameters, DownloadID 
 PendingDownload::PendingDownload(std::unique_ptr<NetworkLoad>&& networkLoad, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
     : m_networkLoad(WTFMove(networkLoad))
 {
+    m_isAllowedToAskUserForCredentials = m_networkLoad->isAllowedToAskUserForCredentials();
+
     m_networkLoad->setPendingDownloadID(downloadID);
     send(Messages::DownloadProxy::DidStart(request, String()));
 
