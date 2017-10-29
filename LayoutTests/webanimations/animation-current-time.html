@@ -1,0 +1,38 @@
+<script src="../resources/js-test-pre.js"></script>
+<script>
+
+description("Check that the Animation currentTime property is set based on the timeline currentTime and the animation startTime.");
+
+debug("Create an animation that starts at 2s.");
+const animation = new Animation(document.timeline);
+animation.startTime = 2;
+shouldBeNull("animation.currentTime");
+
+debug("");
+debug("Seek the timeline to 0s.");
+internals.setTimelineCurrentTime(document.timeline, 0);
+shouldBe("animation.currentTime", "-2");
+
+debug("");
+debug("Seek the timeline to 3s.");
+internals.setTimelineCurrentTime(document.timeline, 3);
+shouldBe("animation.currentTime", "1");
+
+debug("");
+debug("Set the animation start time to 1s.");
+animation.startTime = 1;
+shouldBe("animation.currentTime", "2");
+
+debug("");
+debug("Setting the current time to null should throw a TypeError.");
+shouldThrow("animation.currentTime = null");
+
+debug("");
+debug("Setting the current time should adjust the start time.");
+animation.currentTime = 1;
+shouldBe("animation.startTime", "2");
+
+debug("");
+
+</script>
+<script src="../resources/js-test-post.js"></script>

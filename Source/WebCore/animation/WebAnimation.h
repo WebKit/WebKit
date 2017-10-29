@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
@@ -45,15 +46,22 @@ public:
     AnimationEffect* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffect>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
+
     std::optional<double> bindingsStartTime() const;
     void setBindingsStartTime(std::optional<double>);
-    std::optional<Seconds> startTime() const { return m_startTime; }
-    void setStartTime(Seconds startTime) { m_startTime = startTime; }
+    std::optional<Seconds> startTime() const;
+    void setStartTime(std::optional<Seconds>);
+
+    std::optional<double> bindingsCurrentTime() const;
+    ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
+    std::optional<Seconds> currentTime() const;
+    void setCurrentTime(std::optional<Seconds>);
 
     String description();
 
 private:
     WebAnimation(AnimationTimeline*);
+
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     std::optional<Seconds> m_startTime;

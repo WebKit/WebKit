@@ -1,3 +1,18 @@
+2017-10-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose the currentTime property on Animation
+        https://bugs.webkit.org/show_bug.cgi?id=178988
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that the currentTime property is set
+        correctly based on the startTime value and the document timeline
+        currentTime, and that setting the property may raise an exception
+        and otherwise update the animation startTime.
+
+        * webanimations/animation-current-time-expected.txt: Added.
+        * webanimations/animation-current-time.html: Added.
+
 2017-10-28  Dean Jackson  <dino@apple.com>
 
         createImageBitmap with HTMLCanvasElement

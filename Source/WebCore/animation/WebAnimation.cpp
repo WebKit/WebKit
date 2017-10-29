@@ -68,9 +68,72 @@ std::optional<double> WebAnimation::bindingsStartTime() const
 void WebAnimation::setBindingsStartTime(std::optional<double> startTime)
 {
     if (startTime == std::nullopt)
-        m_startTime = std::nullopt;
+        setStartTime(std::nullopt);
     else
-        m_startTime = Seconds(startTime.value());
+        setStartTime(Seconds(startTime.value()));
+}
+
+std::optional<Seconds> WebAnimation::startTime() const
+{
+    return m_startTime;
+}
+
+void WebAnimation::setStartTime(std::optional<Seconds> startTime)
+{
+    if (startTime == m_startTime)
+        return;
+
+    m_startTime = startTime;
+}
+
+std::optional<double> WebAnimation::bindingsCurrentTime() const
+{
+    auto time = currentTime();
+    if (!time)
+        return std::nullopt;
+    return time->value();
+}
+
+ExceptionOr<void> WebAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
+{
+    if (!currentTime)
+        return Exception { TypeError };
+    setCurrentTime(Seconds(currentTime.value()));
+    return { };
+}
+
+std::optional<Seconds> WebAnimation::currentTime() const
+{
+    // FIXME: return the hold time when we support pausing (webkit.org/b/178932).
+
+    if (!m_timeline || !m_startTime)
+        return std::nullopt;
+
+    auto timelineTime = m_timeline->currentTime();
+    if (!timelineTime)
+        return std::nullopt;
+
+    // FIXME: account for playback rate when we support it (webkit.org/b/178931).
+    return timelineTime.value() - m_startTime.value();
+}
+
+void WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
+{
+    // FIXME: account for hold time when we support it (webkit.org/b/178932).
+
+    if (!m_timeline) {
+        setStartTime(std::nullopt);
+        return;
+    }
+
+    std::optional<Seconds> timelineTime = m_timeline->currentTime();
+    if (timelineTime == std::nullopt) {
+        setStartTime(std::nullopt);
+        return;
+    }
+
+    // FIXME: account for playback rate when we support it (webkit.org/b/178931).
+    setStartTime(timelineTime.value() - seekTime.value());
 }
 
 String WebAnimation::description()
