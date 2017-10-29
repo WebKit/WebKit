@@ -76,3 +76,14 @@ function create18x18CanvasWith2dContext()
     const c = createCanvasOfSize(18, 18);
     return [c, c.getContext("2d")];
 }
+
+function create9x9CanvasWithTargetImage()
+{
+    const c = createCanvasOfSize(9, 9);
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#00ff00";
+    ctx.fillRect(0, 0, 9, 9);
+    ctx.fillStyle = "#0000ff";
+    ctx.fillRect(4, 4, 1, 1);
+    return c;
+}

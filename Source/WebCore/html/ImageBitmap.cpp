@@ -299,18 +299,19 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
 
-    return promise.resolve(WTFMove(imageBitmap));
+    promise.resolve(WTFMove(imageBitmap));
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElement>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
-    UNUSED_PARAM(canvasElement);
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(rect);
-
     // 2. If the canvas element's bitmap has either a horizontal dimension or a vertical
     //    dimension equal to zero, then return a promise rejected with an "InvalidStateError"
     //    DOMException and abort these steps.
+    auto size = canvasElement->size();
+    if (!size.width() || !size.height()) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height");
+        return;
+    }
 
     // 3. Create a new ImageBitmap object.
     auto imageBitmap = create();
@@ -318,13 +319,38 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElemen
     // 4. Let the ImageBitmap object's bitmap data be a copy of the canvas element's bitmap
     //    data, cropped to the source rectangle with formatting.
 
+    auto sourceRectangle = croppedSourceRectangleWithFormatting(size, options, WTFMove(rect));
+    if (sourceRectangle.hasException()) {
+        promise.reject(sourceRectangle.releaseException());
+        return;
+    }
+
+    auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
+    auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
+
+    auto imageForRender = canvasElement->copiedImage();
+    if (!imageForRender) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered");
+        return;
+    }
+
+    FloatRect destRect(FloatPoint(), outputSize);
+    ImagePaintingOptions paintingOptions;
+    paintingOptions.m_interpolationQuality = interpolationQualityForResizeQuality(options.resizeQuality);
+
+    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), paintingOptions);
+
+    imageBitmap->m_bitmapData = WTFMove(bitmapData);
+
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same value as
     //    the origin-clean flag of the canvas element's bitmap.
 
-    // 6. Return a new promise, but continue running these steps in parallel.
+    imageBitmap->m_originClean = canvasElement->originClean();
 
+    // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
-    return promise.resolve(WTFMove(imageBitmap));
+
+    promise.resolve(WTFMove(imageBitmap));
 }
 
 #if ENABLE(VIDEO)
@@ -343,7 +369,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement
     //    DOMException and abort these steps.
 
     // 4. Create a new ImageBitmap object.
-    auto imageBitmap = create();
 
     // 5. Let the ImageBitmap object's bitmap data be a copy of the frame at the current
     //    playback position, at the media resource's intrinsic width and intrinsic height
@@ -357,7 +382,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement
     // 7. Return a new promise, but continue running these steps in parallel.
 
     // 8. Resolve the promise with the new ImageBitmap object as the value.
-    return promise.resolve(WTFMove(imageBitmap));
+    promise.reject(TypeError, "createImageBitmap with HTMLVideoElement is not implemented");
 }
 #endif
 
@@ -371,7 +396,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& ex
     //    rejected with an "InvalidStateError" DOMException and abort these steps.
 
     // 3. Create a new ImageBitmap object.
-    auto imageBitmap = create();
 
     // 4. Let the ImageBitmap object's bitmap data be a copy of the image argument's
     //    bitmap data, cropped to the source rectangle with formatting.
@@ -382,7 +406,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& ex
     // 6. Return a new promise, but continue running these steps in parallel.
 
     // 7. Resolve the promise with the new ImageBitmap object as the value.
-    return promise.resolve(WTFMove(imageBitmap));
+    promise.reject(TypeError, "createImageBitmap with ImageBitmap is not implemented");
 }
 
 class PendingImageBitmap final : public ActiveDOMObject, public FileReaderLoaderClient {
@@ -463,7 +487,6 @@ private:
         //    reject the promise with an "InvalidStateError" DOMException, and abort these steps.
 
         // 6. Create a new ImageBitmap object.
-        auto imageBitmap = ImageBitmap::create();
 
         // 7. Let the ImageBitmap object's bitmap data be the image data read from the Blob object,
         //    cropped to the source rectangle with formatting. If this is an animated image, the
@@ -472,7 +495,7 @@ private:
         //    or is disabled), or, if there is no such image, the first frame of the animation.
 
         // 8. Resolve the promise with the new ImageBitmap object as the value.
-        m_promise.resolve(WTFMove(imageBitmap));
+        m_promise.reject(TypeError, "createImageBitmap with ArrayBuffer or Blob is not implemented");
     }
 
     FileReaderLoader m_blobLoader;
@@ -499,14 +522,13 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageData>& imag
     //    and abort these steps.
 
     // 3. Create a new ImageBitmap object.
-    auto imageBitmap = create();
 
     // 4. Let the ImageBitmap object's bitmap data be the image data given by the ImageData
     //    object, cropped to the source rectangle with formatting.
 
     // 5. Return a new promise, but continue running these steps in parallel.
     // 6. Resolve the promise with the new ImageBitmap object as the value.
-    promise.resolve(imageBitmap);
+    promise.reject(TypeError, "createImageBitmap with ImageData is not implemented");
 }
 
 ImageBitmap::ImageBitmap() = default;

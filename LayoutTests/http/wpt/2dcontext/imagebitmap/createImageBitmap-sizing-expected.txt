@@ -1,7 +1,8 @@
 
 PASS createImageBitmap rejects with TypeError if resizeWidth is negative 
 PASS createImageBitmap rejects with TypeError if resizeHeight is negative 
-PASS createImageBitmap with cropped source 
+PASS createImageBitmap from HTMLImageElement with cropped source 
+PASS createImageBitmap from HTMLCanvasElement with cropped source 
 PASS createImageBitmap with a cropping rectangle that is bigger than the source 
 PASS createImageBitmap with resizeWidth and resizeHeight 
 PASS createImageBitmap with only resizeHeight should calculate resizeWidth 

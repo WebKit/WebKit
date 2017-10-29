@@ -41,6 +41,26 @@
         });
     }, "createImageBitmap from an HTMLImageElement with image data");
 
+    promise_test(function(t) {
+        let canvas = document.createElement("canvas");
+        canvas.width = 0;
+        canvas.height = 0;
+        return promise_rejects(t, "InvalidStateError", createImageBitmap(canvas));
+    }, "createImageBitmap rejects with InvalidStateError from an canvas with zero dimensions");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let canvas = document.createElement("canvas");
+            canvas.width = 20;
+            canvas.height = 20;
+            canvas.getContext("2d").fillRect(0, 0, 20, 20);
+            resolve(createImageBitmap(canvas));
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 20, "ImageBitmap width should be 20");
+            assert_equals(imageBitmap.height, 20, "ImageBitmap height should be 20");
+        });
+    }, "createImageBitmap from an canvas");
+
     promise_test(function() {
         return new Promise(function(resolve, reject) {
             let img = new Image();

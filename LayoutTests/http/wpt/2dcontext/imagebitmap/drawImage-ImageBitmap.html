@@ -29,7 +29,23 @@
             _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
             _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
         });
-    }, "drawImage of ImageBitmap");
+    }, "drawImage of ImageBitmap from HTMLImageElement");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let canvas = create9x9CanvasWithTargetImage();
+            resolve(createImageBitmap(canvas));
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
+            _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
+        });
+    }, "drawImage of ImageBitmap from HTMLCanvasElement");
 
     promise_test(function() {
         return new Promise(function(resolve, reject) {
@@ -48,7 +64,7 @@
             _assertPixel(canvas, 5,4, 0,0,0,0, "5,4", "0,0,0,0"); // Didn't draw into these parts.
             _assertPixel(canvas, 4,5, 0,0,0,0, "4,5", "0,0,0,0");
         });
-    }, "drawImage of ImageBitmap with cropping");
+    }, "drawImage of ImageBitmap from HTMLImageElement with cropping");
 
     promise_test(function() {
         return new Promise(function(resolve, reject) {
@@ -68,7 +84,7 @@
             _assertPixel(canvas, 2,3, 0,255,0,255, "2,3", "0,255,0,255");
             _assertPixel(canvas, 8,8, 0,0,0,0, "8,8", "0,0,0,0");
         });
-    }, "drawImage of ImageBitmap with cropping and different origin");
+    }, "drawImage of ImageBitmap from HTMLImageElement with cropping and different origin");
 
     promise_test(function() {
         return new Promise(function(resolve, reject) {
@@ -88,7 +104,7 @@
             _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
             _assertPixel(canvas, 8,8, 0,0,0,0, "8,8", "0,0,0,0");
         });
-    }, "drawImage of ImageBitmap with cropping and different non-zero origin");
+    }, "drawImage of ImageBitmap from HTMLImageElement with cropping and different non-zero origin");
 
     // TODO: Add tests for tainted origin.
     // TODO: Add tests with different blending.

@@ -2,9 +2,9 @@
 Harness Error (TIMEOUT), message = null
 
 PASS createImageBitmap from a HTMLImageElement, and drawImage on the created ImageBitmap 
-FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL createImageBitmap from a HTMLCanvasElement, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL createImageBitmap from an ImageData, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
+PASS createImageBitmap from a HTMLCanvasElement, and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageBitmap is not implemented"
+FAIL createImageBitmap from an ImageData, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
 TIMEOUT createImageBitmap from a HTMLVideoElement, and drawImage on the created ImageBitmap Test timed out
 

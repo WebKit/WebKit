@@ -41,7 +41,27 @@
             _assertPixel(canvas, 5,4, 0,0,0,0, "5,4", "0,0,0,0"); // Outside source rectangle so transparent.
             _assertPixel(canvas, 4,5, 0,0,0,0, "4,5", "0,0,0,0"); // Outside source rectangle so transparent.
         });
-    }, "createImageBitmap with cropped source");
+    }, "createImageBitmap from HTMLImageElement with cropped source");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let canvas = create9x9CanvasWithTargetImage();
+            // Crop the 9x9 image into 5x5.
+            resolve(createImageBitmap(canvas, 0, 0, 5, 5));
+        }).then(function(imageBitmap) {
+            assert_equals(imageBitmap.width, 5, "ImageBitmap width should be 5");
+            assert_equals(imageBitmap.height, 5, "ImageBitmap height should be 5");
+
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,0,0,0, "5,4", "0,0,0,0"); // Outside source rectangle so transparent.
+            _assertPixel(canvas, 4,5, 0,0,0,0, "4,5", "0,0,0,0"); // Outside source rectangle so transparent.
+        });
+    }, "createImageBitmap from HTMLCanvasElement with cropped source");
 
     promise_test(function() {
         return new Promise(function(resolve, reject) {

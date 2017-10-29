@@ -1,3 +1,22 @@
+2017-10-28  Dean Jackson  <dino@apple.com>
+
+        createImageBitmap with HTMLCanvasElement
+        https://bugs.webkit.org/show_bug.cgi?id=178984
+        <rdar://problem/35238440>
+
+        Reviewed by Sam Weinig.
+
+        Exercise new creation method.
+
+        * http/wpt/2dcontext/imagebitmap/common.js:
+        (create9x9CanvasWithTargetImage):
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-expected.txt:
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-sizing-expected.txt:
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap-sizing.html:
+        * http/wpt/2dcontext/imagebitmap/createImageBitmap.html:
+        * http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap-expected.txt:
+        * http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap.html:
+
 2017-10-28  Youenn Fablet  <youenn@apple.com>
 
         Make HTTPS WPT tests time out through testharness.js to get better error reports

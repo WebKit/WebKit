@@ -5,5 +5,7 @@ PASS createImageBitmap rejects with RangeError if width is negative
 PASS createImageBitmap rejects with RangeError if height is negative 
 PASS createImageBitmap rejects with InvalidStateError on an HTMLImageElement with no image data 
 PASS createImageBitmap from an HTMLImageElement with image data 
+PASS createImageBitmap rejects with InvalidStateError from an canvas with zero dimensions 
+PASS createImageBitmap from an canvas 
 PASS A closed ImageBitmap has zero width and height 
 
