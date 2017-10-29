@@ -1,5 +1,14 @@
 2017-10-28  Youenn Fablet  <youenn@apple.com>
 
+        Make HTTPS WPT tests time out through testharness.js to get better error reports
+        https://bugs.webkit.org/show_bug.cgi?id=178982
+
+        Reviewed by Chris Dumez.
+
+        * resources/testharnessreport.js: extending to tests run over HTTPS WPT port 9443.
+
+2017-10-28  Youenn Fablet  <youenn@apple.com>
+
         Rebase WPT tests up to a1c0107
         https://bugs.webkit.org/show_bug.cgi?id=178589
 

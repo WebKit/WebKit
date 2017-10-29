@@ -19,7 +19,7 @@ if (self.testRunner) {
     // Let's restrict calling testharness timeout() to wptserve tests for the moment.
     // That will limit the impact to a small number of tests.
     // The risk is that testharness timeout() might be called to late on slow bots to finish properly.
-    if (testRunner.timeout && location.port == 8800)
+    if (testRunner.timeout && (location.port == 8800 || location.port == 9443))
         setTimeout(timeout, testRunner.timeout * 0.9);
 }
 
