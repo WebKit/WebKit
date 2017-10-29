@@ -1,5 +1,19 @@
 2017-10-29  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r224135. rdar://problem/35143359
+
+    2017-10-27  Daniel Bates  <dabates@apple.com>
+
+            Attempt to fix the Apple El Capitan build following <https://trac.webkit.org/changeset/224134>
+            (https://bugs.webkit.org/show_bug.cgi?id=178919)
+
+            Move definition of NetworkLoad::isAllowedToAskUserForCredentials() outside of USE(NETWORK_SESSION)-guarded section.
+
+            * NetworkProcess/NetworkLoad.cpp:
+            (WebKit::NetworkLoad::isAllowedToAskUserForCredentials const):
+
+2017-10-29  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r224134. rdar://problem/35143359
 
     2017-10-27  Daniel Bates  <dabates@apple.com>
