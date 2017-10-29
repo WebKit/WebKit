@@ -1792,17 +1792,21 @@ void Document::resolveStyle(ResolveStyleType type)
     // re-attaching our containing iframe, which when asked HTMLFrameElementBase::isURLAllowed
     // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
-    styleScope().flushPendingUpdate();
-
-    frameView.willRecalcStyle();
+    {
+        NoEventDispatchAssertion noEventDispatchAssertion;
+        styleScope().flushPendingUpdate();
+        frameView.willRecalcStyle();
+    }
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(*this);
 
-    m_inStyleRecalc = true;
     bool updatedCompositingLayers = false;
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        NoEventDispatchAssertion noEventDispatchAssertion;
+
+        m_inStyleRecalc = true;
 
         if (m_pendingStyleRecalcShouldForce)
             type = ResolveStyleType::Rebuild;
@@ -1851,6 +1855,19 @@ void Document::resolveStyle(ResolveStyleType type)
 
         if (m_renderView->needsLayout())
             frameView.layoutContext().scheduleLayout();
+
+        // Usually this is handled by post-layout.
+        if (!frameView.needsLayout())
+            frameView.frame().selection().scheduleAppearanceUpdateAfterStyleChange();
+
+        // As a result of the style recalculation, the currently hovered element might have been
+        // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
+        // to check if any other elements ended up under the mouse pointer due to re-layout.
+        if (m_hoveredElement && !m_hoveredElement->renderer())
+            frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
+
+        ++m_styleRecalcCount;
+        // FIXME: Assert ASSERT(!needsStyleRecalc()) here. Do we still have some cases where it's not true?
     }
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
@@ -1858,8 +1875,6 @@ void Document::resolveStyle(ResolveStyleType type)
         m_closeAfterStyleRecalc = false;
         implicitClose();
     }
-    
-    ++m_styleRecalcCount;
 
     InspectorInstrumentation::didRecalculateStyle(cookie);
 
@@ -1869,20 +1884,8 @@ void Document::resolveStyle(ResolveStyleType type)
     if (updatedCompositingLayers && !frameView.needsLayout())
         frameView.viewportContentsChanged();
 
-    // Usually this is handled by post-layout.
-    if (!frameView.needsLayout())
-        frameView.frame().selection().scheduleAppearanceUpdateAfterStyleChange();
-
-    // As a result of the style recalculation, the currently hovered element might have been
-    // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
-    // to check if any other elements ended up under the mouse pointer due to re-layout.
-    if (m_hoveredElement && !m_hoveredElement->renderer())
-        frameView.frame().mainFrame().eventHandler().dispatchFakeMouseMoveEventSoon();
-
     if (m_gotoAnchorNeededAfterStylesheetsLoad && !styleScope().hasPendingSheets())
         frameView.scrollToFragment(m_url);
-
-    // FIXME: Ideally we would ASSERT(!needsStyleRecalc()) here but we have some cases where it is not true.
 }
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
@@ -1920,16 +1923,19 @@ bool Document::needsStyleRecalc() const
 
 bool Document::updateStyleIfNeeded()
 {
-    ASSERT(isMainThread());
-    ASSERT(!view() || !view()->isPainting());
+    {
+        NoEventDispatchAssertion noEventDispatchAssertion;
+        ASSERT(isMainThread());
+        ASSERT(!view() || !view()->isPainting());
 
-    if (!view() || view()->layoutContext().isInRenderTreeLayout())
-        return false;
+        if (!view() || view()->layoutContext().isInRenderTreeLayout())
+            return false;
 
-    styleScope().flushPendingUpdate();
+        styleScope().flushPendingUpdate();
 
-    if (!needsStyleRecalc())
-        return false;
+        if (!needsStyleRecalc())
+            return false;
+    }
 
     resolveStyle();
     return true;
