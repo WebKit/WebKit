@@ -262,7 +262,7 @@ void GraphicsContext3D::prepareTexture()
 
     ::glActiveTexture(GL_TEXTURE0);
     ::glBindTexture(GL_TEXTURE_2D, m_state.boundTarget(GL_TEXTURE0) == GL_TEXTURE_2D ? m_state.boundTexture(GL_TEXTURE0) : 0);
-    ::glActiveTexture(m_state.activeTexture);
+    ::glActiveTexture(m_state.activeTextureUnit);
     if (m_state.boundFBO != m_fbo)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
     ::glFlush();
@@ -452,7 +452,7 @@ IntSize GraphicsContext3D::getInternalFramebufferSize() const
 void GraphicsContext3D::activeTexture(GC3Denum texture)
 {
     makeContextCurrent();
-    m_state.activeTexture = texture;
+    m_state.activeTextureUnit = texture;
     ::glActiveTexture(texture);
 }
 
@@ -505,7 +505,7 @@ void GraphicsContext3D::bindRenderbuffer(GC3Denum target, Platform3DObject rende
 void GraphicsContext3D::bindTexture(GC3Denum target, Platform3DObject texture)
 {
     makeContextCurrent();
-    m_state.setBoundTexture(m_state.activeTexture, texture, target);
+    m_state.setBoundTexture(m_state.activeTextureUnit, texture, target);
     ::glBindTexture(target, texture);
 }
 

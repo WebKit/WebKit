@@ -66,7 +66,9 @@ private:
 
     private:
         GraphicsContext3D& m_context;
-        GC3Dint m_texture { 0 };
+        GC3Denum m_activeTextureUnit { 0 };
+        GC3Denum m_boundTarget { 0 };
+        GC3Denum m_boundTexture { 0 };
         GC3Dint m_framebuffer { 0 };
         GC3Dint m_program { 0 };
         GC3Dint m_arrayBuffer { 0 };

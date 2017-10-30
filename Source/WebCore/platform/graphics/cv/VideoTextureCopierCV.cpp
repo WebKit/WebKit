@@ -517,11 +517,10 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
         return false;
 
     auto newSurfaceSeed = IOSurfaceGetSeed(surface);
-    auto newTextureSeed = m_context->textureSeed(outputTexture);
     if (flipY == m_lastFlipY
         && surface == m_lastSurface 
         && newSurfaceSeed == m_lastSurfaceSeed
-        && lastTextureSeed(outputTexture) == newTextureSeed) {
+        && lastTextureSeed(outputTexture) == m_context->textureSeed(outputTexture)) {
         // If the texture hasn't been modified since the last time we copied to it, and the
         // image hasn't been modified since the last time it was copied, this is a no-op.
         return true;
@@ -619,7 +618,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
 
     m_lastSurface = surface;
     m_lastSurfaceSeed = newSurfaceSeed;
-    m_lastTextureSeed.set(outputTexture, newTextureSeed);
+    m_lastTextureSeed.set(outputTexture, m_context->textureSeed(outputTexture));
     m_lastFlipY = flipY;
 
     return true;
@@ -723,7 +722,9 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(Platform3DObject vi
 VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver(GraphicsContext3D& context)
     : m_context(context)
 {
-    m_context.getIntegerv(GraphicsContext3D::TEXTURE_BINDING_2D, &m_texture);
+    m_activeTextureUnit = m_context.activeTextureUnit();
+    m_boundTarget = m_context.currentBoundTarget();
+    m_boundTexture = m_context.currentBoundTexture();
     m_context.getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &m_framebuffer);
     m_context.getIntegerv(GraphicsContext3D::CURRENT_PROGRAM, &m_program);
     m_context.getIntegerv(GraphicsContext3D::ARRAY_BUFFER_BINDING, &m_arrayBuffer);
@@ -741,7 +742,8 @@ VideoTextureCopierCV::GC3DStateSaver::~GC3DStateSaver()
     m_context.bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_arrayBuffer);
     m_context.vertexAttribPointer(m_vertexAttribIndex, m_vertexAttribSize, m_vertexAttribType, m_vertexAttribNormalized, m_vertexAttribStride, m_vertexAttribPointer);
 
-    m_context.bindTexture(GraphicsContext3D::TEXTURE_BINDING_2D, m_texture);
+    m_context.activeTexture(m_activeTextureUnit);
+    m_context.bindTexture(m_boundTarget, m_boundTexture);
     m_context.bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_framebuffer);
     m_context.useProgram(m_program);
     m_context.viewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
