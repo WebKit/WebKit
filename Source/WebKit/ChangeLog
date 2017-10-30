@@ -1,5 +1,14 @@
 2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE] Build more files under WebCore as unified sources and get rid of WebCorePlatformWPE build target
+        https://bugs.webkit.org/show_bug.cgi?id=178964
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * PlatformWPE.cmake:
+
+2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Expose availability of certain editing commands in WebKitEditorState
         https://bugs.webkit.org/show_bug.cgi?id=168219
 

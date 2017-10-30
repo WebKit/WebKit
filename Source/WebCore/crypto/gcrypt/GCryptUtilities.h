@@ -25,6 +25,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #include "CryptoAlgorithmIdentifier.h"
 #include <array>
 #include <cstring>

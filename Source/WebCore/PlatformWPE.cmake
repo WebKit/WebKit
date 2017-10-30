@@ -5,6 +5,18 @@ include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/TextureMapper.cmake)
 
+list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+    "SourcesWPE.txt"
+
+    "platform/SourcesGLib.txt"
+    "platform/SourcesSoup.txt"
+)
+
+# FIXME: This can't go into SourcesGLib.txt because it has to go into WebCorePlatformGTK.
+list(APPEND WebCore_SOURCES
+    platform/glib/EventHandlerGLib.cpp
+)
+
 # Allow building ANGLE on platforms that don't provide X11 headers.
 list(APPEND ANGLE_PLATFORM_DEFINITIONS "USE_WPE")
 
@@ -45,116 +57,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${WTF_DIR}
 )
 
-list(APPEND WebCore_SOURCES
-    accessibility/wpe/AXObjectCacheWPE.cpp
-    accessibility/wpe/AccessibilityObjectWPE.cpp
-
-    loader/soup/CachedRawResourceSoup.cpp
-    loader/soup/SubresourceLoaderSoup.cpp
-
-    page/linux/ResourceUsageOverlayLinux.cpp
-    page/linux/ResourceUsageThreadLinux.cpp
-
-    page/scrolling/ScrollingStateStickyNode.cpp
-    page/scrolling/ScrollingThread.cpp
-    page/scrolling/ScrollingTreeNode.cpp
-    page/scrolling/ScrollingTreeScrollingNode.cpp
-
-    page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
-    page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
-
-    platform/Cursor.cpp
-    platform/PlatformStrategies.cpp
-    platform/Theme.cpp
-    platform/UserAgentQuirks.cpp
-
-    platform/audio/glib/AudioBusGLib.cpp
-
-    platform/glib/EventLoopGlib.cpp
-    platform/glib/FileMonitorGLib.cpp
-    platform/glib/FileSystemGlib.cpp
-    platform/glib/KeyedDecoderGlib.cpp
-    platform/glib/KeyedEncoderGlib.cpp
-    platform/glib/LowPowerModeNotifierGLib.cpp
-    platform/glib/MainThreadSharedTimerGLib.cpp
-    platform/glib/SSLKeyGeneratorGLib.cpp
-    platform/glib/SharedBufferGlib.cpp
-    platform/glib/UserAgentGLib.cpp
-
-    platform/graphics/GLContext.cpp
-    platform/graphics/GraphicsContext3DPrivate.cpp
-    platform/graphics/ImageSource.cpp
-    platform/graphics/PlatformDisplay.cpp
-    platform/graphics/WOFFFileFormat.cpp
-
-    platform/graphics/egl/GLContextEGL.cpp
-
-    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-    platform/graphics/opengl/Extensions3DOpenGLES.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
-    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-
-    platform/graphics/opentype/OpenTypeVerticalData.cpp
-
-    platform/graphics/wpe/PlatformDisplayWPE.cpp
-
-    platform/network/glib/NetworkStateNotifierGLib.cpp
-
-    platform/network/soup/AuthenticationChallengeSoup.cpp
-    platform/network/soup/CertificateInfo.cpp
-    platform/network/soup/CookieJarSoup.cpp
-    platform/network/soup/CookieStorageSoup.cpp
-    platform/network/soup/CredentialStorageSoup.cpp
-    platform/network/soup/DNSSoup.cpp
-    platform/network/soup/GRefPtrSoup.cpp
-    platform/network/soup/NetworkStorageSessionSoup.cpp
-    platform/network/soup/ProxyServerSoup.cpp
-    platform/network/soup/ResourceErrorSoup.cpp
-    platform/network/soup/ResourceHandleSoup.cpp
-    platform/network/soup/ResourceRequestSoup.cpp
-    platform/network/soup/ResourceResponseSoup.cpp
-    platform/network/soup/SocketStreamHandleImplSoup.cpp
-    platform/network/soup/SoupNetworkSession.cpp
-    platform/network/soup/SynchronousLoaderClientSoup.cpp
-    platform/network/soup/WebKitSoupRequestGeneric.cpp
-
-    platform/soup/PublicSuffixSoup.cpp
-    platform/soup/SharedBufferSoup.cpp
-    platform/soup/URLSoup.cpp
-
-    platform/text/Hyphenation.cpp
-    platform/text/LocaleICU.cpp
-    platform/text/TextCodecICU.cpp
-    platform/text/TextEncodingDetectorICU.cpp
-
-    platform/unix/LoggingUnix.cpp
-
-    platform/xdg/MIMETypeRegistryXdg.cpp
-)
-
-list(APPEND WebCorePlatformWPE_SOURCES
-    editing/wpe/EditorWPE.cpp
-
-    platform/glib/EventHandlerGLib.cpp
-
-    platform/graphics/egl/GLContextEGLWPE.cpp
-
-    platform/graphics/wpe/IconWPE.cpp
-    platform/graphics/wpe/ImageWPE.cpp
-
-    platform/wpe/CursorWPE.cpp
-    platform/wpe/LocalizedStringsWPE.cpp
-    platform/wpe/PasteboardWPE.cpp
-    platform/wpe/PlatformKeyboardEventWPE.cpp
-    platform/wpe/PlatformPasteboardWPE.cpp
-    platform/wpe/PlatformScreenWPE.cpp
-    platform/wpe/RenderThemeWPE.cpp
-    platform/wpe/ScrollbarThemeWPE.cpp
-    platform/wpe/ThemeWPE.cpp
-    platform/wpe/WidgetWPE.cpp
-)
-
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsBase.css
 )
@@ -188,16 +90,4 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${LIBTASN1_INCLUDE_DIRS}
     ${UPOWERGLIB_INCLUDE_DIRS}
     ${WPE_INCLUDE_DIRS}
-)
-
-add_library(WebCorePlatformWPE ${WebCore_LIBRARY_TYPE} ${WebCorePlatformWPE_SOURCES})
-add_dependencies(WebCorePlatformWPE WebCore)
-target_include_directories(WebCorePlatformWPE PRIVATE
-    ${WebCore_INCLUDE_DIRECTORIES}
-)
-target_include_directories(WebCorePlatformWPE SYSTEM PRIVATE
-    ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}
-)
-target_link_libraries(WebCorePlatformWPE
-    ${WebCore_LIBRARIES}
 )
