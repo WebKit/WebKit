@@ -34,6 +34,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._delegate = delegate;
         this.style = style;
         this._propertyViews = [];
+        this._propertyPendingStartEditing = null;
     }
 
     // Public
@@ -47,12 +48,23 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         let properties = this._propertiesToRender;
         this.element.classList.toggle("no-properties", !properties.length);
 
+        // FIXME: Only re-layout properties that have been modified and preserve focus whenever possible.
         this._propertyViews = [];
+
+        let propertyViewPendingStartEditing = null;
         for (let index = 0; index < properties.length; index++) {
             let property = properties[index];
-            let propertyView = new WI.SpreadsheetStyleProperty(this, property);
+            let propertyView = new WI.SpreadsheetStyleProperty(this, property, index);
             this.element.append(propertyView.element);
             this._propertyViews.push(propertyView);
+
+            if (property === this._propertyPendingStartEditing)
+                propertyViewPendingStartEditing = propertyView;
+        }
+
+        if (propertyViewPendingStartEditing) {
+            propertyViewPendingStartEditing.nameTextField.startEditing();
+            this._propertyPendingStartEditing = null;
         }
     }
 
@@ -89,7 +101,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             this._propertyViews[0].nameTextField.startEditing();
         else {
             let index = 0;
-            this._addBlankProperty(index);
+            this.addBlankProperty(index);
         }
     }
 
@@ -100,7 +112,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             lastProperty.valueTextField.startEditing();
         else {
             let index = 0;
-            this._addBlankProperty(index);
+            this.addBlankProperty(index);
         }
     }
 
@@ -145,6 +157,27 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         return false;
     }
 
+    isFocused()
+    {
+        let focusedElement = document.activeElement;
+
+        if (!focusedElement || focusedElement.tagName === "BODY")
+            return false;
+
+        return focusedElement.isSelfOrDescendant(this.element);
+    }
+
+    addBlankProperty(index)
+    {
+        if (index === -1) {
+            // Append to the end.
+            index = this._propertyViews.length;
+        }
+
+        this._propertyPendingStartEditing = this._style.newBlankProperty(index);
+        this.needsLayout();
+    }
+
     spreadsheetCSSStyleDeclarationEditorFocusMoved({direction, movedFromProperty, willRemoveProperty})
     {
         let movedFromIndex = this._propertyViews.indexOf(movedFromProperty);
@@ -167,7 +200,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
                     let reverse = false;
                     this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule(reverse);
                 } else
-                    this._addBlankProperty(movedFromIndex);
+                    this.addBlankProperty(index);
             }
         } else {
             let index = movedFromIndex - 1;
@@ -199,29 +232,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         return this._style.allProperties;
     }
 
-    _addBlankProperty(afterIndex)
-    {
-        let blankProperty = this._style.newBlankProperty(afterIndex);
-        const newlyAdded = true;
-        let propertyView = new WI.SpreadsheetStyleProperty(this, blankProperty, newlyAdded);
-        this.element.append(propertyView.element);
-        this._propertyViews.push(propertyView);
-        propertyView.nameTextField.startEditing();
-    }
-
-    _isFocused()
-    {
-        let focusedElement = document.activeElement;
-
-        if (!focusedElement || focusedElement.tagName === "BODY")
-            return false;
-
-        return focusedElement.isSelfOrDescendant(this.element);
-    }
-
     _propertiesChanged(event)
     {
-        if (this._isFocused()) {
+        if (this.isFocused()) {
             for (let propertyView of this._propertyViews)
                 propertyView.updateClassNames();
         } else

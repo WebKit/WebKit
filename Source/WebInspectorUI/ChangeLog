@@ -1,3 +1,58 @@
+2017-10-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [PARITY] Styles Redesign: clicking on the white space after the property should create a blank property
+        https://bugs.webkit.org/show_bug.cgi?id=178022
+        <rdar://problem/34861687>
+
+        Reviewed by Matt Baker.
+
+        - Clicking on the whitespace on the right side of a property should insert a blank property after the clicked one.
+        - Clicking on the whitespace at the end of a CSS rule should append a blank property.
+        - Clicking on the whitespace before the first property should insert a blank property before the first one.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.remove):
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        Remove method previously didn't do anything for a newly added property.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.newBlankProperty):
+        Update indices of all properties after the newly added property.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.startEditingFirstProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.startEditingLastProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.isFocused):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.addBlankProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetCSSStyleDeclarationEditorFocusMoved):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._addBlankProperty): Deleted.
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._isFocused): Deleted.
+        Re-layout SpreadsheetCSSStyleDeclarationEditor after adding a new property. Preserve edited property
+        so we can restore editing state after the re-layout.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleMouseDown):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleClick):
+        Clicking should add a new property only when we aren't editing an existing property.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.updateClassNames):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        Remove newlyAdded property of SpreadsheetStyleProperty. During layout SpreadsheetCSSStyleDeclarationEditor
+        recreates SpreadsheetStyleProperty views and newlyAdded property gets lost.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype.get valueBeforeEditing):
+        (WI.SpreadsheetTextField.prototype.startEditing):
+        (WI.SpreadsheetTextField.prototype.stopEditing):
+        (WI.SpreadsheetTextField.prototype._discardChange):
+
 2017-10-27  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: no way to see backtrace of where a canvas context was created

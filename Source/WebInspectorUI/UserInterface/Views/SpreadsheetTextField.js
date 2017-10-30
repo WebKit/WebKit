@@ -46,7 +46,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._element.addEventListener("input", this._handleInput.bind(this));
 
         this._editing = false;
-        this._startEditingValue = "";
+        this._valueBeforeEditing = "";
     }
 
     // Public
@@ -57,6 +57,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     get value() { return this._element.textContent; }
     set value(value) { this._element.textContent = value; }
+
+    get valueBeforeEditing() { return this._valueBeforeEditing; }
 
     get suggestionHint()
     {
@@ -83,7 +85,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             this._delegate.spreadsheetTextFieldWillStartEditing(this);
 
         this._editing = true;
-        this._startEditingValue = this.value;
+        this._valueBeforeEditing = this.value;
 
         this._element.classList.add("editing");
         this._element.contentEditable = "plaintext-only";
@@ -102,7 +104,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return;
 
         this._editing = false;
-        this._startEditingValue = "";
+        this._valueBeforeEditing = "";
         this._element.classList.remove("editing");
         this._element.contentEditable = false;
 
@@ -169,8 +171,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     _discardChange()
     {
-        if (this._startEditingValue !== this.value) {
-            this.value = this._startEditingValue;
+        if (this._valueBeforeEditing !== this.value) {
+            this.value = this._valueBeforeEditing;
             this._selectText();
 
             if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")

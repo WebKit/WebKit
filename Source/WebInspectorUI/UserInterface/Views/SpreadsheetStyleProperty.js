@@ -25,7 +25,7 @@
 
 WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 {
-    constructor(delegate, property, newlyAdded = false)
+    constructor(delegate, property, index)
     {
         super();
 
@@ -33,8 +33,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._delegate = delegate || null;
         this._property = property;
-        this._newlyAdded = newlyAdded;
         this._element = document.createElement("div");
+        this._element.dataset.propertyIndex = index;
 
         this._nameElement = null;
         this._valueElement = null;
@@ -86,7 +86,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             return false;
         };
 
-        let classNames = ["property"];
+        let classNames = [WI.SpreadsheetStyleProperty.StyleClassName];
 
         if (this._property.overridden)
             classNames.push("overridden");
@@ -199,20 +199,18 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let propertyName = this._nameTextField.value.trim();
         let propertyValue = this._valueTextField.value.trim();
         let willRemoveProperty = false;
+        let newlyAdded = this._valueTextField.valueBeforeEditing === "";
 
         // Remove a property with an empty name or value. However, a newly added property
         // has an empty name and value at first. Don't remove it when moving focus from
         // the name to the value for the first time.
-        if (!propertyName || (!this._newlyAdded && !propertyValue))
+        if (!propertyName || (!newlyAdded && !propertyValue))
             willRemoveProperty = true;
 
         let isEditingName = textField === this._nameTextField;
 
         if (!isEditingName && !willRemoveProperty)
             this._renderValue(propertyValue);
-
-        if (propertyName && isEditingName)
-            this._newlyAdded = false;
 
         if (direction === "forward") {
             if (isEditingName && !willRemoveProperty) {
@@ -487,5 +485,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         });
     }
 };
+
+WI.SpreadsheetStyleProperty.StyleClassName = "property";
 
 WI.SpreadsheetStyleProperty.CommitCoalesceDelay = 250;

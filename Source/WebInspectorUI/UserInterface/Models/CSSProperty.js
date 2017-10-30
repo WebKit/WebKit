@@ -121,7 +121,9 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     remove()
     {
         // Setting name or value to an empty string removes the entire CSSProperty.
-        this.name = "";
+        this._name = "";
+        const forceRemove = true;
+        this._updateStyleText(forceRemove);
     }
 
     commentOut(disabled)
@@ -325,7 +327,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     // Private
 
-    _updateStyleText()
+    _updateStyleText(forceRemove = false)
     {
         let text = "";
 
@@ -334,13 +336,19 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         let oldText = this._text;
         this._text = text;
-        this._updateOwnerStyleText(oldText, this._text);
+        this._updateOwnerStyleText(oldText, this._text, forceRemove);
     }
 
-    _updateOwnerStyleText(oldText, newText)
+    _updateOwnerStyleText(oldText, newText, forceRemove = false)
     {
-        if (oldText === newText)
+        if (oldText === newText) {
+            if (forceRemove) {
+                const lineDelta = 0;
+                const columnDelta = 0;
+                this._ownerStyle.shiftPropertiesAfter(this, lineDelta, columnDelta, forceRemove);
+            }
             return;
+        }
 
         let styleText = this._ownerStyle.text || "";
 
