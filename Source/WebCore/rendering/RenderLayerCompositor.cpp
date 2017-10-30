@@ -299,8 +299,15 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
 
 void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
 {
+    bool hasAcceleratedCompositing = false;
+    bool showDebugBorders = false;
+    bool showRepaintCounter = false;
+    bool forceCompositingMode = false;
+    bool acceleratedDrawingEnabled = false;
+    bool displayListDrawingEnabled = false;
+
     auto& settings = m_renderView.settings();
-    bool hasAcceleratedCompositing = settings.acceleratedCompositingEnabled();
+    hasAcceleratedCompositing = settings.acceleratedCompositingEnabled();
 
     // We allow the chrome to override the settings, in case the page is rendered
     // on a chrome that doesn't allow accelerated compositing.
@@ -309,11 +316,15 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         hasAcceleratedCompositing = m_compositingTriggers;
     }
 
-    bool showDebugBorders = settings.showDebugBorders();
-    bool showRepaintCounter = settings.showRepaintCounter();
-    bool forceCompositingMode = settings.forceCompositingMode() && hasAcceleratedCompositing;
-    bool acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled();
-    bool displayListDrawingEnabled = settings.displayListDrawingEnabled();
+    showDebugBorders = settings.showDebugBorders();
+    showRepaintCounter = settings.showRepaintCounter();
+    forceCompositingMode = settings.forceCompositingMode() && hasAcceleratedCompositing;
+
+    if (forceCompositingMode && !isMainFrameCompositor())
+        forceCompositingMode = requiresCompositingForScrollableFrame();
+
+    acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled();
+    displayListDrawingEnabled = settings.displayListDrawingEnabled();
     
     if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter || forceCompositingMode != m_forceCompositingMode)
         setCompositingLayersNeedRebuild();
@@ -338,18 +349,6 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     }
 }
 
-void RenderLayerCompositor::cacheAcceleratedCompositingFlagsAfterLayout()
-{
-    cacheAcceleratedCompositingFlags();
-    if (isMainFrameCompositor() || !m_forceCompositingMode)
-        return;
-
-    if (!requiresCompositingForScrollableFrame()) {
-        m_forceCompositingMode = false;
-        setCompositingLayersNeedRebuild();
-    }
-}
-
 bool RenderLayerCompositor::canRender3DTransforms() const
 {
     return hasAcceleratedCompositing() && (m_compositingTriggers & ChromeClient::ThreeDTransformTrigger);
@@ -364,7 +363,6 @@ void RenderLayerCompositor::setCompositingLayersNeedRebuild(bool needRebuild)
 void RenderLayerCompositor::willRecalcStyle()
 {
     m_layerNeedsCompositingUpdate = false;
-    cacheAcceleratedCompositingFlags();
 }
 
 bool RenderLayerCompositor::didRecalcStyleWithNoPendingLayout()
@@ -372,6 +370,7 @@ bool RenderLayerCompositor::didRecalcStyleWithNoPendingLayout()
     if (!m_layerNeedsCompositingUpdate)
         return false;
     
+    cacheAcceleratedCompositingFlags();
     return updateCompositingLayers(CompositingUpdateType::AfterStyleChange);
 }
 
@@ -634,9 +633,6 @@ void RenderLayerCompositor::cancelCompositingLayerUpdate()
 bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " updateCompositingLayers " << updateType << " root " << updateRoot);
-
-    if (updateType == CompositingUpdateType::AfterStyleChange || updateType == CompositingUpdateType::AfterLayout)
-        cacheAcceleratedCompositingFlagsAfterLayout(); // Some flags (e.g. forceCompositingMode) depend on layout.
 
     m_updateCompositingLayersTimer.stop();
 
