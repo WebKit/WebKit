@@ -1,3 +1,59 @@
+2017-10-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Rebaseline tests after r224177.
+
+        Unreviewed test gardening.
+
+        * platform/win/editing/deleting/4922367-expected.txt:
+        * platform/win/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * platform/win/editing/deleting/delete-at-paragraph-boundaries-010-expected.txt:
+        * platform/win/editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * platform/win/editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * platform/win/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/win/editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * platform/win/editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * platform/win/editing/deleting/delete-block-merge-contents-023-expected.txt:
+        * platform/win/editing/deleting/delete-block-merge-contents-024-expected.txt:
+        * platform/win/editing/deleting/delete-br-008-expected.txt:
+        * platform/win/editing/deleting/delete-br-009-expected.txt:
+        * platform/win/editing/deleting/delete-br-010-expected.txt:
+        * platform/win/editing/deleting/delete-line-015-expected.txt:
+        * platform/win/editing/deleting/delete-line-016-expected.txt:
+        * platform/win/editing/deleting/delete-line-017-expected.txt:
+        * platform/win/editing/deleting/merge-no-br-expected.txt:
+        * platform/win/editing/deleting/type-delete-after-quote-expected.txt:
+        * platform/win/editing/execCommand/4747450-expected.txt:
+        * platform/win/editing/execCommand/4916402-expected.txt:
+        * platform/win/editing/execCommand/4916541-expected.txt:
+        * platform/win/editing/execCommand/4924441-expected.txt:
+        * platform/win/editing/execCommand/5136770-expected.txt:
+        * platform/win/editing/execCommand/5142012-2-expected.txt:
+        * platform/win/editing/execCommand/5190926-expected.txt:
+        * platform/win/editing/execCommand/5481523-expected.txt:
+        * platform/win/editing/execCommand/create-list-with-hr-expected.txt:
+        * platform/win/editing/execCommand/indent-selection-expected.txt:
+        * platform/win/editing/execCommand/insert-list-and-stitch-expected.txt:
+        * platform/win/editing/execCommand/nsresponder-indent-expected.txt:
+        * platform/win/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/win/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/win/editing/style/4916887-expected.txt:
+        * platform/win/editing/style/5046875-1-expected.txt:
+        * platform/win/editing/style/5046875-2-expected.txt:
+        * platform/win/editing/style/5279521-expected.txt:
+        * platform/win/editing/style/create-block-for-style-003-expected.txt:
+        * platform/win/editing/style/create-block-for-style-004-expected.txt:
+        * platform/win/editing/style/create-block-for-style-007-expected.txt:
+        * platform/win/editing/style/create-block-for-style-009-expected.txt:
+        * platform/win/editing/style/create-block-for-style-010-expected.txt:
+        * platform/win/editing/style/create-block-for-style-011-expected.txt:
+        * platform/win/editing/style/create-block-for-style-012-expected.txt:
+        * platform/win/editing/style/create-block-for-style-013-expected.txt:
+        * platform/win/editing/style/smoosh-styles-001-expected.txt:
+        * platform/win/editing/style/style-boundary-005-expected.txt:
+        * platform/win/editing/unsupported-content/list-delete-001-expected.txt:
+        * platform/win/fast/forms/button-generated-content-expected.txt:
+        * platform/win/fast/ruby/rubyDOM-remove-text2-expected.txt:
+
 2017-10-30  Matt Lewis  <jlewis3@apple.com>
 
         Rebaselined imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https.html for iOS.
