@@ -1,5 +1,14 @@
 2017-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed WPE gardening. Skip Service Workers tests again after r224132.
+
+        Service Workers tests were unskipped from main TestExpectations in r224132, but Service Workers are not enabled
+        in WPE port yet.
+
+        * platform/wpe/TestExpectations:
+
+2017-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Skip Service Workers tests again after r224132.
 
         Service Workers tests were unskipped from main TestExpectations in r224132, but Service Workers are not enabled
