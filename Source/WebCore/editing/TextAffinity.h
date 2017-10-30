@@ -26,7 +26,7 @@
 #pragma once
 
 namespace WebCore {
-
+// UPSTREAM means before a line break DOWNSTREAM mean after a line break
 enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
 
 } // namespace WebCore

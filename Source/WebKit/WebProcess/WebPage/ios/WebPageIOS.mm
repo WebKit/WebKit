@@ -1857,7 +1857,12 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
         return;
     }
     
-    frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+    // Correctly determine affinity, using logic currently only present in VisiblePosition
+    EAffinity affinity = DOWNSTREAM;
+    if (range && range->collapsed())
+        affinity = VisiblePosition(range->startPosition(), UPSTREAM).affinity();
+    
+    frame.selection().setSelectedRange(range.get(), affinity, true);
     if (correction.length())
         frame.editor().insertText(correction, 0, originalText.isEmpty() ? TextEventInputKeyboard : TextEventInputAutocompletion);
     else
