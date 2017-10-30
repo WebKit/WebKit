@@ -355,7 +355,9 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         // _styleSheetTextRange is the position of the property within the stylesheet.
         // range is the position of the property within the rule.
         let range = this._styleSheetTextRange.relativeTo(this._ownerStyle.styleSheetTextRange.startLine, this._ownerStyle.styleSheetTextRange.startColumn);
-        range.resolveOffsets(styleText);
+
+        // Append a line break to count the last line of styleText towards endOffset.
+        range.resolveOffsets(styleText + "\n");
 
         console.assert(oldText === styleText.slice(range.startOffset, range.endOffset), "_styleSheetTextRange data is invalid.");
 

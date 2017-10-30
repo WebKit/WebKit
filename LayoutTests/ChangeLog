@@ -1,3 +1,16 @@
+2017-10-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [PARITY] Styles Redesign: Ability to modify style attributes
+        https://bugs.webkit.org/show_bug.cgi?id=178328
+        <rdar://problem/35000990>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add tests for WI.TextRange.protopyte.resolveOffsets.
+
+        * inspector/unit-tests/text-range-expected.txt: Added.
+        * inspector/unit-tests/text-range.html: Added.
+
 2017-10-30  Matt Lewis  <jlewis3@apple.com>
 
         Followup rebaseline to r224204.

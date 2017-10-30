@@ -1,3 +1,21 @@
+2017-10-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [PARITY] Styles Redesign: Ability to modify style attributes
+        https://bugs.webkit.org/show_bug.cgi?id=178328
+        <rdar://problem/35000990>
+
+        Reviewed by Joseph Pecoraro.
+
+        Before this patch, modifying a property of a style attribute duplicated the old property
+        and appended the new one. This happened because WI.TextRange.prototype.resolveOffsets
+        didn't resolve offsets correctly when text didn't end with a trailing new line.
+
+        Since WI.TextRange.prototype.resolveOffsets is used elsewhere and this could be expected
+        behavior, append a line break before resolving a range.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+
 2017-10-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Clicking filler in data grid should clear selection

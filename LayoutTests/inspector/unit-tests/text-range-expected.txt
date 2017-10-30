@@ -1,0 +1,16 @@
+Testing that WI.TextRange works.
+
+
+== Running test suite: WI.TextRange
+-- Running test case: resolveOffsetsNoTrailingLineBreak
+PASS: startOffset should be 1.
+PASS: endOffset should be 0.
+
+-- Running test case: resolveOffsetsTrailingLineBreak
+PASS: startOffset should be 1.
+PASS: endOffset should be 14.
+
+-- Running test case: resolveOffsetsTwoTrailingLineBreaks
+PASS: startOffset should be 1.
+PASS: endOffset should be 14.
+
