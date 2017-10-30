@@ -1728,8 +1728,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             break;
         case State::PathStart:
             LOG_STATE("PathStart");
-            if (*c != '/' && *c != '\\')
-                ++c;
+            if (*c != '/' && *c != '\\') {
+                syntaxViolation(c);
+                appendToASCIIBuffer('/');
+            }
+            m_url.m_pathAfterLastSlash = currentPosition(c);
             state = State::Path;
             break;
         case State::Path:

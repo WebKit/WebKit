@@ -361,6 +361,15 @@ TEST_F(URLParserTest, Basic)
     checkURL("file:///#fragment", {"file", "", "", "", 0, "/", "", "fragment", "file:///#fragment"});
     checkURL("file:////?query", {"file", "", "", "", 0, "//", "query", "", "file:////?query"});
     checkURL("file:////#fragment", {"file", "", "", "", 0, "//", "", "fragment", "file:////#fragment"});
+    checkURL("file://?Q", {"file", "", "", "", 0, "/", "Q", "", "file:///?Q"});
+    checkURL("file://#F", {"file", "", "", "", 0, "/", "", "F", "file:///#F"});
+    checkURL("file://host?Q", {"file", "", "", "host", 0, "/", "Q", "", "file://host/?Q"});
+    checkURL("file://host#F", {"file", "", "", "host", 0, "/", "", "F", "file://host/#F"});
+    checkURL("file://host\\P", {"file", "", "", "host", 0, "/P", "", "", "file://host/P"});
+    checkURL("file://host\\?Q", {"file", "", "", "host", 0, "/", "Q", "", "file://host/?Q"});
+    checkURL("file://host\\../P", {"file", "", "", "host", 0, "/P", "", "", "file://host/P"});
+    checkURL("file://host\\/../P", {"file", "", "", "host", 0, "/P", "", "", "file://host/P"});
+    checkURL("file://host\\/P", {"file", "", "", "host", 0, "//P", "", "", "file://host//P"});
     checkURL("http://host/A b", {"http", "", "", "host", 0, "/A%20b", "", "", "http://host/A%20b"});
     checkURL("http://host/a%20B", {"http", "", "", "host", 0, "/a%20B", "", "", "http://host/a%20B"});
     checkURL("http://host?q=@ <>!#fragment", {"http", "", "", "host", 0, "/", "q=@%20%3C%3E!", "fragment", "http://host/?q=@%20%3C%3E!#fragment"});

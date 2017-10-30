@@ -1,3 +1,13 @@
+2017-10-30  Alex Christensen  <achristensen@webkit.org>
+
+        ASSERTION FAILED: internalValuesConsistent(m_url) in WebCore::URLParser::URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=178861
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-10-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r224078.
