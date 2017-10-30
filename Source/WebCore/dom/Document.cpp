@@ -1151,18 +1151,18 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
         return CustomElementNameValidationStatus::ContainsNoHyphen;
 
 #if ENABLE(MATHML)
-    const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag.localName();
+    const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag->localName();
 #else
     static NeverDestroyed<const AtomicString> annotationXmlLocalName("annotation-xml", AtomicString::ConstructFromLiteral);
 #endif
 
-    if (localName == SVGNames::color_profileTag.localName()
-        || localName == SVGNames::font_faceTag.localName()
-        || localName == SVGNames::font_face_formatTag.localName()
-        || localName == SVGNames::font_face_nameTag.localName()
-        || localName == SVGNames::font_face_srcTag.localName()
-        || localName == SVGNames::font_face_uriTag.localName()
-        || localName == SVGNames::missing_glyphTag.localName()
+    if (localName == SVGNames::color_profileTag->localName()
+        || localName == SVGNames::font_faceTag->localName()
+        || localName == SVGNames::font_face_formatTag->localName()
+        || localName == SVGNames::font_face_nameTag->localName()
+        || localName == SVGNames::font_face_srcTag->localName()
+        || localName == SVGNames::font_face_uriTag->localName()
+        || localName == SVGNames::missing_glyphTag->localName()
         || localName == annotationXmlLocalName)
         return CustomElementNameValidationStatus::ConflictsWithStandardElementName;
 

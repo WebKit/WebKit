@@ -1450,9 +1450,9 @@ static String valueDefaultParagraphSeparator(Frame& frame, Event*)
 {
     switch (frame.editor().defaultParagraphSeparator()) {
     case EditorParagraphSeparatorIsDiv:
-        return divTag.localName();
+        return divTag->localName();
     case EditorParagraphSeparatorIsP:
-        return pTag.localName();
+        return pTag->localName();
     }
 
     ASSERT_NOT_REACHED();

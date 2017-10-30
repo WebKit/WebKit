@@ -463,7 +463,7 @@ static ALWAYS_INLINE bool isStyleAttribute(const Element& element, const AtomicS
 {
     if (shouldIgnoreAttributeCase(element))
         return equalLettersIgnoringASCIICase(attributeLocalName, "style");
-    return attributeLocalName == styleAttr.localName();
+    return attributeLocalName == styleAttr->localName();
 }
 
 ALWAYS_INLINE void Element::synchronizeAttribute(const AtomicString& localName) const
@@ -1816,23 +1816,23 @@ static bool canAttachAuthorShadowRoot(const Element& element)
 {
     static NeverDestroyed<HashSet<AtomicString>> tagNames = [] {
         static const HTMLQualifiedName* const tagList[] = {
-            &articleTag,
-            &asideTag,
-            &blockquoteTag,
-            &bodyTag,
-            &divTag,
-            &footerTag,
-            &h1Tag,
-            &h2Tag,
-            &h3Tag,
-            &h4Tag,
-            &h5Tag,
-            &h6Tag,
-            &headerTag,
-            &navTag,
-            &pTag,
-            &sectionTag,
-            &spanTag
+            &articleTag.get(),
+            &asideTag.get(),
+            &blockquoteTag.get(),
+            &bodyTag.get(),
+            &divTag.get(),
+            &footerTag.get(),
+            &h1Tag.get(),
+            &h2Tag.get(),
+            &h3Tag.get(),
+            &h4Tag.get(),
+            &h5Tag.get(),
+            &h6Tag.get(),
+            &headerTag.get(),
+            &navTag.get(),
+            &pTag.get(),
+            &sectionTag.get(),
+            &spanTag.get()
         };
         HashSet<AtomicString> set;
         for (auto& name : tagList)

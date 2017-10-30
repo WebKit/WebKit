@@ -35,7 +35,7 @@ using SVGAnimatedRect = SVGAnimatedPropertyTearOff<SVGRect>;
 DECLARE_ANIMATED_PROPERTY(SVGAnimatedRect, FloatRect, UpperProperty, LowerProperty, )
 
 #define DEFINE_ANIMATED_RECT(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedRect, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedRect, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
 
 class SVGAnimationElement;
 

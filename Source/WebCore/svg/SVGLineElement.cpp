@@ -68,7 +68,7 @@ bool SVGLineElement::isSupportedAttribute(const QualifiedName& attrName)
         HashSet<QualifiedName> set;
         SVGLangSpace::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
-        set.add({ SVGNames::x1Attr, SVGNames::x2Attr, SVGNames::y1Attr, SVGNames::y2Attr });
+        set.add({ SVGNames::x1Attr.get(), SVGNames::x2Attr.get(), SVGNames::y1Attr.get(), SVGNames::y2Attr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

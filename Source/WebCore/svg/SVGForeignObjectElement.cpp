@@ -73,7 +73,7 @@ bool SVGForeignObjectElement::isSupportedAttribute(const QualifiedName& attrName
         HashSet<QualifiedName> set;
         SVGLangSpace::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
-        set.add({ SVGNames::xAttr, SVGNames::yAttr, SVGNames::widthAttr, SVGNames::heightAttr });
+        set.add({ SVGNames::xAttr.get(), SVGNames::yAttr.get(), SVGNames::widthAttr.get(), SVGNames::heightAttr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

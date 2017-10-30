@@ -147,8 +147,8 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, EChildren
         namespaceHash = *namespaces;
     else if (inXMLFragmentSerialization()) {
         // Make sure xml prefix and namespace are always known to uphold the constraints listed at http://www.w3.org/TR/xml-names11/#xmlReserved.
-        namespaceHash.set(xmlAtom().impl(), XMLNames::xmlNamespaceURI.impl());
-        namespaceHash.set(XMLNames::xmlNamespaceURI.impl(), xmlAtom().impl());
+        namespaceHash.set(xmlAtom().impl(), XMLNames::xmlNamespaceURI->impl());
+        namespaceHash.set(XMLNames::xmlNamespaceURI->impl(), xmlAtom().impl());
     }
 
     if (!childrenOnly)
@@ -302,7 +302,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomicStrin
         if (inXMLFragmentSerialization() && !prefix.isEmpty())
             namespaces.set(namespaceURI.impl(), pre);
         // Make sure xml prefix and namespace are always known to uphold the constraints listed at http://www.w3.org/TR/xml-names11/#xmlReserved.
-        if (namespaceURI.impl() == XMLNames::xmlNamespaceURI.impl())
+        if (namespaceURI.impl() == XMLNames::xmlNamespaceURI->impl())
             return;
         result.append(' ');
         result.append(xmlnsAtom().string());
@@ -598,8 +598,9 @@ bool MarkupAccumulator::elementCannotHaveEndTag(const Node& node)
     // If current node is an area, base, basefont, bgsound, br, col, embed, frame, hr, img,
     // input, keygen, link, meta, param, source, track or wbr element, then continue on to
     // the next child node at this point.
-    static const HTMLQualifiedName* tags[] = { &areaTag, &baseTag, &basefontTag, &bgsoundTag, &brTag, &colTag, &embedTag,
-        &frameTag, &hrTag, &imgTag, &inputTag, &keygenTag, &linkTag, &metaTag, &paramTag, &sourceTag, &trackTag, &wbrTag };
+    static const HTMLQualifiedName* tags[] = { &areaTag.get(), &baseTag.get(), &basefontTag.get(), &bgsoundTag.get(),
+        &brTag.get(), &colTag.get(), &embedTag.get(), &frameTag.get(), &hrTag.get(), &imgTag.get(), &inputTag.get(),
+        &keygenTag.get(), &linkTag.get(), &metaTag.get(), &paramTag.get(), &sourceTag.get(), &trackTag.get(), &wbrTag.get() };
     auto& element = downcast<HTMLElement>(node);
     for (auto* tag : tags) {
         if (element.hasTagName(*tag))

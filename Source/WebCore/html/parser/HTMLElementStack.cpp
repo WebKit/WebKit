@@ -502,7 +502,7 @@ bool HTMLElementStack::inSelectScope(const QualifiedName& tagName) const
 
 bool HTMLElementStack::hasTemplateInHTMLScope() const
 {
-    return inScopeCommon<isRootNode>(m_top.get(), templateTag.localName());
+    return inScopeCommon<isRootNode>(m_top.get(), templateTag->localName());
 }
 
 Element& HTMLElementStack::htmlElement() const

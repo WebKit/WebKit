@@ -71,7 +71,7 @@ bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGTests::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
         SVGURIReference::addSupportedAttributes(set);
-        set.add({ SVGNames::xAttr, SVGNames::yAttr });
+        set.add({ SVGNames::xAttr.get(), SVGNames::yAttr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

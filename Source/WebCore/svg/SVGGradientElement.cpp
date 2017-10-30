@@ -67,7 +67,7 @@ bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
         HashSet<QualifiedName> set;
         SVGURIReference::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
-        set.add({ SVGNames::gradientUnitsAttr, SVGNames::gradientTransformAttr, SVGNames::spreadMethodAttr });
+        set.add({ SVGNames::gradientUnitsAttr.get(), SVGNames::gradientTransformAttr.get(), SVGNames::spreadMethodAttr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

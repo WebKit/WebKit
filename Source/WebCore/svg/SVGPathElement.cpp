@@ -58,11 +58,11 @@ const SVGPropertyInfo* SVGPathElement::dPropertyInfo()
     static const SVGPropertyInfo* s_propertyInfo = nullptr;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedPath,
-                                             PropertyIsReadWrite,
-                                             SVGNames::dAttr,
-                                             SVGNames::dAttr.localName(),
-                                             &SVGPathElement::synchronizeD,
-                                             &SVGPathElement::lookupOrCreateDWrapper);
+            PropertyIsReadWrite,
+            SVGNames::dAttr,
+            SVGNames::dAttr->localName(),
+            &SVGPathElement::synchronizeD,
+            &SVGPathElement::lookupOrCreateDWrapper);
     }
     return s_propertyInfo;
 }
@@ -214,7 +214,7 @@ bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
         HashSet<QualifiedName> set;
         SVGLangSpace::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
-        set.add({ SVGNames::dAttr, SVGNames::pathLengthAttr });
+        set.add({ SVGNames::dAttr.get(), SVGNames::pathLengthAttr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

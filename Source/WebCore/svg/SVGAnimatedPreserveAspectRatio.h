@@ -35,7 +35,7 @@ using SVGAnimatedPreserveAspectRatio = SVGAnimatedPropertyTearOff<SVGPreserveAsp
 DECLARE_ANIMATED_PROPERTY(SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatioValue, UpperProperty, LowerProperty, )
 
 #define DEFINE_ANIMATED_PRESERVEASPECTRATIO(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedPreserveAspectRatio, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedPreserveAspectRatio, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
 
 class SVGAnimationElement;
 

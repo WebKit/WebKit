@@ -109,13 +109,13 @@ bool SVGFilterElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGLangSpace::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
         set.add({
-            SVGNames::filterUnitsAttr,
-            SVGNames::primitiveUnitsAttr,
-            SVGNames::xAttr,
-            SVGNames::yAttr,
-            SVGNames::widthAttr,
-            SVGNames::heightAttr,
-            SVGNames::filterResAttr,
+            SVGNames::filterUnitsAttr.get(),
+            SVGNames::primitiveUnitsAttr.get(),
+            SVGNames::xAttr.get(),
+            SVGNames::yAttr.get(),
+            SVGNames::widthAttr.get(),
+            SVGNames::heightAttr.get(),
+            SVGNames::filterResAttr.get(),
         });
         return set;
     }());

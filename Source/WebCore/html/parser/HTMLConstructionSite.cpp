@@ -756,13 +756,13 @@ void HTMLConstructionSite::generateImpliedEndTags()
 void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
 {
     // When a node is to be foster parented, the last template element with no table element is below it in the stack of open elements is the foster parent element (NOT the template's parent!)
-    auto* lastTemplateElement = m_openElements.topmost(templateTag.localName());
+    auto* lastTemplateElement = m_openElements.topmost(templateTag->localName());
     if (lastTemplateElement && !m_openElements.inTableScope(tableTag)) {
         task.parent = &lastTemplateElement->element();
         return;
     }
 
-    if (auto* lastTableElementRecord = m_openElements.topmost(tableTag.localName())) {
+    if (auto* lastTableElementRecord = m_openElements.topmost(tableTag->localName())) {
         auto& lastTableElement = lastTableElementRecord->element();
         auto* parent = lastTableElement.parentNode();
         // When parsing HTML fragments, we skip step 4.2 ("Let root be a new html element with no attributes") for efficiency,

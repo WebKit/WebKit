@@ -197,7 +197,7 @@ static HashSet<AtomicString> createAllowedElementSet()
     // Excluded are anything that is used by reference or that only make sense to appear once in a document.
     using namespace SVGNames;
     HashSet<AtomicString> set;
-    for (auto& tag : { aTag, circleTag, descTag, ellipseTag, gTag, imageTag, lineTag, metadataTag, pathTag, polygonTag, polylineTag, rectTag, svgTag, switchTag, symbolTag, textTag, textPathTag, titleTag, trefTag, tspanTag, useTag })
+    for (auto& tag : { aTag.get(), circleTag.get(), descTag.get(), ellipseTag.get(), gTag.get(), imageTag.get(), lineTag.get(), metadataTag.get(), pathTag.get(), polygonTag.get(), polylineTag.get(), rectTag.get(), svgTag.get(), switchTag.get(), symbolTag.get(), textTag.get(), textPathTag.get(), titleTag.get(), trefTag.get(), tspanTag.get(), useTag.get() })
         set.add(tag.localName());
     return set;
 }

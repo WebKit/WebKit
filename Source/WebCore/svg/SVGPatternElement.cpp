@@ -99,8 +99,8 @@ bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGExternalResourcesRequired::addSupportedAttributes(set);
         SVGFitToViewBox::addSupportedAttributes(set);
         set.add({
-            SVGNames::patternUnitsAttr, SVGNames::patternContentUnitsAttr, SVGNames::patternTransformAttr,
-            SVGNames::xAttr, SVGNames::yAttr, SVGNames::widthAttr, SVGNames::heightAttr,
+            SVGNames::patternUnitsAttr.get(), SVGNames::patternContentUnitsAttr.get(), SVGNames::patternTransformAttr.get(),
+            SVGNames::xAttr.get(), SVGNames::yAttr.get(), SVGNames::widthAttr.get(), SVGNames::heightAttr.get(),
         });
         return set;
     }());

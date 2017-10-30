@@ -177,13 +177,13 @@ Path pathFromGraphicsElement(SVGElement* element)
     static HashMap<AtomicStringImpl*, PathFromFunction>* map = 0;
     if (!map) {
         map = new HashMap<AtomicStringImpl*, PathFromFunction>;
-        map->set(SVGNames::circleTag.localName().impl(), pathFromCircleElement);
-        map->set(SVGNames::ellipseTag.localName().impl(), pathFromEllipseElement);
-        map->set(SVGNames::lineTag.localName().impl(), pathFromLineElement);
-        map->set(SVGNames::pathTag.localName().impl(), pathFromPathElement);
-        map->set(SVGNames::polygonTag.localName().impl(), pathFromPolygonElement);
-        map->set(SVGNames::polylineTag.localName().impl(), pathFromPolylineElement);
-        map->set(SVGNames::rectTag.localName().impl(), pathFromRectElement);
+        map->set(SVGNames::circleTag->localName().impl(), pathFromCircleElement);
+        map->set(SVGNames::ellipseTag->localName().impl(), pathFromEllipseElement);
+        map->set(SVGNames::lineTag->localName().impl(), pathFromLineElement);
+        map->set(SVGNames::pathTag->localName().impl(), pathFromPathElement);
+        map->set(SVGNames::polygonTag->localName().impl(), pathFromPolygonElement);
+        map->set(SVGNames::polylineTag->localName().impl(), pathFromPolylineElement);
+        map->set(SVGNames::rectTag->localName().impl(), pathFromRectElement);
     }
 
     if (PathFromFunction pathFromFunction = map->get(element->localName().impl()))

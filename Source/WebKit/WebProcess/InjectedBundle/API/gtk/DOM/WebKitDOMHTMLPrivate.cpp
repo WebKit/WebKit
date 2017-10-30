@@ -229,7 +229,7 @@ WebKitDOMHTMLElement* wrap(HTMLElement* element)
 {
     static HashMap<const QualifiedName::QualifiedNameImpl*, HTMLElementWrapFunction> map;
     if (map.isEmpty()) {
-#define ADD_HTML_WRAPPER(TagName, ElementName) map.set(TagName##Tag.impl(), TagName##Wrapper);
+#define ADD_HTML_WRAPPER(TagName, ElementName) map.set(TagName##Tag->impl(), TagName##Wrapper);
         FOR_EACH_HTML_TAG(ADD_HTML_WRAPPER)
 #undef ADD_HTML_WRAPPER
     }

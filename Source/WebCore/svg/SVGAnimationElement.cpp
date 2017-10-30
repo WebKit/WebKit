@@ -142,15 +142,15 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGTests::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
         set.add({
-            SVGNames::valuesAttr,
-            SVGNames::keyTimesAttr,
-            SVGNames::keyPointsAttr,
-            SVGNames::keySplinesAttr,
-            SVGNames::attributeTypeAttr,
-            SVGNames::calcModeAttr,
-            SVGNames::fromAttr,
-            SVGNames::toAttr,
-            SVGNames::byAttr,
+            SVGNames::valuesAttr.get(),
+            SVGNames::keyTimesAttr.get(),
+            SVGNames::keyPointsAttr.get(),
+            SVGNames::keySplinesAttr.get(),
+            SVGNames::attributeTypeAttr.get(),
+            SVGNames::calcModeAttr.get(),
+            SVGNames::fromAttr.get(),
+            SVGNames::toAttr.get(),
+            SVGNames::byAttr.get(),
         });
         return set;
     }());

@@ -44,11 +44,11 @@ const SVGPropertyInfo* SVGTextContentElement::textLengthPropertyInfo()
     static const SVGPropertyInfo* s_propertyInfo = nullptr;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedLength,
-                                             PropertyIsReadWrite,
-                                             SVGNames::textLengthAttr,
-                                             SVGNames::textLengthAttr.localName(),
-                                             &SVGTextContentElement::synchronizeTextLength,
-                                             &SVGTextContentElement::lookupOrCreateTextLengthWrapper);
+            PropertyIsReadWrite,
+            SVGNames::textLengthAttr,
+            SVGNames::textLengthAttr->localName(),
+            &SVGTextContentElement::synchronizeTextLength,
+            &SVGTextContentElement::lookupOrCreateTextLengthWrapper);
     }
     return s_propertyInfo;
 }
@@ -194,7 +194,7 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
         HashSet<QualifiedName> set;
         SVGLangSpace::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
-        set.add({ SVGNames::lengthAdjustAttr, SVGNames::textLengthAttr });
+        set.add({ SVGNames::lengthAdjustAttr.get(), SVGNames::textLengthAttr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

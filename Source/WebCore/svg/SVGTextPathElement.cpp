@@ -74,7 +74,7 @@ bool SVGTextPathElement::isSupportedAttribute(const QualifiedName& attrName)
     static const auto supportedAttributes = makeNeverDestroyed([] {
         HashSet<QualifiedName> set;
         SVGURIReference::addSupportedAttributes(set);
-        set.add({ SVGNames::startOffsetAttr, SVGNames::methodAttr, SVGNames::spacingAttr });
+        set.add({ SVGNames::startOffsetAttr.get(), SVGNames::methodAttr.get(), SVGNames::spacingAttr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

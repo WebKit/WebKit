@@ -265,7 +265,7 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     // FIXME: We need to implement the HTML5 XML Fragment parsing algorithm:
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
     // For now we have a hack for script/style innerHTML support:
-    if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag.localName()) || contextElement->hasLocalName(HTMLNames::styleTag.localName()))) {
+    if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag->localName()) || contextElement->hasLocalName(HTMLNames::styleTag->localName()))) {
         fragment.parserAppendChild(fragment.document().createTextNode(chunk));
         return true;
     }

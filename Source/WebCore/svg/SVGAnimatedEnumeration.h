@@ -32,7 +32,7 @@ typedef SVGAnimatedStaticPropertyTearOff<unsigned> SVGAnimatedEnumeration;
 DECLARE_ANIMATED_PROPERTY(SVGAnimatedEnumerationPropertyTearOff<EnumType>, EnumType, UpperProperty, LowerProperty, )
 
 #define DEFINE_ANIMATED_ENUMERATION(OwnerType, DOMAttribute, UpperProperty, LowerProperty, EnumType) \
-DEFINE_ANIMATED_PROPERTY(AnimatedEnumeration, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedEnumeration, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
 
 class SVGAnimatedEnumerationAnimator final : public SVGAnimatedTypeAnimator {
 public:

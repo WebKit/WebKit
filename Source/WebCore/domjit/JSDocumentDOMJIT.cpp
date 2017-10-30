@@ -102,7 +102,7 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentBodyAttribute()
         // We ensured that the name of the given element is HTML qualified.
         // It allows us to perform local name comparison!
         loadLocalName(jit, scratch1, scratch2);
-        nullCases.append(jit.branchPtr(CCallHelpers::NotEqual, scratch2, CCallHelpers::TrustedImmPtr(HTMLNames::htmlTag.localName().impl())));
+        nullCases.append(jit.branchPtr(CCallHelpers::NotEqual, scratch2, CCallHelpers::TrustedImmPtr(HTMLNames::htmlTag->localName().impl())));
 
         RELEASE_ASSERT(!CAST_OFFSET(Node*, ContainerNode*));
         RELEASE_ASSERT(!CAST_OFFSET(Node*, Element*));
@@ -120,8 +120,8 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentBodyAttribute()
         // We ensured that the name of the given element is HTML qualified.
         // It allows us to perform local name comparison!
         loadLocalName(jit, scratch1, scratch2);
-        successCases.append(jit.branchPtr(CCallHelpers::Equal, scratch2, CCallHelpers::TrustedImmPtr(HTMLNames::bodyTag.localName().impl())));
-        successCases.append(jit.branchPtr(CCallHelpers::Equal, scratch2, CCallHelpers::TrustedImmPtr(HTMLNames::framesetTag.localName().impl())));
+        successCases.append(jit.branchPtr(CCallHelpers::Equal, scratch2, CCallHelpers::TrustedImmPtr(HTMLNames::bodyTag->localName().impl())));
+        successCases.append(jit.branchPtr(CCallHelpers::Equal, scratch2, CCallHelpers::TrustedImmPtr(HTMLNames::framesetTag->localName().impl())));
 
         notHTMLElementCase.link(&jit);
         jit.loadPtr(CCallHelpers::Address(scratch1, Node::nextSiblingMemoryOffset()), scratch1);

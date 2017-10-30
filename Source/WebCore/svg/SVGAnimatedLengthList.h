@@ -33,7 +33,7 @@ using SVGAnimatedLengthList = SVGAnimatedListPropertyTearOff<SVGLengthListValues
 DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedLengthList, SVGLengthListValues, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_LENGTH_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedLengthList, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedLengthList, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
 
 class SVGAnimationElement;
 

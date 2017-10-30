@@ -1,3 +1,13 @@
+2017-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use LazyNeverDestroyed instead of DEFINE_GLOBAL for XMLNames, HTMLNames, MathMLNames and SVGNames
+        https://bugs.webkit.org/show_bug.cgi?id=175118
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPrivate.cpp:
+        (WebKit::wrap):
+
 2017-10-27  Megan Gardner  <megan_gardner@apple.com>
 
         Correctly determine affinity when inserting text via Keyboard Suggestions

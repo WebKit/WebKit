@@ -85,7 +85,7 @@ bool SVGImageElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGLangSpace::addSupportedAttributes(set);
         SVGExternalResourcesRequired::addSupportedAttributes(set);
         SVGURIReference::addSupportedAttributes(set);
-        set.add({ SVGNames::xAttr, SVGNames::yAttr, SVGNames::widthAttr, SVGNames::heightAttr, SVGNames::preserveAspectRatioAttr });
+        set.add({ SVGNames::xAttr.get(), SVGNames::yAttr.get(), SVGNames::widthAttr.get(), SVGNames::heightAttr.get(), SVGNames::preserveAspectRatioAttr.get() });
         return set;
     }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);

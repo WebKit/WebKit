@@ -3206,7 +3206,7 @@ void Editor::textDidChangeInTextArea(Element* e)
 
 void Editor::applyEditingStyleToBodyElement() const
 {
-    auto collection = document().getElementsByTagName(HTMLNames::bodyTag.localName());
+    auto collection = document().getElementsByTagName(HTMLNames::bodyTag->localName());
     unsigned length = collection->length();
     for (unsigned i = 0; i < length; ++i)
         applyEditingStyleToElement(collection->item(i));

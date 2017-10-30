@@ -32,7 +32,7 @@ using SVGAnimatedTransformList = SVGAnimatedTransformListPropertyTearOff;
 DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedTransformList, SVGTransformListValues, UpperProperty, LowerProperty)
 
 #define DEFINE_ANIMATED_TRANSFORM_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(AnimatedTransformList, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
+DEFINE_ANIMATED_PROPERTY(AnimatedTransformList, OwnerType, DOMAttribute, DOMAttribute->localName(), UpperProperty, LowerProperty)
 
 class SVGAnimationElement;
 

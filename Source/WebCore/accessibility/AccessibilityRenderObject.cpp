@@ -2883,13 +2883,13 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     switch (roleValue()) {
     case AccessibilityRole::ListItem:
     case AccessibilityRole::ListMarker: {
-        static const auto listItemParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &dlTag, &olTag, &ulTag });
+        static const auto listItemParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &dlTag.get(), &olTag.get(), &ulTag.get() });
         parentTags = &listItemParents.get();
         break;
     }
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Cell: {
-        static const auto tableCellParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &tableTag });
+        static const auto tableCellParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &tableTag.get() });
         parentTags = &tableCellParents.get();
         break;
     }

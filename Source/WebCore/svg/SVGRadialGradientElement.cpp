@@ -75,7 +75,7 @@ Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedNa
 bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrName)
 {
     static const auto supportedAttributes = makeNeverDestroyed(HashSet<QualifiedName> {
-        SVGNames::cxAttr, SVGNames::cyAttr, SVGNames::fxAttr, SVGNames::fyAttr, SVGNames::rAttr, SVGNames::frAttr,
+        SVGNames::cxAttr.get(), SVGNames::cyAttr.get(), SVGNames::fxAttr.get(), SVGNames::fyAttr.get(), SVGNames::rAttr.get(), SVGNames::frAttr.get(),
     });
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
