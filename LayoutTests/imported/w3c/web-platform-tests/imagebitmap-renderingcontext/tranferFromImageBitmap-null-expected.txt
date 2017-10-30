@@ -1,3 +1,3 @@
 
-FAIL Test that transferFromImageBitmap(null) discards the previously transferred image promise_test: Unhandled rejection with value: object "TypeError: bitmapCtx.transferFromImageBitmap is not a function. (In 'bitmapCtx.transferFromImageBitmap(greenImage)', 'bitmapCtx.transferFromImageBitmap' is undefined)"
+PASS Test that transferFromImageBitmap(null) discards the previously transferred image 
 

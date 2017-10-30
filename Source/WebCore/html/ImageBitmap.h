@@ -74,6 +74,8 @@ public:
 
     bool originClean() const { return m_originClean; }
 
+    std::unique_ptr<ImageBuffer> transferOwnershipAndClose();
+
 private:
     friend class PendingImageBitmap;
 

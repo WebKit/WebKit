@@ -27,7 +27,14 @@
 
 #include "CanvasRenderingContext.h"
 
+#include "ExceptionOr.h"
+#include "ImageBufferData.h"
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
+
+class ImageBitmap;
+class ImageBuffer;
 
 class ImageBitmapRenderingContext final : public CanvasRenderingContext {
 public:
@@ -35,10 +42,27 @@ public:
         bool alpha = true;
     };
 
+    enum class BitmapMode {
+        Valid,
+        Blank
+    };
+
     ImageBitmapRenderingContext(HTMLCanvasElement&);
+    ~ImageBitmapRenderingContext();
+
+    ExceptionOr<void> transferFromImageBitmap(RefPtr<ImageBitmap>);
+
+    BitmapMode bitmapMode() { return m_bitmapMode; }
+    bool hasAlpha() { return m_settings.alpha; }
 
 private:
     bool isBitmapRenderer() const final { return true; }
+    bool isAccelerated() const override;
+
+    void setOutputBitmap(RefPtr<ImageBitmap>);
+
+    BitmapMode m_bitmapMode { BitmapMode::Blank };
+    Settings m_settings;
 };
 
 }

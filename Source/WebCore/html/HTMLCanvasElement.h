@@ -150,6 +150,7 @@ public:
     void clearPresentationCopy();
 
     SecurityOrigin* securityOrigin() const;
+    void setOriginClean() { m_originClean = true; }
     void setOriginTainted() { m_originClean = false; }
     bool originClean() const { return m_originClean; }
 
@@ -168,6 +169,10 @@ public:
     size_t memoryCost() const;
     size_t externalMemoryCost() const;
 
+    // FIXME: Only some canvas rendering contexts need an ImageBuffer.
+    // It would be better to have the contexts own the buffers.
+    void setImageBufferAndMarkDirty(std::unique_ptr<ImageBuffer>&&);
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
@@ -183,7 +188,7 @@ private:
     void clearImageBuffer() const;
 
     void setSurfaceSize(const IntSize&);
-    void setImageBuffer(std::unique_ptr<ImageBuffer>) const;
+    void setImageBuffer(std::unique_ptr<ImageBuffer>&&) const;
     void releaseImageBufferAndContext();
 
     bool paintsIntoCanvasBuffer() const;

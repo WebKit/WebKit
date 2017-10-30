@@ -1,5 +1,5 @@
 
-FAIL Test that createImageBitmap from a bitmaprenderer canvas produces correct result myCtx.transferFromImageBitmap is not a function. (In 'myCtx.transferFromImageBitmap(image)', 'myCtx.transferFromImageBitmap' is undefined)
+FAIL Test that createImageBitmap from a bitmaprenderer canvas produces correct result assert_equals: expected 10 but got 20
 PASS Test that createImageBitmap on a bitmaprenderer canvas that never consumes any source produces correct result 
-FAIL Test that createImageBitmap on a bitmaprenderer canvas that consumes null produces correct result ctx.transferFromImageBitmap is not a function. (In 'ctx.transferFromImageBitmap(null)', 'ctx.transferFromImageBitmap' is undefined)
+PASS Test that createImageBitmap on a bitmaprenderer canvas that consumes null produces correct result 
 

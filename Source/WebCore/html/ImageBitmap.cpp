@@ -48,12 +48,11 @@
 
 namespace WebCore {
 
-#if PLATFORM(COCOA) && !PLATFORM(IOS_SIMULATOR)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
 static RenderingMode bufferRenderingMode = Accelerated;
 #else
 static RenderingMode bufferRenderingMode = Unaccelerated;
 #endif
-
 
 Ref<ImageBitmap> ImageBitmap::create()
 {
@@ -557,6 +556,12 @@ void ImageBitmap::close()
 {
     m_detached = true;
     m_bitmapData = nullptr;
+}
+
+std::unique_ptr<ImageBuffer> ImageBitmap::transferOwnershipAndClose()
+{
+    m_detached = true;
+    return WTFMove(m_bitmapData);
 }
 
 }

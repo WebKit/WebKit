@@ -28,8 +28,7 @@
 ] interface ImageBitmapRenderingContext {
     readonly attribute HTMLCanvasElement canvas;
 
-    // FIXME: Add support for transferFromImageBitmap once we have ImageBitmap support.
-    // void transferFromImageBitmap(ImageBitmap? bitmap);
+    [MayThrowException] void transferFromImageBitmap(ImageBitmap? bitmap);
 };
 
 dictionary ImageBitmapRenderingContextSettings {
