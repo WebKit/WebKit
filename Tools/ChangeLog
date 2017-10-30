@@ -1,5 +1,17 @@
 2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE] Upstream or stop using cairo-egl-device-create-for-egl-surface.patch
+        https://bugs.webkit.org/show_bug.cgi?id=178898
+
+        Reviewed by Žan Doberšek.
+
+        This patch seems to be unused.
+
+        * wpe/jhbuild.modules:
+        * wpe/patches/cairo-egl-device-create-for-egl-surface.patch: Removed.
+
+2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE] Build more files under WebCore as unified sources and get rid of WebCorePlatformWPE build target
         https://bugs.webkit.org/show_bug.cgi?id=178964
 

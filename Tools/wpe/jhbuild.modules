@@ -151,9 +151,7 @@
     </dependencies>
     <branch module="releases/cairo-1.14.8.tar.xz" version="1.14.8"
             repo="cairographics.org"
-            hash="sha1:c6f7b99986f93c9df78653c3e6a3b5043f65145e">
-      <patch file="cairo-egl-device-create-for-egl-surface.patch" strip="1"/>
-    </branch>
+            hash="sha1:c6f7b99986f93c9df78653c3e6a3b5043f65145e"/>
   </autotools>
 
   <autotools id="xkbcommon"
