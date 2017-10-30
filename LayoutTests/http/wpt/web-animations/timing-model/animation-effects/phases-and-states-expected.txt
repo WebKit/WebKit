@@ -1,0 +1,13 @@
+
+FAIL Phase calculation for a simple animation effect createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 1)', 'createDiv(t).animate' is undefined)
+FAIL Phase calculation for an animation effect with a positive start delay createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 1, delay: 1 })', 'createDiv(t).animate' is undefined)
+FAIL Phase calculation for an animation effect with a negative start delay createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 1, delay: -1 })', 'createDiv(t).animate' is undefined)
+FAIL Phase calculation for an animation effect with a positive end delay createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 1, endDelay: 1 })', 'createDiv(t).animate' is undefined)
+FAIL Phase calculation for an animation effect with a negative end delay lesser in magnitude than the active duration createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 2, endDelay: -1 })', 'createDiv(t).animate' is undefined)
+FAIL Phase calculation for an animation effect with a negative end delay equal in magnitude to the active duration createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 1, endDelay: -1 })', 'createDiv(t).animate' is undefined)
+FAIL Phase calculation for an animation effect with a negative end delay greater in magnitude than the active duration createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 1, endDelay: -2 })', 'createDiv(t).animate' is undefined)
+FAIL Phase calculation for an animation effect with a positive start delay and a negative end delay lesser in magnitude than the active duration undefined is not a function (near '...createDiv(t).animate...')
+FAIL Phase calculation for an animation effect with a negative start delay and a negative end delay equal in magnitude to the active duration undefined is not a function (near '...createDiv(t).animate...')
+FAIL Phase calculation for an animation effect with a negative start delay and a negative end delay equal greater in magnitude than the active duration undefined is not a function (near '...createDiv(t).animate...')
+FAIL Phase calculation for a simple animation effect with negative playback rate createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 1)', 'createDiv(t).animate' is undefined)
+

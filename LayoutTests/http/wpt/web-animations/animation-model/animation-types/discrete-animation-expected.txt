@@ -1,0 +1,9 @@
+
+FAIL Test animating discrete values div.animate is not a function. (In 'div.animate({ fontStyle: [ 'normal', 'italic' ] },
+                         { duration: 1000, fill: 'forwards' })', 'div.animate' is undefined)
+FAIL Test discrete animation is used when interpolation fails div.animate is not a function. (In 'div.animate({ height: [ 'auto', '200px' ] },
+                         { duration: 1000, fill: 'forwards' })', 'div.animate' is undefined)
+FAIL Test discrete animation is used only for pairs of values that cannot be interpolated undefined is not a function (near '...div.animate...')
+FAIL Test the 50% switch point for discrete animation is based on the effect easing undefined is not a function (near '...div.animate...')
+FAIL Test the 50% switch point for discrete animation is based on the keyframe easing undefined is not a function (near '...div.animate...')
+

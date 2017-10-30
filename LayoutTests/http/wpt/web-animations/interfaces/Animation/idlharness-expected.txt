@@ -1,0 +1,46 @@
+
+PASS Animation interface automated IDL tests 
+FAIL Animation interface: existence and properties of interface object assert_equals: prototype of Animation is not EventTarget expected function "function EventTarget() {
+    [native code]
+}" but got function "function () {
+    [native code]
+}"
+PASS Animation interface object length 
+PASS Animation interface object name 
+FAIL Animation interface: existence and properties of interface prototype object assert_equals: prototype of Animation.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
+PASS Animation interface: existence and properties of interface prototype object's "constructor" property 
+FAIL Animation interface: attribute id assert_true: The prototype object must have a property "id" expected true got false
+PASS Animation interface: attribute effect 
+FAIL Animation interface: attribute timeline assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+PASS Animation interface: attribute startTime 
+PASS Animation interface: attribute currentTime 
+PASS Animation interface: attribute playbackRate 
+FAIL Animation interface: attribute playState assert_true: The prototype object must have a property "playState" expected true got false
+FAIL Animation interface: attribute ready assert_true: The prototype object must have a property "ready" expected true got false
+FAIL Animation interface: attribute finished assert_true: The prototype object must have a property "finished" expected true got false
+FAIL Animation interface: attribute onfinish assert_true: The prototype object must have a property "onfinish" expected true got false
+FAIL Animation interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
+FAIL Animation interface: operation cancel() assert_own_property: interface prototype object missing non-static operation expected property "cancel" missing
+FAIL Animation interface: operation finish() assert_own_property: interface prototype object missing non-static operation expected property "finish" missing
+FAIL Animation interface: operation play() assert_own_property: interface prototype object missing non-static operation expected property "play" missing
+FAIL Animation interface: operation pause() assert_own_property: interface prototype object missing non-static operation expected property "pause" missing
+FAIL Animation interface: operation reverse() assert_own_property: interface prototype object missing non-static operation expected property "reverse" missing
+PASS Animation must be primary interface of new Animation() 
+PASS Stringification of new Animation() 
+FAIL Animation interface: new Animation() must inherit property "id" with the proper type assert_inherits: property "id" not found in prototype chain
+PASS Animation interface: new Animation() must inherit property "effect" with the proper type 
+PASS Animation interface: new Animation() must inherit property "timeline" with the proper type 
+PASS Animation interface: new Animation() must inherit property "startTime" with the proper type 
+PASS Animation interface: new Animation() must inherit property "currentTime" with the proper type 
+PASS Animation interface: new Animation() must inherit property "playbackRate" with the proper type 
+FAIL Animation interface: new Animation() must inherit property "playState" with the proper type assert_inherits: property "playState" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "ready" with the proper type assert_inherits: property "ready" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "finished" with the proper type assert_inherits: property "finished" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "onfinish" with the proper type assert_inherits: property "onfinish" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "oncancel" with the proper type assert_inherits: property "oncancel" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "cancel()" with the proper type assert_inherits: property "cancel" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "finish()" with the proper type assert_inherits: property "finish" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "play()" with the proper type assert_inherits: property "play" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "pause()" with the proper type assert_inherits: property "pause" not found in prototype chain
+FAIL Animation interface: new Animation() must inherit property "reverse()" with the proper type assert_inherits: property "reverse" not found in prototype chain
+

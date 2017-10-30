@@ -1,0 +1,16 @@
+
+FAIL easing values are parsed correctly when set on a property-indexed keyframe effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL easing values are parsed correctly when using a keyframe sequence effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Invalid easing values are correctly rejected when set on a property-indexed keyframe assert_throws: TypeError is thrown for easing '' function "() => {
+      new KeyframeEffect(target, { easing: invalidEasing });
+    }" did not throw
+FAIL Invalid easing values are correctly rejected when using a keyframe sequence assert_throws: TypeError is thrown for easing '' function "() => {
+      new KeyframeEffect(target, [{ easing: invalidEasing }]);
+    }" did not throw
+FAIL Errors from invalid easings on a property-indexed keyframe are thrown after reading all properties assert_throws: function "() => {
+    new KeyframeEffect(target, keyframe);
+  }" did not throw
+FAIL Errors from invalid easings on a keyframe sequence are thrown after reading all properties assert_throws: function "() => {
+    new KeyframeEffect(target, [ kf1, kf2 ]);
+  }" did not throw
+

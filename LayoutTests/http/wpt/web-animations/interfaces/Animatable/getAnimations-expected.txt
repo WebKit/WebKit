@@ -1,0 +1,15 @@
+
+FAIL Test getAnimations on element with no animations div.getAnimations is not a function. (In 'div.getAnimations()', 'div.getAnimations' is undefined)
+FAIL Test getAnimations on element with two animations div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Test getAnimations on separate elements with separate animations divA.animate is not a function. (In 'divA.animate(null, 100 * MS_PER_SEC)', 'divA.animate' is undefined)
+FAIL Test getAnimations on parent and child elements with separate animations divParent.animate is not a function. (In 'divParent.animate(null, 100 * MS_PER_SEC)', 'divParent.animate' is undefined)
+FAIL Test getAnimations on element with finished fill none animation div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Test getAnimations on element with finished fill forwards animation div.animate is not a function. (In 'div.animate(null, {
+    duration: 100 * MS_PER_SEC,
+    fill: 'forwards',
+  })', 'div.animate' is undefined)
+FAIL Test getAnimations on element with delayed animation div.animate is not a function. (In 'div.animate(null, {
+    duration: 100 * MS_PER_SEC,
+    delay: 100 * MS_PER_SEC,
+  })', 'div.animate' is undefined)
+

@@ -1,0 +1,9 @@
+
+FAIL when duration is changed div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
+FAIL when endDelay is changed div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
+FAIL when iterations is changed div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
+FAIL when currentTime changed in duration:1000, delay: 500, endDelay: -500 div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
+                         { duration: 1000, delay: 500, endDelay: -500 })', 'div.animate' is undefined)
+FAIL when currentTime changed in duration:1000, delay: -500, endDelay: -500 div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
+                         { duration: 1000, delay: -500, endDelay: -500 })', 'div.animate' is undefined)
+

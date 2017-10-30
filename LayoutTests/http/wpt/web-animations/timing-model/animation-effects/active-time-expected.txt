@@ -1,0 +1,16 @@
+
+FAIL Active time in before phase createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { delay: 1, fill: test.fill })', 'createDiv(t).animate' is undefined)
+FAIL Active time in active phase and no start delay is the local time createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 1000)', 'createDiv(t).animate' is undefined)
+FAIL Active time in active phase and positive start delay is the local time minus the start delay createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 1000, delay: 500 })', 'createDiv(t).animate' is undefined)
+FAIL Active time in active phase and negative start delay is the local time minus the start delay createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { duration: 1000, delay: -500 })', 'createDiv(t).animate' is undefined)
+FAIL Active time in after phase with no fill is unresolved createDiv(t).animate is not a function. (In 'createDiv(t).animate(null)', 'createDiv(t).animate' is undefined)
+FAIL Active time in after phase with backwards-only fill is unresolved createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, { fill: 'backwards' })', 'createDiv(t).animate' is undefined)
+FAIL Active time in after phase with forwards fill is the active duration undefined is not a function (near '...createDiv(t).animate...')
+FAIL Active time in after phase with forwards fill, zero-duration, and  infinite iteration count is the active duration undefined is not a function (near '...createDiv(t).animate...')
+FAIL Active time in after phase with forwards fill and positive end delay is the active duration undefined is not a function (near '...createDiv(t).animate...')
+FAIL Active time in after phase with forwards fill and negative end delay is the active duration + end delay undefined is not a function (near '...createDiv(t).animate...')
+FAIL Active time in after phase with forwards fill and negative end delay greater in magnitude than the active duration is zero undefined is not a function (near '...createDiv(t).animate...')
+FAIL Active time in after phase with forwards fill and negative end delay greater in magnitude than the sum of the active duration and start delay is zero undefined is not a function (near '...createDiv(t).animate...')
+FAIL Active time in after phase with 'both' fill is the active duration undefined is not a function (near '...createDiv(t).animate...')
+FAIL Active time when the local time is unresolved, is unresolved effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
+

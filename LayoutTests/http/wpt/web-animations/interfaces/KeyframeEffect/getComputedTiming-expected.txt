@@ -1,0 +1,38 @@
+
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed without any KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by an empty KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by a normal KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by a double value Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by +Infinity Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by an Infinity duration Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by an auto duration Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by an Infinity iterations Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by an auto fill Can't find variable: KeyframeEffectReadOnly
+FAIL values of getComputedTiming() when a KeyframeEffectReadOnly is constructed by a forwards fill Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for an empty KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for a non-zero duration and default iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for a non-zero duration and integral iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for a non-zero duration and fractional iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for an non-zero duration and infinite iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for an non-zero duration and zero iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for a zero duration and default iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for a zero duration and fractional iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for a zero duration and infinite iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for a zero duration and zero iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for an infinite duration and default iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for an infinite duration and zero iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for an infinite duration and fractional iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().activeDuration for an infinite duration and infinite iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for an empty KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for a non-zero duration and default iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for a non-zero duration and non-default iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for a non-zero duration and non-zero delay Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for a non-zero duration, non-zero delay and non-default iteration Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for an infinite iteration count Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for an infinite duration Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for an infinite duration and delay Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for an infinite duration and negative delay Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for an non-zero duration and negative delay Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for an non-zero duration and negative delay greater than active duration Can't find variable: KeyframeEffectReadOnly
+FAIL getComputedTiming().endTime for a zero duration and negative delay Can't find variable: KeyframeEffectReadOnly
+

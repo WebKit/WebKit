@@ -1,0 +1,8 @@
+
+FAIL Animated style is cleared after calling Animation.cancel() div.animate is not a function. (In 'div.animate({transform: ['translate(100px)', 'translate(100px)']},
+                              100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL After cancelling an animation, it can still be seeked div.animate is not a function. (In 'div.animate({marginLeft: ['100px', '200px']},
+                              100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL After cancelling an animation, it can still be re-used div.animate is not a function. (In 'div.animate({marginLeft:['100px', '200px']},
+                              100 * MS_PER_SEC)', 'div.animate' is undefined)
+

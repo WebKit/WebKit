@@ -1,0 +1,5 @@
+
+FAIL A new ready promise is created when play()/pause() is called div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Redundant calls to play() do not generate new ready promise objects div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL The ready promise is fulfilled with its Animation div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+

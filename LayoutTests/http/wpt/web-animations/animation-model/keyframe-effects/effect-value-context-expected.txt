@@ -1,0 +1,12 @@
+
+FAIL Effect values reflect changes to font-size on element div.animate is not a function. (In 'div.animate([ { marginLeft: '10em' },
+                                { marginLeft: '20em' } ], 1000)', 'div.animate' is undefined)
+FAIL Effect values reflect changes to font-size on parent element div.animate is not a function. (In 'div.animate([ { marginLeft: '10em' },
+                                { marginLeft: '20em' } ], 1000)', 'div.animate' is undefined)
+FAIL Effect values reflect changes to font-size when computed style is not immediately flushed div.animate is not a function. (In 'div.animate([ { marginLeft: '10em' },
+                                { marginLeft: '20em' } ], 1000)', 'div.animate' is undefined)
+FAIL Effect values reflect changes to font-size from reparenting div.animate is not a function. (In 'div.animate([ { marginLeft: '10em' },
+                                { marginLeft: '20em' } ], 1000)', 'div.animate' is undefined)
+FAIL Effect values reflect changes to target element divA.animate is not a function. (In 'divA.animate([ { marginLeft: '10em' },
+                                 { marginLeft: '20em' } ], 1000)', 'divA.animate' is undefined)
+

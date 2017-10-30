@@ -1,0 +1,8 @@
+
+FAIL pause() a running animation div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL pause() from idle div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL pause() from idle with a negative playbackRate div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL pause() from idle with a negative playbackRate and endless effect div.animate is not a function. (In 'div.animate({}, {duration: 1000 * MS_PER_SEC,
+                                   iterations: Infinity})', 'div.animate' is undefined)
+FAIL pause() on a finished animation div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
+

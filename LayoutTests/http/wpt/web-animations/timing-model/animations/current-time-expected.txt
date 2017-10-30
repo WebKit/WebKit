@@ -1,0 +1,7 @@
+
+FAIL The current time returns the hold time when set Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL The current time is unresolved when there is no associated timeline (and no hold time is set) Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL The current time is unresolved when the start time is unresolved (and no hold time is set) Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL The current time is calculated from the timeline time, start time and playback rate Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL The current time does not progress if playback rate is 0 createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+

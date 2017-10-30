@@ -1,0 +1,3 @@
+
+FAIL A pending ready promise should be resolved and not replaced when the animation is paused createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+

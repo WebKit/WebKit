@@ -1,0 +1,5 @@
+
+FAIL Test the initial effect of setting playbackRate on currentTime div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Test the effect of setting playbackRate on currentTime div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Test the effect of setting playbackRate while playing animation div.animate is not a function. (In 'div.animate(null, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+

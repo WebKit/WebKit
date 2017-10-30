@@ -1,5 +1,270 @@
 2017-10-30  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Add Web Platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=178999
+
+        Reviewed by Sam Weinig.
+
+        The vast majority is failing, as expected due to the nascent status of our Web Animations implementation.
+
+        * http/wpt/web-animations/OWNERS: Added.
+        * http/wpt/web-animations/README.md: Added.
+        * http/wpt/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/animation-types/accumulation-per-property.html: Added.
+        * http/wpt/web-animations/animation-model/animation-types/addition-per-property-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/animation-types/addition-per-property.html: Added.
+        * http/wpt/web-animations/animation-model/animation-types/discrete-animation-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/animation-types/discrete-animation.html: Added.
+        * http/wpt/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/animation-types/interpolation-per-property.html: Added.
+        * http/wpt/web-animations/animation-model/animation-types/property-list.js: Added.
+        (testAnimationSamplesWithAnyOrder):
+        (isSupported):
+        (TestKeyframe.):
+        (TestKeyframe.get Object):
+        (TestKeyframe):
+        (get propertyToIDL):
+        (calcFromPercentage):
+        * http/wpt/web-animations/animation-model/animation-types/property-types.js: Added.
+        (const.discreteType.):
+        (const.discreteType.testInterpolation):
+        (const.discreteType.testAdditionOrAccumulation):
+        (const.discreteType.testAddition):
+        (const.discreteType.testAccumulation):
+        (const.lengthType.testInterpolation):
+        (const.lengthType.testAdditionOrAccumulation):
+        (const.lengthType.testAddition):
+        (const.lengthType.testAccumulation):
+        (const.lengthPairType.testInterpolation):
+        (const.lengthPairType.testAdditionOrAccumulation):
+        (const.lengthPairType.testAddition):
+        (const.lengthPairType.testAccumulation):
+        (const.percentageType.testInterpolation):
+        (const.percentageType.testAdditionOrAccumulation):
+        (const.percentageType.testAddition):
+        (const.percentageType.testAccumulation):
+        (const.integerType.testInterpolation):
+        (const.integerType.testAdditionOrAccumulation):
+        (const.integerType.testAddition):
+        (const.integerType.testAccumulation):
+        (const.positiveIntegerType.testInterpolation):
+        (const.positiveIntegerType.testAdditionOrAccumulation):
+        (const.positiveIntegerType.testAddition):
+        (const.positiveIntegerType.testAccumulation):
+        (const.lengthPercentageOrCalcType.testInterpolation):
+        (const.lengthPercentageOrCalcType.testAdditionOrAccumulation):
+        (const.lengthPercentageOrCalcType.testAddition):
+        (const.lengthPercentageOrCalcType.testAccumulation):
+        (const.positiveNumberType.testInterpolation):
+        (const.positiveNumberType.testAdditionOrAccumulation):
+        (const.positiveNumberType.testAddition):
+        (const.positiveNumberType.testAccumulation):
+        (const.opacityType.testInterpolation):
+        (const.opacityType.testAdditionOrAccumulation):
+        (const.opacityType.testAddition):
+        (const.opacityType.testAccumulation):
+        (const.visibilityType.testInterpolation):
+        (const.visibilityType.testAdditionOrAccumulation):
+        (const.visibilityType.testAddition):
+        (const.visibilityType.testAccumulation):
+        (const.colorType.testInterpolation):
+        (const.colorType.testAdditionOrAccumulation):
+        (const.colorType.testAddition):
+        (const.colorType.testAccumulation):
+        (const.transformListType.testInterpolation):
+        (const.transformListType.testAddition):
+        (const.transformListType.testAccumulation):
+        (const.filterListType.testInterpolation):
+        (const.filterListType.testAddition):
+        (const.filterListType.testAccumulation):
+        (const.textShadowListType.testInterpolation):
+        (const.textShadowListType.testAddition):
+        (const.textShadowListType.testAccumulation):
+        (const.boxShadowListType.testInterpolation):
+        (const.boxShadowListType.testAddition):
+        (const.boxShadowListType.testAccumulation):
+        (const.positionType.testInterpolation):
+        (const.positionType.testAdditionOrAccumulation):
+        (const.positionType.testAddition):
+        (const.positionType.testAccumulation):
+        (const.rectType.testInterpolation):
+        (const.rectType.testAdditionOrAccumulation):
+        (const.rectType.testAddition):
+        (const.rectType.testAccumulation):
+        (const.dasharrayType.testInterpolation):
+        (const.dasharrayType.testAdditionOrAccumulation):
+        (const.dasharrayType.testAddition):
+        (const.dasharrayType.testAccumulation):
+        (const.fontStretchType.testInterpolation):
+        (const.fontStretchType.testAdditionOrAccumulation):
+        (const.fontStretchType.testAddition):
+        (const.fontStretchType.testAccumulation):
+        (const.fontVariationSettingsType.testInterpolation):
+        (const.fontVariationSettingsType.testAdditionOrAccumulation):
+        (const.fontVariationSettingsType.testAddition):
+        (const.fontVariationSettingsType.testAccumulation):
+        * http/wpt/web-animations/animation-model/combining-effects/effect-composition-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/combining-effects/effect-composition.html: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-context-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-context.html: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes.html: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance.html: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-visibility-expected.txt: Added.
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-visibility.html: Added.
+        * http/wpt/web-animations/interfaces/Animatable/animate-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animatable/animate-no-browsing-context-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animatable/animate-no-browsing-context.html: Added.
+        * http/wpt/web-animations/interfaces/Animatable/animate.html: Added.
+        * http/wpt/web-animations/interfaces/Animatable/getAnimations-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animatable/getAnimations.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/cancel-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/cancel.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/constructor-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/constructor.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/effect-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/effect.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/finish-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/finish.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/finished-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/finished.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/id-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/id.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/idlharness.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/oncancel-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/oncancel.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/onfinish-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/onfinish.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/pause-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/pause.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/play-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/play.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/playState-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/playState.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/playbackRate-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/playbackRate.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/ready-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/ready.html: Added.
+        * http/wpt/web-animations/interfaces/Animation/startTime-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Animation/startTime.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/delay-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/delay.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/direction-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/direction.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/duration-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/duration.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/easing.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/endDelay-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/endDelay.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/fill-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/fill.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getAnimations-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getAnimations.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getComputedStyle-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getComputedStyle.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterationStart-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterationStart.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterations-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterations.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline.html: Added.
+        * http/wpt/web-animations/interfaces/AnimationTimeline/idlharness-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/AnimationTimeline/idlharness.html: Added.
+        * http/wpt/web-animations/interfaces/Document/getAnimations-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/Document/getAnimations.html: Added.
+        * http/wpt/web-animations/interfaces/DocumentTimeline/constructor-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/DocumentTimeline/constructor.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/composite-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/composite.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/constructor-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/constructor.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/copy-constructor-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/copy-constructor.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/getComputedTiming-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/getComputedTiming.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/iterationComposite-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/iterationComposite.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setKeyframes.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setTarget-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setTarget.html: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffectReadOnly/copy-constructor-expected.txt: Added.
+        * http/wpt/web-animations/interfaces/KeyframeEffectReadOnly/copy-constructor.html: Added.
+        * http/wpt/web-animations/resources/easing-tests.js: Added.
+        (easingFunction.stepStart):
+        (easingFunction.stepEnd):
+        (easingFunction.framesTiming):
+        (easingFunction.cubicBezier):
+        * http/wpt/web-animations/resources/effect-tests.js: Added.
+        (assert_computed_timing_for_each_phase):
+        * http/wpt/web-animations/resources/keyframe-utils.js: Added.
+        (assert_frame_lists_equal):
+        (assert_frames_equal):
+        * http/wpt/web-animations/resources/xhr-doc.py: Added.
+        (main):
+        * http/wpt/web-animations/testcommon.js: Added.
+        (window.assert_times_equal.window.assert_times_equal):
+        (createDiv):
+        (createElement):
+        (createStyle):
+        (createPseudo):
+        (xForT):
+        (yForT):
+        (tForX):
+        (return.bezierClosure):
+        (cubicBezier):
+        (stepEnd.return.stepEndClosure):
+        (stepEnd):
+        (stepStart.return.stepStartClosure):
+        (stepStart):
+        (framesTiming.return.framesClosure):
+        (framesTiming):
+        (waitForAnimationFrames):
+        (rotate3dToMatrix3d):
+        (rotate3dToMatrix):
+        (assert_matrix_equals):
+        * http/wpt/web-animations/timing-model/animation-effects/active-time-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/active-time.html: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/current-iteration-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/current-iteration.html: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/local-time-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/local-time.html: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/phases-and-states-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/phases-and-states.html: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/simple-iteration-progress-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animation-effects/simple-iteration-progress.html: Added.
+        * http/wpt/web-animations/timing-model/animations/canceling-an-animation-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/canceling-an-animation.html: Added.
+        * http/wpt/web-animations/timing-model/animations/current-time-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/current-time.html: Added.
+        * http/wpt/web-animations/timing-model/animations/finishing-an-animation-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/finishing-an-animation.html: Added.
+        * http/wpt/web-animations/timing-model/animations/pausing-an-animation-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/pausing-an-animation.html: Added.
+        * http/wpt/web-animations/timing-model/animations/playing-an-animation-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/playing-an-animation.html: Added.
+        * http/wpt/web-animations/timing-model/animations/reversing-an-animation-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/reversing-an-animation.html: Added.
+        * http/wpt/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/set-the-animation-start-time.html: Added.
+        * http/wpt/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/set-the-target-effect-of-an-animation.html: Added.
+        * http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation.html: Added.
+        * http/wpt/web-animations/timing-model/animations/updating-the-finished-state-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/animations/updating-the-finished-state.html: Added.
+        * http/wpt/web-animations/timing-model/time-transformations/transformed-progress-expected.txt: Added.
+        * http/wpt/web-animations/timing-model/time-transformations/transformed-progress.html: Added.
+
+2017-10-30  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Expose the playbackRate property on Animation
         https://bugs.webkit.org/show_bug.cgi?id=178931
 

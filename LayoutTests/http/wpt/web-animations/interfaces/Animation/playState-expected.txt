@@ -1,0 +1,6 @@
+
+FAIL Animation.playState reports 'pending'->'running' when initially played div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Animation.playState reports 'pending'->'paused' when pausing div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Animation.playState is 'idle' when canceled. div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Animation.playState is 'paused' after cancelling an animation, seeking it makes it paused div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+

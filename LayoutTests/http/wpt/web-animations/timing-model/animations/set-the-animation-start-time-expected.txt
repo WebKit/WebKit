@@ -1,0 +1,9 @@
+
+FAIL Setting the start time of an animation without an active timeline Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL Setting an unresolved start time an animation without an active timeline does not clear the current time Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL Setting the start time clears the hold time Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL Setting an unresolved start time sets the hold time Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL Setting the start time resolves a pending ready promise Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL Setting the start time resolves a pending pause task Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL Setting the start time updates the finished state Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+

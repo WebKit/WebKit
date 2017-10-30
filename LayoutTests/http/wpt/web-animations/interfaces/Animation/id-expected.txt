@@ -1,0 +1,4 @@
+
+FAIL Animation.id initial value div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+FAIL Animation.id setter div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+

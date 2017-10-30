@@ -1,0 +1,6 @@
+
+FAIL Test copied keyframeEffectReadOnly has the same target Can't find variable: KeyframeEffectReadOnly
+FAIL Test copied keyframeEffectReadOnly has the same keyframes Can't find variable: KeyframeEffectReadOnly
+FAIL Test copied keyframeEffectReadOnly has the same keyframeEffectOptions Can't find variable: KeyframeEffectReadOnly
+FAIL Test copied keyframeEffectReadOnly has the same timing content Can't find variable: KeyframeEffectReadOnly
+

@@ -1,0 +1,59 @@
+
+PASS non-animatable property 'animation' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationDelay' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationDirection' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationDuration' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationFillMode' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationIterationCount' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationName' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationPlayState' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animationTimingFunction' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'transition' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'transitionDelay' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'transitionDuration' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'transitionProperty' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'transitionTimingFunction' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'display' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'unsupportedProperty' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'font-size' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'animation' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationDelay' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationDirection' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationDuration' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationFillMode' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationIterationCount' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationName' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationPlayState' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'animationTimingFunction' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'transition' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'transitionDelay' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'transitionDuration' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'transitionProperty' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'transitionTimingFunction' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'display' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'unsupportedProperty' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'font-size' is not accessed when using a keyframe sequence 
+FAIL Equivalent property-indexed and sequenced keyframes: two properties with one value new KeyframeEffect(null, keyframesA).getKeyframes is not a function. (In 'new KeyframeEffect(null, keyframesA).getKeyframes()', 'new KeyframeEffect(null, keyframesA).getKeyframes' is undefined)
+FAIL Equivalent property-indexed and sequenced keyframes: two properties with three values new KeyframeEffect(null, keyframesA).getKeyframes is not a function. (In 'new KeyframeEffect(null, keyframesA).getKeyframes()', 'new KeyframeEffect(null, keyframesA).getKeyframes' is undefined)
+FAIL Equivalent property-indexed and sequenced keyframes: two properties with different numbers of values new KeyframeEffect(null, keyframesA).getKeyframes is not a function. (In 'new KeyframeEffect(null, keyframesA).getKeyframes()', 'new KeyframeEffect(null, keyframesA).getKeyframes' is undefined)
+FAIL Equivalent property-indexed and sequenced keyframes: same easing applied to all keyframes new KeyframeEffect(null, keyframesA).getKeyframes is not a function. (In 'new KeyframeEffect(null, keyframesA).getKeyframes()', 'new KeyframeEffect(null, keyframesA).getKeyframes' is undefined)
+FAIL Equivalent property-indexed and sequenced keyframes: same composite applied to all keyframes new KeyframeEffect(null, keyframesA).getKeyframes is not a function. (In 'new KeyframeEffect(null, keyframesA).getKeyframes()', 'new KeyframeEffect(null, keyframesA).getKeyframes' is undefined)
+FAIL Keyframes are read from a custom iterator effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL 'easing' and 'offset' are ignored on iterable objects effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes are read from a custom iterator with multiple properties specified effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes are read from a custom iterator with where an offset is specified effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Reading from a custom iterator that returns a non-object keyframe should throw assert_throws: function "() => {
+    new KeyframeEffect(null, createIterable([
+      { done: false, value: { left: '100px' } },
+      { done: false, value: 1234 },
+      { done: false, value: { left: '200px' } },
+      { done: true },
+    ]));
+  }" did not throw
+FAIL A list of values returned from a custom iterator should be ignored effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Only enumerable properties on keyframes are read effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Only properties defined directly on keyframes are read effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Only enumerable properties on property-indexed keyframes are read effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Only properties defined directly on property-indexed keyframes are read effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Properties are read in ascending order by Unicode codepoint assert_array_equals: property access order lengths differ, expected 5 got 0
+

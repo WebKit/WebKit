@@ -1,0 +1,7 @@
+
+FAIL Playing a running animation leaves the current time unchanged createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+FAIL Playing a finished animation seeks back to the start createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+FAIL Playing a finished and reversed animation seeks to end createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+FAIL The ready promise should be replaced if the animation is not already pending createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+FAIL A pending ready promise should be resolved and not replaced when the animation enters the running state createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+

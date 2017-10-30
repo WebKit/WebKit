@@ -1,0 +1,5 @@
+
+FAIL effect is set correctly. Can't find variable: KeyframeEffectReadOnly
+FAIL Clearing and setting Animation.effect should update the computed style of the target element div.animate is not a function. (In 'div.animate({ left: ['100px', '100px'] },
+                              { fill: 'forwards' })', 'div.animate' is undefined)
+
