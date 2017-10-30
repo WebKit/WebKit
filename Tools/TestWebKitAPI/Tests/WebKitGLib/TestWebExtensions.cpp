@@ -30,6 +30,7 @@ static GUniquePtr<char> scriptDialogResult;
 #define FORM_ID "form-id"
 #define FORM2_ID "form2-id"
 
+#if PLATFORM(GTK)
 static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
@@ -50,6 +51,7 @@ static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
     g_variant_get(result.get(), "(&s)", &title);
     g_assert_cmpstr(title, ==, "WebKitGTK+ Web Extensions Test");
 }
+#endif
 
 static void documentLoadedCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant*, WebViewTest* test)
 {

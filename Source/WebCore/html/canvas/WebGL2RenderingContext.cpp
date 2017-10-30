@@ -105,6 +105,7 @@ inline static std::optional<unsigned> arrayBufferViewElementSize(const ArrayBuff
     case JSC::TypeFloat64:
         return elementSize(data.getType());
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void WebGL2RenderingContext::bufferData(GC3Denum target, const ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length)

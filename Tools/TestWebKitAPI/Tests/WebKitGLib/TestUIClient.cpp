@@ -553,8 +553,10 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     static const char* jsAlertFormat = "alert('%s')";
     static const char* jsConfirmFormat = "do { confirmed = confirm('%s'); } while (!confirmed); alert('confirmed');";
     static const char* jsPromptFormat = "alert(prompt('%s', 'default'));";
+#if PLATFORM(GTK)
     static const char* htmlOnBeforeUnloadFormat =
         "<html><body onbeforeunload=\"return beforeUnloadHandler();\"><input id=\"testInput\" type=\"text\"></input><script>function beforeUnloadHandler() { return \"%s\"; }</script></body></html>";
+#endif
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_ALERT;
     GUniquePtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));

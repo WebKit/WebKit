@@ -26,7 +26,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/SynchronousLoaderClientCurl.cpp
 )
 
-list(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${CURL_INCLUDE_DIRS}
     ${OPENSSL_INCLUDE_DIR}
 )

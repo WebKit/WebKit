@@ -68,6 +68,7 @@ static const char* vertexTemplateLT320Vars =
         varying float v_antialias;
     );
 
+#if !USE(OPENGL_ES_2)
 // Input/output variables definition for OpenGL >= 3.2.
 static const char* vertexTemplateGE320Vars =
     STRINGIFY(
@@ -76,6 +77,7 @@ static const char* vertexTemplateGE320Vars =
         out vec2 v_transformedTexCoord;
         out float v_antialias;
     );
+#endif
 
 static const char* vertexTemplateCommon =
     STRINGIFY(
@@ -185,6 +187,7 @@ static const char* fragmentTemplateLT320Vars =
         varying vec2 v_transformedTexCoord;
     );
 
+#if !USE(OPENGL_ES_2)
 // Input/output variables definition for OpenGL >= 3.2.
 static const char* fragmentTemplateGE320Vars =
     STRINGIFY(
@@ -192,6 +195,7 @@ static const char* fragmentTemplateGE320Vars =
         in vec2 v_texCoord;
         in vec2 v_transformedTexCoord;
     );
+#endif
 
 static const char* fragmentTemplateCommon =
     STRINGIFY(
@@ -376,11 +380,11 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     SET_APPLIER_FROM_OPTIONS(ContentTexture);
     SET_APPLIER_FROM_OPTIONS(ManualRepeat);
 
-    unsigned glVersion = GLContext::current()->version();
     StringBuilder vertexShaderBuilder;
 
     // OpenGL >= 3.2 requires a #version directive at the beginning of the code.
 #if !USE(OPENGL_ES_2)
+    unsigned glVersion = GLContext::current()->version();
     if (glVersion >= 320)
         vertexShaderBuilder.append(GLSL_DIRECTIVE(version 150));
 #endif

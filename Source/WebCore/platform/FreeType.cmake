@@ -1,7 +1,4 @@
 list(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${FONTCONFIG_INCLUDE_DIRS}
-    ${FREETYPE2_INCLUDE_DIRS}
-    ${HARFBUZZ_INCLUDE_DIRS}
     "${WEBCORE_DIR}/platform/graphics/freetype"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
 )
@@ -33,6 +30,12 @@ if (USE_CAIRO)
         platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     )
 endif ()
+
+list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+    ${FONTCONFIG_INCLUDE_DIRS}
+    ${FREETYPE2_INCLUDE_DIRS}
+    ${HARFBUZZ_INCLUDE_DIRS}
+)
 
 list(APPEND WebCore_LIBRARIES
     ${FONTCONFIG_LIBRARIES}

@@ -152,6 +152,8 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID, SoupCookieJar* 
             SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_AUTH_NEGOTIATE,
             nullptr);
     }
+#else
+    UNUSED_PARAM(sessionID);
 #endif
 
     if (gProxySettings.mode != SoupNetworkProxySettings::Mode::Default)

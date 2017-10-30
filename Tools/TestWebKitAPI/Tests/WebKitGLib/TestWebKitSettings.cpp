@@ -310,6 +310,7 @@ void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
     g_assert(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
 }
 
+#if PLATFORM(GTK)
 static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
 {
     size_t mainResourceDataSize = 0;
@@ -317,7 +318,6 @@ static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
     return CString(mainResourceData, mainResourceDataSize);
 }
 
-#if PLATFORM(GTK)
 static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, const CString& userAgent)
 {
     test->loadURI(gServer->getURIForPath("/").data());

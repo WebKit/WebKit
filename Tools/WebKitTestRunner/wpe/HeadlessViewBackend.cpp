@@ -237,7 +237,6 @@ struct wpe_mesa_view_backend_exportable_dma_buf_client HeadlessViewBackend::s_ex
         }
 
         assert(it != backend.m_exportMap.end());
-        uint32_t handle = it->first;
         int32_t fd = it->second;
 
         backend.makeCurrent();

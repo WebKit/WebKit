@@ -1,3 +1,12 @@
+2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Fix build warnings
+        https://bugs.webkit.org/show_bug.cgi?id=178899
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * PlatformWPE.cmake:
+
 2017-10-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [ARMv7] Fix initial start register support in YarrJIT

@@ -725,13 +725,10 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), >, 0);
     g_file_delete(downloadFile.get(), nullptr, nullptr);
 }
-#endif // PLATFORM(GTK)
 
 static void testBlobDownload(WebViewDownloadTest* test, gconstpointer)
 {
-#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
-#endif
 
     static const char* linkBlobHTML =
         "<html><body>"
@@ -764,6 +761,7 @@ static void testBlobDownload(WebViewDownloadTest* test, gconstpointer)
     g_assert_cmpstr(downloadContents.get(), ==, "Hello world");
     g_file_delete(downloadFile.get(), nullptr, nullptr);
 }
+#endif // PLATFORM(GTK)
 
 void beforeAll()
 {
@@ -783,9 +781,7 @@ void beforeAll()
     // FIXME: Implement keyStroke in WPE.
 #if PLATFORM(GTK)
     WebViewDownloadTest::add("Downloads", "contex-menu-download-actions", testContextMenuDownloadActions);
-#endif
     // FIXME: Implement mouse click in WPE.
-#if PLATFORM(GTK)
     WebViewDownloadTest::add("Downloads", "blob-download", testBlobDownload);
 #endif
 }
