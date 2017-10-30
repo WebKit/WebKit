@@ -136,16 +136,10 @@ imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.https.html [
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
 
+# Skipping cache storage tests because they are causing a flaky crash.
+webkit.org/b/179035 imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
+
 # Skip service worker tests that are timing out.
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-delete.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-keys.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-matchAll.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-keys.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/close.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-on-evaluation.https.html [ Skip ]
