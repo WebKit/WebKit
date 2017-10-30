@@ -1,3 +1,28 @@
+2017-10-30  Michael Saboff  <msaboff@apple.com>
+
+        Eliminate Basic compiler test from RexBench
+        https://bugs.webkit.org/show_bug.cgi?id=179025
+
+        Reviewed by Saam Barati.
+
+        * RexBench/Basic: Removed.
+        * RexBench/Basic/ast.js: Removed.
+        * RexBench/Basic/basic.js: Removed.
+        * RexBench/Basic/benchmark.js: Removed.
+        * RexBench/Basic/caseless_map.js: Removed.
+        * RexBench/Basic/lexer.js: Removed.
+        * RexBench/Basic/number.js: Removed.
+        * RexBench/Basic/parser.js: Removed.
+        * RexBench/Basic/random.js: Removed.
+        * RexBench/Basic/state.js: Removed.
+        * RexBench/Basic/stress-test.js: Removed.
+        * RexBench/Basic/util.js: Removed.
+        * RexBench/basic_benchmark.js: Removed.
+        * RexBench/about.html:
+        * RexBench/cli.js:
+        * RexBench/glue.js:
+        * RexBench/index.html:
+
 2017-10-25  Robin Morisset  <rmorisset@apple.com>
 
         Support the TailBench9000 benchmark in run-jsc-benchmarks

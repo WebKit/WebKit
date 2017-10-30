@@ -51,7 +51,6 @@ load("results.js");
 load("stats.js");
 load("sunspider_benchmark.js");
 load("octane2_benchmark.js");
-load("basic_benchmark.js");
 load("offline_assembler_benchmark.js");
 load("unipoker_benchmark.js");
 load("flightplan_benchmark.js");

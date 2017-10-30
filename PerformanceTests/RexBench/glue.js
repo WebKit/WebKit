@@ -49,7 +49,6 @@ function reportResult(...args) {
 
 driver.addBenchmark(RegexDNABenchmarkRunner);
 driver.addBenchmark(Octane2RegExpBenchmarkRunner);
-driver.addBenchmark(BasicBenchmarkRunner);
 driver.addBenchmark(OfflineAssemblerBenchmarkRunner);
 driver.addBenchmark(UniPokerBenchmarkRunner);
 driver.addBenchmark(FlightPlannerBenchmarkRunner);
