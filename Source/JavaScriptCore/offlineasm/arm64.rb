@@ -932,12 +932,30 @@ class Instruction
             $asm.putStr("#endif")
         when "globaladdr"
             uid = $asm.newUID
+
+            # On Darwin, use Macho-O GOT relocation specifiers, along with
+            # the labels required for the .loh directive.
+            $asm.putStr("#if OS(DARWIN)")
             $asm.puts "L_offlineasm_loh_adrp_#{uid}:"
             $asm.puts "adrp #{operands[1].arm64Operand(:ptr)}, #{operands[0].asmLabel}@GOTPAGE"
             $asm.puts "L_offlineasm_loh_ldr_#{uid}:"
             $asm.puts "ldr #{operands[1].arm64Operand(:ptr)}, [#{operands[1].arm64Operand(:ptr)}, #{operands[0].asmLabel}@GOTPAGEOFF]"
+
+            # On Linux, use ELF GOT relocation specifiers.
+            $asm.putStr("#elif OS(LINUX)")
+            $asm.puts "adrp #{operands[1].arm64Operand(:ptr)}, :got:#{operands[0].asmLabel}"
+            $asm.puts "ldr #{operands[1].arm64Operand(:ptr)}, [#{operands[1].arm64Operand(:ptr)}, :got_lo12:#{operands[0].asmLabel}]"
+
+            # Throw a compiler error everywhere else.
+            $asm.putStr("#else")
+            $asm.putStr("#error Missing globaladdr implementation")
+            $asm.putStr("#endif")
+
             $asm.deferAction {
+                # On Darwin, also include the .loh directive using the generated labels.
+                $asm.putStr("#if OS(DARWIN)")
                 $asm.puts ".loh AdrpLdrGot L_offlineasm_loh_adrp_#{uid}, L_offlineasm_loh_ldr_#{uid}"
+                $asm.putStr("#endif")
             }
         else
             lowerDefault

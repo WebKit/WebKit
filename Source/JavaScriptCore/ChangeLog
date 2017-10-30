@@ -1,3 +1,21 @@
+2017-10-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [ARM64][Linux] Re-enable Gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=178130
+
+        Reviewed by Michael Catanzaro.
+
+        Guard the current globaladdr opcode implementation for ARM64 with
+        OS(DARWIN) as it's only usable for Mach-O.
+
+        For OS(LINUX), ELF-supported :got: and :got_lo12: relocation specifiers
+        have to be used. The .loh directive can't be used as it's not supported
+        in GCC or the ld linker.
+
+        On every other OS target, a compilation error is thrown.
+
+        * offlineasm/arm64.rb:
+
 2017-10-27  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: no way to see backtrace of where a canvas context was created
