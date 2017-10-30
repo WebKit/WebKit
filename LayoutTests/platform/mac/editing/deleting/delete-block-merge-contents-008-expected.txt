@@ -21,7 +21,6 @@ layer at (0,0) size 800x600
               text run at (0,0) width 83: "OneTwo"
           RenderBlock {DIV} at (0,28) size 756x56
             RenderBlock {DIV} at (0,0) size 756x28
-              RenderBlock (anonymous) at (0,0) size 756x0
               RenderBlock {DIV} at (0,0) size 756x28
                 RenderText {#text} at (0,0) size 56x28
                   text run at (0,0) width 56: "Three"

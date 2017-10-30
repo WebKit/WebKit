@@ -47,7 +47,6 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (2,2) size 780x28
             RenderText {#text} at (0,0) size 77x28
               text run at (0,0) width 77: "line one"
-          RenderBlock (anonymous) at (2,30) size 780x0
           RenderBlock {DIV} at (2,30) size 780x28
             RenderText {#text} at (0,0) size 78x28
               text run at (0,0) width 78: "line two"

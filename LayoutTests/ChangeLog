@@ -1,3 +1,123 @@
+2017-10-30  Antti Koivisto  <antti@apple.com>
+
+        Destroy all unneeded anonymous wrappers in RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()
+        https://bugs.webkit.org/show_bug.cgi?id=178933
+
+        Reviewed by Zalan Bujtas.
+
+        Many leftover empty anonymous wrappers go away in render tree dumps. No visual impact.
+
+        * editing/deleting/delete-br-009-expected.txt:
+        * platform/ios-wk2/editing/execCommand/4747450-expected.txt:
+        * platform/ios-wk2/editing/execCommand/4924441-expected.txt:
+        * platform/ios-wk2/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/ios-wk2/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-line-endings-008-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/undoable-fragment-removes-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/unrendered-br-expected.txt:
+        * platform/ios-wk2/editing/style/4916887-expected.txt:
+        * platform/ios-wk2/editing/style/5046875-1-expected.txt:
+        * platform/ios-wk2/editing/style/5046875-2-expected.txt:
+        * platform/ios-wk2/editing/style/5279521-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-003-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-004-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-007-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-009-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-010-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-011-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-012-expected.txt:
+        * platform/ios-wk2/editing/style/create-block-for-style-013-expected.txt:
+        * platform/ios/editing/deleting/4922367-expected.txt:
+        * platform/ios/editing/deleting/type-delete-after-quote-expected.txt:
+        * platform/ios/editing/execCommand/4916402-expected.txt:
+        * platform/ios/editing/execCommand/4916541-expected.txt:
+        * platform/ios/editing/execCommand/5136770-expected.txt:
+        * platform/ios/editing/execCommand/5142012-2-expected.txt:
+        * platform/ios/editing/execCommand/5190926-expected.txt:
+        * platform/ios/editing/execCommand/5481523-expected.txt:
+        * platform/ios/editing/pasteboard/5071074-2-expected.txt:
+        * platform/ios/editing/pasteboard/displaced-generic-placeholder-expected.txt:
+        * platform/ios/editing/pasteboard/displaced-placeholder-expected.txt:
+        * platform/ios/editing/pasteboard/merge-after-delete-2-expected.txt:
+        * platform/ios/editing/pasteboard/merge-after-delete-expected.txt:
+        * platform/ios/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt:
+        * platform/ios/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/ios/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/ios/fast/forms/button-generated-content-expected.txt:
+        * platform/ios/fast/ruby/rubyDOM-remove-text2-expected.txt:
+        * platform/mac-elcapitan/fast/forms/button-generated-content-expected.txt:
+        * platform/mac/editing/deleting/4922367-expected.txt:
+        * platform/mac/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * platform/mac/editing/deleting/delete-at-paragraph-boundaries-010-expected.txt:
+        * platform/mac/editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-023-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-024-expected.txt:
+        * platform/mac/editing/deleting/delete-br-008-expected.txt:
+        * platform/mac/editing/deleting/delete-br-010-expected.txt:
+        * platform/mac/editing/deleting/delete-line-015-expected.txt:
+        * platform/mac/editing/deleting/delete-line-016-expected.txt:
+        * platform/mac/editing/deleting/delete-line-017-expected.txt:
+        * platform/mac/editing/deleting/merge-no-br-expected.txt:
+        * platform/mac/editing/deleting/type-delete-after-quote-expected.txt:
+        * platform/mac/editing/execCommand/4747450-expected.txt:
+        * platform/mac/editing/execCommand/4916402-expected.txt:
+        * platform/mac/editing/execCommand/4916541-expected.txt:
+        * platform/mac/editing/execCommand/4924441-expected.txt:
+        * platform/mac/editing/execCommand/5136770-expected.txt:
+        * platform/mac/editing/execCommand/5142012-2-expected.txt:
+        * platform/mac/editing/execCommand/5190926-expected.txt:
+        * platform/mac/editing/execCommand/5481523-expected.txt:
+        * platform/mac/editing/execCommand/create-list-with-hr-expected.txt:
+        * platform/mac/editing/execCommand/indent-selection-expected.txt:
+        * platform/mac/editing/execCommand/insert-list-and-stitch-expected.txt:
+        * platform/mac/editing/execCommand/nsresponder-indent-expected.txt:
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt:
+        * platform/mac/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/mac/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/mac/editing/pasteboard/5071074-2-expected.txt:
+        * platform/mac/editing/pasteboard/displaced-generic-placeholder-expected.txt:
+        * platform/mac/editing/pasteboard/displaced-placeholder-expected.txt:
+        * platform/mac/editing/pasteboard/merge-after-delete-2-expected.txt:
+        * platform/mac/editing/pasteboard/merge-after-delete-expected.txt:
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/mac/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt:
+        * platform/mac/editing/pasteboard/paste-line-endings-008-expected.txt:
+        * platform/mac/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-008-expected.txt:
+        * platform/mac/editing/pasteboard/undoable-fragment-removes-expected.txt:
+        * platform/mac/editing/pasteboard/unrendered-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/mac/editing/style/4916887-expected.txt:
+        * platform/mac/editing/style/5046875-1-expected.txt:
+        * platform/mac/editing/style/5046875-2-expected.txt:
+        * platform/mac/editing/style/5279521-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-003-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-004-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-007-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-009-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-010-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-011-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-012-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-013-expected.txt:
+        * platform/mac/editing/style/smoosh-styles-001-expected.txt:
+        * platform/mac/editing/style/style-boundary-005-expected.txt:
+        * platform/mac/editing/style/unbold-in-bold-expected.txt:
+        * platform/mac/editing/unsupported-content/list-delete-001-expected.txt:
+        * platform/mac/fast/forms/button-generated-content-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.txt:
+
 2017-10-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Add support for P-521 EC curves

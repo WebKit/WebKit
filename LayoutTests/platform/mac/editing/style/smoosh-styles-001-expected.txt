@@ -58,5 +58,4 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 21x28 [color=#FF0000]
             RenderText {#text} at (57,2) size 21x28
               text run at (57,2) width 21: "fg"
-        RenderBlock (anonymous) at (0,32) size 784x0
 caret: position 3 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

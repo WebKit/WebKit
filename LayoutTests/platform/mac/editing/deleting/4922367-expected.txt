@@ -19,7 +19,5 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (16,2) size 12x22 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (2,2) size 8x18
                     text run at (2,2) width 8: "2"
-          RenderBlock (anonymous) at (0,28) size 784x0
-        RenderBlock (anonymous) at (0,28) size 784x0
       RenderBlock {UL} at (0,96) size 784x0
 caret: position 0 of child 0 {TABLE} of child 1 {DIV} of child 2 {DIV} of body

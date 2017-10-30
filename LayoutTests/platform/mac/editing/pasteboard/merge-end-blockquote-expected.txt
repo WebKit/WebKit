@@ -36,7 +36,6 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,0) size 704x18
             RenderText {#text} at (0,0) size 104x18
               text run at (0,0) width 104: "Blockquotedfoo"
-        RenderBlock (anonymous) at (0,34) size 784x0
         RenderBlock {BLOCKQUOTE} at (40,34) size 704x18
           RenderBlock {DIV} at (0,0) size 704x18
             RenderText {#text} at (0,0) size 49x18

@@ -23,5 +23,4 @@ layer at (0,0) size 800x600
             text run at (0,0) width 8: "a"
         RenderBlock {DIV} at (0,18) size 784x50
           RenderBR {BR} at (0,0) size 0x18
-        RenderBlock (anonymous) at (0,68) size 784x0
 caret: position 0 of child 0 {BR} of child 2 {DIV} of child 3 {DIV} of body

@@ -1457,19 +1457,22 @@ void RenderObject::willBeRemovedFromTree()
 
 static RenderObject& findDestroyRootIncludingAnonymous(RenderObject& renderer)
 {
-    auto* inlineWrapperForDisplayContents = is<RenderText>(renderer) ? downcast<RenderText>(renderer).inlineWrapperForDisplayContents() : nullptr;
-
-    auto* destroyRoot = inlineWrapperForDisplayContents ? inlineWrapperForDisplayContents : &renderer;
-    auto* destroyRootParent = destroyRoot->parent();
-    while (destroyRootParent && destroyRootParent->isAnonymous()) {
-        if (!destroyRootParent->isTableCell() && !destroyRootParent->isTableRow()
-            && !destroyRootParent->isTableCaption() && !destroyRootParent->isTableSection() && !destroyRootParent->isTable())
+    auto* destroyRoot = &renderer;
+    while (true) {
+        auto* destroyRootParent = destroyRoot->parent();
+        if (!destroyRootParent->isAnonymous())
             break;
-        // single child?
-        if (!(destroyRootParent->firstChild() == destroyRoot && destroyRootParent->lastChild() == destroyRoot))
+        if (destroyRootParent->isRenderView())
+            break;
+        if (destroyRootParent->isRenderFragmentedFlow())
+            break;
+        // FIXME: Destroy continuations here too.
+        if (destroyRootParent->isContinuation())
+            break;
+        bool destroyingOnlyChild = destroyRootParent->firstChild() == destroyRoot && destroyRootParent->lastChild() == destroyRoot;
+        if (!destroyingOnlyChild)
             break;
         destroyRoot = destroyRootParent;
-        destroyRootParent = destroyRootParent->parent();
     }
     return *destroyRoot;
 }

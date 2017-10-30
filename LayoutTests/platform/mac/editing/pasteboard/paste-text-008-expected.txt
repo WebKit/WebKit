@@ -124,7 +124,6 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (14,98) size 756x28
           RenderText {#text} at (0,0) size 438x28
             text run at (0,0) width 438: "Upon such a full seashallows and in miseries."
-      RenderBlock (anonymous) at (0,140) size 784x0
       RenderBlock {DIV} at (0,140) size 784x56 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 378x28
           text run at (14,14) width 378: "Upon such a full sea are we now afloat,"
