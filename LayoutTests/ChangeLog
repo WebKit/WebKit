@@ -1,3 +1,14 @@
+2017-10-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] Rebaseline and re-enable CSS tests
+        https://bugs.webkit.org/show_bug.cgi?id=178746
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        [ truncated ]
+
 2017-10-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip cache storage WPT tests that cause flaky crashes on the bots

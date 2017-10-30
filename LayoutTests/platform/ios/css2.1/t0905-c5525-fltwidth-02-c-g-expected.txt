@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x60
-  RenderBlock {HTML} at (0,0) size 800x60
+layer at (0,0) size 800x61
+  RenderBlock {HTML} at (0,0) size 800x61
     RenderBody {BODY} at (8,8) size 784x19
       RenderBlock {DIV} at (0,0) size 784x19
-        RenderBlock (floating) {P} at (0,0) size 392x52
+        RenderBlock (floating) {P} at (0,0) size 392x53
           RenderText {#text} at (0,0) size 348x51
             text run at (0,0) width 348: "There should be a green square to the right,"
             text run at (0,28) width 309: "roughly in the middle, horizontally. \x{21E8}"

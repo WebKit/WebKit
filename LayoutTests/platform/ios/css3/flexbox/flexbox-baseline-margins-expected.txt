@@ -46,20 +46,20 @@ layer at (0,0) size 800x491
         RenderText {#text} at (307,17) size 89x19
           text run at (307,17) width 89: " the grey box."
       RenderBlock {DIV} at (0,247) size 784x178
-        RenderText {#text} at (0,99) size 166x19
-          text run at (0,99) width 166: "Should align with the top "
+        RenderText {#text} at (0,84) size 166x19
+          text run at (0,84) width 166: "Should align with the top "
         RenderBlock {DIV} at (165,8) size 147x162 [bgcolor=#FFC0CB] [border: (11px solid #FFC0CB)]
           RenderFlexibleBox {DIV} at (24,32) size 98x98 [border: (11px solid #FFC0CB)]
-        RenderText {#text} at (311,99) size 174x19
-          text run at (311,99) width 174: " of the horizontal scrollbar."
+        RenderText {#text} at (311,84) size 174x19
+          text run at (311,84) width 174: " of the horizontal scrollbar."
       RenderBlock {DIV} at (0,425) size 784x50
-        RenderText {#text} at (0,25) size 188x19
-          text run at (0,25) width 188: "Should align 10px above the "
+        RenderText {#text} at (0,10) size 188x19
+          text run at (0,10) width 188: "Should align 10px above the "
         RenderBlock {DIV} at (187,0) size 51x50 [bgcolor=#FFC0CB]
           RenderFlexibleBox {DIV} at (0,0) size 50x50
-        RenderText {#text} at (237,25) size 239x19
-          text run at (237,25) width 239: " horizontal scrollbar, if one is visible."
-layer at (222,323) size 50x46 clip at (222,332) size 50x37
+        RenderText {#text} at (237,10) size 239x19
+          text run at (237,10) width 239: " horizontal scrollbar, if one is visible."
+layer at (222,323) size 50x46 clip at (222,332) size 35x22
   RenderBlock {DIV} at (24,28) size 50x46 [bgcolor=#D3D3D3] [border: (9px solid #FFC0CB) none]
-layer at (195,433) size 50x50
+layer at (195,433) size 50x50 clip at (195,433) size 35x35
   RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#D3D3D3]

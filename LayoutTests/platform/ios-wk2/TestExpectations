@@ -71,15 +71,6 @@ animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/157105 compositing/contents-scale/incremental-change.html [ Pass ImageOnlyFailure ]
 
-# CSS tests that fail:
-css3/blending/blend-mode-simple-composited.html [ Failure ]
-css3/blending/blend-mode-simple.html [ Failure ]
-css3/calc/line-height.html [ Failure ]
-css3/flexbox/flexbox-baseline-margins.html [ Failure ]
-css3/flexbox/flexbox-baseline.html [ Failure ]
-css3/masking/mask-base64.html [ ImageOnlyFailure ]
-css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure ]
-
 # jquery test that time out:
 jquery/manipulation.html
 
@@ -450,15 +441,6 @@ fast/viewport/viewport-legacy-xhtmlmp.html
 # LayoutTests/fast tests that fail:
 fast/backgrounds/size/contain-and-cover-zoomed.html [ Failure ]
 fast/borders/border-radius-position.html [ Failure ]
-fast/css-generated-content/hover-inline.html [ Failure ]
-fast/css/active-display-none.html [ Failure ]
-fast/css/affected-by-hover-after-style-change.html [ Failure ]
-fast/css/hover-affects-ancestor.html [ Failure ]
-fast/css/hover-affects-child.html [ Failure ]
-fast/css/hover-display-block-inline.html [ Failure ]
-fast/css/hover-display-block-none.html [ Failure ]
-fast/css/hover-display-block.html [ Failure ]
-fast/css/nested-layers-with-hover.html [ Failure ]
 fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 fast/dom/Window/Plug-ins.html [ Failure ]
 fast/dom/fragment-activation-focuses-target.html [ Failure ]
@@ -552,7 +534,6 @@ fast/spatial-navigation/snav-only-clipped-overflow-content.html [ Failure ]
 fast/spatial-navigation/snav-z-index.html [ Failure ]
 fast/text/international/thai-offsetForPosition-inside-character.html [ Failure ]
 fast/text/offsetForPosition-cluster-at-zero.html [ Failure ]
-fast/css/unknown-pseudo-element-matching.html [ Failure ]
 fast/dom/adopt-node-crash-2.html [ Failure ]
 fast/dom/Window/window-focus-self.html [ Failure ]
 fast/dom/Window/window-lookup-precedence.html [ Failure ]
@@ -610,8 +591,6 @@ fast/frames/meta-refresh-user-gesture.html [ Failure ]
 fast/parser/pre-html5-parser-quirks.html [ Failure ]
 fast/parser/tabindex-parsing.html [ Failure ]
 fast/table/hittest-self-painting.html [ Failure ]
-fast/css/pseudo-element-selector-scrollbar-hover.html [ ImageOnlyFailure ]
-fast/css/sticky/sticky-left-percentage.html [ ImageOnlyFailure ]
 fast/inline/layout-after-inserting-nested-br.html [ ImageOnlyFailure ]
 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
@@ -619,13 +598,6 @@ fast/shadow-dom/focus-across-details-element.html [ Failure ]
 fast/shadow-dom/focus-navigation-across-slots.html [ Failure ]
 fast/shadow-dom/negative-tabindex-on-shadow-host.html [ Failure ]
 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
-fast/css/beforeSelectorOnCodeElement.html [ Failure ]
-fast/css/css1_forward_compatible_parsing.html [ Failure ]
-fast/css/empty-pseudo-class.html [ Failure ]
-fast/css/first-child-pseudo-class.html [ Failure ]
-fast/css/last-child-pseudo-class.html [ Failure ]
-fast/css/only-child-pseudo-class.html [ Failure ]
-fast/css/word-space-extra.html [ Failure ]
 fast/dynamic/text-combine.html [ Failure ]
 fast/encoding/utf-16-big-endian.html [ Failure ]
 fast/encoding/utf-16-little-endian.html [ Failure ]
@@ -693,11 +665,6 @@ fast/box-decoration-break/box-decoration-break-parsing.html
 fast/box-shadow/basic-shadows.html
 fast/box-shadow/box-shadow-clipped-slices.html
 fast/box-sizing/box-sizing.html
-fast/css-generated-content/pseudo-element-events.html
-fast/css-generated-content/pseudo-transition-event.html
-fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html
-fast/css/hover-update.html
-fast/css/transition-color-unspecified.html
 fast/dom/Geolocation/cached-position-iframe.html
 fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/callback-to-remote-context.html
@@ -794,8 +761,6 @@ fast/dom/Geolocation/delayed-permission-denied-for-multiple-requests.html
 
 # LayoutTests/fast test that assert:
 fast/canvas/canvas-transform-nan.html
-fast/css/drop-shadow-viewport-height.html
-fast/css3-text/css3-text-decoration/text-decoration-scaled.html
 fast/dom/Document/early-document-access.html
 fast/dom/MutationObserver/observer-wrapper-dropoff-transient.html
 fast/dom/Window/window-open-pending-url.html
@@ -825,7 +790,6 @@ fast/history/history-back-initial-vs-final-url.html
 fast/loader/form-submission-before-load-get.html
 
 # LayoutTests/fast tests that are flaky:
-fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure Pass ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure Pass ]
 fast/events/frame-programmatic-focus.html [ Failure Pass ]
 fast/forms/autofocus-input-css-style-change.html [ Failure Pass ]
@@ -1199,8 +1163,6 @@ platform/ios/ios/fast/coordinates/touch-event-zoomed.html
 platform/ios/ios/fast/coordinates/touch-event.html
 
 # Flaky tests:
-css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Failure Pass ]
-css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Failure Pass ]
 fast/dom/inline-event-attributes-release.html [ Failure Pass ]
 fast/parser/parser-yield-timing.html [ Failure Pass ]
 fast/table/024.html [ Failure ImageOnlyFailure Pass ]
@@ -1371,7 +1333,6 @@ tables/mozilla_expected_failures/bugs/bug3517.html [ Failure ImageOnlyFailure Pa
 transitions/svg-text-shadow-transition.html [ Failure Pass ]
 
 # Flaky tests that time out:
-css3/filters/animation-from-initial-values-with-color-matrix.html
 fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
 fast/dom/Geolocation/error.html
@@ -1530,19 +1491,7 @@ fast/loader/refresh-iframe-base-blank.html [ Failure Pass ]
 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
 
 # Failures as of 06/08/2015
-css2.1/t09-c5526c-display-00-e.html [ Failure ]
-css2.1/t1202-counter-04-b.html [ Failure ]
-css2.1/t1202-counters-04-b.html [ Failure ]
-css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute.html [ Failure ]
-css3/filters/backdrop/backdrop-filter-with-cliprect.html [ Failure ]
-css3/filters/backdrop/backdrop-filter-with-mask.html [ Failure ]
 editing/selection/table-caret-3.html [ Failure ]
-fast/css/font-face-multiple-faces.html [ Failure ]
-fast/css/font-face-opentype.html [ Failure ]
-fast/css/font-face-repeated-url.html [ Failure ]
-fast/css/font-face-synthetic-bold-italic.html [ Failure ]
-fast/css/font-face-weight-matching.html [ Failure ]
-fast/css/font-family-pictograph.html [ Failure ]
 fast/dom/DeviceMotion/window-property.html [ Failure ]
 fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html [ Failure ]
 fast/forms/auto-fill-button/input-auto-fill-button.html [ Failure ]
@@ -1581,7 +1530,6 @@ transitions/transition-hit-test-transform.html
 
 # Flaky as of 06/09/2015
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure Pass ]
-css3/filters/backdrop/animation.html
 http/tests/cache/disk-cache/disk-cache-validation.html
 
 # Failures as of 06/09/2015
@@ -1661,30 +1609,8 @@ transitions/zero-duration-with-non-zero-delay-end.html [ Failure Pass ]
 
 
 # Skip flaky/timeout tests
-fast/css-grid-layout/flex-content-sized-columns-resize.html [ Skip ]
 fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
 
-css2.1/t0805-c5518-brdr-t-01-e.html [ Failure ]
-css2.1/t0805-c5519-brdr-r-00-a.html [ Failure ]
-css2.1/t0805-c5520-brdr-b-01-e.html [ Failure ]
-css2.1/t0805-c5521-brdr-l-00-a.html [ Failure ]
-css2.1/t0805-c5521-brdr-l-01-e.html [ Failure ]
-css2.1/t0805-c5521-ibrdr-l-00-a.html [ Failure ]
-css2.1/t0905-c414-flt-02-c.html [ Failure ]
-css2.1/t0905-c414-flt-03-c.html [ Failure ]
-css2.1/t0905-c414-flt-04-c.html [ Failure ]
-css2.1/t0905-c414-flt-fit-01-d-g.html [ Failure ]
-css2.1/t0905-c5525-fltblck-01-d.html [ Failure ]
-css2.1/t0905-c5525-fltcont-00-d-g.html [ Failure ]
-css2.1/t0905-c5525-fltwidth-00-c-g.html [ Failure ]
-css2.1/t0905-c5525-fltwidth-02-c-g.html [ Failure ]
-css2.1/t0905-c5525-fltwidth-03-c-g.html [ Failure ]
-css2.1/t0905-c5525-fltwrap-00-b.html [ Failure ]
-css2.1/t090501-c414-flt-01-b.html [ Failure ]
-css2.1/t090501-c414-flt-03-b-g.html [ Failure ]
-css2.1/t090501-c5525-flt-l-00-b-g.html [ Failure ]
-css2.1/t090501-c5525-flt-r-00-b-g.html [ Failure ]
-css2.1/t100304-c43-rpl-bbx-01-d-g.html [ Failure ]
 fast/block/positioning/auto/vertical-rl/007.html [ Failure ]
 fast/block/positioning/vertical-rl/fixed-positioning.html [ Failure ]
 fast/forms/indeterminate-progress-inline-height.html [ Failure ]

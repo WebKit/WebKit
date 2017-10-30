@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x100
-  RenderBlock {HTML} at (0,0) size 800x100
-    RenderBody {BODY} at (8,16) size 784x76
+layer at (0,0) size 800x107
+  RenderBlock {HTML} at (0,0) size 800x107
+    RenderBody {BODY} at (8,16) size 784x83
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 237x19
           text run at (0,0) width 237: "The following two lines should look "
@@ -83,17 +83,17 @@ layer at (0,0) size 800x100
             RenderCounter at (300,0) size 24x19
               text run at (300,0) width 24: "\x{25A0}.\x{25A0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,56) size 784x20
-        RenderText {#text} at (0,0) size 596x19
-          text run at (0,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (50,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (100,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (150,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (200,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (250,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (300,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (350,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (400,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (450,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (500,0) width 50: "\x{25FE}.\x{25FE} "
-          text run at (550,0) width 46: "\x{25FE}.\x{25FE}"
+      RenderBlock {DIV} at (0,56) size 784x27
+        RenderText {#text} at (0,5) size 596x19
+          text run at (0,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (50,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (100,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (150,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (200,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (250,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (300,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (350,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (400,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (450,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (500,5) width 50: "\x{25FE}.\x{25FE} "
+          text run at (550,5) width 46: "\x{25FE}.\x{25FE}"

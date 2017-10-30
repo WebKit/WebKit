@@ -153,14 +153,14 @@ layer at (0,0) size 800x3002
               text run at (0,0) width 147: "See description in the"
               text run at (0,20) width 127: "box on the left side."
         RenderBlock {P} at (0,0) size 588x140
-          RenderText {#text} at (0,0) size 589x139
+          RenderText {#text} at (0,0) size 588x139
             text run at (0,0) width 431: "This paragraph is inside a DIV which is floated left. The"
             text run at (0,20) width 431: "background of the DIV element is blue and its width is 75%. This"
             text run at (0,40) width 373: "text should all be inside the blue rectangle. The blue DIV "
             text run at (372,40) width 216: "element has another DIV element"
             text run at (0,60) width 170: "as a child. It has a yellow "
             text run at (169,60) width 370: "background color and is floated to the right. Since it is a "
-            text run at (538,60) width 51: "child of"
+            text run at (538,60) width 50: "child of"
             text run at (0,80) width 381: "the blue DIV, the yellow DIV should appear inside the "
             text run at (380,80) width 208: "blue rectangle. Due to it being"
             text run at (0,100) width 199: "floated to the right and having "
