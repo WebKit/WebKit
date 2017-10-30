@@ -282,7 +282,6 @@ private:
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
-    friend class RenderTreeInternalMutationScope;
 
     bool isScrollableOrRubberbandableBox() const override;
 
