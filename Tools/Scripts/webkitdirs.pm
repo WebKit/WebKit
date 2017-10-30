@@ -2460,11 +2460,6 @@ sub setupIOSWebKitEnvironment($)
 
 sub iosSimulatorApplicationsPath()
 {
-    determineXcodeVersion();
-    if (eval "v$xcodeVersion" lt v9.0) {
-        return File::Spec->catdir(XcodeSDKPath(), "Applications");
-    }
-
     my $iphoneOSPlatformPath = sdkPlatformDirectory("iphoneos");
     return File::Spec->catdir($iphoneOSPlatformPath, "Developer", "Library", "CoreSimulator", "Profiles", "Runtimes", "iOS.simruntime", "Contents", "Resources", "RuntimeRoot", "Applications");
 }
