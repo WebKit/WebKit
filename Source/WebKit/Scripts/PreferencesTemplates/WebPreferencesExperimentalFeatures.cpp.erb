@@ -50,7 +50,13 @@ const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 {
     static NeverDestroyed<Vector<RefPtr<API::Object>>> features(std::initializer_list<RefPtr<API::Object>> {
 <%- for @pref in @experimentalFeatures do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
         API::ExperimentalFeature::create(<%= @pref.humanReadableName %>, "<%= @pref.name %>", <%= @pref.humanReadableDescription %>, <%= @pref.defaultValue %>),
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
 <%- end -%>
     });
 
@@ -66,7 +72,13 @@ bool WebPreferences::isEnabledForFeature(const API::ExperimentalFeature& feature
 
     static FeatureGetterMapping getters[] = {
 <%- for @pref in @experimentalFeatures do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
         { "<%= @pref.name %>", &WebPreferences::<%= @pref.nameLower %> },
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
 <%- end -%>
     };
 
@@ -89,7 +101,13 @@ void WebPreferences::setEnabledForFeature(bool value, const API::ExperimentalFea
 
     static FeatureSetterMapping setters[] = {
 <%- for @pref in @experimentalFeatures do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
         { "<%= @pref.name %>", &WebPreferences::set<%= @pref.name %> },
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
 <%- end -%>
     };
 
@@ -106,7 +124,13 @@ void WebPreferences::setEnabledForFeature(bool value, const API::ExperimentalFea
 void WebPreferences::enableAllExperimentalFeatures()
 {
 <%- for @pref in @experimentalFeatures do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
     set<%= @pref.name %>(true);
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
 <%- end -%>
 }
 

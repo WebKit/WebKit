@@ -1,3 +1,15 @@
+2017-10-30  Sam Weinig  <sam@webkit.org>
+
+        [Setting] Only expose experimental features that are compiled in
+        https://bugs.webkit.org/show_bug.cgi?id=179023
+
+        Reviewed by Tim Horton.
+
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        
+            Update template to conditionally expose experimental features based on their
+            'condition' option in WebPreferences.yaml
+
 2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Fix build warnings
