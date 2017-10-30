@@ -57,7 +57,6 @@ struct WebHitTestResultData {
     bool isSelected;
     bool isTextNode;
     bool isOverTextInsideFormControlElement;
-    bool allowsCopy;
     bool isDownloadableMedia;
 
     String lookupText;

@@ -37,6 +37,27 @@ public:
         gtk_clipboard_clear(m_clipboard);
     }
 
+    static gboolean webViewDrawCallback(GMainLoop* mainLoop)
+    {
+        g_main_loop_quit(mainLoop);
+        return G_SOURCE_REMOVE;
+    }
+
+    void flushEditorState()
+    {
+        // FIXME: It would be better to call WebViewTest::showInWindowAndWaitUntilMapped
+        // at the start of the test, rather than creating and destroying temporary windows.
+        showInWindow(GTK_WINDOW_TOPLEVEL);
+
+        g_signal_connect_swapped(m_webView, "draw", G_CALLBACK(webViewDrawCallback), m_mainLoop);
+        gtk_widget_queue_draw(GTK_WIDGET(m_webView));
+        g_main_loop_run(m_mainLoop);
+
+        gtk_container_remove(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(m_webView));
+        gtk_widget_destroy(m_parentWindow);
+        m_parentWindow = nullptr;
+    }
+
     static void canExecuteEditingCommandReadyCallback(GObject*, GAsyncResult* result, EditorTest* test)
     {
         GUniqueOutPtr<GError> error;
@@ -50,6 +71,20 @@ public:
         m_canExecuteEditingCommand = false;
         webkit_web_view_can_execute_editing_command(m_webView, command, 0, reinterpret_cast<GAsyncReadyCallback>(canExecuteEditingCommandReadyCallback), this);
         g_main_loop_run(m_mainLoop);
+
+        if (!strcmp(command, WEBKIT_EDITING_COMMAND_CUT))
+            g_assert(m_canExecuteEditingCommand == webkit_editor_state_is_cut_available(editorState()));
+        else if (!strcmp(command, WEBKIT_EDITING_COMMAND_COPY))
+            g_assert(m_canExecuteEditingCommand == webkit_editor_state_is_copy_available(editorState()));
+        else if (!strcmp(command, WEBKIT_EDITING_COMMAND_PASTE))
+            g_assert(m_canExecuteEditingCommand == webkit_editor_state_is_paste_available(editorState()));
+        // FIXME: Figure out how to add tests for undo and redo. It will probably require using user
+        // scripts to message the UI process when the content has been altered.
+        else if (!strcmp(command, WEBKIT_EDITING_COMMAND_UNDO))
+            g_assert(m_canExecuteEditingCommand == webkit_editor_state_is_undo_available(editorState()));
+        else if (!strcmp(command, WEBKIT_EDITING_COMMAND_REDO))
+            g_assert(m_canExecuteEditingCommand == webkit_editor_state_is_redo_available(editorState()));
+
         return m_canExecuteEditingCommand;
     }
 
@@ -140,6 +175,7 @@ static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpoi
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
 
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
     // It's not possible to cut and paste when content is not editable
@@ -166,6 +202,7 @@ static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointe
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
 
     // There's a selection.
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
@@ -184,6 +221,7 @@ static void testWebViewEditorSelectAllNonEditable(EditorTest* test, gconstpointe
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
 
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
@@ -212,6 +250,7 @@ static void testWebViewEditorSelectAllEditable(EditorTest* test, gconstpointer)
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
 
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
@@ -237,10 +276,13 @@ static void loadContentsAndTryToCutSelection(EditorTest* test, bool contentEdita
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, contentEditable ? "true" : "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
 
     g_assert(!test->isEditable());
     test->setEditable(true);
     g_assert(test->isEditable());
+
+    test->flushEditorState();
 
     // Cut the selection to the clipboard to see if the view is indeed editable.
     GUniquePtr<char> clipboardText(test->cutSelection());
@@ -256,6 +298,7 @@ static void testWebViewEditorNonEditable(EditorTest* test)
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
 
     g_assert(!test->isEditable());
     test->setEditable(true);
@@ -293,9 +336,9 @@ static void testWebViewEditorEditorStateTypingAttributes(EditorTest* test, gcons
         "<b><i>boldanditalic </i></b>"
         "</body></html>";
 
-    test->showInWindowAndWaitUntilMapped();
     test->loadHtml(typingAttributesHTML, nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
     test->setEditable(true);
 
     unsigned typingAttributes = test->typingAttributes();
@@ -406,6 +449,7 @@ static void testWebViewEditorInsertImage(EditorTest* test, gconstpointer)
 {
     test->loadHtml("<html><body></body></html>", "file:///");
     test->waitUntilLoadFinished();
+    test->flushEditorState();
     test->setEditable(true);
 
     GUniquePtr<char> imagePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
@@ -423,6 +467,7 @@ static void testWebViewEditorCreateLink(EditorTest* test, gconstpointer)
 {
     test->loadHtml("<html><body onload=\"document.getSelection().selectAllChildren(document.body);\">webkitgtk.org</body></html>", nullptr);
     test->waitUntilLoadFinished();
+    test->flushEditorState();
     test->setEditable(true);
 
     static const char* webkitGTKURL = "http://www.webkitgtk.org/";

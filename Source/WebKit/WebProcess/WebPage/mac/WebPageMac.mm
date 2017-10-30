@@ -1075,7 +1075,6 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
                 immediateActionResult.lookupText = selectedText;
                 immediateActionResult.isTextNode = true;
                 immediateActionResult.isSelected = true;
-                immediateActionResult.allowsCopy = true;
 
                 immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pdfPugin, &options, TextIndicatorPresentationTransition::FadeIn);
             }

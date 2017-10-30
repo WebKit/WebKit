@@ -70,8 +70,6 @@ public:
 
     bool isOverTextInsideFormControlElement() const { return m_data.isOverTextInsideFormControlElement; }
 
-    bool allowsCopy() const { return m_data.allowsCopy; }
-
     bool isDownloadableMedia() const { return m_data.isDownloadableMedia; }
 
 private:

@@ -1639,7 +1639,7 @@ void Editor::clearUndoRedoOperations()
         client()->clearUndoRedoOperations();
 }
 
-bool Editor::canUndo()
+bool Editor::canUndo() const
 {
     return client() && client()->canUndo();
 }
@@ -1650,7 +1650,7 @@ void Editor::undo()
         client()->undo();
 }
 
-bool Editor::canRedo()
+bool Editor::canRedo() const
 {
     return client() && client()->canRedo();
 }

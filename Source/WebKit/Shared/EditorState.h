@@ -77,7 +77,6 @@ struct EditorState {
     String markedText;
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
     struct PostLayoutData {
         uint32_t typingAttributes { AttributeNone };
 #if PLATFORM(IOS) || PLATFORM(GTK)
@@ -110,24 +109,26 @@ struct EditorState {
         String stringForCandidateRequest;
 #endif
 
+        bool canCut { false };
+        bool canCopy { false };
+        bool canPaste { false };
+        bool canUndo { false };
+        bool canRedo { false };
+
         void encode(IPC::Encoder&) const;
         static bool decode(IPC::Decoder&, PostLayoutData&);
     };
 
     const PostLayoutData& postLayoutData() const;
     PostLayoutData& postLayoutData();
-#endif // PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, EditorState&);
 
-#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 private:
     PostLayoutData m_postLayoutData;
-#endif
 };
 
-#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 inline auto EditorState::postLayoutData() -> PostLayoutData&
 {
     ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");
@@ -139,7 +140,6 @@ inline auto EditorState::postLayoutData() const -> const PostLayoutData&
     ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");
     return m_postLayoutData;
 }
-#endif
 
 }
 

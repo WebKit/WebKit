@@ -131,7 +131,6 @@ public:
 
     WEBCORE_EXPORT bool isDownloadableMedia() const;
     WEBCORE_EXPORT bool isOverTextInsideFormControlElement() const;
-    WEBCORE_EXPORT bool allowsCopy() const;
 
     HitTestProgress addNodeToListBasedTestResult(Node*, const HitTestRequest&, const HitTestLocation& pointInContainer, const LayoutRect& = LayoutRect());
     HitTestProgress addNodeToListBasedTestResult(Node*, const HitTestRequest&, const HitTestLocation& pointInContainer, const FloatRect&);

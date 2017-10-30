@@ -847,20 +847,27 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     }
 
     const VisibleSelection& selection = frame.selection().selection();
+    const Editor& editor = frame.editor();
 
     result.selectionIsNone = selection.isNone();
     result.selectionIsRange = selection.isRange();
     result.isContentEditable = selection.isContentEditable();
     result.isContentRichlyEditable = selection.isContentRichlyEditable();
     result.isInPasswordField = selection.isInPasswordField();
-    result.hasComposition = frame.editor().hasComposition();
-    result.shouldIgnoreSelectionChanges = frame.editor().ignoreSelectionChanges();
+    result.hasComposition = editor.hasComposition();
+    result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges();
+
+    bool canIncludePostLayoutData = frame.view() && !frame.view()->needsLayout();
+    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::Yes && canIncludePostLayoutData) {
+        auto& postLayoutData = result.postLayoutData();
+        postLayoutData.canCut = editor.canCut();
+        postLayoutData.canCopy = editor.canCopy();
+        postLayoutData.canPaste = editor.canPaste();
+        postLayoutData.canUndo = editor.canUndo();
+        postLayoutData.canRedo = editor.canRedo();
 
 #if PLATFORM(COCOA)
-    bool canIncludePostLayoutData = frame.view() && !frame.view()->needsLayout();
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::Yes && canIncludePostLayoutData && result.isContentEditable) {
-        auto& postLayoutData = result.postLayoutData();
-        if (!selection.isNone()) {
+        if (result.isContentEditable && !selection.isNone()) {
             if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
                 if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"))
                     postLayoutData.typingAttributes |= AttributeBold;
@@ -912,8 +919,8 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
                     ASSERT_NOT_REACHED();
             }
         }
-    }
 #endif
+    }
 
     platformEditorState(frame, result, shouldIncludePostLayoutData);
 

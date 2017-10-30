@@ -42,10 +42,8 @@ void EditorState::encode(IPC::Encoder& encoder) const
     encoder << hasComposition;
     encoder << isMissingPostLayoutData;
 
-#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
     if (!isMissingPostLayoutData)
         m_postLayoutData.encode(encoder);
-#endif
 
 #if PLATFORM(IOS)
     encoder << firstMarkedRect;
@@ -83,12 +81,10 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
     if (!decoder.decode(result.isMissingPostLayoutData))
         return false;
 
-#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
     if (!result.isMissingPostLayoutData) {
         if (!PostLayoutData::decode(decoder, result.postLayoutData()))
             return false;
     }
-#endif
 
 #if PLATFORM(IOS)
     if (!decoder.decode(result.firstMarkedRect))
@@ -102,7 +98,6 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
     return true;
 }
 
-#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
 {
     encoder << typingAttributes;
@@ -135,6 +130,11 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << paragraphContextForCandidateRequest;
     encoder << stringForCandidateRequest;
 #endif
+    encoder << canCut;
+    encoder << canCopy;
+    encoder << canPaste;
+    encoder << canUndo;
+    encoder << canRedo;
 }
 
 bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& result)
@@ -194,8 +194,18 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
 #endif
 
+    if (!decoder.decode(result.canCut))
+        return false;
+    if (!decoder.decode(result.canCopy))
+        return false;
+    if (!decoder.decode(result.canPaste))
+        return false;
+    if (!decoder.decode(result.canUndo))
+        return false;
+    if (!decoder.decode(result.canRedo))
+        return false;
+
     return true;
 }
-#endif // PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 
 }

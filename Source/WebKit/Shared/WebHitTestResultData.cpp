@@ -53,7 +53,6 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
     , isSelected(hitTestResult.isSelected())
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
-    , allowsCopy(hitTestResult.allowsCopy())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
     , imageSize(0)
 {
@@ -73,7 +72,6 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
     , isSelected(hitTestResult.isSelected())
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
-    , allowsCopy(hitTestResult.allowsCopy())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
     , imageSize(0)
 {
@@ -109,7 +107,6 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
     encoder << isSelected;
     encoder << isTextNode;
     encoder << isOverTextInsideFormControlElement;
-    encoder << allowsCopy;
     encoder << isDownloadableMedia;
     encoder << lookupText;
     encoder << dictionaryPopupInfo;
@@ -143,7 +140,6 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
         || !decoder.decode(hitTestResultData.isSelected)
         || !decoder.decode(hitTestResultData.isTextNode)
         || !decoder.decode(hitTestResultData.isOverTextInsideFormControlElement)
-        || !decoder.decode(hitTestResultData.allowsCopy)
         || !decoder.decode(hitTestResultData.isDownloadableMedia)
         || !decoder.decode(hitTestResultData.lookupText)
         || !decoder.decode(hitTestResultData.dictionaryPopupInfo))

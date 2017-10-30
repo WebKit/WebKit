@@ -1,3 +1,50 @@
+2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Expose availability of certain editing commands in WebKitEditorState
+        https://bugs.webkit.org/show_bug.cgi?id=168219
+
+        Reviewed by Ryosuke Niwa.
+
+        Expose canCut, canCopy, canPaste, canUndo, and canRedo in EditorState::PostLayouData.
+
+        Add corresponding new WPE/GTK API.
+
+        Remove allowsCopy from WebKitTestResultData. It's unused, does not work correctly in all
+        circumstances, and irritates Ryosuke.
+
+        Also, remove a bunch of #ifs guarding post layout data, since it's now used on all ports.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode const):
+        (WebKit::EditorState::decode):
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::postLayoutData const const):
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        (WebKit::WebHitTestResultData::encode const):
+        (WebKit::WebHitTestResultData::decode):
+        * Shared/WebHitTestResultData.h:
+        * UIProcess/API/APIHitTestResult.h:
+        (API::HitTestResult::allowsCopy const): Deleted.
+        * UIProcess/API/glib/WebKitEditorState.cpp:
+        (webkitEditorStateChanged):
+        (webkit_editor_state_is_cut_available):
+        (webkit_editor_state_is_copy_available):
+        (webkit_editor_state_is_paste_available):
+        (webkit_editor_state_is_undo_available):
+        (webkit_editor_state_is_redo_available):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_can_execute_editing_command):
+        * UIProcess/API/gtk/WebKitEditorState.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitEditorState.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+
 2017-10-27  Sam Weinig  <sam@webkit.org>
 
         [Settings] Generate more of the WebKit preferences code

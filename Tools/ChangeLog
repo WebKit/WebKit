@@ -1,3 +1,23 @@
+2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Expose availability of certain editing commands in WebKitEditorState
+        https://bugs.webkit.org/show_bug.cgi?id=168219
+
+        Reviewed by Ryosuke Niwa.
+
+        Test it.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp:
+        (testWebViewEditorCutCopyPasteNonEditable):
+        (testWebViewEditorCutCopyPasteEditable):
+        (testWebViewEditorSelectAllNonEditable):
+        (testWebViewEditorSelectAllEditable):
+        (loadContentsAndTryToCutSelection):
+        (testWebViewEditorNonEditable):
+        (testWebViewEditorEditorStateTypingAttributes):
+        (testWebViewEditorInsertImage):
+        (testWebViewEditorCreateLink):
+
 2017-10-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build gst-plugins-base without pango support
