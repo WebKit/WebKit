@@ -1,3 +1,11 @@
+2017-10-30  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https.html for iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https-expected.txt: Added.
+
 2017-10-30  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add Web Platform tests
