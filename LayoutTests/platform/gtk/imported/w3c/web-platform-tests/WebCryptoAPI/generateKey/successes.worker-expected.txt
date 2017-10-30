@@ -1271,12 +1271,12 @@ PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [verify, sign
 PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [verify, sign]) 
 PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, false, [sign, verify, sign, sign, verify]) 
 PASS Success: generateKey({name: ECDSA, namedCurve: P-384}, true, [sign, verify, sign, sign, verify]) 
-FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
+PASS Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [sign]) 
+PASS Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign]) 
+PASS Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [verify, sign]) 
+PASS Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [verify, sign]) 
+PASS Success: generateKey({name: ECDSA, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) 
+PASS Success: generateKey({name: ECDSA, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) 
 PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [sign]) 
 PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, true, [sign]) 
 PASS Success: generateKey({name: ecdsa, namedCurve: P-256}, false, [verify, sign]) 
@@ -1289,12 +1289,12 @@ PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [verify, sign
 PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [verify, sign]) 
 PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, false, [sign, verify, sign, sign, verify]) 
 PASS Success: generateKey({name: ecdsa, namedCurve: P-384}, true, [sign, verify, sign, sign, verify]) 
-FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
+PASS Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [sign]) 
+PASS Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [sign]) 
+PASS Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [verify, sign]) 
+PASS Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [verify, sign]) 
+PASS Success: generateKey({name: ecdsa, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) 
+PASS Success: generateKey({name: ecdsa, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) 
 PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [sign]) 
 PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, true, [sign]) 
 PASS Success: generateKey({name: Ecdsa, namedCurve: P-256}, false, [verify, sign]) 
@@ -1307,12 +1307,12 @@ PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [verify, sign
 PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [verify, sign]) 
 PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, false, [sign, verify, sign, sign, verify]) 
 PASS Success: generateKey({name: Ecdsa, namedCurve: P-384}, true, [sign, verify, sign, sign, verify]) 
-FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, true, [sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, true, [verify, sign]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdsa, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [sign]) 
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-521}, true, [sign]) 
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [verify, sign]) 
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-521}, true, [verify, sign]) 
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-521}, false, [sign, verify, sign, sign, verify]) 
+PASS Success: generateKey({name: Ecdsa, namedCurve: P-521}, true, [sign, verify, sign, sign, verify]) 
 PASS Success: generateKey({name: ECDH, namedCurve: P-256}, false, [deriveKey]) 
 PASS Success: generateKey({name: ECDH, namedCurve: P-256}, true, [deriveKey]) 
 PASS Success: generateKey({name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey]) 
@@ -1329,14 +1329,14 @@ PASS Success: generateKey({name: ECDH, namedCurve: P-384}, false, [deriveBits])
 PASS Success: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveBits]) 
 PASS Success: generateKey({name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
 PASS Success: generateKey({name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveKey]) 
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey]) 
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey]) 
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey]) 
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveBits]) 
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveBits]) 
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
+PASS Success: generateKey({name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
 PASS Success: generateKey({name: ecdh, namedCurve: P-256}, false, [deriveKey]) 
 PASS Success: generateKey({name: ecdh, namedCurve: P-256}, true, [deriveKey]) 
 PASS Success: generateKey({name: ecdh, namedCurve: P-256}, false, [deriveBits, deriveKey]) 
@@ -1353,14 +1353,14 @@ PASS Success: generateKey({name: ecdh, namedCurve: P-384}, false, [deriveBits])
 PASS Success: generateKey({name: ecdh, namedCurve: P-384}, true, [deriveBits]) 
 PASS Success: generateKey({name: ecdh, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
 PASS Success: generateKey({name: ecdh, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveBits, deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveBits, deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveKey]) 
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveKey]) 
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveBits, deriveKey]) 
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveBits, deriveKey]) 
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveBits]) 
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveBits]) 
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
+PASS Success: generateKey({name: ecdh, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
 PASS Success: generateKey({name: Ecdh, namedCurve: P-256}, false, [deriveKey]) 
 PASS Success: generateKey({name: Ecdh, namedCurve: P-256}, true, [deriveKey]) 
 PASS Success: generateKey({name: Ecdh, namedCurve: P-256}, false, [deriveBits, deriveKey]) 
@@ -1377,12 +1377,12 @@ PASS Success: generateKey({name: Ecdh, namedCurve: P-384}, false, [deriveBits])
 PASS Success: generateKey({name: Ecdh, namedCurve: P-384}, true, [deriveBits]) 
 PASS Success: generateKey({name: Ecdh, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
 PASS Success: generateKey({name: Ecdh, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveBits, deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveBits, deriveKey]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
-FAIL Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) assert_unreached: Threw an unexpected error: NotSupportedError: The algorithm is not supported Reached unreachable code
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveKey]) 
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveKey]) 
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveBits, deriveKey]) 
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveBits, deriveKey]) 
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveBits]) 
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveBits]) 
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
+PASS Success: generateKey({name: Ecdh, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, deriveKey, deriveBits]) 
 

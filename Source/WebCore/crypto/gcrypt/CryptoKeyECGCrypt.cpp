@@ -46,7 +46,7 @@ static const char* curveName(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return "NIST P-384";
     case CryptoKeyEC::NamedCurve::P521:
-        break;
+        return "NIST P-521";
     }
 
     ASSERT_NOT_REACHED();
@@ -61,7 +61,7 @@ static const uint8_t* curveIdentifier(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return CryptoConstants::s_secp384r1Identifier.data();
     case CryptoKeyEC::NamedCurve::P521:
-        break;
+        return CryptoConstants::s_secp521r1Identifier.data();
     }
 
     ASSERT_NOT_REACHED();
@@ -76,7 +76,7 @@ static size_t curveSize(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return 384;
     case CryptoKeyEC::NamedCurve::P521:
-        break;
+        return 521;
     }
 
     ASSERT_NOT_REACHED();
@@ -91,7 +91,7 @@ static unsigned curveUncompressedFieldElementSize(CryptoKeyEC::NamedCurve curve)
     case CryptoKeyEC::NamedCurve::P384:
         return 48;
     case CryptoKeyEC::NamedCurve::P521:
-        break;
+        return 66;
     }
 
     ASSERT_NOT_REACHED();
@@ -118,7 +118,7 @@ size_t CryptoKeyEC::keySizeInBits() const
 
 bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
 {
-    return curve == NamedCurve::P256 || curve == NamedCurve::P384;
+    return curve == NamedCurve::P256 || curve == NamedCurve::P384 || curve == NamedCurve::P521;
 }
 
 std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
@@ -247,7 +247,7 @@ static std::optional<CryptoKeyEC::NamedCurve> curveForIdentifier(const Vector<ui
     if (CryptoConstants::matches(data, size, CryptoConstants::s_secp384r1Identifier))
         return CryptoKeyEC::NamedCurve::P384;
     if (CryptoConstants::matches(data, size, CryptoConstants::s_secp521r1Identifier))
-        return std::nullopt; // Not yet supported.
+        return CryptoKeyEC::NamedCurve::P521;
 
     return std::nullopt;
 }
@@ -449,8 +449,8 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
         if (!privateKey)
             return nullptr;
 
-        // Validate the size of `privateKey`, making sure it fits the size of the specified EC curve.
-        if (privateKey->size() * 8 != curveSize(curve))
+        // Validate the size of `privateKey`, making sure it fits the byte-size of the specified EC curve.
+        if (privateKey->size() != (curveSize(curve) + 7) / 8)
             return nullptr;
 
         // Construct the `private-key` expression that will also be used for the EC context.
@@ -542,8 +542,16 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
         PAL::GCrypt::Handle<gcry_mpi_t> dMPI(gcry_mpi_ec_get_mpi("d", context, 0));
         if (dMPI) {
             auto d = mpiData(dMPI);
-            if (d && d->size() == uncompressedFieldElementSize)
+            if (d && d->size() <= uncompressedFieldElementSize) {
+                // Zero-pad the private key data up to the field element size, if necessary.
+                if (d->size() < uncompressedFieldElementSize) {
+                    Vector<uint8_t> paddedData(uncompressedFieldElementSize - d->size(), 0);
+                    paddedData.appendVector(*d);
+                    *d = WTFMove(paddedData);
+                }
+
                 jwk.d = base64URLEncode(*d);
+            }
         }
     }
 
@@ -651,9 +659,22 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
             if (!dMPI)
                 return { };
 
-            // Retrieve the MPI data and write it out under `privateKey`.
+            unsigned uncompressedFieldElementSize = curveUncompressedFieldElementSize(m_curve);
+
+            // Retrieve the `d` MPI data.
             auto data = mpiData(dMPI);
-            if (!data || !PAL::TASN1::writeElement(ecPrivateKey, "privateKey", data->data(), data->size()))
+            if (!data || data->size() > uncompressedFieldElementSize)
+                return { };
+
+            // Zero-pad the private key data up to the field element size, if necessary.
+            if (data->size() < uncompressedFieldElementSize) {
+                Vector<uint8_t> paddedData(uncompressedFieldElementSize - data->size(), 0);
+                paddedData.appendVector(*data);
+                *data = WTFMove(paddedData);
+            }
+
+            // Write out the data under `privateKey`.
+            if (!PAL::TASN1::writeElement(ecPrivateKey, "privateKey", data->data(), data->size()))
                 return { };
         }
 

@@ -1,3 +1,58 @@
+2017-10-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Add support for P-521 EC curves
+        https://bugs.webkit.org/show_bug.cgi?id=175199
+
+        Reviewed by Jiewen Tan.
+
+        Add or update Web Crypto test baselines for the GTK+ and WPE ports
+        to reflect the added EC P-521 support.
+
+        * platform/gtk/crypto/subtle/ec-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/gtk/crypto/subtle/ecdh-derive-bits-length-limits-expected.txt: Added.
+        * platform/gtk/crypto/subtle/ecdh-import-spki-key-ecdh-identifier-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https-expected.txt: Added.
+        * platform/wpe/crypto/subtle/ec-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/wpe/crypto/subtle/ecdh-derive-bits-length-limits-expected.txt: Added.
+        * platform/wpe/crypto/subtle/ecdh-import-spki-key-ecdh-identifier-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDH.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_ECDSA.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDH.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_ECDSA.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https-expected.txt: Added.
+
 2017-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed WPE gardening. Skip Service Workers tests again after r224132.

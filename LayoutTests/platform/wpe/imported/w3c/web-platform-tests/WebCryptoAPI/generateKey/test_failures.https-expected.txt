@@ -2361,12 +2361,12 @@ PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-256}, false, [])
 PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-256}, true, []) 
 PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-384}, false, []) 
 PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-384}, true, []) 
-FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-521}, false, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Empty usages: generateKey({name: ECDSA, namedCurve: P-521}, true, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
+PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-521}, false, []) 
+PASS Empty usages: generateKey({name: ECDSA, namedCurve: P-521}, true, []) 
 PASS Empty usages: generateKey({name: ECDH, namedCurve: P-256}, false, []) 
 PASS Empty usages: generateKey({name: ECDH, namedCurve: P-256}, true, []) 
 PASS Empty usages: generateKey({name: ECDH, namedCurve: P-384}, false, []) 
 PASS Empty usages: generateKey({name: ECDH, namedCurve: P-384}, true, []) 
-FAIL Empty usages: generateKey({name: ECDH, namedCurve: P-521}, false, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
-FAIL Empty usages: generateKey({name: ECDH, namedCurve: P-521}, true, []) assert_equals: Empty usages not supported expected "SyntaxError" but got "NotSupportedError"
+PASS Empty usages: generateKey({name: ECDH, namedCurve: P-521}, false, []) 
+PASS Empty usages: generateKey({name: ECDH, namedCurve: P-521}, true, []) 
 
