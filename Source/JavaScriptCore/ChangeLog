@@ -1,5 +1,17 @@
 2017-10-30  Zan Dobersek  <zdobersek@igalia.com>
 
+        [ARMv7] Fix initial start register support in YarrJIT
+        https://bugs.webkit.org/show_bug.cgi?id=178641
+
+        Reviewed by Saam Barati.
+
+        * yarr/YarrJIT.cpp: On ARMv7, use r8 as the initialStart register in the
+        YarrGenerator class. r6 should be avoided since it's already used inside
+        MacroAssemblerARMv7 as addressTempRegister. r7 isn't picked because it
+        can be used as the frame pointer register when targetting ARM Thumb2.
+
+2017-10-30  Zan Dobersek  <zdobersek@igalia.com>
+
         [ARM64][Linux] Re-enable Gigacage
         https://bugs.webkit.org/show_bug.cgi?id=178130
 

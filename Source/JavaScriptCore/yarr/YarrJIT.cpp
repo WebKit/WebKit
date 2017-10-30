@@ -51,7 +51,7 @@ class YarrGenerator : private MacroAssembler {
 
     static const RegisterID regT0 = ARMRegisters::r4;
     static const RegisterID regT1 = ARMRegisters::r5;
-    static const RegisterID initialStart = ARMRegisters::r6;
+    static const RegisterID initialStart = ARMRegisters::r8;
 
     static const RegisterID returnRegister = ARMRegisters::r0;
     static const RegisterID returnRegister2 = ARMRegisters::r1;
