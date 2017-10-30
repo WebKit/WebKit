@@ -1,5 +1,14 @@
 2017-10-30  Matt Lewis  <jlewis3@apple.com>
 
+        Followup rebaseline to r224204.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan-wk2/http/tests/contentextensions/make-https-expected.txt: Added.
+        * platform/mac-sierra-wk2/http/tests/contentextensions/make-https-expected.txt: Added.
+
+2017-10-30  Matt Lewis  <jlewis3@apple.com>
+
         Rebaselined imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html for iOS after r224156.
 
         Unreviewed test gardening.
