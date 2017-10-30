@@ -1,3 +1,12 @@
+2017-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add Path.svg
+        https://bugs.webkit.org/show_bug.cgi?id=178432
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/Path.svg: Added.
+
 2017-10-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [PARITY] Styles Redesign: clicking on the white space after the property should create a blank property
