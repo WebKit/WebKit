@@ -43,7 +43,6 @@ layer at (0,0) size 800x600
               RenderBlock {DIV} at (0,0) size 672x27
                 RenderBlock {DIV} at (0,0) size 672x27
                   RenderBR {BR} at (0,0) size 0x26
-            RenderBlock (anonymous) at (2,56) size 672x0
           RenderBlock (anonymous) at (0,82) size 756x27
             RenderBR {BR} at (0,0) size 0x26
           RenderBlock {BLOCKQUOTE} at (40,133) size 676x58 [border: (2px solid #0000FF)]

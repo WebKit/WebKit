@@ -22,7 +22,6 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (14,14) size 756x27
             RenderText {#text} at (362,0) size 32x26
               text run at (362,0) width 32: "foo"
-          RenderBlock (anonymous) at (14,41) size 756x0
           RenderBlock {DIV} at (14,41) size 756x55 [border: (2px solid #FF0000)]
             RenderText {#text} at (362,14) size 32x26
               text run at (362,14) width 32: "bar"

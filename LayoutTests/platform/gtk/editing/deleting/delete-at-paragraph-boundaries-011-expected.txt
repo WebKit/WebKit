@@ -40,5 +40,4 @@ layer at (0,0) size 800x600
             text run at (2,2) width 49: "hello"
         RenderBlock {P} at (2,81) size 780x31 [border: (2px solid #FF0000)]
           RenderBR {BR} at (2,2) size 0x26
-        RenderBlock (anonymous) at (2,136) size 780x0
 caret: position 0 of child 0 {BR} of child 1 {P} of child 3 {DIV} of body

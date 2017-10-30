@@ -34,5 +34,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 20x17
             text run at (0,0) width 20: "bar"
       RenderBlock {DIV} at (0,100) size 784x20 [border: (1px solid #000000)]
-        RenderBR {BR} at (1,1) size 0x17
+        RenderBlock (anonymous) at (1,1) size 782x18
+          RenderBR {BR} at (0,0) size 0x17
 caret: position 0 of child 0 {BR} of child 6 {DIV} of body

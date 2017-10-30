@@ -1,3 +1,73 @@
+2017-10-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Rebaseline affected tests after r224177
+        https://bugs.webkit.org/show_bug.cgi?id=178933
+
+        Unreviewed gardening.
+
+        * platform/gtk/editing/deleting/4922367-expected.txt:
+        * platform/gtk/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * platform/gtk/editing/deleting/delete-at-paragraph-boundaries-010-expected.txt:
+        * platform/gtk/editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-023-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-024-expected.txt:
+        * platform/gtk/editing/deleting/delete-br-008-expected.txt:
+        * platform/gtk/editing/deleting/delete-br-010-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-015-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-016-expected.txt:
+        * platform/gtk/editing/deleting/delete-line-017-expected.txt:
+        * platform/gtk/editing/deleting/merge-no-br-expected.txt:
+        * platform/gtk/editing/deleting/type-delete-after-quote-expected.txt:
+        * platform/gtk/editing/execCommand/4747450-expected.txt:
+        * platform/gtk/editing/execCommand/4916402-expected.txt:
+        * platform/gtk/editing/execCommand/4916541-expected.txt:
+        * platform/gtk/editing/execCommand/4924441-expected.txt:
+        * platform/gtk/editing/execCommand/5136770-expected.txt:
+        * platform/gtk/editing/execCommand/5142012-2-expected.txt:
+        * platform/gtk/editing/execCommand/5190926-expected.txt:
+        * platform/gtk/editing/execCommand/5481523-expected.txt:
+        * platform/gtk/editing/execCommand/create-list-with-hr-expected.txt:
+        * platform/gtk/editing/execCommand/indent-selection-expected.txt:
+        * platform/gtk/editing/execCommand/insert-list-and-stitch-expected.txt:
+        * platform/gtk/editing/execCommand/nsresponder-indent-expected.txt:
+        * platform/gtk/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/gtk/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/gtk/editing/pasteboard/5071074-2-expected.txt:
+        * platform/gtk/editing/pasteboard/displaced-generic-placeholder-expected.txt:
+        * platform/gtk/editing/pasteboard/displaced-placeholder-expected.txt:
+        * platform/gtk/editing/pasteboard/merge-after-delete-2-expected.txt:
+        * platform/gtk/editing/pasteboard/merge-after-delete-expected.txt:
+        * platform/gtk/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-008-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-008-expected.txt:
+        * platform/gtk/editing/pasteboard/undoable-fragment-removes-expected.txt:
+        * platform/gtk/editing/pasteboard/unrendered-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/gtk/editing/style/4916887-expected.txt:
+        * platform/gtk/editing/style/5046875-1-expected.txt:
+        * platform/gtk/editing/style/5046875-2-expected.txt:
+        * platform/gtk/editing/style/5279521-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-003-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-004-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-007-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-009-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-010-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-011-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-012-expected.txt:
+        * platform/gtk/editing/style/create-block-for-style-013-expected.txt:
+        * platform/gtk/editing/unsupported-content/list-delete-001-expected.txt:
+        * platform/gtk/fast/forms/button-generated-content-expected.txt:
+
 2017-10-30  Antti Koivisto  <antti@apple.com>
 
         Destroy all unneeded anonymous wrappers in RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()

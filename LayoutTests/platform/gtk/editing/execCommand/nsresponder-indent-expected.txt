@@ -17,5 +17,4 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x18
           RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,18) size 784x0
 caret: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

@@ -46,5 +46,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 52x26
             text run at (2,2) width 52: ". test."
-        RenderBlock (anonymous) at (0,31) size 784x0
 caret: position 6 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

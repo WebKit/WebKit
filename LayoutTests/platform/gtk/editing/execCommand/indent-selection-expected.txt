@@ -27,7 +27,6 @@ layer at (0,0) size 800x600
           RenderBlock {BLOCKQUOTE} at (40,36) size 704x18
             RenderText {#text} at (0,0) size 38x17
               text run at (0,0) width 38: "ipsum"
-        RenderBlock (anonymous) at (0,54) size 784x0
         RenderBlock {BLOCKQUOTE} at (40,70) size 744x54
           RenderBlock {UL} at (0,0) size 744x54
             RenderBlock {UL} at (40,0) size 704x54
@@ -54,6 +53,5 @@ layer at (0,0) size 800x600
             RenderInline {SPAN} at (0,0) size 38x17
               RenderText {#text} at (0,18) size 38x17
                 text run at (0,18) width 38: "Thing"
-        RenderBlock (anonymous) at (0,194) size 784x0
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {BLOCKQUOTE} of child 4 {DIV} of body
 selection end:   position 5 of child 0 {#text} of child 3 {SPAN} of child 3 {BLOCKQUOTE} of child 4 {DIV} of body
