@@ -331,7 +331,8 @@ NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentReques
     if (redirectResponse)
         return redirectResponse;
 
-    if ([[[newRequest URL] scheme] isEqualToString:[[currentRequest URL] scheme]])
+    if ([[[newRequest URL] scheme] isEqualToString:[[currentRequest URL] scheme]]
+        && !([newRequest respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)] && [newRequest _schemeWasUpgradedDueToDynamicHSTS]))
         return nil;
 
     // If the new request is a different protocol than the current request, synthesize a redirect response.
