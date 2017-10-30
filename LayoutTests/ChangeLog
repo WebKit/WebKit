@@ -1,3 +1,12 @@
+2017-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Skip Service Workers tests again after r224132.
+
+        Service Workers tests were unskipped from main TestExpectations in r224132, but Service Workers are not enabled
+        in GTk+ port yet.
+
+        * platform/gtk/TestExpectations:
+
 2017-10-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline a few tests after r224156.
