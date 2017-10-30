@@ -266,7 +266,6 @@ Modules/websockets/WebSocketFrame.cpp
 Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 
-Modules/webvr/GamepadWebVR.cpp
 Modules/webvr/NavigatorWebVR.cpp
 Modules/webvr/VRDisplay.cpp
 Modules/webvr/VRDisplayCapabilities.cpp
@@ -2444,7 +2443,6 @@ JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
 JSGainNode.cpp
-JSGamepadWebVR.cpp
 JSGeolocation.cpp
 JSGeoposition.cpp
 JSGlobalCrypto.cpp
@@ -2976,7 +2974,10 @@ JSXSLTProcessor.cpp
 JSGamepad.cpp
 JSGamepadButton.cpp
 JSGamepadEvent.cpp
+JSGamepadWebVR.cpp
 JSNavigatorGamepad.cpp
+
+Modules/webvr/GamepadWebVR.cpp
 
 #endif
 

@@ -405,7 +405,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/websockets/WebSocket.idl
 
     Modules/webvr/DOMWindowWebVR.idl
-    Modules/webvr/GamepadWebVR.idl
     Modules/webvr/NavigatorWebVR.idl
     Modules/webvr/VRDisplay.idl
     Modules/webvr/VRDisplayCapabilities.idl
@@ -996,6 +995,8 @@ if (ENABLE_GAMEPAD)
         Modules/gamepad/GamepadButton.idl
         Modules/gamepad/GamepadEvent.idl
         Modules/gamepad/NavigatorGamepad.idl
+
+        Modules/webvr/GamepadWebVR.idl
     )
 
     list(APPEND WebCore_SOURCES
