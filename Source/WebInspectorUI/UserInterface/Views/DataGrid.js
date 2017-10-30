@@ -1570,10 +1570,14 @@ WI.DataGrid = class DataGrid extends WI.View
     _mouseDownInDataTable(event)
     {
         var gridNode = this.dataGridNodeFromNode(event.target);
-        if (!gridNode || !gridNode.selectable)
+        if (!gridNode) {
+            if (this.selectedNode)
+                this.selectedNode.deselect();
+            
             return;
+        }
 
-        if (gridNode.isEventWithinDisclosureTriangle(event))
+        if (!gridNode.selectable || gridNode.isEventWithinDisclosureTriangle(event))
             return;
 
         if (event.metaKey) {

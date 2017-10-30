@@ -1,3 +1,13 @@
+2017-10-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Clicking filler in data grid should clear selection
+        https://bugs.webkit.org/show_bug.cgi?id=179027
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype._mouseDownInDataTable):
+
 2017-10-30  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: no path components shown in recording content view after selecting a recording via View Recordings... dropdown
