@@ -57,6 +57,9 @@ public:
     std::optional<Seconds> currentTime() const;
     void setCurrentTime(std::optional<Seconds>);
 
+    double playbackRate() const { return m_playbackRate; }
+    void setPlaybackRate(double);
+
     String description();
 
 private:
@@ -65,6 +68,7 @@ private:
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     std::optional<Seconds> m_startTime;
+    double m_playbackRate { 1 };
 };
 
 } // namespace WebCore

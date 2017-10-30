@@ -113,13 +113,13 @@ std::optional<Seconds> WebAnimation::currentTime() const
     if (!timelineTime)
         return std::nullopt;
 
-    // FIXME: account for playback rate when we support it (webkit.org/b/178931).
-    return timelineTime.value() - m_startTime.value();
+    return (timelineTime.value() - m_startTime.value()) * m_playbackRate;
 }
 
 void WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
 {
-    // FIXME: account for hold time when we support it (webkit.org/b/178932).
+    // FIXME: account for hold time when we support it (webkit.org/b/178932),
+    // including situations where playbackRate is 0.
 
     if (!m_timeline) {
         setStartTime(std::nullopt);
@@ -132,8 +132,21 @@ void WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
         return;
     }
 
-    // FIXME: account for playback rate when we support it (webkit.org/b/178931).
-    setStartTime(timelineTime.value() - seekTime.value());
+    setStartTime(timelineTime.value() - (seekTime.value() / m_playbackRate));
+}
+
+void WebAnimation::setPlaybackRate(double newPlaybackRate)
+{
+    if (m_playbackRate == newPlaybackRate)
+        return;
+
+    // 3.5.17.1. Updating the playback rate of an animation
+    // Changes to the playback rate trigger a compensatory seek so that that the animation's current time
+    // is unaffected by the change to the playback rate.
+    auto previousTime = currentTime();
+    m_playbackRate = newPlaybackRate;
+    if (previousTime)
+        setCurrentTime(previousTime);
 }
 
 String WebAnimation::description()

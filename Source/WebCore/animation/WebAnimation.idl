@@ -33,4 +33,5 @@
     readonly attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
+    attribute double playbackRate;
 };

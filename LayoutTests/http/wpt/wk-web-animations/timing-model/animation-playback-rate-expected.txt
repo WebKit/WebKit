@@ -1,0 +1,8 @@
+
+PASS Playback rate defaults to 1 
+PASS Correctly compute the current time based on the playback rate 
+PASS Correctly compute the start time based on the playback rate when setting current time 
+PASS Correctly compute the start time based on a playback rate < 1 when setting current time 
+PASS Correctly compute the start time based on a playback rate < 0 
+PASS Correctly compute a current time of 0 when playback rate is 0 
+

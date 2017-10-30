@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Tests for playback rate</title>
+<link rel="help" href="https://w3c.github.io/web-animations/#updating-the-playback-rate-of-an-animation">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(t => {
+  const animation = new Animation(document.timeline);
+
+  assert_equals(animation.playbackRate, 1);
+}, 'Playback rate defaults to 1');
+
+test(t => {
+  const animation = new Animation(document.timeline);
+  animation.startTime = 1;
+  animation.playbackRate = 2;
+  internals.setTimelineCurrentTime(document.timeline, 3);
+
+  assert_equals(animation.startTime, 1);
+  assert_equals(animation.currentTime, 4);
+  assert_equals(animation.playbackRate, 2);
+}, 'Correctly compute the current time based on the playback rate');
+
+test(t => {
+  const animation = new Animation(document.timeline);
+  animation.startTime = 2;
+  animation.playbackRate = 2;
+  internals.setTimelineCurrentTime(document.timeline, 4);
+
+  animation.currentTime = 3;
+
+  assert_equals(animation.startTime, 2.5);
+  assert_equals(animation.currentTime, 3);
+  assert_equals(animation.playbackRate, 2);
+}, 'Correctly compute the start time based on the playback rate when setting current time');
+
+test(t => {
+  const animation = new Animation(document.timeline);
+  animation.startTime = 2;
+  animation.playbackRate = 0.5;
+  internals.setTimelineCurrentTime(document.timeline, 4);
+
+  animation.currentTime = 1;
+
+  assert_equals(animation.startTime, 2);
+  assert_equals(animation.currentTime, 1);
+  assert_equals(animation.playbackRate, 0.5);
+}, 'Correctly compute the start time based on a playback rate < 1 when setting current time');
+
+test(t => {
+  const animation = new Animation(document.timeline);
+  animation.currentTime = 1;
+  animation.playbackRate = -1;
+  internals.setTimelineCurrentTime(document.timeline, 4);
+
+  assert_equals(animation.startTime, 5);
+  assert_equals(animation.currentTime, 1);
+  assert_equals(animation.playbackRate, -1);
+}, 'Correctly compute the start time based on a playback rate < 0');
+
+test(t => {
+  const animation = new Animation(document.timeline);
+  animation.playbackRate = 0;
+  animation.startTime = 0;
+  internals.setTimelineCurrentTime(document.timeline, 1);
+
+  assert_equals(animation.startTime, 0);
+  assert_equals(animation.currentTime, 0);
+  assert_equals(animation.playbackRate, 0);
+}, 'Correctly compute a current time of 0 when playback rate is 0');
+
+</script>
+</body>

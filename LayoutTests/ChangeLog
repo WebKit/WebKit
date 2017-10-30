@@ -1,3 +1,16 @@
+2017-10-30  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose the playbackRate property on Animation
+        https://bugs.webkit.org/show_bug.cgi?id=178931
+
+        Reviewed by Sam Weinig.
+
+        Add a new test, using WPT, to check that the playbackRate property is accounted
+        for when getting and setting the current time.
+
+        * http/wpt/wk-web-animations/timing-model/animation-playback-rate-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-playback-rate.html: Added.
+
 2017-10-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Rebaseline affected tests after r224177
