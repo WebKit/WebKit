@@ -1,3 +1,9 @@
+2017-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline a few tests after r224156.
+
+        * TestExpectations:
+
 2017-10-29  Sam Weinig  <sam@webkit.org>
 
         [Conic Gradients] Add support for parsing conic gradients

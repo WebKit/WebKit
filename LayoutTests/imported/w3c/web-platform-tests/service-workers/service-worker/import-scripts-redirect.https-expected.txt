@@ -1,0 +1,4 @@
+
+FAIL importScripts() supports redirects assert_not_equals: worker is installing got disallowed value null
+FAIL importScripts() supports redirects and can be updated assert_not_equals: worker is installing got disallowed value null
+

@@ -10,4 +10,5 @@ FAIL ready on an iframe whose parent registers a new service worker promise_test
 FAIL ready on an iframe that installs a new service worker promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
 FAIL ready after a longer matched registration registered promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 FAIL access ready after it has been resolved promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL access ready on uninstalling registration that is resurrected promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 

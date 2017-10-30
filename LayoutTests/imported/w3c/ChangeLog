@@ -1,3 +1,13 @@
+2017-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revaseline a few tests after r224156.
+
+        * web-platform-tests/service-workers/service-worker/import-scripts-redirect.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/mime-sniffing.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/ready.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https-expected.txt:
+
 2017-10-28  Dean Jackson  <dino@apple.com>
 
         createImageBitmap with HTMLCanvasElement

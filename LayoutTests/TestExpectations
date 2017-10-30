@@ -194,6 +194,7 @@ imported/w3c/web-platform-tests/streams/piping/multiple-propagation.serviceworke
 imported/w3c/web-platform-tests/streams/piping/pipe-through.serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/streams/piping/transform-streams.serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.serviceworker.https.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.serviceworker.https.html [ Skip ]

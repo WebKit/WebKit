@@ -8,8 +8,13 @@ FAIL mode: "follow", no mode change, no server redirect promise_test: Unhandled 
 FAIL mode: "follow", no mode change promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 FAIL mode: "error", mode change: "follow" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 FAIL mode: "manual", mode change: "follow" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL mode: "follow", mode change: "redirect" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "follow", mode change: "manual" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 FAIL mode: "error", mode change: "manual" promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 FAIL mode: "manual", no mode change promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "follow", generated redirect response promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "error", generated redirect response promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL mode: "manual", generated redirect response promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Fetch should follow the redirect response 20 times promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Fetch should not follow the redirect response 21 times. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 PASS restore global state (service worker registration) 
 
