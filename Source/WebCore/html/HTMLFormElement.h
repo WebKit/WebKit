@@ -102,8 +102,11 @@ public:
     WEBCORE_EXPORT void setMethod(const String&);
 
     String target() const final;
+    String effectiveTarget(const Event*) const;
 
     bool wasUserSubmitted() const;
+
+    HTMLFormControlElement* findSubmitButton(const Event*) const;
 
     HTMLFormControlElement* defaultButton() const;
     void resetDefaultButton();

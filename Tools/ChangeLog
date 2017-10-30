@@ -1,3 +1,19 @@
+2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        WKBundlePageWillSendSubmitEventCallback is called with incorrect frame parameter
+        https://bugs.webkit.org/show_bug.cgi?id=176719
+
+        Reviewed by Chris Dumez.
+
+        Test that WKBundlePageWillSendSubmitEventCallback is called with separate frame and
+        sourceFrame parameters when the target frame of the form submission is not the source frame.
+
+        * TestWebKitAPI/Tests/WebKit/WillSendSubmitEvent.cpp:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        * TestWebKitAPI/Tests/WebKit/WillSendSubmitEvent_Bundle.cpp:
+        (TestWebKitAPI::willSendSubmitEvent):
+        * TestWebKitAPI/Tests/WebKit/auto-submitting-form.html:
+
 2017-10-30  Alex Christensen  <achristensen@webkit.org>
 
         ASSERTION FAILED: internalValuesConsistent(m_url) in WebCore::URLParser::URLParser

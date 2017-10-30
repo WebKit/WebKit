@@ -56,6 +56,14 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     WKRetainPtr<WKStringRef> hiddenFieldKey(AdoptWK, WKStringCreateWithUTF8CString("hiddenField"));
     WKStringRef hiddenFieldValueWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(values, hiddenFieldKey.get()));
     EXPECT_NULL(hiddenFieldValueWK);
+
+    WKRetainPtr<WKStringRef> targetFrameKey(AdoptWK, WKStringCreateWithUTF8CString("targetFrameIsMainFrame"));
+    WKBooleanRef targetFrameIsMainFrame = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(values, targetFrameKey.get()));
+    EXPECT_FALSE(WKBooleanGetValue(targetFrameIsMainFrame));
+
+    WKRetainPtr<WKStringRef> sourceFrameKey(AdoptWK, WKStringCreateWithUTF8CString("sourceFrameIsMainFrame"));
+    WKBooleanRef sourceFrameIsMainFrame = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(values, sourceFrameKey.get()));
+    EXPECT_TRUE(WKBooleanGetValue(sourceFrameIsMainFrame));
 }
 
 static void setInjectedBundleClient(WKContextRef context)

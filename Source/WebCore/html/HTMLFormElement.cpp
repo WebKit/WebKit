@@ -279,8 +279,11 @@ void HTMLFormElement::prepareForSubmission(Event& event)
         return;
     }
 
+    auto targetFrame = frame->loader().findFrameForNavigation(effectiveTarget(&event), &document());
+    if (!targetFrame)
+        targetFrame = frame.get();
     auto formState = FormState::create(*this, textFieldValues(), document(), NotSubmittedByJavaScript);
-    frame->loader().client().dispatchWillSendSubmitEvent(WTFMove(formState));
+    targetFrame->loader().client().dispatchWillSendSubmitEvent(WTFMove(formState));
 
     Ref<HTMLFormElement> protectedThis(*this);
 
@@ -642,9 +645,35 @@ String HTMLFormElement::target() const
     return attributeWithoutSynchronization(targetAttr);
 }
 
+String HTMLFormElement::effectiveTarget(const Event* event) const
+{
+    if (auto* submitButton = findSubmitButton(event)) {
+        auto targetValue = submitButton->attributeWithoutSynchronization(formtargetAttr);
+        if (!targetValue.isNull())
+            return targetValue;
+    }
+
+    auto targetValue = target();
+    if (!targetValue.isNull())
+        return targetValue;
+
+    return document().baseTarget();
+}
+
 bool HTMLFormElement::wasUserSubmitted() const
 {
     return m_wasUserSubmitted;
+}
+
+HTMLFormControlElement* HTMLFormElement::findSubmitButton(const Event* event) const
+{
+    if (event && event->target()) {
+        for (auto node = event->target()->toNode(); node; node = node->parentNode()) {
+            if (is<HTMLFormControlElement>(*node))
+                return downcast<HTMLFormControlElement>(node.get());
+        }
+    }
+    return nullptr;
 }
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const

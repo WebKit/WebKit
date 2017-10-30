@@ -147,18 +147,9 @@ static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Docum
 
 Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attributes& attributes, Event* event, LockHistory lockHistory, FormSubmissionTrigger trigger)
 {
-    HTMLFormControlElement* submitButton = nullptr;
-    if (event && event->target()) {
-        for (auto node = event->target()->toNode(); node; node = node->parentNode()) {
-            if (is<HTMLFormControlElement>(*node)) {
-                submitButton = downcast<HTMLFormControlElement>(node.get());
-                break;
-            }
-        }
-    }
-
     auto copiedAttributes = attributes;
-    if (submitButton) {
+
+    if (auto* submitButton = form.findSubmitButton(event)) {
         AtomicString attributeValue;
         if (!(attributeValue = submitButton->attributeWithoutSynchronization(formactionAttr)).isNull())
             copiedAttributes.parseAction(attributeValue);
@@ -228,11 +219,9 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attribut
     formData->setIdentifier(generateFormDataIdentifier());
     formData->setContainsPasswordData(containsPasswordData);
 
-    String targetOrBaseTarget = copiedAttributes.target().isEmpty() ? document.baseTarget() : copiedAttributes.target();
-
     auto formState = FormState::create(form, WTFMove(formValues), document, trigger);
 
-    return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, targetOrBaseTarget, encodingType, WTFMove(formState), formData.releaseNonNull(), boundary, lockHistory, event));
+    return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, form.effectiveTarget(event), encodingType, WTFMove(formState), formData.releaseNonNull(), boundary, lockHistory, event));
 }
 
 URL FormSubmission::requestURL() const

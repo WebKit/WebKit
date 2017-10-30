@@ -30,6 +30,7 @@
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
+#include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 
 namespace TestWebKitAPI {
@@ -43,8 +44,18 @@ public:
 
 static InjectedBundleTest::Register<WillSendSubmitEventTest> registrar("WillSendSubmitEventTest");
 
-static void willSendSubmitEvent(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleFrameRef, WKBundleFrameRef, WKDictionaryRef values, const void*)
+static void willSendSubmitEvent(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleFrameRef targetFrame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, const void*)
 {
+    auto messageBody = const_cast<WKMutableDictionaryRef>(values);
+
+    auto targetFrameKey = Util::toWK("targetFrameIsMainFrame");
+    auto targetFrameValue = adoptWK(WKBooleanCreate(WKBundleFrameIsMainFrame(targetFrame)));
+    WKDictionarySetItem(messageBody, targetFrameKey.get(), targetFrameValue.get());
+
+    auto sourceFrameKey = Util::toWK("sourceFrameIsMainFrame");
+    auto sourceFrameValue = adoptWK(WKBooleanCreate(WKBundleFrameIsMainFrame(sourceFrame)));
+    WKDictionarySetItem(messageBody, sourceFrameKey.get(), sourceFrameValue.get());
+
     WKBundlePostMessage(InjectedBundleController::singleton().bundle(), Util::toWK("DidReceiveWillSendSubmitEvent").get(), values);
 }
 
