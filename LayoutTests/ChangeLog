@@ -1,3 +1,16 @@
+2017-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        tab-size: 0px asserts
+        https://bugs.webkit.org/show_bug.cgi?id=176198
+
+        Reviewed by Antti Koivisto.
+
+        Don't claim to support tab-size values with units. We don't, and they would become 0, rather
+        than fall back to the default as should happen.
+
+        * fast/css/tab-size-expected.html:
+        * fast/css/tab-size.html:
+
 2017-10-30  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Rewrite homegrown tests as Web Platform tests

@@ -25,6 +25,7 @@ function test()
     setupBlock("Default tab size (8).", null);
     setupBlock("Tab size = -10, should fall back to the default.", "tab-size: -10;");
     setupBlock("Tab size = 2.", "tab-size: 2;");
+    setupBlock("Tab size = 20px, should not assert, and fall back to 8.", "tab-size: 20px;");
 
     var dynamicBlock = setupBlock("Tab size becomes 2 dynamically.", null);
 

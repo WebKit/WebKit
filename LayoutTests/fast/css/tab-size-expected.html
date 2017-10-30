@@ -29,6 +29,14 @@ pre { margin: 0.1em; }
 <pre>xx  xx  x</pre>
 <pre>xxxxxxxxx xx  x</pre>
 </div>
+<b>Tab size = 20px, should not assert, and fall back to 8.</b>
+<div>
+<pre>        x</pre>
+<pre>                x</pre>
+<pre>        x       x</pre>
+<pre>xx      xx      x</pre>
+<pre>xxxxxxxxx       xx      x</pre>
+</div>
 <b>Tab size becomes 2 dynamically.</b>
 <div>
 <pre>  x</pre>
