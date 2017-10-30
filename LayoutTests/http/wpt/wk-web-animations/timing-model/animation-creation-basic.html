@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Constructing Animation instances with various arguments</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(t => {
+    assert_own_property(window, "Animation");
+}, "The Animation interface is defined.");
+
+test(t => {
+    const animation = new Animation;
+    assert_equals(animation.timeline, null);
+}, "Creating Animation without arguments should have a null timeline.");
+
+test(t => {
+    const animation = new Animation(undefined);
+    assert_equals(animation.timeline, null);
+}, "Creating Animation with an undefined argument should have a null timeline.");
+
+test(t => {
+    const animation = new Animation(null);
+    assert_equals(animation.timeline, null);
+}, "Creating Animation with a null argument should have a null timeline.");
+
+test(t => {
+    const animation = new Animation(document.timeline);
+    assert_equals(animation.timeline, document.timeline);
+}, "Creating Animation with a timeline has a timeline.");
+
+</script>
+</body>

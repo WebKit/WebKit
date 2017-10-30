@@ -1,0 +1,4 @@
+
+PASS The AnimationEffectTiming interface is defined. 
+PASS The AnimationEffectTiming interface cannot be constructed. 
+

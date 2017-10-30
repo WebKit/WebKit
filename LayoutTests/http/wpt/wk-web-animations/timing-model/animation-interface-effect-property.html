@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Check the behavior of the effect property on Animation objects</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(t => {
+    const animation = new Animation;
+    assert_equals(animation.effect, null);
+}, "The animation.effect property should be null by default.");
+
+test(t => {
+    const animation = new Animation;
+    const effect = new KeyframeEffect(document.body);
+    animation.effect = effect;
+    assert_equals(animation.effect, effect);
+}, "The animation.effect property can be set to a KeyframeEffect object.");
+
+test(t => {
+    const animation = new Animation;
+    const effectA = new KeyframeEffect(document.body);
+    animation.effect = effectA;
+    assert_equals(animation.effect, effectA);
+    const effectB = new KeyframeEffect(document.body);
+    animation.effect = effectB;
+    assert_equals(animation.effect, effectB);
+}, "The animation.effect property can be set to another KeyframeEffect object.");
+
+test(t => {
+    const animation = new Animation;
+    const effect = new KeyframeEffect(document.body);
+    animation.effect = effect;
+    assert_equals(animation.effect, effect);
+    animation.effect = null;
+    assert_equals(animation.effect, null);
+}, "The animation.effect property can be set back to null.");
+
+test(t => {
+    const animation = new Animation;
+    assert_throws(new TypeError, () => animation.effect = 0);
+    assert_throws(new TypeError, () => animation.effect = []);
+    assert_throws(new TypeError, () => animation.effect = {});
+    assert_throws(new TypeError, () => animation.effect = false);
+    assert_throws(new TypeError, () => animation.effect = 'effect');
+}, "The animation.effect property cannot be set to something other than null or an AnimationEffect object.");
+
+</script>
+</body>

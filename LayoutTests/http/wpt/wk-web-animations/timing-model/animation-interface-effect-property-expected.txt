@@ -1,0 +1,7 @@
+
+PASS The animation.effect property should be null by default. 
+PASS The animation.effect property can be set to a KeyframeEffect object. 
+PASS The animation.effect property can be set to another KeyframeEffect object. 
+PASS The animation.effect property can be set back to null. 
+PASS The animation.effect property cannot be set to something other than null or an AnimationEffect object. 
+

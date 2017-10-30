@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Check that the AnimationEffect interface is defined and does not expose a constructor</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(t => {
+    assert_own_property(window, "AnimationEffect");
+}, "The AnimationEffect interface is defined.");
+
+test(t => {
+    assert_throws(new TypeError, () => new AnimationEffect);
+}, "The AnimationEffect interface cannot be constructed.");
+
+</script>
+</body>

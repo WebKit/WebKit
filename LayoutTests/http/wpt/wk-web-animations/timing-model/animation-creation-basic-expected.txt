@@ -1,0 +1,7 @@
+
+PASS The Animation interface is defined. 
+PASS Creating Animation without arguments should have a null timeline. 
+PASS Creating Animation with an undefined argument should have a null timeline. 
+PASS Creating Animation with a null argument should have a null timeline. 
+PASS Creating Animation with a timeline has a timeline. 
+

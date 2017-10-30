@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Check the behavior of the startTime property on Animation objects</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(t => {
+    const animation = new Animation;
+    assert_equals(animation.startTime, null);
+}, "The animation.startTime property should be null by default.");
+
+test(t => {
+    const animation = new Animation;
+    animation.startTime = 2;
+    assert_equals(animation.startTime, 2);
+}, "The animation.startTime property can be set to a number.");
+
+test(t => {
+    const animation = new Animation;
+    animation.startTime = 2;
+    assert_equals(animation.startTime, 2);
+    animation.startTime = null;
+    assert_equals(animation.startTime, null);
+}, "The animation.effect property can be set back to null.");
+
+</script>
+</body>

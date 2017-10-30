@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Check that the KeyframeEffect interface is defined and exposes a constructor</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(t => {
+    assert_own_property(window, "KeyframeEffect");
+}, "The KeyframeEffect interface is defined.");
+
+test(t => {
+    assert_throws(new TypeError, () => new KeyframeEffect);
+}, "The KeyframeEffect interface cannot be constructed without parameters.");
+
+test(t => {
+    assert_throws(new TypeError, () => new KeyframeEffect(0));
+    assert_throws(new TypeError, () => new KeyframeEffect({}));
+    assert_throws(new TypeError, () => new KeyframeEffect([]));
+    assert_throws(new TypeError, () => new KeyframeEffect(false));
+    assert_throws(new TypeError, () => new KeyframeEffect('element'));
+}, "The KeyframeEffect interface constructor throws if the parameter has the wrong type.");
+
+test(t => {
+    assert_equals((new KeyframeEffect(document.body)).target, document.body);
+}, "The KeyframeEffect interface target is set to the provided Element.");
+
+test(t => {
+    const effect = new KeyframeEffect(document.body);
+    assert_readonly(effect, "target");
+}, "A KeyframeEffect object target is read-only.");
+
+</script>
+</body>

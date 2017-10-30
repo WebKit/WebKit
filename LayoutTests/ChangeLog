@@ -1,3 +1,55 @@
+2017-10-30  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Rewrite homegrown tests as Web Platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=179017
+
+        We rewrite all of the new homegrown Web Animations tests as Web Platorm tests,
+        except for one test which checks dumping of the document timeline using an
+        internals method which is not appropriate as a WPT.
+
+        Reviewed by Dean Jackson.
+
+        * http/wpt/wk-web-animations/timing-model/animation-creation-basic-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-creation-basic.html: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-current-time-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-current-time.html: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-timing-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-timing.html: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-effect.html: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-effect-property-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-effect-property.html: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-start-time-property-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-start-time-property.html: Added.
+        * http/wpt/wk-web-animations/timing-model/document-timeline-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/document-timeline.html: Added.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-interface-timing-duration-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-interface-timing-duration.html: Added.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect.html: Added.
+        * http/wpt/wk-web-animations/timing-model/timeline-current-time-expected.txt: Added.
+        * http/wpt/wk-web-animations/timing-model/timeline-current-time.html: Added.
+        * webanimations/animation-creation-basic-expected.txt: Removed.
+        * webanimations/animation-creation-basic.html: Removed.
+        * webanimations/animation-current-time-expected.txt: Removed.
+        * webanimations/animation-current-time.html: Removed.
+        * webanimations/animation-effect-expected.txt: Removed.
+        * webanimations/animation-effect-timing-expected.txt: Removed.
+        * webanimations/animation-effect-timing.html: Removed.
+        * webanimations/animation-effect.html: Removed.
+        * webanimations/animation-interface-effect-property-expected.txt: Removed.
+        * webanimations/animation-interface-effect-property.html: Removed.
+        * webanimations/animation-interface-start-time-property-expected.txt: Removed.
+        * webanimations/animation-interface-start-time-property.html: Removed.
+        * webanimations/document-timeline-expected.txt: Removed.
+        * webanimations/document-timeline.html: Removed.
+        * webanimations/keyframe-effect-expected.txt: Removed.
+        * webanimations/keyframe-effect-interface-timing-duration-expected.txt: Removed.
+        * webanimations/keyframe-effect-interface-timing-duration.html: Removed.
+        * webanimations/keyframe-effect.html: Removed.
+        * webanimations/timeline-current-time-expected.txt: Removed.
+        * webanimations/timeline-current-time.html: Removed.
+
 2017-10-30  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Rebaseline tests after r224177.

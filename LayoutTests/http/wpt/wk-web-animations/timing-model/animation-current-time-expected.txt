@@ -1,0 +1,6 @@
+
+PASS An animation's currentTime is null when the timeline has no currentTime set. 
+PASS An animation accounts for its start time and document current time when computing its current time. 
+PASS Setting the current time should adjust the start time. 
+PASS Setting the current time to null should throw a TypeError. 
+
