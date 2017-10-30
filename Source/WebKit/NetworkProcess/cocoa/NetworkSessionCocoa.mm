@@ -159,7 +159,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     completionHandler(WebCore::createHTTPBodyNSInputStream(*body).get());
 }
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if HAVE(CFNETWORK_IGNORE_HSTS)
 static NSURLRequest* downgradeRequest(NSURLRequest *request)
 {
     NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
@@ -202,7 +202,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         auto completionHandlerCopy = Block_copy(completionHandler);
 
         bool shouldIgnoreHSTS = false;
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if HAVE(CFNETWORK_IGNORE_HSTS)
         shouldIgnoreHSTS = [request respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)] && [request _schemeWasUpgradedDueToDynamicHSTS]
             && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request)).isEmpty();
         if (shouldIgnoreHSTS) {
@@ -219,7 +219,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             UNUSED_PARAM(taskIdentifier);
 #endif
             auto nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if HAVE(CFNETWORK_IGNORE_HSTS)
             nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
 #else
             UNUSED_PARAM(shouldIgnoreHSTS);
@@ -239,7 +239,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     LOG(NetworkSession, "%llu _schemeUpgraded %s", taskIdentifier, request.URL.absoluteString.UTF8String);
     
     bool shouldIgnoreHSTS = false;
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if HAVE(CFNETWORK_IGNORE_HSTS)
     shouldIgnoreHSTS = [request respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)] && [request _schemeWasUpgradedDueToDynamicHSTS]
         && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request)).isEmpty();
     if (shouldIgnoreHSTS) {
@@ -258,7 +258,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             UNUSED_PARAM(taskIdentifier);
 #endif
             auto nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if HAVE(CFNETWORK_IGNORE_HSTS)
             nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
 #else
             UNUSED_PARAM(shouldIgnoreHSTS);
