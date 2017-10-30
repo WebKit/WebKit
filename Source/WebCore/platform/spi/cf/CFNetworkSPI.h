@@ -99,9 +99,24 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (void)_setProperty:(id)value forKey:(NSString *)key;
 @end
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@interface NSURLRequest ()
+- (BOOL)_schemeWasUpgradedDueToDynamicHSTS;
+- (BOOL)_preventHSTSStorage;
+- (BOOL)_ignoreHSTS;
+@end
+#endif
+
 @interface NSMutableURLRequest ()
 - (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
 @end
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@interface NSMutableURLRequest ()
+- (void)_setPreventHSTSStorage:(BOOL)preventHSTSStorage;
+- (void)_setIgnoreHSTS:(BOOL)ignoreHSTS;
+@end
+#endif
 
 @interface NSURLResponse ()
 + (NSURLResponse *)_responseWithCFURLResponse:(CFURLResponseRef)response;
