@@ -223,7 +223,7 @@ Markup._get = function(node, depth, shadowRootList)
 
         break;
     case Node.DOCUMENT_FRAGMENT_NODE:
-        if (shadowRootList && internals.address(node) in shadowRootList)
+        if (shadowRootList && window.internals && internals.address(node) in shadowRootList)
           str += "<shadow:root>";
         else
           str += "content";
