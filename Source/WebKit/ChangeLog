@@ -1,3 +1,31 @@
+2017-10-30  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Replace macro driven experimental features code with generated code
+        https://bugs.webkit.org/show_bug.cgi?id=178994
+
+        Reviewed by Simon Fraser.
+
+        As a first step toward allowing experimental features to vary based on compile
+        time flags, replace the macro driven implementation of the WebPreferences part
+        of experimental features, with one generated from a template file.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Scripts/GeneratePreferences.rb:
+        * WebKit.xcodeproj/project.pbxproj:
+
+            Generate the new template.
+        
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb: Added.
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::createExperimentalFeaturesVector): Deleted.
+        (WebKit::WebPreferences::experimentalFeatures): Deleted.
+        (WebKit::WebPreferences::isEnabledForFeature const): Deleted.
+        (WebKit::WebPreferences::setEnabledForFeature): Deleted.
+        (WebKit::WebPreferences::enableAllExperimentalFeatures): Deleted.
+        
+            Replace macro implementation with template generated one.
+
 2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Build more files under WebCore as unified sources and get rid of WebCorePlatformWPE build target

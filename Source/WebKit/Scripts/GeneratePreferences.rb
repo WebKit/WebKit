@@ -159,3 +159,4 @@ preferences.renderToFile("PreferencesTemplates/WebPageUpdatePreferences.cpp.erb"
 preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.h.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.h"))
 preferences.renderToFile("PreferencesTemplates/WebPreferencesKeys.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesKeys.cpp"))
 preferences.renderToFile("PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesStoreDefaultsMap.cpp"))
+preferences.renderToFile("PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb", File.join(options[:outputDirectory], "WebPreferencesExperimentalFeatures.cpp"))
