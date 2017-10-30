@@ -331,7 +331,7 @@ NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentReques
     if (redirectResponse)
         return redirectResponse;
 
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+#if HAVE(CFNETWORK_IGNORE_HSTS)
     if ([[[newRequest URL] scheme] isEqualToString:[[currentRequest URL] scheme]]
         && !([newRequest respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)] && [newRequest _schemeWasUpgradedDueToDynamicHSTS]))
         return nil;
