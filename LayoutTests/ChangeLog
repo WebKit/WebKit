@@ -1,3 +1,12 @@
+2017-10-30  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselining multiple http/tests/websocket/tests/hybi/contentextensions/ test after r224031.
+
+        Unreviewed test gardening.
+
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-expected.txt:
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-worker-expected.txt:
+
 2017-10-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in addChildNodesToDeletionQueue
