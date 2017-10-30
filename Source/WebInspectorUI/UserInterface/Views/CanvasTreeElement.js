@@ -33,6 +33,11 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
         super(["canvas", representedObject.contextType], representedObject.displayName, subtitle, representedObject);
 
         this.registerFolderizeSettings("shader-programs", WI.UIString("Shader Programs"), this.representedObject.shaderProgramCollection, WI.ShaderProgramTreeElement);
+
+        function createRecordingTreeElement(recording) {
+            return new WI.GeneralTreeElement(["recording"], recording.displayName, subtitle, recording);
+        }
+        this.registerFolderizeSettings("recordings", WI.UIString("Recordings"), this.representedObject.recordingCollection, createRecordingTreeElement);
     }
 
     // Protected
@@ -41,8 +46,11 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
     {
         super.onattach();
 
-        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this._shaderProgramAdded, this);
-        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._shaderProgramRemoved, this);
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this._handleItemAdded, this);
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
+
+        this.representedObject.recordingCollection.addEventListener(WI.Collection.Event.ItemAdded, this._handleItemAdded, this);
+        this.representedObject.recordingCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
 
         this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
         this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
@@ -52,8 +60,11 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 
     ondetach()
     {
-        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemAdded, this._shaderProgramAdded, this);
-        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this._shaderProgramRemoved, this);
+        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemAdded, this._handleItemAdded, this);
+        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
+
+        this.representedObject.recordingCollection.removeEventListener(WI.Collection.Event.ItemAdded, this._handleItemAdded, this);
+        this.representedObject.recordingCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
 
         super.ondetach();
     }
@@ -71,6 +82,9 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 
         for (let program of this.representedObject.shaderProgramCollection.items)
             this.addChildForRepresentedObject(program);
+
+        for (let recording of this.representedObject.recordingCollection.items)
+            this.addChildForRepresentedObject(recording);
     }
 
     populateContextMenu(contextMenu, event)
@@ -93,12 +107,12 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 
     // Private
 
-    _shaderProgramAdded(event)
+    _handleItemAdded(event)
     {
-        this.addRepresentedObjectToNewChildQueue(event.data.item);
+        this.addChildForRepresentedObject(event.data.item);
     }
 
-    _shaderProgramRemoved(event)
+    _handleItemRemoved(event)
     {
         this.removeChildForRepresentedObject(event.data.item);
     }

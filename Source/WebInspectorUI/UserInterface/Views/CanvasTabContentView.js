@@ -284,16 +284,11 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     _recordingAdded(recording, options = {})
     {
-        const subtitle = null;
-        let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, subtitle, recording);
-
-        if (recording.source) {
-            let canvasTreeElement = this._canvasTreeOutline.findTreeElement(recording.source);
-            console.assert(canvasTreeElement, "Missing tree element for canvas.", recording.source);
-            if (canvasTreeElement)
-                canvasTreeElement.appendChild(recordingTreeElement);
-        } else
+        if (!recording.source) {
+            const subtitle = null;
+            let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, subtitle, recording);
             this._canvasTreeOutline.appendChild(recordingTreeElement);
+        }
 
         if (!options.suppressShowRecording) {
             this.showRepresentedObject(recording);

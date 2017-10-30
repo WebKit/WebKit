@@ -1,3 +1,36 @@
+2017-10-30  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: no path components shown in recording content view after selecting a recording via View Recordings... dropdown
+        https://bugs.webkit.org/show_bug.cgi?id=178807
+        <rdar://problem/35176463>
+
+        Reviewed by Brian Burg.
+
+        When the first Recording is taken of a canvas, it is immediately added as a child. When the
+        CanvasTreeElement is `attached`, however, it will attempt to regenerate its children if
+        necessary. This is especially true for canvases with ShaderPrograms, as they are added with
+        `addRepresentedObjectToNewChildQueue`, meaning that the child TreeElements aren't actually
+        added until the next tick, preventing the ContentBrowser logic from generating path
+        components correctly.
+
+        This patch switches to using `addChildForRepresentedObject` so that there is no delay when
+        adding children, and also ensures that any existing recordings are also added on regeneration.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype._recordingAdded):
+        Move logic for adding TreeElements for new Recordings to CanvasTreeElement.
+
+        * UserInterface/Views/CanvasTreeElement.js:
+        (WI.CanvasTreeElement.createRecordingTreeElement):
+        (WI.CanvasTreeElement):
+        (WI.CanvasTreeElement.prototype.onattach):
+        (WI.CanvasTreeElement.prototype.ondetach):
+        (WI.CanvasTreeElement.prototype.onpopulate):
+        (WI.CanvasTreeElement.prototype._handleItemAdded):
+        (WI.CanvasTreeElement.prototype._handleItemRemoved):
+        (WI.CanvasTreeElement.prototype._shaderProgramAdded): Deleted.
+        (WI.CanvasTreeElement.prototype._shaderProgramRemoved): Deleted.
+
 2017-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add Path.svg
