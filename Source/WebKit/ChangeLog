@@ -1,3 +1,17 @@
+2017-10-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r223884.
+        https://bugs.webkit.org/show_bug.cgi?id=179055
+
+        It broke GTK+ make distcheck (Requested by KaL on #webkit).
+
+        Reverted changeset:
+
+        "[GTK][WPE] generate-forwarding-headers.pl should also scan
+        derived sources in WebKit framework"
+        https://bugs.webkit.org/show_bug.cgi?id=178579
+        https://trac.webkit.org/changeset/223884
+
 2017-10-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Use LazyNeverDestroyed instead of DEFINE_GLOBAL for XMLNames, HTMLNames, MathMLNames and SVGNames

@@ -1303,8 +1303,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
 )
 
 add_custom_target(WebKit-forwarding-headers
-    DEPENDS ${WebKit_DERIVED_SOURCES}
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT_DIR} --include-path ${DERIVED_SOURCES_WEBKIT_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
 )
 
 # These symbolic link allows includes like #include <webkit2/WebkitWebView.h> which simulates installed headers.
