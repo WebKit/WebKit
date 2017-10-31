@@ -27,10 +27,11 @@
     EnabledAtRuntime=WebAnimations,
     InterfaceName=Animation,
     ImplementationLacksVTable,
-    Constructor(optional AnimationTimeline? timeline)
+    ConstructorCallWith=Document,
+    Constructor(optional AnimationEffect? effect = null, optional AnimationTimeline? timeline)
 ] interface WebAnimation {
     attribute AnimationEffect? effect;
-    readonly attribute AnimationTimeline? timeline;
+    attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;

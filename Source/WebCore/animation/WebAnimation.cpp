@@ -28,22 +28,25 @@
 
 #include "AnimationEffect.h"
 #include "AnimationTimeline.h"
+#include "Document.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Ref<WebAnimation> WebAnimation::create(AnimationTimeline* timeline)
+Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect, AnimationTimeline* timeline)
 {
-    auto result = adoptRef(*new WebAnimation(timeline));
+    auto result = adoptRef(*new WebAnimation());
 
-    if (timeline)
-        timeline->addAnimation(result.copyRef());
+    result->setEffect(effect);
+    
+    // FIXME: the spec mandates distinguishing between an omitted timeline parameter
+    // and an explicit null or undefined value (webkit.org/b/179065).
+    result->setTimeline(timeline ? timeline : &document.timeline());
     
     return result;
 }
 
-WebAnimation::WebAnimation(AnimationTimeline* timeline)
-    : m_timeline(timeline)
+WebAnimation::WebAnimation()
 {
 }
 
@@ -55,9 +58,29 @@ WebAnimation::~WebAnimation()
 
 void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
 {
+    if (effect == m_effect)
+        return;
+
     m_effect = WTFMove(effect);
 }
 
+void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
+{
+    if (timeline == m_timeline)
+        return;
+
+    // FIXME: If the animation start time of animation is resolved, make animation’s
+    // hold time unresolved (webkit.org/b/178932).
+
+    if (m_timeline)
+        m_timeline->removeAnimation(*this);
+
+    if (timeline)
+        timeline->addAnimation(*this);
+
+    m_timeline = WTFMove(timeline);
+}
+    
 std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (m_startTime)

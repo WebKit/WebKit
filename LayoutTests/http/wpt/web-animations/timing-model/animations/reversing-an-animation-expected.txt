@@ -21,5 +21,5 @@ FAIL Reversing animation when playbackRate = 0 and currentTime < 0 and the targe
 FAIL Reversing an animation when playbackRate < 0 and currentTime < 0 and the target effect end is positive infinity should make it play from the start div.animate is not a function. (In 'div.animate({}, {duration: 100 * MS_PER_SEC,
                                    iterations: Infinity})', 'div.animate' is undefined)
 FAIL Reversing when when playbackRate == 0 should preserve the current time and playback rate div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Reversing an animation without an active timeline throws an InvalidStateError Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+FAIL Reversing an animation without an active timeline throws an InvalidStateError assert_throws: function "function () { animation.reverse(); }" threw object "TypeError: animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
 

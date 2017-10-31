@@ -10,13 +10,13 @@
 'use strict';
 
 test(t => {
-  const animation = new Animation(document.timeline);
+  const animation = new Animation;
 
   assert_equals(animation.playbackRate, 1);
 }, 'Playback rate defaults to 1');
 
 test(t => {
-  const animation = new Animation(document.timeline);
+  const animation = new Animation;
   animation.startTime = 1;
   animation.playbackRate = 2;
   internals.setTimelineCurrentTime(document.timeline, 3);
@@ -27,7 +27,7 @@ test(t => {
 }, 'Correctly compute the current time based on the playback rate');
 
 test(t => {
-  const animation = new Animation(document.timeline);
+  const animation = new Animation;
   animation.startTime = 2;
   animation.playbackRate = 2;
   internals.setTimelineCurrentTime(document.timeline, 4);
@@ -40,7 +40,7 @@ test(t => {
 }, 'Correctly compute the start time based on the playback rate when setting current time');
 
 test(t => {
-  const animation = new Animation(document.timeline);
+  const animation = new Animation;
   animation.startTime = 2;
   animation.playbackRate = 0.5;
   internals.setTimelineCurrentTime(document.timeline, 4);
@@ -53,7 +53,7 @@ test(t => {
 }, 'Correctly compute the start time based on a playback rate < 1 when setting current time');
 
 test(t => {
-  const animation = new Animation(document.timeline);
+  const animation = new Animation;
   animation.currentTime = 1;
   animation.playbackRate = -1;
   internals.setTimelineCurrentTime(document.timeline, 4);
@@ -64,7 +64,7 @@ test(t => {
 }, 'Correctly compute the start time based on a playback rate < 0');
 
 test(t => {
-  const animation = new Animation(document.timeline);
+  const animation = new Animation;
   animation.playbackRate = 0;
   animation.startTime = 0;
   internals.setTimelineCurrentTime(document.timeline, 1);

@@ -1,3 +1,27 @@
+2017-10-31  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support AnimationEffect parameter in Animation constructor and read-write timeline property
+        https://bugs.webkit.org/show_bug.cgi?id=179066
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline and amend tests to show support for the AnimationEffect first parameter to the Animation
+        constructor and the default document timeline value for the AnimationTimeline second parameter.
+
+        * http/wpt/web-animations/interfaces/Animation/constructor-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/startTime-expected.txt:
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setTarget-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/current-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/reversing-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt:
+        * http/wpt/wk-web-animations/timing-model/animation-creation-basic-expected.txt:
+        * http/wpt/wk-web-animations/timing-model/animation-creation-basic.html:
+        * http/wpt/wk-web-animations/timing-model/animation-current-time.html:
+        * http/wpt/wk-web-animations/timing-model/animation-playback-rate.html:
+        * webanimations/animation-creation-addition.html:
+
 2017-10-31  Ali Juma  <ajuma@chromium.org>
 
         Layout viewport rect is too wide after window resize

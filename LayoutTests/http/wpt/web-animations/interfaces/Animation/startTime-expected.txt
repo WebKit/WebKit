@@ -1,7 +1,7 @@
 
-FAIL startTime of a newly created (idle) animation is unresolved Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
-FAIL startTime of a play-pending animation is unresolved Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
-FAIL startTime of a pause-pending animation is unresolved Argument 1 ('timeline') to the Animation constructor must be an instance of AnimationTimeline
+PASS startTime of a newly created (idle) animation is unresolved 
+FAIL startTime of a play-pending animation is unresolved animation.play is not a function. (In 'animation.play()', 'animation.play' is undefined)
+FAIL startTime of a pause-pending animation is unresolved animation.pause is not a function. (In 'animation.pause()', 'animation.pause' is undefined)
 FAIL startTime of a play-pending animation created using Element.animate shortcut is unresolved createDiv(t).animate is not a function. (In 'createDiv(t).animate(null)', 'createDiv(t).animate' is undefined)
 FAIL startTime is resolved when running createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
 FAIL startTime and currentTime are unresolved when animation is cancelled createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)

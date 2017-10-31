@@ -9,12 +9,12 @@
 'use strict';
 
 test(t => {
-    const animation = new Animation(document.timeline);
+    const animation = new Animation;
     assert_equals(animation.currentTime, null);
 }, "An animation's currentTime is null when the timeline has no currentTime set.");
 
 test(t => {
-    const animation = new Animation(document.timeline);
+    const animation = new Animation;
     animation.startTime = 2;
     internals.setTimelineCurrentTime(document.timeline, 0);
     assert_equals(animation.currentTime, -2);
@@ -25,7 +25,7 @@ test(t => {
 }, "An animation accounts for its start time and document current time when computing its current time.");
 
 test(t => {
-    const animation = new Animation(document.timeline);
+    const animation = new Animation;
     animation.startTime = 1;
     internals.setTimelineCurrentTime(document.timeline, 3);
     assert_equals(animation.currentTime, 2);
@@ -35,7 +35,7 @@ test(t => {
 }, "Setting the current time should adjust the start time.");
 
 test(t => {
-    const animation = new Animation(document.timeline);
+    const animation = new Animation;
     assert_throws(new TypeError, () => animation.currentTime = null);
 }, "Setting the current time to null should throw a TypeError.");
 

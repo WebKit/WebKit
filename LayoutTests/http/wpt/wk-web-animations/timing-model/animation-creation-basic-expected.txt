@@ -1,7 +1,7 @@
 
 PASS The Animation interface is defined. 
-PASS Creating Animation without arguments should have a null timeline. 
-PASS Creating Animation with an undefined argument should have a null timeline. 
-PASS Creating Animation with a null argument should have a null timeline. 
-PASS Creating Animation with a timeline has a timeline. 
+PASS Creating Animation without arguments should have a null effect and the document timeline. 
+PASS Creating Animation with an undefined argument should have a null effect and the document timeline. 
+PASS Creating Animation with a null argument should have a null effect and the document timeline. 
+PASS Creating Animation with an effect should only set the effect property and have the document timeline. 
 

@@ -14,23 +14,28 @@ test(t => {
 
 test(t => {
     const animation = new Animation;
-    assert_equals(animation.timeline, null);
-}, "Creating Animation without arguments should have a null timeline.");
+    assert_equals(animation.effect, null);
+    assert_equals(animation.timeline, document.timeline);
+}, "Creating Animation without arguments should have a null effect and the document timeline.");
 
 test(t => {
     const animation = new Animation(undefined);
-    assert_equals(animation.timeline, null);
-}, "Creating Animation with an undefined argument should have a null timeline.");
+    assert_equals(animation.effect, null);
+    assert_equals(animation.timeline, document.timeline);
+}, "Creating Animation with an undefined argument should have a null effect and the document timeline.");
 
 test(t => {
     const animation = new Animation(null);
-    assert_equals(animation.timeline, null);
-}, "Creating Animation with a null argument should have a null timeline.");
+    assert_equals(animation.effect, null);
+    assert_equals(animation.timeline, document.timeline);
+}, "Creating Animation with a null argument should have a null effect and the document timeline.");
 
 test(t => {
-    const animation = new Animation(document.timeline);
+    const effect = new KeyframeEffect(document.body);
+    const animation = new Animation(effect);
+    assert_equals(animation.effect, effect);
     assert_equals(animation.timeline, document.timeline);
-}, "Creating Animation with a timeline has a timeline.");
+}, "Creating Animation with an effect should only set the effect property and have the document timeline.");
 
 </script>
 </body>
