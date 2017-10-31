@@ -1,3 +1,12 @@
+2017-10-31  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-header-visibility.https.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=179081
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations: Marking test as flaky.
+
 2017-10-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Skip LayoutTests that rely on eventsender.keyDown()
