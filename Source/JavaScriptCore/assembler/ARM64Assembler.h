@@ -157,7 +157,7 @@ inline uint16_t getHalfword(uint64_t value, int which)
 
 namespace ARM64Registers {
 
-typedef enum {
+enum RegisterID : uint8_t {
     // Parameter/result registers.
     x0,
     x1,
@@ -203,7 +203,7 @@ typedef enum {
     x29 = fp,
     x30 = lr,
     zr = 0x3f,
-} RegisterID;
+};
 
 typedef enum {
     pc,

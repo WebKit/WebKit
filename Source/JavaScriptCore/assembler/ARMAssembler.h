@@ -38,7 +38,7 @@ namespace JSC {
 
     namespace ARMRegisters {
 
-        typedef enum {
+        enum RegisterID : uint8_t {
             r0,
             r1,
             r2,
@@ -63,7 +63,7 @@ namespace JSC {
             r13 = sp,
             r14 = lr,
             r15 = pc
-        } RegisterID;
+        };
 
         typedef enum {
             apsr,

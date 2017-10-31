@@ -39,142 +39,142 @@ namespace JSC {
 
 namespace ARMRegisters {
 
-    typedef enum {
-        r0,
-        r1,
-        r2,
-        r3,
-        r4,
-        r5,
-        r6,
-        r7,
-        r8,
-        r9,
-        r10,
-        r11,
-        r12,
-        r13,
-        r14,
-        r15,
+enum RegisterID : uint8_t {
+    r0,
+    r1,
+    r2,
+    r3,
+    r4,
+    r5,
+    r6,
+    r7,
+    r8,
+    r9,
+    r10,
+    r11,
+    r12,
+    r13,
+    r14,
+    r15,
 
-        fp = r7,   // frame pointer
-        sb = r9,   // static base
-        sl = r10,  // stack limit
-        ip = r12,
-        sp = r13,
-        lr = r14,
-        pc = r15
-    } RegisterID;
+    fp = r7,   // frame pointer
+    sb = r9,   // static base
+    sl = r10,  // stack limit
+    ip = r12,
+    sp = r13,
+    lr = r14,
+    pc = r15
+};
 
-    typedef enum {
-        apsr,
-        fpscr
-    } SPRegisterID;
+typedef enum {
+    apsr,
+    fpscr
+} SPRegisterID;
 
-    typedef enum {
-        s0,
-        s1,
-        s2,
-        s3,
-        s4,
-        s5,
-        s6,
-        s7,
-        s8,
-        s9,
-        s10,
-        s11,
-        s12,
-        s13,
-        s14,
-        s15,
-        s16,
-        s17,
-        s18,
-        s19,
-        s20,
-        s21,
-        s22,
-        s23,
-        s24,
-        s25,
-        s26,
-        s27,
-        s28,
-        s29,
-        s30,
-        s31,
-    } FPSingleRegisterID;
+typedef enum {
+    s0,
+    s1,
+    s2,
+    s3,
+    s4,
+    s5,
+    s6,
+    s7,
+    s8,
+    s9,
+    s10,
+    s11,
+    s12,
+    s13,
+    s14,
+    s15,
+    s16,
+    s17,
+    s18,
+    s19,
+    s20,
+    s21,
+    s22,
+    s23,
+    s24,
+    s25,
+    s26,
+    s27,
+    s28,
+    s29,
+    s30,
+    s31,
+} FPSingleRegisterID;
 
-    typedef enum {
-        d0,
-        d1,
-        d2,
-        d3,
-        d4,
-        d5,
-        d6,
-        d7,
-        d8,
-        d9,
-        d10,
-        d11,
-        d12,
-        d13,
-        d14,
-        d15,
+typedef enum {
+    d0,
+    d1,
+    d2,
+    d3,
+    d4,
+    d5,
+    d6,
+    d7,
+    d8,
+    d9,
+    d10,
+    d11,
+    d12,
+    d13,
+    d14,
+    d15,
 #if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
-        d16,
-        d17,
-        d18,
-        d19,
-        d20,
-        d21,
-        d22,
-        d23,
-        d24,
-        d25,
-        d26,
-        d27,
-        d28,
-        d29,
-        d30,
-        d31,
+    d16,
+    d17,
+    d18,
+    d19,
+    d20,
+    d21,
+    d22,
+    d23,
+    d24,
+    d25,
+    d26,
+    d27,
+    d28,
+    d29,
+    d30,
+    d31,
 #endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
-    } FPDoubleRegisterID;
+} FPDoubleRegisterID;
 
 #if CPU(ARM_NEON)
-    typedef enum {
-        q0,
-        q1,
-        q2,
-        q3,
-        q4,
-        q5,
-        q6,
-        q7,
-        q8,
-        q9,
-        q10,
-        q11,
-        q12,
-        q13,
-        q14,
-        q15,
-    } FPQuadRegisterID;
+typedef enum {
+    q0,
+    q1,
+    q2,
+    q3,
+    q4,
+    q5,
+    q6,
+    q7,
+    q8,
+    q9,
+    q10,
+    q11,
+    q12,
+    q13,
+    q14,
+    q15,
+} FPQuadRegisterID;
 #endif // CPU(ARM_NEON)
 
-    inline FPSingleRegisterID asSingle(FPDoubleRegisterID reg)
-    {
-        ASSERT(reg < d16);
-        return (FPSingleRegisterID)(reg << 1);
-    }
+inline FPSingleRegisterID asSingle(FPDoubleRegisterID reg)
+{
+    ASSERT(reg < d16);
+    return (FPSingleRegisterID)(reg << 1);
+}
 
-    inline FPDoubleRegisterID asDouble(FPSingleRegisterID reg)
-    {
-        ASSERT(!(reg & 1));
-        return (FPDoubleRegisterID)(reg >> 1);
-    }
+inline FPDoubleRegisterID asDouble(FPSingleRegisterID reg)
+{
+    ASSERT(!(reg & 1));
+    return (FPDoubleRegisterID)(reg >> 1);
+}
 
 } // namespace ARMRegisters
 

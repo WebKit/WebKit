@@ -1,3 +1,38 @@
+2017-10-31  Keith Miller  <keith_miller@apple.com>
+
+        StructureStubInfo should have GPRReg members not int8_ts
+        https://bugs.webkit.org/show_bug.cgi?id=179071
+
+        Reviewed by Michael Saboff.
+
+        This patch makes the various RegisterID enums be backed by
+        uint8_t. This means that we can remove the old int8_t members in
+        StructureStubInfo and replace them with the correct enum types.
+
+        Also, this fixes an indentation issue in ARMv7Assembler.h.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMRegisters::asSingle):
+        (JSC::ARMRegisters::asDouble):
+        * assembler/MIPSAssembler.h:
+        * assembler/X86Assembler.h:
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::generateSelfPropertyAccess):
+        (JSC::getScratchRegister):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::valueRegs const):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+
 2017-10-31  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: make ScriptCallStack::maxCallStackSizeToCapture the default value when capturing backtraces

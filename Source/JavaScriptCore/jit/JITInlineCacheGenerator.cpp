@@ -60,13 +60,13 @@ JITByIdGenerator::JITByIdGenerator(
 {
     m_stubInfo->patch.usedRegisters = usedRegisters;
     
-    m_stubInfo->patch.baseGPR = static_cast<int8_t>(base.payloadGPR());
-    m_stubInfo->patch.valueGPR = static_cast<int8_t>(value.payloadGPR());
-    m_stubInfo->patch.thisGPR = static_cast<int8_t>(InvalidGPRReg);
+    m_stubInfo->patch.baseGPR = base.payloadGPR();
+    m_stubInfo->patch.valueGPR = value.payloadGPR();
+    m_stubInfo->patch.thisGPR = InvalidGPRReg;
 #if USE(JSVALUE32_64)
-    m_stubInfo->patch.baseTagGPR = static_cast<int8_t>(base.tagGPR());
-    m_stubInfo->patch.valueTagGPR = static_cast<int8_t>(value.tagGPR());
-    m_stubInfo->patch.thisTagGPR = static_cast<int8_t>(InvalidGPRReg);
+    m_stubInfo->patch.baseTagGPR = base.tagGPR();
+    m_stubInfo->patch.valueTagGPR = value.tagGPR();
+    m_stubInfo->patch.thisTagGPR = InvalidGPRReg;
 #endif
 }
 
@@ -125,9 +125,9 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
 
-    m_stubInfo->patch.thisGPR = static_cast<int8_t>(thisRegs.payloadGPR());
+    m_stubInfo->patch.thisGPR = thisRegs.payloadGPR();
 #if USE(JSVALUE32_64)
-    m_stubInfo->patch.thisTagGPR = static_cast<int8_t>(thisRegs.tagGPR());
+    m_stubInfo->patch.thisTagGPR = thisRegs.tagGPR();
 #endif
 }
 

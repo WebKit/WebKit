@@ -8864,9 +8864,9 @@ private:
                         stubInfo->callSiteIndex =
                             state->jitCode->common.addCodeOrigin(node->origin.semantic);
                         stubInfo->codeOrigin = node->origin.semantic;
-                        stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
-                        stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
-                        stubInfo->patch.thisGPR = static_cast<int8_t>(InvalidGPRReg);
+                        stubInfo->patch.baseGPR = baseGPR;
+                        stubInfo->patch.valueGPR = resultGPR;
+                        stubInfo->patch.thisGPR = InvalidGPRReg;
                         stubInfo->patch.usedRegisters = params.unavailableRegisters();
 
                         CCallHelpers::PatchableJump jump = jit.patchableJump();

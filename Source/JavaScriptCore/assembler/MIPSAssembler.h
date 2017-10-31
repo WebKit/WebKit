@@ -41,7 +41,8 @@ namespace JSC {
 typedef uint32_t MIPSWord;
 
 namespace MIPSRegisters {
-typedef enum {
+
+enum RegisterID : uint8_t {
     r0 = 0,
     r1,
     r2,
@@ -106,7 +107,7 @@ typedef enum {
     sp = r29,
     fp = r30,
     ra = r31
-} RegisterID;
+};
 
 // Currently, we don't have support for any special purpose registers.
 typedef enum {
