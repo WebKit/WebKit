@@ -65,12 +65,12 @@ namespace JSC {
             r15 = pc
         };
 
-        typedef enum {
+        enum SPRegisterID : uint8_t {
             apsr,
             fpscr
-        } SPRegisterID;
+        };
 
-        typedef enum {
+        enum FPRegisterID : uint8_t {
             d0,
             d1,
             d2,
@@ -108,7 +108,7 @@ namespace JSC {
 
             // Pseudonyms for some of the registers.
             SD0 = d7, /* Same as thumb assembler. */
-        } FPRegisterID;
+        };
 
     } // namespace ARMRegisters
 

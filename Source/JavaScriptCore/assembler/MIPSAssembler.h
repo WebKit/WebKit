@@ -110,12 +110,12 @@ enum RegisterID : uint8_t {
 };
 
 // Currently, we don't have support for any special purpose registers.
-typedef enum {
+enum SPRegisterID : uint8_t {
     firstInvalidSPR,
     lastInvalidSPR = -1,
-} SPRegisterID;
+};
 
-typedef enum {
+enum FPRegisterID : uint8_t {
     f0,
     f1,
     f2,
@@ -148,7 +148,7 @@ typedef enum {
     f29,
     f30,
     f31
-} FPRegisterID;
+};
 
 } // namespace MIPSRegisters
 

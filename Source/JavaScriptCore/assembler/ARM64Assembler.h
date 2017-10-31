@@ -205,16 +205,16 @@ enum RegisterID : uint8_t {
     zr = 0x3f,
 };
 
-typedef enum {
+enum SPRegisterID : uint8_t {
     pc,
     nzcv,
     fpsr
-} SPRegisterID;
+};
 
 // ARM64 always has 32 FPU registers 128-bits each. See http://llvm.org/devmtg/2012-11/Northover-AArch64.pdf
 // and Section 5.1.2 in http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf.
 // However, we only use them for 64-bit doubles.
-typedef enum {
+enum FPRegisterID : uint8_t {
     // Parameter/result registers.
     q0,
     q1,
@@ -250,7 +250,7 @@ typedef enum {
     q29,
     q30,
     q31,
-} FPRegisterID;
+};
 
 static constexpr bool isSp(RegisterID reg) { return reg == sp; }
 static constexpr bool isZr(RegisterID reg) { return reg == zr; }

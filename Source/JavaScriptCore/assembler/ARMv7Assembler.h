@@ -66,12 +66,12 @@ enum RegisterID : uint8_t {
     pc = r15
 };
 
-typedef enum {
+enum SPRegisterID : uint8_t {
     apsr,
     fpscr
-} SPRegisterID;
+};
 
-typedef enum {
+enum FPSingleRegisterID : uint8_t {
     s0,
     s1,
     s2,
@@ -104,9 +104,9 @@ typedef enum {
     s29,
     s30,
     s31,
-} FPSingleRegisterID;
+};
 
-typedef enum {
+enum FPDoubleRegisterID : uint8_t {
     d0,
     d1,
     d2,
@@ -141,10 +141,10 @@ typedef enum {
     d30,
     d31,
 #endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
-} FPDoubleRegisterID;
+};
 
 #if CPU(ARM_NEON)
-typedef enum {
+enum FPQuadRegisterID : uint8_t {
     q0,
     q1,
     q2,
@@ -161,7 +161,7 @@ typedef enum {
     q13,
     q14,
     q15,
-} FPQuadRegisterID;
+};
 #endif // CPU(ARM_NEON)
 
 inline FPSingleRegisterID asSingle(FPDoubleRegisterID reg)

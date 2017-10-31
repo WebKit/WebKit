@@ -62,12 +62,12 @@ enum RegisterID : uint8_t {
 #endif
 };
 
-typedef enum {
+enum SPRegisterID : uint8_t {
     eip,
     eflags
-} SPRegisterID;
+};
 
-typedef enum {
+enum XMMRegisterID : uint8_t {
     xmm0,
     xmm1,
     xmm2,
@@ -86,7 +86,7 @@ typedef enum {
     xmm14,
     xmm15
 #endif
-} XMMRegisterID;
+};
 
 } // namespace X86Register
 
