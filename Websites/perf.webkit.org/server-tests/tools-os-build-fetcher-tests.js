@@ -97,7 +97,7 @@ describe('OSBuildFetcher', function() {
 
     describe('OSBuilderFetcher._computeOrder', () => {
         it('should calculate the right order for a given valid revision', () => {
-            const fetcher = new OSBuildFetcher();
+            const fetcher = new OSBuildFetcher({});
             assert.equal(fetcher._computeOrder('Sierra16D32'), 1603003200);
             assert.equal(fetcher._computeOrder('16D321'), 1603032100);
             assert.equal(fetcher._computeOrder('16d321'), 1603032100);
@@ -108,7 +108,7 @@ describe('OSBuildFetcher', function() {
         });
 
         it('should throw assertion error when given a invalid revision', () => {
-            const fetcher = new OSBuildFetcher();
+            const fetcher = new OSBuildFetcher({});
             assert.throws(() => fetcher._computeOrder('invalid'), (error) => error.name == 'AssertionError');
             assert.throws(() => fetcher._computeOrder(''), (error) => error.name == 'AssertionError');
             assert.throws(() => fetcher._computeOrder('16'), (error) => error.name == 'AssertionError');
@@ -124,7 +124,7 @@ describe('OSBuildFetcher', function() {
     describe('OSBuilderFetcher._commitsForAvailableBuilds', () => {
         it('should only return commits whose orders are higher than specified order', () => {
             const logger = new MockLogger;
-            const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
+            const fetchter = new OSBuildFetcher({}, null, null, MockSubprocess, logger);
             const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const fetchCommitsPromise = fetchter._commitsForAvailableBuilds('OSX', ['list', 'build1'], '^\\.*$', 1604000000);
 
@@ -144,7 +144,7 @@ describe('OSBuildFetcher', function() {
     describe('OSBuildFetcher._addOwnedCommitsForBuild', () => {
         it('should add owned-commit info for commits', () => {
             const logger = new MockLogger;
-            const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
+            const fetchter = new OSBuildFetcher({}, null, null, MockSubprocess, logger);
             const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const addownedCommitPromise = fetchter._addOwnedCommitsForBuild([osxCommit, anotherOSXCommit], ['ownedCommit', 'for', 'revision']);
 
@@ -172,7 +172,7 @@ describe('OSBuildFetcher', function() {
 
         it('should fail if the command to get owned-commit info fails', () => {
             const logger = new MockLogger;
-            const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
+            const fetchter = new OSBuildFetcher({}, null, null, MockSubprocess, logger);
             const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const addownedCommitPromise = fetchter._addOwnedCommitsForBuild([osxCommit], ['ownedCommit', 'for', 'revision'])
 
@@ -193,7 +193,7 @@ describe('OSBuildFetcher', function() {
 
         it('should fail if entries in owned-commits does not contain revision', () => {
             const logger = new MockLogger;
-            const fetchter = new OSBuildFetcher(null, null, null, MockSubprocess, logger);
+            const fetchter = new OSBuildFetcher({}, null, null, MockSubprocess, logger);
             const waitForInvocationPromise = MockSubprocess.waitForInvocation();
             const addownedCommitPromise = fetchter._addOwnedCommitsForBuild([osxCommit], ['ownedCommit', 'for', 'revision'])
 
@@ -326,7 +326,7 @@ describe('OSBuildFetcher', function() {
 
                 assert.equal(webkitRepository.length, 1);
                 assert.equal(webkitRepository[0]['owner'], 10);
-                assert.equal(jscRepository.length, 1)
+                assert.equal(jscRepository.length, 1);
                 assert.equal(jscRepository[0]['owner'], 10);
 
                 assert.equal(osxCommit16D69.length, 1);
@@ -412,7 +412,7 @@ describe('OSBuildFetcher', function() {
                 const osxCommit16E34 = results[4];
 
                 assert.equal(webkitRepository.length, 0);
-                assert.equal(jscRepository.length, 0)
+                assert.equal(jscRepository.length, 0);
 
                 assert.equal(osxCommit16D69.length, 1);
                 assert.equal(osxCommit16D69[0]['repository'], 10);

@@ -1,3 +1,19 @@
+2017-10-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Limit the number of results to be submitted in one submission.
+        https://bugs.webkit.org/show_bug.cgi?id=179045
+
+        Reviewed by Ryosuke Niwa.
+
+        Submitting results for a large number of builds with owned commit information may exceed the size limit of php.
+        Added a way to split the results into groups of certain sizes, and submit them one by one.
+
+        * server-tests/tools-os-build-fetcher-tests.js: Updated the unit tests.
+        * tools/js/os-build-fetcher.js: Added '_maxNumberOfResultsPerSubmit' which can be specified by a configuration but also use 20 as default value.
+        (prototype.fetchAndReportNewBuilds): Instead of submitting all results once, split them into groups and submit them one by one.
+        (prototype._fetchAvailableBuilds): 'label' is already quoted, should remove unnecessary quotes.
+        (prototype._addOwnedCommitsForBuild): Added logging to log the size of owned commits.
+
 2017-10-31  Dewei Zhu  <dewei_zhu@apple.com>
 
         OwnedCommitViewer should include the preceding commit.
