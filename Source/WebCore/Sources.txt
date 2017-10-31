@@ -392,6 +392,7 @@ bindings/js/JSMessageChannelCustom.cpp
 bindings/js/JSMessageEventCustom.cpp
 bindings/js/JSMessagePortCustom.cpp
 bindings/js/JSMutationObserverCustom.cpp
+bindings/js/JSNavigatorCustom.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeIteratorCustom.cpp
 bindings/js/JSNodeListCustom.cpp

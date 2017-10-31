@@ -30,7 +30,8 @@
     SecureContext,
     Exposed=(Window),
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker
+    EnabledAtRuntime=ServiceWorker,
+    GenerateIsReachable=Impl,
 ] interface ServiceWorkerContainer : EventTarget {
     readonly attribute ServiceWorker? controller;
     readonly attribute Promise<ServiceWorkerRegistration> ready;

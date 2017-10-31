@@ -19,6 +19,7 @@
 
 [
     GenerateIsReachable=ImplFrame,
+    JSCustomMarkFunction,
 ] interface Navigator {
     readonly attribute DOMPluginArray plugins;
     readonly attribute DOMMimeTypeArray mimeTypes;

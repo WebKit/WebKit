@@ -1,3 +1,15 @@
+2017-10-31  Chris Dumez  <cdumez@apple.com>
+
+        navigator.serviceWorker should always return the same object
+        https://bugs.webkit.org/show_bug.cgi?id=179067
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/navigator-serviceWorker-same-object-expected.txt: Added.
+        * http/tests/workers/service/navigator-serviceWorker-same-object.html: Added.
+
 2017-10-31  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Support AnimationEffect parameter in Animation constructor and read-write timeline property

@@ -9487,6 +9487,7 @@
 		83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLDocumentCustom.cpp; sourceTree = "<group>"; };
 		83B250091FA1181C00BC02D9 /* JSServiceWorkerClientType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSServiceWorkerClientType.h; sourceTree = "<group>"; };
 		83B2500B1FA1181D00BC02D9 /* JSServiceWorkerClientType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSServiceWorkerClientType.cpp; sourceTree = "<group>"; };
+		83B5DA451FA9079300B59DF4 /* JSNavigatorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorCustom.cpp; sourceTree = "<group>"; };
 		83B74EF21F3E0BD700996BC7 /* KeepaliveRequestTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeepaliveRequestTracker.cpp; sourceTree = "<group>"; };
 		83B74EF31F3E0BD700996BC7 /* KeepaliveRequestTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeepaliveRequestTracker.h; sourceTree = "<group>"; };
 		83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderConverter.h; sourceTree = "<group>"; };
@@ -18923,6 +18924,7 @@
 				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
 				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
+				83B5DA451FA9079300B59DF4 /* JSNavigatorCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
 				BC9439C2116CF4940048C750 /* JSNodeCustom.h */,
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
