@@ -29,6 +29,7 @@
 
 #include "FloatRect.h"
 #include "HTMLElement.h"
+#include "ImageBitmapRenderingContextSettings.h"
 #include "IntSize.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -119,8 +120,8 @@ public:
 #endif
 
     static bool isBitmapRendererType(const String&);
-    ImageBitmapRenderingContext* createContextBitmapRenderer(const String&);
-    ImageBitmapRenderingContext* getContextBitmapRenderer(const String&);
+    ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&& = { });
+    ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&& = { });
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);

@@ -31,6 +31,3 @@
     [MayThrowException] void transferFromImageBitmap(ImageBitmap? bitmap);
 };
 
-dictionary ImageBitmapRenderingContextSettings {
-    boolean alpha = true;
-};

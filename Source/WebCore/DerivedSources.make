@@ -643,6 +643,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
     $(WebCore)/html/canvas/EXTsRGB.idl \
     $(WebCore)/html/canvas/ImageBitmapRenderingContext.idl \
+    $(WebCore)/html/canvas/ImageBitmapRenderingContextSettings.idl \
     $(WebCore)/html/canvas/ImageSmoothingQuality.idl \
     $(WebCore)/html/canvas/OESElementIndexUint.idl \
     $(WebCore)/html/canvas/OESStandardDerivatives.idl \

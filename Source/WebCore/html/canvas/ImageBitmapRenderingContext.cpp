@@ -37,8 +37,9 @@ static RenderingMode bufferRenderingMode = Accelerated;
 static RenderingMode bufferRenderingMode = Unaccelerated;
 #endif
 
-ImageBitmapRenderingContext::ImageBitmapRenderingContext(HTMLCanvasElement& canvas)
+ImageBitmapRenderingContext::ImageBitmapRenderingContext(HTMLCanvasElement& canvas, ImageBitmapRenderingContextSettings&& settings)
     : CanvasRenderingContext(canvas)
+    , m_settings(WTFMove(settings))
 {
     setOutputBitmap(nullptr);
 }

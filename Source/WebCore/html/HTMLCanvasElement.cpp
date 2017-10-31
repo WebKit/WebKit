@@ -504,13 +504,12 @@ bool HTMLCanvasElement::isBitmapRendererType(const String& type)
     return type == "bitmaprenderer";
 }
 
-// FIXME: Needs to accept ImageBitmapRenderingContext::Settings.
-ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(const String& type)
+ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(const String& type, ImageBitmapRenderingContextSettings&& settings)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isBitmapRendererType(type));
     ASSERT(!m_context);
 
-    m_context = std::make_unique<ImageBitmapRenderingContext>(*this);
+    m_context = std::make_unique<ImageBitmapRenderingContext>(*this, WTFMove(settings));
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
@@ -520,11 +519,11 @@ ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(cons
     return static_cast<ImageBitmapRenderingContext*>(m_context.get());
 }
 
-ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const String& type)
+ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const String& type, ImageBitmapRenderingContextSettings&& settings)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isBitmapRendererType(type));
     if (!m_context)
-        return createContextBitmapRenderer(type);
+        return createContextBitmapRenderer(type, WTFMove(settings));
     return static_cast<ImageBitmapRenderingContext*>(m_context.get());
 }
 
