@@ -1,5 +1,14 @@
 2017-10-31  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, windows build fix.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::numberOfRegisters):
+        (JSC::X86Assembler::numberOfSPRegisters):
+        (JSC::X86Assembler::numberOfFPRegisters):
+
+2017-10-31  Keith Miller  <keith_miller@apple.com>
+
         Make all register enums be backed by uint8_t.
         https://bugs.webkit.org/show_bug.cgi?id=179074
 
