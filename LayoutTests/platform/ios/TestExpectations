@@ -1658,6 +1658,7 @@ fast/xsl/sort-locale.xml [ Failure ]
 
 # iOS does not support window resizing or window.resizeTo().
 fast/css-grid-layout/flex-content-sized-columns-resize.html [ Skip ]
+fast/dom/Window/window-resize-update-scrollbars.html [ Skip ]
 fast/dynamic/window-resize-scrollbars-test.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]
 loader/go-back-to-different-window-size.html [ Skip ]

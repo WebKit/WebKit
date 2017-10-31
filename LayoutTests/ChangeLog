@@ -1,3 +1,14 @@
+2017-10-31  Ali Juma  <ajuma@chromium.org>
+
+        Layout viewport rect is too wide after window resize
+        https://bugs.webkit.org/show_bug.cgi?id=175235
+
+        Reviewed by Dave Hyatt.
+
+        * fast/dom/Window/window-resize-update-scrollbars-expected.txt: Added.
+        * fast/dom/Window/window-resize-update-scrollbars.html: Added.
+        * platform/ios/TestExpectations:
+
 2017-10-31  Youenn Fablet  <youenn@apple.com>
 
         Crash in:  com.apple.WebKit: WebKit::CacheStorage::Caches::initializeSize(WTF::Function<void (std::optional<WebCore::DOMCacheEngine::Error>&&)>&&) + 30 (CacheStorageEngineCaches.cpp:163)
