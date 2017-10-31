@@ -1,3 +1,19 @@
+2017-10-31  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Rebaseline after r224223
+        https://bugs.webkit.org/show_bug.cgi?id=179059
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-right-expected.png:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-right-expected.txt:
+
 2017-10-31  Charles Turner  <cturner@igalia.com>
 
         [GTK] Test gardening
