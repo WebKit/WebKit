@@ -1,3 +1,20 @@
+2017-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        Fix custom header field setting with reloads and asynchronous navigation action policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=179064
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::applyToDocumentLoader):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision):
+
 2017-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.1 release.

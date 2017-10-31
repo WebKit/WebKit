@@ -251,7 +251,7 @@ void WebFrame::invalidatePolicyListener()
     m_willSubmitFormCompletionHandlers.clear();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID, const WebsitePolicies& websitePolicies)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID, WebsitePolicies&& websitePolicies)
 {
     if (!m_coreFrame)
         return;
@@ -271,7 +271,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     invalidatePolicyListener();
 
     if (forNavigationAction && m_frameLoaderClient)
-        m_frameLoaderClient->applyToDocumentLoader(websitePolicies);
+        m_frameLoaderClient->applyToDocumentLoader(WTFMove(websitePolicies));
 
     m_policyDownloadID = downloadID;
     if (navigationID) {

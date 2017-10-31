@@ -701,7 +701,12 @@ static void respond(id <WKURLSchemeTask>task, NSString *html = nil)
 {
     _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
     [websitePolicies setCustomHeaderFields:@{@"X-key1": @"value1", @"X-key2": @"value2"}];
-    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+    if ([navigationAction.request.URL.path isEqualToString:@"/mainresource"]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+        });
+    } else
+        decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
@@ -774,6 +779,9 @@ TEST(WebKit, CustomHeaderFields)
     TestWebKitAPI::Util::run(&thirdTestDone);
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///createaboutblankiframe"]]];
+    TestWebKitAPI::Util::run(&fourthTestDone);
+    fourthTestDone = false;
+    [webView reload];
     TestWebKitAPI::Util::run(&fourthTestDone);
 }
 

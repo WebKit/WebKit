@@ -2746,7 +2746,7 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, Po
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
-    frame->didReceivePolicyDecision(listenerID, policyAction, navigationID, downloadID, websitePolicies);
+    frame->didReceivePolicyDecision(listenerID, policyAction, navigationID, downloadID, WTFMove(websitePolicies));
 }
 
 void WebPage::continueWillSubmitForm(uint64_t frameID, uint64_t listenerID)

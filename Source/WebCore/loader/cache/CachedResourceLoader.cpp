@@ -787,7 +787,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         }
         if (sameOriginRequest) {
             for (auto& field : m_documentLoader->customHeaderFields())
-                request.resourceRequest().addHTTPHeaderField(field.name(), field.value());
+                request.resourceRequest().setHTTPHeaderField(field.name(), field.value());
         }
     }
 
