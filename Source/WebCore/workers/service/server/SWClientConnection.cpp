@@ -124,11 +124,13 @@ void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationSc
         return;
 
     std::optional<MessageEventSource> source;
-    if (destinationDocument->selectedServiceWorkerIdentifier() == sourceServiceWorkerIdentifier) {
-        ASSERT(container->controller()->identifier() == sourceServiceWorkerIdentifier);
-        source = MessageEventSource { RefPtr<ServiceWorker> { container->controller() } };
-    } else
-        source = MessageEventSource { RefPtr<ServiceWorker> { ServiceWorker::create(*destinationDocument, sourceServiceWorkerIdentifier) } };
+    auto* activeServiceWorker = destinationDocument->activeServiceWorker();
+    if (activeServiceWorker && activeServiceWorker->identifier() == sourceServiceWorkerIdentifier)
+        source = MessageEventSource { RefPtr<ServiceWorker> { activeServiceWorker } };
+    else {
+        // FIXME: Pass in valid scriptURL.
+        source = MessageEventSource { RefPtr<ServiceWorker> { ServiceWorker::create(*destinationDocument, sourceServiceWorkerIdentifier, URL()) } };
+    }
 
     // FIXME: We should pass in ports.
     auto messageEvent = MessageEvent::create({ }, WTFMove(message), sourceOrigin, { }, WTFMove(source));

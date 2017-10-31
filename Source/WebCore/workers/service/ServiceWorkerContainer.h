@@ -100,7 +100,6 @@ private:
 
     RefPtr<SWClientConnection> m_swConnection;
     HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_jobMap;
-    mutable RefPtr<ServiceWorker> m_controller;
 
 #ifndef NDEBUG
     ThreadIdentifier m_creationThread { currentThread() };

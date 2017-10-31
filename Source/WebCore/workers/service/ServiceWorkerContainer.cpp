@@ -28,11 +28,13 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "EventNames.h"
 #include "Exception.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerRegistration.h"
 #include "Logging.h"
+#include "Microtasks.h"
 #include "NavigatorBase.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
@@ -76,13 +78,7 @@ void ServiceWorkerContainer::derefEventTarget()
 ServiceWorker* ServiceWorkerContainer::controller() const
 {
     auto* context = scriptExecutionContext();
-    if (!context || !context->selectedServiceWorkerIdentifier()) {
-        m_controller = nullptr;
-        return nullptr;
-    }
-    if (!m_controller || m_controller->identifier() != context->selectedServiceWorkerIdentifier())
-        m_controller = ServiceWorker::create(*context, context->selectedServiceWorkerIdentifier());
-    return m_controller.get();
+    return context ? context->activeServiceWorker() : nullptr;
 }
 
 void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
@@ -203,6 +199,37 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
     jobDidFinish(job);
 }
 
+class FakeServiceWorkerInstallMicrotask final : public Microtask {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit FakeServiceWorkerInstallMicrotask(Ref<ServiceWorkerRegistration>&& registration)
+        : m_registration(WTFMove(registration))
+    {
+    }
+
+private:
+    Result run() final
+    {
+        // FIXME: We currently resolve the promise at the end of the install instead of the beginning so we need to fake
+        // a few events to make it look like we are installing and activing the service worker.
+        callOnMainThread([registration = WTFMove(m_registration)] () mutable {
+            registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
+            callOnMainThread([registration = WTFMove(registration)] () mutable {
+                registration->installing()->setState(ServiceWorker::State::Installed);
+                callOnMainThread([registration = WTFMove(registration)] () mutable {
+                    registration->waiting()->setState(ServiceWorker::State::Activating);
+                    callOnMainThread([registration = WTFMove(registration)] () mutable {
+                        registration->active()->setState(ServiceWorker::State::Activated);
+                    });
+                });
+            });
+        });
+        return Result::Done;
+    }
+
+    Ref<ServiceWorkerRegistration> m_registration;
+};
+
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data)
 {
     auto guard = WTF::makeScopeExit([this, &job] {
@@ -216,10 +243,18 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     }
 
     // FIXME: Implement proper selection of service workers.
-    context->setSelectedServiceWorkerIdentifier(data.identifier);
+    auto* activeServiceWorker = context->activeServiceWorker();
+    if (!activeServiceWorker || activeServiceWorker->identifier() != data.identifier) {
+        context->setActiveServiceWorker(ServiceWorker::create(*context, data.identifier, data.scriptURL));
+        activeServiceWorker = context->activeServiceWorker();
+    }
 
-    auto registration = ServiceWorkerRegistration::create(*context, WTFMove(data));
+    activeServiceWorker->setState(ServiceWorker::State::Installing);
+    auto registration = ServiceWorkerRegistration::create(*context, WTFMove(data), *activeServiceWorker);
     job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration.get());
+
+    // Use a microtask because we need to make sure this is executed after the promise above is resolved.
+    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FakeServiceWorkerInstallMicrotask>(WTFMove(registration)));
 }
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
@@ -236,7 +271,7 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
 
     // FIXME: Implement proper selection of service workers.
     if (unregistrationResult)
-        context->setSelectedServiceWorkerIdentifier(0);
+        context->setActiveServiceWorker(nullptr);
 
     job.promise().resolve<IDLBoolean>(unregistrationResult);
 }

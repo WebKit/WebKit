@@ -1,30 +1,32 @@
 
-FAIL register-via-api-updateViaCache-undefined promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-via-api-updateViaCache-imports promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-via-api-updateViaCache-all assert_equals: reg.updateViaCache expected "all" but got "imports"
-FAIL register-via-api-updateViaCache-none assert_equals: reg.updateViaCache expected "none" but got "imports"
-FAIL register-via-link-element-updateViaCache-undefined promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-element-updateViaCache-imports promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-element-updateViaCache-all promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-element-updateViaCache-none promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-undefined promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-imports promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-all promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-none promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-with-updateViaCache-undefined-then-undefined promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-undefined-then-imports promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-undefined-then-all promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-undefined-then-none promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-imports-then-undefined promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-imports-then-imports promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-imports-then-all promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-imports-then-none promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-all-then-undefined promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-all-then-imports promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-all-then-all promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-all-then-none promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-none-then-undefined promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-none-then-imports promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-none-then-all promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL register-with-updateViaCache-none-then-none promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT register-via-api-updateViaCache-undefined Test timed out
+NOTRUN register-via-api-updateViaCache-imports 
+NOTRUN register-via-api-updateViaCache-all 
+NOTRUN register-via-api-updateViaCache-none 
+NOTRUN register-via-link-element-updateViaCache-undefined 
+NOTRUN register-via-link-element-updateViaCache-imports 
+NOTRUN register-via-link-element-updateViaCache-all 
+NOTRUN register-via-link-element-updateViaCache-none 
+NOTRUN register-via-link-header-updateViaCache-undefined 
+NOTRUN register-via-link-header-updateViaCache-imports 
+NOTRUN register-via-link-header-updateViaCache-all 
+NOTRUN register-via-link-header-updateViaCache-none 
+NOTRUN register-with-updateViaCache-undefined-then-undefined 
+NOTRUN register-with-updateViaCache-undefined-then-imports 
+NOTRUN register-with-updateViaCache-undefined-then-all 
+NOTRUN register-with-updateViaCache-undefined-then-none 
+NOTRUN register-with-updateViaCache-imports-then-undefined 
+NOTRUN register-with-updateViaCache-imports-then-imports 
+NOTRUN register-with-updateViaCache-imports-then-all 
+NOTRUN register-with-updateViaCache-imports-then-none 
+NOTRUN register-with-updateViaCache-all-then-undefined 
+NOTRUN register-with-updateViaCache-all-then-imports 
+NOTRUN register-with-updateViaCache-all-then-all 
+NOTRUN register-with-updateViaCache-all-then-none 
+NOTRUN register-with-updateViaCache-none-then-undefined 
+NOTRUN register-with-updateViaCache-none-then-imports 
+NOTRUN register-with-updateViaCache-none-then-all 
+NOTRUN register-with-updateViaCache-none-then-none 
 

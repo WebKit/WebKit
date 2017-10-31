@@ -44,6 +44,7 @@
 #include "RejectedPromiseTracker.h"
 #include "ResourceRequest.h"
 #include "ScriptState.h"
+#include "ServiceWorker.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
@@ -528,6 +529,17 @@ JSC::ExecState* ScriptExecutionContext::execState()
 }
 
 #if ENABLE(SERVICE_WORKER)
+
+ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
+{
+    return m_activeServiceWorker.get();
+}
+
+void ScriptExecutionContext::setActiveServiceWorker(RefPtr<ServiceWorker>&& serviceWorker)
+{
+    m_activeServiceWorker = WTFMove(serviceWorker);
+}
+
 ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
 {
     NavigatorBase* navigator = nullptr;

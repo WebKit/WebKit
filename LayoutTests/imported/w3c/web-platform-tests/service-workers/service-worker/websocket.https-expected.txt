@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: WebSocket network error: OSStatus Error -9807: Invalid certificate chain 
+CONSOLE MESSAGE: WebSocket network error: OSStatus Error -9807: Invalid certificate chain 
 
-FAIL Verify WebSocket handshake channel does not get intercepted assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL Verify WebSocket handshake channel does not get intercepted assert_unreached: unexpected rejection: [object Event] Reached unreachable code
 

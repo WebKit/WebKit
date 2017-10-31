@@ -1,5 +1,7 @@
 
-FAIL postMessage to a ServiceWorker (and back via MessagePort) promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.postMessage')"
-FAIL postMessage a transferable ArrayBuffer between ServiceWorker and Client promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'r.installing.postMessage')"
-FAIL postMessage a transferable ArrayBuffer between ServiceWorker and Client over MessagePort promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'r.installing.postMessage')"
+Harness Error (TIMEOUT), message = null
+
+FAIL postMessage to a ServiceWorker (and back via MessagePort) promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+TIMEOUT postMessage a transferable ArrayBuffer between ServiceWorker and Client Test timed out
+NOTRUN postMessage a transferable ArrayBuffer between ServiceWorker and Client over MessagePort 
 

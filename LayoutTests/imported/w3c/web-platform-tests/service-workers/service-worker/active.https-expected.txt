@@ -1,4 +1,3 @@
 
-
-FAIL active is set assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+PASS active is set 
 

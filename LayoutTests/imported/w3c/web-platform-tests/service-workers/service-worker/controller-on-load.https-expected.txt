@@ -1,3 +1,4 @@
 
-FAIL controller is set for a controlled document assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL controller is set for a controlled document assert_true: controller should be a ServiceWorker object expected true got false
 

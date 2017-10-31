@@ -1,3 +1,5 @@
 
-FAIL CacheStorage.match assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT CacheStorage.match Test timed out
 

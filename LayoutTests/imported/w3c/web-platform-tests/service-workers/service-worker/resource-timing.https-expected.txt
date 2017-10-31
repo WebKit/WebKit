@@ -1,4 +1,5 @@
 
-FAIL Controlled resource loads assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL Controlled resource loads assert_unreached: unexpected rejection: undefined is not an object (evaluating 'entry.workerStart') Reached unreachable code
 PASS Non-controlled resource loads 
 

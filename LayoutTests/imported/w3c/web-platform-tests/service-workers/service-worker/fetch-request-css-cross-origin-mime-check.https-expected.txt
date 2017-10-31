@@ -1,3 +1,4 @@
 
-FAIL Mime type checking of CSS files fetched via SW. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL Mime type checking of CSS files fetched via SW. assert_equals: The color must be overridden by cross origin CSS. expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
 

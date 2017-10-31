@@ -39,12 +39,12 @@ class ServiceWorker;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<ServiceWorkerRegistration> create(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& data)
+    static Ref<ServiceWorkerRegistration> create(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& data, Ref<ServiceWorker>&& serviceWorker)
     {
-        return adoptRef(*new ServiceWorkerRegistration(context, WTFMove(data)));
+        return adoptRef(*new ServiceWorkerRegistration(context, WTFMove(data), WTFMove(serviceWorker)));
     }
 
-    virtual ~ServiceWorkerRegistration() = default;
+    ~ServiceWorkerRegistration();
 
     ServiceWorker* installing();
     ServiceWorker* waiting();
@@ -60,7 +60,7 @@ public:
     using RefCounted::deref;
 
 private:
-    ServiceWorkerRegistration(ScriptExecutionContext&, ServiceWorkerRegistrationData&&);
+    ServiceWorkerRegistration(ScriptExecutionContext&, ServiceWorkerRegistrationData&&, Ref<ServiceWorker>&&);
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -71,6 +71,7 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     ServiceWorkerRegistrationData m_registrationData;
+    Ref<ServiceWorker> m_serviceWorker;
 };
 
 } // namespace WebCore

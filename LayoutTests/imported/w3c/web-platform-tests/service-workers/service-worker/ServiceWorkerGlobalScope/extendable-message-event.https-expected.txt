@@ -1,6 +1,8 @@
 
-FAIL Post an extendable message from a top-level client promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Post an extendable message from a nested client promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Post loopback extendable messages promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Post extendable messages among service workers promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+Harness Error (TIMEOUT), message = null
+
+FAIL Post an extendable message from a top-level client promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL Post an extendable message from a nested client promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'f.contentWindow.navigator.serviceWorker.controller.postMessage')"
+TIMEOUT Post loopback extendable messages Test timed out
+NOTRUN Post extendable messages among service workers 
 

@@ -67,6 +67,7 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
+#include "ServiceWorker.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
 #include "SubresourceLoader.h"
@@ -692,7 +693,8 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
         if (!request.origin())
             request.setOrigin(document->securityOrigin());
 #if ENABLE(SERVICE_WORKER)
-        request.setSelectedServiceWorkerIdentifierIfNeeded(document->selectedServiceWorkerIdentifier());
+        if (auto* activeServiceWorker = document->activeServiceWorker())
+            request.setSelectedServiceWorkerIdentifierIfNeeded(activeServiceWorker->identifier());
 #endif
     }
 

@@ -1,3 +1,4 @@
 
-FAIL Client.id returns the client's ID. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL Client.id returns the client's ID. assert_unreached: unexpected rejection: null is not an object (evaluating 'f.contentWindow.navigator.serviceWorker.controller.postMessage') Reached unreachable code
 

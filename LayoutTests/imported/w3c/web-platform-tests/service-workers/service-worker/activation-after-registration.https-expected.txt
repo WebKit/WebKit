@@ -1,3 +1,3 @@
 
-FAIL activation occurs after registration assert_unreached: unexpected rejection: null is not an object (evaluating 'r.installing.state') Reached unreachable code
+PASS activation occurs after registration 
 

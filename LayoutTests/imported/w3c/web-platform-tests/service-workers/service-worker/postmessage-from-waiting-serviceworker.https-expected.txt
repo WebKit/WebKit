@@ -1,3 +1,4 @@
 
-FAIL Client.postMessage() from waiting serviceworker. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL Client.postMessage() from waiting serviceworker. assert_unreached: unexpected rejection: assert_equals: should be same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]" Reached unreachable code
 

@@ -1,3 +1,3 @@
 
-FAIL Error handlers inside serviceworker should see the attributes of ErrorEvent promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.postMessage')"
+FAIL Error handlers inside serviceworker should see the attributes of ErrorEvent assert_equals: error column number expected 3 but got 20
 

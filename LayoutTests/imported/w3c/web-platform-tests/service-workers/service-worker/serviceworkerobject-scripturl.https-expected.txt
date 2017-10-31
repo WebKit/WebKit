@@ -1,5 +1,5 @@
 
-FAIL Verify the scriptURL property: relative promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.scriptURL')"
-FAIL Verify the scriptURL property: with-fragment promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.scriptURL')"
-FAIL Verify the scriptURL property: absolute promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.scriptURL')"
+PASS Verify the scriptURL property: relative 
+PASS Verify the scriptURL property: with-fragment 
+PASS Verify the scriptURL property: absolute 
 

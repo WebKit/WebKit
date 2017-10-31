@@ -1,4 +1,5 @@
 
-FAIL Verify matchAll() with window client type assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Verify matchAll() with {window, sharedworker, worker} client types promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL Verify matchAll() with window client type assert_unreached: unexpected rejection: null is not an object (evaluating 'frame.contentWindow.navigator.serviceWorker.controller.postMessage') Reached unreachable code
+FAIL Verify matchAll() with {window, sharedworker, worker} client types promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
 

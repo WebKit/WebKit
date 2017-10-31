@@ -1,7 +1,7 @@
 
-FAIL activate handler throws an error promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.addEventListener')"
-FAIL activate handler throws an error, error handler does not cancel promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.addEventListener')"
-FAIL activate handler dispatches an event that throws an error promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.addEventListener')"
-FAIL activate handler throws an error that is cancelled promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.addEventListener')"
-FAIL activate handler throws an error and prevents default promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.addEventListener')"
+PASS activate handler throws an error 
+PASS activate handler throws an error, error handler does not cancel 
+PASS activate handler dispatches an event that throws an error 
+PASS activate handler throws an error that is cancelled 
+PASS activate handler throws an error and prevents default 
 

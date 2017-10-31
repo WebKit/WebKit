@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "EventNames.h"
 #include "MessagePort.h"
 #include "SWClientConnection.h"
 #include "ScriptExecutionContext.h"
@@ -37,10 +38,17 @@
 
 namespace WebCore {
 
-ServiceWorker::ServiceWorker(ScriptExecutionContext& context, uint64_t serviceWorkerIdentifier)
+ServiceWorker::ServiceWorker(ScriptExecutionContext& context, uint64_t serviceWorkerIdentifier, const URL& scriptURL)
     : ContextDestructionObserver(&context)
     , m_identifier(serviceWorkerIdentifier)
+    , m_scriptURL(scriptURL)
 {
+}
+
+void ServiceWorker::setState(State state)
+{
+    m_state = state;
+    dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
 }
 
 ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
@@ -72,16 +80,6 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
     swConnection.postMessageToServiceWorkerGlobalScope(m_identifier, message.releaseReturnValue(), context);
 
     return { };
-}
-
-const String& ServiceWorker::scriptURL() const
-{
-    return emptyString();
-}
-
-ServiceWorker::State ServiceWorker::state() const
-{
-    return State::Activated;
 }
 
 EventTargetInterface ServiceWorker::eventTargetInterface() const

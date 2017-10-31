@@ -1,4 +1,4 @@
 
-FAIL Service worker intercepts requests from window promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'nextWorker.addEventListener')"
-FAIL Service worker does not intercept fetch/cache requests within service worker promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'nextWorker.addEventListener')"
+FAIL Service worker intercepts requests from window assert_equals: fetch intercepted expected "intercepted" but got "Hello world\n"
+FAIL Service worker does not intercept fetch/cache requests within service worker assert_equals: fetch within SW not intercepted expected "Hello world\n" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
 

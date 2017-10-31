@@ -1,3 +1,4 @@
 
-FAIL Navigation Preload empty response body. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL Navigation Preload empty response body. assert_equals: expected "[]" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
 

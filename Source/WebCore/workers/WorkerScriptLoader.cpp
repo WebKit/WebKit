@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include "ServiceWorker.h"
 #include "TextResourceDecoder.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptLoaderClient.h"
@@ -65,7 +66,8 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 #if ENABLE(SERVICE_WORKER)
     options.serviceWorkersMode = workerGlobalScope.isServiceWorkerGlobalScope() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
-    options.serviceWorkerIdentifier = workerGlobalScope.selectedServiceWorkerIdentifier();
+    if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())
+        options.serviceWorkerIdentifier = activeServiceWorker->identifier();
 #endif
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(*request), *this, options);
 }
@@ -93,7 +95,8 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 #if ENABLE(SERVICE_WORKER)
     options.serviceWorkersMode = m_client->isServiceWorkerClient() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
-    options.serviceWorkerIdentifier = scriptExecutionContext->selectedServiceWorkerIdentifier();
+    if (auto* activeServiceWorker = scriptExecutionContext->activeServiceWorker())
+        options.serviceWorkerIdentifier = activeServiceWorker->identifier();
 #endif
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);

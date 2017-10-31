@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.postMessage')
-CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.postMessage')
-CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'worker.postMessage')
+CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: NotSupportedError: Passing MessagePort objects to postMessage is not yet supported
+CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: NotSupportedError: Passing MessagePort objects to postMessage is not yet supported
+CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: NotSupportedError: Passing MessagePort objects to postMessage is not yet supported
 
-Harness Error (FAIL), message = null is not an object (evaluating 'worker.postMessage')
+Harness Error (FAIL), message = Passing MessagePort objects to postMessage is not yet supported
 
-FAIL Test install event waitUntil fulfilled assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test ExtendableEvent multiple waitUntil fulfilled. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test ExtendableEvent waitUntil reject precedence. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test activate event waitUntil fulfilled assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test install event waitUntil rejected assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test activate event waitUntil rejected. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Test install event waitUntil fulfilled assert_unreached: unexpected rejection: assert_true: state should be "installed" after the waitUntil promise for "oninstall" is fulfilled. expected true got undefined Reached unreachable code
+FAIL Test ExtendableEvent multiple waitUntil fulfilled. assert_unreached: unexpected rejection: assert_true: state should be "installed" after all waitUntil promises for "oninstall" are fulfilled. expected true got undefined Reached unreachable code
+TIMEOUT Test ExtendableEvent waitUntil reject precedence. Test timed out
+FAIL Test activate event waitUntil fulfilled assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+TIMEOUT Test install event waitUntil rejected Test timed out
+PASS Test activate event waitUntil rejected. 
 

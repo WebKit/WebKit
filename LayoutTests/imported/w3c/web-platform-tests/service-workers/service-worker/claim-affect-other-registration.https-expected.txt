@@ -1,3 +1,4 @@
 
-FAIL claim() should affect the originally controlling registration. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL claim() should affect the originally controlling registration. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'r.active')"
 

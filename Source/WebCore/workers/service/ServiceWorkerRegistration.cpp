@@ -29,31 +29,43 @@
 #if ENABLE(SERVICE_WORKER)
 #include "DOMWindow.h"
 #include "Document.h"
+#include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& registrationData)
+ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& registrationData, Ref<ServiceWorker>&& serviceWorker)
     : ActiveDOMObject(&context)
     , m_registrationData(WTFMove(registrationData))
+    , m_serviceWorker(WTFMove(serviceWorker))
 {
     suspendIfNeeded();
 }
 
+ServiceWorkerRegistration::~ServiceWorkerRegistration()
+{
+}
+
 ServiceWorker* ServiceWorkerRegistration::installing()
 {
-    return nullptr;
+    if (m_serviceWorker->state() != ServiceWorker::State::Installing)
+        return nullptr;
+    return m_serviceWorker.ptr();
 }
 
 ServiceWorker* ServiceWorkerRegistration::waiting()
 {
-    return nullptr;
+    if (m_serviceWorker->state() != ServiceWorker::State::Installed)
+        return nullptr;
+    return m_serviceWorker.ptr();
 }
 
 ServiceWorker* ServiceWorkerRegistration::active()
 {
-    return nullptr;
+    if (m_serviceWorker->state() != ServiceWorker::State::Activating && m_serviceWorker->state() != ServiceWorker::State::Activated)
+        return nullptr;
+    return m_serviceWorker.ptr();
 }
 
 const String& ServiceWorkerRegistration::scope() const

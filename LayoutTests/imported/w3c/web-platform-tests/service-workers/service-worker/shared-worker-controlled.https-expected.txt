@@ -1,5 +1,5 @@
 
-FAIL Verify subresource loads in SharedWorker are controlled by a Service Worker promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Verify SharedWorker construction is controlled by a Service Worker promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Verify importScripts from SharedWorker is controlled by a Service Worker promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Verify subresource loads in SharedWorker are controlled by a Service Worker promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Verify SharedWorker construction is controlled by a Service Worker promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Verify importScripts from SharedWorker is controlled by a Service Worker promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
 

@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT registration via <link> element `rel` rejected Test timed out
+NOTRUN registration via <link> element `rel` accepted in presence of `allow-same-origin` directive 
+

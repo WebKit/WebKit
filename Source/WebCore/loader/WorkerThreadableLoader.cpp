@@ -41,6 +41,7 @@
 #include "ResourceResponse.h"
 #include "ResourceTiming.h"
 #include "SecurityOrigin.h"
+#include "ServiceWorker.h"
 #include "ThreadableLoader.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
@@ -126,7 +127,8 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
 
 #if ENABLE(SERVICE_WORKER)
     optionsCopy->options.serviceWorkersMode = globalScope.isServiceWorkerGlobalScope() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
-    optionsCopy->options.serviceWorkerIdentifier = globalScope.selectedServiceWorkerIdentifier();
+    if (auto* activeServiceWorker = globalScope.activeServiceWorker())
+        optionsCopy->options.serviceWorkerIdentifier = activeServiceWorker->identifier();
 #endif
 
     // Can we benefit from request being an r-value to create more efficiently its isolated copy?

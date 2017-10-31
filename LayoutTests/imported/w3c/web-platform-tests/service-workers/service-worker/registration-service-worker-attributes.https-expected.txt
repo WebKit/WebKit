@@ -1,3 +1,5 @@
 
-FAIL installing/waiting/active after registration promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'registration.installing.scriptURL')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT installing/waiting/active after registration Test timed out
 

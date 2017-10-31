@@ -1,12 +1,12 @@
 
-FAIL Test calling waitUntil in a different task without an existing extension throws assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil in a different microtask without an existing extension throws assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil in a different task with an existing extension succeeds assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil with an existing extension promise handler succeeds assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil at the end of the microtask turn throws assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil after the current extension expired in a different task fails assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil on a script constructed ExtendableEvent throws exception assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil asynchronously with pending respondWith promise. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil synchronously inside microtask of respondWith promise. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Test calling waitUntil asynchronously inside microtask of respondWith promise. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Test calling waitUntil in a different task without an existing extension throws assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil in a different microtask without an existing extension throws assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil in a different task with an existing extension succeeds assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil with an existing extension promise handler succeeds assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil at the end of the microtask turn throws assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil after the current extension expired in a different task fails assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil on a script constructed ExtendableEvent throws exception assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil asynchronously with pending respondWith promise. assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil synchronously inside microtask of respondWith promise. assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Test calling waitUntil asynchronously inside microtask of respondWith promise. assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
 

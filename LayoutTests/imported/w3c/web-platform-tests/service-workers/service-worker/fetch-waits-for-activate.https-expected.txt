@@ -1,3 +1,4 @@
 
-FAIL Fetch events should wait for the activate event to complete. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL Fetch events should wait for the activate event to complete. assert_unreached: unexpected rejection: assert_equals: frame should not be loaded expected (undefined) undefined but got (object) Element node <iframe class="test-iframe" src="resources/fetch-waits-fo... Reached unreachable code
 

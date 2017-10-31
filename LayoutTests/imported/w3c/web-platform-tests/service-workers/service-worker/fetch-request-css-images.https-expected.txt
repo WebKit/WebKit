@@ -1,6 +1,7 @@
 
-FAIL Verify FetchEvent for css image (backgroundImage). assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Verify FetchEvent for css image (shapeOutside). assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Verify FetchEvent for css image-set (backgroundImage). assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Verify FetchEvent for css image-set (shapeOutside). assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL Verify FetchEvent for css image (backgroundImage). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Verify FetchEvent for css image (shapeOutside). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Verify FetchEvent for css image-set (backgroundImage). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+FAIL Verify FetchEvent for css image-set (shapeOutside). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
 

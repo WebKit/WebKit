@@ -82,6 +82,7 @@ private:
     std::unique_ptr<SWServerWorker> m_waitingWorker;
     std::unique_ptr<SWServerWorker> m_activeWorker;
     URL m_scopeURL;
+    URL m_scriptURL;
     std::optional<ServiceWorkerUpdateViaCache> m_updateViaCache;
     
     double m_lastUpdateTime { 0 };

@@ -1,3 +1,6 @@
 
-FAIL Navigation Preload with broken chunked encoding must fail. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Navigation Preload with broken chunked encoding must fail. Test timed out
 

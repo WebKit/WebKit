@@ -1,4 +1,3 @@
 
-
-FAIL installing is set null is not an object (evaluating 'registration.installing.scriptURL')
+PASS installing is set 
 

@@ -36,6 +36,7 @@ ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() cons
         key.isolatedCopy(),
         identifier,
         scopeURL.isolatedCopy(),
+        scriptURL.isolatedCopy(),
         updateViaCache
     };
 }

@@ -1,4 +1,5 @@
 
-FAIL Test worker claims client which is using another registration promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Test for the waiting worker claims a client which is using the the same registration promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL Test worker claims client which is using another registration promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL Test for the waiting worker claims a client which is using the the same registration promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 

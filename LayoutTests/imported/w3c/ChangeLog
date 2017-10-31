@@ -1,3 +1,186 @@
+2017-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Fire updatefound event after resolving the registration promise
+        https://bugs.webkit.org/show_bug.cgi?id=178985
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline tests and land expected results for tests that are timing out.
+        A lot of tests are now actualling testing something instead of failing right away.
+
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-delete.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-keys.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-matchAll.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-keys.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/credentials.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/close.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/postmessage.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/service-worker-error-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/activate-event-after-install-state-change.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/activation-after-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/active.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/appcache-ordering-main.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-affect-other-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-fetch.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-not-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-worker-fetch.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/client-id.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/client-navigate.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get-client-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get-cross-origin.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-exact-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-on-evaluation.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/clients-matchall-order.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/controller-on-disconnect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/controller-on-load.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/controller-on-reload.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-csp.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-after-navigation-within-page.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-async-respond-with.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-network-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-argument.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-readable-stream.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-stops-propagation.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-throws-after-respond-with.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-frame-resource.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-header-visibility.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-base-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-cross-origin-mime-check.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-images.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-fallback.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-html-imports.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-resources.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr-sync.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-response-taint.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-response-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-cors.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-event.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-workers.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/getregistrations.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/http-to-https-redirect-and-register.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/iframe-sandbox-register-link-element.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/immutable-prototype-serviceworker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-scripts-redirect.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/import-scripts-updated-flag.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/indexeddb.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/install-event-type.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/installing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/interfaces-sw.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/interfaces-window.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/invalid-blobtype.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/invalid-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/iso-latin1-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/link-element-register-basic.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/link-element-register-mime-types.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/link-element-register-scope.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/link-element-register-script-url.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/link-element-register-script.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/link-element-register-security-error.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/mime-sniffing.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/multi-globals/url-parsing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multiple-register.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multiple-update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigate-window.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/chunked-encoding.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/empty-preload-response-body.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/get-state.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/request-headers.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/resource-timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect-body.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/onactivate-script-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/oninstall-script-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/opaque-response-preloaded.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/postmessage-blob-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-from-waiting-serviceworker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-msgport-to-client.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-to-client.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ready.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/referer.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/referrer-policy-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-default-scope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-foreign-fetch-errors.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-wait-forever-in-install-worker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-basic.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-end-to-end.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-events.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-mime-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-scope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-script-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-security-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/request-body-blob.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/request-end-to-end.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resource-timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-default.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-script.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/serviceworker-message-event-historical.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/serviceworkerobject-scripturl.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/shared-worker-controlled.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-installed.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/skip-waiting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/state.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/synced-state.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/uncontrolled-page.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-after-oneday.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-bytecheck.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/update-recovery.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/waiting.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/websocket.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-interception.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/xhr.https-expected.txt:
+
 2017-10-30  Dean Jackson  <dino@apple.com>
 
         Implement "bitmaprenderer" CanvasRenderingContext

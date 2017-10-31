@@ -1,3 +1,4 @@
 
-FAIL Navigation Preload Resource Timing. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL Navigation Preload Resource Timing. promise_test: Unhandled rejection with value: object "SyntaxError: JSON Parse error: Unexpected identifier "This""
 

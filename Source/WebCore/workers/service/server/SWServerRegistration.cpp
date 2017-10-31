@@ -97,7 +97,7 @@ void SWServerRegistration::scriptContextFailedToStart(SWServer::Connection&, con
 void SWServerRegistration::scriptContextStarted(SWServer::Connection&, uint64_t identifier, const String& workerID)
 {
     UNUSED_PARAM(workerID);
-    resolveCurrentRegistrationJob(ServiceWorkerRegistrationData { m_registrationKey, identifier, m_scopeURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) });
+    resolveCurrentRegistrationJob(ServiceWorkerRegistrationData { m_registrationKey, identifier, m_scopeURL, m_scriptURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) });
 }
 
 void SWServerRegistration::startNextJob()
@@ -170,6 +170,7 @@ void SWServerRegistration::runRegisterJob(const ServiceWorkerJobData& job)
     } else {
         m_scopeURL = job.scopeURL.isolatedCopy();
         m_scopeURL.removeFragmentIdentifier();
+        m_scriptURL = job.scriptURL.isolatedCopy();
         m_updateViaCache = job.registrationOptions.updateViaCache;
     }
 
@@ -293,7 +294,7 @@ void SWServerRegistration::finishCurrentJob()
 
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
-    return { m_registrationKey, identifier(), m_scopeURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) };
+    return { m_registrationKey, identifier(), m_scopeURL, m_scriptURL, m_updateViaCache.value_or(ServiceWorkerUpdateViaCache::Imports) };
 }
 
 

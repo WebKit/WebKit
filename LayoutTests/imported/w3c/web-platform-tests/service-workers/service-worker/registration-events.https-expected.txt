@@ -1,3 +1,3 @@
 
-FAIL Registration: events null is not an object (evaluating 'sw')
+FAIL Registration: events Passing MessagePort objects to postMessage is not yet supported
 

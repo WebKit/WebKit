@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: line 52: TypeError: window.parent.notify_done is not a function. (In 'window.parent.notify_done('FAIL: no controller')', 'window.parent.notify_done' is undefined)
 
-FAIL respondWith() takes either a Response or a promise that resolves with a Response. Other values should raise a network error. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT respondWith() takes either a Response or a promise that resolves with a Response. Other values should raise a network error. Test timed out
 

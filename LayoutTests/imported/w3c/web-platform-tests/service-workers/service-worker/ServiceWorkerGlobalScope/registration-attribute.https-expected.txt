@@ -1,3 +1,4 @@
 
-FAIL Verify registration attribute on ServiceWorkerGlobalScope promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL Verify registration attribute on ServiceWorkerGlobalScope assert_equals: Service Worker should respond to fetch expected "updatefound,install,statechange(installed),statechange(activating),activate,statechange(activated),fetch" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
 

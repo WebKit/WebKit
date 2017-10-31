@@ -1,4 +1,4 @@
 
-FAIL Clients.matchAll() should not show an old window as controlled after it navigates. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
-FAIL Clients.matchAll() should not show an old window after it navigates. assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Clients.matchAll() should not show an old window as controlled after it navigates. assert_unreached: unexpected rejection: null is not an object (evaluating 'reg.active') Reached unreachable code
+FAIL Clients.matchAll() should not show an old window after it navigates. assert_unreached: unexpected rejection: null is not an object (evaluating 'reg.active') Reached unreachable code
 

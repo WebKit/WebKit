@@ -15,18 +15,19 @@ PASS ServiceWorker interface: attribute scriptURL
 PASS ServiceWorker interface: attribute state 
 PASS ServiceWorker interface: operation postMessage(any, [object Object]) 
 PASS ServiceWorker interface: attribute onstatechange 
-FAIL Stringification of window.registrationInstance.installing assert_equals: class string of window.registrationInstance.installing expected "[object ServiceWorker]" but got "[object Null]"
-FAIL ServiceWorker interface: window.registrationInstance.installing must inherit property "scriptURL" with the proper type object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL ServiceWorker interface: window.registrationInstance.installing must inherit property "state" with the proper type object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL ServiceWorker interface: window.registrationInstance.installing must inherit property "postMessage(any, [object Object])" with the proper type object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL ServiceWorker interface: calling postMessage(any, [object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL ServiceWorker interface: window.registrationInstance.installing must inherit property "onstatechange" with the proper type object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL EventTarget interface: window.registrationInstance.installing must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL EventTarget interface: window.registrationInstance.installing must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL EventTarget interface: window.registrationInstance.installing must inherit property "dispatchEvent(Event)" with the proper type object is not an Object. (evaluating '"hasOwnProperty" in object')
-FAIL EventTarget interface: calling dispatchEvent(Event) on window.registrationInstance.installing with too few arguments must throw TypeError object is not an Object. (evaluating '"hasOwnProperty" in object')
+PASS ServiceWorker must be primary interface of window.registrationInstance.installing 
+PASS Stringification of window.registrationInstance.installing 
+PASS ServiceWorker interface: window.registrationInstance.installing must inherit property "scriptURL" with the proper type 
+PASS ServiceWorker interface: window.registrationInstance.installing must inherit property "state" with the proper type 
+PASS ServiceWorker interface: window.registrationInstance.installing must inherit property "postMessage(any, [object Object])" with the proper type 
+PASS ServiceWorker interface: calling postMessage(any, [object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError 
+PASS ServiceWorker interface: window.registrationInstance.installing must inherit property "onstatechange" with the proper type 
+PASS EventTarget interface: window.registrationInstance.installing must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
+PASS EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError 
+PASS EventTarget interface: window.registrationInstance.installing must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
+PASS EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError 
+PASS EventTarget interface: window.registrationInstance.installing must inherit property "dispatchEvent(Event)" with the proper type 
+PASS EventTarget interface: calling dispatchEvent(Event) on window.registrationInstance.installing with too few arguments must throw TypeError 
 PASS ServiceWorkerRegistration interface: existence and properties of interface object 
 PASS ServiceWorkerRegistration interface object length 
 PASS ServiceWorkerRegistration interface object name 

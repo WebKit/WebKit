@@ -1,0 +1,12 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Registering same scope as the script directory without the last slash Test timed out
+NOTRUN Registration scope outside the script directory 
+NOTRUN Registering scope outside domain 
+NOTRUN Registering script outside domain 
+NOTRUN Registering redirected script 
+NOTRUN Scope including parent-reference and not under the script directory 
+NOTRUN Script URL including consecutive slashes 
+NOTRUN Script URL is same-origin filesystem: URL 
+

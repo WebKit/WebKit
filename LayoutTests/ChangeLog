@@ -1,3 +1,14 @@
+2017-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Fire updatefound event after resolving the registration promise
+        https://bugs.webkit.org/show_bug.cgi?id=178985
+
+        Reviewed by Youenn Fablet.
+
+        Update tests that are skipped due to timing out.
+
+        * TestExpectations:
+
 2017-10-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Rebaseline and re-enable CSS tests

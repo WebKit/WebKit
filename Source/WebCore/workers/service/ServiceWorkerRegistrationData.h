@@ -37,6 +37,7 @@ struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationKey key;
     uint64_t identifier;
     URL scopeURL;
+    URL scriptURL;
     ServiceWorkerUpdateViaCache updateViaCache;
 
     ServiceWorkerRegistrationData isolatedCopy() const;
@@ -49,7 +50,7 @@ struct ServiceWorkerRegistrationData {
 template<class Encoder>
 void ServiceWorkerRegistrationData::encode(Encoder& encoder) const
 {
-    encoder << key << identifier << scopeURL << updateViaCache;
+    encoder << key << identifier << scopeURL << scriptURL << updateViaCache;
 }
 
 template<class Decoder>
@@ -70,12 +71,17 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     if (!scopeURL)
         return std::nullopt;
 
+    std::optional<URL> scriptURL;
+    decoder >> scriptURL;
+    if (!scriptURL)
+        return std::nullopt;
+
     std::optional<ServiceWorkerUpdateViaCache> updateViaCache;
     decoder >> updateViaCache;
     if (!updateViaCache)
         return std::nullopt;
 
-    return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*scopeURL), WTFMove(*updateViaCache) } };
+    return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*scopeURL), WTFMove(*scriptURL), WTFMove(*updateViaCache) } };
 }
 
 } // namespace WTF

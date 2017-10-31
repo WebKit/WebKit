@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test Performance Timeline API in Service Worker Test timed out
+NOTRUN empty service worker fetch event included in performance timings 
+

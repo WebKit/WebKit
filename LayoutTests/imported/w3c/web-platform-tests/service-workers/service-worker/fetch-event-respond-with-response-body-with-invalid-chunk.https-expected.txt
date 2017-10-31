@@ -1,3 +1,3 @@
 
-FAIL Response with a ReadableStream having non-Uint8Array chunks should be transferred as errored promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Response with a ReadableStream having non-Uint8Array chunks should be transferred as errored assert_equals: expected "PASS" but got "FAIL: read() should be rejected"
 

@@ -1,3 +1,4 @@
 
-FAIL Navigation Preload request headers. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+FAIL Navigation Preload request headers. assert_true: The Navigation Preload request must specify a "Service-Worker-Navigation-Preload" header. expected true got false
 

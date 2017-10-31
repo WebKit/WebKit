@@ -1,6 +1,9 @@
 
-FAIL Navigation Preload redirect response. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Navigation Preload no-location redirect response. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Navigation Preload no-location redirect response with body. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
-FAIL Navigation Preload redirect to the same scope. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Navigation Preload redirect response. Test timed out
+NOTRUN Navigation Preload no-location redirect response. 
+NOTRUN Navigation Preload no-location redirect response with body. 
+NOTRUN Navigation Preload redirect to the same scope. 
 

@@ -1,3 +1,4 @@
 
-FAIL Verify XHR does not exist assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+
+FAIL Verify XHR does not exist assert_unreached: unexpected rejection: null is not an object (evaluating 'frame.contentWindow.navigator.serviceWorker.controller.postMessage') Reached unreachable code
 

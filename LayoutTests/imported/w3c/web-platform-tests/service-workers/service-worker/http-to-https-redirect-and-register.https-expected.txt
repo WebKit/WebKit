@@ -1,0 +1,7 @@
+Blocked access to external URL http://www2.localhost:8800/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fhttp-to-https-redirect-and-register-iframe.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT register on a secure page after redirect from an non-secure url Test timed out
+NOTRUN register on a non-secure page after redirect from an non-secure url 
+
