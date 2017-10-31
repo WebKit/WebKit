@@ -1,3 +1,10 @@
+2017-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+/WPE make distcheck.
+
+        * CMakeLists.txt: Only include PerformanceTests directory to the build for GTK+ and WPE ports when developer
+        mode is enabled.
+
 2017-10-26  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Use proper shared object versioning for libWPEWebKit.so
