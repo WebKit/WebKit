@@ -1862,3 +1862,5 @@ webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Skip ]
 
 webkit.org/b/177501 webrtc/video-mute.html [ Pass Timeout ]
 
+webkit.org/b/172397 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
+

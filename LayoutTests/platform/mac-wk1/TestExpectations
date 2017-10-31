@@ -454,3 +454,6 @@ webkit.org/b/177020 fast/events/beforeunload-dom-manipulation-crash.html [ Skip 
 [ HighSierra+ ] fast/text/system-font-fallback-emoji.html [ Crash ]
 
 webkit.org/b/177563 [ HighSierra ] http/tests/xmlhttprequest/response-empty-arraybuffer.html [ Failure ]
+
+webkit.org/b/172397 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
+
