@@ -153,6 +153,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 }
 
 namespace WebKit {
+class DataReference;
 class DrawingArea;
 class DownloadID;
 class FindController;
@@ -997,6 +998,10 @@ public:
 
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback);
     void storageAccessResponse(bool wasGranted, uint64_t contextId);
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, const IPC::DataReference&, CallbackID);
+#endif
 
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);

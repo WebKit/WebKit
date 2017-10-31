@@ -63,7 +63,9 @@ class EditCommand;
 class EditCommandComposition;
 class EditorClient;
 class EditorInternalCommand;
+class File;
 class Frame;
+class HTMLAttachmentElement;
 class HTMLElement;
 class HitTestResult;
 class KeyboardEvent;
@@ -498,8 +500,17 @@ public:
     void setIsGettingDictionaryPopupInfo(bool b) { m_isGettingDictionaryPopupInfo = b; }
     bool isGettingDictionaryPopupInfo() const { return m_isGettingDictionaryPopupInfo; }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    WEBCORE_EXPORT void insertAttachment(const String& identifier, const String& filename, const String& filepath, std::optional<String> contentType = std::nullopt);
+    WEBCORE_EXPORT void insertAttachment(const String& identifier, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType = std::nullopt);
+#endif
+
 private:
     Document& document() const;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void insertAttachmentFromFile(const String& identifier, const String& filename, const String& contentType, Ref<File>&&);
+#endif
 
     bool canDeleteRange(Range*) const;
     bool canSmartReplaceWithPasteboard(Pasteboard&);

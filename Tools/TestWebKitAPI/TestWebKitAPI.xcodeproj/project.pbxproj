@@ -89,6 +89,7 @@
 		2E1DFDF11D42E1E400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */; };
 		2E205BA41F527746005952DD /* AccessibilityTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E205BA31F527746005952DD /* AccessibilityTestsIOS.mm */; };
 		2E54F40D1D7BC84200921ADF /* large-video-mutes-onplaying.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E54F40C1D7BC83900921ADF /* large-video-mutes-onplaying.html */; };
+		2E5C77071FA70136005932C3 /* WKAttachmentTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E5C77061FA70136005932C3 /* WKAttachmentTests.mm */; };
 		2E691AEA1D78B53600129407 /* large-videos-paused-video-hides-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AE81D78B52B00129407 /* large-videos-paused-video-hides-controls.html */; };
 		2E691AEB1D78B53600129407 /* large-videos-playing-video-keeps-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AE91D78B52B00129407 /* large-videos-playing-video-keeps-controls.html */; };
 		2E691AED1D78B91000129407 /* large-videos-playing-muted-video-hides-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E691AEC1D78B90200129407 /* large-videos-playing-muted-video-hides-controls.html */; };
@@ -1168,6 +1169,7 @@
 		2E1DFDF01D42E14400714A00 /* large-video-seek-to-beginning-and-play-after-ending.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-seek-to-beginning-and-play-after-ending.html"; sourceTree = "<group>"; };
 		2E205BA31F527746005952DD /* AccessibilityTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTestsIOS.mm; sourceTree = "<group>"; };
 		2E54F40C1D7BC83900921ADF /* large-video-mutes-onplaying.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-mutes-onplaying.html"; sourceTree = "<group>"; };
+		2E5C77061FA70136005932C3 /* WKAttachmentTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAttachmentTests.mm; sourceTree = "<group>"; };
 		2E691AE81D78B52B00129407 /* large-videos-paused-video-hides-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-paused-video-hides-controls.html"; sourceTree = "<group>"; };
 		2E691AE91D78B52B00129407 /* large-videos-playing-video-keeps-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-playing-video-keeps-controls.html"; sourceTree = "<group>"; };
 		2E691AEC1D78B90200129407 /* large-videos-playing-muted-video-hides-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-videos-playing-muted-video-hides-controls.html"; sourceTree = "<group>"; };
@@ -2074,6 +2076,7 @@
 				51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */,
 				5120C83C1E6750790025B250 /* WebsiteDataStoreCustomPaths.mm */,
 				5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */,
+				2E5C77061FA70136005932C3 /* WKAttachmentTests.mm */,
 				1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */,
 				5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */,
 				2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */,
@@ -2440,7 +2443,6 @@
 		BC9096411255616000083756 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				07E499901F9E56A1002F1EF3 /* GetUserMediaReprompt.mm */,
 				0F139E741A423A4600F590F5 /* cocoa */,
 				C0C5D3BB14598B6F00A802A6 /* mac */,
 				BC90977B125571AE00083756 /* Resources */,
@@ -2478,6 +2480,7 @@
 				F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */,
 				F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */,
 				07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */,
+				07E499901F9E56A1002F1EF3 /* GetUserMediaReprompt.mm */,
 				4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */,
 				4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */,
 				BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */,
@@ -3277,7 +3280,6 @@
 				46397B951DC2C850009A78AE /* DOMNode.mm in Sources */,
 				7CCE7EBC1A411A7E00447C4C /* DOMNodeFromJSObject.mm in Sources */,
 				7CCE7EBD1A411A7E00447C4C /* DOMRangeOfString.mm in Sources */,
-				07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */,
 				7CCE7EEC1A411AE600447C4C /* DOMWindowExtensionBasic.cpp in Sources */,
 				7CCE7EED1A411AE600447C4C /* DOMWindowExtensionNoCache.cpp in Sources */,
 				7CCE7F231A411AF600447C4C /* Download.mm in Sources */,
@@ -3324,6 +3326,7 @@
 				7CCE7EF91A411AE600447C4C /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
 				7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,
 				07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */,
+				07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */,
 				316BDBAC1E7207F100DE0D5A /* GPUBuffer.mm in Sources */,
 				315231CA1EB3B3C700A22A16 /* GPUCommandQueue.mm in Sources */,
 				3162AE9C1E6F2FF5000E4DBC /* GPUDevice.mm in Sources */,
@@ -3521,6 +3524,7 @@
 				7CCE7F1C1A411AE600447C4C /* WillSendSubmitEvent.cpp in Sources */,
 				7CCE7ED81A411A7E00447C4C /* WillSendSubmitEvent.mm in Sources */,
 				7CCE7ED91A411A7E00447C4C /* WindowlessWebViewWithMedia.mm in Sources */,
+				2E5C77071FA70136005932C3 /* WKAttachmentTests.mm in Sources */,
 				1F83571B1D3FFB2300E3967B /* WKBackForwardList.mm in Sources */,
 				7CCE7F2E1A411B1000447C4C /* WKBrowsingContextGroupTest.mm in Sources */,
 				7CCE7F2F1A411B1000447C4C /* WKBrowsingContextLoadDelegateTest.mm in Sources */,

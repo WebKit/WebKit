@@ -222,6 +222,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/Cocoa/WKWebsiteDataStore.mm
     UIProcess/API/Cocoa/WKWindowFeatures.mm
     UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
+    UIProcess/API/Cocoa/_WKAttachment.mm
     UIProcess/API/Cocoa/_WKAutomationSession.mm
     UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm
     UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm

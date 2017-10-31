@@ -29,6 +29,7 @@
 
 #import "SameDocumentNavigationType.h"
 #import "WKWebViewConfiguration.h"
+#import "_WKAttachmentInternal.h"
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 

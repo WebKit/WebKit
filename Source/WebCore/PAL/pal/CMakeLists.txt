@@ -1,4 +1,5 @@
 set(PAL_SOURCES
+    FileSizeFormatter.cpp
     Logging.cpp
     SessionID.cpp
 

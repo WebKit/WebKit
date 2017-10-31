@@ -37,9 +37,13 @@ class RenderAttachment;
 class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&, const String& identifier);
 
     WEBCORE_EXPORT File* file() const;
     void setFile(File*);
+
+    WEBCORE_EXPORT String uniqueIdentifier() const { return m_uniqueIdentifier; }
+    void setUniqueIdentifier(const String& identifier) { m_uniqueIdentifier = identifier; }
 
     WEBCORE_EXPORT String attachmentTitle() const;
     String attachmentType() const;
@@ -48,6 +52,7 @@ public:
 
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
+    HTMLAttachmentElement(const QualifiedName&, Document&, const String& identifier);
     virtual ~HTMLAttachmentElement();
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
@@ -63,6 +68,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     
     RefPtr<File> m_file;
+    String m_uniqueIdentifier;
 };
 
 } // namespace WebCore

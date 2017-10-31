@@ -1,3 +1,24 @@
+2017-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement WKWebView SPI for inserting attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=179013
+        <rdar://problem/35249668>
+
+        Reviewed by Tim Horton.
+
+        Add a PAL library function to convert a file size to a human-readable string. On Cocoa platforms, this is a
+        wrapper around NSLocalizedFileSizeDescription; otherwise, we fall back to a naive platform-agnostic
+        implementation in FileSizeFormatter.cpp.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        * pal/FileSizeFormatter.cpp: Added.
+        (fileSizeDescription):
+        * pal/FileSizeFormatter.h: Added.
+        * pal/cocoa/FileSizeFormatterCocoa.mm: Added.
+        (fileSizeDescription):
+        * pal/spi/cocoa/NSFileSizeFormatterSPI.h: Added.
+
 2017-10-27  Keith Miller  <keith_miller@apple.com>
 
         Move iOS specific sources to unified sources

@@ -97,6 +97,7 @@ public:
         
         // UIProcess types
         ApplicationCacheManager,
+        Attachment,
         AutomationSession,
         BackForwardList,
         BackForwardListItem,

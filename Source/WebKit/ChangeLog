@@ -1,3 +1,65 @@
+2017-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement WKWebView SPI for inserting attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=179013
+        <rdar://problem/35249668>
+
+        Reviewed by Tim Horton.
+
+        Adds native SPI to insert attachment elements given a filename, an optional MIME type, and a data blob. See
+        change-by-change comments below for more detail. Covered by a new API test.
+
+        * PlatformMac.cmake:
+        * Shared/API/APIObject.h:
+        * Shared/API/Cocoa/WebKitPrivate.h:
+        * UIProcess/API/APIAttachment.cpp: Copied from Source/WebKit/Shared/API/Cocoa/WebKitPrivate.h.
+        (API::Attachment::create):
+        (API::Attachment::Attachment):
+        (API::Attachment::~Attachment):
+
+        Introduce API::Attachment, which represents a platform-agnostic Attachment.
+
+        * UIProcess/API/APIAttachment.h: Copied from Source/WebKit/Shared/API/Cocoa/WebKitPrivate.h.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _insertAttachmentWithFilename:contentType:data:options:completion:]):
+
+        Adds support for inserting a new attachment element. Calls out to WebPageProxy to insert the attachment from the
+        given data blob, and creates a new API-object-backed _WKAttachment.
+
+        (-[WKWebView _executeEditCommand:argument:completion:]):
+
+        Support passing in a nil completion block.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h: Copied from Source/WebKit/Shared/API/Cocoa/WebKitPrivate.h.
+        * UIProcess/API/Cocoa/_WKAttachment.mm: Copied from Source/WebCore/html/HTMLAttachmentElement.h.
+
+        Introduces _WKAttachment, an Objective C wrapper around the API::Attachment.
+
+        (-[_WKAttachment _apiObject]):
+        (-[_WKAttachment isEqual:]):
+        (-[_WKAttachment uniqueIdentifier]):
+        (-[_WKAttachment hash]):
+
+        Add _WKAttachment, a WebKit SPI object that wraps an attachment element unique identifier. Also, allow
+        _WKAttachment to be used as a hashable NSDictionary key.
+
+        (-[_WKAttachment description]):
+        * UIProcess/API/Cocoa/_WKAttachmentInternal.h: Copied from Source/WebKit/Shared/API/Cocoa/WebKitPrivate.h.
+        (API::wrapper):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::insertAttachment):
+
+        Implement IPC support for inserting an attachment.
+
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertAttachment):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-10-31  Alex Christensen  <achristensen@webkit.org>
 
         Fix custom header field setting with reloads and asynchronous navigation action policy decisions

@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "MachPort.h"
 #include <WebCore/MachSendRight.h>
+#include <WebCore/SharedBuffer.h>
 #include <mach/mach_error.h>
 #include <mach/mach_port.h>
 #include <mach/vm_map.h>

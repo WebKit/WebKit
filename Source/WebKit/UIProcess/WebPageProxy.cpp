@@ -7105,4 +7105,14 @@ void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrame
     });
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void WebPageProxy::insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, SharedBuffer& data, Function<void(CallbackBase::Error)>&& callback)
+{
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::InsertAttachment(identifier, filename, contentType, IPC::SharedBufferDataReference { &data }, callbackID), m_pageID);
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
+
 } // namespace WebKit

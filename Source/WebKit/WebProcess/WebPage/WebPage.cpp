@@ -163,6 +163,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -5763,5 +5764,16 @@ void WebPage::storageAccessResponse(bool wasGranted, uint64_t contextId)
     ASSERT(callback);
     callback(wasGranted);
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void WebPage::insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, const IPC::DataReference& data, CallbackID callbackID)
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    frame.editor().insertAttachment(identifier, filename, SharedBuffer::create(data.data(), data.size()), contentType);
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace WebKit

@@ -1,3 +1,22 @@
+2017-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement WKWebView SPI for inserting attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=179013
+        <rdar://problem/35249668>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test suite to exercise attachment element insertion and manipulation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm: Added.
+        (webViewForTestingAttachments):
+        (testHTMLData):
+        (testImageData):
+        (-[TestWKWebView synchronouslyInsertAttachmentWithFilename:contentType:data:options:]):
+        (-[TestWKWebView valueOfAttribute:forQuerySelector:]):
+        (TestWebKitAPI::TEST):
+
 2017-10-31  Alex Christensen  <achristensen@webkit.org>
 
         Fix custom header field setting with reloads and asynchronous navigation action policy decisions

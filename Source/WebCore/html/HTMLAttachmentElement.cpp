@@ -28,18 +28,27 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#include "Editor.h"
 #include "File.h"
+#include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderAttachment.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document)
+HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document, const String& identifier)
     : HTMLElement(tagName, document)
+    , m_uniqueIdentifier(identifier)
 {
     ASSERT(hasTagName(attachmentTag));
+}
+
+HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document)
+    : HTMLAttachmentElement(tagName, document, createCanonicalUUIDString())
+{
 }
 
 HTMLAttachmentElement::~HTMLAttachmentElement() = default;
@@ -47,6 +56,11 @@ HTMLAttachmentElement::~HTMLAttachmentElement() = default;
 Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLAttachmentElement(tagName, document));
+}
+
+Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& tagName, Document& document, const String& identifier)
+{
+    return adoptRef(*new HTMLAttachmentElement(tagName, document, identifier));
 }
 
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

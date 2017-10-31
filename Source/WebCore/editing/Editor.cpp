@@ -47,12 +47,14 @@
 #include "EditorClient.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "File.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLCollection.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -98,6 +100,7 @@
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "markup.h"
+#include <pal/FileSizeFormatter.h>
 #include <pal/system/Sound.h>
 #include <pal/text/KillRing.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -3727,6 +3730,39 @@ RefPtr<Range> Editor::rangeForTextCheckingResult(const TextCheckingResult& resul
 
     return TextIterator::subrange(*contextRange, result.location, result.length);
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void Editor::insertAttachment(const String& identifier, const String& filename, const String& filepath, std::optional<String> contentType)
+{
+    if (!contentType)
+        contentType = File::contentTypeForFile(filename);
+    insertAttachmentFromFile(identifier, filename, *contentType, File::create(filepath));
+}
+
+void Editor::insertAttachment(const String& identifier, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType)
+{
+    if (!contentType)
+        contentType = File::contentTypeForFile(filename);
+    insertAttachmentFromFile(identifier, filename, *contentType, File::create(Blob::create(data, *contentType), filename));
+}
+
+void Editor::insertAttachmentFromFile(const String& identifier, const String& filename, const String& contentType, Ref<File>&& file)
+{
+    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document(), identifier);
+    attachment->setAttribute(HTMLNames::titleAttr, filename);
+    attachment->setAttribute(HTMLNames::subtitleAttr, fileSizeDescription(file->size()));
+    attachment->setAttribute(HTMLNames::typeAttr, contentType);
+    attachment->setUniqueIdentifier(identifier);
+    attachment->setFile(file.ptr());
+
+    auto fragmentToInsert = document().createDocumentFragment();
+    fragmentToInsert->appendChild(attachment.get());
+
+    replaceSelectionWithFragment(fragmentToInsert.get(), false, false, true);
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
 {
