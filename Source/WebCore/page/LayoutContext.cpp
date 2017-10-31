@@ -32,6 +32,7 @@
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "NoEventDispatchAssertion.h"
 #include "RenderElement.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -210,7 +211,7 @@ void LayoutContext::layout()
     }
     {
         SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
-    
+        NoEventDispatchAssertion noEventDispatchAssertion;
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 #ifndef NDEBUG
@@ -222,7 +223,6 @@ void LayoutContext::layout()
         applyTextSizingIfNeeded(*layoutRoot.get());
 #endif
         clearSubtreeLayoutRoot();
-
     }
     {
         SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
