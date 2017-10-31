@@ -1,3 +1,11 @@
+2017-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ make distcheck.
+
+        Ensure DERIVED_SOURCES_JAVASCRIPTCORE_DIR/yarr is created before scripts generating files there are run.
+
+        * CMakeLists.txt:
+
 2017-10-30  Saam Barati  <sbarati@apple.com>
 
         We need a storeStoreFence before storing to the instruction stream's live variable catch data

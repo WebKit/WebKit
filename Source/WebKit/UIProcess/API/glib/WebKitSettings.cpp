@@ -35,6 +35,7 @@
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include <WebCore/TextEncodingRegistry.h>
 #include <WebCore/UserAgent.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
