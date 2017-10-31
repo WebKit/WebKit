@@ -1,5 +1,15 @@
 2017-10-31  Tim Horton  <timothy_horton@apple.com>
 
+        Clean up some drag and drop feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=179082
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+2017-10-31  Tim Horton  <timothy_horton@apple.com>
+
         Fix up some content filtering feature flags
         https://bugs.webkit.org/show_bug.cgi?id=179079
 

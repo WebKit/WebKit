@@ -27,16 +27,18 @@
 
 #import <UIKit/UITextInputTraits.h>
 
-@protocol UIDragSession;
-@class UIDragInteraction;
-@class UIDragItem;
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/UIApplication_Private.h>
-#import <UIKit/UIDragInteraction_Private.h>
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
+
+#if ENABLE(DRAG_SUPPORT)
+@protocol UIDragSession;
+@class UIDragInteraction;
+@class UIDragItem;
+#import <UIKit/UIDragInteraction_Private.h>
+#endif
 
 #else
 
@@ -69,9 +71,11 @@ WTF_EXTERN_C_END
 - (NSDictionary *)_autofillContext;
 @end
 
+#if ENABLE(DRAG_SUPPORT)
 @protocol UIDragInteractionDelegate_Proposed_SPI_33146803 <UIDragInteractionDelegate>
 - (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion;
 @end
+#endif
 
 #if __has_include(<UIKit/UITextAutofillSuggestion.h>)
 // FIXME: Move this import under USE(APPLE_INTERNAL_SDK) once <rdar://problem/34583628> lands in the SDK.
