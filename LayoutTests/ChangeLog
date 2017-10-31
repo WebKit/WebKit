@@ -1,3 +1,12 @@
+2017-10-31  Youenn Fablet  <youenn@apple.com>
+
+        Crash in:  com.apple.WebKit: WebKit::CacheStorage::Caches::initializeSize(WTF::Function<void (std::optional<WebCore::DOMCacheEngine::Error>&&)>&&) + 30 (CacheStorageEngineCaches.cpp:163)
+        https://bugs.webkit.org/show_bug.cgi?id=179037
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations: Unskipping crashing tests.
+
 2017-10-31  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted test expectations for animations/needs-layout.html.

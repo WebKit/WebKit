@@ -159,6 +159,11 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
 
 void Caches::initializeSize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
+    if (!m_storage) {
+        callback(Error::Internal);
+        return;
+    }
+
     uint64_t size = 0;
     m_storage->traverse({ }, 0, [protectedThis = makeRef(*this), this, protectedStorage = makeRef(*m_storage), callback = WTFMove(callback), size](const auto* storage, const auto& information) mutable {
         if (!storage) {
