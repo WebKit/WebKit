@@ -12,11 +12,6 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "platform/SourcesSoup.txt"
 )
 
-# FIXME: This can't go into SourcesGLib.txt because it has to go into WebCorePlatformGTK.
-list(APPEND WebCore_SOURCES
-    platform/glib/EventHandlerGLib.cpp
-)
-
 # Allow building ANGLE on platforms that don't provide X11 headers.
 list(APPEND ANGLE_PLATFORM_DEFINITIONS "USE_WPE")
 

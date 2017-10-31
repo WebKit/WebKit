@@ -10,6 +10,13 @@ endif ()
 
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 
+list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+    "SourcesGTK.txt"
+
+    "platform/SourcesGLib.txt"
+    "platform/SourcesSoup.txt"
+)
+
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE/"
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
@@ -30,119 +37,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/gtk"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/gtk"
-)
-
-list(APPEND WebCore_SOURCES
-    accessibility/atk/AXObjectCacheAtk.cpp
-    accessibility/atk/AccessibilityObjectAtk.cpp
-    accessibility/atk/WebKitAccessibleHyperlink.cpp
-    accessibility/atk/WebKitAccessibleInterfaceAction.cpp
-    accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
-    accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
-    accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
-    accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
-    accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
-    accessibility/atk/WebKitAccessibleInterfaceImage.cpp
-    accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
-    accessibility/atk/WebKitAccessibleInterfaceTable.cpp
-    accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
-    accessibility/atk/WebKitAccessibleInterfaceText.cpp
-    accessibility/atk/WebKitAccessibleInterfaceValue.cpp
-    accessibility/atk/WebKitAccessibleUtil.cpp
-    accessibility/atk/WebKitAccessibleWrapperAtk.cpp
-
-    editing/atk/FrameSelectionAtk.cpp
-
-    loader/soup/CachedRawResourceSoup.cpp
-    loader/soup/SubresourceLoaderSoup.cpp
-
-    page/linux/ResourceUsageOverlayLinux.cpp
-    page/linux/ResourceUsageThreadLinux.cpp
-
-    platform/ScrollAnimationKinetic.cpp
-    platform/StaticPasteboard.cpp
-    platform/UserAgentQuirks.cpp
-
-    platform/audio/glib/AudioBusGLib.cpp
-
-    platform/geoclue/GeolocationProviderGeoclue.cpp
-
-    platform/glib/EventLoopGlib.cpp
-    platform/glib/FileMonitorGLib.cpp
-    platform/glib/FileSystemGlib.cpp
-    platform/glib/KeyedDecoderGlib.cpp
-    platform/glib/KeyedEncoderGlib.cpp
-    platform/glib/LowPowerModeNotifierGLib.cpp
-    platform/glib/MainThreadSharedTimerGLib.cpp
-    platform/glib/SSLKeyGeneratorGLib.cpp
-    platform/glib/SharedBufferGlib.cpp
-    platform/glib/UserAgentGLib.cpp
-
-    platform/graphics/GLContext.cpp
-    platform/graphics/GraphicsContext3DPrivate.cpp
-
-    platform/graphics/cairo/BackingStoreBackendCairoX11.cpp
-
-    platform/graphics/egl/GLContextEGL.cpp
-    platform/graphics/egl/GLContextEGLWayland.cpp
-    platform/graphics/egl/GLContextEGLX11.cpp
-
-    platform/graphics/glx/GLContextGLX.cpp
-
-    platform/graphics/gstreamer/ImageGStreamerCairo.cpp
-
-    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-
-    platform/graphics/opentype/OpenTypeVerticalData.cpp
-
-    platform/graphics/wayland/PlatformDisplayWayland.cpp
-
-    platform/graphics/x11/PlatformDisplayX11.cpp
-    platform/graphics/x11/XErrorTrapper.cpp
-    platform/graphics/x11/XUniqueResource.cpp
-
-    platform/gtk/DragDataGtk.cpp
-    platform/gtk/LocalizedStringsGtk.cpp
-    platform/gtk/PasteboardGtk.cpp
-    platform/gtk/ScrollAnimatorGtk.cpp
-    platform/gtk/SelectionData.cpp
-
-    platform/network/glib/NetworkStateNotifierGLib.cpp
-
-    platform/network/soup/AuthenticationChallengeSoup.cpp
-    platform/network/soup/CertificateInfo.cpp
-    platform/network/soup/CookieJarSoup.cpp
-    platform/network/soup/CookieStorageSoup.cpp
-    platform/network/soup/CredentialStorageSoup.cpp
-    platform/network/soup/DNSSoup.cpp
-    platform/network/soup/GRefPtrSoup.cpp
-    platform/network/soup/NetworkStorageSessionSoup.cpp
-    platform/network/soup/ProxyServerSoup.cpp
-    platform/network/soup/ResourceErrorSoup.cpp
-    platform/network/soup/ResourceHandleSoup.cpp
-    platform/network/soup/ResourceRequestSoup.cpp
-    platform/network/soup/ResourceResponseSoup.cpp
-    platform/network/soup/SocketStreamHandleImplSoup.cpp
-    platform/network/soup/SoupNetworkSession.cpp
-    platform/network/soup/SynchronousLoaderClientSoup.cpp
-    platform/network/soup/WebKitSoupRequestGeneric.cpp
-
-    platform/soup/PublicSuffixSoup.cpp
-    platform/soup/SharedBufferSoup.cpp
-    platform/soup/URLSoup.cpp
-
-    platform/text/Hyphenation.cpp
-    platform/text/LocaleICU.cpp
-
-    platform/text/enchant/TextCheckerEnchant.cpp
-
-    platform/text/hyphen/HyphenationLibHyphen.cpp
-
-    platform/unix/LoggingUnix.cpp
-
-    platform/xdg/MIMETypeRegistryXdg.cpp
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES
