@@ -117,7 +117,7 @@ void PageDebuggerAgent::unmuteConsole()
 
 void PageDebuggerAgent::breakpointActionLog(JSC::ExecState& state, const String& message)
 {
-    m_pageAgent->page().console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(&state, ScriptCallStack::maxCallStackSizeToCapture));
+    m_pageAgent->page().console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(&state));
 }
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)

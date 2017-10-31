@@ -211,7 +211,7 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, Exce
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ErrorHandlingScope errorScope(vm);
 
-    Ref<ScriptCallStack> callStack = createScriptCallStackFromException(exec, exception, ScriptCallStack::maxCallStackSizeToCapture);
+    Ref<ScriptCallStack> callStack = createScriptCallStackFromException(exec, exception);
     if (includesNativeCallStackWhenReportingExceptions())
         appendAPIBacktrace(callStack.get());
 

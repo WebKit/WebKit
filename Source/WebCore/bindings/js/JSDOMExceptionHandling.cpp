@@ -83,7 +83,7 @@ void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* c
 
     ErrorHandlingScope errorScope(exec->vm());
 
-    auto callStack = Inspector::createScriptCallStackFromException(exec, exception, Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+    auto callStack = Inspector::createScriptCallStackFromException(exec, exception);
     scope.clearException();
     vm.clearLastException();
 

@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "ScriptCallStack.h"
 #include <wtf/Forward.h>
 
 namespace JSC {
@@ -42,12 +43,11 @@ class JSValue;
 namespace Inspector {
 
 class ScriptArguments;
-class ScriptCallStack;
 
 // FIXME: The subtle differences between these should be eliminated.
-JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize);
-JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState*, size_t maxStackSize);
-JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState*, JSC::Exception*, size_t maxStackSize);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState*, JSC::Exception*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
 JS_EXPORT_PRIVATE Ref<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
 
 } // namespace Inspector

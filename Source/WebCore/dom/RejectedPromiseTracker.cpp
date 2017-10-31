@@ -93,12 +93,12 @@ static RefPtr<ScriptCallStack> createScriptCallStackFromReason(ExecState& state,
     // Always capture a stack from the exception if this rejection was an exception.
     if (auto* exception = vm.lastException()) {
         if (exception->value() == reason)
-            return createScriptCallStackFromException(&state, exception, ScriptCallStack::maxCallStackSizeToCapture);
+            return createScriptCallStackFromException(&state, exception);
     }
 
     // Otherwise, only capture a stack if a debugger is open.
     if (state.lexicalGlobalObject()->debugger())
-        return createScriptCallStack(&state, ScriptCallStack::maxCallStackSizeToCapture);
+        return createScriptCallStack(&state);
 
     return nullptr;
 }

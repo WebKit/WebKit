@@ -182,7 +182,7 @@ void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
 
 void InspectorConsoleAgent::count(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
-    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(state, ScriptCallStack::maxCallStackSizeToCapture);
+    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(state);
 
     String title;
     String identifier;

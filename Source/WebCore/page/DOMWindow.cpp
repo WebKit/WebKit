@@ -938,7 +938,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& incum
     // Capture stack trace only when inspector front-end is loaded as it may be time consuming.
     RefPtr<ScriptCallStack> stackTrace;
     if (InspectorInstrumentation::consoleAgentEnabled(sourceDocument))
-        stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture);
+        stackTrace = createScriptCallStack(JSMainThreadExecState::currentState());
 
     // Schedule the message.
     auto* timer = new PostMessageTimer(*this, message.releaseReturnValue(), sourceOrigin, incumbentWindow, channels.releaseReturnValue(), WTFMove(target), WTFMove(stackTrace));

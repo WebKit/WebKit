@@ -608,7 +608,7 @@ void InspectorNetworkAgent::didScheduleStyleRecalculation(Document& document)
 
 RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document)
 {
-    Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture);
+    Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSMainThreadExecState::currentState());
     if (stackTrace->size() > 0) {
         auto initiatorObject = Inspector::Protocol::Network::Initiator::create()
             .setType(Inspector::Protocol::Network::Initiator::Type::Script)

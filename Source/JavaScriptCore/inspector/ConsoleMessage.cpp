@@ -109,7 +109,7 @@ void ConsoleMessage::autogenerateMetadata(JSC::ExecState* state)
         return;
 
     // FIXME: Should this really be using "for console" in the generic ConsoleMessage autogeneration? This can skip the first frame.
-    m_callStack = createScriptCallStackForConsole(state, ScriptCallStack::maxCallStackSizeToCapture);
+    m_callStack = createScriptCallStackForConsole(state);
 
     if (const ScriptCallFrame* frame = m_callStack->firstNonNativeCallFrame()) {
         m_url = frame->sourceURL();

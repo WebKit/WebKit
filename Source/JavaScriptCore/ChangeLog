@@ -1,3 +1,25 @@
+2017-10-31  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: make ScriptCallStack::maxCallStackSizeToCapture the default value when capturing backtraces
+        https://bugs.webkit.org/show_bug.cgi?id=179048
+
+        Reviewed by Mark Lam.
+
+        * inspector/ScriptCallStackFactory.h:
+        * inspector/ScriptCallStackFactory.cpp:
+        (createScriptCallStack):
+        (createScriptCallStackForConsole):
+        (createScriptCallStackFromException):
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::autogenerateMetadata):
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::count):
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        (Inspector::JSGlobalObjectDebuggerAgent::breakpointActionLog):
+
 2017-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ make distcheck.

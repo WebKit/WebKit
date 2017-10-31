@@ -41,7 +41,6 @@
 #include "JSCInlines.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
-#include "ScriptCallStack.h"
 #include "ScriptValue.h"
 #include "StackVisitor.h"
 #include <wtf/text/WTFString.h>

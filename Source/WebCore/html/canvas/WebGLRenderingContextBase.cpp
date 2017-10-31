@@ -1309,7 +1309,7 @@ void WebGLRenderingContextBase::compileShader(WebGLShader* shader)
     shader->setValid(value);
 
     if (m_synthesizedErrorsToConsole && !value) {
-        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState());
 
         Vector<String> errors;
         getShaderInfoLog(shader).split("\n", errors);
@@ -5278,7 +5278,7 @@ void WebGLRenderingContextBase::printToConsole(MessageLevel level, const String&
 
     // Error messages can occur during function calls, so show stack traces for them.
     if (level == MessageLevel::Error) {
-        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState());
         consoleMessage = std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message, WTFMove(stackTrace));
     } else
         consoleMessage = std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message);
