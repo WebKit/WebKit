@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 2.19.1
+=================
+
+What's new in WebKitGTK+ 2.19.1?
+
+  - Add initial resource load statistics support.
+  - Add API to expose availability of certain editing commands in WebKitEditorState.
+  - Add API to query whether a WebKitNavigationAction is a redirect or not.
+  - Improve complex text rendering.
+  - Add support for the "system" CSS font family.
+  - Implement low power mode.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.17.5
 =================
 

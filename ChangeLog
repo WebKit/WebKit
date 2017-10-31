@@ -1,5 +1,11 @@
 2017-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.1 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
+2017-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+/WPE make distcheck.
 
         * CMakeLists.txt: Only include PerformanceTests directory to the build for GTK+ and WPE ports when developer
