@@ -33,6 +33,7 @@
 #include "FrameDestructionObserver.h"
 #include "ImageBitmap.h"
 #include "ScrollToOptions.h"
+#include "ScrollTypes.h"
 #include "Supplementable.h"
 #include <heap/HandleTypes.h>
 #include <wtf/Function.h>
@@ -232,8 +233,8 @@ public:
 
     void scrollBy(const ScrollToOptions&) const;
     void scrollBy(double x, double y) const;
-    void scrollTo(const ScrollToOptions&) const;
-    void scrollTo(double x, double y) const;
+    void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped) const;
+    void scrollTo(double x, double y, ScrollClamping = ScrollClamping::Clamped) const;
 
     void moveBy(float x, float y) const;
     void moveTo(float x, float y) const;

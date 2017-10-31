@@ -167,6 +167,9 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] void setScrollViewPosition(long x, long y);
 
+    // Like Element.scrollTo(), but without constaints, for testing rubber-banding.
+    [MayThrowException] void unconstrainedScrollTo(Element element, unrestricted double x, unrestricted double y);
+
     [MayThrowException] DOMRect layoutViewportRect();
     [MayThrowException] DOMRect visualViewportRect();
 

@@ -1510,6 +1510,16 @@ ExceptionOr<void> Internals::setScrollViewPosition(int x, int y)
     return { };
 }
 
+ExceptionOr<void> Internals::unconstrainedScrollTo(Element& element, double x, double y)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { InvalidAccessError };
+
+    element.scrollTo({ x, y }, ScrollClamping::Unclamped);
+    return { };
+}
+
 ExceptionOr<Ref<DOMRect>> Internals::layoutViewportRect()
 {
     Document* document = contextDocument();

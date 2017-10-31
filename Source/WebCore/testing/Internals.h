@@ -211,6 +211,7 @@ public:
     ExceptionOr<void> setLowPowerModeEnabled(bool);
 
     ExceptionOr<void> setScrollViewPosition(int x, int y);
+    ExceptionOr<void> unconstrainedScrollTo(Element&, double x, double y);
 
     ExceptionOr<Ref<DOMRect>> layoutViewportRect();
     ExceptionOr<Ref<DOMRect>> visualViewportRect();

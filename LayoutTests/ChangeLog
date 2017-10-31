@@ -1,3 +1,15 @@
+2017-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test rubber-banding in overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=179078
+
+        Reviewed by Sam Weinig.
+
+        Test that internals.unconstrainedScrollTo() works.
+
+        * fast/scrolling/unconstrained-scrollto-expected.txt: Added.
+        * fast/scrolling/unconstrained-scrollto.html: Added.
+
 2017-10-31  Youenn Fablet  <youenn@apple.com>
 
         rwt should allow service worker to load localhost HTTPS resources with any certificate

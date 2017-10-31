@@ -81,12 +81,12 @@ private:
     void timerFired();
 
     RenderLayer* m_layer;
-    int m_currentLoop;
-    int m_totalLoops;
     Timer m_timer;
-    int m_start;
-    int m_end;
-    int m_speed;
+    int m_currentLoop { 0 };
+    int m_totalLoops { 0 };
+    int m_start { 0 };
+    int m_end { 0 };
+    int m_speed { 0 };
     Length m_height;
     bool m_reset: 1;
     bool m_suspended : 1;

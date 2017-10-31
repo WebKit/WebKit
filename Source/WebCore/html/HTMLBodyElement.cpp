@@ -299,7 +299,7 @@ void HTMLBodyElement::setScrollTop(int scrollTop)
     return HTMLElement::setScrollTop(scrollTop);
 }
 
-void HTMLBodyElement::scrollTo(const ScrollToOptions& options)
+void HTMLBodyElement::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
 {
     if (isFirstBodyElementOfDocument()) {
         // If the element is the HTML body element, document is in quirks mode, and the element is not potentially scrollable,
@@ -313,7 +313,7 @@ void HTMLBodyElement::scrollTo(const ScrollToOptions& options)
         window->scrollTo(options);
         return;
     }
-    return HTMLElement::scrollTo(options);
+    return HTMLElement::scrollTo(options, clamping);
 }
 
 int HTMLBodyElement::scrollHeight()

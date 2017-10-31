@@ -703,7 +703,7 @@ void Element::scrollBy(double x, double y)
     scrollTo(scrollLeft() + normalizeNonFiniteValue(x), scrollTop() + normalizeNonFiniteValue(y));
 }
 
-void Element::scrollTo(const ScrollToOptions& options)
+void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
 {
     // If the element is the root element and document is in quirks mode, terminate these steps.
     // Note that WebKit always uses quirks mode document scrolling behavior. See Document::scrollingElement().
@@ -722,8 +722,8 @@ void Element::scrollTo(const ScrollToOptions& options)
     double x = options.left ? normalizeNonFiniteValue(options.left.value()) : adjustForAbsoluteZoom(renderer->scrollLeft(), *renderer);
     double y = options.top ? normalizeNonFiniteValue(options.top.value()) : adjustForAbsoluteZoom(renderer->scrollTop(), *renderer);
 
-    renderer->setScrollLeft(clampToInteger(x * renderer->style().effectiveZoom()));
-    renderer->setScrollTop(clampToInteger(y * renderer->style().effectiveZoom()));
+    renderer->setScrollLeft(clampToInteger(x * renderer->style().effectiveZoom()), clamping);
+    renderer->setScrollTop(clampToInteger(y * renderer->style().effectiveZoom()), clamping);
 }
 
 void Element::scrollTo(double x, double y)

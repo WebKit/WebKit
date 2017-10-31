@@ -137,7 +137,7 @@ public:
 
     void scrollBy(const ScrollToOptions&);
     void scrollBy(double x, double y);
-    virtual void scrollTo(const ScrollToOptions&);
+    virtual void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped);
     void scrollTo(double x, double y);
 
     WEBCORE_EXPORT void scrollByLines(int lines);

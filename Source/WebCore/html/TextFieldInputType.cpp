@@ -212,7 +212,7 @@ void TextFieldInputType::elementDidBlur()
 
     bool isLeftToRightDirection = downcast<RenderTextControlSingleLine>(*renderer).style().isLeftToRightDirection();
     ScrollOffset scrollOffset(isLeftToRightDirection ? 0 : innerLayer->scrollWidth(), 0);
-    innerLayer->scrollToOffset(scrollOffset, RenderLayer::ScrollOffsetClamped);
+    innerLayer->scrollToOffset(scrollOffset);
 }
 
 void TextFieldInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection)

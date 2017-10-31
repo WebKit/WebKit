@@ -1551,7 +1551,7 @@ void DOMWindow::scrollBy(double x, double y) const
     view->setContentsScrollPosition(view->contentsScrollPosition() + scaledOffset);
 }
 
-void DOMWindow::scrollTo(const ScrollToOptions& options) const
+void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1562,10 +1562,10 @@ void DOMWindow::scrollTo(const ScrollToOptions& options) const
 
     double x = options.left ? options.left.value() : view->contentsScrollPosition().x();
     double y = options.top ? options.top.value() : view->contentsScrollPosition().y();
-    return scrollTo(x, y);
+    return scrollTo(x, y, clamping);
 }
 
-void DOMWindow::scrollTo(double x, double y) const
+void DOMWindow::scrollTo(double x, double y, ScrollClamping) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;

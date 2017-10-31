@@ -177,6 +177,11 @@ enum ScrollPinningBehavior {
     PinToBottom
 };
 
+enum class ScrollClamping {
+    Unclamped,
+    Clamped
+};
+
 enum ScrollBehaviorForFixedElements {
     StickToDocumentBounds,
     StickToViewportBounds

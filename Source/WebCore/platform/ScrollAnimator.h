@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimator_h
-#define ScrollAnimator_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
@@ -69,7 +68,7 @@ public:
     // The base class implementation always scrolls immediately, never animates.
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
 
-    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
+    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
@@ -155,4 +154,3 @@ protected:
 
 } // namespace WebCore
 
-#endif // ScrollAnimator_h

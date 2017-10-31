@@ -57,11 +57,12 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderMarquee::RenderMarquee(RenderLayer* l)
-    : m_layer(l), m_currentLoop(0)
-    , m_totalLoops(0)
+    : m_layer(l)
     , m_timer(*this, &RenderMarquee::timerFired)
-    , m_start(0), m_end(0), m_speed(0), m_reset(false)
-    , m_suspended(false), m_stopped(false), m_direction(MAUTO)
+    , m_reset(false)
+    , m_suspended(false)
+    , m_stopped(false)
+    , m_direction(MAUTO)
 {
     l->setConstrainsScrollingToContentEdge(false);
 }
@@ -157,9 +158,9 @@ void RenderMarquee::start()
 
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
-            m_layer->scrollToOffset(ScrollOffset(m_start, 0));
+            m_layer->scrollToOffset(ScrollOffset(m_start, 0), ScrollClamping::Unclamped);
         else
-            m_layer->scrollToOffset(ScrollOffset(0, m_start));
+            m_layer->scrollToOffset(ScrollOffset(0, m_start), ScrollClamping::Unclamped);
     }
     else {
         m_suspended = false;
@@ -232,9 +233,9 @@ void RenderMarquee::timerFired()
     if (m_reset) {
         m_reset = false;
         if (isHorizontal())
-            m_layer->scrollToXOffset(m_start);
+            m_layer->scrollToXOffset(m_start, ScrollClamping::Unclamped);
         else
-            m_layer->scrollToYOffset(m_start);
+            m_layer->scrollToYOffset(m_start, ScrollClamping::Unclamped);
         return;
     }
     
@@ -274,9 +275,9 @@ void RenderMarquee::timerFired()
     }
     
     if (isHorizontal())
-        m_layer->scrollToXOffset(newPos);
+        m_layer->scrollToXOffset(newPos, ScrollClamping::Unclamped);
     else
-        m_layer->scrollToYOffset(newPos);
+        m_layer->scrollToYOffset(newPos, ScrollClamping::Unclamped);
 }
 
 } // namespace WebCore

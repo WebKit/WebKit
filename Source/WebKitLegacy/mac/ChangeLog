@@ -1,3 +1,19 @@
+2017-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test rubber-banding in overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=179078
+
+        Reviewed by Sam Weinig.
+
+        Add internals.unconstrainedScrollTo(element, x, y) and plumb through ScrollClamping
+        (which replaces RenderLayer::ScrollOffsetClamping) to support it.
+
+        Flip the default from unclamped to clamped for various RenderLayer scrolling-related
+        functions, since most callers want clamped.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+
 2017-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Fix up some content filtering feature flags

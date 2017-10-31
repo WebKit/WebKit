@@ -197,20 +197,15 @@ public:
 
     void panScrollFromPoint(const IntPoint&);
 
-    enum ScrollOffsetClamping {
-        ScrollOffsetUnclamped,
-        ScrollOffsetClamped
-    };
-
     // Scrolling methods for layers that can scroll their overflow.
-    void scrollByRecursively(const IntSize& delta, ScrollOffsetClamping = ScrollOffsetUnclamped, ScrollableArea** scrolledArea = nullptr);
+    void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
 
-    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollOffsetClamping = ScrollOffsetUnclamped);
-    void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), clamp); }
-    void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), clamp); }
+    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollClamping = ScrollClamping::Clamped);
+    void scrollToXOffset(int x, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), clamping); }
+    void scrollToYOffset(int y, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), clamping); }
 
-    void scrollToXPosition(int x, ScrollOffsetClamping = ScrollOffsetUnclamped);
-    void scrollToYPosition(int y, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollToXPosition(int x, ScrollClamping = ScrollClamping::Clamped);
+    void scrollToYPosition(int y, ScrollClamping = ScrollClamping::Clamped);
 
     void setPostLayoutScrollPosition(std::optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();

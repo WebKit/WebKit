@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimatorMac_h
-#define ScrollAnimatorMac_h
+#pragma once
 
 #if ENABLE(SMOOTH_SCROLLING)
 
@@ -82,7 +81,7 @@ private:
     FloatSize m_contentAreaScrolledTimerScrollDelta;
 
     bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
-    void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
+    void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping) override;
 
 #if ENABLE(RUBBER_BANDING)
     bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&);
@@ -134,7 +133,7 @@ private:
 
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
-    void immediateScrollToPosition(const FloatPoint&);
+    void immediateScrollToPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     bool isRubberBandInProgress() const override;
     bool isScrollSnapInProgress() const override;
@@ -164,4 +163,3 @@ private:
 
 #endif // ENABLE(SMOOTH_SCROLLING)
 
-#endif // ScrollAnimatorMac_h

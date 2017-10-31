@@ -530,7 +530,7 @@ void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, 
     else if (exposeBottom >= clientHeight)
         scrollOffset.setY(std::min(box->scrollHeight() - clientHeight, scrollOffset.y() + clientHeight / 2));
 
-    layer->scrollToOffset(scrollOffset);
+    layer->scrollToOffset(scrollOffset, ScrollClamping::Unclamped);
     selection().setCaretRectNeedsUpdate();
     selection().updateAppearance();
 }
@@ -626,7 +626,7 @@ int Frame::checkOverflowScroll(OverflowScrollAction action)
     Ref<Frame> protectedThis(*this);
 
     if (action == PerformOverflowScroll && (deltaX || deltaY)) {
-        layer->scrollToOffset(layer->scrollOffset() + IntSize(deltaX, deltaY));
+        layer->scrollToOffset(layer->scrollOffset() + IntSize(deltaX, deltaY), ScrollClamping::Unclamped);
 
         // Handle making selection.
         VisiblePosition visiblePosition(renderer->positionForPoint(selectionPosition, nullptr));

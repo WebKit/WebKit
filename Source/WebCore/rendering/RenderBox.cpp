@@ -572,20 +572,20 @@ static void setupWheelEventTestTrigger(RenderLayer& layer)
     layer.scrollAnimator().setWheelEventTestTrigger(page.testTrigger());
 }
 
-void RenderBox::setScrollLeft(int newLeft)
+void RenderBox::setScrollLeft(int newLeft, ScrollClamping clamping)
 {
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventTestTrigger(*layer());
-    layer()->scrollToXPosition(newLeft, RenderLayer::ScrollOffsetClamped);
+    layer()->scrollToXPosition(newLeft, clamping);
 }
 
-void RenderBox::setScrollTop(int newTop)
+void RenderBox::setScrollTop(int newTop, ScrollClamping clamping)
 {
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventTestTrigger(*layer());
-    layer()->scrollToYPosition(newTop, RenderLayer::ScrollOffsetClamped);
+    layer()->scrollToYPosition(newTop, clamping);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const

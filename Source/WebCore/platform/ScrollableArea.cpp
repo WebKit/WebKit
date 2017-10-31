@@ -139,10 +139,10 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     return scrollAnimator().scroll(orientation, granularity, step, multiplier);
 }
 
-void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
+void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
-    scrollAnimator().scrollToOffsetWithoutAnimation(offset);
+    scrollAnimator().scrollToOffsetWithoutAnimation(offset, clamping);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)

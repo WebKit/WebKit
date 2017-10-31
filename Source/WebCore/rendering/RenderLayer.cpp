@@ -2270,11 +2270,11 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     if (abs(delta.height()) <= ScrollView::noPanScrollRadius)
         delta.setHeight(0);
 
-    scrollByRecursively(adjustedScrollDelta(delta), ScrollOffsetClamped);
+    scrollByRecursively(adjustedScrollDelta(delta));
 }
 
 // FIXME: unify with the scrollRectToVisible() code below.
-void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp, ScrollableArea** scrolledArea)
+void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea)
 {
     if (delta.isZero())
         return;
@@ -2285,7 +2285,7 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
 
     if (renderer().hasOverflowClip() && !restrictedByLineClamp) {
         ScrollOffset newScrollOffset = scrollOffset() + delta;
-        scrollToOffset(newScrollOffset, clamp);
+        scrollToOffset(newScrollOffset);
         if (scrolledArea)
             *scrolledArea = this;
 
@@ -2293,7 +2293,7 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
         IntSize remainingScrollOffset = newScrollOffset - scrollOffset();
         if (!remainingScrollOffset.isZero() && renderer().parent()) {
             if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
-                scrollableLayer->scrollByRecursively(remainingScrollOffset, clamp, scrolledArea);
+                scrollableLayer->scrollByRecursively(remainingScrollOffset, scrolledArea);
 
             renderer().frame().eventHandler().updateAutoscrollRenderer();
         }
@@ -2319,20 +2319,20 @@ void RenderLayer::applyPostLayoutScrollPositionIfNeeded()
     if (!m_postLayoutScrollPosition)
         return;
 
-    scrollToOffset(scrollOffsetFromPosition(m_postLayoutScrollPosition.value()), ScrollOffsetClamped);
+    scrollToOffset(scrollOffsetFromPosition(m_postLayoutScrollPosition.value()));
     m_postLayoutScrollPosition = std::nullopt;
 }
 
-void RenderLayer::scrollToXPosition(int x, ScrollOffsetClamping clamp)
+void RenderLayer::scrollToXPosition(int x, ScrollClamping clamping)
 {
     ScrollPosition position(x, m_scrollPosition.y());
-    scrollToOffset(scrollOffsetFromPosition(position), clamp);
+    scrollToOffset(scrollOffsetFromPosition(position), clamping);
 }
 
-void RenderLayer::scrollToYPosition(int y, ScrollOffsetClamping clamp)
+void RenderLayer::scrollToYPosition(int y, ScrollClamping clamping)
 {
     ScrollPosition position(m_scrollPosition.x(), y);
-    scrollToOffset(scrollOffsetFromPosition(position), clamp);
+    scrollToOffset(scrollOffsetFromPosition(position), clamping);
 }
 
 ScrollOffset RenderLayer::clampScrollOffset(const ScrollOffset& scrollOffset) const
@@ -2340,11 +2340,11 @@ ScrollOffset RenderLayer::clampScrollOffset(const ScrollOffset& scrollOffset) co
     return scrollOffset.constrainedBetween(IntPoint(), maximumScrollOffset());
 }
 
-void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollOffsetClamping clamp)
+void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollClamping clamping)
 {
-    ScrollOffset newScrollOffset = clamp == ScrollOffsetClamped ? clampScrollOffset(scrollOffset) : scrollOffset;
+    ScrollOffset newScrollOffset = clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
     if (newScrollOffset != this->scrollOffset())
-        scrollToOffsetWithoutAnimation(newScrollOffset);
+        scrollToOffsetWithoutAnimation(newScrollOffset, clamping);
 }
 
 void RenderLayer::scrollTo(const ScrollPosition& position)
