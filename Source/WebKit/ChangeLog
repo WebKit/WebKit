@@ -1,3 +1,14 @@
+2017-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: UIProcess ASSERT in ~RemoteWebInspectorProxy when InspectorProcess crashes
+        https://bugs.webkit.org/show_bug.cgi?id=179044
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::frontendDidClose):
+        Add a protector to keep the proxy alive for the duration of this method.
+
 2017-10-31  Youenn Fablet  <youenn@apple.com>
 
         Crash in:  com.apple.WebKit: WebKit::CacheStorage::Caches::initializeSize(WTF::Function<void (std::optional<WebCore::DOMCacheEngine::Error>&&)>&&) + 30 (CacheStorageEngineCaches.cpp:163)

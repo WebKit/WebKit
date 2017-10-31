@@ -82,6 +82,8 @@ void RemoteWebInspectorProxy::sendMessageToFrontend(const String& message)
 
 void RemoteWebInspectorProxy::frontendDidClose()
 {
+    Ref<RemoteWebInspectorProxy> protect(*this);
+
     if (m_client)
         m_client->closeFromFrontend();
 
