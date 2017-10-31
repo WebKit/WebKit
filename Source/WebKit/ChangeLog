@@ -1,3 +1,17 @@
+2017-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Followup to r224238: API::Attachment should generate a _WKAttachment ObjC wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=179080
+
+        Reviewed by Tim Horton.
+
+        Fixes a failing API test. The new Attachment object type added in r224238 was not actually being handled in
+        Object::newObject, so a plain WKObject Objective C wrapper was being created; fix this by allocating a new
+        _WKAttachment object for Type::Attachment.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
 2017-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Fix up some content filtering feature flags

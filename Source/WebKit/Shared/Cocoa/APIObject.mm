@@ -68,6 +68,7 @@
 #import "WKWebsiteDataRecordInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WKWindowFeaturesInternal.h"
+#import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
@@ -103,6 +104,10 @@ void* Object::newObject(size_t size, Type type)
     switch (type) {
     case Type::Array:
         wrapper = [WKNSArray alloc];
+        break;
+
+    case Type::Attachment:
+        wrapper = [_WKAttachment alloc];
         break;
 
     case Type::AuthenticationChallenge:
