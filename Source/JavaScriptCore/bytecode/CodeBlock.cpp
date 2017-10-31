@@ -1742,6 +1742,12 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow(unsigned byte
     RELEASE_ASSERT(profiles->m_size == liveOperands.size());
     for (unsigned i = 0; i < profiles->m_size; ++i)
         profiles->m_buffer.get()[i].m_operand = liveOperands[i].offset();
+
+    // The compiler thread will read this pointer value and then proceed to dereference it
+    // if it is not null. We need to make sure all above stores happen before this store so
+    // the compiler thread reads fully initialized data.
+    WTF::storeStoreFence(); 
+
     m_instructions[bytecodeOffset + 3].u.pointer = profiles.get();
 
     {

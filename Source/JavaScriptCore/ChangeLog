@@ -1,3 +1,13 @@
+2017-10-30  Saam Barati  <sbarati@apple.com>
+
+        We need a storeStoreFence before storing to the instruction stream's live variable catch data
+        https://bugs.webkit.org/show_bug.cgi?id=178649
+
+        Reviewed by Keith Miller.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow):
+
 2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Fix build warnings
