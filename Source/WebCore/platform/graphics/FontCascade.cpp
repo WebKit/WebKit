@@ -282,14 +282,8 @@ float FontCascade::glyphBufferForTextRun(CodePath codePathToUse, const TextRun& 
 float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     unsigned destination = to.value_or(run.length());
-
-    CodePath codePathToUse = codePath(run);
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
-        codePathToUse = Complex;
-
     GlyphBuffer glyphBuffer;
-    float startX = point.x() + glyphBufferForTextRun(codePathToUse, run, from, destination, glyphBuffer);
+    float startX = point.x() + glyphBufferForTextRun(codePath(run, from, to), run, from, destination, glyphBuffer);
     // We couldn't generate any glyphs for the run. Give up.
     if (glyphBuffer.isEmpty())
         return 0;
@@ -305,13 +299,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
         return;
 
     unsigned destination = to.value_or(run.length());
-
-    CodePath codePathToUse = codePath(run);
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
-        codePathToUse = Complex;
-
-    if (codePathToUse != Complex)
+    if (codePath(run, from, to) != Complex)
         drawEmphasisMarksForSimpleText(context, run, mark, point, from, destination);
     else
         drawEmphasisMarksForComplexText(context, run, mark, point, from, destination);
@@ -511,13 +499,7 @@ bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const
 void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const
 {
     unsigned destination = to.value_or(run.length());
-
-    CodePath codePathToUse = codePath(run);
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
-        codePathToUse = Complex;
-
-    if (codePathToUse != Complex)
+    if (codePath(run, from, to) != Complex)
         return adjustSelectionRectForSimpleText(run, selectionRect, from, destination);
 
     return adjustSelectionRectForComplexText(run, selectionRect, from, destination);
@@ -525,8 +507,7 @@ void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& sel
 
 int FontCascade::offsetForPosition(const TextRun& run, float x, bool includePartialGlyphs) const
 {
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePath(run) != Complex && (!(enableKerning() || requiresShaping())))
+    if (codePath(run, x) != Complex)
         return offsetForPositionForSimpleText(run, x, includePartialGlyphs);
 
     return offsetForPositionForComplexText(run, x, includePartialGlyphs);
@@ -577,10 +558,19 @@ FontCascade::CodePath FontCascade::codePath()
     return s_codePath;
 }
 
-FontCascade::CodePath FontCascade::codePath(const TextRun& run) const
+FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<unsigned> from, std::optional<unsigned> to) const
 {
     if (s_codePath != Auto)
         return s_codePath;
+
+#if !USE(FREETYPE)
+    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
+    if ((enableKerning() || requiresShaping()) && (from.value_or(0) || to.value_or(run.length()) != run.length()))
+        return Complex;
+#else
+    UNUSED_PARAM(from);
+    UNUSED_PARAM(to);
+#endif
 
 #if PLATFORM(COCOA) || USE(FREETYPE)
     // Because Font::applyTransforms() doesn't know which features to enable/disable in the simple code path, it can't properly handle feature or variant settings.

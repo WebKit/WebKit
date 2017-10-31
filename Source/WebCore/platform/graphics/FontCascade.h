@@ -189,7 +189,7 @@ public:
     WEBCORE_EXPORT static bool shouldUseSmoothing();
 
     enum CodePath { Auto, Simple, Complex, SimpleWithGlyphOverflow };
-    CodePath codePath(const TextRun&) const;
+    CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 
