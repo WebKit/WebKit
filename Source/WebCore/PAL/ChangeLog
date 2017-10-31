@@ -1,3 +1,12 @@
+2017-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Fix up some content filtering feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=179079
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement WKWebView SPI for inserting attachment elements

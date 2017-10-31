@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && ENABLE(CONTENT_FILTERING)
 
 #import "ContentFiltering.h"
 #import "MockContentFilterSettings.h"
@@ -59,21 +59,17 @@ using DecisionPoint = MockContentFilterSettings::DecisionPoint;
     if (!(self = [super init]))
         return nil;
 
-#if ENABLE(CONTENT_FILTERING)
     auto& settings = MockContentFilterSettings::singleton();
     settings.setEnabled(true);
     settings.setDecision(static_cast<Decision>([decoder decodeIntForKey:@"Decision"]));
     settings.setDecisionPoint(static_cast<DecisionPoint>([decoder decodeIntForKey:@"DecisionPoint"]));
     settings.setBlockedString(ASCIILiteral("blocked"));
-#endif
     return self;
 }
 
 - (void)dealloc
 {
-#if ENABLE(CONTENT_FILTERING)
     MockContentFilterSettings::singleton().setEnabled(false);
-#endif
     [super dealloc];
 }
 
@@ -133,4 +129,4 @@ using DecisionPoint = MockContentFilterSettings::DecisionPoint;
 
 @end
 
-#endif // WK_API_ENABLED
+#endif // WK_API_ENABLED && ENABLE(CONTENT_FILTERING)

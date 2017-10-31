@@ -1,3 +1,15 @@
+2017-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Fix up some content filtering feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=179079
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFilteringPlugIn.mm:
+        (-[MockContentFilterEnabler initWithCoder:]):
+        (-[MockContentFilterEnabler dealloc]):
+
 2017-10-31  Youenn Fablet  <youenn@apple.com>
 
         rwt should allow service worker to load localhost HTTPS resources with any certificate
