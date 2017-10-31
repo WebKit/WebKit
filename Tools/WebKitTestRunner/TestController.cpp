@@ -782,6 +782,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
 
     clearDOMCaches();
 
+    WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(platformContext(), true);
+
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset the EventSender for each test.

@@ -1,5 +1,6 @@
 
 Harness Error (TIMEOUT), message = null
 
-TIMEOUT Test single skipWaiting() when no client attached Test timed out
+PASS Test single skipWaiting() when no client attached 
+TIMEOUT skipWaiting Test timed out
 

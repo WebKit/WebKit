@@ -1,5 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT CSP test for default-src in ServiceWorkerGlobalScope Test timed out
+PASS CSP test for default-src in ServiceWorkerGlobalScope 
+PASS importScripts test for default-src 
+FAIL Fetch test for default-src assert_unreached: unexpected rejection: assert_unreached: fetch should fail. Reached unreachable code Reached unreachable code
+FAIL Redirected fetch test for default-src assert_unreached: unexpected rejection: assert_unreached: Redirected fetch should fail. Reached unreachable code Reached unreachable code
 

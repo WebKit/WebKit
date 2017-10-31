@@ -1,3 +1,4 @@
 
-FAIL Fetch in service worker: referrer with no-referrer policy assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
+PASS Fetch in service worker: referrer with no-referrer policy 
+PASS Request's referrer is empty 
 

@@ -1,3 +1,4 @@
 
-FAIL Fetch in worker: referrer with unsafe-url policy assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
+PASS Fetch in worker: referrer with unsafe-url policy 
+PASS Request's referrer is the full url of current document/worker 
 

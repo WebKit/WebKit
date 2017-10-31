@@ -38,6 +38,7 @@
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
 #include "ProcessThrottler.h"
+#include "ServiceWorkerProcessProxy.h"
 #include "StatisticsRequest.h"
 #include "StorageProcessProxy.h"
 #include "VisitedLinkStore.h"
@@ -322,6 +323,10 @@ public:
     void storageProcessCrashed(StorageProcessProxy*);
 #if ENABLE(SERVICE_WORKER)
     void getWorkerContextProcessConnection(StorageProcessProxy&);
+    bool isServiceWorker(uint64_t pageID) const { return m_serviceWorkerProcess && m_serviceWorkerProcess->pageID() == pageID; }
+    ServiceWorkerProcessProxy* serviceWorkerProxy() const { return m_serviceWorkerProcess; }
+    void setAllowsAnySSLCertificateForServiceWorker(bool allows) { m_allowsAnySSLCertificateForServiceWorker = allows; }
+    bool allowsAnySSLCertificateForServiceWorker() const { return m_allowsAnySSLCertificateForServiceWorker; }
 #endif
 
 #if PLATFORM(COCOA)
@@ -488,6 +493,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     ServiceWorkerProcessProxy* m_serviceWorkerProcess { nullptr };
     bool m_waitingForWorkerContextProcessConnection { false };
+    bool m_allowsAnySSLCertificateForServiceWorker { false };
 #endif
 
     Ref<WebPageGroup> m_defaultPageGroup;

@@ -264,6 +264,14 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Atta
 
 void NetworkProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge& coreChallenge, uint64_t challengeID)
 {
+#if ENABLE(SERVICE_WORKER)
+    if (m_processPool.isServiceWorker(pageID)) {
+        auto authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, connection());
+        m_processPool.serviceWorkerProxy()->didReceiveAuthenticationChallenge(pageID, frameID, WTFMove(authenticationChallenge));
+        return;
+    }
+#endif
+
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
     MESSAGE_CHECK(page);
 
@@ -374,8 +382,12 @@ void NetworkProcessProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderI
             page->canAuthenticateAgainstProtectionSpace(loaderID, frameID, protectionSpace);
             return;
         }
+#if ENABLE(SERVICE_WORKER)
+    } else if (m_processPool.isServiceWorker(pageID)) {
+        send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(loaderID, true), 0);
+        return;
+#endif
     }
-    
     // In the case where we will not be able to reply to this message with a client reply,
     // we should message back a default to the Networking process.
     send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(loaderID, false), 0);

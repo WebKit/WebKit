@@ -6,5 +6,6 @@ PASS Blob should not support slice prefixed
 PASS BlobBuilder should not be supported. 
 PASS createFor method should not be supported 
 PASS Blob.close() should not be supported 
-FAIL Service worker test setup assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
+PASS Service worker test setup 
+FAIL "FileReaderSync" should not be supported in service workers assert_false: expected false got true
 

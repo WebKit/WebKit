@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Fetch events should not go through uncontrolled page. Test timed out
+FAIL Fetch events should not go through uncontrolled page. assert_unreached: assert_equals: expected "a simple text file\n" but got "ERROR" Reached unreachable code
 

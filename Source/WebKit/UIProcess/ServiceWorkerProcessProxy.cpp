@@ -26,8 +26,12 @@
 #import "config.h"
 #include "ServiceWorkerProcessProxy.h"
 
+#include "AuthenticationChallengeProxy.h"
+#include "WebCredential.h"
 #include "WebPreferencesStore.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPool.h"
+#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 
@@ -44,6 +48,22 @@ ServiceWorkerProcessProxy::~ServiceWorkerProcessProxy()
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store)
 {
     send(Messages::WebProcess::GetWorkerContextConnection(m_serviceWorkerPageID, store), 0);
+}
+
+void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&& challenge)
+{
+    UNUSED_PARAM(pageID);
+    UNUSED_PARAM(frameID);
+
+    // FIXME: Expose an API to delegate the actual decision to the application layer.
+    auto& protectionSpace = challenge->core().protectionSpace();
+    if (protectionSpace.authenticationScheme() == WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested && processPool().allowsAnySSLCertificateForServiceWorker()) {
+        auto credential = WebCore::Credential(ASCIILiteral("accept server trust"), emptyString(), WebCore::CredentialPersistenceNone);
+        challenge->useCredential(WebCredential::create(credential).ptr());
+        return;
+    }
+    notImplemented();
+    challenge->performDefaultHandling();
 }
 
 } // namespace WebKit

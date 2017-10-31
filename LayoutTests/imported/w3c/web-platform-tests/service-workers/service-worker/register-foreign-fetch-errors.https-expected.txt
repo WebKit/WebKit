@@ -1,5 +1,5 @@
 
 Harness Error (TIMEOUT), message = null
 
-TIMEOUT foreign fetch registration Test timed out
+PASS foreign fetch registration 
 

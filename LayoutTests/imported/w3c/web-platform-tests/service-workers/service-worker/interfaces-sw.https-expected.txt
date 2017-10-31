@@ -1,5 +1,12 @@
 
 Harness Error (TIMEOUT), message = null
 
-TIMEOUT Interfaces and attributes in ServiceWorkerGlobalScope Test timed out
+PASS Interfaces and attributes in ServiceWorkerGlobalScope 
+TIMEOUT test setup (cache creation) Test timed out
+FAIL Event constructors assert_equals: Default FetchEvent.clientId should be null expected (object) null but got (string) ""
+PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
+PASS ServiceWorkerGlobalScope interface object length 
+PASS ServiceWorkerGlobalScope interface object name 
+PASS ServiceWorkerGlobalScope interface: existence and properties of interface prototype object 
+TIMEOUT ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via Object.setPrototypeOf should throw a TypeError Test timed out
 

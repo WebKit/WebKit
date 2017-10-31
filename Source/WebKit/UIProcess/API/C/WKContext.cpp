@@ -556,6 +556,13 @@ void WKContextSetAllowsAnySSLCertificateForWebSocketTesting(WKContextRef context
     toImpl(context)->setAllowsAnySSLCertificateForWebSocket(allows);
 }
 
+void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef context, bool allows)
+{
+#if ENABLE(SERVICE_WORKER)
+    toImpl(context)->setAllowsAnySSLCertificateForServiceWorker(allows);
+#endif
+}
+
 void WKContextClearCachedCredentials(WKContextRef context)
 {
     toImpl(context)->clearCachedCredentials();

@@ -1,3 +1,4 @@
 
-FAIL Service worker test setup assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
+PASS Service worker test setup 
+FAIL Piping through an identity transform stream should close the destination when the source closes Can't find variable: TransformStream
 

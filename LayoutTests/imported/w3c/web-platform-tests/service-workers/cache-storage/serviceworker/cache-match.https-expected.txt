@@ -1,5 +1,23 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Cache.match Test timed out
+PASS Cache.match 
+PASS Cache.match with no matching entries 
+PASS Cache.match with URL 
+PASS Cache.match with Request 
+PASS Cache.match with multiple cache hits 
+PASS Cache.match with new Request 
+PASS Cache.match with HEAD 
+PASS Cache.match with ignoreSearch option (request with no search parameters) 
+PASS Cache.match with ignoreSearch option (request with search parameter) 
+PASS Cache.match supports ignoreMethod 
+PASS Cache.match supports ignoreVary 
+PASS Cache.match with URL containing fragment 
+PASS Cache.match with string fragment "http" as query 
+PASS Cache.match with responses containing "Vary" header 
+PASS Cache.match with Request and Response objects with different URLs 
+PASS Cache.match invoked multiple times for the same Request/Response 
+PASS Cache.match blob should be sliceable 
+PASS Cache.match with POST Request 
+PASS Cache.match with a non-2xx Response 
+PASS Cache.match with a network error Response 
+PASS Cache produces large Responses that can be cloned and read correctly. 
 

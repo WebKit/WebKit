@@ -1,5 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT CacheStorage.keys Test timed out
+PASS CacheStorage.keys 
+PASS CacheStorage keys 
 

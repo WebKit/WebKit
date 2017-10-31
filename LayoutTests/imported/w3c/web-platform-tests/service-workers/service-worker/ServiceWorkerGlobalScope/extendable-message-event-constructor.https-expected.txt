@@ -1,5 +1,13 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT ServiceWorkerGlobalScope: ExtendableMessageEvent Constructor Test timed out
+PASS ServiceWorkerGlobalScope: ExtendableMessageEvent Constructor 
+PASS no initializer specified 
+PASS `bubbles` is specified 
+PASS `cancelable` is specified 
+FAIL `data` is specified assert_equals: expected object "[object Object]" but got object "[object Object]"
+PASS `origin` is specified 
+PASS `lastEventId` is specified 
+FAIL `source` is specified assert_equals: expected object "[object MessagePort]" but got null
+FAIL `ports` is specified assert_throws: function "function () {
+      createEvent({ get ports() { throw { name: 'Error' }; } }); }" threw object "TypeError: Value is not a sequence" ("TypeError") expected object "[object Object]" ("Error")
+FAIL all initial values are specified assert_equals: expected object "[object Object]" but got object "[object Object]"
 

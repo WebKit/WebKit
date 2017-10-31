@@ -1,4 +1,0 @@
-Status is no status
-Got response with buffer byte length being 12940
-Status is http://127.0.0.1:8000/resources/square100.png through fetch
-

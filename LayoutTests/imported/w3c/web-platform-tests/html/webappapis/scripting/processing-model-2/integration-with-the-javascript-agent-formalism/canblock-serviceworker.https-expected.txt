@@ -1,3 +1,6 @@
 
-FAIL Service worker test setup assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
+PASS Service worker test setup 
+FAIL [[CanBlock]] in a ServiceWorkerGlobalScope assert_throws: function "() => {
+    Atomics.wait(ta, 0, 0, 10);
+  }" did not throw
 

@@ -1,12 +1,10 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test(cors: false, main: default, imported: default) Test timed out
-NOTRUN Test(cors: false, main: default, imported: time) 
-NOTRUN Test(cors: false, main: time, imported: default) 
-NOTRUN Test(cors: false, main: time, imported: time) 
-NOTRUN Test(cors: true, main: default, imported: default) 
-NOTRUN Test(cors: true, main: default, imported: time) 
-NOTRUN Test(cors: true, main: time, imported: default) 
-NOTRUN Test(cors: true, main: time, imported: time) 
+FAIL Test(cors: false, main: default, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: false, main: default, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: false, main: time, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: false, main: time, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: true, main: default, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: true, main: default, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: true, main: time, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: true, main: time, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
 

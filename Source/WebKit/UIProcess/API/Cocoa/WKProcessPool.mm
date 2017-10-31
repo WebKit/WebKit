@@ -446,6 +446,13 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->setCookieStoragePartitioningEnabled(enabled);
 }
 
+- (void)_setAllowsAnySSLCertificateForServiceWorker:(BOOL) allows
+{
+#if ENABLE(SERVICE_WORKER)
+    _processPool->setAllowsAnySSLCertificateForServiceWorker(allows);
+#endif
+}
+
 #if PLATFORM(IOS)
 - (id <_WKGeolocationCoreLocationProvider>)_coreLocationProvider
 {

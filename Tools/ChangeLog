@@ -1,3 +1,13 @@
+2017-10-31  Youenn Fablet  <youenn@apple.com>
+
+        rwt should allow service worker to load localhost HTTPS resources with any certificate
+        https://bugs.webkit.org/show_bug.cgi?id=179018
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): allowing any SSL certificate for service workers.
+
 2017-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement WKWebView SPI for inserting attachment elements

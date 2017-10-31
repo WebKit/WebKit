@@ -28,6 +28,7 @@
 #include "WebProcessProxy.h"
 
 namespace WebKit {
+class AuthenticationChallengeProxy;
 struct WebPreferencesStore;
 
 class ServiceWorkerProcessProxy final : public WebProcessProxy {
@@ -38,7 +39,10 @@ public:
     }
     ~ServiceWorkerProcessProxy();
 
+    void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
+
     void start(const WebPreferencesStore&);
+    uint64_t pageID() const { return m_serviceWorkerPageID; }
 
 private:
     ServiceWorkerProcessProxy(WebProcessPool&, WebsiteDataStore&);
