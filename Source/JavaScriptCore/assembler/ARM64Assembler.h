@@ -157,7 +157,7 @@ inline uint16_t getHalfword(uint64_t value, int which)
 
 namespace ARM64Registers {
 
-enum RegisterID : uint8_t {
+typedef enum {
     // Parameter/result registers.
     x0,
     x1,
@@ -203,18 +203,18 @@ enum RegisterID : uint8_t {
     x29 = fp,
     x30 = lr,
     zr = 0x3f,
-};
+} RegisterID;
 
-enum SPRegisterID : uint8_t {
+typedef enum {
     pc,
     nzcv,
     fpsr
-};
+} SPRegisterID;
 
 // ARM64 always has 32 FPU registers 128-bits each. See http://llvm.org/devmtg/2012-11/Northover-AArch64.pdf
 // and Section 5.1.2 in http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf.
 // However, we only use them for 64-bit doubles.
-enum FPRegisterID : uint8_t {
+typedef enum {
     // Parameter/result registers.
     q0,
     q1,
@@ -250,7 +250,7 @@ enum FPRegisterID : uint8_t {
     q29,
     q30,
     q31,
-};
+} FPRegisterID;
 
 static constexpr bool isSp(RegisterID reg) { return reg == sp; }
 static constexpr bool isZr(RegisterID reg) { return reg == zr; }

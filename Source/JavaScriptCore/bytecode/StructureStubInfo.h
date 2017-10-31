@@ -174,13 +174,13 @@ public:
         int32_t deltaFromStartToSlowPathCallLocation;
         int32_t deltaFromStartToSlowPathStart;
 
-        GPRReg baseGPR;
-        GPRReg valueGPR;
-        GPRReg thisGPR;
+        int8_t baseGPR;
+        int8_t valueGPR;
+        int8_t thisGPR;
 #if USE(JSVALUE32_64)
-        GPRReg valueTagGPR;
-        GPRReg baseTagGPR;
-        GPRReg thisTagGPR;
+        int8_t valueTagGPR;
+        int8_t baseTagGPR;
+        int8_t thisTagGPR;
 #endif
     } patch;
 
@@ -197,9 +197,9 @@ public:
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            patch.valueTagGPR,
+            static_cast<GPRReg>(patch.valueTagGPR),
 #endif
-            patch.valueGPR);
+            static_cast<GPRReg>(patch.valueGPR));
     }
 
 

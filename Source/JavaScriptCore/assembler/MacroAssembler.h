@@ -1921,8 +1921,8 @@ private:
     
 public:
     
-    enum RegisterID : uint8_t { NoRegister };
-    enum FPRegisterID : uint8_t { NoFPRegister };
+    enum RegisterID { NoRegister };
+    enum FPRegisterID { NoFPRegister };
 };
 
 } // namespace JSC

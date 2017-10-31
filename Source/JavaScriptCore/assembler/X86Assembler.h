@@ -41,7 +41,7 @@ inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(sign
 
 namespace X86Registers {
 
-enum RegisterID : uint8_t {
+typedef enum {
     eax,
     ecx,
     edx,
@@ -60,14 +60,14 @@ enum RegisterID : uint8_t {
     r14,
     r15
 #endif
-};
+} RegisterID;
 
-enum SPRegisterID : uint8_t {
+typedef enum {
     eip,
     eflags
-};
+} SPRegisterID;
 
-enum XMMRegisterID : uint8_t {
+typedef enum {
     xmm0,
     xmm1,
     xmm2,
@@ -86,7 +86,7 @@ enum XMMRegisterID : uint8_t {
     xmm14,
     xmm15
 #endif
-};
+} XMMRegisterID;
 
 } // namespace X86Register
 
@@ -103,13 +103,13 @@ public:
         return X86Registers::edi;
 #endif
     }
-    static constexpr unsigned numberOfRegisters() { return static_cast<uint8_t>(lastRegister()) - static_cast<uint8_t>(firstRegister()) + 1; }
+    static constexpr unsigned numberOfRegisters() { return lastRegister() - firstRegister() + 1; }
     
     typedef X86Registers::SPRegisterID SPRegisterID;
 
     static constexpr SPRegisterID firstSPRegister() { return X86Registers::eip; }
     static constexpr SPRegisterID lastSPRegister() { return X86Registers::eflags; }
-    static constexpr unsigned numberOfSPRegisters() { return static_cast<uint8_t>(lastSPRegister()) - static_cast<uint8_t>(firstSPRegister()) + 1; }
+    static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
     
     typedef X86Registers::XMMRegisterID XMMRegisterID;
     typedef XMMRegisterID FPRegisterID;
@@ -123,7 +123,7 @@ public:
         return X86Registers::xmm7;
 #endif
     }
-    static constexpr unsigned numberOfFPRegisters() { return static_cast<uint8_t>(lastFPRegister()) - static_cast<uint8_t>(firstFPRegister()) + 1; }
+    static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
     
     static const char* gprName(RegisterID id)
     {

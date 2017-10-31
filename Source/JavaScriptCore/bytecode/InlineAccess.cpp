@@ -161,7 +161,7 @@ bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Struc
 {
     CCallHelpers jit;
     
-    GPRReg base = stubInfo.patch.baseGPR;
+    GPRReg base = static_cast<GPRReg>(stubInfo.patch.baseGPR);
     JSValueRegs value = stubInfo.valueRegs();
 
     auto branchToSlowPath = jit.patchableBranch32(
@@ -189,11 +189,11 @@ bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Struc
 ALWAYS_INLINE static GPRReg getScratchRegister(StructureStubInfo& stubInfo)
 {
     ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
-    allocator.lock(stubInfo.patch.baseGPR);
-    allocator.lock(stubInfo.patch.valueGPR);
+    allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseGPR));
+    allocator.lock(static_cast<GPRReg>(stubInfo.patch.valueGPR));
 #if USE(JSVALUE32_64)
-    allocator.lock(stubInfo.patch.baseTagGPR);
-    allocator.lock(stubInfo.patch.valueTagGPR);
+    allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
+    allocator.lock(static_cast<GPRReg>(stubInfo.patch.valueTagGPR));
 #endif
     GPRReg scratch = allocator.allocateScratchGPR();
     if (allocator.didReuseRegisters())

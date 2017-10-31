@@ -1050,13 +1050,13 @@ void SpeculativeJIT::compileIn(Node* node)
             
             stubInfo->callSiteIndex = m_jit.addCallSite(node->origin.semantic);
             stubInfo->codeOrigin = node->origin.semantic;
-            stubInfo->patch.baseGPR = baseGPR;
-            stubInfo->patch.valueGPR = resultGPR;
-            stubInfo->patch.thisGPR = InvalidGPRReg;
+            stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
+            stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
+            stubInfo->patch.thisGPR = static_cast<int8_t>(InvalidGPRReg);
 #if USE(JSVALUE32_64)
-            stubInfo->patch.valueTagGPR = InvalidGPRReg;
-            stubInfo->patch.baseTagGPR = InvalidGPRReg;
-            stubInfo->patch.thisTagGPR = InvalidGPRReg;
+            stubInfo->patch.valueTagGPR = static_cast<int8_t>(InvalidGPRReg);
+            stubInfo->patch.baseTagGPR = static_cast<int8_t>(InvalidGPRReg);
+            stubInfo->patch.thisTagGPR = static_cast<int8_t>(InvalidGPRReg);
 #endif
             stubInfo->patch.usedRegisters = usedRegisters();
 
