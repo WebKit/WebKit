@@ -1,3 +1,18 @@
+2017-10-31  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: replace Canvas stack iteration with createScriptCallStack
+        https://bugs.webkit.org/show_bug.cgi?id=178980
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/create-context-2d-expected.txt:
+        * inspector/canvas/create-context-webgl-expected.txt:
+        * inspector/canvas/create-context-webgl2-expected.txt:
+        * inspector/canvas/create-context-webgpu-expected.txt:
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+
 2017-10-30  Chris Dumez  <cdumez@apple.com>
 
         Fire updatefound event after resolving the registration promise

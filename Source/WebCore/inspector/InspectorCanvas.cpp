@@ -68,8 +68,8 @@
 #include "WebGPURenderingContext.h"
 #endif
 #include <inspector/IdentifiersFactory.h>
-#include <interpreter/CallFrame.h>
-#include <interpreter/StackVisitor.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 
 
 namespace WebCore {
@@ -191,30 +191,6 @@ bool InspectorCanvas::hasBufferSpace() const
     return m_bufferUsed < m_bufferLimit;
 }
 
-template <typename T, typename Functor>
-static RefPtr<Inspector::Protocol::Array<T>> iterateCallFrames(const Functor& functor)
-{
-    RefPtr<Inspector::Protocol::Array<T>> callFrames = Inspector::Protocol::Array<T>::create();
-    if (JSC::CallFrame* callFrame = JSMainThreadExecState::currentState()->vm().topCallFrame) {
-        callFrame->iterate([&] (JSC::StackVisitor& visitor) {
-            // Only skip Native frames if they are the first frame.
-            if (!callFrames->length() && visitor->isNativeFrame())
-                return JSC::StackVisitor::Continue;
-
-            unsigned line = 0;
-            unsigned column = 0;
-            visitor->computeLineAndColumn(line, column);
-
-            ScriptCallFrame scriptCallFrame(visitor->functionName(), visitor->sourceURL(), static_cast<JSC::SourceID>(visitor->sourceID()), line, column);
-            RefPtr<T> item = functor(scriptCallFrame);
-            callFrames->addItem(WTFMove(item));
-
-            return JSC::StackVisitor::Continue;
-        });
-    }
-    return callFrames;
-}
-
 Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(InstrumentingAgents& instrumentingAgents, bool captureBacktrace)
 {
     Document& document = m_canvas.document();
@@ -283,9 +259,8 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
         canvas->setMemoryCost(memoryCost);
 
     if (captureBacktrace) {
-        canvas->setBacktrace(iterateCallFrames<Inspector::Protocol::Console::CallFrame>([&] (const ScriptCallFrame& scriptCallFrame) {
-            return scriptCallFrame.buildInspectorObject();
-        }));
+        auto stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+        canvas->setBacktrace(stackTrace->buildInspectorArray());
     }
 
     return canvas;
@@ -588,9 +563,12 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
 
     action->addItem(WTFMove(parametersData));
     action->addItem(WTFMove(swizzleTypes));
-    action->addItem(iterateCallFrames<InspectorValue>([&] (const ScriptCallFrame& scriptCallFrame) {
-        return InspectorValue::create(indexForData(scriptCallFrame));
-    }));
+
+    RefPtr<Inspector::Protocol::Array<double>> trace = Inspector::Protocol::Array<double>::create();
+    auto stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+    for (size_t i = 0; i < stackTrace->size(); ++i)
+        trace->addItem(indexForData(stackTrace->at(i)));
+    action->addItem(WTFMove(trace));
 
     return action;
 }
