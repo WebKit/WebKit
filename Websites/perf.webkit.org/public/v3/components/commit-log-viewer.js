@@ -8,6 +8,7 @@ class CommitLogViewer extends ComponentBase {
         this._repository = null;
         this._fetchingPromise = null;
         this._commits = null;
+        this._precedingCommit = null;
         this._renderCommitListLazily = new LazilyEvaluatedFunction(this._renderCommitList.bind(this));
         this._showRepositoryName = true;
     }
@@ -35,7 +36,8 @@ class CommitLogViewer extends ComponentBase {
         }
 
         let promise;
-        if (!precedingRevision || precedingRevision == lastRevision)
+        const fetchSingleCommit = !precedingRevision || precedingRevision == lastRevision;
+        if (fetchSingleCommit)
             promise = CommitLog.fetchForSingleRevision(repository, lastRevision);
         else
             promise = CommitLog.fetchBetweenRevisions(repository, precedingRevision, lastRevision);
@@ -46,9 +48,26 @@ class CommitLogViewer extends ComponentBase {
         this._fetchingPromise.then((commits) => {
             if (this._fetchingPromise != promise)
                 return;
-            this._fetchingPromise = null;
             this._commits = commits;
-            this.enqueueToRender();
+            if (fetchSingleCommit) {
+                this._fetchingPromise = null;
+                this._precedingCommit = null;
+                this.enqueueToRender();
+                return;
+            }
+            return CommitLog.fetchForSingleRevision(repository, precedingRevision).then((precedingCommit) => {
+                if (this._fetchingPromise != promise)
+                    return;
+                this._fetchingPromise = null;
+                this._precedingCommit = precedingCommit[0];
+                this.enqueueToRender();
+            }, (error) => {
+                if (this._fetchingPromise != promise)
+                    return;
+                this._fetchingPromise = null;
+                this._precedingCommit = null;
+                this.enqueueToRender();
+            });
         }, (error) => {
             if (this._fetchingPromise != promise)
                 return;
@@ -65,13 +84,14 @@ class CommitLogViewer extends ComponentBase {
         const shouldShowRepositoryName = this._repository && (this._commits || this._fetchingPromise) && this._showRepositoryName;
         this.content('repository-name').textContent = shouldShowRepositoryName ? this._repository.name() : '';
         this.content('spinner-container').style.display = this._fetchingPromise ? null : 'none';
-        this._renderCommitListLazily.evaluate(this._commits);
+        this._renderCommitListLazily.evaluate(this._commits, this._precedingCommit);
     }
 
-    _renderCommitList(commits)
+    _renderCommitList(commits, precedingCommit)
     {
         const element = ComponentBase.createElement;
         const link = ComponentBase.createLink;
+        commits = commits && precedingCommit && precedingCommit.ownsCommits() ? [precedingCommit].concat(commits) : commits;
         let previousCommit = null;
 
         this.renderReplace(this.content('commits-list'), (commits || []).map((commit) => {
