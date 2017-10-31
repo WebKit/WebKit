@@ -1,3 +1,20 @@
+2017-10-30  Tim Horton  <timothy_horton@apple.com>
+
+        Update safe area inset demo pages to use env()
+        https://bugs.webkit.org/show_bug.cgi?id=179041
+
+        Reviewed by Simon Fraser.
+
+        * demos/safe-area-insets/1-default.html:
+        * demos/safe-area-insets/2-viewport-fit.html:
+        * demos/safe-area-insets/3-safe-area-constants.html:
+        * demos/safe-area-insets/4-min-max.html:
+        * demos/safe-area-insets/safe-areas.html:
+        Update to use env() instead of constant(), but keep constant() around
+        for backwards-compatibility.
+
+        Adjust the colors on the safe areas test page to look a little less holiday-like.
+
 2017-10-16  Daniel Bates  <dabates@apple.com>
 
         No nightlies listed on nightly.webkit.org when using shipping Safari on macOS Sierra and OS X El Capitan

@@ -7,7 +7,7 @@
     <style>
     #topBar {
         background-color: #729fcf;
-        padding: constant(safe-area-inset-top) constant(safe-area-inset-right) 0 constant(safe-area-inset-left);
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
     }
 
     #topBar a {
@@ -76,14 +76,14 @@
 
     @supports(padding: max(0px)) {
         #bottomBar {
-            padding-left: max(8px, constant(safe-area-inset-left));
-            padding-right: max(8px, constant(safe-area-inset-right));
-            padding-bottom: max(8px, constant(safe-area-inset-bottom));
+            padding-left: max(8px, env(safe-area-inset-left));
+            padding-right: max(8px, env(safe-area-inset-right));
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
         }
 
         .post {
-            padding-left: max(12px, constant(safe-area-inset-left));
-            padding-right: max(12px, constant(safe-area-inset-right));
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
         }
     }
     </style>
@@ -97,7 +97,7 @@
     <p>Welcome to my sample blog!</p>
     <p>This post is here to help demonstrate how easy it is to take an existing site, along with full-width bars and fixed-position elements, and make it take full advantage of iPhone X's edge-to-edge display.</p>
     <p>The actual post describing how to adopt the new API is over on the <a href="https://webkit.org/blog/7929/designing-websites-for-iphone-x/">WebKit blog</a>.</p>
-    <p>There, you will learn all about new WebKit features, including <code>viewport-fit</code>, <code>constant()</code>, safe area insets, and <code>min()</code> and <code>max()</code>.</p>
+    <p>There, you will learn all about new WebKit features, including <code>viewport-fit</code>, <code>env()</code>, safe area insets, and <code>min()</code> and <code>max()</code>.</p>
     <p>I hope that it helps you adopt these new features in your websites.</p>
     </div>
     <div id="bottomBar"><a href="#">About Me</a><a href="#">Contact</a><a href="#">Site Map</a></div>

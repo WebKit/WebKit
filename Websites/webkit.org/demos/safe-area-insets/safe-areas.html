@@ -10,7 +10,7 @@
     }
 
     #unsafeArea {
-        background: repeating-linear-gradient(45deg, #a40000, #a40000 10px, #cc0000 10px, #cc0000 20px);
+        background: repeating-linear-gradient(45deg, rgb(246, 194, 194), rgb(246, 194, 194) 10px, rgb(238, 192, 193) 10px, rgb(238, 192, 193) 20px);
 
         position: fixed;
         top: 0;
@@ -20,7 +20,7 @@
     }
 
     #safeArea {
-        background-color: #4e9a06;
+        background-color: rgb(187, 251, 198);
 
         display: flex;
         align-items: center;
@@ -28,9 +28,13 @@
         
         position: fixed;
         top: constant(safe-area-inset-top);
+        top: env(safe-area-inset-top);
         left: constant(safe-area-inset-left);
+        left: env(safe-area-inset-left);
         right: constant(safe-area-inset-right);
+        right: env(safe-area-inset-right);
         bottom: constant(safe-area-inset-bottom);
+        bottom: env(safe-area-inset-bottom);
     }
 
     .horizontalInsetIndicator {
@@ -65,6 +69,7 @@
         position: fixed;
 
         left: calc(constant(safe-area-inset-left) + 45px);
+        left: calc(env(safe-area-inset-left) + 45px);
         width: 25px;
     }
 
@@ -84,37 +89,44 @@
     #leftInsetIndicator {
         left: 0;
         width: constant(safe-area-inset-left);
+        width: env(safe-area-inset-left);
     }
 
     #leftInsetIndicator .indicatorLabel {
         left: calc(constant(safe-area-inset-left) + 12px);
+        left: calc(env(safe-area-inset-left) + 12px);
     }
 
     #rightInsetIndicator {
         right: 0;
         width: constant(safe-area-inset-left);
+        width: env(safe-area-inset-left);
     }
 
     #rightInsetIndicator .indicatorLabel {
         right: calc(constant(safe-area-inset-right) + 12px);
+        right: calc(env(safe-area-inset-right) + 12px);
     }
 
     #bottomInsetIndicator {
         bottom: 0;
         height: constant(safe-area-inset-bottom);
+        height: env(safe-area-inset-bottom);
     }
 
     #bottomInsetIndicator .indicatorLabel {
         left: calc(constant(safe-area-inset-left) + 12px);
+        left: calc(env(safe-area-inset-left) + 12px);
         bottom: calc(constant(safe-area-inset-bottom) + 12px);
+        bottom: calc(env(safe-area-inset-bottom) + 12px);
     }
     </style>
 </head>
 <body>
     <div id="unsafeArea"></div>
     <div id="safeArea"><h1>Safe Area</h1></div>
-    <div id="leftInsetIndicator" class="horizontalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">constant(safe-area-inset-left)</div></div>
-    <div id="rightInsetIndicator" class="horizontalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">constant(safe-area-inset-right)</div></div>
-    <div id="bottomInsetIndicator" class="verticalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">constant(safe-area-inset-bottom)</div></div>
+    <div id="leftInsetIndicator" class="horizontalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">env(safe-area-inset-left)</div></div>
+    <div id="rightInsetIndicator" class="horizontalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">env(safe-area-inset-right)</div></div>
+    <div id="bottomInsetIndicator" class="verticalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">env(safe-area-inset-bottom)</div></div>
 </body>
 </html>
