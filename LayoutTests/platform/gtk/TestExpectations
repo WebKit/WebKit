@@ -1187,6 +1187,8 @@ webkit.org/b/177633 http/tests/misc/copy-resolves-urls.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
 
+webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1879,6 +1881,10 @@ webkit.org/b/177529 crypto/workers/subtle/rsa-oaep-import-key-encrypt.html [ Pas
 webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
 
 webkit.org/b/177940 workers/wasm-hashset.html [ Crash Timeout Pass ]
+
+webkit.org/b/179050 accessibility/aria-text-role.html [ Crash Pass ]
+
+webkit.org/b/179051 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html [ Crash Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
