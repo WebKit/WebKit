@@ -10,7 +10,6 @@ fast/multicol/flexbox-rows.html [ Skip ]
 workers/wasm-mem-post-message.html [ Failure ]
 
 fast/forms/input-text-word-wrap.html [ Skip ]
-fast/forms/search-rtl.html [ Skip ]
 fast/forms/search-vertical-alignment.html [ Skip ]
 fast/forms/searchfield-heights.html [ Skip ]
 fast/forms/visual-hebrew-text-field.html [ Skip ]

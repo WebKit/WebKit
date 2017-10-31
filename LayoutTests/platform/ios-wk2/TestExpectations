@@ -78,9 +78,6 @@ jquery/manipulation.html
 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
 storage/domstorage/storage-close-database-on-idle.html
 
-# ietestcenter tests that fail:
-ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
-
 # <rdar://problem/17349058> Assertion in WebProcessProxy::didNavigateWithNavigationData() when running layout tests in WTR
 fast/dom/Window/mozilla-focus-blur.html
 fast/dom/Window/window-property-invalid-characters-ignored.html
@@ -99,7 +96,6 @@ pageoverlay/overlay-large-document.html [ Failure ]
 
 # Scrollbar test that fail:
 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
-scrollbars/scrollbar-miss-mousemove-disabled.html [ Failure ]
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Failure ]
@@ -220,7 +216,6 @@ svg/custom/gradient-attr-update.svg
 svg/custom/hit-test-path-stroke.svg
 svg/custom/hit-test-path.svg
 svg/custom/hit-test-unclosed-subpaths.svg
-svg/custom/hit-test-with-br.xhtml
 svg/custom/js-update-container2.svg
 svg/custom/linking-a-03-b-preserveAspectRatio.svg
 svg/custom/linking-a-03-b-transform.svg
@@ -240,7 +235,6 @@ svg/custom/pointer-events-on-svg-with-pointer.xhtml
 svg/custom/pointer-events-on-svg-without-pointer.xhtml
 svg/custom/pointer-events-with-linecaps-and-miterlimits.xhtml
 svg/custom/prevent-default.svg
-svg/custom/scroll-hit-test.xhtml
 svg/custom/use-event-handler-on-referenced-element.svg
 svg/custom/use-event-handler-on-use-element.svg
 svg/custom/use-instanceRoot-event-bubbling.xhtml
@@ -282,31 +276,11 @@ imported/mozilla/svg/text/text-shadow.svg [ ImageOnlyFailure ]
 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 svg/custom/focus-event-handling-keyboard.xhtml [ Failure ]
 svg/custom/focus-event-handling.xhtml [ Failure ]
-svg/custom/foreignObject-crash-on-hover.xml [ Failure ]
-svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ Failure ]
-svg/custom/getscreenctm-in-scrollable-div-area.xhtml [ Failure ]
-svg/custom/getscreenctm-in-scrollable-svg-area.xhtml [ Failure ]
-svg/custom/hover-default-fill.svg [ Failure ]
-svg/custom/image-clipped-hit.svg [ Failure ]
 svg/custom/invisible-text-after-scrolling.xhtml [ Failure ]
-svg/custom/marker-changes.svg [ Failure ]
 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure ]
-svg/custom/pointer-events-image-css-transform.svg [ Failure ]
-svg/custom/pointer-events-image.svg [ Failure ]
-svg/custom/pointer-events-path.svg [ Failure ]
-svg/custom/pointer-events-text-css-transform.svg [ Failure ]
-svg/custom/pointer-events-text.svg [ Failure ]
-svg/custom/polyline-hittest.svg [ Failure ]
-svg/custom/stroke-width-click.svg [ Failure ]
 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
-svg/custom/text-hit-test.svg [ Failure ]
-svg/custom/use-clipped-hit.svg [ Failure ]
-svg/custom/use-css-events.svg [ ImageOnlyFailure ]
-svg/custom/use-event-retargeting.html [ Failure ]
-svg/custom/viewBox-hit.svg [ Failure ]
 svg/filters/feTurbulence_bad_seeds.html [ ImageOnlyFailure ]
 svg/hixie/intrinsic/003.html [ Failure ]
-svg/text/foreignObject-repaint.xml [ Failure ]
 svg/zoom/page/absolute-sized-document-no-scrollbars.svg [ Failure ]
 svg/zoom/page/relative-sized-document-scrollbars.svg [ Failure ]
 svg/zoom/page/zoom-background-image-tiled.html [ Failure ]
@@ -354,12 +328,7 @@ http/tests/navigation/relativeanchor-frames.html [ Failure ]
 http/tests/navigation/reload-subframe-object.html [ Failure ]
 http/tests/navigation/success200-subframeload.html [ Failure ]
 http/tests/navigation/timerredirect-subframeload.html [ Failure ]
-http/tests/security/drag-drop-local-file.html [ Failure ]
 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
-http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
-http/tests/security/isolatedWorld/events.html [ Failure ]
-http/tests/security/listener/xss-window-onclick-addEventListener.html [ Failure ]
-http/tests/security/listener/xss-window-onclick-shortcut.html [ Failure ]
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
 http/tests/security/no-referrer.html [ Failure ]
 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
@@ -380,32 +349,18 @@ http/tests/appcache/auth.html
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 http/tests/cache/subresource-expiration-1.html
 http/tests/cache/subresource-expiration-2.html
-http/tests/download/inherited-encoding.html
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
-http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html
-http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html
 http/tests/misc/acid3.html
-http/tests/navigation/document-location-click-timeout.html
-http/tests/navigation/document-location-click.html
-http/tests/navigation/document-location-mouseover.html
 http/tests/navigation/javascriptlink-basic.html
 http/tests/navigation/javascriptlink-frames.html
 http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/navigation-interrupted-by-fragment.html
-http/tests/navigation/no-referrer-reset.html
-http/tests/navigation/no-referrer-same-window.html
-http/tests/navigation/no-referrer-subframe.html
-http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/redirect-preserves-referrer.html
-http/tests/navigation/redirect-to-random-url-versus-memory-cache.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
 http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure ]
 http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure ]
-http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 http/tests/security/isolatedWorld/cross-origin-xhr.html
-http/tests/security/isolatedWorld/userGestureEvents.html
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
 http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
@@ -440,99 +395,48 @@ fast/viewport/viewport-legacy-xhtmlmp.html
 
 # LayoutTests/fast tests that fail:
 fast/backgrounds/size/contain-and-cover-zoomed.html [ Failure ]
-fast/borders/border-radius-position.html [ Failure ]
 fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 fast/dom/Window/Plug-ins.html [ Failure ]
 fast/dom/fragment-activation-focuses-target.html [ Failure ]
-fast/dom/replaced-image-map.html [ Failure ]
 fast/dom/right-overflow-in-rtl.html [ Failure ]
-fast/dom/search-shadow-host-crash.html [ Failure ]
 fast/encoding/idn-security.html [ Failure ]
 fast/events/access-key-self-destruct.html [ Failure ]
 fast/events/anchor-empty-focus.html [ Failure ]
 fast/events/arrow-keys-on-body.html [ Failure ]
-fast/events/attribute-listener-deletion-crash.html [ Failure ]
-fast/events/click-focus-anchor.html [ Failure ]
-fast/events/click-range-slider.html [ Failure ]
-fast/events/dont-loose-last-event.html [ Failure ]
-fast/events/event-sender-mouse-moved.html [ Failure ]
-fast/events/frame-click-focus.html [ Failure ]
 fast/events/imagemap-norender-crash.html [ Failure ]
 fast/events/input-tab-focus-no-duplicate-events.html [ Failure ]
 fast/events/js-keyboard-event-creation.html [ Failure ]
 fast/events/keydown-function-keys.html [ Failure ]
 fast/events/keydown-keypress-focus-change.html [ Failure ]
 fast/events/keydown-keypress-preventDefault.html [ Failure ]
-fast/events/mosuedrag-on-canvas-should-not-start-selection.html [ Failure ]
-fast/events/mouse-focus-imagemap.html [ Failure ]
-fast/events/mouse-relative-position.html [ Failure ]
-fast/events/mouseclick-target-and-positioning.html [ Failure ]
-fast/events/mouseenter-mouseleave-capture.html [ Failure ]
-fast/events/mouseenter-mouseleave.html [ Failure ]
-fast/events/mouseenterleave-on-subframe.html [ Failure ]
-fast/events/mouseout-dead-node.html [ Failure ]
-fast/events/mouseover-mouseout.html [ Failure ]
-fast/events/mouseup-outside-document.html [ Failure ]
-fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
-fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
-fast/forms/25153.html [ Failure ]
 fast/forms/ValidityState-valueMissing-002.html [ Failure ]
 fast/forms/access-key-for-all-elements.html [ Failure ]
 fast/forms/access-key.html [ Failure ]
 fast/forms/button-enter-click.html [ Failure ]
 fast/forms/button-spacebar-click.html [ Failure ]
 fast/forms/cursor-at-editable-content-boundary.html [ Failure ]
-fast/forms/disabled-mousedown-event.html [ Failure ]
 fast/forms/focus-control-to-page.html [ Failure ]
-fast/forms/focus-selection-textarea.html [ Failure ]
 fast/forms/formaction-attribute.html [ Failure ]
-fast/forms/input-readonly-focus.html [ Failure ]
 fast/forms/input-search-press-escape-key.html [ Failure ]
 fast/forms/label/label-becomes-visible-while-clicking-on-label.html [ Failure ]
 fast/forms/number/number-change-type-on-focus.html [ Failure ]
 fast/forms/number/number-keyoperation.html [ Failure ]
 fast/forms/radio/input-radio-checked-tab.html [ Failure ]
 fast/forms/radio/radio-group-keyboard-change-event.html [ Failure ]
-fast/forms/radio/radio-nested-labels.html [ Failure ]
-fast/forms/radio/radio_checked_name.html [ Failure ]
 fast/forms/range/range-keyboard-oninput-event.html [ Failure ]
-fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
 fast/forms/select/menulist-oninput-fired.html [ Failure ]
 fast/forms/select/menulist-type-ahead-find.html [ Failure ]
 fast/frames/frame-dead-region.html [ Failure ]
-fast/frames/frame-deep-nested-resize.html [ Failure ]
 fast/frames/frame-programmatic-noresize.html [ Failure ]
 fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html [ Failure ]
 fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html [ Failure ]
-fast/frames/frames-with-frameborder-zero-can-be-resized.html [ Failure ]
 fast/frames/location-redirect-user-gesture.html [ Failure ]
 fast/harness/override-preferences-2.html [ Failure ]
-fast/html/details-click-controls.html [ Failure ]
 fast/html/details-keyboard-show-hide.html [ Failure ]
-fast/html/details-mouse-click.html [ Failure ]
-fast/images/image-map-multiple-xhtml.xhtml [ Failure ]
-fast/images/image-map-multiple.html [ Failure ]
-fast/images/image-map-zoom.html [ Failure ]
-fast/images/imagemap-dynamic-area-updates.html [ Failure ]
-fast/inline/relative-positioned-overflow.html [ Failure ]
-fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
-fast/loader/repeat-same-document-navigation.html [ Failure ]
-fast/replaced/image-map-2.html [ Failure ]
-fast/replaced/image-map-bug16782.html [ Failure ]
-fast/replaced/image-map.html [ Failure ]
-fast/selectors/active-hover-quirks.html [ Failure ]
-fast/selectors/active-hover-strict.html [ Failure ]
-fast/selectors/active-quirks.html [ Failure ]
-fast/selectors/active-strict.html [ Failure ]
-fast/selectors/hover-quirks.html [ Failure ]
-fast/selectors/hover-strict.html [ Failure ]
-fast/selectors/not-active-hover-quirks.html [ Failure ]
-fast/selectors/not-active-hover-strict.html [ Failure ]
 fast/selectors/querySelector-window-inactive.html [ Failure ]
 fast/spatial-navigation/snav-only-clipped-overflow-content.html [ Failure ]
 fast/spatial-navigation/snav-z-index.html [ Failure ]
-fast/text/international/thai-offsetForPosition-inside-character.html [ Failure ]
 fast/text/offsetForPosition-cluster-at-zero.html [ Failure ]
 fast/dom/adopt-node-crash-2.html [ Failure ]
 fast/dom/Window/window-focus-self.html [ Failure ]
@@ -541,59 +445,27 @@ fast/dom/Window/window-onFocus.html [ Failure ]
 fast/dom/hidden-iframe-no-focus.html [ Failure ]
 fast/dom/HTMLAnchorElement/anchor-in-noscroll-iframe.html [ Failure ]
 fast/dom/left-overflow-in-ltr.html [ Failure ]
-fast/events/autoscroll-in-overflow-hidden-html.html [ Failure ]
 fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]
-fast/events/capture-on-target.html [ Failure ]
-fast/events/onchange-click-hang.html [ Failure ]
 fast/events/onchange-passwordfield.html [ Failure ]
 fast/events/onchange-searchfield.html [ Failure ]
 fast/events/onchange-select-popup.html [ Failure ]
 fast/events/onchange-textfield.html [ Failure ]
-fast/events/onclick-list-marker.html [ Failure ]
 fast/events/onsearch-enter.html [ Failure ]
-fast/events/pointer-events.html [ Failure ]
-fast/events/popup-allowed-from-gesture-initiated-event.html [ Failure ]
-fast/events/popup-blocked-from-fake-user-gesture.html [ Failure ]
-fast/events/related-target.html [ Failure ]
-fast/events/relative-offset-of-simulated-click.html [ Failure ]
-fast/events/remove-target-in-mouseup-deep.html [ Failure ]
-fast/events/remove-target-in-mouseup-insertback.html [ Failure ]
-fast/events/remove-target-in-mouseup-twice.html [ Failure ]
-fast/events/remove-target-in-mouseup.html [ Failure ]
-fast/events/scroll-to-anchor-in-overflow-hidden.html [ Failure ]
-fast/events/shadow-event-path-2.html [ Failure ]
-fast/events/simulated-click-coords.html [ Failure ]
 fast/events/tab-focus-anchor.html [ Failure ]
 fast/events/tab-focus-hidden.html [ Failure ]
 fast/events/tab-imagemap.html [ Failure ]
 fast/events/tab-test-not-visible-imagemap.html [ Failure ]
 fast/events/tabindex-focus-chain.html [ Failure ]
-fast/events/window-events-bubble.html [ Failure ]
-fast/events/window-events-bubble2.html [ Failure ]
-fast/events/window-events-capture.html [ Failure ]
 fast/forms/legend-access-key.html [ Failure ]
 fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 fast/forms/listbox-typeahead-greek.html [ Failure ]
-fast/forms/search-click-in-placeholder.html [ Failure ]
-fast/forms/search-delete-while-cancel-button-clicked.html [ Failure ]
-fast/forms/search-hidden-cancel-button.html [ Failure ]
-fast/forms/search-hide-cancel-on-cancel.html [ Failure ]
 fast/forms/select-accesskey.html [ Failure ]
 fast/forms/select-double-onchange.html [ Failure ]
-fast/forms/select-empty-list.html [ Failure ]
-fast/forms/select-listbox-focus-displaynone.html [ Failure ]
 fast/forms/select-popup-pagekeys.html [ Failure ]
 fast/forms/select-script-onchange.html [ Failure ]
 fast/forms/select-type-ahead-non-latin.html [ Failure ]
-fast/forms/textarea-scrolled-endline-caret.html [ Failure ]
-fast/forms/textfield-inside-anchor.html [ Failure ]
 fast/frames/meta-refresh-user-gesture.html [ Failure ]
 fast/parser/pre-html5-parser-quirks.html [ Failure ]
-fast/parser/tabindex-parsing.html [ Failure ]
-fast/table/hittest-self-painting.html [ Failure ]
-fast/inline/layout-after-inserting-nested-br.html [ ImageOnlyFailure ]
-fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
-fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
 fast/shadow-dom/focus-across-details-element.html [ Failure ]
 fast/shadow-dom/focus-navigation-across-slots.html [ Failure ]
 fast/shadow-dom/negative-tabindex-on-shadow-host.html [ Failure ]
@@ -642,7 +514,6 @@ fast/text/international/002.html [ Failure ]
 fast/text/international/003.html [ Failure ]
 fast/text/international/bidi-layout-across-linebreak.html [ Failure ]
 fast/text/international/hebrew-vowels.html [ Failure ]
-fast/text/international/khmer-selection.html [ Failure ]
 fast/text/international/text-combine-image-test.html [ Failure ]
 fast/text/international/thai-line-breaks.html [ Failure ]
 fast/text/whitespace/024.html [ Failure ]
@@ -658,7 +529,6 @@ fast/multicol/nested-filter-in-columns.html [ ImageOnlyFailure ]
 
 
 # LayoutTests/fast tests that time out:
-fast/block/positioning/absolute-appended-to-inline.html
 fast/borders/0px-borders-no-line-height.html
 fast/borders/bidi-002.html
 fast/box-decoration-break/box-decoration-break-parsing.html
@@ -679,34 +549,15 @@ fast/dom/Geolocation/permission-denied-already-error.html
 fast/dom/Geolocation/permission-denied-stops-watches.html
 fast/dom/Geolocation/requestQueuingForHiddenPage.html
 fast/dom/HTMLLinkElement/prefetch.html
-fast/dom/MutationObserver/end-of-task-delivery.html
-fast/dom/Node/mutation-blur.html
 fast/dom/Window/new-window-opener.html
-fast/dom/Window/window-postmessage-clone-frames.html
-fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-resize-contents.html
 fast/dom/html-link-element-activation-behavior-on-mouse-click.html
 fast/dom/remove-body-during-body-replacement2.html
-fast/encoding/mailto-always-utf-8.html
 fast/events/attempt-scroll-with-no-scrollbars.html
-fast/events/event-view-toString.html
 fast/events/focus-change-crash2.html
-fast/events/frame-detached-in-mousedown.html
-fast/events/iframe-onmousemove.html
-fast/events/mouse-moved-remove-frame-crash.html
-fast/events/mouseout-dead-subframe.html
-fast/events/open-window-from-another-frame.html
 fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
-fast/events/popup-allowed-from-gesture-initiated-form-submit.html
-fast/events/popup-blocked-from-untrusted-mouse-click.html
-fast/events/popup-blocking-click-in-iframe.html
-fast/events/popup-blocking-timers1.html
-fast/events/popup-blocking-timers2.html
-fast/events/popup-blocking-timers3.html
-fast/events/popup-blocking-timers5.html
-fast/events/popup-blocking-timers6.html
 fast/events/popup-when-select-change.html
 fast/events/related-target-focusevent.html
 
@@ -716,29 +567,13 @@ fast/forms/formtarget-attribute-input-2.html
 fast/forms/input-image-submit.html
 fast/forms/interactive-validation-formnovalidate-2.html
 fast/forms/mailto/formenctype-attribute-input-2.html
-fast/forms/multiple-form-submission-protection-mouse.html
 fast/forms/placeholder-crash-with-scrollbar-corner.html
 fast/forms/range/range-type-change-onchange.html
 fast/forms/select/menulist-onchange-fired-with-key-up-down.html
-fast/forms/submit-to-blank-multiple-times.html
-fast/forms/submit-while-you-submit.html
-fast/forms/type-after-focus-rule-shrink-width.html
 fast/frames/flattening/iframe-flattening-resize-event-count.html
-fast/history/form-submit-in-frame-via-onclick.html
-fast/history/form-submit-in-frame.html
-fast/history/gesture-before-onload-form-submit.html
-fast/history/gesture-before-onload-location-href.html
-fast/history/history_reload.html
 fast/history/history-scroll-restoration.html [ Skip ]
-fast/history/timed-refresh-in-cached-frame.html
-fast/history/window-open.html
 fast/images/animate-list-item-image-assertion.html
-fast/layers/no-clipping-overflow-hidden-added-after-transform.html
-fast/loader/child-frame-add-after-back-forward.html
-fast/loader/document-with-fragment-url-1.html
 fast/loader/document-with-fragment-url-2.html
-fast/loader/document-with-fragment-url-3.html
-fast/loader/document-with-fragment-url-4.html
 fast/loader/fragment-after-redirect-gets-back-entry.html
 fast/replaced/no-focus-ring-embed.html
 fast/replaced/no-focus-ring-iframe.html
@@ -746,9 +581,6 @@ fast/replaced/no-focus-ring-object.html
 fast/shapes/shape-outside-floats/shape-outside-animation.html
 fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html
 fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
-fast/text/reset-drag-on-mouse-down.html
-fast/text/simple-lines-hover-after.html
-fast/text/simple-lines-hover-underline.html
 fast/workers/worker-cloneport.html
 fast/borders/bidi-009a.html
 fast/box-shadow/box-shadow-currentcolor.html
@@ -768,7 +600,6 @@ fast/events/media-element-focus-tab.html
 fast/events/message-port-no-wrapper.html
 fast/events/scroll-event-during-modal-dialog.html
 fast/forms/fallback-content-submission.html
-fast/frames/hover-timer-crash.html
 fast/hidpi/image-srcset-relative-svg-canvas.html
 fast/history/history-subframe-with-name.html
 fast/history/location-replace-hash.html
@@ -785,7 +616,6 @@ fast/text/selection-hard-linebreak.html
 fast/workers/wrapper-map-gc.html
 fast/events/message-port.html
 fast/loader/dynamic-iframe-extra-back-forward-item.html
-fast/events/mouse-cursor-change.html
 fast/history/history-back-initial-vs-final-url.html
 fast/loader/form-submission-before-load-get.html
 
@@ -853,7 +683,6 @@ editing/deleting/delete-tab-001.html [ Failure ]
 editing/deleting/delete-tab-004.html [ Failure ]
 editing/deleting/forward-delete-key.html [ Failure ]
 editing/deleting/smart-delete-002.html [ Failure ]
-editing/deleting/smart-delete-across-editable-boundaries-2.html [ Failure ]
 editing/deleting/smart-delete-across-editable-boundaries.html [ Failure ]
 editing/deleting/smart-editing-disabled-mac.html [ Failure ]
 editing/execCommand/button.html [ Failure ]
@@ -917,78 +746,32 @@ editing/inserting/typing-around-image-001.html [ Failure ]
 editing/inserting/typing-tab-designmode-forms.html [ Failure ]
 editing/inserting/typing-tab-designmode.html [ Failure ]
 editing/secure-input/password-input-changed-type.html [ Failure ]
-editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
 editing/secure-input/password-input-focusing.html [ Failure ]
 editing/secure-input/removed-password-input.html [ Failure ]
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
-editing/selection/4895428-1.html [ Failure ]
-editing/selection/4895428-4.html [ Failure ]
-editing/selection/5195166-1.html [ Failure ]
-editing/selection/5209984.html [ Failure ]
-editing/selection/5354455-1.html [ Failure ]
-editing/selection/after-line-break.html [ Failure ]
-editing/selection/anchor-focus1.html [ Failure ]
-editing/selection/anchor-focus2.html [ Failure ]
-editing/selection/anchor-focus3.html [ Failure ]
 editing/selection/block-cursor-overtype-mode.html [ Failure ]
-editing/selection/block-with-positioned-lastchild.html [ Failure ]
 editing/selection/caret-after-keypress.html [ Failure ]
-editing/selection/caret-at-bidi-boundary.html [ Failure ]
-editing/selection/caret-bidi-first-and-last-letters.html [ Failure ]
 editing/selection/caret-in-empty-inline-1.html [ Failure ]
 editing/selection/caret-in-empty-inline-2.html [ Failure ]
 editing/selection/caret-mode-paragraph-keys-navigation.html [ Failure ]
-editing/selection/click-after-nested-block.html [ Failure ]
-editing/selection/click-before-and-after-table.html [ Failure ]
-editing/selection/click-below-rtl-text.html [ Failure ]
-editing/selection/click-in-focusable-link-should-not-clear-selection.html [ Failure ]
 editing/selection/click-in-margins-inside-editable-div.html [ Failure ]
 editing/selection/click-in-padding-with-multiple-line-boxes.html [ Failure ]
-editing/selection/click-left-of-rtl-wrapping-text.html [ Failure ]
-editing/selection/click-on-block-image.html [ Failure ]
-editing/selection/click-on-body-margin.html [ Failure ]
-editing/selection/click-on-head-margin.html [ Failure ]
-editing/selection/click-outside-editable-div.html [ Failure ]
-editing/selection/collapse-selection-in-bidi.html [ Failure ]
-editing/selection/context-menu-on-text.html [ Failure ]
-editing/selection/context-menu-text-selection.html [ Failure ]
-editing/selection/context-menu-text-selection-lookup.html [ Failure ]
-editing/selection/crash-on-shift-click.html [ Failure ]
-editing/selection/directionality-after-undo-replace.html [ Failure ]
 editing/selection/double-click-selection-with-dom-mutation.html [ Failure ]
-editing/selection/doubleclick-beside-cr-span.html [ Failure ]
-editing/selection/doubleclick-crash.html [ Failure ]
-editing/selection/doubleclick-inline-first-last-contenteditable.html [ Failure ]
-editing/selection/doubleclick-japanese-text.html [ Failure ]
-editing/selection/doubleclick-whitespace.html [ Failure ]
-editing/selection/drag-select-rapidly.html [ Failure ]
-editing/selection/drag-start-event-client-x-y.html [ Failure ]
-editing/selection/drag-text-delay.html [ Failure ]
 editing/selection/editable-div-clear-on-keydown.html [ Failure ]
-editing/selection/editable-links.html [ Failure ]
-editing/selection/empty-cell-right-click.html [ Failure ]
-editing/selection/extend-after-mouse-selection.html [ Failure ]
 editing/selection/extend-by-character-006.html [ Failure ]
 editing/selection/extend-by-sentence-001.html [ Failure ]
 editing/selection/extend-by-word-001.html [ Failure ]
 editing/selection/extend-forward-by-word-over-non-editable.html [ Failure ]
 editing/selection/extend-inside-transforms-backward.html [ Failure ]
 editing/selection/extend-inside-transforms-forward.html [ Failure ]
-editing/selection/extend-selection-after-double-click.html [ Failure ]
 editing/selection/extend-selection-bidi.html [ Failure ]
 editing/selection/extend-selection-enclosing-block-mac.html [ Failure ]
 editing/selection/extend-selection-enclosing-block-win.html [ Failure ]
 editing/selection/extend-selection-word.html [ Failure ]
 editing/selection/extend-to-line-boundary.html [ Failure ]
-editing/selection/fake-drag.html [ Failure ]
 editing/selection/find-yensign-and-backslash.html [ Failure ]
-editing/selection/focus-and-display-none.html [ Failure ]
 editing/selection/focus-body.html [ Failure ]
-editing/selection/focus-crash.html [ Failure ]
-editing/selection/hit-test-anonymous.html [ Failure ]
-editing/selection/hit-test-on-text-with-line-height.html [ Failure ]
 editing/selection/internal-caret-rect.html [ Failure ]
-editing/selection/last-empty-inline.html [ Failure ]
 editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
 editing/selection/move-begin-end.html [ Failure ]
 editing/selection/move-by-line-001.html [ Failure ]
@@ -996,34 +779,22 @@ editing/selection/move-by-word-001.html [ Failure ]
 editing/selection/move-by-word-visually-multi-line.html [ Failure ]
 editing/selection/move-left-right.html [ Failure ]
 editing/selection/replace-selection-1.html [ Failure ]
-editing/selection/rtl-move-selection-right-left.html [ Failure ]
 editing/selection/select-all-001.html [ Failure ]
 editing/selection/select-all-002.html [ Failure ]
 editing/selection/select-all-003.html [ Failure ]
 editing/selection/select-all-004.html [ Failure ]
-editing/selection/select-bidi-run.html [ Failure ]
-editing/selection/select-line-break-with-opposite-directionality.html [ Failure ]
-editing/selection/select-out-of-editable.html [ Failure ]
 editing/selection/select-out-of-floated-contenteditable.html [ Failure ]
 editing/selection/select-out-of-floated-input.html [ Failure ]
 editing/selection/select-out-of-floated-textarea.html [ Failure ]
 editing/selection/selection-extend-should-not-move-across-caret-on-mac.html [ Failure ]
-editing/selection/shift-click.html [ Failure ]
 editing/selection/shrink-selection-after-shift-pagedown.html [ Failure ]
-editing/selection/undo-crash.html [ Failure ]
 editing/selection/unrendered-001.html [ Failure ]
 editing/selection/unrendered-002.html [ Failure ]
 editing/selection/unrendered-003.html [ Failure ]
 editing/selection/unrendered-004.html [ Failure ]
 editing/selection/unrendered-005.html [ Failure ]
-editing/selection/user-select-all-image-with-single-click.html [ Failure ]
-editing/selection/user-select-all-selection.html [ Failure ]
-editing/selection/user-select-all-with-shift.html [ Failure ]
-editing/selection/user-select-all-with-single-click.html [ Failure ]
 editing/spelling/centering-misspelling-dots.html [ Failure ]
-editing/spelling/context-menu-suggestions.html [ Failure ]
 editing/spelling/misspelling-dots-dont-extend-beyond-words.html [ Failure ]
-editing/spelling/spellcheck-input-search-crash.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
 editing/style/fore-color-by-name.html [ Failure ]
 editing/style/make-text-writing-direction-inline-mac.html [ Failure ]
@@ -1052,7 +823,6 @@ editing/undo/undo-delete-boundary.html [ Failure ]
 editing/undo/undo-delete.html [ Failure ]
 editing/undo/undo-deleteWord.html [ Failure ]
 editing/undo/undo-misspellings.html [ Failure ]
-editing/undo/undo-smart-delete-word.html [ Failure ]
 editing/undo/undo-typing-001.html [ Failure ]
 
 # Editing tests that time out:
@@ -1060,11 +830,7 @@ editing/input/page-up-down-scrolls.html
 editing/input/reveal-contenteditable-on-input-vertically.html
 editing/selection/designmode-no-caret.html
 editing/selection/move-by-character-brute-force.html
-editing/spelling/context-menu-suggestions-multiword-selection.html
-editing/spelling/context-menu-suggestions-subword-selection.html
 editing/spelling/delete-into-misspelled-word.html
-editing/spelling/design-mode-spellcheck-off.html
-editing/spelling/editing-multiple-words-with-markers.html
 editing/spelling/editing-word-with-marker-2.html
 editing/spelling/grammar-edit-word.html
 editing/spelling/grammar.html
@@ -1078,7 +844,6 @@ editing/spelling/spelling-attribute-change.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spelling-backward.html
 editing/spelling/spelling-changed-text.html
-editing/spelling/spelling-double-clicked-word.html
 editing/spelling/spelling-exactly-selected-word.html
 editing/spelling/spelling-hasspellingmarker.html
 editing/spelling/spelling-insert-html.html
@@ -1086,7 +851,6 @@ editing/spelling/spelling-linebreak.html
 editing/spelling/spelling-marker-description.html
 editing/spelling/spelling-with-punctuation-selection.html
 editing/spelling/spelling-with-whitespace-selection.html
-editing/undo/undo-smart-delete-reversed-selection.html
 editing/unsupported-content/list-delete-001.html
 
 # Editing tests that are flaky:
@@ -1154,10 +918,6 @@ editing/unsupported-content/table-type-before.html [ Failure Pass ]
 # iOS-specific tests that fail:
 platform/ios/ios/storage/domstorage/5mb-quota-expected.txt [ Failure ]
 
-# iOS-specific tests that time out:
-platform/ios/ios/fast/coordinates/mouse-event-zoomed.html
-platform/ios/ios/fast/coordinates/mouse-event.html
-
 # iOS-specific tests that time out or fail in WebKitTestRunner due to missing DRT-specific functionality:
 platform/ios/ios/fast/coordinates/touch-event-zoomed.html
 platform/ios/ios/fast/coordinates/touch-event.html
@@ -1208,8 +968,6 @@ fast/text/atsui-kerning-and-ligatures.html [ Failure Pass ]
 fast/text/atsui-multiple-renderers.html [ Failure Pass ]
 fast/text/atsui-negative-spacing-features.html [ Failure Pass ]
 fast/text/atsui-partial-selection.html [ Failure Pass ]
-fast/text/atsui-pointtooffset-calls-cg.html [ Failure Pass ]
-fast/text/atsui-rtl-override-selection.html [ Failure Pass ]
 fast/text/atsui-small-caps-punctuation-size.html [ Failure Pass ]
 fast/text/atsui-spacing-features.html [ Failure Pass ]
 fast/text/backslash-to-yen-sign-dynamic.html [ Failure Pass ]
@@ -1242,7 +1000,6 @@ fast/text/hyphenate-limit-before-after.html [ Failure Pass ]
 fast/text/hyphenate-limit-lines.html [ Failure Pass ]
 fast/text/hyphenate-locale.html [ Failure Pass ]
 fast/text/hyphens.html [ Failure Pass ]
-fast/text/in-rendered-text-rtl.html [ Failure Pass ]
 fast/text/indic.html [ Failure Pass ]
 fast/text/justified-selection-at-edge.html [ Failure Pass ]
 fast/text/justified-selection.html [ Failure Pass ]
@@ -1274,7 +1031,6 @@ fast/text/tatechuyoko.html [ Failure Pass ]
 fast/text/text-combine-different-fonts.html [ Failure Pass ]
 fast/text/text-letter-spacing.html [ Failure Pass ]
 fast/text/text-shadow-no-default-color.html [ Failure Pass ]
-fast/text/textIteratorNilRenderer.html [ Failure Pass ]
 fast/text/trailing-white-space-2.html [ Failure Pass ]
 fast/text/trailing-white-space.html [ Failure Pass ]
 fast/text/unicode-variation-selector.html [ Failure Pass ]
@@ -1336,7 +1092,6 @@ transitions/svg-text-shadow-transition.html [ Failure Pass ]
 fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
 fast/dom/Geolocation/error.html
-fast/events/mouse-cursor-multiframecur.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 http/tests/cache/cache-redirections.html
 js/promises-tests/promises-tests-2-2-6.html
@@ -1352,7 +1107,6 @@ sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.19_String.protot
 storage/websql/change-version.html
 
 # Flaky tests that assert/time out:
-fast/events/mouse-cursor.html
 fast/loader/form-submission-before-load-post.html
 fast/loader/frame-location-change-not-added-to-history.html
 fast/loader/frame-src-change-added-to-history.html
@@ -1600,7 +1354,6 @@ editing/selection/move-by-character-6.html [ Failure Pass ]
 editing/selection/move-by-line-002.html [ Failure Pass ]
 editing/selection/move-by-sentence-001.html [ Failure Pass ]
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Timeout ]
-perf/mouse-event.html [ Failure Pass ]
 platform/ios/ios/fast/coordinates/document-elementFromPoint.html [ Failure Pass ]
 transitions/transition-on-element-with-content.html [ Failure Pass ]
 transitions/visited-link-color.html [ Failure Pass ]
@@ -1614,13 +1367,9 @@ fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
 fast/block/positioning/auto/vertical-rl/007.html [ Failure ]
 fast/block/positioning/vertical-rl/fixed-positioning.html [ Failure ]
 fast/forms/indeterminate-progress-inline-height.html [ Failure ]
-fast/forms/input-appearance-spinbutton-up.html [ Failure ]
 fast/forms/input-appearance-spinbutton.html [ Failure ]
-fast/forms/input-readonly-autoscroll.html [ Failure ]
 fast/forms/onchange-select-check-validity.html [ Failure ]
 fast/replaced/border-radius-clip.html [ Failure ]
-fast/writing-mode/japanese-lr-selection.html [ Failure ]
-fast/writing-mode/japanese-rl-selection.html [ Failure ]
 accessibility/ios-simulator/press-fires-touch-events.html [ Skip ]
 
 fast/text/combining-character-sequence-vertical.html [ ImageOnlyFailure ]
