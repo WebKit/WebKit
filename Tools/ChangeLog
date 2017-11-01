@@ -1,3 +1,26 @@
+2017-11-01  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win] Detect Visual Studio 2017 location
+        https://bugs.webkit.org/show_bug.cgi?id=175275
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/update-vswhere.py: Added.
+        * Scripts/webkitdirs.pm:
+        (requireModulesForVSWhere):
+        (pickCurrentVisualStudioInstallation):
+        (pickLegacyVisualStudioInstallation):
+        (visualStudioInstallDir):
+        (visualStudioInstallDirVSWhere):
+        (visualStudioInstallDirLegacy):
+        (visualStudioInstallDirFallback):
+        (msBuildInstallDir):
+        (visualStudioVersion):
+        (visualStudioVersionFromInstallDir):
+        (generateBuildSystemFromCMakeProject):
+
 2017-11-01  Tim Horton  <timothy_horton@apple.com>
 
         Fix the !USE(QUICKLOOK) build

@@ -160,6 +160,8 @@ my $vsVersion;
 my $windowsSourceDir;
 my $winVersion;
 my $willUseVCExpressWhenBuilding = 0;
+my $vsWhereFoundInstallation;
+my $vsWhereLegacyInstallation;
 
 # Defined in VCSUtils.
 sub exitStatus($);
@@ -589,6 +591,80 @@ sub programFilesPathX86
     return $programFilesPathX86;
 }
 
+sub requireModulesForVSWhere
+{
+    require Encode;
+    require Encode::Locale;
+    require JSON::PP;
+}
+
+sub pickCurrentVisualStudioInstallation
+{
+    return $vsWhereFoundInstallation if defined $vsWhereFoundInstallation;
+
+    requireModulesForVSWhere();
+    determineSourceDir();
+
+    # Prefer Enterprise, then Professional, then Community, then
+    # anything else that provides MSBuild.
+    foreach my $productType ((
+        'Microsoft.VisualStudio.Product.Enterprise',
+        'Microsoft.VisualStudio.Product.Professional',
+        'Microsoft.VisualStudio.Product.Community',
+        undef
+    )) {
+        my $command = "$sourceDir/WebKitLibraries/win/tools/vswhere -nologo -latest -format json -requires Microsoft.Component.MSBuild";
+        if (defined $productType) {
+            $command .= " -products $productType";
+        }
+        my $vsWhereOut = `$command`;
+        my $installations = [];
+        eval {
+            $installations = JSON::PP::decode_json(Encode::encode('UTF-8' => Encode::decode(console_in => $vsWhereOut)));
+        };
+        print "Error getting Visual Studio Location: $@\n" if $@;
+        undef $@;
+
+        if (scalar @$installations) {
+            my $installation = $installations->[0];
+            $vsWhereFoundInstallation = $installation;
+            return $installation;
+        }
+    }
+    return undef;
+}
+
+sub pickLegacyVisualStudioInstallation
+{
+    return $vsWhereLegacyInstallation if defined $vsWhereLegacyInstallation;
+
+    requireModulesForVSWhere();
+    determineSourceDir();
+
+    my $vsWhereOut = `$sourceDir/WebKitLibraries/win/tools/vswhere -nologo -legacy -format json`;
+    my $installations_all = [];
+    eval {
+        $installations_all = JSON::PP::decode_json(Encode::encode('UTF-8' => Encode::decode(console_in => $vsWhereOut)));
+    };
+    print "Error getting Visual Studio Legacy Location: $@\n" if $@;
+    undef $@;
+
+    # It's possible that a non-legacy installation without msbuild
+    # would not be found by the latest, but would be found by this
+    # vswhere call, and we want to skip those, so check for versions
+    # with an installation version before 15.0.
+    my @installations = grep { $_->{installationVersion} < 15 } @$installations_all;
+
+    # We don't get much information that would let us choose between
+    # legacy installations, so we'll take the first.
+    if (scalar @installations) {
+        my $installation = $installations[0];
+        $vsWhereLegacyInstallation = $installation;
+        return $installation;
+    }
+    return undef;
+}
+
 sub visualStudioInstallDir
 {
     return $vsInstallDir if defined $vsInstallDir;
@@ -597,9 +673,13 @@ sub visualStudioInstallDir
         $vsInstallDir = $ENV{'VSINSTALLDIR'};
         $vsInstallDir =~ s|[\\/]$||;
     } else {
-        $vsInstallDir = File::Spec->catdir(programFilesPathX86(), "Microsoft Visual Studio", "2017", "Community");
+        $vsInstallDir = visualStudioInstallDirVSWhere();
         if (not -e $vsInstallDir) {
-            $vsInstallDir = File::Spec->catdir(programFilesPathX86(), "Microsoft Visual Studio 14.0");
+            $vsInstallDir = visualStudioInstallDirLegacy();
+        }
+        if (not -e $vsInstallDir) {
+            $vsInstallDir = visualStudioInstallDirFallback();
+            print "Fallback $vsInstallDir\n";
         }
     }
     chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
@@ -608,14 +688,56 @@ sub visualStudioInstallDir
     return $vsInstallDir;
 }
 
+sub visualStudioInstallDirVSWhere
+{
+    pickCurrentVisualStudioInstallation();
+    if (defined($vsWhereFoundInstallation)) {
+        return $vsWhereFoundInstallation->{installationPath};
+    }
+    return undef;
+}
+
+sub visualStudioInstallDirLegacy
+{
+    pickLegacyVisualStudioInstallation();
+    if (defined($vsWhereLegacyInstallation)) {
+        return $vsWhereLegacyInstallation->{installationPath};
+    }
+    return undef;
+}
+
+sub visualStudioInstallDirFallback
+{
+    foreach my $productType ((
+        'Enterprise',
+        'Professional',
+        'Community',
+    )) {
+        my $installdir = File::Spec->catdir(programFilesPathX86(),
+            "Microsoft Visual Studio", "2017", $productType);
+        my $msbuilddir = File::Spec->catdir($installdir,
+            "MSBuild", "15.0", "bin");
+        if (-e $installdir && -e $msbuilddir) {
+            return $installdir;
+        }
+    }
+    return File::Spec->catdir(programFilesPathX86(), "Microsoft Visual Studio 14.0");
+}
+
 sub msBuildInstallDir
 {
     return $msBuildInstallDir if defined $msBuildInstallDir;
 
-    $msBuildInstallDir = File::Spec->catdir(programFilesPathX86(), "Microsoft Visual Studio", "2017", "Community", "MSBuild", "15.0", "Bin");
-    if (not -e $msBuildInstallDir) {
-        $msBuildInstallDir = File::Spec->catdir(programFilesPathX86(), "MSBuild", "14.0", "Bin");
+    my $version = visualStudioVersion();
+    if ($version >= 15.0) {
+        my $installDir = visualStudioInstallDir();
+        $msBuildInstallDir = File::Spec->catdir($installDir,
+            "MSBuild", $version, "bin");
+    } else {
+        $msBuildInstallDir = File::Spec->catdir(programFilesPathX86(), 
+            "MSBuild", "14.0", "Bin")
     }
+
     chomp($msBuildInstallDir = `cygpath "$msBuildInstallDir"`) if isCygwin();
 
     print "Using MSBuild: $msBuildInstallDir\n";
@@ -627,11 +749,28 @@ sub visualStudioVersion
     return $vsVersion if defined $vsVersion;
 
     my $installDir = visualStudioInstallDir();
-
-    $vsVersion = ($installDir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) ? $1 : "14";
+    $vsVersion = visualStudioVersionFromInstallDir($installDir);
 
     print "Using Visual Studio $vsVersion\n";
     return $vsVersion;
+}
+
+sub visualStudioVersionFromInstallDir
+{
+    my ($dir) = @_;
+    my $version;
+
+    if ($dir =~ m|Microsoft Visual Studio[/\\]2017|) {
+        $version = "15.0";
+    }
+
+    if (!defined($version)) {
+        if ($dir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) {
+            $version = $1;
+        }
+    }
+
+    return $version;
 }
 
 sub determineConfigurationForVisualStudio
@@ -2084,7 +2223,11 @@ sub generateBuildSystemFromCMakeProject
             push @args, "Ninja";
         }
     } elsif (isAnyWindows() && isWin64()) {
-        push @args, '-G "Visual Studio 14 2015 Win64"';
+        if (visualStudioVersion() >= 15) {
+            push @args, '-G "Visual Studio 15 2017 Win64"';
+        } else {
+            push @args, '-G "Visual Studio 14 2015 Win64"';
+        }
     }
     # Do not show progress of generating bindings in interactive Ninja build not to leave noisy lines on tty
     push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);
