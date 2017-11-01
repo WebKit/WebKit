@@ -1,3 +1,18 @@
+2017-11-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Hovering over a selector should highlight matching elements on the page
+        https://bugs.webkit.org/show_bug.cgi?id=179040
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        Use mouseenter/mouseleave events instead of mousein/mouseout (as in the old styles sidebar)
+        to avoid unnecessary events being fired.
+
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._highlightNodesWithSelector):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._hideDOMNodeHighlight):
+
 2017-10-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [PARITY] Styles Redesign: Ability to modify style attributes

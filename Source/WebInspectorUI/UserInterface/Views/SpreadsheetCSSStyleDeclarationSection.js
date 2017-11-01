@@ -64,6 +64,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._selectorElement = document.createElement("span");
         this._selectorElement.classList.add("selector");
+        this._selectorElement.addEventListener("mouseenter", this._highlightNodesWithSelector.bind(this));
+        this._selectorElement.addEventListener("mouseleave", this._hideDOMNodeHighlight.bind(this));
         this._headerElement.append(this._selectorElement);
 
         let openBrace = document.createElement("span");
@@ -368,6 +370,22 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         const appendAfterLast = -1;
         this._propertiesEditor.addBlankProperty(appendAfterLast);
+    }
+
+    _highlightNodesWithSelector()
+    {
+        if (!this._style.ownerRule) {
+            WI.domTreeManager.highlightDOMNode(this._style.node.id);
+            return;
+        }
+
+        let selectorText = this._selectorElement.textContent.trim();
+        WI.domTreeManager.highlightSelector(selectorText, this._style.node.ownerDocument.frameIdentifier);
+    }
+
+    _hideDOMNodeHighlight()
+    {
+        WI.domTreeManager.hideDOMNodeHighlight();
     }
 };
 
