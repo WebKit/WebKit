@@ -675,6 +675,8 @@ public:
     // The query rect is given in local coordinates.
     bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const;
 
+    bool scrollingMayRevealBackground() const;
+
     bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
@@ -883,7 +885,6 @@ private:
     bool showsOverflowControls() const;
 
     bool shouldBeNormalFlowOnly() const;
-
     bool shouldBeSelfPaintingLayer() const;
 
     int scrollOffset(ScrollbarOrientation) const override;

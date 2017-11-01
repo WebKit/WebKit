@@ -1418,6 +1418,7 @@ bool RenderBox::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, u
 {
     if (!maxDepthToTest)
         return false;
+
     for (auto& childBox : childrenOfType<RenderBox>(*this)) {
         if (!isCandidateForOpaquenessTest(childBox))
             continue;
@@ -1455,6 +1456,10 @@ bool RenderBox::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOff
     LayoutRect backgroundRect;
     if (!getBackgroundPaintedExtent(paintOffset, backgroundRect))
         return false;
+
+    if (hasLayer() && layer()->scrollingMayRevealBackground())
+        return false;
+
     return foregroundIsKnownToBeOpaqueInRect(backgroundRect, backgroundObscurationTestMaxDepth);
 }
 

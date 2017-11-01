@@ -2386,7 +2386,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
 #endif
         return;
     }
-    
+
     m_scrollPosition = newPosition;
 
     RenderView& view = renderer().view();
@@ -5980,6 +5980,11 @@ bool RenderLayer::shouldApplyClipPath(PaintBehavior paintBehavior, PaintLayerFla
         return true;
 
     return (paintFlags & PaintLayerPaintingCompositingClipPathPhase);
+}
+
+bool RenderLayer::scrollingMayRevealBackground() const
+{
+    return scrollsOverflow() || usesCompositedScrolling();
 }
 
 bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
