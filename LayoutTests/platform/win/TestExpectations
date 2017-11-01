@@ -3813,3 +3813,5 @@ webkit.org/b/178549 http/tests/navigation/keyboard-events-during-provisional-nav
 webkit.org/b/178549 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
 webkit.org/b/178724 fast/css-generated-content/details-summary-before-after.html [ Failure ]
+
+webkit.org/b/179130 fast/dom/Window/window-resize-update-scrollbars.html [ Timeout ]

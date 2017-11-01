@@ -1,3 +1,12 @@
+2017-11-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark fast/dom/Window/window-resize-update-scrollbars.html as a timeout on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=179130
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-11-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r224273 and r224278.
