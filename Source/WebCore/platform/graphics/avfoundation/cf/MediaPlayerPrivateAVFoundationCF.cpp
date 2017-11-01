@@ -459,7 +459,7 @@ InbandTextTrackPrivateAVF* MediaPlayerPrivateAVFoundationCF::currentTextTrack() 
     return 0;
 }
 
-void MediaPlayerPrivateAVFoundationCF::createAVAssetForURL(const String& url)
+void MediaPlayerPrivateAVFoundationCF::createAVAssetForURL(const URL& url)
 {
     ASSERT(!m_avfWrapper);
 
