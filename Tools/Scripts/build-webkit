@@ -245,10 +245,6 @@ if (isAppleCocoaWebKit()) {
     (system("perl Tools/Scripts/update-webkit-support-libs") == 0) or die;
 }
 
-if (isAnyWindows()) {
-    system("python Tools/Scripts/update-vswhere.py");
-}
-
 # If asked to build just the WebKit project, overwrite the projects
 # list after all of the port specific tweaks have been made to
 # build options, etc.
