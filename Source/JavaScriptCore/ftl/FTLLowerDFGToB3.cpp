@@ -10754,7 +10754,7 @@ private:
         Vector<ValueFromBlock, 4> results;
 
         LBasicBlock lastNext = m_out.appendTo(emptyCase, notEmptyCase);
-        results.append(m_out.anchor(m_out.weakPointer(m_graph, jsEmptyString(&vm()))));
+        results.append(m_out.anchor(weakPointer(jsEmptyString(&vm()))));
         m_out.jump(continuation);
 
         m_out.appendTo(notEmptyCase, oneCharCase);

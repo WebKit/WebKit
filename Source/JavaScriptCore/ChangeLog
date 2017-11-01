@@ -1,5 +1,13 @@
 2017-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, use weakPointer instead of FTLOutput::weakPointer
+        https://bugs.webkit.org/show_bug.cgi?id=178934
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringSlice):
+
+2017-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Introduce @toObject
         https://bugs.webkit.org/show_bug.cgi?id=178726
 
