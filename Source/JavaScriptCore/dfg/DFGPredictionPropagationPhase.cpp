@@ -784,6 +784,7 @@ private:
             break;
         }
 
+        case StringSlice:
         case ToLowerCase:
             setPrediction(SpecString);
             break;

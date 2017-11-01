@@ -1,3 +1,82 @@
+2017-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Introduce StringSlice
+        https://bugs.webkit.org/show_bug.cgi?id=178934
+
+        Reviewed by Saam Barati.
+
+        String.prototype.slice is one of the most frequently called function in ARES-6/Babylon.
+        This patch introduces StringSlice DFG node to optimize it in DFG and FTL.
+
+        This patch's StringSlice node optimizes the following things.
+
+        1. Empty string generation is accelerated. It is fully executed inline.
+        2. One char string generation is accelerated. `< 0x100` character is supported right now.
+        It is the same to charAt acceleration.
+        3. We calculate start and end index in DFG/FTL with Int32Use information and call optimized
+        operation.
+
+        We do not inline (3)'s operation right now since we do not have a way to call bmalloc allocation from DFG / FTL.
+        And we do not optimize String.prototype.{substring,substr} right now. But they can be optimized based on this change
+        in subsequent changes.
+
+        This patch improves ARES-6/Babylon performance by 3% in steady state.
+
+        Baseline:
+            Running... Babylon ( 1  to go)
+            firstIteration:     50.05 +- 13.68 ms
+            averageWorstCase:   16.80 +- 1.27 ms
+            steadyState:        7.53 +- 0.22 ms
+
+        Patched:
+            Running... Babylon ( 1  to go)
+            firstIteration:     50.91 +- 13.41 ms
+            averageWorstCase:   16.12 +- 0.99 ms
+            steadyState:        7.30 +- 0.29 ms
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringSlice):
+        (JSC::DFG::SpeculativeJIT::emitPopulateSliceIndex):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::populateSliceRange):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringSlice):
+        * jit/JITOperations.h:
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2017-10-31  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: Wasm::IndexOrName has a raw pointer to Name

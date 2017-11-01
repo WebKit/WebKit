@@ -291,6 +291,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CompareStrictEq:
     case DefineDataProperty:
     case DefineAccessorProperty:
+    case StringSlice:
     case ToLowerCase:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:

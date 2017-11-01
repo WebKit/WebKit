@@ -1099,6 +1099,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case StringSlice: {
+        forNode(node).setType(m_graph, SpecString);
+        break;
+    }
+
     case ToLowerCase: {
         forNode(node).setType(m_graph, SpecString);
         break;

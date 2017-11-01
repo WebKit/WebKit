@@ -73,6 +73,7 @@ enum Intrinsic {
     StringPrototypeValueOfIntrinsic,
     StringPrototypeReplaceIntrinsic,
     StringPrototypeReplaceRegExpIntrinsic,
+    StringPrototypeSliceIntrinsic,
     StringPrototypeToLowerCaseIntrinsic,
     NumberPrototypeToStringIntrinsic,
     IMulIntrinsic,

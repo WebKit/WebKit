@@ -5264,6 +5264,11 @@ void SpeculativeJIT::compile(Node* node)
         compileWeakMapGet(node);
         break;
 
+    case StringSlice: {
+        compileStringSlice(node);
+        break;
+    }
+
     case ToLowerCase: {
         compileToLowerCase(node);
         break;

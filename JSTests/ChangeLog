@@ -1,3 +1,17 @@
+2017-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Introduce StringSlice
+        https://bugs.webkit.org/show_bug.cgi?id=178934
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/string-slice-empty.js: Added.
+        (slice):
+        * microbenchmarks/string-slice-one-char.js: Added.
+        (slice):
+        * microbenchmarks/string-slice.js: Added.
+        (slice):
+
 2017-10-26  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r222601): We fail to properly backtrack into a sub pattern of a parenthesis with non-zero minimum

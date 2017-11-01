@@ -412,6 +412,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
     case MapHash:
+    case StringSlice:
     case ToLowerCase:
     case GetMapBucket:
     case GetMapBucketHead:

@@ -1175,6 +1175,9 @@ private:
         case Unreachable:
             compileUnreachable();
             break;
+        case StringSlice:
+            compileStringSlice();
+            break;
         case ToLowerCase:
             compileToLowerCase();
             break;
@@ -4301,27 +4304,39 @@ private:
         }
     }
 
+    std::pair<LValue, LValue> populateSliceRange(LValue start, LValue end, LValue length)
+    {
+        // end can be nullptr.
+        ASSERT(start);
+        ASSERT(length);
+
+        auto pickIndex = [&] (LValue index) {
+            return m_out.select(m_out.greaterThanOrEqual(index, m_out.int32Zero),
+                m_out.select(m_out.above(index, length), length, index),
+                m_out.select(m_out.lessThan(m_out.add(length, index), m_out.int32Zero), m_out.int32Zero, m_out.add(length, index)));
+        };
+
+        LValue endBoundary = length;
+        if (end)
+            endBoundary = pickIndex(end);
+        LValue startIndex = pickIndex(start);
+        return std::make_pair(startIndex, endBoundary);
+    }
+
     void compileArraySlice()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
 
         LValue sourceStorage = lowStorage(m_node->numChildren() == 3 ? m_graph.varArgChild(m_node, 2) : m_graph.varArgChild(m_node, 3));
         LValue inputLength = m_out.load32(sourceStorage, m_heaps.Butterfly_publicLength);
+        LValue start = lowInt32(m_graph.varArgChild(m_node, 1));
+        LValue end = nullptr;
+        if (m_node->numChildren() != 3)
+            end = lowInt32(m_graph.varArgChild(m_node, 2));
 
-        LValue endBoundary;
-        if (m_node->numChildren() == 3)
-            endBoundary = m_out.load32(sourceStorage, m_heaps.Butterfly_publicLength);
-        else {
-            endBoundary = lowInt32(m_graph.varArgChild(m_node, 2));
-            endBoundary = m_out.select(m_out.greaterThanOrEqual(endBoundary, m_out.constInt32(0)),
-                m_out.select(m_out.above(endBoundary, inputLength), inputLength, endBoundary),
-                m_out.select(m_out.lessThan(m_out.add(inputLength, endBoundary), m_out.constInt32(0)), m_out.constInt32(0), m_out.add(inputLength, endBoundary)));
-        }
-
-        LValue startIndex = lowInt32(m_graph.varArgChild(m_node, 1));
-        startIndex = m_out.select(m_out.greaterThanOrEqual(startIndex, m_out.constInt32(0)),
-            m_out.select(m_out.above(startIndex, inputLength), inputLength, startIndex),
-            m_out.select(m_out.lessThan(m_out.add(inputLength, startIndex), m_out.constInt32(0)), m_out.constInt32(0), m_out.add(inputLength, startIndex)));
+        auto range = populateSliceRange(start, end, inputLength);
+        LValue startIndex = range.first;
+        LValue endBoundary = range.second;
 
         LValue resultLength = m_out.select(m_out.below(startIndex, endBoundary),
             m_out.sub(endBoundary, startIndex),
@@ -10701,6 +10716,88 @@ private:
 
         DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
         nonSpeculativeCompare(intFunctor, fallbackFunction);
+    }
+
+    void compileStringSlice()
+    {
+        LBasicBlock emptyCase = m_out.newBlock();
+        LBasicBlock notEmptyCase = m_out.newBlock();
+        LBasicBlock oneCharCase = m_out.newBlock();
+        LBasicBlock bitCheckCase = m_out.newBlock();
+        LBasicBlock is8Bit = m_out.newBlock();
+        LBasicBlock is16Bit = m_out.newBlock();
+        LBasicBlock bitsContinuation = m_out.newBlock();
+        LBasicBlock bigCharacter = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue string = lowString(m_node->child1());
+        LValue length = m_out.load32NonNegative(string, m_heaps.JSString_length);
+        LValue start = lowInt32(m_node->child2());
+        LValue end = nullptr;
+        if (m_node->child3())
+            end = lowInt32(m_node->child3());
+
+        auto range = populateSliceRange(start, end, length);
+        LValue from = range.first;
+        LValue to = range.second;
+
+        LValue span = m_out.sub(to, from);
+        m_out.branch(m_out.lessThanOrEqual(span, m_out.int32Zero), unsure(emptyCase), unsure(notEmptyCase));
+
+        Vector<ValueFromBlock, 4> results;
+
+        LBasicBlock lastNext = m_out.appendTo(emptyCase, notEmptyCase);
+        results.append(m_out.anchor(m_out.weakPointer(m_graph, jsEmptyString(&vm()))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(notEmptyCase, oneCharCase);
+        m_out.branch(m_out.equal(span, m_out.int32One), unsure(oneCharCase), unsure(slowCase));
+
+        m_out.appendTo(oneCharCase, bitCheckCase);
+        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
+        m_out.branch(m_out.isNull(stringImpl), unsure(slowCase), unsure(bitCheckCase));
+
+        m_out.appendTo(bitCheckCase, is8Bit);
+        LValue storage = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(is16Bit), unsure(is8Bit));
+
+        m_out.appendTo(is8Bit, is16Bit);
+        // FIXME: Need to cage strings!
+        // https://bugs.webkit.org/show_bug.cgi?id=174924
+        ValueFromBlock char8Bit = m_out.anchor(m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, storage, m_out.zeroExtPtr(from))));
+        m_out.jump(bitsContinuation);
+
+        m_out.appendTo(is16Bit, bigCharacter);
+        LValue char16BitValue = m_out.load16ZeroExt32(m_out.baseIndex(m_heaps.characters16, storage, m_out.zeroExtPtr(from)));
+        ValueFromBlock char16Bit = m_out.anchor(char16BitValue);
+        m_out.branch(
+            m_out.aboveOrEqual(char16BitValue, m_out.constInt32(0x100)),
+            rarely(bigCharacter), usually(bitsContinuation));
+
+        m_out.appendTo(bigCharacter, bitsContinuation);
+        results.append(m_out.anchor(vmCall(
+            Int64, m_out.operation(operationSingleCharacterString),
+            m_callFrame, char16BitValue)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(bitsContinuation, slowCase);
+        LValue character = m_out.phi(Int32, char8Bit, char16Bit);
+        LValue smallStrings = m_out.constIntPtr(vm().smallStrings.singleCharacterStrings());
+        results.append(m_out.anchor(m_out.loadPtr(m_out.baseIndex(
+            m_heaps.singleCharacterStrings, smallStrings, m_out.zeroExtPtr(character)))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        results.append(m_out.anchor(vmCall(pointerType(), m_out.operation(operationStringSubstr), m_callFrame, string, from, span)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), results));
     }
 
     void compileToLowerCase()

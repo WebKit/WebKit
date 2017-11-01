@@ -2905,6 +2905,24 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case StringPrototypeSliceIntrinsic: {
+        if (argumentCountIncludingThis < 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
+        Node* start = get(virtualRegisterForArgument(1, registerOffset));
+        Node* end = nullptr;
+        if (argumentCountIncludingThis > 2)
+            end = get(virtualRegisterForArgument(2, registerOffset));
+        Node* result = addToGraph(StringSlice, thisString, start, end);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
     case StringPrototypeToLowerCaseIntrinsic: {
         if (argumentCountIncludingThis != 1)
             return false;

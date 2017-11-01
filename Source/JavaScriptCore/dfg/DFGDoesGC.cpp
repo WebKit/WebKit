@@ -332,6 +332,7 @@ bool doesGC(Graph& graph, Node* node)
     case StrCat:
     case StringReplace:
     case StringReplaceRegExp:
+    case StringSlice:
     case CreateRest:
     case ToLowerCase:
     case CallDOMGetter:
