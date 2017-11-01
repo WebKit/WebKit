@@ -1,3 +1,26 @@
+2017-11-01  Frederic Wang  <fwang@igalia.com>
+
+        Make iOS Find UI reveal matches in scrollable elements
+        https://bugs.webkit.org/show_bug.cgi?id=178789
+
+        Reviewed by Tim Horton.
+
+        This patch exposes WKWebView's findString function in order to test the fix for bug 178789.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::findString): Dummy implementation of findString.
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::findString): Ditto.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl: Declare findString.
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::findString): Dummy implementation of findString.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h: Declare findString.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::findString): Implement findString by forwarding the call to the
+        web view.
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::findString): Dummy implementation of findString.
+
 2017-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Add a test for _WKInputDelegate.willSubmitFormValues

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Find text in overflow node</title>
+    <meta name="viewport" content="width=device-width">
+    <script src="../../../../resources/testharness.js"></script>
+    <script src="../../../../resources/testharnessreport.js"></script>
+    <script type="text/javascript">
+      setup({ "explicit_done": true });
+      function run() {
+        if (!window.testRunner || !testRunner.runUIScript)
+          return;
+
+        var node = document.getElementById("scrollable");
+        test(function() {
+          assert_equals(node.scrollTop, 0);
+        }, "Initial position of overflow node");
+        var afterMatch3 = async_test("Position of overflow node after the three first results");
+        var afterMatch4 = async_test("Position of overflow node after the fourth result");
+        testRunner.runUIScript(`
+          uiController.findString("match", 0, 4); // match
+          uiController.findString("match", 0, 4); // match 2
+          uiController.findString("match", 0, 4); // match 3
+          uiController.uiScriptComplete("Done");
+        `, afterMatch3.step_func_done(function() {
+          assert_equals(node.scrollTop, 0);
+          testRunner.runUIScript(`
+            uiController.findString("match", 0, 4); // match 4
+            uiController.uiScriptComplete("Done");
+          `, afterMatch4.step_func_done(function() {
+              assert_greater_than(node.scrollTop, 0);
+          }));
+        }));
+
+        done();
+      }
+    </script>
+    <style>
+      #scrollable {
+        border: 1px solid black;
+        background: gray;
+        width: 200px;
+        height: 200px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    </style>
+  </head>
+  <body onload="run()">
+    <p>Use iOS Find UI to search for the text "match". The following overflow node should scroll to show the fourth result.</p>
+    <p>match 2</p>
+    <p>match 3</p>
+    <div id="scrollable">
+      <div style="height: 200px; background: linear-gradient(135deg, blue, cyan);"></div>
+      <p>match 4</p>
+    </div>
+  </body>
+</html>

@@ -1,3 +1,14 @@
+2017-11-01  Frederic Wang  <fwang@igalia.com>
+
+        Make iOS Find UI reveal matches in scrollable elements
+        https://bugs.webkit.org/show_bug.cgi?id=178789
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::didFindString): Reveal selection up to the main frame. The main frame
+        is handled by the SmartMagnificationController.
+
 2017-11-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r224192): [WPE] Fix WebEventFactory::createWebWheelEvent

@@ -445,6 +445,10 @@ void UIScriptController::simulateRotationLikeSafari(DeviceOrientation*, JSValueR
 {
 }
 
+void UIScriptController::findString(JSStringRef, unsigned long options, unsigned long maxCount)
+{
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef)
 {
 }

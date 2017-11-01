@@ -1,3 +1,16 @@
+2017-11-01  Frederic Wang  <fwang@igalia.com>
+
+        Make iOS Find UI reveal matches in scrollable elements
+        https://bugs.webkit.org/show_bug.cgi?id=178789
+
+        Reviewed by Tim Horton.
+
+        Adds a test to verify that an overflow node is scrolled to reveal results it contains when
+        iOS's Find UI is used.
+
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-expected.txt: Added.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node.html: Added.
+
 2017-11-01  Per Arne Vollan  <pvollan@apple.com>
 
         Mark fast/dom/Window/window-resize-update-scrollbars.html as a timeout on Windows.

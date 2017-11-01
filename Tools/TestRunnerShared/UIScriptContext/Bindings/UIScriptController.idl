@@ -239,6 +239,8 @@ interface UIScriptController {
     void simulateRotation(DeviceOrientation orientation, object callback);
     void simulateRotationLikeSafari(DeviceOrientation orientation, object callback);
 
+    void findString(DOMString string, unsigned long options, unsigned long maxCount);
+
     // Unparent and parent the web view, simulating, for example, tab switching.
     void removeViewFromWindow(object callback);
     void addViewToWindow(object callback);

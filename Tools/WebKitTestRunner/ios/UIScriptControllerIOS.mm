@@ -620,6 +620,12 @@ void UIScriptController::simulateRotationLikeSafari(DeviceOrientation* orientati
     [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
 }
 
+void UIScriptController::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView _findString:toWTFString(toWK(string)) options:options maxCount:maxCount];
+}
+
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
     TestController::singleton().mainWebView()->removeFromWindow();

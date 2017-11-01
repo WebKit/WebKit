@@ -157,6 +157,10 @@ void FindController::didFindString()
     frame.selection().setUpdateAppearanceEnabled(true);
     frame.selection().updateAppearance();
     frame.selection().setUpdateAppearanceEnabled(false);
+
+    // Scrolling the main frame is handled by the SmartMagnificationController class but we still
+    // need to consider overflow nodes and subframes here.
+    frame.selection().revealSelection(SelectionRevealMode::RevealUpToMainFrame, ScrollAlignment::alignToEdgeIfNeeded, WebCore::DoNotRevealExtent);
 }
 
 void FindController::didFailToFindString()

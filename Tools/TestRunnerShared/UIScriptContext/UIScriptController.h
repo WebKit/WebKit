@@ -166,6 +166,8 @@ public:
     void simulateRotation(DeviceOrientation*, JSValueRef);
     void simulateRotationLikeSafari(DeviceOrientation*, JSValueRef);
 
+    void findString(JSStringRef, unsigned long options, unsigned long maxCount);
+
     // These use a callback to allow the client to know when view visibility state updates get to the web process.
     void removeViewFromWindow(JSValueRef);
     void addViewToWindow(JSValueRef);
