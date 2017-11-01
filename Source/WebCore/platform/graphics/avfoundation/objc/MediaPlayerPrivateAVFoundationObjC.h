@@ -205,7 +205,7 @@ private:
     void createAVPlayer() override;
     void createAVPlayerItem() override;
     virtual void createAVPlayerLayer();
-    void createAVAssetForURL(const String& url) override;
+    void createAVAssetForURL(const URL&) override;
     MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const override;
     MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const override;
     long assetErrorCode() const override;
@@ -226,6 +226,7 @@ private:
     MediaTime platformMaxTimeLoaded() const override;
     void beginLoadingMetadata() override;
     void sizeChanged() override;
+    void resolvedURLChanged() override;
 
     bool hasAvailableVideoFrame() const override;
 
@@ -240,7 +241,6 @@ private:
 
     void updateVideoLayerGravity() override;
 
-    bool hasSingleSecurityOrigin() const override;
     bool didPassCORSAccessCheck() const override;
 
     MediaTime getStartDate() const override;
@@ -329,8 +329,6 @@ private:
 
     double maxFastForwardRate() const override { return m_cachedCanPlayFastForward ? std::numeric_limits<double>::infinity() : 2.0; }
     double minFastReverseRate() const override { return m_cachedCanPlayFastReverse ? -std::numeric_limits<double>::infinity() : 0.0; }
-
-    URL resolvedURL() const override;
 
     Vector<String> preferredAudioCharacteristics() const;
 

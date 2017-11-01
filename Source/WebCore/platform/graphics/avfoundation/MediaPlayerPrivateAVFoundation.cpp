@@ -172,7 +172,8 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
     setNetworkState(m_preload == MediaPlayer::None ? MediaPlayer::Idle : MediaPlayer::Loading);
     setReadyState(MediaPlayer::HaveNothing);
 
-    m_assetURL = url;
+    m_assetURL = URL(ParsedURLString, url);
+    m_requestedOrigin = SecurityOrigin::create(m_assetURL);
 
     // Don't do any more work if the url is empty.
     if (!url.length())
@@ -482,6 +483,19 @@ bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
 #endif
 }
 
+bool MediaPlayerPrivateAVFoundation::hasSingleSecurityOrigin() const
+{
+    if (m_resolvedOrigin && m_requestedOrigin)
+        return m_resolvedOrigin->isSameSchemeHostPort(*m_requestedOrigin);
+    return false;
+}
+
+void MediaPlayerPrivateAVFoundation::setResolvedURL(URL&& resolvedURL)
+{
+    m_resolvedURL = WTFMove(resolvedURL);
+    m_resolvedOrigin = SecurityOrigin::create(m_resolvedURL);
+}
+
 void MediaPlayerPrivateAVFoundation::updateStates()
 {
     if (m_ignoreLoadStateChanges)
@@ -611,6 +625,7 @@ void MediaPlayerPrivateAVFoundation::setShouldMaintainAspectRatio(bool maintainA
 void MediaPlayerPrivateAVFoundation::metadataLoaded()
 {
     m_loadingMetadata = false;
+    resolvedURLChanged();
     tracksChanged();
 }
 
@@ -720,7 +735,7 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 {
     ALWAYS_LOG(LOGIDENTIFIER, " - ", static_cast<int>(preload));
     m_preload = preload;
-    if (!m_assetURL.length())
+    if (m_assetURL.isEmpty())
         return;
 
     setDelayCallbacks(true);
@@ -1044,14 +1059,6 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     return true;
 }
 #endif
-
-URL MediaPlayerPrivateAVFoundation::resolvedURL() const
-{
-    if (!m_assetURL.length())
-        return URL();
-
-    return URL(ParsedURLString, m_assetURL);
-}
 
 bool MediaPlayerPrivateAVFoundation::canSaveMediaData() const
 {

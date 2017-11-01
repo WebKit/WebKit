@@ -46,6 +46,7 @@ public:
     virtual ~MediaPlayerPrivateAVFoundationCF();
 
     void tracksChanged() override;
+    void resolvedURLChanged() override;
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     bool shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestRef);
@@ -83,7 +84,7 @@ private:
 
     virtual void createAVPlayer();
     virtual void createAVPlayerItem();
-    virtual void createAVAssetForURL(const String& url);
+    virtual void createAVAssetForURL(const URL&);
     virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
     virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
 
@@ -115,10 +116,6 @@ private:
     void updateVideoLayerGravity() override;
 
     virtual void contentsNeedsDisplay();
-
-    URL resolvedURL() const override;
-
-    bool hasSingleSecurityOrigin() const override;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient*) override;

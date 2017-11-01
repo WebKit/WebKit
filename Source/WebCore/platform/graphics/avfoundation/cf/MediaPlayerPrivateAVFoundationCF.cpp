@@ -1110,6 +1110,14 @@ void MediaPlayerPrivateAVFoundationCF::sizeChanged()
     setNaturalSize(IntSize(naturalSize));
 }
 
+void MediaPlayerPrivateAVFoundationCF::resolvedURLChanged()
+{
+    if (m_avfWrapper && m_avfWrapper->avAsset())
+        setResolvedURL(adoptCF(AVCFAssetCopyResolvedURL(m_avfWrapper->avAsset())));
+    else
+        setResolvedURL({ });
+}
+
 bool MediaPlayerPrivateAVFoundationCF::requiresImmediateCompositing() const
 {
     // The AVFoundationCF player needs to have the root compositor available at construction time
@@ -1342,26 +1350,6 @@ void MediaPlayerPrivateAVFoundationCF::contentsNeedsDisplay()
         m_avfWrapper->setVideoLayerNeedsCommit();
 }
 
-URL MediaPlayerPrivateAVFoundationCF::resolvedURL() const
-{
-    if (!m_avfWrapper || !m_avfWrapper->avAsset())
-        return URL();
-
-    auto resolvedURL = adoptCF(AVCFAssetCopyResolvedURL(m_avfWrapper->avAsset()));
-
-    return URL(resolvedURL.get());
-}
-
-bool MediaPlayerPrivateAVFoundationCF::hasSingleSecurityOrigin() const
-{
-    if (!m_avfWrapper || !m_avfWrapper->avAsset())
-        return false;
-
-    Ref<SecurityOrigin> resolvedOrigin(SecurityOrigin::create(resolvedURL()));
-    Ref<SecurityOrigin> requestedOrigin(SecurityOrigin::createFromString(assetURL()));
-    return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
-}
-
 AVFWrapper::AVFWrapper(MediaPlayerPrivateAVFoundationCF* owner)
     : m_owner(owner)
     , m_objectID(s_nextAVFWrapperObjectID++)
@@ -1510,11 +1498,11 @@ void AVFWrapper::disconnectAndDeleteAVFWrapper(void* context)
     dispatch_async_f(dispatch_get_main_queue(), context, destroyAVFWrapper);
 }
 
-void AVFWrapper::createAssetForURL(const String& url, bool inheritURI)
+void AVFWrapper::createAssetForURL(const URL& url, bool inheritURI)
 {
     ASSERT(!avAsset());
 
-    RetainPtr<CFURLRef> urlRef = URL(ParsedURLString, url).createCFURL();
+    RetainPtr<CFURLRef> urlRef = url.createCFURL();
 
     RetainPtr<CFMutableDictionaryRef> optionsRef = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
