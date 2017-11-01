@@ -189,9 +189,13 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // need to pass its style on to anyone else.
     auto& newStyle = style();
     RenderInline* continuation = inlineElementContinuation();
-    if (continuation && !isContinuation()) {
-        for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation())
+    if (continuation) {
+        for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
+            RenderBoxModelObject* nextCont = currCont->continuation();
+            currCont->setContinuation(nullptr);
             currCont->setStyle(RenderStyle::clone(newStyle));
+            currCont->setContinuation(nextCont);
+        }
         // If an inline's in-flow positioning has changed and it is part of an active continuation as a descendant of an anonymous containing block,
         // then any descendant blocks will need to change their in-flow positioning accordingly.
         // Do this by updating the position of the descendant blocks' containing anonymous blocks - there may be more than one.
@@ -340,9 +344,7 @@ void RenderInline::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild
         newBox->initializeStyle();
         newBox->setIsContinuation();
         RenderBoxModelObject* oldContinuation = continuation();
-        if (oldContinuation)
-            oldContinuation->removeFromContinuationChain();
-        newBox->insertIntoContinuationChainAfter(*this);
+        setContinuation(newBox.get());
 
         splitFlow(beforeChild, WTFMove(newBox), WTFMove(newChild), oldContinuation);
         return;
@@ -415,10 +417,9 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
         rendererToMove = nextSibling;
     }
+    cloneInline->setContinuation(oldCont);
     // Hook |clone| up as the continuation of the middle block.
-    cloneInline->insertIntoContinuationChainAfter(*middleBlock);
-    if (oldCont)
-        oldCont->insertIntoContinuationChainAfter(*cloneInline);
+    middleBlock->setContinuation(cloneInline.get());
 
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our inline parent chain until we hit the containing block.
@@ -442,16 +443,19 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             cloneInline->addChildIgnoringContinuation(WTFMove(cloneChild));
 
             // Hook the clone up as a continuation of |curr|.
-            cloneInline->insertIntoContinuationChainAfter(*current);
+            RenderInline& currentInline = downcast<RenderInline>(*current);
+            oldCont = currentInline.continuation();
+            currentInline.setContinuation(cloneInline.get());
+            cloneInline->setContinuation(oldCont);
 
             // Now we need to take all of the children starting from the first child
             // *after* currentChild and append them all to the clone.
-            for (auto* sibling = currentChild->nextSibling(); sibling;) {
-                auto* next = sibling->nextSibling();
-                auto childToMove = current->takeChildInternal(*sibling, NotifyChildren);
+            for (auto* current = currentChild->nextSibling(); current;) {
+                auto* next = current->nextSibling();
+                auto childToMove = currentInline.takeChildInternal(*current, NotifyChildren);
                 cloneInline->addChildIgnoringContinuation(WTFMove(childToMove));
-                sibling->setNeedsLayoutAndPrefWidthsRecalc();
-                sibling = next;
+                current->setNeedsLayoutAndPrefWidthsRecalc();
+                current = next;
             }
         }
         
@@ -572,7 +576,7 @@ void RenderInline::addChildToContinuation(RenderPtr<RenderObject> newChild, Rend
         auto* parent = beforeChild->parent();
         while (parent && parent->parent() && parent->parent()->isAnonymous()) {
             // The ancestor candidate needs to be inside the continuation.
-            if (parent->isContinuation())
+            if (parent->hasContinuation())
                 break;
             parent = parent->parent();
         }
@@ -1375,9 +1379,7 @@ void RenderInline::childBecameNonInline(RenderElement& child)
     auto newBox = containingBlock()->createAnonymousBlock();
     newBox->setIsContinuation();
     RenderBoxModelObject* oldContinuation = continuation();
-    if (oldContinuation)
-        oldContinuation->removeFromContinuationChain();
-    newBox->insertIntoContinuationChainAfter(*this);
+    setContinuation(newBox.get());
     RenderObject* beforeChild = child.nextSibling();
     auto removedChild = takeChildInternal(child, NotifyChildren);
     splitFlow(beforeChild, WTFMove(newBox), WTFMove(removedChild), oldContinuation);

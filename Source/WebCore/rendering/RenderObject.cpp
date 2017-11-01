@@ -824,7 +824,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
         bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
             || renderer->outlineStyleForRepaint().outlineStyleIsAuto()
-            || (is<RenderBoxModelObject>(*renderer) && downcast<RenderBoxModelObject>(*renderer).isContinuation()));
+            || (is<RenderElement>(*renderer) && downcast<RenderElement>(*renderer).hasContinuation()));
         if (renderer == &repaintContainer && rendererHasOutlineAutoAncestor)
             repaintRectNeedsConverting = true;
         if (rendererHasOutlineAutoAncestor)
@@ -1175,7 +1175,7 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     }
     if (is<RenderBoxModelObject>(*this)) {
         auto& renderer = downcast<RenderBoxModelObject>(*this);
-        if (renderer.continuation())
+        if (renderer.hasContinuation())
             stream << " continuation->(" << renderer.continuation() << ")";
     }
     outputRegionsInformation(stream);
@@ -1466,6 +1466,9 @@ static RenderObject& findDestroyRootIncludingAnonymous(RenderObject& renderer)
             break;
         if (destroyRootParent->isRenderFragmentedFlow())
             break;
+        // FIXME: Destroy continuations here too.
+        if (destroyRootParent->isContinuation())
+            break;
         bool destroyingOnlyChild = destroyRootParent->firstChild() == destroyRoot && destroyRootParent->lastChild() == destroyRoot;
         if (!destroyingOnlyChild)
             break;
@@ -1487,9 +1490,7 @@ void RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()
     if (is<RenderTableRow>(destroyRoot))
         downcast<RenderTableRow>(destroyRoot).collapseAndDestroyAnonymousSiblingRows();
 
-    auto& destroyRootParent = *destroyRoot.parent();
-    destroyRootParent.removeAndDestroyChild(destroyRoot);
-    destroyRootParent.removeAnonymousWrappersForInlinesIfNecessary();
+    destroyRoot.removeFromParentAndDestroy();
     // WARNING: |this| is deleted here.
 }
 

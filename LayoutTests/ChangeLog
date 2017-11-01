@@ -1,3 +1,22 @@
+2017-11-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r224273 and r224278.
+        https://bugs.webkit.org/show_bug.cgi?id=179120
+
+        Some crashes under guard malloc (Requested by anttik on
+        #webkit).
+
+        Reverted changesets:
+
+        "Remove empty continuations in
+        RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers"
+        https://bugs.webkit.org/show_bug.cgi?id=179014
+        https://trac.webkit.org/changeset/224273
+
+        "Fix ContinuationChainNode::insertAfter assertion."
+        https://bugs.webkit.org/show_bug.cgi?id=179115
+        https://trac.webkit.org/changeset/224278
+
 2017-11-01  Antti Koivisto  <antti@apple.com>
 
         Remove empty continuations in RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers
