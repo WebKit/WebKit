@@ -1,3 +1,12 @@
+2017-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use LazyNeverDestroyed instead of DEFINE_GLOBAL
+        https://bugs.webkit.org/show_bug.cgi?id=174979
+
+        Reviewed by Yusuke Suzuki.
+
+        * config.h: Removed definitions of SKIP_STATIC_CONSTRUCTORS_ON_MSVC and SKIP_STATIC_CONSTRUCTORS_ON_GCC.
+
 2017-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Introduce StringSlice

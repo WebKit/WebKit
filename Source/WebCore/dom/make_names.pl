@@ -136,9 +136,6 @@ END
     print F StaticString::GenerateStringAsserts(\%parameters);
 
     for my $name (sort keys %parameters) {
-        # FIXME: Would like to use static_cast here, but there are differences in const
-        # depending on whether SKIP_STATIC_CONSTRUCTORS_ON_GCC is used, so stick with a
-        # C-style cast for now.
         print F "    ${name}.construct(&${name}Data);\n";
     }
 
@@ -572,7 +569,6 @@ sub printCppHead
     print F "#endif\n\n";
 
     print F "#include \"${namespace}Names.h\"\n\n";
-    print F "#include <wtf/StaticConstructors.h>\n";
 
     print F "namespace WebCore {\n\n";
     print F "namespace ${namespace}Names {\n\n";

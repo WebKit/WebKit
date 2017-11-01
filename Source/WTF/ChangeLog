@@ -1,3 +1,17 @@
+2017-11-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use LazyNeverDestroyed instead of DEFINE_GLOBAL
+        https://bugs.webkit.org/show_bug.cgi?id=174979
+
+        Reviewed by Yusuke Suzuki.
+
+        DEFINE_GLOBAL is not used anymore. Remove it.
+
+        * WTF.xcodeproj/project.pbxproj: Removed StaticConstructors.h
+        * config.h: Removed definitions of SKIP_STATIC_CONSTRUCTORS_ON_MSVC and SKIP_STATIC_CONSTRUCTORS_ON_GCC.
+        * wtf/CMakeLists.txt: Removed StaticConstructors.h
+        * wtf/StaticConstructors.h: Removed.
+
 2017-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Fix build warnings

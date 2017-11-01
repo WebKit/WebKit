@@ -132,7 +132,6 @@ set(WTF_HEADERS
     StackBounds.h
     StackStats.h
     StackTrace.h
-    StaticConstructors.h
     StdLibExtras.h
     Stopwatch.h
     StringExtras.h
