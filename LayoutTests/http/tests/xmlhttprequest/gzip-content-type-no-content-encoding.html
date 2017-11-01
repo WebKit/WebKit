@@ -16,7 +16,7 @@ const log = text => {
 };
 
 const xhr = new XMLHttpRequest();
-xhr.open('GET', 'resources/gzip-lorem-no-content-encoding.php');
+xhr.open('GET', 'resources/gzip-lorem-no-content-encoding.php.gz');
 xhr.responseType = 'arraybuffer';
 xhr.onerror = e => log(`FAILED: ${xhr.status} ${xhr.statusText}`);
 xhr.onreadystatechange = () => {

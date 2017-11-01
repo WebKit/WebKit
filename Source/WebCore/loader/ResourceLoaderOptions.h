@@ -97,6 +97,11 @@ enum class ServiceWorkersMode {
     None,
 };
 
+enum class ContentEncodingSniffingPolicy {
+    Sniff,
+    DoNotSniff,
+};
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions() { }
 
@@ -120,6 +125,7 @@ struct ResourceLoaderOptions : public FetchOptions {
 
     SendCallbackPolicy sendLoadCallbacks { DoNotSendCallbacks };
     ContentSniffingPolicy sniffContent { DoNotSniffContent };
+    ContentEncodingSniffingPolicy sniffContentEncoding { ContentEncodingSniffingPolicy::Sniff };
     DataBufferingPolicy dataBufferingPolicy { BufferData };
     StoredCredentialsPolicy storedCredentialsPolicy { StoredCredentialsPolicy::DoNotUse };
     SecurityCheckPolicy securityCheck { DoSecurityCheck };

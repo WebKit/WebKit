@@ -475,7 +475,10 @@ RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& ur
         }
     }
 
-    RefPtr<ResourceHandle> handle = ResourceHandle::create(m_frame->loader().networkingContext(), request, this, false, true);
+    bool defersLoading = false;
+    bool shouldContentSniff = true;
+    bool shouldContentEncodingSniff = true;
+    RefPtr<ResourceHandle> handle = ResourceHandle::create(m_frame->loader().networkingContext(), request, this, defersLoading, shouldContentSniff, shouldContentEncodingSniff);
 
     // Because willSendRequest only gets called during redirects, we initialize
     // the identifier and the first willSendRequest here.

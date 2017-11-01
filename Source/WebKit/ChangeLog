@@ -1,3 +1,50 @@
+2017-11-01  Daniel Bates  <dabates@apple.com>
+
+        XMLHttpRequest should not sniff content encoding
+        https://bugs.webkit.org/show_bug.cgi?id=175597
+        <rdar://problem/34912624>
+
+        Reviewed by Alex Christensen.
+
+        Fixes an issue where the body of an HTTP response associated with an XHR request to a .gz file
+        would be automatically gzipped decompressed if the HTTP response omitted a Content-Encoding HTTP
+        header. Specifically, such a response would be treated analogous to a response with headers
+        "Content-Type: application/gzip" and "Content-Encoding: identity". This behavior does not conform
+        the HTTP 1.1 spec. and breaks Epic Zen Garden, <https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html>.
+
+        On macOS 10.13.2 opt out of content encoding sniffing when making an XHR request. We likely can
+        selectively opt out of content encoding sniffing for other network requests. This will be done
+        in subsequent commits to make it straightforward to identify site breakage (if any).
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::start): Enable content encoding sniff to match existing behavior.
+        (WebKit::Download::startWithHandle): Ditto.
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create): Pass through the content encoding sniffing policy.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad): Ditto.
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const): Encode content encoding sniffing policy.
+        (WebKit::NetworkResourceLoadParameters::decode): Decode content encoding sniffing policy.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad): Enable content encoding sniff to match existing
+        behavior. We should look to disable content encoding sniffing in a subsequent change.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded): Added helper function
+        to apply sniffing policies and bind request to interface, if applicable.
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa): Modified to take the content encoding sniffing
+        policy. Calls applySniffingPoliciesAndBindRequestToInferfaceIfNeeded() to apply this policy. Also use
+        convenience function URL::isLocalFile() to determine if the URL is a file URL.
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup): Pass through the content encoding sniffing policy.
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess): Pass through the content encoding sniffing policy.
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously): Enable content encoding sniff to match existing
+        behavior.
+
 2017-11-01  Brady Eidson  <beidson@apple.com>
 
         Plumbing for handling SW scripts failing to evaluate

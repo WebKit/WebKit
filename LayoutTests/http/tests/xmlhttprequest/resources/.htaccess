@@ -10,3 +10,5 @@ AddCharset windows-1251 .xml
 <Files "noContentType.asis">
 DefaultType None
 </Files>
+
+AddType application/x-httpd-php .php.gz

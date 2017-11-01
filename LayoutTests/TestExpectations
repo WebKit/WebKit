@@ -256,6 +256,9 @@ imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Skip ]
 # Not supported
 imported/w3c/web-platform-tests/background-fetch [ Skip ]
 
+# Content encoding sniffing is only supported by CFNetwork.
+http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1552,8 +1555,6 @@ webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-015.htm
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-016.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-019.html [ ImageOnlyFailure ]
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-005.html [ ImageOnlyFailure ]
-
-webkit.org/b/175597 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Failure ]
 
 webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]
 

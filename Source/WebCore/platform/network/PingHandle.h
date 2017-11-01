@@ -46,7 +46,10 @@ public:
         , m_shouldFollowRedirects(shouldFollowRedirects)
         , m_completionHandler(WTFMove(completionHandler))
     {
-        m_handle = ResourceHandle::create(networkingContext, request, this, false, false);
+        bool defersLoading = false;
+        bool shouldContentSniff = false;
+        bool shouldContentEncodingSniff = true;
+        m_handle = ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, shouldContentEncodingSniff);
 
         // If the server never responds, this object will hang around forever.
         // Set a very generous timeout, just in case.

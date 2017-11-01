@@ -74,7 +74,34 @@ static float toNSURLSessionTaskPriority(WebCore::ResourceLoadPriority priority)
     return NSURLSessionTaskPriorityDefault;
 }
 
-NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
+void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(NSURLRequest*& nsRequest, bool shouldContentSniff, bool shouldContentEncodingSniff)
+{
+#if !PLATFORM(MAC)
+    UNUSED_PARAM(shouldContentEncodingSniff);
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED < 101302
+    shouldContentEncodingSniff = true;
+#endif
+    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
+    if (shouldContentSniff && shouldContentEncodingSniff && cocoaSession.m_boundInterfaceIdentifier.isNull())
+        return;
+
+    auto mutableRequest = adoptNS([nsRequest mutableCopy]);
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101302
+    if (!shouldContentEncodingSniff)
+        [mutableRequest _setProperty:@(YES) forKey:(NSString *)kCFURLRequestContentDecoderSkipURLCheck];
+#endif
+
+    if (!shouldContentSniff)
+        [mutableRequest _setProperty:@(NO) forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
+
+    if (!cocoaSession.m_boundInterfaceIdentifier.isNull())
+        [mutableRequest setBoundInterfaceIdentifier:cocoaSession.m_boundInterfaceIdentifier];
+
+    nsRequest = mutableRequest.autorelease();
+}
+
+NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
     if (m_scheduledFailureType != NoFailure)
@@ -104,24 +131,14 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
     
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
-    if (shouldContentSniff == WebCore::DoNotSniffContent || url.protocolIs("file")) {
-        NSMutableURLRequest *mutableRequest = [[nsRequest mutableCopy] autorelease];
-        [mutableRequest _setProperty:@(NO) forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
-        nsRequest = mutableRequest;
-    }
+    applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
-    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
     if (session.networkStorageSession().shouldBlockCookies(request)) {
         storedCredentialsPolicy = WebCore::StoredCredentialsPolicy::DoNotUse;
         m_storedCredentialsPolicy = WebCore::StoredCredentialsPolicy::DoNotUse;
     }
 
-    if (!cocoaSession.m_boundInterfaceIdentifier.isNull()) {
-        NSMutableURLRequest *mutableRequest = [[nsRequest mutableCopy] autorelease];
-        [mutableRequest setBoundInterfaceIdentifier:cocoaSession.m_boundInterfaceIdentifier];
-        nsRequest = mutableRequest;
-    }
-
+    auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
         m_task = [cocoaSession.m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
         ASSERT(!cocoaSession.m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));

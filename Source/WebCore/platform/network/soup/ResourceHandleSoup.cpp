@@ -90,9 +90,9 @@ SoupSession* ResourceHandleInternal::soupSession()
     return m_session ? m_session->soupSession() : sessionFromContext(m_context.get());
 }
 
-RefPtr<ResourceHandle> ResourceHandle::create(SoupNetworkSession& session, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
+RefPtr<ResourceHandle> ResourceHandle::create(SoupNetworkSession& session, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff)
 {
-    auto newHandle = adoptRef(*new ResourceHandle(session, request, client, defersLoading, shouldContentSniff));
+    auto newHandle = adoptRef(*new ResourceHandle(session, request, client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)
         return WTFMove(newHandle);
@@ -103,8 +103,8 @@ RefPtr<ResourceHandle> ResourceHandle::create(SoupNetworkSession& session, const
     return nullptr;
 }
 
-ResourceHandle::ResourceHandle(SoupNetworkSession& session, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
-    : d(std::make_unique<ResourceHandleInternal>(this, nullptr, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url())))
+ResourceHandle::ResourceHandle(SoupNetworkSession& session, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff)
+    : d(std::make_unique<ResourceHandleInternal>(this, nullptr, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), shouldContentEncodingSniff))
 {
     if (!request.url().isValid()) {
         scheduleFailure(InvalidURLFailure);
@@ -732,7 +732,7 @@ bool ResourceHandle::start()
 RefPtr<ResourceHandle> ResourceHandle::releaseForDownload(ResourceHandleClient* downloadClient)
 {
     // We don't adopt the ref, as it will be released by cleanupSoupRequestOperation, which should always run.
-    ResourceHandle* newHandle = new ResourceHandle(d->m_context.get(), firstRequest(), nullptr, d->m_defersLoading, d->m_shouldContentSniff);
+    ResourceHandle* newHandle = new ResourceHandle(d->m_context.get(), firstRequest(), nullptr, d->m_defersLoading, d->m_shouldContentSniff, d->m_shouldContentEncodingSniff);
     newHandle->relaxAdoptionRequirement();
     std::swap(d, newHandle->d);
 

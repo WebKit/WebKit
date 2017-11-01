@@ -74,6 +74,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     }
 
     encoder.encodeEnum(contentSniffingPolicy);
+    encoder.encodeEnum(contentEncodingSniffingPolicy);
     encoder.encodeEnum(storedCredentialsPolicy);
     encoder.encodeEnum(clientCredentialPolicy);
     encoder.encodeEnum(shouldPreconnectOnly);
@@ -140,6 +141,8 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     }
 
     if (!decoder.decodeEnum(result.contentSniffingPolicy))
+        return false;
+    if (!decoder.decodeEnum(result.contentEncodingSniffingPolicy))
         return false;
     if (!decoder.decodeEnum(result.storedCredentialsPolicy))
         return false;

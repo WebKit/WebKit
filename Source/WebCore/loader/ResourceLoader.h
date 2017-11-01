@@ -123,6 +123,7 @@ public:
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
     bool shouldSniffContent() const { return m_options.sniffContent == SniffContent; }
+    bool shouldSniffContentEncoding() const { return m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
     bool shouldIncludeCertificateInfo() const { return m_options.certificateInfoPolicy == IncludeCertificateInfo; }
 

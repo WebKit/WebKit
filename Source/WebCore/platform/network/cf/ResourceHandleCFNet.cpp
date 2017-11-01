@@ -126,7 +126,7 @@ static inline CFStringRef shouldSniffConnectionProperty()
 #endif
 }
 
-void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, MessageQueue<Function<void()>>* messageQueue, CFDictionaryRef clientProperties)
+void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, MessageQueue<Function<void()>>* messageQueue, CFDictionaryRef clientProperties)
 {
     if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolIsInHTTPFamily()) {
         // Credentials for ftp can only be passed in URL, the didReceiveAuthenticationChallenge delegate call won't be made.
@@ -161,7 +161,14 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     auto request = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, firstRequest().cfURLRequest(UpdateHTTPBody)));
     if (auto storageSession = d->m_storageSession.get())
         _CFURLRequestSetStorageSession(request.get(), storageSession);
-    
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101302
+    if (!shouldContentEncodingSniff)
+        _CFURLRequestSetProtocolProperty(request.get(), kCFURLRequestContentDecoderSkipURLCheck, kCFBooleanTrue);
+#else
+    UNUSED_PARAM(shouldContentEncodingSniff);
+#endif
+
     if (!shouldContentSniff)
         _CFURLRequestSetProtocolProperty(request.get(), shouldSniffConnectionProperty(), kCFBooleanFalse);
 
@@ -259,7 +266,7 @@ bool ResourceHandle::start()
     setCollectsTimingData();
 #endif
 
-    createCFURLConnection(shouldUseCredentialStorage, d->m_shouldContentSniff, nullptr, client()->connectionProperties(this).get());
+    createCFURLConnection(shouldUseCredentialStorage, d->m_shouldContentSniff, d->m_shouldContentEncodingSniff, nullptr, client()->connectionProperties(this).get());
     ref();
 
     d->m_connectionDelegate->setupConnectionScheduling(d->m_connection.get());
@@ -554,7 +561,10 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     SynchronousLoaderClient client;
     client.setAllowStoredCredentials(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
 
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, false /*defersLoading*/, true /*shouldContentSniff*/));
+    bool defersLoading = false;
+    bool shouldContentSniff = true;
+    bool shouldContentEncodingSniff = true;
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
 
     handle->d->m_storageSession = context->storageSession().platformSession();
 
@@ -564,7 +574,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     }
 
     handle->ref();
-    handle->createCFURLConnection(storedCredentialsPolicy == StoredCredentialsPolicy::Use, ResourceHandle::shouldContentSniffURL(request.url()), &client.messageQueue(), handle->client()->connectionProperties(handle.get()).get());
+    handle->createCFURLConnection(storedCredentialsPolicy == StoredCredentialsPolicy::Use, ResourceHandle::shouldContentSniffURL(request.url()), handle->shouldContentEncodingSniff(), &client.messageQueue(), handle->client()->connectionProperties(handle.get()).get());
 
     static CFRunLoopRef runLoop = nullptr;
     if (!runLoop) {

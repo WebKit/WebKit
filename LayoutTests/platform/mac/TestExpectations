@@ -33,6 +33,9 @@ fast/xmlhttprequest/set-dangerous-headers-in-dashboard.html [ Pass ]
 
 http/tests/gzip-content-encoding [ Pass ]
 
+# FIXME: Mark as Pass once the fix for <rdar://problem/33822249> ships.
+http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

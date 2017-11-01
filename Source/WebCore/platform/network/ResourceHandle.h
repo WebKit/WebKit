@@ -52,6 +52,7 @@ OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
 OBJC_CLASS NSURLConnection;
+OBJC_CLASS NSURLRequest;
 #ifndef __OBJC__
 typedef struct objc_object *id;
 #endif
@@ -93,11 +94,11 @@ class Timer;
 
 class ResourceHandle : public RefCounted<ResourceHandle>, public AuthenticationClient {
 public:
-    WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+    WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
     WEBCORE_EXPORT static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
 
 #if USE(SOUP)
-    static RefPtr<ResourceHandle> create(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+    static RefPtr<ResourceHandle> create(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
 #endif
 
     WEBCORE_EXPORT virtual ~ResourceHandle();
@@ -164,6 +165,8 @@ public:
 
     bool shouldContentSniff() const;
     static bool shouldContentSniffURL(const URL&);
+
+    bool shouldContentEncodingSniff() const;
 
     WEBCORE_EXPORT static void forceContentSniffing();
 
@@ -236,7 +239,7 @@ public:
     static void registerBuiltinSynchronousLoader(const AtomicString& protocol, BuiltinSynchronousLoader);
 
 protected:
-    ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+    ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
 
 private:
     enum FailureType {
@@ -246,7 +249,7 @@ private:
     };
 
 #if USE(SOUP)
-    ResourceHandle(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+    ResourceHandle(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
 #endif
 
     void platformSetDefersLoading(bool);
@@ -266,15 +269,19 @@ private:
 #endif
 
 #if USE(CFURLCONNECTION)
-    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, WTF::MessageQueue<WTF::Function<void()>>*, CFDictionaryRef clientProperties);
+    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, WTF::MessageQueue<WTF::Function<void()>>*, CFDictionaryRef clientProperties);
 #endif
 
 #if PLATFORM(MAC) && !USE(CFURLCONNECTION)
-    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior);
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, SchedulingBehavior);
 #endif
 
 #if PLATFORM(IOS) && !USE(CFURLCONNECTION)
-    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior, NSDictionary *connectionProperties);
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, SchedulingBehavior, NSDictionary *connectionProperties);
+#endif
+
+#if PLATFORM(COCOA)
+    void applySniffingPoliciesAndStoragePartitionIfNeeded(NSURLRequest*&, bool shouldContentSniff, bool shouldContentEncodingSniff);
 #endif
 
 #if USE(SOUP)

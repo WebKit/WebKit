@@ -1,7 +1,7 @@
 Test that an XMLHttpRequest with Content-Type: gzip is properly uncompressed.
 
 Content Type: application/octet-stream
-Content Encoding: null
+Content Encoding: gzip
 Content Length: 282
 RESPONSE 200: [object ArrayBuffer]
 LENGTH: 445
