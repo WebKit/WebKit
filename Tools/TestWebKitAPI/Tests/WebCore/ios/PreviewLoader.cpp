@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && USE(QUICK_LOOK)
 
 #include <WebCore/PreviewLoader.h>
 #include <wtf/text/WTFString.h>
@@ -44,4 +44,4 @@ TEST(QuickLook, ShouldCreateForMIMEType)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && USE(QUICK_LOOK)
