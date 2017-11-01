@@ -27,7 +27,7 @@ function testDescriptor(object, propertyName, shouldHaveGetter, shouldHaveSetter
         shouldBeType("descriptor.value", "Function");
         shouldBeFalse("descriptor.writable");
     }
-    shouldBeTrue("descriptor.enumerable");
+    shouldBeFalse("descriptor.enumerable");
     shouldBeTrue("descriptor.configurable");
 }
 

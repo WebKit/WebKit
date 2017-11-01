@@ -1,3 +1,15 @@
+2017-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r219659): Can no longer log into ifttt.com using Google account
+        https://bugs.webkit.org/show_bug.cgi?id=179117
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-expected.txt:
+
 2017-10-31  Dean Jackson  <dino@apple.com>
 
         transferFromImageBitmap should update canvas dimensions

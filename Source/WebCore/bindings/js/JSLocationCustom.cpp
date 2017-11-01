@@ -62,7 +62,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
 
     // We only allow access to Location.replace() cross origin.
     if (propertyName == vm.propertyNames->replace) {
-        slot.setCustom(&thisObject, static_cast<unsigned>(PropertyAttribute::ReadOnly), nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
+        slot.setCustom(&thisObject, static_cast<unsigned>(PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum), nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
         return true;
     }
 
@@ -71,7 +71,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
     if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == vm.propertyNames->href) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
         CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, nullptr, entry->propertyPutter());
-        slot.setCustomGetterSetter(&thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), customGetterSetter);
+        slot.setCustomGetterSetter(&thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum), customGetterSetter);
         return true;
     }
 
@@ -188,7 +188,8 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError)) {
-        addCrossOriginLocationOwnPropertyNames(*exec, propertyNames);
+        if (mode.includeDontEnumProperties())
+            addCrossOriginLocationOwnPropertyNames(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
