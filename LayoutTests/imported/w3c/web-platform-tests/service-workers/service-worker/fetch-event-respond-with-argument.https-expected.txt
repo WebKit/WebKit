@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: line 52: TypeError: window.parent.notify_done is not a function. (In 'window.parent.notify_done('FAIL: no controller')', 'window.parent.notify_done' is undefined)
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT respondWith() takes either a Response or a promise that resolves with a Response. Other values should raise a network error. Test timed out
+FAIL respondWith() takes either a Response or a promise that resolves with a Response. Other values should raise a network error. assert_equals: expected "PASS" but got "FAIL: no controller"
 

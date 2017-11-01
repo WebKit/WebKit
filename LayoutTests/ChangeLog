@@ -1,3 +1,14 @@
+2017-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Fix a couple of service worker tests and unskip them
+        https://bugs.webkit.org/show_bug.cgi?id=179088
+
+        Reviewed by Sam Weinig.
+
+        Unskip the 2 tests.
+
+        * TestExpectations:
+
 2017-10-31  Alex Christensen  <achristensen@webkit.org>
 
         Use asynchronous ResourceHandleClient calls for WebKit1

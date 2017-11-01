@@ -1,3 +1,17 @@
+2017-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Fix a couple of service worker tests and unskip them
+        https://bugs.webkit.org/show_bug.cgi?id=179088
+
+        Reviewed by Sam Weinig.
+
+        Merge fixes from https://github.com/w3c/web-platform-tests/pull/8019 and rebaseline tests.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-network-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-argument.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-network-error-controllee-iframe.html:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-argument-iframe.html:
+
 2017-10-30  Chris Dumez  <cdumez@apple.com>
 
         Fire updatefound event after resolving the registration promise

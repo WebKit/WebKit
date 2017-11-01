@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: line 57: TypeError: window.parent.notify_done is not a function. (In 'window.parent.notify_done('FAIL: no controller')', 'window.parent.notify_done' is undefined)
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Rejecting the fetch event or using preventDefault() causes a network error Test timed out
+FAIL Rejecting the fetch event or using preventDefault() causes a network error assert_equals: expected "PASS" but got "FAIL: no controller"
 

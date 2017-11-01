@@ -150,8 +150,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-network-error.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-argument.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-event.https.html [ Skip ]
