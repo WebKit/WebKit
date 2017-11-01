@@ -1,3 +1,19 @@
+2017-11-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add a test for _WKInputDelegate.willSubmitFormValues
+        https://bugs.webkit.org/show_bug.cgi?id=179086
+
+        Reviewed by Darin Adler.
+
+        Hidden input types are not included in this submission because FormSubmission::create ignores them
+        because input.isTextField() returns false.  This is existing behavior that wasn't shown by a test.
+        HTTPBodies are also not sent to WKURLSchemeHandlers.  This is existing behavior that wasn't shown by a test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKInputDelegate.mm: Added.
+        (-[FormSubmissionDelegate _webView:willSubmitFormValues:userObject:submissionHandler:]):
+        (TEST):
+
 2017-10-31  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Add Inspector menu items to Mac MiniBrowser
