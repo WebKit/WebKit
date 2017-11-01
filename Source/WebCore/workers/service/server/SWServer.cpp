@@ -72,20 +72,17 @@ SWServer::~SWServer()
 
 SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
-    ASSERT(!isMainThread());
     return m_registrations.get(registrationKey);
 }
 
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
 {
-    ASSERT(!isMainThread());
     auto key = registration->key();
     m_registrations.add(key, WTFMove(registration));
 }
 
 void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
-    ASSERT(!isMainThread());
     m_registrations.remove(registrationKey);
 }
 

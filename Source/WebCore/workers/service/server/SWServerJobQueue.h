@@ -58,13 +58,6 @@ private:
     void runUnregisterJob(const ServiceWorkerJobData&);
     void runUpdateJob(const ServiceWorkerJobData&);
 
-    void rejectWithExceptionOnMainThread(const ExceptionData&);
-    void resolveWithRegistrationOnMainThread(SWServerRegistration&);
-    void resolveCurrentRegistrationJobOnMainThead(uint64_t serviceWorkerIdentifier);
-    void resolveWithUnregistrationResultOnMainThread(bool);
-    void startScriptFetchFromMainThread();
-    bool isEmpty();
-
     Deque<ServiceWorkerJobData> m_jobQueue;
     std::unique_ptr<ServiceWorkerJobData> m_currentJob;
 

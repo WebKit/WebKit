@@ -28,22 +28,17 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ExceptionData.h"
 #include "SWServer.h"
 #include "SWServerWorker.h"
-#include "SecurityOrigin.h"
-#include "ServiceWorkerFetchResult.h"
-#include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerUpdateViaCache.h"
-#include "WorkerType.h"
 
 namespace WebCore {
 
 SWServerRegistration::SWServerRegistration(const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL)
     : m_registrationKey(key)
     , m_updateViaCache(updateViaCache)
-    , m_scopeURL(scopeURL.isolatedCopy())
-    , m_scriptURL(scriptURL.isolatedCopy())
+    , m_scopeURL(scopeURL)
+    , m_scriptURL(scriptURL)
 {
     m_scopeURL.removeFragmentIdentifier();
 }
@@ -54,7 +49,6 @@ SWServerRegistration::~SWServerRegistration()
 
 SWServerWorker* SWServerRegistration::getNewestWorker()
 {
-    ASSERT(!isMainThread());
     if (m_installingWorker)
         return m_installingWorker.get();
     if (m_waitingWorker)
