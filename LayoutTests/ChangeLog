@@ -1,3 +1,13 @@
+2017-11-01  Alex Christensen  <achristensen@webkit.org>
+
+        Mark media loading tests as only flaky on Sierra.
+        https://bugs.webkit.org/show_bug.cgi?id=178272
+
+        * platform/mac-wk1/TestExpectations:
+        In r224267 I marked a bunch of tests as flaky on WebKit1.
+        They are media-related tests, and they are only failing on Sierra WK1,
+        so mark them as such so we will notice regressions in new operating systems.
+
 2017-11-01  Daniel Bates  <dabates@apple.com>
 
         XMLHttpRequest should not sniff content encoding
