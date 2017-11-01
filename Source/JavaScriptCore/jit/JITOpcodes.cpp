@@ -519,6 +519,20 @@ void JIT::emit_op_to_string(Instruction* currentInstruction)
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
+void JIT::emit_op_to_object(Instruction* currentInstruction)
+{
+    int dstVReg = currentInstruction[1].u.operand;
+    int srcVReg = currentInstruction[2].u.operand;
+    emitGetVirtualRegister(srcVReg, regT0);
+
+    addSlowCase(emitJumpIfNotJSCell(regT0));
+    addSlowCase(branch8(Below, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+
+    emitValueProfilingSite();
+    if (srcVReg != dstVReg)
+        emitPutVirtualRegister(dstVReg);
+}
+
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
     restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
@@ -897,6 +911,14 @@ void JIT::emitSlow_op_to_string(Instruction* currentInstruction, Vector<SlowCase
     linkAllSlowCases(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_string);
+    slowPathCall.call();
+}
+
+void JIT::emitSlow_op_to_object(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_object);
     slowPathCall.call();
 }
 

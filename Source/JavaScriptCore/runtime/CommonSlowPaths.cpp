@@ -435,6 +435,19 @@ SLOW_PATH_DECL(slow_path_to_number)
     RETURN_PROFILED(op_to_number, result);
 }
 
+SLOW_PATH_DECL(slow_path_to_object)
+{
+    BEGIN();
+    JSValue argument = OP_C(2).jsValue();
+    if (UNLIKELY(argument.isUndefinedOrNull())) {
+        const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
+        if (!ident.isEmpty())
+            THROW(createTypeError(exec, ident.impl()));
+    }
+    JSObject* result = argument.toObject(exec);
+    RETURN_PROFILED(op_to_object, result);
+}
+
 SLOW_PATH_DECL(slow_path_add)
 {
     BEGIN();

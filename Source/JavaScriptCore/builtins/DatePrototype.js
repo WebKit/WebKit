@@ -40,7 +40,7 @@ function toLocaleString(/* locales, options */)
         else if (opts === null)
             @throwTypeError("null is not an object");
         else
-            options = @Object(opts);
+            options = @toObject(opts);
 
         // Check original instead of descendant to reduce lookups up the prototype chain.
         var needsDefaults = !options || (
@@ -97,7 +97,7 @@ function toLocaleDateString(/* locales, options */)
         else if (opts === null)
             @throwTypeError("null is not an object");
         else
-            options = @Object(opts);
+            options = @toObject(opts);
 
         // Check original instead of descendant to reduce lookups up the prototype chain.
         var needsDefaults = !options || (
@@ -147,7 +147,7 @@ function toLocaleTimeString(/* locales, options */)
         else if (opts === null)
             @throwTypeError("null is not an object");
         else
-            options = @Object(opts);
+            options = @toObject(opts);
 
         // Check original instead of descendant to reduce lookups up the prototype chain.
         var needsDefaults = !options || (

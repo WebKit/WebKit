@@ -90,7 +90,7 @@ function copyDataProperties(target, source, excludedSet)
     if (source == null) 
         return target;
 
-    let from = @Object(source); 
+    let from = @toObject(source);
     let keys = @Reflect.@ownKeys(from); 
     let keysLength = keys.length;
     for (let i = 0; i < keysLength; i++) {
@@ -115,7 +115,7 @@ function copyDataPropertiesNoExclusions(target, source)
     if (source == null) 
         return target;
 
-    let from = @Object(source); 
+    let from = @toObject(source);
     let keys = @Reflect.@ownKeys(from); 
     let keysLength = keys.length;
     for (let i = 0; i < keysLength; i++) {

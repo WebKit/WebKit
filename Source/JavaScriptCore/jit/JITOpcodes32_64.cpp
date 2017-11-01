@@ -723,6 +723,29 @@ void JIT::emitSlow_op_to_string(Instruction* currentInstruction, Vector<SlowCase
     slowPathCall.call();
 }
 
+void JIT::emit_op_to_object(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int src = currentInstruction[2].u.operand;
+
+    emitLoad(src, regT1, regT0);
+
+    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+    addSlowCase(branch8(Below, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+
+    emitValueProfilingSite();
+    if (src != dst)
+        emitStore(dst, regT1, regT0);
+}
+
+void JIT::emitSlow_op_to_object(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_object);
+    slowPathCall.call();
+}
+
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
     restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);

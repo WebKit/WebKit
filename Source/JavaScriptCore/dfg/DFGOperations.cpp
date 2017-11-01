@@ -263,7 +263,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     return constructEmptyObject(exec);
 }
 
-JSCell* JIT_OPERATION operationObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget)
+JSCell* JIT_OPERATION operationCallObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -273,6 +273,25 @@ JSCell* JIT_OPERATION operationObjectConstructor(ExecState* exec, JSGlobalObject
 
     if (value.isUndefinedOrNull())
         return constructEmptyObject(exec, globalObject->objectPrototype());
+    return value.toObject(exec, globalObject);
+}
+
+JSCell* JIT_OPERATION operationToObject(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget, UniquedStringImpl* errorMessage)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue value = JSValue::decode(encodedTarget);
+    ASSERT(!value.isObject());
+
+    if (UNLIKELY(value.isUndefinedOrNull())) {
+        if (errorMessage->length()) {
+            throwVMTypeError(exec, scope, errorMessage);
+            return nullptr;
+        }
+    }
+
     return value.toObject(exec, globalObject);
 }
 

@@ -37,7 +37,7 @@ function getUserMedia(options, successCallback, errorCallback)
     if (arguments.length < 3)
         @throwTypeError("Not enough arguments");
 
-    if (options !== @Object(options))
+    if (!@isObject(options))
         @throwTypeError("Argument 1 (options) to Navigator.getUserMedia must be an object");
 
     if (typeof successCallback !== "function")

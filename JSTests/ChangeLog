@@ -1,3 +1,61 @@
+2017-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Introduce @toObject
+        https://bugs.webkit.org/show_bug.cgi?id=178726
+
+        Reviewed by Saam Barati.
+
+        * stress/array-copywithin.js:
+        (shouldThrow):
+        * stress/object-constructor-boolean-edge.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-constructor-global.js: Added.
+        (shouldBe):
+        * stress/object-constructor-null-edge.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-constructor-number-edge.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-constructor-object-edge.js: Added.
+        (shouldBe):
+        (test):
+        (i.arg):
+        * stress/object-constructor-string-edge.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-constructor-symbol-edge.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-constructor-undefined-edge.js: Added.
+        (shouldBe):
+        (test):
+        * stress/symbol-array-from.js: Added.
+        (shouldBe):
+        * stress/to-object-intrinsic-boolean-edge.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        * stress/to-object-intrinsic-null-or-undefined-edge.js: Added.
+        (shouldThrow):
+        * stress/to-object-intrinsic-number-edge.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        * stress/to-object-intrinsic-object-edge.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        (i.arg):
+        * stress/to-object-intrinsic-string-edge.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        * stress/to-object-intrinsic-symbol-edge.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        * stress/to-object-intrinsic.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (builtin.createBuiltin):
+
 2017-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Introduce StringSlice

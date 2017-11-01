@@ -188,6 +188,7 @@ typedef JSCell* (JIT_OPERATION *C_JITOperation_ECZC)(ExecState*, JSCell*, int32_
 typedef JSCell* (JIT_OPERATION *C_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_EGJ)(ExecState*, JSGlobalObject*, EncodedJSValue);
+typedef JSCell* (JIT_OPERATION *C_JITOperation_EGJI)(ExecState*, JSGlobalObject*, EncodedJSValue, UniquedStringImpl*);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_EIcf)(ExecState*, InlineCallFrame*);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_EJsc)(ExecState*, JSScope*);
@@ -439,7 +440,6 @@ int32_t JIT_OPERATION operationSizeFrameForForwardArguments(ExecState*, EncodedJ
 int32_t JIT_OPERATION operationSizeFrameForVarargs(ExecState*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset) WTF_INTERNAL;
 CallFrame* JIT_OPERATION operationSetupForwardArgumentsFrame(ExecState*, CallFrame*, EncodedJSValue, int32_t, int32_t length) WTF_INTERNAL;
 CallFrame* JIT_OPERATION operationSetupVarargsFrame(ExecState*, CallFrame*, EncodedJSValue arguments, int32_t firstVarArgOffset, int32_t length) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationToObject(ExecState*, EncodedJSValue) WTF_INTERNAL;
 
 char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;
 char* JIT_OPERATION operationSwitchImmWithUnknownKeyType(ExecState*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;

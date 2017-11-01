@@ -27,14 +27,9 @@ function raw(template)
 {
     "use strict";
 
-    if (template === null || template === @undefined)
-        @throwTypeError("String.raw requires template not be null or undefined");
-    var cookedSegments = @Object(template);
+    var cookedSegments = @toObject(template, "String.raw requires template not be null or undefined");
 
-    var rawValue = cookedSegments.raw;
-    if (rawValue === null || rawValue === @undefined)
-        @throwTypeError("String.raw requires template.raw not be null or undefined");
-    var rawSegments = @Object(rawValue);
+    var rawSegments = @toObject(cookedSegments.raw, "String.raw requires template.raw not be null or undefined");
 
     var numberOfSubstitutions = arguments.length - 1;
 

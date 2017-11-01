@@ -59,8 +59,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         thisArg = @argument(2);
     }
 
-    if (items == null)
-        @throwTypeError("TypedArray.from requires an array-like object - not null or undefined");
+    let arrayLike = @toObject(items, "TypedArray.from requires an array-like object - not null or undefined");
 
     let iteratorMethod = items.@iteratorSymbol;
     if (iteratorMethod != null) {
@@ -99,7 +98,6 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         return result;
     }
 
-    let arrayLike = @Object(items);
     let arrayLikeLength = @toLength(arrayLike.length);
 
     let constructFunction = this.@allocateTypedArray;

@@ -28,10 +28,7 @@ function entries(object)
 {
     "use strict";
 
-    if (object == null)
-        @throwTypeError("Object.entries requires that input parameter not be null or undefined");
-
-    var obj = @Object(object);
+    var obj = @toObject(object, "Object.entries requires that input parameter not be null or undefined");
     var names = @getOwnPropertyNames(obj);
     var properties = [];
     for (var i = 0, length = names.length; i < length; ++i) {

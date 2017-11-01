@@ -555,8 +555,9 @@ private:
         case DFG::Check:
             compileNoOp();
             break;
+        case ToObject:
         case CallObjectConstructor:
-            compileCallObjectConstructor();
+            compileToObjectOrCallObjectConstructor();
             break;
         case ToThis:
             compileToThis();
@@ -1661,9 +1662,8 @@ private:
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
     }
 
-    void compileCallObjectConstructor()
+    void compileToObjectOrCallObjectConstructor()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         LValue value = lowJSValue(m_node->child1());
 
         LBasicBlock isCellCase = m_out.newBlock();
@@ -1677,7 +1677,13 @@ private:
         m_out.branch(isObject(value), usually(continuation), rarely(slowCase));
 
         m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationObjectConstructor), m_callFrame, weakPointer(globalObject), value));
+
+        ValueFromBlock slowResult;
+        if (m_node->op() == ToObject) {
+            auto* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+            slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationToObject), m_callFrame, weakPointer(globalObject), value, m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
+        } else
+            slowResult = m_out.anchor(vmCall(Int64, m_out.operation(operationCallObjectConstructor), m_callFrame, frozenPointer(m_node->cellOperand()), value));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);

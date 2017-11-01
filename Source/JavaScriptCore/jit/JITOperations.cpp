@@ -2135,16 +2135,6 @@ CallFrame* JIT_OPERATION operationSetupVarargsFrame(ExecState* exec, CallFrame* 
     return newCallFrame;
 }
 
-EncodedJSValue JIT_OPERATION operationToObject(ExecState* exec, EncodedJSValue value)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    JSObject* obj = JSValue::decode(value).toObject(exec);
-    if (!obj)
-        return JSValue::encode(JSValue());
-    return JSValue::encode(obj);
-}
-
 char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState* exec, EncodedJSValue encodedKey, size_t tableIndex)
 {
     VM& vm = exec->vm();

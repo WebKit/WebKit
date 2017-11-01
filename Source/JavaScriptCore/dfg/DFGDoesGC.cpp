@@ -301,6 +301,7 @@ bool doesGC(Graph& graph, Node* node)
     case CreateScopedArguments:
     case CreateClonedArguments:
     case CallObjectConstructor:
+    case ToObject:
     case ToThis:
     case CreateThis:
     case AllocatePropertyStorage:

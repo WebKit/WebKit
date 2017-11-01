@@ -180,6 +180,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetArgumentCountIncludingThis:
     case ToNumber:
     case ToString:
+    case ToObject:
     case CallObjectConstructor:
     case CallStringConstructor:
     case MakeRope:

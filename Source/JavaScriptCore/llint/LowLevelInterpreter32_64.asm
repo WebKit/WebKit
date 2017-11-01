@@ -944,6 +944,23 @@ _llint_op_to_string:
     dispatch(constexpr op_to_string_length)
 
 
+_llint_op_to_object:
+    traceExecution()
+    loadi 8[PC], t0
+    loadi 4[PC], t1
+    loadConstantOrVariable(t0, t2, t3)
+    bineq t2, CellTag, .opToObjectSlow
+    bbb JSCell::m_type[t3], ObjectType, .opToObjectSlow
+    storei t2, TagOffset[cfr, t1, 8]
+    storei t3, PayloadOffset[cfr, t1, 8]
+    valueProfile(t2, t3, 16, t1)
+    dispatch(constexpr op_to_object_length)
+
+.opToObjectSlow:
+    callOpcodeSlowPath(_slow_path_to_object)
+    dispatch(constexpr op_to_object_length)
+
+
 _llint_op_negate:
     traceExecution()
     loadi 8[PC], t0

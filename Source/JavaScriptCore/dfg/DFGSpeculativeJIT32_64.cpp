@@ -4028,8 +4028,9 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ToObject:
     case CallObjectConstructor: {
-        compileCallObjectConstructor(node);
+        compileToObjectOrCallObjectConstructor(node);
         break;
     }
         

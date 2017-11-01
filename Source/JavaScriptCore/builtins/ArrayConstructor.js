@@ -52,8 +52,7 @@ function from(items /*, mapFn, thisArg */)
         thisArg = @argument(2);
     }
 
-    if (items == null)
-        @throwTypeError("Array.from requires an array-like object - not null or undefined");
+    var arrayLike = @toObject(items, "Array.from requires an array-like object - not null or undefined");
 
     var iteratorMethod = items.@iteratorSymbol;
     if (iteratorMethod != null) {
@@ -83,7 +82,6 @@ function from(items /*, mapFn, thisArg */)
         return result;
     }
 
-    var arrayLike = @Object(items);
     var arrayLikeLength = @toLength(arrayLike.length);
 
     var result = @isConstructor(thisObj) ? new thisObj(arrayLikeLength) : @newArrayWithSize(arrayLikeLength);

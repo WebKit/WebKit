@@ -522,7 +522,16 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
 
+    case ToObject:
+        read(World);
+        write(Heap);
+        return;
+
     case CallObjectConstructor:
+        read(HeapObjectCount);
+        write(HeapObjectCount);
+        return;
+
     case ToThis:
     case CreateThis:
         read(MiscFields);

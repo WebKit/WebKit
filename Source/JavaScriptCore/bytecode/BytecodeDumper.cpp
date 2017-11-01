@@ -871,6 +871,13 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         printUnaryOp(out, location, it, "to_string");
         break;
     }
+    case op_to_object: {
+        printUnaryOp(out, location, it, "to_object");
+        int id0 = (++it)->u.operand;
+        out.printf(" %s", idName(id0, identifier(id0)).data());
+        dumpValueProfiling(out, it, hasPrintedProfiling);
+        break;
+    }
     case op_negate: {
         printUnaryOp(out, location, it, "negate");
         ++it; // op_negate has an extra operand for the ArithProfile.

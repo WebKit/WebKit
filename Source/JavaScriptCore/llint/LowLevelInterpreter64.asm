@@ -847,6 +847,22 @@ _llint_op_to_string:
     dispatch(constexpr op_to_string_length)
 
 
+_llint_op_to_object:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadisFromInstruction(1, t1)
+    loadConstantOrVariable(t0, t2)
+    btqnz t2, tagMask, .opToObjectSlow
+    bbb JSCell::m_type[t2], ObjectType, .opToObjectSlow
+    storeq t2, [cfr, t1, 8]
+    valueProfile(t2, 4, t0)
+    dispatch(constexpr op_to_object_length)
+
+.opToObjectSlow:
+    callOpcodeSlowPath(_slow_path_to_object)
+    dispatch(constexpr op_to_object_length)
+
+
 _llint_op_negate:
     traceExecution()
     loadisFromInstruction(2, t0)

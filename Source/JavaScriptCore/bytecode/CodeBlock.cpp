@@ -576,6 +576,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         case op_get_by_val_with_this:
         case op_get_from_arguments:
         case op_to_number:
+        case op_to_object:
         case op_get_argument: {
             linkValueProfile(i, opLength);
             break;

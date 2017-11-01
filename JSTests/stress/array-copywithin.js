@@ -238,11 +238,11 @@ shouldBe(JSON.stringify(result), '{"length":5}');
 
 shouldThrow(function () {
     Array.prototype.copyWithin.call(undefined);
-}, 'TypeError: Array.copyWithin requires that |this| not be null or undefined');
+}, 'TypeError: Array.prototype.copyWithin requires that |this| not be null or undefined');
 
 shouldThrow(function () {
     Array.prototype.copyWithin.call(null);
-}, 'TypeError: Array.copyWithin requires that |this| not be null or undefined');
+}, 'TypeError: Array.prototype.copyWithin requires that |this| not be null or undefined');
 
 
 function valueOf(code) {

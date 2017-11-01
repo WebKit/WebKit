@@ -57,6 +57,7 @@ class Identifier;
     macro(putByValDirect) \
     macro(toNumber) \
     macro(toString) \
+    macro(toObject) \
     macro(newArrayWithSize) \
     macro(defineEnumerableWritableConfigurableDataProperty) \
 
