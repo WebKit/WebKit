@@ -72,6 +72,8 @@
 
 - (IBAction)dumpSourceToConsole:(id)sender;
 
+- (IBAction)showHideWebInspector:(id)sender;
+
 - (void)didChangeSettings;
 
 - (NSURL *)currentURL;

@@ -27,6 +27,7 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#import <WebKit/WebInspector.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
@@ -148,6 +149,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
     else if (action == @selector(toggleEditable:))
         [menuItem setState:self.isEditable ? NSOnState : NSOffState];
+    else if (action == @selector(showHideWebInspector:))
+        [menuItem setTitle:_webView.inspector.isOpen ? @"Close Web Inspector" : @"Show Web Inspector"];
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _viewScaleFactor], [self pageScaleForMenuItemTag:[menuItem tag]])];
@@ -250,6 +253,15 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (IBAction)dumpSourceToConsole:(id)sender
 {
+}
+
+- (IBAction)showHideWebInspector:(id)sender
+{
+    WebInspector *inspector = _webView.inspector;
+    if (inspector.isOpen)
+        [inspector close:sender];
+    else
+        [inspector show:sender];
 }
 
 - (NSURL *)currentURL

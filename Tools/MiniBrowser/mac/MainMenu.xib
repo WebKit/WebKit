@@ -846,6 +846,12 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="uef-kb-r9n"/>
+                            <menuItem title="Show Web Inspector" keyEquivalent="i" id="xso-9z-R4u">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="showHideWebInspector:" target="-1" id="Cmx-g7-EPb"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show Extensions Manager" keyEquivalent="m" id="2f0-pH-KRx">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>

@@ -30,8 +30,10 @@
 #import "AppDelegate.h"
 #import "SettingsController.h"
 #import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKInspector.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKPage.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -205,6 +207,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
     else if (action == @selector(toggleEditable:))
         [menuItem setState:self.isEditable ? NSOnState : NSOffState];
+    else if (action == @selector(showHideWebInspector:))
+        [menuItem setTitle:WKInspectorIsVisible(WKPageGetInspector(_webView._pageRefForTransitionToWKWebView)) ? @"Close Web Inspector" : @"Show Web Inspector"];
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _pageScale], [self pageScaleForMenuItemTag:[menuItem tag]])];
@@ -276,6 +280,15 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (IBAction)dumpSourceToConsole:(id)sender
 {
+}
+
+- (IBAction)showHideWebInspector:(id)sender
+{
+    WKInspectorRef inspectorRef = WKPageGetInspector(_webView._pageRefForTransitionToWKWebView);
+    if (WKInspectorIsVisible(inspectorRef))
+        WKInspectorHide(inspectorRef);
+    else
+        WKInspectorShow(inspectorRef);
 }
 
 - (NSURL *)currentURL
