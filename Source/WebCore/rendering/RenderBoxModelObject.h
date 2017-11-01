@@ -235,6 +235,9 @@ public:
     void suspendAnimations(double time = 0);
 
     RenderBoxModelObject* continuation() const;
+    
+    void insertIntoContinuationChainAfter(RenderBoxModelObject&);
+    void removeFromContinuationChain();
 
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return LayoutRect(); };
     
@@ -255,8 +258,6 @@ protected:
     LayoutRect borderInnerRectAdjustedForBleedAvoidance(const GraphicsContext&, const LayoutRect&, BackgroundBleedAvoidance) const;
 
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
-
-    void setContinuation(RenderBoxModelObject*);
 
     LayoutRect localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset);
 
@@ -301,7 +302,12 @@ public:
 
     RenderBlock* containingBlockForAutoHeightDetection(Length logicalHeight) const;
 
+    struct ContinuationChainNode;
+
 private:
+    ContinuationChainNode& ensureContinuationChainNode();
+    void removeAndDestroyAllContinuations();
+
     LayoutUnit computedCSSPadding(const Length&) const;
     
     virtual LayoutRect frameRectForStickyPositioning() const = 0;

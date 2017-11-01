@@ -435,14 +435,10 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
 
     auto& newStyle = style();
-    if (!isAnonymousBlock()) {
+    if (!isAnonymousBlock() && !isContinuation()) {
         // Ensure that all of our continuation blocks pick up the new style.
-        for (RenderBlock* currCont = blockElementContinuation(); currCont; currCont = currCont->blockElementContinuation()) {
-            RenderBoxModelObject* nextCont = currCont->continuation();
-            currCont->setContinuation(0);
+        for (RenderBlock* currCont = blockElementContinuation(); currCont; currCont = currCont->blockElementContinuation())
             currCont->setStyle(RenderStyle::clone(newStyle));
-            currCont->setContinuation(nextCont);
-        }
     }
 
     propagateStyleToAnonymousChildren(PropagateToBlockChildrenOnly);
@@ -818,14 +814,14 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObje
     return true;
 }
 
-void RenderBlock::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
+void RenderBlock::dropAnonymousBoxChild(RenderBlock& child)
 {
-    parent.setNeedsLayoutAndPrefWidthsRecalc();
-    parent.setChildrenInline(child.childrenInline());
+    setNeedsLayoutAndPrefWidthsRecalc();
+    setChildrenInline(child.childrenInline());
     RenderObject* nextSibling = child.nextSibling();
 
-    auto toBeDeleted = parent.takeChildInternal(child, child.hasLayer() ? NotifyChildren : DontNotifyChildren);
-    child.moveAllChildrenTo(&parent, nextSibling, child.hasLayer());
+    auto toBeDeleted = takeChildInternal(child, child.hasLayer() ? NotifyChildren : DontNotifyChildren);
+    child.moveAllChildrenTo(this, nextSibling, child.hasLayer());
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
 }
@@ -893,7 +889,7 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
     if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && canDropAnonymousBlockChild()) {
         // The removal has knocked us down to containing only a single anonymous
         // box. We can pull the content right back up into our box.
-        dropAnonymousBoxChild(*this, downcast<RenderBlock>(*child));
+        dropAnonymousBoxChild(downcast<RenderBlock>(*child));
     } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && canDropAnonymousBlockChild()) {
         // It's possible that the removal has knocked us down to a single anonymous
         // block with floating siblings.
@@ -909,7 +905,7 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
                 }
             }
             if (dropAnonymousBlock)
-                dropAnonymousBoxChild(*this, anonBlock);
+                dropAnonymousBoxChild(anonBlock);
         }
     }
 
@@ -917,31 +913,6 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
         // If this was our last child be sure to clear out our line boxes.
         if (childrenInline())
             deleteLines();
-
-        // If we are an empty anonymous block in the continuation chain,
-        // we need to remove ourself and fix the continuation chain.
-        if (!beingDestroyed() && isAnonymousBlockContinuation() && !oldChild.isListMarker()) {
-            auto containingBlockIgnoringAnonymous = containingBlock();
-            while (containingBlockIgnoringAnonymous && containingBlockIgnoringAnonymous->isAnonymousBlock())
-                containingBlockIgnoringAnonymous = containingBlockIgnoringAnonymous->containingBlock();
-            for (RenderObject* current = this; current; current = current->previousInPreOrder(containingBlockIgnoringAnonymous)) {
-                if (!is<RenderBoxModelObject>(current) || downcast<RenderBoxModelObject>(*current).continuation() != this)
-                    continue;
-                // Found our previous continuation. We just need to point it to
-                // |this|'s next continuation.
-                auto* nextContinuation = continuation();
-                if (is<RenderInline>(*current))
-                    downcast<RenderInline>(*current).setContinuation(nextContinuation);
-                else if (is<RenderBlock>(*current))
-                    downcast<RenderBlock>(*current).setContinuation(nextContinuation);
-                else
-                    ASSERT_NOT_REACHED();
-                break;
-            }
-            setContinuation(nullptr);
-            // FIXME: This is dangerous.
-            removeFromParentAndDestroy();
-        }
     }
     return takenChild;
 }

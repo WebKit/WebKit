@@ -221,7 +221,9 @@ public:
     // the child.
     virtual void updateAnonymousChildStyle(const RenderObject&, RenderStyle&) const { };
 
-    bool hasContinuation() const { return m_hasContinuation; }
+    void removeAnonymousWrappersForInlinesIfNecessary();
+
+    bool hasContinuationChainNode() const { return m_hasContinuationChainNode; }
     bool isContinuation() const { return m_isContinuation; }
     void setIsContinuation() { m_isContinuation = true; }
     bool isElementContinuation() const { return isContinuation() && !isAnonymous(); }
@@ -264,7 +266,7 @@ protected:
     void setRenderInlineAlwaysCreatesLineBoxes(bool b) { m_renderInlineAlwaysCreatesLineBoxes = b; }
     bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }
 
-    void setHasContinuation(bool b) { m_hasContinuation = b; }
+    void setHasContinuationChainNode(bool b) { m_hasContinuationChainNode = b; }
 
     void setRenderBlockHasMarginBeforeQuirk(bool b) { m_renderBlockHasMarginBeforeQuirk = b; }
     void setRenderBlockHasMarginAfterQuirk(bool b) { m_renderBlockHasMarginAfterQuirk = b; }
@@ -303,7 +305,6 @@ private:
     // again.  We have to make sure the render tree updates as needed to accommodate the new
     // normal flow object.
     void handleDynamicFloatPositionChange();
-    void removeAnonymousWrappersForInlinesIfNecessary();
 
     bool shouldRepaintForStyleDifference(StyleDifference) const;
     bool hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const;
@@ -336,7 +337,7 @@ private:
     unsigned m_renderBoxNeedsLazyRepaint : 1;
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
-    unsigned m_hasContinuation : 1;
+    unsigned m_hasContinuationChainNode : 1;
     unsigned m_isContinuation : 1;
     mutable unsigned m_hasValidCachedFirstLineStyle : 1;
 

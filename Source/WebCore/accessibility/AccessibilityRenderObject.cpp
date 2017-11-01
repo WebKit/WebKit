@@ -163,7 +163,7 @@ static inline bool isInlineWithContinuation(RenderObject& object)
 
 static inline RenderObject* firstChildInContinuation(RenderInline& renderer)
 {
-    auto continuation = renderer.continuation();
+    auto* continuation = renderer.continuation();
 
     while (continuation) {
         if (is<RenderBlock>(*continuation))

@@ -192,12 +192,9 @@ public:
     WEBCORE_EXPORT RenderInline* inlineElementContinuation() const;
     RenderBlock* blockElementContinuation() const;
 
-    using RenderBoxModelObject::continuation;
-    using RenderBoxModelObject::setContinuation;
-
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);
     RenderPtr<RenderBlock> createAnonymousBlock(EDisplay = BLOCK) const;
-    static void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
+    void dropAnonymousBoxChild(RenderBlock& child);
 
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 

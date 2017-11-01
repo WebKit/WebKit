@@ -77,10 +77,54 @@ using namespace HTMLNames;
 // an anonymous block (that houses other blocks) or it will be an inline flow.
 // <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as
 // its continuation but the <b> will just have an inline as its continuation.
-typedef HashMap<const RenderBoxModelObject*, WeakPtr<RenderBoxModelObject>> ContinuationMap;
-static ContinuationMap& continuationMap()
+
+struct RenderBoxModelObject::ContinuationChainNode {
+    WeakPtr<RenderBoxModelObject> renderer;
+    ContinuationChainNode* previous { nullptr };
+    ContinuationChainNode* next { nullptr };
+
+    ContinuationChainNode(RenderBoxModelObject&);
+    ~ContinuationChainNode();
+
+    void insertAfter(ContinuationChainNode&);
+
+    WTF_MAKE_FAST_ALLOCATED;
+};
+
+RenderBoxModelObject::ContinuationChainNode::ContinuationChainNode(RenderBoxModelObject& renderer)
+    : renderer(makeWeakPtr(renderer))
 {
-    static NeverDestroyed<ContinuationMap> map;
+}
+
+RenderBoxModelObject::ContinuationChainNode::~ContinuationChainNode()
+{
+    if (next) {
+        ASSERT(previous);
+        ASSERT(next->previous == this);
+        next->previous = previous;
+    }
+    if (previous) {
+        ASSERT(previous->next == this);
+        previous->next = next;
+    }
+}
+
+void RenderBoxModelObject::ContinuationChainNode::insertAfter(ContinuationChainNode& after)
+{
+    ASSERT(!previous);
+    ASSERT(!next);
+    if ((next = after.next)) {
+        ASSERT(next->previous = &after);
+        next->previous = this;
+    }
+    previous = &after;
+    after.next = this;
+}
+
+typedef HashMap<const RenderBoxModelObject*, std::unique_ptr<RenderBoxModelObject::ContinuationChainNode>> ContinuationChainNodeMap;
+static ContinuationChainNodeMap& continuationChainNodeMap()
+{
+    static NeverDestroyed<ContinuationChainNodeMap> map;
     return map;
 }
 
@@ -187,10 +231,12 @@ RenderBoxModelObject::~RenderBoxModelObject()
 
 void RenderBoxModelObject::willBeDestroyed()
 {
-    if (hasContinuation()) {
-        continuation()->removeFromParentAndDestroy();
-        setContinuation(nullptr);
+    if (continuation() && !isContinuation()) {
+        removeAndDestroyAllContinuations();
+        ASSERT(!continuation());
     }
+    if (hasContinuationChainNode())
+        removeFromContinuationChain();
 
     // If this is a first-letter object with a remaining text fragment then the
     // entry needs to be cleared from the map.
@@ -2447,19 +2493,49 @@ LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const
 
 RenderBoxModelObject* RenderBoxModelObject::continuation() const
 {
-    if (!hasContinuation())
+    if (!hasContinuationChainNode())
         return nullptr;
-    return continuationMap().get(this).get();
+
+    auto& continuationChainNode = *continuationChainNodeMap().get(this);
+    if (!continuationChainNode.next)
+        return nullptr;
+    return continuationChainNode.next->renderer.get();
 }
 
-void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
+void RenderBoxModelObject::insertIntoContinuationChainAfter(RenderBoxModelObject& afterRenderer)
 {
-    ASSERT(!continuation || continuation->isContinuation());
-    if (continuation)
-        continuationMap().set(this, makeWeakPtr(continuation));
-    else if (hasContinuation())
-        continuationMap().remove(this);
-    setHasContinuation(!!continuation);
+    ASSERT(isContinuation());
+    ASSERT(!continuationChainNodeMap().contains(this));
+
+    auto& after = afterRenderer.ensureContinuationChainNode();
+    ensureContinuationChainNode().insertAfter(after);
+}
+
+void RenderBoxModelObject::removeFromContinuationChain()
+{
+    ASSERT(hasContinuationChainNode());
+    ASSERT(continuationChainNodeMap().contains(this));
+    setHasContinuationChainNode(false);
+    continuationChainNodeMap().remove(this);
+}
+
+auto RenderBoxModelObject::ensureContinuationChainNode() -> ContinuationChainNode&
+{
+    setHasContinuationChainNode(true);
+    return *continuationChainNodeMap().ensure(this, [&] {
+        return std::make_unique<ContinuationChainNode>(*this);
+    }).iterator->value;
+}
+
+void RenderBoxModelObject::removeAndDestroyAllContinuations()
+{
+    ASSERT(!isContinuation());
+    ASSERT(hasContinuationChainNode());
+    ASSERT(continuationChainNodeMap().contains(this));
+    auto& continuationChainNode = *continuationChainNodeMap().get(this);
+    while (continuationChainNode.next)
+        continuationChainNode.next->renderer->removeFromParentAndDestroy();
+    removeFromContinuationChain();
 }
 
 RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
