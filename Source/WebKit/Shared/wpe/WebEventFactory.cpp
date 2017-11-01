@@ -157,6 +157,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
     case Smooth:
         wheelTicks = WebCore::FloatSize(0, event->value / deviceScaleFactor);
         delta = wheelTicks;
+        break;
     default:
         ASSERT_NOT_REACHED();
     };

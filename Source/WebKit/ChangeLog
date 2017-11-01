@@ -1,3 +1,13 @@
+2017-11-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r224192): [WPE] Fix WebEventFactory::createWebWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=179098
+
+        Reviewed by Sam Weinig.
+
+        * Shared/wpe/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2017-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some drag and drop feature flags
