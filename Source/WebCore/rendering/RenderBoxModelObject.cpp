@@ -114,7 +114,7 @@ void RenderBoxModelObject::ContinuationChainNode::insertAfter(ContinuationChainN
     ASSERT(!previous);
     ASSERT(!next);
     if ((next = after.next)) {
-        ASSERT(next->previous = &after);
+        ASSERT(next->previous == &after);
         next->previous = this;
     }
     previous = &after;
