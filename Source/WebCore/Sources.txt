@@ -2174,6 +2174,7 @@ workers/service/context/SWContextManager.cpp
 
 workers/service/server/SWClientConnection.cpp
 workers/service/server/SWServer.cpp
+workers/service/server/SWServerJobQueue.cpp
 workers/service/server/SWServerRegistration.cpp
 workers/service/server/SWServerWorker.cpp
 

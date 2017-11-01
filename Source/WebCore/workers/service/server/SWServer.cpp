@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "SWServerJobQueue.h"
 #include "SWServerRegistration.h"
 #include "SWServerWorker.h"
 #include "ServiceWorkerContextData.h"
@@ -57,6 +58,7 @@ SWServer::~SWServer()
 {
     RELEASE_ASSERT(m_connections.isEmpty());
     RELEASE_ASSERT(m_registrations.isEmpty());
+    RELEASE_ASSERT(m_jobQueues.isEmpty());
 
     ASSERT(m_taskQueue.isEmpty());
     ASSERT(m_taskReplyQueue.isEmpty());
@@ -66,6 +68,25 @@ SWServer::~SWServer()
     // But once it does start happening, this ASSERT will catch us doing it wrong.
     Locker<Lock> locker(m_taskThreadLock);
     ASSERT(!m_taskThread);
+}
+
+SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationKey& registrationKey)
+{
+    ASSERT(!isMainThread());
+    return m_registrations.get(registrationKey);
+}
+
+void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
+{
+    ASSERT(!isMainThread());
+    auto key = registration->key();
+    m_registrations.add(key, WTFMove(registration));
+}
+
+void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& registrationKey)
+{
+    ASSERT(!isMainThread());
+    m_registrations.remove(registrationKey);
 }
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
@@ -86,9 +107,9 @@ void SWServer::Connection::scriptContextFailedToStart(const ServiceWorkerRegistr
     m_server.scriptContextFailedToStart(*this, registrationKey, workerID, message);
 }
 
-void SWServer::Connection::scriptContextStarted(const ServiceWorkerRegistrationKey& registrationKey, uint64_t identifier, const String& workerID)
+void SWServer::Connection::scriptContextStarted(const ServiceWorkerRegistrationKey& registrationKey, uint64_t serviceWorkerIdentifier, const String& workerID)
 {
-    m_server.scriptContextStarted(*this, registrationKey, identifier, workerID);
+    m_server.scriptContextStarted(*this, registrationKey, serviceWorkerIdentifier, workerID);
 }
 
 SWServer::SWServer()
@@ -102,9 +123,9 @@ void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()));
 
-    auto result = m_registrations.add(jobData.registrationKey(), nullptr);
+    auto result = m_jobQueues.add(jobData.registrationKey(), nullptr);
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<SWServerRegistration>(*this, jobData.registrationKey());
+        result.iterator->value = std::make_unique<SWServerJobQueue>(*this, jobData.registrationKey());
 
     ASSERT(result.iterator->value);
 
@@ -156,27 +177,27 @@ void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFe
 
     ASSERT(m_connections.contains(result.connectionIdentifier));
 
-    auto registration = m_registrations.get(result.registrationKey);
-    if (!registration)
+    auto jobQueue = m_jobQueues.get(result.registrationKey);
+    if (!jobQueue)
         return;
 
-    registration->scriptFetchFinished(connection, result);
+    jobQueue->scriptFetchFinished(connection, result);
 }
 
 void SWServer::scriptContextFailedToStart(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
 {
     ASSERT(m_connections.contains(connection.identifier()));
     
-    if (auto* registration = m_registrations.get(registrationKey))
-        registration->scriptContextFailedToStart(connection, workerID, message);
+    if (auto* jobQueue = m_jobQueues.get(registrationKey))
+        jobQueue->scriptContextFailedToStart(connection, workerID, message);
 }
 
-void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, uint64_t identifier, const String& workerID)
+void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, uint64_t serviceWorkerIdentifier, const String& workerID)
 {
     ASSERT(m_connections.contains(connection.identifier()));
 
-    if (auto* registration = m_registrations.get(registrationKey))
-        registration->scriptContextStarted(connection, identifier, workerID);
+    if (auto* jobQueue = m_jobQueues.get(registrationKey))
+        jobQueue->scriptContextStarted(connection, serviceWorkerIdentifier, workerID);
 }
 
 Ref<SWServerWorker> SWServer::updateWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)

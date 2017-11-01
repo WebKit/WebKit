@@ -36,6 +36,7 @@ enum class ServiceWorkerUpdateViaCache;
 struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationKey key;
     uint64_t identifier;
+    uint64_t activeServiceWorkerIdentifier; // FIXME: This should not be part of registrationData.
     URL scopeURL;
     URL scriptURL;
     ServiceWorkerUpdateViaCache updateViaCache;
@@ -50,7 +51,7 @@ struct ServiceWorkerRegistrationData {
 template<class Encoder>
 void ServiceWorkerRegistrationData::encode(Encoder& encoder) const
 {
-    encoder << key << identifier << scopeURL << scriptURL << updateViaCache;
+    encoder << key << identifier << activeServiceWorkerIdentifier << scopeURL << scriptURL << updateViaCache;
 }
 
 template<class Decoder>
@@ -64,6 +65,11 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     std::optional<uint64_t> identifier;
     decoder >> identifier;
     if (!identifier)
+        return std::nullopt;
+
+    std::optional<uint64_t> activeServiceWorkerIdentifier;
+    decoder >> activeServiceWorkerIdentifier;
+    if (!activeServiceWorkerIdentifier)
         return std::nullopt;
 
     std::optional<URL> scopeURL;
@@ -81,7 +87,7 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     if (!updateViaCache)
         return std::nullopt;
 
-    return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*scopeURL), WTFMove(*scriptURL), WTFMove(*updateViaCache) } };
+    return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*activeServiceWorkerIdentifier), WTFMove(*scopeURL), WTFMove(*scriptURL), WTFMove(*updateViaCache) } };
 }
 
 } // namespace WTF

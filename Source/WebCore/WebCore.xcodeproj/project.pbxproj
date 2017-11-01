@@ -2168,6 +2168,7 @@
 		830784B21C52EE2C00104D1D /* XMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 830784B11C52EE1900104D1D /* XMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		830A36BD1DAC5FAD006D7D09 /* JSMouseEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */; };
 		83102B271F9EADD900E404B9 /* JSExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */; };
+		8311C0031FAA2E9500E3C8E5 /* SWServerJobQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8311C0021FAA2E8900E3C8E5 /* SWServerJobQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */; };
 		8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */ = {isa = PBXBuildFile; fileRef = 8321507B1F27EA150095B136 /* NavigatorBeacon.h */; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
@@ -9373,6 +9374,8 @@
 		830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMouseEventInit.h; sourceTree = "<group>"; };
 		83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExtendableMessageEvent.h; sourceTree = "<group>"; };
 		83102B251F9EADC200E404B9 /* JSExtendableMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExtendableMessageEvent.cpp; sourceTree = "<group>"; };
+		8311C0001FAA2E8900E3C8E5 /* SWServerJobQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServerJobQueue.cpp; sourceTree = "<group>"; };
+		8311C0021FAA2E8900E3C8E5 /* SWServerJobQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWServerJobQueue.h; sourceTree = "<group>"; };
 		831C46C31F9EE5E000EBD450 /* JSExtendableMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExtendableMessageEventCustom.cpp; sourceTree = "<group>"; };
 		831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataElement.cpp; sourceTree = "<group>"; };
 		8321507A1F27EA150095B136 /* NavigatorBeacon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBeacon.cpp; sourceTree = "<group>"; };
@@ -17132,6 +17135,8 @@
 				517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */,
 				517A52EF1F47535900DCDC0A /* SWServer.cpp */,
 				517A52EE1F47535900DCDC0A /* SWServer.h */,
+				8311C0001FAA2E8900E3C8E5 /* SWServerJobQueue.cpp */,
+				8311C0021FAA2E8900E3C8E5 /* SWServerJobQueue.h */,
 				51F645951F4A686100B54DED /* SWServerRegistration.cpp */,
 				51F645941F4A684F00B54DED /* SWServerRegistration.h */,
 				517A53431F50C16100DCDC0A /* SWServerWorker.cpp */,
@@ -29288,6 +29293,7 @@
 				517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */,
 				46658DC91FA24B8700F7DD54 /* SWContextManager.h in Headers */,
 				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
+				8311C0031FAA2E9500E3C8E5 /* SWServerJobQueue.h in Headers */,
 				51F645971F4A686F00B54DED /* SWServerRegistration.h in Headers */,
 				517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,

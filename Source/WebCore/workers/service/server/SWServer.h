@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class SWServerJobQueue;
 class SWServerRegistration;
 class SWServerWorker;
 struct ExceptionData;
@@ -55,7 +56,7 @@ public:
         WEBCORE_EXPORT virtual ~Connection();
 
         WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
-        WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
+        WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, uint64_t serviceWorkerIdentifier, const String& workerID);
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
@@ -80,6 +81,10 @@ public:
     WEBCORE_EXPORT SWServer();
     WEBCORE_EXPORT ~SWServer();
 
+    SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
+    void addRegistration(std::unique_ptr<SWServerRegistration>&&);
+    void removeRegistration(const ServiceWorkerRegistrationKey&);
+
     void scheduleJob(const ServiceWorkerJobData&);
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
     void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&);
@@ -100,10 +105,11 @@ private:
 
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
-    void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
+    void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, uint64_t serviceWorkerIdentifier, const String& workerID);
 
     HashMap<uint64_t, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
+    HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 
     HashMap<String, Ref<SWServerWorker>> m_workersByID;
 
