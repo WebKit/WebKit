@@ -587,8 +587,6 @@ protected:
 private:
     void createMediaPlayer();
 
-    bool alwaysCreateUserAgentShadowRoot() const override { return true; }
-
     bool supportsFocus() const override;
     bool isMouseFocusable() const override;
     bool rendererIsNeeded(const RenderStyle&) override;

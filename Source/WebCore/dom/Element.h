@@ -580,7 +580,6 @@ private:
     bool isUserActionElementHovered() const;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) { }
-    virtual bool alwaysCreateUserAgentShadowRoot() const { return false; }
 
     // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
     friend class Attr;

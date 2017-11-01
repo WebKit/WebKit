@@ -50,9 +50,6 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    // HTMLFormControlElement always creates one, but buttons don't need it.
-    bool alwaysCreateUserAgentShadowRoot() const final { return false; }
-
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
     void defaultEventHandler(Event&) final;
