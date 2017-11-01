@@ -293,7 +293,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     auto innerText = innerTextElement();
     bool hasFocus = document().focusedElement() == this;
     if (!hasFocus && innerText) {
-        // FIXME: Removing this synchronous layout requires fixing <https://webkit.org/b/128797>
+        // FIXME: Removing this synchronous layout requires fixing setSelectionWithoutUpdatingAppearance not needing up-to-date style.
         document().updateLayoutIgnorePendingStylesheets();
 
         // Double-check the state of innerTextElement after the layout.
@@ -301,7 +301,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
         auto* rendererTextControl = renderer();
 
         if (innerText && rendererTextControl) {
-            if (rendererTextControl->style().visibility() == HIDDEN || !innerText->renderBox()->height()) {
+            if (rendererTextControl->style().visibility() == HIDDEN || !innerText->renderBox() || !innerText->renderBox()->height()) {
                 cacheSelection(start, end, direction);
                 return;
             }
