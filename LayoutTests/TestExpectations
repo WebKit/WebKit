@@ -177,6 +177,8 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navi
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
 
+webkit.org/b/179137 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html [ Pass Failure ]
+webkit.org/b/179138 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
