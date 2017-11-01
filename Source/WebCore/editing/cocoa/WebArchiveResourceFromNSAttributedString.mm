@@ -42,7 +42,7 @@ using namespace WebCore;
         return nil;
     }
 
-    resource = ArchiveResource::create(SharedBuffer::create(adoptNS([data copy]).get()), URL, MIMEType, textEncodingName, frameName, nil);
+    resource = ArchiveResource::create(SharedBuffer::create(adoptNS([data copy]).get()), URL, MIMEType, textEncodingName, frameName, { });
     if (!resource) {
         [self release];
         return nil;

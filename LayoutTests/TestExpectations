@@ -40,6 +40,9 @@ http/tests/gzip-content-encoding [ Skip ]
 
 # window.showModalDialog is only tested in DumpRenderTree on Mac.
 editing/execCommand/show-modal-dialog-during-execCommand.html [ Skip ]
+http/tests/security/cross-origin-modal-dialog-base.html [ Skip ]
+fast/events/scroll-event-during-modal-dialog.html [ Skip ]
+fast/harness/show-modal-dialog.html [ Skip ]
 
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 
@@ -489,6 +492,11 @@ webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-preflight.htm [ 
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-async.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/304.htm [ Failure ]
 
+# These tests used to have deterministic load delegate callback order before webkit.org/b/160677
+http/tests/svg/svg-use-external.html [ Pass Failure ]
+http/tests/loading/text-content-type-with-binary-extension.html [ Pass Failure ]
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
+
 # Tests that are flakey due to unhandled promise rejection error messages
 webkit.org/b/171094 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ Pass Failure ]
 webkit.org/b/171094 streams/brand-checks.html [ Pass Failure ]
@@ -825,6 +833,7 @@ webkit.org/b/139840 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 webkit.org/b/140043 js/dom/Promise.html [ Pass Failure ]
 
+webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 webkit.org/b/141267 http/tests/misc/detached-frame-console.html [ Pass Failure ]
 
 # Aborting application cache abort tests are intrinsically flaky.

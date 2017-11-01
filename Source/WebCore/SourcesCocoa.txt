@@ -330,7 +330,6 @@ platform/network/cf/ResourceRequestCFNet.cpp
 platform/network/cf/ResourceResponseCFNet.cpp
 platform/network/cf/SocketStreamHandleImplCFNet.cpp
 platform/network/cf/SynchronousLoaderClientCFNet.cpp
-platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
 
 platform/network/cocoa/CookieCocoa.mm
 platform/network/cocoa/CookieStorageObserver.mm
@@ -353,7 +352,6 @@ platform/network/mac/ResourceErrorMac.mm
 platform/network/mac/ResourceHandleMac.mm
 platform/network/mac/SynchronousLoaderClient.mm
 platform/network/mac/UTIUtilities.mm
-platform/network/mac/WebCoreResourceHandleAsDelegate.mm
 platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
 platform/network/mac/WebCoreURLResponse.mm
 

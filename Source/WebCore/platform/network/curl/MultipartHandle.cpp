@@ -350,7 +350,7 @@ void MultipartHandle::didReceiveResponse()
         response.setMimeType(mimeType.convertToASCIILowercase());
         response.setTextEncodingName(extractCharsetFromMediaType(contentType));
 
-        d->client()->didReceiveResponse(m_resourceHandle, WTFMove(response));
+        m_resourceHandle->didReceiveResponse(WTFMove(response));
     }
 }
 

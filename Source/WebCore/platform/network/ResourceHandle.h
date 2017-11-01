@@ -70,6 +70,7 @@ typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 
 namespace WTF {
 class SchedulePair;
+template<typename T> class MessageQueue;
 }
 
 namespace WebCore {
@@ -125,7 +126,7 @@ public:
 
 #if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
     WEBCORE_EXPORT NSURLConnection *connection() const;
-    id makeDelegate(bool);
+    id makeDelegate(bool, WTF::MessageQueue<WTF::Function<void()>>*);
     id delegate();
     void releaseDelegate();
 #endif
@@ -237,8 +238,6 @@ public:
 protected:
     ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
 
-    bool usesAsyncCallbacks() const;
-
 private:
     enum FailureType {
         NoFailure,
@@ -267,7 +266,7 @@ private:
 #endif
 
 #if USE(CFURLCONNECTION)
-    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior, CFDictionaryRef clientProperties);
+    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, WTF::MessageQueue<WTF::Function<void()>>*, CFDictionaryRef clientProperties);
 #endif
 
 #if PLATFORM(MAC) && !USE(CFURLCONNECTION)

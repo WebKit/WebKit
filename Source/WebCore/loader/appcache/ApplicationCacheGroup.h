@@ -109,10 +109,14 @@ private:
     bool shouldUseCredentialStorage(ResourceHandle*) override { return true; }
 
     // ResourceHandleClient
-    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override;
-    void didReceiveData(ResourceHandle*, const char*, unsigned length, int encodedDataLength) override;
-    void didFinishLoading(ResourceHandle*) override;
-    void didFail(ResourceHandle*, const ResourceError&) override;
+    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) final;
+    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) final;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&) final;
+#endif
+    void didReceiveData(ResourceHandle*, const char*, unsigned length, int encodedDataLength) final;
+    void didFinishLoading(ResourceHandle*) final;
+    void didFail(ResourceHandle*, const ResourceError&) final;
 
     void didReceiveManifestResponse(const ResourceResponse&);
     void didReceiveManifestData(const char*, int);

@@ -1,3 +1,34 @@
+2017-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        Use asynchronous ResourceHandleClient calls for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=160677
+
+        Reviewed by Brady Eidson.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
+        http/tests/cache/iframe-304-crash.html used to deterministically record its didFinishLoading callback,
+        but only for WK1.  It was marked as flaky for all WK2 ports.  It is now flaky in WK1 because the order
+        of the testRunner.notifyDone call and the didFinishLoading logging is no longer deterministic with
+        asynchronous loading, but the test still verifies that there is no crash.
+
+        http/tests/security/cross-origin-modal-dialog-base.html does navigation during showModalDialog, which
+        probably should've never worked in WK1 and never worked in WK2.  WK1 behavior now matches WK2 behavior.
+        I'm not aware of any complaints about no navigation working during showModalDialog in WK2 and I imagine
+        nobody will be regressed by this change, but if we do find such a problem, creative use of MessageQueues
+        like we do with sync xhr in WK1 now could theoretically fix the problem, but we are trying to get
+        rid of showModalDialog anyway.  The test was written to verify that the SecurityOrigin doesn't fall back
+        to the wrong origin, and it certainly doesn't now.
+
+        These tests dump load delegate call order, which are less deterministic now but the tests still behave correctly.
+        http/tests/svg/svg-use-external.html
+        http/tests/loading/text-content-type-with-binary-extension.html
+        http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html
+
 2017-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber-banding overflow-scrolling-touch shows black

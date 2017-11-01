@@ -59,7 +59,14 @@ struct CFTypeTrait<ClassName##Ref> { \
 static inline CFTypeID typeID() { return ClassName##GetTypeID(); } \
 };
 
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 DECLARE_CF_TYPE_TRAIT(CFHTTPCookie);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
 
 #undef DECLARE_CF_TYPE_TRAIT
 } // namespace WTF

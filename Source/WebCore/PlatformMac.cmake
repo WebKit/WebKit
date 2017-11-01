@@ -479,7 +479,6 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/ResourceHandleMac.mm
     platform/network/mac/SynchronousLoaderClient.mm
     platform/network/mac/UTIUtilities.mm
-    platform/network/mac/WebCoreResourceHandleAsDelegate.mm
     platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
     platform/network/mac/WebCoreURLResponse.mm
 

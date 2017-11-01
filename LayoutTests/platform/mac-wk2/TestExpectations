@@ -301,8 +301,6 @@ webkit.org/b/125996 accessibility/mac/search-when-element-starts-in-table.html [
 
 webkit.org/b/162999 accessibility/mac/wk1-set-selected-text-marker-range-input-element.html [ Skip ]
 
-webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Pass Failure ]
-
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 

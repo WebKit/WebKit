@@ -367,7 +367,6 @@ http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
 # HTTP tests that are flaky:
-http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 http/tests/navigation/forward-and-cancel.html [ Failure Pass ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure Pass ]
 http/tests/webarchive/cross-origin-stylesheet-crash.html [ Failure Pass ]

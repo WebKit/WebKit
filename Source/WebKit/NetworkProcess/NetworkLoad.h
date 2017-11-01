@@ -127,7 +127,6 @@ private:
     bool shouldUseCredentialStorage(WebCore::ResourceHandle*) final;
     void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) final;
     void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) final;
-    bool usesAsyncCallbacks() final { return true; }
     bool loadingSynchronousXHR() final { return m_client.get().isSynchronous(); }
 #else
     // NetworkDataTaskClient

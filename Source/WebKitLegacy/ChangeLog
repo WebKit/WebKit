@@ -1,3 +1,13 @@
+2017-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        Use asynchronous ResourceHandleClient calls for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=160677
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::createPingHandle):
+
 2017-10-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223271.

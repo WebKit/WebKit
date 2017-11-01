@@ -353,13 +353,7 @@ static void doRedirect(ResourceHandle* handle)
     cleanupSoupRequestOperation(handle);
 
     ResourceResponse responseCopy = d->m_response;
-    if (d->client()->usesAsyncCallbacks())
-        d->client()->willSendRequestAsync(handle, WTFMove(newRequest), WTFMove(responseCopy));
-    else {
-        auto request = d->client()->willSendRequest(handle, WTFMove(newRequest), WTFMove(responseCopy));
-        continueAfterWillSendRequest(handle, WTFMove(request));
-    }
-
+    d->client()->willSendRequestAsync(handle, WTFMove(newRequest), WTFMove(responseCopy));
 }
 
 static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
@@ -1032,13 +1026,11 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
 
 void ResourceHandle::continueWillSendRequest(ResourceRequest&& request)
 {
-    ASSERT(!client() || client()->usesAsyncCallbacks());
     continueAfterWillSendRequest(this, WTFMove(request));
 }
 
 void ResourceHandle::continueDidReceiveResponse()
 {
-    ASSERT(!client() || client()->usesAsyncCallbacks());
     continueAfterDidReceiveResponse(this);
 }
 

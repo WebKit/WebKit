@@ -43,7 +43,30 @@
 - (CFURLRef)_cfurl;
 @end
 
+#endif
+
 namespace WebCore {
+
+static NSArray *httpCookies(CFHTTPCookieStorageRef cookieStorage)
+{
+    if (!cookieStorage)
+        return [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies];
+    
+    auto cookies = adoptCF(CFHTTPCookieStorageCopyCookies(cookieStorage));
+    return [NSHTTPCookie _cf2nsCookies:cookies.get()];
+}
+
+static void deleteHTTPCookie(CFHTTPCookieStorageRef cookieStorage, NSHTTPCookie *cookie)
+{
+    if (!cookieStorage) {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+        return;
+    }
+    
+    CFHTTPCookieStorageDeleteCookie(cookieStorage, [cookie _GetInternalCFHTTPCookie]);
+}
+
+#if !USE(CFURLCONNECTION)
 
 static NSArray *httpCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSURL *firstParty, NSURL *url)
 {
@@ -180,15 +203,6 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     return { String(), false };
 }
 
-static NSArray *httpCookies(CFHTTPCookieStorageRef cookieStorage)
-{
-    if (!cookieStorage)
-        return [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies];
-
-    auto cookies = adoptCF(CFHTTPCookieStorageCopyCookies(cookieStorage));
-    return [NSHTTPCookie _cf2nsCookies:cookies.get()];
-}
-
 static void setHTTPCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSArray *cookies, NSURL *url, NSURL *mainDocumentURL)
 {
     if (!cookieStorage) {
@@ -198,16 +212,6 @@ static void setHTTPCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSArray *
 
     auto cfCookies = adoptCF([NSHTTPCookie _ns2cfCookies:cookies]);
     CFHTTPCookieStorageSetCookies(cookieStorage, cfCookies.get(), [url _cfurl], [mainDocumentURL _cfurl]);
-}
-
-static void deleteHTTPCookie(CFHTTPCookieStorageRef cookieStorage, NSHTTPCookie *cookie)
-{
-    if (!cookieStorage) {
-        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
-        return;
-    }
-
-    CFHTTPCookieStorageDeleteCookie(cookieStorage, [cookie _GetInternalCFHTTPCookie]);
 }
 
 static void deleteAllHTTPCookies(CFHTTPCookieStorageRef cookieStorage)
@@ -344,11 +348,7 @@ void deleteAllCookies(const NetworkStorageSession& session)
     deleteAllHTTPCookies(session.cookieStorage().get());
 }
 
-}
-
 #endif // !USE(CFURLCONNECTION)
-
-namespace WebCore {
 
 void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vector<String>& hostnames)
 {

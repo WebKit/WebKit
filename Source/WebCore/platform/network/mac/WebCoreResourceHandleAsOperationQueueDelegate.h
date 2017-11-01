@@ -27,30 +27,31 @@
 
 #if !USE(CFURLCONNECTION)
 
-#include "WebCoreResourceHandleAsDelegate.h"
 #include <dispatch/dispatch.h>
+#include <wtf/Function.h>
+#include <wtf/MessageQueue.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 class ResourceHandle;
 }
 
-@interface WebCoreResourceHandleAsOperationQueueDelegate : NSObject <NSURLConnectionDelegate, WebCoreResourceLoaderDelegate> {
+@interface WebCoreResourceHandleAsOperationQueueDelegate : NSObject <NSURLConnectionDelegate> {
     WebCore::ResourceHandle* m_handle;
 
     // Synchronous delegates on operation queue wait until main thread sends an asynchronous response.
     dispatch_semaphore_t m_semaphore;
+    MessageQueue<Function<void()>>* m_messageQueue;
     RetainPtr<NSURLRequest> m_requestResult;
     RetainPtr<NSCachedURLResponse> m_cachedResponseResult;
     BOOL m_boolResult;
 }
 
-- (id)initWithHandle:(WebCore::ResourceHandle*)handle;
+- (void)detachHandle;
+- (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(MessageQueue<Function<void()>>*)messageQueue;
 - (void)continueWillSendRequest:(NSURLRequest *)newRequest;
 - (void)continueDidReceiveResponse;
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 - (void)continueCanAuthenticateAgainstProtectionSpace:(BOOL)canAuthenticate;
-#endif
 - (void)continueWillCacheResponse:(NSCachedURLResponse *)response;
 @end
 

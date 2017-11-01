@@ -64,6 +64,8 @@ TEST(WebKitLegacy, SimplifyMarkupTest)
     
     Util::run(&didFinishLoad);
     didFinishLoad = false;
+    while (![[[[webView1 mainFrameDocument] body] innerHTML] isEqualToString:[[[webView2 mainFrameDocument] body] innerHTML]])
+        Util::spinRunLoop(1);
 
     DOMDocument *document1 = webView1.get().mainFrameDocument;
     NSString* markupBefore = [[document1 body] innerHTML];

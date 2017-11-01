@@ -159,15 +159,11 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
             cancel();
             String message = "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9.";
             d->m_client->didFail(this, { String(), 0, url, message });
+            continueDidReceiveResponse();
             return;
         }
     }
-    if (d->m_usesAsyncCallbacks)
-        d->m_client->didReceiveResponseAsync(this, WTFMove(response));
-    else {
-        d->m_client->didReceiveResponse(this, WTFMove(response));
-        platformContinueSynchronousDidReceiveResponse();
-    }
+    client()->didReceiveResponseAsync(this, WTFMove(response));
 }
 
 #if !USE(SOUP) && !USE(CURL)
@@ -242,11 +238,6 @@ void ResourceHandle::setDefersLoading(bool defers)
     }
 
     platformSetDefersLoading(defers);
-}
-
-bool ResourceHandle::usesAsyncCallbacks() const
-{
-    return d->m_usesAsyncCallbacks;
 }
 
 } // namespace WebCore
