@@ -200,7 +200,7 @@ private:
     std::unique_ptr<CanvasRenderingContext> m_context;
 
     FloatRect m_dirtyRect;
-    IntSize m_size;
+    mutable IntSize m_size;
 
     bool m_originClean { true };
     bool m_ignoreReset { false };

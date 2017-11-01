@@ -978,6 +978,9 @@ void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) co
         m_imageBuffer = WTFMove(buffer);
     }
 
+    if (m_imageBuffer && m_size != m_imageBuffer->internalSize())
+        m_size = m_imageBuffer->internalSize();
+
     size_t currentMemoryCost = memoryCost();
     activePixelMemory += currentMemoryCost;
 
