@@ -1,3 +1,24 @@
+2017-11-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Combine all storage icon files into a single file
+        https://bugs.webkit.org/show_bug.cgi?id=179134
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/CookieIcon.css: Removed.
+        * UserInterface/Views/DOMStorageIcons.css: Removed.
+        * UserInterface/Views/DatabaseIcon.css: Removed.
+        * UserInterface/Views/DatabaseTableIcon.css: Removed.
+        * UserInterface/Views/StorageIcons.css: Added.
+        (.application-cache-manifest .icon):
+        (.application-cache-frame .icon):
+        (.cookie-icon .icon):
+        (.local-storage-icon .icon):
+        (.session-storage-icon .icon):
+        (.database-icon .icon):
+        (.database-table-icon .icon):
+
 2017-11-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: Hovering over a selector should highlight matching elements on the page
