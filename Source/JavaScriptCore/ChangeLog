@@ -1,3 +1,54 @@
+2017-10-31  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: Wasm::IndexOrName has a raw pointer to Name
+        https://bugs.webkit.org/show_bug.cgi?id=176644
+
+        Reviewed by Michael Saboff.
+
+        IndexOrName now keeps a RefPtr to its original NameSection, which
+        holds the Name (or references nullptr if Index). Holding onto the
+        entire section seems like the better thing to do, since backtraces
+        probably contain multiple names from the same Module.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator() const):
+        * interpreter/StackVisitor.h: Frame is no longer POD because of the
+        RefPtr.
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::StackFrame):
+        * runtime/StackFrame.h: Drop the union, size is now 40 bytes.
+        (JSC::StackFrame::StackFrame): Deleted. Initialized in class instead.
+        (JSC::StackFrame::wasm): Deleted. Make it a ctor instead.
+        * wasm/WasmBBQPlanInlines.h:
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::Callee):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::create):
+        * wasm/WasmFormat.h: Move NameSection to its own header.
+        (JSC::Wasm::isValidNameType):
+        (JSC::Wasm::NameSection::get): Deleted.
+        * wasm/WasmIndexOrName.cpp:
+        (JSC::Wasm::IndexOrName::IndexOrName):
+        (JSC::Wasm::makeString):
+        * wasm/WasmIndexOrName.h:
+        (JSC::Wasm::IndexOrName::IndexOrName):
+        (JSC::Wasm::IndexOrName::isEmpty const):
+        (JSC::Wasm::IndexOrName::isIndex const):
+        * wasm/WasmModuleInformation.cpp:
+        (JSC::Wasm::ModuleInformation::ModuleInformation):
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::ModuleInformation): Deleted.
+        * wasm/WasmNameSection.h:
+        (JSC::Wasm::NameSection::get):
+        (JSC::Wasm::NameSection::create): Deleted.
+        * wasm/WasmNameSectionParser.cpp:
+        (JSC::Wasm::NameSectionParser::parse):
+        * wasm/WasmNameSectionParser.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+
 2017-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some drag and drop feature flags

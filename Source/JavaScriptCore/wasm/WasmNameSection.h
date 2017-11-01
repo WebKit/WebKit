@@ -28,21 +28,17 @@
 #include "WasmName.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
+#include <utility>
 
 namespace JSC { namespace Wasm {
 
-struct NameSection : ThreadSafeRefCounted<NameSection> {
-    static Ref<NameSection> create()
+struct NameSection : public ThreadSafeRefCounted<NameSection> {
+    std::pair<const Name*, RefPtr<NameSection>> get(size_t functionIndexSpace)
     {
-        return adoptRef(*new NameSection());
+        return functionIndexSpace < functionNames.size() ? std::make_pair(&functionNames[functionIndexSpace], RefPtr<NameSection>(this)) : std::pair<const Name*, RefPtr<NameSection>>(nullptr, nullptr);
     }
-
     Name moduleName;
     Vector<Name> functionNames;
-    const Name* get(size_t functionIndexSpace)
-    {
-        return functionIndexSpace < functionNames.size() ? &functionNames[functionIndexSpace] : nullptr;
-    }
 };
 
 } } // namespace JSC::Wasm

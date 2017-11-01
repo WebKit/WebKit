@@ -30,6 +30,7 @@
 #include "CalleeBits.h"
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
+#include "WasmNameSection.h"
 
 namespace JSC { namespace Wasm {
 
@@ -47,7 +48,7 @@ void BBQPlan::initializeCallees(const Functor& callback)
 
         InternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
         size_t functionIndexSpace = internalFunctionIndex + m_moduleInformation->importFunctionCount();
-        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection.get(functionIndexSpace));
+        Ref<Wasm::Callee> wasmEntrypointCallee = Wasm::Callee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
         MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(wasmEntrypointCallee.ptr()));
 
         callback(internalFunctionIndex, WTFMove(embedderEntrypointCallee), WTFMove(wasmEntrypointCallee));

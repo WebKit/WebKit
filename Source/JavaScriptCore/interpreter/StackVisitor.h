@@ -121,9 +121,9 @@ public:
         size_t m_index;
         size_t m_argumentCountIncludingThis;
         unsigned m_bytecodeOffset;
-        Wasm::IndexOrName m_wasmFunctionIndexOrName;
         bool m_callerIsEntryFrame : 1;
         bool m_isWasmFrame : 1;
+        Wasm::IndexOrName m_wasmFunctionIndexOrName;
 
         friend class StackVisitor;
     };

@@ -37,21 +37,9 @@ class SlotVisitor;
 
 class StackFrame {
 public:
-    StackFrame()
-        : m_bytecodeOffset(UINT_MAX)
-    { }
-
     StackFrame(VM&, JSCell* owner, JSCell* callee);
-
     StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, unsigned bytecodeOffset);
-
-    static StackFrame wasm(Wasm::IndexOrName indexOrName)
-    {
-        StackFrame result;
-        result.m_isWasmFrame = true;
-        result.m_wasmFunctionIndexOrName = indexOrName;
-        return result;
-    }
+    StackFrame(Wasm::IndexOrName);
 
     bool hasLineAndColumnInfo() const { return !!m_codeBlock; }
     
@@ -73,10 +61,8 @@ public:
 private:
     WriteBarrier<JSCell> m_callee { };
     WriteBarrier<CodeBlock> m_codeBlock { };
-    union {
-        unsigned m_bytecodeOffset;
-        Wasm::IndexOrName m_wasmFunctionIndexOrName;
-    };
+    Wasm::IndexOrName m_wasmFunctionIndexOrName;
+    unsigned m_bytecodeOffset { UINT_MAX };
     bool m_isWasmFrame { false };
 };
 

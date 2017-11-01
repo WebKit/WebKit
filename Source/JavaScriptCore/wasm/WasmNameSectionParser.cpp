@@ -29,14 +29,15 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "IdentifierInlines.h"
+#include "WasmNameSection.h"
 
 namespace JSC { namespace Wasm {
 
 auto NameSectionParser::parse() -> Result
 {
-    NameSection nameSection;
-    WASM_PARSER_FAIL_IF(!nameSection.functionNames.tryReserveCapacity(m_info.functionIndexSpaceSize()), "can't allocate enough memory for function names");
-    nameSection.functionNames.resize(m_info.functionIndexSpaceSize());
+    RefPtr<NameSection> nameSection(adoptRef(*new NameSection()));
+    WASM_PARSER_FAIL_IF(!nameSection->functionNames.tryReserveCapacity(m_info.functionIndexSpaceSize()), "can't allocate enough memory for function names");
+    nameSection->functionNames.resize(m_info.functionIndexSpaceSize());
 
     for (size_t payloadNumber = 0; m_offset < length(); ++payloadNumber) {
         uint8_t nameType;
@@ -58,7 +59,7 @@ auto NameSectionParser::parse() -> Result
             Name nameString;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get module's name length for payload ", payloadNumber);
             WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get module's name of length ", nameLen, " for payload ", payloadNumber);
-            nameSection.moduleName = WTFMove(nameString);
+            nameSection->moduleName = WTFMove(nameString);
             break;
         }
         case NameType::Function: {
@@ -72,7 +73,7 @@ auto NameSectionParser::parse() -> Result
                 WASM_PARSER_FAIL_IF(m_info.functionIndexSpaceSize() <= index, "function ", function, " index ", index, " is larger than function index space ", m_info.functionIndexSpaceSize(), " for payload ", payloadNumber);
                 WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get functions ", function, "'s name length for payload ", payloadNumber);
                 WASM_PARSER_FAIL_IF(!consumeUTF8String(nameString, nameLen), "can't get function ", function, "'s name of length ", nameLen, " for payload ", payloadNumber);
-                nameSection.functionNames[index] = WTFMove(nameString);
+                nameSection->functionNames[index] = WTFMove(nameString);
             }
             break;
         }

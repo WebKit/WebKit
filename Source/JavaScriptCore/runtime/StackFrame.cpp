@@ -35,7 +35,6 @@ namespace JSC {
 
 StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee)
     : m_callee(vm, owner, callee)
-    , m_bytecodeOffset(UINT_MAX)
 {
 }
 
@@ -43,6 +42,12 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee, CodeBlock* codeBlo
     : m_callee(vm, owner, callee)
     , m_codeBlock(vm, owner, codeBlock)
     , m_bytecodeOffset(bytecodeOffset)
+{
+}
+
+StackFrame::StackFrame(Wasm::IndexOrName indexOrName)
+    : m_wasmFunctionIndexOrName(indexOrName)
+    , m_isWasmFrame(true)
 {
 }
 

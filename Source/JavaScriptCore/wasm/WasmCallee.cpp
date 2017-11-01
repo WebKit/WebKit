@@ -38,9 +38,9 @@ Callee::Callee(Entrypoint&& entrypoint)
     registerCode(m_entrypoint.compilation->codeRef().executableMemory()->start(), m_entrypoint.compilation->codeRef().executableMemory()->end());
 }
 
-Callee::Callee(Entrypoint&& entrypoint, size_t index, const Name* name)
+Callee::Callee(Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : m_entrypoint(WTFMove(entrypoint))
-    , m_indexOrName(index, name)
+    , m_indexOrName(index, WTFMove(name))
 {
     registerCode(m_entrypoint.compilation->codeRef().executableMemory()->start(), m_entrypoint.compilation->codeRef().executableMemory()->end());
 }

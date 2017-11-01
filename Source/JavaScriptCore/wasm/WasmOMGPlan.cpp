@@ -38,6 +38,7 @@
 #include "WasmInstance.h"
 #include "WasmMachineThreads.h"
 #include "WasmMemory.h"
+#include "WasmNameSection.h"
 #include "WasmValidate.h"
 #include "WasmWorklist.h"
 #include <wtf/DataLog.h>
@@ -105,7 +106,7 @@ void OMGPlan::work(CompilationEffort)
     void* entrypoint;
     {
         ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
-        Ref<Callee> callee = Callee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection.get(functionIndexSpace));
+        Ref<Callee> callee = Callee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
         MacroAssembler::repatchPointer(parseAndCompileResult.value()->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
         ASSERT(!m_codeBlock->m_optimizedCallees[m_functionIndex]);
         entrypoint = callee->entrypoint();

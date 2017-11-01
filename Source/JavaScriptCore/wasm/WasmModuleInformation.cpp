@@ -28,8 +28,15 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmNameSection.h"
+
 namespace JSC { namespace Wasm {
 
+ModuleInformation::ModuleInformation(Vector<uint8_t>&& sourceBytes)
+    : source(WTFMove(sourceBytes))
+    , nameSection(new NameSection())
+{
+}
 ModuleInformation::~ModuleInformation() { }
 
 } } // namespace JSC::Wasm

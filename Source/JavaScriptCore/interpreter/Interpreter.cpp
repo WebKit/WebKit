@@ -507,7 +507,7 @@ public:
 
         if (m_remainingCapacityForFrameCapture) {
             if (visitor->isWasmFrame()) {
-                m_results.append(StackFrame::wasm(visitor->wasmFunctionIndexOrName()));
+                m_results.append(StackFrame(visitor->wasmFunctionIndexOrName()));
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 m_results.append(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeOffset()));
