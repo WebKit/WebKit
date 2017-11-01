@@ -569,10 +569,10 @@ WI.DataGridNode = class DataGridNode extends WI.Object
             this.dataGrid.dispatchEventToListeners(WI.DataGrid.Event.SelectedNodeChanged, {oldSelectedNode});
     }
 
-    revealAndSelect()
+    revealAndSelect(suppressSelectedEvent)
     {
         this.reveal();
-        this.select();
+        this.select(suppressSelectedEvent);
     }
 
     deselect(suppressDeselectedEvent)

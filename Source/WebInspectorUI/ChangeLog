@@ -1,3 +1,43 @@
+2017-11-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Improve UX of Layers tab visualization
+        https://bugs.webkit.org/show_bug.cgi?id=178966
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.initialLayout):
+        (WI.Layers3DContentView.prototype._canvasMouseDown):
+        (WI.Layers3DContentView.prototype._createLayerGroup): Renamed from _addLayerGroup.
+        (WI.Layers3DContentView.prototype._updateLayerGroupPosition): Merged into _updateLayers.
+        Set up zoom and pan.
+
+        (WI.Layers3DContentView.prototype._animate):
+        (WI.Layers3DContentView.prototype._restrictPan):
+        Restrict pan to bounding box on XY plane.
+
+        (WI.Layers3DContentView.prototype.layout):
+        (WI.Layers3DContentView.prototype._updateDocument):
+        (WI.Layers3DContentView.prototype._resetCamera):
+        On new document, throw out all old layers and center the camera on the new document layer.
+
+        (WI.Layers3DContentView.prototype.selectLayerById):
+        (WI.Layers3DContentView.prototype._centerOnSelection):
+        Recenter the camera when layer group selection is updated programmatically.
+
+        (WI.Layers3DContentView.prototype._updateLayers):
+        (WI.Layers3DContentView.prototype._createLayerMesh):
+        Fix visual artifact due to "depthWrite" flag.
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel.prototype.selectNodeByLayerId):
+        Suppress selection update event when the data grid selection is updated programmatically.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.revealAndSelect):
+        Allow forwarding of select()'s parameter.
+
 2017-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Combine all storage icon files into a single file
