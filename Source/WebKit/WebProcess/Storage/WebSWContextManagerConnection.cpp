@@ -95,7 +95,7 @@ void WebSWContextManagerConnection::updatePreferences(const WebPreferencesStore&
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
 }
 
-void WebSWContextManagerConnection::startServiceWorker(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
+void WebSWContextManagerConnection::updateServiceWorker(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
 {
     // FIXME: Provide a sensical session ID.
     auto sessionID = PAL::SessionID::defaultSessionID();
@@ -107,16 +107,29 @@ void WebSWContextManagerConnection::startServiceWorker(uint64_t serverConnection
         WebProcess::singleton().cacheStorageProvider()
     };
     fillWithEmptyClients(pageConfiguration);
+
+    // FIXME: This method should be moved directly to WebCore::SWContextManager::Connection
+    // If it weren't for ServiceWorkerFrameLoaderClient's dependence on WebDocumentLoader, this could already happen.
     auto frameLoaderClient = std::make_unique<ServiceWorkerFrameLoaderClient>(sessionID, m_pageID, ++m_previousServiceWorkerID);
     pageConfiguration.loaderClientForMainFrame = frameLoaderClient.release();
 
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), serverConnectionIdentifier, data, sessionID, WebProcess::singleton().cacheStorageProvider());
-    auto serviceWorkerIdentifier = serviceWorkerThreadProxy->identifier();
-    SWContextManager::singleton().registerServiceWorkerThread(WTFMove(serviceWorkerThreadProxy));
+    SWContextManager::singleton().registerServiceWorkerThreadForUpdate(WTFMove(serviceWorkerThreadProxy));
 
-    LOG(ServiceWorker, "Context process PID: %i started worker thread %s\n", getpid(), data.workerID.utf8().data());
+    LOG(ServiceWorker, "Context process PID: %i created worker thread %s\n", getpid(), data.workerID.utf8().data());
+}
 
-    m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextStarted(serverConnectionIdentifier, data.registrationKey, serviceWorkerIdentifier, data.workerID), 0);
+void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(uint64_t serviceWorkerIdentifier, const String& exceptionMessage)
+{
+    auto* threadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
+    ASSERT(threadProxy);
+    
+    auto& data = threadProxy->thread().contextData();
+    
+    if (exceptionMessage.isEmpty())
+        m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextStarted(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, serviceWorkerIdentifier, data.workerID), 0);
+    else
+        m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, data.workerID, exceptionMessage), 0);
 }
 
 void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options)

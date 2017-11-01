@@ -96,9 +96,9 @@ void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
     send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier));
 }
 
-void WebSWServerConnection::startServiceWorkerContext(const ServiceWorkerContextData& data)
+void WebSWServerConnection::updateServiceWorkerContext(const ServiceWorkerContextData& data)
 {
-    if (sendToContextProcess(Messages::WebSWContextManagerConnection::StartServiceWorker(identifier(), data)))
+    if (sendToContextProcess(Messages::WebSWContextManagerConnection::UpdateServiceWorker(identifier(), data)))
         return;
 
     m_pendingContextDatas.append(data);
@@ -157,9 +157,9 @@ void WebSWServerConnection::setContextConnection(IPC::Connection* connection)
 {
     m_contextConnection = connection;
 
-    // We can now start any pending service worker contexts.
+    // We can now start any pending service worker updates.
     for (auto& pendingContextData : m_pendingContextDatas)
-        startServiceWorkerContext(pendingContextData);
+        updateServiceWorkerContext(pendingContextData);
     
     m_pendingContextDatas.clear();
 }

@@ -29,6 +29,7 @@
 #include <memory>
 #include <runtime/RuntimeFlags.h>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 
 namespace PAL {
@@ -62,7 +63,7 @@ class WorkerThread : public RefCounted<WorkerThread> {
 public:
     virtual ~WorkerThread();
 
-    WEBCORE_EXPORT bool start();
+    WEBCORE_EXPORT bool start(WTF::Function<void(const String&)>&& evaluateCallback);
     void stop();
 
     ThreadIdentifier threadID() const { return m_thread ? m_thread->id() : 0; }
@@ -114,6 +115,8 @@ private:
     Lock m_threadCreationAndWorkerGlobalScopeMutex;
 
     std::unique_ptr<WorkerThreadStartupData> m_startupData;
+    
+    WTF::Function<void(const String&)> m_evaluateCallback;
 
 #if ENABLE(NOTIFICATIONS)
     NotificationClient* m_notificationClient { nullptr };

@@ -1,3 +1,23 @@
+2017-11-01  Brady Eidson  <beidson@apple.com>
+
+        Plumbing for handling SW scripts failing to evaluate
+        https://bugs.webkit.org/show_bug.cgi?id=178926
+
+        Reviewed by Chris Dumez.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::updateServiceWorkerContext):
+        (WebKit::WebSWServerConnection::setContextConnection):
+        (WebKit::WebSWServerConnection::startServiceWorkerContext): Deleted.
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updateServiceWorker):
+        (WebKit::WebSWContextManagerConnection::serviceWorkerStartedWithMessage):
+        (WebKit::WebSWContextManagerConnection::startServiceWorker): Deleted.
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-11-01  Frederic Wang  <fwang@igalia.com>
 
         Make iOS Find UI reveal matches in scrollable elements

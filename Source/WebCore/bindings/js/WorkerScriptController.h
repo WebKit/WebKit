@@ -39,70 +39,70 @@ class VM;
 
 namespace WebCore {
 
-    class JSWorkerGlobalScope;
-    class ScriptSourceCode;
-    class WorkerConsoleClient;
-    class WorkerGlobalScope;
+class JSWorkerGlobalScope;
+class ScriptSourceCode;
+class WorkerConsoleClient;
+class WorkerGlobalScope;
 
-    class WorkerScriptController {
-        WTF_MAKE_NONCOPYABLE(WorkerScriptController); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        WorkerScriptController(WorkerGlobalScope*);
-        ~WorkerScriptController();
+class WorkerScriptController {
+    WTF_MAKE_NONCOPYABLE(WorkerScriptController); WTF_MAKE_FAST_ALLOCATED;
+public:
+    WorkerScriptController(WorkerGlobalScope*);
+    ~WorkerScriptController();
 
-        JSWorkerGlobalScope* workerGlobalScopeWrapper()
-        {
-            initScriptIfNeeded();
-            return m_workerGlobalScopeWrapper.get();
-        }
+    JSWorkerGlobalScope* workerGlobalScopeWrapper()
+    {
+        initScriptIfNeeded();
+        return m_workerGlobalScopeWrapper.get();
+    }
 
-        void evaluate(const ScriptSourceCode&);
-        void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException);
+    void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
+    void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
 
-        void setException(JSC::Exception*);
+    void setException(JSC::Exception*);
 
-        // Async request to terminate a JS run execution. Eventually causes termination
-        // exception raised during JS execution, if the worker thread happens to run JS.
-        // After JS execution was terminated in this way, the Worker thread has to use
-        // forbidExecution()/isExecutionForbidden() to guard against reentry into JS.
-        // Can be called from any thread.
-        void scheduleExecutionTermination();
-        bool isTerminatingExecution() const;
+    // Async request to terminate a JS run execution. Eventually causes termination
+    // exception raised during JS execution, if the worker thread happens to run JS.
+    // After JS execution was terminated in this way, the Worker thread has to use
+    // forbidExecution()/isExecutionForbidden() to guard against reentry into JS.
+    // Can be called from any thread.
+    void scheduleExecutionTermination();
+    bool isTerminatingExecution() const;
 
-        // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
-        // or by Worker thread termination code to prevent future entry into JS.
-        void forbidExecution();
-        bool isExecutionForbidden() const;
+    // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
+    // or by Worker thread termination code to prevent future entry into JS.
+    void forbidExecution();
+    bool isExecutionForbidden() const;
 
-        void disableEval(const String& errorMessage);
-        void disableWebAssembly(const String& errorMessage);
+    void disableEval(const String& errorMessage);
+    void disableWebAssembly(const String& errorMessage);
 
-        JSC::VM& vm() { return *m_vm; }
-        
-        void releaseHeapAccess();
-        void acquireHeapAccess();
+    JSC::VM& vm() { return *m_vm; }
+    
+    void releaseHeapAccess();
+    void acquireHeapAccess();
 
-        void addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
-        void removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
+    void addTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
+    void removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback);
 
-        void attachDebugger(JSC::Debugger*);
-        void detachDebugger(JSC::Debugger*);
+    void attachDebugger(JSC::Debugger*);
+    void detachDebugger(JSC::Debugger*);
 
-    private:
-        void initScriptIfNeeded()
-        {
-            if (!m_workerGlobalScopeWrapper)
-                initScript();
-        }
-        void initScript();
+private:
+    void initScriptIfNeeded()
+    {
+        if (!m_workerGlobalScopeWrapper)
+            initScript();
+    }
+    void initScript();
 
-        RefPtr<JSC::VM> m_vm;
-        WorkerGlobalScope* m_workerGlobalScope;
-        JSC::Strong<JSWorkerGlobalScope> m_workerGlobalScopeWrapper;
-        std::unique_ptr<WorkerConsoleClient> m_consoleClient;
-        bool m_executionForbidden { false };
-        bool m_isTerminatingExecution { false };
-        mutable Lock m_scheduledTerminationMutex;
-    };
+    RefPtr<JSC::VM> m_vm;
+    WorkerGlobalScope* m_workerGlobalScope;
+    JSC::Strong<JSWorkerGlobalScope> m_workerGlobalScopeWrapper;
+    std::unique_ptr<WorkerConsoleClient> m_consoleClient;
+    bool m_executionForbidden { false };
+    bool m_isTerminatingExecution { false };
+    mutable Lock m_scheduledTerminationMutex;
+};
 
 } // namespace WebCore

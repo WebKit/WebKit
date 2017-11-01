@@ -72,7 +72,7 @@ public:
         virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
 
         // Messages to the SW host WebProcess
-        virtual void startServiceWorkerContext(const ServiceWorkerContextData&) = 0;
+        virtual void updateServiceWorkerContext(const ServiceWorkerContextData&) = 0;
 
         SWServer& m_server;
     };
@@ -89,7 +89,7 @@ public:
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);
 
-    Ref<SWServerWorker> createWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
+    Ref<SWServerWorker> updateWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
     
 private:
     void registerConnection(Connection&);

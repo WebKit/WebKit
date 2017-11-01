@@ -38,9 +38,7 @@ namespace WebCore {
 
 Ref<ServiceWorkerThreadProxy> ServiceWorkerThreadProxy::create(PageConfiguration&& pageConfiguration, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID sessionID, CacheStorageProvider& cacheStorageProvider)
 {
-    auto serviceWorker = adoptRef(*new ServiceWorkerThreadProxy { WTFMove(pageConfiguration), serverConnectionIdentifier, data, sessionID, cacheStorageProvider });
-    serviceWorker->m_serviceWorkerThread->start();
-    return serviceWorker;
+    return adoptRef(*new ServiceWorkerThreadProxy { WTFMove(pageConfiguration), serverConnectionIdentifier, data, sessionID, cacheStorageProvider });
 }
 
 static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const URL& url)
@@ -61,7 +59,6 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_sessionID(sessionID)
 {
-    m_serviceWorkerThread->start();
 }
 
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)

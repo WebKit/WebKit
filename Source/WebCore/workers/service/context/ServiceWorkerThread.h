@@ -57,6 +57,9 @@ public:
     WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, FetchOptions&&);
     WEBCORE_EXPORT void postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin);
 
+    uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
+    const ServiceWorkerContextData& contextData() const { return m_data; }
+
 protected:
     Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID) final;
     void runEventLoop() override;

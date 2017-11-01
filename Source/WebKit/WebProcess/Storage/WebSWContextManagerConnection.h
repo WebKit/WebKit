@@ -54,7 +54,8 @@ private:
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, Ref<WebCore::SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin) final;
 
     // IPC messages.
-    void startServiceWorker(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
+    void serviceWorkerStartedWithMessage(uint64_t serviceWorkerIdentifier, const String& exceptionMessage) final;
+    void updateServiceWorker(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
     void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&);
     void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, const WebCore::ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin);
 

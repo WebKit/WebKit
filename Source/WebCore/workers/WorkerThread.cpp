@@ -128,13 +128,15 @@ WorkerThread::~WorkerThread()
     workerThreads().remove(this);
 }
 
-bool WorkerThread::start()
+bool WorkerThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
     LockHolder lock(m_threadCreationAndWorkerGlobalScopeMutex);
 
     if (m_thread)
         return true;
+
+    m_evaluateCallback = WTFMove(evaluateCallback);
 
     m_thread = Thread::create("WebCore: Worker", [this] {
         workerThread();
@@ -181,7 +183,14 @@ void WorkerThread::workerThread()
             scriptController->forbidExecution();
     }
 
-    scriptController->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, m_startupData->m_scriptURL));
+    String exceptionMessage;
+    scriptController->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, m_startupData->m_scriptURL), &exceptionMessage);
+    
+    RunLoop::main().dispatch([evaluateCallback = WTFMove(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
+        if (evaluateCallback)
+            evaluateCallback(message);
+    });
+    
     // Free the startup data to cause its member variable deref's happen on the worker's thread (since
     // all ref/derefs of these objects are happening on the thread at this point). Note that
     // WorkerThread::~WorkerThread happens on a different thread where it was created.

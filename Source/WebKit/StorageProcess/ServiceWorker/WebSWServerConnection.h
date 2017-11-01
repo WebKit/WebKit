@@ -71,7 +71,7 @@ private:
     void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin);
 
     // Messages to the SW context WebProcess
-    void startServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
+    void updateServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
 
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier(); }

@@ -91,7 +91,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     auto thread = DedicatedWorkerThread::create(scriptURL, identifier, userAgent, sourceCode, *this, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), timeOrigin, proxy, socketProvider, runtimeFlags, sessionID);
 
     workerThreadCreated(thread.get());
-    thread->start();
+    thread->start(nullptr);
 
     m_inspectorProxy->workerStarted(m_scriptExecutionContext.get(), thread.ptr(), scriptURL);
 }

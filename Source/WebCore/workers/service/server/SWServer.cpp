@@ -179,14 +179,14 @@ void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerR
         registration->scriptContextStarted(connection, identifier, workerID);
 }
 
-Ref<SWServerWorker> SWServer::createWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
+Ref<SWServerWorker> SWServer::updateWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
 {
     String workerID = createCanonicalUUIDString();
     
     auto result = m_workersByID.add(workerID, SWServerWorker::create(registrationKey, url, script, type, workerID));
     ASSERT(result.isNewEntry);
     
-    connection.startServiceWorkerContext({ registrationKey, workerID, script, url });
+    connection.updateServiceWorkerContext({ registrationKey, workerID, script, url });
     
     return result.iterator->value.get();
 }

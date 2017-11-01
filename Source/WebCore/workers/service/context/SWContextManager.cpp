@@ -47,11 +47,16 @@ auto SWContextManager::connection() const -> Connection*
     return m_connection.get();
 }
 
-void SWContextManager::registerServiceWorkerThread(Ref<ServiceWorkerThreadProxy>&& serviceWorkerThreadProxy)
+void SWContextManager::registerServiceWorkerThreadForUpdate(Ref<ServiceWorkerThreadProxy>&& serviceWorkerThreadProxy)
 {
     auto serviceWorkerIdentifier = serviceWorkerThreadProxy->identifier();
+    auto* threadProxy = serviceWorkerThreadProxy.ptr();
     auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorkerThreadProxy));
     ASSERT_UNUSED(result, result.isNewEntry);
+    
+    threadProxy->thread().start([serviceWorkerIdentifier](const String& exceptionMessage) {
+        SWContextManager::singleton().connection()->serviceWorkerStartedWithMessage(serviceWorkerIdentifier, exceptionMessage);
+    });
 }
 
 ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(uint64_t serviceWorkerIdentifier) const

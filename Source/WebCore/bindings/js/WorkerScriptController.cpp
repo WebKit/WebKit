@@ -120,20 +120,20 @@ void WorkerScriptController::initScript()
     m_workerGlobalScopeWrapper->setConsoleClient(m_consoleClient.get());
 }
 
-void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, String* returnedExceptionMessage)
 {
     if (isExecutionForbidden())
         return;
 
     NakedPtr<JSC::Exception> exception;
-    evaluate(sourceCode, exception);
+    evaluate(sourceCode, exception, returnedExceptionMessage);
     if (exception) {
         JSLockHolder lock(vm());
         reportException(m_workerGlobalScopeWrapper->globalExec(), exception);
     }
 }
 
-void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedPtr<JSC::Exception>& returnedException)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage)
 {
     if (isExecutionForbidden())
         return;
@@ -157,8 +157,11 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
         int columnNumber = 0;
         String sourceURL = sourceCode.url().string();
         JSC::Strong<JSC::Unknown> error;
-        if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript()))
+        if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript())) {
+            if (returnedExceptionMessage)
+                *returnedExceptionMessage = errorMessage;
             returnedException = JSC::Exception::create(vm, createError(exec, errorMessage.impl()));
+        }
     }
 }
 

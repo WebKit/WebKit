@@ -84,14 +84,18 @@ void SWServerRegistration::scriptFetchFinished(SWServer::Connection& connection,
     // then resolve and finish the job without doing anything further.
 
     // FIXME: Support the proper worker type (classic vs module)
-    m_server.createWorker(connection, m_registrationKey, m_currentJob->scriptURL, result.script, WorkerType::Classic);
+    m_server.updateWorker(connection, m_registrationKey, m_currentJob->scriptURL, result.script, WorkerType::Classic);
 }
 
 void SWServerRegistration::scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message)
 {
-    UNUSED_PARAM(workerID);
+    // FIXME: Install has failed. Run the install failed substeps
+    // Run the Update Worker State algorithm passing registration’s installing worker and redundant as the arguments.
+    // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
+    // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
 
-    rejectCurrentJob(ExceptionData { UnknownError, message });
+    UNUSED_PARAM(workerID);
+    UNUSED_PARAM(message);
 }
 
 void SWServerRegistration::scriptContextStarted(SWServer::Connection&, uint64_t identifier, const String& workerID)
