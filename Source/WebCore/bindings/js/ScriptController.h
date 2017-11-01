@@ -64,6 +64,7 @@ class Widget;
 struct ExceptionDetails;
 
 enum ReasonForCallingCanExecuteScripts {
+    AboutToCreateEventListener,
     AboutToExecuteScript,
     NotAboutToExecuteScript
 };

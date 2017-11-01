@@ -97,7 +97,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
         return nullptr;
 
     ScriptController& script = document.frame()->script();
-    if (!script.canExecuteScripts(AboutToExecuteScript) || script.isPaused())
+    if (!script.canExecuteScripts(AboutToCreateEventListener) || script.isPaused())
         return nullptr;
 
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(&executionContext, isolatedWorld());
@@ -168,7 +168,7 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(const CreationArguments&
     TextPosition position;
     String sourceURL;
     if (Frame* frame = arguments.document.frame()) {
-        if (!frame->script().canExecuteScripts(AboutToExecuteScript))
+        if (!frame->script().canExecuteScripts(AboutToCreateEventListener))
             return nullptr;
         position = frame->script().eventHandlerPosition();
         sourceURL = arguments.document.url().string();

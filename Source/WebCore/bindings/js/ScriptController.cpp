@@ -43,6 +43,7 @@
 #include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
 #include "NP_jsobject.h"
+#include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -676,9 +677,12 @@ JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const Str
 
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
 {
+    if (reason == AboutToExecuteScript)
+        ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
+
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        if (reason == AboutToExecuteScript)
+        if (reason == AboutToExecuteScript || reason == AboutToCreateEventListener)
             m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked script execution in '" + m_frame.document()->url().stringCenterEllipsizedToLength() + "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.");
         return false;
     }
