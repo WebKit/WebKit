@@ -147,10 +147,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlob
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-on-evaluation.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-workers.https.html [ Skip ]
@@ -177,6 +173,10 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navi
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
 
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ DumpJSConsoleLogInStdErr ]
+
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Pass Failure ]
 webkit.org/b/179137 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html [ Pass Failure ]
 webkit.org/b/179138 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]

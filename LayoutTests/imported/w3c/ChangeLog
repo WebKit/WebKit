@@ -1,3 +1,16 @@
+2017-11-02  Youenn Fablet  <youenn@apple.com>
+
+        Fix WPT service worker tests using www1 URLs
+        https://bugs.webkit.org/show_bug.cgi?id=179144
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-response-taint.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resources/test-helpers.sub.js:
+
 2017-11-02  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Add initial implementation for try Clear Registration / Clear Registration algorithms

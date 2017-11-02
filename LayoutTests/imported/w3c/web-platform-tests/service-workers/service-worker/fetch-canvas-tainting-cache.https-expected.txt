@@ -1,9 +1,4 @@
-Blocked access to external URL https://www1.localhost:9443/service-workers/service-worker/resources/fetch-access-control-login.html
-CONSOLE MESSAGE: Unable to post message to https://www1.localhost:9443. Recipient has origin https://localhost:9443.
+ 
 
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Verify canvas tainting of fetched image in a Service Worker Test timed out
+FAIL Verify canvas tainting of fetched image in a Service Worker assert_equals: expected "finish" but got "failure:Result of url:https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE&reject&cache  cross_origin:  must be LOAD_ERROR but NOT_TAINTED"
 
