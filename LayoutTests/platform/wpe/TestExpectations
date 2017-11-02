@@ -89,14 +89,6 @@ Bug(WPE) css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-width-applies-to-007.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-width-applies-to-009.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
-Bug(WPE) ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 Bug(WPE) ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
 # These are prone to run in parallel, consuming all the memory on the system.

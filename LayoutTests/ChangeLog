@@ -1,3 +1,22 @@
+2017-11-02  Ms2ger  <Ms2ger@igalia.com>
+
+        Mark some ietestcenter tests as failing on all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=179166
+
+        Unreviewed test gardening.
+
+        This makes it a little easier to figure out which failure expectations
+        are actually platform-specific.
+
+        These tests might not be correct; I haven't tried to figure that out.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-11-02  Antti Koivisto  <antti@apple.com>
 
         Remove empty continuations in RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers
