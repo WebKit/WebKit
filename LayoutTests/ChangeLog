@@ -1,3 +1,11 @@
+2017-11-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark two service worker tests as flaky.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-11-02  Youenn Fablet  <youenn@apple.com>
 
         Service Worker fetch should transmit headers to its client
