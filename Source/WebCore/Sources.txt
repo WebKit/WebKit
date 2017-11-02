@@ -1377,7 +1377,7 @@ platform/Cursor.cpp
 platform/DateComponents.cpp
 platform/Decimal.cpp
 platform/DragData.cpp
-platform/DragImage.cpp @no-unify // FIXME: We only have this because WPE fails to build with it unified. See: https://bugs.webkit.org/show_bug.cgi?id=178844
+platform/DragImage.cpp
 platform/EventTrackingRegions.cpp
 platform/FileChooser.cpp
 platform/FileHandle.cpp

@@ -4066,7 +4066,6 @@
 		DE5F84771FA186EA006DB63A /* UnifiedSource398.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F83B71FA1867B006DB63A /* UnifiedSource398.cpp */; };
 		DE5F84781FA186EA006DB63A /* UnifiedSource399.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F83E61FA186A7006DB63A /* UnifiedSource399.cpp */; };
 		DE5F84791FA186EA006DB63A /* UnifiedSource400.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F83FB1FA186BD006DB63A /* UnifiedSource400.cpp */; };
-		DE5F84831FA1895C006DB63A /* DragImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */; };
 		DE5F85031FA1A4F8006DB63A /* UnifiedSource401.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F84D01FA1A4AC006DB63A /* UnifiedSource401.cpp */; };
 		DE5F85041FA1A4F8006DB63A /* UnifiedSource402.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F84A31FA1A482006DB63A /* UnifiedSource402.cpp */; };
 		DE5F85051FA1A4F8006DB63A /* UnifiedSource403.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F84BF1FA1A49C006DB63A /* UnifiedSource403.cpp */; };
@@ -30128,7 +30127,6 @@
 				31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
 				BE23480C18A9870B00E4B6E8 /* DataCue.cpp in Sources */,
-				DE5F84831FA1895C006DB63A /* DragImage.cpp in Sources */,
 				515BE18F1D54F5FB00DD7C68 /* EmptyGamepadProvider.cpp in Sources */,
 				724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */,
 				72F1ADA21A3904DC00014E18 /* EXTFragDepth.cpp in Sources */,
