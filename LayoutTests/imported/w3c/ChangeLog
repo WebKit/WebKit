@@ -1,3 +1,17 @@
+2017-11-02  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Add initial implementation for try Clear Registration / Clear Registration algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=179151
+
+        Reviewed by Youenn Fablet.
+
+        Rebbaseline several WPT tests now that registrations are actually removed.
+
+        * web-platform-tests/service-workers/service-worker/multi-globals/url-parsing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-basic.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-scope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/serviceworkerobject-scripturl.https-expected.txt:
+
 2017-11-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r219659): Can no longer log into ifttt.com using Google account

@@ -69,11 +69,15 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
 {
     ASSERT(m_currentJob && m_currentJob->identifier() == result.jobIdentifier);
 
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    ASSERT(registration);
+
     if (!result.scriptError.isNull()) {
         rejectCurrentJob(ExceptionData { UnknownError, makeString("Script URL ", m_currentJob->scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
 
         // If newestWorker is null, invoke Clear Registration algorithm passing this registration as its argument.
-        // FIXME: We don't have "clear registration" yet.
+        if (!registration->getNewestWorker())
+            clearRegistration(*registration);
 
         return;
     }
@@ -178,7 +182,25 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
     // Invoke Resolve Job Promise with job and true.
     resolveCurrentUnregistrationJob(true);
 
-    // FIXME: Invoke Try Clear Registration with registration.
+    // Invoke Try Clear Registration with registration.
+    tryClearRegistration(*registration);
+}
+
+// https://w3c.github.io/ServiceWorker/#try-clear-registration-algorithm
+void SWServerJobQueue::tryClearRegistration(SWServerRegistration& registration)
+{
+    // FIXME: Make sure that the registration has no service worker client.
+
+    // FIXME: The specification has more complex logic here.
+    if (!registration.getNewestWorker())
+        clearRegistration(registration);
+}
+
+// https://w3c.github.io/ServiceWorker/#clear-registration
+void SWServerJobQueue::clearRegistration(SWServerRegistration& registration)
+{
+    // FIXME: Update / terminate the registration's service workers.
+    m_server.removeRegistration(registration.key());
 }
 
 void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)

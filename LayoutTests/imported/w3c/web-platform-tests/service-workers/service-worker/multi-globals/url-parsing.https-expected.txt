@@ -1,6 +1,6 @@
 
 
 PASS register should use the relevant global of the object it was called on to resolve the script URL and the default scope URL 
-FAIL register should use the relevant global of the object it was called on to resolve the script URL and the given scope URL assert_equals: the given scope URL should be parsed against the relevant global expected "https://localhost:9443/service-workers/service-worker/multi-globals/relevant/scope" but got "https://localhost:9443/service-workers/service-worker/multi-globals/relevant/"
+PASS register should use the relevant global of the object it was called on to resolve the script URL and the given scope URL 
 FAIL getRegistration should use the relevant global of the object it was called on to resolve the script URL assert_not_equals: the registration from the other frame should not be null got disallowed value null
 

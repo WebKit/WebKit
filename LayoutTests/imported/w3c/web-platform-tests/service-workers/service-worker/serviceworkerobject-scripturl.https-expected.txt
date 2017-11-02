@@ -1,5 +1,5 @@
 
 PASS Verify the scriptURL property: relative 
-PASS Verify the scriptURL property: with-fragment 
+FAIL Verify the scriptURL property: with-fragment assert_equals: Returned ServiceWorker object should have scriptURL expected "https://localhost:9443/service-workers/service-worker/resources/empty-worker.js" but got "https://localhost:9443/service-workers/service-worker/resources/empty-worker.js#ref"
 PASS Verify the scriptURL property: absolute 
 

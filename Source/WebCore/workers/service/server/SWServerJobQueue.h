@@ -58,6 +58,9 @@ private:
     void runUnregisterJob(const ServiceWorkerJobData&);
     void runUpdateJob(const ServiceWorkerJobData&);
 
+    void tryClearRegistration(SWServerRegistration&);
+    void clearRegistration(SWServerRegistration&);
+
     Deque<ServiceWorkerJobData> m_jobQueue;
     std::unique_ptr<ServiceWorkerJobData> m_currentJob;
 
