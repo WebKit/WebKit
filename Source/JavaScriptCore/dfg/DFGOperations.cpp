@@ -292,6 +292,7 @@ JSCell* JIT_OPERATION operationToObject(ExecState* exec, JSGlobalObject* globalO
         }
     }
 
+    scope.release();
     return value.toObject(exec, globalObject);
 }
 
