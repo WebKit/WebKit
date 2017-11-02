@@ -52,8 +52,10 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& pl
 {
     EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(display, &config, WindowSurface))
+    if (!getEGLConfig(display, &config, WindowSurface)) {
+        WTFLogAlways("Cannot obtain EGL WPE context configuration: %s\n", lastErrorString());
         return nullptr;
+    }
 
     static const EGLint contextAttributes[] = {
 #if USE(OPENGL_ES_2)
@@ -63,19 +65,23 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& pl
     };
 
     EGLContext context = eglCreateContext(display, config, sharingContext, contextAttributes);
-    if (context == EGL_NO_CONTEXT)
+    if (context == EGL_NO_CONTEXT) {
+        WTFLogAlways("Cannot create EGL WPE context: %s\n", lastErrorString());
         return nullptr;
+    }
 
     auto* target = wpe_renderer_backend_egl_offscreen_target_create();
     wpe_renderer_backend_egl_offscreen_target_initialize(target, downcast<PlatformDisplayWPE>(platformDisplay).backend());
     EGLNativeWindowType window = wpe_renderer_backend_egl_offscreen_target_get_native_window(target);
     if (!window) {
+        WTFLogAlways("Cannot create EGL WPE context: %s\n", lastErrorString());
         wpe_renderer_backend_egl_offscreen_target_destroy(target);
         return nullptr;
     }
 
     EGLSurface surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
     if (surface == EGL_NO_SURFACE) {
+        WTFLogAlways("Cannot create EGL WPE window surface: %s\n", lastErrorString());
         eglDestroyContext(display, context);
         wpe_renderer_backend_egl_offscreen_target_destroy(target);
         return nullptr;

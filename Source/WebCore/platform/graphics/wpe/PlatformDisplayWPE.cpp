@@ -54,7 +54,7 @@ void PlatformDisplayWPE::initialize(int hostFd)
 
     m_eglDisplay = eglGetDisplay(wpe_renderer_backend_egl_get_native_display(m_backend));
     if (m_eglDisplay == EGL_NO_DISPLAY) {
-        WTFLogAlways("PlatformDisplayWPE: could not create the EGL display.");
+        WTFLogAlways("PlatformDisplayWPE: could not create the EGL display: %s.", GLContextEGL::lastErrorString());
         return;
     }
 

@@ -64,6 +64,7 @@
 #else
 #include <EGL/egl.h>
 #endif
+#include "GLContextEGL.h"
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #endif
@@ -197,13 +198,15 @@ void PlatformDisplay::initializeEGLDisplay()
 
     if (m_eglDisplay == EGL_NO_DISPLAY) {
         m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (m_eglDisplay == EGL_NO_DISPLAY)
+        if (m_eglDisplay == EGL_NO_DISPLAY) {
+            WTFLogAlways("Cannot get default EGL display: %s\n", GLContextEGL::lastErrorString());
             return;
+        }
     }
 
     EGLint majorVersion, minorVersion;
     if (eglInitialize(m_eglDisplay, &majorVersion, &minorVersion) == EGL_FALSE) {
-        LOG_ERROR("EGLDisplay Initialization failed.");
+        WTFLogAlways("EGLDisplay Initialization failed: %s\n", GLContextEGL::lastErrorString());
         terminateEGLDisplay();
         return;
     }
