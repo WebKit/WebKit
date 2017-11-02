@@ -29,14 +29,12 @@
 
 #include "CurlContext.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
 
-class CurlJobList;
 class CurlRequestSchedulerClient;
 
 class CurlRequestScheduler {
@@ -59,17 +57,23 @@ private:
     void stopThreadIfNoMoreJobRunning();
     void stopThread();
 
-    void updateJobList(CurlJobList&);
+    void executeTasks();
 
     void workerThread();
 
-    RefPtr<Thread> m_thread;
-    HashSet<CurlRequestSchedulerClient*> m_pendingJobs;
-    HashMap<CURL*, CURLcode> m_finishedJobs;
-    HashMap<CURL*, CURLcode> m_cancelledJobs;
-    Vector<WTF::Function<void()>> m_taskQueue;
+    void startTransfer(CurlRequestSchedulerClient*);
+    void completeTransfer(CURL*, CURLcode);
+    void cancelTransfer(CURL*);
+    void finalizeTransfer(CURL*, Function<void(CurlRequestSchedulerClient*)>);
+
     mutable Lock m_mutex;
+    RefPtr<Thread> m_thread;
     bool m_runThread { false };
+
+    Vector<Function<void()>> m_taskQueue;
+    HashMap<CURL*, CurlRequestSchedulerClient*> m_activeJobs;
+
+    std::unique_ptr<CurlMultiHandle> m_curlMultiHandle;
 };
 
 } // namespace WebCore

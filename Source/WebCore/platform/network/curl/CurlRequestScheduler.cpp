@@ -35,51 +35,6 @@
 
 namespace WebCore {
 
-/*
- * CurlJobList is used only in background so that no need to manage mutex
- */
-class CurlJobList : public CurlMultiHandle {
-public:
-    bool isEmpty() const { return m_activeJobs.isEmpty(); }
-
-    void startJobs(HashSet<CurlRequestSchedulerClient*>&& jobs)
-    {
-        auto localJobs = WTFMove(jobs);
-        for (auto& client : localJobs) {
-            CURL* handle = client->setupTransfer();
-            if (!handle)
-                return;
-
-            m_activeJobs.add(handle, client);
-            addHandle(handle);
-        }
-    }
-
-    void finishJobs(HashMap<CURL*, CURLcode>&& tickets, WTF::Function<void(CurlRequestSchedulerClient*, CURLcode)> completionHandler)
-    {
-        auto localTickets = WTFMove(tickets);
-        for (auto& ticket : localTickets) {
-            if (!m_activeJobs.contains(ticket.key))
-                continue;
-
-            CURL* handle = ticket.key;
-            CURLcode result = ticket.value;
-            CurlRequestSchedulerClient* client = m_activeJobs.inlineGet(handle);
-
-            removeHandle(handle);
-            m_activeJobs.remove(handle);
-            completionHandler(client, result);
-
-            callOnMainThread([client]() {
-                client->release();
-            });
-        }
-    }
-
-private:
-    HashMap<CURL*, CurlRequestSchedulerClient*> m_activeJobs;
-};
-
 CurlRequestScheduler& CurlRequestScheduler::singleton()
 {
     static NeverDestroyed<CurlRequestScheduler> sharedInstance;
@@ -93,13 +48,7 @@ bool CurlRequestScheduler::add(CurlRequestSchedulerClient* client)
     if (!client)
         return false;
 
-    client->retain();
-
-    {
-        LockHolder locker(m_mutex);
-        m_pendingJobs.add(client);
-    }
-
+    startTransfer(client);
     startThreadIfNeeded();
 
     return true;
@@ -112,8 +61,7 @@ void CurlRequestScheduler::cancel(CurlRequestSchedulerClient* client)
     if (!client || !client->handle())
         return;
 
-    LockHolder locker(m_mutex);
-    m_cancelledJobs.add(client->handle(), CURLE_OK);
+    cancelTransfer(client->handle());
 }
 
 void CurlRequestScheduler::callOnWorkerThread(WTF::Function<void()>&& task)
@@ -147,10 +95,14 @@ void CurlRequestScheduler::stopThreadIfNoMoreJobRunning()
 {
     ASSERT(!isMainThread());
 
-    LockHolder locker(m_mutex);
+    if (m_activeJobs.size())
+        return;
 
-    if (m_pendingJobs.isEmpty())
-        m_runThread = false;
+    LockHolder locker(m_mutex);
+    if (m_taskQueue.size())
+        return;
+
+    m_runThread = false;
 }
 
 void CurlRequestScheduler::stopThread()
@@ -163,44 +115,29 @@ void CurlRequestScheduler::stopThread()
     }
 }
 
-void CurlRequestScheduler::updateJobList(CurlJobList& jobs)
+void CurlRequestScheduler::executeTasks()
 {
     ASSERT(!isMainThread());
 
-    HashSet<CurlRequestSchedulerClient*> pendingJobs;
-    HashMap<CURL*, CURLcode> cancelledJobs;
     Vector<WTF::Function<void()>> taskQueue;
 
     {
         LockHolder locker(m_mutex);
-
-        pendingJobs = WTFMove(m_pendingJobs);
-        cancelledJobs = WTFMove(m_cancelledJobs);
         taskQueue = WTFMove(m_taskQueue);
     }
 
     for (auto& task : taskQueue)
         task();
-
-    jobs.startJobs(WTFMove(pendingJobs));
-
-    jobs.finishJobs(WTFMove(cancelledJobs), [](CurlRequestSchedulerClient* client, CURLcode) {
-        client->didCancelTransfer();
-    });
-
-    jobs.finishJobs(WTFMove(m_finishedJobs), [](CurlRequestSchedulerClient* client, CURLcode result) {
-        client->didCompleteTransfer(result);
-    });
 }
 
 void CurlRequestScheduler::workerThread()
 {
     ASSERT(!isMainThread());
 
-    CurlJobList jobs;
+    m_curlMultiHandle = std::make_unique<CurlMultiHandle>();
 
     while (m_runThread) {
-        updateJobList(jobs);
+        executeTasks();
 
         // Retry 'select' if it was interrupted by a process signal.
         int rc = 0;
@@ -216,7 +153,7 @@ void CurlRequestScheduler::workerThread()
             timeout.tv_sec = 0;
             timeout.tv_usec = selectTimeoutMS * 1000; // select waits microseconds
 
-            jobs.getFdSet(fdread, fdwrite, fdexcep, maxfd);
+            m_curlMultiHandle->getFdSet(fdread, fdwrite, fdexcep, maxfd);
 
             // When the 3 file descriptors are empty, winsock will return -1
             // and bail out, stopping the file download. So make sure we
@@ -226,23 +163,76 @@ void CurlRequestScheduler::workerThread()
         } while (rc == -1 && errno == EINTR);
 
         int activeCount = 0;
-        while (jobs.perform(activeCount) == CURLM_CALL_MULTI_PERFORM) { }
+        while (m_curlMultiHandle->perform(activeCount) == CURLM_CALL_MULTI_PERFORM) { }
 
         // check the curl messages indicating completed transfers
         // and free their resources
         while (true) {
             int messagesInQueue = 0;
-            CURLMsg* msg = jobs.readInfo(messagesInQueue);
+            CURLMsg* msg = m_curlMultiHandle->readInfo(messagesInQueue);
             if (!msg)
                 break;
 
             ASSERT(msg->msg == CURLMSG_DONE);
-            m_finishedJobs.add(msg->easy_handle, msg->data.result);
+            completeTransfer(msg->easy_handle, msg->data.result);
         }
 
-        if (jobs.isEmpty())
-            stopThreadIfNoMoreJobRunning();
+        stopThreadIfNoMoreJobRunning();
     }
+
+    m_curlMultiHandle = nullptr;
+}
+
+void CurlRequestScheduler::startTransfer(CurlRequestSchedulerClient* client)
+{
+    client->retain();
+
+    auto task = [this, client]() {
+        CURL* handle = client->setupTransfer();
+        if (!handle)
+            return;
+
+        m_activeJobs.add(handle, client);
+        m_curlMultiHandle->addHandle(handle);
+    };
+
+    LockHolder locker(m_mutex);
+    m_taskQueue.append(WTFMove(task));
+}
+
+void CurlRequestScheduler::completeTransfer(CURL* handle, CURLcode result)
+{
+    finalizeTransfer(handle, [result](CurlRequestSchedulerClient* client) {
+        client->didCompleteTransfer(result);
+    });
+}
+
+void CurlRequestScheduler::cancelTransfer(CURL* handle)
+{
+    finalizeTransfer(handle, [](CurlRequestSchedulerClient* client) {
+        client->didCancelTransfer();
+    });
+}
+
+void CurlRequestScheduler::finalizeTransfer(CURL* handle, Function<void(CurlRequestSchedulerClient*)> completionHandler)
+{
+    auto task = [this, handle, completion = WTFMove(completionHandler)]() {
+        if (!m_activeJobs.contains(handle))
+            return;
+
+        CurlRequestSchedulerClient* client = m_activeJobs.inlineGet(handle);
+
+        m_curlMultiHandle->removeHandle(handle);
+        m_activeJobs.remove(handle);
+        completion(client);
+
+        callOnMainThread([client]() {
+            client->release();
+        });
+    };
+
+    LockHolder locker(m_mutex);
+    m_taskQueue.append(WTFMove(task));
 }
 
 }
