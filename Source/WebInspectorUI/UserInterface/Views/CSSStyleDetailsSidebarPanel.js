@@ -35,10 +35,10 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
         this._rulesStyleDetailsPanel = new WI.RulesStyleDetailsPanel(this);
         this._visualStyleDetailsPanel = new WI.VisualStyleDetailsPanel(this);
 
-        if (WI.settings.experimentalSpreadsheetStyleEditor.value)
-            this._activeRulesStyleDetailsPanel = new WI.SpreadsheetRulesStyleDetailsPanel(this);
-        else
+        if (WI.settings.experimentalLegacyStyleEditor.value)
             this._activeRulesStyleDetailsPanel = this._rulesStyleDetailsPanel;
+        else
+            this._activeRulesStyleDetailsPanel = new WI.SpreadsheetRulesStyleDetailsPanel(this);
 
         this._panels = [this._computedStyleDetailsPanel, this._activeRulesStyleDetailsPanel, this._visualStyleDetailsPanel];
         this._panelNavigationInfo = [this._computedStyleDetailsPanel.navigationInfo, this._activeRulesStyleDetailsPanel.navigationInfo, this._visualStyleDetailsPanel.navigationInfo];

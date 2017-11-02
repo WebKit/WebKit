@@ -202,13 +202,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         generalSettingsView.addSeparator();
 
-        let stylesEditingGroup = generalSettingsView.addGroup(WI.UIString("Styles Editing:"));
-        stylesEditingGroup.addSetting(WI.settings.stylesShowInlineWarnings, WI.UIString("Show inline warnings"));
-        stylesEditingGroup.addSetting(WI.settings.stylesInsertNewline, WI.UIString("Automatically insert newline"));
-        stylesEditingGroup.addSetting(WI.settings.stylesSelectOnFirstClick, WI.UIString("Select text on first click"));
-
-        generalSettingsView.addSeparator();
-
         generalSettingsView.addSetting(WI.UIString("Network:"), WI.settings.clearNetworkOnNavigate, WI.UIString("Clear when page loads"));
 
         generalSettingsView.addSeparator();
@@ -262,7 +255,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
         if (window.CSSAgent) {
-            experimentalSettingsView.addSetting(WI.UIString("Styles Panel:"), WI.settings.experimentalSpreadsheetStyleEditor, WI.UIString("Spreadsheet Style Editor"));
+            experimentalSettingsView.addSetting(WI.UIString("Styles Panel:"), WI.settings.experimentalLegacyStyleEditor, WI.UIString("Legacy Style Editor"));
             experimentalSettingsView.addSeparator();
         }
 
@@ -285,7 +278,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             });
         }
 
-        listenForChange(WI.settings.experimentalSpreadsheetStyleEditor);
+        listenForChange(WI.settings.experimentalLegacyStyleEditor);
         listenForChange(WI.settings.experimentalEnableLayersTab);
 
         this.addSettingsView(experimentalSettingsView);

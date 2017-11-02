@@ -1,3 +1,33 @@
+2017-11-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: turn on CSS spreadsheet editor by default
+        https://bugs.webkit.org/show_bug.cgi?id=179100
+        <rdar://problem/35285990>
+
+        Reviewed by Brian Burg.
+
+        Add a "Legacy Style Editor" checkbox and remove the experimental "Spreadsheet Style Editor" checkbox.
+
+        Remove settings of the legacy styles editor:
+        - Show inline warnings
+        - Automatically insert newline
+        - Select text on first click
+
+        These settings are not applicable for the spreadsheet styles editor and
+        now are always enabled for the legacy styles editor.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WI.CSSStyleDeclarationTextEditor):
+        (WI.CSSStyleDeclarationTextEditor.prototype._handleMouseUp):
+        (WI.CSSStyleDeclarationTextEditor.):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WI.CSSStyleDetailsSidebarPanel):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2017-11-01  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: consolidate DOMTreeElement contextmenu items into submenus

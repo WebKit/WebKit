@@ -117,15 +117,12 @@ WI.settings = {
     clearNetworkOnNavigate: new WI.Setting("clear-network-on-navigate", true),
     zoomFactor: new WI.Setting("zoom-factor", 1),
     layoutDirection: new WI.Setting("layout-direction-override", "system"),
-    stylesShowInlineWarnings: new WI.Setting("styles-show-inline-warning", true),
-    stylesInsertNewline: new WI.Setting("styles-insert-newline", true),
-    stylesSelectOnFirstClick: new WI.Setting("styles-select-on-first-click", true),
     showScopeChainOnPause: new WI.Setting("show-scope-chain-sidebar", true),
     showImageGrid: new WI.Setting("show-image-grid", false),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
 
     // Experimental
-    experimentalSpreadsheetStyleEditor: new WI.Setting("experimental-spreadsheet-style-editor", false),
+    experimentalLegacyStyleEditor: new WI.Setting("experimental-legacy-style-editor", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
 };
