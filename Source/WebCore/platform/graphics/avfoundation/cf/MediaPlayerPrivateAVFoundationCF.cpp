@@ -115,7 +115,7 @@ public:
     void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(const MediaTime&, const FloatRect&);
 
-    void createAssetForURL(const String& url, bool inheritURI);
+    void createAssetForURL(const URL&, bool inheritURI);
     void setAsset(AVCFURLAssetRef);
     
     void createPlayer(IDirect3DDevice9*);
@@ -1113,7 +1113,7 @@ void MediaPlayerPrivateAVFoundationCF::sizeChanged()
 void MediaPlayerPrivateAVFoundationCF::resolvedURLChanged()
 {
     if (m_avfWrapper && m_avfWrapper->avAsset())
-        setResolvedURL(adoptCF(AVCFAssetCopyResolvedURL(m_avfWrapper->avAsset())));
+        setResolvedURL(URL(adoptCF(AVCFAssetCopyResolvedURL(m_avfWrapper->avAsset())).get()));
     else
         setResolvedURL({ });
 }
