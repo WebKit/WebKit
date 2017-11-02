@@ -1,3 +1,14 @@
+2017-11-02  John Wilander  <wilander@apple.com>
+
+        Ignore HSTS for partitioned, cross-origin subresource requests
+        https://bugs.webkit.org/show_bug.cgi?id=178993
+        <rdar://problem/34962462>
+
+        Reviewed by Brent Fulgham and Alex Christensen.
+
+        * wtf/Platform.h:
+            Added HAVE_CFNETWORK_IGNORE_HSTS.
+
 2017-11-02  Frederic Wang  <fwang@igalia.com>
 
         Add references to bug 179167 in FIXME comments
