@@ -109,31 +109,26 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     if (!(domNode instanceof WI.DOMNode))
         return;
 
+    let copySubMenu = options.copySubMenu || contextMenu.appendSubMenuItem(WI.UIString("Copy"));
+
     let isElement = domNode.nodeType() === Node.ELEMENT_NODE;
-    if (isElement) {
-        contextMenu.appendItem(WI.UIString("Scroll Into View"), () => {
-            domNode.scrollIntoView();
-        });
-    }
-
-    contextMenu.appendSeparator();
-
     if (domNode.ownerDocument && isElement) {
-        contextMenu.appendItem(WI.UIString("Copy Selector Path"), () => {
+        copySubMenu.appendItem(WI.UIString("Selector Path"), () => {
             let cssPath = WI.cssPath(domNode);
             InspectorFrontendHost.copyText(cssPath);
         });
     }
 
     if (domNode.ownerDocument && !domNode.isPseudoElement()) {
-        contextMenu.appendItem(WI.UIString("Copy XPath"), () => {
+        copySubMenu.appendItem(WI.UIString("XPath"), () => {
             let xpath = WI.xpath(domNode);
             InspectorFrontendHost.copyText(xpath);
         });
     }
 
+    contextMenu.appendSeparator();
+
     if (domNode.isCustomElement()) {
-        contextMenu.appendSeparator();
         contextMenu.appendItem(WI.UIString("Jump to Definition"), () => {
             function didGetFunctionDetails(error, response) {
                 if (error)
@@ -164,6 +159,8 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                 remoteObject.release();
             });
         });
+
+        contextMenu.appendSeparator();
     }
 
     if (WI.domDebuggerManager.supported && isElement && !domNode.isPseudoElement() && domNode.ownerDocument) {
@@ -193,7 +190,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     }
 
     if (window.PageAgent) {
-        contextMenu.appendItem(WI.UIString("Capture Element Screenshot"), () => {
+        contextMenu.appendItem(WI.UIString("Capture Screenshot"), () => {
             PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
                 if (error) {
                     const target = WI.mainTarget;
@@ -224,4 +221,12 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
             });
         });
     }
+
+    if (isElement) {
+        contextMenu.appendItem(WI.UIString("Scroll Into View"), () => {
+            domNode.scrollIntoView();
+        });
+    }
+
+    contextMenu.appendSeparator();
 };

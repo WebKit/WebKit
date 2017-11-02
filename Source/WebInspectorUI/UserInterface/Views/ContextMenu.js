@@ -96,7 +96,7 @@ WI.ContextSubMenuItem = class ContextSubMenuItem extends WI.ContextMenuItem
     appendItem(label, handler, disabled)
     {
         let item = new WI.ContextMenuItem(this._contextMenu, "item", label, disabled);
-        this._pushItem(item);
+        this.pushItem(item);
         this._contextMenu._setHandler(item.id(), handler);
         return item;
     }
@@ -104,14 +104,14 @@ WI.ContextSubMenuItem = class ContextSubMenuItem extends WI.ContextMenuItem
     appendSubMenuItem(label, disabled)
     {
         let item = new WI.ContextSubMenuItem(this._contextMenu, label, disabled);
-        this._pushItem(item);
+        this.pushItem(item);
         return item;
     }
 
     appendCheckboxItem(label, handler, checked, disabled)
     {
         let item = new WI.ContextMenuItem(this._contextMenu, "checkbox", label, disabled, checked);
-        this._pushItem(item);
+        this.pushItem(item);
         this._contextMenu._setHandler(item.id(), handler);
         return item;
     }
@@ -122,7 +122,7 @@ WI.ContextSubMenuItem = class ContextSubMenuItem extends WI.ContextMenuItem
             this._pendingSeparator = true;
     }
 
-    _pushItem(item)
+    pushItem(item)
     {
         if (this._pendingSeparator) {
             this._items.push(new WI.ContextMenuItem(this._contextMenu, "separator"));
@@ -136,9 +136,14 @@ WI.ContextSubMenuItem = class ContextSubMenuItem extends WI.ContextMenuItem
         return !this._items.length;
     }
 
+    // Private
+
     _buildDescriptor()
     {
-        let subItems = this._items.map((item) => item._buildDescriptor());
+        if (this.isEmpty())
+            return null;
+
+        let subItems = this._items.map((item) => item._buildDescriptor()).filter((item) => !!item);
         return {type: "subMenu", label: this._label, enabled: !this._disabled, subItems};
     }
 };
@@ -224,7 +229,7 @@ WI.ContextMenu = class ContextMenu extends WI.ContextSubMenuItem
 
     _buildDescriptor()
     {
-        return this._items.map((item) => item._buildDescriptor());
+        return this._items.map((item) => item._buildDescriptor()).filter((item) => !!item);
     }
 
     _itemSelected(id)

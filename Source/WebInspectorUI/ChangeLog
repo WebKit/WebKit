@@ -1,3 +1,44 @@
+2017-11-01  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: consolidate DOMTreeElement contextmenu items into submenus
+        https://bugs.webkit.org/show_bug.cgi?id=178996
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/ContextMenu.js:
+        (WI.ContextSubMenuItem.prototype.appendItem):
+        (WI.ContextSubMenuItem.prototype.appendSubMenuItem):
+        (WI.ContextSubMenuItem.prototype.appendCheckboxItem):
+        (WI.ContextSubMenuItem.prototype.pushItem):
+        (WI.ContextSubMenuItem.prototype._pushItem): Deleted.
+        Made `pushItem` public so that it is possible to create a ContextMenuItem without
+        immediately adding it to the ContextMenu.
+
+        (WI.ContextSubMenuItem.prototype._buildDescriptor):
+        (WI.ContextMenu.prototype._buildDescriptor):
+        Filter out submenus that have no items.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.toggleElementVisibility):
+        (WI.DOMTreeElement.prototype._populateTagContextMenu):
+        (WI.DOMTreeElement.prototype._populateTextContextMenu):
+        (WI.DOMTreeElement.prototype._populateNodeContextMenu):
+        (WI.DOMTreeElement.prototype._populateForcedPseudoStateItems): Deleted.
+        Add relevant items to the provided submenus and reorder the entire contextmenu for better
+        readability and consistency.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.populateContextMenu):
+        Create submenus for Add, Edit, Copy, and Delete, and pass them to the DOMTreeElement
+        "populate*ContextMenu" functions so that they can add items to each submenu.
+
+        (WI.DOMTreeOutline.prototype._hideElement):
+        Move to DOMTreeElement so that it can be used by a contextmenu item.
+
 2017-11-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Improve UX of Layers tab visualization

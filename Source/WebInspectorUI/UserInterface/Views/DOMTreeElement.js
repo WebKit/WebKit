@@ -283,6 +283,38 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         return this.children[index];
     }
 
+    toggleElementVisibility()
+    {
+        let effectiveNode = this.representedObject;
+        if (effectiveNode.isPseudoElement()) {
+            effectiveNode = effectiveNode.parentNode;
+            console.assert(effectiveNode);
+            if (!effectiveNode)
+                return;
+        }
+
+        if (effectiveNode.nodeType() !== Node.ELEMENT_NODE)
+            return;
+
+        function inspectedPage_node_injectStyleAndToggleClass() {
+            let hideElementStyleSheetIdOrClassName = "__WebInspectorHideElement__";
+            let styleElement = document.getElementById(hideElementStyleSheetIdOrClassName);
+            if (!styleElement) {
+                styleElement = document.createElement("style");
+                styleElement.id = hideElementStyleSheetIdOrClassName;
+                styleElement.textContent = "." + hideElementStyleSheetIdOrClassName + " { visibility: hidden !important; }";
+                document.head.appendChild(styleElement);
+            }
+
+            this.classList.toggle(hideElementStyleSheetIdOrClassName);
+        }
+
+        WI.RemoteObject.resolveNode(effectiveNode).then((object) => {
+            object.callFunction(inspectedPage_node_injectStyleAndToggleClass, undefined, false, () => { });
+            object.release();
+        });
+    }
+
     _createTooltipForNode()
     {
         var node = this.representedObject;
@@ -697,90 +729,109 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         return false;
     }
 
-    _populateTagContextMenu(contextMenu, event)
+    _populateTagContextMenu(contextMenu, event, subMenus)
     {
         let node = this.representedObject;
-        if (!node.isInUserAgentShadowTree()) {
-            let attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
+        let isNonShadowEditable = !node.isInUserAgentShadowTree() && this.editable;
 
-            if (event.target && event.target.tagName === "A") {
-                let url = event.target.href;
+        if (event.target && event.target.tagName === "A") {
+            let url = event.target.href;
 
-                contextMenu.appendItem(WI.UIString("Open in New Tab"), () => {
-                    const frame = null;
-                    WI.openURL(url, frame, {alwaysOpenExternally: true});
+            contextMenu.appendItem(WI.UIString("Open in New Tab"), () => {
+                const frame = null;
+                WI.openURL(url, frame, {alwaysOpenExternally: true});
+            });
+
+            if (WI.frameResourceManager.resourceForURL(url)) {
+                contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
+                    let frame = WI.frameResourceManager.frameForIdentifier(node.frameIdentifier);
+
+                    const options = {
+                        ignoreNetworkTab: true,
+                        ignoreSearchTab: true,
+                    };
+                    WI.openURL(url, frame, options);
                 });
-
-                if (WI.frameResourceManager.resourceForURL(url)) {
-                    contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
-                        let frame = WI.frameResourceManager.frameForIdentifier(node.frameIdentifier);
-
-                        const options = {
-                            ignoreNetworkTab: true,
-                            ignoreSearchTab: true,
-                        };
-                        WI.openURL(url, frame, options);
-                    });
-                }
-
-                contextMenu.appendItem(WI.UIString("Copy Link Address"), () => {
-                    InspectorFrontendHost.copyText(url);
-                });
-
-                contextMenu.appendSeparator();
             }
 
-            // Add attribute-related actions.
-            if (this.editable) {
-                contextMenu.appendItem(WI.UIString("Add Attribute"), this._addNewAttribute.bind(this));
-                if (attribute)
-                    contextMenu.appendItem(WI.UIString("Edit Attribute"), this._startEditingAttribute.bind(this, attribute, event.target));
-                contextMenu.appendSeparator();
-            }
-
-            if (WI.cssStyleManager.canForcePseudoClasses()) {
-                let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes"));
-                this._populateForcedPseudoStateItems(pseudoSubMenu);
-                contextMenu.appendSeparator();
-            }
+            contextMenu.appendItem(WI.UIString("Copy Link Address"), () => {
+                InspectorFrontendHost.copyText(url);
+            });
         }
 
-        this._populateNodeContextMenu(contextMenu);
+        contextMenu.appendSeparator();
+
+        this._populateNodeContextMenu(contextMenu, subMenus);
+
+        contextMenu.appendItem(WI.UIString("Toggle Visibility"), this.toggleElementVisibility.bind(this));
+
+        subMenus.add.appendItem(WI.UIString("Attribute"), this._addNewAttribute.bind(this), !isNonShadowEditable);
+
+        let attribute = event.target.enclosingNodeOrSelfWithClass("html-attribute");
+        subMenus.edit.appendItem(WI.UIString("Attribute"), this._startEditingAttribute.bind(this, attribute, event.target), !attribute || ! isNonShadowEditable);
+
+        let attributeName = null;
+        if (attribute) {
+            let attributeNameElement = attribute.getElementsByClassName("html-attribute-name")[0];
+            if (attributeNameElement)
+                attributeName = attributeNameElement.textContent.trim();
+        }
+
+        let attributeValue = this.representedObject.getAttribute(attributeName);
+        subMenus.copy.appendItem(WI.UIString("Attribute"), () => {
+            let text = attributeName;
+            if (attributeValue)
+                text += "=\"" + attributeValue.replace(/"/g, "\\\"") + "\"";
+            InspectorFrontendHost.copyText(text);
+        }, !attribute || !isNonShadowEditable);
+
+        subMenus.delete.appendItem(WI.UIString("Attribute"), () => {
+            this.representedObject.removeAttribute(attributeName);
+        }, !attribute || !isNonShadowEditable);
+
+        subMenus.edit.appendItem(WI.UIString("Tag"), () => {
+            this._startEditingTagName();
+        }, !isNonShadowEditable);
+
+        contextMenu.appendSeparator();
+
+        if (WI.cssStyleManager.canForcePseudoClasses()) {
+            let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes"));
+
+            let enabledPseudoClasses = this.representedObject.enabledPseudoClasses;
+            WI.CSSStyleManager.ForceablePseudoClasses.forEach((pseudoClass) => {
+                let enabled = enabledPseudoClasses.includes(pseudoClass);
+                pseudoSubMenu.appendCheckboxItem(pseudoClass.capitalize(), () => {
+                    this.representedObject.setPseudoClassEnabled(pseudoClass, !enabled);
+                }, enabled);
+            });
+
+            contextMenu.appendSeparator();
+        }
     }
 
-    _populateForcedPseudoStateItems(subMenu)
+    _populateTextContextMenu(contextMenu, textNode, subMenus)
     {
-        var node = this.representedObject;
-        var enabledPseudoClasses = node.enabledPseudoClasses;
-        // These strings don't need to be localized as they are CSS pseudo-classes.
-        WI.CSSStyleManager.ForceablePseudoClasses.forEach(function(pseudoClass) {
-            var label = pseudoClass.capitalize();
-            var enabled = enabledPseudoClasses.includes(pseudoClass);
-            subMenu.appendCheckboxItem(label, function() {
-                node.setPseudoClassEnabled(pseudoClass, !enabled);
-            }, enabled, false);
-        });
+        this._populateNodeContextMenu(contextMenu, subMenus);
+
+        subMenus.edit.appendItem(WI.UIString("Text"), this._startEditingTextNode.bind(this, textNode), !this.editable);
+
+        subMenus.copy.appendItem(WI.UIString("Text"), () => {
+            InspectorFrontendHost.copyText(textNode.textContent);
+        }, !textNode.textContent.length);
     }
 
-    _populateTextContextMenu(contextMenu, textNode)
-    {
-        if (this.editable)
-            contextMenu.appendItem(WI.UIString("Edit Text"), this._startEditingTextNode.bind(this, textNode));
-
-        this._populateNodeContextMenu(contextMenu);
-    }
-
-    _populateNodeContextMenu(contextMenu)
+    _populateNodeContextMenu(contextMenu, subMenus)
     {
         let node = this.representedObject;
 
-        // Add free-form node-related actions.
-        if (this.editable)
-            contextMenu.appendItem(WI.UIString("Edit as HTML"), this._editAsHTML.bind(this));
-        if (!node.isPseudoElement())
-            contextMenu.appendItem(WI.UIString("Copy as HTML"), this._copyHTML.bind(this));
-        if (this.editable)
-            contextMenu.appendItem(WI.UIString("Delete Node"), this.remove.bind(this));
+        // FIXME: <https://webkit.org/b/179042> Web Inspector: add contextmenu item to arbitrarily add HTML/Child to DOMTree
+        subMenus.edit.appendItem(WI.UIString("HTML"), this._editAsHTML.bind(this), !this.editable);
+        subMenus.copy.appendItem(WI.UIString("HTML"), this._copyHTML.bind(this), node.isPseudoElement());
+        subMenus.delete.appendItem(WI.UIString("Node"), this.remove.bind(this), !this.editable);
+
+        for (let subMenu of Object.values(subMenus))
+            contextMenu.pushItem(subMenu);
     }
 
     _startEditing()

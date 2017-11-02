@@ -243,14 +243,24 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         let commentNode = event.target.enclosingNodeOrSelfWithClass("html-comment");
         let pseudoElement = event.target.enclosingNodeOrSelfWithClass("html-pseudo-element");
 
-        if (tag && treeElement._populateTagContextMenu)
-            treeElement._populateTagContextMenu(contextMenu, event);
-        else if (textNode && treeElement._populateTextContextMenu)
-            treeElement._populateTextContextMenu(contextMenu, textNode);
-        else if ((commentNode || pseudoElement) && treeElement._populateNodeContextMenu)
-            treeElement._populateNodeContextMenu(contextMenu);
+        let subMenus = {
+            add: new WI.ContextSubMenuItem(contextMenu, WI.UIString("Add")),
+            edit: new WI.ContextSubMenuItem(contextMenu, WI.UIString("Edit")),
+            copy: new WI.ContextSubMenuItem(contextMenu, WI.UIString("Copy")),
+            delete: new WI.ContextSubMenuItem(contextMenu, WI.UIString("Delete")),
+        };
 
-        const options = {excludeRevealElement: this._excludeRevealElementContextMenu};
+        if (tag && treeElement._populateTagContextMenu)
+            treeElement._populateTagContextMenu(contextMenu, event, subMenus);
+        else if (textNode && treeElement._populateTextContextMenu)
+            treeElement._populateTextContextMenu(contextMenu, textNode, subMenus);
+        else if ((commentNode || pseudoElement) && treeElement._populateNodeContextMenu)
+            treeElement._populateNodeContextMenu(contextMenu, subMenus);
+
+        let options = {
+            excludeRevealElement: this._excludeRevealElementContextMenu,
+            copySubMenu: subMenus.copy,
+        };
         WI.appendContextMenuItemsForDOMNode(contextMenu, treeElement.representedObject, options);
 
         super.populateContextMenu(contextMenu, event, treeElement);
@@ -490,38 +500,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         event.preventDefault();
 
-        var effectiveNode = this.selectedTreeElement.representedObject;
-        console.assert(effectiveNode);
-        if (!effectiveNode)
-            return;
-
-        if (effectiveNode.isPseudoElement()) {
-            effectiveNode = effectiveNode.parentNode;
-            console.assert(effectiveNode);
-            if (!effectiveNode)
-                return;
-        }
-
-        if (effectiveNode.nodeType() !== Node.ELEMENT_NODE)
-            return;
-
-        function inspectedPage_node_injectStyleAndToggleClass() {
-            let hideElementStyleSheetIdOrClassName = "__WebInspectorHideElement__";
-            let styleElement = document.getElementById(hideElementStyleSheetIdOrClassName);
-            if (!styleElement) {
-                styleElement = document.createElement("style");
-                styleElement.id = hideElementStyleSheetIdOrClassName;
-                styleElement.textContent = "." + hideElementStyleSheetIdOrClassName + " { visibility: hidden !important; }";
-                document.head.appendChild(styleElement);
-            }
-
-            this.classList.toggle(hideElementStyleSheetIdOrClassName);
-        }
-
-        WI.RemoteObject.resolveNode(effectiveNode).then((object) => {
-            object.callFunction(inspectedPage_node_injectStyleAndToggleClass, undefined, false, () => { });
-            object.release();
-        });
+        this.selectedTreeElement.toggleElementVisibility();
     }
 };
 
