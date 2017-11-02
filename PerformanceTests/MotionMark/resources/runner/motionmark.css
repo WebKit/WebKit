@@ -278,16 +278,53 @@ button:disabled {
     }
 }
 
-/* Intro section */
+/* Intro section, About page */
+
+#intro, #about {
+    padding: 2em;
+}
 
 #intro {
-    padding: 2em;
     opacity: 0;
     transition: opacity 500ms ease-in;
 }
 
 body.images-loaded #intro {
     opacity: 1;
+}
+
+#about .body {
+    transform: none;
+    margin: 0;
+    max-width: initial;
+}
+
+#about li {
+    line-height: 1.5em;
+}
+
+#about button {
+    padding: .75em 2em;
+    margin: 1.5em auto 0;
+    min-width: initial;
+    transform: skewX(-10deg);
+}
+
+@media screen and (min-width: 667px) {
+    #about .body {
+        font-size: .7em;
+        margin: 1em;
+    }
+
+    #about ol, #about ul {
+        padding-left: 3em;
+    }
+}
+
+
+#intro a, #about a,
+#intro a:visited, #about a:visited {
+    color: black;
 }
 
 /* Running test section */
