@@ -634,8 +634,8 @@ webkit.org/b/79203 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ 
 webkit.org/b/79203 fast/mediastream/get-user-media-on-loadedmetadata.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/local-audio-playing-event.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/media-stream-track-source-failure.html [ Timeout ]
-webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Timeout ]
-webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html [ Timeout ]
+webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
+webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 # Crash is bug #176801
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
@@ -1174,6 +1174,7 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/tem
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Failure ]
 
 # Loading MP4 as an image is not supported by GTK
 fast/images/animated-image-mp4.html [ Skip ]
@@ -3321,6 +3322,10 @@ webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-sub
 
 webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ Failure ]
 webkit.org/b/179113 fast/text/ellipsis-text-rtl.html [ Failure ]
+
+webkit.org/b/179173 http/tests/inspector/network/har/har-page.html [ Failure ]
+
+webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

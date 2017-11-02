@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x126
         RenderBlock (floating) at (2,-4) size 25x74
-          RenderText {#text} at (0,16) size 25x70
+          RenderText at (0,16) size 25x70
             text run at (0,16) width 25: "J"
         RenderText {#text} at (29,36) size 399x89
           text run at (29,36) width 370: "ust an example of first-letter. This letter should span 3 lines"

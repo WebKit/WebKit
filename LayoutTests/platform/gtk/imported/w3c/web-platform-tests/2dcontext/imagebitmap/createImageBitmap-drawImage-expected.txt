@@ -1,8 +1,8 @@
 
-FAIL createImageBitmap from a HTMLImageElement, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap from a HTMLCanvasElement, and drawImage on the created ImageBitmap Can't find variable: createImageBitmap
-FAIL createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap from an ImageData, and drawImage on the created ImageBitmap Can't find variable: createImageBitmap
-FAIL createImageBitmap from a HTMLVideoElement, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+PASS createImageBitmap from a HTMLImageElement, and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
+PASS createImageBitmap from a HTMLCanvasElement, and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageBitmap is not implemented"
+FAIL createImageBitmap from an ImageData, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+FAIL createImageBitmap from a HTMLVideoElement, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
 

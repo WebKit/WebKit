@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,68) size 784x55 [color=#FF0000]
         RenderInline {SPAN} at (0,0) size 429x17 [color=#008000]
           RenderInline (generated) at (0,0) size 35x53
-            RenderText {#text} at (0,1) size 35x53
+            RenderText at (0,1) size 35x53
               text run at (0,1) width 35: "A"
           RenderText {#text} at (35,30) size 394x17
             text run at (35,30) width 394: "ll of this text should be green, including the big \"A\" first-letter."
