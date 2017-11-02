@@ -3328,6 +3328,9 @@ webkit.org/b/178456 media/audio-playback-volume-changes-with-restrictions.html [
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
+webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ Failure ]
+webkit.org/b/179113 fast/text/ellipsis-text-rtl.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

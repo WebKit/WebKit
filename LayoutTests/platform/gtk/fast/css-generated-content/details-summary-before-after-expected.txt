@@ -24,7 +24,6 @@ layer at (0,0) size 800x112
               RenderText at (0,0) size 28x17
                 text run at (0,0) width 28: "after"
         RenderBlock (anonymous) at (1,77) size 782x18
-          RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 48x17
             text run at (0,0) width 48: "Details "
           RenderInline (generated) at (0,0) size 28x17

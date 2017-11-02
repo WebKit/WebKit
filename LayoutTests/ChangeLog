@@ -1,3 +1,18 @@
+2017-11-02  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=179164
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: update for failing tests reported in bug 179113.
+        * platform/gtk/editing/deleting/delete-br-009-expected.txt: Rebaseline for r224177.
+        * platform/gtk/fast/css-generated-content/details-summary-before-after-expected.txt: Rebaseline for r223848.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/1.1/module-scriptnonce-redirect-expected.txt:
+          Removed; platform-specific expectations were added unnecessarily due to failures around bug 178340.
+        * platform/gtk/http/tests/security/module-no-mime-type-expected.txt:
+          Removed; platform-specific expectations were added unnecessarily due to failures around bug 178340.
+
 2017-11-02  Antti Koivisto  <antti@apple.com>
 
         First letter renderer should be anonymous
