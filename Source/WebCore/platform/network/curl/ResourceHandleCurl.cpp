@@ -245,7 +245,10 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     ASSERT(isMainThread());
 
     SynchronousLoaderClient client;
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, false, false));
+    bool defersLoading = false;
+    bool shouldContentSniff = true;
+    bool shouldContentEncodingSniff = true;
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
 
     handle->d->m_delegate = adoptRef(new ResourceHandleCurlDelegate(handle.get()));
     handle->d->m_delegate->dispatchSynchronousJob();
