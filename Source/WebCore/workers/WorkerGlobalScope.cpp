@@ -52,13 +52,14 @@
 namespace WebCore {
 using namespace Inspector;
 
-WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
+WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, bool isOnline, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
     : m_url(url)
     , m_identifier(identifier)
     , m_userAgent(userAgent)
     , m_thread(thread)
     , m_script(std::make_unique<WorkerScriptController>(this))
     , m_inspectorController(std::make_unique<WorkerInspectorController>(*this))
+    , m_isOnline(isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
     , m_eventQueue(*this)
     , m_topOrigin(WTFMove(topOrigin))
@@ -195,8 +196,15 @@ void WorkerGlobalScope::close()
 WorkerNavigator& WorkerGlobalScope::navigator()
 {
     if (!m_navigator)
-        m_navigator = WorkerNavigator::create(*this, m_userAgent);
+        m_navigator = WorkerNavigator::create(*this, m_userAgent, m_isOnline);
     return *m_navigator;
+}
+
+void WorkerGlobalScope::setIsOnline(bool isOnline)
+{
+    m_isOnline = isOnline;
+    if (m_navigator)
+        m_navigator->setIsOnline(isOnline);
 }
 
 void WorkerGlobalScope::postTask(Task&& task)

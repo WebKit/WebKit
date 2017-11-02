@@ -31,6 +31,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
+#include "NetworkStateNotifier.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "ScriptController.h"
@@ -86,6 +87,11 @@ String Navigator::userAgent() const
         return String();
 
     return m_frame->loader().userAgent(m_frame->document()->url());
+}
+
+bool Navigator::onLine() const
+{
+    return NetworkStateNotifier::singleton().onLine();
 }
 
 DOMPluginArray& Navigator::plugins()

@@ -34,6 +34,7 @@ static const Seconds updateStateSoonInterval { 2_s };
 
 NetworkStateNotifier& NetworkStateNotifier::singleton()
 {
+    RELEASE_ASSERT(isMainThread());
     static NeverDestroyed<NetworkStateNotifier> networkStateNotifier;
     return networkStateNotifier;
 }

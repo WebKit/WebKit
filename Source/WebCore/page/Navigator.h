@@ -40,7 +40,8 @@ public:
     bool cookieEnabled() const;
     bool javaEnabled() const;
     String userAgent() const final;
-
+    bool onLine() const final;
+    
 #if PLATFORM(IOS)
     bool standalone() const;
 #endif

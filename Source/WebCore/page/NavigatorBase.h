@@ -50,7 +50,7 @@ public:
     static String vendor();
     static String vendorSub();
 
-    static bool onLine();
+    virtual bool onLine() const = 0;
 
     static String language();
     static Vector<String> languages();

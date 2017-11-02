@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, const URL& url, const String& identifier, const String& userAgent, ServiceWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
-    : WorkerGlobalScope(url, identifier, userAgent, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
+ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, const URL& url, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
+    : WorkerGlobalScope(url, identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_contextData(crossThreadCopy(data))
     , m_clients(ServiceWorkerClients::create(*this))

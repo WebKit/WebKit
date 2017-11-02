@@ -27,7 +27,6 @@
 #include "config.h"
 #include "NavigatorBase.h"
 
-#include "NetworkStateNotifier.h"
 #include "ServiceWorkerContainer.h"
 #include <mutex>
 #include <wtf/Language.h>
@@ -136,11 +135,6 @@ String NavigatorBase::vendor()
 String NavigatorBase::vendorSub()
 {
     return WEBCORE_NAVIGATOR_VENDOR_SUB;
-}
-
-bool NavigatorBase::onLine()
-{
-    return NetworkStateNotifier::singleton().onLine();
 }
 
 String NavigatorBase::language()
