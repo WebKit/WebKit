@@ -95,11 +95,12 @@
 
         Reviewed by Alex Christensen.
 
-        Fixes an issue where the body of an HTTP response associated with an XHR request to a .gz file
-        would be automatically gzipped decompressed if the HTTP response omitted a Content-Encoding HTTP
-        header. Specifically, such a response would be treated analogous to a response with headers
-        "Content-Type: application/gzip" and "Content-Encoding: identity". This behavior does not conform
-        the HTTP 1.1 spec. and breaks Epic Zen Garden, <https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html>.
+        Fixes an issue where the body of an HTTP response with headers "Content-Type: application/octet-stream" and
+        "Content-Encoding: gzip" associated with an XHR request to a .gz file would not be automatically gzipped
+        decompressed. Specifically, such a response would be treated analogous to a response with headers
+        "Content-Type: application/gzip" and "Content-Encoding: identity". This behavior does not conform to the
+        behavior of the Content-Encoding header as defined in the HTTP 1.1 and later specs. Moreover this behavior
+        breaks the Epic Zen Garden demo: <https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html>.
 
         On macOS 10.13.2 opt out of content encoding sniffing when making an XHR request. We likely can
         selectively opt out of content encoding sniffing for other network requests. This will be done
