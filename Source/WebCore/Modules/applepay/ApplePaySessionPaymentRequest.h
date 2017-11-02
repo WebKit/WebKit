@@ -223,10 +223,13 @@ template<> struct EnumTraits<WebCore::PaymentError::ContactField> {
         WebCore::PaymentError::ContactField::PhoneNumber,
         WebCore::PaymentError::ContactField::EmailAddress,
         WebCore::PaymentError::ContactField::Name,
+        WebCore::PaymentError::ContactField::PhoneticName,
         WebCore::PaymentError::ContactField::PostalAddress,
         WebCore::PaymentError::ContactField::AddressLines,
+        WebCore::PaymentError::ContactField::SubLocality,
         WebCore::PaymentError::ContactField::Locality,
         WebCore::PaymentError::ContactField::PostalCode,
+        WebCore::PaymentError::ContactField::SubAdministrativeArea,
         WebCore::PaymentError::ContactField::AdministrativeArea,
         WebCore::PaymentError::ContactField::Country,
         WebCore::PaymentError::ContactField::CountryCode
