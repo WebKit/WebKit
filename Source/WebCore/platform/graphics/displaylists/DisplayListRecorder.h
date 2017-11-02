@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DisplayListRecorder_h
-#define DisplayListRecorder_h
+#pragma once
 
 #include "DisplayList.h"
 #include "GraphicsContext.h" // For InterpolationQuality.
@@ -97,8 +96,8 @@ public:
     void drawEllipse(const FloatRect&);
     void drawPath(const Path&);
 
-    void drawFocusRing(const Path&, int width, int offset, const Color&);
-    void drawFocusRing(const Vector<FloatRect>&, int width, int offset, const Color&);
+    void drawFocusRing(const Path&, float width, float offset, const Color&);
+    void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&);
 
     void save();
     void restore();
@@ -171,4 +170,3 @@ private:
 }
 }
 
-#endif // DisplayListRecorder_h

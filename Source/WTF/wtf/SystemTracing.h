@@ -71,6 +71,8 @@ enum TracePointCode {
     MemoryPressureHandlerEnd,
     UpdateTouchRegionsStart,
     UpdateTouchRegionsEnd,
+    DisplayListRecordStart,
+    DisplayListRecordEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DisplayList_h
-#define DisplayList_h
+#pragma once
 
 #include "DisplayListItems.h"
 #include <wtf/FastMalloc.h>
@@ -111,4 +110,3 @@ WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList::DisplayList&);
 
 using WebCore::DisplayList::DisplayList;
 
-#endif /* DisplayList_h */

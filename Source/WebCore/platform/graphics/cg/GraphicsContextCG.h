@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsContextCG_h
-#define GraphicsContextCG_h
+#pragma once
 
 #include "GraphicsContext.h"
 
@@ -101,4 +100,3 @@ private:
 
 }
 
-#endif

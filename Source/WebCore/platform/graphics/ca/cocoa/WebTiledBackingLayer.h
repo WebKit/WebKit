@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebTiledBackingLayer_h
-#define WebTiledBackingLayer_h
+#pragma once
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -51,4 +50,3 @@ class TiledBacking;
 
 @end
 
-#endif // WebTiledBackingLayer_h

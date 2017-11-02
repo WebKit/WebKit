@@ -1544,9 +1544,8 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         client().didCommitChangesForLayer(this);
 
     if (usesDisplayListDrawing() && m_drawsContent && (!m_hasEverPainted || hadDirtyRects)) {
-#ifdef LOG_RECORDING_TIME
-        double startTime = currentTime();
-#endif
+        TraceScope tracingScope(DisplayListRecordStart, DisplayListRecordEnd);
+
         m_displayList = std::make_unique<DisplayList::DisplayList>();
         
         FloatRect initialClip(boundsOrigin(), size());
@@ -1555,11 +1554,6 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         // The Recorder is large, so heap-allocate.
         std::unique_ptr<DisplayList::Recorder> recorder = std::make_unique<DisplayList::Recorder>(context, *m_displayList, initialClip, AffineTransform());
         paintGraphicsLayerContents(context, FloatRect(FloatPoint(), size()));
-
-#ifdef LOG_RECORDING_TIME
-        double duration = currentTime() - startTime;
-        WTFLogAlways("Recording took %.5fms", duration * 1000.0);
-#endif
     }
 }
 

@@ -184,6 +184,18 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Record display list</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5023</string>
+                 <key>CodeEnd</key>
+                 <string>5024</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>

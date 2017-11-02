@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DisplayListReplayer_h
-#define DisplayListReplayer_h
+#pragma once
 
 #include "DisplayList.h"
 #include <wtf/Noncopyable.h>
@@ -53,4 +52,3 @@ private:
 }
 }
 
-#endif // DisplayListReplayer_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSystemBackdropLayer_h
-#define WebSystemBackdropLayer_h
+#pragma once
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -37,4 +36,3 @@
 @interface WebDarkSystemBackdropLayer : WebSystemBackdropLayer
 @end
 
-#endif // WebSystemBackdropLayer_h

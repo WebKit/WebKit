@@ -1045,11 +1045,21 @@ FloatSize GraphicsContext::scaleFactorForDrawing(const FloatRect& destRect, cons
 
 void GraphicsContext::fillEllipse(const FloatRect& ellipse)
 {
+    if (isRecording()) {
+        m_displayListRecorder->fillEllipse(ellipse);
+        return;
+    }
+
     platformFillEllipse(ellipse);
 }
 
 void GraphicsContext::strokeEllipse(const FloatRect& ellipse)
 {
+    if (isRecording()) {
+        m_displayListRecorder->strokeEllipse(ellipse);
+        return;
+    }
+
     platformStrokeEllipse(ellipse);
 }
 

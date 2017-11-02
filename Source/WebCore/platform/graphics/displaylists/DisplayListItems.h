@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DisplayListItems_h
-#define DisplayListItems_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -904,18 +903,18 @@ private:
 
 class DrawFocusRingPath : public DrawingItem {
 public:
-    static Ref<DrawFocusRingPath> create(const Path& path, int width, int offset, const Color& color)
+    static Ref<DrawFocusRingPath> create(const Path& path, float width, float offset, const Color& color)
     {
         return adoptRef(*new DrawFocusRingPath(path, width, offset, color));
     }
 
     const Path& path() const { return m_path; }
-    int width() const { return m_width; }
-    int offset() const { return m_offset; }
+    float width() const { return m_width; }
+    float offset() const { return m_offset; }
     const Color& color() const { return m_color; }
 
 private:
-    DrawFocusRingPath(const Path& path, int width, int offset, const Color& color)
+    DrawFocusRingPath(const Path& path, float width, float offset, const Color& color)
         : DrawingItem(ItemType::DrawFocusRingPath)
         , m_path(path)
         , m_width(width)
@@ -929,25 +928,25 @@ private:
     std::optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     const Path m_path;
-    int m_width;
-    int m_offset;
+    float m_width;
+    float m_offset;
     Color m_color;
 };
 
 class DrawFocusRingRects : public DrawingItem {
 public:
-    static Ref<DrawFocusRingRects> create(const Vector<FloatRect>& rects, int width, int offset, const Color& color)
+    static Ref<DrawFocusRingRects> create(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
     {
         return adoptRef(*new DrawFocusRingRects(rects, width, offset, color));
     }
 
     const Vector<FloatRect> rects() const { return m_rects; }
-    int width() const { return m_width; }
-    int offset() const { return m_offset; }
+    float width() const { return m_width; }
+    float offset() const { return m_offset; }
     const Color& color() const { return m_color; }
 
 private:
-    DrawFocusRingRects(const Vector<FloatRect>& rects, int width, int offset, const Color& color)
+    DrawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
         : DrawingItem(ItemType::DrawFocusRingRects)
         , m_rects(rects)
         , m_width(width)
@@ -961,8 +960,8 @@ private:
     std::optional<FloatRect> localBounds(const GraphicsContext&) const override;
 
     Vector<FloatRect> m_rects;
-    int m_width;
-    int m_offset;
+    float m_width;
+    float m_offset;
     Color m_color;
 };
 
@@ -1387,4 +1386,3 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ApplyFillPattern)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ApplyDeviceScaleFactor)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ClearShadow)
 
-#endif // DisplayListItems_h
