@@ -1,8 +1,11 @@
-MODULES = bmalloc WTF JavaScriptCore ThirdParty/ANGLE ThirdParty/libwebrtc WebCore WebInspectorUI WebKitLegacy WebKit
+MODULES = bmalloc WTF JavaScriptCore ThirdParty/ANGLE WebCore WebKitLegacy WebKit
 
 ifneq (,$(SDKROOT))
-	ifeq (,$(findstring macosx,$(SDKROOT)))
-		MODULES = bmalloc WTF JavaScriptCore ThirdParty/ANGLE ThirdParty/libwebrtc WebCore WebKitLegacy WebKit
+	ifneq (,$(findstring macosx,$(SDKROOT)))
+		MODULES += WebInspectorUI ThirdParty/libwebrtc
+	endif
+	ifneq (,$(findstring iphone,$(SDKROOT)))
+		MODULES += ThirdParty/libwebrtc
 	endif
 endif
 

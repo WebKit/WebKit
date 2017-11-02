@@ -1,3 +1,14 @@
+2017-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        Reduce duplication in the toplevel Makefile
+        https://bugs.webkit.org/show_bug.cgi?id=179204
+
+        Reviewed by Simon Fraser.
+
+        * Source/Makefile:
+        Make MODULES additive instead of completely repeated, and only build
+        libwebrtc where it's needed.
+
 2017-11-02  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed, fix typos in library names for the GTK+ port.
