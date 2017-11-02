@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Attachment_h
-#define Attachment_h
+# pragma once
 
 #if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
 #include <mach/mach_init.h>
@@ -58,6 +58,10 @@ public:
     ~Attachment();
 #elif OS(DARWIN)
     Attachment(mach_port_name_t, mach_msg_type_name_t disposition);
+#elif OS(WINDOWS)
+    Attachment(HANDLE handle)
+        : m_handle(handle)
+    { }
 #endif
 
     Type type() const { return m_type; }
@@ -73,6 +77,8 @@ public:
     // MachPortType
     mach_port_name_t port() const { return m_port; }
     mach_msg_type_name_t disposition() const { return m_disposition; }
+#elif OS(WINDOWS)
+    HANDLE handle() { return m_handle; }
 #endif
 
     void encode(Encoder&) const;
@@ -87,9 +93,9 @@ private:
 #elif OS(DARWIN)
     mach_port_name_t m_port;
     mach_msg_type_name_t m_disposition;
+#elif OS(WINDOWS)
+    HANDLE m_handle;
 #endif
 };
 
 } // namespace IPC
-
-#endif // Attachment_h

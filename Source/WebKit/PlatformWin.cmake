@@ -25,6 +25,9 @@ list(APPEND WebKit_SOURCES
 
     Shared/curl/WebCoreArgumentCodersCurl.cpp
 
+    Platform/IPC/win/AttachmentWin.cpp
+    Platform/IPC/win/ConnectionWin.cpp
+
     StorageProcess/win/StorageProcessMainWin.cpp
 
     WebProcess/Cookies/curl/WebCookieManagerCurl.cpp

@@ -50,6 +50,7 @@ void Attachment::release()
 }
 #endif
 
+#if !OS(WINDOWS)
 void Attachment::encode(Encoder& encoder) const
 {
     encoder.addAttachment(WTFMove(*const_cast<Attachment*>(this)));
@@ -61,5 +62,6 @@ bool Attachment::decode(Decoder& decoder, Attachment& attachment)
         return false;
     return true;
 }
+#endif
 
 } // namespace IPC
