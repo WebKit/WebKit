@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+async function startServiceWorker() {
+    await navigator.serviceWorker.register("resources/fetch-service-worker.js");
+    TestPage.dispatchEventToFrontend("SetupComplete");
+}
+
+async function triggerServiceWorkerLoad(url) {
+    try { await fetch(url); } catch { }
+    TestPage.dispatchEventToFrontend("LoadComplete");
+}
+
+function test()
+{
+    InspectorTest.debug();
+    let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.ServiceWorker");
+
+    function addTestCase({name, description, setup, expression, statusCode, responseSource}) {
+        suite.addTestCase({
+            name, description, setup,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
+                    let resource = resourceWasAddedEvent.data.resource;
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+                    InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
+                    if (responseSource)
+                        InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                    InspectorTest.log("RESPONSE: " + resource.statusCode + " " + resource.statusText);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.ResponseSource.ServiceWorker.200",
+        setup(resolve) { InspectorTest.evaluateInPage(`startServiceWorker()`); InspectorTest.awaitEvent("SetupComplete").then(resolve); },
+        expression: `triggerServiceWorkerLoad("test-200")`,
+        responseSource: WI.Resource.ResponseSource.ServiceWorker,
+    });
+
+    addTestCase({
+        name: "Resource.ResponseSource.ServiceWorker.500",
+        expression: `triggerServiceWorkerLoad("test-500")`,
+        responseSource: WI.Resource.ResponseSource.ServiceWorker,
+    });
+
+    suite.addTestCase({
+        name: "Resource.ResponseSource.ServiceWorker.Error",
+        description: "ServiceWorker may respond with an error.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerServiceWorkerLoad("test-error")`);
+            Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                InspectorTest.awaitEvent("LoadComplete"),
+            ]).then(([resourceWasAddedEvent, loadCompleteEvent]) => {
+                let resource = resourceWasAddedEvent.data.resource;
+                InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+                InspectorTest.expectThat(resource.failed, "Resource should have failed.");
+            }).then(resolve, reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for `Resource.ResponseSource.ServiceWorker`.</p>
+</body>
+</html>

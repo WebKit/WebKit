@@ -230,6 +230,8 @@ WI.Resource = class Resource extends WI.SourceCode
             return WI.Resource.ResponseSource.MemoryCache;
         case NetworkAgent.ResponseSource.DiskCache:
             return WI.Resource.ResponseSource.DiskCache;
+        case NetworkAgent.ResponseSource.ServiceWorker:
+            return WI.Resource.ResponseSource.ServiceWorker;
         default:
             console.error("Unknown response source type", source);
             return WI.Resource.ResponseSource.Unknown;
@@ -662,7 +664,9 @@ WI.Resource = class Resource extends WI.SourceCode
 
         var oldURL = this._url;
 
-        this._url = url;
+        if (url)
+            this._url = url;
+
         this._requestHeaders = requestHeaders || {};
         this._requestCookies = null;
         this._lastRedirectReceivedTimestamp = elapsedTime || NaN;
@@ -680,7 +684,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     hasResponse()
     {
-        return !isNaN(this._statusCode) || this._finished;
+        return !isNaN(this._statusCode) || this._finished || this._failed;
     }
 
     hasRequestFormParameters()
@@ -702,7 +706,9 @@ WI.Resource = class Resource extends WI.SourceCode
         if (type in WI.Resource.Type)
             type = WI.Resource.Type[type];
 
-        this._url = url;
+        if (url)
+            this._url = url;
+
         this._mimeType = mimeType;
         this._type = type || WI.Resource.typeFromMIMEType(mimeType);
         this._statusCode = statusCode;
@@ -1099,6 +1105,7 @@ WI.Resource.ResponseSource = {
     Network: Symbol("network"),
     MemoryCache: Symbol("memory-cache"),
     DiskCache: Symbol("disk-cache"),
+    ServiceWorker: Symbol("service-worker"),
 };
 
 WI.Resource.NetworkPriority = {

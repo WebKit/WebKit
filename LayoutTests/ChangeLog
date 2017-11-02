@@ -1,3 +1,24 @@
+2017-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Inspector should display service worker served responses properly
+        https://bugs.webkit.org/show_bug.cgi?id=178597
+        <rdar://problem/35186111>
+
+        Reviewed by Brian Burg.
+
+        * LayoutTests/platform/gtk/TestExpectations:
+        * LayoutTests/platform/mac-wk1/TestExpectations:
+        * LayoutTests/platform/win/TestExpectations:
+        * LayoutTests/platform/wpe/TestExpectations:
+        Skip Inspector service worker tests on platforms where Service Workers
+        are not yet supported. For now this is just one test, future tests
+        specific to Service Workers will go into a directory.
+
+        * http/tests/inspector/network/resource-response-service-worker-expected.txt: Added.
+        * http/tests/inspector/network/resource-response-service-worker.html: Added.
+        * http/tests/inspector/network/resources/fetch-service-worker.js: Added.
+        Test for service worker initiated loads.
+
 2017-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/preload/viewport/meta-viewport-link-headers.php as flaky on iOS.

@@ -1,0 +1,21 @@
+Test for `Resource.ResponseSource.ServiceWorker`.
+
+
+== Running test suite: Resource.ResponseSource.ServiceWorker
+-- Running test setup.
+-- Running test case: Resource.ResponseSource.ServiceWorker.200
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: responseSource should be Symbol(service-worker)
+RESPONSE: 200 Custom Status Text: OK
+
+-- Running test case: Resource.ResponseSource.ServiceWorker.500
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: responseSource should be Symbol(service-worker)
+RESPONSE: 500 Custom Status Text: Error
+
+-- Running test case: Resource.ResponseSource.ServiceWorker.Error
+PASS: Resource should be created.
+PASS: Resource should have failed.
+

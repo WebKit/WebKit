@@ -251,6 +251,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             return WI.UIString("Memory Cache");
         case WI.Resource.ResponseSource.DiskCache:
             return WI.UIString("Disk Cache");
+        case WI.Resource.ResponseSource.ServiceWorker:
+            return WI.UIString("Service Worker");
         case WI.Resource.ResponseSource.Unknown:
         default:
             return null;
@@ -270,6 +272,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         if (!isNaN(this._resource.statusCode))
             status = this._resource.statusCode + (this._resource.statusText ? " " + this._resource.statusText : "");
         this._appendKeyValuePair(detailsElement, WI.UIString("Status"), status);
+
+        // FIXME: <https://webkit.org/b/178827> Web Inspector: Should be able to link directly to the ServiceWorker that handled a particular load
 
         let source = this._responseSourceDisplayString(this._resource.responseSource) || emDash;
         this._appendKeyValuePair(detailsElement, WI.UIString("Source"), source);

@@ -1,3 +1,50 @@
+2017-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Inspector should display service worker served responses properly
+        https://bugs.webkit.org/show_bug.cgi?id=178597
+        <rdar://problem/35186111>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New Service Worker related strings.
+
+        * UserInterface/Controllers/HARBuilder.js:
+        (WI.HARBuilder.entry):
+        (WI.HARBuilder.timings):
+        Only output timing data when we have real resource timing data.
+
+        (WI.HARBuilder.fetchType):
+        Output a new string for a Service Worker load in our custom field.
+
+        * UserInterface/Models/ResourceTimingData.js:
+        (WI.ResourceTimingData.prototype.get responseStart):
+        Fallback further to the responseEnd. This can happen if the response
+        itself is an error/failure and there was no response, so treat it as
+        the same as response end.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.responseSourceFromPayload):
+        (WI.Resource.prototype.updateForRedirectResponse):
+        (WI.Resource.prototype.updateForResponse):
+        A fetch response won't change the URL, so if the URL is empty
+        don't change it from what the request's URL was.
+
+        (WI.Resource.prototype.hasResponse):
+        Failure is like finished. We should likely transition to an "isComplete" method.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateTransferSizeCell):
+        (WI.NetworkTableContentView.prototype._generateSortComparator):
+        Output "(service worker)" in the transfer size field, to indicate this came
+        from a Service worker. Sort such loads together.
+
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._responseSourceDisplayString):
+        (WI.ResourceHeadersContentView.prototype._refreshSummarySection):
+        Include the Service Worker response source in this details view. Also include
+        a FIXME, since we would like to link directly to the service worker in the future.
+
 2017-11-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: turn on CSS spreadsheet editor by default

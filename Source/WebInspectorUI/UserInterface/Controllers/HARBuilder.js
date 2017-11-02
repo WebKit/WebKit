@@ -299,6 +299,8 @@ WI.HARBuilder = class HARBuilder
             return "Memory Cache";
         case WI.Resource.ResponseSource.DiskCache:
             return "Disk Cache";
+        case WI.Resource.ResponseSource.ServiceWorker:
+            return "Service Worker";
         }
 
         console.assert(false);

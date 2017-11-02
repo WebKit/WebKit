@@ -426,6 +426,7 @@ webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/impo
 fast/images/low-memory-decode.html [ Skip ]
 
 http/tests/workers/service [ Skip ]
+http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
 
 # Link preconnect is disabled on WebKit1 because it does not use NETWORK_SESSION.
 http/tests/preconnect [ Skip ]
