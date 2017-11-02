@@ -171,7 +171,7 @@
 
   <cmake id="wpe">
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend.git"
-            tag="5e2a29d2ccc637f7122ba72c1d62ef669b42f05c" />
+            tag="3013faaebab42e7ef7497b3850a2902978eb3d6f" />
   </cmake>
 
   <cmake id="wpe-mesa">
@@ -182,7 +182,7 @@
       <dep package="xkbcommon" />
     </dependencies>
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend-mesa.git"
-            tag="0286aed84a09120de16c3ab08bdf83c91d4a1754" />
+            tag="ce2a0ad98d1746d5b0fa743121a6ebb148ab92c1" />
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">

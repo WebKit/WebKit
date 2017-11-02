@@ -1,3 +1,14 @@
+2017-11-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][JHBuild] Update WPEBackend and WPEBackend-mesa
+        https://bugs.webkit.org/show_bug.cgi?id=179169
+
+        Reviewed by Michael Catanzaro.
+
+        Update WPEBackend and WPEBackend-mesa to last master as of today.
+
+        * wpe/jhbuild.modules:
+
 2017-11-02  Frederic Wang  <fwang@igalia.com>
 
         Add references to bug 179167 in FIXME comments
