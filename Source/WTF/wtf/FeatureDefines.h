@@ -139,7 +139,7 @@
 #endif
 
 /* FIXME: Remove the USE(APPLE_INTERNAL_SDK) conjunct once we support touch events when building against
-the public iOS SDK. We will also need to update the FeatureDefines.xcconfig files. */
+the public iOS SDK. See <https://webkit.org/b/179167>. */
 #if !defined(ENABLE_TOUCH_EVENTS) && USE(APPLE_INTERNAL_SDK)
 #define ENABLE_TOUCH_EVENTS 1
 #endif

@@ -189,7 +189,7 @@ ENABLE_CSS_TRAILING_WORD = ENABLE_CSS_TRAILING_WORD;
 ENABLE_USER_MESSAGE_HANDLERS = ENABLE_USER_MESSAGE_HANDLERS;
 
 // FIXME: Remove the USE_INTERNAL_SDK condition once we support touch events when building for iOS with
-// the public SDK. We will also need to update FeatureDefines.h.
+// the public SDK. See <https://webkit.org/b/179167>.
 ENABLE_TOUCH_EVENTS[sdk=iphone*] = $(ENABLE_TOUCH_EVENTS_ios_WITH_INTERNAL_SDK_$(USE_INTERNAL_SDK));
 ENABLE_TOUCH_EVENTS_ios_WITH_INTERNAL_SDK_YES = ENABLE_TOUCH_EVENTS;
 
