@@ -1434,6 +1434,13 @@ void RenderObject::willBeDestroyed()
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->remove(this);
 
+    if (auto* node = this->node()) {
+        // FIXME: Continuations should be anonymous.
+        ASSERT(!node->renderer() || node->renderer() == this || (is<RenderElement>(*this) && downcast<RenderElement>(*this).isContinuation()));
+        if (node->renderer() == this)
+            node->setRenderer(nullptr);
+    }
+
     removeRareData();
 }
 
@@ -1518,6 +1525,7 @@ void RenderObject::destroy()
 #endif
 
     willBeDestroyed();
+
     if (is<RenderWidget>(*this)) {
         downcast<RenderWidget>(*this).deref();
         return;
