@@ -1,3 +1,12 @@
+2017-11-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html as flaky on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=177322
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-11-02  Ms2ger  <Ms2ger@igalia.com>
 
         Mark some ietestcenter tests as failing on all platforms.
