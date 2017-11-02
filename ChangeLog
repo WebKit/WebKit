@@ -1,3 +1,9 @@
+2017-11-02  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed, fix typos in library names for the GTK+ port.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2017-10-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.1 release.
