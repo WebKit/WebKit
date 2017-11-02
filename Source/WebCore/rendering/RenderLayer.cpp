@@ -2526,7 +2526,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
 
             if (frameElementAndViewPermitScroll(frameElementBase, frameView)) {
                 // If this assertion fires we need to protect the ownerElement from being destroyed.
-                NoEventDispatchAssertion assertNoEventDispatch;
+                NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
 
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
                 LayoutRect exposeRect = getRectToExpose(viewRect, absoluteRect, insideFixed, alignX, alignY);

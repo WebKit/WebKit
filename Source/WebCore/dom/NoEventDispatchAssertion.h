@@ -63,11 +63,41 @@ public:
 #endif
     }
 
-    static bool isEventDispatchAllowedInSubtree(Node& node)
-    {
-        return isEventAllowedInMainThread() || EventAllowedScope::isAllowedNode(node);
-    }
+    class InMainThread {
+    public:
+        InMainThread()
+        {
+            ASSERT(isMainThread());
+#if !ASSERT_DISABLED
+            ++s_count;
+#endif
+        }
 
+        ~InMainThread()
+        {
+            ASSERT(isMainThread());
+#if !ASSERT_DISABLED
+            ASSERT(s_count);
+            --s_count;
+#endif
+        }
+
+        static bool isEventDispatchAllowedInSubtree(Node& node)
+        {
+            return isEventAllowed() || EventAllowedScope::isAllowedNode(node);
+        }
+
+        static bool isEventAllowed()
+        {
+            ASSERT(isMainThread());
+#if !ASSERT_DISABLED
+            return !s_count;
+#else
+            return true;
+#endif
+        }
+    };
+    
 #if !ASSERT_DISABLED
     class EventAllowedScope {
     public:

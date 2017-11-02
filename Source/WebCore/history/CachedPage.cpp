@@ -108,7 +108,7 @@ void CachedPage::restore(Page& page)
     {
         // Do not dispatch DOM events as their JavaScript listeners could cause the page to be put
         // into the page cache before we have finished restoring it from the page cache.
-        NoEventDispatchAssertion noEventDispatchAssertion;
+        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
 
         m_cachedMainFrame->open();
     }

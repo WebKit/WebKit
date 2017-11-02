@@ -25,7 +25,6 @@
 
 #include "AttributeChangeInvalidation.h"
 #include "Event.h"
-#include "NoEventDispatchAssertion.h"
 #include "ScopedEventQueue.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"

@@ -1793,7 +1793,7 @@ void Document::resolveStyle(ResolveStyleType type)
     // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
     {
-        NoEventDispatchAssertion noEventDispatchAssertion;
+        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
         styleScope().flushPendingUpdate();
         frameView.willRecalcStyle();
     }
@@ -1804,7 +1804,7 @@ void Document::resolveStyle(ResolveStyleType type)
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-        NoEventDispatchAssertion noEventDispatchAssertion;
+        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
 
         m_inStyleRecalc = true;
 
@@ -1924,7 +1924,7 @@ bool Document::needsStyleRecalc() const
 bool Document::updateStyleIfNeeded()
 {
     {
-        NoEventDispatchAssertion noEventDispatchAssertion;
+        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
         ASSERT(isMainThread());
         ASSERT(!view() || !view()->isPainting());
 
@@ -4085,7 +4085,7 @@ void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
+    ASSERT(!NoEventDispatchAssertion::InMainThread::isEventAllowed());
 
     removeFocusedNodeOfSubtree(container, true /* amongChildrenOnly */);
     removeFocusNavigationNodeOfSubtree(container, true /* amongChildrenOnly */);
@@ -4118,7 +4118,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 
 void Document::nodeWillBeRemoved(Node& node)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
+    ASSERT(!NoEventDispatchAssertion::InMainThread::isEventAllowed());
 
     removeFocusedNodeOfSubtree(node);
     removeFocusNavigationNodeOfSubtree(node);
@@ -4262,7 +4262,7 @@ EventListener* Document::getWindowAttributeEventListener(const AtomicString& eve
 
 void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 {
-    RELEASE_ASSERT(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchEvent(event, target);
@@ -4270,7 +4270,7 @@ void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 
 void Document::dispatchWindowLoadEvent()
 {
-    RELEASE_ASSERT(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchLoadEvent();
@@ -5100,7 +5100,7 @@ void Document::applyPendingXSLTransformsTimerFired()
         return;
 
     m_hasPendingXSLTransforms = false;
-    ASSERT(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
     for (auto& processingInstruction : styleScope().collectXSLTransforms()) {
         ASSERT(processingInstruction->isXSL());
 

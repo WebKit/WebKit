@@ -130,7 +130,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
 
 bool EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventDispatchAllowedInSubtree(node));
     Ref<Node> protectedNode(node);
     RefPtr<FrameView> view = node.document().view();
     EventPath eventPath(node, event);

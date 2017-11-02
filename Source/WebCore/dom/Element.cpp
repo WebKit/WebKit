@@ -1771,28 +1771,31 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 {
     ASSERT(!newShadowRoot->hasChildNodes());
     ASSERT(!shadowRoot());
-    
-    if (renderer())
-        RenderTreeUpdater::tearDownRenderers(*this);
 
     ShadowRoot& shadowRoot = newShadowRoot;
-    ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
+    {
+        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
+        if (renderer())
+            RenderTreeUpdater::tearDownRenderers(*this);
 
-    shadowRoot.setHost(this);
-    shadowRoot.setParentTreeScope(treeScope());
+        ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
+
+        shadowRoot.setHost(this);
+        shadowRoot.setParentTreeScope(treeScope());
 
 #if !ASSERT_DISABLED
-    ASSERT(notifyChildNodeInserted(*this, shadowRoot).isEmpty());
+        ASSERT(notifyChildNodeInserted(*this, shadowRoot).isEmpty());
 #else
-    notifyChildNodeInserted(*this, shadowRoot);
+        notifyChildNodeInserted(*this, shadowRoot);
 #endif
 
-    invalidateStyleAndRenderersForSubtree();
-
-    InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
+        invalidateStyleAndRenderersForSubtree();
+    }
 
     if (shadowRoot.mode() == ShadowRootMode::UserAgent)
         didAddUserAgentShadowRoot(shadowRoot);
+
+    InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 }
 
 void Element::removeShadowRoot()
@@ -2146,7 +2149,7 @@ void Element::attachAttributeNodeIfNeeded(Attr& attrNode)
     if (attrNode.ownerElement() == this)
         return;
 
-    NoEventDispatchAssertion assertNoEventDispatch;
+    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
 
     attrNode.attachToElement(*this);
     ensureAttrNodeListForElement(*this).append(&attrNode);
@@ -2164,8 +2167,8 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
         return Exception { InUseAttributeError };
 
     {
-    NoEventDispatchAssertion assertNoEventDispatch;
-    synchronizeAllAttributes();
+        NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
+        synchronizeAllAttributes();
     }
 
     auto& elementData = ensureUniqueElementData();
@@ -2210,25 +2213,23 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
     if (attrNode.ownerElement() && attrNode.ownerElement() != this)
         return Exception { InUseAttributeError };
 
-    unsigned index = 0;
-    
     // Attr::value() will return its 'm_standaloneValue' member any time its Element is set to nullptr. We need to cache this value
     // before making changes to attrNode's Element connections.
     auto attrNodeValue = attrNode.value();
-
+    unsigned index = 0;
     {
-    NoEventDispatchAssertion assertNoEventDispatch;
-    synchronizeAllAttributes();
-    auto& elementData = ensureUniqueElementData();
+        NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
+        synchronizeAllAttributes();
+        auto& elementData = ensureUniqueElementData();
 
-    index = elementData.findAttributeIndexByName(attrNode.qualifiedName());
+        index = elementData.findAttributeIndexByName(attrNode.qualifiedName());
 
-    if (index != ElementData::attributeNotFound) {
-        if (oldAttrNode)
-            detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
-        else
-            oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), elementData.attributeAt(index).value());
-    }
+        if (index != ElementData::attributeNotFound) {
+            if (oldAttrNode)
+                detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
+            else
+                oldAttrNode = Attr::create(document(), attrNode.qualifiedName(), elementData.attributeAt(index).value());
+        }
     }
 
     attachAttributeNodeIfNeeded(attrNode);
@@ -2474,14 +2475,14 @@ void Element::blur()
 
 void Element::dispatchFocusInEvent(const AtomicString& eventType, RefPtr<Element>&& oldFocusedElement)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
     ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().DOMFocusInEvent);
     dispatchScopedEvent(FocusEvent::create(eventType, true, false, document().defaultView(), 0, WTFMove(oldFocusedElement)));
 }
 
 void Element::dispatchFocusOutEvent(const AtomicString& eventType, RefPtr<Element>&& newFocusedElement)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
     ASSERT(eventType == eventNames().focusoutEvent || eventType == eventNames().DOMFocusOutEvent);
     dispatchScopedEvent(FocusEvent::create(eventType, true, false, document().defaultView(), 0, WTFMove(newFocusedElement)));
 }

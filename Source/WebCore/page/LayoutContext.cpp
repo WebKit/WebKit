@@ -211,7 +211,7 @@ void LayoutContext::layout()
     }
     {
         SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
-        NoEventDispatchAssertion noEventDispatchAssertion;
+        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 #ifndef NDEBUG

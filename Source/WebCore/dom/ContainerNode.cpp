@@ -89,7 +89,7 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
         }
     } else {
         ASSERT(source == ContainerNode::ChildChangeSource::Parser);
-        NoEventDispatchAssertion assertNoEventDispatch;
+        NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
         if (UNLIKELY(document().hasMutationObserversOfType(MutationObserver::ChildList))) {
             ChildListMutationScope mutation(*this);
             for (auto& child : children)
@@ -100,7 +100,7 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
     disconnectSubframesIfNeeded(*this, DescendantsOnly);
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-    NoEventDispatchAssertion assertNoEventDispatch;
+    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
 
     document().nodeChildrenWillBeRemoved(*this);
 
@@ -120,11 +120,11 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
     Ref<Node> protectedChildToRemove(childToRemove);
     ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
     {
-        NoEventDispatchAssertion assertNoEventDispatch;
+        NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
         ChildListMutationScope(*this).willRemoveChild(childToRemove);
     }
 
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(childToRemove));
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventDispatchAllowedInSubtree(childToRemove));
     if (source == ContainerNode::ChildChangeSource::API) {
         childToRemove.notifyMutationObserversNodeWillDetach();
         dispatchChildRemovalEvents(protectedChildToRemove);
@@ -144,7 +144,7 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         return false;
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-    NoEventDispatchAssertion assertNoEventDispatch;
+    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
 
     document().nodeWillBeRemoved(childToRemove);
 
@@ -174,7 +174,7 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
 {
     NodeVector postInsertionNotificationTargets;
     {
-        NoEventDispatchAssertion assertNoEventDispatch;
+        NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
         doNodeInsertion();
         ChildListMutationScope(containerNode).childAdded(child);
         postInsertionNotificationTargets = notifyChildNodeInserted(containerNode, child);
@@ -192,7 +192,7 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
         });
     }
 
-    ASSERT(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(child));
+    ASSERT(NoEventDispatchAssertion::InMainThread::isEventDispatchAllowedInSubtree(child));
     for (auto& target : postInsertionNotificationTargets)
         target->didFinishInsertingNode();
 
@@ -225,6 +225,7 @@ void ContainerNode::removeDetachedChildren()
             child->updateAncestorConnectedSubframeCountForRemoval();
     }
     // FIXME: We should be able to ASSERT(!attached()) here: https://bugs.webkit.org/show_bug.cgi?id=107801
+    NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
     removeDetachedChildrenInContainer(*this);
 }
 
@@ -399,7 +400,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
 
 void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
+    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
 
     ASSERT(!newChild.parentNode()); // Use insertBefore if you need to handle reparenting (and want DOM mutation events).
     ASSERT(!newChild.nextSibling());
@@ -424,7 +425,7 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
 
 void ContainerNode::appendChildCommon(Node& child)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
+    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
 
     child.setParentNode(this);
 
@@ -563,7 +564,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
 {
     InspectorInstrumentation::didRemoveDOMNode(oldChild.document(), oldChild);
 
-    NoEventDispatchAssertion assertNoEventDispatch;
+    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
 
     ASSERT(oldChild.parentNode() == this);
 
@@ -762,7 +763,7 @@ static void dispatchChildInsertionEvents(Node& child)
     if (child.isInShadowTree())
         return;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(child));
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventDispatchAllowedInSubtree(child));
 
     RefPtr<Node> c = &child;
     Ref<Document> document(child.document());
@@ -779,7 +780,7 @@ static void dispatchChildInsertionEvents(Node& child)
 
 static void dispatchChildRemovalEvents(Ref<Node>& child)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventDispatchAllowedInSubtree(child));
+    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventDispatchAllowedInSubtree(child));
     InspectorInstrumentation::willRemoveDOMNode(child->document(), child.get());
 
     if (child->isInShadowTree())

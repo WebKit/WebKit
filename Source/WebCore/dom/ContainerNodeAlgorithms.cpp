@@ -84,7 +84,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
 
 NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
+    ASSERT(!NoEventDispatchAssertion::InMainThread::isEventAllowed());
 
     InspectorInstrumentation::didInsertDOMNode(node.document(), node);
 
@@ -147,7 +147,8 @@ static void notifyNodeRemovedFromTree(ContainerNode& oldParentOfRemovedTree, Tre
 
 void notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node& child)
 {
-    NoEventDispatchAssertion assertNoEventDispatch;
+    // Assert that the caller of this function has an instance of NoEventDispatchAssertion.
+    ASSERT(!isMainThread() || !NoEventDispatchAssertion::InMainThread::isEventAllowed());
 
     // Tree scope has changed if the container node from which "node" is removed is in a document or a shadow root.
     auto treeScopeChange = oldParentOfRemovedTree.isInTreeScope() ? TreeScopeChange::Changed : TreeScopeChange::DidNotChange;
