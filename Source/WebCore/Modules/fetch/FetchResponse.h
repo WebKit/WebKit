@@ -95,7 +95,7 @@ public:
     void consumeBodyWhenLoaded(ConsumeDataCallback&&);
     void consumeBodyFromReadableStream(ConsumeDataCallback&&);
 
-    const ResourceResponse& resourceResponse() const { return m_response; }
+    WEBCORE_EXPORT ResourceResponse resourceResponse() const;
 
     uint64_t bodySizeWithPadding() const { return m_bodySizeWithPadding; }
     void setBodySizeWithPadding(uint64_t size) { m_bodySizeWithPadding = size; }

@@ -438,4 +438,13 @@ bool FetchResponse::canSuspendForDocumentSuspension() const
     return !isActive();
 }
 
+ResourceResponse FetchResponse::resourceResponse() const
+{
+    auto response = m_response;
+    // FIXME: Add a setHTTPHeaderFields on ResourceResponseBase.
+    for (auto& header : headers().internalHeaders())
+        response.setHTTPHeaderField(header.key, header.value);
+    return response;
+}
+
 } // namespace WebCore

@@ -1,8 +1,9 @@
-CONSOLE MESSAGE: line 12: test1 status code: 200
-CONSOLE MESSAGE: line 13: test1 status text: Hello from service worker
-CONSOLE MESSAGE: line 16: test1 source: Service worker
-CONSOLE MESSAGE: line 19: test2 status code: 500
-CONSOLE MESSAGE: line 20: test2 status text: Error from service worker
-CONSOLE MESSAGE: line 23: test2 source: Service worker
-CONSOLE MESSAGE: line 32: test3 fetch failed as expected
+test1 status code: 200
+test1 status text: Hello from service worker
+test1 header Hello: World
+test1 source: Service worker
+test2 status code: 500
+test2 status text: Error from service worker
+test2 source: Service worker
+test3 fetch failed as expected
 

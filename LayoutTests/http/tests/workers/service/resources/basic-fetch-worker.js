@@ -1,6 +1,6 @@
 self.addEventListener("fetch", (event) => {
     if (event.request.url.indexOf("test1") !== -1) {
-        event.respondWith(new Response(null, { status: 200, statusText: "Hello from service worker" }));
+        event.respondWith(new Response(null, { status: 200, statusText: "Hello from service worker", headers: [["Hello", "World"]] }));
         return;
     }
     if (event.request.url.indexOf("test2") !== -1) {
