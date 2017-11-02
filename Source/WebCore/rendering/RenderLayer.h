@@ -244,9 +244,7 @@ public:
 #if PLATFORM(IOS)
 #if ENABLE(TOUCH_EVENTS)
     bool handleTouchEvent(const PlatformTouchEvent&) override;
-    bool isTouchScrollable() const override { return true; }
 #endif
-    bool isOverflowScroll() const override { return true; }
     
     void didStartScroll() override;
     void didEndScroll() override;

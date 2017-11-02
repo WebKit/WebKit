@@ -89,12 +89,10 @@ public:
     void updateScrollSnapState();
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual bool isTouchScrollable() const { return false; }
     virtual bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
 #if PLATFORM(IOS)
-    virtual bool isOverflowScroll() const { return false; }
     virtual void didStartScroll() { }
     virtual void didEndScroll() { }
     virtual void didUpdateScroll() { }
