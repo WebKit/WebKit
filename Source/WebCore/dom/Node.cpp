@@ -1966,8 +1966,8 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
             shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
             moveShadowTreeToNewDocument(shadowRoot, oldDocument, newDocument);
         });
-        oldDocument.decrementReferencingNodeCount();
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&oldScope.documentScope() == &oldDocument && &newScope.documentScope() == &newDocument);
+        oldDocument.decrementReferencingNodeCount();
     } else {
         traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
             ASSERT(!node.isTreeScope());
