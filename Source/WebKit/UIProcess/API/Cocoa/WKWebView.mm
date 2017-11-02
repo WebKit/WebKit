@@ -261,6 +261,10 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
 
+#if ENABLE(FULLSCREEN_API)
+    RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
+#endif
+
     BOOL _overridesMinimumLayoutSize;
     CGSize _minimumLayoutSizeOverride;
     std::optional<WebCore::FloatSize> _lastSentMinimumLayoutSize;
@@ -6077,6 +6081,42 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 @end
 
+
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+
+@implementation WKWebView (FullScreenAPI)
+
+- (BOOL)hasFullScreenWindowController
+{
+    return !!_fullScreenWindowController;
+}
+
+- (WKFullScreenWindowController *)fullScreenWindowController
+{
+    if (!_fullScreenWindowController)
+        _fullScreenWindowController = adoptNS([[WKFullScreenWindowController alloc] initWithWebView:self]);
+
+    return _fullScreenWindowController.get();
+}
+
+- (void)closeFullScreenWindowController
+{
+    if (!_fullScreenWindowController)
+        return;
+
+    [_fullScreenWindowController close];
+    _fullScreenWindowController = nullptr;
+}
+
+- (WebCoreFullScreenPlaceholderView *)fullScreenPlaceholderView
+{
+    if ([_fullScreenWindowController isFullScreen])
+        return [_fullScreenWindowController webViewPlaceholder];
+    return nil;
+}
+
+@end
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
 
 #if PLATFORM(MAC)
 

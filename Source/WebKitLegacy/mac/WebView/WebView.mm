@@ -10096,7 +10096,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
 
 - (NSView*)fullScreenPlaceholderView
 {
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
     if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen])
         return [_private->newFullscreenController webViewPlaceholder];
 #endif

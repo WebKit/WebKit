@@ -27,15 +27,22 @@
 
 #if WK_API_ENABLED
 
-WK_API_AVAILABLE(macosx(10.13))
+WK_API_AVAILABLE(macosx(10.13), ios(WK_IOS_TBA))
 @protocol _WKFullscreenDelegate <NSObject>
 
 @optional
 
+#if TARGET_OS_IPHONE
+- (void)_webViewWillEnterElementFullscreen:(WKWebView *)webView;
+- (void)_webViewDidEnterElementFullscreen:(WKWebView *)webView;
+- (void)_webViewWillExitElementFullscreen:(WKWebView *)webView;
+- (void)_webViewDidExitElementFullscreen:(WKWebView *)webView;
+#else
 - (void)_webViewWillEnterFullscreen:(NSView *)webView;
 - (void)_webViewDidEnterFullscreen:(NSView *)webView;
 - (void)_webViewWillExitFullscreen:(NSView *)webView;
 - (void)_webViewDidExitFullscreen:(NSView *)webView;
+#endif
 
 @end
 

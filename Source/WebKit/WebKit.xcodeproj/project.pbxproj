@@ -876,6 +876,10 @@
 		3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */; };
 		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
+		3F915C101F564DEE00183CE9 /* WKFullScreenWindowControllerIOS.mm in Headers */ = {isa = PBXBuildFile; fileRef = 3F915C0E1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.mm */; };
+		3FB08E431F60B240005E5312 /* WebKit.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FB08E421F60B240005E5312 /* WebKit.xcassets */; };
+		3FFDDB961F577F480050E593 /* WKFullScreenWindowControllerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F915C0F1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.h */; };
+		3FFDDB971F5780E10050E593 /* WKFullScreenWindowControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F915C0E1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.mm */; };
 		410482CD1DDD324C00F006D0 /* RTCNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */; };
 		410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 410482CC1DDD2FB500F006D0 /* RTCNetwork.h */; };
 		4112B5551FA0EA7A00E67875 /* NetworkRTCResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */; };
@@ -3181,6 +3185,9 @@
 		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
 		3F87B9BF158940D80090FF62 /* WebColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPicker.h; sourceTree = "<group>"; };
+		3F915C0E1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.mm */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFullScreenWindowControllerIOS.mm; path = ios/WKFullScreenWindowControllerIOS.mm; sourceTree = "<group>"; };
+		3F915C0F1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFullScreenWindowControllerIOS.h; path = ios/WKFullScreenWindowControllerIOS.h; sourceTree = "<group>"; };
+		3FB08E421F60B240005E5312 /* WebKit.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = WebKit.xcassets; path = ../../../Opensource/Source/WebKit/WebKit.xcassets; sourceTree = "<group>"; };
 		410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNetwork.cpp; sourceTree = "<group>"; };
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
 		4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCResolver.cpp; path = NetworkProcess/webrtc/NetworkRTCResolver.cpp; sourceTree = "<group>"; };
@@ -4708,6 +4715,7 @@
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
 				E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */,
 				E133FD891423DD7F00FC7BFB /* WebKit.icns */,
+				3FB08E421F60B240005E5312 /* WebKit.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -5631,6 +5639,8 @@
 				0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */,
 				0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */,
 				0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */,
+				3F915C0F1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.h */,
+				3F915C0E1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.mm */,
 				0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */,
 				0FCB4E4018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm */,
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
@@ -9259,6 +9269,8 @@
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
+				3FFDDB961F577F480050E593 /* WKFullScreenWindowControllerIOS.h in Headers */,
+				3F915C101F564DEE00183CE9 /* WKFullScreenWindowControllerIOS.mm in Headers */,
 				BC54CC1212D674EE005C67B0 /* WKGeolocationManager.h in Headers */,
 				BC06F44E12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h in Headers */,
 				BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */,
@@ -9730,6 +9742,7 @@
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				93A2A3461D246125002B59D3 /* mediaIcon.pdf in Resources */,
+				3FB08E431F60B240005E5312 /* WebKit.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10874,6 +10887,7 @@
 				BCB9F6A61123DD0D00A137E0 /* WKFramePolicyListener.cpp in Sources */,
 				E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */,
 				CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */,
+				3FFDDB971F5780E10050E593 /* WKFullScreenWindowControllerIOS.mm in Sources */,
 				BC54CC1312D674EE005C67B0 /* WKGeolocationManager.cpp in Sources */,
 				BC06F44F12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp in Sources */,
 				BC0E619912D6CD120012A72A /* WKGeolocationPosition.cpp in Sources */,

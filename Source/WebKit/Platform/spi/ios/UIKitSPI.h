@@ -30,7 +30,9 @@
 #import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItem_Private.h>
+#import <UIKit/UIBlurEffect_Private.h>
 #import <UIKit/UICalloutBar.h>
+#import <UIKit/UIColorEffect.h>
 #import <UIKit/UIDatePicker_Private.h>
 #import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIDocumentMenuViewController_Private.h>
@@ -62,6 +64,7 @@
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIViewController_ViewService.h>
 #import <UIKit/UIView_Private.h>
+#import <UIKit/UIVisualEffect_Private.h>
 #import <UIKit/UIWKSelectionAssistant.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebBrowserView.h>
@@ -470,6 +473,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 - (void)safeAreaInsetsDidChange;
 #endif
+@property (nonatomic, setter=_setContinuousCornerRadius:) CGFloat _continuousCornerRadius;
 @end
 
 @interface UIWebSelectionView : UIView
@@ -887,6 +891,7 @@ typedef enum {
 WTF_EXTERN_C_BEGIN
 
 NSTimeInterval _UIDragInteractionDefaultLiftDelay();
+CGFloat UIRoundToScreenScale(CGFloat value, UIScreen *);
 
 WTF_EXTERN_C_END
 
@@ -930,6 +935,29 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @end
 
 #endif
+
+@interface _UIVisualEffectLayerConfig : NSObject
++ (instancetype)layerWithFillColor:(UIColor *)fillColor opacity:(CGFloat)opacity filterType:(NSString *)filterType;
+- (void)configureLayerView:(UIView *)view;
+@end
+
+@interface _UIVisualEffectConfig : NSObject
+@property (nonatomic, readonly) _UIVisualEffectLayerConfig *contentConfig;
++ (_UIVisualEffectConfig *)configWithContentConfig:(_UIVisualEffectLayerConfig *)contentConfig;
+@end
+
+@interface UIVisualEffect ()
++ (UIVisualEffect *)emptyEffect;
++ (UIVisualEffect *)effectCombiningEffects:(NSArray<UIVisualEffect *> *)effects;
+@end
+
+@interface UIColorEffect : UIVisualEffect
++ (UIColorEffect *)colorEffectSaturate:(CGFloat)saturationAmount;
+@end
+
+@interface UIBlurEffect ()
++ (UIBlurEffect *)effectWithBlurRadius:(CGFloat)blurRadius;
+@end
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

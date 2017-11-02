@@ -37,6 +37,7 @@
 #import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
+#import "WKFullScreenWindowControllerIOS.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/LengthBox.h>
 #endif
@@ -153,6 +154,15 @@ struct PrintInfo;
 @end
 
 WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
+
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+@interface WKWebView (FullScreenAPI)
+-(BOOL)hasFullScreenWindowController;
+-(WKFullScreenWindowController *)fullScreenWindowController;
+-(void)closeFullScreenWindowController;
+-(WebCoreFullScreenPlaceholderView *)fullScreenPlaceholderView;
+@end
+#endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
 
 #if PLATFORM(IOS)
 @interface WKWebView (_WKWebViewPrintFormatter)

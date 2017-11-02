@@ -1,3 +1,15 @@
+2017-11-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement WKFullscreenWindowController for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=178924
+        rdar://problem/34697120
+
+        Reviewed by Simon Fraser.
+
+        Enable ENABLE_FULLSCREEN_API for iOS.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-11-01  Simon Fraser  <simon.fraser@apple.com>
 
         Misc display list and other cleanup

@@ -1,3 +1,17 @@
+2017-11-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement WKFullscreenWindowController for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=178924
+        rdar://problem/34697120
+
+        Reviewed by Simon Fraser.
+
+        Enable ENABLE_FULLSCREEN_API for iOS. Fix a build error.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebView/WebView.mm:
+        (-[WebView fullScreenPlaceholderView]):
+
 2017-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some drag and drop feature flags

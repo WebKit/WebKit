@@ -33,14 +33,21 @@
 #import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC)
 @class NSView;
+using WKFullscreenClientView = NSView;
+#else
+@class WKWebView;
+using WKFullscreenClientView = WKWebView;
+#endif
+
 @protocol _WKFullscreenDelegate;
 
 namespace WebKit {
 
 class FullscreenClient : public API::FullscreenClient {
 public:
-    explicit FullscreenClient(NSView *);
+    explicit FullscreenClient(WKFullscreenClientView *);
     ~FullscreenClient() { };
 
     RetainPtr<id<_WKFullscreenDelegate>> delegate();
@@ -52,14 +59,21 @@ public:
     void didExitFullscreen(WebPageProxy*) override;
 
 private:
-    NSView *m_webView;
+    WKFullscreenClientView *m_webView;
     WeakObjCPtr<id <_WKFullscreenDelegate> > m_delegate;
 
     struct {
+#if PLATFORM(MAC)
         bool webViewWillEnterFullscreen : 1;
         bool webViewDidEnterFullscreen : 1;
         bool webViewWillExitFullscreen : 1;
         bool webViewDidExitFullscreen : 1;
+#else
+        bool webViewWillEnterElementFullscreen : 1;
+        bool webViewDidEnterElementFullscreen : 1;
+        bool webViewWillExitElementFullscreen : 1;
+        bool webViewDidExitElementFullscreen : 1;
+#endif
     } m_delegateMethods;
 };
     

@@ -626,27 +626,35 @@ WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
 
 void PageClientImpl::closeFullScreenManager()
 {
+    [m_webView closeFullScreenWindowController];
 }
 
 bool PageClientImpl::isFullScreen()
 {
-    return false;
+    if (![m_webView hasFullScreenWindowController])
+        return false;
+
+    return [m_webView fullScreenWindowController].isFullScreen;
 }
 
 void PageClientImpl::enterFullScreen()
 {
+    [[m_webView fullScreenWindowController] enterFullScreen];
 }
 
 void PageClientImpl::exitFullScreen()
 {
+    [[m_webView fullScreenWindowController] exitFullScreen];
 }
 
-void PageClientImpl::beganEnterFullScreen(const IntRect&, const IntRect&)
+void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
+    [[m_webView fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
 }
 
-void PageClientImpl::beganExitFullScreen(const IntRect&, const IntRect&)
+void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
+    [[m_webView fullScreenWindowController] beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
 }
 
 #endif // ENABLE(FULLSCREEN_API)

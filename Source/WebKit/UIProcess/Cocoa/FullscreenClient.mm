@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-FullscreenClient::FullscreenClient(NSView *webView)
+FullscreenClient::FullscreenClient(WKFullscreenClientView *webView)
     : m_webView(webView)
 {
 }
@@ -46,34 +46,61 @@ void FullscreenClient::setDelegate(id <_WKFullscreenDelegate> delegate)
 {
     m_delegate = delegate;
 
+#if PLATFORM(MAC)
     m_delegateMethods.webViewWillEnterFullscreen = [delegate respondsToSelector:@selector(_webViewWillEnterFullscreen:)];
     m_delegateMethods.webViewDidEnterFullscreen = [delegate respondsToSelector:@selector(_webViewDidEnterFullscreen:)];
     m_delegateMethods.webViewWillExitFullscreen = [delegate respondsToSelector:@selector(_webViewWillExitFullscreen:)];
     m_delegateMethods.webViewDidExitFullscreen = [delegate respondsToSelector:@selector(_webViewDidExitFullscreen:)];
+#else
+    m_delegateMethods.webViewWillEnterElementFullscreen = [delegate respondsToSelector:@selector(_webViewWillEnterElementFullscreen:)];
+    m_delegateMethods.webViewDidEnterElementFullscreen = [delegate respondsToSelector:@selector(_webViewDidEnterElementFullscreen:)];
+    m_delegateMethods.webViewWillExitElementFullscreen = [delegate respondsToSelector:@selector(_webViewWillExitElementFullscreen:)];
+    m_delegateMethods.webViewDidExitElementFullscreen = [delegate respondsToSelector:@selector(_webViewDidExitElementFullscreen:)];
+#endif
 }
 
 void FullscreenClient::willEnterFullscreen(WebPageProxy*)
 {
+#if PLATFORM(MAC)
     if (m_delegateMethods.webViewWillEnterFullscreen)
         [m_delegate.get() _webViewWillEnterFullscreen:m_webView];
+#else
+    if (m_delegateMethods.webViewWillEnterElementFullscreen)
+        [m_delegate.get() _webViewWillEnterElementFullscreen:m_webView];
+#endif
 }
 
 void FullscreenClient::didEnterFullscreen(WebPageProxy*)
 {
+#if PLATFORM(MAC)
     if (m_delegateMethods.webViewDidEnterFullscreen)
         [m_delegate.get() _webViewDidEnterFullscreen:m_webView];
+#else
+    if (m_delegateMethods.webViewDidEnterElementFullscreen)
+        [m_delegate.get() _webViewDidEnterElementFullscreen:m_webView];
+#endif
 }
 
 void FullscreenClient::willExitFullscreen(WebPageProxy*)
 {
+#if PLATFORM(MAC)
     if (m_delegateMethods.webViewWillExitFullscreen)
         [m_delegate.get() _webViewWillExitFullscreen:m_webView];
+#else
+    if (m_delegateMethods.webViewWillExitElementFullscreen)
+        [m_delegate.get() _webViewWillExitElementFullscreen:m_webView];
+#endif
 }
 
 void FullscreenClient::didExitFullscreen(WebPageProxy*)
 {
+#if PLATFORM(MAC)
     if (m_delegateMethods.webViewDidExitFullscreen)
         [m_delegate.get() _webViewDidExitFullscreen:m_webView];
+#else
+    if (m_delegateMethods.webViewDidExitElementFullscreen)
+        [m_delegate.get() _webViewDidExitElementFullscreen:m_webView];
+#endif
 }
 
 } // namespace WebKit

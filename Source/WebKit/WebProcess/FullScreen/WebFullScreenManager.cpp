@@ -109,7 +109,9 @@ void WebFullScreenManager::willEnterFullScreen()
 {
     ASSERT(m_element);
     m_element->document().webkitWillEnterFullScreenForElement(m_element.get());
+#if !PLATFORM(IOS)
     m_page->hidePageBanners();
+#endif
     m_element->document().updateLayout();
     m_page->forceRepaintWithoutCallback();
     m_finalFrame = screenRectOfContents(m_element.get());
@@ -127,7 +129,9 @@ void WebFullScreenManager::willExitFullScreen()
     ASSERT(m_element);
     m_finalFrame = screenRectOfContents(m_element.get());
     m_element->document().webkitWillExitFullScreenForElement(m_element.get());
+#if !PLATFORM(IOS)
     m_page->showPageBanners();
+#endif
     m_page->injectedBundleFullScreenClient().beganExitFullScreen(m_page.get(), m_finalFrame, m_initialFrame);
 }
 

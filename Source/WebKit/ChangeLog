@@ -1,3 +1,92 @@
+2017-11-01  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement WKFullscreenWindowController for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=178924
+        rdar://problem/34697120
+
+        Reviewed by Simon Fraser.
+
+        Plumb relevant calls through WKWebView and PageClientImplIOS.
+
+        This forms the base implementation for element fullscreen. This will animate an element into fullscreen and back to inline.
+        It does this by replacing the WKWebView with a placeholder image and presenting the WKWebView with a fullscreen view controller.
+        This also attempts to preserve UI state of the WKWebView when it is placed back inline.
+
+        To enable _WKFullscreenDelegate for iOS, this adds an iOS version of the delegate methods that passes WKWebView instead of NSView.
+        The iOS version of these functions are renamed to be more specific and disambiguate them from the video fullscreen delegate methods.
+
+        This also adds an image asset for the done button.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView hasFullScreenWindowController]):
+        (-[WKWebView fullScreenWindowController]):
+        (-[WKWebView closeFullScreenWindowController]):
+        (-[WKWebView fullScreenPlaceholderView]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/_WKFullscreenDelegate.h:
+        * UIProcess/Cocoa/FullscreenClient.h:
+        * UIProcess/Cocoa/FullscreenClient.mm:
+        (WebKit::FullscreenClient::FullscreenClient):
+        (WebKit::FullscreenClient::setDelegate):
+        (WebKit::FullscreenClient::willEnterFullscreen):
+        (WebKit::FullscreenClient::didEnterFullscreen):
+        (WebKit::FullscreenClient::willExitFullscreen):
+        (WebKit::FullscreenClient::didExitFullscreen):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::closeFullScreenManager):
+        (WebKit::PageClientImpl::isFullScreen):
+        (WebKit::PageClientImpl::enterFullScreen):
+        (WebKit::PageClientImpl::exitFullScreen):
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKFullscreenDelegate.h.
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm: Added.
+        (WebKit::replaceViewWithView):
+        (WebKit::WKWebViewState::applyTo):
+        (WebKit::WKWebViewState::store):
+        (-[_WKTapDelgatingView setTarget:action:]):
+        (-[_WKTapDelgatingView hitTest:withEvent:]):
+        (-[_WKFullScreenViewController dealloc]):
+        (-[_WKFullScreenViewController viewWillTransitionToSize:withTransitionCoordinator:]):
+        (+[_WKFullScreenViewController configureView:withBackgroundFillOfColor:opacity:filter:]):
+        (-[_WKFullScreenViewController _updateTransparencyOfVisualEffectView:]):
+        (-[_WKFullScreenViewController createVisualEffectViewWithFrame:]):
+        (-[_WKFullScreenViewController loadView]):
+        (-[_WKFullScreenViewController viewWillAppear:]):
+        (-[_WKFullScreenViewController viewDidDisappear:]):
+        (-[_WKFullScreenViewController cancelAction:]):
+        (-[_WKFullScreenViewController hideCancelButton]):
+        (-[_WKFullScreenViewController showCancelButton]):
+        (-[_WKFullScreenViewController setTarget:action:]):
+        (-[_WKFullScreenViewController prefersStatusBarHidden]):
+        (-[WKFullscreenAnimationController transitionDuration:]):
+        (-[WKFullscreenAnimationController animateTransition:]):
+        (-[WKFullscreenAnimationController animationEnded:]):
+        (-[WKFullScreenWindowController initWithWebView:page:]):
+        (-[WKFullScreenWindowController dealloc]):
+        (-[WKFullScreenWindowController isFullScreen]):
+        (-[WKFullScreenWindowController webViewPlaceholder]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController completedEnterFullScreen]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController requestExitFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController completedExitFullScreen]):
+        (-[WKFullScreenWindowController close]):
+        (-[WKFullScreenWindowController _manager]):
+        (-[WKFullScreenWindowController animationControllerForPresentedController:presentingController:sourceController:]):
+        (-[WKFullScreenWindowController animationControllerForDismissedController:]):
+        * WebKit.xcassets/Contents.json: Added.
+        * WebKit.xcassets/Done.imageset/Contents.json: Added.
+        * WebKit.xcassets/Done.imageset/Done.pdf: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::willEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+
 2017-11-01  Daniel Bates  <dabates@apple.com>
 
         XMLHttpRequest should not sniff content encoding
