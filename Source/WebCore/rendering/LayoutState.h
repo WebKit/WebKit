@@ -53,7 +53,7 @@ public:
     {
     }
 
-    LayoutState(std::unique_ptr<LayoutState>, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
+    LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
     explicit LayoutState(RenderObject&);
 
     void clearPaginationInformation();
@@ -97,7 +97,7 @@ public:
 
     // The current line grid that we're snapping to and the offset of the start of the grid.
     RenderBlockFlow* m_lineGrid { nullptr };
-    std::unique_ptr<LayoutState> m_next;
+    std::unique_ptr<LayoutState> m_ancestor;
 
     // FIXME: Distinguish between the layout clip rect and the paint clip rect which may be larger,
     // e.g., because of composited scrolling.

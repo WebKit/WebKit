@@ -263,7 +263,7 @@ private:
 
     void popLayoutState()
     {
-        m_layoutState = WTFMove(m_layoutState->m_next);
+        m_layoutState = WTFMove(m_layoutState->m_ancestor);
     }
 
     // Suspends the LayoutState optimization. Used under transforms that cannot be represented by
