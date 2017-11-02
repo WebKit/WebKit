@@ -81,7 +81,7 @@
 namespace WebCore {
 
 struct SameSizeAsRenderElement : public RenderObject {
-    unsigned bitfields : 24;
+    unsigned bitfields : 25;
     void* firstChild;
     void* lastChild;
     RenderStyle style;
