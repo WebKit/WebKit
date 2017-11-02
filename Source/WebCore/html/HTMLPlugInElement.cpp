@@ -227,7 +227,7 @@ bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent&) const
         return false;
 
     RefPtr<Widget> widget = pluginWidget();
-    if (!is<PluginViewBase>(widget.get()))
+    if (!is<PluginViewBase>(widget))
         return false;
 
     return downcast<PluginViewBase>(*widget).supportsKeyboardFocus();
@@ -242,7 +242,7 @@ bool HTMLPlugInElement::isUserObservable() const
 {
     // No widget - can't be anything to see or hear here.
     RefPtr<Widget> widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
-    if (!is<PluginViewBase>(widget.get()))
+    if (!is<PluginViewBase>(widget))
         return false;
 
     PluginViewBase& pluginView = downcast<PluginViewBase>(*widget);

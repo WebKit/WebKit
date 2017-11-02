@@ -933,7 +933,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
             scrollableArea = scrollableAreaForEventTarget(wheelEventTarget.get());
         } else {
             scrollableContainer = findEnclosingScrollableContainer(wheelEventTarget.get(), wheelEvent.deltaX(), wheelEvent.deltaY());
-            if (scrollableContainer && !is<HTMLIFrameElement>(wheelEventTarget.get()))
+            if (scrollableContainer && !is<HTMLIFrameElement>(wheelEventTarget))
                 scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
             else {
                 scrollableContainer = view->frame().document()->bodyOrFrameset();

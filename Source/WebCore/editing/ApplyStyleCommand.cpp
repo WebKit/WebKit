@@ -59,7 +59,7 @@ using namespace HTMLNames;
 
 static int toIdentifier(RefPtr<CSSValue>&& value)
 {
-    return is<CSSPrimitiveValue>(value.get()) ? downcast<CSSPrimitiveValue>(*value).valueID() : 0;
+    return is<CSSPrimitiveValue>(value) ? downcast<CSSPrimitiveValue>(*value).valueID() : 0;
 }
 
 static String& styleSpanClassString()
@@ -270,7 +270,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
                     block = newBlock;
             }
             ASSERT(!block || is<HTMLElement>(*block));
-            if (is<HTMLElement>(block.get())) {
+            if (is<HTMLElement>(block)) {
                 removeCSSStyle(style, downcast<HTMLElement>(*block));
                 if (!m_removeOnly)
                     addBlockStyle(styleChange, downcast<HTMLElement>(*block));
@@ -1356,7 +1356,7 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     if (nextSibling && nextSibling->hasEditableStyle() && areIdenticalElements(element, *nextSibling))
         mergeIdenticalElements(element, downcast<Element>(*nextSibling));
 
-    if (is<Element>(previousSibling.get()) && previousSibling->hasEditableStyle()) {
+    if (is<Element>(previousSibling) && previousSibling->hasEditableStyle()) {
         auto* mergedElement = previousSibling->nextSibling();
         ASSERT(mergedElement);
         if (mergedElement->hasEditableStyle() && areIdenticalElements(*previousSibling, *mergedElement))

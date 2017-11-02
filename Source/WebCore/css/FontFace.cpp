@@ -66,7 +66,7 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
     auto sourceConversionResult = WTF::switchOn(source,
         [&] (String& string) -> ExceptionOr<void> {
             auto value = FontFace::parseString(string, CSSPropertySrc);
-            if (!is<CSSValueList>(value.get()))
+            if (!is<CSSValueList>(value))
                 return Exception { SyntaxError };
             CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
             return { };

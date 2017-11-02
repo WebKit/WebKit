@@ -1917,7 +1917,7 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
     FilterOperations operations;
     for (auto& currentValue : downcast<CSSValueList>(inValue)) {
 
-        if (is<CSSPrimitiveValue>(currentValue.get())) {
+        if (is<CSSPrimitiveValue>(currentValue)) {
             auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
             if (!primitiveValue.isURI())
                 continue;
@@ -1930,7 +1930,7 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
             continue;
         }
 
-        if (!is<CSSFunctionValue>(currentValue.get()))
+        if (!is<CSSFunctionValue>(currentValue))
             continue;
 
         auto& filterValue = downcast<CSSFunctionValue>(currentValue.get());

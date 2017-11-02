@@ -338,7 +338,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     FontSelectionRequest request = computeFontSelectionRequest(style.get());
 
     auto family = style->getPropertyCSSValue(CSSPropertyFontFamily);
-    if (!is<CSSValueList>(family.get()))
+    if (!is<CSSValueList>(family))
         return Exception { SyntaxError };
     CSSValueList& familyList = downcast<CSSValueList>(*family);
 

@@ -1597,7 +1597,7 @@ HTMLDataListElement* HTMLInputElement::dataList() const
         return nullptr;
 
     RefPtr<Element> element = treeScope().getElementById(attributeWithoutSynchronization(listAttr));
-    if (!is<HTMLDataListElement>(element.get())
+    if (!is<HTMLDataListElement>(element))
         return nullptr;
 
     return downcast<HTMLDataListElement>(element.get());

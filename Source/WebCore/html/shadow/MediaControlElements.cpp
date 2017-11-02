@@ -689,7 +689,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event& even
 #if ENABLE(VIDEO_TRACK)
     if (event.type() == eventNames().clickEvent) {
         RefPtr<Node> target = event.target()->toNode();
-        if (!is<Element>(target.get()))
+        if (!is<Element>(target))
             return;
 
         // When we created the elements in the track list, we gave them a custom

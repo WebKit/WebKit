@@ -143,9 +143,9 @@ template<typename T>
 int identifierForStyleProperty(T& style, CSSPropertyID propertyID)
 {
     RefPtr<CSSValue> value = extractPropertyValue(style, propertyID);
-    if (propertyID == CSSPropertyFontStyle && is<CSSFontStyleValue>(value.get()) && downcast<CSSFontStyleValue>(value.get())->isItalicOrOblique())
+    if (propertyID == CSSPropertyFontStyle && is<CSSFontStyleValue>(value) && downcast<CSSFontStyleValue>(value.get())->isItalicOrOblique())
         return CSSValueItalic;
-    if (!is<CSSPrimitiveValue>(value.get()))
+    if (!is<CSSPrimitiveValue>(value))
         return 0;
     return downcast<CSSPrimitiveValue>(*value).valueID();
 }
@@ -198,7 +198,7 @@ HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, CSSValueID primit
 bool HTMLElementEquivalent::valueIsPresentInStyle(Element& element, const EditingStyle& style) const
 {
     RefPtr<CSSValue> value = style.m_mutableStyle->getPropertyCSSValue(m_propertyID);
-    return matches(element) && is<CSSPrimitiveValue>(value.get()) && downcast<CSSPrimitiveValue>(*value).valueID() == m_primitiveValue->valueID();
+    return matches(element) && is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(*value).valueID() == m_primitiveValue->valueID();
 }
 
 void HTMLElementEquivalent::addToStyle(Element*, EditingStyle* style) const
@@ -237,7 +237,7 @@ public:
         RefPtr<CSSValue> styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (!styleValue)
             styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyTextDecoration);
-        return is<CSSValueList>(styleValue.get()) && downcast<CSSValueList>(*styleValue).hasValue(m_primitiveValue.get());
+        return is<CSSValueList>(styleValue) && downcast<CSSValueList>(*styleValue).hasValue(m_primitiveValue.get());
     }
 
 private:
@@ -502,7 +502,7 @@ void EditingStyle::extractFontSizeDelta()
 
     // Get the adjustment amount out of the style.
     RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitFontSizeDelta);
-    if (!is<CSSPrimitiveValue>(value.get()))
+    if (!is<CSSPrimitiveValue>(value))
         return;
 
     CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
@@ -550,13 +550,13 @@ bool EditingStyle::textDirection(WritingDirection& writingDirection) const
         return false;
 
     RefPtr<CSSValue> unicodeBidi = m_mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
-    if (!is<CSSPrimitiveValue>(unicodeBidi.get()))
+    if (!is<CSSPrimitiveValue>(unicodeBidi))
         return false;
 
     CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
     if (unicodeBidiValue == CSSValueEmbed) {
         RefPtr<CSSValue> direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
-        if (!is<CSSPrimitiveValue>(direction.get()))
+        if (!is<CSSPrimitiveValue>(direction))
             return false;
 
         writingDirection = downcast<CSSPrimitiveValue>(*direction).valueID() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
@@ -799,7 +799,7 @@ TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
 static RefPtr<CSSValueList> textDecorationValueList(const StyleProperties& properties)
 {
     RefPtr<CSSValue> value = properties.getPropertyCSSValue(CSSPropertyTextDecoration);
-    if (!is<CSSValueList>(value.get()))
+    if (!is<CSSValueList>(value))
         return nullptr;
     return downcast<CSSValueList>(value.get());
 }
@@ -1089,9 +1089,9 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         || cssValueToColor(m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor).get()) == rgbaBackgroundColorInEffect(position.containerNode()))
         m_mutableStyle->removeProperty(CSSPropertyBackgroundColor);
 
-    if (is<CSSPrimitiveValue>(unicodeBidi.get())) {
+    if (is<CSSPrimitiveValue>(unicodeBidi)) {
         m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSValueID>(downcast<CSSPrimitiveValue>(*unicodeBidi).valueID()));
-        if (is<CSSPrimitiveValue>(direction.get()))
+        if (is<CSSPrimitiveValue>(direction))
             m_mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSValueID>(downcast<CSSPrimitiveValue>(*direction).valueID()));
     }
 }
@@ -1406,7 +1406,7 @@ bool EditingStyle::isFloating()
 int EditingStyle::legacyFontSize(Document* document) const
 {
     RefPtr<CSSValue> cssValue = m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize);
-    if (!is<CSSPrimitiveValue>(cssValue.get()))
+    if (!is<CSSPrimitiveValue>(cssValue))
         return 0;
     return legacyFontSizeFromCSSValue(document, downcast<CSSPrimitiveValue>(cssValue.get()),
         m_shouldUseFixedDefaultFontSize, AlwaysUseLegacyFontSize);
@@ -1475,7 +1475,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
                 continue;
 
             RefPtr<CSSValue> unicodeBidi = ComputedStyleExtractor(n).propertyValue(CSSPropertyUnicodeBidi);
-            if (!is<CSSPrimitiveValue>(unicodeBidi.get()))
+            if (!is<CSSPrimitiveValue>(unicodeBidi))
                 continue;
 
             CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
@@ -1504,7 +1504,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
 
         ComputedStyleExtractor computedStyle(node);
         RefPtr<CSSValue> unicodeBidi = computedStyle.propertyValue(CSSPropertyUnicodeBidi);
-        if (!is<CSSPrimitiveValue>(unicodeBidi.get()))
+        if (!is<CSSPrimitiveValue>(unicodeBidi))
             continue;
 
         CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
@@ -1516,7 +1516,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
 
         ASSERT(unicodeBidiValue == CSSValueEmbed);
         RefPtr<CSSValue> direction = computedStyle.propertyValue(CSSPropertyDirection);
-        if (!is<CSSPrimitiveValue>(direction.get()))
+        if (!is<CSSPrimitiveValue>(direction))
             continue;
 
         CSSValueID directionValue = downcast<CSSPrimitiveValue>(*direction).valueID();
@@ -1584,11 +1584,11 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     bool shouldAddStrikeThrough = style->strikeThroughChange() == TextDecorationChange::Add;
     if (shouldAddUnderline || shouldAddStrikeThrough) {
         RefPtr<CSSValue> value = computedStyle.propertyValue(CSSPropertyWebkitTextDecorationsInEffect);
-        if (!is<CSSValueList>(value.get()))
+        if (!is<CSSValueList>(value))
             value = computedStyle.propertyValue(CSSPropertyTextDecoration);
 
         RefPtr<CSSValueList> valueList;
-        if (is<CSSValueList>(value.get()))
+        if (is<CSSValueList>(value))
             valueList = downcast<CSSValueList>(value.get());
 
         auto& cssValuePool = CSSValuePool::singleton();
@@ -1667,7 +1667,7 @@ void StyleChange::extractTextStyles(Document* document, MutableStyleProperties& 
     // Assuming reconcileTextDecorationProperties has been called, there should not be -webkit-text-decorations-in-effect
     // Furthermore, text-decoration: none has been trimmed so that text-decoration property is always a CSSValueList.
     RefPtr<CSSValue> textDecoration = style.getPropertyCSSValue(CSSPropertyTextDecoration);
-    if (is<CSSValueList>(textDecoration.get())) {
+    if (is<CSSValueList>(textDecoration)) {
         auto& cssValuePool = CSSValuePool::singleton();
         RefPtr<CSSPrimitiveValue> underline = cssValuePool.createIdentifierValue(CSSValueUnderline);
         RefPtr<CSSPrimitiveValue> lineThrough = cssValuePool.createIdentifierValue(CSSValueLineThrough);
@@ -1718,7 +1718,7 @@ void StyleChange::extractTextStyles(Document* document, MutableStyleProperties& 
 static void diffTextDecorations(MutableStyleProperties& style, CSSPropertyID propertID, CSSValue* refTextDecoration)
 {
     RefPtr<CSSValue> textDecoration = style.getPropertyCSSValue(propertID);
-    if (!is<CSSValueList>(textDecoration.get()) || !is<CSSValueList>(refTextDecoration))
+    if (!is<CSSValueList>(textDecoration) || !is<CSSValueList>(refTextDecoration))
         return;
 
     RefPtr<CSSValueList> newTextDecoration = downcast<CSSValueList>(*textDecoration).copy();

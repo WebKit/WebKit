@@ -2645,7 +2645,7 @@ HTMLElement* Document::bodyOrFrameset() const
 
 ExceptionOr<void> Document::setBodyOrFrameset(RefPtr<HTMLElement>&& newBody)
 {
-    if (!is<HTMLBodyElement>(newBody.get()) && !is<HTMLFrameSetElement>(newBody.get()))
+    if (!is<HTMLBodyElement>(newBody) && !is<HTMLFrameSetElement>(newBody))
         return Exception { HierarchyRequestError };
 
     auto* currentBody = bodyOrFrameset();
@@ -3844,7 +3844,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
                 view()->setFocus(false);
         }
 
-        if (is<HTMLInputElement>(oldFocusedElement.get())) {
+        if (is<HTMLInputElement>(oldFocusedElement)) {
             // HTMLInputElement::didBlur just scrolls text fields back to the beginning.
             // FIXME: This could be done asynchronusly.
             // Updating style may dispatch events due to PostResolutionCallback
@@ -6847,7 +6847,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
                 elementsToRemoveFromChain.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
-        if (is<HTMLFrameOwnerElement>(oldHoveredElement.get())) {
+        if (is<HTMLFrameOwnerElement>(oldHoveredElement)) {
             if (Document* contentDocument = downcast<HTMLFrameOwnerElement>(*oldHoveredElement).contentDocument())
                 contentDocument->updateHoverActiveState(request, nullptr);
         }

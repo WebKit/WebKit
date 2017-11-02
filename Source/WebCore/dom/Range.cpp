@@ -918,7 +918,7 @@ ExceptionOr<void> Range::insertNode(Ref<Node>&& node)
         return removeResult.releaseException();
 
     unsigned newOffset = referenceNode ? referenceNode->computeNodeIndex() : parent->countChildNodes();
-    if (is<DocumentFragment>(node.get()))
+    if (is<DocumentFragment>(node))
         newOffset += downcast<DocumentFragment>(node.get()).countChildNodes();
     else
         ++newOffset;

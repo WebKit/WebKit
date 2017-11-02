@@ -100,7 +100,7 @@ static bool isClickableControl(Node* node)
     if (is<HTMLFormControlElement>(element))
         return true;
     RefPtr<Element> host = element.shadowHost();
-    return host && is<HTMLFormControlElement>(host.get());
+    return host && is<HTMLFormControlElement>(host);
 }
 
 bool HTMLSummaryElement::supportsFocus() const

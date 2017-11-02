@@ -34,7 +34,7 @@ using namespace JSC;
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Text>&& text)
 {
-    if (is<CDATASection>(text.get()))
+    if (is<CDATASection>(text))
         return createWrapper<CDATASection>(globalObject, WTFMove(text));
     return createWrapper<Text>(globalObject, WTFMove(text));
 }

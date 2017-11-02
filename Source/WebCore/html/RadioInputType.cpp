@@ -121,7 +121,7 @@ bool RadioInputType::isKeyboardFocusable(KeyboardEvent& event) const
     // Never allow keyboard tabbing to leave you in the same radio group.  Always
     // skip any other elements in the group.
     RefPtr<Element> currentFocusedNode = element().document().focusedElement();
-    if (is<HTMLInputElement>(currentFocusedNode.get())) {
+    if (is<HTMLInputElement>(currentFocusedNode)) {
         HTMLInputElement& focusedInput = downcast<HTMLInputElement>(*currentFocusedNode);
         if (focusedInput.isRadioButton() && focusedInput.form() == element().form() && focusedInput.name() == element().name())
             return false;

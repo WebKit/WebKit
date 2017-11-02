@@ -171,7 +171,7 @@ void PageScriptDebugServer::setJavaScriptPaused(Frame& frame, bool paused)
 
     if (auto* view = frame.view()) {
         for (auto& child : view->children()) {
-            if (!is<PluginViewBase>(child.get()))
+            if (!is<PluginViewBase>(child))
                 continue;
             downcast<PluginViewBase>(child.get()).setJavaScriptPaused(paused);
         }

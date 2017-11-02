@@ -774,7 +774,7 @@ static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, Ref
 
     // FIXME: These additional checks should not be necessary. We should consider generally keeping the selection whenever the
     // focused element is blurred, with no new element taking focus.
-    if (!oldFocusedElement->isRootEditableElement() && !is<HTMLInputElement>(oldFocusedElement.get()) && !is<HTMLTextAreaElement>(oldFocusedElement.get()))
+    if (!oldFocusedElement->isRootEditableElement() && !is<HTMLInputElement>(oldFocusedElement) && !is<HTMLTextAreaElement>(oldFocusedElement))
         return true;
 
     for (auto ancestor = page.mainFrame().eventHandler().draggedElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {

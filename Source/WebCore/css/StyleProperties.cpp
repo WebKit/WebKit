@@ -241,7 +241,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) const
 {
     auto colorValue = getPropertyCSSValue(property);
-    if (!is<CSSPrimitiveValue>(colorValue.get()))
+    if (!is<CSSPrimitiveValue>(colorValue))
         return std::nullopt;
 
     auto& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
@@ -251,7 +251,7 @@ std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) co
 CSSValueID StyleProperties::propertyAsValueID(CSSPropertyID property) const
 {
     auto cssValue = getPropertyCSSValue(property);
-    return is<CSSPrimitiveValue>(cssValue.get()) ? downcast<CSSPrimitiveValue>(*cssValue).valueID() : CSSValueInvalid;
+    return is<CSSPrimitiveValue>(cssValue) ? downcast<CSSPrimitiveValue>(*cssValue).valueID() : CSSValueInvalid;
 }
 
 String StyleProperties::getCustomPropertyValue(const String& propertyName) const

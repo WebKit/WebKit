@@ -3768,10 +3768,10 @@ Color FrameView::documentBackgroundColor() const
 bool FrameView::hasCustomScrollbars() const
 {
     for (auto& widget : children()) {
-        if (is<FrameView>(widget.get())) {
+        if (is<FrameView>(widget)) {
             if (downcast<FrameView>(widget.get()).hasCustomScrollbars())
                 return true;
-        } else if (is<Scrollbar>(widget.get())) {
+        } else if (is<Scrollbar>(widget)) {
             if (downcast<Scrollbar>(widget.get()).isCustomScrollbar())
                 return true;
         }

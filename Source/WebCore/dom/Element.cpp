@@ -2569,12 +2569,12 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
         return replaceResult.releaseException();
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (is<Text>(node.get())) {
+    if (is<Text>(node)) {
         auto result = mergeWithNextTextNode(downcast<Text>(*node));
         if (result.hasException())
             return result.releaseException();
     }
-    if (is<Text>(prev.get())) {
+    if (is<Text>(prev)) {
         auto result = mergeWithNextTextNode(downcast<Text>(*prev));
         if (result.hasException())
             return result.releaseException();

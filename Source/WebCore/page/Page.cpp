@@ -1404,7 +1404,7 @@ Vector<Ref<PluginViewBase>> Page::pluginViews()
         if (!view)
             break;
         for (auto& widget : view->children()) {
-            if (is<PluginViewBase>(widget.get()))
+            if (is<PluginViewBase>(widget))
                 views.append(downcast<PluginViewBase>(widget.get()));
         }
     }

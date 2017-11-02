@@ -911,7 +911,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             auto compositeOp = op == CompositeSourceOver ? bgLayer.composite() : op;
             context.setDrawLuminanceMask(bgLayer.maskSourceType() == MaskLuminance);
 
-            if (is<BitmapImage>(image.get()))
+            if (is<BitmapImage>(image))
                 downcast<BitmapImage>(*image).updateFromSettings(settings());
 
             auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());

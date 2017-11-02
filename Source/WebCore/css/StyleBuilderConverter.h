@@ -909,7 +909,7 @@ inline bool StyleBuilderConverter::createGridTrackList(const CSSValue& value, Tr
 
     unsigned currentNamedGridLine = 0;
     for (auto& currentValue : downcast<CSSValueList>(value)) {
-        if (is<CSSGridLineNamesValue>(currentValue.get())) {
+        if (is<CSSGridLineNamesValue>(currentValue)) {
             createGridLineNamesList(currentValue.get(), currentNamedGridLine, tracksData.m_namedGridLines, tracksData.m_orderedNamedGridLines);
             continue;
         }
@@ -921,7 +921,7 @@ inline bool StyleBuilderConverter::createGridTrackList(const CSSValue& value, Tr
             ASSERT(autoRepeatID == CSSValueAutoFill || autoRepeatID == CSSValueAutoFit);
             tracksData.m_autoRepeatType = autoRepeatID == CSSValueAutoFill ? AutoFill : AutoFit;
             for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue.get())) {
-                if (is<CSSGridLineNamesValue>(autoRepeatValue.get())) {
+                if (is<CSSGridLineNamesValue>(autoRepeatValue)) {
                     createGridLineNamesList(autoRepeatValue.get(), autoRepeatIndex, tracksData.m_autoRepeatNamedGridLines, tracksData.m_autoRepeatOrderedNamedGridLines);
                     continue;
                 }

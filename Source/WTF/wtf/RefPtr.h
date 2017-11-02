@@ -238,6 +238,16 @@ template<typename T> inline RefPtr<T> makeRefPtr(T& reference)
     return &reference;
 }
 
+template<typename ExpectedType, typename ArgType> inline bool is(RefPtr<ArgType>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
+template<typename ExpectedType, typename ArgType> inline bool is(const RefPtr<ArgType>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
 } // namespace WTF
 
 using WTF::RefPtr;

@@ -120,7 +120,7 @@ void HTMLOptionElement::setText(const String &text)
 
     // Handle the common special case where there's exactly 1 child node, and it's a text node.
     RefPtr<Node> child = firstChild();
-    if (is<Text>(child.get()) && !child->nextSibling())
+    if (is<Text>(child) && !child->nextSibling())
         downcast<Text>(*child).setData(text);
     else {
         removeChildren();
@@ -301,7 +301,7 @@ void HTMLOptionElement::willResetComputedStyle()
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     RefPtr<ContainerNode> parent = parentNode();
-    if (is<HTMLOptGroupElement>(parent.get()))
+    if (is<HTMLOptGroupElement>(parent))
         return "    " + displayLabel();
     return displayLabel();
 }

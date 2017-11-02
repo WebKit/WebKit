@@ -110,7 +110,7 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
 
     TransformOperations operations;
     for (auto& currentValue : downcast<CSSValueList>(value)) {
-        if (!is<CSSFunctionValue>(currentValue.get()))
+        if (!is<CSSFunctionValue>(currentValue))
             continue;
 
         auto& transformValue = downcast<CSSFunctionValue>(currentValue.get());

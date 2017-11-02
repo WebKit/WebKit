@@ -1033,7 +1033,7 @@ static unsigned deferredStyleRulesCountForList(const Vector<RefPtr<StyleRuleBase
 {
     unsigned count = 0;
     for (auto rule : childRules) {
-        if (is<StyleRule>(rule.get())) {
+        if (is<StyleRule>(rule)) {
             auto* cssRule = downcast<StyleRule>(rule.get());
             if (!cssRule->propertiesWithoutDeferredParsing())
                 count++;
@@ -1041,9 +1041,9 @@ static unsigned deferredStyleRulesCountForList(const Vector<RefPtr<StyleRuleBase
         }
 
         StyleRuleGroup* groupRule = nullptr;
-        if (is<StyleRuleMedia>(rule.get()))
+        if (is<StyleRuleMedia>(rule))
             groupRule = downcast<StyleRuleMedia>(rule.get());
-        else if (is<StyleRuleSupports>(rule.get()))
+        else if (is<StyleRuleSupports>(rule))
             groupRule = downcast<StyleRuleSupports>(rule.get());
         if (!groupRule)
             continue;
@@ -1068,9 +1068,9 @@ static unsigned deferredGroupRulesCountForList(const Vector<RefPtr<StyleRuleBase
     unsigned count = 0;
     for (auto rule : childRules) {
         StyleRuleGroup* groupRule = nullptr;
-        if (is<StyleRuleMedia>(rule.get()))
+        if (is<StyleRuleMedia>(rule))
             groupRule = downcast<StyleRuleMedia>(rule.get());
-        else if (is<StyleRuleSupports>(rule.get()))
+        else if (is<StyleRuleSupports>(rule))
             groupRule = downcast<StyleRuleSupports>(rule.get());
         if (!groupRule)
             continue;
@@ -1093,7 +1093,7 @@ static unsigned deferredKeyframesRulesCountForList(const Vector<RefPtr<StyleRule
 {
     unsigned count = 0;
     for (auto rule : childRules) {
-        if (is<StyleRuleKeyframes>(rule.get())) {
+        if (is<StyleRuleKeyframes>(rule)) {
             auto* cssRule = downcast<StyleRuleKeyframes>(rule.get());
             if (!cssRule->keyframesWithoutDeferredParsing())
                 count++;
@@ -1101,9 +1101,9 @@ static unsigned deferredKeyframesRulesCountForList(const Vector<RefPtr<StyleRule
         }
 
         StyleRuleGroup* groupRule = nullptr;
-        if (is<StyleRuleMedia>(rule.get()))
+        if (is<StyleRuleMedia>(rule))
             groupRule = downcast<StyleRuleMedia>(rule.get());
-        else if (is<StyleRuleSupports>(rule.get()))
+        else if (is<StyleRuleSupports>(rule))
             groupRule = downcast<StyleRuleSupports>(rule.get());
         if (!groupRule)
             continue;

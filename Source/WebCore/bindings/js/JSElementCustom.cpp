@@ -49,9 +49,9 @@ using namespace HTMLNames;
 
 static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Element>&& element)
 {
-    if (is<HTMLElement>(element.get()))
+    if (is<HTMLElement>(element))
         return createJSHTMLWrapper(globalObject, static_reference_cast<HTMLElement>(WTFMove(element)));
-    if (is<SVGElement>(element.get()))
+    if (is<SVGElement>(element))
         return createJSSVGWrapper(globalObject, static_reference_cast<SVGElement>(WTFMove(element)));
     return createWrapper<Element>(globalObject, WTFMove(element));
 }

@@ -104,7 +104,7 @@ float ViewportStyleResolver::getViewportArgumentValue(CSSPropertyID id) const
         defaultValue = 1;
 
     RefPtr<CSSValue> value = m_propertySet->getPropertyCSSValue(id);
-    if (!is<CSSPrimitiveValue>(value.get()))
+    if (!is<CSSPrimitiveValue>(value))
         return defaultValue;
 
     CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);

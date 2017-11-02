@@ -736,7 +736,7 @@ void InspectorDOMAgent::setNodeName(ErrorString& errorString, int nodeId, const 
     *newId = 0;
 
     RefPtr<Node> oldNode = nodeForId(nodeId);
-    if (!is<Element>(oldNode.get()))
+    if (!is<Element>(oldNode))
         return;
 
     auto createElementResult = oldNode->document().createElementForBindings(tagName);

@@ -190,7 +190,7 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
 
 void HTMLConstructionSite::attachLater(ContainerNode& parent, Ref<Node>&& child, bool selfClosing)
 {
-    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(child.get()) || !isScriptElement(downcast<Element>(child.get())));
+    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(child) || !isScriptElement(downcast<Element>(child.get())));
     ASSERT(pluginContentIsAllowed(m_parserContentPolicy) || !child->isPluginElement());
 
     if (shouldFosterParent()) {
@@ -584,7 +584,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
 
     RefPtr<Node> previousChild = task.nextChild ? task.nextChild->previousSibling() : task.parent->lastChild();
-    if (is<Text>(previousChild.get())) {
+    if (is<Text>(previousChild)) {
         // FIXME: We're only supposed to append to this text node if it
         // was the last text node inserted by the parser.
         currentPosition = downcast<Text>(*previousChild).parserAppendData(characters, 0, lengthLimit);

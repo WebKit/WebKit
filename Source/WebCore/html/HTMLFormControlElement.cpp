@@ -124,7 +124,7 @@ bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
     for (RefPtr<Element> ancestor = parentElement(); ancestor; ancestor = ancestor->parentElement()) {
         if (is<HTMLFieldSetElement>(*ancestor) && ancestor->hasAttributeWithoutSynchronization(disabledAttr)) {
             HTMLFieldSetElement& fieldSetAncestor = downcast<HTMLFieldSetElement>(*ancestor);
-            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor.get()) && previousAncestor == fieldSetAncestor.legend();
+            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldSetAncestor.legend();
             return !isInFirstLegend;
         }
         previousAncestor = ancestor;

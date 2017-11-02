@@ -561,12 +561,12 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
         return replaceResult.releaseException();
 
     RefPtr<Node> node = next ? next->previousSibling() : nullptr;
-    if (is<Text>(node.get())) {
+    if (is<Text>(node)) {
         auto result = mergeWithNextTextNode(downcast<Text>(*node));
         if (result.hasException())
             return result.releaseException();
     }
-    if (is<Text>(prev.get())) {
+    if (is<Text>(prev)) {
         auto result = mergeWithNextTextNode(downcast<Text>(*prev));
         if (result.hasException())
             return result.releaseException();
@@ -840,7 +840,7 @@ void HTMLElement::dirAttributeChanged(const AtomicString& value)
 {
     RefPtr<Element> parent = parentElement();
 
-    if (is<HTMLElement>(parent.get()) && parent->selfOrAncestorHasDirAutoAttribute())
+    if (is<HTMLElement>(parent) && parent->selfOrAncestorHasDirAutoAttribute())
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
     if (equalLettersIgnoringASCIICase(value, "auto"))

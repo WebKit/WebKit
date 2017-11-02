@@ -865,7 +865,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
     if (shouldDeselect)
         deselectItemsWithoutValidation(element.get());
 
-    if (is<HTMLOptionElement>(element.get())) {
+    if (is<HTMLOptionElement>(element)) {
         if (m_activeSelectionAnchorIndex < 0 || shouldDeselect)
             setActiveSelectionAnchorIndex(listIndex);
         if (m_activeSelectionEndIndex < 0 || shouldDeselect)

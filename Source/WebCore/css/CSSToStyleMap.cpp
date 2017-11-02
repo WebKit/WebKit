@@ -549,11 +549,11 @@ void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, N
     CSSValueList& borderImage = downcast<CSSValueList>(*value);
 
     for (auto& current : borderImage) {
-        if (is<CSSImageValue>(current.get()) || is<CSSImageGeneratorValue>(current.get()) || is<CSSImageSetValue>(current.get()))
+        if (is<CSSImageValue>(current) || is<CSSImageGeneratorValue>(current) || is<CSSImageSetValue>(current))
             image.setImage(styleImage(current.get()));
-        else if (is<CSSBorderImageSliceValue>(current.get()))
+        else if (is<CSSBorderImageSliceValue>(current))
             mapNinePieceImageSlice(current, image);
-        else if (is<CSSValueList>(current.get())) {
+        else if (is<CSSValueList>(current)) {
             CSSValueList& slashList = downcast<CSSValueList>(current.get());
             // Map in the image slices.
             if (is<CSSBorderImageSliceValue>(slashList.item(0)))
@@ -566,7 +566,7 @@ void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, N
             // Map in the outset.
             if (slashList.item(2))
                 image.setOutset(mapNinePieceImageQuad(*slashList.item(2)));
-        } else if (is<CSSPrimitiveValue>(current.get())) {
+        } else if (is<CSSPrimitiveValue>(current)) {
             // Set the appropriate rules for stretch/round/repeat of the slices.
             mapNinePieceImageRepeat(current, image);
         }
