@@ -127,6 +127,9 @@ void GraphicsContext::drawFocusRing(const Path& path, float width, float offset,
     drawFocusRingToContext(platformContext(), path.platformPath());
 #else
     UNUSED_PARAM(path);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(color);
 #endif
 }
 
@@ -176,7 +179,9 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
     drawFocusRingToContext(platformContext(), focusRingPath.get());
 #else
     UNUSED_PARAM(rects);
+    UNUSED_PARAM(width);
     UNUSED_PARAM(offset);
+    UNUSED_PARAM(color);
 #endif
 }
 
