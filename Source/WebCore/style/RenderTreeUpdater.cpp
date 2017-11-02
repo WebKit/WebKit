@@ -175,7 +175,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
             auto& text = downcast<Text>(node);
             auto* textUpdate = m_styleUpdate->textUpdate(text);
             bool didCreateParent = parent().updates && parent().updates->update.change == Style::Detach;
-            bool mayNeedUpdateWhitespaceOnlyRenderer = parent().didCreateOrDestroyChildRenderer && text.containsOnlyWhitespace();
+            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text.containsOnlyWhitespace();
             if (didCreateParent || textUpdate || mayNeedUpdateWhitespaceOnlyRenderer)
                 updateTextRenderer(text, textUpdate);
 
@@ -215,14 +215,19 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
     popParentsToDepth(0);
 }
 
-RenderTreePosition& RenderTreeUpdater::renderTreePosition()
+auto RenderTreeUpdater::renderingParent() -> Parent&
 {
-    for (unsigned i = m_parentStack.size(); i; --i) {
-        if (auto& position = m_parentStack[i - 1].renderTreePosition)
-            return *position;
+    for (unsigned i = m_parentStack.size(); i--;) {
+        if (m_parentStack[i].renderTreePosition)
+            return m_parentStack[i];
     }
     ASSERT_NOT_REACHED();
-    return *m_parentStack.last().renderTreePosition;
+    return m_parentStack.last();
+}
+
+RenderTreePosition& RenderTreeUpdater::renderTreePosition()
+{
+    return *renderingParent().renderTreePosition;
 }
 
 void RenderTreeUpdater::pushParent(Element& element, const Style::ElementUpdates* updates)
@@ -314,7 +319,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         auto teardownType = update.style->display() == NONE ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
         tearDownRenderers(element, teardownType);
 
-        parent().didCreateOrDestroyChildRenderer = true;
+        renderingParent().didCreateOrDestroyChildRenderer = true;
     }
 
     bool hasDisplayContents = update.style->display() == CONTENTS;
@@ -329,7 +334,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
             element.willAttachRenderers();
         createRenderer(element, RenderStyle::clone(*update.style));
 
-        parent().didCreateOrDestroyChildRenderer = true;
+        renderingParent().didCreateOrDestroyChildRenderer = true;
         return;
     }
 
@@ -410,7 +415,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
 
-    auto* previousRenderer = parent().previousChildRenderer;
+    auto* previousRenderer = renderingParent().previousChildRenderer;
     if (previousRenderer && previousRenderer->isBR()) // <span><br/> <br/></span>
         return false;
 
@@ -483,13 +488,13 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
             return;
         }
         tearDownRenderer(text);
-        parent().didCreateOrDestroyChildRenderer = true;
+        renderingParent().didCreateOrDestroyChildRenderer = true;
         return;
     }
     if (!needsRenderer)
         return;
     createTextRenderer(text, renderTreePosition(), textUpdate);
-    parent().didCreateOrDestroyChildRenderer = true;
+    renderingParent().didCreateOrDestroyChildRenderer = true;
 }
 
 void RenderTreeUpdater::storePreviousRenderer(Node& node)
@@ -497,8 +502,8 @@ void RenderTreeUpdater::storePreviousRenderer(Node& node)
     auto* renderer = node.renderer();
     if (!renderer)
         return;
-    ASSERT(parent().previousChildRenderer != renderer);
-    parent().previousChildRenderer = renderer;
+    ASSERT(renderingParent().previousChildRenderer != renderer);
+    renderingParent().previousChildRenderer = renderer;
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root)

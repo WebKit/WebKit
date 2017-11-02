@@ -550,11 +550,8 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
         ASSERT(beforeChildContainer);
 
         if (beforeChildContainer->isAnonymous()) {
-            if (beforeChildContainer->isInline()) {
-                ASSERT(RenderText::findByDisplayContentsInlineWrapperCandidate(*beforeChildContainer) == beforeChild);
-                addChild(WTFMove(newChild), beforeChildContainer);
-                return;
-            }
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline());
+
             // If the requested beforeChild is not one of our children, then this is because
             // there is an anonymous container within this object that contains the beforeChild.
             RenderElement* beforeChildAnonymousContainer = beforeChildContainer;
@@ -574,6 +571,7 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
             }
 
             ASSERT(beforeChildAnonymousContainer->isTable());
+
             if (newChild->isTablePart()) {
                 // Insert into the anonymous table.
                 beforeChildAnonymousContainer->addChild(WTFMove(newChild), beforeChild);
@@ -582,12 +580,7 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
 
             beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
-            ASSERT(beforeChild->parent() == this);
-            if (beforeChild->parent() != this) {
-                // We should never reach here. If we do, we need to use the
-                // safe fallback to use the topmost beforeChild container.
-                beforeChild = beforeChildContainer;
-            }
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(beforeChild->parent() == this);
         }
     }
 

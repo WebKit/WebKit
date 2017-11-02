@@ -78,6 +78,7 @@ private:
         Parent(Element&, const Style::ElementUpdates*);
     };
     Parent& parent() { return m_parentStack.last(); }
+    Parent& renderingParent();
     RenderTreePosition& renderTreePosition();
 
     GeneratedContent& generatedContent() { return *m_generatedContent; }

@@ -78,10 +78,4 @@ inline bool RenderTreePosition::canInsert(RenderText& renderer) const
     return m_parent.isChildAllowed(renderer, m_parent.style());
 }
 
-inline void RenderTreePosition::insert(RenderPtr<RenderObject> renderer)
-{
-    ASSERT(m_hasValidNextSibling);
-    m_parent.addChild(WTFMove(renderer), m_nextSibling);
-}
-
 } // namespace WebCore

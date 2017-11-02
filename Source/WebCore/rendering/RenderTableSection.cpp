@@ -122,7 +122,7 @@ void RenderTableSection::addChild(RenderPtr<RenderObject> child, RenderObject* b
         RenderObject* last = beforeChild;
         if (!last)
             last = lastRow();
-        if (last && last->isAnonymous() && !last->isBeforeOrAfterContent()) {
+        if (is<RenderTableRow>(last) && last->isAnonymous() && !last->isBeforeOrAfterContent()) {
             RenderTableRow& row = downcast<RenderTableRow>(*last);
             if (beforeChild == &row)
                 beforeChild = row.firstCell();
@@ -143,7 +143,7 @@ void RenderTableSection::addChild(RenderPtr<RenderObject> child, RenderObject* b
         RenderObject* lastBox = last;
         while (lastBox && lastBox->parent()->isAnonymous() && !is<RenderTableRow>(*lastBox))
             lastBox = lastBox->parent();
-        if (lastBox && lastBox->isAnonymous() && !lastBox->isBeforeOrAfterContent()) {
+        if (is<RenderTableRow>(lastBox) && lastBox->isAnonymous() && !lastBox->isBeforeOrAfterContent()) {
             downcast<RenderTableRow>(*lastBox).addChild(WTFMove(child), beforeChild);
             return;
         }

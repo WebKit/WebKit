@@ -538,6 +538,7 @@ void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, Ren
         beforeChild = beforeChild->parent();
 
     ASSERT(!beforeChild || beforeChild->parent() == this);
+    ASSERT(!is<RenderText>(beforeChild) || !downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents());
 
     // Take the ownership.
     auto* newChild = newChildPtr.release();
