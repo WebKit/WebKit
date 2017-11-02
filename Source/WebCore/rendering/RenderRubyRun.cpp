@@ -181,12 +181,6 @@ RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderObject& child)
             auto takenBase = RenderBlockFlow::takeChild(*base);
             base->deleteLines();
         }
-
-        // If any of the above leaves the run empty, destroy it as well.
-        if (!hasRubyText() && !hasRubyBase()) {
-            auto takenThis = parent()->takeChild(*this);
-            deleteLines();
-        }
     }
 
     return takenChild;

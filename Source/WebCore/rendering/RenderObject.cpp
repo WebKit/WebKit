@@ -824,7 +824,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
         bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
             || renderer->outlineStyleForRepaint().outlineStyleIsAuto()
-            || (is<RenderElement>(*renderer) && downcast<RenderElement>(*renderer).hasContinuation()));
+            || (is<RenderBoxModelObject>(*renderer) && downcast<RenderBoxModelObject>(*renderer).isContinuation()));
         if (renderer == &repaintContainer && rendererHasOutlineAutoAncestor)
             repaintRectNeedsConverting = true;
         if (rendererHasOutlineAutoAncestor)
@@ -1175,7 +1175,7 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     }
     if (is<RenderBoxModelObject>(*this)) {
         auto& renderer = downcast<RenderBoxModelObject>(*this);
-        if (renderer.hasContinuation())
+        if (renderer.continuation())
             stream << " continuation->(" << renderer.continuation() << ")";
     }
     outputRegionsInformation(stream);
@@ -1455,24 +1455,26 @@ void RenderObject::willBeRemovedFromTree()
     parent()->setNeedsBoundariesUpdate();
 }
 
+static bool isAnonymousAndSafeToDelete(RenderElement& element)
+{
+    if (!element.isAnonymous())
+        return false;
+    if (element.isRenderView() || element.isRenderFragmentedFlow())
+        return false;
+    return true;
+}
+
 static RenderObject& findDestroyRootIncludingAnonymous(RenderObject& renderer)
 {
     auto* destroyRoot = &renderer;
     while (true) {
-        auto* destroyRootParent = destroyRoot->parent();
-        if (!destroyRootParent->isAnonymous())
+        auto& destroyRootParent = *destroyRoot->parent();
+        if (!isAnonymousAndSafeToDelete(destroyRootParent))
             break;
-        if (destroyRootParent->isRenderView())
-            break;
-        if (destroyRootParent->isRenderFragmentedFlow())
-            break;
-        // FIXME: Destroy continuations here too.
-        if (destroyRootParent->isContinuation())
-            break;
-        bool destroyingOnlyChild = destroyRootParent->firstChild() == destroyRoot && destroyRootParent->lastChild() == destroyRoot;
+        bool destroyingOnlyChild = destroyRootParent.firstChild() == destroyRoot && destroyRootParent.lastChild() == destroyRoot;
         if (!destroyingOnlyChild)
             break;
-        destroyRoot = destroyRootParent;
+        destroyRoot = &destroyRootParent;
     }
     return *destroyRoot;
 }
@@ -1490,7 +1492,14 @@ void RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()
     if (is<RenderTableRow>(destroyRoot))
         downcast<RenderTableRow>(destroyRoot).collapseAndDestroyAnonymousSiblingRows();
 
-    destroyRoot.removeFromParentAndDestroy();
+    auto& destroyRootParent = *destroyRoot.parent();
+    destroyRootParent.removeAndDestroyChild(destroyRoot);
+    destroyRootParent.removeAnonymousWrappersForInlinesIfNecessary();
+
+    // Anonymous parent might have become empty, try to delete it too.
+    if (isAnonymousAndSafeToDelete(destroyRootParent) && !destroyRootParent.firstChild())
+        destroyRootParent.removeFromParentAndDestroyCleaningUpAnonymousWrappers();
+
     // WARNING: |this| is deleted here.
 }
 

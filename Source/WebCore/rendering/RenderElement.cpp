@@ -101,7 +101,7 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_renderBoxNeedsLazyRepaint(false)
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)
-    , m_hasContinuation(false)
+    , m_hasContinuationChainNode(false)
     , m_isContinuation(false)
     , m_isFirstLetter(false)
     , m_hasValidCachedFirstLineStyle(false)
@@ -962,8 +962,11 @@ void RenderElement::handleDynamicFloatPositionChange()
 
 void RenderElement::removeAnonymousWrappersForInlinesIfNecessary()
 {
-    RenderBlock& parentBlock = downcast<RenderBlock>(*parent());
-    if (!parentBlock.canDropAnonymousBlockChild())
+    // FIXME: Move to RenderBlock.
+    if (!is<RenderBlock>(*this))
+        return;
+    RenderBlock& thisBlock = downcast<RenderBlock>(*this);
+    if (!thisBlock.canDropAnonymousBlockChild())
         return;
 
     // We have changed to floated or out-of-flow positioning so maybe all our parent's
@@ -971,18 +974,18 @@ void RenderElement::removeAnonymousWrappersForInlinesIfNecessary()
     // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
     // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
     // if we find a continuation.
-    RenderObject* current = parent()->firstChild();
-    while (current && ((current->isAnonymousBlock() && !downcast<RenderBlock>(*current).isAnonymousBlockContinuation()) || current->style().isFloating() || current->style().hasOutOfFlowPosition()))
+    RenderObject* current = firstChild();
+    while (current && ((current->isAnonymousBlock() && !downcast<RenderBlock>(*current).isContinuation()) || current->style().isFloating() || current->style().hasOutOfFlowPosition()))
         current = current->nextSibling();
 
     if (current)
         return;
 
     RenderObject* next;
-    for (current = parent()->firstChild(); current; current = next) {
+    for (current = firstChild(); current; current = next) {
         next = current->nextSibling();
         if (current->isAnonymousBlock())
-            parentBlock.dropAnonymousBoxChild(parentBlock, downcast<RenderBlock>(*current));
+            thisBlock.dropAnonymousBoxChild(downcast<RenderBlock>(*current));
     }
 }
 
@@ -1011,7 +1014,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         handleDynamicFloatPositionChange();
 
     if (s_noLongerAffectsParentBlock)
-        removeAnonymousWrappersForInlinesIfNecessary();
+        parent()->removeAnonymousWrappersForInlinesIfNecessary();
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 
@@ -2153,8 +2156,10 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
             continue;
         downcast<RenderElement>(child).updateOutlineAutoAncestor(hasOutlineAuto);
     }
-    if (hasContinuation())
-        downcast<RenderBoxModelObject>(*this).continuation()->updateOutlineAutoAncestor(hasOutlineAuto);
+    if (is<RenderBoxModelObject>(*this)) {
+        if (auto* continuation = downcast<RenderBoxModelObject>(*this).continuation())
+            continuation->updateOutlineAutoAncestor(hasOutlineAuto);
+    }
 }
 
 bool RenderElement::hasOutlineAnnotation() const
