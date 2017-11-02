@@ -84,10 +84,13 @@ static ContinuationMap& continuationMap()
     return map;
 }
 
-// This HashMap is similar to the continuation map, but connects first-letter
-// renderers to their remaining text fragments.
-typedef HashMap<const RenderBoxModelObject*, RenderTextFragment*> FirstLetterRemainingTextMap;
-static FirstLetterRemainingTextMap* firstLetterRemainingTextMap = nullptr;
+using FirstLetterRemainingTextMap = HashMap<const RenderBoxModelObject*, WeakPtr<RenderTextFragment>>;
+
+static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
+{
+    static NeverDestroyed<FirstLetterRemainingTextMap> map;
+    return map;
+}
 
 void RenderBoxModelObject::setSelectionState(SelectionState state)
 {
@@ -192,10 +195,8 @@ void RenderBoxModelObject::willBeDestroyed()
         setContinuation(nullptr);
     }
 
-    // If this is a first-letter object with a remaining text fragment then the
-    // entry needs to be cleared from the map.
-    if (firstLetterRemainingText())
-        setFirstLetterRemainingText(nullptr);
+    if (isFirstLetter())
+        clearFirstLetterRemainingText();
 
     if (!renderTreeBeingDestroyed())
         view().imageQualityController().rendererWillBeDestroyed(*this);
@@ -2464,19 +2465,21 @@ void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
 
 RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
 {
-    if (!firstLetterRemainingTextMap)
+    if (!isFirstLetter())
         return nullptr;
-    return firstLetterRemainingTextMap->get(this);
+    return firstLetterRemainingTextMap().get(this).get();
 }
 
-void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment* remainingText)
+void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment& remainingText)
 {
-    if (remainingText) {
-        if (!firstLetterRemainingTextMap)
-            firstLetterRemainingTextMap = new FirstLetterRemainingTextMap;
-        firstLetterRemainingTextMap->set(this, remainingText);
-    } else if (firstLetterRemainingTextMap)
-        firstLetterRemainingTextMap->remove(this);
+    ASSERT(isFirstLetter());
+    firstLetterRemainingTextMap().set(this, makeWeakPtr(remainingText));
+}
+
+void RenderBoxModelObject::clearFirstLetterRemainingText()
+{
+    ASSERT(isFirstLetter());
+    firstLetterRemainingTextMap().remove(this);
 }
 
 LayoutRect RenderBoxModelObject::localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset)

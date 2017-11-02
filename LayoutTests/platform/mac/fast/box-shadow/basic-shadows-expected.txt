@@ -79,7 +79,7 @@ layer at (0,0) size 785x671
           text run at (0,18) width 180: "This second line should not."
       RenderBlock {P} at (0,598) size 769x36
         RenderBlock (floating) at (0,0) size 40x65 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-          RenderText {#text} at (5,5) size 30x55
+          RenderText at (5,5) size 30x55
             text run at (5,5) width 30: "T"
         RenderText {#text} at (43,0) size 498x18
           text run at (43,0) width 498: "he first letter of this paragraph should have a border and a nice shadow effect."

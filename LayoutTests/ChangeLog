@@ -1,3 +1,58 @@
+2017-11-02  Antti Koivisto  <antti@apple.com>
+
+        First letter renderer should be anonymous
+        https://bugs.webkit.org/show_bug.cgi?id=179114
+
+        Reviewed by Darin Adler.
+
+        * fast/dynamic/first-letter-after-list-marker-expected.txt:
+        * platform/mac/css1/pseudo/firstletter-expected.txt:
+        * platform/mac/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * platform/mac/css2.1/t051202-c24-first-lttr-00-b-expected.txt:
+        * platform/mac/css2.1/t051202-c26-psudo-nest-00-c-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-166-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-166a-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-39-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-39b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-166-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-166a-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-39-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-39b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-166-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-166a-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-39-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-39b-expected.txt:
+        * platform/mac/editing/selection/extend-by-word-002-expected.txt:
+        * platform/mac/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/mac/fast/css-generated-content/003-expected.txt:
+        * platform/mac/fast/css-generated-content/007-expected.txt:
+        * platform/mac/fast/css-generated-content/009-expected.txt:
+        * platform/mac/fast/css-generated-content/012-expected.txt:
+        * platform/mac/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-basic-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-border-padding-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-clearance-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-descender-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-raised-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-sunken-expected.txt:
+        * platform/mac/fast/css/first-letter-capitalized-expected.txt:
+        * platform/mac/fast/css/first-letter-detach-expected.txt:
+        * platform/mac/fast/css/first-letter-first-line-hover-expected.txt:
+        * platform/mac/fast/css/first-letter-float-after-float-expected.txt:
+        * platform/mac/fast/css/first-letter-float-expected.txt:
+        * platform/mac/fast/css/first-letter-hover-expected.txt:
+        * platform/mac/fast/css/first-letter-punctuation-expected.txt:
+        * platform/mac/fast/css/first-letter-recalculation-expected.txt:
+        * platform/mac/fast/css/first-letter-visibility-expected.txt:
+        * platform/mac/fast/dynamic/first-letter-display-change-expected.txt:
+        * platform/mac/fast/multicol/shadow-breaking-expected.txt:
+        * platform/mac/fast/selectors/039-expected.txt:
+        * platform/mac/fast/selectors/039b-expected.txt:
+        * platform/mac/fast/selectors/166a-expected.txt:
+        * platform/mac/fast/text/firstline/002-expected.txt:
+        * platform/mac/fast/text/firstline/003-expected.txt:
+
 2017-11-01  Alex Christensen  <achristensen@webkit.org>
 
         Mark media loading tests as only flaky on Sierra.

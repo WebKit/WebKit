@@ -87,10 +87,7 @@ void RenderTextFragment::setText(const String& text, bool force)
         return;
     m_firstLetter->removeFromParentAndDestroy();
     ASSERT(!m_firstLetter);
-    if (!textNode())
-        return;
-    ASSERT(!textNode()->renderer());
-    textNode()->setRenderer(this);
+    ASSERT(!textNode() || textNode()->renderer() == this);
 }
 
 UChar RenderTextFragment::previousCharacter() const

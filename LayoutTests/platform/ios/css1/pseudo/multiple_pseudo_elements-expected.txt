@@ -5,7 +5,7 @@ layer at (0,0) size 800x1071
     RenderBody {BODY} at (8,8) size 784x1055 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x20
         RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-          RenderText {#text} at (0,0) size 10x19
+          RenderText at (0,0) size 10x19
             text run at (0,0) width 10: "T"
         RenderText {#text} at (9,0) size 354x19
           text run at (9,0) width 354: "he style declarations which apply to the text below are:"
@@ -21,7 +21,7 @@ layer at (0,0) size 800x1071
       RenderBlock {HR} at (0,147) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,165) size 784x60
         RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-          RenderText {#text} at (0,0) size 10x19
+          RenderText at (0,0) size 10x19
             text run at (0,0) width 10: "T"
         RenderText {#text} at (9,0) size 782x59
           text run at (9,0) width 735: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be"
@@ -31,7 +31,7 @@ layer at (0,0) size 800x1071
           text run at (0,40) width 459: "a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,241) size 784x190
         RenderInline (generated) at (0,0) size 69x125 [color=#800000]
-          RenderText {#text} at (0,2) size 69x125
+          RenderText at (0,2) size 69x125
             text run at (0,2) width 69: "T"
         RenderText {#text} at (68,73) size 766x116
           text run at (68,73) width 634: "he first letter of this paragraph, and only that one,"
@@ -42,7 +42,7 @@ layer at (0,0) size 800x1071
           text run at (57,170) width 678: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,447) size 784x126
         RenderInline (generated) at (0,0) size 76x63 [color=#800000]
-          RenderText {#text} at (0,1) size 76x63
+          RenderText at (0,1) size 76x63
             text run at (0,1) width 76: "\"W"
         RenderText {#text} at (75,36) size 783x89
           text run at (75,36) width 336: "e should check for quotation support,\" it was said. "
@@ -65,7 +65,7 @@ layer at (0,0) size 800x1071
             RenderTableCell {TD} at (12,28) size 770x436 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x60
                 RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-                  RenderText {#text} at (0,0) size 10x19
+                  RenderText at (0,0) size 10x19
                     text run at (0,0) width 10: "T"
                 RenderText {#text} at (9,0) size 744x59
                   text run at (9,0) width 735: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be"
@@ -75,7 +75,7 @@ layer at (0,0) size 800x1071
                   text run at (0,40) width 505: "ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,80) size 762x210
                 RenderInline (generated) at (0,0) size 69x125 [color=#800000]
-                  RenderText {#text} at (0,2) size 69x125
+                  RenderText at (0,2) size 69x125
                     text run at (0,2) width 69: "T"
                 RenderText {#text} at (68,73) size 754x136
                   text run at (68,73) width 634: "he first letter of this paragraph, and only that one,"
@@ -87,7 +87,7 @@ layer at (0,0) size 800x1071
                   text run at (0,190) width 28: "line."
               RenderBlock {P} at (4,306) size 762x126
                 RenderInline (generated) at (0,0) size 76x63 [color=#800000]
-                  RenderText {#text} at (0,1) size 76x63
+                  RenderText at (0,1) size 76x63
                     text run at (0,1) width 76: "\"W"
                 RenderText {#text} at (75,36) size 757x89
                   text run at (75,36) width 336: "e should check for quotation support,\" it was said. "

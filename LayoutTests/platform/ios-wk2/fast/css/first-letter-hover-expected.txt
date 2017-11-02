@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 397: "The next line of text should turn green when we hover over it."
       RenderBlock {DIV} at (0,72) size 784x40
         RenderInline (generated) at (0,0) size 10x19 [color=#0000FF]
-          RenderText {#text} at (0,0) size 10x19
+          RenderText at (0,0) size 10x19
             text run at (0,0) width 10: "T"
         RenderText {#text} at (9,0) size 771x39
           text run at (9,0) width 762: "he first letter of this paragraph should be larger than the rest. If you hover over this paragraph, all of the text (including"

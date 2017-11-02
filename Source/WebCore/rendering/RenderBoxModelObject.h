@@ -271,7 +271,8 @@ protected:
 public:
     // For RenderBlocks and RenderInlines with m_style->styleType() == FIRST_LETTER, this tracks their remaining text fragments
     RenderTextFragment* firstLetterRemainingText() const;
-    void setFirstLetterRemainingText(RenderTextFragment*);
+    void setFirstLetterRemainingText(RenderTextFragment&);
+    void clearFirstLetterRemainingText();
 
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
     // Since they are typically called only to move objects around within anonymous blocks, the default for fullRemoveInsert is false rather than true.

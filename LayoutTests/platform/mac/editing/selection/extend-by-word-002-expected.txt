@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           RenderListItem {LI} at (0,0) size 120x21
             RenderListMarker at (-14,6) size 5x12: bullet
             RenderInline (generated) at (0,0) size 15x24
-              RenderText {#text} at (5,-4) size 15x24
+              RenderText at (5,-4) size 15x24
                 text run at (5,-4) width 15: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
             RenderInline {A} at (0,0) size 53x12 [color=#0000EE]
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
           RenderListItem {LI} at (0,21) size 120x21
             RenderListMarker at (-14,6) size 5x12: bullet
             RenderInline (generated) at (0,0) size 15x24
-              RenderText {#text} at (5,-4) size 15x24
+              RenderText at (5,-4) size 15x24
                 text run at (5,-4) width 15: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
             RenderInline {A} at (0,0) size 79x12 [color=#0000EE]
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
           RenderListItem {LI} at (0,42) size 120x33
             RenderListMarker at (-14,6) size 5x12: bullet
             RenderInline (generated) at (0,0) size 15x24
-              RenderText {#text} at (5,-4) size 15x24
+              RenderText at (5,-4) size 15x24
                 text run at (5,-4) width 15: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
             RenderInline {A} at (0,0) size 77x24 [color=#0000EE]
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
           RenderListItem {LI} at (0,75) size 120x21
             RenderListMarker at (-14,6) size 5x12: bullet
             RenderInline (generated) at (0,0) size 15x24
-              RenderText {#text} at (5,-4) size 15x24
+              RenderText at (5,-4) size 15x24
                 text run at (5,-4) width 15: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
             RenderInline {A} at (0,0) size 65x12 [color=#0000EE]
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
           RenderListItem {LI} at (0,96) size 120x21
             RenderListMarker at (-14,6) size 5x12: bullet
             RenderInline (generated) at (0,0) size 15x24
-              RenderText {#text} at (5,-4) size 15x24
+              RenderText at (5,-4) size 15x24
                 text run at (5,-4) width 15: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
             RenderInline {A} at (0,0) size 41x12 [color=#0000EE]
@@ -64,7 +64,7 @@ layer at (0,0) size 800x600
           RenderListItem {LI} at (0,117) size 120x21
             RenderListMarker at (-14,6) size 5x12: bullet
             RenderInline (generated) at (0,0) size 15x24
-              RenderText {#text} at (5,-4) size 15x24
+              RenderText at (5,-4) size 15x24
                 text run at (5,-4) width 15: "\x{B7} "
             RenderText {#text} at (0,0) size 0x0
             RenderInline {A} at (0,0) size 41x12 [color=#0000EE]

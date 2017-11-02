@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 8x18
             text run at (0,0) width 8: "1"
         RenderBlock (floating) at (8,0) size 8x18
-          RenderText {#text} at (0,0) size 8x18
+          RenderText at (0,0) size 8x18
             text run at (0,0) width 8: "2"
         RenderText {#text} at (16,0) size 8x18
           text run at (16,0) width 8: "3"

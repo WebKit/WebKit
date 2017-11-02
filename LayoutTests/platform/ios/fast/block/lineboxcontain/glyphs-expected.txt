@@ -12,7 +12,7 @@ layer at (0,0) size 800x284
           text run at (1,-2) width 280: "this block should hug the lowercase glyphs."
       RenderBlock {P} at (0,200) size 784x60
         RenderBlock (floating) at (0,0) size 22x25
-          RenderText {#text} at (0,-9) size 22x41
+          RenderText at (0,-9) size 22x41
             text run at (0,-9) width 22: "T"
         RenderText {#text} at (24,0) size 419x19
           text run at (24,0) width 419: "he first letter here should look nicer because it uses glyph bounds"

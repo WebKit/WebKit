@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x120
         RenderBlock (floating) at (2,1) size 54x59 [color=#FF0000] [border: (2px solid #FF0000)]
-          RenderText {#text} at (3,-22) size 48x96
+          RenderText at (3,-22) size 48x96
             text run at (3,-22) width 48: "A"
         RenderText {#text} at (57,20) size 397x99
           text run at (57,20) width 317: "n example of first-letter. This letter should span 3"
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
       RenderBlock {SPAN} at (0,136) size 784x120
         RenderBlock {DIV} at (368,0) size 400x120
           RenderBlock (floating) at (344,1) size 54x59 [color=#FF0000] [border: (2px solid #FF0000)]
-            RenderText {#text} at (3,-22) size 48x96
+            RenderText at (3,-22) size 48x96
               text run at (3,-22) width 48: "A"
           RenderText {#text} at (6,20) size 394x99
             text run at (6,20) width 337: "n RTL example of first-letter. This letter should span"

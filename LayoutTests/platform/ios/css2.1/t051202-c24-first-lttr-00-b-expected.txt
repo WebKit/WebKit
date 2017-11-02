@@ -5,7 +5,7 @@ layer at (0,0) size 800x268
     RenderBody {BODY} at (8,16) size 784x236 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x40
         RenderInline (generated) at (0,0) size 10x19 [color=#008000]
-          RenderText {#text} at (0,0) size 10x19
+          RenderText at (0,0) size 10x19
             text run at (0,0) width 10: "T"
         RenderText {#text} at (9,0) size 20x19
           text run at (9,0) width 20: "he "
@@ -24,7 +24,7 @@ layer at (0,0) size 800x268
           text run at (0,20) width 189: "user agent has failed this test."
       RenderBlock {P} at (0,56) size 784x58
         RenderInline (generated) at (0,0) size 20x36 [color=#008000]
-          RenderText {#text} at (0,1) size 20x36
+          RenderText at (0,1) size 20x36
             text run at (0,1) width 20: "T"
         RenderText {#text} at (19,15) size 20x19
           text run at (19,15) width 20: "he "
@@ -48,7 +48,7 @@ layer at (0,0) size 800x268
           text run at (184,38) width 245: "then the user agent has failed this test."
       RenderBlock {P} at (0,130) size 784x106
         RenderInline (generated) at (0,0) size 58x63 [color=#008000]
-          RenderText {#text} at (0,1) size 58x63
+          RenderText at (0,1) size 58x63
             text run at (0,1) width 58: "\"T"
         RenderText {#text} at (57,36) size 20x19
           text run at (57,36) width 20: "he "

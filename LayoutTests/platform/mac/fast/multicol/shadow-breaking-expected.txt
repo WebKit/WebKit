@@ -10,7 +10,7 @@ layer at (20,36) size 424x266
 layer at (22,38) size 200x509
   RenderMultiColumnFlowThread at (2,2) size 200x509
     RenderBlock (floating) at (0,0) size 25x41
-      RenderText {#text} at (0,0) size 25x41
+      RenderText at (0,0) size 25x41
         text run at (0,0) width 25: "L"
     RenderText {#text} at (28,0) size 200x509
       text run at (28,0) width 172: "orem ipsum dolor sit"

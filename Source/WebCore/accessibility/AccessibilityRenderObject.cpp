@@ -1232,6 +1232,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         if (!renderText.hasRenderedText())
             return true;
 
+        if (renderText.parent()->isFirstLetter())
+            return true;
+
         // static text beneath TextControls is reported along with the text control text so it's ignored.
         for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) { 
             if (parent->roleValue() == AccessibilityRole::TextField)
@@ -1249,8 +1252,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
                 return true;
             if (altTextInclusion == AccessibilityObjectInclusion::IncludeObject)
                 return false;
-            if (downcast<RenderTextFragment>(renderText).firstLetter())
-                return true;
         }
 
         // text elements that are just empty whitespace should not be returned

@@ -5,13 +5,13 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x60
         RenderBlock (floating) at (2,4) size 52x90
-          RenderText {#text} at (0,-49) size 52x217
+          RenderText at (0,-49) size 52x217
             text run at (0,-49) width 52: "J"
         RenderText {#text} at (56,40) size 297x19
           text run at (56,40) width 297: "ust an example of first-letter. Short paragraph!"
       RenderBlock {DIV} at (16,76) size 400x197
         RenderBlock (floating) at (2,21) size 52x90
-          RenderText {#text} at (0,-49) size 52x217
+          RenderText at (0,-49) size 52x217
             text run at (0,-49) width 52: "J"
         RenderText {#text} at (56,57) size 395x139
           text run at (56,57) width 334: "ust an example of first-letter. This letter should span"

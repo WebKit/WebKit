@@ -226,6 +226,8 @@ public:
     void setIsContinuation() { m_isContinuation = true; }
     bool isElementContinuation() const { return isContinuation() && !isAnonymous(); }
     bool isInlineElementContinuation() const { return isElementContinuation() && isInline(); }
+    bool isFirstLetter() const { return m_isFirstLetter; }
+    void setIsFirstLetter() { m_isFirstLetter = true; }
 
 protected:
     enum BaseTypeFlag {
@@ -338,6 +340,7 @@ private:
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuation : 1;
     unsigned m_isContinuation : 1;
+    unsigned m_isFirstLetter : 1;
     mutable unsigned m_hasValidCachedFirstLineStyle : 1;
 
     unsigned m_renderBlockHasMarginBeforeQuirk : 1;

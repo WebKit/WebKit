@@ -5,7 +5,7 @@ layer at (0,0) size 800x745
     RenderBody {BODY} at (8,8) size 784x729 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x20
         RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-          RenderText {#text} at (0,0) size 10x19
+          RenderText at (0,0) size 10x19
             text run at (0,0) width 10: "T"
         RenderText {#text} at (9,0) size 354x19
           text run at (9,0) width 354: "he style declarations which apply to the text below are:"
@@ -18,7 +18,7 @@ layer at (0,0) size 800x745
       RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x60
         RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-          RenderText {#text} at (0,0) size 10x19
+          RenderText at (0,0) size 10x19
             text run at (0,0) width 10: "T"
         RenderText {#text} at (9,0) size 781x59
           text run at (9,0) width 445: "he first letter of this paragraph, and only that one, should be maroon. "
@@ -28,7 +28,7 @@ layer at (0,0) size 800x745
           text run at (0,40) width 87: "than one line."
       RenderBlock {P} at (0,199) size 784x78
         RenderInline (generated) at (0,0) size 20x36 [color=#800000]
-          RenderText {#text} at (0,1) size 20x36
+          RenderText at (0,1) size 20x36
             text run at (0,1) width 20: "T"
         RenderText {#text} at (19,15) size 775x62
           text run at (19,15) width 625: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
@@ -38,7 +38,7 @@ layer at (0,0) size 800x745
           text run at (0,58) width 332: "paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,293) size 784x106
         RenderInline (generated) at (0,0) size 76x63 [color=#800000]
-          RenderText {#text} at (0,1) size 76x63
+          RenderText at (0,1) size 76x63
             text run at (0,1) width 76: "\"W"
         RenderText {#text} at (75,36) size 774x69
           text run at (75,36) width 325: "e should check for quotation support,\" it was said. "
@@ -60,7 +60,7 @@ layer at (0,0) size 800x745
             RenderTableCell {TD} at (12,28) size 771x284 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x60
                 RenderInline (generated) at (0,0) size 10x19 [color=#800000]
-                  RenderText {#text} at (0,0) size 10x19
+                  RenderText at (0,0) size 10x19
                     text run at (0,0) width 10: "T"
                 RenderText {#text} at (9,0) size 757x59
                   text run at (9,0) width 445: "he first letter of this paragraph, and only that one, should be maroon. "
@@ -70,7 +70,7 @@ layer at (0,0) size 800x745
                   text run at (0,40) width 144: "on more than one line."
               RenderBlock {P} at (4,80) size 762x78
                 RenderInline (generated) at (0,0) size 20x36 [color=#800000]
-                  RenderText {#text} at (0,1) size 20x36
+                  RenderText at (0,1) size 20x36
                     text run at (0,1) width 20: "T"
                 RenderText {#text} at (19,15) size 751x62
                   text run at (19,15) width 625: "he first letter of this paragraph, and only that one, should be a larger font size, as well as maroon. "
@@ -80,7 +80,7 @@ layer at (0,0) size 800x745
                   text run at (0,58) width 355: "the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,174) size 762x106
                 RenderInline (generated) at (0,0) size 76x63 [color=#800000]
-                  RenderText {#text} at (0,1) size 76x63
+                  RenderText at (0,1) size 76x63
                     text run at (0,1) width 76: "\"W"
                 RenderText {#text} at (75,36) size 754x69
                   text run at (75,36) width 325: "e should check for quotation support,\" it was said. "
