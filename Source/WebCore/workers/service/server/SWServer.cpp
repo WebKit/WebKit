@@ -116,17 +116,21 @@ SWServer::SWServer()
     });
 }
 
+// https://w3c.github.io/ServiceWorker/#schedule-job-algorithm
 void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()));
 
-    auto result = m_jobQueues.add(jobData.registrationKey(), nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = std::make_unique<SWServerJobQueue>(*this, jobData.registrationKey());
+    // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
+    // If it is, stack it along with that job.
 
-    ASSERT(result.iterator->value);
+    auto& jobQueue = *m_jobQueues.ensure(jobData.registrationKey(), [this, &jobData] {
+        return std::make_unique<SWServerJobQueue>(*this, jobData.registrationKey());
+    }).iterator->value;
 
-    result.iterator->value->enqueueJob(jobData);
+    jobQueue.enqueueJob(jobData);
+    if (jobQueue.size() == 1)
+        jobQueue.runNextJob();
 }
 
 void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionData& exceptionData)

@@ -40,18 +40,21 @@ public:
     SWServerJobQueue(const SWServerRegistration&) = delete;
     ~SWServerJobQueue();
 
-    void enqueueJob(const ServiceWorkerJobData&);
+    const ServiceWorkerJobData& firstJob() const { return m_jobQueue.first(); }
+    const ServiceWorkerJobData& lastJob() const { return m_jobQueue.last(); }
+    void enqueueJob(const ServiceWorkerJobData& jobData) { m_jobQueue.append(jobData); }
+    size_t size() const { return m_jobQueue.size(); }
+
+    void runNextJob();
+
     void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message);
     void scriptContextStarted(SWServer::Connection&, uint64_t serviceWorkerIdentifier, const String& workerID);
 
 private:
     void jobTimerFired();
-    void startNextJob();
+    void runNextJobSynchronously();
     void rejectCurrentJob(const ExceptionData&);
-    void resolveCurrentRegistrationJob(const ServiceWorkerRegistrationData&);
-    void resolveCurrentUnregistrationJob(bool unregistrationResult);
-    void startScriptFetchForCurrentJob();
     void finishCurrentJob();
 
     void runRegisterJob(const ServiceWorkerJobData&);
@@ -62,7 +65,6 @@ private:
     void clearRegistration(SWServerRegistration&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
-    std::unique_ptr<ServiceWorkerJobData> m_currentJob;
 
     Timer m_jobTimer;
     SWServer& m_server;

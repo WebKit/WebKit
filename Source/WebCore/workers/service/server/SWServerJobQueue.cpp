@@ -40,7 +40,7 @@
 namespace WebCore {
 
 SWServerJobQueue::SWServerJobQueue(SWServer& server, const ServiceWorkerRegistrationKey& key)
-    : m_jobTimer(*this, &SWServerJobQueue::startNextJob)
+    : m_jobTimer(*this, &SWServerJobQueue::runNextJobSynchronously)
     , m_server(server)
     , m_registrationKey(key)
 {
@@ -51,29 +51,16 @@ SWServerJobQueue::~SWServerJobQueue()
     ASSERT(m_jobQueue.isEmpty());
 }
 
-void SWServerJobQueue::enqueueJob(const ServiceWorkerJobData& jobData)
-{
-    // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
-    // If it is, stack it along with that job.
-
-    m_jobQueue.append(jobData);
-
-    if (m_currentJob)
-        return;
-
-    if (!m_jobTimer.isActive())
-        m_jobTimer.startOneShot(0_s);
-}
-
 void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, const ServiceWorkerFetchResult& result)
 {
-    ASSERT(m_currentJob && m_currentJob->identifier() == result.jobIdentifier);
+    auto& job = firstJob();
+    ASSERT(job.identifier() == result.jobIdentifier);
 
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
     if (!result.scriptError.isNull()) {
-        rejectCurrentJob(ExceptionData { UnknownError, makeString("Script URL ", m_currentJob->scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
+        rejectCurrentJob(ExceptionData { UnknownError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
 
         // If newestWorker is null, invoke Clear Registration algorithm passing this registration as its argument.
         if (!registration->getNewestWorker())
@@ -86,7 +73,7 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     // then resolve and finish the job without doing anything further.
 
     // FIXME: Support the proper worker type (classic vs module)
-    m_server.updateWorker(connection, m_registrationKey, m_currentJob->scriptURL, result.script, WorkerType::Classic);
+    m_server.updateWorker(connection, m_registrationKey, job.scriptURL, result.script, WorkerType::Classic);
 }
 
 void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message)
@@ -107,28 +94,35 @@ void SWServerJobQueue::scriptContextStarted(SWServer::Connection&, uint64_t serv
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
     registration->setActiveServiceWorkerIdentifier(serviceWorkerIdentifier);
-    resolveCurrentRegistrationJob(registration->data());
+
+    m_server.resolveRegistrationJob(firstJob(), registration->data());
+    finishCurrentJob();
 }
 
-void SWServerJobQueue::startNextJob()
+// https://w3c.github.io/ServiceWorker/#run-job
+void SWServerJobQueue::runNextJob()
 {
-    ASSERT(!m_currentJob);
     ASSERT(!m_jobQueue.isEmpty());
+    ASSERT(!m_jobTimer.isActive());
+    m_jobTimer.startOneShot(0_s);
+}
 
-    m_currentJob = std::make_unique<ServiceWorkerJobData>(m_jobQueue.takeFirst());
-
-    switch (m_currentJob->type) {
+void SWServerJobQueue::runNextJobSynchronously()
+{
+    auto& job = firstJob();
+    switch (job.type) {
     case ServiceWorkerJobType::Register:
-        runRegisterJob(*m_currentJob);
+        runRegisterJob(job);
         return;
     case ServiceWorkerJobType::Unregister:
-        runUnregisterJob(*m_currentJob);
+        runUnregisterJob(job);
         return;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+// https://w3c.github.io/ServiceWorker/#register-algorithm
 void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
 {
     ASSERT(job.type == ServiceWorkerJobType::Register);
@@ -149,7 +143,8 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
         registration->setIsUninstalling(false);
         auto* newestWorker = registration->getNewestWorker();
         if (newestWorker && equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()) && job.registrationOptions.updateViaCache == registration->updateViaCache()) {
-            resolveCurrentRegistrationJob(registration->data());
+            m_server.resolveRegistrationJob(firstJob(), registration->data());
+            finishCurrentJob();
             return;
         }
     } else {
@@ -160,6 +155,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
     runUpdateJob(job);
 }
 
+// https://w3c.github.io/ServiceWorker/#unregister-algorithm
 void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
 {
     // If the origin of job’s scope url is not job's client's origin, then:
@@ -172,7 +168,8 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
     // If registration is null, then:
     if (!registration || registration->isUninstalling()) {
         // Invoke Resolve Job Promise with job and false.
-        resolveCurrentUnregistrationJob(false);
+        m_server.resolveUnregistrationJob(firstJob(), m_registrationKey, false);
+        finishCurrentJob();
         return;
     }
 
@@ -180,10 +177,11 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
     registration->setIsUninstalling(true);
 
     // Invoke Resolve Job Promise with job and true.
-    resolveCurrentUnregistrationJob(true);
+    m_server.resolveUnregistrationJob(firstJob(), m_registrationKey, true);
 
     // Invoke Try Clear Registration with registration.
     tryClearRegistration(*registration);
+    finishCurrentJob();
 }
 
 // https://w3c.github.io/ServiceWorker/#try-clear-registration-algorithm
@@ -203,6 +201,7 @@ void SWServerJobQueue::clearRegistration(SWServerRegistration& registration)
     m_server.removeRegistration(registration.key());
 }
 
+// https://w3c.github.io/ServiceWorker/#update-algorithm
 void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
 {
     auto* registration = m_server.getRegistration(m_registrationKey);
@@ -218,56 +217,24 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
     if (newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
         return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker with a requested script URL whose newest worker has a different script URL") });
 
-    startScriptFetchForCurrentJob();
+    m_server.startScriptFetch(job);
 }
 
 void SWServerJobQueue::rejectCurrentJob(const ExceptionData& exceptionData)
 {
-    ASSERT(m_currentJob);
-
-    m_server.rejectJob(*m_currentJob, exceptionData);
+    m_server.rejectJob(firstJob(), exceptionData);
 
     finishCurrentJob();
 }
 
-void SWServerJobQueue::resolveCurrentRegistrationJob(const ServiceWorkerRegistrationData& data)
-{
-    ASSERT(m_currentJob);
-    ASSERT(m_currentJob->type == ServiceWorkerJobType::Register);
-
-    m_server.resolveRegistrationJob(*m_currentJob, data);
-
-    finishCurrentJob();
-}
-
-void SWServerJobQueue::resolveCurrentUnregistrationJob(bool unregistrationResult)
-{
-    ASSERT(m_currentJob);
-    ASSERT(m_currentJob->type == ServiceWorkerJobType::Unregister);
-
-    m_server.resolveUnregistrationJob(*m_currentJob, m_registrationKey, unregistrationResult);
-
-    finishCurrentJob();
-}
-
-void SWServerJobQueue::startScriptFetchForCurrentJob()
-{
-    ASSERT(m_currentJob);
-
-    m_server.startScriptFetch(*m_currentJob);
-}
-
+// https://w3c.github.io/ServiceWorker/#finish-job
 void SWServerJobQueue::finishCurrentJob()
 {
-    ASSERT(m_currentJob);
     ASSERT(!m_jobTimer.isActive());
 
-    m_currentJob = nullptr;
-    if (m_jobQueue.isEmpty())
-        return;
-
-    ASSERT(!m_jobTimer.isActive());
-    m_jobTimer.startOneShot(0_s);
+    m_jobQueue.removeFirst();
+    if (!m_jobQueue.isEmpty())
+        runNextJob();
 }
 
 } // namespace WebCore
