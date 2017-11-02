@@ -1,3 +1,49 @@
+2017-11-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update test expectations after r224324.
+
+        Unreviewed test gardening.
+
+        * platform/win/css1/pseudo/firstletter-expected.txt:
+        * platform/win/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * platform/win/css2.1/t051202-c24-first-lttr-00-b-expected.txt:
+        * platform/win/css2.1/t051202-c26-psudo-nest-00-c-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-166-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-166a-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-39-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-39b-expected.txt:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-166-expected.txt:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-166a-expected.txt:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-39-expected.txt:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-39b-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-166-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-166a-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-39-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-39b-expected.txt:
+        * platform/win/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/win/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/win/fast/css-generated-content/003-expected.txt:
+        * platform/win/fast/css-generated-content/007-expected.txt:
+        * platform/win/fast/css-generated-content/009-expected.txt:
+        * platform/win/fast/css-generated-content/012-expected.txt:
+        * platform/win/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt:
+        * platform/win/fast/css/first-letter-capitalized-expected.txt:
+        * platform/win/fast/css/first-letter-detach-expected.txt:
+        * platform/win/fast/css/first-letter-first-line-hover-expected.txt:
+        * platform/win/fast/css/first-letter-float-expected.txt:
+        * platform/win/fast/css/first-letter-hover-expected.txt:
+        * platform/win/fast/css/first-letter-punctuation-expected.txt:
+        * platform/win/fast/css/first-letter-recalculation-expected.txt:
+        * platform/win/fast/css/first-letter-visibility-expected.txt:
+        * platform/win/fast/multicol/shadow-breaking-expected.txt:
+        * platform/win/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+        * platform/win/fast/selectors/039-expected.txt:
+        * platform/win/fast/selectors/039b-expected.txt:
+        * platform/win/fast/selectors/166a-expected.txt:
+        * platform/win/fast/text/firstline/002-expected.txt:
+        * platform/win/fast/text/firstline/003-expected.txt:
+        * platform/win/ietestcenter/css3/text/textshadow-004-expected.txt:
+
 2017-11-02  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Adjusting test expectations and rebaseline some
