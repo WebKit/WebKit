@@ -104,7 +104,7 @@ RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(RenderStyle&&
     return createRenderer<RenderBlockFlow>(*this, WTFMove(style));
 }
 
-void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     auto summarySlot = HTMLSlotElement::create(slotTag, document());
     summarySlot->setAttributeWithoutSynchronization(nameAttr, summarySlotName());
@@ -115,7 +115,7 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     m_defaultSummary = defaultSummary.ptr();
 
     summarySlot->appendChild(defaultSummary);
-    root->appendChild(summarySlot);
+    root.appendChild(summarySlot);
 
     m_defaultSlot = HTMLSlotElement::create(slotTag, document());
     ASSERT(!m_isOpen);

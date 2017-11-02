@@ -141,7 +141,7 @@ HTMLImageLoader& HTMLInputElement::ensureImageLoader()
     return *m_imageLoader;
 }
 
-void HTMLInputElement::didAddUserAgentShadowRoot(ShadowRoot*)
+void HTMLInputElement::didAddUserAgentShadowRoot(ShadowRoot&)
 {
     m_inputType->createShadowSubtree();
     updateInnerTextElementEditability();

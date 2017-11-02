@@ -341,7 +341,7 @@ static DOMWrapperWorld& plugInImageElementIsolatedWorld()
     return isolatedWorld;
 }
 
-void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     HTMLPlugInElement::didAddUserAgentShadowRoot(root);
     if (displayState() >= PreparingPluginReplacement)
@@ -354,7 +354,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     // Reset any author styles that may apply as we only want explicit
     // styles defined in the injected user agents stylesheets to specify
     // the look-and-feel of the snapshotted plug-in overlay. 
-    root->setResetStyleInheritance(true);
+    root.setResetStyleInheritance(true);
     
     String mimeType = loadedMimeType();
 

@@ -292,13 +292,13 @@ void HTMLPlugInElement::setDisplayState(DisplayState state)
         m_swapRendererTimer.startOneShot(0_s);
 }
 
-void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     if (!m_pluginReplacement || !document().page() || displayState() != PreparingPluginReplacement)
         return;
     
-    root->setResetStyleInheritance(true);
-    if (m_pluginReplacement->installReplacement(*root)) {
+    root.setResetStyleInheritance(true);
+    if (m_pluginReplacement->installReplacement(root)) {
         setDisplayState(DisplayingPluginReplacement);
         invalidateStyleAndRenderersForSubtree();
     }

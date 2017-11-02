@@ -1792,7 +1792,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 
     if (shadowRoot.mode() == ShadowRootMode::UserAgent)
-        didAddUserAgentShadowRoot(&shadowRoot);
+        didAddUserAgentShadowRoot(shadowRoot);
 }
 
 void Element::removeShadowRoot()

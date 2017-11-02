@@ -106,7 +106,7 @@ private:
 
     bool allowedToLoadPluginContent(const String& url, const String& mimeType) const;
 
-    void didAddUserAgentShadowRoot(ShadowRoot*) final;
+    void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;

@@ -58,7 +58,7 @@ private:
     void didAttachRenderers() final;
 
     void didElementStateChange();
-    void didAddUserAgentShadowRoot(ShadowRoot*) final;
+    void didAddUserAgentShadowRoot(ShadowRoot&) final;
     bool isDeterminate() const;
 
     bool canContainRangeEndPoint() const final { return false; }

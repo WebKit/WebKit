@@ -579,7 +579,7 @@ private:
     bool isUserActionElementFocused() const;
     bool isUserActionElementHovered() const;
 
-    virtual void didAddUserAgentShadowRoot(ShadowRoot*) { }
+    virtual void didAddUserAgentShadowRoot(ShadowRoot&) { }
 
     // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
     friend class Attr;

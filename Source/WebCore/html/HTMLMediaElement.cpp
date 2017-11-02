@@ -7030,7 +7030,7 @@ void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JS
     controllerObject->methodTable(vm)->put(controllerObject, exec, JSC::Identifier::fromString(exec, propertyName), propertyValue, propertySlot);
 }
 
-void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     DEBUG_LOG(LOGIDENTIFIER);
 

@@ -65,10 +65,10 @@ RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(RenderStyle&&
     return createRenderer<RenderBlockFlow>(*this, WTFMove(style));
 }
 
-void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    root->appendChild(DetailsMarkerControl::create(document()));
-    root->appendChild(HTMLSlotElement::create(slotTag, document()));
+    root.appendChild(DetailsMarkerControl::create(document()));
+    root.appendChild(HTMLSlotElement::create(slotTag, document()));
 }
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const

@@ -75,7 +75,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     void didElementStateChange();
-    void didAddUserAgentShadowRoot(ShadowRoot*) final;
+    void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     RefPtr<HTMLElement> m_value;
 };

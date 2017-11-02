@@ -71,7 +71,7 @@ private:
 
     enum WrapMethod { NoWrap, SoftWrap, HardWrap };
 
-    void didAddUserAgentShadowRoot(ShadowRoot*) final;
+    void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     void maxLengthAttributeChanged(const AtomicString& newValue);
     void minLengthAttributeChanged(const AtomicString& newValue);

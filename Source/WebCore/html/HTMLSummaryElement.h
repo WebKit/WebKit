@@ -39,7 +39,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void defaultEventHandler(Event&) final;
 
-    void didAddUserAgentShadowRoot(ShadowRoot*) final;
+    void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     bool hasCustomFocusLogic() const final { return true; }
 

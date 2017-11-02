@@ -100,9 +100,9 @@ Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagNam
     return textArea;
 }
 
-void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    root->appendChild(TextControlInnerTextElement::create(document()));
+    root.appendChild(TextControlInnerTextElement::create(document()));
     updateInnerTextElementEditability();
 }
 

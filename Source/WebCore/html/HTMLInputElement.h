@@ -346,7 +346,7 @@ protected:
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
 
-    void didAddUserAgentShadowRoot(ShadowRoot*) final;
+    void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     void willChangeForm() final;
     void didChangeForm() final;

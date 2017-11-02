@@ -220,7 +220,7 @@ RenderMeter* HTMLMeterElement::renderMeter() const
     return nullptr;
 }
 
-void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     ASSERT(!m_value);
 
@@ -228,13 +228,13 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
     auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
     style->setTextContent(shadowStyle);
-    root->appendChild(style);
+    root.appendChild(style);
 
     // Pseudos are set to allow author styling.
     auto inner = HTMLDivElement::create(document());
     inner->setIdAttribute("inner");
     inner->setPseudo("-webkit-meter-inner-element");
-    root->appendChild(inner);
+    root.appendChild(inner);
 
     auto bar = HTMLDivElement::create(document());
     bar->setIdAttribute("bar");

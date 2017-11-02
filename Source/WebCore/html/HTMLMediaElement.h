@@ -838,7 +838,7 @@ private:
     SleepType shouldDisableSleep() const;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    void didAddUserAgentShadowRoot(ShadowRoot*) override;
+    void didAddUserAgentShadowRoot(ShadowRoot&) override;
     DOMWrapperWorld& ensureIsolatedWorld();
     bool ensureMediaControlsInjectedScript();
 #endif
