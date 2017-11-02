@@ -3113,3 +3113,5 @@ webkit.org/b/112755 fast/css3-text/css3-text-indent/getComputedStyle/getComputed
 webkit.org/b/58491 editing/pasteboard/insert-text-decoration.html [ Skip ]
 
 webkit.org/b/177322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
+
+webkit.org/b/178029 http/tests/preload/viewport/meta-viewport-link-headers.php [ Pass Failure ]
