@@ -1,3 +1,17 @@
+2017-11-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Early out selection update when data is not present
+        https://bugs.webkit.org/show_bug.cgi?id=179084
+
+        Reviewed by Ryosuke Niwa.
+
+        We should early out of a selection update when we do not have the data that is necessary to make that
+        update. This mostly helps avoid debug asserts, but will be helpful with the selection changes that are
+        ongoing.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateChangedSelection:]):
+
 2017-11-02  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] audioTrack.label is always empty on macOS

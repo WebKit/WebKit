@@ -3957,7 +3957,7 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_updateChangedSelection:(BOOL)force
 {
-    if (!_selectionNeedsUpdate)
+    if (!_selectionNeedsUpdate || _page->editorState().isMissingPostLayoutData)
         return;
 
     WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());
