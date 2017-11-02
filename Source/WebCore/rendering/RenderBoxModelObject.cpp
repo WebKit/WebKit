@@ -2535,10 +2535,8 @@ void RenderBoxModelObject::removeAndDestroyAllContinuations()
     ASSERT(hasContinuationChainNode());
     ASSERT(continuationChainNodeMap().contains(this));
     auto& continuationChainNode = *continuationChainNodeMap().get(this);
-    while (continuationChainNode.next) {
-        ASSERT(!continuationChainNode.next->renderer->firstChild());
+    while (continuationChainNode.next)
         continuationChainNode.next->renderer->removeFromParentAndDestroy();
-    }
     removeFromContinuationChain();
 }
 
