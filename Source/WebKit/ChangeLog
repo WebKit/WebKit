@@ -1,3 +1,14 @@
+2017-11-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] audioTrack.label is always empty on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=179175
+        <rdar://problem/35315438>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::createCaptureSource): Pass settings.label to Source constructor.
+
 2017-11-02  Frederic Wang  <fwang@igalia.com>
 
         Add references to bug 179167 in FIXME comments

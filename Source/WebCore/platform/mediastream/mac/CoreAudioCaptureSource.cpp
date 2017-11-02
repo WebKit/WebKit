@@ -794,6 +794,7 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings() const
         settings.setVolume(volume());
         settings.setSampleRate(sampleRate());
         settings.setDeviceId(id());
+        settings.setLabel(name());
         settings.setEchoCancellation(echoCancellation());
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;

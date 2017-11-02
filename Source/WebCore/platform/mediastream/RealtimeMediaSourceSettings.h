@@ -96,6 +96,9 @@ public:
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints) { m_supportedConstraints = supportedConstraints; }
 
+    const AtomicString& label() const { return m_label; }
+    void setLabel(const AtomicString& label) { m_label = label; }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceSettings&);
 
@@ -112,6 +115,7 @@ private:
 
     AtomicString m_deviceId;
     AtomicString m_groupId;
+    AtomicString m_label;
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };
@@ -129,6 +133,7 @@ void RealtimeMediaSourceSettings::encode(Encoder& encoder) const
         << m_echoCancellation
         << m_deviceId
         << m_groupId
+        << m_label
         << m_supportedConstraints;
     encoder.encodeEnum(m_facingMode);
 }
@@ -146,6 +151,7 @@ bool RealtimeMediaSourceSettings::decode(Decoder& decoder, RealtimeMediaSourceSe
         && decoder.decode(settings.m_echoCancellation)
         && decoder.decode(settings.m_deviceId)
         && decoder.decode(settings.m_groupId)
+        && decoder.decode(settings.m_label)
         && decoder.decode(settings.m_supportedConstraints)
         && decoder.decodeEnum(settings.m_facingMode);
 }
