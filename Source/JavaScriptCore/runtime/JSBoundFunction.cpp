@@ -41,6 +41,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->uncheckedArgument(i));
+    RELEASE_ASSERT(!args.hasOverflowed());
 
     JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
     ExecutableBase* executable = targetFunction->executable();
@@ -56,6 +57,8 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
 
     JSArray* boundArgs = boundFunction->boundArgs();
@@ -67,11 +70,16 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
     }
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->uncheckedArgument(i));
+    if (UNLIKELY(args.hasOverflowed())) {
+        throwOutOfMemoryError(exec, scope);
+        return encodedJSValue();
+    }
 
     JSObject* targetFunction = boundFunction->targetFunction();
     CallData callData;
     CallType callType = getCallData(targetFunction, callData);
     ASSERT(callType != CallType::None);
+    scope.release();
     return JSValue::encode(call(exec, targetFunction, callType, callData, boundFunction->boundThis(), args));
 }
 
@@ -82,6 +90,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->uncheckedArgument(i));
+    RELEASE_ASSERT(!args.hasOverflowed());
 
     JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
     ConstructData constructData;
@@ -92,6 +101,8 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
 
     JSArray* boundArgs = boundFunction->boundArgs();
@@ -103,11 +114,16 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
     }
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
         args.append(exec->uncheckedArgument(i));
+    if (UNLIKELY(args.hasOverflowed())) {
+        throwOutOfMemoryError(exec, scope);
+        return encodedJSValue();
+    }
 
     JSObject* targetFunction = boundFunction->targetFunction();
     ConstructData constructData;
     ConstructType constructType = getConstructData(targetFunction, constructData);
     ASSERT(constructType != ConstructType::None);
+    scope.release();
     return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
 }
 

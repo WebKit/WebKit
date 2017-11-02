@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -378,9 +378,15 @@ template<typename T> struct JSConverter<IDLSequence<T>> {
     template<typename U, size_t inlineCapacity>
     static JSC::JSValue convert(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, const Vector<U, inlineCapacity>& vector)
     {
+        JSC::VM& vm = exec.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         JSC::MarkedArgumentBuffer list;
         for (auto& element : vector)
             list.append(toJS<T>(exec, globalObject, element));
+        if (UNLIKELY(list.hasOverflowed())) {
+            throwOutOfMemoryError(&exec, scope);
+            return { };
+        }
         return JSC::constructArray(&exec, nullptr, &globalObject, list);
     }
 };
@@ -406,9 +412,15 @@ template<typename T> struct JSConverter<IDLFrozenArray<T>> {
     template<typename U, size_t inlineCapacity>
     static JSC::JSValue convert(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, const Vector<U, inlineCapacity>& vector)
     {
+        JSC::VM& vm = exec.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         JSC::MarkedArgumentBuffer list;
         for (auto& element : vector)
             list.append(toJS<T>(exec, globalObject, element));
+        if (UNLIKELY(list.hasOverflowed())) {
+            throwOutOfMemoryError(&exec, scope);
+            return { };
+        }
         auto* array = JSC::constructArray(&exec, nullptr, &globalObject, list);
         return JSC::objectConstructorFreeze(&exec, array);
     }

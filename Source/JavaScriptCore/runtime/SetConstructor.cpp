@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,7 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
     forEachInIterable(exec, iterable, [&](VM&, ExecState* exec, JSValue nextValue) {
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
+        ASSERT(!arguments.hasOverflowed());
         call(exec, adderFunction, adderFunctionCallType, adderFunctionCallData, set, arguments);
     });
 

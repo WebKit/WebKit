@@ -65,6 +65,7 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(parameter);
+    ASSERT(!arguments.hasOverflowed());
 
     return callFunction(state, function, &object, arguments);
 }

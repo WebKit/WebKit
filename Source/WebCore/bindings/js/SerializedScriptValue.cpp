@@ -666,7 +666,7 @@ private:
     void recordObject(JSObject* object)
     {
         m_objectPool.add(object, m_objectPool.size());
-        m_gcBuffer.append(object);
+        m_gcBuffer.appendWithCrashOnOverflow(object);
     }
 
     bool startObjectInternal(JSObject* object)
@@ -1589,8 +1589,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!startMap(inMap))
                     break;
                 JSMapIterator* iterator = JSMapIterator::create(vm, vm.mapIteratorStructure.get(), inMap, IterateKeyValue);
-                m_gcBuffer.append(inMap);
-                m_gcBuffer.append(iterator);
+                m_gcBuffer.appendWithCrashOnOverflow(inMap);
+                m_gcBuffer.appendWithCrashOnOverflow(iterator);
                 mapIteratorStack.append(iterator);
                 inputObjectStack.append(inMap);
                 goto mapDataStartVisitEntry;
@@ -1610,7 +1610,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     goto objectStartVisitMember;
                 }
                 inValue = key;
-                m_gcBuffer.append(value);
+                m_gcBuffer.appendWithCrashOnOverflow(value);
                 mapIteratorValueStack.append(value);
                 stateStack.append(MapDataEndVisitKey);
                 goto stateUnknown;
@@ -1633,8 +1633,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!startSet(inSet))
                     break;
                 JSSetIterator* iterator = JSSetIterator::create(vm, vm.setIteratorStructure.get(), inSet, IterateKey);
-                m_gcBuffer.append(inSet);
-                m_gcBuffer.append(iterator);
+                m_gcBuffer.appendWithCrashOnOverflow(inSet);
+                m_gcBuffer.appendWithCrashOnOverflow(iterator);
                 setIteratorStack.append(iterator);
                 inputObjectStack.append(inSet);
                 goto setDataStartVisitEntry;
@@ -2651,13 +2651,13 @@ private:
         case FalseObjectTag: {
             BooleanObject* obj = BooleanObject::create(m_exec->vm(), m_globalObject->booleanObjectStructure());
             obj->setInternalValue(m_exec->vm(), jsBoolean(false));
-            m_gcBuffer.append(obj);
+            m_gcBuffer.appendWithCrashOnOverflow(obj);
             return obj;
         }
         case TrueObjectTag: {
             BooleanObject* obj = BooleanObject::create(m_exec->vm(), m_globalObject->booleanObjectStructure());
             obj->setInternalValue(m_exec->vm(), jsBoolean(true));
-             m_gcBuffer.append(obj);
+            m_gcBuffer.appendWithCrashOnOverflow(obj);
             return obj;
         }
         case DoubleTag: {
@@ -2671,7 +2671,7 @@ private:
             if (!read(d))
                 return JSValue();
             NumberObject* obj = constructNumber(m_exec, m_globalObject, jsNumber(d));
-            m_gcBuffer.append(obj);
+            m_gcBuffer.appendWithCrashOnOverflow(obj);
             return obj;
         }
         case DateTag: {
@@ -2763,13 +2763,13 @@ private:
             if (!readStringData(cachedString))
                 return JSValue();
             StringObject* obj = constructString(m_exec->vm(), m_globalObject, cachedString->jsString(m_exec));
-            m_gcBuffer.append(obj);
+            m_gcBuffer.appendWithCrashOnOverflow(obj);
             return obj;
         }
         case EmptyStringObjectTag: {
             VM& vm = m_exec->vm();
             StringObject* obj = constructString(vm, m_globalObject, jsEmptyString(&vm));
-            m_gcBuffer.append(obj);
+            m_gcBuffer.appendWithCrashOnOverflow(obj);
             return obj;
         }
         case RegExpTag: {
@@ -2816,7 +2816,7 @@ private:
             // module to not have been a valid module. Therefore, createStub should
             // not trow.
             scope.releaseAssertNoException();
-            m_gcBuffer.append(result);
+            m_gcBuffer.appendWithCrashOnOverflow(result);
             return result;
         }
 #endif
@@ -2834,7 +2834,7 @@ private:
                 return JSValue();
             }
             JSValue result = JSArrayBuffer::create(m_exec->vm(), structure, WTFMove(arrayBuffer));
-            m_gcBuffer.append(result);
+            m_gcBuffer.appendWithCrashOnOverflow(result);
             return result;
         }
         case ArrayBufferTransferTag: {
@@ -2861,7 +2861,7 @@ private:
             RELEASE_ASSERT(m_sharedBuffers->at(index));
             RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(WTFMove(m_sharedBuffers->at(index)));
             JSValue result = getJSValue(buffer.get());
-            m_gcBuffer.append(result);
+            m_gcBuffer.appendWithCrashOnOverflow(result);
             return result;
         }
         case ArrayBufferViewTag: {
@@ -2870,7 +2870,7 @@ private:
                 fail();
                 return JSValue();
             }
-            m_gcBuffer.append(arrayBufferView);
+            m_gcBuffer.appendWithCrashOnOverflow(arrayBufferView);
             return arrayBufferView;
         }
 #if ENABLE(SUBTLE_CRYPTO)
@@ -2896,7 +2896,7 @@ private:
                 fail();
                 return JSValue();
             }
-            m_gcBuffer.append(cryptoKey);
+            m_gcBuffer.appendWithCrashOnOverflow(cryptoKey);
             return cryptoKey;
         }
 #endif
@@ -2984,7 +2984,7 @@ DeserializationResult CloneDeserializer::deserialize()
             JSArray* outArray = constructEmptyArray(m_exec, 0, m_globalObject, length);
             if (UNLIKELY(scope.exception()))
                 goto error;
-            m_gcBuffer.append(outArray);
+            m_gcBuffer.appendWithCrashOnOverflow(outArray);
             outputObjectStack.append(outArray);
         }
         arrayStartVisitMember:
@@ -3025,7 +3025,7 @@ DeserializationResult CloneDeserializer::deserialize()
             if (outputObjectStack.size() > maximumFilterRecursion)
                 return std::make_pair(JSValue(), SerializationReturnCode::StackOverflowError);
             JSObject* outObject = constructEmptyObject(m_exec, m_globalObject->objectPrototype());
-            m_gcBuffer.append(outObject);
+            m_gcBuffer.appendWithCrashOnOverflow(outObject);
             outputObjectStack.append(outObject);
         }
         objectStartVisitMember:
@@ -3062,7 +3062,7 @@ DeserializationResult CloneDeserializer::deserialize()
             JSMap* map = JSMap::create(m_exec, m_exec->vm(), m_globalObject->mapStructure());
             if (UNLIKELY(scope.exception()))
                 goto error;
-            m_gcBuffer.append(map);
+            m_gcBuffer.appendWithCrashOnOverflow(map);
             outputObjectStack.append(map);
             mapStack.append(map);
             goto mapDataStartVisitEntry;
@@ -3093,7 +3093,7 @@ DeserializationResult CloneDeserializer::deserialize()
             JSSet* set = JSSet::create(m_exec, m_exec->vm(), m_globalObject->setStructure());
             if (UNLIKELY(scope.exception()))
                 goto error;
-            m_gcBuffer.append(set);
+            m_gcBuffer.appendWithCrashOnOverflow(set);
             outputObjectStack.append(set);
             setStack.append(set);
             goto setDataStartVisitEntry;

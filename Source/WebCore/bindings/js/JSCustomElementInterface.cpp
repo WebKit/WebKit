@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
 
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(&document, constructType, constructData);
     MarkedArgumentBuffer args;
+    ASSERT(!args.hasOverflowed());
     JSValue newElement = construct(&state, constructor, constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(cookie, &document);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -198,6 +199,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     m_constructionStack.append(&element);
 
     MarkedArgumentBuffer args;
+    ASSERT(!args.hasOverflowed());
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(context, constructType, constructData);
     JSValue returnedElement = construct(state, m_constructor.get(), constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(cookie, context);
@@ -245,6 +247,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
 
     MarkedArgumentBuffer args;
     addArguments(state, globalObject, args);
+    RELEASE_ASSERT(!args.hasOverflowed());
 
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 

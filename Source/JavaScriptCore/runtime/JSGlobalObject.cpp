@@ -1215,6 +1215,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
         HeapIterationScope iterationScope(vm.heap);
         vm.heap.objectSpace().forEachLiveCell(iterationScope, finder);
     }
+    RELEASE_ASSERT(!foundObjects.hasOverflowed());
     while (!foundObjects.isEmpty()) {
         JSObject* object = asObject(foundObjects.last());
         foundObjects.removeLast();

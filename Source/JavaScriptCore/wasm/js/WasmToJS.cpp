@@ -247,6 +247,10 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
                     }
                     args.append(arg);
                 }
+                if (UNLIKELY(args.hasOverflowed())) {
+                    throwOutOfMemoryError(exec, throwScope);
+                    return 0;
+                }
 
                 CallData callData;
                 CallType callType = callee->methodTable(*vm)->getCallData(callee, callData);

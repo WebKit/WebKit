@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Canon, Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,7 @@ inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject& globalObjec
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(value1);
     arguments.append(value2);
+    ASSERT(!arguments.hasOverflowed());
     return constructArray(&state, nullptr, &globalObject, arguments);
 }
 
@@ -214,6 +215,10 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::ExecState& state
         JSC::MarkedArgumentBuffer arguments;
         appendForEachArguments<JSIterator>(state, *thisObject.globalObject(), arguments, value);
         arguments.append(&thisObject);
+        if (UNLIKELY(arguments.hasOverflowed())) {
+            throwOutOfMemoryError(&state, scope);
+            return { };
+        }
         JSC::call(&state, callback, callType, callData, thisValue, arguments);
         if (UNLIKELY(scope.exception()))
             break;

@@ -138,6 +138,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
         MarkedArgumentBuffer args;
         args.append(toJS(exec, globalObject, &event));
+        ASSERT(!args.hasOverflowed());
 
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(&event);

@@ -205,6 +205,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     argList.append(toJS(exec, globalObject, this));
     argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*exec, *globalObject, m_names));
     argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*exec, *globalObject, m_values));
+    ASSERT(!argList.hasOverflowed());
     JSC::JSValue replacement = call(exec, replacementObject, callType, callData, globalObject, argList);
     if (UNLIKELY(scope.exception())) {
         scope.clearException();

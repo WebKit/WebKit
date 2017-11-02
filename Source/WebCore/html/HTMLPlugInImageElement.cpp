@@ -377,6 +377,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     // This parameter determines whether or not the snapshot overlay should always be visible over the plugin snapshot.
     // If no snapshot was found then we want the overlay to be visible.
     argList.append(toJS<IDLBoolean>(!m_snapshotImage));
+    ASSERT(!argList.hasOverflowed());
 
     // It is expected the JS file provides a createOverlay(shadowRoot, title, subtitle) function.
     auto* overlay = globalObject.get(&state, JSC::Identifier::fromString(&state, "createOverlay")).toObject(&state);

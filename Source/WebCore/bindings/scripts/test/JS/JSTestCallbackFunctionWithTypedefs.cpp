@@ -69,6 +69,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackFunctionWithT
     MarkedArgumentBuffer args;
     args.append(toJS<IDLSequence<IDLNullable<IDLLong>>>(state, globalObject, sequenceArg));
     args.append(toJS<IDLLong>(longArg));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);

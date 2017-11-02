@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -74,6 +74,7 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReaderGeneric(ExecState& e
 
     MarkedArgumentBuffer args;
     args.append(exec.argument(0));
+    ASSERT(!args.hasOverflowed());
     return JSValue::encode(JSC::construct(&exec, constructor, constructType, constructData, args));
 }
 

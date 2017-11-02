@@ -112,6 +112,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     MarkedArgumentBuffer args;
     args.append(jsNontrivialString(exec, m_eventParameterName));
     args.append(jsStringWithCache(exec, m_code));
+    ASSERT(!args.hasOverflowed());
 
     // We want all errors to refer back to the line on which our attribute was
     // declared, regardless of any newlines in our JavaScript source text.

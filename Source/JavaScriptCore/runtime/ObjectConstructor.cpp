@@ -569,6 +569,7 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
                 markBuffer.append(descriptor.setter());
         }
     }
+    RELEASE_ASSERT(!markBuffer.hasOverflowed());
     for (size_t i = 0; i < numProperties; i++) {
         auto& propertyName = propertyNames[i];
         ASSERT(!propertyName.isPrivateName());

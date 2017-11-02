@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2007-2009, 2014, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -101,6 +101,7 @@ bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
 
     MarkedArgumentBuffer args;
     args.append(value);
+    ASSERT(!args.hasOverflowed());
 
     CallData callData;
     CallType callType = setter->methodTable(vm)->getCallData(setter, callData);

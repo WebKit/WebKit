@@ -51,6 +51,7 @@ Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<Rea
 
     MarkedArgumentBuffer args;
     args.append(source ? toJSNewlyCreated(&execState, &globalObject, source.releaseNonNull()) : JSC::jsUndefined());
+    ASSERT(!args.hasOverflowed());
 
     auto newReadableStream = jsDynamicDowncast<JSReadableStream*>(vm, JSC::construct(&execState, constructor, constructType, constructData, args));
     scope.assertNoException();
@@ -83,6 +84,7 @@ void ReadableStream::pipeTo(ReadableStreamSink& sink)
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());
     arguments.append(toJS(&state, m_globalObject.get(), sink));
+    ASSERT(!arguments.hasOverflowed());
     ReadableStreamInternal::callFunction(state, readableStreamPipeTo, JSC::jsUndefined(), arguments);
 }
 
@@ -98,6 +100,7 @@ std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
     MarkedArgumentBuffer arguments;
     arguments.append(readableStream());
     arguments.append(JSC::jsBoolean(true));
+    ASSERT(!arguments.hasOverflowed());
     auto returnedValue = ReadableStreamInternal::callFunction(state, readableStreamTee, JSC::jsUndefined(), arguments);
 
     auto results = Detail::SequenceConverter<IDLInterface<ReadableStream>>::convert(state, returnedValue);
@@ -122,6 +125,7 @@ void ReadableStream::lock()
 
     MarkedArgumentBuffer args;
     args.append(readableStream());
+    ASSERT(!args.hasOverflowed());
 
     JSC::construct(&state, constructor, constructType, constructData, args);
     scope.assertNoException();
@@ -134,6 +138,7 @@ static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadab
     ASSERT(function);
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(readableStream);
+    ASSERT(!arguments.hasOverflowed());
     return ReadableStreamInternal::callFunction(state, function, JSC::jsUndefined(), arguments).isTrue();
 }
 

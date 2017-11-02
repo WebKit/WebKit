@@ -1,3 +1,131 @@
+2017-11-01  Mark Lam  <mark.lam@apple.com>
+
+        Add support to throw OOM if MarkedArgumentBuffer may overflow.
+        https://bugs.webkit.org/show_bug.cgi?id=179092
+        <rdar://problem/35116160>
+
+        Reviewed by Saam Barati.
+
+        The test for overflowing a MarkedArgumentBuffer will run for a ridiculously long
+        time, which renders it unsuitable for automated tests.  Instead, I've run a
+        test manually to verify that an OutOfMemoryError will be thrown when an overflow
+        occurs.
+
+        The MarkedArgumentBuffer's destructor will now assert that the client has indeed
+        checked for an overflow after invoking methods that may result in an overflow i.e.
+        the destructor checks that MarkedArgumentBuffer::hasOverflowed() has been called.
+        This is only done on debug builds.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeRegExp):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * dfg/DFGOperations.cpp:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeChain const):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        * jsc.cpp:
+        (functionDollarAgentReceiveBroadcast):
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::slowEnsureCapacity):
+        (JSC::MarkedArgumentBuffer::expandCapacity):
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::~MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::appendWithAction):
+        (JSC::MarkedArgumentBuffer::append):
+        (JSC::MarkedArgumentBuffer::appendWithCrashOnOverflow):
+        (JSC::MarkedArgumentBuffer::hasOverflowed):
+        (JSC::MarkedArgumentBuffer::setNeedsOverflowCheck):
+        (JSC::MarkedArgumentBuffer::clearNeedsOverflowCheck):
+        * runtime/ArrayPrototype.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/GetterSetter.cpp:
+        (JSC::callSetter):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorNext):
+        (JSC::iteratorClose):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionCall):
+        (JSC::boundFunctionCall):
+        (JSC::boundThisNoArgsFunctionConstruct):
+        (JSC::boundFunctionConstruct):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewFromIterator):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+        * runtime/JSJob.cpp:
+        (JSC::JSJobMicrotask::run):
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::createPair):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::provideFetch):
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::requestImportModule):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSONImpl):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Walker::callReviver):
+        * runtime/JSObject.cpp:
+        (JSC::ordinarySetSlow):
+        (JSC::callToPrimitiveFunction):
+        (JSC::JSObject::hasInstance):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::initialize):
+        (JSC::JSPromise::resolve):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::newPromiseCapability):
+        (JSC::callFunction):
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::createPair):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::defineProperties):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performDefineOwnProperty):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectConstruct):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2017-11-01  Michael Saboff  <msaboff@apple.com>
 
         Integer overflow in code generated by LoadVarargs processing in DFG and FTL.

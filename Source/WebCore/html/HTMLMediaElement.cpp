@@ -4277,6 +4277,7 @@ void HTMLMediaElement::updateCaptionContainer()
         return;
 
     JSC::MarkedArgumentBuffer noArguments;
+    ASSERT(!noArguments.hasOverflowed());
     JSC::call(exec, methodObject, callType, callData, controllerObject, noArguments);
     scope.clearException();
 
@@ -7072,6 +7073,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     argList.append(toJS(exec, globalObject, root));
     argList.append(mediaJSWrapper);
     argList.append(mediaControlsHostJSWrapper);
+    ASSERT(!argList.hasOverflowed());
 
     JSC::JSObject* function = functionValue.toObject(exec);
     scope.assertNoException();
@@ -7165,6 +7167,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
         return;
 
     JSC::MarkedArgumentBuffer argList;
+    ASSERT(!argList.hasOverflowed());
     JSC::call(exec, function, callType, callData, controllerObject, argList);
 }
 
@@ -7204,6 +7207,7 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
     JSC::CallData callData;
     JSC::CallType callType = function->methodTable(vm)->getCallData(function, callData);
     JSC::MarkedArgumentBuffer argList;
+    ASSERT(!argList.hasOverflowed());
     if (callType == JSC::CallType::None)
         return emptyString();
 

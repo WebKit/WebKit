@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,8 @@ void JSJobMicrotask::run(ExecState* exec)
         CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());
         handlerArguments.append(arg);
     }
+    if (UNLIKELY(handlerArguments.hasOverflowed()))
+        return;
     profiledCall(exec, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
     scope.clearException();
 }

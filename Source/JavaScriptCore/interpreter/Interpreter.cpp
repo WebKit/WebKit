@@ -862,6 +862,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
                     return throwException(callFrame, throwScope, createNotAFunctionError(callFrame, function));
                 MarkedArgumentBuffer jsonArg;
                 jsonArg.append(JSONPValue);
+                ASSERT(!jsonArg.hasOverflowed());
                 JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined(): baseObject;
                 JSONPValue = JSC::call(callFrame, function, callType, callData, thisValue, jsonArg);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());

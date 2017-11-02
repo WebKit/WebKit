@@ -174,6 +174,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     auto& state = *globalObject.globalExec();
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithNoParam"), returnedException);
@@ -200,6 +201,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLFloat32Array>(state, globalObject, arrayParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithArrayParam"), returnedException);
@@ -227,6 +229,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     MarkedArgumentBuffer args;
     args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, globalObject, srzParam));
     args.append(toJS<IDLDOMString>(state, strParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithSerializedScriptValueParam"), returnedException);
@@ -253,6 +256,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLInterface<DOMStringList>>(state, globalObject, listParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithStringList"), returnedException);
@@ -279,6 +283,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLBoolean>(boolParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithBoolean"), returnedException);
@@ -306,6 +311,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     MarkedArgumentBuffer args;
     args.append(toJS<IDLLong>(longParam));
     args.append(toJS<IDLInterface<TestNode>>(state, globalObject, testNodeParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackRequiresThisToPass"), returnedException);
@@ -331,6 +337,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto& state = *globalObject.globalExec();
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithAReturnValue"), returnedException);
@@ -360,6 +367,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLEnumeration<TestCallbackInterface::Enum>>(state, enumParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackThatRethrowsExceptions"), returnedException);
@@ -387,6 +395,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLDictionary<TestCallbackInterface::Dictionary>>(state, globalObject, dictionaryParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackThatSkipsInvokeCheck"), returnedException);
@@ -416,6 +425,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     JSValue thisValue = toJS<IDLInterface<TestNode>>(state, globalObject, thisObject);
     MarkedArgumentBuffer args;
     args.append(toJS<IDLInterface<TestObj>>(state, globalObject, testObjParam));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithThisObject"), returnedException);

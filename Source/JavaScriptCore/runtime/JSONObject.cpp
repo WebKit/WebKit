@@ -313,6 +313,7 @@ JSValue Stringifier::toJSONImpl(JSValue value, JSValue toJSONFunction, const Pro
 
     MarkedArgumentBuffer args;
     args.append(propertyName.value(m_exec));
+    ASSERT(!args.hasOverflowed());
     return call(m_exec, asObject(toJSONFunction), callType, callData, value, args);
 }
 
@@ -330,6 +331,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         MarkedArgumentBuffer args;
         args.append(propertyName.value(m_exec));
         args.append(value);
+        ASSERT(!args.hasOverflowed());
         value = call(m_exec, m_replacer.get(), m_replacerCallType, m_replacerCallData, holder.object(), args);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
     }
@@ -609,6 +611,7 @@ private:
         MarkedArgumentBuffer args;
         args.append(property);
         args.append(unfiltered);
+        ASSERT(!args.hasOverflowed());
         return call(m_exec, m_function.get(), m_callType, m_callData, thisObj, args);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -165,6 +165,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     arguments.append(receiver);
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, getHandler, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -237,6 +238,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, getOwnPropertyDescriptorMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -345,6 +347,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, hasMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -452,6 +455,7 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     arguments.append(putValue);
     arguments.append(thisValue);
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, setMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
     bool trapResultAsBool = trapResult.toBoolean(exec);
@@ -546,6 +550,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
     arguments.append(target);
     arguments.append(exec->thisValue());
     arguments.append(argArray);
+    ASSERT(!arguments.hasOverflowed());
     scope.release();
     return JSValue::encode(call(exec, applyMethod, callType, callData, handler, arguments));
 }
@@ -598,6 +603,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
     arguments.append(target);
     arguments.append(argArray);
     arguments.append(exec->newTarget());
+    ASSERT(!arguments.hasOverflowed());
     JSValue result = call(exec, constructMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!result.isObject())
@@ -655,6 +661,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, deletePropertyMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -728,6 +735,7 @@ bool ProxyObject::performPreventExtensions(ExecState* exec)
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, preventExtensionsMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -782,6 +790,7 @@ bool ProxyObject::performIsExtensible(ExecState* exec)
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, isExtensibleMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -852,6 +861,7 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
     arguments.append(target);
     arguments.append(identifierToSafePublicJSValue(vm, Identifier::fromUid(&vm, propertyName.uid())));
     arguments.append(descriptorObject);
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, definePropertyMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -936,6 +946,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
+    ASSERT(!arguments.hasOverflowed());
     JSValue arrayLikeObject = call(exec, ownKeysMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -1087,6 +1098,7 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
     MarkedArgumentBuffer arguments;
     arguments.append(target);
     arguments.append(prototype);
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, setPrototypeOfMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -1150,6 +1162,7 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
 
     MarkedArgumentBuffer arguments;
     arguments.append(target);
+    ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(exec, getPrototypeOfMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, { });
 

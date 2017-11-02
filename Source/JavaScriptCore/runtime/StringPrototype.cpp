@@ -719,6 +719,10 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                 args.append(string);
                 if (hasNamedCaptures)
                     args.append(groups);
+                if (UNLIKELY(args.hasOverflowed())) {
+                    throwOutOfMemoryError(exec, scope);
+                    return encodedJSValue();
+                }
 
                 JSValue replacement = call(exec, replaceValue, callType, callData, jsUndefined(), args);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -835,6 +839,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingStringSearch(VM& vm, ExecState* 
         args.append(jsSubstring(exec, string, matchStart, searchString.impl()->length()));
         args.append(jsNumber(matchStart));
         args.append(jsString);
+        ASSERT(!args.hasOverflowed());
         replaceValue = call(exec, replaceValue, callType, callData, jsUndefined(), args);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }

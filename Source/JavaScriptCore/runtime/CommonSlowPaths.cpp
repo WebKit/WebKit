@@ -1095,6 +1095,7 @@ SLOW_PATH_DECL(slow_path_spread)
 
         MarkedArgumentBuffer arguments;
         arguments.append(iterable);
+        ASSERT(!arguments.hasOverflowed());
         JSValue arrayResult = call(exec, iterationFunction, callType, callData, jsNull(), arguments);
         CHECK_EXCEPTION();
         array = jsCast<JSArray*>(arrayResult);

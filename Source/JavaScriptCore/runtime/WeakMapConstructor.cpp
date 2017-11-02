@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)
         MarkedArgumentBuffer arguments;
         arguments.append(key);
         arguments.append(value);
+        ASSERT(!arguments.hasOverflowed());
         scope.release();
         call(exec, adderFunction, adderFunctionCallType, adderFunctionCallData, weakMap, arguments);
     });

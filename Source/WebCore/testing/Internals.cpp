@@ -3847,6 +3847,7 @@ JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSVal
     arguments.append(buffer);
     arguments.append(srcByteOffset);
     arguments.append(srcLength);
+    ASSERT(!arguments.hasOverflowed());
 
     return JSC::call(&state, function, callType, callData, JSC::jsUndefined(), arguments);
 }

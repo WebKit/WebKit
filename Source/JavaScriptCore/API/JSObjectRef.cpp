@@ -151,6 +151,12 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     for (unsigned i = 0; i < parameterCount; i++)
         args.append(jsString(exec, parameterNames[i]->string()));
     args.append(jsString(exec, body->string()));
+    if (UNLIKELY(args.hasOverflowed())) {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        throwOutOfMemoryError(exec, throwScope);
+        handleExceptionIfNeeded(scope, exec, exception);
+        return 0;
+    }
 
     auto sourceURLString = sourceURL ? sourceURL->string() : String();
     JSObject* result = constructFunction(exec, exec->lexicalGlobalObject(), args, nameID, SourceOrigin { sourceURLString }, sourceURLString, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
@@ -175,6 +181,12 @@ JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSVa
         MarkedArgumentBuffer argList;
         for (size_t i = 0; i < argumentCount; ++i)
             argList.append(toJS(exec, arguments[i]));
+        if (UNLIKELY(argList.hasOverflowed())) {
+            auto throwScope = DECLARE_THROW_SCOPE(vm);
+            throwOutOfMemoryError(exec, throwScope);
+            handleExceptionIfNeeded(scope, exec, exception);
+            return 0;
+        }
 
         result = constructArray(exec, static_cast<ArrayAllocationProfile*>(0), argList);
     } else
@@ -200,6 +212,12 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
     MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(exec, arguments[i]));
+    if (UNLIKELY(argList.hasOverflowed())) {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        throwOutOfMemoryError(exec, throwScope);
+        handleExceptionIfNeeded(scope, exec, exception);
+        return 0;
+    }
 
     JSObject* result = constructDate(exec, exec->lexicalGlobalObject(), JSValue(), argList);
     if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
@@ -243,6 +261,12 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
     MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(exec, arguments[i]));
+    if (UNLIKELY(argList.hasOverflowed())) {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        throwOutOfMemoryError(exec, throwScope);
+        handleExceptionIfNeeded(scope, exec, exception);
+        return 0;
+    }
 
     JSObject* result = constructRegExp(exec, exec->lexicalGlobalObject(), argList);
     if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
@@ -581,6 +605,12 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(exec, arguments[i]));
+    if (UNLIKELY(argList.hasOverflowed())) {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        throwOutOfMemoryError(exec, throwScope);
+        handleExceptionIfNeeded(scope, exec, exception);
+        return 0;
+    }
 
     CallData callData;
     CallType callType = jsObject->methodTable(vm)->getCallData(jsObject, callData);
@@ -622,6 +652,12 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
     MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(exec, arguments[i]));
+    if (UNLIKELY(argList.hasOverflowed())) {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        throwOutOfMemoryError(exec, throwScope);
+        handleExceptionIfNeeded(scope, exec, exception);
+        return 0;
+    }
 
     JSObjectRef result = toRef(profiledConstruct(exec, ProfilingReason::API, jsObject, constructType, constructData, argList));
     if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)

@@ -2406,6 +2406,7 @@ JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
 
         MarkedArgumentBuffer arguments;
         arguments.append(iterable);
+        ASSERT(!arguments.hasOverflowed());
         JSValue arrayResult = call(exec, iterationFunction, callType, callData, jsNull(), arguments);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
         array = jsCast<JSArray*>(arrayResult);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -158,6 +158,7 @@ JSC::JSObject* InjectedScriptManager::createInjectedScript(const String& source,
     args.append(m_injectedScriptHost->wrapper(scriptState, globalObject));
     args.append(globalThisValue);
     args.append(jsNumber(id));
+    ASSERT(!args.hasOverflowed());
 
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
     scope.clearException();

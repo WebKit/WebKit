@@ -2911,6 +2911,8 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentReceiveBroadcast(ExecState* exec
     MarkedArgumentBuffer args;
     args.append(jsBuffer);
     args.append(jsNumber(message->index()));
+    if (UNLIKELY(args.hasOverflowed()))
+        return JSValue::encode(throwOutOfMemoryError(exec, scope));
     scope.release();
     return JSValue::encode(call(exec, callback, callType, callData, jsNull(), args));
 }

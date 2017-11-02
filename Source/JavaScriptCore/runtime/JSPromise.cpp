@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,7 @@ void JSPromise::initialize(ExecState* exec, JSGlobalObject* globalObject, JSValu
 
     MarkedArgumentBuffer arguments;
     arguments.append(executor);
+    ASSERT(!arguments.hasOverflowed());
     call(exec, initializePromise, callType, callData, this, arguments);
 }
 
@@ -105,6 +106,7 @@ JSPromise* JSPromise::resolve(JSGlobalObject& globalObject, JSValue value)
 
     MarkedArgumentBuffer arguments;
     arguments.append(value);
+    ASSERT(!arguments.hasOverflowed());
     auto result = call(exec, promiseResolveFunction, callType, callData, globalObject.promiseConstructor(), arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     ASSERT(result.inherits(vm, JSPromise::info()));

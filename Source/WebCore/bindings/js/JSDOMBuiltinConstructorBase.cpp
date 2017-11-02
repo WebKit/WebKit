@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2011, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
  *
@@ -30,6 +30,8 @@ using namespace JSC;
     
 void JSDOMBuiltinConstructorBase::callFunctionWithCurrentArguments(JSC::ExecState& state, JSC::JSObject& thisObject, JSC::JSFunction& function)
 {
+    JSC::VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::CallData callData;
     JSC::CallType callType = JSC::getCallData(&function, callData);
     ASSERT(callType != CallType::None);
@@ -37,6 +39,10 @@ void JSDOMBuiltinConstructorBase::callFunctionWithCurrentArguments(JSC::ExecStat
     JSC::MarkedArgumentBuffer arguments;
     for (unsigned i = 0; i < state.argumentCount(); ++i)
         arguments.append(state.uncheckedArgument(i));
+    if (UNLIKELY(arguments.hasOverflowed())) {
+        throwOutOfMemoryError(&state, scope);
+        return;
+    }
     JSC::call(&state, &function, callType, callData, &thisObject, arguments);
 }
 

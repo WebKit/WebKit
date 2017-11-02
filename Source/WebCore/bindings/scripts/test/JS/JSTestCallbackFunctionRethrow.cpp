@@ -68,6 +68,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLSequence<IDLLong>>(state, globalObject, argument));
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);

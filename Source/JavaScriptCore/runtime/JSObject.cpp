@@ -740,6 +740,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
     JSObject* setterObject = asObject(setter);
     MarkedArgumentBuffer args;
     args.append(value);
+    ASSERT(!args.hasOverflowed());
 
     CallData callData;
     CallType callType = setterObject->methodTable(vm)->getCallData(setterObject, callData);
@@ -1938,6 +1939,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(ExecState* exec, const JSOb
         }
         callArgs.append(hintString);
     }
+    ASSERT(!callArgs.hasOverflowed());
 
     JSValue result = call(exec, function, callType, callData, const_cast<JSObject*>(object), callArgs);
     RETURN_IF_EXCEPTION(scope, scope.exception());
@@ -2052,6 +2054,7 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceVa
 
         MarkedArgumentBuffer args;
         args.append(value);
+        ASSERT(!args.hasOverflowed());
         JSValue result = call(exec, hasInstanceValue, callType, callData, this, args);
         RETURN_IF_EXCEPTION(scope, false);
         return result.toBoolean(exec);

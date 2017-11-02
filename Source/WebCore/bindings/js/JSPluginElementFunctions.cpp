@@ -151,6 +151,7 @@ static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
     MarkedArgumentBuffer argumentList;
     for (size_t i = 0; i < argumentCount; i++)
         argumentList.append(exec->argument(i));
+    ASSERT(!argumentList.hasOverflowed());
 
     CallData callData;
     CallType callType = getCallData(scriptObject, callData);

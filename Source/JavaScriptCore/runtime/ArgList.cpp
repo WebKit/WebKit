@@ -65,21 +65,30 @@ void MarkedArgumentBuffer::markLists(SlotVisitor& visitor, ListSet& markSet)
 
 void MarkedArgumentBuffer::slowEnsureCapacity(size_t requestedCapacity)
 {
-    int newCapacity = Checked<int>(requestedCapacity).unsafeGet();
-    expandCapacity(newCapacity);
+    setNeedsOverflowCheck();
+    auto checkedNewCapacity = Checked<int, RecordOverflow>(requestedCapacity);
+    if (UNLIKELY(checkedNewCapacity.hasOverflowed()))
+        return this->overflowed();
+    expandCapacity(checkedNewCapacity.unsafeGet());
 }
 
 void MarkedArgumentBuffer::expandCapacity()
 {
-    int newCapacity = (Checked<int>(m_capacity) * 2).unsafeGet();
-    expandCapacity(newCapacity);
+    setNeedsOverflowCheck();
+    auto checkedNewCapacity = Checked<int, RecordOverflow>(m_capacity) * 2;
+    if (UNLIKELY(checkedNewCapacity.hasOverflowed()))
+        return this->overflowed();
+    expandCapacity(checkedNewCapacity.unsafeGet());
 }
 
 void MarkedArgumentBuffer::expandCapacity(int newCapacity)
 {
+    setNeedsOverflowCheck();
     ASSERT(m_capacity < newCapacity);
-    size_t size = (Checked<size_t>(newCapacity) * sizeof(EncodedJSValue)).unsafeGet();
-    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(fastMalloc(size));
+    auto checkedSize = Checked<size_t, RecordOverflow>(newCapacity) * sizeof(EncodedJSValue);
+    if (UNLIKELY(checkedSize.hasOverflowed()))
+        return this->overflowed();
+    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(fastMalloc(checkedSize.unsafeGet()));
     for (int i = 0; i < m_size; ++i) {
         newBuffer[i] = m_buffer[i];
         addMarkSet(JSValue::decode(m_buffer[i]));
@@ -97,6 +106,10 @@ void MarkedArgumentBuffer::slowAppend(JSValue v)
     ASSERT(m_size <= m_capacity);
     if (m_size == m_capacity)
         expandCapacity();
+    if (UNLIKELY(Base::hasOverflowed())) {
+        ASSERT(m_needsOverflowCheck);
+        return;
+    }
 
     slotFor(m_size) = JSValue::encode(v);
     ++m_size;

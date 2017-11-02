@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,6 +94,7 @@ JSValue JSModuleLoader::provideFetch(ExecState* exec, JSValue key, const SourceC
     MarkedArgumentBuffer arguments;
     arguments.append(key);
     arguments.append(JSSourceCode::create(vm, WTFMove(source)));
+    ASSERT(!arguments.hasOverflowed());
 
     scope.release();
     return call(exec, function, callType, callData, this, arguments);
@@ -114,6 +115,7 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValu
     arguments.append(moduleName);
     arguments.append(parameters);
     arguments.append(scriptFetcher);
+    ASSERT(!arguments.hasOverflowed());
 
     scope.release();
     return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
@@ -134,6 +136,7 @@ JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleNam
     arguments.append(moduleName);
     arguments.append(parameters);
     arguments.append(scriptFetcher);
+    ASSERT(!arguments.hasOverflowed());
 
     scope.release();
     return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
@@ -153,6 +156,7 @@ JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey
     MarkedArgumentBuffer arguments;
     arguments.append(moduleKey);
     arguments.append(scriptFetcher);
+    ASSERT(!arguments.hasOverflowed());
 
     scope.release();
     return call(exec, function, callType, callData, this, arguments);
@@ -173,6 +177,7 @@ JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Id
     arguments.append(jsString(exec, moduleKey.impl()));
     arguments.append(parameters);
     arguments.append(scriptFetcher);
+    ASSERT(!arguments.hasOverflowed());
 
     scope.release();
     return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));

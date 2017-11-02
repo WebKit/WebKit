@@ -73,6 +73,7 @@ JSC::JSValue forwardFunctionCallToBackingMap(JSC::ExecState& state, JSC::JSObjec
     JSC::MarkedArgumentBuffer arguments;
     for (size_t cptr = 0; cptr < state.argumentCount(); ++cptr)
         arguments.append(state.uncheckedArgument(cptr));
+    ASSERT(!arguments.hasOverflowed());
     return JSC::call(&state, function, callType, callData, &backingMap, arguments);
 }
 
@@ -89,6 +90,7 @@ JSC::JSValue forwardForEachCallToBackingMap(JSC::ExecState& state, JSDOMGlobalOb
     JSC::MarkedArgumentBuffer arguments;
     for (size_t cptr = 0; cptr < state.argumentCount(); ++cptr)
         arguments.append(state.uncheckedArgument(cptr));
+    ASSERT(!arguments.hasOverflowed());
     return JSC::call(&state, function, callType, callData, &mapLike, arguments);
 }
 

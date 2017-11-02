@@ -6040,6 +6040,7 @@ sub GenerateCallbackImplementationContent
             foreach my $argument (@{$operation->arguments}) {
                 push(@$contentRef, "    args.append(" . NativeToJSValueUsingReferences($argument, $interfaceOrCallback, $argument->name, "globalObject") . ");\n");
             }
+            push(@$contentRef, "    ASSERT(!args.hasOverflowed());\n");
 
             push(@$contentRef, "\n    NakedPtr<JSC::Exception> returnedException;\n");
 

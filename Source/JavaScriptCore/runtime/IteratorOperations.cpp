@@ -52,6 +52,7 @@ JSValue iteratorNext(ExecState* exec, IterationRecord iterationRecord, JSValue a
     MarkedArgumentBuffer nextFunctionArguments;
     if (!argument.isEmpty())
         nextFunctionArguments.append(argument);
+    ASSERT(!nextFunctionArguments.hasOverflowed());
     JSValue result = call(exec, nextFunction, nextFunctionCallType, nextFunctionCallData, iterator, nextFunctionArguments);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
@@ -117,6 +118,7 @@ void iteratorClose(ExecState* exec, IterationRecord iterationRecord)
     }
 
     MarkedArgumentBuffer returnFunctionArguments;
+    ASSERT(!returnFunctionArguments.hasOverflowed());
     JSValue innerResult = call(exec, returnFunction, returnFunctionCallType, returnFunctionCallData, iterationRecord.iterator, returnFunctionArguments);
 
     if (exception) {

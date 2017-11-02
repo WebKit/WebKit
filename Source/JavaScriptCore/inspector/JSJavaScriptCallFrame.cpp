@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -180,6 +180,9 @@ JSValue JSJavaScriptCallFrame::functionName(ExecState* exec) const
 
 JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!impl().scopeChain())
         return jsNull();
 
@@ -195,6 +198,10 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
         list.append(iter.get());
         ++iter;
     } while (iter != end);
+    if (UNLIKELY(list.hasOverflowed())) {
+        throwOutOfMemoryError(exec, scope);
+        return { };
+    }
 
     return constructArray(exec, nullptr, globalObject(), list);
 }

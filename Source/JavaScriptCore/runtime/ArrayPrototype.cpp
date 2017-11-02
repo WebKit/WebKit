@@ -254,6 +254,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
 
     MarkedArgumentBuffer args;
     args.append(jsNumber(length));
+    ASSERT(!args.hasOverflowed());
     JSObject* newObject = construct(exec, constructor, args, "Species construction did not get a valid constructor");
     RETURN_IF_EXCEPTION(scope, exceptionResult());
     return std::make_pair(SpeciesConstructResult::CreatedObject, newObject);

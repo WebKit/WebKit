@@ -449,6 +449,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(VM& vm, ExecSta
 
     MarkedArgumentBuffer args;
     args.append(jsNumber(length));
+    ASSERT(!args.hasOverflowed());
 
     JSArrayBufferView* result = speciesConstruct(exec, thisObject, args, [&]() {
         Structure* structure = callee->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
@@ -563,6 +564,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     args.append(vm.m_typedArrayController->toJS(exec, thisObject->globalObject(), arrayBuffer.get()));
     args.append(jsNumber(newByteOffset));
     args.append(jsNumber(length));
+    ASSERT(!args.hasOverflowed());
 
     JSObject* result = construct(exec, species, args, "species is not a constructor");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

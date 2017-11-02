@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,6 +195,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         
         MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        RELEASE_ASSERT(!argList.hasOverflowed());
         JSValue resultV = JSC::call(exec, function, callType, callData, function, argList);
 
         // Convert and return the result of the function call.
@@ -247,6 +248,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         // Call the function object.
         MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        RELEASE_ASSERT(!argList.hasOverflowed());
         JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
 
         // Convert and return the result of the function call.
@@ -536,6 +538,7 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
         
         MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        RELEASE_ASSERT(!argList.hasOverflowed());
         JSValue resultV = JSC::construct(exec, constructor, constructType, constructData, argList);
         
         // Convert and return the result.

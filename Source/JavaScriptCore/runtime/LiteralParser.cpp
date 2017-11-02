@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -593,7 +593,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             case StartParseArray: {
                 JSArray* array = constructEmptyArray(m_exec, 0);
                 RETURN_IF_EXCEPTION(scope, JSValue());
-                objectStack.append(array);
+                objectStack.appendWithCrashOnOverflow(array);
             }
             doParseArrayStartExpression:
             FALLTHROUGH;
@@ -634,7 +634,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             startParseObject:
             case StartParseObject: {
                 JSObject* object = constructEmptyObject(m_exec);
-                objectStack.append(object);
+                objectStack.appendWithCrashOnOverflow(object);
 
                 TokenType type = m_lexer.next();
                 if (type == TokString || (m_mode != StrictJSON && type == TokIdentifier)) {
