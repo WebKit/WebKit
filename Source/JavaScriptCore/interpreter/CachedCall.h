@@ -51,7 +51,10 @@ namespace JSC {
             ASSERT(!function->isHostFunctionNonInline());
             if (UNLIKELY(vm.isSafeToRecurseSoft())) {
                 m_arguments.ensureCapacity(argumentCount);
-                m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
+                if (LIKELY(!m_arguments.hasOverflowed()))
+                    m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
+                else
+                    throwOutOfMemoryError(callFrame, scope);
             } else
                 throwStackOverflowError(callFrame, scope);
             m_valid = !scope.exception();
@@ -67,6 +70,7 @@ namespace JSC {
 
         void clearArguments() { m_arguments.clear(); }
         void appendArgument(JSValue v) { m_arguments.append(v); }
+        bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
 
     private:
         bool m_valid;

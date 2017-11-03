@@ -1,3 +1,18 @@
+2017-11-03  Mark Lam  <mark.lam@apple.com>
+
+        CachedCall (and its clients) needs overflow checks.
+        https://bugs.webkit.org/show_bug.cgi?id=179185
+
+        Reviewed by JF Bastien.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        (JSC::CachedCall::hasOverflowedArguments):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::clear):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+
 2017-11-03  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas2D Profiling: highlight expensive context commands in the captured command log

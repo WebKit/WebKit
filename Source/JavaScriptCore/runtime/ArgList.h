@@ -73,6 +73,8 @@ public:
 
     void clear()
     {
+        ASSERT(!m_needsOverflowCheck);
+        clearOverflow();
         m_size = 0;
     }
 

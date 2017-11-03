@@ -598,6 +598,11 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                     cachedCall.appendArgument(groups);
 
                 cachedCall.setThis(jsUndefined());
+                if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
+                    throwOutOfMemoryError(exec, scope);
+                    return encodedJSValue();
+                }
+
                 JSValue jsResult = cachedCall.call();
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 replacements.append(jsResult.toWTFString(exec));
@@ -659,6 +664,11 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                     cachedCall.appendArgument(groups);
 
                 cachedCall.setThis(jsUndefined());
+                if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
+                    throwOutOfMemoryError(exec, scope);
+                    return encodedJSValue();
+                }
+
                 JSValue jsResult = cachedCall.call();
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 replacements.append(jsResult.toWTFString(exec));
