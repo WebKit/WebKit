@@ -1,3 +1,16 @@
+2017-11-03  Youenn Fablet  <youenn@apple.com>
+
+        Implement Service Worker Matching Registration algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=178882
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * http/tests/workers/service/basic-register-exceptions-expected.txt:
+        * http/tests/workers/service/resources/basic-register.js: Fixing flakiness.
+        * http/tests/workers/service/service-worker-clear-expected.txt: Added.
+        * http/tests/workers/service/service-worker-clear.html: Added.
+
 2017-11-02  Dean Jackson  <dino@apple.com>
 
         Add basic OffscreenCanvas interface

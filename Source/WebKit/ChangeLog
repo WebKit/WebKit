@@ -1,3 +1,27 @@
+2017-11-03  Youenn Fablet  <youenn@apple.com>
+
+        Implement Service Worker Matching Registration algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=178882
+
+        Reviewed by Chris Dumez.
+
+        Added IPC plumbery for matchRegistration request and response.
+        Added some limited clearing of workers and registrations.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::matchRegistration):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::deleteWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::didMatchRegistration):
+        (WebKit::WebSWClientConnection::matchRegistration):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+
 2017-11-03  Jeremy Jones  <jeremyj@apple.com>
 
         Element fullscreen should use FloatRects instead of IntRects in beganEnterFullScreenWithInitialFrame

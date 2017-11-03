@@ -43,7 +43,9 @@ ServiceWorkerJobData::ServiceWorkerJobData(uint64_t connectionIdentifier)
 
 ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 {
-    return { clientCreationURL, topOrigin };
+    URL scope = scopeURL;
+    scope.removeFragmentIdentifier();
+    return { URL { clientCreationURL }, SecurityOriginData { topOrigin }, WTFMove(scope) };
 }
 
 ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const

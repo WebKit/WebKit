@@ -54,11 +54,8 @@ public:
 
     uint64_t identifier() const final { return m_identifier; }
 
-    void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
-    void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
     void addServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
     void removeServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
-    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ScriptExecutionContext& source) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -69,6 +66,13 @@ public:
     void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
 
 private:
+    void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
+    void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
+    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ScriptExecutionContext& source) final;
+
+    void matchRegistration(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, RegistrationCallback&&) final;
+    void didMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData>&&);
+
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
 
     IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
@@ -81,6 +85,10 @@ private:
 
     Ref<IPC::Connection> m_connection;
     UniqueRef<WebSWOriginTable> m_swOriginTable;
+
+    uint64_t m_previousMatchRegistrationTaskIdentifier { 0 };
+    HashMap<uint64_t, RegistrationCallback> m_ongoingMatchRegistrationTasks;
+
 }; // class WebSWServerConnection
 
 } // namespace WebKit

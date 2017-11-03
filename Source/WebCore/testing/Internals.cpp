@@ -132,6 +132,7 @@
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
 #include "ServiceWorkerProvider.h"
+#include "ServiceWorkerRegistrationData.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SourceBuffer.h"
@@ -4265,6 +4266,17 @@ Ref<FetchEvent> Internals::createBeingDispatchedFetchEvent(ScriptExecutionContex
     return event;
 }
 
+void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&& promise)
+{
+    if (!contextDocument())
+        return;
+
+    URL parsedURL = contextDocument()->completeURL(clientURL);
+
+    return ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(contextDocument()->sessionID()).matchRegistration(contextDocument()->topOrigin(), parsedURL, [promise = WTFMove(promise)] (auto&& result) mutable {
+        promise.resolve(!!result);
+    });
+}
 #endif
 
 String Internals::timelineDescription(AnimationTimeline& timeline)

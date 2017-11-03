@@ -39,6 +39,7 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerFetchResult.h>
 #include <WebCore/ServiceWorkerJobData.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
 
 using namespace PAL;
 using namespace WebCore;
@@ -96,6 +97,19 @@ bool WebSWClientConnection::hasServiceWorkerRegisteredForOrigin(const SecurityOr
 void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::Handle& handle)
 {
     m_swOriginTable->setSharedMemory(handle);
+}
+
+void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::optional<ServiceWorkerRegistrationData>&& result)
+{
+    if (auto completionHandler = m_ongoingMatchRegistrationTasks.take(matchingRequest))
+        completionHandler(WTFMove(result));
+}
+
+void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
+{
+    uint64_t requestIdentifier = ++m_previousMatchRegistrationTaskIdentifier;
+    m_ongoingMatchRegistrationTasks.add(requestIdentifier, WTFMove(callback));
+    send(Messages::WebSWServerConnection::MatchRegistration(requestIdentifier, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
 }
 
 Ref<ServiceWorkerClientFetch> WebSWClientConnection::startFetch(WebServiceWorkerProvider& provider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, ServiceWorkerClientFetch::Callback&& callback)

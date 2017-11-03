@@ -47,6 +47,9 @@ class SWClientConnection : public ThreadSafeRefCounted<SWClientConnection> {
 public:
     WEBCORE_EXPORT virtual ~SWClientConnection();
 
+    using RegistrationCallback = WTF::CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>;
+    virtual void matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&&) = 0;
+
     void scheduleJob(ServiceWorkerJob&);
     void finishedFetchingScript(ServiceWorkerJob&, const String&);
     void failedFetchingScript(ServiceWorkerJob&, const ResourceError&);

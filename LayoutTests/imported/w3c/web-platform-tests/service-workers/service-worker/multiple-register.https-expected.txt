@@ -1,6 +1,6 @@
 
 
 FAIL Subsequent registrations resolve to the same registration object assert_unreached: unexpected rejection: assert_equals: register should resolve to the same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]" Reached unreachable code
-FAIL Subsequent registrations from a different iframe resolve to the different registration object but they refer to the same registration and workers assert_unreached: unexpected rejection: assert_equals: registrations should have the same scope expected "https://localhost:9443/service-workers/service-worker/resources/scope/subsequent-register-from-different-iframe" but got "https://localhost:9443/service-workers/service-worker/resources/scope/subsequent-register-from-same-window" Reached unreachable code
+FAIL Subsequent registrations from a different iframe resolve to the different registration object but they refer to the same registration and workers assert_unreached: unexpected rejection: assert_equals: installing worker should be null expected null but got object "[object ServiceWorker]" Reached unreachable code
 FAIL Concurrent registrations resolve to the same registration object assert_unreached: unexpected rejection: assert_equals: register should resolve to the same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]" Reached unreachable code
 

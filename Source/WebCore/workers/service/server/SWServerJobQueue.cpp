@@ -48,7 +48,6 @@ SWServerJobQueue::SWServerJobQueue(SWServer& server, const ServiceWorkerRegistra
 
 SWServerJobQueue::~SWServerJobQueue()
 {
-    ASSERT(m_jobQueue.isEmpty());
 }
 
 void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, const ServiceWorkerFetchResult& result)

@@ -29,6 +29,7 @@
 
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJob.h"
+#include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
@@ -59,7 +60,8 @@ public:
 
         WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
         WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
-        
+        const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
+
         // Messages to the client WebProcess
         virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>) = 0;
 
@@ -87,6 +89,8 @@ public:
 
     WEBCORE_EXPORT SWServer();
     WEBCORE_EXPORT ~SWServer();
+
+    WEBCORE_EXPORT void clear();
 
     SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
@@ -118,6 +122,8 @@ private:
 
     void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
+
+    WEBCORE_EXPORT const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
 
     HashMap<uint64_t, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;

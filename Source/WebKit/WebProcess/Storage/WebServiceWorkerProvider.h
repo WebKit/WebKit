@@ -46,6 +46,7 @@ public:
     void fetchFinished(uint64_t fetchIdentifier);
 
     void didReceiveServiceWorkerClientFetchMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveServiceWorkerClientRegistrationMatch(IPC::Connection&, IPC::Decoder&);
 
 private:
     friend NeverDestroyed<WebServiceWorkerProvider>;

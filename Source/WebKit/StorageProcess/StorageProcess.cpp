@@ -226,6 +226,8 @@ void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         if (auto* store = swOriginStoreForSession(sessionID))
             store->clear();
+        if (auto* server = m_swServers.get(sessionID))
+            server->clear();
     }
 #endif
 
@@ -251,6 +253,7 @@ void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             for (auto& originData : securityOriginDatas)
                 store->remove(originData.securityOrigin());
         }
+        // FIXME: Clear service workers and registrations related to the origin.
     }
 #endif
 

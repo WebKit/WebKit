@@ -34,6 +34,7 @@
 #include "SWServerJobQueue.h"
 #include "SWServerRegistration.h"
 #include "SWServerWorker.h"
+#include "SecurityOrigin.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
@@ -89,6 +90,13 @@ void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registrat
 void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
     m_registrations.remove(registrationKey);
+}
+
+void SWServer::clear()
+{
+    m_jobQueues.clear();
+    m_registrations.clear();
+    // FIXME: We should probably ask service workers to terminate.
 }
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
@@ -302,6 +310,19 @@ void SWServer::unregisterConnection(Connection& connection)
 {
     ASSERT(m_connections.get(connection.identifier()) == &connection);
     m_connections.remove(connection.identifier());
+}
+
+const SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
+{
+    const SWServerRegistration* selectedRegistration = nullptr;
+    for (auto& registration : m_registrations.values()) {
+        if (!registration->key().isMatching(topOrigin, clientURL))
+            continue;
+        if (!selectedRegistration || selectedRegistration->key().scopeLength() < registration->key().scopeLength())
+            selectedRegistration = registration.get();
+    }
+
+    return (selectedRegistration && !selectedRegistration->isUninstalling()) ? selectedRegistration : nullptr;
 }
 
 } // namespace WebCore

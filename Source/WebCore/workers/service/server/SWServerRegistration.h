@@ -47,7 +47,7 @@ public:
     const ServiceWorkerRegistrationKey& key() const { return m_registrationKey; }
 
     SWServerWorker* getNewestWorker();
-    ServiceWorkerRegistrationData data() const;
+    WEBCORE_EXPORT ServiceWorkerRegistrationData data() const;
 
     bool isUninstalling() const { return m_uninstalling; }
     void setIsUninstalling(bool value) { m_uninstalling = value; }

@@ -32,6 +32,14 @@
 
 namespace WebCore {
 
+ServiceWorkerRegistrationKey::ServiceWorkerRegistrationKey(URL&& clientURL, SecurityOriginData&& topOrigin, URL&& scope)
+    : m_clientCreationURL(WTFMove(clientURL))
+    , m_topOrigin(WTFMove(topOrigin))
+    , m_scope(WTFMove(scope))
+{
+    ASSERT(!m_scope.hasFragment());
+}
+
 ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::emptyKey()
 {
     return { };
@@ -39,24 +47,33 @@ ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::emptyKey()
 
 unsigned ServiceWorkerRegistrationKey::hash() const
 {
-    unsigned hashes[2];
-    hashes[0] = URLHash::hash(clientCreationURL);
-    hashes[1] = SecurityOriginDataHash::hash(topOrigin);
+    unsigned hashes[3];
+    hashes[0] = URLHash::hash(m_clientCreationURL);
+    hashes[1] = SecurityOriginDataHash::hash(m_topOrigin);
+    hashes[2] = StringHash::hash(m_scope);
 
     return StringHasher::hashMemory(hashes, sizeof(hashes));
 }
 
 bool ServiceWorkerRegistrationKey::operator==(const ServiceWorkerRegistrationKey& other) const
 {
-    return clientCreationURL == other.clientCreationURL && topOrigin == other.topOrigin;
+    return m_clientCreationURL == other.m_clientCreationURL && m_topOrigin == other.m_topOrigin && m_scope == other.m_scope;
 }
 
 ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const
 {
-    ServiceWorkerRegistrationKey result;
-    result.clientCreationURL = clientCreationURL.isolatedCopy();
-    result.topOrigin = topOrigin.isolatedCopy();
-    return result;
+    return { m_clientCreationURL.isolatedCopy(), m_topOrigin.isolatedCopy(), m_scope.isolatedCopy() };
+}
+
+bool ServiceWorkerRegistrationKey::isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
+{
+    if (topOrigin != m_topOrigin)
+        return false;
+
+    if (!protocolHostAndPortAreEqual(clientURL, m_scope))
+        return false;
+
+    return clientURL.string().startsWith(m_scope);
 }
 
 } // namespace WebCore

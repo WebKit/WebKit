@@ -83,6 +83,7 @@ struct SecurityOriginData {
 };
 
 WEBCORE_EXPORT bool operator==(const SecurityOriginData&, const SecurityOriginData&);
+inline bool operator!=(const SecurityOriginData& first, const SecurityOriginData& second) { return !(first == second); }
 
 template<class Encoder>
 void SecurityOriginData::encode(Encoder& encoder) const

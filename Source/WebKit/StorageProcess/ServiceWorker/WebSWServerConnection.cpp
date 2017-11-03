@@ -43,11 +43,11 @@
 #include "WebToStorageProcessConnection.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SWServerRegistration.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
-#include <WebCore/ServiceWorkerRegistrationData.h>
 #include <wtf/MainThread.h>
 
 using namespace PAL;
@@ -78,14 +78,14 @@ void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const Exce
 
 void WebSWServerConnection::resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
 {
-    auto origin = registrationData.key.topOrigin.securityOrigin();
+    auto origin = registrationData.key.topOrigin().securityOrigin();
     StorageProcess::singleton().ensureSWOriginStoreForSession(m_sessionID).add(origin);
     send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobIdentifier, registrationData));
 }
 
 void WebSWServerConnection::resolveUnregistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
 {
-    auto origin = registrationKey.topOrigin.securityOrigin();
+    auto origin = registrationKey.topOrigin().securityOrigin();
     if (auto* store = StorageProcess::singleton().swOriginStoreForSession(m_sessionID))
         store->remove(origin);
     send(Messages::WebSWClientConnection::UnregistrationJobResolvedInServer(jobIdentifier, unregistrationResult));
@@ -148,6 +148,15 @@ void WebSWServerConnection::didNotHandleFetch(uint64_t fetchIdentifier)
 void WebSWServerConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin)
 {
     send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationScriptExecutionContextIdentifier, message, sourceServiceWorkerIdentifier, sourceOrigin });
+}
+
+void WebSWServerConnection::matchRegistration(uint64_t registrationMatchRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL)
+{
+    if (auto* registration = doRegistrationMatching(topOrigin, clientURL)) {
+        send(Messages::WebSWClientConnection::DidMatchRegistration { registrationMatchRequestIdentifier, registration->data() });
+        return;
+    }
+    send(Messages::WebSWClientConnection::DidMatchRegistration { registrationMatchRequestIdentifier, std::nullopt });
 }
 
 template<typename U> bool WebSWServerConnection::sendToContextProcess(U&& message)

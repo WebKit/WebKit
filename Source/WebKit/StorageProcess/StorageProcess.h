@@ -39,7 +39,7 @@ namespace WebCore {
 class SWServer;
 struct SecurityOriginData;
 struct ServiceWorkerClientIdentifier;
-struct ServiceWorkerRegistrationKey;
+class ServiceWorkerRegistrationKey;
 }
 
 namespace WebKit {
