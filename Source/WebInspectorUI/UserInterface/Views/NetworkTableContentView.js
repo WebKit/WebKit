@@ -338,7 +338,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._populateNameCell(cell, entry);
             break;
         case "domain":
-            cell.textContent = entry.domain || emDash;
+            this._populateDomainCell(cell, entry);
             break;
         case "type":
             cell.textContent = entry.displayType || emDash;
@@ -405,6 +405,24 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let nameElement = cell.appendChild(document.createElement("span"));
         nameElement.textContent = entry.name;
+    }
+
+    _populateDomainCell(cell, entry)
+    {
+        console.assert(!cell.firstChild, "We expect the cell to be empty.", cell, cell.firstChild);
+
+        if (!entry.domain) {
+            cell.textContent = emDash;
+            return;
+        }
+
+        let secure = entry.scheme === "https" || entry.scheme === "wss";
+        if (secure) {
+            let lockIconElement = cell.appendChild(document.createElement("img"));
+            lockIconElement.className = "lock";
+        }
+
+        cell.append(entry.domain);
     }
 
     _populateTransferSizeCell(cell, entry)

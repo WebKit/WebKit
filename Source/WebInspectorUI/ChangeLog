@@ -1,3 +1,18 @@
+2017-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Table - Include a secure lock indicator in the domain column
+        https://bugs.webkit.org/show_bug.cgi?id=179233
+        <rdar://problem/34070883>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table .cell.domain > .lock):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.tablePopulateCell):
+        (WI.NetworkTableContentView.prototype._populateDomainCell):
+        Add a small lock icon by the domain if the request was https/wss.
+
 2017-11-03  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas2D Profiling: highlight expensive context commands in the captured command log

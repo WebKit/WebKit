@@ -48,6 +48,13 @@
     color: var(--error-text-color);
 }
 
+.network-table .cell.domain > .lock {
+    width: 8px;
+    height: 10px;
+    content: url(../Images/Locked.svg);
+    -webkit-margin-end: 5px;
+}
+
 body[dir=ltr] .network-table .cell.name > .status {
     float: right;
     margin-left: 4px;
