@@ -447,7 +447,7 @@ void RenderTable::layout()
     recalcBordersInRowDirection();
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
     LayoutUnit oldLogicalWidth = logicalWidth();
     LayoutUnit oldLogicalHeight = logicalHeight();

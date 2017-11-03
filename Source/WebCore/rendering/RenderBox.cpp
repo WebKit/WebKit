@@ -507,7 +507,7 @@ void RenderBox::layout()
         return;
     }
 
-    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), style().isFlippedBlocksWritingMode());
     while (child) {
         if (child->needsLayout())
             downcast<RenderElement>(*child).layout();

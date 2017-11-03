@@ -385,7 +385,7 @@ void RenderTableSection::layout()
     // can be called in a loop (e.g during parsing). Doing it now ensures we have a stable-enough structure.
     m_grid.shrinkToFit();
 
-    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
     bool paginated = view().layoutState()->isPaginated();
     
     const Vector<LayoutUnit>& columnPos = table()->columnPositions();
@@ -601,7 +601,7 @@ void RenderTableSection::layoutRows()
     LayoutUnit vspacing = table()->vBorderSpacing();
     unsigned nEffCols = table()->numEffCols();
 
-    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || style().isFlippedBlocksWritingMode());
 
     for (unsigned r = 0; r < totalRows; r++) {
         // Set the row's x/y position and width/height.

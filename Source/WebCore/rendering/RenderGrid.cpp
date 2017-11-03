@@ -229,7 +229,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         return;
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
     preparePaginationBeforeBlockLayout(relayoutChildren);
 

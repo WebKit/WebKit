@@ -346,8 +346,8 @@ class LayoutStateMaintainer {
     WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);
 public:
     // Constructor to push now.
-    explicit LayoutStateMaintainer(RenderView& view, RenderBox& root, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false)
-        : m_view(view)
+    explicit LayoutStateMaintainer(RenderBox& root, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false)
+        : m_view(root.view())
         , m_disabled(disableState)
     {
         push(root, offset, pageHeight, pageHeightChanged);

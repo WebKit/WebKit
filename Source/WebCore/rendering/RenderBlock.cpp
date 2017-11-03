@@ -1317,7 +1317,7 @@ bool RenderBlock::simplifiedLayout()
     if (!canPerformSimplifiedLayout())
         return false;
 
-    LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
     if (needsPositionedMovementLayout() && !tryLayoutDoingPositionedMovementOnly()) {
         statePusher.pop();
         return false;
