@@ -1,5 +1,44 @@
 2017-11-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r224405. rdar://problem/35296405
+
+    2017-11-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash inside ChildListMutationAccumulator::enqueueMutationRecord()
+            https://bugs.webkit.org/show_bug.cgi?id=179234
+            <rdar://problem/35287748>
+
+            Reviewed by Darin Adler.
+
+            Fixed the crash by keeping MutationObserver referenced by MutationObserverInterestGroup alive.
+
+            Also added hasCallback() virtual function on MutationObserver to check whether the callback is alive
+            to work around the bug that JS function referenced by MutationObserver isn't kept alive.
+            We'll address this bug separately in https://webkit.org/b/179224.
+
+            Test: fast/dom/MutationObserver/disconnect-observer-while-mutation-records-are-enqueued-crash.html
+
+            * bindings/scripts/CodeGeneratorJS.pm:
+            (GenerateCallbackHeaderContent): Added an override for the newly added virtual hasCallback().
+            * dom/MutationCallback.h:
+            * dom/MutationObserver.cpp:
+            (WebCore::MutationObserver::deliver): Added the aforementioned workaround.
+            * dom/MutationObserverInterestGroup.cpp:
+            (WebCore::MutationObserverInterestGroup::MutationObserverInterestGroup): Fixed the crash by using Ref.
+            (WebCore::MutationObserverInterestGroup::enqueueMutationRecord): Ditto.
+            * dom/MutationObserverInterestGroup.h:
+            * dom/NativeNodeFilter.cpp:
+            (WebCore::NativeNodeFilter::hasCallback const): Always return true here. This function is never called
+            but we still need to implement it since NodeFilter has a pure virtual hasCallback() now.
+            * dom/NativeNodeFilter.h:
+            * dom/Node.cpp:
+            (WebCore::collectMatchingObserversForMutation): Use Ref to fix the crash.
+            (WebCore::Node::registeredMutationObservers): Ditto.
+            * dom/Node.h:
+            * dom/NodeFilter.h:
+
+2017-11-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r224398. rdar://problem/35329714
 
     2017-11-03  Daniel Bates  <dabates@apple.com>
