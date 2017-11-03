@@ -1,3 +1,15 @@
+2017-11-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Uncaught Exception: null is not an object (evaluating 'selector.specificity.map') (at SpreadsheetCSSStyleDeclarationSection.js:199:51)
+        https://bugs.webkit.org/show_bug.cgi?id=179225
+        <rdar://problem/35329019>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._renderSelector):
+        selector.specificity may not exist when the selector is dynamic and doesn't match the selected element.
+
 2017-11-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Move Show Compositing Borders/Paint Flashing buttons from Elements tab to Layers tab

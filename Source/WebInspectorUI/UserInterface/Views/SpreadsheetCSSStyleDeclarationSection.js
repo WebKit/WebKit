@@ -196,8 +196,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             if (matched)
                 selectorElement.classList.add(WI.SpreadsheetCSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
 
-            let specificity = selector.specificity.map((number) => number.toLocaleString());
-            if (specificity) {
+            if (selector.specificity) {
+                let specificity = selector.specificity.map((number) => number.toLocaleString());
                 let tooltip = WI.UIString("Specificity: (%d, %d, %d)").format(...specificity);
                 if (selector.dynamic) {
                     tooltip += "\n";
