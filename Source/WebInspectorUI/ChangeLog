@@ -1,3 +1,71 @@
+2017-11-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas: recording parameters that include an Image should show an InlineSwatch (2D canvas)
+        https://bugs.webkit.org/show_bug.cgi?id=177032
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Test.html:
+        * UserInterface/Base/ImageUtilities.js:
+        (WI.scratchCanvasContext2D):
+        Creates a static canvas that can be used for scratch purposes, such as converting ImageData
+        to an Image, or rendering the result of a CanvasGradient. The canvas is reset after each
+        call of the function so it can be reused by other callers.
+
+        (WI.imageFromImageData):
+        (WI.imageFromCanvasGradient):
+        Utility functions for getting a dataURL image of ImageData/CanvasGradient after drawing it
+        onto WI.scratchCanvasContext2D.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.prototype.async.swizzle):
+        Set the Image used to create a CanvasPattern as an expando property for later use.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.getImageParameters):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM):
+        Add Image InlineSwatch elements for parameters that are viewable as an image. For ImageData
+        and CanvasGradient, WI.scratchCanvasContext2D is used to draw the ImageData/CanvasGradient
+        and get a dataURL to be used as the image.
+
+        (WI.RecordingActionTreeElement._createSwatchForColorParameters):
+        Drive-by: add checks that the parameter is not a CanvasGradient or CanvasPattern.
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        Add Image InlineSwatch elements for fillStyle/strokeStyle when the value is a CanvasGradient
+        or a CanvasPattern.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype._updateSwatch):
+        (WI.InlineSwatch.prototype._swatchElementClicked):
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch):
+        (.inline-swatch:matches(.color, .gradient)):
+        (.inline-swatch:matches(.bezier, .spring, .variable)):
+        (.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):hover):
+        (.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):active):
+        (.inline-swatch:not(.read-only):active > span):
+        (.inline-swatch:matches(.bezier, .spring, .variable) > span):
+        (.inline-swatch.image > span):
+        (.inline-swatch:matches(.bezier, .spring, .variable):hover): Deleted.
+        (.inline-swatch:matches(.bezier, .spring, .variable):active): Deleted.
+        (.inline-swatch:active > span): Deleted.
+        (.inline-swatch:matches(.bezier, .spring) > span): Deleted.
+        Add Image type for showing previews of images.
+        Drive-by: simplify some styles.
+
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.action > .titles .parameters > .inline-swatch):
+        (.tree-outline:matches(:focus, .force-focus) .item.action > .titles .parameters > .inline-swatch): Deleted.
+        Drive-by: remove the :focus requirement, as it would cause the InlineSwatch to shift when
+        the user clicked out of the WebInspector window.
+
 2017-11-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Inspector should display service worker served responses properly

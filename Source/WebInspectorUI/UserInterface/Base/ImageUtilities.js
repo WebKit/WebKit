@@ -51,3 +51,52 @@ function useSVGSymbol(url, className, title)
 
     return wrapper;
 }
+
+(function() {
+    let canvas = null;
+    let context = null;
+
+    WI.scratchCanvasContext2D = function(callback) {
+        if (!canvas)
+            canvas = document.createElement("canvas");
+
+        if (!context)
+            context = canvas.getContext("2d");
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.save();
+        callback(context);
+        context.restore();
+    };
+})();
+
+WI.imageFromImageData = function(data) {
+    console.assert(data instanceof ImageData);
+
+    let image = null;
+    WI.scratchCanvasContext2D((context) => {
+        context.canvas.width = data.width;
+        context.canvas.height = data.height;
+        context.putImageData(data, 0, 0);
+
+        image = new Image;
+        image.src = context.canvas.toDataURL();
+    });
+    return image;
+};
+
+WI.imageFromCanvasGradient = function(gradient, width, height) {
+    console.assert(gradient instanceof CanvasGradient);
+
+    let image = null;
+    WI.scratchCanvasContext2D((context) => {
+        context.canvas.width = width;
+        context.canvas.height = height;
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, width, height);
+
+        image = new Image;
+        image.src = context.canvas.toDataURL();
+    });
+    return image;
+};

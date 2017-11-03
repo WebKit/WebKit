@@ -995,6 +995,7 @@ localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
 localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertical"] = "Vertical";
+localizedStrings["View Image"] = "View Image";
 localizedStrings["View Recordings... (%d)"] = "View Recordings... (%d)";
 localizedStrings["View variable value"] = "View variable value";
 localizedStrings["Visibility"] = "Visibility";

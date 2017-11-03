@@ -70,10 +70,6 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:matches(:focus
     color: var(--selected-secondary-text-color);
 }
 
-.tree-outline:matches(:focus, .force-focus) .item.action > .titles .parameters > .inline-swatch {
-    vertical-align: -1px;
-}
-
 .tree-outline[data-indent="1"] .item.action::before,
 .tree-outline[data-indent="2"] .item.action::before {
     min-width: var(--data-indent);
@@ -129,6 +125,10 @@ body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.init
 
 .item.action:not(.selected) > .titles .parameter.swizzled {
     color: var(--text-color-gray-medium);
+}
+
+.item.action > .titles .parameters > .inline-swatch {
+    vertical-align: -1px;
 }
 
 .item.action.composite > .icon {

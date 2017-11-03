@@ -237,6 +237,25 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         return [];
     }
+
+    getImageParameters()
+    {
+        switch (this._name) {
+        // 2D
+        case "createImageData":
+        case "createPattern":
+        case "drawImage":
+        case "fillStyle":
+        case "putImageData":
+        case "strokeStyle":
+        // 2D (non-standard)
+        case "drawImageFromRect":
+        case "webkitPutImageDataHD":
+            return this._parameters.slice(0, 1);
+        }
+
+        return [];
+    }
 };
 
 WI.RecordingAction.Event = {

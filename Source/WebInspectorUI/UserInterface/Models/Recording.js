@@ -269,8 +269,9 @@ WI.Recording = class Recording
                 case WI.Recording.Swizzle.CanvasGradient:
                     var gradientType = await this.swizzle(data[0], WI.Recording.Swizzle.String);
 
-                    var context = document.createElement("canvas").getContext("2d");
-                    this._swizzle[index][type] = gradientType === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
+                    WI.scratchCanvasContext2D((context) => {
+                        this._swizzle[index][type] = gradientType === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
+                    });
 
                     for (let stop of data[2]) {
                         let color = await this.swizzle(stop[1], WI.Recording.Swizzle.String);
@@ -284,8 +285,10 @@ WI.Recording = class Recording
                         this.swizzle(data[1], WI.Recording.Swizzle.String),
                     ]);
 
-                    var context = document.createElement("canvas").getContext("2d");
-                    this._swizzle[index][type] = context.createPattern(image, repeat);
+                    WI.scratchCanvasContext2D((context) => {
+                        this._swizzle[index][type] = context.createPattern(image, repeat);
+                        this._swizzle[index][type].__image = image;
+                    });
                     break;
                 }
             } catch { }

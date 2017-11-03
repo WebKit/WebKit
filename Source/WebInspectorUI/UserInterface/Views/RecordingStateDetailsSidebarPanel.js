@@ -141,12 +141,25 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
                 let isGradient = value instanceof CanvasGradient;
                 let isPattern = value instanceof CanvasPattern;
                 if (isGradient || isPattern) {
-                    value = document.createElement("span");
-                    value.classList.add("unavailable");
-                    if (isGradient)
-                        value.textContent = WI.unlocalizedString("Gradient");
-                    else if (isPattern)
-                        value.textContent = WI.unlocalizedString("Pattern");
+                    let textElement = document.createElement("span");
+                    textElement.classList.add("unavailable");
+
+                    let image = null;
+                    if (isGradient) {
+                        textElement.textContent = WI.unlocalizedString("CanvasGradient");
+                        image = WI.imageFromCanvasGradient(value, 100, 100);
+                    } else if (isPattern) {
+                        textElement.textContent = WI.unlocalizedString("CanvasPattern");
+                        image = value.__image;
+                    }
+
+                    let fragment = document.createDocumentFragment();
+                    if (image) {
+                        let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Image, image);
+                        fragment.appendChild(swatch.element);
+                    }
+                    fragment.appendChild(textElement);
+                    value = fragment;
                 } else {
                     if (value instanceof DOMMatrix)
                         value = [value.a, value.b, value.c, value.d, value.e, value.f];

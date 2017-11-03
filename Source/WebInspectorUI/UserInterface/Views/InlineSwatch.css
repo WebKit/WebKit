@@ -31,16 +31,19 @@
     height: 1em;
     margin-right: 3px;
     vertical-align: -2px;
-    /* Make a checkered background for transparent colors to show against. */
-    background-image: linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%)),
-                      linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%));
     background-color: white;
-    background-size: 50%;
-    background-position: top left, bottom right;
-    background-repeat: no-repeat;
     border-radius: 2px;
     overflow: hidden;
     cursor: default;
+}
+
+.inline-swatch:matches(.color, .gradient) {
+    /* Make a checkered background for transparent colors to show against. */
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%)),
+                      linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%));
+    background-size: 50%;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
 }
 
 .inline-swatch:matches(.bezier, .spring) {
@@ -53,14 +56,13 @@
 
 .inline-swatch:matches(.bezier, .spring, .variable) {
     margin-right: 2px;
-    background: none;
 }
 
-.inline-swatch:matches(.bezier, .spring, .variable):hover {
+.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):hover {
     filter: brightness(0.9);
 }
 
-.inline-swatch:matches(.bezier, .spring, .variable):active {
+.inline-swatch:not(.read-only):matches(.bezier, .spring, .variable):active {
     filter: brightness(0.8);
 }
 
@@ -88,12 +90,17 @@
     border-color: hsla(0, 0%, 25%, 0.8);
 }
 
-.inline-swatch:active > span {
+.inline-swatch:not(.read-only):active > span {
     border-color: hsl(0, 0%, 25%);
 }
 
-.inline-swatch:matches(.bezier, .spring) > span {
+.inline-swatch:matches(.bezier, .spring, .variable) > span {
     display: none;
+}
+
+.inline-swatch.image > span {
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .inline-swatch-variable-popover {
