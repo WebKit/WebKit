@@ -27,10 +27,9 @@ class VideoToolboxVideoEncoderFactory
   void DestroyVideoEncoder(VideoEncoder* encoder) override;
   const std::vector<cricket::VideoCodec>& supported_codecs() const override;
 
-protected:
+ private:
   virtual VideoEncoder* CreateSupportedVideoEncoder(const cricket::VideoCodec& codec);
 
-private:
   // TODO(magjed): Mutable because it depends on a field trial and it is
   // recalculated every call to supported_codecs().
   mutable std::vector<cricket::VideoCodec> supported_codecs_;

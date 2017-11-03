@@ -48,7 +48,7 @@ inline CFDictionaryRef CreateCFDictionary(CFTypeRef* keys,
 }
 
 // Copies characters from a CFStringRef into a std::string.
-static std::string CFStringToString(const CFStringRef cf_string) {
+std::string CFStringToString(const CFStringRef cf_string) {
   RTC_DCHECK(cf_string);
   std::string std_string;
   // Get the size needed for UTF8 plus terminating character.
@@ -66,7 +66,7 @@ static std::string CFStringToString(const CFStringRef cf_string) {
 }
 
 // Convenience function for setting a VT property.
-static void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(VTSessionRef session,
                           CFStringRef key,
                           int32_t value) {
   CFNumberRef cfNum =
@@ -81,7 +81,7 @@ static void SetVTSessionProperty(VTSessionRef session,
 }
 
 // Convenience function for setting a VT property.
-static void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(VTSessionRef session,
                           CFStringRef key,
                           uint32_t value) {
   int64_t value_64 = value;
@@ -97,7 +97,7 @@ static void SetVTSessionProperty(VTSessionRef session,
 }
 
 // Convenience function for setting a VT property.
-static void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
+void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
   CFBooleanRef cf_bool = (value) ? kCFBooleanTrue : kCFBooleanFalse;
   OSStatus status = VTSessionSetProperty(session, key, cf_bool);
   if (status != noErr) {
@@ -108,7 +108,7 @@ static void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool val
 }
 
 // Convenience function for setting a VT property.
-static void SetVTSessionProperty(VTSessionRef session,
+void SetVTSessionProperty(VTSessionRef session,
                           CFStringRef key,
                           CFStringRef value) {
   OSStatus status = VTSessionSetProperty(session, key, value);
@@ -155,7 +155,7 @@ struct FrameEncodeParams {
 // We receive I420Frames as input, but we need to feed CVPixelBuffers into the
 // encoder. This performs the copy and format conversion.
 // TODO(tkchin): See if encoder will accept i420 frames and compare performance.
-static bool CopyVideoFrameToPixelBuffer(const rtc::scoped_refptr<webrtc::I420BufferInterface>& frame,
+bool CopyVideoFrameToPixelBuffer(const rtc::scoped_refptr<webrtc::I420BufferInterface>& frame,
                                  CVPixelBufferRef pixel_buffer) {
   RTC_DCHECK(pixel_buffer);
   RTC_DCHECK_EQ(CVPixelBufferGetPixelFormatType(pixel_buffer),
@@ -191,7 +191,7 @@ static bool CopyVideoFrameToPixelBuffer(const rtc::scoped_refptr<webrtc::I420Buf
   return true;
 }
 
-static CVPixelBufferRef CreatePixelBuffer(CVPixelBufferPoolRef pixel_buffer_pool) {
+CVPixelBufferRef CreatePixelBuffer(CVPixelBufferPoolRef pixel_buffer_pool) {
   if (!pixel_buffer_pool) {
     LOG(LS_ERROR) << "Failed to get pixel buffer pool.";
     return nullptr;
@@ -210,7 +210,7 @@ static CVPixelBufferRef CreatePixelBuffer(CVPixelBufferPoolRef pixel_buffer_pool
 
 // This is the callback function that VideoToolbox calls when encode is
 // complete. From inspection this happens on its own queue.
-static void VTCompressionOutputCallback(void* encoder,
+void VTCompressionOutputCallback(void* encoder,
                                  void* params,
                                  OSStatus status,
                                  VTEncodeInfoFlags info_flags,
@@ -228,7 +228,7 @@ static void VTCompressionOutputCallback(void* encoder,
 // specific VideoToolbox profile for the specified level, AutoLevel will be
 // returned. The user must initialize the encoder with a resolution and
 // framerate conforming to the selected H264 level regardless.
-static CFStringRef ExtractProfile(const cricket::VideoCodec& codec) {
+CFStringRef ExtractProfile(const cricket::VideoCodec& codec) {
   const rtc::Optional<webrtc::H264::ProfileLevelId> profile_level_id =
       webrtc::H264::ParseSdpProfileLevelId(codec.params);
   RTC_DCHECK(profile_level_id);
