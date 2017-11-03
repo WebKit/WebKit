@@ -274,14 +274,6 @@ void ResourceHandle::platformContinueSynchronousDidReceiveResponse()
         d->m_delegate->platformContinueSynchronousDidReceiveResponse();
 }
 
-void ResourceHandle::continueWillSendRequest(ResourceRequest&& request)
-{
-    ASSERT(isMainThread());
-
-    if (d->m_delegate)
-        d->m_delegate->continueWillSendRequest(WTFMove(request));
-}
-
 } // namespace WebCore
 
 #endif
