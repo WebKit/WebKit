@@ -1,3 +1,11 @@
+2017-11-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark a few failures, posting along the relevant
+        bug entries. Add a platform-specific baseline for one HTTP test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/security/module-no-mime-type-expected.txt: Added.
+
 2017-11-03  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update test expectations after r224324.
