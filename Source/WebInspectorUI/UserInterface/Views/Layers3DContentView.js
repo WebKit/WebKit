@@ -31,6 +31,17 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         this.element.classList.add("layers-3d");
 
+        this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
+        this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
+        this._compositingBordersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+
+        WI.showPaintRectsSetting.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
+        this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/Paint.svg", 16, 16);
+        this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
+        this._paintFlashingButtonNavigationItem.enabled = !!PageAgent.setShowPaintRects;
+        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.showPaintRectsSetting.value;
+        this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+
         WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
         this._layers = [];
@@ -51,6 +62,11 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     // Public
 
+    get navigationItems()
+    {
+        return [this._compositingBordersButtonNavigationItem, this._paintFlashingButtonNavigationItem];
+    }
+
     get supplementalRepresentedObjects()
     {
         return this._layers;
@@ -59,6 +75,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
     shown()
     {
         super.shown();
+
+        this._updateCompositingBordersButtonState();
 
         if (this._layersChangedWhileHidden) {
             this._layersChangedWhileHidden = false;
@@ -79,6 +97,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     closed()
     {
+        WI.showPaintRectsSetting.removeEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
         WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
         super.closed();
@@ -323,6 +342,35 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         let delta = this._boundingBox.clampPoint(this._controls.target).setZ(0).sub(this._controls.target);
         this._controls.target.add(delta);
         this._camera.position.add(delta);
+    }
+
+    _showPaintRectsSettingChanged(event)
+    {
+        console.assert(PageAgent.setShowPaintRects);
+
+        this._paintFlashingButtonNavigationItem.activated = WI.showPaintRectsSetting.value;
+        PageAgent.setShowPaintRects(this._paintFlashingButtonNavigationItem.activated);
+    }
+
+    _togglePaintFlashing(event)
+    {
+        WI.showPaintRectsSetting.value = !WI.showPaintRectsSetting.value;
+    }
+
+    _updateCompositingBordersButtonState()
+    {
+        // This value can be changed outside of Web Inspector.
+        // FIXME: Have PageAgent dispatch a change event instead?
+        PageAgent.getCompositingBordersVisible((error, compositingBordersVisible) => {
+            this._compositingBordersButtonNavigationItem.activated = error ? false : compositingBordersVisible;
+            this._compositingBordersButtonNavigationItem.enabled = error !== "unsupported";
+        });
+    }
+
+    _toggleCompositingBorders(event)
+    {
+        this._compositingBordersButtonNavigationItem.activated = !this._compositingBordersButtonNavigationItem.activated;
+        PageAgent.setCompositingBordersVisible(this._compositingBordersButtonNavigationItem.activated);
     }
 };
 

@@ -1,3 +1,27 @@
+2017-11-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Move Show Compositing Borders/Paint Flashing buttons from Elements tab to Layers tab
+        https://bugs.webkit.org/show_bug.cgi?id=179211
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.get navigationItems):
+        (WI.DOMTreeContentView.prototype._updateCompositingBordersButtonToMatchPageSettings):
+        Guard old buttons with experimental flag.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.get navigationItems):
+        (WI.Layers3DContentView.prototype.shown):
+        (WI.Layers3DContentView.prototype.closed):
+        (WI.Layers3DContentView.prototype._showPaintRectsSettingChanged):
+        (WI.Layers3DContentView.prototype._togglePaintFlashing):
+        (WI.Layers3DContentView.prototype._updateCompositingBordersButtonState):
+        (WI.Layers3DContentView.prototype._toggleCompositingBorders):
+        Add buttons to new home.
+        No need to guard for get/setCompositingBordersVisible anymore, as these were introduced in iOS 7.
+
 2017-11-03  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: move top-level namespace functions in ImageUtilities to static class
