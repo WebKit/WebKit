@@ -1,3 +1,78 @@
+2017-11-02  Jon Lee  <jonlee@apple.com>
+
+        Add license for MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=179222
+
+        Reviewed by Ryosuke Niwa.
+
+        * MotionMark/about.html:
+        * MotionMark/developer.html:
+        * MotionMark/index.html:
+        * MotionMark/resources/debug-runner/graph.js:
+        * MotionMark/resources/debug-runner/motionmark.css:
+        * MotionMark/resources/debug-runner/motionmark.js:
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/resources/extensions.js:
+        * MotionMark/resources/statistics.js:
+        * MotionMark/resources/strings.js:
+        * MotionMark/tests/3d/resources/webgl.js:
+        * MotionMark/tests/3d/webgl.html:
+        * MotionMark/tests/bouncing-particles/bouncing-canvas-images.html:
+        * MotionMark/tests/bouncing-particles/bouncing-canvas-shapes.html:
+        * MotionMark/tests/bouncing-particles/bouncing-css-images.html:
+        * MotionMark/tests/bouncing-particles/bouncing-css-shapes.html:
+        * MotionMark/tests/bouncing-particles/bouncing-svg-images.html:
+        * MotionMark/tests/bouncing-particles/bouncing-svg-shapes.html:
+        * MotionMark/tests/bouncing-particles/bouncing-tagged-images.html:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-images.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-particles.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-shapes.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-css-images.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-particles.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-images.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-particles.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+        * MotionMark/tests/bouncing-particles/resources/bouncing-tagged-images.js:
+        * MotionMark/tests/dom/compositing-transforms.html:
+        * MotionMark/tests/dom/focus.html:
+        * MotionMark/tests/dom/leaves.html:
+        * MotionMark/tests/dom/particles.html:
+        * MotionMark/tests/dom/resources/compositing-transforms.js:
+        * MotionMark/tests/dom/resources/dom-particles.js:
+        * MotionMark/tests/dom/resources/focus.js:
+        * MotionMark/tests/dom/resources/leaves.js:
+        * MotionMark/tests/master/canvas-stage.html:
+        * MotionMark/tests/master/focus.html:
+        * MotionMark/tests/master/image-data.html:
+        * MotionMark/tests/master/leaves.html:
+        * MotionMark/tests/master/multiply.html:
+        * MotionMark/tests/master/resources/canvas-stage.js:
+        * MotionMark/tests/master/resources/canvas-tests.js:
+        * MotionMark/tests/master/resources/focus.js:
+        * MotionMark/tests/master/resources/image-data.js:
+        * MotionMark/tests/master/resources/leaves.js:
+        * MotionMark/tests/master/resources/multiply.js:
+        * MotionMark/tests/master/resources/particles.js:
+        * MotionMark/tests/master/resources/svg-particles.js:
+        * MotionMark/tests/master/resources/text.js:
+        * MotionMark/tests/master/svg-particles.html:
+        * MotionMark/tests/master/text.html:
+        * MotionMark/tests/resources/main.js:
+        * MotionMark/tests/resources/math.js:
+        * MotionMark/tests/resources/stage.css:
+        * MotionMark/tests/simple/resources/simple-canvas-paths.js:
+        * MotionMark/tests/simple/resources/simple-canvas.js:
+        * MotionMark/tests/simple/resources/tiled-canvas-image.js:
+        * MotionMark/tests/simple/simple-canvas-paths.html:
+        * MotionMark/tests/simple/tiled-canvas-image.html:
+        * MotionMark/tests/template/resources/template-canvas.js:
+        * MotionMark/tests/template/resources/template-css.js:
+        * MotionMark/tests/template/resources/template-svg.js:
+        * MotionMark/tests/template/template-canvas.html:
+        * MotionMark/tests/template/template-css.html:
+        * MotionMark/tests/template/template-svg.html:
+
 2017-11-01  Jon Lee  <jonlee@apple.com>
 
         Add about page for MotionMark
