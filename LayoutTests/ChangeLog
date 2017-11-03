@@ -1,3 +1,15 @@
+2017-11-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update test expectations after r224324.
+
+        Unreviewed test gardening.
+
+        * platform/win/css3/selectors3/html/css3-modsel-166-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-166a-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-39-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-39b-expected.txt:
+        * platform/win/fast/css/first-letter-float-after-float-expected.txt:
+
 2017-11-03  Matt Lewis  <jlewis3@apple.com>
 
         Marked js/intl-datetimeformat.html as failing on High Sierra.
