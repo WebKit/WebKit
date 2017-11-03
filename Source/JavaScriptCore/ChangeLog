@@ -1,5 +1,21 @@
 2017-11-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r224349. rdar://problem/35329727
+
+    2017-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+            AI does not correctly model the clobber case of ArithClz32
+            https://bugs.webkit.org/show_bug.cgi?id=179188
+
+            Reviewed by Michael Saboff.
+
+            The non-Int32 case clobbers the world because it may call valueOf.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2017-11-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r224302. rdar://problem/35296408
 
     2017-11-01  Michael Saboff  <msaboff@apple.com>
