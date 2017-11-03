@@ -56,6 +56,9 @@ def platform_options(use_globs=False):
         optparse.make_option('--wpe', action='store_const', dest='platform',
             const=('wpe*' if use_globs else 'wpe'),
             help=('Alias for --platform=wpe')),
+        optparse.make_option('--wincairo', action='store_const', dest='platform',
+            const=('wincairo'),
+            help=('Alias for --platform=wincairo')),
         ] + (config.apple_additions().platform_options() if config.apple_additions() else [])
 
 
