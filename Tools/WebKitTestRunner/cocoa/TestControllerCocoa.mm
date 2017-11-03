@@ -67,7 +67,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     [globalWebViewConfiguration release];
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
-    globalWebViewConfiguration.processPool = WTF::adoptNS([[WKProcessPool alloc] _initWithConfiguration:(_WKProcessPoolConfiguration *)contextConfiguration]).get();
+    globalWebViewConfiguration.processPool = (WKProcessPool *)context;
     globalWebViewConfiguration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
 

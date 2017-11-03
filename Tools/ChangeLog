@@ -1,3 +1,15 @@
+2017-11-03  Jonathan Bedard  <jbedard@apple.com>
+
+        TestController platformAdjustContext should use provided WKContext for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=179124
+        <rdar://problem/35295176>
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration): Use the provided WKContext, since that is
+        a WebProcessPool, instead of creating a second one.
+
 2017-11-02  Christopher Reid  <chris.reid@sony.com>
 
         Add a FileSystem namespace to FileSystem.cpp
