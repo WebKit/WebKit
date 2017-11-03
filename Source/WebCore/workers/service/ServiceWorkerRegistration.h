@@ -30,18 +30,20 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "SWClientConnection.h"
 #include "ServiceWorkerRegistrationData.h"
+#include <wtf/Identified.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 class ServiceWorker;
 
-class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
+class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject, public ThreadSafeIdentified<ServiceWorkerRegistration> {
 public:
-    static Ref<ServiceWorkerRegistration> create(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& data, Ref<ServiceWorker>&& serviceWorker)
+    template <typename... Args> static Ref<ServiceWorkerRegistration> create(Args&&... args)
     {
-        return adoptRef(*new ServiceWorkerRegistration(context, WTFMove(data), WTFMove(serviceWorker)));
+        return adoptRef(*new ServiceWorkerRegistration(std::forward<Args>(args)...));
     }
 
     ~ServiceWorkerRegistration();
@@ -58,9 +60,13 @@ public:
 
     using RefCounted::ref;
     using RefCounted::deref;
+    
+    const ServiceWorkerRegistrationData& data() const { return m_registrationData; }
+
+    void updateStateFromServer(ServiceWorkerRegistrationState, const String& workerID);
 
 private:
-    ServiceWorkerRegistration(ScriptExecutionContext&, ServiceWorkerRegistrationData&&, Ref<ServiceWorker>&&);
+    ServiceWorkerRegistration(ScriptExecutionContext&, SWClientConnection&, ServiceWorkerRegistrationData&&, Ref<ServiceWorker>&&);
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -72,6 +78,7 @@ private:
 
     ServiceWorkerRegistrationData m_registrationData;
     Ref<ServiceWorker> m_serviceWorker;
+    Ref<SWClientConnection> m_connection;
 };
 
 } // namespace WebCore

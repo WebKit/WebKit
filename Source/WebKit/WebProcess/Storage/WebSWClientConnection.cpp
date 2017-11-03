@@ -69,6 +69,16 @@ void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetc
     send(Messages::WebSWServerConnection::FinishFetchingScriptInServer(result));
 }
 
+void WebSWClientConnection::addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, uint64_t registrationIdentifier)
+{
+    send(Messages::WebSWServerConnection::AddServiceWorkerRegistrationInServer(key, registrationIdentifier));
+}
+
+void WebSWClientConnection::removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, uint64_t registrationIdentifier)
+{
+    send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer(key, registrationIdentifier));
+}
+
 void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&& scriptValue, ScriptExecutionContext& source)
 {
     // FIXME: Add support for posting messages from workers.

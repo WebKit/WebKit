@@ -96,6 +96,11 @@ void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
     send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier));
 }
 
+void WebSWServerConnection::updateRegistrationStateInClient(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const String& workerID)
+{
+    send(Messages::WebSWClientConnection::UpdateRegistrationState(key, state, workerID));
+}
+
 void WebSWServerConnection::updateServiceWorkerContext(const ServiceWorkerContextData& data)
 {
     if (sendToContextProcess(Messages::WebSWContextManagerConnection::UpdateServiceWorker(identifier(), data)))

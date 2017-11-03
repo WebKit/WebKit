@@ -30,15 +30,17 @@
 
 #include "SWServer.h"
 #include "SWServerWorker.h"
+#include "ServiceWorkerTypes.h"
 #include "ServiceWorkerUpdateViaCache.h"
 
 namespace WebCore {
 
-SWServerRegistration::SWServerRegistration(const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL)
+SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL)
     : m_registrationKey(key)
     , m_updateViaCache(updateViaCache)
     , m_scopeURL(scopeURL)
     , m_scriptURL(scriptURL)
+    , m_server(server)
 {
     m_scopeURL.removeFragmentIdentifier();
 }
@@ -57,9 +59,55 @@ SWServerWorker* SWServerRegistration::getNewestWorker()
     return m_activeWorker.get();
 }
 
+void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationState state, SWServerWorker* worker)
+{
+    switch (state) {
+    case ServiceWorkerRegistrationState::Installing:
+        m_installingWorker = worker;
+        break;
+    case ServiceWorkerRegistrationState::Waiting:
+        m_waitingWorker = worker;
+        break;
+    case ServiceWorkerRegistrationState::Active:
+        m_activeWorker = worker;
+        break;
+    };
+
+    String workerID;
+    if (worker)
+        workerID = worker->workerID();
+
+    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
+        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
+            connection->updateRegistrationStateInClient(m_registrationKey, state, workerID);
+    }
+}
+
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
     return { m_registrationKey, identifier(), m_activeServiceWorkerIdentifier, m_scopeURL, m_scriptURL, m_updateViaCache };
+}
+
+void SWServerRegistration::addClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier)
+{
+    auto result = m_clientRegistrationsByConnection.ensure(connectionIdentifier, [] {
+        return std::make_unique<HashSet<uint64_t>>();
+    });
+    
+    ASSERT(!result.iterator->value->contains(clientRegistrationIdentifier));
+    result.iterator->value->add(clientRegistrationIdentifier);
+}
+
+void SWServerRegistration::removeClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier)
+{
+    auto iterator = m_clientRegistrationsByConnection.find(connectionIdentifier);
+    if (iterator == m_clientRegistrationsByConnection.end() || !iterator->value)
+        return;
+    
+    ASSERT(iterator->value->contains(clientRegistrationIdentifier));
+    iterator->value->remove(clientRegistrationIdentifier);
+    if (iterator->value->isEmpty())
+        m_clientRegistrationsByConnection.remove(iterator);
 }
 
 } // namespace WebCore

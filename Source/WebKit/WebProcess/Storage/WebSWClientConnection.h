@@ -56,6 +56,8 @@ public:
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
+    void addServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
+    void removeServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
     void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ScriptExecutionContext& source) final;
 
     void disconnectedFromWebProcess();

@@ -39,6 +39,7 @@
 #include <WebCore/PaymentHeaders.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 
@@ -803,6 +804,15 @@ template <> struct EnumTraits<WebCore::ServiceWorkerUpdateViaCache> {
         WebCore::ServiceWorkerUpdateViaCache::Imports,
         WebCore::ServiceWorkerUpdateViaCache::All,
         WebCore::ServiceWorkerUpdateViaCache::None
+    >;
+};
+
+template <> struct EnumTraits<WebCore::ServiceWorkerRegistrationState> {
+    using values = EnumValues<
+        WebCore::ServiceWorkerRegistrationState,
+        WebCore::ServiceWorkerRegistrationState::Installing,
+        WebCore::ServiceWorkerRegistrationState::Waiting,
+        WebCore::ServiceWorkerRegistrationState::Active
     >;
 };
 #endif

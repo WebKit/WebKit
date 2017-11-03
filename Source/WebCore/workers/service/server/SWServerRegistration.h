@@ -33,13 +33,15 @@
 
 namespace WebCore {
 
+class SWServer;
 class SWServerWorker;
+enum class ServiceWorkerRegistrationState;
 struct ExceptionData;
 struct ServiceWorkerFetchResult;
 
 class SWServerRegistration : public ThreadSafeIdentified<SWServerRegistration> {
 public:
-    SWServerRegistration(const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL);
+    SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL);
     ~SWServerRegistration();
 
     const ServiceWorkerRegistrationKey& key() const { return m_registrationKey; }
@@ -55,6 +57,11 @@ public:
 
     void setActiveServiceWorkerIdentifier(uint64_t identifier) { m_activeServiceWorkerIdentifier = identifier; }
 
+    void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);
+
+    void addClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);
+    void removeClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);
+
 private:
     ServiceWorkerRegistrationKey m_registrationKey;
     ServiceWorkerUpdateViaCache m_updateViaCache;
@@ -62,13 +69,16 @@ private:
     URL m_scriptURL;
 
     bool m_uninstalling { false };
-    std::unique_ptr<SWServerWorker> m_installingWorker;
-    std::unique_ptr<SWServerWorker> m_waitingWorker;
-    std::unique_ptr<SWServerWorker> m_activeWorker;
+    RefPtr<SWServerWorker> m_installingWorker;
+    RefPtr<SWServerWorker> m_waitingWorker;
+    RefPtr<SWServerWorker> m_activeWorker;
 
     uint64_t m_activeServiceWorkerIdentifier { 0 };
 
     double m_lastUpdateTime { 0 };
+    
+    HashMap<uint64_t, std::unique_ptr<HashSet<uint64_t>>> m_clientRegistrationsByConnection;
+    SWServer& m_server;
 };
 
 } // namespace WebCore

@@ -26,6 +26,8 @@ messages -> WebSWServerConnection {
     # When possible, these messages can be implemented directly by WebCore::SWClientConnection
     ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
     FinishFetchingScriptInServer(struct WebCore::ServiceWorkerFetchResult result)
+    AddServiceWorkerRegistrationInServer(struct WebCore::ServiceWorkerRegistrationKey key, uint64_t registrationIdentifier)
+    RemoveServiceWorkerRegistrationInServer(struct WebCore::ServiceWorkerRegistrationKey key, uint64_t registrationIdentifier)
 
     StartFetch(uint64_t identifier, uint64_t serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
     PostMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, IPC::DataReference message, uint64_t sourceScriptExecutionContextIdentifier, String sourceOrigin)

@@ -36,36 +36,45 @@ namespace WebCore {
 class ResourceError;
 class SecurityOrigin;
 class SerializedScriptValue;
+class ServiceWorkerRegistration;
 class SharedBuffer;
+enum class ServiceWorkerRegistrationState;
 struct ExceptionData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
 
 class SWClientConnection : public ThreadSafeRefCounted<SWClientConnection> {
 public:
-    WEBCORE_EXPORT SWClientConnection();
     WEBCORE_EXPORT virtual ~SWClientConnection();
 
     void scheduleJob(ServiceWorkerJob&);
     void finishedFetchingScript(ServiceWorkerJob&, const String&);
     void failedFetchingScript(ServiceWorkerJob&, const ResourceError&);
-    virtual void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
+    void addServiceWorkerRegistration(ServiceWorkerRegistration&);
+    void removeServiceWorkerRegistration(ServiceWorkerRegistration&);
 
+    virtual void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
     virtual uint64_t identifier() const = 0;
     virtual bool hasServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
 
 protected:
+    WEBCORE_EXPORT SWClientConnection();
+
     WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
     WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&);
     WEBCORE_EXPORT void unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult);
     WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
+    WEBCORE_EXPORT void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const String& workerID);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
+    virtual void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
+    virtual void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
 
     HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
+    HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<HashSet<ServiceWorkerRegistration*>>> m_registrations;
 };
 
 } // namespace WebCore

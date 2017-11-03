@@ -148,7 +148,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
             return;
         }
     } else {
-        auto newRegistration = std::make_unique<SWServerRegistration>(m_registrationKey, job.registrationOptions.updateViaCache, job.scopeURL, job.scriptURL);
+        auto newRegistration = std::make_unique<SWServerRegistration>(m_server, m_registrationKey, job.registrationOptions.updateViaCache, job.scopeURL, job.scriptURL);
         m_server.addRegistration(WTFMove(newRegistration));
     }
 

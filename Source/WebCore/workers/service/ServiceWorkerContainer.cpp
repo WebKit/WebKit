@@ -250,7 +250,10 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     }
 
     activeServiceWorker->setState(ServiceWorker::State::Installing);
-    auto registration = ServiceWorkerRegistration::create(*context, WTFMove(data), *activeServiceWorker);
+    
+    ASSERT(m_swConnection);
+    auto registration = ServiceWorkerRegistration::create(*context, *m_swConnection, WTFMove(data), *activeServiceWorker);
+
     job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration.get());
 
     // Use a microtask because we need to make sure this is executed after the promise above is resolved.

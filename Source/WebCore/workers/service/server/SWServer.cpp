@@ -99,6 +99,16 @@ void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetch
     m_server.scriptFetchFinished(*this, result);
 }
 
+void SWServer::Connection::addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, uint64_t clientRegistrationIdentifier)
+{
+    m_server.addClientServiceWorkerRegistration(*this, key, clientRegistrationIdentifier);
+}
+
+void SWServer::Connection::removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, uint64_t clientRegistrationIdentifier)
+{
+    m_server.removeClientServiceWorkerRegistration(*this, key, clientRegistrationIdentifier);
+}
+
 void SWServer::Connection::scriptContextFailedToStart(const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
 {
     m_server.scriptContextFailedToStart(*this, registrationKey, workerID, message);
@@ -199,6 +209,28 @@ void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerR
 
     if (auto* jobQueue = m_jobQueues.get(registrationKey))
         jobQueue->scriptContextStarted(connection, serviceWorkerIdentifier, workerID);
+}
+
+void SWServer::addClientServiceWorkerRegistration(Connection& connection, const ServiceWorkerRegistrationKey& key, uint64_t registrationIdentifier)
+{
+    auto* registration = m_registrations.get(key);
+    if (!registration) {
+        LOG_ERROR("Request to add client-side ServiceWorkerRegistration to non-existent server-side registration");
+        return;
+    }
+    
+    registration->addClientServiceWorkerRegistration(connection.identifier(), registrationIdentifier);
+}
+
+void SWServer::removeClientServiceWorkerRegistration(Connection& connection, const ServiceWorkerRegistrationKey& key, uint64_t registrationIdentifier)
+{
+    auto* registration = m_registrations.get(key);
+    if (!registration) {
+        LOG_ERROR("Request to remove client-side ServiceWorkerRegistration from non-existent server-side registration");
+        return;
+    }
+    
+    registration->removeClientServiceWorkerRegistration(connection.identifier(), registrationIdentifier);
 }
 
 Ref<SWServerWorker> SWServer::updateWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)

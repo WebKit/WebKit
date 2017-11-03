@@ -65,6 +65,7 @@ private:
     void resolveRegistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&) final;
     void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationKey&, bool unregistrationResult) final;
     void startScriptFetchInClient(uint64_t jobIdentifier) final;
+    void updateRegistrationStateInClient(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationState, const String& serviceWorkerID) final;
 
     void startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
 

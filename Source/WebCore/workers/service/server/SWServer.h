@@ -43,6 +43,7 @@ namespace WebCore {
 class SWServerJobQueue;
 class SWServerRegistration;
 class SWServerWorker;
+enum class ServiceWorkerRegistrationState;
 struct ExceptionData;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
@@ -57,6 +58,9 @@ public:
 
         WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
         WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, uint64_t serviceWorkerIdentifier, const String& workerID);
+        
+        // Messages to the client WebProcess
+        virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const String& serviceWorkerID) = 0;
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
@@ -64,6 +68,8 @@ public:
 
         WEBCORE_EXPORT void scheduleJobInServer(const ServiceWorkerJobData&);
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
+        WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t clientRegistrationIdentifier);
+        WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t clientRegistrationIdentifier);
 
     private:
         // Messages to the client WebProcess
@@ -96,6 +102,8 @@ public:
 
     Ref<SWServerWorker> updateWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
     
+    Connection* getConnection(uint64_t identifier) { return m_connections.get(identifier); }
+
 private:
     void registerConnection(Connection&);
     void unregisterConnection(Connection&);
@@ -106,6 +114,9 @@ private:
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
     void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, uint64_t serviceWorkerIdentifier, const String& workerID);
+
+    void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
+    void removeClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
 
     HashMap<uint64_t, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;

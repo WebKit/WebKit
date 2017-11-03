@@ -31,20 +31,25 @@
 #include "Document.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
+#include "ServiceWorkerTypes.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, ServiceWorkerRegistrationData&& registrationData, Ref<ServiceWorker>&& serviceWorker)
+ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, SWClientConnection& connection, ServiceWorkerRegistrationData&& registrationData, Ref<ServiceWorker>&& serviceWorker)
     : ActiveDOMObject(&context)
     , m_registrationData(WTFMove(registrationData))
     , m_serviceWorker(WTFMove(serviceWorker))
+    , m_connection(connection)
 {
     suspendIfNeeded();
+
+    m_connection->addServiceWorkerRegistration(*this);
 }
 
 ServiceWorkerRegistration::~ServiceWorkerRegistration()
 {
+    m_connection->removeServiceWorkerRegistration(*this);
 }
 
 ServiceWorker* ServiceWorkerRegistration::installing()
@@ -99,6 +104,13 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
     }
 
     container->removeRegistration(m_registrationData.scopeURL, WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, const String& workerID)
+{
+    // FIXME: Implement here along with "Update Worker State" algorithm
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(workerID);
 }
 
 EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const
