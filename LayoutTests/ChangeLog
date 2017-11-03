@@ -1,3 +1,21 @@
+2017-11-03  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r224398. rdar://problem/35329684
+
+    2017-11-03  Daniel Bates  <dabates@apple.com>
+
+            Invalidate node list when associated form control element is removed
+            https://bugs.webkit.org/show_bug.cgi?id=179232
+            <rdar://problem/35308269>
+
+            Reviewed by Ryosuke Niwa.
+
+            Add a test to ensure the node list returned by HTMLFormElement.elements stays synchronized
+            with the document.
+
+            * fast/forms/node-list-remove-button-from-form-expected.txt: Added.
+            * fast/forms/node-list-remove-button-from-form.html: Added.
+
 2017-10-29  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r224139. rdar://problem/35143359

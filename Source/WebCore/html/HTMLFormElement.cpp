@@ -606,6 +606,9 @@ void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
     removeFromPastNamesMap(e);
     m_associatedElements.remove(index);
 
+    if (auto* nodeLists = this->nodeLists())
+        nodeLists->invalidateCaches();
+
     if (e == m_defaultButton)
         resetDefaultButton();
 }
