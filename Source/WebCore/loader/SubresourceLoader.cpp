@@ -478,6 +478,11 @@ bool SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResp
     if (!m_resource->isCrossOrigin() || options().mode != FetchOptions::Mode::Cors)
         return true;
 
+#if ENABLE(SERVICE_WORKER)
+    if (response.source() == ResourceResponse::Source::ServiceWorker)
+        return true;
+#endif
+
     ASSERT(m_origin);
     return passesAccessControlCheck(response, options().storedCredentialsPolicy, *m_origin, errorDescription);
 }

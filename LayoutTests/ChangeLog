@@ -1,3 +1,18 @@
+2017-11-02  Youenn Fablet  <youenn@apple.com>
+
+        Do not check for CORS in case response is coming from a service worker
+        https://bugs.webkit.org/show_bug.cgi?id=179177
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/cors-image-fetch-expected.txt: Added.
+        * http/tests/workers/service/cors-image-fetch.html: Added.
+        * http/tests/workers/service/resources/cors-image-fetch-worker.js: Added.
+        * http/tests/workers/service/resources/cors-image-fetch.js: Added.
+        * http/tests/workers/service/resources/tainted-image-fetch.js: Added.
+        * http/tests/workers/service/tainted-image-fetch-expected.txt: Added.
+        * http/tests/workers/service/tainted-image-fetch.html: Added.
+
 2017-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip editing/selection/move-by-word-visually-multi-space.html on iOS debug bots.

@@ -1,0 +1,10 @@
+ 
+Registering service worker
+Service worker registered
+Status is no status
+Loading image
+PASS: Loaded image
+Status is Got response for http://localhost:8000/resources/square100.png, status code is 200
+Image size: 100x100
+PASS: canvas toDataURL fails with SecurityError: The operation is insecure.
+
