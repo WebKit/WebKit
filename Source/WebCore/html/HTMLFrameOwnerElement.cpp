@@ -113,9 +113,9 @@ bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent& event) const
 
 ExceptionOr<Document&> HTMLFrameOwnerElement::getSVGDocument() const
 {
-    auto* document = contentDocument();
+    auto document = makeRef(*contentDocument());
     if (is<SVGDocument>(document))
-        return *document;
+        return document.get();
     // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
     return Exception { NotSupportedError };
 }

@@ -42,7 +42,7 @@ Ref<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLLegendElement(tagName, document));
 }
 
-HTMLFormControlElement* HTMLLegendElement::associatedControl()
+RefPtr<HTMLFormControlElement> HTMLLegendElement::associatedControl()
 {
     // Check if there's a fieldset belonging to this legend.
     auto enclosingFieldset = ancestorsOfType<HTMLFieldSetElement>(*this).first();
@@ -65,13 +65,13 @@ void HTMLLegendElement::focus(bool restorePreviousSelection, FocusDirection dire
     }
 
     // To match other browsers' behavior, never restore previous selection.
-    if (auto* control = associatedControl())
+    if (auto control = associatedControl())
         control->focus(false, direction);
 }
 
 void HTMLLegendElement::accessKeyAction(bool sendMouseEvents)
 {
-    if (auto* control = associatedControl())
+    if (auto control = associatedControl())
         control->accessKeyAction(sendMouseEvents);
 }
 
@@ -80,7 +80,7 @@ HTMLFormElement* HTMLLegendElement::form() const
     // According to the specification, If the legend has a fieldset element as
     // its parent, then the form attribute must return the same value as the
     // form attribute on that fieldset element. Otherwise, it must return null.
-    auto* fieldset = parentNode();
+    auto fieldset = makeRefPtr(parentNode());
     if (!is<HTMLFieldSetElement>(fieldset))
         return nullptr;
     return downcast<HTMLFieldSetElement>(*fieldset).form();

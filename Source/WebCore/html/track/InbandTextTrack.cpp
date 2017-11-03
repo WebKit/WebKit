@@ -156,7 +156,7 @@ void InbandTextTrack::languageChanged(const AtomicString& language)
 
 void InbandTextTrack::willRemove()
 {
-    auto* element = mediaElement();
+    auto element = makeRefPtr(mediaElement());
     if (!element)
         return;
     element->removeTextTrack(*this);

@@ -41,7 +41,7 @@ protected:
     bool isPresentationAttribute(const QualifiedName&) const override;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    HTMLTableElement* findParentTable() const;
+    RefPtr<HTMLTableElement> findParentTable() const;
 };
 
 } // namespace WebCore

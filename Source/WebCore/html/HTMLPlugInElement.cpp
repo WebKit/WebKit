@@ -111,7 +111,7 @@ void HTMLPlugInElement::resetInstance()
 
 JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
 {
-    auto* frame = document().frame();
+    auto frame = makeRefPtr(document().frame());
     if (!frame)
         return nullptr;
 
@@ -119,8 +119,8 @@ JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
     // the cached allocated Bindings::Instance.  Not supporting this edge-case is OK.
 
     if (!m_instance) {
-        if (auto* widget = pluginWidget())
-            m_instance = frame->script().createScriptInstanceForWidget(widget);
+        if (auto widget = makeRefPtr(pluginWidget()))
+            m_instance = frame->script().createScriptInstanceForWidget(widget.get());
     }
     return m_instance.get();
 }

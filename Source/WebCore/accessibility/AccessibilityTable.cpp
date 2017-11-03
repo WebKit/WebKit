@@ -39,6 +39,7 @@
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
+#include "HTMLTableSectionElement.h"
 #include "RenderObject.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
@@ -392,8 +393,8 @@ void AccessibilityTable::addChildren()
     table.recalcSectionsIfNeeded();
     
     if (HTMLTableElement* tableElement = this->tableElement()) {
-        if (HTMLTableCaptionElement* caption = tableElement->caption()) {
-            AccessibilityObject* axCaption = axObjectCache()->getOrCreate(caption);
+        if (auto caption = tableElement->caption()) {
+            AccessibilityObject* axCaption = axObjectCache()->getOrCreate(caption.get());
             if (axCaption && !axCaption->accessibilityIsIgnored())
                 m_children.append(axCaption);
         }
@@ -686,7 +687,7 @@ String AccessibilityTable::title() const
     // see if there is a caption
     Node* tableElement = m_renderer->node();
     if (is<HTMLTableElement>(tableElement)) {
-        if (HTMLTableCaptionElement* caption = downcast<HTMLTableElement>(*tableElement).caption())
+        if (auto caption = downcast<HTMLTableElement>(*tableElement).caption())
             title = caption->innerText();
     }
     

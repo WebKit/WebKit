@@ -371,7 +371,7 @@ void RangeInputType::updateTickMarkValues()
         return;
     m_tickMarkValues.clear();
     m_tickMarkValuesDirty = false;
-    RefPtr<HTMLDataListElement> dataList = element().dataList();
+    auto dataList = element().dataList();
     if (!dataList)
         return;
     Ref<HTMLCollection> options = dataList->options();

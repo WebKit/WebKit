@@ -252,7 +252,7 @@ Vector<Color> ColorInputType::suggestions() const
 {
     Vector<Color> suggestions;
 #if ENABLE(DATALIST_ELEMENT)
-    if (auto* dataList = element().dataList()) {
+    if (auto dataList = element().dataList()) {
         Ref<HTMLCollection> options = dataList->options();
         unsigned length = options->length();
         suggestions.reserveInitialCapacity(length);

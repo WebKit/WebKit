@@ -123,7 +123,7 @@ void FormAssociatedElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
     ASSERT(m_form);
     RefPtr<Node> rootNode = &asHTMLElement();
-    for (auto* ancestor = asHTMLElement().parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+    for (auto ancestor = makeRefPtr(asHTMLElement().parentNode()); ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == m_form) {
             // Form is our ancestor so we don't need to reset our owner, we also no longer
             // need an id observer since we are no longer connected.

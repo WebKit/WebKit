@@ -402,7 +402,7 @@ Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& no
         }
     }
 
-    auto* containingShadowRoot = node.containingShadowRoot();
+    auto containingShadowRoot = makeRefPtr(node.containingShadowRoot());
     if (containingShadowRoot && containingShadowRoot->mode() == ShadowRootMode::UserAgent)
         return Editability::ReadOnly;
 

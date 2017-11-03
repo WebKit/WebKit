@@ -71,7 +71,7 @@ void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(HTMLSlotElement::create(slotTag, document()));
 }
 
-HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
+RefPtr<HTMLDetailsElement> HTMLSummaryElement::detailsElement() const
 {
     auto* parent = parentElement();
     if (parent && is<HTMLDetailsElement>(*parent))

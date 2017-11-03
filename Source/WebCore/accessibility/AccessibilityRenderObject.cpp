@@ -2525,7 +2525,7 @@ AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElem
     if (!labelElement)
         return nullptr;
     
-    HTMLElement* correspondingControl = labelElement->control();
+    auto correspondingControl = labelElement->control();
     if (!correspondingControl)
         return nullptr;
 
@@ -2533,7 +2533,7 @@ AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElem
     if (correspondingControl->renderer() && !correspondingControl->renderer()->parent())
         return nullptr;
     
-    return axObjectCache()->getOrCreate(correspondingControl);     
+    return axObjectCache()->getOrCreate(correspondingControl.get());
 }
 
 AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElement() const

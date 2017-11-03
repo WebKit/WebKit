@@ -410,7 +410,7 @@ void WebGL2RenderingContext::texStorage2D(GC3Denum target, GC3Dsizei levels, GC3
     if (isContextLostOrPending())
         return;
 
-    auto* texture = validateTextureBinding("texStorage2D", target, false);
+    auto texture = validateTextureBinding("texStorage2D", target, false);
     if (!texture)
         return;
 
@@ -1154,7 +1154,7 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum targ
         return nullptr;
     }
     
-    auto* object = m_framebufferBinding->getAttachmentObject(attachment);
+    auto object = makeRefPtr(m_framebufferBinding->getAttachmentObject(attachment));
     if (!object) {
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return static_cast<unsigned>(GraphicsContext3D::NONE);
@@ -1765,7 +1765,7 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GC3Denum type, unsig
     // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
     if (!numElements)
         return false;
-    auto* buffer = elementArrayBuffer->elementArrayBuffer();
+    auto buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
     
     std::optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);

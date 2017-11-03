@@ -155,7 +155,7 @@ static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
     if (!document.settings().needsSiteSpecificQuirks())
         return false;
 
-    auto* loader = document.loader();
+    auto loader = makeRefPtr(document.loader());
     return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::ArbitraryUserGestures);
 }
 #endif // PLATFORM(MAC)
@@ -743,7 +743,7 @@ static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
     if (!element.renderer())
         return false;
 
-    auto* documentFrame = element.document().frame();
+    auto documentFrame = makeRefPtr(element.document().frame());
     if (!documentFrame)
         return false;
 
@@ -769,7 +769,7 @@ static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
     if (!renderer)
         return false;
 
-    auto* documentFrame = element.document().frame();
+    auto documentFrame = makeRefPtr(element.document().frame());
     if (!documentFrame)
         return false;
 

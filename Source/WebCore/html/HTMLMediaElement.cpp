@@ -641,7 +641,7 @@ static bool needsAutoplayPlayPauseEventsQuirk(const Document& document)
     if (!page || !page->settings().needsSiteSpecificQuirks())
         return false;
 
-    auto* loader = document.loader();
+    auto loader = makeRefPtr(document.loader());
     return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
@@ -1521,7 +1521,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (auto* documentLoader = frame->loader().documentLoader()) {
+    if (auto documentLoader = makeRefPtr(frame->loader().documentLoader())) {
         if (page->userContentProvider().processContentExtensionRulesForLoad(url, ResourceType::Media, *documentLoader).blockedLoad) {
             mediaLoadingFailed(MediaPlayer::FormatError);
             return;
@@ -1854,7 +1854,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         // simple event named cuechange at the track element as well.
         if (is<LoadableTextTrack>(*affectedTrack)) {
             auto event = Event::create(eventNames().cuechangeEvent, false, false);
-            auto* trackElement = downcast<LoadableTextTrack>(*affectedTrack).trackElement();
+            auto trackElement = makeRefPtr(downcast<LoadableTextTrack>(*affectedTrack).trackElement());
             ASSERT(trackElement);
             event->setTarget(trackElement);
             m_asyncEventQueue.enqueueEvent(WTFMove(event));
@@ -3952,7 +3952,7 @@ void HTMLMediaElement::removeAudioTrack(AudioTrack& track)
 void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
 {
     TrackDisplayUpdateScope scope { *this };
-    if (auto* cues = track.cues())
+    if (auto cues = makeRefPtr(track.cues()))
         textTrackRemoveCues(track, *cues);
     track.clearClient();
     if (m_textTracks)
@@ -4288,7 +4288,7 @@ void HTMLMediaElement::updateCaptionContainer()
 void HTMLMediaElement::layoutSizeChanged()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    if (auto* frameView = document().view()) {
+    if (auto frameView = makeRefPtr(document().view())) {
         auto task = [this, protectedThis = makeRef(*this)] {
             if (auto root = userAgentShadowRoot())
                 root->dispatchEvent(Event::create("resize", false, false));

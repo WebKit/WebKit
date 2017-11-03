@@ -39,13 +39,13 @@ public:
     static Ref<HTMLTableElement> create(Document&);
     static Ref<HTMLTableElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT HTMLTableCaptionElement* caption() const;
+    WEBCORE_EXPORT RefPtr<HTMLTableCaptionElement> caption() const;
     WEBCORE_EXPORT ExceptionOr<void> setCaption(RefPtr<HTMLTableCaptionElement>&&);
 
-    WEBCORE_EXPORT HTMLTableSectionElement* tHead() const;
+    WEBCORE_EXPORT RefPtr<HTMLTableSectionElement> tHead() const;
     WEBCORE_EXPORT ExceptionOr<void> setTHead(RefPtr<HTMLTableSectionElement>&&);
 
-    WEBCORE_EXPORT HTMLTableSectionElement* tFoot() const;
+    WEBCORE_EXPORT RefPtr<HTMLTableSectionElement> tFoot() const;
     WEBCORE_EXPORT ExceptionOr<void> setTFoot(RefPtr<HTMLTableSectionElement>&&);
 
     WEBCORE_EXPORT Ref<HTMLTableSectionElement> createTHead();

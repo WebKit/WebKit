@@ -1523,8 +1523,8 @@ void AXObjectCache::handleAriaModalChange(Node* node)
 void AXObjectCache::labelChanged(Element* element)
 {
     ASSERT(is<HTMLLabelElement>(*element));
-    HTMLElement* correspondingControl = downcast<HTMLLabelElement>(*element).control();
-    deferTextChangedIfNeeded(correspondingControl);
+    auto correspondingControl = downcast<HTMLLabelElement>(*element).control();
+    deferTextChangedIfNeeded(correspondingControl.get());
 }
 
 void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)

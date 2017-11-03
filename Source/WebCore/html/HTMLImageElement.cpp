@@ -144,7 +144,7 @@ void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidat
 
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 {
-    auto* picture = pictureElement();
+    auto picture = makeRefPtr(pictureElement());
     if (!picture)
         return { };
     picture->clearViewportDependentResults();
@@ -167,7 +167,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
                 continue;
         }
 
-        auto* documentElement = document().documentElement();
+        auto documentElement = makeRefPtr(document().documentElement());
         MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute();
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);

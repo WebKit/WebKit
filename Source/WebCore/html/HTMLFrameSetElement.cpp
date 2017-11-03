@@ -230,11 +230,11 @@ void HTMLFrameSetElement::removedFromAncestor(RemovalType removalType, Container
 
 DOMWindow* HTMLFrameSetElement::namedItem(const AtomicString& name)
 {
-    auto* frameElement = children()->namedItem(name);
+    auto frameElement = makeRefPtr(children()->namedItem(name));
     if (!is<HTMLFrameElement>(frameElement))
         return nullptr;
 
-    if (auto* document = downcast<HTMLFrameElement>(*frameElement).contentDocument())
+    if (auto document = makeRefPtr(downcast<HTMLFrameElement>(frameElement.get())->contentDocument()))
         return document->domWindow();
     return nullptr;
 }

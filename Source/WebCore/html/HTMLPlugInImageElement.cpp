@@ -138,7 +138,7 @@ bool HTMLPlugInImageElement::isImageType()
     if (m_serviceType.isEmpty() && protocolIs(m_url, "data"))
         m_serviceType = mimeTypeFromDataURL(m_url);
 
-    if (auto* frame = document().frame())
+    if (auto frame = makeRefPtr(document().frame()))
         return frame->loader().client().objectContentType(document().completeURL(m_url), m_serviceType) == ObjectContentType::Image;
 
     return Image::supportsType(m_serviceType);
@@ -230,7 +230,7 @@ void HTMLPlugInImageElement::didAttachRenderers()
 
 void HTMLPlugInImageElement::willDetachRenderers()
 {
-    auto* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
+    auto widget = makeRefPtr(pluginWidget(PluginLoadingPolicy::DoNotLoad));
     if (is<PluginViewBase>(widget))
         downcast<PluginViewBase>(*widget).willDetatchRenderer();
 
@@ -406,7 +406,7 @@ bool HTMLPlugInImageElement::partOfSnapshotOverlay(const Node* node) const
     auto queryResult = shadow->querySelector(selector.get());
     if (queryResult.hasException())
         return false;
-    auto* snapshotLabel = queryResult.releaseReturnValue();
+    auto snapshotLabel = makeRefPtr(queryResult.releaseReturnValue());
     return snapshotLabel && snapshotLabel->contains(node);
 }
 
@@ -538,7 +538,7 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
     LOG(Plugins, "%p Plug-in originally avoided snapshotting because it was sized %dx%d. Now it is %dx%d. Tell it to snapshot.\n", this, m_sizeWhenSnapshotted.width(), m_sizeWhenSnapshotted.height(), contentWidth, contentHeight);
     setDisplayState(WaitingForSnapshot);
     m_snapshotDecision = Snapshotted;
-    auto* widget = pluginWidget();
+    auto widget = makeRefPtr(pluginWidget());
     if (is<PluginViewBase>(widget))
         downcast<PluginViewBase>(*widget).beginSnapshottingRunningPlugin();
 }

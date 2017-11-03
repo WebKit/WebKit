@@ -408,7 +408,7 @@ void CanvasRenderingContext2D::setStrokeStyle(CanvasStyle style)
         } else
             style = CanvasStyle(currentColor(&canvas()));
     } else
-        checkOrigin(style.canvasPattern());
+        checkOrigin(style.canvasPattern().get());
 
     realizeSaves();
     State& state = modifiableState();
@@ -435,7 +435,7 @@ void CanvasRenderingContext2D::setFillStyle(CanvasStyle style)
         } else
             style = CanvasStyle(currentColor(&canvas()));
     } else
-        checkOrigin(style.canvasPattern());
+        checkOrigin(style.canvasPattern().get());
 
     realizeSaves();
     State& state = modifiableState();
@@ -1093,7 +1093,7 @@ void CanvasRenderingContext2D::fillInternal(const Path& path, CanvasFillRule win
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto* gradient = c->fillGradient();
+    auto gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1128,7 +1128,7 @@ void CanvasRenderingContext2D::strokeInternal(const Path& path)
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto* gradient = c->strokeGradient();
+    auto gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1280,7 +1280,7 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     // from the HTML5 Canvas spec:
     // If x0 = x1 and y0 = y1, then the linear gradient must paint nothing
     // If x0 = x1 and y0 = y1 and r0 = r1, then the radial gradient must paint nothing
-    auto* gradient = c->fillGradient();
+    auto gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1318,7 +1318,7 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto* gradient = c->strokeGradient();
+    auto gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1847,10 +1847,10 @@ void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient& gradi
 
 static CanvasRenderingContext2D::Style toStyle(const CanvasStyle& style)
 {
-    if (auto* gradient = style.canvasGradient())
-        return RefPtr<CanvasGradient> { gradient };
-    if (auto* pattern = style.canvasPattern())
-        return RefPtr<CanvasPattern> { pattern };
+    if (auto gradient = style.canvasGradient())
+        return gradient;
+    if (auto pattern = style.canvasPattern())
+        return pattern;
     return style.color();
 }
 
@@ -2616,7 +2616,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto* gradient = c->strokeGradient();
+    auto gradient = c->strokeGradient();
     if (!fill && gradient && gradient->isZeroSize())
         return;
 

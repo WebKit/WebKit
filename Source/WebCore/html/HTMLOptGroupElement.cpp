@@ -86,7 +86,7 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const Atomic
 
 void HTMLOptGroupElement::recalcSelectOptions()
 {
-    if (auto* selectElement = ancestorsOfType<HTMLSelectElement>(*this).first()) {
+    if (auto selectElement = makeRefPtr(ancestorsOfType<HTMLSelectElement>(*this).first())) {
         selectElement->setRecalcListItems();
         selectElement->updateValidity();
     }

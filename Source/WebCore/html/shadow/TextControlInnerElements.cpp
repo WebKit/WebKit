@@ -178,7 +178,7 @@ Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Doc
 void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 {
     // On mousedown, bring up a menu, if needed
-    auto* input = downcast<HTMLInputElement>(shadowHost());
+    auto input = makeRefPtr(downcast<HTMLInputElement>(shadowHost()));
     if (input && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
         input->focus();
         input->select();

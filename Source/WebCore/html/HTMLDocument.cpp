@@ -123,8 +123,8 @@ std::optional<Variant<RefPtr<DOMWindow>, RefPtr<Element>, RefPtr<HTMLCollection>
 
     auto& element = *documentNamedItem(*name.impl());
     if (UNLIKELY(is<HTMLIFrameElement>(element))) {
-        if (auto* domWindow = downcast<HTMLIFrameElement>(element).contentWindow())
-            return Variant<RefPtr<DOMWindow>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<DOMWindow> { domWindow } };
+        if (auto domWindow = makeRefPtr(downcast<HTMLIFrameElement>(element).contentWindow()))
+            return Variant<RefPtr<DOMWindow>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(domWindow) };
     }
 
     return Variant<RefPtr<DOMWindow>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { &element } };

@@ -444,19 +444,19 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         attributes->setInteger(ASCIILiteral("direction"), indexForData(convertEnumerationToString(context2d->direction())));
 
         int strokeStyleIndex;
-        if (CanvasGradient* canvasGradient = state.strokeStyle.canvasGradient())
-            strokeStyleIndex = indexForData(canvasGradient);
-        else if (CanvasPattern* canvasPattern = state.strokeStyle.canvasPattern())
-            strokeStyleIndex = indexForData(canvasPattern);
+        if (auto canvasGradient = state.strokeStyle.canvasGradient())
+            strokeStyleIndex = indexForData(canvasGradient.get());
+        else if (auto canvasPattern = state.strokeStyle.canvasPattern())
+            strokeStyleIndex = indexForData(canvasPattern.get());
         else
             strokeStyleIndex = indexForData(state.strokeStyle.color());
         attributes->setInteger(ASCIILiteral("strokeStyle"), strokeStyleIndex);
 
         int fillStyleIndex;
-        if (CanvasGradient* canvasGradient = state.fillStyle.canvasGradient())
-            fillStyleIndex = indexForData(canvasGradient);
-        else if (CanvasPattern* canvasPattern = state.fillStyle.canvasPattern())
-            fillStyleIndex = indexForData(canvasPattern);
+        if (auto canvasGradient = state.fillStyle.canvasGradient())
+            fillStyleIndex = indexForData(canvasGradient.get());
+        else if (auto canvasPattern = state.fillStyle.canvasPattern())
+            fillStyleIndex = indexForData(canvasPattern.get());
         else
             fillStyleIndex = indexForData(state.fillStyle.color());
         attributes->setInteger(ASCIILiteral("fillStyle"), fillStyleIndex);

@@ -64,7 +64,7 @@ FloatRect RenderSVGPath::calculateUpdatedStrokeBoundingBox() const
 
 static void useStrokeStyleToFill(GraphicsContext& context)
 {
-    if (Gradient* gradient = context.strokeGradient())
+    if (auto gradient = context.strokeGradient())
         context.setFillGradient(*gradient);
     else if (Pattern* pattern = context.strokePattern())
         context.setFillPattern(*pattern);

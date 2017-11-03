@@ -281,7 +281,7 @@ public:
     Pattern* strokePattern() const { return m_state.strokePattern.get(); }
 
     void setStrokeGradient(Ref<Gradient>&&);
-    Gradient* strokeGradient() const { return m_state.strokeGradient.get(); }
+    RefPtr<Gradient> strokeGradient() const { return m_state.strokeGradient; }
 
     void setFillRule(WindRule);
     WindRule fillRule() const { return m_state.fillRule; }
@@ -293,7 +293,7 @@ public:
     Pattern* fillPattern() const { return m_state.fillPattern.get(); }
 
     WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&);
-    Gradient* fillGradient() const { return m_state.fillGradient.get(); }
+    RefPtr<Gradient> fillGradient() const { return m_state.fillGradient; }
 
     void setShadowsIgnoreTransforms(bool);
     bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms; }

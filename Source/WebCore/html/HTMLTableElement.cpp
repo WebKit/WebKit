@@ -62,7 +62,7 @@ Ref<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLTableElement(tagName, document));
 }
 
-HTMLTableCaptionElement* HTMLTableElement::caption() const
+RefPtr<HTMLTableCaptionElement> HTMLTableElement::caption() const
 {
     return childrenOfType<HTMLTableCaptionElement>(const_cast<HTMLTableElement&>(*this)).first();
 }
@@ -75,7 +75,7 @@ ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&&
     return insertBefore(*newCaption, firstChild());
 }
 
-HTMLTableSectionElement* HTMLTableElement::tHead() const
+RefPtr<HTMLTableSectionElement> HTMLTableElement::tHead() const
 {
     for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(theadTag))
@@ -102,7 +102,7 @@ ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& n
     return insertBefore(*newHead, child.get());
 }
 
-HTMLTableSectionElement* HTMLTableElement::tFoot() const
+RefPtr<HTMLTableSectionElement> HTMLTableElement::tFoot() const
 {
     for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(tfootTag))
@@ -123,8 +123,8 @@ ExceptionOr<void> HTMLTableElement::setTFoot(RefPtr<HTMLTableSectionElement>&& n
 
 Ref<HTMLTableSectionElement> HTMLTableElement::createTHead()
 {
-    if (auto* existingHead = tHead())
-        return *existingHead;
+    if (auto existingHead = tHead())
+        return existingHead.releaseNonNull();
     auto head = HTMLTableSectionElement::create(theadTag, document());
     setTHead(head.copyRef());
     return head;
@@ -132,14 +132,14 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTHead()
 
 void HTMLTableElement::deleteTHead()
 {
-    if (auto* head = tHead())
+    if (auto head = tHead())
         removeChild(*head);
 }
 
 Ref<HTMLTableSectionElement> HTMLTableElement::createTFoot()
 {
-    if (auto* existingFoot = tFoot())
-        return *existingFoot;
+    if (auto existingFoot = tFoot())
+        return existingFoot.releaseNonNull();
     auto foot = HTMLTableSectionElement::create(tfootTag, document());
     setTFoot(foot.copyRef());
     return foot;
@@ -147,7 +147,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTFoot()
 
 void HTMLTableElement::deleteTFoot()
 {
-    if (auto* foot = tFoot())
+    if (auto foot = tFoot())
         removeChild(*foot);
 }
 
@@ -161,8 +161,8 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTBody()
 
 Ref<HTMLTableCaptionElement> HTMLTableElement::createCaption()
 {
-    if (auto* existingCaption = caption())
-        return *existingCaption;
+    if (auto existingCaption = caption())
+        return existingCaption.releaseNonNull();
     auto caption = HTMLTableCaptionElement::create(captionTag, document());
     setCaption(caption.copyRef());
     return caption;
@@ -170,7 +170,7 @@ Ref<HTMLTableCaptionElement> HTMLTableElement::createCaption()
 
 void HTMLTableElement::deleteCaption()
 {
-    if (auto* caption = this->caption())
+    if (auto caption = this->caption())
         removeChild(*caption);
 }
 

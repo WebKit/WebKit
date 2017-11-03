@@ -264,8 +264,8 @@ public:
     bool willRespondToMouseClickEvents() override;
 
 #if ENABLE(DATALIST_ELEMENT)
-    HTMLElement* list() const;
-    HTMLDataListElement* dataList() const;
+    RefPtr<HTMLElement> list() const;
+    RefPtr<HTMLDataListElement> dataList() const;
     void listAttributeTargetChanged();
 #endif
 

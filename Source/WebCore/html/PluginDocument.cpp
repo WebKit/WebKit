@@ -98,7 +98,7 @@ void PluginDocumentParser::createDocumentStructure()
     embedElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
     
     ASSERT(document.loader());
-    if (auto* loader = document.loader())
+    if (auto loader = makeRefPtr(document.loader()))
         m_embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
 
     document.setPluginElement(*m_embedElement);
@@ -113,7 +113,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 
     createDocumentStructure();
 
-    auto* frame = document()->frame();
+    auto frame = makeRefPtr(document()->frame());
     if (!frame)
         return;
 

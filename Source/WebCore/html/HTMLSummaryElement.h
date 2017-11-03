@@ -43,7 +43,7 @@ private:
 
     bool hasCustomFocusLogic() const final { return true; }
 
-    HTMLDetailsElement* detailsElement() const;
+    RefPtr<HTMLDetailsElement> detailsElement() const;
 
     bool supportsFocus() const final;
 };

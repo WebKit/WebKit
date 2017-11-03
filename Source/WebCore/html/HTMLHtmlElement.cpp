@@ -66,7 +66,7 @@ void HTMLHtmlElement::insertedByParser()
     if (!document().frame())
         return;
 
-    auto* documentLoader = document().frame()->loader().documentLoader();
+    auto documentLoader = makeRefPtr(document().frame()->loader().documentLoader());
     if (!documentLoader)
         return;
 

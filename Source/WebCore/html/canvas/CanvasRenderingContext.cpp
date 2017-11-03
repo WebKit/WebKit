@@ -65,7 +65,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
     if (!cachedImage)
         return false;
 
-    auto* image = cachedImage->image();
+    auto image = makeRefPtr(cachedImage->image());
     if (!image)
         return false;
 

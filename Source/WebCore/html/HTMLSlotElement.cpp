@@ -77,7 +77,7 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomicSt
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
     if (isInShadowTree() && name == nameAttr) {
-        if (auto* shadowRoot = containingShadowRoot()) {
+        if (auto shadowRoot = makeRefPtr(containingShadowRoot())) {
             shadowRoot->removeSlotElementByName(oldValue, *this);
             shadowRoot->addSlotElementByName(newValue, *this);
         }
@@ -86,7 +86,7 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomicSt
 
 const Vector<Node*>* HTMLSlotElement::assignedNodes() const
 {
-    auto* shadowRoot = containingShadowRoot();
+    auto shadowRoot = makeRefPtr(containingShadowRoot());
     if (!shadowRoot)
         return nullptr;
 

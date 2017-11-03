@@ -50,7 +50,7 @@ Ref<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName
 
 const StyleProperties* HTMLTableSectionElement::additionalPresentationAttributeStyle() const
 {
-    auto* table = findParentTable();
+    auto table = findParentTable();
     if (!table)
         return nullptr;
     return table->additionalGroupStyle(true);

@@ -325,10 +325,10 @@ void HTMLTrackElement::textTrackRemoveCue(TextTrack& track, TextTrackCue& cue)
 
 RefPtr<HTMLMediaElement> HTMLTrackElement::mediaElement() const
 {
-    auto* parent = parentElement();
+    auto parent = makeRefPtr(parentElement());
     if (!is<HTMLMediaElement>(parent))
         return nullptr;
-    return downcast<HTMLMediaElement>(parent);
+    return downcast<HTMLMediaElement>(parent.get());
 }
 
 }

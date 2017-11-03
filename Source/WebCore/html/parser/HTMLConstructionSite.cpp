@@ -131,7 +131,7 @@ static inline void executeReparentTask(HTMLConstructionSiteTask& task)
     ASSERT(task.operation == HTMLConstructionSiteTask::Reparent);
     ASSERT(!task.nextChild);
 
-    if (auto* parent = task.child->parentNode())
+    if (auto parent = makeRefPtr(task.child->parentNode()))
         parent->parserRemoveChild(*task.child);
 
     if (task.child->parentNode())
@@ -161,8 +161,8 @@ static inline void executeTakeAllChildrenAndReparentTask(HTMLConstructionSiteTas
     ASSERT(task.operation == HTMLConstructionSiteTask::TakeAllChildrenAndReparent);
     ASSERT(!task.nextChild);
 
-    auto* furthestBlock = task.oldParent();
-    task.parent->takeAllChildrenFrom(furthestBlock);
+    auto furthestBlock = makeRefPtr(task.oldParent());
+    task.parent->takeAllChildrenFrom(furthestBlock.get());
 
     RELEASE_ASSERT(!task.parent->parentNode());
     furthestBlock->parserAppendChild(*task.parent);
@@ -269,7 +269,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
     if (m_isParsingFragment)
         return;
 
-    if (auto* frame = m_document.frame())
+    if (auto frame = makeRefPtr(m_document.frame()))
         frame->injectUserScripts(InjectAtDocumentStart);
 }
 
@@ -660,12 +660,12 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
     bool insideTemplateElement = !ownerDocument.frame();
     RefPtr<Element> element = HTMLElementFactory::createKnownElement(localName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
-        auto* window = ownerDocument.domWindow();
+        auto window = makeRefPtr(ownerDocument.domWindow());
         if (customElementInterface && window) {
-            auto* registry = window->customElementRegistry();
+            auto registry = makeRefPtr(window->customElementRegistry());
             if (UNLIKELY(registry)) {
-                if (auto* elementInterface = registry->findInterface(localName)) {
-                    *customElementInterface = elementInterface;
+                if (auto elementInterface = makeRefPtr(registry->findInterface(localName))) {
+                    *customElementInterface = elementInterface.get();
                     return nullptr;
                 }
             }
@@ -764,11 +764,11 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
 
     if (auto* lastTableElementRecord = m_openElements.topmost(tableTag->localName())) {
         auto& lastTableElement = lastTableElementRecord->element();
-        auto* parent = lastTableElement.parentNode();
+        auto parent = makeRefPtr(lastTableElement.parentNode());
         // When parsing HTML fragments, we skip step 4.2 ("Let root be a new html element with no attributes") for efficiency,
         // and instead use the DocumentFragment as a root node. So we must treat the root node (DocumentFragment) as if it is a html element here.
         bool parentCanBeFosterParent = parent && (parent->isElementNode() || (m_isParsingFragment && parent == &m_openElements.rootNode()));
-        parentCanBeFosterParent = parentCanBeFosterParent || (is<DocumentFragment>(parent) && downcast<DocumentFragment>(parent)->isTemplateContent());
+        parentCanBeFosterParent = parentCanBeFosterParent || (is<DocumentFragment>(parent) && downcast<DocumentFragment>(parent.get())->isTemplateContent());
         if (parentCanBeFosterParent) {
             task.parent = parent;
             task.nextChild = &lastTableElement;

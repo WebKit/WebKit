@@ -56,8 +56,8 @@ public:
     float overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha.value(); }
 
     String color() const;
-    CanvasGradient* canvasGradient() const;
-    CanvasPattern* canvasPattern() const;
+    RefPtr<CanvasGradient> canvasGradient() const;
+    RefPtr<CanvasPattern> canvasPattern() const;
 
     void applyFillColor(GraphicsContext&) const;
     void applyStrokeColor(GraphicsContext&) const;
@@ -103,18 +103,18 @@ inline CanvasStyle::CanvasStyle()
 {
 }
 
-inline CanvasGradient* CanvasStyle::canvasGradient() const
+inline RefPtr<CanvasGradient> CanvasStyle::canvasGradient() const
 {
     if (!WTF::holds_alternative<RefPtr<CanvasGradient>>(m_style))
         return nullptr;
-    return WTF::get<RefPtr<CanvasGradient>>(m_style).get();
+    return WTF::get<RefPtr<CanvasGradient>>(m_style);
 }
 
-inline CanvasPattern* CanvasStyle::canvasPattern() const
+inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 {
     if (!WTF::holds_alternative<RefPtr<CanvasPattern>>(m_style))
         return nullptr;
-    return WTF::get<RefPtr<CanvasPattern>>(m_style).get();
+    return WTF::get<RefPtr<CanvasPattern>>(m_style);
 }
 
 inline String CanvasStyle::color() const

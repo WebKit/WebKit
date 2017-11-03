@@ -305,7 +305,7 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
 
     // The addCue(cue) method of TextTrack objects, when invoked, must run the following steps:
 
-    auto* cueTrack = cue->track();
+    auto cueTrack = makeRefPtr(cue->track());
     if (cueTrack == this)
         return { };
 
@@ -379,7 +379,7 @@ void TextTrack::addRegion(RefPtr<VTTRegion>&& region)
 
     // 1. If the given region is in a text track list of regions, then remove
     // region from that text track list of regions.
-    auto* regionTrack = region->track();
+    auto regionTrack = makeRefPtr(region->track());
     if (regionTrack && regionTrack != this)
         regionTrack->removeRegion(region.get());
 
@@ -387,7 +387,7 @@ void TextTrack::addRegion(RefPtr<VTTRegion>&& region)
     // a region with the same identifier as region replace the values of that
     // region's width, height, anchor point, viewport anchor point and scroll
     // attributes with those of region.
-    auto* existingRegion = regionList.getRegionById(region->id());
+    auto existingRegion = makeRefPtr(regionList.getRegionById(region->id()));
     if (existingRegion) {
         existingRegion->updateParametersFromRegion(*region);
         return;

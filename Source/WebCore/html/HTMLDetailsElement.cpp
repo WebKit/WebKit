@@ -129,7 +129,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     if (summary.parentNode() != this)
         return false;
 
-    auto* slot = shadowRoot()->findAssignedSlot(summary);
+    auto slot = makeRefPtr(shadowRoot()->findAssignedSlot(summary));
     if (!slot)
         return false;
     return slot == m_summarySlot;
@@ -147,7 +147,7 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomicS
         bool oldValue = m_isOpen;
         m_isOpen = !value.isNull();
         if (oldValue != m_isOpen) {
-            auto* root = shadowRoot();
+            auto root = makeRefPtr(shadowRoot());
             ASSERT(root);
             if (m_isOpen)
                 root->appendChild(*m_defaultSlot);

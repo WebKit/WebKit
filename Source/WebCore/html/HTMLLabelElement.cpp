@@ -39,7 +39,7 @@ using namespace HTMLNames;
 
 static LabelableElement* firstElementWithIdIfLabelable(TreeScope& treeScope, const AtomicString& id)
 {
-    auto* element = treeScope.getElementById(id);
+    auto element = makeRefPtr(treeScope.getElementById(id));
     if (!is<LabelableElement>(element))
         return nullptr;
 
@@ -58,7 +58,7 @@ Ref<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLLabelElement(tagName, document));
 }
 
-LabelableElement* HTMLLabelElement::control() const
+RefPtr<LabelableElement> HTMLLabelElement::control() const
 {
     auto& controlId = attributeWithoutSynchronization(forAttr);
     if (controlId.isNull()) {
@@ -76,10 +76,10 @@ LabelableElement* HTMLLabelElement::control() const
 
 HTMLFormElement* HTMLLabelElement::form() const
 {
-    auto* control = this->control();
+    auto control = this->control();
     if (!is<HTMLFormControlElement>(control))
         return nullptr;
-    return downcast<HTMLFormControlElement>(*control).form();
+    return downcast<HTMLFormControlElement>(control.get())->form();
 }
 
 void HTMLLabelElement::setActive(bool down, bool pause)
@@ -91,7 +91,7 @@ void HTMLLabelElement::setActive(bool down, bool pause)
     HTMLElement::setActive(down, pause);
 
     // Also update our corresponding control.
-    if (auto* element = control())
+    if (auto element = control())
         element->setActive(down, pause);
 }
 
@@ -104,7 +104,7 @@ void HTMLLabelElement::setHovered(bool over)
     HTMLElement::setHovered(over);
 
     // Also update our corresponding control.
-    if (auto* element = control())
+    if (auto element = control())
         element->setHovered(over);
 }
 
@@ -139,7 +139,7 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
 
 bool HTMLLabelElement::willRespondToMouseClickEvents()
 {
-    auto* element = control();
+    auto element = control();
     return (element && element->willRespondToMouseClickEvents()) || HTMLElement::willRespondToMouseClickEvents();
 }
 
@@ -155,13 +155,13 @@ void HTMLLabelElement::focus(bool restorePreviousSelection, FocusDirection direc
     }
 
     // To match other browsers, always restore previous selection.
-    if (auto* element = control())
+    if (auto element = control())
         element->focus(true, direction);
 }
 
 void HTMLLabelElement::accessKeyAction(bool sendMouseEvents)
 {
-    if (auto* element = control())
+    if (auto element = control())
         element->accessKeyAction(sendMouseEvents);
     else
         HTMLElement::accessKeyAction(sendMouseEvents);

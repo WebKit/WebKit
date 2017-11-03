@@ -82,7 +82,7 @@ void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedN
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-HTMLTableElement* HTMLTablePartElement::findParentTable() const
+RefPtr<HTMLTableElement> HTMLTablePartElement::findParentTable() const
 {
     RefPtr<ContainerNode> parent = parentNode();
     while (parent && !is<HTMLTableElement>(*parent))

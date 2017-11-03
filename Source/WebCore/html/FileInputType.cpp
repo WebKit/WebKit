@@ -152,7 +152,7 @@ void FileInputType::restoreFormControlState(const FormControlState& state)
 
 bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
 {
-    auto* fileList = element().files();
+    auto fileList = makeRefPtr(element().files());
     ASSERT(fileList);
 
     auto name = element().name();
@@ -288,7 +288,7 @@ void FileInputType::disabledAttributeChanged()
     if (!root)
         return;
     
-    if (auto* button = childrenOfType<UploadButtonElement>(*root).first())
+    if (auto button = makeRefPtr(childrenOfType<UploadButtonElement>(*root).first()))
         button->setBooleanAttribute(disabledAttr, element().isDisabledFormControl());
 }
 
@@ -300,7 +300,7 @@ void FileInputType::multipleAttributeChanged()
     if (!root)
         return;
 
-    if (auto* button = childrenOfType<UploadButtonElement>(*root).first())
+    if (auto button = makeRefPtr(childrenOfType<UploadButtonElement>(*root).first()))
         button->setValue(element().multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
 }
 

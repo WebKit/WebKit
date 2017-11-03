@@ -39,7 +39,7 @@ private:
     HTMLLegendElement(const QualifiedName&, Document&);
 
     // Control in the legend's field set that gets focus and access key.
-    HTMLFormControlElement* associatedControl();
+    RefPtr<HTMLFormControlElement> associatedControl();
 
     void accessKeyAction(bool sendMouseEvents) final;
     void focus(bool restorePreviousSelection, FocusDirection) final;

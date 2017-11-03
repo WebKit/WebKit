@@ -223,7 +223,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
         return nullptr;
     }
     
-    auto* object = m_framebufferBinding->getAttachmentObject(attachment);
+    auto object = makeRefPtr(m_framebufferBinding->getAttachmentObject(attachment));
     if (!object) {
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return static_cast<unsigned>(GraphicsContext3D::NONE);
@@ -262,7 +262,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum targe
                 synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
                 return nullptr;
             }
-            RefPtr<WebGLRenderbuffer> renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
+            RefPtr<WebGLRenderbuffer> renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object.get());
             GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
             ASSERT(renderBufferFormat != Extensions3D::SRGB_EXT && renderBufferFormat != Extensions3D::SRGB_ALPHA_EXT);
             if (renderBufferFormat == Extensions3D::SRGB8_ALPHA8_EXT)
@@ -661,7 +661,7 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
     // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
     if (!numElements)
         return false;
-    const ArrayBuffer* buffer = elementArrayBuffer->elementArrayBuffer();
+    auto buffer = elementArrayBuffer->elementArrayBuffer();
     ASSERT(buffer);
     
     std::optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);

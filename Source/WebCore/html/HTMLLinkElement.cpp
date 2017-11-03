@@ -401,7 +401,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
         ASSERT(!m_sheet);
         return;
     }
-    auto* frame = document().frame();
+    auto frame = makeRefPtr(document().frame());
     if (!frame)
         return;
 
@@ -584,7 +584,7 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     // Append the URL of this link element.
     addSubresourceURL(urls, href());
 
-    if (auto* styleSheet = this->sheet()) {
+    if (auto styleSheet = makeRefPtr(this->sheet())) {
         styleSheet->contents().traverseSubresources([&] (auto& resource) {
             urls.add(resource.url());
             return false;

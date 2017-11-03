@@ -163,7 +163,7 @@ void VideoTrack::languageChanged(const AtomicString& language)
 
 void VideoTrack::willRemove()
 {
-    auto* element = mediaElement();
+    auto element = makeRefPtr(mediaElement());
     if (!element)
         return;
     element->removeVideoTrack(*this);

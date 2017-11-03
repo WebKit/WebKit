@@ -49,7 +49,7 @@ RadioNodeList::~RadioNodeList()
     ownerNode().nodeLists()->removeCacheWithAtomicName(this, m_name);
 }
 
-static inline HTMLInputElement* toRadioButtonInputElement(HTMLElement& element)
+static inline RefPtr<HTMLInputElement> toRadioButtonInputElement(HTMLElement& element)
 {
     if (!is<HTMLInputElement>(element))
         return nullptr;
@@ -64,7 +64,7 @@ String RadioNodeList::value() const
 {
     auto length = this->length();
     for (unsigned i = 0; i < length; ++i) {
-        auto* inputElement = toRadioButtonInputElement(*item(i));
+        auto inputElement = toRadioButtonInputElement(*item(i));
         if (!inputElement || !inputElement->checked())
             continue;
         return inputElement->value();
@@ -76,7 +76,7 @@ void RadioNodeList::setValue(const String& value)
 {
     auto length = this->length();
     for (unsigned i = 0; i < length; ++i) {
-        auto* inputElement = toRadioButtonInputElement(*item(i));
+        auto inputElement = toRadioButtonInputElement(*item(i));
         if (!inputElement || inputElement->value() != value)
             continue;
         inputElement->setChecked(true);

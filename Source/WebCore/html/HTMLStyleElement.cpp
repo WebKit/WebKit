@@ -144,7 +144,7 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {    
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    if (auto* styleSheet = this->sheet()) {
+    if (auto styleSheet = makeRefPtr(this->sheet())) {
         styleSheet->contents().traverseSubresources([&] (auto& resource) {
             urls.add(resource.url());
             return false;

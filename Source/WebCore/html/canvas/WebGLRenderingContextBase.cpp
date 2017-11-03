@@ -1338,7 +1338,7 @@ void WebGLRenderingContextBase::compressedTexImage2D(GC3Denum target, GC3Dint le
     if (!validateCompressedTexFuncData("compressedTexImage2D", width, height, internalformat, data))
         return;
 
-    RefPtr<WebGLTexture> tex = validateTextureBinding("compressedTexImage2D", target, true);
+    auto tex = validateTextureBinding("compressedTexImage2D", target, true);
     if (!tex)
         return;
     if (!validateNPOTTextureLevel(width, height, level, "compressedTexImage2D"))
@@ -1369,7 +1369,7 @@ void WebGLRenderingContextBase::compressedTexSubImage2D(GC3Denum target, GC3Dint
     if (!validateCompressedTexFuncData("compressedTexSubImage2D", width, height, format, data))
         return;
 
-    RefPtr<WebGLTexture> tex = validateTextureBinding("compressedTexSubImage2D", target, true);
+    auto tex = validateTextureBinding("compressedTexSubImage2D", target, true);
     if (!tex)
         return;
 
@@ -1409,7 +1409,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GC3Denum target, GC3Dint level
         return;
     if (!validateTexFuncLevel("copyTexSubImage2D", target, level))
         return;
-    RefPtr<WebGLTexture> tex = validateTextureBinding("copyTexSubImage2D", target, true);
+    auto tex = validateTextureBinding("copyTexSubImage2D", target, true);
     if (!tex)
         return;
     if (!validateSize("copyTexSubImage2D", xoffset, yoffset) || !validateSize("copyTexSubImage2D", width, height))
@@ -2178,7 +2178,7 @@ void WebGLRenderingContextBase::generateMipmap(GC3Denum target)
 {
     if (isContextLostOrPending())
         return;
-    RefPtr<WebGLTexture> tex = validateTextureBinding("generateMipmap", target, false);
+    auto tex = validateTextureBinding("generateMipmap", target, false);
     if (!tex)
         return;
     if (!tex->canGenerateMipmaps()) {
@@ -2504,7 +2504,7 @@ WebGLAny WebGLRenderingContextBase::getTexParameter(GC3Denum target, GC3Denum pn
 {
     if (isContextLostOrPending())
         return nullptr;
-    RefPtr<WebGLTexture> tex = validateTextureBinding("getTexParameter", target, false);
+    auto tex = validateTextureBinding("getTexParameter", target, false);
     if (!tex)
         return nullptr;
     GC3Dint value = 0;
@@ -3385,7 +3385,7 @@ void WebGLRenderingContextBase::stencilOpSeparate(GC3Denum face, GC3Denum fail, 
 void WebGLRenderingContextBase::texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     // FIXME: For now we ignore any errors returned.
-    RefPtr<WebGLTexture> tex = validateTextureBinding("texImage2D", target, true);
+    auto tex = validateTextureBinding("texImage2D", target, true);
     ASSERT(validateTexFuncParameters("texImage2D", TexImage, target, level, internalFormat, width, height, border, format, type));
     ASSERT(tex);
     ASSERT(validateNPOTTextureLevel(width, height, level, "texImage2D"));
@@ -3440,7 +3440,7 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
     if (!validateTexFuncParameters(functionName, functionType, target, level, internalFormat, width, height, border, format, type))
         return false;
 
-    RefPtr<WebGLTexture> texture = validateTextureBinding(functionName, target, true);
+    auto texture = validateTextureBinding(functionName, target, true);
     if (!texture)
         return false;
 
@@ -3541,7 +3541,7 @@ void WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3Dint level, GC
     if (isContextLostOrPending())
         return;
 
-    RefPtr<WebGLTexture> texture = validateTextureBinding("texSubImage2D", target, true);
+    auto texture = validateTextureBinding("texSubImage2D", target, true);
     if (!texture)
         return;
 
@@ -3586,7 +3586,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
         return { };
 
     auto visitor = WTF::makeVisitor([&](const RefPtr<ImageData>& pixels) -> ExceptionOr<void> {
-        RefPtr<WebGLTexture> texture = validateTextureBinding("texSubImage2D", target, true);
+        auto texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
             return { };
 
@@ -3636,7 +3636,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
         if (imageForRender->isSVGImage())
             imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
 
-        RefPtr<WebGLTexture> texture = validateTextureBinding("texSubImage2D", target, true);
+        auto texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
             return { };
 
@@ -3660,7 +3660,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
         if (!validationResult.returnValue())
             return { };
 
-        RefPtr<WebGLTexture> texture = validateTextureBinding("texSubImage2D", target, true);
+        auto texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
             return { };
 
@@ -3690,7 +3690,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
         if (!validationResult.returnValue())
             return { };
 
-        RefPtr<WebGLTexture> texture = validateTextureBinding("texSubImage2D", target, true);
+        auto texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
             return { };
 
@@ -4059,7 +4059,7 @@ void WebGLRenderingContextBase::texSubImage2DBase(GC3Denum target, GC3Dint level
     ASSERT(validateTexFuncParameters("texSubImage2D", TexSubImage, target, level, internalFormat, width, height, 0, format, type));
     ASSERT(validateSize("texSubImage2D", xoffset, yoffset));
     ASSERT(validateSettableTexInternalFormat("texSubImage2D", internalFormat));
-    RefPtr<WebGLTexture> tex = validateTextureBinding("texSubImage2D", target, true);
+    auto tex = validateTextureBinding("texSubImage2D", target, true);
     if (!tex) {
         ASSERT_NOT_REACHED();
         return;
@@ -4080,7 +4080,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GC3Denum target, GC3Dint level, G
         return;
     if (!validateSettableTexInternalFormat("copyTexImage2D", internalFormat))
         return;
-    RefPtr<WebGLTexture> tex = validateTextureBinding("copyTexImage2D", target, true);
+    auto tex = validateTextureBinding("copyTexImage2D", target, true);
     if (!tex)
         return;
     if (!isTexInternalFormatColorBufferCombinationValid(internalFormat, getBoundFramebufferColorFormat())) {
@@ -4182,7 +4182,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
         if (!validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
             return { };
 
-        RefPtr<WebGLTexture> texture = validateTextureBinding("texImage2D", target, true);
+        auto texture = validateTextureBinding("texImage2D", target, true);
         // If possible, copy from the canvas element directly to the texture
         // via the GPU, without a read-back to system memory.
         //
@@ -4224,7 +4224,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
         // Otherwise, it will fall back to the normal SW path.
         // FIXME: The current restrictions require that format shoud be RGB or RGBA,
         // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
-        RefPtr<WebGLTexture> texture = validateTextureBinding("texImage2D", target, true);
+        auto texture = validateTextureBinding("texImage2D", target, true);
         if (GraphicsContext3D::TEXTURE_2D == target && texture
             && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA)
             && type == GraphicsContext3D::UNSIGNED_BYTE
@@ -4289,7 +4289,7 @@ void WebGLRenderingContextBase::texParameter(GC3Denum target, GC3Denum pname, GC
 {
     if (isContextLostOrPending())
         return;
-    RefPtr<WebGLTexture> tex = validateTextureBinding("texParameter", target, false);
+    auto tex = validateTextureBinding("texParameter", target, false);
     if (!tex)
         return;
     switch (pname) {
@@ -5006,12 +5006,12 @@ int WebGLRenderingContextBase::getBoundFramebufferHeight()
     return m_context->getInternalFramebufferSize().height();
 }
 
-WebGLTexture* WebGLRenderingContextBase::validateTextureBinding(const char* functionName, GC3Denum target, bool useSixEnumsForCubeMap)
+RefPtr<WebGLTexture> WebGLRenderingContextBase::validateTextureBinding(const char* functionName, GC3Denum target, bool useSixEnumsForCubeMap)
 {
     RefPtr<WebGLTexture> texture;
     switch (target) {
     case GraphicsContext3D::TEXTURE_2D:
-        texture = m_textureUnits[m_activeTextureUnit].texture2DBinding.get();
+        texture = m_textureUnits[m_activeTextureUnit].texture2DBinding;
         break;
     case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
@@ -5023,14 +5023,14 @@ WebGLTexture* WebGLRenderingContextBase::validateTextureBinding(const char* func
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture target");
             return nullptr;
         }
-        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding.get();
+        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
         break;
     case GraphicsContext3D::TEXTURE_CUBE_MAP:
         if (useSixEnumsForCubeMap) {
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture target");
             return nullptr;
         }
-        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding.get();
+        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
         break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture target");
@@ -5042,7 +5042,7 @@ WebGLTexture* WebGLRenderingContextBase::validateTextureBinding(const char* func
 
     if (!texture)
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "no texture");
-    return texture.get();
+    return texture;
 }
 
 bool WebGLRenderingContextBase::validateLocationLength(const char* functionName, const String& string)
