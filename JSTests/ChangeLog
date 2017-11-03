@@ -1,5 +1,26 @@
 2017-11-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r224366. rdar://problem/35329722
+
+    2017-11-02  Michael Saboff  <msaboff@apple.com>
+
+            DFG needs to handle code motion of code in for..in loop bodies
+            https://bugs.webkit.org/show_bug.cgi?id=179212
+
+            Reviewed by Keith Miller.
+
+            New regression test.
+
+            * stress/for-in-side-effects.js: Added.
+            (getPrototypeOf):
+            (reset):
+            (testWithoutFTL.f):
+            (testWithoutFTL):
+            (testWithFTL.f):
+            (testWithFTL):
+
+2017-11-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r224349. rdar://problem/35329729
 
     2017-11-02  Filip Pizlo  <fpizlo@apple.com>

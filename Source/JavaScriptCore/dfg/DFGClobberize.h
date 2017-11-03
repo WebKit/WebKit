@@ -262,8 +262,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case HasGenericProperty:
     case HasStructureProperty:
-    case GetEnumerableLength:
     case GetPropertyEnumerator: {
+        read(World);
+        write(Heap);
+        return;
+    }
+
+    case GetEnumerableLength: {
         read(Heap);
         write(SideState);
         return;
