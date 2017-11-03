@@ -436,7 +436,7 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 - (void)_setFooterBannerHeight:(int)height WK_API_AVAILABLE(macosx(10.12.3));
 #endif
 
-- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, NSString*, double, double, NSInteger))callback WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_MAC_TBA));
+- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, NSString*, double, double, NSInteger))callback WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin WK_API_AVAILABLE(ios(10.3));
 - (CGFloat)_pageScale WK_API_AVAILABLE(ios(10.3));
