@@ -48,6 +48,7 @@
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
@@ -285,7 +286,7 @@ void ResourceHandle::cancel()
     }
 }
 
-ResourceRequest ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
+void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     const URL& url = request.url();
     d->m_user = url.user();
@@ -314,9 +315,11 @@ ResourceRequest ResourceHandle::willSendRequest(ResourceRequest&& request, Resou
         }
     }
 
-    Ref<ResourceHandle> protectedThis(*this);
-    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse));
-    return { };
+    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+        if (!request.isNull())
+            request.setStorageSession(d->m_storageSession.get());
+        completionHandler(WTFMove(request));
+    });
 }
 
 bool ResourceHandle::shouldUseCredentialStorage()
@@ -661,13 +664,6 @@ void ResourceHandle::unschedule(SchedulePair& pair)
 const ResourceRequest& ResourceHandle::currentRequest() const
 {
     return d->m_currentRequest;
-}
-
-void ResourceHandle::continueWillSendRequest(ResourceRequest&& request)
-{
-    if (!request.isNull())
-        request.setStorageSession(d->m_storageSession.get());
-    d->m_connectionDelegate->continueWillSendRequest(request.cfURLRequest(UpdateHTTPBody));
 }
 
 void ResourceHandle::continueDidReceiveResponse()

@@ -46,7 +46,6 @@ public:
     virtual void setupConnectionScheduling(CFURLConnectionRef) = 0;
     virtual void releaseHandle();
 
-    virtual void continueWillSendRequest(CFURLRequestRef) = 0;
     virtual void continueDidReceiveResponse() = 0;
     virtual void continueWillCacheResponse(CFCachedURLResponseRef) = 0;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

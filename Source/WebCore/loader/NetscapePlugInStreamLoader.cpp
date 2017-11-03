@@ -32,6 +32,7 @@
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -86,11 +87,9 @@ bool NetscapePlugInStreamLoader::init(const ResourceRequest& request)
     return true;
 }
 
-void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, WTF::Function<void(ResourceRequest&&)>&& callback)
+void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback)
 {
-    RefPtr<NetscapePlugInStreamLoader> protectedThis(this);
-
-    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis, redirectResponse, callback = WTFMove(callback)](ResourceRequest request) {
+    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = makeRef(*this), redirectResponse, callback = WTFMove(callback)](ResourceRequest request) mutable {
         if (!request.isNull())
             protectedThis->willSendRequestInternal(request, redirectResponse);
 

@@ -45,6 +45,7 @@
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/RefCountedLeakCounter.h>
 
 using namespace WebCore;
@@ -130,7 +131,7 @@ void HostedNetscapePluginStream::didFinishLoading(WebCore::NetscapePlugInStreamL
     m_instance->disconnectStream(this);
 }
 
-void HostedNetscapePluginStream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse&, WTF::Function<void (WebCore::ResourceRequest&&)>&& callback)
+void HostedNetscapePluginStream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& callback)
 {
     // FIXME: We should notify the plug-in with NPP_URLRedirectNotify here.
     callback(WTFMove(request));

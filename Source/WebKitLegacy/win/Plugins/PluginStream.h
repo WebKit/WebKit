@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginStream_h
-#define PluginStream_h
+#pragma once
 
 #include "FileSystem.h"
 #include "URL.h"
@@ -43,83 +42,81 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    class Frame;
-    class PluginStream;
+class Frame;
+class PluginStream;
 
-    enum PluginStreamState { StreamBeforeStarted, StreamStarted, StreamStopped };
+enum PluginStreamState { StreamBeforeStarted, StreamStarted, StreamStopped };
 
-    class PluginStreamClient {
-    public:
-        virtual ~PluginStreamClient() {}
-        virtual void streamDidFinishLoading(PluginStream*) {}
-    };
+class PluginStreamClient {
+public:
+    virtual ~PluginStreamClient() { }
+    virtual void streamDidFinishLoading(PluginStream*) { }
+};
 
-    class PluginStream : public RefCounted<PluginStream>, private NetscapePlugInStreamLoaderClient {
-    public:
-        static Ref<PluginStream> create(PluginStreamClient* client, Frame* frame, const ResourceRequest& request, bool sendNotification, void* notifyData, const NPPluginFuncs* functions, NPP instance, const PluginQuirkSet& quirks)
-        {
-            return adoptRef(*new PluginStream(client, frame, request, sendNotification, notifyData, functions, instance, quirks));
-        }
-        virtual ~PluginStream();
-        
-        void start();
-        void stop();
+class PluginStream : public RefCounted<PluginStream>, private NetscapePlugInStreamLoaderClient {
+public:
+    static Ref<PluginStream> create(PluginStreamClient* client, Frame* frame, const ResourceRequest& request, bool sendNotification, void* notifyData, const NPPluginFuncs* functions, NPP instance, const PluginQuirkSet& quirks)
+    {
+        return adoptRef(*new PluginStream(client, frame, request, sendNotification, notifyData, functions, instance, quirks));
+    }
+    virtual ~PluginStream();
+    
+    void start();
+    void stop();
 
-        void startStream();
+    void startStream();
 
-        void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
+    void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
-        void sendJavaScriptStream(const URL& requestURL, const WTF::CString& resultString);
-        void cancelAndDestroyStream(NPReason);
+    void sendJavaScriptStream(const URL& requestURL, const WTF::CString& resultString);
+    void cancelAndDestroyStream(NPReason);
 
-        static NPP ownerForStream(NPStream*);
+    static NPP ownerForStream(NPStream*);
 
-    private:
-        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
+private:
+    PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
 
-        void deliverData();
-        void destroyStream(NPReason);
-        void destroyStream();
+    void deliverData();
+    void destroyStream(NPReason);
+    void destroyStream();
 
-        // NetscapePlugInStreamLoaderClient
-        void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, WTF::Function<void (ResourceRequest&&)>&&) override;
-        void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) override;
-        void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) override;
-        void didFail(NetscapePlugInStreamLoader*, const ResourceError&) override;
-        void didFinishLoading(NetscapePlugInStreamLoader*) override;
-        bool wantsAllStreams() const override;
+    // NetscapePlugInStreamLoaderClient
+    void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) override;
+    void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) override;
+    void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) override;
+    void didFail(NetscapePlugInStreamLoader*, const ResourceError&) override;
+    void didFinishLoading(NetscapePlugInStreamLoader*) override;
+    bool wantsAllStreams() const override;
 
-        ResourceRequest m_resourceRequest;
-        ResourceResponse m_resourceResponse;
+    ResourceRequest m_resourceRequest;
+    ResourceResponse m_resourceResponse;
 
-        PluginStreamClient* m_client;
-        Frame* m_frame;
-        RefPtr<NetscapePlugInStreamLoader> m_loader;
-        void* m_notifyData;
-        bool m_sendNotification;
-        PluginStreamState m_streamState;
-        bool m_loadManually;
+    PluginStreamClient* m_client;
+    Frame* m_frame;
+    RefPtr<NetscapePlugInStreamLoader> m_loader;
+    void* m_notifyData;
+    bool m_sendNotification;
+    PluginStreamState m_streamState;
+    bool m_loadManually;
 
-        Timer m_delayDeliveryTimer;
-        void delayDeliveryTimerFired();
+    Timer m_delayDeliveryTimer;
+    void delayDeliveryTimerFired();
 
-        std::unique_ptr<Vector<char>> m_deliveryData;
+    std::unique_ptr<Vector<char>> m_deliveryData;
 
-        FileSystem::PlatformFileHandle m_tempFileHandle;
+    FileSystem::PlatformFileHandle m_tempFileHandle;
 
-        const NPPluginFuncs* m_pluginFuncs;
-        NPP m_instance;
-        uint16_t m_transferMode;
-        int32_t m_offset;
-        CString m_headers;
-        String m_path;
-        NPReason m_reason;
-        NPStream m_stream;
-        PluginQuirkSet m_quirks;
+    const NPPluginFuncs* m_pluginFuncs;
+    NPP m_instance;
+    uint16_t m_transferMode;
+    int32_t m_offset;
+    CString m_headers;
+    String m_path;
+    NPReason m_reason;
+    NPStream m_stream;
+    PluginQuirkSet m_quirks;
 
-        friend class PluginView;
-    };
+    friend class PluginView;
+};
 
 } // namespace WebCore
-
-#endif

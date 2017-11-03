@@ -86,7 +86,7 @@ private:
     NSError *pluginCancelledConnectionError() const;
 
     // NetscapePlugInStreamLoaderClient methods.
-    void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, WTF::Function<void (WebCore::ResourceRequest&&)>&&) override;
+    void willSendRequest(WebCore::NetscapePlugInStreamLoader*, WebCore::ResourceRequest&&, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) override;
     void didReceiveResponse(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceResponse&) override;
     bool wantsAllStreams() const override;
     

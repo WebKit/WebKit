@@ -35,6 +35,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
@@ -71,9 +72,10 @@ void BlobDownloadClient::didDecideDownloadDestination(const String& destinationP
     m_download.continueDidReceiveResponse();
 }
 
-void BlobDownloadClient::willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&)
+void BlobDownloadClient::willSendRequestAsync(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
+    completionHandler(WTFMove(request));
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

@@ -53,6 +53,7 @@
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <runtime/JSLock.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
@@ -301,7 +302,7 @@ void WebNetscapePluginStream::stop()
         cancelLoadAndDestroyStreamWithError(m_loader->cancelledError());
 }
 
-void WebNetscapePluginStream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse&, WTF::Function<void (WebCore::ResourceRequest&&)>&& callback)
+void WebNetscapePluginStream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& callback)
 {
     // FIXME: We should notify the plug-in with NPP_URLRedirectNotify here.
     callback(WTFMove(request));

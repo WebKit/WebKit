@@ -98,7 +98,7 @@ public:
     
     virtual bool isSubresourceLoader();
 
-    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, WTF::Function<void(ResourceRequest&&)>&& callback);
+    virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType);
@@ -187,7 +187,7 @@ private:
     // ResourceHandleClient
     void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) override;
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) override;
+    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength) override;
     void didFinishLoading(ResourceHandle*) override;

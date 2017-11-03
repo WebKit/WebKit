@@ -41,6 +41,7 @@
 #include "ResourceHandleInternal.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
@@ -363,7 +364,9 @@ void ResourceHandleCurlDelegate::willSendRequest()
     }
 
     ResourceResponse responseCopy = response();
-    m_handle->client()->willSendRequestAsync(m_handle, WTFMove(newRequest), WTFMove(responseCopy));
+    m_handle->client()->willSendRequestAsync(m_handle, WTFMove(newRequest), WTFMove(responseCopy), [this, protectedThis = makeRef(*this)] (ResourceRequest&& request) {
+        continueWillSendRequest(WTFMove(request));
+    });
 }
 
 void ResourceHandleCurlDelegate::continueWillSendRequest(ResourceRequest&& request)

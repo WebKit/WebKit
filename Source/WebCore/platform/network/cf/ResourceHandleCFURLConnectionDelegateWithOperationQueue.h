@@ -58,7 +58,6 @@ private:
     void didSendBodyData(CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite) override;
     Boolean shouldUseCredentialStorage() override;
 
-    void continueWillSendRequest(CFURLRequestRef) override;
     void continueDidReceiveResponse() override;
     void continueWillCacheResponse(CFCachedURLResponseRef) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

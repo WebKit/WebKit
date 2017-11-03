@@ -49,7 +49,6 @@ class ResourceHandle;
 
 - (void)detachHandle;
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(MessageQueue<Function<void()>>*)messageQueue;
-- (void)continueWillSendRequest:(NSURLRequest *)newRequest;
 - (void)continueDidReceiveResponse;
 - (void)continueCanAuthenticateAgainstProtectionSpace:(BOOL)canAuthenticate;
 - (void)continueWillCacheResponse:(NSCachedURLResponse *)response;

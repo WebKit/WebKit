@@ -48,6 +48,7 @@
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 
@@ -562,9 +563,9 @@ void ApplicationCacheGroup::didReceiveResponseAsync(ResourceHandle* handle, Reso
     handle->continueDidReceiveResponse();
 }
 
-void ApplicationCacheGroup::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&)
+void ApplicationCacheGroup::willSendRequestAsync(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    handle->continueWillSendRequest(WTFMove(request));
+    completionHandler(WTFMove(request));
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

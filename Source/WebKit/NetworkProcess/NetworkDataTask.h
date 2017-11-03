@@ -54,7 +54,7 @@ class NetworkSession;
 class PendingDownload;
 enum class AuthenticationChallengeDisposition;
 
-using RedirectCompletionHandler = CompletionHandler<void(const WebCore::ResourceRequest&)>;
+using RedirectCompletionHandler = CompletionHandler<void(WebCore::ResourceRequest&&)>;
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 

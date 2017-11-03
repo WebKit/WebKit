@@ -40,6 +40,7 @@
 #include "WebCoreURLResponse.h"
 #endif
 #include <pal/spi/cf/CFNetworkSPI.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
@@ -152,23 +153,27 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
 
     ASSERT(!isMainThread());
     
-    auto work = [protectedThis = makeRef(*this), cfRequest = RetainPtr<CFURLRequestRef>(cfRequest), originalRedirectResponse = RetainPtr<CFURLResponseRef>(originalRedirectResponse)] () {
+    auto work = [this, protectedThis = makeRef(*this), cfRequest = RetainPtr<CFURLRequestRef>(cfRequest), originalRedirectResponse = RetainPtr<CFURLResponseRef>(originalRedirectResponse)] () mutable {
         auto& handle = protectedThis->m_handle;
-        
-        if (!protectedThis->hasHandle()) {
-            protectedThis->continueWillSendRequest(nullptr);
+        auto completionHandler = [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) {
+            m_requestResult = request.cfURLRequest(UpdateHTTPBody);
+            m_semaphore.signal();
+        };
+
+        if (!hasHandle()) {
+            completionHandler({ });
             return;
         }
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest(handle=%p) (%s)", handle, handle->firstRequest().url().string().utf8().data());
 
-        RetainPtr<CFURLResponseRef> redirectResponse = protectedThis->synthesizeRedirectResponseIfNecessary(cfRequest.get(), originalRedirectResponse.get());
+        RetainPtr<CFURLResponseRef> redirectResponse = synthesizeRedirectResponseIfNecessary(cfRequest.get(), originalRedirectResponse.get());
         ASSERT(redirectResponse);
 
-        ResourceRequest request = protectedThis->createResourceRequest(cfRequest.get(), redirectResponse.get());
-        handle->willSendRequest(WTFMove(request), redirectResponse.get());
+        ResourceRequest request = createResourceRequest(cfRequest.get(), redirectResponse.get());
+        handle->willSendRequest(WTFMove(request), redirectResponse.get(), WTFMove(completionHandler));
     };
-    
+
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
@@ -404,12 +409,6 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueCanAuthent
     m_semaphore.signal();
 }
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
-
-void ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueWillSendRequest(CFURLRequestRef request)
-{
-    m_requestResult = request;
-    m_semaphore.signal();
-}
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueDidReceiveResponse()
 {

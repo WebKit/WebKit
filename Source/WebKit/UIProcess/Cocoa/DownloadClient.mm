@@ -185,12 +185,12 @@ void DownloadClient::didCancel(WebProcessPool&, DownloadProxy& downloadProxy)
         [m_delegate _downloadDidCancel:wrapper(downloadProxy)];
 }
 
-void DownloadClient::willSendRequest(WebProcessPool&, DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, Function<void(WebCore::ResourceRequest&&)>&& callback)
+void DownloadClient::willSendRequest(WebProcessPool&, DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
         [m_delegate _download:wrapper(downloadProxy) didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];
 
-    callback(WTFMove(request));
+    completionHandler(WTFMove(request));
 }
 
 } // namespace WebKit

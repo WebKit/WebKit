@@ -56,6 +56,7 @@
 #if !COMPILER(MSVC)
 #include <unistd.h>
 #endif
+#include <wtf/CompletionHandler.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -353,7 +354,9 @@ static void doRedirect(ResourceHandle* handle)
     cleanupSoupRequestOperation(handle);
 
     ResourceResponse responseCopy = d->m_response;
-    d->client()->willSendRequestAsync(handle, WTFMove(newRequest), WTFMove(responseCopy));
+    d->client()->willSendRequestAsync(handle, WTFMove(newRequest), WTFMove(responseCopy), [handle = makeRef(*handle)] (ResourceRequest&& request) {
+        continueAfterWillSendRequest(handle.ptr(), WTFMove(request));
+    });
 }
 
 static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
@@ -1022,11 +1025,6 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     handle->ensureReadBuffer();
     g_input_stream_read_async(d->m_inputStream.get(), const_cast<char*>(d->m_soupBuffer->data), d->m_soupBuffer->length, RunLoopSourcePriority::AsyncIONetwork,
         d->m_cancellable.get(), readCallback, handle.get());
-}
-
-void ResourceHandle::continueWillSendRequest(ResourceRequest&& request)
-{
-    continueAfterWillSendRequest(this, WTFMove(request));
 }
 
 void ResourceHandle::continueDidReceiveResponse()

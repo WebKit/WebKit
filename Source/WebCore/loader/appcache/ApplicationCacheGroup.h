@@ -110,7 +110,7 @@ private:
 
     // ResourceHandleClient
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) final;
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) final;
+    void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) final;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&) final;
 #endif

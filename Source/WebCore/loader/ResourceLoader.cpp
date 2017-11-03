@@ -50,6 +50,7 @@
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -420,7 +421,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
     }
 }
 
-void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, WTF::Function<void(ResourceRequest&&)>&& callback)
+void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback)
 {
     willSendRequestInternal(request, redirectResponse);
     callback(WTFMove(request));
@@ -638,15 +639,15 @@ ResourceError ResourceLoader::cannotShowURLError()
     return frameLoader()->client().cannotShowURLError(m_request);
 }
 
-void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse)
+void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     RefPtr<ResourceHandle> protectedHandle(handle);
     if (documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(this, request, redirectResponse)) {
-        handle->continueWillSendRequest(WTFMove(request));
+        completionHandler(WTFMove(request));
         return;
     }
     willSendRequestInternal(request, redirectResponse);
-    handle->continueWillSendRequest(WTFMove(request));
+    completionHandler(WTFMove(request));
 }
 
 void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

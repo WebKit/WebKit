@@ -49,6 +49,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/Ref.h>
 #import <wtf/SchedulePair.h>
 #import <wtf/text/Base64.h>
@@ -435,7 +436,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     data.swap(client.mutableData());
 }
 
-ResourceRequest ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
+void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT(!redirectResponse.isNull());
 
@@ -483,16 +484,12 @@ ResourceRequest ResourceHandle::willSendRequest(ResourceRequest&& request, Resou
         }
     }
 
-    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse));
-    return { };
-}
-
-void ResourceHandle::continueWillSendRequest(ResourceRequest&& newRequest)
-{
-    // Client call may not preserve the session, especially if the request is sent over IPC.
-    if (!newRequest.isNull())
-        newRequest.setStorageSession(d->m_storageSession.get());
-    [(id)delegate() continueWillSendRequest:newRequest.nsURLRequest(UpdateHTTPBody)];
+    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+        // Client call may not preserve the session, especially if the request is sent over IPC.
+        if (!request.isNull())
+            request.setStorageSession(d->m_storageSession.get());
+        completionHandler(WTFMove(request));
+    });
 }
 
 void ResourceHandle::continueDidReceiveResponse()

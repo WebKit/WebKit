@@ -30,10 +30,6 @@
 #include <WebCore/ResourceResponse.h>
 #include <wtf/Forward.h>
 
-#if PLATFORM(COCOA)
-typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
-#endif
-
 namespace WebCore {
 class NetworkLoadMetrics;
 class ProtectionSpace;

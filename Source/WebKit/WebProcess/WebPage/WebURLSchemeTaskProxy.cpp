@@ -33,6 +33,7 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/CurrentTime.h>
 
 using namespace WebCore;

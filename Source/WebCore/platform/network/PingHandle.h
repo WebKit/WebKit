@@ -57,14 +57,14 @@ public:
     }
 
 private:
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&) final
+    void willSendRequestAsync(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final
     {
         m_currentRequest = WTFMove(request);
         if (m_shouldFollowRedirects) {
-            m_handle->continueWillSendRequest(ResourceRequest { m_currentRequest });
+            completionHandler(ResourceRequest { m_currentRequest });
             return;
         }
-        m_handle->continueWillSendRequest({ });
+        completionHandler({ });
         pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Not allowed to follow redirects"), ResourceError::Type::AccessControl });
     }
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response) final

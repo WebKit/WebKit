@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PlatformExportMacros.h"
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
 #if USE(CFURLCONNECTION)
@@ -75,8 +76,7 @@ public:
 
     virtual bool loadingSynchronousXHR() { return false; }
 
-    // Client will pass an updated request using ResourceHandle::continueWillSendRequest() when ready.
-    WEBCORE_EXPORT virtual void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&) = 0;
+    WEBCORE_EXPORT virtual void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) = 0;
 
     // Client will call ResourceHandle::continueDidReceiveResponse() when ready.
     WEBCORE_EXPORT virtual void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) = 0;

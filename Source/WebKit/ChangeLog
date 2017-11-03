@@ -1,3 +1,38 @@
+2017-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Use CompletionHandlers for redirects
+        https://bugs.webkit.org/show_bug.cgi?id=179163
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        (WebKit::BlobDownloadClient::willSendRequestAsync):
+        * NetworkProcess/Downloads/BlobDownloadClient.h:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::willSendRequestAsync):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::willSendRequest):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::willSendRequest):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::~Stream):
+        (WebKit::PluginView::Stream::continueLoad):
+        (WebKit::PluginView::Stream::willSendRequest):
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+
 2017-11-02  Christopher Reid  <chris.reid@sony.com>
 
         Add a FileSystem namespace to FileSystem.cpp

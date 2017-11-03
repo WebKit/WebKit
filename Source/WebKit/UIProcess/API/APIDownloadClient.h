@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -62,7 +62,7 @@ public:
     virtual void didFail(WebKit::WebProcessPool&, WebKit::DownloadProxy&, const WebCore::ResourceError&) { }
     virtual void didCancel(WebKit::WebProcessPool&, WebKit::DownloadProxy&) { }
     virtual void processDidCrash(WebKit::WebProcessPool&, WebKit::DownloadProxy&) { }
-    virtual void willSendRequest(WebKit::WebProcessPool&, WebKit::DownloadProxy&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, Function<void(WebCore::ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
+    virtual void willSendRequest(WebKit::WebProcessPool&, WebKit::DownloadProxy&, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
 };
 
 } // namespace API

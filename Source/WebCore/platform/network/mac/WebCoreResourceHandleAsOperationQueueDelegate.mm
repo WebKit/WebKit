@@ -74,12 +74,6 @@ using namespace WebCore;
     [super dealloc];
 }
 
-- (void)continueWillSendRequest:(NSURLRequest *)newRequest
-{
-    m_requestResult = newRequest;
-    dispatch_semaphore_signal(m_semaphore);
-}
-
 - (void)continueDidReceiveResponse
 {
     dispatch_semaphore_signal(m_semaphore);
@@ -122,10 +116,12 @@ using namespace WebCore;
             return;
         }
 
-        m_handle->willSendRequest(newRequest.get(), redirectResponse.get());
+        m_handle->willSendRequest(newRequest.get(), redirectResponse.get(), [self, protectedSelf = WTFMove(protectedSelf)](ResourceRequest&& request) {
+            m_requestResult = request.nsURLRequest(UpdateHTTPBody);
+            dispatch_semaphore_signal(m_semaphore);
+        });
     };
 
-    
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else

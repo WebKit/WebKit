@@ -104,7 +104,7 @@ public:
     WEBCORE_EXPORT virtual ~ResourceHandle();
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
-    ResourceRequest willSendRequest(ResourceRequest&&, ResourceResponse&&);
+    void willSendRequest(ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&);
 #endif
 
     void didReceiveResponse(ResourceResponse&&);
@@ -192,9 +192,6 @@ public:
     // The client may be 0, in which case no callbacks will be made.
     WEBCORE_EXPORT ResourceHandleClient* client() const;
     WEBCORE_EXPORT void clearClient();
-
-    // Called in response to ResourceHandleClient::willSendRequestAsync().
-    WEBCORE_EXPORT void continueWillSendRequest(ResourceRequest&&);
 
     // Called in response to ResourceHandleClient::didReceiveResponseAsync().
     WEBCORE_EXPORT virtual void continueDidReceiveResponse();

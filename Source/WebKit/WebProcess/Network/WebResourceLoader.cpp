@@ -43,6 +43,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SubresourceLoader.h>
+#include <wtf/CompletionHandler.h>
 
 using namespace WebCore;
 
@@ -85,12 +86,10 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, Resou
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("willSendRequest: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
 
-    RefPtr<WebResourceLoader> protectedThis(this);
-
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(m_coreLoader.get(), proposedRequest, redirectResponse))
         return;
 
-    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [protectedThis](ResourceRequest&& request) {
+    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [protectedThis = makeRef(*this)](ResourceRequest&& request) {
         if (!protectedThis->m_coreLoader)
             return;
 

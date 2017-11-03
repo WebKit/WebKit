@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkLoad_h
-#define NetworkLoad_h
+#pragma once
 
 #include "NetworkLoadClient.h"
 #include "NetworkLoadParameters.h"
 #include "RemoteNetworkingContext.h"
 #include <WebCore/ResourceHandleClient.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Optional.h>
 
 #if USE(NETWORK_SESSION)
@@ -115,7 +115,7 @@ private:
 
 #if !USE(NETWORK_SESSION)
     // ResourceHandleClient
-    void willSendRequestAsync(WebCore::ResourceHandle*, WebCore::ResourceRequest&&, WebCore::ResourceResponse&& redirectResponse) final;
+    void willSendRequestAsync(WebCore::ResourceHandle*, WebCore::ResourceRequest&&, WebCore::ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
     void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
     void didReceiveResponseAsync(WebCore::ResourceHandle*, WebCore::ResourceResponse&&) final;
     void didReceiveData(WebCore::ResourceHandle*, const char*, unsigned, int encodedDataLength) final;
@@ -147,6 +147,7 @@ private:
 
     std::reference_wrapper<NetworkLoadClient> m_client;
     const NetworkLoadParameters m_parameters;
+    CompletionHandler<void(WebCore::ResourceRequest&&)> m_redirectCompletionHandler;
 #if USE(NETWORK_SESSION)
     RefPtr<NetworkDataTask> m_task;
     std::optional<WebCore::AuthenticationChallenge> m_challenge;
@@ -154,7 +155,6 @@ private:
     ChallengeCompletionHandler m_challengeCompletionHandler;
 #endif
     ResponseCompletionHandler m_responseCompletionHandler;
-    RedirectCompletionHandler m_redirectCompletionHandler;
     
     struct Throttle;
     std::unique_ptr<Throttle> m_throttle;
@@ -173,5 +173,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // NetworkLoad_h

@@ -29,22 +29,23 @@
 #include "AuthenticationChallenge.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
 SynchronousLoaderClient::~SynchronousLoaderClient() = default;
 
-void SynchronousLoaderClient::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&)
+void SynchronousLoaderClient::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
     if (protocolHostAndPortAreEqual(handle->firstRequest().url(), request.url())) {
-        handle->continueWillSendRequest(WTFMove(request));
+        completionHandler(WTFMove(request));
         return;
     }
 
     ASSERT(m_error.isNull());
     m_error = platformBadResponseError();
-    handle->continueWillSendRequest({ });
+    completionHandler({ });
 }
 
 bool SynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)
