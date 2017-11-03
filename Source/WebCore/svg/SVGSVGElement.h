@@ -153,7 +153,7 @@ private:
 
     Frame* frameForCurrentScale() const;
     void inheritViewAttributes(const SVGViewElement&);
-    Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(RefPtr<SVGElement>&&, SVGRect&));
+    Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
     bool m_useCurrentView { false };
     SVGZoomAndPanType m_zoomAndPan { SVGZoomAndPanMagnify };

@@ -43,6 +43,7 @@
 #include "JSDOMWindowBase.h"
 #include "LibWebRTCProvider.h"
 #include "MainFrame.h"
+#include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
@@ -310,8 +311,11 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 
     view->resize(containerSize());
 
-    if (view->needsLayout())
-        view->layoutContext().layout();
+    {
+        NoEventDispatchAssertion::DisableAssertionsInScope disabledScope;
+        if (view->needsLayout())
+            view->layoutContext().layout();
+    }
 
     view->paint(context, intersection(context.clipBounds(), enclosingIntRect(srcRect)));
 

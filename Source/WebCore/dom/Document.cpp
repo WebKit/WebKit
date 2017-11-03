@@ -1923,12 +1923,13 @@ bool Document::needsStyleRecalc() const
 
 bool Document::updateStyleIfNeeded()
 {
+    RefPtr<FrameView> frameView = view();
     {
         NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
         ASSERT(isMainThread());
-        ASSERT(!view() || !view()->isPainting());
+        ASSERT(!frameView || !frameView->isPainting());
 
-        if (!view() || view()->layoutContext().isInRenderTreeLayout())
+        if (!frameView || frameView->layoutContext().isInRenderTreeLayout())
             return false;
 
         styleScope().flushPendingUpdate();
@@ -1937,14 +1938,17 @@ bool Document::updateStyleIfNeeded()
             return false;
     }
 
+    // The early exit for needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
+    ASSERT(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
+
     resolveStyle();
     return true;
 }
 
 void Document::updateLayout()
 {
-    ASSERT(LayoutDisallowedScope::isLayoutAllowed());
     ASSERT(isMainThread());
+    ASSERT(LayoutDisallowedScope::isLayoutAllowed());
 
     RefPtr<FrameView> frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
@@ -1952,6 +1956,8 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
+    ASSERT(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
+
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 

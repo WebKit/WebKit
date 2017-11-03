@@ -138,23 +138,21 @@ public:
 #endif
 
 #if !ASSERT_DISABLED
+    // FIXME: Remove this class once the sync layout inside SVGImage::draw is removed.
     class DisableAssertionsInScope {
     public:
         DisableAssertionsInScope()
         {
-            if (!isMainThread())
-                return;
-            s_existingCount = s_count;
-            s_count = 0;
+            ASSERT(isMainThread());
+            std::swap(s_count, m_originalCount);
         }
 
         ~DisableAssertionsInScope()
         {
-            s_count = s_existingCount;
-            s_existingCount = 0;
+            s_count = m_originalCount;
         }
     private:
-        WEBCORE_EXPORT static unsigned s_existingCount;
+        unsigned m_originalCount { 0 };
     };
 #else
     class DisableAssertionsInScope {

@@ -72,7 +72,6 @@ ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot;
 
 #if !ASSERT_DISABLED
 unsigned NoEventDispatchAssertion::s_count = 0;
-unsigned NoEventDispatchAssertion::DisableAssertionsInScope::s_existingCount = 0;
 NoEventDispatchAssertion::EventAllowedScope* NoEventDispatchAssertion::EventAllowedScope::s_currentScope = nullptr;
 #endif
 
@@ -143,24 +142,28 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
     if (childToRemove.parentNode() != this)
         return false;
 
-    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
-
-    document().nodeWillBeRemoved(childToRemove);
-
-    ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
-    ASSERT(!childToRemove.isDocumentFragment());
-
-    RefPtr<Node> previousSibling = childToRemove.previousSibling();
-    RefPtr<Node> nextSibling = childToRemove.nextSibling();
-    removeBetween(previousSibling.get(), nextSibling.get(), childToRemove);
-    notifyChildNodeRemoved(*this, childToRemove);
-
     ChildChange change;
-    change.type = is<Element>(childToRemove) ? ElementRemoved : (is<Text>(childToRemove) ? TextRemoved : NonContentsChildRemoved);
-    change.previousSiblingElement = (!previousSibling || is<Element>(*previousSibling)) ? downcast<Element>(previousSibling.get()) : ElementTraversal::previousSibling(*previousSibling);
-    change.nextSiblingElement = (!nextSibling || is<Element>(*nextSibling)) ? downcast<Element>(nextSibling.get()) : ElementTraversal::nextSibling(*nextSibling);
-    change.source = source;
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
+
+        document().nodeWillBeRemoved(childToRemove);
+
+        ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
+        ASSERT(!childToRemove.isDocumentFragment());
+
+        RefPtr<Node> previousSibling = childToRemove.previousSibling();
+        RefPtr<Node> nextSibling = childToRemove.nextSibling();
+        removeBetween(previousSibling.get(), nextSibling.get(), childToRemove);
+        notifyChildNodeRemoved(*this, childToRemove);
+
+        change.type = is<Element>(childToRemove) ? ElementRemoved : (is<Text>(childToRemove) ? TextRemoved : NonContentsChildRemoved);
+        change.previousSiblingElement = (!previousSibling || is<Element>(*previousSibling)) ? downcast<Element>(previousSibling.get()) : ElementTraversal::previousSibling(*previousSibling);
+        change.nextSiblingElement = (!nextSibling || is<Element>(*nextSibling)) ? downcast<Element>(nextSibling.get()) : ElementTraversal::nextSibling(*nextSibling);
+        change.source = source;
+    }
+
+    // FIXME: Move childrenChanged into NoEventDispatchAssertion block.
     childrenChanged(change);
 
     return true;
