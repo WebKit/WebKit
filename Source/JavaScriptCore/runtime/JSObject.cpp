@@ -776,19 +776,23 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
-                bool result = callSetter(exec, slot.thisValue(), gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
-                RETURN_IF_EXCEPTION(scope, false);
+                // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
                 if (!structure()->isDictionary())
                     slot.setCacheableSetter(obj, offset);
+
+                bool result = callSetter(exec, slot.thisValue(), gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
+                RETURN_IF_EXCEPTION(scope, false);
                 return result;
             }
             if (gs.isCustomGetterSetter()) {
-                bool result = callCustomSetter(exec, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
-                RETURN_IF_EXCEPTION(scope, false);
+                // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
                 if (attributes & PropertyAttribute::CustomAccessor)
                     slot.setCustomAccessor(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
                 else
                     slot.setCustomValue(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
+
+                bool result = callCustomSetter(exec, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
+                RETURN_IF_EXCEPTION(scope, false);
                 return result;
             }
             ASSERT(!(attributes & PropertyAttribute::Accessor));

@@ -289,12 +289,14 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
         ASSERT_WITH_MESSAGE(!(entry->attributes() & PropertyAttribute::DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
         bool isAccessor = entry->attributes() & PropertyAttribute::CustomAccessor;
         JSValue updateThisValue = entry->attributes() & PropertyAttribute::CustomAccessor ? slot.thisValue() : JSValue(base);
-        bool result = callCustomSetter(exec, entry->propertyPutter(), isAccessor, updateThisValue, value);
-        RETURN_IF_EXCEPTION(scope, false);
+        // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
         if (isAccessor)
             slot.setCustomAccessor(base, entry->propertyPutter());
         else
             slot.setCustomValue(base, entry->propertyPutter());
+
+        bool result = callCustomSetter(exec, entry->propertyPutter(), isAccessor, updateThisValue, value);
+        RETURN_IF_EXCEPTION(scope, false);
         return result;
     }
 
