@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DIBPixelData_h
-#define DIBPixelData_h
+#pragma once
 
 #include "IntRect.h"
 #include "IntSize.h"
@@ -52,7 +51,7 @@ public:
     void initialize(HBITMAP);
 
 #ifndef NDEBUG
-    void FileSystem::writeToFile(LPCWSTR);
+    void writeToFile(LPCWSTR);
 #endif
 
     UInt8* buffer() const { return m_bitmapBuffer; }
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DIBPixelData_h
