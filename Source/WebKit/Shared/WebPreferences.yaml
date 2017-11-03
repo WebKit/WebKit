@@ -1056,7 +1056,7 @@ ConstantPropertiesEnabled:
 
 DisplayContentsEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "CSS display: contents"
   humanReadableDescription: "Enable CSS display: contents support"
   category: experimental
