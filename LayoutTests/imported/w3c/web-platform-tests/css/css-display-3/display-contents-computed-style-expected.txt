@@ -1,67 +1,7 @@
 
-CSS Display: Computed style for display:contents
-
-
-
-
-
-
-
-    html, .contents { display: contents }
-
-    #t2 .contents { background-color: green }
-    #t2 span { background-color: inherit }
-
-    #t3 .contents { color: green }
-
-    #t4 {
-        width: auto;
-        height: 50%;
-        margin-left: 25%;
-        padding-top: 10%;
-    }
-
-
-
-    
-        
-    
-
-
-    
-        
-    
-
-
-
-    test(function(){
-        assert_equals(getComputedStyle(document.querySelector("#t1")).display, "contents");
-    }, "Serialization of computed style value for display:contents");
-
-    test(function(){
-        assert_equals(getComputedStyle(document.querySelector("#t2 span")).backgroundColor, "rgb(0, 128, 0)");
-    }, "display:contents element as inherit parent - explicit inheritance");
-
-    test(function(){
-        assert_equals(getComputedStyle(document.querySelector("#t3 span")).color, "rgb(0, 128, 0)");
-    }, "display:contents element as inherit parent - implicit inheritance");
-
-    test(function(){
-        var computed = getComputedStyle(document.querySelector("#t4"));
-        assert_equals(computed.width, "auto");
-        assert_equals(computed.height, "50%");
-        assert_equals(computed.marginLeft, "25%");
-        assert_equals(computed.paddingTop, "10%");
-    }, "Resolved value should be computed value, not used value, for display:contents");
-
-    test(function(){
-        assert_equals(getComputedStyle(document.documentElement).display, "block");
-    }, "display:contents is blockified for root elements");
-
-
 PASS Serialization of computed style value for display:contents 
 PASS display:contents element as inherit parent - explicit inheritance 
 PASS display:contents element as inherit parent - implicit inheritance 
 PASS Resolved value should be computed value, not used value, for display:contents 
-FAIL display:contents is blockified for root elements assert_equals: expected "block" but got "contents"
+PASS display:contents is blockified for root elements 
 

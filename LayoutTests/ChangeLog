@@ -1,3 +1,16 @@
+2017-11-03  Antti Koivisto  <antti@apple.com>
+
+        Crash in WebCore::RenderStyle::overflowX with display:contents
+        https://bugs.webkit.org/show_bug.cgi?id=178857
+        <rdar://problem/35201120>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/display-contents-all-expected.html: Added.
+        * fast/css/display-contents-all.html: Added.
+        * fast/css/display-contents-document-element-expected.txt: Added.
+        * fast/css/display-contents-document-element.html: Added.
+
 2017-11-03  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Enable the dom/ directory of web-platform-tests.

@@ -801,6 +801,10 @@ static void adjustDisplayContentsStyle(RenderStyle& style, const Element* elemen
             style.setDisplay(NONE);
         return;
     }
+    if (element->document().documentElement() == element) {
+        style.setDisplay(BLOCK);
+        return;
+    }
     if (hasEffectiveDisplayNoneForDisplayContents(*element))
         style.setDisplay(NONE);
 }
