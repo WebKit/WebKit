@@ -1,3 +1,18 @@
+2017-11-03  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Enable the dom/ directory of web-platform-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=179180
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/wpe/TestExpectations: Enable tests; copy expected timeout from generic expectation file.
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution-expected.txt:
+          Added; GamepadEvent is not enabled. (The fragility of the test is fixed upstream.)
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+          Added; more subtests pass than in the generic expectation file.
+        * platform/wpe/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+          Added; more subtests pass than in the generic expectation file.
+
 2017-11-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Rebaselining tests affected by r224324.
