@@ -1,3 +1,14 @@
+2017-11-03  Ms2ger  <Ms2ger@igalia.com>
+
+        Update Event-timestamp-high-resolution.html.
+        https://bugs.webkit.org/show_bug.cgi?id=179242
+
+        Reviewed by Darin Adler.
+
+        Synchronise with upstream to make the test more robust.
+
+        * web-platform-tests/dom/events/Event-timestamp-high-resolution.html:
+
 2017-11-03  Antti Koivisto  <antti@apple.com>
 
         Crash in WebCore::RenderStyle::overflowX with display:contents
