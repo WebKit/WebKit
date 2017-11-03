@@ -3,6 +3,16 @@
         Reduce duplication in the toplevel Makefile
         https://bugs.webkit.org/show_bug.cgi?id=179204
 
+        Unreviewed build fix.
+
+        * Source/Makefile:
+        Take three. An empty SDKROOT should be like Mac (and build all the things).
+
+2017-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        Reduce duplication in the toplevel Makefile
+        https://bugs.webkit.org/show_bug.cgi?id=179204
+
         * Source/Makefile:
         Address some post-landing review comments to keep the order of the MODULES correct.
 
