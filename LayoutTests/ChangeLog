@@ -1,3 +1,16 @@
+2017-11-03  Alex Christensen  <achristensen@webkit.org>
+
+        Remove Yosemite test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=179143
+
+        Reviewed by Ryosuke Niwa.
+
+        We only test back to El Capitan.  Everything is Yosemite+.  Marking tests as failing only on Yosemite isn't useful any more.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-11-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Mark a few failures, posting along the relevant

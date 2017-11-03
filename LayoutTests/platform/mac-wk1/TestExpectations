@@ -36,7 +36,7 @@ http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
 
 # Before Yosemite, the test did not actually test compositing vs. non-compositing on WebKit1, so it passed accidentally.
-webkit.org/b/132421 [ Yosemite+ ] fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
@@ -56,8 +56,6 @@ webkit.org/b/144127 compositing/scrolling/touch-scroll-to-clip.html [ Pass Failu
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
-webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/copyTexImage2DBadArgs.html [ Pass Failure ]
-
 webkit.org/b/150564 svg/repaint/add-background-property-on-root.html [ Pass Timeout ]
 
 webkit.org/b/152485 webaudio/audiocontext-state-interrupted.html [ Pass Crash ]
@@ -67,8 +65,6 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 webkit.org/b/154297 [ Debug ] fast/events/keydown-1.html [ Pass Failure ]
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
-
-webkit.org/b/153143 [ Yosemite ] media/track/track-in-band-style.html [ Pass Crash ]
 
 webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Crash ]
 
@@ -190,7 +186,7 @@ fast/images/async-image-background-change.html
 fast/images/async-image-src-change.html
 http/tests/multipart/multipart-async-image.html
 
-[ Yosemite+ ] fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
+fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
@@ -198,7 +194,7 @@ loader/navigation-policy [ Skip ]
 [ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
 # This test gives a different output on ElCapitan-wk1 only.
-webkit.org/b/152178 [ Yosemite+ ] fast/replaced/replaced-breaking.html [ Failure ]
+webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
 
 # DRT can open way more files than the DatabaseProcess with WebKitTestRunner, and the number is reasonable.
 # So we shouldn't bother with this test in WebKit1.
@@ -319,12 +315,10 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 [ Sierra+ ] accessibility/parent-delete.html [ Failure ]
 
 # rdar://problem/28017216
-[ Yosemite ElCapitan ] fast/inline-block/003.html [ Failure ]
+[ ElCapitan ] fast/inline-block/003.html [ Failure ]
 
 # rdar://problem/26478296
 [ Sierra+ ] svg/hixie/text/003.html [ Failure ]
-
-[ Yosemite ] http/tests/media/hls/video-controller-getStartDate.html [ Pass Timeout ]
 
 webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Pass Failure ]
 
@@ -357,7 +351,7 @@ http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 http/tests/inspector/network/resource-sizes-memory-cache.html [ Failure ]
 http/tests/inspector/network/har/har-page.html [ Failure ]
 
-webkit.org/b/164491 [ Yosemite ElCapitan ] fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]
+webkit.org/b/164491 [ ElCapitan ] fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]
 
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
