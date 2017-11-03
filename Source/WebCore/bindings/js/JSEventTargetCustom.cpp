@@ -34,8 +34,8 @@
 #include "JSDOMWindowProxy.h"
 #include "JSEventListener.h"
 #include "JSWorkerGlobalScope.h"
+#include "OffscreenCanvas.h"
 #include "WorkerGlobalScope.h"
-
 
 namespace WebCore {
 using namespace JSC;

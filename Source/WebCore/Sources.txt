@@ -1012,6 +1012,7 @@ html/MediaElementSession.cpp
 html/MediaFragmentURIParser.cpp
 html/MonthInputType.cpp
 html/NumberInputType.cpp
+html/OffscreenCanvas.cpp
 html/PasswordInputType.cpp
 html/PluginDocument.cpp
 html/PublicURLManager.cpp
@@ -2622,6 +2623,7 @@ JSNotificationPermission.cpp
 JSNotificationPermissionCallback.cpp
 JSOfflineAudioCompletionEvent.cpp
 JSOfflineAudioContext.cpp
+JSOffscreenCanvas.cpp
 JSOscillatorNode.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp

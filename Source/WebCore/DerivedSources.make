@@ -604,6 +604,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaEncryptedEvent.idl \
     $(WebCore)/html/MediaError.idl \
+    $(WebCore)/html/OffscreenCanvas.idl \
     $(WebCore)/html/RadioNodeList.idl \
     $(WebCore)/html/TextMetrics.idl \
     $(WebCore)/html/TimeRanges.idl \

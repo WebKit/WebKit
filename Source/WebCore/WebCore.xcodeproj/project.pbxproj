@@ -829,6 +829,8 @@
 		3146FE6E184420A8001A937C /* OESTextureFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 3146FE6618442087001A937C /* OESTextureFloatLinear.h */; };
 		3146FE6F184420AA001A937C /* OESTextureFloatLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3146FE6518442087001A937C /* OESTextureFloatLinear.cpp */; };
 		3146FE7518442370001A937C /* JSOESTextureFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 3146FE7118442367001A937C /* JSOESTextureFloatLinear.h */; };
+		314877E31FAA8FE900C05759 /* OffscreenCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 314877E11FAA8FE900C05759 /* OffscreenCanvas.h */; };
+		314877E61FAAB02500C05759 /* JSOffscreenCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 314877E41FAAB02200C05759 /* JSOffscreenCanvas.h */; };
 		314BE3A11B30F6B700141982 /* CSSNamedImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 314BE3A01B30F6B700141982 /* CSSNamedImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		314BE3A71B3103FB00141982 /* NamedImageGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */; };
 		316BDB861E6E0A2700DE0D5A /* GPUDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB851E6E0A2100DE0D5A /* GPUDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6486,6 +6488,11 @@
 		3146FE6718442087001A937C /* OESTextureFloatLinear.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OESTextureFloatLinear.idl; sourceTree = "<group>"; };
 		3146FE7018442367001A937C /* JSOESTextureFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureFloatLinear.cpp; sourceTree = "<group>"; };
 		3146FE7118442367001A937C /* JSOESTextureFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureFloatLinear.h; sourceTree = "<group>"; };
+		314877D91FAA870600C05759 /* OffscreenCanvas.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OffscreenCanvas.idl; sourceTree = "<group>"; };
+		314877E01FAA8FE900C05759 /* OffscreenCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OffscreenCanvas.cpp; sourceTree = "<group>"; };
+		314877E11FAA8FE900C05759 /* OffscreenCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OffscreenCanvas.h; sourceTree = "<group>"; };
+		314877E41FAAB02200C05759 /* JSOffscreenCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOffscreenCanvas.h; sourceTree = "<group>"; };
+		314877E51FAAB02400C05759 /* JSOffscreenCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOffscreenCanvas.cpp; sourceTree = "<group>"; };
 		314BE3A01B30F6B700141982 /* CSSNamedImageValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSNamedImageValue.h; sourceTree = "<group>"; };
 		314BE3A21B30F6D100141982 /* CSSNamedImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSNamedImageValue.cpp; sourceTree = "<group>"; };
 		314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamedImageGeneratedImage.cpp; sourceTree = "<group>"; };
@@ -19773,6 +19780,9 @@
 				F55B3D921251F12D003EF269 /* MonthInputType.h */,
 				F55B3D931251F12D003EF269 /* NumberInputType.cpp */,
 				F55B3D941251F12D003EF269 /* NumberInputType.h */,
+				314877E01FAA8FE900C05759 /* OffscreenCanvas.cpp */,
+				314877E11FAA8FE900C05759 /* OffscreenCanvas.h */,
+				314877D91FAA870600C05759 /* OffscreenCanvas.idl */,
 				F55B3D951251F12D003EF269 /* PasswordInputType.cpp */,
 				F55B3D961251F12D003EF269 /* PasswordInputType.h */,
 				97205AB91239292700B17380 /* PluginDocument.cpp */,
@@ -20924,6 +20934,8 @@
 				31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */,
 				77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */,
 				77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */,
+				314877E51FAAB02400C05759 /* JSOffscreenCanvas.cpp */,
+				314877E41FAAB02200C05759 /* JSOffscreenCanvas.h */,
 				7C193BFD1F5E10D60088F3E6 /* JSPath2D.cpp */,
 				7C193BFE1F5E10D70088F3E6 /* JSPath2D.h */,
 				B658FF9F1522EF3A00DD5595 /* JSRadioNodeList.cpp */,
@@ -27636,6 +27648,7 @@
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
+				314877E61FAAB02500C05759 /* JSOffscreenCanvas.h in Headers */,
 				57E233651DC7DB1F00F28D01 /* JsonWebKey.h in Headers */,
 				FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */,
 				0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */,
@@ -28325,6 +28338,7 @@
 				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
+				314877E31FAA8FE900C05759 /* OffscreenCanvas.h in Headers */,
 				B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */,
 				B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */,
 				B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */,

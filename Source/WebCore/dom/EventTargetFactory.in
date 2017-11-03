@@ -25,6 +25,7 @@ MediaStreamTrack conditional=MEDIA_STREAM
 MessagePort
 Node
 Notification conditional=NOTIFICATIONS
+OffscreenCanvas
 PaymentRequest conditional=PAYMENT_REQUEST
 Performance
 RTCDataChannel conditional=WEB_RTC

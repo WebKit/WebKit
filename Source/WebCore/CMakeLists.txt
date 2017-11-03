@@ -690,6 +690,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ImageData.idl
     html/MediaController.idl
     html/MediaError.idl
+    html/OffscreenCanvas.idl
     html/RadioNodeList.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
