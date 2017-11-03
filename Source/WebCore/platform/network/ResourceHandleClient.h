@@ -30,8 +30,7 @@
 #include <wtf/Ref.h>
 
 #if USE(CFURLCONNECTION)
-#include <CFNetwork/CFURLCachePriv.h>
-#include <CFNetwork/CFURLResponsePriv.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 #if PLATFORM(IOS) || USE(CFURLCONNECTION)

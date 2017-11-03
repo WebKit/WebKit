@@ -34,7 +34,7 @@
 
 #if USE(CFURLCONNECTION)
 #include "ResourceHandleCFURLConnectionDelegate.h"
-#include <CFNetwork/CFURLConnectionPriv.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 #if USE(CURL) && PLATFORM(WIN)

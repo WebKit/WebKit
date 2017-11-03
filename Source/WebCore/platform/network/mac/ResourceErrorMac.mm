@@ -31,8 +31,15 @@
 #import <Foundation/Foundation.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if PLATFORM(IOS) && USE(CFURLCONNECTION)
+#if PLATFORM(IOS) && USE(CFURLCONNECTION) && USE(APPLE_INTERNAL_SDK)
 #import <CFNetwork/CFSocketStreamPriv.h>
+#endif
+
+#if USE(CFURLCONNECTION)
+extern "C" {
+const CFStringRef _kCFStreamPropertySSLClientCertificates;
+const CFStringRef _kCFStreamPropertySSLClientCertificateState;
+}
 #endif
 
 @interface NSError (WebExtras)
