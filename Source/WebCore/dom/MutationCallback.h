@@ -45,6 +45,8 @@ class MutationCallback : public RefCounted<MutationCallback>, public ActiveDOMCa
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    virtual bool hasCallback() const = 0;
+
     virtual CallbackResult<void> handleEvent(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
 };
 
