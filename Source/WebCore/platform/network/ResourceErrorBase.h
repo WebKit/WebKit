@@ -60,7 +60,7 @@ public:
 
     static bool compare(const ResourceError&, const ResourceError&);
 
-    void setType(Type);
+    WEBCORE_EXPORT void setType(Type);
     Type type() const { return m_type; }
 
 protected:

@@ -281,7 +281,7 @@ void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(ServiceWo
     if (isPotentialNavigationOrSubresourceRequest(m_options.destination))
         return;
 
-    if (m_options.serviceWorkersMode != ServiceWorkersMode::All)
+    if (m_options.serviceWorkersMode == ServiceWorkersMode::None)
         return;
     if (m_options.serviceWorkerIdentifier)
         return;

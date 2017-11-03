@@ -148,6 +148,17 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
     if ((m_options.preflightPolicy == ConsiderPreflight && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields())) || m_options.preflightPolicy == PreventPreflight)
         makeSimpleCrossOriginAccessRequest(WTFMove(request));
     else {
+#if ENABLE(SERVICE_WORKER)
+        if (m_options.serviceWorkersMode == ServiceWorkersMode::All && m_async) {
+            if (m_options.serviceWorkerIdentifier || document().activeServiceWorker()) {
+                ASSERT(!m_bypassingPreflightForServiceWorkerRequest);
+                m_bypassingPreflightForServiceWorkerRequest = WTFMove(request);
+                m_options.serviceWorkersMode = ServiceWorkersMode::Only;
+                loadRequest(ResourceRequest { m_bypassingPreflightForServiceWorkerRequest.value() }, SkipSecurityCheck);
+                return;
+            }
+        }
+#endif
         m_simpleRequest = false;
         if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin().toString(), request.url(), m_options.storedCredentialsPolicy, request.httpMethod(), request.httpHeaderFields()))
             preflightSuccess(WTFMove(request));
@@ -392,6 +403,13 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
 void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error)
 {
     ASSERT(m_client);
+#if ENABLE(SERVICE_WORKER)
+    if (m_bypassingPreflightForServiceWorkerRequest) {
+        m_options.serviceWorkersMode = ServiceWorkersMode::None;
+        makeCrossOriginAccessRequest(WTFMove(m_bypassingPreflightForServiceWorkerRequest.value()));
+        return;
+    }
+#endif
     logErrorAndFail(error);
 }
 

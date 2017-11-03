@@ -96,6 +96,7 @@ enum class InitiatorContext {
 enum class ServiceWorkersMode {
     All,
     None,
+    Only // An error will happen if service worker is not handling the fetch. Used to bypass preflight safely.
 };
 
 enum class ContentEncodingSniffingPolicy {

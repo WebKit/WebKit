@@ -133,6 +133,9 @@ namespace WebCore {
         std::optional<HTTPHeaderMap> m_originalHeaders;
 
         ShouldLogError m_shouldLogError;
+#if ENABLE(SERVICE_WORKER)
+        std::optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
+#endif
     };
 
 } // namespace WebCore

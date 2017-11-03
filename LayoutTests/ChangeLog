@@ -1,3 +1,20 @@
+2017-11-03  Youenn Fablet  <youenn@apple.com>
+
+        Requests handled by Service Worker should not go through preflighting
+        https://bugs.webkit.org/show_bug.cgi?id=179250
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/service/resources/service-worker-crossorigin-fetch-worker.js: Added.
+        (event.event.request.url.indexOf):
+        (event.event.request.url.endsWith):
+        * http/tests/workers/service/resources/service-worker-crossorigin-fetch.js: Added.
+        (done):
+        (async.logStatus):
+        (async.test):
+        * http/tests/workers/service/service-worker-crossorigin-fetch-expected.txt: Added.
+        * http/tests/workers/service/service-worker-crossorigin-fetch.html: Added.
+
 2017-11-03  Alex Christensen  <achristensen@webkit.org>
 
         LayoutTest http/tests/loading/basic-auth-resend-wrong-credentials.html is flaky on WK2

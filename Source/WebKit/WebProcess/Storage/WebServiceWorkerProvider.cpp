@@ -61,7 +61,7 @@ WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionFo
 
 static inline bool shouldHandleFetch(const WebSWClientConnection& connection, CachedResource* resource, const ResourceLoaderOptions& options)
 {
-    if (options.serviceWorkersMode != ServiceWorkersMode::All)
+    if (options.serviceWorkersMode == ServiceWorkersMode::None)
         return false;
 
     if (isPotentialNavigationOrSubresourceRequest(options.destination))
