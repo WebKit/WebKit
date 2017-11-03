@@ -95,8 +95,22 @@ void InspectorCanvasAgent::enable(ErrorString&)
     m_enabled = true;
 
     const bool captureBacktrace = false;
-    for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values())
+    for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
         m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(m_instrumentingAgents, captureBacktrace));
+
+#if ENABLE(WEBGL)
+        CanvasRenderingContext* context = inspectorCanvas->canvas().renderingContext();
+        if (is<WebGLRenderingContextBase>(context)) {
+            WebGLRenderingContextBase* contextWebGL = downcast<WebGLRenderingContextBase>(context);
+            if (std::optional<Vector<String>> extensions = contextWebGL->getSupportedExtensions()) {
+                for (const String& extension : *extensions) {
+                    if (contextWebGL->extensionIsEnabled(extension))
+                        m_frontendDispatcher->extensionEnabled(inspectorCanvas->identifier(), extension);
+                }
+            }
+        }
+#endif
+    }
 
 #if ENABLE(WEBGL)
     for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
@@ -508,6 +522,15 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
 }
 
 #if ENABLE(WEBGL)
+void InspectorCanvasAgent::didEnableExtension(WebGLRenderingContextBase& context, const String& extension)
+{
+    auto* inspectorCanvas = findInspectorCanvas(context.canvas());
+    if (!inspectorCanvas)
+        return;
+
+    m_frontendDispatcher->extensionEnabled(inspectorCanvas->identifier(), extension);
+}
+
 void InspectorCanvasAgent::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
     auto* inspectorCanvas = findInspectorCanvas(context.canvas());

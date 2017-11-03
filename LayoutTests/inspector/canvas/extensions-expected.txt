@@ -1,0 +1,7 @@
+Test that CanvasManager is notified whenever a WebGL extension is enabled for a given canvas context.
+
+
+== Running test suite: Canvas.extensions
+-- Running test case: Canvas.extensions.enable
+PASS: The newly enabled extension should be "WEBGL_lose_context".
+

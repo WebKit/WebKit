@@ -1,3 +1,14 @@
+2017-11-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: show supported GL extensions for selected canvas
+        https://bugs.webkit.org/show_bug.cgi?id=179070
+        <rdar://problem/35278276>
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/extensions-expected.txt: Added.
+        * inspector/canvas/extensions.html: Added.
+
 2017-11-02  Youenn Fablet  <youenn@apple.com>
 
         Do not check for CORS in case response is coming from a service worker

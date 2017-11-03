@@ -77,6 +77,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         if (this._canvas) {
             this._canvas.removeEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
             this._canvas.removeEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
         }
 
@@ -84,6 +85,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         if (this._canvas) {
             this._canvas.addEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
+            this._canvas.addEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
             this._canvas.addEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
         }
 
@@ -117,9 +119,14 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         this._attributesDataGridRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Attributes"));
 
-        let attributesSection = new WI.DetailsSection("canvas-attributes", WI.UIString("Attributes"));
-        attributesSection.groups = [new WI.DetailsSectionGroup([this._attributesDataGridRow])];
-        this._sections.push(attributesSection);
+        this._attributesSection = new WI.DetailsSection("canvas-attributes", WI.UIString("Attributes"));
+        this._attributesSection.groups = [new WI.DetailsSectionGroup([this._attributesDataGridRow])];
+        this._attributesSection.element.hidden = true;
+        this._sections.push(this._attributesSection);
+
+        this._extensionsSection = new WI.DetailsSection("canvas-extensions", WI.UIString("Extensions"));
+        this._extensionsSection.element.hidden = true;
+        this._sections.push(this._extensionsSection);
 
         this._cssCanvasClientsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Nodes"));
 
@@ -156,6 +163,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._refreshIdentitySection();
         this._refreshSourceSection();
         this._refreshAttributesSection();
+        this._refreshExtensionsSection();
         this._refreshCSSCanvasSection();
         this._refreshBacktraceSection();
     }
@@ -244,11 +252,10 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
     _refreshAttributesSection()
     {
-        if (isEmptyObject(this._canvas.contextAttributes)) {
-            // Remove the DataGrid to show the placeholder text.
-            this._attributesDataGridRow.dataGrid = null;
+        let hasAttributes = !isEmptyObject(this._canvas.contextAttributes);
+        this._attributesSection.element.hidden = !hasAttributes;
+        if (!hasAttributes)
             return;
-        }
 
         let dataGrid = this._attributesDataGridRow.dataGrid;
         if (!dataGrid) {
@@ -267,6 +274,21 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         }
 
         dataGrid.updateLayoutIfNeeded();
+    }
+
+    _refreshExtensionsSection()
+    {
+        let hasEnabledExtensions = this._canvas.extensions.size > 0;
+        this._extensionsSection.element.hidden = !hasEnabledExtensions;
+        if (!hasEnabledExtensions)
+            return;
+
+        let element = document.createElement("ul");
+        for (let extension of this._canvas.extensions) {
+            let listElement = element.appendChild(document.createElement("li"));
+            listElement.textContent = extension;
+        }
+        this._extensionsSection.groups = [{element}];
     }
 
     _refreshCSSCanvasSection()

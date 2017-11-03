@@ -88,6 +88,7 @@ public:
     void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
+    void didEnableExtension(WebGLRenderingContextBase&, const String&);
     void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
     void willDeleteProgram(WebGLProgram&);
     bool isShaderProgramDisabled(WebGLProgram&);

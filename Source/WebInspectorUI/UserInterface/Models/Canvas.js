@@ -39,6 +39,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._domNode = domNode || null;
         this._cssCanvasName = cssCanvasName || "";
         this._contextAttributes = contextAttributes || {};
+        this._extensions = new Set;
         this._memoryCost = memoryCost || NaN;
         this._backtrace = backtrace || [];
 
@@ -111,6 +112,7 @@ WI.Canvas = class Canvas extends WI.Object
     get frame() { return this._frame; }
     get cssCanvasName() { return this._cssCanvasName; }
     get contextAttributes() { return this._contextAttributes; }
+    get extensions() { return this._extensions; }
     get backtrace() { return this._backtrace; }
     get shaderProgramCollection() { return this._shaderProgramCollection; }
     get recordingCollection() { return this._recordingCollection; }
@@ -265,6 +267,15 @@ WI.Canvas = class Canvas extends WI.Object
 
     }
 
+    enableExtension(extension)
+    {
+        // Called from WI.CanvasManager.
+
+        this._extensions.add(extension);
+
+        this.dispatchEventToListeners(WI.Canvas.Event.ExtensionEnabled, {extension});
+    }
+
     cssCanvasClientNodesChanged()
     {
         // Called from WI.CanvasManager.
@@ -299,5 +310,6 @@ WI.Canvas.ContextType = {
 
 WI.Canvas.Event = {
     MemoryChanged: "canvas-memory-changed",
+    ExtensionEnabled: "canvas-extension-enabled",
     CSSCanvasClientNodesChanged: "canvas-css-canvas-client-nodes-changed",
 };

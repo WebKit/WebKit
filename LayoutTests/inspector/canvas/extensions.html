@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.context = document.body.appendChild(document.createElement("canvas")).getContext("webgl");
+
+    runTest();
+}
+
+function enableExtension(name) {
+    window.context.getExtension(name);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.extensions");
+
+    suite.addTestCase({
+        name: "Canvas.extensions.enable",
+        description: "Check that enabling an extension notifies the frontend.",
+        test(resolve, reject) {
+            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            if (!canvases.length) {
+                reject("Missing WebGL canvas.");
+                return;
+            }
+
+            InspectorTest.assert(canvases.length === 1, "There should only be one WebGL canvas.");
+            InspectorTest.assert(canvases[0].extensions.size === 0, "The canvas should have no extensions enabled after being created");
+
+            const extensionName = "WEBGL_lose_context";
+            canvases[0].awaitEvent(WI.Canvas.Event.ExtensionEnabled).then((event) => {
+                InspectorTest.expectEqual(event.data.extension, extensionName, `The newly enabled extension should be "${extensionName}".`);
+                InspectorTest.assert(canvases[0].extensions.size === 1, "The canvas should now have one extension.");
+                InspectorTest.assert(canvases[0].extensions.has(event.data.extension), `The one extension should be "${extensionName}".`);
+            }).then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`enableExtension("${extensionName}")`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager is notified whenever a WebGL extension is enabled for a given canvas context.</p>
+</body>
+</html>

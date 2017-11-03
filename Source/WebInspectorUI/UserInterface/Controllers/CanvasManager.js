@@ -160,6 +160,18 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingStopped, {canvas, recording});
     }
 
+    extensionEnabled(canvasIdentifier, extension)
+    {
+        // Called from WI.CanvasObserver.
+
+        let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
+        console.assert(canvas);
+        if (!canvas)
+            return;
+
+        canvas.enableExtension(extension);
+    }
+
     programCreated(canvasIdentifier, programIdentifier)
     {
         // Called from WI.CanvasObserver.

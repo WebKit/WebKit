@@ -395,6 +395,7 @@ localizedStrings["Export"] = "Export";
 localizedStrings["Export HAR"] = "Export HAR";
 localizedStrings["Expression"] = "Expression";
 localizedStrings["Extension Scripts"] = "Extension Scripts";
+localizedStrings["Extensions"] = "Extensions";
 localizedStrings["Extra Scripts"] = "Extra Scripts";
 localizedStrings["Fade unexecuted code"] = "Fade unexecuted code";
 localizedStrings["Failed to upgrade"] = "Failed to upgrade";

@@ -40,6 +40,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
+#include "InspectorInstrumentation.h"
 #include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
@@ -89,28 +90,20 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
 {
     if (isContextLostOrPending())
         return nullptr;
-    
-    if (equalIgnoringASCIICase(name, "EXT_blend_minmax")) {
-        if (!m_extBlendMinMax) {
-            m_extBlendMinMax = enableSupportedExtension("GL_EXT_blend_minmax")
-                ? std::make_unique<EXTBlendMinMax>(*this) : nullptr;
-        }
-        return m_extBlendMinMax.get();
+
+#define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
+    if (equalIgnoringASCIICase(name, nameLiteral)) { \
+        if (!variable) { \
+            variable = (canEnable) ? std::make_unique<type>(*this) : nullptr; \
+            if (variable != nullptr) \
+                InspectorInstrumentation::didEnableExtension(*this, name); \
+        } \
+        return variable.get(); \
     }
-    if (equalIgnoringASCIICase(name, "EXT_sRGB")) {
-        if (!m_extsRGB) {
-            m_extsRGB = enableSupportedExtension("GL_EXT_sRGB")
-                ? std::make_unique<EXTsRGB>(*this) : nullptr;
-        }
-        return m_extsRGB.get();
-    }
-    if (equalIgnoringASCIICase(name, "EXT_frag_depth")) {
-        if (!m_extFragDepth) {
-            m_extFragDepth = enableSupportedExtension("GL_EXT_frag_depth")
-                ? std::make_unique<EXTFragDepth>(*this) : nullptr;
-        }
-        return m_extFragDepth.get();
-    }
+
+    ENABLE_IF_REQUESTED(EXTBlendMinMax, m_extBlendMinMax, "EXT_blend_minmax", enableSupportedExtension("GL_EXT_blend_minmax"));
+    ENABLE_IF_REQUESTED(EXTsRGB, m_extsRGB, "EXT_sRGB", enableSupportedExtension("GL_EXT_sRGB"));
+    ENABLE_IF_REQUESTED(EXTFragDepth, m_extFragDepth, "EXT_frag_depth", enableSupportedExtension("GL_EXT_frag_depth"));
     if (equalIgnoringASCIICase(name, "EXT_shader_texture_lod")) {
         if (!m_extShaderTextureLOD) {
             if (!(m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_shader_texture_lod" }) || m_context->getExtensions().supports(ASCIILiteral { "GL_ARB_shader_texture_lod" })))
@@ -118,99 +111,25 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             else {
                 m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_EXT_shader_texture_lod" });
                 m_extShaderTextureLOD = std::make_unique<EXTShaderTextureLOD>(*this);
+                InspectorInstrumentation::didEnableExtension(*this, name);
             }
         }
         return m_extShaderTextureLOD.get();
     }
-    if (equalIgnoringASCIICase(name, "EXT_texture_filter_anisotropic") || equalIgnoringASCIICase(name, "WEBKIT_EXT_texture_filter_anisotropic")) {
-        if (!m_extTextureFilterAnisotropic) {
-            m_extTextureFilterAnisotropic = enableSupportedExtension("GL_EXT_texture_filter_anisotropic")
-                ? std::make_unique<EXTTextureFilterAnisotropic>(*this) : nullptr;
-        }
-        return m_extTextureFilterAnisotropic.get();
-    }
-    if (equalIgnoringASCIICase(name, "OES_standard_derivatives")) {
-        if (!m_oesStandardDerivatives) {
-            m_oesStandardDerivatives = enableSupportedExtension("GL_OES_standard_derivatives")
-                ? std::make_unique<OESStandardDerivatives>(*this) : nullptr;
-        }
-        return m_oesStandardDerivatives.get();
-    }
-    if (equalIgnoringASCIICase(name, "OES_texture_float")) {
-        if (!m_oesTextureFloat) {
-            m_oesTextureFloat = enableSupportedExtension("GL_OES_texture_float")
-                ? std::make_unique<OESTextureFloat>(*this) : nullptr;
-        }
-        return m_oesTextureFloat.get();
-    }
-    if (equalIgnoringASCIICase(name, "OES_texture_float_linear")) {
-        if (!m_oesTextureFloatLinear) {
-            m_oesTextureFloatLinear = enableSupportedExtension("GL_OES_texture_float_linear")
-                ? std::make_unique<OESTextureFloatLinear>(*this) : nullptr;
-        }
-        return m_oesTextureFloatLinear.get();
-    }
-    if (equalIgnoringASCIICase(name, "OES_texture_half_float")) {
-        if (!m_oesTextureHalfFloat) {
-            m_oesTextureHalfFloat = enableSupportedExtension("GL_OES_texture_half_float")
-                ? std::make_unique<OESTextureHalfFloat>(*this) : nullptr;
-        }
-        return m_oesTextureHalfFloat.get();
-    }
-    if (equalIgnoringASCIICase(name, "OES_texture_half_float_linear")) {
-        if (!m_oesTextureHalfFloatLinear) {
-            m_oesTextureHalfFloatLinear = enableSupportedExtension("GL_OES_texture_half_float_linear")
-                ? std::make_unique<OESTextureHalfFloatLinear>(*this) : nullptr;
-        }
-        return m_oesTextureHalfFloatLinear.get();
-    }
-    if (equalIgnoringASCIICase(name, "OES_vertex_array_object")) {
-        if (!m_oesVertexArrayObject) {
-            m_oesVertexArrayObject = enableSupportedExtension("GL_OES_vertex_array_object")
-                ? std::make_unique<OESVertexArrayObject>(*this) : nullptr;
-        }
-        return m_oesVertexArrayObject.get();
-    }
-    if (equalIgnoringASCIICase(name, "OES_element_index_uint")) {
-        if (!m_oesElementIndexUint) {
-            m_oesElementIndexUint = enableSupportedExtension("GL_OES_element_index_uint")
-                ? std::make_unique<OESElementIndexUint>(*this) : nullptr;
-        }
-        return m_oesElementIndexUint.get();
-    }
-    if (equalIgnoringASCIICase(name, "WEBGL_lose_context")) {
-        if (!m_webglLoseContext)
-            m_webglLoseContext = std::make_unique<WebGLLoseContext>(*this);
-        return m_webglLoseContext.get();
-    }
-    if (equalIgnoringASCIICase(name, "WEBKIT_WEBGL_compressed_texture_atc")) {
-        if (!m_webglCompressedTextureATC) {
-            m_webglCompressedTextureATC = WebGLCompressedTextureATC::supported(*this)
-                ? std::make_unique<WebGLCompressedTextureATC>(*this) : nullptr;
-        }
-        return m_webglCompressedTextureATC.get();
-    }
-    if (equalIgnoringASCIICase(name, "WEBKIT_WEBGL_compressed_texture_pvrtc")) {
-        if (!m_webglCompressedTexturePVRTC) {
-            m_webglCompressedTexturePVRTC = WebGLCompressedTexturePVRTC::supported(*this)
-                ? std::make_unique<WebGLCompressedTexturePVRTC>(*this) : nullptr;
-        }
-        return m_webglCompressedTexturePVRTC.get();
-    }
-    if (equalIgnoringASCIICase(name, "WEBGL_compressed_texture_s3tc")) {
-        if (!m_webglCompressedTextureS3TC) {
-            m_webglCompressedTextureS3TC = WebGLCompressedTextureS3TC::supported(*this)
-                ? std::make_unique<WebGLCompressedTextureS3TC>(*this) : nullptr;
-        }
-        return m_webglCompressedTextureS3TC.get();
-    }
-    if (equalIgnoringASCIICase(name, "WEBGL_depth_texture")) {
-        if (!m_webglDepthTexture) {
-            m_webglDepthTexture = WebGLDepthTexture::supported(*m_context)
-                ? std::make_unique<WebGLDepthTexture>(*this) : nullptr;
-        }
-        return m_webglDepthTexture.get();
-    }
+    ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"));
+    ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic", enableSupportedExtension("GL_EXT_texture_filter_anisotropic"));
+    ENABLE_IF_REQUESTED(OESStandardDerivatives, m_oesStandardDerivatives, "OES_standard_derivatives", enableSupportedExtension("GL_OES_standard_derivatives"));
+    ENABLE_IF_REQUESTED(OESTextureFloat, m_oesTextureFloat, "OES_texture_float", enableSupportedExtension("GL_OES_texture_float"));
+    ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear", enableSupportedExtension("GL_OES_texture_float_linear"));
+    ENABLE_IF_REQUESTED(OESTextureHalfFloat, m_oesTextureHalfFloat, "OES_texture_half_float", enableSupportedExtension("GL_OES_texture_half_float"));
+    ENABLE_IF_REQUESTED(OESTextureHalfFloatLinear, m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear", enableSupportedExtension("GL_OES_texture_half_float_linear"));
+    ENABLE_IF_REQUESTED(OESVertexArrayObject, m_oesVertexArrayObject, "OES_vertex_array_object", enableSupportedExtension("GL_OES_vertex_array_object"));
+    ENABLE_IF_REQUESTED(OESElementIndexUint, m_oesElementIndexUint, "OES_element_index_uint", enableSupportedExtension("GL_OES_element_index_uint"));
+    ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context", true);
+    ENABLE_IF_REQUESTED(WebGLCompressedTextureATC, m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc", WebGLCompressedTextureATC::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLCompressedTexturePVRTC, m_webglCompressedTexturePVRTC, "WEBKIT_WEBGL_compressed_texture_pvrtc", WebGLCompressedTexturePVRTC::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TC, m_webglCompressedTextureS3TC, "WEBGL_compressed_texture_s3tc", WebGLCompressedTextureS3TC::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLDepthTexture, m_webglDepthTexture, "WEBGL_depth_texture", WebGLDepthTexture::supported(*m_context));
     if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers")) {
         if (!m_webglDrawBuffers) {
             if (!supportsDrawBuffers())
@@ -218,6 +137,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             else {
                 m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_EXT_draw_buffers" });
                 m_webglDrawBuffers = std::make_unique<WebGLDrawBuffers>(*this);
+                InspectorInstrumentation::didEnableExtension(*this, name);
             }
         }
         return m_webglDrawBuffers.get();
@@ -229,23 +149,13 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             else {
                 m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_ANGLE_instanced_arrays" });
                 m_angleInstancedArrays = std::make_unique<ANGLEInstancedArrays>(*this);
+                InspectorInstrumentation::didEnableExtension(*this, name);
             }
         }
         return m_angleInstancedArrays.get();
     }
-    if (equalIgnoringASCIICase(name, "WEBGL_debug_renderer_info")) {
-        if (!m_webglDebugRendererInfo)
-            m_webglDebugRendererInfo = std::make_unique<WebGLDebugRendererInfo>(*this);
-        return m_webglDebugRendererInfo.get();
-    }
-    if (equalIgnoringASCIICase(name, "WEBGL_debug_shaders")) {
-        if (!m_webglDebugShaders) {
-            m_webglDebugShaders = m_context->getExtensions().supports(ASCIILiteral { "GL_ANGLE_translated_shader_source" })
-                ? std::make_unique<WebGLDebugShaders>(*this) : nullptr;
-        }
-        return m_webglDebugShaders.get();
-    }
-
+    ENABLE_IF_REQUESTED(WebGLDebugRendererInfo, m_webglDebugRendererInfo, "WEBGL_debug_renderer_info", true);
+    ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders", m_context->getExtensions().supports(ASCIILiteral { "GL_ANGLE_translated_shader_source" }));
     return nullptr;
 }
 

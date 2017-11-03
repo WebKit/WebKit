@@ -52,6 +52,11 @@ WI.CanvasObserver = class CanvasObserver
         WI.canvasManager.recordingFinished(canvasId, recording);
     }
 
+    extensionEnabled(canvasId, extension)
+    {
+        WI.canvasManager.extensionEnabled(canvasId, extension);
+    }
+
     programCreated(canvasId, programId)
     {
         WI.canvasManager.programCreated(canvasId, programId);

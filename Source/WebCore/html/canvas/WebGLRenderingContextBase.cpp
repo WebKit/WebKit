@@ -2740,6 +2740,37 @@ long long WebGLRenderingContextBase::getVertexAttribOffset(GC3Duint index, GC3De
     return m_context->getVertexAttribOffset(index, pname);
 }
 
+bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
+{
+#define CHECK_EXTENSION(variable, nameLiteral) \
+    if (equalIgnoringASCIICase(name, nameLiteral)) \
+        return variable != nullptr;
+
+    CHECK_EXTENSION(m_extFragDepth, "EXT_frag_depth");
+    CHECK_EXTENSION(m_extBlendMinMax, "EXT_blend_minmax");
+    CHECK_EXTENSION(m_extsRGB, "EXT_sRGB");
+    CHECK_EXTENSION(m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic");
+    CHECK_EXTENSION(m_extTextureFilterAnisotropic, "WEBKIT_EXT_texture_filter_anisotropic");
+    CHECK_EXTENSION(m_extShaderTextureLOD, "EXT_shader_texture_lod");
+    CHECK_EXTENSION(m_oesTextureFloat, "OES_texture_float");
+    CHECK_EXTENSION(m_oesTextureFloatLinear, "OES_texture_float_linear");
+    CHECK_EXTENSION(m_oesTextureHalfFloat, "OES_texture_half_float");
+    CHECK_EXTENSION(m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear");
+    CHECK_EXTENSION(m_oesStandardDerivatives, "OES_standard_derivatives");
+    CHECK_EXTENSION(m_oesVertexArrayObject, "OES_vertex_array_object");
+    CHECK_EXTENSION(m_oesElementIndexUint, "OES_element_index_uint");
+    CHECK_EXTENSION(m_webglLoseContext, "WEBGL_lose_context");
+    CHECK_EXTENSION(m_webglDebugRendererInfo, "WEBGL_debug_renderer_info");
+    CHECK_EXTENSION(m_webglDebugShaders, "WEBGL_debug_shaders");
+    CHECK_EXTENSION(m_webglCompressedTextureATC, "WEBKIT_WEBGL_compressed_texture_atc");
+    CHECK_EXTENSION(m_webglCompressedTexturePVRTC, "WEBKIT_WEBGL_compressed_texture_pvrtc");
+    CHECK_EXTENSION(m_webglCompressedTextureS3TC, "WEBGL_compressed_texture_s3tc");
+    CHECK_EXTENSION(m_webglDepthTexture, "WEBGL_depth_texture");
+    CHECK_EXTENSION(m_webglDrawBuffers, "WEBGL_draw_buffers");
+    CHECK_EXTENSION(m_angleInstancedArrays, "ANGLE_instanced_arrays");
+    return false;
+}
+
 GC3Dboolean WebGLRenderingContextBase::isBuffer(WebGLBuffer* buffer)
 {
     if (!buffer || isContextLostOrPending())

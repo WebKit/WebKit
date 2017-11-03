@@ -1,3 +1,34 @@
+2017-11-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: show supported GL extensions for selected canvas
+        https://bugs.webkit.org/show_bug.cgi?id=179070
+        <rdar://problem/35278276>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WI.CanvasObserver.prototype.extensionEnabled):
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.extensionEnabled):
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.get extensions):
+        (WI.Canvas.prototype.enableExtension):
+        Maintain a Set of enabled extensions, and dispatch an event whenever an extension is enabled.
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.canvas .details-section.canvas-extensions .content > ul):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.set canvas):
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WI.CanvasDetailsSidebarPanel.prototype.layout):
+        (WI.CanvasDetailsSidebarPanel.prototype._refreshAttributesSection):
+        (WI.CanvasDetailsSidebarPanel.prototype._refreshExtensionsSection):
+        Drive-by: hide Attributes section when the canvas has no attributes.
+
 2017-11-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make ServiceWorker a Remote Inspector debuggable target
