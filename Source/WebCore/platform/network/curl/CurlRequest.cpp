@@ -103,13 +103,24 @@ void CurlRequest::cancel()
 {
     ASSERT(isMainThread());
 
-    if (m_cancelled)
+    if (isCompletedOrCancelled())
         return;
 
     m_cancelled = true;
 
-    if (!m_isSyncRequest)
-        CurlRequestScheduler::singleton().cancel(this);
+    if (!m_isSyncRequest) {
+        auto& scheduler = CurlRequestScheduler::singleton();
+
+        if (needToInvokeDidCancelTransfer()) {
+            scheduler.callOnWorkerThread([protectedThis = makeRef(*this)]() {
+                protectedThis->didCancelTransfer();
+            });
+        } else
+            scheduler.cancel(this);
+    } else {
+        if (needToInvokeDidCancelTransfer())
+            didCancelTransfer();
+    }
 
     setRequestPaused(false);
     setCallbackPaused(false);
@@ -226,7 +237,7 @@ CURLcode CurlRequest::willSetupSslCtx(void* sslCtx)
 
 size_t CurlRequest::willSendData(char* ptr, size_t blockSize, size_t numberOfBlocks)
 {
-    if (m_cancelled)
+    if (isCompletedOrCancelled())
         return CURL_READFUNC_ABORT;
 
     if (!blockSize || !numberOfBlocks)
@@ -252,7 +263,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     static const auto emptyLineCRLF = "\r\n";
     static const auto emptyLineLF = "\n";
 
-    if (m_cancelled)
+    if (isCompletedOrCancelled())
         return 0;
 
     // libcurl sends all headers that libcurl received to application.
@@ -308,7 +319,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
 
 size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
-    if (m_cancelled)
+    if (isCompletedOrCancelled())
         return 0;
 
     if (needToInvokeDidReceiveResponse()) {
@@ -525,7 +536,7 @@ void CurlRequest::completeDidReceiveResponse()
     ASSERT(m_didNotifyResponse);
     ASSERT(!m_didReturnFromNotify);
 
-    if (m_cancelled)
+    if (isCompletedOrCancelled())
         return;
 
     m_didReturnFromNotify = true;
@@ -537,7 +548,6 @@ void CurlRequest::completeDidReceiveResponse()
         // Start transfer for file scheme
         startWithJobManager();
     } else if (m_actionAfterInvoke == Action::FinishTransfer) {
-        // Keep the calling thread of didCompleteTransfer()
         if (!m_isSyncRequest) {
             CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
                 protectedThis->didCompleteTransfer(finishedResultCode);
@@ -577,18 +587,20 @@ void CurlRequest::setCallbackPaused(bool paused)
 
 void CurlRequest::pausedStatusChanged()
 {
-    if (m_cancelled || !m_curlHandle)
+    if (isCompletedOrCancelled())
         return;
 
     if (!m_isSyncRequest && isMainThread()) {
         CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this), paused = isPaused()]() {
-            if (protectedThis->m_cancelled)
+            if (protectedThis->isCompletedOrCancelled())
                 return;
 
             auto error = protectedThis->m_curlHandle->pause(paused ? CURLPAUSE_ALL : CURLPAUSE_CONT);
             if ((error != CURLE_OK) && !paused) {
                 // Restarting the handle has failed so just cancel it.
-                protectedThis->cancel();
+                callOnMainThread([protectedThis = makeRef(protectedThis.get())]() {
+                    protectedThis->cancel();
+                });
             }
         });
     } else {

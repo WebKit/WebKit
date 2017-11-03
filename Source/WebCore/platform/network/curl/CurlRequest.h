@@ -59,7 +59,9 @@ public:
     void suspend();
     void resume();
 
-    bool isSyncRequest() { return m_isSyncRequest; }
+    bool isSyncRequest() const { return m_isSyncRequest; }
+    bool isCompletedOrCancelled() const { return !m_curlHandle || m_cancelled; }
+
 
     // Processing for DidReceiveResponse
     void completeDidReceiveResponse();
@@ -107,6 +109,7 @@ private:
 
     // Processing for DidReceiveResponse
     bool needToInvokeDidReceiveResponse() const { return !m_didNotifyResponse || !m_didReturnFromNotify; }
+    bool needToInvokeDidCancelTransfer() const { return m_didNotifyResponse && !m_didReturnFromNotify && m_actionAfterInvoke == Action::FinishTransfer; }
     void invokeDidReceiveResponseForFile(URL&);
     void invokeDidReceiveResponse(Action);
     void setRequestPaused(bool);
