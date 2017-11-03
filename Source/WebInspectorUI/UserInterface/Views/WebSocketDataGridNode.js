@@ -32,7 +32,7 @@ WI.WebSocketDataGridNode = class WebSocketDataGridNode extends WI.DataGridNode
         if (columnIdentifier === "data") {
             let fragment = document.createDocumentFragment();
             if (this._data.isOutgoing) {
-                let iconElement = useSVGSymbol("Images/ArrowUp.svg", "icon", WI.UIString("Outgoing message"));
+                let iconElement = WI.ImageUtilities.useSVGSymbol("Images/ArrowUp.svg", "icon", WI.UIString("Outgoing message"));
                 fragment.appendChild(iconElement);
             }
             fragment.appendChild(document.createTextNode(this._data.data));

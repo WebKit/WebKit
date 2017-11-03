@@ -44,11 +44,11 @@ WI.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSeparatedKeywo
         controlContainer.classList.add("visual-style-comma-separated-keyword-controls");
         this.contentElement.appendChild(controlContainer);
 
-        let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-add-comma-separated-keyword");
+        let addGlyphElement = WI.ImageUtilities.useSVGSymbol("Images/Plus13.svg", "visual-style-add-comma-separated-keyword");
         addGlyphElement.addEventListener("click", this._addEmptyCommaSeparatedKeyword.bind(this));
         controlContainer.appendChild(addGlyphElement);
 
-        let removeGlyphElement = useSVGSymbol("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WI.UIString("Remove selected item"));
+        let removeGlyphElement = WI.ImageUtilities.useSVGSymbol("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WI.UIString("Remove selected item"));
         removeGlyphElement.addEventListener("click", this._removeSelectedCommaSeparatedKeyword.bind(this));
         controlContainer.appendChild(removeGlyphElement);
     }

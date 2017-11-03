@@ -1702,7 +1702,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         }
 
         if (!this._statusImageElement) {
-            this._statusImageElement = useSVGSymbol("Images/DOMBreakpoint.svg", "status-image");
+            this._statusImageElement = WI.ImageUtilities.useSVGSymbol("Images/DOMBreakpoint.svg", "status-image");
             this._statusImageElement.classList.add("breakpoint");
             this._statusImageElement.addEventListener("click", this._statusImageClicked.bind(this));
             this._statusImageElement.addEventListener("contextmenu", this._statusImageContextmenu.bind(this));

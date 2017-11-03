@@ -96,7 +96,7 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
         this._image = newImage;
 
-        this._glyphElement = useSVGSymbol(this._image, "glyph");
+        this._glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
         this._glyphElement.style.width = this._imageWidth + "px";
         this._glyphElement.style.height = this._imageHeight + "px";
         this._element.appendChild(this._glyphElement);

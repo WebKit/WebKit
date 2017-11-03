@@ -74,7 +74,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         var propertiesGroup = new WI.DetailsSectionGroup([this._propertiesRow]);
         var propertiesSection = new WI.DetailsSection("dom-node-properties", WI.UIString("Properties"), [propertiesGroup]);
 
-        let eventListenersFilterElement = useSVGSymbol("Images/FilterFieldGlyph.svg", "filter", WI.UIString("Grouping Method"));
+        let eventListenersFilterElement = WI.ImageUtilities.useSVGSymbol("Images/FilterFieldGlyph.svg", "filter", WI.UIString("Grouping Method"));
 
         let eventListenersGroupMethodSelectElement = eventListenersFilterElement.appendChild(document.createElement("select"));
         eventListenersGroupMethodSelectElement.addEventListener("change", (event) => {

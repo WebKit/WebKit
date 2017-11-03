@@ -48,7 +48,7 @@ WI.ScopeRadioButtonNavigationItem = class ScopeRadioButtonNavigationItem extends
         this._scopeItemSelect.addEventListener("change", this._handleItemChanged.bind(this));
         this._element.appendChild(this._scopeItemSelect);
 
-        this._element.appendChild(useSVGSymbol("Images/UpDownArrows.svg", "arrows"));
+        this._element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/UpDownArrows.svg", "arrows"));
     }
 
     // Public

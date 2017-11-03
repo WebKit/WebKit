@@ -46,7 +46,7 @@ WI.VisualStyleKeywordIconList = class VisualStyleKeywordIconList extends WI.Visu
             iconButtonElement.addEventListener("click", this._handleKeywordChanged.bind(this));
 
             let imageName = (value === "none" || value === "initial") ? "VisualStyleNone" : prettyPropertyReferenceName + title.replace(/\s/g, "");
-            iconButtonElement.appendChild(useSVGSymbol("Images/" + imageName + ".svg"));
+            iconButtonElement.appendChild(WI.ImageUtilities.useSVGSymbol("Images/" + imageName + ".svg"));
 
             return iconButtonElement;
         }

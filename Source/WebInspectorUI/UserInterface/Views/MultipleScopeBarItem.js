@@ -40,7 +40,7 @@ WI.MultipleScopeBarItem = class MultipleScopeBarItem extends WI.Object
         this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bind(this));
         this._element.appendChild(this._selectElement);
 
-        this._element.appendChild(useSVGSymbol("Images/UpDownArrows.svg", "arrows"));
+        this._element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/UpDownArrows.svg", "arrows"));
 
         this.scopeBarItems = scopeBarItems;
     }

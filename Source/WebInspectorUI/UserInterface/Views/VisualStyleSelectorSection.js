@@ -59,7 +59,7 @@ WI.VisualStyleSelectorSection = class VisualStyleSelectorSection extends WI.Deta
 
         this._newInspectorRuleSelector = null;
 
-        let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-selector-section-add-rule", WI.UIString("Add new rule"));
+        let addGlyphElement = WI.ImageUtilities.useSVGSymbol("Images/Plus13.svg", "visual-style-selector-section-add-rule", WI.UIString("Add new rule"));
         addGlyphElement.addEventListener("click", this._addNewRuleClick.bind(this));
         addGlyphElement.addEventListener("contextmenu", this._addNewRuleContextMenu.bind(this));
         controlElement.appendChild(addGlyphElement);

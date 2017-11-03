@@ -147,7 +147,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
                     let image = null;
                     if (isGradient) {
                         textElement.textContent = WI.unlocalizedString("CanvasGradient");
-                        image = WI.imageFromCanvasGradient(value, 100, 100);
+                        image = WI.ImageUtilities.imageFromCanvasGradient(value, 100, 100);
                     } else if (isPattern) {
                         textElement.textContent = WI.unlocalizedString("CanvasPattern");
                         image = value.__image;

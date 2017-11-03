@@ -269,7 +269,7 @@ WI.Recording = class Recording
                 case WI.Recording.Swizzle.CanvasGradient:
                     var gradientType = await this.swizzle(data[0], WI.Recording.Swizzle.String);
 
-                    WI.scratchCanvasContext2D((context) => {
+                    WI.ImageUtilities.scratchCanvasContext2D((context) => {
                         this._swizzle[index][type] = gradientType === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
                     });
 
@@ -285,7 +285,7 @@ WI.Recording = class Recording
                         this.swizzle(data[1], WI.Recording.Swizzle.String),
                     ]);
 
-                    WI.scratchCanvasContext2D((context) => {
+                    WI.ImageUtilities.scratchCanvasContext2D((context) => {
                         this._swizzle[index][type] = context.createPattern(image, repeat);
                         this._swizzle[index][type].__image = image;
                     });

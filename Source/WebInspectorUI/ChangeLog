@@ -1,3 +1,58 @@
+2017-11-03  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: move top-level namespace functions in ImageUtilities to static class
+        https://bugs.webkit.org/show_bug.cgi?id=179207
+
+        Reviewed by Brian Burg.
+
+        * .eslintrc:
+        * UserInterface/Base/ImageUtilities.js:
+        (WI.ImageUtilities.useSVGSymbol):
+        (WI.ImageUtilities.scratchCanvasContext2D):
+        (WI.ImageUtilities.imageFromImageData):
+        (WI.ImageUtilities.imageFromCanvasGradient):
+        (WI.ImageUtilities):
+        (useSVGSymbol): Deleted.
+        (WI.scratchCanvasContext2D): Deleted.
+        (WI.imageFromImageData): Deleted.
+        (WI.imageFromCanvasGradient): Deleted.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.prototype.async swizzle):
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WI.ButtonNavigationItem.prototype.set image):
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WI.CallFrameTreeElement.prototype._updateStatus):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.initialLayout):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._updateBreakpointStatus):
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem):
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM):
+        (WI.RecordingActionTreeElement.prototype._handleHasVisibleEffectChanged):
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        * UserInterface/Views/ResourceMetricsContentView.js:
+        (WI.ResourceMetricsContentView.prototype._refreshResourceSizeSection):
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.js:
+        (WI.ScopeRadioButtonNavigationItem):
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WI.ThreadTreeElement.prototype._updateStatus):
+        * UserInterface/Views/TimelineTreeElement.js:
+        (WI.TimelineTreeElement.prototype._showCloseButton):
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WI.VisualStyleCommaSeparatedKeywordEditor):
+        * UserInterface/Views/VisualStyleKeywordIconList.js:
+        (WI.VisualStyleKeywordIconList):
+        * UserInterface/Views/VisualStylePropertyEditorLink.js:
+        (WI.VisualStylePropertyEditorLink):
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WI.VisualStyleSelectorSection):
+        * UserInterface/Views/WebSocketDataGridNode.js:
+        (WI.WebSocketDataGridNode.prototype.createCellContent):
+
 2017-11-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Hide legacy Layers sidebar on Search tab

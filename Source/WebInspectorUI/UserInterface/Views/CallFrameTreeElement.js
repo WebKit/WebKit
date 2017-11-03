@@ -102,7 +102,7 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
         }
 
         if (!this._statusImageElement)
-            this._statusImageElement = useSVGSymbol("Images/ActiveCallFrame.svg", "status-image");
+            this._statusImageElement = WI.ImageUtilities.useSVGSymbol("Images/ActiveCallFrame.svg", "status-image");
         this.status = this._statusImageElement;
     }
 };

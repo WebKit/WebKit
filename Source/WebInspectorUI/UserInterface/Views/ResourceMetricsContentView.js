@@ -269,7 +269,7 @@ WI.ResourceMetricsContentView = class ResourceMetricsContentView extends WI.Cont
 
         const minimumSizeBeforeWarning = 1024;
         if (compressionRate <= 1 && encodedSize >= minimumSizeBeforeWarning && WI.shouldTreatMIMETypeAsText(this._resource.mimeType))
-            this._compressionElement.appendChild(useSVGSymbol("Images/Warning.svg", "warning", WI.UIString("This text resource could benefit from compression")));
+            this._compressionElement.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Warning.svg", "warning", WI.UIString("This text resource could benefit from compression")));
     }
 
     _refreshTimingSection()

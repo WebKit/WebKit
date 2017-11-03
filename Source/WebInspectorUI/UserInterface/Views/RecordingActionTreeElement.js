@@ -152,9 +152,9 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             let image = imageParameters[0];
 
             if (isImageData)
-                image = WI.imageFromImageData(image);
+                image = WI.ImageUtilities.imageFromImageData(image);
             else if (isCanvasGradient)
-                image = WI.imageFromCanvasGradient(image, 100, 100);
+                image = WI.ImageUtilities.imageFromCanvasGradient(image, 100, 100);
             else if (isCanvasPattern)
                 image = image.__image;
 
@@ -433,7 +433,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     {
         this.addClassName("no-visible-effect");
 
-        this.status = useSVGSymbol("Images/Warning.svg", "warning");
+        this.status = WI.ImageUtilities.useSVGSymbol("Images/Warning.svg", "warning");
         this.status.title = WI.UIString("This action causes no visual change");
     }
 };

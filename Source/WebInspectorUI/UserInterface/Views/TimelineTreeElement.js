@@ -74,7 +74,7 @@ WI.TimelineTreeElement = class TimelineTreeElement extends WI.GeneralTreeElement
     _showCloseButton()
     {
         let tooltip = WI.UIString("Close %s timeline view").format(this.mainTitle);
-        let button = new WI.TreeElementStatusButton(useSVGSymbol("Images/CloseLarge.svg", "close-button", tooltip));
+        let button = new WI.TreeElementStatusButton(WI.ImageUtilities.useSVGSymbol("Images/CloseLarge.svg", "close-button", tooltip));
         button.addEventListener(WI.TreeElementStatusButton.Event.Clicked, () => { this.deselect(); });
 
         this.status = button.element;

@@ -128,11 +128,6 @@
         // DOM Utilities
         "createSVGElement": true,
 
-        // Image Utilities
-        "platformImagePath": true,
-        "useSVGSymbol": true,
-        "wrappedSVGDocument": true,
-
         // URL Utilities
         "absoluteURL": true,
         "decodeBase64ToBlob": true,

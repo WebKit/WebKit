@@ -50,10 +50,10 @@ WI.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink extends W
         this._iconElement.addEventListener("mouseout", this._iconMouseout.bind(this));
         this._iconElement.addEventListener("click", this._iconClicked.bind(this));
 
-        this._unlinkedIcon = useSVGSymbol("Images/VisualStylePropertyUnlinked.svg", "unlinked-icon");
+        this._unlinkedIcon = WI.ImageUtilities.useSVGSymbol("Images/VisualStylePropertyUnlinked.svg", "unlinked-icon");
         this._iconElement.appendChild(this._unlinkedIcon);
 
-        this._linkedIcon = useSVGSymbol("Images/VisualStylePropertyLinked.svg", "linked-icon");
+        this._linkedIcon = WI.ImageUtilities.useSVGSymbol("Images/VisualStylePropertyLinked.svg", "linked-icon");
         this._linkedIcon.hidden = true;
         this._iconElement.appendChild(this._linkedIcon);
 
