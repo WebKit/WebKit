@@ -1,3 +1,19 @@
+2017-11-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r223718): Leaking WebProcessPool after reconfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=179123
+        <rdar://problem/35294685>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure we destroy the ServiceWorker WebProcess once all other WebProcesses
+        go away at there is no use keeping it running at this point. Also, this prevents
+        leaking the WebProcessPool since the WebProcessProxy holds a strong reference
+        to the WebProcessPool.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::disconnectProcess):
+
 2017-11-03  Youenn Fablet  <youenn@apple.com>
 
         Implement Service Worker Matching Registration algorithm
