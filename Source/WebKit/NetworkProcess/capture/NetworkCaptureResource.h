@@ -48,7 +48,7 @@ public:
     private:
         String m_eventFilePath;
         bool m_haveMappedEventFile { false };
-        WebCore::MappedFileData m_mappedEventFile;
+        WebCore::FileSystem::MappedFileData m_mappedEventFile;
         size_t m_offset { 0 };
     };
 

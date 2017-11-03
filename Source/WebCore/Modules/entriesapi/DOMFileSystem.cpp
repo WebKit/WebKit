@@ -48,17 +48,17 @@ struct ListedChild {
 static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& fullPath)
 {
     ASSERT(!isMainThread());
-    if (!fileIsDirectory(fullPath, ShouldFollowSymbolicLinks::No))
+    if (!FileSystem::fileIsDirectory(fullPath, FileSystem::ShouldFollowSymbolicLinks::No))
         return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
 
-    auto childPaths = listDirectory(fullPath, "*");
+    auto childPaths = FileSystem::listDirectory(fullPath, "*");
     Vector<ListedChild> listedChildren;
     listedChildren.reserveInitialCapacity(childPaths.size());
     for (auto& childPath : childPaths) {
-        auto metadata = fileMetadata(childPath);
+        auto metadata = FileSystem::fileMetadata(childPath);
         if (!metadata || metadata.value().isHidden)
             continue;
-        listedChildren.uncheckedAppend(ListedChild { pathGetFileName(childPath), metadata.value().type });
+        listedChildren.uncheckedAppend(ListedChild { FileSystem::pathGetFileName(childPath), metadata.value().type });
     }
     return WTFMove(listedChildren);
 }
@@ -143,7 +143,7 @@ static bool isValidVirtualPath(StringView virtualPath)
 DOMFileSystem::DOMFileSystem(Ref<File>&& file)
     : m_name(createCanonicalUUIDString())
     , m_file(WTFMove(file))
-    , m_rootPath(directoryName(m_file->path()))
+    , m_rootPath(FileSystem::directoryName(m_file->path()))
     , m_workQueue(WorkQueue::create("DOMFileSystem work queue"))
 {
     ASSERT(!m_rootPath.endsWith('/'));
@@ -167,7 +167,7 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
 {
     ASSERT(!isMainThread());
 
-    auto metadata = fileMetadata(fullPath);
+    auto metadata = FileSystem::fileMetadata(fullPath);
     if (!metadata || metadata.value().isHidden)
         return Exception { NotFoundError, ASCIILiteral("Path does not exist") };
 
@@ -179,7 +179,7 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
 
 static std::optional<FileMetadata::Type> fileType(const String& fullPath)
 {
-    auto metadata = fileMetadata(fullPath);
+    auto metadata = FileSystem::fileMetadata(fullPath);
     if (!metadata || metadata.value().isHidden)
         return std::nullopt;
     return metadata.value().type;
@@ -236,7 +236,7 @@ String DOMFileSystem::evaluatePath(StringView virtualPath)
         resolvedComponents.append(component);
     }
 
-    return pathByAppendingComponents(m_rootPath, resolvedComponents);
+    return FileSystem::pathByAppendingComponents(m_rootPath, resolvedComponents);
 }
 
 void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory, DirectoryListingCallback&& completionHandler)

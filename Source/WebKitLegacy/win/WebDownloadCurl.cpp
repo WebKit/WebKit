@@ -216,7 +216,7 @@ void WebDownload::didReceiveResponse(const ResourceResponse& response)
 
         String suggestedFilename = response.suggestedFilename();
         if (suggestedFilename.isEmpty())
-            suggestedFilename = pathGetFileName(response.url().string());
+            suggestedFilename = FileSystem::pathGetFileName(response.url().string());
         suggestedFilename = decodeURLEscapeSequences(suggestedFilename);
         BString suggestedFilenameBSTR(suggestedFilename);
         m_delegate->decideDestinationWithSuggestedFilename(this, suggestedFilenameBSTR);

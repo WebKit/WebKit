@@ -1159,7 +1159,7 @@ const String& Page::userStyleSheet() const
         return m_userStyleSheet;
 
     time_t modTime;
-    if (!getFileModificationTime(m_userStyleSheetPath, modTime)) {
+    if (!FileSystem::getFileModificationTime(m_userStyleSheetPath, modTime)) {
         // The stylesheet either doesn't exist, was just deleted, or is
         // otherwise unreadable. If we've read the stylesheet before, we should
         // throw away that data now as it no longer represents what's on disk.

@@ -154,7 +154,7 @@ private:
     Lock m_downloadMutex;
     bool m_isEnabledDownloadToFile { false };
     String m_downloadFilePath;
-    PlatformFileHandle m_downloadFileHandle { invalidPlatformFileHandle };
+    FileSystem::PlatformFileHandle m_downloadFileHandle { FileSystem::invalidPlatformFileHandle };
 
     NetworkLoadMetrics m_networkLoadMetrics;
 };

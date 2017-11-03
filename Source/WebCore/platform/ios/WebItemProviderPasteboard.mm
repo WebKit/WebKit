@@ -516,7 +516,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     if (!url)
         return nil;
 
-    NSString *temporaryDataInteractionDirectory = WebCore::createTemporaryDirectory(dataInteractionDirectoryPrefix);
+    NSString *temporaryDataInteractionDirectory = WebCore::FileSystem::createTemporaryDirectory(dataInteractionDirectoryPrefix);
     if (!temporaryDataInteractionDirectory)
         return nil;
 

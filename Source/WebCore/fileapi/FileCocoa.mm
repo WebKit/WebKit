@@ -59,9 +59,9 @@ bool File::shouldReplaceFile(const String& path)
 
 void File::computeNameAndContentTypeForReplacedFile(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType)
 {
-    ASSERT(!pathGetFileName(path).endsWith('/')); // Expecting to get a path without trailing slash, even for directories.
+    ASSERT(!FileSystem::pathGetFileName(path).endsWith('/')); // Expecting to get a path without trailing slash, even for directories.
     effectiveContentType = ASCIILiteral("application/zip");
-    effectiveName = (nameOverride.isNull() ? pathGetFileName(path) : nameOverride) + ASCIILiteral(".zip");
+    effectiveName = (nameOverride.isNull() ? FileSystem::pathGetFileName(path) : nameOverride) + ASCIILiteral(".zip");
 }
 
 }

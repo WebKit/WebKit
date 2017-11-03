@@ -105,7 +105,7 @@ namespace WebCore {
 
         std::unique_ptr<Vector<char>> m_deliveryData;
 
-        PlatformFileHandle m_tempFileHandle;
+        FileSystem::PlatformFileHandle m_tempFileHandle;
 
         const NPPluginFuncs* m_pluginFuncs;
         NPP m_instance;

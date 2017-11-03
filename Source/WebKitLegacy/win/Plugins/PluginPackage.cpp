@@ -121,7 +121,7 @@ PluginPackage::PluginPackage(const String& path, const time_t& lastModified)
     , m_infoIsFromCache(true)
 #endif
 {
-    m_fileName = pathGetFileName(m_path);
+    m_fileName = FileSystem::pathGetFileName(m_path);
     m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 

@@ -448,7 +448,7 @@ void CurlRequest::setupFormData(ResourceRequest& request, bool isPostRequest)
     for (auto element : elements) {
         if (element.m_type == FormDataElement::Type::EncodedFile) {
             long long fileSizeResult;
-            if (getFileSize(element.m_filename, fileSizeResult)) {
+            if (FileSystem::getFileSize(element.m_filename, fileSizeResult)) {
                 if (fileSizeResult > maxCurlOffT) {
                     // File size is too big for specifying it to cURL
                     chunkedTransfer = true;
@@ -619,22 +619,22 @@ void CurlRequest::writeDataToDownloadFileIfEnabled(const SharedBuffer& buffer)
             return;
 
         if (m_downloadFilePath.isEmpty())
-            m_downloadFilePath = openTemporaryFile("download", m_downloadFileHandle);
+            m_downloadFilePath = FileSystem::openTemporaryFile("download", m_downloadFileHandle);
     }
 
-    if (m_downloadFileHandle != invalidPlatformFileHandle)
-        writeToFile(m_downloadFileHandle, buffer.data(), buffer.size());
+    if (m_downloadFileHandle != FileSystem::invalidPlatformFileHandle)
+        FileSystem::writeToFile(m_downloadFileHandle, buffer.data(), buffer.size());
 }
 
 void CurlRequest::closeDownloadFile()
 {
     LockHolder locker(m_downloadMutex);
 
-    if (m_downloadFileHandle == invalidPlatformFileHandle)
+    if (m_downloadFileHandle == FileSystem::invalidPlatformFileHandle)
         return;
 
-    closeFile(m_downloadFileHandle);
-    m_downloadFileHandle = invalidPlatformFileHandle;
+    FileSystem::closeFile(m_downloadFileHandle);
+    m_downloadFileHandle = FileSystem::invalidPlatformFileHandle;
 }
 
 void CurlRequest::cleanupDownloadFile()
@@ -642,7 +642,7 @@ void CurlRequest::cleanupDownloadFile()
     LockHolder locker(m_downloadMutex);
 
     if (!m_downloadFilePath.isEmpty()) {
-        deleteFile(m_downloadFilePath);
+        FileSystem::deleteFile(m_downloadFilePath);
         m_downloadFilePath = String();
     }
 }

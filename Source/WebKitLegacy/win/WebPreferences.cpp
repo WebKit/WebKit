@@ -58,7 +58,7 @@ using std::numeric_limits;
 
 static const String& oldPreferencesPath()
 {
-    static String path = pathByAppendingComponent(roamingUserSpecificStorageDirectory(), "WebKitPreferences.plist");
+    static String path = FileSystem::pathByAppendingComponent(FileSystem::roamingUserSpecificStorageDirectory(), "WebKitPreferences.plist");
     return path;
 }
 
@@ -516,7 +516,7 @@ void WebPreferences::migrateWebKitPreferencesToCFPreferences()
 
     copyWebKitPreferencesToCFPreferences(static_cast<CFDictionaryRef>(plist.get()));
 
-    deleteFile(oldPreferencesPath());
+    FileSystem::deleteFile(oldPreferencesPath());
 }
 
 void WebPreferences::copyWebKitPreferencesToCFPreferences(CFDictionaryRef dict)

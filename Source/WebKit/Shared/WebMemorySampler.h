@@ -87,7 +87,7 @@ private:
     void initializeTimers(double);
     void sampleTimerFired();
     void stopTimerFired();
-    void appendCurrentMemoryUsageToFile(WebCore::PlatformFileHandle&);
+    void appendCurrentMemoryUsageToFile(WebCore::FileSystem::PlatformFileHandle&);
     void sendMemoryPressureEvent();
     
     SystemMallocStats sampleSystemMalloc() const;
@@ -95,7 +95,7 @@ private:
     WebMemoryStatistics sampleWebKit() const;
     String processName() const;
     
-    WebCore::PlatformFileHandle m_sampleLogFile { WebCore::invalidPlatformFileHandle };
+    WebCore::FileSystem::PlatformFileHandle m_sampleLogFile { WebCore::FileSystem::invalidPlatformFileHandle };
     String m_sampleLogFilePath;
     WebCore::Timer m_sampleTimer;
     WebCore::Timer m_stopTimer;

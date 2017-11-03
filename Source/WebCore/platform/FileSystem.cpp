@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+namespace FileSystem {
+
 // The following lower-ASCII characters need escaping to be used in a filename
 // across all systems, including Windows:
 //     - Unprintable ASCII (00-1F)
@@ -359,4 +361,5 @@ bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowS
     return metadata.value().type == FileMetadata::Type::Directory;
 }
 
+} // namespace FileSystem
 } // namespace WebCore

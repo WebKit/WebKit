@@ -66,7 +66,7 @@ WebApplicationCache* WebApplicationCache::createInstance()
 
 static String applicationCachePath()
 {
-    String path = localUserSpecificStorageDirectory();
+    String path = FileSystem::localUserSpecificStorageDirectory();
 
 #if USE(CF)
     auto cacheDirectoryPreference = adoptCF(CFPreferencesCopyAppValue(WebKitLocalCacheDefaultsKey, WebPreferences::applicationId()));

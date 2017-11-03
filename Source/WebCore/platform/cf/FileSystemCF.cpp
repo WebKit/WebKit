@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-CString fileSystemRepresentation(const String& path)
+CString FileSystem::fileSystemRepresentation(const String& path)
 {
     RetainPtr<CFStringRef> cfString = path.createCFString();
 
@@ -55,12 +55,12 @@ CString fileSystemRepresentation(const String& path)
     return CString(buffer.data(), strlen(buffer.data()));
 }
 
-String stringFromFileSystemRepresentation(const char* fileSystemRepresentation)
+String FileSystem::stringFromFileSystemRepresentation(const char* fileSystemRepresentation)
 {
     return adoptCF(CFStringCreateWithFileSystemRepresentation(kCFAllocatorDefault, fileSystemRepresentation)).get();
 }
 
-RetainPtr<CFURLRef> pathAsURL(const String& path)
+RetainPtr<CFURLRef> FileSystem::pathAsURL(const String& path)
 {
     CFURLPathStyle pathStyle;
 #if PLATFORM(WIN)

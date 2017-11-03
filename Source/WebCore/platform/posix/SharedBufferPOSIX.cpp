@@ -40,7 +40,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
     if (filePath.isEmpty())
         return nullptr;
 
-    CString filename = fileSystemRepresentation(filePath);
+    CString filename = FileSystem::fileSystemRepresentation(filePath);
     int fd = open(filename.data(), O_RDONLY);
     if (fd == -1)
         return nullptr;

@@ -214,7 +214,7 @@ bool IconDatabase::open(const String& directory, const String& filename)
     m_databaseDirectory = directory.isolatedCopy();
 
     // Formulate the full path for the database file
-    m_completeDatabasePath = pathByAppendingComponent(m_databaseDirectory, filename);
+    m_completeDatabasePath = FileSystem::pathByAppendingComponent(m_databaseDirectory, filename);
 
     // Lock here as well as first thing in the thread so the thread doesn't actually commence until the createThread() call
     // completes and m_syncThreadRunning is properly set
@@ -869,13 +869,13 @@ void IconDatabase::iconDatabaseSyncThread()
 #endif
 
     // Need to create the database path if it doesn't already exist
-    makeAllDirectories(m_databaseDirectory);
+    FileSystem::makeAllDirectories(m_databaseDirectory);
 
     // Existence of a journal file is evidence of a previous crash/force quit and automatically qualifies
     // us to do an integrity check
     String journalFilename = m_completeDatabasePath + "-journal";
     if (!checkIntegrityOnOpen)
-        checkIntegrityOnOpen = fileExists(journalFilename);
+        checkIntegrityOnOpen = FileSystem::fileExists(journalFilename);
 
     {
         LockHolder locker(m_syncLock);
@@ -1008,8 +1008,8 @@ void IconDatabase::performOpenInitialization()
             {
                 LockHolder locker(m_syncLock);
                 // Should've been consumed by SQLite, delete just to make sure we don't see it again in the future;
-                deleteFile(m_completeDatabasePath + "-journal");
-                deleteFile(m_completeDatabasePath);
+                FileSystem::deleteFile(m_completeDatabasePath + "-journal");
+                FileSystem::deleteFile(m_completeDatabasePath);
             }
 
             // Reopen the write database, creating it from scratch

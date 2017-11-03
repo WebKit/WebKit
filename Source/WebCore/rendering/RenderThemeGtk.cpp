@@ -2009,7 +2009,7 @@ String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font
 
     String string;
     if (fileList->length())
-        string = pathGetFileName(fileList->item(0)->path());
+        string = FileSystem::pathGetFileName(fileList->item(0)->path());
     else if (multipleFilesAllowed)
         string = fileButtonNoFilesSelectedLabel();
     else

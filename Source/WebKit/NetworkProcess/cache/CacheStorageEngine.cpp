@@ -58,7 +58,7 @@ String Engine::cachesRootPath(const String& origin)
         return { };
 
     Key key(origin, { }, { }, { }, salt());
-    return WebCore::pathByAppendingComponent(rootPath(), key.partitionHashAsString());
+    return WebCore::FileSystem::pathByAppendingComponent(rootPath(), key.partitionHashAsString());
 }
 
 Engine::~Engine()
@@ -205,9 +205,9 @@ void Engine::initialize(Function<void(std::optional<Error>&&)>&& callback)
         return;
     }
 
-    String saltPath = WebCore::pathByAppendingComponent(m_rootPath, ASCIILiteral("salt"));
+    String saltPath = WebCore::FileSystem::pathByAppendingComponent(m_rootPath, ASCIILiteral("salt"));
     m_ioQueue->dispatch([protectedThis = makeRef(*this), this, callback = WTFMove(callback), saltPath = WTFMove(saltPath)] () mutable {
-        WebCore::makeAllDirectories(m_rootPath);
+        WebCore::FileSystem::makeAllDirectories(m_rootPath);
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), this, salt = readOrMakeSalt(saltPath), callback = WTFMove(callback)]() mutable {
             if (!salt) {
                 callback(Error::WriteDisk);
@@ -334,7 +334,7 @@ void Engine::removeFile(const String& filename)
         return;
 
     m_ioQueue->dispatch([filename = filename.isolatedCopy()]() mutable {
-        WebCore::deleteFile(filename);
+        WebCore::FileSystem::deleteFile(filename);
     });
 }
 
@@ -382,8 +382,8 @@ void Engine::fetchEntries(bool shouldComputeSize, WTF::CompletionHandler<void(Ve
     }
 
     auto taskCounter = ReadOriginsTaskCounter::create(WTFMove(completionHandler));
-    for (auto& folderPath : WebCore::listDirectory(m_rootPath, "*")) {
-        if (!WebCore::fileIsDirectory(folderPath, WebCore::ShouldFollowSymbolicLinks::No))
+    for (auto& folderPath : WebCore::FileSystem::listDirectory(m_rootPath, "*")) {
+        if (!WebCore::FileSystem::fileIsDirectory(folderPath, WebCore::FileSystem::ShouldFollowSymbolicLinks::No))
             continue;
         Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter = taskCounter.copyRef()] (std::optional<WebCore::SecurityOriginData>&& origin) mutable {
             ASSERT(RunLoop::isMain());
@@ -415,8 +415,8 @@ void Engine::clearAllCaches(CallbackAggregator& taskHandler)
         return;
 
     m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), taskHandler = makeRef(taskHandler)] {
-        for (auto& filename : WebCore::listDirectory(path, "*")) {
-            if (WebCore::fileIsDirectory(filename, WebCore::ShouldFollowSymbolicLinks::No))
+        for (auto& filename : WebCore::FileSystem::listDirectory(path, "*")) {
+            if (WebCore::FileSystem::fileIsDirectory(filename, WebCore::FileSystem::ShouldFollowSymbolicLinks::No))
                 deleteDirectoryRecursively(filename);
         }
     });

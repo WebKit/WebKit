@@ -43,8 +43,8 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
     if (!modificationHandler)
         return;
 
-    auto handle = openFile(path, OpenForEventsOnly);
-    if (handle == invalidPlatformFileHandle) {
+    auto handle = FileSystem::openFile(path, FileSystem::OpenForEventsOnly);
+    if (handle == FileSystem::invalidPlatformFileHandle) {
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to open statistics file for monitoring: %s", path.utf8().data());
         return;
     }
@@ -71,7 +71,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
     }).get());
     
     dispatch_source_set_cancel_handler(m_platformMonitor.get(), [handle] () mutable {
-        closeFile(handle);
+        FileSystem::closeFile(handle);
     });
     
     dispatch_resume(m_platformMonitor.get());

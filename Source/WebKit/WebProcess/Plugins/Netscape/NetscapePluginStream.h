@@ -93,7 +93,7 @@ private:
     int32_t m_offset;
 
     String m_filePath;
-    WebCore::PlatformFileHandle m_fileHandle;
+    WebCore::FileSystem::PlatformFileHandle m_fileHandle;
     
     // Whether NPP_NewStream has successfully been called.
     bool m_isStarted;

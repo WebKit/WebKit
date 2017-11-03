@@ -133,7 +133,7 @@ void StorageProcess::ensurePathExists(const String& path)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (!makeAllDirectories(path))
+    if (!FileSystem::makeAllDirectories(path))
         LOG_ERROR("Failed to make all directories for path '%s'", path.utf8().data());
 }
 
@@ -288,7 +288,7 @@ void StorageProcess::accessToTemporaryFileComplete(const String& path)
     // We've either hard linked the temporary blob file to the database directory, copied it there,
     // or the transaction is being aborted.
     // In any of those cases, we can delete the temporary blob file now.
-    deleteFile(path);
+    FileSystem::deleteFile(path);
 
     if (auto extension = m_blobTemporaryFileSandboxExtensions.take(path))
         extension->revoke();
@@ -300,8 +300,8 @@ Vector<WebCore::SecurityOriginData> StorageProcess::indexedDatabaseOrigins(const
         return { };
 
     Vector<WebCore::SecurityOriginData> securityOrigins;
-    for (auto& originPath : listDirectory(path, "*")) {
-        String databaseIdentifier = pathGetFileName(originPath);
+    for (auto& originPath : FileSystem::listDirectory(path, "*")) {
+        String databaseIdentifier = FileSystem::pathGetFileName(originPath);
 
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
             securityOrigins.append(WTFMove(*securityOrigin));

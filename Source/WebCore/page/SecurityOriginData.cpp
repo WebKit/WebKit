@@ -87,7 +87,7 @@ String SecurityOriginData::databaseIdentifier() const
     StringBuilder stringBuilder;
     stringBuilder.append(protocol);
     stringBuilder.append(separatorCharacter);
-    stringBuilder.append(encodeForFileName(host));
+    stringBuilder.append(FileSystem::encodeForFileName(host));
     stringBuilder.append(separatorCharacter);
     stringBuilder.appendNumber(port.value_or(0));
     

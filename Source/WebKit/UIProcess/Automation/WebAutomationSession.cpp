@@ -679,7 +679,7 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
 
 static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<String>& allowedMIMETypes, const HashSet<String>& allowedFileExtensions)
 {
-    if (!WebCore::fileExists(filename))
+    if (!WebCore::FileSystem::fileExists(filename))
         return false;
 
     if (allowedMIMETypes.isEmpty() && allowedFileExtensions.isEmpty())

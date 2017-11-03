@@ -927,12 +927,12 @@ AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
         if (storageDirectory.isEmpty())
             return nil;
 
-        if (!fileExists(storageDirectory)) {
-            if (!makeAllDirectories(storageDirectory))
+        if (!FileSystem::fileExists(storageDirectory)) {
+            if (!FileSystem::makeAllDirectories(storageDirectory))
                 return nil;
         }
 
-        String storagePath = pathByAppendingComponent(storageDirectory, "SecureStop.plist");
+        String storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
         m_streamSession = adoptNS([allocAVStreamSessionInstance() initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
     }
     return m_streamSession.get();

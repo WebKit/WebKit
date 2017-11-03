@@ -75,7 +75,7 @@ private:
     String m_headerFilename;
     String m_contentFilename;
 
-    PlatformFileHandle m_contentFile;
+    FileSystem::PlatformFileHandle m_contentFile;
 
     size_t m_entrySize;
     double m_expireDate;

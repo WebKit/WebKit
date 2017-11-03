@@ -390,15 +390,15 @@ API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataMan
     if (!priv->websiteDataStore) {
         WebsiteDataStore::Configuration configuration;
         configuration.localStorageDirectory = !priv->localStorageDirectory ?
-            API::WebsiteDataStore::defaultLocalStorageDirectory() : WebCore::stringFromFileSystemRepresentation(priv->localStorageDirectory.get());
+            API::WebsiteDataStore::defaultLocalStorageDirectory() : WebCore::FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get());
         configuration.networkCacheDirectory = !priv->diskCacheDirectory ?
-            API::WebsiteDataStore::defaultNetworkCacheDirectory() : WebCore::pathByAppendingComponent(WebCore::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory);
+            API::WebsiteDataStore::defaultNetworkCacheDirectory() : WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::stringFromFileSystemRepresentation(priv->diskCacheDirectory.get()), networkCacheSubdirectory);
         configuration.applicationCacheDirectory = !priv->applicationCacheDirectory ?
-            API::WebsiteDataStore::defaultApplicationCacheDirectory() : WebCore::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get());
+            API::WebsiteDataStore::defaultApplicationCacheDirectory() : WebCore::FileSystem::stringFromFileSystemRepresentation(priv->applicationCacheDirectory.get());
         configuration.webSQLDatabaseDirectory = !priv->webSQLDirectory ?
-            API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : WebCore::stringFromFileSystemRepresentation(priv->webSQLDirectory.get());
+            API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : WebCore::FileSystem::stringFromFileSystemRepresentation(priv->webSQLDirectory.get());
         configuration.resourceLoadStatisticsDirectory = !priv->resourceLoadStatisticsDirectory ?
-            API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory() : WebCore::stringFromFileSystemRepresentation(priv->resourceLoadStatisticsDirectory.get());
+            API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory() : WebCore::FileSystem::stringFromFileSystemRepresentation(priv->resourceLoadStatisticsDirectory.get());
         configuration.mediaKeysStorageDirectory = API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
         priv->websiteDataStore = API::WebsiteDataStore::createLegacy(WTFMove(configuration));
     }
@@ -561,7 +561,7 @@ const gchar* webkit_website_data_manager_get_disk_cache_directory(WebKitWebsiteD
 
     if (!priv->diskCacheDirectory) {
         // The default directory already has the subdirectory.
-        priv->diskCacheDirectory.reset(g_strdup(WebCore::directoryName(API::WebsiteDataStore::defaultNetworkCacheDirectory()).utf8().data()));
+        priv->diskCacheDirectory.reset(g_strdup(WebCore::FileSystem::directoryName(API::WebsiteDataStore::defaultNetworkCacheDirectory()).utf8().data()));
     }
     return priv->diskCacheDirectory.get();
 }

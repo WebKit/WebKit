@@ -46,6 +46,8 @@
 
 namespace WebCore {
 
+namespace FileSystem {
+
 String homeDirectoryPath()
 {
     return NSHomeDirectory();
@@ -128,4 +130,5 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
     return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.data() length:length];
 }
 
+} // namespace FileSystem
 } // namespace WebCore

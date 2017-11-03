@@ -56,7 +56,7 @@ private:
 
     Download& m_download;
     String m_destinationPath;
-    WebCore::PlatformFileHandle m_destinationFile { WebCore::invalidPlatformFileHandle };
+    WebCore::FileSystem::PlatformFileHandle m_destinationFile { WebCore::FileSystem::invalidPlatformFileHandle };
 };
 
 }

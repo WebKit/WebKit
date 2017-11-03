@@ -55,19 +55,19 @@ public:
         RunLoop::initializeMainRunLoop();
         
         // create temp file
-        PlatformFileHandle handle;
-        m_tempFilePath = openTemporaryFile("tempTestFile", handle);
-        ASSERT_NE(handle, invalidPlatformFileHandle);
+        FileSystem::PlatformFileHandle handle;
+        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
+        ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
         
-        int rc = writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());
+        int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());
         ASSERT_NE(rc, -1);
         
-        closeFile(handle);
+        FileSystem::closeFile(handle);
     }
     
     void TearDown() override
     {
-        deleteFile(m_tempFilePath);
+        FileSystem::deleteFile(m_tempFilePath);
     }
     
     const String& tempFilePath() { return m_tempFilePath; }
@@ -114,19 +114,19 @@ static String readContentsOfFile(const String& path)
 {
     constexpr int bufferSize = 1024;
 
-    auto source = openFile(path, OpenForRead);
-    if (!isHandleValid(source))
+    auto source = FileSystem::openFile(path, FileSystem::OpenForRead);
+    if (!FileSystem::isHandleValid(source))
         return emptyString();
 
     StringBuffer<LChar> buffer(bufferSize);
 
     auto fileCloser = WTF::makeScopeExit([source]() {
-        PlatformFileHandle handle = source;
-        closeFile(handle);
+        FileSystem::PlatformFileHandle handle = source;
+        FileSystem::closeFile(handle);
     });
 
     // Since we control the test files, we know we only need one read
-    int readBytes = readFromFile(source, reinterpret_cast<char*>(buffer.characters()), bufferSize);
+    int readBytes = FileSystem::readFromFile(source, reinterpret_cast<char*>(buffer.characters()), bufferSize);
     if (readBytes < 0)
         return emptyString();
 
@@ -142,7 +142,7 @@ static String readContentsOfFile(const String& path)
 
 TEST_F(FileMonitorTest, DetectChange)
 {
-    EXPECT_TRUE(fileExists(tempFilePath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
     RunLoop::initializeMainRunLoop();
 
@@ -184,7 +184,7 @@ TEST_F(FileMonitorTest, DetectChange)
 
 TEST_F(FileMonitorTest, DetectMultipleChanges)
 {
-    EXPECT_TRUE(fileExists(tempFilePath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
     RunLoop::initializeMainRunLoop();
 
@@ -244,7 +244,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 
 TEST_F(FileMonitorTest, DetectDeletion)
 {
-    EXPECT_TRUE(fileExists(tempFilePath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
     RunLoop::initializeMainRunLoop();
 
@@ -283,7 +283,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
 
 TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
 {
-    EXPECT_TRUE(fileExists(tempFilePath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
     RunLoop::initializeMainRunLoop();
 
@@ -340,7 +340,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
 
 TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 {
-    EXPECT_TRUE(fileExists(tempFilePath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
     RunLoop::initializeMainRunLoop();
 
@@ -377,12 +377,12 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
     resetTestState();
 
     testQueue->dispatch([this] () mutable {
-        EXPECT_FALSE(fileExists(tempFilePath()));
+        EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
 
-        auto handle = openFile(tempFilePath(), OpenForWrite);
-        ASSERT_NE(handle, invalidPlatformFileHandle);
+        auto handle = FileSystem::openFile(tempFilePath(), FileSystem::OpenForWrite);
+        ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
 
-        int rc = writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());
+        int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());
         ASSERT_NE(rc, -1);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);

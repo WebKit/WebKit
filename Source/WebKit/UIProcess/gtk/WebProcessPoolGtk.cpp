@@ -124,7 +124,7 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 String WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory()
 {
     GUniquePtr<gchar> javaScriptCoreConfigDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "JavaScriptCoreDebug", nullptr));
-    return WebCore::stringFromFileSystemRepresentation(javaScriptCoreConfigDirectory.get());
+    return WebCore::FileSystem::stringFromFileSystemRepresentation(javaScriptCoreConfigDirectory.get());
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()

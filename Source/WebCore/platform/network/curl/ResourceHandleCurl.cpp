@@ -93,7 +93,7 @@ void ResourceHandle::setClientCertificateInfo(const String& host, const String& 
 {
     ASSERT(isMainThread());
 
-    if (fileExists(certificate))
+    if (FileSystem::fileExists(certificate))
         CurlContext::singleton().sslHandle().setClientCertificateInfo(host, certificate, key);
     else
         LOG(Network, "Invalid client certificate file: %s!\n", certificate.latin1().data());

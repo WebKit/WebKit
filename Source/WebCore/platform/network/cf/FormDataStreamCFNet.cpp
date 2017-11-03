@@ -147,13 +147,13 @@ static bool advanceCurrentStream(FormStreamFields* form)
         form->currentData = WTFMove(data);
     } else {
         // Check if the file has been changed or not if required.
-        if (isValidFileTime(nextInput.m_expectedFileModificationTime)) {
+        if (FileSystem::isValidFileTime(nextInput.m_expectedFileModificationTime)) {
             time_t fileModificationTime;
-            if (!getFileModificationTime(nextInput.m_filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(nextInput.m_expectedFileModificationTime))
+            if (!FileSystem::getFileModificationTime(nextInput.m_filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(nextInput.m_expectedFileModificationTime))
                 return false;
         }
         const String& path = nextInput.m_shouldGenerateFile ? nextInput.m_generatedFilename : nextInput.m_filename;
-        form->currentStream = CFReadStreamCreateWithFile(0, pathAsURL(path).get());
+        form->currentStream = CFReadStreamCreateWithFile(0, FileSystem::pathAsURL(path).get());
         if (!form->currentStream) {
             // The file must have been removed or become unreadable.
             return false;
@@ -379,7 +379,7 @@ RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
                 continue;
             }
             long long fileSize;
-            if (getFileSize(element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename, fileSize))
+            if (FileSystem::getFileSize(element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename, fileSize))
                 length += fileSize;
         }
     }

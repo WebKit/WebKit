@@ -1388,7 +1388,7 @@ void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerP
     g_object_get(player->m_downloadBuffer.get(), "temp-location", &downloadFile.outPtr(), nullptr);
     player->m_downloadBuffer = nullptr;
 
-    if (UNLIKELY(!deleteFile(downloadFile.get()))) {
+    if (UNLIKELY(!FileSystem::deleteFile(downloadFile.get()))) {
         GST_WARNING("Couldn't unlink media temporary file %s after creation", downloadFile.get());
         return;
     }
@@ -1405,8 +1405,8 @@ void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const char* downloadFile
     GUniquePtr<char> templateFile(g_path_get_basename(downloadFileTemplate));
     String templatePattern = String(templateFile.get()).replace("X", "?");
 
-    for (auto& filePath : listDirectory(templatePath.get(), templatePattern)) {
-        if (UNLIKELY(!deleteFile(filePath))) {
+    for (auto& filePath : FileSystem::listDirectory(templatePath.get(), templatePattern)) {
+        if (UNLIKELY(!FileSystem::deleteFile(filePath))) {
             GST_WARNING("Couldn't unlink legacy media temporary file: %s", filePath.utf8().data());
             continue;
         }

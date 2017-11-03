@@ -37,7 +37,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
     if (path.isEmpty() || !modificationHandler)
         return;
 
-    auto file = adoptGRef(g_file_new_for_path(fileSystemRepresentation(path).data()));
+    auto file = adoptGRef(g_file_new_for_path(FileSystem::fileSystemRepresentation(path).data()));
     m_cancellable = adoptGRef(g_cancellable_new());
     GUniqueOutPtr<GError> error;
     m_platformMonitor = adoptGRef(g_file_monitor(file.get(), G_FILE_MONITOR_NONE, m_cancellable.get(), &error.outPtr()));

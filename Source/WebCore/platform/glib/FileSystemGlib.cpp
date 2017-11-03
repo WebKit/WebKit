@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+namespace FileSystem {
+
 /* On linux file names are just raw bytes, so also strings that cannot be encoded in any way
  * are valid file names. This mean that we cannot just store a file name as-is in a String
  * but we have to escape it.
@@ -496,4 +498,5 @@ bool unlockFile(PlatformFileHandle handle)
 }
 #endif // USE(FILE_LOCK)
 
-}
+} // namespace FileSystem
+} // namespace WebCore

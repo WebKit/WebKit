@@ -472,7 +472,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         auto& downloadManager = WebKit::NetworkProcess::singleton().downloadManager();
         auto download = std::make_unique<WebKit::Download>(downloadManager, downloadID, downloadTask, _session->sessionID(), networkDataTask->suggestedFilename());
         networkDataTask->transferSandboxExtensionToDownload(*download);
-        ASSERT(WebCore::fileExists(networkDataTask->pendingDownloadLocation()));
+        ASSERT(WebCore::FileSystem::fileExists(networkDataTask->pendingDownloadLocation()));
         download->didCreateDestination(networkDataTask->pendingDownloadLocation());
         downloadManager.dataTaskBecameDownloadTask(downloadID, WTFMove(download));
 

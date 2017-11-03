@@ -56,10 +56,10 @@ Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
 {
     Vector<String> result;
     char normalizedPath[PATH_MAX];
-    for (const auto& path : listDirectory(directory, String("*.so"))) {
-        CString filename = fileSystemRepresentation(path);
+    for (const auto& path : FileSystem::listDirectory(directory, String("*.so"))) {
+        CString filename = FileSystem::fileSystemRepresentation(path);
         if (realpath(filename.data(), normalizedPath))
-            result.append(stringFromFileSystemRepresentation(normalizedPath));
+            result.append(FileSystem::stringFromFileSystemRepresentation(normalizedPath));
     }
 
     return result;
@@ -80,7 +80,7 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
                 return false;
             String pluginProcessPath = executablePathOfPluginProcess();
             pluginProcessPath.append('2');
-            if (!fileExists(pluginProcessPath))
+            if (!FileSystem::fileExists(pluginProcessPath))
                 return false;
         }
 #endif

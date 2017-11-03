@@ -33,9 +33,9 @@ String WebDatabaseProvider::indexedDatabaseDirectoryPath()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *databasesDirectory = [defaults objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
-        databasesDirectory = WebCore::pathByAppendingComponent(ASCIILiteral("~/Library/WebKit/Databases/___IndexedDB"), [[NSBundle mainBundle] bundleIdentifier]);
+        databasesDirectory = WebCore::FileSystem::pathByAppendingComponent(ASCIILiteral("~/Library/WebKit/Databases/___IndexedDB"), [[NSBundle mainBundle] bundleIdentifier]);
     else
-        databasesDirectory = WebCore::pathByAppendingComponent(databasesDirectory, ASCIILiteral("___IndexedDB"));
+        databasesDirectory = WebCore::FileSystem::pathByAppendingComponent(databasesDirectory, ASCIILiteral("___IndexedDB"));
     
     return [databasesDirectory stringByStandardizingPath];
 }

@@ -39,7 +39,7 @@ static String getExecutablePath()
 {
     CString executablePath = getCurrentExecutablePath();
     if (!executablePath.isNull())
-        return directoryName(stringFromFileSystemRepresentation(executablePath.data()));
+        return FileSystem::directoryName(FileSystem::stringFromFileSystemRepresentation(executablePath.data()));
     return String();
 }
 
@@ -47,19 +47,19 @@ static String findWebKitProcess(const char* processName)
 {
     static const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
-        String processPath = pathByAppendingComponent(stringFromFileSystemRepresentation(execDirectory), processName);
-        if (fileExists(processPath))
+        String processPath = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(execDirectory), processName);
+        if (FileSystem::fileExists(processPath))
             return processPath;
     }
 
     static String executablePath = getExecutablePath();
     if (!executablePath.isNull()) {
-        String processPath = pathByAppendingComponent(executablePath, processName);
-        if (fileExists(processPath))
+        String processPath = FileSystem::pathByAppendingComponent(executablePath, processName);
+        if (FileSystem::fileExists(processPath))
             return processPath;
     }
 
-    return pathByAppendingComponent(stringFromFileSystemRepresentation(LIBEXECDIR), processName);
+    return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(LIBEXECDIR), processName);
 }
 
 String executablePathOfWebProcess()

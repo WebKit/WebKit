@@ -53,7 +53,7 @@ static String extractLocaleFromDictionaryFilePath(const String& filePath)
 {
     // Dictionary files always have the form "hyph_<locale name>.dic"
     // so we strip everything except the locale.
-    String fileName = pathGetFileName(filePath);
+    String fileName = FileSystem::pathGetFileName(filePath);
     static const int prefixLength = 5;
     static const int suffixLength = 4;
     return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength);
@@ -61,14 +61,14 @@ static String extractLocaleFromDictionaryFilePath(const String& filePath)
 
 static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomicString, Vector<String>>& availableLocales)
 {
-    for (auto& filePath : listDirectory(directoryPath, "hyph_*.dic")) {
+    for (auto& filePath : FileSystem::listDirectory(directoryPath, "hyph_*.dic")) {
         String locale = extractLocaleFromDictionaryFilePath(filePath).convertToASCIILowercase();
 
         char normalizedPath[PATH_MAX];
-        if (!realpath(fileSystemRepresentation(filePath).data(), normalizedPath))
+        if (!realpath(FileSystem::fileSystemRepresentation(filePath).data(), normalizedPath))
             continue;
 
-        filePath = stringFromFileSystemRepresentation(normalizedPath);
+        filePath = FileSystem::stringFromFileSystemRepresentation(normalizedPath);
         availableLocales.add(locale, Vector<String>()).iterator->value.append(filePath);
 
         String localeReplacingUnderscores = String(locale);
@@ -224,7 +224,7 @@ public:
 
     static RefPtr<WebCore::HyphenationDictionary> createValueForKey(const AtomicString& dictionaryPath)
     {
-        return WebCore::HyphenationDictionary::create(WebCore::fileSystemRepresentation(dictionaryPath.string()));
+        return WebCore::HyphenationDictionary::create(WebCore::FileSystem::fileSystemRepresentation(dictionaryPath.string()));
     }
 };
 

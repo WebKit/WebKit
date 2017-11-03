@@ -71,14 +71,14 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
 
     String sandboxImportPath = "/usr/local/share/sandbox/imports";
-    sandboxParameters.addPathParameter("IMPORT_DIR", fileSystemRepresentation(sandboxImportPath).data());
+    sandboxParameters.addPathParameter("IMPORT_DIR", FileSystem::fileSystemRepresentation(sandboxImportPath).data());
 
     switch (sandboxParameters.mode()) {
     case SandboxInitializationParameters::UseDefaultSandboxProfilePath:
     case SandboxInitializationParameters::UseOverrideSandboxProfilePath: {
         String sandboxProfilePath = sandboxParameters.mode() == SandboxInitializationParameters::UseDefaultSandboxProfilePath ? defaultProfilePath : sandboxParameters.overrideSandboxProfilePath();
         if (!sandboxProfilePath.isEmpty()) {
-            CString profilePath = fileSystemRepresentation(sandboxProfilePath);
+            CString profilePath = FileSystem::fileSystemRepresentation(sandboxProfilePath);
             char* errorBuf;
             if (sandbox_init_with_parameters(profilePath.data(), SANDBOX_NAMED_EXTERNAL, sandboxParameters.namedParameterArray(), &errorBuf)) {
                 WTFLogAlways("%s: Couldn't initialize sandbox profile [%s], error '%s'\n", getprogname(), profilePath.data(), errorBuf);

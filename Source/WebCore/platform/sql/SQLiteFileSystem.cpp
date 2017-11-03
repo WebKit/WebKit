@@ -48,19 +48,19 @@ SQLiteFileSystem::SQLiteFileSystem()
 
 int SQLiteFileSystem::openDatabase(const String& filename, sqlite3** database, bool)
 {
-    return sqlite3_open_v2(fileSystemRepresentation(filename).data(), database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_AUTOPROXY, nullptr);
+    return sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_AUTOPROXY, nullptr);
 }
 
 String SQLiteFileSystem::appendDatabaseFileNameToPath(const String& path, const String& fileName)
 {
-    return pathByAppendingComponent(path, fileName);
+    return FileSystem::pathByAppendingComponent(path, fileName);
 }
 
 bool SQLiteFileSystem::ensureDatabaseDirectoryExists(const String& path)
 {
     if (path.isEmpty())
         return false;
-    return makeAllDirectories(path);
+    return FileSystem::makeAllDirectories(path);
 }
 
 bool SQLiteFileSystem::ensureDatabaseFileExists(const String& fileName, bool checkPathOnly)
@@ -69,16 +69,16 @@ bool SQLiteFileSystem::ensureDatabaseFileExists(const String& fileName, bool che
         return false;
 
     if (checkPathOnly) {
-        String dir = directoryName(fileName);
+        String dir = FileSystem::directoryName(fileName);
         return ensureDatabaseDirectoryExists(dir);
     }
 
-    return fileExists(fileName);
+    return FileSystem::fileExists(fileName);
 }
 
 bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String& path)
 {
-    return deleteEmptyDirectory(path);
+    return FileSystem::deleteEmptyDirectory(path);
 }
 
 bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
@@ -87,12 +87,12 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
     String shmFileName = makeString(fileName, ASCIILiteral("-shm"));
 
     // Try to delete all three files whether or not they are there.
-    deleteFile(fileName);
-    deleteFile(walFileName);
-    deleteFile(shmFileName);
+    FileSystem::deleteFile(fileName);
+    FileSystem::deleteFile(walFileName);
+    FileSystem::deleteFile(shmFileName);
 
     // If any of the wal or shm files remain after the delete attempt, the overall delete operation failed.
-    return !fileExists(fileName) && !fileExists(walFileName) && !fileExists(shmFileName);
+    return !FileSystem::fileExists(fileName) && !FileSystem::fileExists(walFileName) && !FileSystem::fileExists(shmFileName);
 }
 
 #if PLATFORM(IOS)
@@ -105,19 +105,19 @@ bool SQLiteFileSystem::truncateDatabaseFile(sqlite3* database)
 long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
 {        
     long long size;
-    return getFileSize(fileName, size) ? size : 0;
+    return FileSystem::getFileSize(fileName, size) ? size : 0;
 }
 
 double SQLiteFileSystem::databaseCreationTime(const String& fileName)
 {
     time_t time;
-    return getFileCreationTime(fileName, time) ? time : 0;
+    return FileSystem::getFileCreationTime(fileName, time) ? time : 0;
 }
 
 double SQLiteFileSystem::databaseModificationTime(const String& fileName)
 {
     time_t time;
-    return getFileModificationTime(fileName, time) ? time : 0;
+    return FileSystem::getFileModificationTime(fileName, time) ? time : 0;
 }
 
 } // namespace WebCore

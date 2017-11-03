@@ -112,7 +112,7 @@ public:
 #if USE(SOUP)
         static Ref<DataSegment> create(GUniquePtr<SoupBuffer>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
-        static Ref<DataSegment> create(MappedFileData&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
+        static Ref<DataSegment> create(FileSystem::MappedFileData&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 
     private:
         DataSegment(Vector<char>&& data)
@@ -125,7 +125,7 @@ public:
         DataSegment(GUniquePtr<SoupBuffer>&& data)
             : m_immutableData(WTFMove(data)) { }
 #endif
-        DataSegment(MappedFileData&& data)
+        DataSegment(FileSystem::MappedFileData&& data)
             : m_immutableData(WTFMove(data)) { }
 
         Variant<Vector<char>,
@@ -135,7 +135,7 @@ public:
 #if USE(SOUP)
             GUniquePtr<SoupBuffer>,
 #endif
-            MappedFileData> m_immutableData;
+            FileSystem::MappedFileData> m_immutableData;
         friend class SharedBuffer;
     };
 
@@ -157,7 +157,7 @@ private:
     explicit SharedBuffer(const char*, size_t);
     explicit SharedBuffer(const unsigned char*, size_t);
     explicit SharedBuffer(Vector<char>&&);
-    explicit SharedBuffer(MappedFileData&&);
+    explicit SharedBuffer(FileSystem::MappedFileData&&);
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
 #endif

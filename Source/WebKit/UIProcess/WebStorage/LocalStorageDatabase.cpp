@@ -85,7 +85,7 @@ void LocalStorageDatabase::openDatabase(DatabaseOpeningStrategy openingStrategy)
 
 bool LocalStorageDatabase::tryToOpenDatabase(DatabaseOpeningStrategy openingStrategy)
 {
-    if (!fileExists(m_databasePath) && openingStrategy == SkipIfNonExistent)
+    if (!FileSystem::fileExists(m_databasePath) && openingStrategy == SkipIfNonExistent)
         return true;
 
     if (m_databasePath.isEmpty()) {

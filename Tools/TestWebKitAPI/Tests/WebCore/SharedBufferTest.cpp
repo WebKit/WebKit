@@ -38,19 +38,19 @@ void SharedBufferTest::SetUp()
     WTF::initializeMainThread();
 
     // create temp file
-    PlatformFileHandle handle;
-    m_tempFilePath = openTemporaryFile("tempTestFile", handle);
-    writeToFile(handle, testData(), strlen(testData()));
-    closeFile(handle);
+    FileSystem::PlatformFileHandle handle;
+    m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
+    FileSystem::writeToFile(handle, testData(), strlen(testData()));
+    FileSystem::closeFile(handle);
 
-    m_tempEmptyFilePath = openTemporaryFile("tempEmptyTestFile", handle);
-    closeFile(handle);
+    m_tempEmptyFilePath = FileSystem::openTemporaryFile("tempEmptyTestFile", handle);
+    FileSystem::closeFile(handle);
 }
 
 void SharedBufferTest::TearDown()
 {
-    deleteFile(m_tempFilePath);
-    deleteFile(m_tempEmptyFilePath);
+    FileSystem::deleteFile(m_tempFilePath);
+    FileSystem::deleteFile(m_tempEmptyFilePath);
 }
 
 } // namespace TestWebKitAPI

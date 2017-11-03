@@ -46,7 +46,7 @@ static bool hasFileChangedSince(const String& path, WallTime since)
 {
     ASSERT(!RunLoop::isMain());
     time_t modificationTime;
-    if (!getFileModificationTime(path, modificationTime))
+    if (!FileSystem::getFileModificationTime(path, modificationTime))
         return true;
 
     return WallTime::fromRawSeconds(modificationTime) > since;
@@ -55,26 +55,26 @@ static bool hasFileChangedSince(const String& path, WallTime since)
 static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)
 {
     ASSERT(!RunLoop::isMain());
-    auto handle = openAndLockFile(path, OpenForRead);
-    if (handle == invalidPlatformFileHandle)
+    auto handle = FileSystem::openAndLockFile(path, FileSystem::OpenForRead);
+    if (handle == FileSystem::invalidPlatformFileHandle)
         return nullptr;
 
     long long fileSize = 0;
-    if (!getFileSize(handle, fileSize)) {
-        unlockAndCloseFile(handle);
+    if (!FileSystem::getFileSize(handle, fileSize)) {
+        FileSystem::unlockAndCloseFile(handle);
         return nullptr;
     }
 
     size_t bytesToRead;
     if (!WTF::convertSafely(fileSize, bytesToRead)) {
-        unlockAndCloseFile(handle);
+        FileSystem::unlockAndCloseFile(handle);
         return nullptr;
     }
 
     Vector<char> buffer(bytesToRead);
-    size_t totalBytesRead = readFromFile(handle, buffer.data(), buffer.size());
+    size_t totalBytesRead = FileSystem::readFromFile(handle, buffer.data(), buffer.size());
 
-    unlockAndCloseFile(handle);
+    FileSystem::unlockAndCloseFile(handle);
 
     if (totalBytesRead != bytesToRead)
         return nullptr;
@@ -112,7 +112,7 @@ String ResourceLoadStatisticsPersistentStorage::resourceLogFilePath() const
     if (storagePath.isEmpty())
         return emptyString();
 
-    return pathByAppendingComponent(storagePath, "full_browsing_session_resourceLog.plist");
+    return FileSystem::pathByAppendingComponent(storagePath, "full_browsing_session_resourceLog.plist");
 }
 
 void ResourceLoadStatisticsPersistentStorage::startMonitoringDisk()
@@ -145,8 +145,8 @@ void ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics()
     String storagePath = storageDirectoryPath();
     ASSERT(!storagePath.isEmpty());
 
-    if (!fileExists(storagePath)) {
-        if (!makeAllDirectories(storagePath)) {
+    if (!FileSystem::fileExists(storagePath)) {
+        if (!FileSystem::makeAllDirectories(storagePath)) {
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "ResourceLoadStatisticsPersistentStorage: Failed to create directory path %s", storagePath.utf8().data());
             return;
         }
@@ -163,7 +163,7 @@ void ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics()
         String resourceLogPath = resourceLogFilePath();
         ASSERT(!resourceLogPath.isEmpty());
 
-        if (!fileExists(resourceLogPath))
+        if (!FileSystem::fileExists(resourceLogPath))
             return;
 
         m_fileMonitor = nullptr;
@@ -209,7 +209,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
     ASSERT(!RunLoop::isMain());
 
     String filePath = resourceLogFilePath();
-    if (filePath.isEmpty() || !fileExists(filePath)) {
+    if (filePath.isEmpty() || !FileSystem::fileExists(filePath)) {
         m_memoryStore.grandfatherExistingWebsiteData();
         monitorDirectoryForNewStatistics();
         return;
@@ -258,16 +258,16 @@ void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
 
     auto storagePath = storageDirectoryPath();
     if (!storagePath.isEmpty()) {
-        makeAllDirectories(storagePath);
+        FileSystem::makeAllDirectories(storagePath);
         excludeFromBackup();
     }
 
-    auto handle = openAndLockFile(resourceLogFilePath(), OpenForWrite);
-    if (handle == invalidPlatformFileHandle)
+    auto handle = FileSystem::openAndLockFile(resourceLogFilePath(), FileSystem::OpenForWrite);
+    if (handle == FileSystem::invalidPlatformFileHandle)
         return;
 
-    int64_t writtenBytes = writeToFile(handle, rawData->data(), rawData->size());
-    unlockAndCloseFile(handle);
+    int64_t writtenBytes = FileSystem::writeToFile(handle, rawData->data(), rawData->size());
+    FileSystem::unlockAndCloseFile(handle);
 
     if (writtenBytes != static_cast<int64_t>(rawData->size()))
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "ResourceLoadStatisticsPersistentStorage: We only wrote %d out of %zu bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
@@ -306,7 +306,7 @@ void ResourceLoadStatisticsPersistentStorage::clear()
 
     stopMonitoringDisk();
 
-    if (!deleteFile(filePath))
+    if (!FileSystem::deleteFile(filePath))
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "ResourceLoadStatisticsPersistentStorage: Unable to delete statistics file: %s", filePath.utf8().data());
 }
 

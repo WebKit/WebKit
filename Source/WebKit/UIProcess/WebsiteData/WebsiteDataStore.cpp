@@ -124,8 +124,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
 
     // Resolve directories for file paths.
     if (!m_configuration.cookieStorageFile.isEmpty()) {
-        m_resolvedConfiguration.cookieStorageFile = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebCore::directoryName(m_configuration.cookieStorageFile));
-        m_resolvedConfiguration.cookieStorageFile = WebCore::pathByAppendingComponent(m_resolvedConfiguration.cookieStorageFile, WebCore::pathGetFileName(m_configuration.cookieStorageFile));
+        m_resolvedConfiguration.cookieStorageFile = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebCore::FileSystem::directoryName(m_configuration.cookieStorageFile));
+        m_resolvedConfiguration.cookieStorageFile = WebCore::FileSystem::pathByAppendingComponent(m_resolvedConfiguration.cookieStorageFile, WebCore::FileSystem::pathGetFileName(m_configuration.cookieStorageFile));
     }
 }
 
@@ -1248,7 +1248,7 @@ Vector<PluginModuleInfo> WebsiteDataStore::plugins() const
 
 static String computeMediaKeyFile(const String& mediaKeyDirectory)
 {
-    return WebCore::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist");
+    return WebCore::FileSystem::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist");
 }
 
 Vector<WebCore::SecurityOriginData> WebsiteDataStore::mediaKeyOrigins(const String& mediaKeysStorageDirectory)
@@ -1257,12 +1257,12 @@ Vector<WebCore::SecurityOriginData> WebsiteDataStore::mediaKeyOrigins(const Stri
 
     Vector<WebCore::SecurityOriginData> origins;
 
-    for (const auto& originPath : WebCore::listDirectory(mediaKeysStorageDirectory, "*")) {
+    for (const auto& originPath : WebCore::FileSystem::listDirectory(mediaKeysStorageDirectory, "*")) {
         auto mediaKeyFile = computeMediaKeyFile(originPath);
-        if (!WebCore::fileExists(mediaKeyFile))
+        if (!WebCore::FileSystem::fileExists(mediaKeyFile))
             continue;
 
-        auto mediaKeyIdentifier = WebCore::pathGetFileName(originPath);
+        auto mediaKeyIdentifier = WebCore::FileSystem::pathGetFileName(originPath);
 
         if (auto securityOrigin = WebCore::SecurityOriginData::fromDatabaseIdentifier(mediaKeyIdentifier))
             origins.append(*securityOrigin);
@@ -1275,18 +1275,18 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
 {
     ASSERT(!mediaKeysStorageDirectory.isEmpty());
 
-    for (const auto& mediaKeyDirectory : WebCore::listDirectory(mediaKeysStorageDirectory, "*")) {
+    for (const auto& mediaKeyDirectory : WebCore::FileSystem::listDirectory(mediaKeysStorageDirectory, "*")) {
         auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
 
         time_t modificationTime;
-        if (!WebCore::getFileModificationTime(mediaKeyFile, modificationTime))
+        if (!WebCore::FileSystem::getFileModificationTime(mediaKeyFile, modificationTime))
             continue;
 
         if (std::chrono::system_clock::from_time_t(modificationTime) < modifiedSince)
             continue;
 
-        WebCore::deleteFile(mediaKeyFile);
-        WebCore::deleteEmptyDirectory(mediaKeyDirectory);
+        WebCore::FileSystem::deleteFile(mediaKeyFile);
+        WebCore::FileSystem::deleteEmptyDirectory(mediaKeyDirectory);
     }
 }
 
@@ -1295,11 +1295,11 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
     ASSERT(!mediaKeysStorageDirectory.isEmpty());
 
     for (const auto& origin : origins) {
-        auto mediaKeyDirectory = WebCore::pathByAppendingComponent(mediaKeysStorageDirectory, origin.databaseIdentifier());
+        auto mediaKeyDirectory = WebCore::FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, origin.databaseIdentifier());
         auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
 
-        WebCore::deleteFile(mediaKeyFile);
-        WebCore::deleteEmptyDirectory(mediaKeyDirectory);
+        WebCore::FileSystem::deleteFile(mediaKeyFile);
+        WebCore::FileSystem::deleteEmptyDirectory(mediaKeyDirectory);
     }
 }
 

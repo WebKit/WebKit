@@ -50,7 +50,7 @@ namespace WebCore {
 CurlCacheEntry::CurlCacheEntry(const String& url, ResourceHandle* job, const String& cacheDir)
     : m_headerFilename(cacheDir)
     , m_contentFilename(cacheDir)
-    , m_contentFile(invalidPlatformFileHandle)
+    , m_contentFile(FileSystem::invalidPlatformFileHandle)
     , m_entrySize(0)
     , m_expireDate(-1)
     , m_headerParsed(false)
@@ -79,7 +79,7 @@ bool CurlCacheEntry::isLoading() const
 // Cache manager should invalidate the entry on false
 bool CurlCacheEntry::isCached()
 {
-    if (!fileExists(m_contentFilename) || !fileExists(m_headerFilename))
+    if (!FileSystem::fileExists(m_contentFilename) || !FileSystem::fileExists(m_headerFilename))
         return false;
 
     if (!m_headerParsed) {
@@ -104,7 +104,7 @@ bool CurlCacheEntry::saveCachedData(const char* data, size_t size)
         return false;
 
     // Append
-    writeToFile(m_contentFile, data, size);
+    FileSystem::writeToFile(m_contentFile, data, size);
 
     return true;
 }
@@ -125,8 +125,8 @@ bool CurlCacheEntry::readCachedData(ResourceHandle* job)
 
 bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
 {
-    PlatformFileHandle headerFile = openFile(m_headerFilename, OpenForWrite);
-    if (!isHandleValid(headerFile)) {
+    FileSystem::PlatformFileHandle headerFile = FileSystem::openFile(m_headerFilename, FileSystem::OpenForWrite);
+    if (!FileSystem::isHandleValid(headerFile)) {
         LOG(Network, "Cache Error: Could not open %s for write\n", m_headerFilename.latin1().data());
         return false;
     }
@@ -140,12 +140,12 @@ bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
         headerField.append(it->value);
         headerField.append("\n");
         CString headerFieldLatin1 = headerField.latin1();
-        writeToFile(headerFile, headerFieldLatin1.data(), headerFieldLatin1.length());
+        FileSystem::writeToFile(headerFile, headerFieldLatin1.data(), headerFieldLatin1.length());
         m_cachedResponse.setHTTPHeaderField(it->key, it->value);
         ++it;
     }
 
-    closeFile(headerFile);
+    FileSystem::closeFile(headerFile);
     return true;
 }
 
@@ -227,16 +227,16 @@ void CurlCacheEntry::generateBaseFilename(const CString& url)
 bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<char>& buffer)
 {
     // Open the file
-    PlatformFileHandle inputFile = openFile(filepath, OpenForRead);
-    if (!isHandleValid(inputFile)) {
+    FileSystem::PlatformFileHandle inputFile = FileSystem::openFile(filepath, FileSystem::OpenForRead);
+    if (!FileSystem::isHandleValid(inputFile)) {
         LOG(Network, "Cache Error: Could not open %s for read\n", filepath.latin1().data());
         return false;
     }
 
     long long filesize = -1;
-    if (!getFileSize(filepath, filesize)) {
+    if (!FileSystem::getFileSize(filepath, filesize)) {
         LOG(Network, "Cache Error: Could not get file size of %s\n", filepath.latin1().data());
-        closeFile(inputFile);
+        FileSystem::closeFile(inputFile);
         return false;
     }
 
@@ -249,24 +249,24 @@ bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<char>& buff
         if (filesize - bufferPosition < bufferReadSize)
             bufferReadSize = filesize - bufferPosition;
 
-        bytesRead = readFromFile(inputFile, buffer.data() + bufferPosition, bufferReadSize);
+        bytesRead = FileSystem::readFromFile(inputFile, buffer.data() + bufferPosition, bufferReadSize);
         if (bytesRead != bufferReadSize) {
             LOG(Network, "Cache Error: Could not read from %s\n", filepath.latin1().data());
-            closeFile(inputFile);
+            FileSystem::closeFile(inputFile);
             return false;
         }
 
         bufferPosition += bufferReadSize;
     }
-    closeFile(inputFile);
+    FileSystem::closeFile(inputFile);
     return true;
 }
 
 void CurlCacheEntry::invalidate()
 {
     closeContentFile();
-    deleteFile(m_headerFilename);
-    deleteFile(m_contentFilename);
+    FileSystem::deleteFile(m_headerFilename);
+    FileSystem::deleteFile(m_contentFilename);
     LOG(Network, "Cache: invalidated %s\n", m_basename.latin1().data());
 }
 
@@ -280,7 +280,7 @@ bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
     double fileTime;
     time_t fileModificationDate;
 
-    if (getFileModificationTime(m_headerFilename, fileModificationDate))
+    if (FileSystem::getFileModificationTime(m_headerFilename, fileModificationDate))
         fileTime = difftime(fileModificationDate, 0) * 1000.0;
     else
         fileTime = currentTimeMS(); // GMT
@@ -342,11 +342,11 @@ size_t CurlCacheEntry::entrySize()
         long long headerFileSize;
         long long contentFileSize;
 
-        if (!getFileSize(m_headerFilename, headerFileSize)) {
+        if (!FileSystem::getFileSize(m_headerFilename, headerFileSize)) {
             LOG(Network, "Cache Error: Could not get file size of %s\n", m_headerFilename.latin1().data());
             return m_entrySize;
         }
-        if (!getFileSize(m_contentFilename, contentFileSize)) {
+        if (!FileSystem::getFileSize(m_contentFilename, contentFileSize)) {
             LOG(Network, "Cache Error: Could not get file size of %s\n", m_contentFilename.latin1().data());
             return m_entrySize;
         }
@@ -360,12 +360,12 @@ size_t CurlCacheEntry::entrySize()
 
 bool CurlCacheEntry::openContentFile()
 {
-    if (isHandleValid(m_contentFile))
+    if (FileSystem::isHandleValid(m_contentFile))
         return true;
     
-    m_contentFile = openFile(m_contentFilename, OpenForWrite);
+    m_contentFile = FileSystem::openFile(m_contentFilename, FileSystem::OpenForWrite);
 
-    if (isHandleValid(m_contentFile))
+    if (FileSystem::isHandleValid(m_contentFile))
         return true;
     
     LOG(Network, "Cache Error: Could not open %s for write\n", m_contentFilename.latin1().data());
@@ -374,11 +374,11 @@ bool CurlCacheEntry::openContentFile()
 
 bool CurlCacheEntry::closeContentFile()
 {
-    if (!isHandleValid(m_contentFile))
+    if (!FileSystem::isHandleValid(m_contentFile))
         return true;
 
-    closeFile(m_contentFile);
-    m_contentFile = invalidPlatformFileHandle;
+    FileSystem::closeFile(m_contentFile);
+    m_contentFile = FileSystem::invalidPlatformFileHandle;
 
     return true;
 }

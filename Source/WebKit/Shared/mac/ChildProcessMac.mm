@@ -128,7 +128,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
     // Use private temporary and cache directories.
-    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data(), 1);
+    setenv("DIRHELPER_USER_DIR_SUFFIX", FileSystem::fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data(), 1);
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("%s: couldn't retrieve private temporary directory path: %d\n", getprogname(), errno);
@@ -154,18 +154,18 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     String path = String::fromUTF8(pwd.pw_dir);
     path.append("/Library");
 
-    sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", fileSystemRepresentation(path).data());
+    sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", FileSystem::fileSystemRepresentation(path).data());
 
     path.append("/Preferences");
 
-    sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", fileSystemRepresentation(path).data());
+    sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", FileSystem::fileSystemRepresentation(path).data());
 
     switch (sandboxParameters.mode()) {
     case SandboxInitializationParameters::UseDefaultSandboxProfilePath:
     case SandboxInitializationParameters::UseOverrideSandboxProfilePath: {
         String sandboxProfilePath = sandboxParameters.mode() == SandboxInitializationParameters::UseDefaultSandboxProfilePath ? defaultProfilePath : sandboxParameters.overrideSandboxProfilePath();
         if (!sandboxProfilePath.isEmpty()) {
-            CString profilePath = fileSystemRepresentation(sandboxProfilePath);
+            CString profilePath = FileSystem::fileSystemRepresentation(sandboxProfilePath);
             char* errorBuf;
             if (sandbox_init_with_parameters(profilePath.data(), SANDBOX_NAMED_EXTERNAL, sandboxParameters.namedParameterArray(), &errorBuf)) {
                 WTFLogAlways("%s: Couldn't initialize sandbox profile [%s], error '%s'\n", getprogname(), profilePath.data(), errorBuf);

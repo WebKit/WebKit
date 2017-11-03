@@ -350,7 +350,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
         return true;
 
 #if !PLATFORM(IOS)
-    if (m_protocol == "file" && url.isLocalFile() && !filesHaveSameVolume(m_filePath, url.fileSystemPath()))
+    if (m_protocol == "file" && url.isLocalFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
 #endif
 

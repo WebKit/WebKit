@@ -283,14 +283,14 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
 
         auto performWriting = [blobsForWriting = WTFMove(blobsForWriting), &filePaths]() {
             for (auto& blob : blobsForWriting) {
-                PlatformFileHandle file;
-                String tempFilePath = openTemporaryFile(ASCIILiteral("Blob"), file);
+                FileSystem::PlatformFileHandle file;
+                String tempFilePath = FileSystem::openTemporaryFile(ASCIILiteral("Blob"), file);
 
                 auto fileCloser = WTF::makeScopeExit([file]() mutable {
-                    closeFile(file);
+                    FileSystem::closeFile(file);
                 });
                 
-                if (tempFilePath.isEmpty() || !isHandleValid(file)) {
+                if (tempFilePath.isEmpty() || !FileSystem::isHandleValid(file)) {
                     LOG_ERROR("Failed to open temporary file for writing a Blob to IndexedDB");
                     return false;
                 }
@@ -298,13 +298,13 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
                 for (auto& part : blob.filePathsOrDataBuffers) {
                     if (part.second.data()) {
                         int length = part.second.data()->size();
-                        if (writeToFile(file, reinterpret_cast<const char*>(part.second.data()->data()), length) != length) {
+                        if (FileSystem::writeToFile(file, reinterpret_cast<const char*>(part.second.data()->data()), length) != length) {
                             LOG_ERROR("Failed writing a Blob to temporary file for storage in IndexedDB");
                             return false;
                         }
                     } else {
                         ASSERT(!part.first.isEmpty());
-                        if (!appendFileContentsToFileHandle(part.first, file)) {
+                        if (!FileSystem::appendFileContentsToFileHandle(part.first, file)) {
                             LOG_ERROR("Failed copying File contents to a Blob temporary file for storage in IndexedDB (%s to %s)", part.first.utf8().data(), tempFilePath.utf8().data());
                             return false;
                         }

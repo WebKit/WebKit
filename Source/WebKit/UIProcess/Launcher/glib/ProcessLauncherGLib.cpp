@@ -79,7 +79,7 @@ void ProcessLauncher::launchProcess()
             executablePath.append('2');
 #endif
         pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
-        realPluginPath = fileSystemRepresentation(pluginPath);
+        realPluginPath = FileSystem::fileSystemRepresentation(pluginPath);
         break;
 #endif
     case ProcessLauncher::ProcessType::Network:
@@ -93,7 +93,7 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    realExecutablePath = fileSystemRepresentation(executablePath);
+    realExecutablePath = FileSystem::fileSystemRepresentation(executablePath);
     GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", socketPair.client));
     unsigned nargs = 4; // size of the argv array for g_spawn_async()
 

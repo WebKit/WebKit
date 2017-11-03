@@ -41,9 +41,9 @@ WebKitExtensionManager::WebKitExtensionManager()
 
 void WebKitExtensionManager::scanModules(const String& webExtensionsDirectory, Vector<String>& modules)
 {
-    Vector<String> modulePaths = WebCore::listDirectory(webExtensionsDirectory, String("*.so"));
+    Vector<String> modulePaths = WebCore::FileSystem::listDirectory(webExtensionsDirectory, String("*.so"));
     for (size_t i = 0; i < modulePaths.size(); ++i) {
-        if (WebCore::fileExists(modulePaths[i]))
+        if (WebCore::FileSystem::fileExists(modulePaths[i]))
             modules.append(modulePaths[i]);
     }
 }
@@ -63,7 +63,7 @@ static void parseUserData(API::Object* userData, String& webExtensionsDirectory,
     GVariant* data = nullptr;
     g_variant_get(variant.get(), "(m&smv)", &directory, &data);
 
-    webExtensionsDirectory = WebCore::stringFromFileSystemRepresentation(directory);
+    webExtensionsDirectory = WebCore::FileSystem::stringFromFileSystemRepresentation(directory);
     initializationUserData = adoptGRef(data);
 }
 

@@ -47,7 +47,7 @@ SharedBuffer::SharedBuffer(const unsigned char* data, size_t size)
     append(reinterpret_cast<const char*>(data), size);
 }
 
-SharedBuffer::SharedBuffer(MappedFileData&& fileData)
+SharedBuffer::SharedBuffer(FileSystem::MappedFileData&& fileData)
     : m_size(fileData.size())
 {
     m_segments.append({0, DataSegment::create(WTFMove(fileData))});
@@ -61,7 +61,7 @@ SharedBuffer::SharedBuffer(Vector<char>&& data)
 RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
 {
     bool mappingSuccess;
-    MappedFileData mappedFileData(filePath, mappingSuccess);
+    FileSystem::MappedFileData mappedFileData(filePath, mappingSuccess);
 
     if (!mappingSuccess)
         return SharedBuffer::createFromReadingFile(filePath);
@@ -206,7 +206,7 @@ const char* SharedBuffer::DataSegment::data() const
 #if USE(SOUP)
         [](const GUniquePtr<SoupBuffer>& data) { return data->data; },
 #endif
-        [](const MappedFileData& data) { return reinterpret_cast<const char*>(data.data()); }
+        [](const FileSystem::MappedFileData& data) { return reinterpret_cast<const char*>(data.data()); }
     );
     return WTF::visit(visitor, m_immutableData);
 }
@@ -227,7 +227,7 @@ size_t SharedBuffer::DataSegment::size() const
 #if USE(SOUP)
         [](const GUniquePtr<SoupBuffer>& data) { return static_cast<size_t>(data->length); },
 #endif
-        [](const MappedFileData& data) { return data.size(); }
+        [](const FileSystem::MappedFileData& data) { return data.size(); }
     );
     return WTF::visit(visitor, m_immutableData);
 }

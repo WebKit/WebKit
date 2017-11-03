@@ -113,7 +113,7 @@ double File::lastModified() const
     // The i/o should be performed on a background thread,
     // and the result should be cached along with an asynchronous monitor for changes to the file.
     time_t modificationTime;
-    if (getFileModificationTime(m_path, modificationTime) && isValidFileTime(modificationTime))
+    if (FileSystem::getFileModificationTime(m_path, modificationTime) && FileSystem::isValidFileTime(modificationTime))
         result = modificationTime * msPerSecond;
     else
         result = currentTime() * msPerSecond;
@@ -129,7 +129,7 @@ void File::computeNameAndContentType(const String& path, const String& nameOverr
         return;
     }
 #endif
-    effectiveName = nameOverride.isNull() ? pathGetFileName(path) : nameOverride;
+    effectiveName = nameOverride.isNull() ? FileSystem::pathGetFileName(path) : nameOverride;
     size_t index = effectiveName.reverseFind('.');
     if (index != notFound)
         effectiveContentType = MIMETypeRegistry::getMIMETypeForExtension(effectiveName.substring(index + 1));
@@ -147,7 +147,7 @@ String File::contentTypeForFile(const String& path)
 bool File::isDirectory() const
 {
     if (!m_isDirectory)
-        m_isDirectory = fileIsDirectory(m_path, ShouldFollowSymbolicLinks::Yes);
+        m_isDirectory = FileSystem::fileIsDirectory(m_path, FileSystem::ShouldFollowSymbolicLinks::Yes);
     return *m_isDirectory;
 }
 

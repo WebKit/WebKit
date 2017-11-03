@@ -212,9 +212,9 @@ void ResourceRequest::doUpdatePlatformRequest()
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
     if (m_url.isLocalFile()) {
-        auto fsRepFile = fileSystemRepresentation(m_url.fileSystemPath());
+        auto fsRepFile = FileSystem::fileSystemRepresentation(m_url.fileSystemPath());
         if (!fsRepFile.isNull()) {
-            auto fileDevice = getFileDeviceId(fsRepFile);
+            auto fileDevice = FileSystem::getFileDeviceId(fsRepFile);
             if (fileDevice && fileDevice.value())
                 [nsRequest _setProperty:[NSNumber numberWithInteger:fileDevice.value()] forKey:@"NSURLRequestFileProtocolExpectedDevice"];
         }

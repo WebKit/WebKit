@@ -76,8 +76,8 @@ void CurlCacheManager::setCacheDirectory(const String& directory)
         return;
     }
 
-    if (!fileExists(m_cacheDir)) {
-        if (!makeAllDirectories(m_cacheDir)) {
+    if (!FileSystem::fileExists(m_cacheDir)) {
+        if (!FileSystem::makeAllDirectories(m_cacheDir)) {
             LOG(Network, "Cache Error: Could not open or create cache directory! CacheManager disabled.\n");
             m_disabled = true;
             return;
@@ -103,14 +103,14 @@ void CurlCacheManager::loadIndex()
     String indexFilePath(m_cacheDir);
     indexFilePath.append("index.dat");
 
-    PlatformFileHandle indexFile = openFile(indexFilePath, OpenForRead);
-    if (!isHandleValid(indexFile)) {
+    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::OpenForRead);
+    if (!FileSystem::isHandleValid(indexFile)) {
         LOG(Network, "Cache Warning: Could not open %s for read\n", indexFilePath.latin1().data());
         return;
     }
 
     long long filesize = -1;
-    if (!getFileSize(indexFilePath, filesize)) {
+    if (!FileSystem::getFileSize(indexFilePath, filesize)) {
         LOG(Network, "Cache Error: Could not get file size of %s\n", indexFilePath.latin1().data());
         return;
     }
@@ -124,10 +124,10 @@ void CurlCacheManager::loadIndex()
         if (filesize - bufferPosition < bufferReadSize)
             bufferReadSize = filesize - bufferPosition;
 
-        readFromFile(indexFile, buffer.data() + bufferPosition, bufferReadSize);
+        FileSystem::readFromFile(indexFile, buffer.data() + bufferPosition, bufferReadSize);
         bufferPosition += bufferReadSize;
     }
-    closeFile(indexFile);
+    FileSystem::closeFile(indexFile);
 
     // Create strings from buffer
     String headerContent = String(buffer.data(), buffer.size());
@@ -164,9 +164,9 @@ void CurlCacheManager::saveIndex()
     String indexFilePath(m_cacheDir);
     indexFilePath.append("index.dat");
 
-    deleteFile(indexFilePath);
-    PlatformFileHandle indexFile = openFile(indexFilePath, OpenForWrite);
-    if (!isHandleValid(indexFile)) {
+    FileSystem::deleteFile(indexFilePath);
+    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::OpenForWrite);
+    if (!FileSystem::isHandleValid(indexFile)) {
         LOG(Network, "Cache Error: Could not open %s for write\n", indexFilePath.latin1().data());
         return;
     }
@@ -175,12 +175,12 @@ void CurlCacheManager::saveIndex()
     const auto& end = m_LRUEntryList.end();
     while (it != end) {
         const CString& urlLatin1 = it->latin1();
-        writeToFile(indexFile, urlLatin1.data(), urlLatin1.length());
-        writeToFile(indexFile, "\n", 1);
+        FileSystem::writeToFile(indexFile, urlLatin1.data(), urlLatin1.length());
+        FileSystem::writeToFile(indexFile, "\n", 1);
         ++it;
     }
 
-    closeFile(indexFile);
+    FileSystem::closeFile(indexFile);
 }
 
 void CurlCacheManager::makeRoomForNewEntry()

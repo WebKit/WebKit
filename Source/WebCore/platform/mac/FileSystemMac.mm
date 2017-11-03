@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-bool deleteEmptyDirectory(const String& path)
+bool FileSystem::deleteEmptyDirectory(const String& path)
 {
     auto fileManager = adoptNS([[NSFileManager alloc] init]);
 
@@ -45,10 +45,10 @@ bool deleteEmptyDirectory(const String& path)
     }
 
     // rmdir(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
-    return !rmdir(fileSystemRepresentation(path).data());
+    return !rmdir(FileSystem::fileSystemRepresentation(path).data());
 }
 
-void setMetadataURL(const String& path, const String& metadataURLString, const String& referrer)
+void FileSystem::setMetadataURL(const String& path, const String& metadataURLString, const String& referrer)
 {
     String urlString;
     if (NSURL *url = URLWithUserTypedString(metadataURLString, nil))
@@ -71,15 +71,15 @@ void setMetadataURL(const String& path, const String& metadataURLString, const S
     });
 }
 
-bool canExcludeFromBackup()
+bool FileSystem::canExcludeFromBackup()
 {
     return true;
 }
 
-bool excludeFromBackup(const String& path)
+bool FileSystem::excludeFromBackup(const String& path)
 {
     // It is critical to pass FALSE for excludeByPath because excluding by path requires root privileges.
-    CSBackupSetItemExcluded(pathAsURL(path).get(), TRUE, FALSE); 
+    CSBackupSetItemExcluded(FileSystem::pathAsURL(path).get(), TRUE, FALSE);
     return true;
 }
 

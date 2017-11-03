@@ -43,7 +43,7 @@
 {
     ASSERT(URLString);
     ASSERT(path);
-    WebCore::setMetadataURL(path, URLString, referrer);
+    WebCore::FileSystem::setMetadataURL(path, URLString, referrer);
 }
 
 #endif // !PLATFORM(IOS)
@@ -92,7 +92,7 @@ static BOOL fileExists(NSString *path)
 #if PLATFORM(IOS)
 - (NSString *)_webkit_createTemporaryDirectoryWithTemplatePrefix:(NSString *)prefix
 {
-    return WebCore::createTemporaryDirectory(prefix);
+    return WebCore::FileSystem::createTemporaryDirectory(prefix);
 }
 #endif
 

@@ -135,7 +135,7 @@ uint64_t FormDataElement::lengthInBytes() const
         if (m_fileLength != BlobDataItem::toEndOfFile)
             return m_fileLength;
         long long fileSize;
-        if (getFileSize(m_shouldGenerateFile ? m_generatedFilename : m_filename, fileSize))
+        if (FileSystem::getFileSize(m_shouldGenerateFile ? m_generatedFilename : m_filename, fileSize))
             return fileSize;
         return 0;
     }
@@ -167,7 +167,7 @@ void FormData::appendData(const void* data, size_t size)
 
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
-    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, invalidFileTime(), shouldGenerateFile));
+    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, FileSystem::invalidFileTime(), shouldGenerateFile));
     m_lengthInBytes = std::nullopt;
 }
 
@@ -408,9 +408,9 @@ void FormData::removeGeneratedFilesIfNeeded()
         if (element.m_type == FormDataElement::Type::EncodedFile && element.m_ownsGeneratedFile) {
             ASSERT(!element.m_generatedFilename.isEmpty());
             ASSERT(element.m_shouldGenerateFile);
-            String directory = directoryName(element.m_generatedFilename);
-            deleteFile(element.m_generatedFilename);
-            deleteEmptyDirectory(directory);
+            String directory = FileSystem::directoryName(element.m_generatedFilename);
+            FileSystem::deleteFile(element.m_generatedFilename);
+            FileSystem::deleteEmptyDirectory(directory);
             element.m_generatedFilename = String();
             element.m_ownsGeneratedFile = false;
         }

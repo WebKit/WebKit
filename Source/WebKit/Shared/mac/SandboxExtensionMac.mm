@@ -277,7 +277,7 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path)
 String resolvePathForSandboxExtension(const String& path)
 {
     // FIXME: Do we need both resolveSymlinksInPath() and -stringByStandardizingPath?
-    CString fileSystemPath = fileSystemRepresentation([(NSString *)path stringByStandardizingPath]);
+    CString fileSystemPath = FileSystem::fileSystemRepresentation([(NSString *)path stringByStandardizingPath]);
     if (fileSystemPath.isNull()) {
         LOG_ERROR("Could not create a valid file system representation for the string '%s' of length %lu", fileSystemPath.data(), fileSystemPath.length());
         return { };
@@ -335,7 +335,7 @@ String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type
     path.append(prefix.utf8().data(), prefix.length());
     path.append('\0');
     
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(fileSystemRepresentation(path.data()).data(), type);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(FileSystem::fileSystemRepresentation(path.data()).data(), type);
 
     if (!handle.m_sandboxExtension) {
         WTFLogAlways("Could not create a sandbox extension for temporary file '%s'", path.data());

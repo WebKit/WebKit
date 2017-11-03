@@ -92,10 +92,10 @@ static bool expectedUserInitiatedState = false;
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
 
-    WebCore::PlatformFileHandle fileHandle;
-    _destinationPath = WebCore::openTemporaryFile("TestWebKitAPI", fileHandle);
-    EXPECT_TRUE(fileHandle != WebCore::invalidPlatformFileHandle);
-    WebCore::closeFile(fileHandle);
+    WebCore::FileSystem::PlatformFileHandle fileHandle;
+    _destinationPath = WebCore::FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    EXPECT_TRUE(fileHandle != WebCore::FileSystem::invalidPlatformFileHandle);
+    WebCore::FileSystem::closeFile(fileHandle);
 
     *allowOverwrite = YES;
     return _destinationPath;
@@ -107,7 +107,7 @@ static bool expectedUserInitiatedState = false;
     EXPECT_EQ(expectedUserInitiatedState, download.wasUserInitiated);
     EXPECT_TRUE(_expectedContentLength == NSURLResponseUnknownLength || static_cast<uint64_t>(_expectedContentLength) == _receivedContentLength);
     EXPECT_TRUE([[NSFileManager defaultManager] contentsEqualAtPath:_destinationPath andPath:[sourceURL path]]);
-    WebCore::deleteFile(_destinationPath);
+    WebCore::FileSystem::deleteFile(_destinationPath);
     isDone = true;
 }
 
@@ -393,10 +393,10 @@ TEST(_WKDownload, DownloadRequestOriginalURLDirectDownloadWithLoadedContent)
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
 
-    WebCore::PlatformFileHandle fileHandle;
-    _destinationPath = WebCore::openTemporaryFile("TestWebKitAPI", fileHandle);
-    EXPECT_TRUE(fileHandle != WebCore::invalidPlatformFileHandle);
-    WebCore::closeFile(fileHandle);
+    WebCore::FileSystem::PlatformFileHandle fileHandle;
+    _destinationPath = WebCore::FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    EXPECT_TRUE(fileHandle != WebCore::FileSystem::invalidPlatformFileHandle);
+    WebCore::FileSystem::closeFile(fileHandle);
 
     *allowOverwrite = YES;
     return _destinationPath;
@@ -410,7 +410,7 @@ TEST(_WKDownload, DownloadRequestOriginalURLDirectDownloadWithLoadedContent)
     NSString* expectedContent = @"{\"x\":42,\"s\":\"hello, world\"}";
     NSData* expectedData = [expectedContent dataUsingEncoding:NSUTF8StringEncoding];
     EXPECT_TRUE([[[NSFileManager defaultManager] contentsAtPath:_destinationPath] isEqualToData:expectedData]);
-    WebCore::deleteFile(_destinationPath);
+    WebCore::FileSystem::deleteFile(_destinationPath);
     isDone = true;
 }
 
@@ -466,10 +466,10 @@ TEST(_WKDownload, DownloadRequestBlobURL)
 
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
 {
-    WebCore::PlatformFileHandle fileHandle;
-    _destinationPath = WebCore::openTemporaryFile("TestWebKitAPI", fileHandle);
-    EXPECT_TRUE(fileHandle != WebCore::invalidPlatformFileHandle);
-    WebCore::closeFile(fileHandle);
+    WebCore::FileSystem::PlatformFileHandle fileHandle;
+    _destinationPath = WebCore::FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    EXPECT_TRUE(fileHandle != WebCore::FileSystem::invalidPlatformFileHandle);
+    WebCore::FileSystem::closeFile(fileHandle);
     *allowOverwrite = YES;
     return _destinationPath;
 }
@@ -496,7 +496,7 @@ TEST(_WKDownload, DownloadRequestBlobURL)
     if (redirectChain.count > 2)
         EXPECT_STREQ("http://pass/", [redirectChain[2].absoluteString UTF8String]);
 
-    WebCore::deleteFile(_destinationPath);
+    WebCore::FileSystem::deleteFile(_destinationPath);
     isDone = true;
 }
 

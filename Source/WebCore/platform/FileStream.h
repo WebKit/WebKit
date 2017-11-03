@@ -60,7 +60,7 @@ public:
     int read(char* buffer, int length);
 
 private:
-    PlatformFileHandle m_handle;
+    FileSystem::PlatformFileHandle m_handle;
     long long m_bytesProcessed;
     long long m_totalBytesToRead;
 };

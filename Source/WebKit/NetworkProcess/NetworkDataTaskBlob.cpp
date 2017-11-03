@@ -412,7 +412,7 @@ void NetworkDataTaskBlob::consumeData(const char* data, int bytesRead)
     m_totalRemainingSize -= bytesRead;
 
     if (bytesRead) {
-        if (m_downloadFile != invalidPlatformFileHandle) {
+        if (m_downloadFile != FileSystem::invalidPlatformFileHandle) {
             if (!writeDownload(data, bytesRead))
                 return;
         } else {
@@ -448,8 +448,8 @@ void NetworkDataTaskBlob::setPendingDownloadLocation(const String& filename, con
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
 
-    if (allowOverwrite && fileExists(m_pendingDownloadLocation))
-        deleteFile(m_pendingDownloadLocation);
+    if (allowOverwrite && FileSystem::fileExists(m_pendingDownloadLocation))
+        FileSystem::deleteFile(m_pendingDownloadLocation);
 }
 
 String NetworkDataTaskBlob::suggestedFilename() const
@@ -467,8 +467,8 @@ void NetworkDataTaskBlob::download()
 
     LOG(NetworkSession, "%p - NetworkDataTaskBlob::download to %s", this, m_pendingDownloadLocation.utf8().data());
 
-    m_downloadFile = openFile(m_pendingDownloadLocation, OpenForWrite);
-    if (m_downloadFile == invalidPlatformFileHandle) {
+    m_downloadFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::OpenForWrite);
+    if (m_downloadFile == FileSystem::invalidPlatformFileHandle) {
         didFailDownload(cancelledError(m_firstRequest));
         return;
     }
@@ -488,7 +488,7 @@ void NetworkDataTaskBlob::download()
 bool NetworkDataTaskBlob::writeDownload(const char* data, int bytesRead)
 {
     ASSERT(isDownload());
-    int bytesWritten = writeToFile(m_downloadFile, data, bytesRead);
+    int bytesWritten = FileSystem::writeToFile(m_downloadFile, data, bytesRead);
     if (bytesWritten == -1) {
         didFailDownload(cancelledError(m_firstRequest));
         return false;
@@ -503,11 +503,11 @@ bool NetworkDataTaskBlob::writeDownload(const char* data, int bytesRead)
 
 void NetworkDataTaskBlob::cleanDownloadFiles()
 {
-    if (m_downloadFile != invalidPlatformFileHandle) {
-        closeFile(m_downloadFile);
-        m_downloadFile = invalidPlatformFileHandle;
+    if (m_downloadFile != FileSystem::invalidPlatformFileHandle) {
+        FileSystem::closeFile(m_downloadFile);
+        m_downloadFile = FileSystem::invalidPlatformFileHandle;
     }
-    deleteFile(m_pendingDownloadLocation);
+    FileSystem::deleteFile(m_pendingDownloadLocation);
 }
 
 void NetworkDataTaskBlob::didFailDownload(const ResourceError& error)
@@ -536,8 +536,8 @@ void NetworkDataTaskBlob::didFinishDownload()
     LOG(NetworkSession, "%p - NetworkDataTaskBlob::didFinishDownload", this);
 
     ASSERT(isDownload());
-    closeFile(m_downloadFile);
-    m_downloadFile = invalidPlatformFileHandle;
+    FileSystem::closeFile(m_downloadFile);
+    m_downloadFile = FileSystem::invalidPlatformFileHandle;
 
     if (m_sandboxExtension) {
         m_sandboxExtension->revoke();
@@ -569,7 +569,7 @@ void NetworkDataTaskBlob::didFail(Error errorCode)
 
 void NetworkDataTaskBlob::didFinish()
 {
-    if (m_downloadFile != invalidPlatformFileHandle) {
+    if (m_downloadFile != FileSystem::invalidPlatformFileHandle) {
         didFinishDownload();
         return;
     }

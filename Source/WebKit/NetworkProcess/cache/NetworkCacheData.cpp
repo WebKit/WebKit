@@ -137,7 +137,7 @@ static Salt makeSalt()
 
 std::optional<Salt> readOrMakeSalt(const String& path)
 {
-    auto cpath = WebCore::fileSystemRepresentation(path);
+    auto cpath = WebCore::FileSystem::fileSystemRepresentation(path);
     auto fd = open(cpath.data(), O_RDONLY, 0);
     Salt salt;
     auto bytesRead = read(fd, salt.data(), salt.size());

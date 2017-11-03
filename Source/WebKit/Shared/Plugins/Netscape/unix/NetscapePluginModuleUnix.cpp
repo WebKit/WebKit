@@ -162,7 +162,7 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         return false;
 
     plugin.path = pluginPath;
-    plugin.info.file = pathGetFileName(pluginPath);
+    plugin.info.file = FileSystem::pathGetFileName(pluginPath);
     plugin.info.name = metaData.name;
     plugin.info.desc = metaData.description;
     parseMIMEDescription(metaData.mimeDescription, plugin.info.mimes);

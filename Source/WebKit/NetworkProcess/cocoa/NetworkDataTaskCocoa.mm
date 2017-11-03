@@ -302,8 +302,8 @@ void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filenam
 
     m_task.get()._pathToDownloadTaskFile = m_pendingDownloadLocation;
 
-    if (allowOverwrite && WebCore::fileExists(m_pendingDownloadLocation))
-        WebCore::deleteFile(filename);
+    if (allowOverwrite && WebCore::FileSystem::fileExists(m_pendingDownloadLocation))
+        WebCore::FileSystem::deleteFile(filename);
 }
 
 bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler& completionHandler)

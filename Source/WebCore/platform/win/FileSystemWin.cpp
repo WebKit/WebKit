@@ -45,6 +45,8 @@
 
 namespace WebCore {
 
+namespace FileSystem {
+
 static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
 
 static bool getFindData(String path, WIN32_FIND_DATAW& findData)
@@ -543,4 +545,5 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
     return fileInformation.dwVolumeSerialNumber;
 }
 
+} // namespace FileSystem
 } // namespace WebCore

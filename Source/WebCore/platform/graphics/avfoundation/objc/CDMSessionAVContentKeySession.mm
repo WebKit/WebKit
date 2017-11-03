@@ -365,10 +365,10 @@ AVContentKeySession* CDMSessionAVContentKeySession::contentKeySession()
 
         m_contentKeySession = [getAVContentKeySessionClass() contentKeySessionWithKeySystem:getAVContentKeySystemFairPlayStreaming()];
     } else {
-        String storageDirectory = directoryName(storagePath);
+        String storageDirectory = FileSystem::directoryName(storagePath);
 
-        if (!fileExists(storageDirectory)) {
-            if (!makeAllDirectories(storageDirectory))
+        if (!FileSystem::fileExists(storageDirectory)) {
+            if (!FileSystem::makeAllDirectories(storageDirectory))
                 return nil;
         }
 

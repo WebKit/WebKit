@@ -73,15 +73,15 @@ void Manager::initialize(const String& recordReplayMode, const String& recordRep
         m_recordReplayMode = Disabled;
     }
 
-    m_recordReplayCacheLocation = WebCore::pathByAppendingComponent(recordReplayCacheLocation, kDirNameRecordReplay);
+    m_recordReplayCacheLocation = WebCore::FileSystem::pathByAppendingComponent(recordReplayCacheLocation, kDirNameRecordReplay);
     DEBUG_LOG("Cache location = " STRING_SPECIFIER, DEBUG_STR(m_recordReplayCacheLocation));
 
     if (isRecording()) {
-        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::OpenForWrite);
+        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::FileSystem::OpenForWrite);
     } else if (isReplaying()) {
-        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::OpenForRead);
-        m_loadFileHandle = WebCore::FileHandle(reportLoadPath(), WebCore::OpenForWrite);
-        m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), WebCore::OpenForWrite);
+        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::FileSystem::OpenForRead);
+        m_loadFileHandle = WebCore::FileHandle(reportLoadPath(), WebCore::FileSystem::OpenForWrite);
+        m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), WebCore::FileSystem::OpenForWrite);
         loadResources();
     }
 }
@@ -365,17 +365,17 @@ void Manager::loadResources()
 
 String Manager::reportLoadPath()
 {
-    return WebCore::pathByAppendingComponent(m_recordReplayCacheLocation, kFileNameReportLoad);
+    return WebCore::FileSystem::pathByAppendingComponent(m_recordReplayCacheLocation, kFileNameReportLoad);
 }
 
 String Manager::reportRecordPath()
 {
-    return WebCore::pathByAppendingComponent(m_recordReplayCacheLocation, kFileNameReportRecord);
+    return WebCore::FileSystem::pathByAppendingComponent(m_recordReplayCacheLocation, kFileNameReportRecord);
 }
 
 String Manager::reportReplayPath()
 {
-    return WebCore::pathByAppendingComponent(m_recordReplayCacheLocation, kFileNameReportReplay);
+    return WebCore::FileSystem::pathByAppendingComponent(m_recordReplayCacheLocation, kFileNameReportReplay);
 }
 
 String Manager::requestToPath(const WebCore::ResourceRequest& request)
@@ -411,9 +411,9 @@ String Manager::hashToPath(const String& hash)
     fileName.append(hashTail);
     fileName.appendLiteral(".data");
 
-    auto path = WebCore::pathByAppendingComponent(m_recordReplayCacheLocation, kDirNameResources);
-    path = WebCore::pathByAppendingComponent(path, hashHead);
-    path = WebCore::pathByAppendingComponent(path, fileName.toString());
+    auto path = WebCore::FileSystem::pathByAppendingComponent(m_recordReplayCacheLocation, kDirNameResources);
+    path = WebCore::FileSystem::pathByAppendingComponent(path, hashHead);
+    path = WebCore::FileSystem::pathByAppendingComponent(path, fileName.toString());
 
     return path;
 }
@@ -452,7 +452,7 @@ void Manager::logPlayedBackResource(const WebCore::ResourceRequest& request, boo
     m_replayFileHandle.printf("%s %s\n", wasCacheMiss ? "miss" : "hit ", DEBUG_STR(url.string()));
 }
 
-WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::FileOpenMode mode)
+WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::FileSystem::FileOpenMode mode)
 {
     // If we can trivially open the file, then do that and return the new file
     // handle.
@@ -464,9 +464,9 @@ WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::File
     // If we're opening the file for writing (including appending), then try
     // again after making sure all intermediate directories have been created.
 
-    if (mode != WebCore::OpenForRead) {
-        const auto& parentDir = WebCore::directoryName(filePath);
-        if (!WebCore::makeAllDirectories(parentDir)) {
+    if (mode != WebCore::FileSystem::OpenForRead) {
+        const auto& parentDir = WebCore::FileSystem::directoryName(filePath);
+        if (!WebCore::FileSystem::makeAllDirectories(parentDir)) {
             DEBUG_LOG_ERROR("Error %d trying to create intermediate directories: " STRING_SPECIFIER, errno, DEBUG_STR(parentDir));
             return fileHandle;
         }
@@ -479,7 +479,7 @@ WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::File
     // Could not open the file. Log the error and leave, returning the invalid
     // file handle.
 
-    if (mode == WebCore::OpenForRead)
+    if (mode == WebCore::FileSystem::OpenForRead)
         DEBUG_LOG_ERROR("Error %d trying to open " STRING_SPECIFIER " for reading", errno, DEBUG_STR(filePath));
     else
         DEBUG_LOG_ERROR("Error %d trying to open " STRING_SPECIFIER " for writing", errno, DEBUG_STR(filePath));
@@ -490,7 +490,7 @@ WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::File
 std::optional<Vector<Vector<String>>> Manager::readFile(const String& filePath)
 {
     bool success = false;
-    WebCore::MappedFileData file(filePath, success);
+    WebCore::FileSystem::MappedFileData file(filePath, success);
     if (!success)
         return std::nullopt;
 

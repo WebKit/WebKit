@@ -1,3 +1,18 @@
+2017-11-02  Christopher Reid  <chris.reid@sony.com>
+
+        Add a FileSystem namespace to FileSystem.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=179063
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * TestWebKitAPI/Tests/WebCore/FileMonitor.cpp:
+        * TestWebKitAPI/Tests/WebCore/FileSystem.cpp:
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        * TestWebKitAPI/Tests/WebCore/SharedBufferTest.cpp:
+        * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+
 2017-11-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE][JHBuild] Update WPEBackend and WPEBackend-mesa

@@ -90,7 +90,7 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
 #endif
 #if ENABLE(PLUGIN_PROCESS_GTK2)
         pluginProcessPath.append('2');
-        if (!fileExists(pluginProcessPath))
+        if (!FileSystem::fileExists(pluginProcessPath))
             return false;
 #else
         return false;
@@ -98,8 +98,8 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     }
 #endif
 
-    CString binaryPath = fileSystemRepresentation(pluginProcessPath);
-    CString pluginPathCString = fileSystemRepresentation(pluginPath);
+    CString binaryPath = FileSystem::fileSystemRepresentation(pluginProcessPath);
+    CString pluginPathCString = FileSystem::fileSystemRepresentation(pluginPath);
     char* argv[4];
     argv[0] = const_cast<char*>(binaryPath.data());
     argv[1] = const_cast<char*>("-scanPlugin");

@@ -33,12 +33,12 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
     if (filePath.isEmpty())
         return nullptr;
 
-    CString filename = fileSystemRepresentation(filePath);
+    CString filename = FileSystem::fileSystemRepresentation(filePath);
     GUniqueOutPtr<gchar> contents;
     gsize size;
     GUniqueOutPtr<GError> error;
     if (!g_file_get_contents(filename.data(), &contents.outPtr(), &size, &error.outPtr())) {
-        LOG_ERROR("Failed to fully read contents of file %s - %s", filenameForDisplay(filePath).utf8().data(), error->message);
+        LOG_ERROR("Failed to fully read contents of file %s - %s", FileSystem::filenameForDisplay(filePath).utf8().data(), error->message);
         return nullptr;
     }
 

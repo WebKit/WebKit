@@ -41,26 +41,26 @@ public:
         WTF::initializeMainThread();
 
         // create temp file
-        PlatformFileHandle handle;
-        m_tempFilePath = openTemporaryFile("tempTestFile", handle);
-        closeFile(handle);
+        FileSystem::PlatformFileHandle handle;
+        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
+        FileSystem::closeFile(handle);
         
-        m_spaceContainingFilePath = openTemporaryFile("temp Empty Test File", handle);
-        closeFile(handle);
+        m_spaceContainingFilePath = FileSystem::openTemporaryFile("temp Empty Test File", handle);
+        FileSystem::closeFile(handle);
         
-        m_bangContainingFilePath = openTemporaryFile("temp!Empty!Test!File", handle);
-        closeFile(handle);
+        m_bangContainingFilePath = FileSystem::openTemporaryFile("temp!Empty!Test!File", handle);
+        FileSystem::closeFile(handle);
         
-        m_quoteContainingFilePath = openTemporaryFile("temp\"Empty\"TestFile", handle);
-        closeFile(handle);
+        m_quoteContainingFilePath = FileSystem::openTemporaryFile("temp\"Empty\"TestFile", handle);
+        FileSystem::closeFile(handle);
     }
 
     void TearDown() override
     {
-        deleteFile(m_tempFilePath);
-        deleteFile(m_spaceContainingFilePath);
-        deleteFile(m_bangContainingFilePath);
-        deleteFile(m_quoteContainingFilePath);
+        FileSystem::deleteFile(m_tempFilePath);
+        FileSystem::deleteFile(m_spaceContainingFilePath);
+        FileSystem::deleteFile(m_bangContainingFilePath);
+        FileSystem::deleteFile(m_quoteContainingFilePath);
     }
     
     const String& tempFilePath() { return m_tempFilePath; }

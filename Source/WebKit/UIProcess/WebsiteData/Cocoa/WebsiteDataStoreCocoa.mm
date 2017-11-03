@@ -73,7 +73,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.pendingCookies = copyToVector(m_pendingCookies);
 
     if (!cookieFile.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(WebCore::directoryName(cookieFile), parameters.cookieStoragePathExtensionHandle);
+        SandboxExtension::createHandleForReadWriteDirectory(WebCore::FileSystem::directoryName(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (!m_configuration.cacheStorageDirectory.isNull()) {
         parameters.cacheStorageDirectory = m_configuration.cacheStorageDirectory;

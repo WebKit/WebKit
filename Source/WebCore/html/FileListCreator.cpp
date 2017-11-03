@@ -41,15 +41,15 @@ FileListCreator::~FileListCreator()
 
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<Ref<File>>& fileObjects)
 {
-    for (auto& childPath : listDirectory(directory, "*")) {
-        auto metadata = fileMetadata(childPath);
+    for (auto& childPath : FileSystem::listDirectory(directory, "*")) {
+        auto metadata = FileSystem::fileMetadata(childPath);
         if (!metadata)
             continue;
 
         if (metadata.value().isHidden)
             continue;
 
-        String childRelativePath = relativePath + "/" + pathGetFileName(childPath);
+        String childRelativePath = relativePath + "/" + FileSystem::pathGetFileName(childPath);
         if (metadata.value().type == FileMetadata::Type::Directory)
             appendDirectoryFiles(childPath, childRelativePath, fileObjects);
         else if (metadata.value().type == FileMetadata::Type::File)
@@ -80,8 +80,8 @@ Ref<FileList> FileListCreator::createFileList(const Vector<FileChooserFileInfo>&
 {
     Vector<Ref<File>> fileObjects;
     for (auto& info : paths) {
-        if (shouldResolveDirectories == ShouldResolveDirectories::Yes && fileIsDirectory(info.path, ShouldFollowSymbolicLinks::No))
-            appendDirectoryFiles(info.path, pathGetFileName(info.path), fileObjects);
+        if (shouldResolveDirectories == ShouldResolveDirectories::Yes && FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
+            appendDirectoryFiles(info.path, FileSystem::pathGetFileName(info.path), fileObjects);
         else
             fileObjects.append(File::createWithName(info.path, info.displayName));
     }

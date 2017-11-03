@@ -45,6 +45,8 @@
 
 namespace WebCore {
 
+namespace FileSystem {
+
 bool fileExists(const String& path)
 {
     if (path.isNull())
@@ -445,4 +447,5 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
     return fileStat.st_dev;
 }
 
+} // namespace FileSystem
 } // namespace WebCore

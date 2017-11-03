@@ -65,7 +65,7 @@ PluginStream::PluginStream(PluginStreamClient* client, Frame* frame, const Resou
     , m_streamState(StreamBeforeStarted)
     , m_loadManually(false)
     , m_delayDeliveryTimer(*this, &PluginStream::delayDeliveryTimerFired)
-    , m_tempFileHandle(invalidPlatformFileHandle)
+    , m_tempFileHandle(FileSystem::invalidPlatformFileHandle)
     , m_pluginFuncs(pluginFuncs)
     , m_instance(instance)
     , m_quirks(quirks)
@@ -212,10 +212,10 @@ void PluginStream::startStream()
     if (m_transferMode == NP_NORMAL)
         return;
 
-    m_path = openTemporaryFile("WKP", m_tempFileHandle);
+    m_path = FileSystem::openTemporaryFile("WKP", m_tempFileHandle);
 
     // Something went wrong, cancel loading the stream
-    if (!isHandleValid(m_tempFileHandle))
+    if (!FileSystem::isHandleValid(m_tempFileHandle))
         cancelAndDestroyStream(NPRES_NETWORK_ERR);
 }
 
@@ -254,7 +254,7 @@ void PluginStream::destroyStream()
     ASSERT(m_reason != WebReasonNone);
     ASSERT(!m_deliveryData || m_deliveryData->size() == 0);
 
-    closeFile(m_tempFileHandle);
+    FileSystem::closeFile(m_tempFileHandle);
 
     bool newStreamCalled = m_stream.ndata;
 
@@ -319,7 +319,7 @@ void PluginStream::destroyStream()
         m_client->streamDidFinishLoading(this);
 
     if (!m_path.isNull())
-        deleteFile(m_path);
+        FileSystem::deleteFile(m_path);
 }
 
 void PluginStream::delayDeliveryTimerFired()
@@ -440,8 +440,8 @@ void PluginStream::didReceiveData(NetscapePlugInStreamLoader* loader, const char
         deliverData();
     }
 
-    if (m_streamState != StreamStopped && isHandleValid(m_tempFileHandle)) {
-        int bytesWritten = writeToFile(m_tempFileHandle, data, length);
+    if (m_streamState != StreamStopped && FileSystem::isHandleValid(m_tempFileHandle)) {
+        int bytesWritten = FileSystem::writeToFile(m_tempFileHandle, data, length);
         if (bytesWritten != length)
             cancelAndDestroyStream(NPRES_NETWORK_ERR);
     }

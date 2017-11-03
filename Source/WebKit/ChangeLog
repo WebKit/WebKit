@@ -1,3 +1,71 @@
+2017-11-02  Christopher Reid  <chris.reid@sony.com>
+
+        Add a FileSystem namespace to FileSystem.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=179063
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        * NetworkProcess/Downloads/BlobDownloadClient.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        * NetworkProcess/capture/NetworkCaptureManager.h:
+        * NetworkProcess/capture/NetworkCaptureRecorder.cpp:
+        * NetworkProcess/capture/NetworkCaptureResource.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        * Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp:
+        * Shared/Plugins/unix/PluginSearchPath.cpp:
+        * Shared/WebMemorySampler.cpp:
+        * Shared/WebMemorySampler.h:
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        * Shared/ios/ChildProcessIOS.mm:
+        * Shared/mac/ChildProcessMac.mm:
+        * Shared/mac/SandboxExtensionMac.mm:
+        * Shared/wpe/ProcessExecutablePathWPE.cpp:
+        * StorageProcess/StorageProcess.cpp:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp:
+        * UIProcess/API/glib/IconDatabase.cpp:
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        * UIProcess/API/glib/WebKitFileChooserRequest.cpp:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        * UIProcess/WebStorage/LocalStorageDatabase.cpp:
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        * WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp:
+        * WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+
 2017-11-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make ServiceWorker a Remote Inspector debuggable target

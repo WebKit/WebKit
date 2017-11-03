@@ -381,7 +381,7 @@ int64_t ApplicationCacheStorage::spaceNeeded(int64_t cacheToSave)
 {
     int64_t spaceNeeded = 0;
     long long fileSize = 0;
-    if (!getFileSize(m_cacheFile, fileSize))
+    if (!FileSystem::getFileSize(m_cacheFile, fileSize))
         return 0;
 
     int64_t currentSize = fileSize + flatFileAreaSize();
@@ -600,11 +600,11 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     if (m_cacheDirectory.isNull())
         return;
 
-    m_cacheFile = pathByAppendingComponent(m_cacheDirectory, "ApplicationCache.db");
-    if (!createIfDoesNotExist && !fileExists(m_cacheFile))
+    m_cacheFile = FileSystem::pathByAppendingComponent(m_cacheDirectory, "ApplicationCache.db");
+    if (!createIfDoesNotExist && !FileSystem::fileExists(m_cacheFile))
         return;
 
-    makeAllDirectories(m_cacheDirectory);
+    FileSystem::makeAllDirectories(m_cacheDirectory);
     m_database.open(m_cacheFile);
     
     if (!m_database.isOpen())
@@ -799,7 +799,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
 
     String fullPath;
     if (!resource->path().isEmpty())
-        dataStatement.bindText(2, pathGetFileName(resource->path()));
+        dataStatement.bindText(2, FileSystem::pathGetFileName(resource->path()));
     else if (shouldStoreResourceAsFlatFile(resource)) {
         // First, check to see if creating the flat file would violate the maximum total quota. We don't need
         // to check the per-origin quota here, as it was already checked in storeNewestCache().
@@ -808,8 +808,8 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
             return false;
         }
         
-        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
-        makeAllDirectories(flatFileDirectory);
+        String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
+        FileSystem::makeAllDirectories(flatFileDirectory);
 
         String extension;
         
@@ -822,7 +822,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         if (!writeDataToUniqueFileInDirectory(resource->data(), flatFileDirectory, path, extension))
             return false;
         
-        fullPath = pathByAppendingComponent(flatFileDirectory, path);
+        fullPath = FileSystem::pathByAppendingComponent(flatFileDirectory, path);
         resource->setPath(fullPath);
         dataStatement.bindText(2, path);
     } else {
@@ -833,7 +833,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     if (!dataStatement.executeCommand()) {
         // Clean up the file which we may have written to:
         if (!fullPath.isEmpty())
-            deleteFile(fullPath);
+            FileSystem::deleteFile(fullPath);
 
         return false;
     }
@@ -1116,7 +1116,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
 
     auto cache = ApplicationCache::create();
 
-    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
+    String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
 
     int result;
     while ((result = cacheStatement.step()) == SQLITE_ROW) {
@@ -1136,8 +1136,8 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
         if (path.isEmpty())
             size = data->size();
         else {
-            path = pathByAppendingComponent(flatFileDirectory, path);
-            getFileSize(path, size);
+            path = FileSystem::pathByAppendingComponent(flatFileDirectory, path);
+            FileSystem::getFileSize(path, size);
         }
         
         String mimeType = cacheStatement.getColumnText(3);
@@ -1294,25 +1294,25 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& dat
     String fullPath;
     
     do {
-        path = encodeForFileName(createCanonicalUUIDString()) + fileExtension;
+        path = FileSystem::encodeForFileName(createCanonicalUUIDString()) + fileExtension;
         // Guard against the above function being called on a platform which does not implement
         // createCanonicalUUIDString().
         ASSERT(!path.isEmpty());
         if (path.isEmpty())
             return false;
         
-        fullPath = pathByAppendingComponent(directory, path);
-    } while (directoryName(fullPath) != directory || fileExists(fullPath));
+        fullPath = FileSystem::pathByAppendingComponent(directory, path);
+    } while (FileSystem::directoryName(fullPath) != directory || FileSystem::fileExists(fullPath));
     
-    PlatformFileHandle handle = openFile(fullPath, OpenForWrite);
+    FileSystem::PlatformFileHandle handle = FileSystem::openFile(fullPath, FileSystem::OpenForWrite);
     if (!handle)
         return false;
     
-    int64_t writtenBytes = writeToFile(handle, data.data(), data.size());
-    closeFile(handle);
+    int64_t writtenBytes = FileSystem::writeToFile(handle, data.data(), data.size());
+    FileSystem::closeFile(handle);
     
     if (writtenBytes != static_cast<int64_t>(data.size())) {
-        deleteFile(fullPath);
+        FileSystem::deleteFile(fullPath);
         return false;
     }
     
@@ -1466,15 +1466,15 @@ void ApplicationCacheStorage::checkForDeletedResources()
         if (path.isEmpty())
             continue;
         
-        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
-        String fullPath = pathByAppendingComponent(flatFileDirectory, path);
+        String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
+        String fullPath = FileSystem::pathByAppendingComponent(flatFileDirectory, path);
         
         // Don't exit the flatFileDirectory! This should only happen if the "path" entry contains a directory 
         // component, but protect against it regardless.
-        if (directoryName(fullPath) != flatFileDirectory)
+        if (FileSystem::directoryName(fullPath) != flatFileDirectory)
             continue;
         
-        deleteFile(fullPath);
+        FileSystem::deleteFile(fullPath);
     } while (selectPaths.step() == SQLITE_ROW);
     
     executeSQLCommand("DELETE FROM DeletedCacheResources");
@@ -1494,12 +1494,12 @@ long long ApplicationCacheStorage::flatFileAreaSize()
     }
 
     long long totalSize = 0;
-    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
+    String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
     while (selectPaths.step() == SQLITE_ROW) {
         String path = selectPaths.getColumnText(0);
-        String fullPath = pathByAppendingComponent(flatFileDirectory, path);
+        String fullPath = FileSystem::pathByAppendingComponent(flatFileDirectory, path);
         long long pathSize = 0;
-        if (!getFileSize(fullPath, pathSize))
+        if (!FileSystem::getFileSize(fullPath, pathSize))
             continue;
         totalSize += pathSize;
     }

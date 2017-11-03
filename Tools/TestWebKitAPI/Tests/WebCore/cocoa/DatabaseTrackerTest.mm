@@ -40,21 +40,21 @@ namespace TestWebKitAPI {
 
 TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
 {
-    PlatformFileHandle handle;
-    String databaseFilePath = openTemporaryFile("tempEmptyDatabase", handle);
-    closeFile(handle);
+    FileSystem::PlatformFileHandle handle;
+    String databaseFilePath = FileSystem::openTemporaryFile("tempEmptyDatabase", handle);
+    FileSystem::closeFile(handle);
 
     long long fileSize;
-    getFileSize(databaseFilePath, fileSize);
+    FileSystem::getFileSize(databaseFilePath, fileSize);
     EXPECT_EQ(0, fileSize);
 
     EXPECT_TRUE(DatabaseTracker::deleteDatabaseFileIfEmpty(databaseFilePath));
 
-    bool fileStillExists = fileExists(databaseFilePath);
+    bool fileStillExists = FileSystem::fileExists(databaseFilePath);
     EXPECT_FALSE(fileStillExists);
 
     if (fileStillExists)
-        deleteFile(databaseFilePath);
+        FileSystem::deleteFile(databaseFilePath);
 }
 
 #endif // PLATFORM(IOS)
@@ -78,19 +78,19 @@ static void addToDatabasesTable(const String& databasePath, const SecurityOrigin
 
 static void removeDirectoryAndAllContents(const String& directoryPath)
 {
-    for (const auto& file : listDirectory(directoryPath, "*"))
-        EXPECT_TRUE(deleteFile(file));
+    for (const auto& file : FileSystem::listDirectory(directoryPath, "*"))
+        EXPECT_TRUE(FileSystem::deleteFile(file));
 
-    if (fileExists(directoryPath))
-        EXPECT_TRUE(deleteEmptyDirectory(directoryPath));
+    if (FileSystem::fileExists(directoryPath))
+        EXPECT_TRUE(FileSystem::deleteEmptyDirectory(directoryPath));
 }
 
 static void createFileAtPath(const String& path)
 {
-    PlatformFileHandle fileHandle = openFile(path, OpenForWrite);
+    FileSystem::PlatformFileHandle fileHandle = FileSystem::openFile(path, FileSystem::OpenForWrite);
     EXPECT_NE(-1, fileHandle);
-    closeFile(fileHandle);
-    EXPECT_TRUE(fileExists(path));
+    FileSystem::closeFile(fileHandle);
+    EXPECT_TRUE(FileSystem::fileExists(path));
 }
 
 TEST(DatabaseTracker, DeleteOrigin)
@@ -99,7 +99,7 @@ TEST(DatabaseTracker, DeleteOrigin)
     // tables, and an actual database on disk.
     // In this case, we should remove the origin's information from both the Origins
     // and Databases tables, and remove the database from disk.
-    NSString *webSQLDirectory = createTemporaryDirectory(@"WebSQL");
+    NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
     String databaseDirectoryPath(webSQLDirectory.UTF8String);
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
@@ -108,16 +108,16 @@ TEST(DatabaseTracker, DeleteOrigin)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
-    EXPECT_TRUE(fileExists(databasePath));
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
     addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db");
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String originPath = pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
-    EXPECT_TRUE(makeAllDirectories(originPath));
-    EXPECT_TRUE(fileExists(originPath));
+    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
+    EXPECT_TRUE(FileSystem::fileExists(originPath));
 
     String fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     createFileAtPath(fullWebDatabasePath);
@@ -128,14 +128,14 @@ TEST(DatabaseTracker, DeleteOrigin)
 
 #if PLATFORM(IOS)
     EXPECT_TRUE(DatabaseTracker::deleteDatabaseFileIfEmpty(fullWebDatabasePath));
-    EXPECT_TRUE(deleteEmptyDirectory(originPath));
+    EXPECT_TRUE(FileSystem::deleteEmptyDirectory(originPath));
 #else
-    EXPECT_FALSE(fileExists(fullWebDatabasePath));
-    EXPECT_FALSE(fileExists(originPath));
+    EXPECT_FALSE(FileSystem::fileExists(fullWebDatabasePath));
+    EXPECT_FALSE(FileSystem::fileExists(originPath));
 #endif
 
     removeDirectoryAndAllContents(databaseDirectoryPath);
-    EXPECT_FALSE(fileExists(databaseDirectoryPath));
+    EXPECT_FALSE(FileSystem::fileExists(databaseDirectoryPath));
 }
 
 TEST(DatabaseTracker, DeleteOriginWhenDatabaseDoesNotExist)
@@ -143,7 +143,7 @@ TEST(DatabaseTracker, DeleteOriginWhenDatabaseDoesNotExist)
     // Test the case where there is an entry in both the Origins and Databases tables,
     // but not an actual database on disk.
     // The information should still be removed from the tables.
-    NSString *webSQLDirectory = createTemporaryDirectory(@"WebSQL");
+    NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
     String databaseDirectoryPath(webSQLDirectory.UTF8String);
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
@@ -152,15 +152,15 @@ TEST(DatabaseTracker, DeleteOriginWhenDatabaseDoesNotExist)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
-    EXPECT_TRUE(fileExists(databasePath));
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
     addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db");
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
     String webDatabaseFullPath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
-    EXPECT_FALSE(fileExists(webDatabaseFullPath));
+    EXPECT_FALSE(FileSystem::fileExists(webDatabaseFullPath));
 
     EXPECT_TRUE(databaseTracker->deleteOrigin(origin));
 
@@ -168,7 +168,7 @@ TEST(DatabaseTracker, DeleteOriginWhenDatabaseDoesNotExist)
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
 
     removeDirectoryAndAllContents(databaseDirectoryPath);
-    EXPECT_FALSE(fileExists(databaseDirectoryPath));
+    EXPECT_FALSE(FileSystem::fileExists(databaseDirectoryPath));
 }
 
 TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
@@ -178,7 +178,7 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     // When we call deleteOrigin(), deleting one of these databases fails.
     // In this case, we shouldn't remove the information from either the Databases or
     // Origins tables.
-    NSString *webSQLDirectory = createTemporaryDirectory(@"WebSQL");
+    NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
     String databaseDirectoryPath(webSQLDirectory.UTF8String);
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
@@ -187,16 +187,16 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
-    EXPECT_TRUE(fileExists(databasePath));
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
     addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db");
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String originPath = pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
-    EXPECT_TRUE(makeAllDirectories(originPath));
-    EXPECT_TRUE(fileExists(originPath));
+    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
+    EXPECT_TRUE(FileSystem::fileExists(originPath));
 
     String fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     createFileAtPath(fullWebDatabasePath);
@@ -209,8 +209,8 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
 
     EXPECT_FALSE(databaseTracker->deleteOrigin(origin));
 
-    EXPECT_TRUE(fileExists(fullWebDatabasePath));
-    EXPECT_TRUE(fileExists(originPath));
+    EXPECT_TRUE(FileSystem::fileExists(fullWebDatabasePath));
+    EXPECT_TRUE(FileSystem::fileExists(originPath));
 
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
@@ -221,11 +221,11 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     chflags(fullWebDatabasePath.utf8().data(), 0);
 #endif
 
-    EXPECT_TRUE(deleteFile(fullWebDatabasePath));
-    EXPECT_TRUE(deleteEmptyDirectory(originPath));
+    EXPECT_TRUE(FileSystem::deleteFile(fullWebDatabasePath));
+    EXPECT_TRUE(FileSystem::deleteEmptyDirectory(originPath));
 
     removeDirectoryAndAllContents(databaseDirectoryPath);
-    EXPECT_FALSE(fileExists(databaseDirectoryPath));
+    EXPECT_FALSE(FileSystem::fileExists(databaseDirectoryPath));
 }
 
 TEST(DatabaseTracker, DeleteOriginWithMissingEntryInDatabasesTable)
@@ -234,7 +234,7 @@ TEST(DatabaseTracker, DeleteOriginWithMissingEntryInDatabasesTable)
     // the Databases table. There is an actual database on disk.
     // The information should still be removed from the Origins table, and the
     // database should be deleted from disk.
-    NSString *webSQLDirectory = createTemporaryDirectory(@"WebSQL");
+    NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
     String databaseDirectoryPath(webSQLDirectory.UTF8String);
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
@@ -243,28 +243,28 @@ TEST(DatabaseTracker, DeleteOriginWithMissingEntryInDatabasesTable)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
-    EXPECT_TRUE(fileExists(databasePath));
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
 
-    String originPath = pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
-    EXPECT_TRUE(makeAllDirectories(originPath));
-    EXPECT_TRUE(fileExists(originPath));
+    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
+    EXPECT_TRUE(FileSystem::fileExists(originPath));
 
-    String webDatabasePath = pathByAppendingComponent(originPath, "database.db");
+    String webDatabasePath = FileSystem::pathByAppendingComponent(originPath, "database.db");
     createFileAtPath(webDatabasePath);
 
     EXPECT_TRUE(databaseTracker->deleteOrigin(origin));
 
-    EXPECT_FALSE(fileExists(webDatabasePath));
-    EXPECT_FALSE(fileExists(originPath));
+    EXPECT_FALSE(FileSystem::fileExists(webDatabasePath));
+    EXPECT_FALSE(FileSystem::fileExists(originPath));
 
     EXPECT_TRUE(databaseTracker->origins().isEmpty());
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
 
     removeDirectoryAndAllContents(databaseDirectoryPath);
-    EXPECT_FALSE(fileExists(databaseDirectoryPath));
+    EXPECT_FALSE(FileSystem::fileExists(databaseDirectoryPath));
 }
 
 TEST(DatabaseTracker, DeleteDatabase)
@@ -272,7 +272,7 @@ TEST(DatabaseTracker, DeleteDatabase)
     // Test the expected case. There is an entry in the Databases table
     // and a database on disk. After the deletion, the database should be deleted
     // from disk, and the information should be gone from the Databases table.
-    NSString *webSQLDirectory = createTemporaryDirectory(@"WebSQL");
+    NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
     String databaseDirectoryPath(webSQLDirectory.UTF8String);
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
@@ -281,16 +281,16 @@ TEST(DatabaseTracker, DeleteDatabase)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
-    EXPECT_TRUE(fileExists(databasePath));
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
     addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db");
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    String originPath = pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
-    EXPECT_TRUE(makeAllDirectories(originPath));
-    EXPECT_TRUE(fileExists(originPath));
+    String originPath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, origin.databaseIdentifier());
+    EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
+    EXPECT_TRUE(FileSystem::fileExists(originPath));
 
     String fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     createFileAtPath(fullWebDatabasePath);
@@ -301,20 +301,20 @@ TEST(DatabaseTracker, DeleteDatabase)
 #if PLATFORM(IOS)
     EXPECT_TRUE(DatabaseTracker::deleteDatabaseFileIfEmpty(fullWebDatabasePath));
 #else
-    EXPECT_FALSE(fileExists(fullWebDatabasePath));
+    EXPECT_FALSE(FileSystem::fileExists(fullWebDatabasePath));
 #endif
 
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
-    EXPECT_TRUE(deleteEmptyDirectory(originPath));
+    EXPECT_TRUE(FileSystem::deleteEmptyDirectory(originPath));
     removeDirectoryAndAllContents(databaseDirectoryPath);
-    EXPECT_FALSE(fileExists(databaseDirectoryPath));
+    EXPECT_FALSE(FileSystem::fileExists(databaseDirectoryPath));
 }
 
 TEST(DatabaseTracker, DeleteDatabaseWhenDatabaseDoesNotExist)
 {
     // Test the case where we try to delete a database that doesn't exist on disk.
     // We should still remove the database information from the Databases table.
-    NSString *webSQLDirectory = createTemporaryDirectory(@"WebSQL");
+    NSString *webSQLDirectory = FileSystem::createTemporaryDirectory(@"WebSQL");
     String databaseDirectoryPath(webSQLDirectory.UTF8String);
 
     std::unique_ptr<DatabaseTracker> databaseTracker = DatabaseTracker::trackerWithDatabasePath(databaseDirectoryPath);
@@ -323,21 +323,21 @@ TEST(DatabaseTracker, DeleteDatabaseWhenDatabaseDoesNotExist)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
-    EXPECT_TRUE(fileExists(databasePath));
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
     addToDatabasesTable(databasePath, origin, webDatabaseName, "database.db");
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
     String webDatabaseFullPath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
-    EXPECT_FALSE(fileExists(webDatabaseFullPath));
+    EXPECT_FALSE(FileSystem::fileExists(webDatabaseFullPath));
 
     EXPECT_TRUE(databaseTracker->deleteDatabase(origin, webDatabaseName));
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
 
     removeDirectoryAndAllContents(databaseDirectoryPath);
-    EXPECT_FALSE(fileExists(databaseDirectoryPath));
+    EXPECT_FALSE(FileSystem::fileExists(databaseDirectoryPath));
 }
 
 #endif // PLATFORM(COCOA)

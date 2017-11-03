@@ -466,11 +466,11 @@ void IDBServer::performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, 
 {
     String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(mainFrameOrigin, openingOrigin, m_databaseDirectoryPath);
 
-    Vector<String> entries = listDirectory(directory, ASCIILiteral("*"));
+    Vector<String> entries = FileSystem::listDirectory(directory, ASCIILiteral("*"));
     Vector<String> databases;
     databases.reserveInitialCapacity(entries.size());
     for (auto& entry : entries) {
-        String encodedName = lastComponentOfPathIgnoringTrailingSlash(entry);
+        String encodedName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(entry);
         databases.uncheckedAppend(SQLiteIDBBackingStore::databaseNameFromEncodedFilename(encodedName));
     }
 
@@ -581,14 +581,14 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
 
 static void removeAllDatabasesForOriginPath(const String& originPath, std::chrono::system_clock::time_point modifiedSince)
 {
-    Vector<String> databasePaths = listDirectory(originPath, "*");
+    Vector<String> databasePaths = FileSystem::listDirectory(originPath, "*");
 
     for (auto& databasePath : databasePaths) {
-        String databaseFile = pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
+        String databaseFile = FileSystem::pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
 
-        if (modifiedSince > std::chrono::system_clock::time_point::min() && fileExists(databaseFile)) {
+        if (modifiedSince > std::chrono::system_clock::time_point::min() && FileSystem::fileExists(databaseFile)) {
             time_t modificationTime;
-            if (!getFileModificationTime(databaseFile, modificationTime))
+            if (!FileSystem::getFileModificationTime(databaseFile, modificationTime))
                 continue;
 
             if (std::chrono::system_clock::from_time_t(modificationTime) < modifiedSince)
@@ -606,11 +606,11 @@ static void removeAllDatabasesForOriginPath(const String& originPath, std::chron
         //
         // IndexedDB blob files are named "N.blob" where N is a decimal integer,
         // so those are the only blob files we should be trying to delete.
-        for (auto& blobPath : listDirectory(databasePath, "[0-9]*.blob")) {
+        for (auto& blobPath : FileSystem::listDirectory(databasePath, "[0-9]*.blob")) {
             // Globbing can't give us only filenames starting with 1-or-more digits.
             // The above globbing gives us files that start with a digit and ends with ".blob", but there might be non-digits in between.
             // We need to validate that each filename contains only digits before deleting it, as any other files are not ones we put there.
-            String filename = pathGetFileName(blobPath);
+            String filename = FileSystem::pathGetFileName(blobPath);
             auto filenameLength = filename.length();
 
             ASSERT(filenameLength >= 6);
@@ -630,24 +630,24 @@ static void removeAllDatabasesForOriginPath(const String& originPath, std::chron
             }
 
             if (validFilename)
-                deleteFile(blobPath);
+                FileSystem::deleteFile(blobPath);
         }
 
         // Now delete IndexedDB.sqlite3 and related SQLite files.
         SQLiteFileSystem::deleteDatabaseFile(databaseFile);
 
         // And finally, if we can, delete the empty directory.
-        deleteEmptyDirectory(databasePath);
+        FileSystem::deleteEmptyDirectory(databasePath);
     }
 
     // If no databases remain for this origin, we can delete the origin directory as well.
-    deleteEmptyDirectory(originPath);
+    FileSystem::deleteEmptyDirectory(originPath);
 }
 
 void IDBServer::performCloseAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
     if (!m_databaseDirectoryPath.isEmpty()) {
-        Vector<String> originPaths = listDirectory(m_databaseDirectoryPath, "*");
+        Vector<String> originPaths = FileSystem::listDirectory(m_databaseDirectoryPath, "*");
         for (auto& originPath : originPaths)
             removeAllDatabasesForOriginPath(originPath, modifiedSince);
     }
@@ -659,7 +659,7 @@ void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOr
 {
     if (!m_databaseDirectoryPath.isEmpty()) {
         for (const auto& origin : origins) {
-            String originPath = pathByAppendingComponent(m_databaseDirectoryPath, origin.databaseIdentifier());
+            String originPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, origin.databaseIdentifier());
             removeAllDatabasesForOriginPath(originPath, std::chrono::system_clock::time_point::min());
         }
     }

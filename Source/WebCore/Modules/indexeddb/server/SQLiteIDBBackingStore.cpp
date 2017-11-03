@@ -744,7 +744,7 @@ String SQLiteIDBBackingStore::databaseNameFromEncodedFilename(const String& enco
     String partiallyDecoded = encodedName;
     partiallyDecoded.replace(ASCIILiteral("%2E"), ASCIILiteral("."));
 
-    return decodeFromFilename(partiallyDecoded);
+    return FileSystem::decodeFromFilename(partiallyDecoded);
 }
 
 String SQLiteIDBBackingStore::filenameForDatabaseName() const
@@ -754,7 +754,7 @@ String SQLiteIDBBackingStore::filenameForDatabaseName() const
     if (m_identifier.databaseName().isEmpty())
         return "%00";
 
-    String filename = encodeForFileName(m_identifier.databaseName());
+    String filename = FileSystem::encodeForFileName(m_identifier.databaseName());
     filename.replace('.', "%2E");
 
     return filename;
@@ -764,14 +764,14 @@ String SQLiteIDBBackingStore::fullDatabaseDirectory() const
 {
     ASSERT(!m_identifier.databaseName().isNull());
 
-    return pathByAppendingComponent(m_absoluteDatabaseDirectory, filenameForDatabaseName());
+    return FileSystem::pathByAppendingComponent(m_absoluteDatabaseDirectory, filenameForDatabaseName());
 }
 
 String SQLiteIDBBackingStore::fullDatabasePath() const
 {
     ASSERT(!m_identifier.databaseName().isNull());
 
-    return pathByAppendingComponent(fullDatabaseDirectory(), "IndexedDB.sqlite3");
+    return FileSystem::pathByAppendingComponent(fullDatabaseDirectory(), "IndexedDB.sqlite3");
 }
 
 IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
@@ -783,7 +783,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         return IDBError { };
     }
 
-    makeAllDirectories(fullDatabaseDirectory());
+    FileSystem::makeAllDirectories(fullDatabaseDirectory());
     String dbFilename = fullDatabasePath();
 
     m_sqliteDB = std::make_unique<SQLiteDatabase>();
@@ -1858,7 +1858,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
         blobURLs.append(blobURL);
 
         String fileName = sql->getColumnText(0);
-        blobFilePaths.append(pathByAppendingComponent(databaseDirectory, fileName));
+        blobFilePaths.append(FileSystem::pathByAppendingComponent(databaseDirectory, fileName));
     }
 
     return IDBError { };
@@ -2542,8 +2542,8 @@ void SQLiteIDBBackingStore::deleteBackingStore()
 
     String databaseDirectory = fullDatabaseDirectory();
     for (auto& file : blobFiles) {
-        String fullPath = pathByAppendingComponent(databaseDirectory, file);
-        if (!deleteFile(fullPath))
+        String fullPath = FileSystem::pathByAppendingComponent(databaseDirectory, file);
+        if (!FileSystem::deleteFile(fullPath))
             LOG_ERROR("Error deleting blob file %s", fullPath.utf8().data());
     }
 

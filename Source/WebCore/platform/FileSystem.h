@@ -56,6 +56,10 @@ typedef struct _GFileIOStream GFileIOStream;
 
 namespace WebCore {
 
+struct FileMetadata;
+
+namespace FileSystem {
+
 // PlatformFileHandle
 #if USE(GLIB) && !PLATFORM(WIN)
 typedef GFileIOStream* PlatformFileHandle;
@@ -91,8 +95,6 @@ enum FileLockMode {
 };
 
 enum class ShouldFollowSymbolicLinks { No, Yes };
-
-struct FileMetadata;
 
 WEBCORE_EXPORT bool fileExists(const String&);
 WEBCORE_EXPORT bool deleteFile(const String&);
@@ -213,5 +215,6 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
     return *this;
 }
 
+} // namespace FileSystem
 } // namespace WebCore
 

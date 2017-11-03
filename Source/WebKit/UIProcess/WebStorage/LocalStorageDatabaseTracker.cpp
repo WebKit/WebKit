@@ -95,7 +95,7 @@ void LocalStorageDatabaseTracker::deleteAllDatabases()
 
     int result;
     while ((result = statement.step()) == SQLITE_ROW) {
-        deleteFile(statement.getColumnText(1));
+        FileSystem::deleteFile(statement.getColumnText(1));
 
         // FIXME: Call out to the client.
     }
@@ -106,7 +106,7 @@ void LocalStorageDatabaseTracker::deleteAllDatabases()
     if (m_database.isOpen())
         m_database.close();
 
-    if (!deleteFile(trackerDatabasePath())) {
+    if (!FileSystem::deleteFile(trackerDatabasePath())) {
         // In the case where it is not possible to delete the database file (e.g some other program
         // like a virus scanner is accessing it), make sure to remove all entries.
         openTrackerDatabase(SkipIfNonExistent);
@@ -124,19 +124,19 @@ void LocalStorageDatabaseTracker::deleteAllDatabases()
         }
     }
 
-    deleteEmptyDirectory(m_localStorageDirectory);
+    FileSystem::deleteEmptyDirectory(m_localStorageDirectory);
 }
 
 static std::optional<time_t> fileCreationTime(const String& filePath)
 {
     time_t time;
-    return getFileCreationTime(filePath, time) ? time : std::optional<time_t>(std::nullopt);
+    return FileSystem::getFileCreationTime(filePath, time) ? time : std::optional<time_t>(std::nullopt);
 }
 
 static std::optional<time_t> fileModificationTime(const String& filePath)
 {
     time_t time;
-    if (!getFileModificationTime(filePath, time))
+    if (!FileSystem::getFileModificationTime(filePath, time))
         return std::nullopt;
 
     return time;
@@ -209,7 +209,7 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
 
 String LocalStorageDatabaseTracker::databasePath(const String& filename) const
 {
-    if (!makeAllDirectories(m_localStorageDirectory)) {
+    if (!FileSystem::makeAllDirectories(m_localStorageDirectory)) {
         LOG_ERROR("Unable to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
         return String();
     }
@@ -218,7 +218,7 @@ String LocalStorageDatabaseTracker::databasePath(const String& filename) const
     platformMaybeExcludeFromBackup();
 #endif
 
-    return pathByAppendingComponent(m_localStorageDirectory, filename);
+    return FileSystem::pathByAppendingComponent(m_localStorageDirectory, filename);
 }
 
 String LocalStorageDatabaseTracker::trackerDatabasePath() const
@@ -233,7 +233,7 @@ void LocalStorageDatabaseTracker::openTrackerDatabase(DatabaseOpeningStrategy op
 
     String databasePath = trackerDatabasePath();
 
-    if (!fileExists(databasePath) && openingStrategy == SkipIfNonExistent)
+    if (!FileSystem::fileExists(databasePath) && openingStrategy == SkipIfNonExistent)
         return;
 
     if (!m_database.open(databasePath)) {
@@ -279,7 +279,7 @@ void LocalStorageDatabaseTracker::importOriginIdentifiers()
 
 void LocalStorageDatabaseTracker::updateTrackerDatabaseFromLocalStorageDatabaseFiles()
 {
-    Vector<String> paths = listDirectory(m_localStorageDirectory, "*.localstorage");
+    Vector<String> paths = FileSystem::listDirectory(m_localStorageDirectory, "*.localstorage");
 
     HashSet<String> origins(m_origins);
     HashSet<String> originsFromLocalStorageDatabaseFiles;
@@ -290,7 +290,7 @@ void LocalStorageDatabaseTracker::updateTrackerDatabaseFromLocalStorageDatabaseF
         if (!path.endsWith(".localstorage"))
             continue;
 
-        String filename = pathGetFileName(path);
+        String filename = FileSystem::pathGetFileName(path);
 
         String originIdentifier = filename.substring(0, filename.length() - strlen(".localstorage"));
 
@@ -360,7 +360,7 @@ void LocalStorageDatabaseTracker::removeDatabaseWithOriginIdentifier(const Strin
         // There are no origins left; delete the tracker database.
         m_database.close();
         SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath());
-        deleteEmptyDirectory(m_localStorageDirectory);
+        FileSystem::deleteEmptyDirectory(m_localStorageDirectory);
     }
 
     // FIXME: Tell clients that the origin was removed.

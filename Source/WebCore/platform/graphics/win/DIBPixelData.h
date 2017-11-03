@@ -52,7 +52,7 @@ public:
     void initialize(HBITMAP);
 
 #ifndef NDEBUG
-    void writeToFile(LPCWSTR);
+    void FileSystem::writeToFile(LPCWSTR);
 #endif
 
     UInt8* buffer() const { return m_bitmapBuffer; }

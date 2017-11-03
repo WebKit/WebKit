@@ -122,7 +122,7 @@ void CurlDownload::curlDidComplete()
 
     if (!m_destination.isEmpty()) {
         if (m_curlRequest && !m_curlRequest->getDownloadedFilePath().isEmpty())
-            moveFile(m_curlRequest->getDownloadedFilePath(), m_destination);
+            FileSystem::moveFile(m_curlRequest->getDownloadedFilePath(), m_destination);
     }
 
     if (m_listener)
@@ -137,7 +137,7 @@ void CurlDownload::curlDidFailWithError(const ResourceError& resourceError)
         return;
 
     if (m_deletesFileUponFailure && m_curlRequest && !m_curlRequest->getDownloadedFilePath().isEmpty())
-        deleteFile(m_curlRequest->getDownloadedFilePath());
+        FileSystem::deleteFile(m_curlRequest->getDownloadedFilePath());
 
     if (m_listener)
         m_listener->didFail();

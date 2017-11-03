@@ -135,7 +135,7 @@ static NSDictionary *temporaryDirectoryAttributes()
 
 NSString *createTemporaryFileForQuickLook(NSString *fileName)
 {
-    NSString *downloadDirectory = createTemporaryDirectory(@"QuickLookContent");
+    NSString *downloadDirectory = FileSystem::createTemporaryDirectory(@"QuickLookContent");
     if (!downloadDirectory)
         return nil;
 
