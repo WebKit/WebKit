@@ -98,7 +98,7 @@ async function getPaymentRequestResponse(options, id) {
       ev.complete({});
       internals.mockPaymentCoordinator.acceptPayment();
   };
-  const response = await request.show();
+  const response = await activateThen(() => request.show());
   return { request, response };
 }
 

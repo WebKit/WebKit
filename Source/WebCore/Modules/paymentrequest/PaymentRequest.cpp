@@ -382,8 +382,10 @@ static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const St
 // https://www.w3.org/TR/payment-request/#show()-method
 void PaymentRequest::show(Document& document, ShowPromise&& promise)
 {
-    // FIXME: Reject promise with SecurityError if show() was not triggered by a user gesture.
-    // Find a way to do this without breaking the payment-request web platform tests.
+    if (!UserGestureIndicator::processingUserGesture()) {
+        promise.reject(Exception { SecurityError, "show() must be triggered by user activation." });
+        return;
+    }
 
     if (m_state != State::Created) {
         promise.reject(Exception { InvalidStateError });

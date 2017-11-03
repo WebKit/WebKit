@@ -5,8 +5,11 @@
 <meta charset="utf-8">
 <title>Test for PaymentRequest.show() method</title>
 <link rel="help" href="https://w3c.github.io/browser-payment-api/#show-method">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<body>
 <script>
 'use strict';
 const applePay = Object.freeze({
@@ -40,7 +43,7 @@ test(() => {
 }, "Must be possible to construct a payment request");
 
 
-promise_test(async t => {
+user_activation_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise = request.show(); // Sets state to "interactive"
   await promise_rejects(t, "InvalidStateError", request.show());
@@ -48,7 +51,7 @@ promise_test(async t => {
   await promise_rejects(t, "AbortError", acceptPromise);
 }, `Throws if the promise [[state]] is not "created"`);
 
-promise_test(async t => {
+user_activation_test(async t => {
   const request1 = new PaymentRequest(defaultMethods, defaultDetails);
   const request2 = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise1 = request1.show();
@@ -58,7 +61,7 @@ promise_test(async t => {
   await promise_rejects(t, "AbortError", acceptPromise1);
 }, `If the user agent's "payment request is showing" boolean is true, then return a promise rejected with an "AbortError" DOMException.`);
 
-promise_test(async t => {
+user_activation_test(async t => {
   const request = new PaymentRequest(
     [{ supportedMethods: "this-is-not-supported" }],
     defaultDetails);
@@ -66,7 +69,7 @@ promise_test(async t => {
   await promise_rejects(t, "NotSupportedError", acceptPromise);
 }, `If payment method consultation produces no supported method of payment, then return a promise rejected with a "NotSupportedError" DOMException.`);
 
-promise_test(async t => {
+user_activation_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise = request.show(); // Sets state to "interactive"
   internals.mockPaymentCoordinator.cancelPayment();

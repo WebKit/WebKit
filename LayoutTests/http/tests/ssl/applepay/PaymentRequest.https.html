@@ -2,7 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="../../resources/js-test-pre.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
 </head>
 <body>
 <script>
@@ -31,23 +33,20 @@ function validPaymentDetails() {
 }
 
 function logAndShouldThrow(setup, test) {
-    debug("SETUP: " + setup)
-    eval(setup)
-    shouldThrow(test)
-    debug("")
-}
-
-function logAndShouldNotThrow(setup, test) {
-    debug("SETUP: " + setup)
-    eval(setup)
-    shouldNotThrow(test)
-    debug("")
+    return activateThen(() => {
+        debug("SETUP: " + setup);
+        eval(setup);
+        shouldThrow(test);
+        debug("");
+    });
 }
 
 function logAndShouldReject(setup, test) {
-    debug("SETUP: " + setup)
-    eval(setup)
-    return shouldReject(test)
+    return activateThen(() => {
+        debug("SETUP: " + setup)
+        eval(setup)
+        return shouldReject(test)
+    });
 }
 
 async function go() {
@@ -145,59 +144,59 @@ async function go() {
 
     debug("Testing PaymentDetails.total")
     debug("")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); delete paymentDetails.total;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = '';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = null;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = undefined;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = 7;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = [];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label' };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: 'amount' };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: '', value: '0' } };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); delete paymentDetails.total;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = '';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = null;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = undefined;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = 7;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = [];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label' };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: 'amount' };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: '', value: '0' } };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '0' } };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     debug("")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '10000000000.00' } };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     debug("")
 
     debug("Testing PaymentDetails.displayItems")
     debug("");
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = '';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = null;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = 7;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = { };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [''];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [null];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [undefined];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{}];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = '';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = null;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = 7;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = { };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [''];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [null];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [undefined];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{}];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: { currency: 'EUR', value: '10.00' } }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
 
     debug("Testing PaymentDetails.shippingOptions")
     debug("");
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = '';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 'invalid';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = null;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 7;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = { };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '-1', detail: '', identifier: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = '';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 'invalid';", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = null;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 7;", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = { };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '-1', detail: '', identifier: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: { currency: 'EUR', value: '10.00' }, id: '', label: '' }];", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
 
     debug("Testing PaymentOptions")
     debug("");
-    logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = '';", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
-    logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = 'invalid';", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
-    logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = null;", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
-    logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = 7;", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
-    logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = { };", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = '';", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = 'invalid';", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = null;", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = 7;", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = { };", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions); request.show()")
 
     document.querySelector("button").remove();
 

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <script src="/js-test-resources/ui-helper.js"></script>
 <script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
 </head>
 <body>
 <script>
@@ -36,10 +37,10 @@ function runTest(test) {
         var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
         paymentRequest.onapplepayvalidatemerchant = (event) => {
             test(event, paymentRequest);
-            paymentRequest.abort();
+            paymentRequest.abort().catch(() => {});
             resolve();
         };
-        paymentRequest.show().catch(() => {});
+        activateThen(() => paymentRequest.show().catch(() => {}));
     });
 }
 

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <script src="/js-test-resources/ui-helper.js"></script>
 <script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
 </head>
 <body>
 <script>
@@ -62,9 +63,11 @@ async function go() {
         document.querySelector("button").remove();
         finishJSTest();
     };
-    
-    paymentRequest.show();
-    internals.mockPaymentCoordinator.changePaymentMethod(expectedPaymentMethod);
+
+    activateThen(() => {
+        paymentRequest.show();
+        internals.mockPaymentCoordinator.changePaymentMethod(expectedPaymentMethod);
+    });
 }
 
 window.onload = function() {

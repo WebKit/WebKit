@@ -6,8 +6,11 @@
 <title>Test for PaymentRequest shippingOption attribute</title>
 <link rel="help" href="https://w3c.github.io/payment-request/#shippingoption-attribute">
 <link rel="help" href="https://w3c.github.io/payment-request/#onshippingoptionchange-attribute">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<body>
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 const applePay = Object.freeze({
@@ -47,7 +50,7 @@ const requestShipping = Object.freeze({
 });
 
 function testShippingOptionChanged() {
-  promise_test(async t => {
+  user_activation_test(async t => {
     const detailsWithShippingOptions = Object.assign({}, validDetails, {
       shippingOptions: [validShippingOption1, validShippingOption2],
     });

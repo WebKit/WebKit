@@ -3,6 +3,8 @@
 <meta charset="utf-8">
 <title>Test for validity of payment method identifiers when calling updateWith() method</title>
 <link rel="help" href="https://www.w3.org/TR/payment-request/#updatewith()-method">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script>
@@ -62,7 +64,7 @@ function runTest(button, { invalidMethod }) {
           countryCode: 'US',
       },
   });
-  promise_test(async t => {
+  user_activation_test(async t => {
     const request = new PaymentRequest(
       [applePay],
       validDetails,

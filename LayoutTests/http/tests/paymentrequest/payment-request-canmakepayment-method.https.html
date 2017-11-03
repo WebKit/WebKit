@@ -5,6 +5,8 @@
 <meta charset="utf-8">
 <title>Tests for PaymentRequest.canMakePayment() method</title>
 <link rel="help" href="https://w3c.github.io/browser-payment-api/#show-method">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script>
@@ -49,7 +51,7 @@ promise_test(async t => {
   }
 }, `If request.[[state]] is "created", then return a promise that resolves to true for known method.`);
 
-promise_test(async t => {
+user_activation_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise = request.show(); // Sets state to "interactive"
   const canMakePaymentPromise = request.canMakePayment();
@@ -69,7 +71,7 @@ promise_test(async t => {
   await promise_rejects(t, "InvalidStateError", request.canMakePayment());
 }, `If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException.`);
 
-promise_test(async t => {
+user_activation_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise = request.show(); // The state is now "interactive"
   acceptPromise.catch(() => {}); // no-op, just to silence unhandled rejection in devtools.

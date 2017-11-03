@@ -1,3 +1,31 @@
+2017-11-02  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] show() should only be called with user activation
+        https://bugs.webkit.org/show_bug.cgi?id=179056
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html:
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https.html:
+        * http/tests/paymentrequest/payment-request-change-shipping-address.https.html:
+        * http/tests/paymentrequest/payment-request-change-shipping-option.https.html:
+        * http/tests/paymentrequest/payment-request-show-method.https.html:
+        * http/tests/paymentrequest/payment-response-complete-method.https.html:
+        * http/tests/paymentrequest/payment-response-methodName-attribute.https.html:
+        * http/tests/paymentrequest/payment-response-payerEmail-attribute.https.html:
+        * http/tests/paymentrequest/payment-response-payerName-attribute.https.html:
+        * http/tests/paymentrequest/payment-response-payerPhone-attribute.https.html:
+        * http/tests/paymentrequest/resources/helpers.js:
+        (async.getPaymentRequestResponse):
+        * http/tests/paymentrequest/updateWith-method-pmi-handling.https.html:
+        * http/tests/resources/payment-request.js: Added.
+        (activateThen):
+        * http/tests/ssl/applepay/ApplePayMerchantValidationEvent.https.html:
+        * http/tests/ssl/applepay/ApplePayPaymentMethodUpdateEvent.https.html:
+        * http/tests/ssl/applepay/PaymentRequest.https.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.activateElement):
+
 2017-11-03  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Update Event-timestamp-high-resolution.html expectations.

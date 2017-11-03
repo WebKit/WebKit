@@ -4,8 +4,11 @@
 <title>Test for PaymentRequest shippingAddress attribute</title>
 <link rel="help" href="https://w3c.github.io/payment-request/#shippingaddress-attribute">
 <link rel="help" href="https://w3c.github.io/payment-request/#onshippingaddresschange-attribute">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<body>
 <script>
 setup({ explicit_done: true, explicit_timeout: true });
 const applePay = Object.freeze({
@@ -51,7 +54,7 @@ function testShippingAddressChange() {
       emailAddress: '',
   };
   internals.mockPaymentCoordinator.setShippingAddress(shippingAddress);
-  promise_test(async t => {
+  user_activation_test(async t => {
     const request = new PaymentRequest(
       validMethods,
       validDetails,
