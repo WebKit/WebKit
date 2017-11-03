@@ -32,7 +32,7 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
         let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel,
             WI.DOMNodeDetailsSidebarPanel, WI.CSSStyleDetailsSidebarPanel];
 
-        if (window.LayerTreeAgent)
+        if (window.LayerTreeAgent && !WI.settings.experimentalEnableLayersTab.value)
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
         super(identifier || "search", "search", tabBarItem, WI.SearchSidebarPanel, detailsSidebarPanelConstructors);

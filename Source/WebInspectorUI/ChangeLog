@@ -1,3 +1,13 @@
+2017-11-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Hide legacy Layers sidebar on Search tab
+        https://bugs.webkit.org/show_bug.cgi?id=179257
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView):
+
 2017-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Table - Include a secure lock indicator in the domain column
