@@ -25,11 +25,6 @@
 
 WI.TestAppController = class TestAppController extends WI.AppControllerBase
 {
-    constructor()
-    {
-        super();
-    }
-
     get hasExtraDomains() { return false; }
     get debuggableType() { return WI.DebuggableType.Web; }
 };

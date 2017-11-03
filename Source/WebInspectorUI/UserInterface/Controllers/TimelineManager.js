@@ -73,6 +73,14 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return defaultTypes;
         }
 
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) {
+            // FIXME: Support Network Timeline in ServiceWorker.
+            let defaultTypes = [WI.TimelineRecord.Type.Script];
+            if (WI.HeapAllocationsInstrument.supported())
+                defaultTypes.push(WI.TimelineRecord.Type.HeapAllocations);
+            return defaultTypes;
+        }
+
         let defaultTypes = [
             WI.TimelineRecord.Type.Network,
             WI.TimelineRecord.Type.Layout,
@@ -88,7 +96,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     static availableTimelineTypes()
     {
         let types = WI.TimelineManager.defaultTimelineTypes();
-        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)
             return types;
 
         if (WI.MemoryInstrument.supported())

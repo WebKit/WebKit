@@ -2818,7 +2818,9 @@
 		A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E841C56D079009951BE /* ResourceUsageThread.h */; };
 		A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */; };
 		A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */; };
-		A52B349E1FA41703008B6246 /* WorkerDebuggerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B349C1FA416F8008B6246 /* WorkerDebuggerProxy.h */; };
+		A52B348F1FA3BDA6008B6246 /* ServiceWorkerDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B348C1FA3BD79008B6246 /* ServiceWorkerDebuggable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A52B34961FA3E290008B6246 /* ServiceWorkerInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A52B349E1FA41703008B6246 /* WorkerDebuggerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B349C1FA416F8008B6246 /* WorkerDebuggerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5416FE618810EF80009FC5F /* YouTubeEmbedShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */; };
 		A54A0C621DB7F8C10017A90B /* WorkerInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A54A0C601DB7F8B70017A90B /* WorkerInspectorController.h */; };
 		A54A0C661DB805360017A90B /* WorkerScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = A54A0C641DB805320017A90B /* WorkerScriptDebugServer.h */; };
@@ -10677,6 +10679,10 @@
 		A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDateCache.mm; sourceTree = "<group>"; };
 		A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = InspectorOverlayPage.css; sourceTree = "<group>"; };
 		A518225517E2A0D400A9BA1D /* InspectorOverlayPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = InspectorOverlayPage.js; sourceTree = "<group>"; };
+		A52B348C1FA3BD79008B6246 /* ServiceWorkerDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDebuggable.h; sourceTree = "<group>"; };
+		A52B348E1FA3BD79008B6246 /* ServiceWorkerDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDebuggable.cpp; sourceTree = "<group>"; };
+		A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerInspectorProxy.h; sourceTree = "<group>"; };
+		A52B34951FA3E286008B6246 /* ServiceWorkerInspectorProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerInspectorProxy.cpp; sourceTree = "<group>"; };
 		A52B349C1FA416F8008B6246 /* WorkerDebuggerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerDebuggerProxy.h; sourceTree = "<group>"; };
 		A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubeEmbedShadowElement.cpp; sourceTree = "<group>"; };
 		A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouTubeEmbedShadowElement.h; sourceTree = "<group>"; };
@@ -17100,8 +17106,12 @@
 		517C87071F8E8FF200EB8076 /* context */ = {
 			isa = PBXGroup;
 			children = (
+				A52B348E1FA3BD79008B6246 /* ServiceWorkerDebuggable.cpp */,
+				A52B348C1FA3BD79008B6246 /* ServiceWorkerDebuggable.h */,
 				419ACF901F97E7D6009F1A83 /* ServiceWorkerFetch.cpp */,
 				419ACF8E1F97E7D5009F1A83 /* ServiceWorkerFetch.h */,
+				A52B34951FA3E286008B6246 /* ServiceWorkerInspectorProxy.cpp */,
+				A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */,
 				517C87111F8EE72F00EB8076 /* ServiceWorkerThread.cpp */,
 				517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */,
 				4112B5411F9F9C9C00E67875 /* ServiceWorkerThreadProxy.cpp */,
@@ -28880,9 +28890,11 @@
 				8369FDFC1FA102E300C1FF1F /* ServiceWorkerClientType.h in Headers */,
 				51F1755F1F3EBC8300C74950 /* ServiceWorkerContainer.h in Headers */,
 				51CA7EE91F883390003D3131 /* ServiceWorkerContextData.h in Headers */,
+				A52B348F1FA3BDA6008B6246 /* ServiceWorkerDebuggable.h in Headers */,
 				419ACF921F97E7DA009F1A83 /* ServiceWorkerFetch.h in Headers */,
 				517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */,
 				51F175611F3EBC8300C74950 /* ServiceWorkerGlobalScope.h in Headers */,
+				A52B34961FA3E290008B6246 /* ServiceWorkerInspectorProxy.h in Headers */,
 				51F175631F3EBC8300C74950 /* ServiceWorkerJob.h in Headers */,
 				51F175641F3EBC8300C74950 /* ServiceWorkerJobClient.h in Headers */,
 				51F645691F4539B900B54DED /* ServiceWorkerJobData.h in Headers */,

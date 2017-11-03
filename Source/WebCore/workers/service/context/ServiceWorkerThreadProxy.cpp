@@ -55,10 +55,16 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
 ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID sessionID, CacheStorageProvider& cacheStorageProvider)
     : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data.scriptURL))
     , m_document(*m_page->mainFrame().document())
-    , m_serviceWorkerThread(ServiceWorkerThread::create(serverConnectionIdentifier, data, sessionID, *this))
+    , m_serviceWorkerThread(ServiceWorkerThread::create(serverConnectionIdentifier, data, sessionID, *this, *this))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_sessionID(sessionID)
+    , m_inspectorProxy(*this)
 {
+#if ENABLE(REMOTE_INSPECTOR)
+    m_remoteDebuggable = std::make_unique<ServiceWorkerDebuggable>(*this, data);
+    m_remoteDebuggable->setRemoteDebuggingAllowed(true);
+    m_remoteDebuggable->init();
+#endif
 }
 
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
@@ -72,6 +78,14 @@ void ServiceWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& t
 {
     RunLoop::main().dispatch([task = WTFMove(task), this, protectedThis = makeRef(*this)] () mutable {
         task.performTask(m_document.get());
+    });
+}
+
+void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
+{
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), message = message.isolatedCopy()] {
+        // FIXME: Handle terminated case.
+        m_inspectorProxy.sendMessageFromWorkerToFrontend(message);
     });
 }
 

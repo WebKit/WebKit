@@ -27,7 +27,7 @@ body.web .toolbar.collapsed .dashboard.default > :matches(.resourcesSize, .time,
     display: none;
 }
 
-body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourcesSize, .time) {
+body:not(.web) .toolbar .dashboard.default > :matches(.resourcesCount, .resourcesSize, .time) {
     display: none;
 }
 

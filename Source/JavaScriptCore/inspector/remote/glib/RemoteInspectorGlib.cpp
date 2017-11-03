@@ -186,6 +186,10 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
     if (!target.remoteDebuggingAllowed())
         return nullptr;
 
+    // FIXME: Support remote debugging of a ServiceWorker.
+    if (target.type() == RemoteInspectionTarget::Type::ServiceWorker)
+        return nullptr;
+
     ASSERT(target.type() == RemoteInspectionTarget::Type::Web || target.type() == RemoteInspectionTarget::Type::JavaScript);
     return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
         target.type() == RemoteInspectionTarget::Type::Web ? "Web" : "JavaScript",

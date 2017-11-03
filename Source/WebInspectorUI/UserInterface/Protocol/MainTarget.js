@@ -38,10 +38,12 @@ WI.MainTarget = class MainTarget extends WI.Target
     get displayName()
     {
         switch (WI.sharedApp.debuggableType) {
-        case WI.DebuggableType.Web:
-            return WI.UIString("Page");
         case WI.DebuggableType.JavaScript:
             return WI.UIString("JavaScript Context");
+        case WI.DebuggableType.ServiceWorker:
+            return WI.UIString("ServiceWorker");
+        case WI.DebuggableType.Web:
+            return WI.UIString("Page");
         default:
             console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
             return WI.UIString("Main");

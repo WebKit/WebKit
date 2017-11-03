@@ -2170,7 +2170,9 @@ workers/service/ServiceWorkerRegistrationKey.cpp
 workers/service/ServiceWorkerRegistrationOptions.cpp
 workers/service/ServiceWorkerWindowClient.cpp
 
+workers/service/context/ServiceWorkerDebuggable.cpp
 workers/service/context/ServiceWorkerFetch.cpp
+workers/service/context/ServiceWorkerInspectorProxy.cpp
 workers/service/context/ServiceWorkerThread.cpp
 workers/service/context/ServiceWorkerThreadProxy.cpp
 workers/service/context/SWContextManager.cpp

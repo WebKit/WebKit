@@ -65,7 +65,7 @@ protected:
     void runEventLoop() override;
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, WorkerLoaderProxy&);
+    WEBCORE_EXPORT ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, WorkerLoaderProxy&, WorkerDebuggerProxy&);
 
     uint64_t m_serverConnectionIdentifier;
     ServiceWorkerContextData m_data;

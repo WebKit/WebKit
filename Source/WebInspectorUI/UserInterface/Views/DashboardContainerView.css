@@ -37,7 +37,7 @@ body.web .toolbar .dashboard-container {
     min-width: 350px;
 }
 
-body.javascript .toolbar .dashboard-container {
+body:not(.web) .toolbar .dashboard-container {
     width: 25vw;
     min-width: 175px;
 }

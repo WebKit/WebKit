@@ -30,7 +30,25 @@ WI.AppController = class AppController extends WI.AppControllerBase
         super();
 
         this._hasExtraDomains = false;
-        this._debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WI.DebuggableType.Web : WI.DebuggableType.JavaScript;
+        this._debuggableType = AppController.debuggableTypeFromHost();
+    }
+
+    // Static
+
+    static debuggableTypeFromHost()
+    {
+        let type = InspectorFrontendHost.debuggableType();
+        switch (type) {
+        case "javascript":
+            return WI.DebuggableType.JavaScript;
+        case "service-worker":
+            return WI.DebuggableType.ServiceWorker;
+        case "web":
+            return WI.DebuggableType.Web;
+        default:
+            console.assert(false, "Unexpected debuggable type", type);
+            return WI.DebuggableType.JavaScript;
+        }
     }
 
     // Properties.

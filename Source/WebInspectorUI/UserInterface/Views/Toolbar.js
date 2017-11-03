@@ -100,8 +100,8 @@ WI.Toolbar = class Toolbar extends WI.NavigationBar
         if (!this._leftSectionElement || !this._centerSectionElement || !this._rightSectionElement)
             return;
 
-        // Force collapsed style for JavaScript debuggables.
-        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript) {
+        // Force collapsed style for non-Web debuggables.
+        if (WI.sharedApp.debuggableType !== WI.DebuggableType.Web) {
             this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
             return;
         }

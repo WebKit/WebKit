@@ -24,8 +24,9 @@
  */
 
 WI.DebuggableType = {
+    JavaScript: "javascript",
+    ServiceWorker: "service-worker",
     Web: "web",
-    JavaScript: "javascript"
 };
 
 WI.NotImplementedError = class NotImplementedError extends Error

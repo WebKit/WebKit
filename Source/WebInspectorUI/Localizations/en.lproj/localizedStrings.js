@@ -818,6 +818,7 @@ localizedStrings["Self Size"] = "Self Size";
 localizedStrings["Self Time"] = "Self Time";
 localizedStrings["Semantic Issue"] = "Semantic Issue";
 localizedStrings["Service Worker"] = "Service Worker";
+localizedStrings["ServiceWorker"] = "ServiceWorker";
 localizedStrings["Session"] = "Session";
 localizedStrings["Session Storage"] = "Session Storage";
 localizedStrings["Set to Automatically Continue"] = "Set to Automatically Continue";

@@ -285,6 +285,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             for (let script of targetData.scripts) {
                 if (script.resource)
                     continue;
+                if (isWebInspectorConsoleEvaluationScript(script.sourceURL))
+                    continue;
                 if (!WI.isDebugUIEnabled() && isWebKitInternalScript(script.sourceURL))
                     continue;
                 knownScripts.push(script);

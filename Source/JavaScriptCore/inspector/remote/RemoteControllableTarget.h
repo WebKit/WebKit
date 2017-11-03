@@ -51,7 +51,7 @@ public:
     unsigned targetIdentifier() const { return m_identifier; }
     void setTargetIdentifier(unsigned identifier) { m_identifier = identifier; }
 
-    enum class Type { JavaScript, Web, Automation };
+    enum class Type { JavaScript, ServiceWorker, Web, Automation };
     virtual Type type() const = 0;
     virtual bool remoteControlAllowed() const = 0;
     virtual void dispatchMessageFromRemote(const String& message) = 0;

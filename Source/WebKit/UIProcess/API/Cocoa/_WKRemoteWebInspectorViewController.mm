@@ -99,6 +99,8 @@ static String debuggableTypeString(WKRemoteWebInspectorDebuggableType debuggable
     switch (debuggableType) {
     case WKRemoteWebInspectorDebuggableTypeJavaScript:
         return ASCIILiteral("javascript");
+    case WKRemoteWebInspectorDebuggableTypeServiceWorker:
+        return ASCIILiteral("service-worker");
     case WKRemoteWebInspectorDebuggableTypeWeb:
         return ASCIILiteral("web");
     }

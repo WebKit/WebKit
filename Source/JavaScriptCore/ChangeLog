@@ -1,3 +1,24 @@
+2017-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make ServiceWorker a Remote Inspector debuggable target
+        https://bugs.webkit.org/show_bug.cgi?id=179043
+        <rdar://problem/34126008>
+
+        Reviewed by Brian Burg.
+
+        * inspector/remote/RemoteControllableTarget.h:
+        * inspector/remote/RemoteInspectionTarget.h:
+        * inspector/remote/RemoteInspectorConstants.h:
+        Include a new ServiceWorker remote inspector target type.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+        Implement listing for a ServiceWorker to include a URL like a page.
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+        Bail for ServiceWorker support in glib. They will need to implement their support.
+
 2017-11-02  Michael Saboff  <msaboff@apple.com>
 
         DFG needs to handle code motion of code in for..in loop bodies

@@ -1,3 +1,48 @@
+2017-11-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make ServiceWorker a Remote Inspector debuggable target
+        https://bugs.webkit.org/show_bug.cgi?id=179043
+        <rdar://problem/34126008>
+
+        Reviewed by Brian Burg.
+
+        Customize the Web Inspector frontend for a ServiceWorker target.
+        Currently this just behaves like a JavaScript Context target because
+        we haven't yet added support for Networking capabilities.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.get knownNonResourceScripts):
+        Drive-by fix a bug where lazily initializing the Resources / Debugger tabs
+        would show Console evaluation scripts. We should ignore them, like we
+        do in other places.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/AppController.js:
+        (WI.AppController):
+        (WI.AppController.debuggableTypeFromHost):
+        * UserInterface/Controllers/AppControllerBase.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.defaultTimelineTypes):
+        (WI.TimelineManager.availableTimelineTypes):
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.sourceCodeTimelinesSupported):
+        * UserInterface/Protocol/MainTarget.js:
+        (WI.MainTarget.prototype.get displayName):
+        * UserInterface/Test/TestAppController.js:
+        * UserInterface/Views/DashboardContainerView.css:
+        (body:not(.web) .toolbar .dashboard-container):
+        (body.javascript .toolbar .dashboard-container): Deleted.
+        * UserInterface/Views/DefaultDashboardView.css:
+        (body:not(.web) .toolbar .dashboard.default > :matches(.resourcesCount, .resourcesSize, .time)):
+        (body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourcesSize, .time)): Deleted.
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel):
+        (WI.ResourceSidebarPanel.shouldPlaceResourcesAtTopLevel):
+        (WI.ResourceSidebarPanel.prototype.initialLayout):
+        (WI.ResourceSidebarPanel.prototype._addScript):
+        (WI.ResourceSidebarPanel.prototype._extraDomainsActivated):
+        * UserInterface/Views/Toolbar.js:
+
 2017-11-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas: recording parameters that include an Image should show an InlineSwatch (2D canvas)

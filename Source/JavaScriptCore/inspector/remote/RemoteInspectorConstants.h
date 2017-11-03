@@ -72,6 +72,7 @@
 #define WIRConnectionDiedMessage                @"WIRConnectionDiedMessage"
 #define WIRTypeKey                              @"WIRTypeKey"
 #define WIRTypeJavaScript                       @"WIRTypeJavaScript"
+#define WIRTypeServiceWorker                    @"WIRTypeServiceWorker"
 #define WIRTypeWeb                              @"WIRTypeWeb"
 #define WIRTypeAutomation                       @"WIRTypeAutomation"
 #define WIRAutomaticallyPause                   @"WIRAutomaticallyPause"
