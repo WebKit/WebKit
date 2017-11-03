@@ -802,7 +802,7 @@ sub determineConfigurationProductDir
             $configurationProductDir = "$baseProductDir";
         } else {
             $configurationProductDir = "$baseProductDir/$configuration";
-            $configurationProductDir .= "-" . xcodeSDKPlatformName() if isIOSWebKit();
+            $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit();
         }
     }
 }
