@@ -104,7 +104,6 @@ void SWServerRegistration::removeClientServiceWorkerRegistration(uint64_t connec
     if (iterator == m_clientRegistrationsByConnection.end() || !iterator->value)
         return;
     
-    ASSERT(iterator->value->contains(clientRegistrationIdentifier));
     iterator->value->remove(clientRegistrationIdentifier);
     if (iterator->value->isEmpty())
         m_clientRegistrationsByConnection.remove(iterator);
