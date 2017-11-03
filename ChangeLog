@@ -1,3 +1,16 @@
+2017-11-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Avoid duplicating code for dist and distcheck targets
+        https://bugs.webkit.org/show_bug.cgi?id=179154
+
+        Reviewed by Carlos Garcia Campos.
+
+        This commit just reduces some CMake code duplication between GTK and WPE.
+
+        * Source/PlatformGTK.cmake:
+        * Source/PlatformWPE.cmake:
+        * Source/cmake/WebKitDist.cmake: Added.
+
 2017-11-02  Tim Horton  <timothy_horton@apple.com>
 
         Reduce duplication in the toplevel Makefile

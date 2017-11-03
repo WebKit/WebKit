@@ -1,3 +1,15 @@
+2017-11-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Avoid duplicating code for dist and distcheck targets
+        https://bugs.webkit.org/show_bug.cgi?id=179154
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the script out of Tools/gtk because it is already used by WPE. Also, drop the .py
+        prefix because it is executable.
+
+        * Scripts/make-dist: Renamed from Tools/gtk/make-dist.py.
+
 2017-11-03  Jonathan Bedard  <jbedard@apple.com>
 
         TestController platformAdjustContext should use provided WKContext for Mac

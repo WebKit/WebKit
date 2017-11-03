@@ -1,3 +1,5 @@
+include(WebKitDist)
+
 add_subdirectory(${WEBCORE_DIR}/platform/gtk/po)
 
 # This allows exposing a 'gir' target which builds all GObject introspection files.
@@ -52,45 +54,6 @@ add_custom_target(check
 )
 
 if (DEVELOPER_MODE)
-    configure_file(
-        ${TOOLS_DIR}/gtk/manifest.txt.in
-        ${CMAKE_BINARY_DIR}/manifest.txt
-    )
-
-    add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
-        DEPENDS ${CMAKE_BINARY_DIR}/manifest.txt
-        DEPENDS WebKit
-        DEPENDS gtkdoc
-        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
-                --source-dir=${CMAKE_SOURCE_DIR}
-                --build-dir=${CMAKE_BINARY_DIR}
-                --version=${PROJECT_VERSION}
-                ${CMAKE_BINARY_DIR}/manifest.txt
-    )
-
-    add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
-        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-    )
-
-    add_custom_target(dist
-        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
-    )
-
-    add_custom_target(distcheck
-        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
-        DEPENDS ${CMAKE_BINARY_DIR}/manifest.txt
-        DEPENDS WebKit
-        DEPENDS gtkdoc
-        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
-                --check
-                --source-dir=${CMAKE_SOURCE_DIR}
-                --build-dir=${CMAKE_BINARY_DIR}
-                --version=${PROJECT_VERSION}
-                ${CMAKE_BINARY_DIR}/manifest.txt
-        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-    )
+    add_custom_target(Documentation DEPENDS gtkdoc)
+    WEBKIT_DECLARE_DIST_TARGETS(GTK webkitgtk ${TOOLS_DIR}/gtk/manifest.txt.in)
 endif ()
