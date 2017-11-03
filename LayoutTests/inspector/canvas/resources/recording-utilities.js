@@ -26,7 +26,13 @@ TestPage.registerInitializer(() => {
         InspectorTest.log("frames:");
         for (let i = 0; i < recording.frames.length; ++i) {
             let frame = recording.frames[i];
-            InspectorTest.log(`  ${i}:` + (frame.incomplete ? " (incomplete)" : ""));
+
+            let frameText = `  ${i}:`;
+            if (!isNaN(frame.duration))
+                frameText += " (duration)";
+            if (frame.incomplete)
+                frameText += " (incomplete)";
+            InspectorTest.log(frameText);
 
             for (let j = 0; j < frame.actions.length; ++j) {
                 let action = frame.actions[j];

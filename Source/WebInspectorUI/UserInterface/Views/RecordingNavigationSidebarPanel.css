@@ -30,6 +30,11 @@
 .sidebar > .panel.navigation.recording > .content > .tree-outline {
     min-height: 100%;
 }
+
 .sidebar > .panel.navigation.recording > .content > .tree-outline .item.folder-icon > .icon {
     content: url(../Images/RenderingFrame.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline .item.folder-icon > .status {
+    line-height: 16px;
 }

@@ -486,13 +486,12 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
         return;
     }
 
-    if (!forceDispatch && !inspectorCanvas->singleFrame()) {
-        inspectorCanvas->markNewFrame();
-        return;
-    }
-
     if (forceDispatch)
         inspectorCanvas->markCurrentFrameIncomplete();
+
+    inspectorCanvas->finalizeFrame();
+    if (!forceDispatch && !inspectorCanvas->singleFrame())
+        return;
 
     // FIXME: <https://webkit.org/b/176008> Web Inspector: Record actions performed on WebGL2RenderingContext
 

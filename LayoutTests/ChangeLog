@@ -1,3 +1,19 @@
+2017-11-03  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas2D Profiling: highlight expensive context commands in the captured command log
+        https://bugs.webkit.org/show_bug.cgi?id=178302
+        <rdar://problem/33158849>
+
+        Reviewed by Brian Burg.
+
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+        * inspector/canvas/resources/recording-utilities.js:
+        (TestPage.registerInitializer):
+        * inspector/model/recording-expected.txt:
+        * inspector/model/recording.html:
+
 2017-11-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: show supported GL extensions for selected canvas

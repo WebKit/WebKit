@@ -71,6 +71,11 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
                 for (let i = 0; i < frame.actions.length; ++i)
                     folder.appendChild(new WI.RecordingActionTreeElement(frame.actions[i], cumulativeActionIndex + i, this._recording.type));
 
+                if (!isNaN(frame.duration)) {
+                    const higherResolution = true;
+                    folder.status = Number.secondsToString(frame.duration / 1000, higherResolution);
+                }
+
                 if (frame.incomplete)
                     folder.subtitle = WI.UIString("Incomplete");
 

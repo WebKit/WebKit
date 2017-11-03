@@ -1,3 +1,22 @@
+2017-11-03  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas2D Profiling: highlight expensive context commands in the captured command log
+        https://bugs.webkit.org/show_bug.cgi?id=178302
+        <rdar://problem/33158849>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/RecordingFrame.js:
+        (WI.RecordingFrame):
+        (WI.RecordingFrame.fromPayload):
+        (WI.RecordingFrame.prototype.get duration):
+        (WI.RecordingFrame.prototype.toJSON):
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.prototype.set recording):
+        * UserInterface/Views/RecordingNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline .item.folder-icon > .status):
+
 2017-11-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: show supported GL extensions for selected canvas

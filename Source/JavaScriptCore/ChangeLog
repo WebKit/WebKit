@@ -1,3 +1,14 @@
+2017-11-03  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas2D Profiling: highlight expensive context commands in the captured command log
+        https://bugs.webkit.org/show_bug.cgi?id=178302
+        <rdar://problem/33158849>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Recording.json:
+        Add `duration` to each Frame that represents the total time of all the recorded actions.
+
 2017-11-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: show supported GL extensions for selected canvas

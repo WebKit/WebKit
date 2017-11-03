@@ -70,6 +70,7 @@
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
+#include <wtf/CurrentTime.h>
 
 
 namespace WebCore {
@@ -136,6 +137,8 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
             .release();
 
         m_frames->addItem(WTFMove(frame));
+
+        m_currentFrameStartTime = monotonicallyIncreasingTimeMS();
     }
 
     appendActionSnapshotIfNeeded();
@@ -168,8 +171,15 @@ RefPtr<Inspector::Protocol::Array<InspectorValue>>&& InspectorCanvas::releaseDat
     return WTFMove(m_serializedDuplicateData);
 }
 
-void InspectorCanvas::markNewFrame()
+void InspectorCanvas::finalizeFrame()
 {
+    if (m_frames->length() && !std::isnan(m_currentFrameStartTime)) {
+        auto currentFrame = static_cast<Inspector::Protocol::Recording::Frame*>(m_frames->get(m_frames->length() - 1).get());
+        currentFrame->setDuration(monotonicallyIncreasingTimeMS() - m_currentFrameStartTime);
+
+        m_currentFrameStartTime = NAN;
+    }
+
     m_currentActions = nullptr;
 }
 

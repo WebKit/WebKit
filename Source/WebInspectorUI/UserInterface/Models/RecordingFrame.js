@@ -25,10 +25,11 @@
 
 WI.RecordingFrame = class RecordingFrame
 {
-    constructor(actions, {incomplete} = {})
+    constructor(actions, {duration, incomplete} = {})
     {
         this._actions = actions;
-        this._incomplete = incomplete;
+        this._duration = duration || NaN;
+        this._incomplete = incomplete || false;
     }
 
     // Static
@@ -43,6 +44,7 @@ WI.RecordingFrame = class RecordingFrame
 
         let actions = payload.actions.map(WI.RecordingAction.fromPayload);
         return new WI.RecordingFrame(actions, {
+            duration: payload.duration || NaN,
             incomplete: !!payload.incomplete,
         });
     }
@@ -50,6 +52,7 @@ WI.RecordingFrame = class RecordingFrame
     // Public
 
     get actions() { return this._actions; }
+    get duration() { return this._duration; }
     get incomplete() { return this._incomplete; }
 
     toJSON()
@@ -57,6 +60,8 @@ WI.RecordingFrame = class RecordingFrame
         let json = {
             actions: this._actions.map((action) => action.toJSON()),
         };
+        if (!isNaN(this._duration))
+            json.duration = this._duration;
         if (this._incomplete)
             json.incomplete = this._incomplete;
         return json;

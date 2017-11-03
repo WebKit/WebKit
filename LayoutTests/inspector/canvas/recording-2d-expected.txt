@@ -32,7 +32,7 @@ initialState:
   parameters:
   content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
 frames:
-  0:
+  0: (duration)
     0: arc(1, 2, 3, 4, 5, false)
       swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
       trace:
@@ -124,7 +124,7 @@ initialState:
   parameters:
   content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
 frames:
-  0:
+  0: (duration)
     0: arc(1, 2, 3, 4, 5, false)
       swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
       trace:
@@ -151,7 +151,7 @@ frames:
         7: evaluateWithScopeExtension - [native code] (26)
         8: _evaluateOn (28)
         9: _evaluateAndWrap (30)
-  1:
+  1: (duration)
     0: arcTo(1, 2, 3, 4, 5)
       swizzleTypes: [Number, Number, Number, Number, Number]
       trace:
@@ -160,33 +160,33 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:81:28 (36)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  2:
+  2: (duration)
     0: beginPath()
       trace:
         0: beginPath - [native code] (38)
         1: (anonymous function) - inspector/canvas/recording-2d.html:84:26 (39)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  3:
+  3: (duration)
     0: bezierCurveTo(1, 2, 3, 4, 5, 6)
       swizzleTypes: [Number, Number, Number, Number, Number, Number]
       trace:
         0: bezierCurveTo - [native code] (41)
         1: (anonymous function) - inspector/canvas/recording-2d.html:87:30 (42)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  4:
+  4: (duration)
     0: clearRect(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: clearRect - [native code] (44)
         1: (anonymous function) - inspector/canvas/recording-2d.html:90:26 (45)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  5:
+  5: (duration)
     0: clearShadow()
       trace:
         0: clearShadow - [native code] (47)
         1: (anonymous function) - inspector/canvas/recording-2d.html:93:28 (48)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  6:
+  6: (duration)
     0: clip("nonzero")
       swizzleTypes: [String (50)]
       trace:
@@ -211,13 +211,13 @@ frames:
         0: clip - [native code] (51)
         1: (anonymous function) - inspector/canvas/recording-2d.html:99:21 (58)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  7:
+  7: (duration)
     0: closePath()
       trace:
         0: closePath - [native code] (60)
         1: (anonymous function) - inspector/canvas/recording-2d.html:102:26 (61)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  8:
+  8: (duration)
     0: createImageData([object ImageData])
       swizzleTypes: [ImageData (63)]
       trace:
@@ -234,7 +234,7 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:106:28 (68)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  9:
+  9: (duration)
     0: createLinearGradient(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
@@ -243,7 +243,7 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:109:28 (72)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  10:
+  10: (duration)
     0: createPattern([object HTMLImageElement], "testA")
       swizzleTypes: [Image (74), String (75)]
       trace:
@@ -268,7 +268,7 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:114:28 (86)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  11:
+  11: (duration)
     0: createRadialGradient(1, 2, 3, 4, 5, 6)
       swizzleTypes: [Number, Number, Number, Number, Number, Number]
       trace:
@@ -277,12 +277,12 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:117:28 (90)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  12:
+  12: (duration)
     0: direction
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:120:16 (92)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  13:
+  13: (duration)
     0: drawFocusIfNeeded("Element")
       swizzleTypes: [None (94)]
       trace:
@@ -295,7 +295,7 @@ frames:
         0: drawFocusIfNeeded - [native code] (95)
         1: (anonymous function) - inspector/canvas/recording-2d.html:125:34 (97)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  14:
+  14: (duration)
     0: drawImage([object HTMLImageElement], 1, 2)
       swizzleTypes: [Image (74), Number, Number]
       trace:
@@ -368,7 +368,7 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:136:28 (117)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  15:
+  15: (duration)
     0: drawImageFromRect([object HTMLImageElement], 1, 2, 3, 4, 5, 6, 7, 8, "")
       swizzleTypes: [Image (74), Number, Number, Number, Number, Number, Number, Number, Number, String (10)]
       trace:
@@ -381,7 +381,7 @@ frames:
         0: drawImageFromRect - [native code] (119)
         1: (anonymous function) - inspector/canvas/recording-2d.html:140:34 (122)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  16:
+  16: (duration)
     0: ellipse(1, 2, 3, 4, 5, 6, 7, false)
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Boolean]
       trace:
@@ -398,7 +398,7 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:144:28 (128)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  17:
+  17: (duration)
     0: fill("nonzero")
       swizzleTypes: [String (50)]
       trace:
@@ -423,14 +423,14 @@ frames:
         0: fill - [native code] (130)
         1: (anonymous function) - inspector/canvas/recording-2d.html:150:21 (134)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  18:
+  18: (duration)
     0: fillRect(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: fillRect - [native code] (136)
         1: (anonymous function) - inspector/canvas/recording-2d.html:153:25 (137)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  19:
+  19: (duration)
     0: fillStyle
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:156:16 (139)
@@ -455,7 +455,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:160:16 (150)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  20:
+  20: (duration)
     0: fillText("testA", 1, 2)
       swizzleTypes: [String (75), Number, Number]
       trace:
@@ -468,7 +468,7 @@ frames:
         0: fillText - [native code] (152)
         1: (anonymous function) - inspector/canvas/recording-2d.html:164:25 (154)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  21:
+  21: (duration)
     0: font
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:167:16 (156)
@@ -478,7 +478,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:168:16 (157)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  22:
+  22: (duration)
     0: getImageData(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
@@ -487,19 +487,19 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:171:28 (161)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  23:
+  23: (duration)
     0: getLineDash()
       trace:
         0: getLineDash - [native code] (163)
         1: (anonymous function) - inspector/canvas/recording-2d.html:174:28 (164)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  24:
+  24: (duration)
     0: getTransform
       trace:
         0: getTransform - [native code] (166)
         1: (anonymous function) - inspector/canvas/recording-2d.html:177:29 (167)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  25:
+  25: (duration)
     0: globalAlpha
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:180:16 (169)
@@ -509,7 +509,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:181:16 (170)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  26:
+  26: (duration)
     0: globalCompositeOperation
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:184:16 (172)
@@ -519,7 +519,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:185:16 (173)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  27:
+  27: (duration)
     0: imageSmoothingEnabled
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:188:16 (175)
@@ -529,7 +529,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:189:16 (176)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  28:
+  28: (duration)
     0: imageSmoothingQuality
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:192:16 (178)
@@ -539,7 +539,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:193:16 (179)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  29:
+  29: (duration)
     0: isPointInPath([object Path2D], 5, 6, "nonzero")
       swizzleTypes: [Path2D (55), Number, Number, String (50)]
       trace:
@@ -564,7 +564,7 @@ frames:
         0: isPointInPath - [native code] (181)
         1: (anonymous function) - inspector/canvas/recording-2d.html:199:30 (185)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  30:
+  30: (duration)
     0: isPointInStroke([object Path2D], 3, 4)
       swizzleTypes: [Path2D (55), Number, Number]
       trace:
@@ -577,12 +577,12 @@ frames:
         0: isPointInStroke - [native code] (187)
         1: (anonymous function) - inspector/canvas/recording-2d.html:203:32 (189)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  31:
+  31: (duration)
     0: lineCap
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:206:16 (191)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  32:
+  32: (duration)
     0: lineDashOffset
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:210:16 (193)
@@ -592,19 +592,19 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:211:16 (194)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  33:
+  33: (duration)
     0: lineJoin
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:214:16 (196)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  34:
+  34: (duration)
     0: lineTo(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: lineTo - [native code] (198)
         1: (anonymous function) - inspector/canvas/recording-2d.html:218:23 (199)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  35:
+  35: (duration)
     0: lineWidth
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:221:16 (201)
@@ -614,14 +614,14 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:222:16 (202)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  36:
+  36: (duration)
     0: measureText("test")
       swizzleTypes: [String (121)]
       trace:
         0: measureText - [native code] (204)
         1: (anonymous function) - inspector/canvas/recording-2d.html:225:28 (205)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  37:
+  37: (duration)
     0: miterLimit
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:228:16 (207)
@@ -631,14 +631,14 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:229:16 (208)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  38:
+  38: (duration)
     0: moveTo(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: moveTo - [native code] (210)
         1: (anonymous function) - inspector/canvas/recording-2d.html:232:23 (211)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  39:
+  39: (duration)
     0: putImageData([object ImageData], 5, 6)
       swizzleTypes: [ImageData (63), Number, Number]
       trace:
@@ -651,53 +651,53 @@ frames:
         0: putImageData - [native code] (213)
         1: (anonymous function) - inspector/canvas/recording-2d.html:236:29 (216)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  40:
+  40: (duration)
     0: quadraticCurveTo(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: quadraticCurveTo - [native code] (218)
         1: (anonymous function) - inspector/canvas/recording-2d.html:239:33 (219)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  41:
+  41: (duration)
     0: rect(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: rect - [native code] (221)
         1: (anonymous function) - inspector/canvas/recording-2d.html:242:21 (222)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  42:
+  42: (duration)
     0: resetTransform()
       trace:
         0: resetTransform - [native code] (224)
         1: (anonymous function) - inspector/canvas/recording-2d.html:245:31 (225)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  43:
+  43: (duration)
     0: restore()
       trace:
         0: restore - [native code] (227)
         1: (anonymous function) - inspector/canvas/recording-2d.html:248:24 (228)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  44:
+  44: (duration)
     0: rotate(1)
       swizzleTypes: [Number]
       trace:
         0: rotate - [native code] (230)
         1: (anonymous function) - inspector/canvas/recording-2d.html:253:23 (231)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  45:
+  45: (duration)
     0: save()
       trace:
         0: save - [native code] (233)
         1: (anonymous function) - inspector/canvas/recording-2d.html:256:21 (234)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  46:
+  46: (duration)
     0: scale(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: scale - [native code] (236)
         1: (anonymous function) - inspector/canvas/recording-2d.html:259:22 (237)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  47:
+  47: (duration)
     0: setAlpha(null)
       swizzleTypes: [Number]
       trace:
@@ -710,7 +710,7 @@ frames:
         0: setAlpha - [native code] (239)
         1: (anonymous function) - inspector/canvas/recording-2d.html:263:25 (241)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  48:
+  48: (duration)
     0: setCompositeOperation("undefined")
       swizzleTypes: [String (243)]
       trace:
@@ -723,7 +723,7 @@ frames:
         0: setCompositeOperation - [native code] (244)
         1: (anonymous function) - inspector/canvas/recording-2d.html:267:38 (246)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  49:
+  49: (duration)
     0: setFillColor("testA")
       swizzleTypes: [String (75)]
       trace:
@@ -760,7 +760,7 @@ frames:
         0: setFillColor - [native code] (248)
         1: (anonymous function) - inspector/canvas/recording-2d.html:275:29 (254)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  50:
+  50: (duration)
     0: setLineCap("undefined")
       swizzleTypes: [String (243)]
       trace:
@@ -773,14 +773,14 @@ frames:
         0: setLineCap - [native code] (256)
         1: (anonymous function) - inspector/canvas/recording-2d.html:279:27 (258)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  51:
+  51: (duration)
     0: setLineDash([1,2])
       swizzleTypes: [Array]
       trace:
         0: setLineDash - [native code] (260)
         1: (anonymous function) - inspector/canvas/recording-2d.html:282:28 (261)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  52:
+  52: (duration)
     0: setLineJoin("undefined")
       swizzleTypes: [String (243)]
       trace:
@@ -793,7 +793,7 @@ frames:
         0: setLineJoin - [native code] (263)
         1: (anonymous function) - inspector/canvas/recording-2d.html:286:28 (265)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  53:
+  53: (duration)
     0: setLineWidth(null)
       swizzleTypes: [Number]
       trace:
@@ -806,7 +806,7 @@ frames:
         0: setLineWidth - [native code] (267)
         1: (anonymous function) - inspector/canvas/recording-2d.html:290:29 (269)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  54:
+  54: (duration)
     0: setMiterLimit(null)
       swizzleTypes: [Number]
       trace:
@@ -819,7 +819,7 @@ frames:
         0: setMiterLimit - [native code] (271)
         1: (anonymous function) - inspector/canvas/recording-2d.html:294:30 (273)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  55:
+  55: (duration)
     0: setShadow(1, 2, 3, "")
       swizzleTypes: [Number, Number, Number, String (275)]
       trace:
@@ -856,7 +856,7 @@ frames:
         0: setShadow - [native code] (276)
         1: (anonymous function) - inspector/canvas/recording-2d.html:302:26 (282)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  56:
+  56: (duration)
     0: setStrokeColor("testA")
       swizzleTypes: [String (75)]
       trace:
@@ -893,7 +893,7 @@ frames:
         0: setStrokeColor - [native code] (284)
         1: (anonymous function) - inspector/canvas/recording-2d.html:310:31 (290)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  57:
+  57: (duration)
     0: setTransform(1, 2, 3, 4, 5, 6)
       swizzleTypes: [Number, Number, Number, Number, Number, Number]
       trace:
@@ -916,7 +916,7 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:315:28 (297)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  58:
+  58: (duration)
     0: shadowBlur
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:318:16 (299)
@@ -926,7 +926,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:319:16 (300)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  59:
+  59: (duration)
     0: shadowColor
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:322:16 (302)
@@ -936,7 +936,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:323:16 (303)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  60:
+  60: (duration)
     0: shadowOffsetX
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:326:16 (305)
@@ -946,7 +946,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:327:16 (306)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  61:
+  61: (duration)
     0: shadowOffsetY
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:330:16 (308)
@@ -956,7 +956,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:331:16 (309)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  62:
+  62: (duration)
     0: stroke()
       trace:
         0: stroke - [native code] (311)
@@ -968,14 +968,14 @@ frames:
         0: stroke - [native code] (311)
         1: (anonymous function) - inspector/canvas/recording-2d.html:335:23 (313)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  63:
+  63: (duration)
     0: strokeRect(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: strokeRect - [native code] (315)
         1: (anonymous function) - inspector/canvas/recording-2d.html:338:27 (316)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  64:
+  64: (duration)
     0: strokeStyle
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:341:16 (318)
@@ -1000,7 +1000,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:345:16 (322)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  65:
+  65: (duration)
     0: strokeText("testA", 1, 2)
       swizzleTypes: [String (75), Number, Number]
       trace:
@@ -1013,31 +1013,31 @@ frames:
         0: strokeText - [native code] (324)
         1: (anonymous function) - inspector/canvas/recording-2d.html:349:27 (326)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  66:
+  66: (duration)
     0: textAlign
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:352:16 (328)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  67:
+  67: (duration)
     0: textBaseline
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:356:16 (330)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  68:
+  68: (duration)
     0: transform(1, 2, 3, 4, 5, 6)
       swizzleTypes: [Number, Number, Number, Number, Number, Number]
       trace:
         0: transform - [native code] (332)
         1: (anonymous function) - inspector/canvas/recording-2d.html:360:26 (333)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  69:
+  69: (duration)
     0: translate(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: translate - [native code] (335)
         1: (anonymous function) - inspector/canvas/recording-2d.html:363:26 (336)
         2: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  70:
+  70: (duration)
     0: webkitGetImageDataHD(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
@@ -1046,7 +1046,7 @@ frames:
         2: ignoreException - inspector/canvas/recording-2d.html:48:13 (17)
         3: (anonymous function) - inspector/canvas/recording-2d.html:366:28 (340)
         4: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  71:
+  71: (duration)
     0: webkitImageSmoothingEnabled
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:369:16 (342)
@@ -1056,7 +1056,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:370:16 (343)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  72:
+  72: (duration)
     0: webkitLineDash
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:373:16 (345)
@@ -1066,7 +1066,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:374:16 (346)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  73:
+  73: (duration)
     0: webkitLineDashOffset
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:377:16 (348)
@@ -1076,7 +1076,7 @@ frames:
       trace:
         0: (anonymous function) - inspector/canvas/recording-2d.html:378:16 (349)
         1: executeFrameFunction - inspector/canvas/recording-2d.html:390:24 (20)
-  74:
+  74: (duration)
     0: webkitPutImageDataHD([object ImageData], 5, 6)
       swizzleTypes: [ImageData (63), Number, Number]
       trace:
@@ -1475,7 +1475,7 @@ initialState:
   parameters:
   content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
 frames:
-  0: (incomplete)
+  0: (duration) (incomplete)
     0: arc(1, 2, 3, 4, 5, false)
       swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
       trace:

@@ -75,6 +75,7 @@ null
           []
         ]
       ],
+      "duration": 1,
       "incomplete": true
     }
   ],
@@ -106,6 +107,7 @@ null
           []
         ]
       ],
+      "duration": 1,
       "incomplete": true
     }
   ],
@@ -143,6 +145,7 @@ null
           ]
         ]
       ],
+      "duration": 1,
       "incomplete": true
     }
   ],
