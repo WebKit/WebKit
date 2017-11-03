@@ -1,3 +1,18 @@
+2017-11-03  Jeremy Jones  <jeremyj@apple.com>
+
+        Element fullscreen should use FloatRects instead of IntRects in beganEnterFullScreenWithInitialFrame
+        https://bugs.webkit.org/show_bug.cgi?id=179033
+        rdar://problem/35309279
+        
+        Reviewed by Darin Adler.
+
+        Screen coordinates are floats, so use NSRect instead of IntRect on Mac.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+
 2017-11-03  Chris Dumez  <cdumez@apple.com>
 
         Use a single identifier type to identify Service Workers
