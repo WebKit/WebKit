@@ -96,9 +96,9 @@ void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
     send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier));
 }
 
-void WebSWServerConnection::updateRegistrationStateInClient(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const String& workerID)
+void WebSWServerConnection::updateRegistrationStateInClient(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
 {
-    send(Messages::WebSWClientConnection::UpdateRegistrationState(key, state, workerID));
+    send(Messages::WebSWClientConnection::UpdateRegistrationState(key, state, serviceWorkerIdentifier));
 }
 
 void WebSWServerConnection::updateServiceWorkerContext(const ServiceWorkerContextData& data)
@@ -109,12 +109,12 @@ void WebSWServerConnection::updateServiceWorkerContext(const ServiceWorkerContex
     m_pendingContextDatas.append(data);
 }
 
-void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
+void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
 {
     sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin)
+void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin)
 {
     ServiceWorkerClientIdentifier sourceIdentifier { identifier(), sourceScriptExecutionContextIdentifier };
     sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, sourceIdentifier, sourceOrigin });
@@ -145,7 +145,7 @@ void WebSWServerConnection::didNotHandleFetch(uint64_t fetchIdentifier)
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+void WebSWServerConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin)
 {
     send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationScriptExecutionContextIdentifier, message, sourceServiceWorkerIdentifier, sourceOrigin });
 }

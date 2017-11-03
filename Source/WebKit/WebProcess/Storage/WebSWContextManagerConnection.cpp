@@ -116,10 +116,10 @@ void WebSWContextManagerConnection::updateServiceWorker(uint64_t serverConnectio
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), serverConnectionIdentifier, data, sessionID, WebProcess::singleton().cacheStorageProvider());
     SWContextManager::singleton().registerServiceWorkerThreadForUpdate(WTFMove(serviceWorkerThreadProxy));
 
-    LOG(ServiceWorker, "Context process PID: %i created worker thread %s\n", getpid(), data.workerID.utf8().data());
+    LOG(ServiceWorker, "Context process PID: %i created worker thread\n", getpid());
 }
 
-void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(uint64_t serviceWorkerIdentifier, const String& exceptionMessage)
+void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage)
 {
     auto* threadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
     ASSERT(threadProxy);
@@ -127,14 +127,14 @@ void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(uint64_t ser
     auto& data = threadProxy->thread().contextData();
     
     if (exceptionMessage.isEmpty())
-        m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextStarted(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, serviceWorkerIdentifier, data.workerID), 0);
+        m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextStarted(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, serviceWorkerIdentifier), 0);
     else
-        m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, data.workerID, exceptionMessage), 0);
+        m_connectionToStorageProcess->send(Messages::StorageProcess::ServiceWorkerContextFailedToStart(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, serviceWorkerIdentifier, exceptionMessage), 0);
 }
 
-void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options)
+void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options)
 {
-    auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
+    auto* serviceWorkerThreadProxy = serviceWorkerIdentifier ? SWContextManager::singleton().serviceWorkerThreadProxy(*serviceWorkerIdentifier) : nullptr;
     if (!serviceWorkerThreadProxy) {
         m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch(serverConnectionIdentifier, fetchIdentifier), 0);
         return;
@@ -144,14 +144,14 @@ void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifi
     serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
 }
 
-void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
+void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
 {
-    SWContextManager::singleton().postMessageToServiceWorkerGlobalScope(destinationServiceWorkerIdentifier, SerializedScriptValue::adopt(message.vector()), sourceIdentifier, sourceOrigin);
+    SWContextManager::singleton().postMessageToServiceWorkerGlobalScope(destinationIdentifier, SerializedScriptValue::adopt(message.vector()), sourceIdentifier, sourceOrigin);
 }
 
-void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    m_connectionToStorageProcess->send(Messages::StorageProcess::PostMessageToServiceWorkerClient(destinationIdentifier, IPC::DataReference { message->data() }, sourceServiceWorkerIdentifier, sourceOrigin), 0);
+    m_connectionToStorageProcess->send(Messages::StorageProcess::PostMessageToServiceWorkerClient(destinationIdentifier, IPC::DataReference { message->data() }, sourceIdentifier, sourceOrigin), 0);
 }
 
 } // namespace WebCore

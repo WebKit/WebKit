@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 
 namespace WebCore {
@@ -36,7 +37,7 @@ enum class ServiceWorkerUpdateViaCache;
 struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationKey key;
     uint64_t identifier;
-    uint64_t activeServiceWorkerIdentifier; // FIXME: This should not be part of registrationData.
+    std::optional<ServiceWorkerIdentifier> activeServiceWorkerIdentifier; // FIXME: This should not be part of registrationData.
     URL scopeURL;
     URL scriptURL;
     ServiceWorkerUpdateViaCache updateViaCache;
@@ -67,7 +68,8 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     if (!identifier)
         return std::nullopt;
 
-    std::optional<uint64_t> activeServiceWorkerIdentifier;
+
+    std::optional<std::optional<ServiceWorkerIdentifier>> activeServiceWorkerIdentifier;
     decoder >> activeServiceWorkerIdentifier;
     if (!activeServiceWorkerIdentifier)
         return std::nullopt;

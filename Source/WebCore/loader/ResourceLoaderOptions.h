@@ -31,6 +31,7 @@
 #pragma once
 
 #include "FetchOptions.h"
+#include "ServiceWorkerIdentifier.h"
 #include "StoredCredentialsPolicy.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -136,7 +137,9 @@ struct ResourceLoaderOptions : public FetchOptions {
     SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
     InitiatorContext initiatorContext { InitiatorContext::Document };
     ServiceWorkersMode serviceWorkersMode { ServiceWorkersMode::All };
-    uint64_t serviceWorkerIdentifier { 0 };
+#if ENABLE(SERVICE_WORKER)
+    std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier;
+#endif
 
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
     unsigned maxRedirectCount { 20 };

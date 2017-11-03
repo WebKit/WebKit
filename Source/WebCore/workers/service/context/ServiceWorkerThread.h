@@ -29,8 +29,8 @@
 
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerFetch.h"
+#include "ServiceWorkerIdentifier.h"
 #include "WorkerThread.h"
-#include <wtf/Identified.h>
 
 namespace WebCore {
 
@@ -44,7 +44,7 @@ struct ServiceWorkerContextData;
 
 using MessagePortChannelArray = Vector<std::unique_ptr<MessagePortChannel>, 1>;
 
-class ServiceWorkerThread : public WorkerThread, public ThreadSafeIdentified<ServiceWorkerThread> {
+class ServiceWorkerThread : public WorkerThread {
 public:
     template<typename... Args> static Ref<ServiceWorkerThread> create(Args&&... args)
     {
@@ -59,6 +59,8 @@ public:
 
     uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
     const ServiceWorkerContextData& contextData() const { return m_data; }
+
+    ServiceWorkerIdentifier identifier() const { return m_data.serviceWorkerIdentifier; }
 
 protected:
     Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, bool isOnline, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID) final;

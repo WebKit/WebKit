@@ -63,7 +63,7 @@ public:
     
     const ServiceWorkerRegistrationData& data() const { return m_registrationData; }
 
-    void updateStateFromServer(ServiceWorkerRegistrationState, const String& workerID);
+    void updateStateFromServer(ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
 
 private:
     ServiceWorkerRegistration(ScriptExecutionContext&, SWClientConnection&, ServiceWorkerRegistrationData&&, Ref<ServiceWorker>&&);

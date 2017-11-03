@@ -2210,6 +2210,7 @@
 		839947101F50B6FA00E9D86B /* JSDOMFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399470E1F50B6F300E9D86B /* JSDOMFileSystem.h */; };
 		839A2F2E1E204A710039057E /* WebGLStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839A2F2C1E204A6D0039057E /* WebGLStateTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		839AAFED1A0C0C8D00605F99 /* HTMLWBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */; };
+		83A8AC401FABBFE5002064AC /* ServiceWorkerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A8AC3E1FABBFD1002064AC /* ServiceWorkerIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83B2D1751B8BCD6A00A02E47 /* NativeNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83B74EF61F3E0BF200996BC7 /* KeepaliveRequestTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B74EF31F3E0BD700996BC7 /* KeepaliveRequestTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83B9687B19F8AB83004EF7AF /* StyleBuilderConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */; };
@@ -9470,6 +9471,7 @@
 		839AAFEA1A0C0C8D00605F99 /* HTMLWBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLWBRElement.cpp; sourceTree = "<group>"; };
 		839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLWBRElement.h; sourceTree = "<group>"; };
 		83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLDocumentCustom.cpp; sourceTree = "<group>"; };
+		83A8AC3E1FABBFD1002064AC /* ServiceWorkerIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerIdentifier.h; sourceTree = "<group>"; };
 		83B250091FA1181C00BC02D9 /* JSServiceWorkerClientType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSServiceWorkerClientType.h; sourceTree = "<group>"; };
 		83B2500B1FA1181D00BC02D9 /* JSServiceWorkerClientType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSServiceWorkerClientType.cpp; sourceTree = "<group>"; };
 		83B5DA451FA9079300B59DF4 /* JSNavigatorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorCustom.cpp; sourceTree = "<group>"; };
@@ -17252,6 +17254,7 @@
 				51F175551F3EBC0C00C74950 /* ServiceWorkerGlobalScope.cpp */,
 				51F175541F3EBC0C00C74950 /* ServiceWorkerGlobalScope.h */,
 				51F175531F3EBC0C00C74950 /* ServiceWorkerGlobalScope.idl */,
+				83A8AC3E1FABBFD1002064AC /* ServiceWorkerIdentifier.h */,
 				51F175521F3EBC0C00C74950 /* ServiceWorkerJob.cpp */,
 				51F175511F3EBC0C00C74950 /* ServiceWorkerJob.h */,
 				51F175501F3EBC0C00C74950 /* ServiceWorkerJobClient.h */,
@@ -28897,6 +28900,7 @@
 				419ACF921F97E7DA009F1A83 /* ServiceWorkerFetch.h in Headers */,
 				517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */,
 				51F175611F3EBC8300C74950 /* ServiceWorkerGlobalScope.h in Headers */,
+				83A8AC401FABBFE5002064AC /* ServiceWorkerIdentifier.h in Headers */,
 				A52B34961FA3E290008B6246 /* ServiceWorkerInspectorProxy.h in Headers */,
 				51F175631F3EBC8300C74950 /* ServiceWorkerJob.h in Headers */,
 				51F175641F3EBC8300C74950 /* ServiceWorkerJobClient.h in Headers */,

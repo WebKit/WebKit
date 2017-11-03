@@ -139,7 +139,7 @@ void SWClientConnection::startScriptFetchForServer(uint64_t jobIdentifier)
     job->startScriptFetch();
 }
 
-void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     // FIXME: destinationScriptExecutionContextIdentifier can only identify a Document at the moment.
     auto* destinationDocument = Document::allDocumentsMap().get(destinationScriptExecutionContextIdentifier);
@@ -152,11 +152,11 @@ void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationSc
 
     std::optional<MessageEventSource> source;
     auto* activeServiceWorker = destinationDocument->activeServiceWorker();
-    if (activeServiceWorker && activeServiceWorker->identifier() == sourceServiceWorkerIdentifier)
+    if (activeServiceWorker && activeServiceWorker->identifier() == sourceIdentifier)
         source = MessageEventSource { RefPtr<ServiceWorker> { activeServiceWorker } };
     else {
         // FIXME: Pass in valid scriptURL.
-        source = MessageEventSource { RefPtr<ServiceWorker> { ServiceWorker::create(*destinationDocument, sourceServiceWorkerIdentifier, URL()) } };
+        source = MessageEventSource { RefPtr<ServiceWorker> { ServiceWorker::create(*destinationDocument, sourceIdentifier, URL()) } };
     }
 
     // FIXME: We should pass in ports.
@@ -164,14 +164,14 @@ void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationSc
     container->dispatchEvent(messageEvent);
 }
 
-void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const String& workerID)
+void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
 {
     auto* registrations = m_registrations.get(key);
     if (!registrations)
         return;
     
     for (auto& registration : *registrations)
-        registration->updateStateFromServer(state, workerID);
+        registration->updateStateFromServer(state, serviceWorkerIdentifier);
 }
 
 } // namespace WebCore

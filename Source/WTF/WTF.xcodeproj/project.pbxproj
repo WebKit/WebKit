@@ -360,6 +360,7 @@
 		7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectIdentifier.h; sourceTree = "<group>"; };
 		83F2BADE1CF9524E003E99C3 /* Function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Function.h; sourceTree = "<group>"; };
 		83FBA93119DF459700F30ADB /* TypeCasts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCasts.h; sourceTree = "<group>"; };
 		86F46F5F1A2840EE00CCBF22 /* RefCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounter.h; sourceTree = "<group>"; };
@@ -906,6 +907,7 @@
 				A8A472D5151A825B004123FF /* NumberOfCores.cpp */,
 				A8A472D6151A825B004123FF /* NumberOfCores.h */,
 				7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */,
+				83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */,
 				1AFDE6521953B23D00C48FFA /* Optional.h */,
 				1A4656181C7FC68E00F5920F /* OptionSet.h */,
 				0F9495831C571CC900413A48 /* OrderMaker.h */,

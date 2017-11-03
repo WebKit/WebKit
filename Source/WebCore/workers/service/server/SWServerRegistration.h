@@ -55,7 +55,7 @@ public:
     void setLastUpdateTime(double time) { m_lastUpdateTime = time; }
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
 
-    void setActiveServiceWorkerIdentifier(uint64_t identifier) { m_activeServiceWorkerIdentifier = identifier; }
+    void setActiveServiceWorkerIdentifier(ServiceWorkerIdentifier identifier) { m_activeServiceWorkerIdentifier = identifier; }
 
     void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);
 
@@ -73,7 +73,7 @@ private:
     RefPtr<SWServerWorker> m_waitingWorker;
     RefPtr<SWServerWorker> m_activeWorker;
 
-    uint64_t m_activeServiceWorkerIdentifier { 0 };
+    std::optional<ServiceWorkerIdentifier> m_activeServiceWorkerIdentifier;
 
     double m_lastUpdateTime { 0 };
     

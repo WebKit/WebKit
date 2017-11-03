@@ -57,7 +57,7 @@ public:
     void didFailFetch(uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t fetchIdentifier);
 
-    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin);
 
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
@@ -65,11 +65,11 @@ private:
     void resolveRegistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&) final;
     void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationKey&, bool unregistrationResult) final;
     void startScriptFetchInClient(uint64_t jobIdentifier) final;
-    void updateRegistrationStateInClient(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationState, const String& serviceWorkerID) final;
+    void updateRegistrationStateInClient(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationState, std::optional<WebCore::ServiceWorkerIdentifier>) final;
 
-    void startFetch(uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
+    void startFetch(uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
 
-    void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin);
 
     // Messages to the SW context WebProcess
     void updateServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;

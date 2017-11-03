@@ -244,8 +244,9 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
     // FIXME: Implement proper selection of service workers.
     auto* activeServiceWorker = context->activeServiceWorker();
-    if (!activeServiceWorker || activeServiceWorker->identifier() != data.activeServiceWorkerIdentifier) {
-        context->setActiveServiceWorker(ServiceWorker::create(*context, data.activeServiceWorkerIdentifier, data.scriptURL));
+    ASSERT(data.activeServiceWorkerIdentifier);
+    if (!activeServiceWorker || activeServiceWorker->identifier() != *data.activeServiceWorkerIdentifier) {
+        context->setActiveServiceWorker(ServiceWorker::create(*context, *data.activeServiceWorkerIdentifier, data.scriptURL));
         activeServiceWorker = context->activeServiceWorker();
     }
 

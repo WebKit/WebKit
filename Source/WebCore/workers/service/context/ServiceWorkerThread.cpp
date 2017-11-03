@@ -38,6 +38,7 @@
 #include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
+#include <inspector/IdentifiersFactory.h>
 #include <pal/SessionID.h>
 #include <runtime/RuntimeFlags.h>
 #include <wtf/NeverDestroyed.h>
@@ -71,7 +72,7 @@ private:
 // FIXME: Use valid runtime flags
 
 ServiceWorkerThread::ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data, PAL::SessionID, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy)
-    : WorkerThread(data.scriptURL, data.workerID, ASCIILiteral("WorkerUserAgent"), /* isOnline */ false, data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, ContentSecurityPolicyResponseHeaders { }, false, SecurityOrigin::create(data.scriptURL).get(), MonotonicTime::now(), nullptr, nullptr, JSC::RuntimeFlags::createAllEnabled(), SessionID::defaultSessionID())
+    : WorkerThread(data.scriptURL, "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), ASCIILiteral("WorkerUserAgent"), /* isOnline */ false, data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, ContentSecurityPolicyResponseHeaders { }, false, SecurityOrigin::create(data.scriptURL).get(), MonotonicTime::now(), nullptr, nullptr, JSC::RuntimeFlags::createAllEnabled(), SessionID::defaultSessionID())
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_data(data.isolatedCopy())
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())

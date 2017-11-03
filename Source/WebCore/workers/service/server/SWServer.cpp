@@ -37,10 +37,15 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
-#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+static ServiceWorkerIdentifier generateServiceWorkerIdentifier()
+{
+    static uint64_t identifier = 0;
+    return makeObjectIdentifier<ServiceWorkerIdentifierType>(++identifier);
+}
 
 SWServer::Connection::Connection(SWServer& server, uint64_t identifier)
     : Identified(identifier)
@@ -109,14 +114,14 @@ void SWServer::Connection::removeServiceWorkerRegistrationInServer(const Service
     m_server.removeClientServiceWorkerRegistration(*this, key, clientRegistrationIdentifier);
 }
 
-void SWServer::Connection::scriptContextFailedToStart(const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
+void SWServer::Connection::scriptContextFailedToStart(const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier identifier, const String& message)
 {
-    m_server.scriptContextFailedToStart(*this, registrationKey, workerID, message);
+    m_server.scriptContextFailedToStart(*this, registrationKey, identifier, message);
 }
 
-void SWServer::Connection::scriptContextStarted(const ServiceWorkerRegistrationKey& registrationKey, uint64_t serviceWorkerIdentifier, const String& workerID)
+void SWServer::Connection::scriptContextStarted(const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier identifier)
 {
-    m_server.scriptContextStarted(*this, registrationKey, serviceWorkerIdentifier, workerID);
+    m_server.scriptContextStarted(*this, registrationKey, identifier);
 }
 
 SWServer::SWServer()
@@ -195,20 +200,20 @@ void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFe
     jobQueue->scriptFetchFinished(connection, result);
 }
 
-void SWServer::scriptContextFailedToStart(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
+void SWServer::scriptContextFailedToStart(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier identifier, const String& message)
 {
     ASSERT(m_connections.contains(connection.identifier()));
     
     if (auto* jobQueue = m_jobQueues.get(registrationKey))
-        jobQueue->scriptContextFailedToStart(connection, workerID, message);
+        jobQueue->scriptContextFailedToStart(connection, identifier, message);
 }
 
-void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, uint64_t serviceWorkerIdentifier, const String& workerID)
+void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier identifier)
 {
     ASSERT(m_connections.contains(connection.identifier()));
 
     if (auto* jobQueue = m_jobQueues.get(registrationKey))
-        jobQueue->scriptContextStarted(connection, serviceWorkerIdentifier, workerID);
+        jobQueue->scriptContextStarted(connection, identifier);
 }
 
 void SWServer::addClientServiceWorkerRegistration(Connection& connection, const ServiceWorkerRegistrationKey& key, uint64_t registrationIdentifier)
@@ -235,12 +240,12 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, con
 
 Ref<SWServerWorker> SWServer::updateWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
 {
-    String workerID = createCanonicalUUIDString();
+    auto serviceWorkerIdentifier = generateServiceWorkerIdentifier();
     
-    auto result = m_workersByID.add(workerID, SWServerWorker::create(registrationKey, url, script, type, workerID));
+    auto result = m_workersByID.add(serviceWorkerIdentifier, SWServerWorker::create(registrationKey, url, script, type, serviceWorkerIdentifier));
     ASSERT(result.isNewEntry);
     
-    connection.updateServiceWorkerContext({ registrationKey, workerID, script, url });
+    connection.updateServiceWorkerContext({ registrationKey, serviceWorkerIdentifier, script, url });
     
     return result.iterator->value.get();
 }

@@ -59,14 +59,14 @@ void SWContextManager::registerServiceWorkerThreadForUpdate(Ref<ServiceWorkerThr
     });
 }
 
-ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(uint64_t serviceWorkerIdentifier) const
+ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWorkerIdentifier identifier) const
 {
-    return m_workerMap.get(serviceWorkerIdentifier);
+    return m_workerMap.get(identifier);
 }
 
-void SWContextManager::postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
+void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
 {
-    auto* serviceWorker = m_workerMap.get(destinationServiceWorkerIdentifier);
+    auto* serviceWorker = m_workerMap.get(destination);
     if (!serviceWorker)
         return;
 

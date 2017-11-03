@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-ServiceWorker::ServiceWorker(ScriptExecutionContext& context, uint64_t serviceWorkerIdentifier, const URL& scriptURL)
+ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL)
     : ContextDestructionObserver(&context)
-    , m_identifier(serviceWorkerIdentifier)
+    , m_identifier(identifier)
     , m_scriptURL(scriptURL)
 {
 }

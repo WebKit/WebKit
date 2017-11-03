@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-SWServerWorker::SWServerWorker(const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type, const String& workerID)
+SWServerWorker::SWServerWorker(const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
     : m_registrationKey(registrationKey)
     , m_scriptURL(url)
     , m_script(script)
-    , m_workerID(workerID)
+    , m_identifier(identifier)
     , m_type(type)
 {
 }

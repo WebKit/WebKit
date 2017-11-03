@@ -274,7 +274,7 @@ void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination des
 }
 
 #if ENABLE(SERVICE_WORKER)
-void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(uint64_t serviceWorkerIdentifier)
+void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(ServiceWorkerIdentifier identifier)
 {
     if (isNonSubresourceRequest(m_options.destination))
         return;
@@ -286,7 +286,7 @@ void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(uint64_t 
     if (m_options.serviceWorkerIdentifier)
         return;
 
-    m_options.serviceWorkerIdentifier = serviceWorkerIdentifier;
+    m_options.serviceWorkerIdentifier = identifier;
 }
 #endif
 

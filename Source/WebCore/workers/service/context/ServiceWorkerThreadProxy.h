@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Page.h"
 #include "ServiceWorkerDebuggable.h"
+#include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerInspectorProxy.h"
 #include "ServiceWorkerThread.h"
 #include "WorkerDebuggerProxy.h"
@@ -48,7 +49,7 @@ class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorker
 public:
     WEBCORE_EXPORT static Ref<ServiceWorkerThreadProxy> create(PageConfiguration&&, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
 
-    uint64_t identifier() const { return m_serviceWorkerThread->identifier(); }
+    ServiceWorkerIdentifier identifier() const { return m_serviceWorkerThread->identifier(); }
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
     ServiceWorkerInspectorProxy& inspectorProxy() { return m_inspectorProxy; }
 

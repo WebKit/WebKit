@@ -24,8 +24,8 @@
 
 messages -> WebSWContextManagerConnection {
     UpdateServiceWorker(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerContextData contextData)
-    StartFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, uint64_t serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
-    PostMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerClientIdentifier sourceIdentifier, String sourceOrigin)
+    StartFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
+    PostMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerClientIdentifier sourceIdentifier, String sourceOrigin)
 }
 
 #endif

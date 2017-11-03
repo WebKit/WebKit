@@ -48,8 +48,8 @@ public:
     void runNextJob();
 
     void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
-    void scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message);
-    void scriptContextStarted(SWServer::Connection&, uint64_t serviceWorkerIdentifier, const String& workerID);
+    void scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier, const String& message);
+    void scriptContextStarted(SWServer::Connection&, ServiceWorkerIdentifier);
 
 private:
     void jobTimerFired();

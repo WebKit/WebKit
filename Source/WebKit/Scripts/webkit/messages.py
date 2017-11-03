@@ -187,8 +187,8 @@ def forward_declarations_and_headers(receiver):
         kind = parameter.kind
         type = parameter.type
 
-        if type.find('<') != -1:
-            # Don't forward declare class templates.
+        if type.find('<') != -1 or type == "WebCore::ServiceWorkerIdentifier":
+            # Don't forward declare class templates or ServiceWorkerIdentifier.
             headers.update(headers_for_type(type))
             continue
 

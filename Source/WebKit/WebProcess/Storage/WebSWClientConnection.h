@@ -58,7 +58,7 @@ public:
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
     void addServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
     void removeServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
-    void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ScriptExecutionContext& source) final;
+    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ScriptExecutionContext& source) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -66,7 +66,7 @@ public:
     bool hasServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
     Ref<ServiceWorkerClientFetch> startFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, ServiceWorkerClientFetch::Callback&&);
 
-    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
 
 private:
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);

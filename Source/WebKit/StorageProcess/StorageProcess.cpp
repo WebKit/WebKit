@@ -394,16 +394,16 @@ void StorageProcess::didGetWorkerContextProcessConnection(IPC::Attachment&& enco
         connection->workerContextProcessConnectionCreated();
 }
 
-void StorageProcess::serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const String& workerID, const String& message)
+void StorageProcess::serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)
 {
     if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->scriptContextFailedToStart(registrationKey, workerID, message);
+        connection->scriptContextFailedToStart(registrationKey, serviceWorkerIdentifier, message);
 }
 
-void StorageProcess::serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, uint64_t identifier, const String& workerID)
+void StorageProcess::serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->scriptContextStarted(registrationKey, identifier, workerID);
+        connection->scriptContextStarted(registrationKey, serviceWorkerIdentifier);
 }
 
 void StorageProcess::didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
@@ -436,10 +436,10 @@ void StorageProcess::didFinishFetch(uint64_t serverConnectionIdentifier, uint64_
         connection->didFinishFetch(fetchIdentifier);
 }
 
-void StorageProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin)
+void StorageProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     if (auto* connection = m_swServerConnections.get(destinationIdentifier.serverConnectionIdentifier))
-        connection->postMessageToServiceWorkerClient(destinationIdentifier.scriptExecutionContextIdentifier, message, sourceServiceWorkerIdentifier, sourceOrigin);
+        connection->postMessageToServiceWorkerClient(destinationIdentifier.scriptExecutionContextIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)

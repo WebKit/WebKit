@@ -1,3 +1,27 @@
+2017-11-03  Chris Dumez  <cdumez@apple.com>
+
+        Use a single identifier type to identify Service Workers
+        https://bugs.webkit.org/show_bug.cgi?id=179192
+
+        Reviewed by Brady Eidson.
+
+        Introduce class for strongly typed identifiers. This avoids mixing up
+        different types of identifiers.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ObjectIdentifier.h: Added.
+        (WTF::ObjectIdentifier::encode const):
+        (WTF::ObjectIdentifier::decode):
+        (WTF::ObjectIdentifier::operator== const):
+        (WTF::ObjectIdentifier::operator!= const):
+        (WTF::ObjectIdentifier::ObjectIdentifier):
+        (WTF::makeObjectIdentifier):
+        (WTF::ObjectIdentifierHash::hash):
+        (WTF::ObjectIdentifierHash::equal):
+        (WTF::HashTraits<ObjectIdentifier<T>>::emptyValue):
+        (WTF::HashTraits<ObjectIdentifier<T>>::constructDeletedValue):
+        (WTF::HashTraits<ObjectIdentifier<T>>::isDeletedValue):
+
 2017-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224353.

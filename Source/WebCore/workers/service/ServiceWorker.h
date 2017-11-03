@@ -29,6 +29,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
+#include "ServiceWorkerIdentifier.h"
 #include "URL.h"
 #include <heap/Strong.h>
 #include <wtf/RefCounted.h>
@@ -43,9 +44,9 @@ class Frame;
 
 class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
-    static Ref<ServiceWorker> create(ScriptExecutionContext& context, uint64_t serviceWorkerIdentifier, const URL& scriptURL)
+    static Ref<ServiceWorker> create(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL)
     {
-        return adoptRef(*new ServiceWorker(context, serviceWorkerIdentifier, scriptURL));
+        return adoptRef(*new ServiceWorker(context, identifier, scriptURL));
     }
 
     virtual ~ServiceWorker() = default;
@@ -65,20 +66,20 @@ public:
 
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
-    uint64_t identifier() const { return m_identifier; }
+    ServiceWorkerIdentifier identifier() const { return m_identifier; }
 
     using RefCounted::ref;
     using RefCounted::deref;
 
 private:
-    ServiceWorker(ScriptExecutionContext&, uint64_t serviceWorkerIdentifier, const URL& scriptURL);
+    ServiceWorker(ScriptExecutionContext&, ServiceWorkerIdentifier, const URL& scriptURL);
 
     virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    uint64_t m_identifier;
+    ServiceWorkerIdentifier m_identifier;
     URL m_scriptURL;
     State m_state { State::Installing };
 };

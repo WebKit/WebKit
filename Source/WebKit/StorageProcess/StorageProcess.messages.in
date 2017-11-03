@@ -38,14 +38,14 @@ messages -> StorageProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     DidGetWorkerContextProcessConnection(IPC::Attachment connectionHandle)
 
-    ServiceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerRegistrationKey registrationKey, String workerID, String message)
-    ServiceWorkerContextStarted(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerRegistrationKey registrationKey, uint64_t identifier, String workerID)
+    ServiceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message)
+    ServiceWorkerContextStarted(uint64_t serverConnectionIdentifier, struct WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier)
 
     DidNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
     DidFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
     DidReceiveFetchResponse(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, WebCore::ResourceResponse response)
     DidReceiveFetchData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, IPC::DataReference data, int64_t encodedDataLength)
     DidFinishFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
-    PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, IPC::DataReference message, uint64_t sourceServiceWorkerIdentifier, String sourceOrigin)
+    PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, IPC::DataReference message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
 #endif
 }

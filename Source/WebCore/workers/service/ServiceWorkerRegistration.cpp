@@ -106,11 +106,11 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
     container->removeRegistration(m_registrationData.scopeURL, WTFMove(promise));
 }
 
-void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, const String& workerID)
+void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
 {
     // FIXME: Implement here along with "Update Worker State" algorithm
     UNUSED_PARAM(state);
-    UNUSED_PARAM(workerID);
+    UNUSED_PARAM(serviceWorkerIdentifier);
 }
 
 EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const

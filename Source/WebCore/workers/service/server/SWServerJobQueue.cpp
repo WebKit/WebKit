@@ -76,24 +76,22 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     m_server.updateWorker(connection, m_registrationKey, job.scriptURL, result.script, WorkerType::Classic);
 }
 
-void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, const String& workerID, const String& message)
+void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier identifier, const String& message)
 {
     // FIXME: Install has failed. Run the install failed substeps
     // Run the Update Worker State algorithm passing registration’s installing worker and redundant as the arguments.
     // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
     // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
 
-    UNUSED_PARAM(workerID);
+    UNUSED_PARAM(identifier);
     UNUSED_PARAM(message);
 }
 
-void SWServerJobQueue::scriptContextStarted(SWServer::Connection&, uint64_t serviceWorkerIdentifier, const String& workerID)
+void SWServerJobQueue::scriptContextStarted(SWServer::Connection&, ServiceWorkerIdentifier identifier)
 {
-    UNUSED_PARAM(workerID);
-
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
-    registration->setActiveServiceWorkerIdentifier(serviceWorkerIdentifier);
+    registration->setActiveServiceWorkerIdentifier(identifier);
 
     m_server.resolveRegistrationJob(firstJob(), registration->data());
     finishCurrentJob();

@@ -29,6 +29,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
+#include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/UniqueIDBDatabase.h>
 #include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
@@ -118,8 +119,8 @@ private:
 #endif
 #if ENABLE(SERVICE_WORKER)
     void didGetWorkerContextProcessConnection(IPC::Attachment&& encodedConnectionIdentifier);
-    void serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
-    void serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, uint64_t identifier, const String& workerID);
+    void serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier, const String& message);
+    void serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier);
 
     void didReceiveFetchResponse(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const WebCore::ResourceResponse&);
     void didReceiveFetchData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
@@ -127,7 +128,7 @@ private:
     void didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
 
-    void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);

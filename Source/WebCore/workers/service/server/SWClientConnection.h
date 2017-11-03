@@ -53,7 +53,7 @@ public:
     void addServiceWorkerRegistration(ServiceWorkerRegistration&);
     void removeServiceWorkerRegistration(ServiceWorkerRegistration&);
 
-    virtual void postMessageToServiceWorkerGlobalScope(uint64_t destinationServiceWorkerIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
+    virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
     virtual uint64_t identifier() const = 0;
     virtual bool hasServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
 
@@ -64,8 +64,8 @@ protected:
     WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&);
     WEBCORE_EXPORT void unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult);
     WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
-    WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, uint64_t sourceServiceWorkerIdentifier, const String& sourceOrigin);
-    WEBCORE_EXPORT void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const String& workerID);
+    WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier source, const String& sourceOrigin);
+    WEBCORE_EXPORT void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

@@ -83,7 +83,7 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& conte
     if (channels && !channels->isEmpty())
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
-    uint64_t sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
+    auto sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
     callOnMainThread([message = message.releaseReturnValue(), destinationIdentifier = m_identifier, sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
         if (auto* connection = SWContextManager::singleton().connection())
             connection->postMessageToServiceWorkerClient(destinationIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);

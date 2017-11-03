@@ -73,13 +73,13 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
         break;
     };
 
-    String workerID;
+    std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier;
     if (worker)
-        workerID = worker->workerID();
+        serviceWorkerIdentifier = worker->identifier();
 
     for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
         if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
-            connection->updateRegistrationStateInClient(m_registrationKey, state, workerID);
+            connection->updateRegistrationStateInClient(m_registrationKey, state, serviceWorkerIdentifier);
     }
 }
 

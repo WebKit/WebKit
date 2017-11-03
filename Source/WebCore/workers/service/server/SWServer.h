@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include <wtf/CrossThreadQueue.h>
@@ -56,11 +57,11 @@ public:
     public:
         WEBCORE_EXPORT virtual ~Connection();
 
-        WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
-        WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, uint64_t serviceWorkerIdentifier, const String& workerID);
+        WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
+        WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
         
         // Messages to the client WebProcess
-        virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const String& serviceWorkerID) = 0;
+        virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>) = 0;
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
@@ -112,8 +113,8 @@ private:
     void handleTaskRepliesOnMainThread();
 
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
-    void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, const String& workerID, const String& message);
-    void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, uint64_t serviceWorkerIdentifier, const String& workerID);
+    void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
+    void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
 
     void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
@@ -122,7 +123,7 @@ private:
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 
-    HashMap<String, Ref<SWServerWorker>> m_workersByID;
+    HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_workersByID;
 
     RefPtr<Thread> m_taskThread;
     Lock m_taskThreadLock;
