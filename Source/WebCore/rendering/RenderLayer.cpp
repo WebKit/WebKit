@@ -3959,7 +3959,7 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
     } else if (viewportConstrainedNotCompositedReason() == NotCompositedForBoundsOutOfView) {
         // Don't paint out-of-view viewport constrained layers (when doing prepainting) because they will never be visible
         // unless their position or viewport size is changed.
-        ASSERT(renderer().style().position() == FixedPosition);
+        ASSERT(renderer().isFixedPositioned());
         return;
     }
 
@@ -5414,13 +5414,13 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
-    if (renderer().style().position() == FixedPosition) {
+    if (renderer().isFixedPositioned()) {
         clipRects.setPosClipRect(clipRects.fixedClipRect());
         clipRects.setOverflowClipRect(clipRects.fixedClipRect());
         clipRects.setFixed(true);
-    } else if (renderer().style().hasInFlowPosition())
+    } else if (renderer().isInFlowPositioned())
         clipRects.setPosClipRect(clipRects.overflowClipRect());
-    else if (renderer().style().position() == AbsolutePosition)
+    else if (renderer().isAbsolutelyPositioned())
         clipRects.setOverflowClipRect(clipRects.posClipRect());
     
     // Update the clip rects that will be passed to child layers.

@@ -1122,7 +1122,7 @@ const char* RenderDeprecatedFlexibleBox::renderName() const
         return "RenderDeprecatedFlexibleBox (generated)";
     if (isAnonymous())
         return "RenderDeprecatedFlexibleBox (generated)";
-    if (isRelPositioned())
+    if (isRelativelyPositioned())
         return "RenderDeprecatedFlexibleBox (relative positioned)";
     return "RenderDeprecatedFlexibleBox";
 }

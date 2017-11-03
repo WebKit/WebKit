@@ -414,11 +414,13 @@ public:
 
     bool isFloating() const { return m_bitfields.floating(); }
 
-    bool isOutOfFlowPositioned() const { return m_bitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
-    bool isInFlowPositioned() const { return m_bitfields.isRelPositioned() || m_bitfields.isStickyPositioned(); } // relative or sticky positioning
-    bool isRelPositioned() const { return m_bitfields.isRelPositioned(); } // relative positioning
-    bool isStickyPositioned() const { return m_bitfields.isStickyPositioned(); }
     bool isPositioned() const { return m_bitfields.isPositioned(); }
+    bool isInFlowPositioned() const { return m_bitfields.isRelativelyPositioned() || m_bitfields.isStickilyPositioned(); }
+    bool isOutOfFlowPositioned() const { return m_bitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
+    bool isFixedPositioned() const { return isOutOfFlowPositioned() && style().position() == FixedPosition; }
+    bool isAbsolutelyPositioned() const { return isOutOfFlowPositioned() && style().position() == AbsolutePosition; }
+    bool isRelativelyPositioned() const { return m_bitfields.isRelativelyPositioned(); }
+    bool isStickilyPositioned() const { return m_bitfields.isStickilyPositioned(); }
 
     bool isText() const  { return !m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isLineBreak() const { return m_bitfields.isLineBreak(); }
@@ -856,7 +858,7 @@ private:
             IsStaticallyPositioned = 0,
             IsRelativelyPositioned = 1,
             IsOutOfFlowPositioned = 2,
-            IsStickyPositioned = 3
+            IsStickilyPositioned = 3
         };
 
     public:
@@ -929,8 +931,8 @@ private:
 
     public:
         bool isOutOfFlowPositioned() const { return m_positionedState == IsOutOfFlowPositioned; }
-        bool isRelPositioned() const { return m_positionedState == IsRelativelyPositioned; }
-        bool isStickyPositioned() const { return m_positionedState == IsStickyPositioned; }
+        bool isRelativelyPositioned() const { return m_positionedState == IsRelativelyPositioned; }
+        bool isStickilyPositioned() const { return m_positionedState == IsStickilyPositioned; }
         bool isPositioned() const { return m_positionedState != IsStaticallyPositioned; }
 
         void setPositionedState(int positionState)

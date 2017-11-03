@@ -742,7 +742,7 @@ LayoutRect RenderBox::reflectedRect(const LayoutRect& r) const
 
 bool RenderBox::fixedElementLaysOutRelativeToFrame(const FrameView& frameView) const
 {
-    return style().position() == FixedPosition && container()->isRenderView() && frameView.fixedElementsLayoutRelativeToFrame();
+    return isFixedPositioned() && container()->isRenderView() && frameView.fixedElementsLayoutRelativeToFrame();
 }
 
 bool RenderBox::includeVerticalScrollbarSize() const
@@ -1423,7 +1423,7 @@ bool RenderBox::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, u
         if (!isCandidateForOpaquenessTest(childBox))
             continue;
         LayoutPoint childLocation = childBox.location();
-        if (childBox.isRelPositioned())
+        if (childBox.isRelativelyPositioned())
             childLocation.move(childBox.relativePositionOffset());
         LayoutRect childLocalRect = localRect;
         childLocalRect.moveBy(-childLocation);
@@ -1935,7 +1935,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     if (!container)
         return;
 
-    bool isFixedPos = style().position() == FixedPosition;
+    bool isFixedPos = isFixedPositioned();
     // If this box has a transform, it acts as a fixed position container for fixed descendants,
     // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
     if (hasTransform() && !isFixedPos)
@@ -1978,7 +1978,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     if (!container)
         return nullptr;
 
-    bool isFixedPos = style().position() == FixedPosition;
+    bool isFixedPos = isFixedPositioned();
     LayoutSize adjustmentForSkippedAncestor;
     if (ancestorSkipped) {
         // There can't be a transform between repaintContainer and container, because transforms create containers, so it should be safe
@@ -2006,7 +2006,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
 
 void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
-    bool isFixedPos = style().position() == FixedPosition;
+    bool isFixedPos = isFixedPositioned();
     if (hasTransform() && !isFixedPos) {
         // If this box has a transform, it acts as a fixed position container for fixed descendants,
         // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
@@ -2017,10 +2017,10 @@ void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState
     RenderBoxModelObject::mapAbsoluteToLocalPoint(mode, transformState);
 }
 
-LayoutSize RenderBox::offsetFromContainer(RenderElement& renderer, const LayoutPoint&, bool* offsetDependsOnPoint) const
+LayoutSize RenderBox::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
     // A fragment "has" boxes inside it without being their container. 
-    ASSERT(&renderer == container() || is<RenderFragmentContainer>(renderer));
+    ASSERT(&container == this->container() || is<RenderFragmentContainer>(container));
 
     LayoutSize offset;    
     if (isInFlowPositioned())
@@ -2029,14 +2029,14 @@ LayoutSize RenderBox::offsetFromContainer(RenderElement& renderer, const LayoutP
     if (!isInline() || isReplaced())
         offset += topLeftLocationOffset();
 
-    if (is<RenderBox>(renderer))
-        offset -= toLayoutSize(downcast<RenderBox>(renderer).scrollPosition());
+    if (is<RenderBox>(container))
+        offset -= toLayoutSize(downcast<RenderBox>(container).scrollPosition());
 
-    if (style().position() == AbsolutePosition && renderer.isInFlowPositioned() && is<RenderInline>(renderer))
-        offset += downcast<RenderInline>(renderer).offsetForInFlowPositionedInline(this);
+    if (isAbsolutelyPositioned() && container.isInFlowPositioned() && is<RenderInline>(container))
+        offset += downcast<RenderInline>(container).offsetForInFlowPositionedInline(this);
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint |= is<RenderFragmentedFlow>(renderer);
+        *offsetDependsOnPoint |= is<RenderFragmentedFlow>(container);
 
     return offset;
 }
@@ -3209,7 +3209,7 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
     }
 
     if (is<RenderBox>(containingBlock)) {
-        bool isFixedPosition = style().position() == FixedPosition;
+        bool isFixedPosition = isFixedPositioned();
 
         RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
         if (!fragmentedFlow) {
@@ -3274,7 +3274,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
     }
 
     if (containingBlock.isBox()) {
-        bool isFixedPosition = style().position() == FixedPosition;
+        bool isFixedPosition = isFixedPositioned();
 
         if (isFixedPosition && is<RenderView>(containingBlock))
             return downcast<RenderView>(containingBlock).clientLogicalHeightForFixedPosition();

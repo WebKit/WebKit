@@ -1693,7 +1693,7 @@ const char* RenderGrid::renderName() const
         return "RenderGrid (positioned)";
     if (isAnonymous())
         return "RenderGrid (generated)";
-    if (isRelPositioned())
+    if (isRelativelyPositioned())
         return "RenderGrid (relative positioned)";
     return "RenderGrid";
 }

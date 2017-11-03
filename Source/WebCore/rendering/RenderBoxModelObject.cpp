@@ -448,9 +448,9 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
         if (is<RenderBox>(*offsetParent) && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
             referencePoint.move(-downcast<RenderBox>(*offsetParent).borderLeft(), -downcast<RenderBox>(*offsetParent).borderTop());
         if (!isOutOfFlowPositioned() || enclosingFragmentedFlow()) {
-            if (isRelPositioned())
+            if (isRelativelyPositioned())
                 referencePoint.move(relativePositionOffset());
-            else if (isStickyPositioned())
+            else if (isStickilyPositioned())
                 referencePoint.move(stickyPositionOffset());
             
             // CSS regions specification says that region flows should return the body element as their offsetParent.
@@ -601,10 +601,10 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
 
 LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
 {
-    if (isRelPositioned())
+    if (isRelativelyPositioned())
         return relativePositionOffset();
 
-    if (isStickyPositioned())
+    if (isStickilyPositioned())
         return stickyPositionOffset();
 
     return LayoutSize();

@@ -3531,9 +3531,9 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (generated)";
     if (isAnonymous())
         return "RenderBlock (generated)";
-    if (isRelPositioned())
+    if (isRelativelyPositioned())
         return "RenderBlock (relative positioned)";
-    if (isStickyPositioned())
+    if (isStickilyPositioned())
         return "RenderBlock (sticky positioned)";
     return "RenderBlock";
 }

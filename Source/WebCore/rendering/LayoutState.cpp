@@ -42,7 +42,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox* rende
 {
     ASSERT(m_ancestor);
 
-    bool fixed = renderer->isOutOfFlowPositioned() && renderer->style().position() == FixedPosition;
+    bool fixed = renderer->isFixedPositioned();
     if (fixed) {
         // FIXME: This doesn't work correctly with transforms.
         FloatPoint fixedOffset = renderer->view().localToAbsolute(FloatPoint(), IsFixed);

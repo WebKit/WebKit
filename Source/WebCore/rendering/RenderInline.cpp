@@ -842,9 +842,9 @@ LayoutUnit RenderInline::marginAfter(const RenderStyle* otherStyle) const
 
 const char* RenderInline::renderName() const
 {
-    if (isRelPositioned())
+    if (isRelativelyPositioned())
         return "RenderInline (relative positioned)";
-    if (isStickyPositioned())
+    if (isStickilyPositioned())
         return "RenderInline (sticky positioned)";
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())

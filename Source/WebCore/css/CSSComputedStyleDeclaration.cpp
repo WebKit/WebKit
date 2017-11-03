@@ -779,7 +779,7 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     // We should return the "used value".
     auto& box = downcast<RenderBox>(*renderer);
     auto* containingBlock = box.containingBlock();
-    if (box.isRelPositioned() || !containingBlock)
+    if (box.isRelativelyPositioned() || !containingBlock)
         return zoomAdjustedPixelValue(getOffsetUsedStyleRelative(box, propertyID), style);
     if (renderer->isOutOfFlowPositioned())
         return zoomAdjustedPixelValue(getOffsetUsedStyleOutOfFlowPositioned(*containingBlock, box, propertyID), style);

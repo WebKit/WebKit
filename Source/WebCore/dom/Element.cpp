@@ -1035,7 +1035,7 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
         for (auto* positionedBox : *viewPositionedObjects) {
             if (positionedBox == &renderBox)
                 continue;
-            if (positionedBox->style().position() == FixedPosition && renderBox.element()->contains(positionedBox->element()))
+            if (positionedBox->isFixedPositioned() && renderBox.element()->contains(positionedBox->element()))
                 return false;
         }
     }

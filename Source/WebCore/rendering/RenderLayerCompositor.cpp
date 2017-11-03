@@ -1086,7 +1086,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
 
     // If a fixed position layer gained/lost a backing or the reason not compositing it changed,
     // the scrolling coordinator needs to recalculate whether it can do fast scrolling.
-    if (layer.renderer().style().position() == FixedPosition) {
+    if (layer.renderer().isFixedPositioned()) {
         if (layer.viewportConstrainedNotCompositedReason() != viewportConstrainedNotCompositedReason) {
             layer.setViewportConstrainedNotCompositedReason(viewportConstrainedNotCompositedReason);
             layerChanged = true;
@@ -1202,7 +1202,7 @@ void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const Re
 
 
     RenderLayerModelObject& renderer = layer.renderer();
-    if (renderer.isOutOfFlowPositioned() && renderer.style().position() == FixedPosition && renderer.container() == &m_renderView) {
+    if (renderer.isFixedPositioned() && renderer.container() == &m_renderView) {
         // Because fixed elements get moved around without re-computing overlap, we have to compute an overlap
         // rect that covers all the locations that the fixed element could move to.
         // FIXME: need to handle sticky too.
@@ -2142,7 +2142,7 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         reasons |= CompositingReason::WillChange;
 
     if (requiresCompositingForPosition(renderer, *renderer.layer()))
-        reasons |= renderer.style().position() == FixedPosition ? CompositingReason::PositionFixed : CompositingReason::PositionSticky;
+        reasons |= renderer.isFixedPositioned() ? CompositingReason::PositionFixed : CompositingReason::PositionSticky;
 
 #if PLATFORM(IOS)
     if (requiresCompositingForScrolling(*renderer.layer()))
@@ -2553,7 +2553,7 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
 
 bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& layer, const RenderLayer** enclosingAcceleratedOverflowLayer) const
 {
-    ASSERT(layer.renderer().isStickyPositioned());
+    ASSERT(layer.renderer().isStickilyPositioned());
 
     auto* enclosingOverflowLayer = layer.enclosingOverflowClipLayer(ExcludeSelf);
 
@@ -2584,7 +2584,7 @@ bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& laye
 
 bool RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer(const RenderLayer& layer) const
 {
-    if (layer.renderer().isStickyPositioned())
+    if (layer.renderer().isStickilyPositioned())
         return isAsyncScrollableStickyLayer(layer);
 
     if (layer.renderer().style().position() != FixedPosition)
@@ -2592,7 +2592,7 @@ bool RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer(const Render
 
     // FIXME: Handle fixed inside of a transform, which should not behave as fixed.
     for (auto* stackingContainer = layer.stackingContainer(); stackingContainer; stackingContainer = stackingContainer->stackingContainer()) {
-        if (stackingContainer->isComposited() && stackingContainer->renderer().style().position() == FixedPosition)
+        if (stackingContainer->isComposited() && stackingContainer->renderer().isFixedPositioned())
             return false;
     }
 
@@ -3758,7 +3758,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
     // If a node plays both roles, fixed/sticky is always the ancestor node of scrolling.
     if (reasons & ViewportConstrained) {
         ScrollingNodeType nodeType = FrameScrollingNode;
-        if (layer.renderer().style().position() == FixedPosition)
+        if (layer.renderer().isFixedPositioned())
             nodeType = FixedNode;
         else if (layer.renderer().style().position() == StickyPosition)
             nodeType = StickyNode;
@@ -3856,14 +3856,14 @@ void RenderLayerCompositor::registerAllViewportConstrainedLayers()
         ASSERT(layer->isComposited());
 
         std::unique_ptr<ViewportConstraints> constraints;
-        if (layer->renderer().isStickyPositioned()) {
+        if (layer->renderer().isStickilyPositioned()) {
             constraints = std::make_unique<StickyPositionViewportConstraints>(computeStickyViewportConstraints(*layer));
             const RenderLayer* enclosingTouchScrollableLayer = nullptr;
             if (isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
                 ASSERT(enclosingTouchScrollableLayer->isComposited());
                 stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollingLayer()->platformLayer());
             }
-        } else if (layer->renderer().style().position() == FixedPosition)
+        } else if (layer->renderer().isFixedPositioned())
             constraints = std::make_unique<FixedPositionViewportConstraints>(computeFixedViewportConstraints(*layer));
         else
             continue;

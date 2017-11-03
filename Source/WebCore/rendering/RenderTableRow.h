@@ -77,7 +77,7 @@ private:
     void layout() override;
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
 
-    bool requiresLayer() const override { return hasOverflowClip() || hasTransformRelatedProperty() || hasHiddenBackface() || hasClipPath() || createsGroup() || isStickyPositioned(); }
+    bool requiresLayer() const override { return hasOverflowClip() || hasTransformRelatedProperty() || hasHiddenBackface() || hasClipPath() || createsGroup() || isStickilyPositioned(); }
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 

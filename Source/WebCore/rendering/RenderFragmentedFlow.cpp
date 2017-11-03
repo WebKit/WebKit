@@ -324,9 +324,9 @@ LayoutPoint RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent(const R
             
             // Since the top has been overriden, check if the
             // relative/sticky positioning must be reconsidered.
-            if (boxModelObject.isRelPositioned())
+            if (boxModelObject.isRelativelyPositioned())
                 referencePoint.move(0, boxModelObject.relativePositionOffset().height());
-            else if (boxModelObject.isStickyPositioned())
+            else if (boxModelObject.isStickilyPositioned())
                 referencePoint.move(0, boxModelObject.stickyPositionOffset().height());
         }
         

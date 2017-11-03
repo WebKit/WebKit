@@ -602,10 +602,9 @@ RenderBlock* RenderObject::containingBlock() const
 {
     auto containingBlockForRenderer = [](const RenderElement& renderer)
     {
-        auto& style = renderer.style();
-        if (style.position() == AbsolutePosition)
+        if (renderer.isAbsolutelyPositioned())
             return renderer.containingBlockForAbsolutePosition();
-        if (style.position() == FixedPosition)
+        if (renderer.isFixedPositioned())
             return renderer.containingBlockForFixedPosition();
         return renderer.containingBlockForObjectInFlow();
     };
@@ -1069,12 +1068,12 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         stream << "B";
 
     if (isPositioned()) {
-        if (isRelPositioned())
+        if (isRelativelyPositioned())
             stream << "R";
-        else if (isStickyPositioned())
+        else if (isStickilyPositioned())
             stream << "K";
         else if (isOutOfFlowPositioned()) {
-            if (style().position() == AbsolutePosition)
+            if (isAbsolutelyPositioned())
                 stream << "A";
             else
                 stream << "X";
@@ -1719,7 +1718,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     // A is the root element.
     // A is the HTML body element.
     // The computed value of the position property for element A is fixed.
-    if (isDocumentElementRenderer() || isBody() || (isOutOfFlowPositioned() && style().position() == FixedPosition))
+    if (isDocumentElementRenderer() || isBody() || isFixedPositioned())
         return nullptr;
 
     // If A is an area HTML element which has a map HTML element somewhere in the ancestor

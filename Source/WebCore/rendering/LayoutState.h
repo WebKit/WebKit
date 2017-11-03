@@ -103,9 +103,9 @@ public:
     // e.g., because of composited scrolling.
     LayoutRect m_clipRect;
     
-    // x/y offset from container. Includes relative positioning and scroll offsets.
+    // x/y offset from layout root. Includes in-flow positioning and scroll offsets.
     LayoutSize m_paintOffset;
-    // x/y offset from container. Does not include relative positioning or scroll offsets.
+    // x/y offset from layout root. Does not include in-flow positioning or scroll offsets.
     LayoutSize m_layoutOffset;
     // Transient offset from the final position of the object
     // used to ensure that repaints happen in the correct place.
