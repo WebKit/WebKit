@@ -28,7 +28,6 @@
 #include "URL.h"
 
 #include "DecodeEscapeSequences.h"
-#include "MIMETypeRegistry.h"
 #include "TextEncoding.h"
 #include "URLParser.h"
 #include <stdio.h>
@@ -1319,15 +1318,6 @@ String mimeTypeFromDataURL(const String& url)
         return ASCIILiteral("text/plain");
     ASSERT(index >= 5);
     return url.substring(5, index - 5).convertToASCIILowercase();
-}
-
-String mimeTypeFromURL(const URL& url)
-{
-    String decodedPath = decodeURLEscapeSequences(url.path());
-    String extension = decodedPath.substring(decodedPath.reverseFind('.') + 1);
-
-    // We don't use MIMETypeRegistry::getMIMETypeForPath() because it returns "application/octet-stream" upon failure
-    return MIMETypeRegistry::getMIMETypeForExtension(extension);
 }
 
 String URL::stringCenterEllipsizedToLength(unsigned length) const

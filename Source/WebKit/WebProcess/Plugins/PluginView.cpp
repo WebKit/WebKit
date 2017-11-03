@@ -1838,7 +1838,7 @@ void PluginView::pluginDidReceiveUserInteraction()
     HTMLPlugInImageElement& plugInImageElement = downcast<HTMLPlugInImageElement>(*m_pluginElement);
     String pageOrigin = plugInImageElement.document().page()->mainFrame().document()->baseURL().host();
     String pluginOrigin = plugInImageElement.loadedUrl().host();
-    String mimeType = plugInImageElement.loadedMimeType();
+    String mimeType = plugInImageElement.serviceType();
 
     WebProcess::singleton().plugInDidReceiveUserInteraction(pageOrigin, pluginOrigin, mimeType, plugInImageElement.document().page()->sessionID());
 }

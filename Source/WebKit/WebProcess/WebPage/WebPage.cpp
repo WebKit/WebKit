@@ -5250,7 +5250,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
     m_didFindPrimarySnapshottedPlugin = true;
     m_primaryPlugInPageOrigin = m_page->mainFrame().document()->baseURL().host();
     m_primaryPlugInOrigin = candidatePlugIn->loadedUrl().host();
-    m_primaryPlugInMimeType = candidatePlugIn->loadedMimeType();
+    m_primaryPlugInMimeType = candidatePlugIn->serviceType();
 
     candidatePlugIn->setIsPrimarySnapshottedPlugIn(true);
 }

@@ -43,14 +43,6 @@ public:
     const String& url() const { return m_url; }
     const URL& loadedUrl() const { return m_loadedUrl; }
 
-    String loadedMimeType() const
-    {
-        String mimeType = serviceType();
-        if (mimeType.isEmpty())
-            mimeType = mimeTypeFromURL(m_loadedUrl);
-        return mimeType;
-    }
-
     // Public for FrameView::addWidgetToUpdate()
     bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }

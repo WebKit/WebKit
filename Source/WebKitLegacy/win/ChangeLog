@@ -1,3 +1,13 @@
+2017-11-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Don't try to guess plugin MIME type from a file extension in a URL (no observable effect)
+        https://bugs.webkit.org/show_bug.cgi?id=178333
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::objectContentType): Remove unnecessary call to mimeTypeFromURL
+
 2017-11-02  Alex Christensen  <achristensen@webkit.org>
 
         Use CompletionHandlers for redirects

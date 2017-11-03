@@ -1054,9 +1054,6 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
 {
     String mimeType = mimeTypeIn;
 
-    if (mimeType.isEmpty())
-        mimeType = mimeTypeFromURL(url);
-
     if (mimeType.isEmpty()) {
         String decodedPath = decodeURLEscapeSequences(url.path());
         mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(decodedPath.substring(decodedPath.reverseFind('.') + 1));

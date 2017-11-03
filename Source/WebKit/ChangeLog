@@ -1,3 +1,15 @@
+2017-11-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Don't try to guess plugin MIME type from a file extension in a URL (no observable effect)
+        https://bugs.webkit.org/show_bug.cgi?id=178333
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginDidReceiveUserInteraction): loadedMIMEType --> serviceType
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn): ditto
+
 2017-11-02  Brady Eidson  <beidson@apple.com>
 
         SW: Implement "Update Registration State" algorithm (unused for now)

@@ -356,7 +356,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     // the look-and-feel of the snapshotted plug-in overlay. 
     root.setResetStyleInheritance(true);
     
-    String mimeType = loadedMimeType();
+    String mimeType = serviceType();
 
     auto& isolatedWorld = plugInImageElementIsolatedWorld();
     document().ensurePlugInsInjectedScript(isolatedWorld);
@@ -425,7 +425,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
     // may be in different frames, so traverse from the top of the document.
 
     String plugInOrigin = m_loadedUrl.host();
-    String mimeType = loadedMimeType();
+    String mimeType = serviceType();
     Vector<Ref<HTMLPlugInImageElement>> similarPlugins;
 
     if (!document().page())
@@ -439,7 +439,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
             continue;
 
         for (auto& element : descendantsOfType<HTMLPlugInImageElement>(*frame->document())) {
-            if (plugInOrigin == element.loadedUrl().host() && mimeType == element.loadedMimeType())
+            if (plugInOrigin == element.loadedUrl().host() && mimeType == element.serviceType())
                 similarPlugins.append(element);
         }
     }
@@ -460,7 +460,7 @@ void HTMLPlugInImageElement::userDidClickSnapshot(MouseEvent& event, bool forwar
 
     String plugInOrigin = m_loadedUrl.host();
     if (document().page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document().page()->mainFrame().document()->baseURL().protocol().toStringWithoutCopying()) && document().page()->settings().autostartOriginPlugInSnapshottingEnabled())
-        document().page()->plugInClient()->didStartFromOrigin(document().page()->mainFrame().document()->baseURL().host(), plugInOrigin, loadedMimeType(), document().page()->sessionID());
+        document().page()->plugInClient()->didStartFromOrigin(document().page()->mainFrame().document()->baseURL().host(), plugInOrigin, serviceType(), document().page()->sessionID());
 
     LOG(Plugins, "%p User clicked on snapshotted plug-in. Restart.", this);
     restartSnapshottedPlugIn();
@@ -602,7 +602,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
 {
     LOG(Plugins, "%p Plug-in URL: %s", this, m_url.utf8().data());
     LOG(Plugins, "   Actual URL: %s", url.string().utf8().data());
-    LOG(Plugins, "   MIME type: %s", loadedMimeType().utf8().data());
+    LOG(Plugins, "   MIME type: %s", serviceType().utf8().data());
 
     m_loadedUrl = url;
     m_plugInWasCreated = false;
@@ -664,14 +664,14 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
         return;
     }
 
-    if (document().page()->settings().autostartOriginPlugInSnapshottingEnabled() && document().page()->plugInClient() && document().page()->plugInClient()->shouldAutoStartFromOrigin(document().page()->mainFrame().document()->baseURL().host(), url.host(), loadedMimeType())) {
+    if (document().page()->settings().autostartOriginPlugInSnapshottingEnabled() && document().page()->plugInClient() && document().page()->plugInClient()->shouldAutoStartFromOrigin(document().page()->mainFrame().document()->baseURL().host(), url.host(), serviceType())) {
         LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document().page()->mainFrame().document()->baseURL().host().utf8().data(), url.host().utf8().data());
         m_snapshotDecision = NeverSnapshot;
         return;
     }
 
-    if (m_loadedUrl.isEmpty() && !loadedMimeType().isEmpty()) {
-        LOG(Plugins, "%p Plug-in has no src URL but does have a valid mime type %s, set to play", this, loadedMimeType().utf8().data());
+    if (m_loadedUrl.isEmpty() && !serviceType().isEmpty()) {
+        LOG(Plugins, "%p Plug-in has no src URL but does have a valid mime type %s, set to play", this, serviceType().utf8().data());
         m_snapshotDecision = MaySnapshotWhenContentIsSet;
         return;
     }
