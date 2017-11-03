@@ -1,3 +1,32 @@
+2017-11-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Rebaselining tests affected by r224324.
+
+        * platform/wpe/css1/pseudo/firstletter-expected.txt:
+        * platform/wpe/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * platform/wpe/css2.1/t051202-c24-first-lttr-00-b-expected.txt:
+        * platform/wpe/css2.1/t051202-c26-psudo-nest-00-c-expected.txt:
+        * platform/wpe/css3/selectors3/html/css3-modsel-166-expected.txt:
+        * platform/wpe/css3/selectors3/html/css3-modsel-166a-expected.txt:
+        * platform/wpe/css3/selectors3/html/css3-modsel-39-expected.txt:
+        * platform/wpe/css3/selectors3/html/css3-modsel-39b-expected.txt:
+        * platform/wpe/css3/selectors3/xhtml/css3-modsel-166-expected.txt:
+        * platform/wpe/css3/selectors3/xhtml/css3-modsel-166a-expected.txt:
+        * platform/wpe/css3/selectors3/xhtml/css3-modsel-39-expected.txt:
+        * platform/wpe/css3/selectors3/xhtml/css3-modsel-39b-expected.txt:
+        * platform/wpe/css3/selectors3/xml/css3-modsel-166-expected.txt:
+        * platform/wpe/css3/selectors3/xml/css3-modsel-166a-expected.txt:
+        * platform/wpe/css3/selectors3/xml/css3-modsel-39-expected.txt:
+        * platform/wpe/css3/selectors3/xml/css3-modsel-39b-expected.txt:
+        * platform/wpe/fast/dynamic/first-letter-display-change-expected.txt:
+        * platform/wpe/ietestcenter/css3/text/textshadow-004-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/wpe/svg/custom/glyph-selection-arabic-forms-expected.txt:
+        * platform/wpe/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt:
+        * platform/wpe/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt:
+        * platform/wpe/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt:
+        * platform/wpe/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt:
+
 2017-11-03  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas2D Profiling: highlight expensive context commands in the captured command log

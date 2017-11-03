@@ -5,7 +5,7 @@ layer at (0,0) size 800x454
     RenderBody {BODY} at (8,16) size 784x430 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x237
         RenderInline (generated) at (0,0) size 88x159 [color=#00FFFF]
-          RenderText {#text} at (0,3) size 88x159
+          RenderText at (0,3) size 88x159
             text run at (0,3) width 88: "T"
         RenderText {#text} at (88,88) size 57x53
           text run at (88,88) width 57: "he "
@@ -49,7 +49,7 @@ layer at (0,0) size 800x454
           text run at (36,219) width 146: "than one line. (TEST1)"
       RenderBlock {P} at (0,253) size 784x73
         RenderInline (generated) at (0,0) size 33x36 [color=#00FFFF]
-          RenderText {#text} at (0,0) size 33x36
+          RenderText at (0,0) size 33x36
             text run at (0,0) width 33: "\"T"
         RenderText {#text} at (33,15) size 98x17
           text run at (33,15) width 98: "est\": The first "
@@ -86,7 +86,7 @@ layer at (0,0) size 800x454
           text run at (315,55) width 409: "the paragraph must be displayed on more than one line. (TEST2)"
       RenderBlock {P} at (0,342) size 784x54
         RenderInline (generated) at (0,0) size 10x17 [color=#00FFFF]
-          RenderText {#text} at (0,0) size 10x17
+          RenderText at (0,0) size 10x17
             text run at (0,0) width 10: "T"
         RenderText {#text} at (10,0) size 19x17
           text run at (10,0) width 19: "he "
