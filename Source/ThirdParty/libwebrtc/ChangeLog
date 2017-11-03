@@ -1,3 +1,30 @@
+2017-11-03  Youenn Fablet  <youenn@apple.com>
+
+        Use VCP H264 encoder for platforms supporting it
+        https://bugs.webkit.org/show_bug.cgi?id=179076
+        rdar://problem/35180773
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/encoder_vcp.h: Added.
+        (webrtc::H264VideoToolboxEncoderVCP::SetActive):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/encoder_vcp.mm: Copied from Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.mm.
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.mm:
+        (internal::CFStringToString):
+        (internal::SetVTSessionProperty):
+        (internal::CopyVideoFrameToPixelBuffer):
+        (internal::CreatePixelBuffer):
+        (internal::VTCompressionOutputCallback):
+        (internal::ExtractProfile):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.mm:
+        (webrtc::VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory):
+        (webrtc::VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-10-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r222775.
