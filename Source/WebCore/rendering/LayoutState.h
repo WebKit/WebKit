@@ -81,6 +81,9 @@ public:
     void setCurrentRenderFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) { m_currentRenderFragmentedFlow = fragmentedFlow; }
 
 private:
+    void computeOffsets(RenderBox&, LayoutSize offset);
+    void computeClipRect(RenderBox&);
+    void computePaginationInformation(RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
     void propagateLineGridInfo(RenderBox&);
     void establishLineGrid(RenderBlockFlow&);
 
