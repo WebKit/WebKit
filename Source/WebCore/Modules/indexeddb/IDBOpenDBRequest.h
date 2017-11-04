@@ -54,7 +54,7 @@ public:
 private:
     IDBOpenDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
 
-    bool dispatchEvent(Event&) final;
+    void dispatchEvent(Event&) final;
 
     void cancelForStop() final;
 

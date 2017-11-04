@@ -85,7 +85,7 @@ public:
     void refEventTarget() final { ThreadSafeRefCounted::ref(); }
     void derefEventTarget() final { ThreadSafeRefCounted::deref(); }
     using EventTarget::dispatchEvent;
-    bool dispatchEvent(Event&) final;
+    void dispatchEvent(Event&) final;
 
     using ThreadSafeRefCounted<IDBTransaction>::ref;
     using ThreadSafeRefCounted<IDBTransaction>::deref;

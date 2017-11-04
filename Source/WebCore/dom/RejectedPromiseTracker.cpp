@@ -169,9 +169,9 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
 
         auto event = PromiseRejectionEvent::create(state, eventNames().unhandledrejectionEvent, initializer);
         auto target = m_context.errorEventTarget();
-        bool needsDefaultAction = target->dispatchEvent(event);
+        target->dispatchEvent(event);
 
-        if (needsDefaultAction)
+        if (!event->defaultPrevented())
             m_context.reportUnhandledPromiseRejection(state, promise, unhandledPromise.callStack());
 
         if (!promise.isHandled(vm))

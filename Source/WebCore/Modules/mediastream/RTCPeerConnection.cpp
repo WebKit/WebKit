@@ -594,10 +594,10 @@ RTCRtpParameters RTCPeerConnection::getParameters(RTCRtpSender& sender) const
     return m_backend->getParameters(sender);
 }
 
-bool RTCPeerConnection::dispatchEvent(Event& event)
+void RTCPeerConnection::dispatchEvent(Event& event)
 {
     DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
-    return EventTarget::dispatchEvent(event);
+    EventTarget::dispatchEvent(event);
 }
 
 #if !RELEASE_LOG_DISABLED

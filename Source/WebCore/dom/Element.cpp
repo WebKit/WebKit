@@ -273,7 +273,8 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
         return true; // Shouldn't happen.
 
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
-    bool didNotSwallowEvent = dispatchEvent(mouseEvent) && !mouseEvent->defaultHandled();
+    dispatchEvent(mouseEvent);
+    bool didNotSwallowEvent = !mouseEvent->defaultPrevented() && !mouseEvent->defaultHandled();
 
     if (mouseEvent->type() == eventNames().clickEvent && mouseEvent->detail() == 2) {
         // Special case: If it's a double click event, we also send the dblclick event. This is not part
@@ -295,30 +296,34 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     return didNotSwallowEvent;
 }
 
-
-bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
+bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent)
 {
-    Ref<WheelEvent> wheelEvent = WheelEvent::create(event, document().defaultView());
+    auto event = WheelEvent::create(platformEvent, document().defaultView());
 
     // Events with no deltas are important because they convey platform information about scroll gestures
     // and momentum beginning or ending. However, those events should not be sent to the DOM since some
     // websites will break. They need to be dispatched because dispatching them will call into the default
     // event handler, and our platform code will correctly handle the phase changes. Calling stopPropogation()
     // will prevent the event from being sent to the DOM, but will still call the default event handler.
-    if (!event.deltaX() && !event.deltaY())
-        wheelEvent->stopPropagation();
+    // FIXME: Move this logic into WheelEvent::create.
+    if (!platformEvent.deltaX() && !platformEvent.deltaY())
+        event->stopPropagation();
 
-    return EventDispatcher::dispatchEvent(*this, wheelEvent) && !wheelEvent->defaultHandled();
+    dispatchEvent(event);
+    return !event->defaultPrevented() && !event->defaultHandled();
 }
 
 bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 {
-    Ref<KeyboardEvent> event = KeyboardEvent::create(platformEvent, document().defaultView());
+    auto event = KeyboardEvent::create(platformEvent, document().defaultView());
+
     if (Frame* frame = document().frame()) {
-        if (frame->eventHandler().accessibilityPreventsEventPropogation(event))
+        if (frame->eventHandler().accessibilityPreventsEventPropagation(event))
             event->stopPropagation();
     }
-    return EventDispatcher::dispatchEvent(*this, event) && !event->defaultHandled();
+
+    dispatchEvent(event);
+    return !event->defaultPrevented() && !event->defaultHandled();
 }
 
 void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
@@ -2489,18 +2494,16 @@ void Element::dispatchFocusOutEvent(const AtomicString& eventType, RefPtr<Elemen
 
 void Element::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection)
 {
-    if (document().page())
-        document().page()->chrome().client().elementDidFocus(*this);
-
-    EventDispatcher::dispatchEvent(*this, FocusEvent::create(eventNames().focusEvent, false, false, document().defaultView(), 0, WTFMove(oldFocusedElement)));
+    if (auto* page = document().page())
+        page->chrome().client().elementDidFocus(*this);
+    dispatchEvent(FocusEvent::create(eventNames().focusEvent, false, false, document().defaultView(), 0, WTFMove(oldFocusedElement)));
 }
 
 void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 {
-    if (document().page())
-        document().page()->chrome().client().elementDidBlur(*this);
-
-    EventDispatcher::dispatchEvent(*this, FocusEvent::create(eventNames().blurEvent, false, false, document().defaultView(), 0, WTFMove(newFocusedElement)));
+    if (auto* page = document().page())
+        page->chrome().client().elementDidBlur(*this);
+    dispatchEvent(FocusEvent::create(eventNames().blurEvent, false, false, document().defaultView(), 0, WTFMove(newFocusedElement)));
 }
 
 void Element::dispatchWebKitImageReadyEventForTesting()

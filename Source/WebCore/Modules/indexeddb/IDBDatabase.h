@@ -106,7 +106,7 @@ public:
 
     bool isClosingOrClosed() const { return m_closePending || m_closedInServer; }
 
-    bool dispatchEvent(Event&) final;
+    void dispatchEvent(Event&) final;
 
     bool hasPendingActivity() const final;
 

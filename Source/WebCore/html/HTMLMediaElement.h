@@ -663,7 +663,7 @@ private:
     void enqueuePlaybackTargetAvailabilityChangedEvent();
 
     using EventTarget::dispatchEvent;
-    bool dispatchEvent(Event&) override;
+    void dispatchEvent(Event&) override;
 #endif
 
 #if ENABLE(MEDIA_SESSION)

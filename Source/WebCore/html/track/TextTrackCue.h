@@ -99,7 +99,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     using EventTarget::dispatchEvent;
-    bool dispatchEvent(Event&) final;
+    void dispatchEvent(Event&) final;
 
     EventTargetInterface eventTargetInterface() const final { return TextTrackCueEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }

@@ -473,17 +473,17 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
     scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
 
-bool IDBDatabase::dispatchEvent(Event& event)
+void IDBDatabase::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ") (%p)", m_databaseConnectionIdentifier, this);
     ASSERT(currentThread() == originThreadID());
 
-    bool result = EventTargetWithInlineData::dispatchEvent(event);
+    auto protectedThis = makeRef(*this);
+
+    EventTargetWithInlineData::dispatchEvent(event);
 
     if (event.isVersionChangeEvent() && event.type() == m_eventNames.versionchangeEvent)
-        connectionProxy().didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());
-
-    return result;
+        m_connectionProxy->didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());
 }
 
 void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)

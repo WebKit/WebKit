@@ -5627,7 +5627,7 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
     updateSleepDisabling();
 }
 
-bool HTMLMediaElement::dispatchEvent(Event& event)
+void HTMLMediaElement::dispatchEvent(Event& event)
 {
     if (event.type() == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
         m_failedToPlayToWirelessTarget = false;
@@ -5636,7 +5636,7 @@ bool HTMLMediaElement::dispatchEvent(Event& event)
 
     DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
 
-    return HTMLElement::dispatchEvent(event);
+    HTMLElement::dispatchEvent(event);
 }
 
 bool HTMLMediaElement::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)

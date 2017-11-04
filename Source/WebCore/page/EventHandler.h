@@ -258,7 +258,7 @@ public:
     WEBCORE_EXPORT bool keyEvent(const PlatformKeyboardEvent&);
     void defaultKeyboardEventHandler(KeyboardEvent&);
 
-    bool accessibilityPreventsEventPropogation(KeyboardEvent&);
+    bool accessibilityPreventsEventPropagation(KeyboardEvent&);
     WEBCORE_EXPORT void handleKeyboardSelectionMovementForAccessibility(KeyboardEvent&);
 
     bool handleTextInputEvent(const String& text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard);
@@ -417,7 +417,7 @@ private:
 #if ENABLE(DRAG_SUPPORT)
     void clearDragState();
 
-    bool dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent&);
+    void dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent&);
     bool dispatchDragStartEventOnSourceElement(DataTransfer&);
 
     bool dragHysteresisExceeded(const FloatPoint&) const;

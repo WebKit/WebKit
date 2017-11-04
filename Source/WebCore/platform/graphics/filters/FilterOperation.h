@@ -166,11 +166,10 @@ public:
     }
     virtual ~ReferenceFilterOperation();
 
-    Ref<FilterOperation> clone() const override
+    Ref<FilterOperation> clone() const final
     {
         // Reference filters cannot be cloned.
         RELEASE_ASSERT_NOT_REACHED();
-        return *static_cast<FilterOperation*>(nullptr);
     }
 
     bool affectsOpacity() const override { return true; }

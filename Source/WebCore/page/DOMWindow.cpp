@@ -1960,63 +1960,66 @@ void DOMWindow::languagesChanged()
 
 void DOMWindow::dispatchLoadEvent()
 {
-    Ref<Event> loadEvent = Event::create(eventNames().loadEvent, false, false);
-    if (m_frame && m_frame->loader().documentLoader() && !m_frame->loader().documentLoader()->timing().loadEventStart()) {
-        // The DocumentLoader (and thus its LoadTiming) might get destroyed while dispatching
-        // the event, so protect it to prevent writing the end time into freed memory.
-        RefPtr<DocumentLoader> documentLoader = m_frame->loader().documentLoader();
-        LoadTiming& timing = documentLoader->timing();
-        timing.markLoadEventStart();
-        dispatchEvent(loadEvent, document());
-        timing.markLoadEventEnd();
-    } else
-        dispatchEvent(loadEvent, document());
+    // If we did not protect it, the document loader and its timing subobject might get destroyed
+    // as a side effect of what event handling code does.
+    auto protectedThis = makeRef(*this);
+    auto protectedLoader = makeRefPtr(frame() ? frame()->loader().documentLoader() : nullptr);
+    bool shouldMarkLoadEventTimes = protectedLoader && !protectedLoader->timing().loadEventStart();
 
-    // For load events, send a separate load event to the enclosing frame only.
-    // This is a DOM extension and is independent of bubbling/capturing rules of
-    // the DOM.
-    Element* ownerElement = m_frame ? m_frame->ownerElement() : nullptr;
-    if (ownerElement)
-        ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+    if (shouldMarkLoadEventTimes)
+        protectedLoader->timing().markLoadEventStart();
+
+    dispatchEvent(Event::create(eventNames().loadEvent, false, false), document());
+
+    if (shouldMarkLoadEventTimes)
+        protectedLoader->timing().markLoadEventEnd();
+
+    // Send a separate load event to the element that owns this frame.
+    if (frame()) {
+        if (auto* owner = frame()->ownerElement())
+            owner->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+    }
 
     InspectorInstrumentation::loadEventFired(frame());
 }
 
-bool DOMWindow::dispatchEvent(Event& event, EventTarget* target)
+void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
 {
-    Ref<EventTarget> protectedThis(*this);
+    // FIXME: It's confusing to have both the inherited EventTarget::dispatchEvent function
+    // and this function, which does something nearly identical but subtly different if
+    // called with a target of null. Most callers pass the document as the target, though.
+    // Fixing this could allow us to remove the special case in DocumentEventQueue::dispatchEvent.
+
+    auto protectedThis = makeRef(*this);
 
     // Pausing a page may trigger pagehide and pageshow events. WebCore also implicitly fires these
     // events when closing a WebView. Here we keep track of the state of the page to prevent duplicate,
     // unbalanced events per the definition of the pageshow event:
     // <http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-pageshow>.
+    // FIXME: This code should go at call sites where pageshowEvent and pagehideEvents are
+    // generated, not here inside the event dispatching process.
     if (event.eventInterface() == PageTransitionEventInterfaceType) {
         if (event.type() == eventNames().pageshowEvent) {
             if (m_lastPageStatus == PageStatus::Shown)
-                return true; // Event was previously dispatched; do not fire a duplicate event.
+                return; // Event was previously dispatched; do not fire a duplicate event.
             m_lastPageStatus = PageStatus::Shown;
         } else if (event.type() == eventNames().pagehideEvent) {
             if (m_lastPageStatus == PageStatus::Hidden)
-                return true; // Event was previously dispatched; do not fire a duplicate event.
+                return; // Event was previously dispatched; do not fire a duplicate event.
             m_lastPageStatus = PageStatus::Hidden;
         }
     }
 
+    // FIXME: It doesn't seem right to have the inspector instrumentation here since not all
+    // events dispatched to the window object are guaranteed to flow through this function.
+    // But the instrumentation prevents us from calling EventDispatcher::dispatchEvent here.
     event.setTarget(target ? target : this);
     event.setCurrentTarget(this);
     event.setEventPhase(Event::AT_TARGET);
-
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), event, *this);
-
-    bool result = fireEventListeners(event);
-
+    auto cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), event, *this);
+    fireEventListeners(event);
     InspectorInstrumentation::didDispatchEventOnWindow(cookie);
-
-    event.setCurrentTarget(nullptr);
-    event.setEventPhase(Event::NONE);
-    event.resetPropagationFlags();
-
-    return result;
+    event.resetAfterDispatch();
 }
 
 void DOMWindow::removeAllEventListeners()

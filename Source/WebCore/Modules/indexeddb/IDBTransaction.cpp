@@ -32,12 +32,12 @@
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "Event.h"
+#include "EventDispatcher.h"
 #include "EventNames.h"
 #include "EventQueue.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBError.h"
-#include "IDBEventDispatcher.h"
 #include "IDBGetRecordData.h"
 #include "IDBIndex.h"
 #include "IDBIterateCursorData.h"
@@ -614,7 +614,7 @@ void IDBTransaction::enqueueEvent(Ref<Event>&& event)
     scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
 
-bool IDBTransaction::dispatchEvent(Event& event)
+void IDBTransaction::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBTransaction::dispatchEvent");
 
@@ -624,11 +624,9 @@ bool IDBTransaction::dispatchEvent(Event& event)
     ASSERT(event.target() == this);
     ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
 
-    Vector<RefPtr<EventTarget>> targets;
-    targets.append(this);
-    targets.append(db());
+    auto protectedThis = makeRef(*this);
 
-    bool result = IDBEventDispatcher::dispatch(event, targets);
+    EventDispatcher::dispatchEvent({ this, m_database.ptr() }, event);
 
     if (isVersionChange()) {
         ASSERT(m_openDBRequest);
@@ -643,8 +641,6 @@ bool IDBTransaction::dispatchEvent(Event& event)
 
         m_openDBRequest = nullptr;
     }
-
-    return result;
 }
 
 Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& info)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,15 +36,15 @@ class TouchList;
 class EventContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // FIXME: Use ContainerNode instead of Node.
     EventContext(Node*, EventTarget* currentTarget, EventTarget*);
     virtual ~EventContext();
 
     Node* node() const { return m_node.get(); }
     EventTarget* currentTarget() const { return m_currentTarget.get(); }
     EventTarget* target() const { return m_target.get(); }
-    bool currentTargetSameAsTarget() const { return m_currentTarget.get() == m_target.get(); }
+
     virtual void handleLocalEvents(Event&) const;
+
     virtual bool isMouseOrFocusEventContext() const;
     virtual bool isTouchEventContext() const;
 
@@ -59,7 +60,7 @@ protected:
 
 class MouseOrFocusEventContext final : public EventContext {
 public:
-    MouseOrFocusEventContext(Node*, EventTarget* currentTarget, EventTarget*);
+    MouseOrFocusEventContext(Node&, EventTarget* currentTarget, EventTarget*);
     virtual ~MouseOrFocusEventContext();
 
     Node* relatedTarget() const { return m_relatedTarget.get(); }
@@ -76,27 +77,21 @@ private:
 
 class TouchEventContext final : public EventContext {
 public:
-    TouchEventContext(Node*, EventTarget* currentTarget, EventTarget*);
+    TouchEventContext(Node&, EventTarget* currentTarget, EventTarget*);
     virtual ~TouchEventContext();
 
-    void handleLocalEvents(Event&) const override;
-    bool isTouchEventContext() const override;
-
-    enum TouchListType { Touches, TargetTouches, ChangedTouches, NotTouchList };
-    TouchList* touchList(TouchListType);
-
-    TouchList* touches() { return m_touches.get(); }
-    TouchList* targetTouches() { return m_targetTouches.get(); }
-    TouchList* changedTouches() { return m_changedTouches.get(); }
+    enum TouchListType { Touches, TargetTouches, ChangedTouches };
+    TouchList& touchList(TouchListType);
 
 private:
-#if !ASSERT_DISABLED
-    void checkReachability(TouchList*) const;
-#endif
+    void handleLocalEvents(Event&) const final;
+    bool isTouchEventContext() const final;
 
-    RefPtr<TouchList> m_touches;
-    RefPtr<TouchList> m_targetTouches;
-    RefPtr<TouchList> m_changedTouches;
+    void checkReachability(const Ref<TouchList>&) const;
+
+    Ref<TouchList> m_touches;
+    Ref<TouchList> m_targetTouches;
+    Ref<TouchList> m_changedTouches;
 };
 
 #endif // ENABLE(TOUCH_EVENTS)
@@ -119,7 +114,7 @@ inline void MouseOrFocusEventContext::setRelatedTarget(Node* relatedTarget)
 
 #if ENABLE(TOUCH_EVENTS)
 
-inline TouchList* TouchEventContext::touchList(TouchListType type)
+inline TouchList& TouchEventContext::touchList(TouchListType type)
 {
     switch (type) {
     case Touches:
@@ -128,11 +123,17 @@ inline TouchList* TouchEventContext::touchList(TouchListType type)
         return m_targetTouches.get();
     case ChangedTouches:
         return m_changedTouches.get();
-    case NotTouchList:
-        break;
     }
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return m_touches.get();
+}
+
+#endif
+
+#if ENABLE(TOUCH_EVENTS) && ASSERT_DISABLED
+
+inline void TouchEventContext::checkReachability(const Ref<TouchList>&) const
+{
 }
 
 #endif

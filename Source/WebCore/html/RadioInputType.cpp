@@ -153,22 +153,18 @@ void RadioInputType::willDispatchClick(InputElementClickState& state)
     element().setChecked(true, DispatchChangeEvent);
 }
 
-void RadioInputType::didDispatchClick(Event* event, const InputElementClickState& state)
+void RadioInputType::didDispatchClick(Event& event, const InputElementClickState& state)
 {
-    if (event->defaultPrevented() || event->defaultHandled()) {
+    if (event.defaultPrevented() || event.defaultHandled()) {
         // Restore the original selected radio button if possible.
         // Make sure it is still a radio button and only do the restoration if it still belongs to our group.
-        RefPtr<HTMLInputElement> checkedRadioButton = state.checkedRadioButton.get();
-        if (checkedRadioButton
-                && checkedRadioButton->isRadioButton()
-                && checkedRadioButton->form() == element().form()
-                && checkedRadioButton->name() == element().name()) {
-            checkedRadioButton->setChecked(true);
-        }
+        auto& button = state.checkedRadioButton;
+        if (button && button->isRadioButton() && button->form() == element().form() && button->name() == element().name())
+            button->setChecked(true);
     }
 
     // The work we did in willDispatchClick was default handling.
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
 bool RadioInputType::isRadioButton() const

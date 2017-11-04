@@ -528,30 +528,18 @@ void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddres
 {
     ASSERT(m_state == State::Interactive);
     m_shippingAddress = WTFMove(shippingAddress);
-    auto event = PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent, *this);
-    dispatchEvent(event.get());
+    if (m_isUpdating)
+        return;
+    dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent, *this));
 }
 
 void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 {
     ASSERT(m_state == State::Interactive);
     m_shippingOption = shippingOption;
-    auto event = PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent, *this);
-    dispatchEvent(event.get());
-}
-
-bool PaymentRequest::dispatchEvent(Event& event)
-{
-    if (!event.isTrusted())
-        return EventTargetWithInlineData::dispatchEvent(event);
-
     if (m_isUpdating)
-        return false;
-
-    if (m_state != State::Interactive)
-        return false;
-
-    return EventTargetWithInlineData::dispatchEvent(event);
+        return;
+    dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent, *this));
 }
 
 ExceptionOr<void> PaymentRequest::updateWith(Event& event, Ref<DOMPromise>&& promise)

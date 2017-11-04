@@ -29,7 +29,6 @@
 #include "DOMRect.h"
 #include "DataTransfer.h"
 #include "Element.h"
-#include "EventDispatcher.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
 #include <wtf/CurrentTime.h>
@@ -81,8 +80,7 @@ private:
 
 static void simulateMouseEvent(const AtomicString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
 {
-    auto event = SimulatedMouseEvent::create(eventType, element.document().defaultView(), underlyingEvent, element, source);
-    EventDispatcher::dispatchEvent(element, event);
+    element.dispatchEvent(SimulatedMouseEvent::create(eventType, element.document().defaultView(), underlyingEvent, element, source));
 }
 
 void simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions, SimulatedClickSource creationOptions)

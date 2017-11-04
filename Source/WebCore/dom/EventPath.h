@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,43 +32,42 @@ namespace WebCore {
 class EventPath {
 public:
     EventPath(Node& origin, Event&);
+    explicit EventPath(const Vector<EventTarget*>&);
 
     bool isEmpty() const { return m_path.isEmpty(); }
     size_t size() const { return m_path.size(); }
     const EventContext& contextAt(size_t i) const { return *m_path[i]; }
     EventContext& contextAt(size_t i) { return *m_path[i]; }
 
-#if ENABLE(TOUCH_EVENTS)
-    void retargetTouchLists(const TouchEvent&);
-#endif
-    void setRelatedTarget(Node& origin, EventTarget&);
-
-    bool hasEventListeners(const AtomicString& eventType) const;
-
-    EventContext* lastContextIfExists() { return m_path.isEmpty() ? nullptr : m_path.last().get(); }
-
     Vector<EventTarget*> computePathUnclosedToTarget(const EventTarget&) const;
 
-    static Node* eventTargetRespectingTargetRules(Node& referenceNode)
-    {
-        if (is<PseudoElement>(referenceNode))
-            return downcast<PseudoElement>(referenceNode).hostElement();
-
-        // Events sent to elements inside an SVG use element's shadow tree go to the use element.
-        if (is<SVGElement>(referenceNode)) {
-            if (auto* useElement = downcast<SVGElement>(referenceNode).correspondingUseElement())
-                return useElement;
-        }
-
-        return &referenceNode;
-    }
+    static Node* eventTargetRespectingTargetRules(Node&);
 
 private:
+    void buildPath(Node& origin, Event&);
+    void setRelatedTarget(Node& origin, EventTarget&);
+
 #if ENABLE(TOUCH_EVENTS)
     void retargetTouch(TouchEventContext::TouchListType, const Touch&);
+    void retargetTouchList(TouchEventContext::TouchListType, const TouchList*);
+    void retargetTouchLists(const TouchEvent&);
 #endif
 
     Vector<std::unique_ptr<EventContext>, 32> m_path;
 };
+
+inline Node* EventPath::eventTargetRespectingTargetRules(Node& referenceNode)
+{
+    if (is<PseudoElement>(referenceNode))
+        return downcast<PseudoElement>(referenceNode).hostElement();
+
+    // Events sent to elements inside an SVG use element's shadow tree go to the use element.
+    if (is<SVGElement>(referenceNode)) {
+        if (auto* useElement = downcast<SVGElement>(referenceNode).correspondingUseElement())
+            return useElement;
+    }
+
+    return &referenceNode;
+}
 
 } // namespace WebCore

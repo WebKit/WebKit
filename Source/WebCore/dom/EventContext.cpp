@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +40,6 @@ EventContext::EventContext(Node* node, EventTarget* currentTarget, EventTarget* 
     , m_currentTarget(currentTarget)
     , m_target(target)
 {
-    ASSERT(m_node);
     ASSERT(!isUnreachableNode(m_target.get()));
 }
 
@@ -49,7 +49,11 @@ void EventContext::handleLocalEvents(Event& event) const
 {
     event.setTarget(m_target.get());
     event.setCurrentTarget(m_currentTarget.get());
-    m_node->handleLocalEvents(event);
+    // FIXME: Consider merging handleLocalEvents and fireEventListeners.
+    if (m_node)
+        m_node->handleLocalEvents(event);
+    else
+        m_currentTarget->fireEventListeners(event);
 }
 
 bool EventContext::isMouseOrFocusEventContext() const
@@ -62,8 +66,8 @@ bool EventContext::isTouchEventContext() const
     return false;
 }
 
-MouseOrFocusEventContext::MouseOrFocusEventContext(Node* node, EventTarget* currentTarget, EventTarget* target)
-    : EventContext(node, currentTarget, target)
+MouseOrFocusEventContext::MouseOrFocusEventContext(Node& node, EventTarget* currentTarget, EventTarget* target)
+    : EventContext(&node, currentTarget, target)
 {
 }
 
@@ -83,8 +87,8 @@ bool MouseOrFocusEventContext::isMouseOrFocusEventContext() const
 
 #if ENABLE(TOUCH_EVENTS)
 
-TouchEventContext::TouchEventContext(Node* node, EventTarget* currentTarget, EventTarget* target)
-    : EventContext(node, currentTarget, target)
+TouchEventContext::TouchEventContext(Node& node, EventTarget* currentTarget, EventTarget* target)
+    : EventContext(&node, currentTarget, target)
     , m_touches(TouchList::create())
     , m_targetTouches(TouchList::create())
     , m_changedTouches(TouchList::create())
@@ -95,16 +99,13 @@ TouchEventContext::~TouchEventContext() = default;
 
 void TouchEventContext::handleLocalEvents(Event& event) const
 {
-#if !ASSERT_DISABLED
-    checkReachability(m_touches.get());
-    checkReachability(m_targetTouches.get());
-    checkReachability(m_changedTouches.get());
-#endif
-    ASSERT(is<TouchEvent>(event));
-    TouchEvent& touchEvent = downcast<TouchEvent>(event);
-    touchEvent.setTouches(m_touches.get());
-    touchEvent.setTargetTouches(m_targetTouches.get());
-    touchEvent.setChangedTouches(m_changedTouches.get());
+    checkReachability(m_touches);
+    checkReachability(m_targetTouches);
+    checkReachability(m_changedTouches);
+    auto& touchEvent = downcast<TouchEvent>(event);
+    touchEvent.setTouches(m_touches.ptr());
+    touchEvent.setTargetTouches(m_targetTouches.ptr());
+    touchEvent.setChangedTouches(m_changedTouches.ptr());
     EventContext::handleLocalEvents(event);
 }
 
@@ -115,7 +116,7 @@ bool TouchEventContext::isTouchEventContext() const
 
 #if !ASSERT_DISABLED
 
-void TouchEventContext::checkReachability(TouchList* touchList) const
+void TouchEventContext::checkReachability(const Ref<TouchList>& touchList) const
 {
     size_t length = touchList->length();
     for (size_t i = 0; i < length; ++i)
@@ -124,6 +125,6 @@ void TouchEventContext::checkReachability(TouchList* touchList) const
 
 #endif
 
-#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#endif // ENABLE(TOUCH_EVENTS)
 
 }

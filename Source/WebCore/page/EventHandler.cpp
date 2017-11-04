@@ -473,7 +473,9 @@ static inline bool dispatchSelectStart(Node* node)
     if (!node || !node->renderer())
         return true;
 
-    return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
+    auto event = Event::create(eventNames().selectstartEvent, true, true);
+    node->dispatchEvent(event);
+    return !event->defaultPrevented();
 }
 
 static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
@@ -2320,10 +2322,8 @@ EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformM
                 response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperation, draggingFiles);
         } else if (newTarget) {
             // As per section 7.9.4 of the HTML 5 spec., we must always fire a drag event before firing a dragenter, dragleave, or dragover event.
-            if (dragState().source && dragState().shouldDispatchEvents) {
-                // for now we don't care if event handler cancels default behavior, since there is none
+            if (dragState().source && dragState().shouldDispatchEvents)
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
-            }
             response = dispatchDragEnterOrDragOverEvent(eventNames().dragenterEvent, *newTarget, event, makePasteboard(), sourceOperation, draggingFiles);
         }
 
@@ -2349,10 +2349,8 @@ EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformM
                 response = targetFrame->eventHandler().updateDragAndDrop(event, makePasteboard, sourceOperation, draggingFiles);
         } else if (newTarget) {
             // Note, when dealing with sub-frames, we may need to fire only a dragover event as a drag event may have been fired earlier.
-            if (!m_shouldOnlyFireDragOverEvent && dragState().source && dragState().shouldDispatchEvents) {
-                // for now we don't care if event handler cancels default behavior, since there is none
+            if (!m_shouldOnlyFireDragOverEvent && dragState().source && dragState().shouldDispatchEvents)
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
-            }
             response = dispatchDragEnterOrDragOverEvent(eventNames().dragoverEvent, *newTarget, event, makePasteboard(), sourceOperation, draggingFiles);
             m_shouldOnlyFireDragOverEvent = false;
         }
@@ -3259,7 +3257,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         keydown->setDefaultHandled();
     }
     
-    if (accessibilityPreventsEventPropogation(keydown))
+    if (accessibilityPreventsEventPropagation(keydown))
         keydown->stopPropagation();
 
     element->dispatchEvent(keydown);
@@ -3402,7 +3400,7 @@ void EventHandler::handleKeyboardSelectionMovementForAccessibility(KeyboardEvent
     }
 }
 
-bool EventHandler::accessibilityPreventsEventPropogation(KeyboardEvent& event)
+bool EventHandler::accessibilityPreventsEventPropagation(KeyboardEvent& event)
 {
 #if PLATFORM(COCOA)
     if (!AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
@@ -3548,7 +3546,6 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
 
     if (dragState().source && dragState().shouldDispatchEvents) {
         dragState().dataTransfer->setDestinationOperation(operation);
-        // For now we don't care if event handler cancels default behavior, since there is no default behavior.
         dispatchDragSrcEvent(eventNames().dragendEvent, event);
     }
     invalidateDataTransfer();
@@ -3571,11 +3568,10 @@ void EventHandler::updateDragStateAfterEditDragIfNeeded(Element& rootEditableEle
         dragState().source = &rootEditableElement;
 }
 
-// Return value indicates if we should continue "default processing", i.e., whether event handler canceled.
-bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event)
+void EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event)
 {
     ASSERT(dragState().dataTransfer);
-    return !dispatchDragEvent(eventType, *dragState().source, event, *dragState().dataTransfer);
+    dispatchDragEvent(eventType, *dragState().source, event, *dragState().dataTransfer);
 }
 
 bool EventHandler::dispatchDragStartEventOnSourceElement(DataTransfer& dataTransfer)
@@ -4194,7 +4190,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
                 TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
                     stateName, touchEventTarget->toNode()->document().defaultView(),
                     0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
-            touchEventTarget->toNode()->dispatchTouchEvent(touchEvent);
+            touchEventTarget->dispatchEvent(touchEvent);
             swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();
         }
     }

@@ -118,7 +118,7 @@ protected:
     IDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&);
 
     void enqueueEvent(Ref<Event>&&);
-    bool dispatchEvent(Event&) override;
+    void dispatchEvent(Event&) override;
 
     void setResult(Ref<IDBDatabase>&&);
 

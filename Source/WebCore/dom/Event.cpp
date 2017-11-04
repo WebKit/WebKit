@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -114,76 +114,6 @@ bool Event::composed() const
         || isInputEvent();
 }
 
-EventInterface Event::eventInterface() const
-{
-    return EventInterfaceType;
-}
-
-bool Event::isUIEvent() const
-{
-    return false;
-}
-
-bool Event::isMouseEvent() const
-{
-    return false;
-}
-
-bool Event::isFocusEvent() const
-{
-    return false;
-}
-
-bool Event::isKeyboardEvent() const
-{
-    return false;
-}
-
-bool Event::isInputEvent() const
-{
-    return false;
-}
-
-bool Event::isCompositionEvent() const
-{
-    return false;
-}
-
-bool Event::isTouchEvent() const
-{
-    return false;
-}
-
-bool Event::isClipboardEvent() const
-{
-    return false;
-}
-
-bool Event::isBeforeTextInsertedEvent() const
-{
-    return false;
-}
-
-bool Event::isBeforeUnloadEvent() const
-{
-    return false;
-}
-
-bool Event::isErrorEvent() const
-{
-    return false;
-}
-
-bool Event::isTextEvent() const
-{
-    return false;
-}
-
-bool Event::isWheelEvent() const
-{
-    return false;
-}
-
 void Event::setTarget(RefPtr<EventTarget>&& target)
 {
     if (m_target == target)
@@ -206,13 +136,9 @@ Vector<EventTarget*> Event::composedPath() const
     return m_eventPath->computePathUnclosedToTarget(*m_currentTarget);
 }
 
-void Event::receivedTarget()
-{
-}
-
 void Event::setUnderlyingEvent(Event* underlyingEvent)
 {
-    // Prohibit creation of a cycle -- just do nothing in that case.
+    // Prohibit creation of a cycle by doing nothing if a cycle would be created.
     for (Event* event = underlyingEvent; event; event = event->underlyingEvent()) {
         if (event == this)
             return;
@@ -232,6 +158,15 @@ DOMHighResTimeStamp Event::timeStampForBindings(ScriptExecutionContext& context)
         return 0;
 
     return performance->relativeTimeFromTimeOriginInReducedResolution(m_createTime);
+}
+
+void Event::resetAfterDispatch()
+{
+    m_eventPath = nullptr;
+    m_currentTarget = nullptr;
+    m_eventPhase = NONE;
+    m_propagationStopped = false;
+    m_immediatePropagationStopped = false;
 }
 
 } // namespace WebCore

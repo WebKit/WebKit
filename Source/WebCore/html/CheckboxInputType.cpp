@@ -76,15 +76,15 @@ void CheckboxInputType::willDispatchClick(InputElementClickState& state)
     element().setChecked(!state.checked, DispatchChangeEvent);
 }
 
-void CheckboxInputType::didDispatchClick(Event* event, const InputElementClickState& state)
+void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickState& state)
 {
-    if (event->defaultPrevented() || event->defaultHandled()) {
+    if (event.defaultPrevented() || event.defaultHandled()) {
         element().setIndeterminate(state.indeterminate);
         element().setChecked(state.checked);
     }
 
     // The work we did in willDispatchClick was default handling.
-    event->setDefaultHandled();
+    event.setDefaultHandled();
 }
 
 bool CheckboxInputType::isCheckbox() const

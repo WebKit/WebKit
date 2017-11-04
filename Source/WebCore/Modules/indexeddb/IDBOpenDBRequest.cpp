@@ -117,16 +117,16 @@ void IDBOpenDBRequest::cancelForStop()
     connectionProxy().openDBRequestCancelled({ connectionProxy(), *this });
 }
 
-bool IDBOpenDBRequest::dispatchEvent(Event& event)
+void IDBOpenDBRequest::dispatchEvent(Event& event)
 {
     ASSERT(currentThread() == originThreadID());
 
-    bool result = IDBRequest::dispatchEvent(event);
+    auto protectedThis = makeRef(*this);
+
+    IDBRequest::dispatchEvent(event);
 
     if (m_transaction && m_transaction->isVersionChange() && (event.type() == eventNames().errorEvent || event.type() == eventNames().successEvent))
         m_transaction->database().connectionProxy().didFinishHandlingVersionChangeTransaction(m_transaction->database().databaseConnectionIdentifier(), *m_transaction);
-
-    return result;
 }
 
 void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)

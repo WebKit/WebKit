@@ -266,7 +266,7 @@ public:
     void removeAllEventListeners() final;
 
     using EventTarget::dispatchEvent;
-    bool dispatchEvent(Event&, EventTarget*);
+    void dispatchEvent(Event&, EventTarget*);
 
     void dispatchLoadEvent();
 

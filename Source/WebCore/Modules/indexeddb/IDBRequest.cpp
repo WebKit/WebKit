@@ -30,13 +30,13 @@
 
 #include "DOMException.h"
 #include "Event.h"
+#include "EventDispatcher.h"
 #include "EventNames.h"
 #include "EventQueue.h"
 #include "IDBBindingUtilities.h"
 #include "IDBConnectionProxy.h"
 #include "IDBCursor.h"
 #include "IDBDatabase.h"
-#include "IDBEventDispatcher.h"
 #include "IDBIndex.h"
 #include "IDBKeyData.h"
 #include "IDBObjectStore.h"
@@ -296,7 +296,7 @@ void IDBRequest::enqueueEvent(Ref<Event>&& event)
     scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
 
-bool IDBRequest::dispatchEvent(Event& event)
+void IDBRequest::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().string().utf8().data(), this);
 
@@ -304,30 +304,28 @@ bool IDBRequest::dispatchEvent(Event& event)
     ASSERT(m_hasPendingActivity);
     ASSERT(!m_contextStopped);
 
+    auto protectedThis = makeRef(*this);
+
     if (event.type() != eventNames().blockedEvent)
         m_readyState = ReadyState::Done;
 
-    Vector<RefPtr<EventTarget>> targets;
-    targets.append(this);
+    Vector<EventTarget*> targets { this };
 
     if (&event == m_openDatabaseSuccessEvent)
         m_openDatabaseSuccessEvent = nullptr;
-    else if (m_transaction && !m_transaction->isFinished()) {
-        targets.append(m_transaction);
-        targets.append(m_transaction->db());
-    }
+    else if (m_transaction && !m_transaction->isFinished())
+        targets = { this, m_transaction.get(), &m_transaction->database() };
 
     m_hasPendingActivity = false;
 
     m_cursorRequestNotifier = nullptr;
 
-    bool dontPreventDefault;
     {
         TransactionActivator activator(m_transaction.get());
-        dontPreventDefault = IDBEventDispatcher::dispatch(event, targets);
+        EventDispatcher::dispatchEvent(targets, event);
     }
 
-    // IDBEventDispatcher::dispatch() might have set the pending activity flag back to true, suggesting the request will be reused.
+    // Dispatching the event might have set the pending activity flag back to true, suggesting the request will be reused.
     // We might also re-use the request if this event was the upgradeneeded event for an IDBOpenDBRequest.
     if (!m_hasPendingActivity)
         m_hasPendingActivity = isOpenDBRequest() && (event.type() == eventNames().upgradeneededEvent || event.type() == eventNames().blockedEvent);
@@ -336,15 +334,13 @@ bool IDBRequest::dispatchEvent(Event& event)
     if (m_transaction && !m_pendingCursor && event.type() != eventNames().blockedEvent)
         m_transaction->removeRequest(*this);
 
-    if (dontPreventDefault && event.type() == eventNames().errorEvent && m_transaction && !m_transaction->isFinishedOrFinishing()) {
+    if (!event.defaultPrevented() && event.type() == eventNames().errorEvent && m_transaction && !m_transaction->isFinishedOrFinishing()) {
         ASSERT(m_domError);
         m_transaction->abortDueToFailedRequest(*m_domError);
     }
 
     if (m_transaction)
         m_transaction->finishedDispatchEventForRequest(*this);
-
-    return dontPreventDefault;
 }
 
 void IDBRequest::uncaughtExceptionInEventHandler()

@@ -1940,8 +1940,12 @@ void FrameSelection::selectAll()
     if (!root)
         return;
 
-    if (selectStartTarget && !selectStartTarget->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true)))
-        return;
+    if (selectStartTarget) {
+        auto event = Event::create(eventNames().selectstartEvent, true, true);
+        selectStartTarget->dispatchEvent(event);
+        if (event->defaultPrevented())
+            return;
+    }
 
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
 
@@ -2390,7 +2394,9 @@ bool FrameSelection::dispatchSelectStart()
     if (!selectStartTarget)
         return true;
 
-    return selectStartTarget->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
+    auto event = Event::create(eventNames().selectstartEvent, true, true);
+    selectStartTarget->dispatchEvent(event);
+    return !event->defaultPrevented();
 }
 
 void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)

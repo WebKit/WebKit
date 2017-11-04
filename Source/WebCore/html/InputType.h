@@ -177,7 +177,7 @@ public:
     virtual void handleClickEvent(MouseEvent&);
     virtual void handleMouseDownEvent(MouseEvent&);
     virtual void willDispatchClick(InputElementClickState&);
-    virtual void didDispatchClick(Event*, const InputElementClickState&);
+    virtual void didDispatchClick(Event&, const InputElementClickState&);
     virtual void handleDOMActivateEvent(Event&);
     virtual void handleKeydownEvent(KeyboardEvent&);
     virtual void handleKeypressEvent(KeyboardEvent&);

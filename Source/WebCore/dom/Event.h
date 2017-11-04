@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,16 +29,13 @@
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/MonotonicTime.h>
-#include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class DataTransfer;
 class EventPath;
 class EventTarget;
-class HTMLIFrameElement;
 class ScriptExecutionContext;
 
 enum EventInterface {
@@ -54,26 +51,15 @@ public:
     enum class IsTrusted { No, Yes };
 
     enum PhaseType { 
-        NONE                = 0,
-        CAPTURING_PHASE     = 1, 
-        AT_TARGET           = 2,
-        BUBBLING_PHASE      = 3 
+        NONE = 0,
+        CAPTURING_PHASE = 1,
+        AT_TARGET = 2,
+        BUBBLING_PHASE = 3
     };
 
-    static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
-    {
-        return adoptRef(*new Event(type, canBubble, cancelable));
-    }
-
-    static Ref<Event> createForBindings()
-    {
-        return adoptRef(*new Event);
-    }
-
-    static Ref<Event> create(const AtomicString& type, const EventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
-    {
-        return adoptRef(*new Event(type, initializer, isTrusted));
-    }
+    static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable);
+    static Ref<Event> createForBindings();
+    static Ref<Event> create(const AtomicString& type, const EventInit&, IsTrusted = IsTrusted::No);
 
     virtual ~Event();
 
@@ -91,7 +77,7 @@ public:
     void setCurrentTarget(EventTarget*);
 
     unsigned short eventPhase() const { return m_eventPhase; }
-    void setEventPhase(unsigned short eventPhase) { m_eventPhase = eventPhase; }
+    void setEventPhase(PhaseType phase) { m_eventPhase = phase; }
 
     bool bubbles() const { return m_canBubble; }
     bool cancelable() const { return m_cancelable; }
@@ -101,7 +87,6 @@ public:
     MonotonicTime timeStamp() const { return m_createTime; }
 
     void setEventPath(const EventPath& path) { m_eventPath = &path; }
-    void clearEventPath() { m_eventPath = nullptr; }
     Vector<EventTarget*> composedPath() const;
 
     void stopPropagation() { m_propagationStopped = true; }
@@ -109,49 +94,34 @@ public:
 
     bool isTrusted() const { return m_isTrusted; }
     void setUntrusted() { m_isTrusted = false; }
-    
-    // IE Extensions
-    EventTarget* srcElement() const { return target(); } // MSIE extension - "the object that fired the event"
 
     bool legacyReturnValue() const { return !defaultPrevented(); }
     void setLegacyReturnValue(bool returnValue) { setDefaultPrevented(!returnValue); }
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const { return EventInterfaceType; }
 
-    // These events are general classes of events.
-    virtual bool isUIEvent() const;
-    virtual bool isMouseEvent() const;
-    virtual bool isFocusEvent() const;
-    virtual bool isKeyboardEvent() const;
-    virtual bool isInputEvent() const;
-    virtual bool isCompositionEvent() const;
-    virtual bool isTouchEvent() const;
-
-    // These events lack a DOM interface.
-    virtual bool isClipboardEvent() const;
-    virtual bool isBeforeTextInsertedEvent() const;
-
-    virtual bool isBeforeUnloadEvent() const;
-
-    virtual bool isErrorEvent() const;
-    virtual bool isTextEvent() const;
-    virtual bool isWheelEvent() const;
-
-#if ENABLE(INDEXED_DATABASE)
+    virtual bool isBeforeTextInsertedEvent() const { return false; }
+    virtual bool isBeforeUnloadEvent() const { return false; }
+    virtual bool isClipboardEvent() const { return false; }
+    virtual bool isCompositionEvent() const { return false; }
+    virtual bool isErrorEvent() const { return false; }
+    virtual bool isFocusEvent() const { return false; }
+    virtual bool isInputEvent() const { return false; }
+    virtual bool isKeyboardEvent() const { return false; }
+    virtual bool isMouseEvent() const { return false; }
+    virtual bool isTextEvent() const { return false; }
+    virtual bool isTouchEvent() const { return false; }
+    virtual bool isUIEvent() const { return false; }
     virtual bool isVersionChangeEvent() const { return false; }
-#endif
+    virtual bool isWheelEvent() const { return false; }
 
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 
-    void resetPropagationFlags();
+    void resetAfterDispatch();
 
     bool defaultPrevented() const { return m_defaultPrevented; }
-    void preventDefault()
-    {
-        if (m_cancelable && !m_isExecutingPassiveEventListener)
-            m_defaultPrevented = true;
-    }
+    void preventDefault();
     void setDefaultPrevented(bool defaultPrevented) { m_defaultPrevented = defaultPrevented; }
 
     bool defaultHandled() const { return m_defaultHandled; }
@@ -173,12 +143,12 @@ public:
     virtual void setRelatedTarget(EventTarget&) { }
 
 protected:
-    Event(IsTrusted = IsTrusted::No);
+    explicit Event(IsTrusted = IsTrusted::No);
     WEBCORE_EXPORT Event(const AtomicString& type, bool canBubble, bool cancelable);
     Event(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp);
     Event(const AtomicString& type, const EventInit&, IsTrusted);
 
-    virtual void receivedTarget();
+    virtual void receivedTarget() { }
 
 private:
     AtomicString m_type;
@@ -195,7 +165,7 @@ private:
     bool m_isTrusted { false };
     bool m_isExecutingPassiveEventListener { false };
 
-    unsigned short m_eventPhase { 0 };
+    PhaseType m_eventPhase { NONE };
     RefPtr<EventTarget> m_currentTarget;
     const EventPath* m_eventPath { nullptr };
     RefPtr<EventTarget> m_target;
@@ -204,10 +174,27 @@ private:
     RefPtr<Event> m_underlyingEvent;
 };
 
-inline void Event::resetPropagationFlags()
+inline Ref<Event> Event::create(const AtomicString& type, bool canBubble, bool cancelable)
 {
-    m_propagationStopped = false;
-    m_immediatePropagationStopped = false;
+    return adoptRef(*new Event(type, canBubble, cancelable));
+}
+
+inline Ref<Event> Event::createForBindings()
+{
+    return adoptRef(*new Event);
+}
+
+inline Ref<Event> Event::create(const AtomicString& type, const EventInit& initializer, IsTrusted isTrusted)
+{
+    return adoptRef(*new Event(type, initializer, isTrusted));
+}
+
+inline void Event::preventDefault()
+{
+    if (m_cancelable && !m_isExecutingPassiveEventListener)
+        m_defaultPrevented = true;
+    // FIXME: Specification suggests we log something to the console when preventDefault is called but
+    // doesn't do anything because the event is not cancelable or is executing passive event listeners.
 }
 
 inline void Event::setCancelBubble(bool cancel)

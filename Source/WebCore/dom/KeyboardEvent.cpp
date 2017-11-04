@@ -25,7 +25,6 @@
 
 #include "Document.h"
 #include "Editor.h"
-#include "EventDispatcher.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"

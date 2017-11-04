@@ -75,9 +75,6 @@ public:
     void complete(std::optional<PaymentComplete>&&);
     void cancel();
 
-    // EventTarget
-    bool dispatchEvent(Event&) final;
-
     using MethodIdentifier = Variant<String, URL>;
     using RefCounted<PaymentRequest>::ref;
     using RefCounted<PaymentRequest>::deref;

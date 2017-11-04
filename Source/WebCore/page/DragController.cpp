@@ -507,7 +507,9 @@ bool DragController::dispatchTextInputEventFor(Frame* innerFrame, const DragData
     String text = m_page.dragCaretController().isContentRichlyEditable() ? emptyString() : dragData.asPlainText();
     Element* target = innerFrame->editor().findEventTargetFrom(m_page.dragCaretController().caretPosition());
     // FIXME: What guarantees target is not null?
-    return target->dispatchEvent(TextEvent::createForDrop(innerFrame->document()->domWindow(), text));
+    auto event = TextEvent::createForDrop(innerFrame->document()->domWindow(), text);
+    target->dispatchEvent(event);
+    return !event->defaultPrevented();
 }
 
 bool DragController::concludeEditDrag(const DragData& dragData)

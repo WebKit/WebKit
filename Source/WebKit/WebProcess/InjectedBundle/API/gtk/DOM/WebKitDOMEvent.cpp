@@ -370,7 +370,7 @@ WebKitDOMEventTarget* webkit_dom_event_get_src_element(WebKitDOMEvent* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(self), 0);
     WebCore::Event* item = WebKit::core(self);
-    RefPtr<WebCore::EventTarget> gobjectResult = WTF::getPtr(item->srcElement());
+    RefPtr<WebCore::EventTarget> gobjectResult = WTF::getPtr(item->target());
     return WebKit::kit(gobjectResult.get());
 }
 
