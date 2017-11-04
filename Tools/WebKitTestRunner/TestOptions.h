@@ -45,6 +45,7 @@ struct TestOptions {
     bool useCharacterSelectionGranularity { false };
     bool enableAttachmentElement { false };
     bool enableIntersectionObserver { false };
+    bool enableMenuItemElement { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
     bool enableCredentialManagement { false };
@@ -71,6 +72,7 @@ struct TestOptions {
             || useCharacterSelectionGranularity != options.useCharacterSelectionGranularity
             || enableAttachmentElement != options.enableAttachmentElement
             || enableIntersectionObserver != options.enableIntersectionObserver
+            || enableMenuItemElement != options.enableMenuItemElement
             || enableModernMediaControls != options.enableModernMediaControls
             || enablePointerLock != options.enablePointerLock
             || enableCredentialManagement != options.enableCredentialManagement

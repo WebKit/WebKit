@@ -76,6 +76,7 @@
 #include "HTMLMarqueeElement.cpp"
 #include "HTMLMediaElement.cpp"
 #include "HTMLMenuElement.cpp"
+#include "HTMLMenuItemElement.cpp"
 #include "HTMLMetaElement.cpp"
 #include "HTMLMeterElement.cpp"
 #include "HTMLModElement.cpp"

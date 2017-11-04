@@ -1,3 +1,19 @@
+2017-11-04  Aishwarya Nirmal  <anirmal@apple.com>
+
+        [Touch Bar Web API] Add support for menuitem tag
+        https://bugs.webkit.org/show_bug.cgi?id=179020
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds in the MenuItemElementEnabled flag so that the menu item element is a runtime-
+        enabled feature. It has a default value of false.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMenuItemElementEnabled):
+        (WKPreferencesGetMenuItemElementEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2017-11-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r224438.

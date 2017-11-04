@@ -953,6 +953,7 @@ html/HTMLMapElement.cpp
 html/HTMLMarqueeElement.cpp
 html/HTMLMediaElement.cpp
 html/HTMLMenuElement.cpp
+html/HTMLMenuItemElement.cpp
 html/HTMLMetaElement.cpp
 html/HTMLMeterElement.cpp
 html/HTMLModElement.cpp
@@ -2502,6 +2503,7 @@ JSHTMLMarqueeElement.cpp
 JSHTMLMediaElement.cpp
 JSHTMLMediaElementMediaSession.cpp
 JSHTMLMenuElement.cpp
+JSHTMLMenuItemElement.cpp
 JSHTMLMetaElement.cpp
 JSHTMLMeterElement.cpp
 JSHTMLModElement.cpp

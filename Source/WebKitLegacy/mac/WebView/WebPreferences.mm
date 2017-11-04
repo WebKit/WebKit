@@ -3103,6 +3103,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitIntersectionObserverEnabledPreferenceKey];
 }
 
+- (BOOL)menuItemElementEnabled
+{
+    return [self _boolValueForKey:WebKitMenuItemElementEnabledPreferenceKey];
+}
+
+- (void)setMenuItemElementEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMenuItemElementEnabledPreferenceKey];
+}
+
 - (BOOL)displayContentsEnabled
 {
     return [self _boolValueForKey:WebKitDisplayContentsEnabledPreferenceKey];

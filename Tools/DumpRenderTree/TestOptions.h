@@ -31,6 +31,7 @@
 struct TestOptions {
     bool enableAttachmentElement { false };
     bool enableIntersectionObserver { false };
+    bool enableMenuItemElement { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
     bool enableCredentialManagement { false };

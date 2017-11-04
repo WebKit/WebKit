@@ -639,6 +639,11 @@ CustomElementsEnabled:
   defaultValue: true
   webcoreBinding: RuntimeEnabledFeatures
 
+MenuItemElementEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+
 EncryptedMediaAPIEnabled:
   type: bool
   defaultValue: false

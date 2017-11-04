@@ -82,6 +82,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->enableAttachmentElement = parseBooleanTestHeaderValue(value);
         else if (key == "enableIntersectionObserver")
             this->enableIntersectionObserver = parseBooleanTestHeaderValue(value);
+        else if (key == "enableMenuItemElement")
+            this->enableMenuItemElement = parseBooleanTestHeaderValue(value);
         else if (key == "enableModernMediaControls")
             this->enableModernMediaControls = parseBooleanTestHeaderValue(value);
         else if (key == "enablePointerLock")

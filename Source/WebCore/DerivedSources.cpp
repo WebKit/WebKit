@@ -254,6 +254,7 @@
 #include "JSHTMLMediaElement.cpp"
 #include "JSHTMLMediaElementMediaSession.cpp"
 #include "JSHTMLMenuElement.cpp"
+#include "JSHTMLMenuItemElement.cpp"
 #include "JSHTMLMetaElement.cpp"
 #include "JSHTMLMeterElement.cpp"
 #include "JSHTMLModElement.cpp"
