@@ -1,6 +1,7 @@
 
-FAIL loss of controllees triggers activation promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'document.body.appendChild')"
-FAIL finishing a request triggers activation promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'document.body.appendChild')"
-FAIL skipWaiting bypasses no controllee requirement promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'document.body.appendChild')"
-FAIL finishing a request triggers unregister promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'document.body.appendChild')"
+
+FAIL loss of controllees triggers activation assert_not_equals: got disallowed value null
+FAIL finishing a request triggers activation assert_not_equals: got disallowed value null
+FAIL skipWaiting bypasses no controllee requirement assert_not_equals: got disallowed value null
+FAIL finishing a request triggers unregister assert_not_equals: got disallowed value null
 

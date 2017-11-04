@@ -64,32 +64,6 @@ void SWClientConnection::failedFetchingScript(ServiceWorkerJob& job, const Resou
     finishFetchingScriptInServer({ job.data().identifier(), job.data().connectionIdentifier(), job.data().registrationKey(), { }, error });
 }
 
-void SWClientConnection::addServiceWorkerRegistration(ServiceWorkerRegistration& registration)
-{
-    auto result = m_registrations.ensure(registration.data().key, [] {
-        return std::make_unique<HashSet<ServiceWorkerRegistration*>>();
-    });
-
-    ASSERT(!result.iterator->value->contains(&registration));
-    result.iterator->value->add(&registration);
-    
-    addServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
-}
-
-void SWClientConnection::removeServiceWorkerRegistration(ServiceWorkerRegistration& registration)
-{
-    auto iterator = m_registrations.find(registration.data().key);
-
-    ASSERT(iterator != m_registrations.end());
-    ASSERT(iterator->value && iterator->value->contains(&registration));
-    iterator->value->remove(&registration);
-
-    if (iterator->value->isEmpty())
-        m_registrations.remove(iterator);
-
-    removeServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
-}
-    
 void SWClientConnection::jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData& exceptionData)
 {
     auto job = m_scheduledJobs.take(jobIdentifier);
@@ -166,12 +140,11 @@ void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationSc
 
 void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
 {
-    auto* registrations = m_registrations.get(key);
-    if (!registrations)
-        return;
-    
-    for (auto& registration : *registrations)
-        registration->updateStateFromServer(state, serviceWorkerIdentifier);
+    // FIXME: We should iterate over all service worker clients, not only documents.
+    for (auto& document : Document::allDocuments()) {
+        if (auto* container = document->serviceWorkerContainer())
+            container->updateRegistration(key, state, serviceWorkerIdentifier);
+    }
 }
 
 } // namespace WebCore

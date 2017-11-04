@@ -176,11 +176,47 @@ void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
     m_swConnection->scheduleJob(rawJob);
 }
 
-void ServiceWorkerContainer::getRegistration(const String&, RegistrationPromise&& promise)
+void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<DeferredPromise>&& promise)
 {
-    // FIXME: Implement getRegistration algorithm, for now pretend there is no registration.
-    // https://bugs.webkit.org/show_bug.cgi?id=178882
-    promise.resolve(nullptr);
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        ASSERT_NOT_REACHED();
+        promise->reject(Exception { InvalidStateError });
+        return;
+    }
+
+    URL parsedURL = context->completeURL(clientURL);
+    if (!protocolHostAndPortAreEqual(parsedURL, context->url())) {
+        promise->reject(Exception { SecurityError, ASCIILiteral("Origin of clientURL is not client's origin") });
+        return;
+    }
+
+    if (!m_swConnection)
+        m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context->sessionID());
+
+    return m_swConnection->matchRegistration(context->topOrigin(), parsedURL, [promise = WTFMove(promise), protectingThis = makePendingActivity(*this), this] (auto&& result) mutable {
+        if (m_isStopped)
+            return;
+
+        if (!result) {
+            promise->resolve();
+            return;
+        }
+
+        RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(result->key);
+        if (!registration) {
+            auto& context = *scriptExecutionContext();
+            auto worker = ServiceWorker::create(context, *result->activeServiceWorkerIdentifier, result->scriptURL);
+            registration = ServiceWorkerRegistration::create(context, *this, WTFMove(result.value()), WTFMove(worker));
+        }
+        promise->resolve<IDLInterface<ServiceWorkerRegistration>>(registration.releaseNonNull());
+    });
+}
+
+void ServiceWorkerContainer::updateRegistration(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
+{
+    if (auto* registration = m_registrations.get(key))
+        registration->updateStateFromServer(state, serviceWorkerIdentifier);
 }
 
 void ServiceWorkerContainer::getRegistrations(RegistrationsPromise&& promise)
@@ -251,11 +287,10 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     }
 
     activeServiceWorker->setState(ServiceWorker::State::Installing);
-    
-    ASSERT(m_swConnection);
-    auto registration = ServiceWorkerRegistration::create(*context, *m_swConnection, WTFMove(data), *activeServiceWorker);
 
-    job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration.get());
+    auto registration = ServiceWorkerRegistration::create(*context, *this, WTFMove(data), *activeServiceWorker);
+
+    job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration);
 
     // Use a microtask because we need to make sure this is executed after the promise above is resolved.
     MicrotaskQueue::mainThreadQueue().append(std::make_unique<FakeServiceWorkerInstallMicrotask>(WTFMove(registration)));
@@ -312,7 +347,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
 {
     auto taken = m_jobMap.take(job.data().identifier());
-    ASSERT_UNUSED(taken, !taken || taken.get() == &job);
+    ASSERT_UNUSED(taken, !taken || taken->ptr() == &job);
 }
 
 uint64_t ServiceWorkerContainer::connectionIdentifier()
@@ -328,7 +363,7 @@ const char* ServiceWorkerContainer::activeDOMObjectName() const
 
 bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
 {
-    return true;
+    return !hasPendingActivity();
 }
 
 } // namespace WebCore

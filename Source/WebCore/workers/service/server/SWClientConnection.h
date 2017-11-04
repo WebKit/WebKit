@@ -53,8 +53,6 @@ public:
     void scheduleJob(ServiceWorkerJob&);
     void finishedFetchingScript(ServiceWorkerJob&, const String&);
     void failedFetchingScript(ServiceWorkerJob&, const ResourceError&);
-    void addServiceWorkerRegistration(ServiceWorkerRegistration&);
-    void removeServiceWorkerRegistration(ServiceWorkerRegistration&);
 
     virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
     virtual uint64_t identifier() const = 0;
@@ -77,7 +75,6 @@ private:
     virtual void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
 
     HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
-    HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<HashSet<ServiceWorkerRegistration*>>> m_registrations;
 };
 
 } // namespace WebCore

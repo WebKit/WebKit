@@ -1,5 +1,22 @@
 2017-11-03  Youenn Fablet  <youenn@apple.com>
 
+        Implement ServiceWorkerContainer.getRegistration
+        https://bugs.webkit.org/show_bug.cgi?id=179253
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/activation.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-affect-other-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-with-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/getregistration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multi-globals/url-parsing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigate-window.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-iframe.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/synced-state.https-expected.txt:
+
+2017-11-03  Youenn Fablet  <youenn@apple.com>
+
         Implement Service Worker Matching Registration algorithm
         https://bugs.webkit.org/show_bug.cgi?id=178882
 

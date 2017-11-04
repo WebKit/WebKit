@@ -36,20 +36,19 @@
 
 namespace WebCore {
 
-ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, SWClientConnection& connection, ServiceWorkerRegistrationData&& registrationData, Ref<ServiceWorker>&& serviceWorker)
+ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& registrationData, Ref<ServiceWorker>&& serviceWorker)
     : ActiveDOMObject(&context)
     , m_registrationData(WTFMove(registrationData))
     , m_serviceWorker(WTFMove(serviceWorker))
-    , m_connection(connection)
+    , m_container(WTFMove(container))
 {
     suspendIfNeeded();
-
-    m_connection->addServiceWorkerRegistration(*this);
+    m_container->addRegistration(*this);
 }
 
 ServiceWorkerRegistration::~ServiceWorkerRegistration()
 {
-    m_connection->removeServiceWorkerRegistration(*this);
+    m_container->removeRegistration(*this);
 }
 
 ServiceWorker* ServiceWorkerRegistration::installing()

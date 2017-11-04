@@ -1,4 +1,4 @@
 
 
-FAIL claim() should affect the originally controlling registration. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'r.active')"
+FAIL claim() should affect the originally controlling registration. assert_equals: Should be the same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]"
 

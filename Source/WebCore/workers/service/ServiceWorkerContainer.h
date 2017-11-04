@@ -62,11 +62,14 @@ public:
     void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
     void removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&&);
 
-    using RegistrationPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<ServiceWorkerRegistration>>>;
-    void getRegistration(const String& clientURL, RegistrationPromise&&);
+    void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
+    void updateRegistration(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
 
     using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistrations(RegistrationsPromise&&);
+
+    void addRegistration(ServiceWorkerRegistration& registration) { m_registrations.add(registration.data().key, &registration); }
+    void removeRegistration(ServiceWorkerRegistration& registration)  { m_registrations.remove(registration.data().key); }
 
     void startMessages();
 
@@ -93,13 +96,17 @@ private:
     EventTargetInterface eventTargetInterface() const final { return ServiceWorkerContainerEventTargetInterfaceType; }
     void refEventTarget() final;
     void derefEventTarget() final;
+    void stop() final { m_isStopped = true; }
 
     ReadyPromise m_readyPromise;
 
     NavigatorBase& m_navigator;
 
     RefPtr<SWClientConnection> m_swConnection;
-    HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_jobMap;
+    HashMap<uint64_t, Ref<ServiceWorkerJob>> m_jobMap;
+
+    bool m_isStopped { false };
+    HashMap<ServiceWorkerRegistrationKey, ServiceWorkerRegistration*> m_registrations;
 
 #ifndef NDEBUG
     ThreadIdentifier m_creationThread { currentThread() };

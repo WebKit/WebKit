@@ -172,6 +172,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-r
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Pass Failure ]
 webkit.org/b/179137 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html [ Pass Failure ]

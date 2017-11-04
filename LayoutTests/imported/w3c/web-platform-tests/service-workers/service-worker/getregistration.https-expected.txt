@@ -1,7 +1,7 @@
 
-FAIL getRegistration assert_unreached: unexpected rejection: assert_equals: getRegistration should resolve with undefined expected (undefined) undefined but got (object) null Reached unreachable code
-FAIL Register then getRegistration assert_unreached: unexpected rejection: assert_equals: getRegistration should resolve to the same registration object expected object "[object ServiceWorkerRegistration]" but got null Reached unreachable code
-FAIL Register then getRegistration with a URL having a fragment assert_unreached: unexpected rejection: assert_equals: getRegistration should resolve to the same registration object expected object "[object ServiceWorkerRegistration]" but got null Reached unreachable code
-FAIL getRegistration with a cross origin URL assert_unreached: unexpected rejection: assert_unreached: getRegistration with an out of origin URL should fail Reached unreachable code Reached unreachable code
-FAIL Register then Unregister then getRegistration assert_unreached: unexpected rejection: assert_equals: getRegistration should resolve with undefined expected (undefined) undefined but got (object) null Reached unreachable code
+PASS getRegistration 
+PASS Register then getRegistration 
+PASS Register then getRegistration with a URL having a fragment 
+PASS getRegistration with a cross origin URL 
+PASS Register then Unregister then getRegistration 
 

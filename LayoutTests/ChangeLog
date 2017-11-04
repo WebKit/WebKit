@@ -1,5 +1,18 @@
 2017-11-03  Youenn Fablet  <youenn@apple.com>
 
+        Implement ServiceWorkerContainer.getRegistration
+        https://bugs.webkit.org/show_bug.cgi?id=179253
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * http/tests/workers/service/resources/service-worker-getRegistration-worker.js: Added.
+        * http/tests/workers/service/resources/service-worker-getRegistration.js: Added.
+        * http/tests/workers/service/service-worker-getRegistration-expected.txt: Added.
+        * http/tests/workers/service/service-worker-getRegistration.html: Added.
+
+2017-11-03  Youenn Fablet  <youenn@apple.com>
+
         Requests handled by Service Worker should not go through preflighting
         https://bugs.webkit.org/show_bug.cgi?id=179250
 

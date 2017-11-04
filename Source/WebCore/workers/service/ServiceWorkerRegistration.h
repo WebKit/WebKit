@@ -38,6 +38,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class ServiceWorker;
+class ServiceWorkerContainer;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject, public ThreadSafeIdentified<ServiceWorkerRegistration> {
 public:
@@ -66,7 +67,7 @@ public:
     void updateStateFromServer(ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
 
 private:
-    ServiceWorkerRegistration(ScriptExecutionContext&, SWClientConnection&, ServiceWorkerRegistrationData&&, Ref<ServiceWorker>&&);
+    ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&, Ref<ServiceWorker>&&);
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -78,7 +79,7 @@ private:
 
     ServiceWorkerRegistrationData m_registrationData;
     Ref<ServiceWorker> m_serviceWorker;
-    Ref<SWClientConnection> m_connection;
+    Ref<ServiceWorkerContainer> m_container;
 };
 
 } // namespace WebCore
