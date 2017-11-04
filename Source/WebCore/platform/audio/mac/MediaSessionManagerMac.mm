@@ -95,7 +95,7 @@ void MediaSessionManagerMac::removeSession(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::removeSession(session);
     LOG(Media, "MediaSessionManagerMac::removeSession");
-    updateNowPlayingInfo();
+    scheduleUpdateNowPlayingInfo();
 }
 
 void MediaSessionManagerMac::sessionWillEndPlayback(PlatformMediaSession& session)
