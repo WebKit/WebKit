@@ -500,6 +500,23 @@ WI.DOMNode = class DOMNode extends WI.Object
         DOMAgent.setOuterHTML(this.id, html, this._makeUndoableCallback(callback));
     }
 
+    insertAdjacentHTML(position, html)
+    {
+        if (this.nodeType() !== Node.ELEMENT_NODE)
+            return;
+
+        // FIXME: <https://webkit.org/b/179283> Web Inspector: support undo/redo of insertAdjacentHTML
+
+        WI.RemoteObject.resolveNode(this).then((object) => {
+            function inspectedPage_node_insertAdjacentHTML(position, html) {
+                this.insertAdjacentHTML(position, html);
+            }
+
+            object.callFunction(inspectedPage_node_insertAdjacentHTML, [position, html]);
+            object.release();
+        });
+    }
+
     removeNode(callback)
     {
         DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));

@@ -51,6 +51,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._boundNodeChangedAnimationEnd = this._nodeChangedAnimationEnd.bind(this);
 
         node.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
+
+        this._ignoreSingleTextChild = false;
+        this._forceUpdateTitle = false;
     }
 
     // Static
@@ -825,7 +828,12 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     {
         let node = this.representedObject;
 
-        // FIXME: <https://webkit.org/b/179042> Web Inspector: add contextmenu item to arbitrarily add HTML/Child to DOMTree
+        let isEditableNode = node.nodeType() === Node.ELEMENT_NODE && this.editable;
+        let forbiddenClosingTag = WI.DOMTreeElement.ForbiddenClosingTagElements.has(node.nodeNameInCorrectCase());
+        subMenus.add.appendItem(WI.UIString("Child"), this._addHTML.bind(this), forbiddenClosingTag || !isEditableNode);
+        subMenus.add.appendItem(WI.UIString("Previous Sibling"), this._addPreviousSibling.bind(this), !isEditableNode);
+        subMenus.add.appendItem(WI.UIString("Next Sibling"), this._addNextSibling.bind(this), !isEditableNode);
+
         subMenus.edit.appendItem(WI.UIString("HTML"), this._editAsHTML.bind(this), !this.editable);
         subMenus.copy.appendItem(WI.UIString("HTML"), this._copyHTML.bind(this), node.isPseudoElement());
         subMenus.delete.appendItem(WI.UIString("Node"), this.remove.bind(this), !this.editable);
@@ -950,7 +958,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         }
 
         var tagName = tagNameElement.textContent;
-        if (WI.DOMTreeElement.EditTagBlacklist[tagName.toLowerCase()])
+        if (WI.DOMTreeElement.EditTagBlacklist.has(tagName.toLowerCase()))
             return false;
 
         if (WI.isBeingEdited(tagNameElement))
@@ -988,27 +996,39 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         return true;
     }
 
-    _startEditingAsHTML(commitCallback, error, initialValue)
+    _startEditingAsHTML(commitCallback, options = {})
     {
-        if (error)
-            return;
         if (this._htmlEditElement && WI.isBeingEdited(this._htmlEditElement))
             return;
 
-        this._htmlEditElement = document.createElement("div");
-        this._htmlEditElement.textContent = initialValue;
-
-        // Hide header items.
-        var child = this.listItemElement.firstChild;
-        while (child) {
-            child.style.display = "none";
-            child = child.nextSibling;
+        if (options.hideExistingElements) {
+            let child = this.listItemElement.firstChild;
+            while (child) {
+                child.style.display = "none";
+                child = child.nextSibling;
+            }
+            if (this._childrenListNode)
+                this._childrenListNode.style.display = "none";
         }
-        // Hide children item.
-        if (this._childrenListNode)
-            this._childrenListNode.style.display = "none";
-        // Append editor.
-        this.listItemElement.appendChild(this._htmlEditElement);
+
+        let positionInside = options.position === "afterbegin" || options.position === "beforeend";
+        if (positionInside && this._childrenListNode) {
+            this._htmlEditElement = document.createElement("li");
+
+            let referenceNode = options.position === "afterbegin" ? this._childrenListNode.firstElementChild : this._childrenListNode.lastElementChild;
+            this._childrenListNode.insertBefore(this._htmlEditElement, referenceNode);
+        } else if (options.position && !positionInside) {
+            this._htmlEditElement = document.createElement("li");
+
+            let targetNode = (options.position === "afterend" && this._childrenListNode) ? this._childrenListNode : this.listItemElement;
+            targetNode.insertAdjacentElement(options.position, this._htmlEditElement);
+        } else {
+            this._htmlEditElement = document.createElement("div");
+            this.listItemElement.appendChild(this._htmlEditElement);
+        }
+
+        if (options.initialValue)
+            this._htmlEditElement.textContent = options.initialValue;
 
         this.updateSelectionArea();
 
@@ -1023,16 +1043,17 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             this._editing = false;
 
             // Remove editor.
-            this.listItemElement.removeChild(this._htmlEditElement);
+            this._htmlEditElement.remove();
             this._htmlEditElement = null;
-            // Unhide children item.
-            if (this._childrenListNode)
-                this._childrenListNode.style.removeProperty("display");
-            // Unhide header items.
-            var child = this.listItemElement.firstChild;
-            while (child) {
-                child.style.removeProperty("display");
-                child = child.nextSibling;
+
+            if (options.hideExistingElements) {
+                if (this._childrenListNode)
+                    this._childrenListNode.style.removeProperty("display");
+                let child = this.listItemElement.firstChild;
+                while (child) {
+                    child.style.removeProperty("display");
+                    child = child.nextSibling;
+                }
             }
 
             this.updateSelectionArea();
@@ -1041,6 +1062,16 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         var config = new WI.EditingConfig(commit.bind(this), dispose.bind(this));
         config.setMultiline(true);
         this._editing = WI.startEditing(this._htmlEditElement, config);
+
+        if (!isNaN(options.startPosition)) {
+            let range = document.createRange();
+            range.setStart(this._htmlEditElement.firstChild, options.startPosition);
+            range.collapse(true);
+
+            let selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
     }
 
     _attributeEditingCommitted(element, newText, oldText, attributeName, moveDirection)
@@ -1220,7 +1251,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     {
         // If we are editing, return early to prevent canceling the edit.
         // After editing is committed updateTitle will be called.
-        if (this._editing)
+        if (this._editing && !this._forceUpdateTitle)
             return;
 
         if (onlySearchQueryChanged) {
@@ -1388,7 +1419,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 var textChild = this._singleTextChild(node);
                 var showInlineText = textChild && textChild.nodeValue().length < WI.DOMTreeElement.MaximumInlineTextChildLength;
 
-                if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WI.DOMTreeElement.ForbiddenClosingTagElements[tagName]))) {
+                if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WI.DOMTreeElement.ForbiddenClosingTagElements.has(tagName)))) {
                     if (this.hasChildren) {
                         var textNodeElement = info.titleDOM.createChild("span", "html-text-node");
                         textNodeElement.textContent = ellipsis;
@@ -1473,7 +1504,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     _singleTextChild(node)
     {
-        if (!node)
+        if (!node || this._ignoreSingleTextChild)
             return null;
 
         var firstChild = node.firstChild;
@@ -1564,6 +1595,80 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this.representedObject.removeNode(removeNodeCallback);
     }
 
+    _insertAdjacentHTML(position, options = {})
+    {
+        let hasChildren = this.hasChildren;
+
+        let commitCallback = (value) => {
+            this._ignoreSingleTextChild = false;
+
+            if (!value.length) {
+                if (!hasChildren) {
+                    this._forceUpdateTitle = true;
+                    this.hasChildren = false;
+                    this._forceUpdateTitle = false;
+                }
+                return;
+            }
+
+            this.representedObject.insertAdjacentHTML(position, value);
+        };
+
+        if (position === "afterbegin" || position === "beforeend") {
+            this._ignoreSingleTextChild = true;
+            this.hasChildren = true;
+            this.expand();
+        }
+
+        this._startEditingAsHTML(commitCallback, Object.shallowMerge(options, {position}));
+    }
+
+    _addHTML(event)
+    {
+        let options = {};
+        switch (this.representedObject.nodeNameInCorrectCase()) {
+        case "ul":
+        case "ol":
+            options.initialValue = "<li></li>";
+            options.startPosition = 4;
+            break;
+        case "table":
+        case "thead":
+        case "tbody":
+        case "tfoot":
+            options.initialValue = "<tr></tr>";
+            options.startPosition = 4;
+            break;
+        case "tr":
+            options.initializing = "<td></td>";
+            options.startPosition = 4;
+            break;
+        }
+        this._insertAdjacentHTML("beforeend", options);
+    }
+
+    _addPreviousSibling(event)
+    {
+        let options = {};
+        let nodeName = this.representedObject.nodeNameInCorrectCase();
+        if (nodeName === "li" || nodeName === "tr" || nodeName === "th" || nodeName === "td") {
+            options.initialValue = `<${nodeName}></${nodeName}>`;
+            options.startPosition = nodeName.length + 2;
+        }
+        this._insertAdjacentHTML("beforebegin", options);
+    }
+
+    _addNextSibling(event)
+    {
+        let options = {};
+        let nodeName = this.representedObject.nodeNameInCorrectCase();
+        if (nodeName === "li" || nodeName === "tr" || nodeName === "th" || nodeName === "td") {
+            options.initialValue = `<${nodeName}></${nodeName}>`;
+            options.startPosition = nodeName.length + 2;
+        }
+        this._insertAdjacentHTML("afterend", options);
+    }
+
     _editAsHTML()
     {
         var treeOutline = this.treeOutline;
@@ -1598,7 +1703,15 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             node.setOuterHTML(value, selectNode);
         }
 
-        node.getOuterHTML(this._startEditingAsHTML.bind(this, commitChange));
+        node.getOuterHTML((error, initialValue) => {
+            if (error)
+                return;
+
+            this._startEditingAsHTML(commitChange, {
+                initialValue,
+                hideExistingElements: true,
+            });
+        });
     }
 
     _copyHTML()
@@ -1775,20 +1888,16 @@ WI.DOMTreeElement.MaximumInlineTextChildLength = 80;
 
 // A union of HTML4 and HTML5-Draft elements that explicitly
 // or implicitly (for HTML5) forbid the closing tag.
-WI.DOMTreeElement.ForbiddenClosingTagElements = [
+WI.DOMTreeElement.ForbiddenClosingTagElements = new Set([
     "area", "base", "basefont", "br", "canvas", "col", "command", "embed", "frame",
     "hr", "img", "input", "keygen", "link", "meta", "param", "source",
     "wbr", "track", "menuitem"
-].keySet();
+]);
 
 // These tags we do not allow editing their tag name.
-WI.DOMTreeElement.EditTagBlacklist = [
+WI.DOMTreeElement.EditTagBlacklist = new Set([
     "html", "head", "body"
-].keySet();
-
-WI.DOMTreeElement.ChangeType = {
-    Attribute: "dom-tree-element-change-type-attribute"
-};
+]);
 
 WI.DOMTreeElement.BreakpointStatus = {
     None: Symbol("none"),

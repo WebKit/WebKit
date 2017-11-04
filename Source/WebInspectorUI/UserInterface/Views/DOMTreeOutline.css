@@ -38,9 +38,6 @@
     background-color: transparent !important;
     color: black;
 
-    --item-padding-start: 17px;
-    --item-padding-end: 6px;
-
     --item-parent-margin-start: -15px;
 
     --item-parent-before-padding-end: 2px;
@@ -134,15 +131,21 @@ body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.ex
 }
 
 .tree-outline.dom li {
+    padding: 0;
     word-wrap: break-word;
+
+    --item-padding-start: 17px;
+    --item-padding-end: 6px;
 }
 
-body[dir=ltr] .tree-outline.dom li {
-    padding: 0 var(--item-padding-end) 0 var(--item-padding-start);
+.tree-outline.dom li:not(.editing) {
+    -webkit-padding-start: var(--item-padding-start);
+    -webkit-padding-end: var(--item-padding-end);
 }
 
-body[dir=rtl] .tree-outline.dom li {
-    padding: 0 var(--item-padding-start) 0 var(--item-padding-end);
+.tree-outline.dom li.editing {
+    -webkit-margin-start: var(--item-padding-start);
+    -webkit-margin-end: var(--item-padding-end);
 }
 
 .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
