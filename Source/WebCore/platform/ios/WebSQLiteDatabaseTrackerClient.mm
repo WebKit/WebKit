@@ -52,6 +52,7 @@ WebSQLiteDatabaseTrackerClient& WebSQLiteDatabaseTrackerClient::sharedWebSQLiteD
 WebSQLiteDatabaseTrackerClient::WebSQLiteDatabaseTrackerClient()
     : m_hysteresis([this](PAL::HysteresisState state) { hysteresisUpdated(state); }, hysteresisDuration)
 {
+    ASSERT(pthread_main_np());
 }
 
 WebSQLiteDatabaseTrackerClient::~WebSQLiteDatabaseTrackerClient()
@@ -60,20 +61,21 @@ WebSQLiteDatabaseTrackerClient::~WebSQLiteDatabaseTrackerClient()
 
 void WebSQLiteDatabaseTrackerClient::willBeginFirstTransaction()
 {
-    callOnMainThread([this] {
+    dispatch_async(dispatch_get_main_queue(), [this] {
         m_hysteresis.start();
     });
 }
 
 void WebSQLiteDatabaseTrackerClient::didFinishLastTransaction()
 {
-    callOnMainThread([this] {
+    dispatch_async(dispatch_get_main_queue(), [this] {
         m_hysteresis.stop();
     });
 }
 
 void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(PAL::HysteresisState state)
 {
+    ASSERT(pthread_main_np());
     if (state == PAL::HysteresisState::Started)
         [WebDatabaseTransactionBackgroundTaskController startBackgroundTask];
     else
