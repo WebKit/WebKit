@@ -80,6 +80,7 @@ const int cMisspellingLinePatternGapWidth = 1;
 class AffineTransform;
 class FloatRoundedRect;
 class Gradient;
+class GraphicsContextImpl;
 class GraphicsContextPlatformPrivate;
 class ImageBuffer;
 class IntRect;
@@ -251,6 +252,10 @@ class GraphicsContext {
     WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*);
+    
+    using GraphicsContextImplFactory = WTF::Function<std::unique_ptr<GraphicsContextImpl>(GraphicsContext&)>;
+    WEBCORE_EXPORT GraphicsContext(const GraphicsContextImplFactory&);
+
     GraphicsContext() = default;
     WEBCORE_EXPORT ~GraphicsContext();
     
@@ -260,13 +265,11 @@ public:
     };
     GraphicsContext(NonPaintingReasons);
 
+    bool hasPlatformContext() const { return m_data; }
     WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
 
-    bool paintingDisabled() const { return !m_data && !isRecording(); }
+    bool paintingDisabled() const { return !m_data && !m_impl; }
     bool updatingControlTints() const { return m_nonPaintingReasons == NonPaintingReasons::UpdatingControlTints; }
-
-    void setDisplayListRecorder(DisplayList::Recorder* recorder) { m_displayListRecorder = recorder; }
-    bool isRecording() const { return m_displayListRecorder; }
 
     void setStrokeThickness(float);
     float strokeThickness() const { return m_state.strokeThickness; }
@@ -640,7 +643,7 @@ private:
     Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
 
     GraphicsContextPlatformPrivate* m_data { nullptr };
-    DisplayList::Recorder* m_displayListRecorder { nullptr };
+    std::unique_ptr<GraphicsContextImpl> m_impl;
 
     GraphicsContextState m_state;
     Vector<GraphicsContextState, 1> m_stack;

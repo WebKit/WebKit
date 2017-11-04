@@ -5349,6 +5349,8 @@
 		0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLUniformLocation.h; sourceTree = "<group>"; };
 		0E7058ED1BC5BC190045A507 /* SearchPopupMenuCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchPopupMenuCocoa.mm; sourceTree = "<group>"; };
 		0E7058F31BC5CCD70045A507 /* SearchPopupMenuCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenuCocoa.h; sourceTree = "<group>"; };
+		0F00123F1FAD87D600531D76 /* GraphicsContextImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContextImpl.h; sourceTree = "<group>"; };
+		0F0012401FAD881000531D76 /* GraphicsContextImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextImpl.cpp; sourceTree = "<group>"; };
 		0F03C0731884695E00A5F8CA /* SystemMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemMemory.h; sourceTree = "<group>"; };
 		0F099D0617B968A100FF84B9 /* WebCoreTypedArrayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTypedArrayController.cpp; sourceTree = "<group>"; };
 		0F099D0717B968A100FF84B9 /* WebCoreTypedArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypedArrayController.h; sourceTree = "<group>"; };
@@ -22636,6 +22638,8 @@
 				6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */,
 				49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */,
 				7C330A011DF8FAC600D3395C /* GraphicsContext3DAttributes.h */,
+				0F0012401FAD881000531D76 /* GraphicsContextImpl.cpp */,
+				0F00123F1FAD87D600531D76 /* GraphicsContextImpl.h */,
 				0F580B090F12A2690051D689 /* GraphicsLayer.cpp */,
 				0F580B0A0F12A2690051D689 /* GraphicsLayer.h */,
 				0F580B0B0F12A2690051D689 /* GraphicsLayerClient.h */,

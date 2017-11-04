@@ -195,7 +195,7 @@ AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
     if (paintingDisabled())
         return AffineTransform();
 
-    if (isRecording()) {
+    if (m_impl) {
         WTFLogAlways("GraphicsContext::getCTM() is not yet compatible with recording contexts.");
         return AffineTransform();
     }
@@ -213,14 +213,14 @@ PlatformContextCairo* GraphicsContext::platformContext() const
 
 void GraphicsContext::savePlatformState()
 {
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
     platformContext()->save();
     m_data->save();
 }
 
 void GraphicsContext::restorePlatformState()
 {
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
     platformContext()->restore();
     m_data->restore();
 
@@ -236,8 +236,8 @@ void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->drawRect(rect, borderThickness);
+    if (m_impl) {
+        m_impl->drawRect(rect, borderThickness);
         return;
     }
 
@@ -265,8 +265,8 @@ void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSi
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->drawNativeImage(image, imageSize, destRect, srcRect, op, blendMode, orientation);
+    if (m_impl) {
+        m_impl->drawNativeImage(image, imageSize, destRect, srcRect, op, blendMode, orientation);
         return;
     }
 
@@ -305,8 +305,8 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     if (strokeStyle() == NoStroke)
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->drawLine(point1, point2);
+    if (m_impl) {
+        m_impl->drawLine(point1, point2);
         return;
     }
 
@@ -374,8 +374,8 @@ void GraphicsContext::drawEllipse(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->drawEllipse(rect);
+    if (m_impl) {
+        m_impl->drawEllipse(rect);
         return;
     }
 
@@ -406,8 +406,8 @@ void GraphicsContext::fillPath(const Path& path)
     if (paintingDisabled() || path.isEmpty())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->fillPath(path);
+    if (m_impl) {
+        m_impl->fillPath(path);
         return;
     }
 
@@ -421,8 +421,8 @@ void GraphicsContext::strokePath(const Path& path)
     if (paintingDisabled() || path.isEmpty())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->strokePath(path);
+    if (m_impl) {
+        m_impl->strokePath(path);
         return;
     }
 
@@ -436,8 +436,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->fillRect(rect);
+    if (m_impl) {
+        m_impl->fillRect(rect);
         return;
     }
 
@@ -451,8 +451,8 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->fillRect(rect, color);
+    if (m_impl) {
+        m_impl->fillRect(rect, color);
         return;
     }
 
@@ -467,8 +467,8 @@ void GraphicsContext::clip(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->clip(rect);
+    if (m_impl) {
+        m_impl->clip(rect);
         return;
     }
 
@@ -494,8 +494,8 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->clipPath(path, clipRule);
+    if (m_impl) {
+        m_impl->clipPath(path, clipRule);
         return;
     }
 
@@ -527,7 +527,7 @@ IntRect GraphicsContext::clipBounds() const
     if (paintingDisabled())
         return IntRect();
 
-    if (isRecording()) {
+    if (m_impl) {
         WTFLogAlways("Getting the clip bounds not yet supported with display lists");
         return IntRect(-2048, -2048, 4096, 4096); // FIXME: display lists.
     }
@@ -635,8 +635,8 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     if (widths.size() <= 0)
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->drawLinesForText(point, widths, printing, doubleUnderlines, strokeThickness());
+    if (m_impl) {
+        m_impl->drawLinesForText(point, widths, printing, doubleUnderlines, strokeThickness());
         return;
     }
 
@@ -700,7 +700,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingM
     if (paintingDisabled())
         return frect;
 
-    if (isRecording()) {
+    if (m_impl) {
         WTFLogAlways("GraphicsContext::roundToDevicePixels() is not yet compatible with recording contexts.");
         return frect;
     }
@@ -745,8 +745,8 @@ void GraphicsContext::translate(float x, float y)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->translate(x, y);
+    if (m_impl) {
+        m_impl->translate(x, y);
         return;
     }
 
@@ -772,7 +772,7 @@ void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
     if (paintingDisabled())
         return;
 
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
 
     cairo_set_line_width(platformContext()->cr(), strokeThickness);
 }
@@ -785,7 +785,7 @@ void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
     if (paintingDisabled())
         return;
 
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
 
     switch (strokeStyle) {
     case NoStroke:
@@ -816,8 +816,8 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->concatCTM(transform);
+    if (m_impl) {
+        m_impl->concatCTM(transform);
         return;
     }
 
@@ -832,7 +832,7 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
+    if (m_impl) {
         WTFLogAlways("GraphicsContext::setCTM() is not compatible with recording contexts.");
         return;
     }
@@ -874,7 +874,7 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
     if (paintingDisabled())
         return;
 
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
 
     cairo_t* cr = platformContext()->cr();
     cairo_push_group(cr);
@@ -886,7 +886,7 @@ void GraphicsContext::endPlatformTransparencyLayer()
     if (paintingDisabled())
         return;
 
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
 
     cairo_t* cr = platformContext()->cr();
 
@@ -905,8 +905,8 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->clearRect(rect);
+    if (m_impl) {
+        m_impl->clearRect(rect);
         return;
     }
 
@@ -924,8 +924,8 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->strokeRect(rect, width);
+    if (m_impl) {
+        m_impl->strokeRect(rect, width);
         return;
     }
 
@@ -942,8 +942,8 @@ void GraphicsContext::setLineCap(LineCap lineCap)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->setLineCap(lineCap);
+    if (m_impl) {
+        m_impl->setLineCap(lineCap);
         return;
     }
 
@@ -976,8 +976,8 @@ void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->setLineDash(dashes, dashOffset);
+    if (m_impl) {
+        m_impl->setLineDash(dashes, dashOffset);
         return;
     }
 
@@ -992,8 +992,8 @@ void GraphicsContext::setLineJoin(LineJoin lineJoin)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->setLineJoin(lineJoin);
+    if (m_impl) {
+        m_impl->setLineJoin(lineJoin);
         return;
     }
 
@@ -1017,9 +1017,9 @@ void GraphicsContext::setMiterLimit(float miter)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
+    if (m_impl) {
         // Maybe this should be part of the state.
-        m_displayListRecorder->setMiterLimit(miter);
+        m_impl->setMiterLimit(miter);
         return;
     }
 
@@ -1049,8 +1049,8 @@ void GraphicsContext::clipOut(const Path& path)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->clipOut(path);
+    if (m_impl) {
+        m_impl->clipOut(path);
         return;
     }
 
@@ -1071,8 +1071,8 @@ void GraphicsContext::rotate(float radians)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->rotate(radians);
+    if (m_impl) {
+        m_impl->rotate(radians);
         return;
     }
 
@@ -1085,8 +1085,8 @@ void GraphicsContext::scale(const FloatSize& size)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->scale(size);
+    if (m_impl) {
+        m_impl->scale(size);
         return;
     }
 
@@ -1099,8 +1099,8 @@ void GraphicsContext::clipOut(const FloatRect& r)
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->clipOut(r);
+    if (m_impl) {
+        m_impl->clipOut(r);
         return;
     }
 
@@ -1120,7 +1120,7 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, cons
     if (paintingDisabled())
         return;
 
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
 
     if (hasShadow())
         platformContext()->shadowBlur().drawRectShadow(*this, rect);
@@ -1140,8 +1140,8 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     if (paintingDisabled() || !color.isValid())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->fillRectWithRoundedHole(rect, roundedHoleRect, color);
+    if (m_impl) {
+        m_impl->fillRectWithRoundedHole(rect, roundedHoleRect, color);
         return;
     }
 
@@ -1167,8 +1167,8 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
     if (paintingDisabled())
         return;
 
-    if (isRecording()) {
-        m_displayListRecorder->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
+    if (m_impl) {
+        m_impl->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
         return;
     }
 
@@ -1185,7 +1185,7 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
     if (paintingDisabled())
         return;
 
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
 
     // When true, use the default Cairo backend antialias mode (usually this
     // enables standard 'grayscale' antialiasing); false to explicitly disable
@@ -1195,14 +1195,14 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
 
 void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality quality)
 {
-    ASSERT(!isRecording());
+    ASSERT(hasPlatformContext());
 
     platformContext()->setImageInterpolationQuality(quality);
 }
 
 bool GraphicsContext::isAcceleratedContext() const
 {
-    if (isRecording())
+    if (!hasPlatformContext())
         return false;
 
     return cairo_surface_get_type(cairo_get_target(platformContext()->cr())) == CAIRO_SURFACE_TYPE_GL;

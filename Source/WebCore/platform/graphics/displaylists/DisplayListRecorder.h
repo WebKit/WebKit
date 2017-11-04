@@ -26,7 +26,7 @@
 #pragma once
 
 #include "DisplayList.h"
-#include "GraphicsContext.h" // For InterpolationQuality.
+#include "GraphicsContextImpl.h"
 #include "Image.h" // For Image::TileRule.
 #include "TextFlags.h"
 #include <wtf/Noncopyable.h>
@@ -47,79 +47,79 @@ namespace DisplayList {
 
 class DrawingItem;
 
-class Recorder {
+class Recorder : public GraphicsContextImpl {
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
     Recorder(GraphicsContext&, DisplayList&, const FloatRect& initialClip, const AffineTransform&);
-    ~Recorder();
-
-    void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
-    void clearShadow();
-
-    void setLineCap(LineCap);
-    void setLineDash(const DashArray&, float dashOffset);
-    void setLineJoin(LineJoin);
-    void setMiterLimit(float);
-
-    void fillRect(const FloatRect&);
-    void fillRect(const FloatRect&, const Color&);
-    void fillRect(const FloatRect&, Gradient&);
-    void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode);
-    void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode);
-    void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&);
-    void fillPath(const Path&);
-    void fillEllipse(const FloatRect&);
-    void strokeRect(const FloatRect&, float lineWidth);
-    void strokePath(const Path&);
-    void strokeEllipse(const FloatRect&);
-    void clearRect(const FloatRect&);
-
-#if USE(CG)
-    void applyStrokePattern();
-    void applyFillPattern();
-#endif
-
-    void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
-
-    void drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&);
-    void drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&);
-    void drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions&);
-#if USE(CG) || USE(CAIRO)
-    void drawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation);
-#endif
-    void drawPattern(Image&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendModeNormal);
-
-    void drawRect(const FloatRect&, float borderThickness);
-    void drawLine(const FloatPoint&, const FloatPoint&);
-    void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines, float strokeThickness);
-    void drawLineForDocumentMarker(const FloatPoint&, float width, GraphicsContext::DocumentMarkerLineStyle);
-    void drawEllipse(const FloatRect&);
-    void drawPath(const Path&);
-
-    void drawFocusRing(const Path&, float width, float offset, const Color&);
-    void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&);
-
-    void save();
-    void restore();
-
-    void translate(float x, float y);
-    void rotate(float angleInRadians);
-    void scale(const FloatSize&);
-    void concatCTM(const AffineTransform&);
-
-    void beginTransparencyLayer(float opacity);
-    void endTransparencyLayer();
-
-    void clip(const FloatRect&);
-    void clipOut(const FloatRect&);
-    void clipOut(const Path&);
-    void clipPath(const Path&, WindRule);
-    
-    void applyDeviceScaleFactor(float);
+    virtual ~Recorder();
 
     size_t itemCount() const { return m_displayList.itemCount(); }
 
 private:
+    void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) override;
+    void clearShadow() override;
+
+    void setLineCap(LineCap) override;
+    void setLineDash(const DashArray&, float dashOffset) override;
+    void setLineJoin(LineJoin) override;
+    void setMiterLimit(float) override;
+
+    void fillRect(const FloatRect&) override;
+    void fillRect(const FloatRect&, const Color&) override;
+    void fillRect(const FloatRect&, Gradient&) override;
+    void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode) override;
+    void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) override;
+    void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&) override;
+    void fillPath(const Path&) override;
+    void fillEllipse(const FloatRect&) override;
+    void strokeRect(const FloatRect&, float lineWidth) override;
+    void strokePath(const Path&) override;
+    void strokeEllipse(const FloatRect&) override;
+    void clearRect(const FloatRect&) override;
+
+#if USE(CG)
+    void applyStrokePattern() override;
+    void applyFillPattern() override;
+#endif
+
+    void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) override;
+
+    void drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) override;
+    void drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&) override;
+    void drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions&) override;
+#if USE(CG) || USE(CAIRO)
+    void drawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation) override;
+#endif
+    void drawPattern(Image&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendModeNormal) override;
+
+    void drawRect(const FloatRect&, float borderThickness) override;
+    void drawLine(const FloatPoint&, const FloatPoint&) override;
+    void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines, float strokeThickness) override;
+    void drawLineForDocumentMarker(const FloatPoint&, float width, GraphicsContext::DocumentMarkerLineStyle) override;
+    void drawEllipse(const FloatRect&) override;
+    void drawPath(const Path&) override;
+
+    void drawFocusRing(const Path&, float width, float offset, const Color&) override;
+    void drawFocusRing(const Vector<FloatRect>&, float width, float offset, const Color&) override;
+
+    void save() override;
+    void restore() override;
+
+    void translate(float x, float y) override;
+    void rotate(float angleInRadians) override;
+    void scale(const FloatSize&) override;
+    void concatCTM(const AffineTransform&) override;
+
+    void beginTransparencyLayer(float opacity) override;
+    void endTransparencyLayer() override;
+
+    void clip(const FloatRect&) override;
+    void clipOut(const FloatRect&) override;
+    void clipOut(const Path&) override;
+    void clipPath(const Path&, WindRule) override;
+    
+    void applyDeviceScaleFactor(float) override;
+
     Item& appendItem(Ref<Item>&&);
     void willAppendItem(const Item&);
 
@@ -161,7 +161,6 @@ private:
     const ContextState& currentState() const;
     ContextState& currentState();
 
-    GraphicsContext& m_graphicsContext;
     DisplayList& m_displayList;
 
     Vector<ContextState, 32> m_stateStack;

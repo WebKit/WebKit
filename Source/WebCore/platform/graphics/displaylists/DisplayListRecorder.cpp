@@ -37,11 +37,10 @@ namespace WebCore {
 namespace DisplayList {
 
 Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const FloatRect& initialClip, const AffineTransform& baseCTM)
-    : m_graphicsContext(context)
+    : GraphicsContextImpl(context, initialClip, baseCTM)
     , m_displayList(displayList)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
-    m_graphicsContext.setDisplayListRecorder(this);
     m_stateStack.append(ContextState(baseCTM, initialClip));
 }
 
@@ -374,7 +373,7 @@ Item& Recorder::appendItem(Ref<Item>&& item)
 
 void Recorder::updateItemExtent(DrawingItem& item) const
 {
-    if (std::optional<FloatRect> rect = item.localBounds(m_graphicsContext))
+    if (std::optional<FloatRect> rect = item.localBounds(graphicsContext()))
         item.setExtent(extentFromLocalBounds(rect.value()));
 }
 
@@ -396,7 +395,7 @@ FloatRect Recorder::extentFromLocalBounds(const FloatRect& rect) const
     FloatSize shadowOffset;
     float shadowRadius;
     Color shadowColor;
-    if (m_graphicsContext.getShadow(shadowOffset, shadowRadius, shadowColor)) {
+    if (graphicsContext().getShadow(shadowOffset, shadowRadius, shadowColor)) {
         FloatRect shadowExtent= bounds;
         shadowExtent.move(shadowOffset);
         shadowExtent.inflate(shadowPaintingExtent(shadowRadius));

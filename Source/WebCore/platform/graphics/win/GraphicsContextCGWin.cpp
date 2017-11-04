@@ -29,6 +29,7 @@
 #if USE(CG)
 
 #include "AffineTransform.h"
+#include "GraphicsContextImpl.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "Path.h"
 

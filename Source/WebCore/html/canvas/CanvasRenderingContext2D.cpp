@@ -89,11 +89,12 @@ struct DisplayListDrawingContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphicsContext context;
-    DisplayList::Recorder recorder;
     DisplayList::DisplayList displayList;
     
     DisplayListDrawingContext(const FloatRect& clip)
-        : recorder(context, displayList, clip, AffineTransform())
+        : context([&](GraphicsContext& context) {
+            return std::make_unique<DisplayList::Recorder>(context, displayList, clip, AffineTransform());
+        })
     {
     }
 };
