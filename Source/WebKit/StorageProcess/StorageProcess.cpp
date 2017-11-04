@@ -76,16 +76,8 @@ bool StorageProcess::shouldTerminate()
     return true;
 }
 
-void StorageProcess::didClose(IPC::Connection& connection)
+void StorageProcess::didClose(IPC::Connection&)
 {
-#if ENABLE(SERVICE_WORKER)
-    if (m_workerContextProcessConnection == &connection) {
-        m_workerContextProcessConnection = nullptr;
-        return;
-    }
-#else
-    UNUSED_PARAM(connection);
-#endif
     stopRunLoop();
 }
 
