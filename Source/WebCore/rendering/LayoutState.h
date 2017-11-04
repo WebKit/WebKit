@@ -30,13 +30,12 @@
 
 namespace WebCore {
 
-class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
 class RenderElement;
 class RenderFragmentedFlow;
 class RenderObject;
-class ShapeInsideInfo;
+class RenderView;
 
 class LayoutState {
     WTF_MAKE_NONCOPYABLE(LayoutState); WTF_MAKE_FAST_ALLOCATED;
@@ -126,6 +125,58 @@ public:
 #ifndef NDEBUG
     RenderElement* m_renderer { nullptr };
 #endif
+};
+
+// Stack-based class to assist with LayoutState push/pop
+class LayoutStateMaintainer {
+    WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);
+public:
+    // Constructor to push now.
+    explicit LayoutStateMaintainer(RenderBox&, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
+    // Constructor to maybe push later.
+    explicit LayoutStateMaintainer(RenderView&);
+    ~LayoutStateMaintainer();
+
+    void push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
+    void pop();
+    bool didPush() const { return m_didCallPush; }
+
+private:
+    RenderView& m_view;
+    bool m_disabled { false };
+    bool m_didCallPush { false };
+    bool m_didCallPop { false };
+    bool m_didPushLayoutState { false };
+};
+
+class SubtreeLayoutStateMaintainer {
+public:
+    SubtreeLayoutStateMaintainer(RenderElement* subtreeLayoutRoot);
+    ~SubtreeLayoutStateMaintainer();
+
+private:
+    RenderElement* m_subtreeLayoutRoot { nullptr };
+    bool m_didDisableLayoutState { false };
+};
+
+class LayoutStateDisabler {
+    WTF_MAKE_NONCOPYABLE(LayoutStateDisabler);
+public:
+    LayoutStateDisabler(RenderView&);
+    ~LayoutStateDisabler();
+
+private:
+    RenderView& m_view;
+};
+
+class PaginatedLayoutStateMaintainer {
+public:
+    PaginatedLayoutStateMaintainer(RenderBlockFlow&);
+    ~PaginatedLayoutStateMaintainer();
+
+private:
+    RenderBlockFlow& m_flow;
+    bool m_pushed { false };
 };
 
 } // namespace WebCore

@@ -67,25 +67,6 @@ struct SameSizeAsMarginInfo {
 COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginValues) == sizeof(LayoutUnit[4]), MarginValues_should_stay_small);
 COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginInfo) == sizeof(SameSizeAsMarginInfo), MarginInfo_should_stay_small);
 
-class PaginatedLayoutStateMaintainer {
-public:
-    PaginatedLayoutStateMaintainer(RenderBlockFlow& flow)
-        : m_flow(flow)
-        , m_pushed(flow.view().pushLayoutStateForPaginationIfNeeded(flow))
-    {
-    }
-
-    ~PaginatedLayoutStateMaintainer()
-    {
-        if (m_pushed)
-            m_flow.view().popLayoutState(m_flow);
-    }
-
-private:
-    RenderBlockFlow& m_flow;
-    bool m_pushed { false };
-};
-
 // Our MarginInfo state used when laying out block children.
 RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding)
     : m_atBeforeSideOfBlock(true)

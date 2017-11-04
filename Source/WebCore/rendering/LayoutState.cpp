@@ -208,5 +208,102 @@ void LayoutState::establishLineGrid(RenderBlockFlow& renderer)
     m_lineGridOffset = m_layoutOffset;
 }
 
+LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset, bool disableState, LayoutUnit pageHeight, bool pageHeightChanged)
+    : m_view(root.view())
+    , m_disabled(disableState)
+{
+    push(root, offset, pageHeight, pageHeightChanged);
+}
+
+LayoutStateMaintainer::LayoutStateMaintainer(RenderView& view)
+    : m_view(view)
+{
+}
+
+LayoutStateMaintainer::~LayoutStateMaintainer()
+{
+    ASSERT(!m_didCallPush || m_didCallPush == m_didCallPop);
+}
+
+void LayoutStateMaintainer::push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight, bool pageHeightChanged)
+{
+    ASSERT(!m_didCallPush);
+    m_didCallPush = true;
+    // We push state even if disabled, because we still need to store layoutDelta
+    m_didPushLayoutState = m_view.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
+    if (!m_didPushLayoutState)
+        return;
+    if (m_disabled)
+        m_view.disableLayoutState();
+}
+
+void LayoutStateMaintainer::pop()
+{
+    ASSERT(!m_didCallPop);
+    m_didCallPop = true;
+    if (!m_didCallPush)
+        return;
+    if (!m_didPushLayoutState)
+        return;
+    m_view.popLayoutState();
+    if (m_disabled)
+        m_view.enableLayoutState();
+}
+
+LayoutStateDisabler::LayoutStateDisabler(RenderView& view)
+    : m_view(view)
+{
+    m_view.disableLayoutState();
+}
+
+LayoutStateDisabler::~LayoutStateDisabler()
+{
+    m_view.enableLayoutState();
+}
+
+static bool shouldDisableLayoutStateForSubtree(RenderElement& subtreeLayoutRoot)
+{
+    for (auto* renderer = &subtreeLayoutRoot; renderer; renderer = renderer->container()) {
+        if (renderer->hasTransform() || renderer->hasReflection())
+            return true;
+    }
+    return false;
+}
+
+SubtreeLayoutStateMaintainer::SubtreeLayoutStateMaintainer(RenderElement* subtreeLayoutRoot)
+    : m_subtreeLayoutRoot(subtreeLayoutRoot)
+{
+    if (m_subtreeLayoutRoot) {
+        RenderView& view = m_subtreeLayoutRoot->view();
+        view.pushLayoutState(*m_subtreeLayoutRoot);
+        if (shouldDisableLayoutStateForSubtree(*m_subtreeLayoutRoot)) {
+            view.disableLayoutState();
+            m_didDisableLayoutState = true;
+        }
+    }
+}
+
+SubtreeLayoutStateMaintainer::~SubtreeLayoutStateMaintainer()
+{
+    if (m_subtreeLayoutRoot) {
+        RenderView& view = m_subtreeLayoutRoot->view();
+        view.popLayoutState(*m_subtreeLayoutRoot);
+        if (m_didDisableLayoutState)
+            view.enableLayoutState();
+    }
+}
+
+PaginatedLayoutStateMaintainer::PaginatedLayoutStateMaintainer(RenderBlockFlow& flow)
+    : m_flow(flow)
+    , m_pushed(flow.view().pushLayoutStateForPaginationIfNeeded(flow))
+{
+}
+
+PaginatedLayoutStateMaintainer::~PaginatedLayoutStateMaintainer()
+{
+    if (m_pushed)
+        m_flow.view().popLayoutState(m_flow);
+}
+
 } // namespace WebCore
 

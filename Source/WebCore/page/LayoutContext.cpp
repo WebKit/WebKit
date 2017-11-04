@@ -51,45 +51,6 @@ static bool isObjectAncestorContainerOf(RenderElement& ancestor, RenderElement& 
     return false;
 }
 
-class SubtreeLayoutStateMaintainer {
-public:
-    SubtreeLayoutStateMaintainer(RenderElement* subtreeLayoutRoot)
-        : m_subtreeLayoutRoot(subtreeLayoutRoot)
-    {
-        if (m_subtreeLayoutRoot) {
-            RenderView& view = m_subtreeLayoutRoot->view();
-            view.pushLayoutState(*m_subtreeLayoutRoot);
-            if (shouldDisableLayoutStateForSubtree()) {
-                view.disableLayoutState();
-                m_didDisableLayoutState = true;
-            }
-        }
-    }
-
-    ~SubtreeLayoutStateMaintainer()
-    {
-        if (m_subtreeLayoutRoot) {
-            RenderView& view = m_subtreeLayoutRoot->view();
-            view.popLayoutState(*m_subtreeLayoutRoot);
-            if (m_didDisableLayoutState)
-                view.enableLayoutState();
-        }
-    }
-
-    bool shouldDisableLayoutStateForSubtree()
-    {
-        for (auto* renderer = m_subtreeLayoutRoot; renderer; renderer = renderer->container()) {
-            if (renderer->hasTransform() || renderer->hasReflection())
-                return true;
-        }
-        return false;
-    }
-    
-private:
-    RenderElement* m_subtreeLayoutRoot { nullptr };
-    bool m_didDisableLayoutState { false };
-};
-
 #ifndef NDEBUG
 class RenderTreeNeedsLayoutChecker {
 public :
