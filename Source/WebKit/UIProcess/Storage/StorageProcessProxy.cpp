@@ -231,6 +231,7 @@ void StorageProcessProxy::getWorkerContextProcessConnection()
 
 void StorageProcessProxy::didGetWorkerContextProcessConnection(const IPC::Attachment& connection)
 {
+    m_waitingOnWorkerContextProcessConnection = false;
     send(Messages::StorageProcess::DidGetWorkerContextProcessConnection(connection), 0);
 }
 

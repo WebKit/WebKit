@@ -935,6 +935,15 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_processesUsingGamepads.contains(process))
         processStoppedUsingGamepads(*process);
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+    // FIXME: We should do better than this. For now, we just destroy the ServiceWorker process
+    // whenever there is no regular WebContent process remaining.
+    if (m_processes.size() == 1 && m_processes[0] == m_serviceWorkerProcess) {
+        m_serviceWorkerProcess = nullptr;
+        m_processes.clear();
+    }
+#endif
 }
 
 WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore& websiteDataStore)
