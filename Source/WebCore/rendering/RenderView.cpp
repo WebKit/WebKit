@@ -753,7 +753,7 @@ float RenderView::zoomFactor() const
     return frameView().frame().pageZoomFactor();
 }
 
-void RenderView::pushLayoutState(RenderObject& root)
+void RenderView::pushLayoutState(RenderElement& root)
 {
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == 0);

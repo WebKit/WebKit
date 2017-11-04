@@ -53,8 +53,8 @@ public:
     {
     }
 
-    LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
-    explicit LayoutState(RenderObject&);
+    LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
+    explicit LayoutState(RenderElement&);
 
     void clearPaginationInformation();
     bool isPaginated() const { return m_isPaginated; }
@@ -81,8 +81,8 @@ public:
     void setCurrentRenderFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) { m_currentRenderFragmentedFlow = fragmentedFlow; }
 
 private:
-    void propagateLineGridInfo(RenderBox*);
-    void establishLineGrid(RenderBlockFlow*);
+    void propagateLineGridInfo(RenderBox&);
+    void establishLineGrid(RenderBlockFlow&);
 
 public:
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173
@@ -120,9 +120,8 @@ public:
     LayoutSize m_lineGridPaginationOrigin;
 
     RenderFragmentedFlow* m_currentRenderFragmentedFlow { nullptr };
-
 #ifndef NDEBUG
-    RenderObject* m_renderer { nullptr };
+    RenderElement* m_renderer { nullptr };
 #endif
 };
 

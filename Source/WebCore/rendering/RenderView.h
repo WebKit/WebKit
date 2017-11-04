@@ -120,7 +120,7 @@ public:
     bool doingFullRepaint() const { return frameView().layoutContext().needsFullRepaint(); }
 
     // Subtree push/pop
-    void pushLayoutState(RenderObject&);
+    void pushLayoutState(RenderElement&);
     bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
     void popLayoutState(RenderObject&) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
 
@@ -255,7 +255,7 @@ private:
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
         if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
             || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
-            m_layoutState = std::make_unique<LayoutState>(WTFMove(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged);
+            m_layoutState = std::make_unique<LayoutState>(WTFMove(m_layoutState), renderer, offset, pageHeight, pageHeightChanged);
             return true;
         }
         return false;
