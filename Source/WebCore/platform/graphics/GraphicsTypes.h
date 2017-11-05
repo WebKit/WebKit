@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsTypes_h
-#define GraphicsTypes_h
+#pragma once
 
 #include "WindRule.h"
 #include <wtf/Forward.h>
@@ -121,4 +120,3 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineJoin);
 
 } // namespace WebCore
 
-#endif
