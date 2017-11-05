@@ -1582,3 +1582,6 @@ webkit.org/b/177799 accessibility/table-detection.html [ Pass Failure ]
 webkit.org/b/177997 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.html [ Pass Failure ]
 
 webkit.org/b/179069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_032.htm [ Pass Failure ]
+
+webkit.org/b/179287 http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline.html [ Pass Failure ]
+webkit.org/b/179287 http/wpt/web-animations/timing-model/animations/set-the-animation-start-time.html [ Pass Failure ]

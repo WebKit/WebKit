@@ -42,7 +42,7 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
     // FIXME: the spec mandates distinguishing between an omitted timeline parameter
     // and an explicit null or undefined value (webkit.org/b/179065).
     result->setTimeline(timeline ? timeline : &document.timeline());
-    
+
     return result;
 }
 
@@ -107,6 +107,9 @@ void WebAnimation::setStartTime(std::optional<Seconds> startTime)
         return;
 
     m_startTime = startTime;
+    
+    if (m_timeline)
+        m_timeline->animationTimingModelDidChange();
 }
 
 std::optional<double> WebAnimation::bindingsCurrentTime() const
@@ -170,6 +173,29 @@ void WebAnimation::setPlaybackRate(double newPlaybackRate)
     m_playbackRate = newPlaybackRate;
     if (previousTime)
         setCurrentTime(previousTime);
+}
+
+Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const
+{
+    if (!m_timeline || !m_startTime || !m_effect || !m_playbackRate)
+        return Seconds::infinity();
+
+    auto startTime = m_startTime.value();
+    auto endTime = startTime + (m_effect->timing()->duration() / m_playbackRate);
+
+    // If we haven't started yet, return the interval until our active start time.
+    auto activeStartTime = std::min(startTime, endTime);
+    if (timelineTime <= activeStartTime)
+        return activeStartTime - timelineTime;
+
+    // If we're in the middle of our active duration, we want to be called as soon as possible.
+    auto activeEndTime = std::max(startTime, endTime);
+    if (timelineTime <= activeEndTime)
+        return 0_ms;
+
+    // If none of the previous cases match, then we're already past our active duration
+    // and do not need scheduling.
+    return Seconds::infinity();
 }
 
 String WebAnimation::description()

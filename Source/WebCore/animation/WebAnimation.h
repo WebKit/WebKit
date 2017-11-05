@@ -62,6 +62,8 @@ public:
     double playbackRate() const { return m_playbackRate; }
     void setPlaybackRate(double);
 
+    Seconds timeToNextRequiredTick(Seconds) const;
+
     String description();
 
 private:

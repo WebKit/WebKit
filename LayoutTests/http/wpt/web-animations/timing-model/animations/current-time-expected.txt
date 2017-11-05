@@ -2,6 +2,6 @@
 FAIL The current time returns the hold time when set animation.play is not a function. (In 'animation.play()', 'animation.play' is undefined)
 FAIL The current time is unresolved when there is no associated timeline (and no hold time is set) undefined is not an object (evaluating 'animation.ready.then')
 PASS The current time is unresolved when the start time is unresolved (and no hold time is set) 
-FAIL The current time is calculated from the timeline time, start time and playback rate assert_approx_equals: Animation has a unresolved start time expected a number but got a "object"
+PASS The current time is calculated from the timeline time, start time and playback rate 
 FAIL The current time does not progress if playback rate is 0 createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
 

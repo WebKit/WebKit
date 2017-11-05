@@ -8,6 +8,8 @@
 <script>
 'use strict';
 
+internals.pauseTimeline(document.timeline);
+
 test(t => {
     assert_own_property(window, "DocumentTimeline");
 }, "The DocumentTimeline interface is defined.");

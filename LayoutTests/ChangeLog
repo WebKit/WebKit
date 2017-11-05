@@ -1,3 +1,34 @@
+2017-11-05  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Schedule animations registered on the document timeline
+        https://bugs.webkit.org/show_bug.cgi?id=179236
+        <rdar://problem/35332669>
+
+        Reviewed by Dean Jackson.
+
+        Adopt the new internals.pauseTimeline() method to ensure that the existing
+        tests do not have a self-advancing timeline since we're interested in checking
+        the timing model state based on manually setting the timeline current time.
+
+        Also update some WPT expectations with some progressions.
+
+        * TestExpectations: Mark two tests as flaky due to the sample time being logged
+        in the failure.
+        * http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/current-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt:
+        * http/wpt/wk-web-animations/timing-model/animation-creation-basic.html:
+        * http/wpt/wk-web-animations/timing-model/animation-current-time.html:
+        * http/wpt/wk-web-animations/timing-model/animation-effect-timing.html:
+        * http/wpt/wk-web-animations/timing-model/animation-effect.html:
+        * http/wpt/wk-web-animations/timing-model/animation-interface-effect-property.html:
+        * http/wpt/wk-web-animations/timing-model/animation-interface-start-time-property.html:
+        * http/wpt/wk-web-animations/timing-model/animation-playback-rate.html:
+        * http/wpt/wk-web-animations/timing-model/document-timeline.html:
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-interface-timing-duration.html:
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect.html:
+        * http/wpt/wk-web-animations/timing-model/timeline-current-time.html:
+
 2017-11-05  Per Arne Vollan  <pvollan@apple.com>
 
         Mark http/tests/security/xss-DENIED-xsl-external-entity.xml as a flaky failure on Windows.

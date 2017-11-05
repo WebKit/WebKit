@@ -628,6 +628,7 @@ public:
 #endif
 
     String timelineDescription(AnimationTimeline&);
+    void pauseTimeline(AnimationTimeline&);
     void setTimelineCurrentTime(AnimationTimeline&, double);
 
 private:

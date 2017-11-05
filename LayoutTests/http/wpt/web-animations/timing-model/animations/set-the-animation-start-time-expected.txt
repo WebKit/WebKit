@@ -1,7 +1,7 @@
 
-FAIL Setting the start time of an animation without an active timeline assert_equals: Setting the current time succeeds expected (number) 1000 but got (object) null
-FAIL Setting an unresolved start time an animation without an active timeline does not clear the current time assert_equals: Setting the current time succeeds expected (number) 1000 but got (object) null
-FAIL Setting the start time clears the hold time assert_equals: The current time is calculated from the hold time expected (number) 1000 but got (object) null
+FAIL Setting the start time of an animation without an active timeline assert_equals: Start time remains null after setting current time expected (object) null but got (number) -999.896
+FAIL Setting an unresolved start time an animation without an active timeline does not clear the current time assert_equals: Start time remains null after setting current time expected (object) null but got (number) -999.896
+FAIL Setting the start time clears the hold time assert_equals: Animation reports it is running after setting a resolved start time expected (string) "running" but got (undefined) undefined
 FAIL Setting an unresolved start time sets the hold time assert_equals: expected (string) "running" but got (undefined) undefined
 FAIL Setting the start time resolves a pending ready promise undefined is not an object (evaluating 'animation.ready.then')
 FAIL Setting the start time resolves a pending pause task undefined is not an object (evaluating 'animation.ready.then')

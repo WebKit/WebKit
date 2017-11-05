@@ -8,6 +8,8 @@
 <script>
 'use strict';
 
+internals.pauseTimeline(document.timeline);
+
 test(t => {
     assert_own_property(window, "AnimationEffect");
 }, "The AnimationEffect interface is defined.");

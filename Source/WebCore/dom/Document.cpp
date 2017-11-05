@@ -5815,6 +5815,9 @@ void Document::windowScreenDidChange(PlatformDisplayID displayID)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->windowScreenDidChange(displayID);
 
+    if (m_timeline)
+        m_timeline->windowScreenDidChange(displayID);
+
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
             view->compositor().windowScreenDidChange(displayID);
@@ -7451,7 +7454,8 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 DocumentTimeline& Document::timeline()
 {
     if (!m_timeline)
-        m_timeline = DocumentTimeline::create();
+        m_timeline = DocumentTimeline::create(*this, page() ? page()->chrome().displayID() : 0);
+
     return *m_timeline;
 }
 
