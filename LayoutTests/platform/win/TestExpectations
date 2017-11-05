@@ -3808,3 +3808,11 @@ webkit.org/b/178549 http/tests/navigation/keyboard-events-during-provisional-sub
 webkit.org/b/178724 fast/css-generated-content/details-summary-before-after.html [ Failure ]
 
 webkit.org/b/179130 fast/dom/Window/window-resize-update-scrollbars.html [ Timeout ]
+
+webkit.org/b/179296 css2.1/t0801-c412-hz-box-00-b-a.html [ Failure ]
+webkit.org/b/179296 fast/invalid/td-inside-object.html [ Failure ]
+webkit.org/b/179296 fast/css/display-contents-all.html [ ImageOnlyFailure ]
+webkit.org/b/179296 fast/css/object-fit/object-fit-embed.html [ ImageOnlyFailure ]
+webkit.org/b/179296 fast/css/object-fit/object-fit-object.html [ ImageOnlyFailure ]
+webkit.org/b/179296 fast/css/object-position/object-position-embed.html [ ImageOnlyFailure ]
+webkit.org/b/179296 fast/css/object-position/object-position-object.html [ ImageOnlyFailure ]

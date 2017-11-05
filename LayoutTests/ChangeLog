@@ -1,3 +1,12 @@
+2017-11-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark fast/css/object-fit/object-fit-embed.html and related tests as failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=179296
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-11-04  Chris Dumez  <cdumez@apple.com>
 
         Index properties on cross origin Window objects should be enumerable
