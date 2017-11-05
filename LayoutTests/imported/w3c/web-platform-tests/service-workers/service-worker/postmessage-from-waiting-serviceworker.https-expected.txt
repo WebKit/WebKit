@@ -1,4 +1,4 @@
 
 
-FAIL Client.postMessage() from waiting serviceworker. assert_unreached: unexpected rejection: assert_equals: should be same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]" Reached unreachable code
+FAIL Client.postMessage() from waiting serviceworker. assert_unreached: unexpected rejection: assert_equals: message event source should be correct expected null but got object "[object ServiceWorker]" Reached unreachable code
 

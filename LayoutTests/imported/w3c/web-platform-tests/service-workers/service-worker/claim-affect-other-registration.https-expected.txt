@@ -1,4 +1,4 @@
 
 
-FAIL claim() should affect the originally controlling registration. assert_equals: Should be the same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]"
+FAIL claim() should affect the originally controlling registration. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 

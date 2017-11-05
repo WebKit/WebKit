@@ -44,7 +44,7 @@ public:
     virtual void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) = 0;
     virtual void startScriptFetchForJob(ServiceWorkerJob&) = 0;
     virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) = 0;
-    virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&) = 0;
+    virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, std::optional<Exception>&&) = 0;
 
     virtual uint64_t connectionIdentifier() = 0;
 

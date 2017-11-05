@@ -1,3 +1,31 @@
+2017-11-05  Chris Dumez  <cdumez@apple.com>
+
+        Implement ServiceWorkerRegistration.update()
+        https://bugs.webkit.org/show_bug.cgi?id=179270
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT tests now that more are passing or at least failing later.
+
+        * web-platform-tests/service-workers/service-worker/claim-affect-other-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-with-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-scripts-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multiple-register.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multiple-update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-from-waiting-serviceworker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ready.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https-expected.txt:
+
+        * web-platform-tests/service-workers/service-worker/update.https-expected.txt:
+        I investigated this test and it is still failing later on because we clear registrations too
+        aggressively on the StorageProcess side we are supposed to make sure the registration does
+        not have a newestWorker before clearing it when a script fetch fails or a script syntax error
+        occurs. We properly have those if (!newestWorker) checks in the code but service workers
+        are not yet populated on the SWServerRegistration object so SWServerRegistration::getNewestWorker()
+        alwasy returns null.
+
 2017-11-04  Chris Dumez  <cdumez@apple.com>
 
         Index properties on cross origin Window objects should be enumerable

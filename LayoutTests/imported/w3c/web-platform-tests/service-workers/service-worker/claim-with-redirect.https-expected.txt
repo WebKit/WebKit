@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 27: Unhandled Promise Rejection: NotSupportedError: ServiceWorkerRegistration::update not yet implemented
+CONSOLE MESSAGE: line 27: Unhandled Promise Rejection: InvalidStateError: newestWorker is null
   
 
 FAIL Claim works after redirection to another origin assert_equals: expected (string) "updated" but got (undefined) undefined

@@ -165,6 +165,31 @@ void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<Deferre
     scheduleJob(ServiceWorkerJob::create(*this, WTFMove(promise), WTFMove(jobData)));
 }
 
+void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, Ref<DeferredPromise>&& promise)
+{
+    auto* context = scriptExecutionContext();
+    if (!context || !context->sessionID().isValid()) {
+        ASSERT_NOT_REACHED();
+        promise->reject(Exception(InvalidStateError));
+        return;
+    }
+
+    if (!m_swConnection) {
+        ASSERT_NOT_REACHED();
+        promise->reject(Exception(InvalidStateError));
+        return;
+    }
+
+    ServiceWorkerJobData jobData(m_swConnection->identifier());
+    jobData.clientCreationURL = context->url();
+    jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
+    jobData.type = ServiceWorkerJobType::Update;
+    jobData.scopeURL = scopeURL;
+    jobData.scriptURL = scriptURL;
+
+    scheduleJob(ServiceWorkerJob::create(*this, WTFMove(promise), WTFMove(jobData)));
+}
+
 void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 {
     ASSERT(m_swConnection);
@@ -206,8 +231,9 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
         RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(result->key);
         if (!registration) {
             auto& context = *scriptExecutionContext();
-            auto worker = ServiceWorker::create(context, *result->activeServiceWorkerIdentifier, result->scriptURL);
-            registration = ServiceWorkerRegistration::create(context, *this, WTFMove(result.value()), WTFMove(worker));
+            // FIXME: We should probably not be constructing ServiceWorkerRegistration objects here. Instead, we should make
+            // sure that ServiceWorkerRegistration objects stays alive as long as their SWServerRegistration on server side.
+            registration = ServiceWorkerRegistration::create(context, *this, WTFMove(result.value()));
         }
         promise->resolve<IDLInterface<ServiceWorkerRegistration>>(registration.releaseNonNull());
     });
@@ -251,9 +277,13 @@ private:
         callOnMainThread([registration = WTFMove(m_registration)] () mutable {
             registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
             callOnMainThread([registration = WTFMove(registration)] () mutable {
-                registration->installing()->setState(ServiceWorker::State::Installed);
+                registration->setWaitingWorker(registration->installing());
+                registration->setInstallingWorker(nullptr);
+                registration->waiting()->setState(ServiceWorker::State::Installed);
                 callOnMainThread([registration = WTFMove(registration)] () mutable {
-                    registration->waiting()->setState(ServiceWorker::State::Activating);
+                    registration->setActiveWorker(registration->waiting());
+                    registration->setWaitingWorker(nullptr);
+                    registration->active()->setState(ServiceWorker::State::Activating);
                     callOnMainThread([registration = WTFMove(registration)] () mutable {
                         registration->active()->setState(ServiceWorker::State::Activated);
                     });
@@ -286,14 +316,17 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         activeServiceWorker = context->activeServiceWorker();
     }
 
+    RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.key);
+    if (!registration)
+        registration = ServiceWorkerRegistration::create(*context, *this, WTFMove(data));
+
     activeServiceWorker->setState(ServiceWorker::State::Installing);
+    registration->setInstallingWorker(activeServiceWorker);
 
-    auto registration = ServiceWorkerRegistration::create(*context, *this, WTFMove(data), *activeServiceWorker);
-
-    job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(registration);
+    job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(*registration);
 
     // Use a microtask because we need to make sure this is executed after the promise above is resolved.
-    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FakeServiceWorkerInstallMicrotask>(WTFMove(registration)));
+    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FakeServiceWorkerInstallMicrotask>(registration.releaseNonNull()));
 }
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
@@ -337,9 +370,12 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
     m_swConnection->finishedFetchingScript(job, script);
 }
 
-void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error)
+void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, std::optional<Exception>&& exception)
 {
     LOG(ServiceWorker, "SeviceWorkerContainer %p failed fetching script for job %" PRIu64, this, job.data().identifier());
+
+    if (exception)
+        job.promise().reject(*exception);
 
     m_swConnection->failedFetchingScript(job, error);
 }

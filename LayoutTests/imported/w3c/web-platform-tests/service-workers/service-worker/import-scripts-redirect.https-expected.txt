@@ -1,4 +1,4 @@
 
 PASS importScripts() supports redirects 
-FAIL importScripts() supports redirects and can be updated promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+PASS importScripts() supports redirects and can be updated 
 

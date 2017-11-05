@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "JSDOMPromiseDeferred.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ServiceWorkerJobData.h"
@@ -100,6 +101,15 @@ void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse&
     ASSERT(m_scriptLoader);
 
     m_lastResponse = response;
+    // Extract a MIME type from the response's header list. If this MIME type (ignoring parameters) is not a JavaScript MIME type, then:
+    if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(response.mimeType())) {
+        // Invoke Reject Job Promise with job and "SecurityError" DOMException.
+        Exception exception { SecurityError, ASCIILiteral("MIME Type is not a JavaScript MIME type") };
+        // Asynchronously complete these steps with a network error.
+        ResourceError error { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Unexpected MIME type") };
+        m_client->jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
+        m_scriptLoader = nullptr;
+    }
 }
 
 void ServiceWorkerJob::notifyFinished()
@@ -110,7 +120,7 @@ void ServiceWorkerJob::notifyFinished()
     if (!m_scriptLoader->failed())
         m_client->jobFinishedLoadingScript(*this, m_scriptLoader->script());
     else
-        m_client->jobFailedLoadingScript(*this, m_scriptLoader->error());
+        m_client->jobFailedLoadingScript(*this, m_scriptLoader->error(), std::nullopt);
 
     m_scriptLoader = nullptr;
 }

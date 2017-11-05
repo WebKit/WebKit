@@ -59,7 +59,7 @@ public:
         Redundant,
     };
 
-    const String& scriptURL() const { return m_scriptURL.string(); }
+    const URL& scriptURL() const { return m_scriptURL; }
 
     State state() const { return m_state; }
     void setState(State);

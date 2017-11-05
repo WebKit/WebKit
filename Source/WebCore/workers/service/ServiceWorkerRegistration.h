@@ -53,6 +53,12 @@ public:
     ServiceWorker* waiting();
     ServiceWorker* active();
 
+    void setInstallingWorker(RefPtr<ServiceWorker>&&);
+    void setWaitingWorker(RefPtr<ServiceWorker>&&);
+    void setActiveWorker(RefPtr<ServiceWorker>&&);
+
+    ServiceWorker* getNewestWorker();
+
     const String& scope() const;
     ServiceWorkerUpdateViaCache updateViaCache() const;
 
@@ -67,7 +73,7 @@ public:
     void updateStateFromServer(ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
 
 private:
-    ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&, Ref<ServiceWorker>&&);
+    ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -78,8 +84,11 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     ServiceWorkerRegistrationData m_registrationData;
-    Ref<ServiceWorker> m_serviceWorker;
     Ref<ServiceWorkerContainer> m_container;
+
+    RefPtr<ServiceWorker> m_installingWorker;
+    RefPtr<ServiceWorker> m_waitingWorker;
+    RefPtr<ServiceWorker> m_activeWorker;
 };
 
 } // namespace WebCore

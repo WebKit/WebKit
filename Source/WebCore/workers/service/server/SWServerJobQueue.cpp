@@ -58,18 +58,35 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
-    if (!result.scriptError.isNull()) {
-        rejectCurrentJob(ExceptionData { UnknownError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
+    auto* newestWorker = registration->getNewestWorker();
 
-        // If newestWorker is null, invoke Clear Registration algorithm passing this registration as its argument.
-        if (!registration->getNewestWorker())
+    if (!result.scriptError.isNull()) {
+        // Invoke Reject Job Promise with job and TypeError.
+        m_server.rejectJob(firstJob(), ExceptionData { TypeError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
+
+        // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
+        if (!newestWorker)
             clearRegistration(*registration);
 
+        // Invoke Finish Job with job and abort these steps.
+        finishCurrentJob();
         return;
     }
 
-    // FIXME: If the script data matches byte-for-byte with the existing newestWorker,
-    // then resolve and finish the job without doing anything further.
+    // If newestWorker is not null, newestWorker's script url equals job's script url with the exclude fragments
+    // flag set, and script's source text is a byte-for-byte match with newestWorker's script resource's source
+    // text, then:
+    if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && result.script == newestWorker->script()) {
+        // FIXME: if script is a classic script, and script's module record's [[ECMAScriptCode]] is a byte-for-byte
+        // match with newestWorker’s script resource's module record's [[ECMAScriptCode]] otherwise.
+
+        // Invoke Resolve Job Promise with job and registration.
+        m_server.resolveRegistrationJob(job, registration->data());
+
+        // Invoke Finish Job with job and abort these steps.
+        finishCurrentJob();
+        return;
+    }
 
     // FIXME: Support the proper worker type (classic vs module)
     m_server.updateWorker(connection, m_registrationKey, job.scriptURL, result.script, WorkerType::Classic);
@@ -77,10 +94,16 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
 
 void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier identifier, const String& message)
 {
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    ASSERT(registration);
+
     // FIXME: Install has failed. Run the install failed substeps
     // Run the Update Worker State algorithm passing registration’s installing worker and redundant as the arguments.
     // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
+
     // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
+    if (!registration->getNewestWorker())
+        clearRegistration(*registration);
 
     UNUSED_PARAM(identifier);
     UNUSED_PARAM(message);
@@ -113,6 +136,9 @@ void SWServerJobQueue::runNextJobSynchronously()
         return;
     case ServiceWorkerJobType::Unregister:
         runUnregisterJob(job);
+        return;
+    case ServiceWorkerJobType::Update:
+        runUpdateJob(job);
         return;
     }
 
@@ -201,6 +227,7 @@ void SWServerJobQueue::clearRegistration(SWServerRegistration& registration)
 // https://w3c.github.io/ServiceWorker/#update-algorithm
 void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
 {
+    // Let registration be the result of running the Get Registration algorithm passing job’s scope url as the argument.
     auto* registration = m_server.getRegistration(m_registrationKey);
 
     // If registration is null (in our parlance "empty") or registration’s uninstalling flag is set, then:
@@ -209,9 +236,11 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
     if (registration->isUninstalling())
         return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker registration that is uninstalling") });
 
-    // If job's type is update, and newestWorker’s script url does not equal job’s script url with the exclude fragments flag set, then:
+    // Let newestWorker be the result of running Get Newest Worker algorithm passing registration as the argument.
     auto* newestWorker = registration->getNewestWorker();
-    if (newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
+
+    // If job's type is update, and newestWorker's script url does not equal job’s script url with the exclude fragments flag set, then:
+    if (job.type == ServiceWorkerJobType::Update && newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
         return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker with a requested script URL whose newest worker has a different script URL") });
 
     m_server.startScriptFetch(job);

@@ -1,3 +1,3 @@
 
-FAIL Trigger multiple updates. promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+PASS Trigger multiple updates. 
 

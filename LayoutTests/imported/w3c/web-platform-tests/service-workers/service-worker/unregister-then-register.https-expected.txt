@@ -1,7 +1,7 @@
 
 
-PASS Unregister then register resolves to a new value 
-FAIL Unregister then register resolves to the original value if the registration is in use. assert_unreached: unexpected rejection: assert_equals: new registration should resolve to the same registration expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]" Reached unreachable code
+FAIL Unregister then register resolves to a new value assert_unreached: unexpected rejection: assert_not_equals: register should resolve to a new value got disallowed value object "[object ServiceWorkerRegistration]" Reached unreachable code
+PASS Unregister then register resolves to the original value if the registration is in use. 
 PASS Reloading the last controlled iframe after unregistration should ensure the deletion of the registration 
 FAIL Unregister then register does not affect existing controllee assert_unreached: unexpected rejection: assert_equals: installing version is null expected null but got object "[object ServiceWorker]" Reached unreachable code
 FAIL Unregister then register resurrects the registration assert_unreached: unexpected rejection: assert_not_equals: document should have a controller got disallowed value null Reached unreachable code

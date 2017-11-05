@@ -35,6 +35,7 @@
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerRegistration.h"
 #include "ServiceWorkerRegistrationOptions.h"
+#include "WorkerType.h"
 #include <pal/SessionID.h>
 #include <wtf/Threading.h>
 
@@ -61,6 +62,7 @@ public:
 
     void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
     void removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&&);
+    void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, Ref<DeferredPromise>&&);
 
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
     void updateRegistration(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
@@ -84,7 +86,7 @@ private:
     void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) final;
     void startScriptFetchForJob(ServiceWorkerJob&) final;
     void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) final;
-    void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&) final;
+    void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, std::optional<Exception>&&) final;
 
     void jobDidFinish(ServiceWorkerJob&);
 

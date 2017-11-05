@@ -74,6 +74,7 @@ void ServiceWorkerJobData::encode(Encoder& encoder) const
         encoder << registrationOptions;
         break;
     case ServiceWorkerJobType::Unregister:
+    case ServiceWorkerJobType::Update:
         break;
     }
 }
@@ -113,6 +114,7 @@ std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decode
             return std::nullopt;
         break;
     case ServiceWorkerJobType::Unregister:
+    case ServiceWorkerJobType::Update:
         break;
     }
 

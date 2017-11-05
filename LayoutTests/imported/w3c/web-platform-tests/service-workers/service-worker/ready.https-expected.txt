@@ -10,5 +10,5 @@ FAIL ready on an iframe whose parent registers a new service worker promise_test
 FAIL ready on an iframe that installs a new service worker promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
 FAIL ready after a longer matched registration registered promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
 FAIL access ready after it has been resolved promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
-FAIL access ready on uninstalling registration that is resurrected assert_equals: existing registration should be resurrected expected object "[object ServiceWorkerRegistration]" but got object "[object ServiceWorkerRegistration]"
+FAIL access ready on uninstalling registration that is resurrected promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
 

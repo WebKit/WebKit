@@ -1,6 +1,6 @@
 
-FAIL Registering invalid chunked encoding script assert_throws: Registration of invalid chunked encoding script should fail. function "function () { throw e }" threw object "UnknownError: Script URL https://localhost:9443/service-workers/service-worker/resources/invalid-chunked-encoding.py fetch resulted in error: cannot parse response" ("UnknownError") expected object "TypeError" ("TypeError")
-FAIL Registering invalid chunked encoding script with flush assert_throws: Registration of invalid chunked encoding script should fail. function "function () { throw e }" threw object "UnknownError: Script URL https://localhost:9443/service-workers/service-worker/resources/invalid-chunked-encoding-with-flush.py fetch resulted in error: cannot parse response" ("UnknownError") expected object "TypeError" ("TypeError")
+PASS Registering invalid chunked encoding script 
+PASS Registering invalid chunked encoding script with flush 
 FAIL Registering script including parse error assert_unreached: Should have rejected: Registration of script including parse error should fail. Reached unreachable code
 FAIL Registering script including undefined error assert_unreached: Should have rejected: Registration of script including undefined error should fail. Reached unreachable code
 FAIL Registering script including uncaught exception assert_unreached: Should have rejected: Registration of script including uncaught exception should fail. Reached unreachable code
