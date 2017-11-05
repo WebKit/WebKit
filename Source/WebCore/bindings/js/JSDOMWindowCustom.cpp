@@ -233,7 +233,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, 
     // (1) First, indexed properties.
     // These are also allowed cross-orgin, so come before the access check.
     if (frame && index < frame->tree().scopedChildCount()) {
-        slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
+        slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
         return true;
     }
 
@@ -351,8 +351,7 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
 
-    if (mode.includeDontEnumProperties())
-        addScopedChildrenIndexes(*exec, thisObject->wrapped(), propertyNames);
+    addScopedChildrenIndexes(*exec, thisObject->wrapped(), propertyNames);
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())

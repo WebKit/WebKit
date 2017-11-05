@@ -1,3 +1,19 @@
+2017-11-04  Chris Dumez  <cdumez@apple.com>
+
+        Index properties on cross origin Window objects should be enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=179289
+
+        Reviewed by Darin Adler.
+
+        Re-sync WPT test after:
+        - https://github.com/w3c/web-platform-tests/pull/8045
+
+        Rebaseline a couple of WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-expected.txt:
+
 2017-11-03  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerContainer.getRegistration
