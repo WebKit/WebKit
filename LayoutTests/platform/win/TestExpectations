@@ -3820,3 +3820,5 @@ webkit.org/b/179296 fast/css/object-position/object-position-object.html [ Image
 webkit.org/b/179297 fast/loader/empty-embed-src-attribute.html [ Pass Crash ]
 
 webkit.org/b/179299 fast/html/menuitem-element.html [ Failure ]
+
+webkit.org/b/179301 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Pass Failure ]
