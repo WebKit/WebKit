@@ -1,3 +1,5 @@
+//@ skip if $hostOS == "windows"
+// FIXME: unskip this test when https://bugs.webkit.org/show_bug.cgi?id=179298 is fixed.
 
 var exception;
 try {
