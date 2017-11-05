@@ -3816,3 +3816,5 @@ webkit.org/b/179296 fast/css/object-fit/object-fit-embed.html [ ImageOnlyFailure
 webkit.org/b/179296 fast/css/object-fit/object-fit-object.html [ ImageOnlyFailure ]
 webkit.org/b/179296 fast/css/object-position/object-position-embed.html [ ImageOnlyFailure ]
 webkit.org/b/179296 fast/css/object-position/object-position-object.html [ ImageOnlyFailure ]
+
+webkit.org/b/179297 fast/loader/empty-embed-src-attribute.html [ Pass Crash ]
