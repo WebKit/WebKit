@@ -1,0 +1,137 @@
+<html>
+<head>
+    <script>
+      testRunner.waitUntilDone();
+      testRunner.setBackingScaleFactor(1);
+      if (!sessionStorage.pageReloaded) {
+          sessionStorage.pageReloaded = true
+          // have to force a restart because of a bug in dynamic changes with srcset
+          // we have to force the restart even if DPR=1 for consistency
+          document.location.reload(true);
+      }
+    </script>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100"></script>
+</head>
+<body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    shouldBe("window.devicePixelRatio", "1");
+    shouldBeTrue("internals.isPreloaded('resources/base-image1.png?0');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?0');");
+    shouldBeTrue("internals.isPreloaded('resources/base-image1.png?1');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?1');");
+    shouldBeTrue("internals.isPreloaded('resources/base-image1.png?2');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?2');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image1.png?3');");
+    shouldBeTrue("internals.isPreloaded('resources/preload-test.jpg?3');");
+
+    shouldBeFalse("internals.isPreloaded('resources/base-image1.png?4');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image2.png?4');");
+    shouldBeTrue("internals.isPreloaded('resources/base-image3.png?4');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?4');");
+
+    shouldBeFalse("internals.isPreloaded('resources/base-image1.png?5');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image2.png?5');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image3.png?5');");
+    shouldBeTrue("internals.isPreloaded('resources/preload-test.jpg?5');");
+
+    shouldBeTrue("internals.isPreloaded('resources/base-image1.png?6');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?6');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image1.png?7');");
+    shouldBeTrue("internals.isPreloaded('resources/preload-test.jpg?7');");
+
+    shouldBeTrue("internals.isPreloaded('resources/base-image1.png?8');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?8');");
+
+    shouldBeFalse("internals.isPreloaded('resources/base-image1.png?9');");
+    shouldBeTrue("internals.isPreloaded('resources/preload-test.jpg?9');");
+
+    shouldBeTrue("internals.isPreloaded('resources/base-image1.png?10');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image2.png?10');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?10');");
+
+    shouldBeFalse("internals.isPreloaded('resources/base-image1.png?11');");
+    shouldBeTrue("internals.isPreloaded('resources/base-image2.png?11');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?11');");
+
+    shouldBeTrue("internals.isPreloaded('resources/base-image1.png?12');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image2.png?12');");
+    shouldBeFalse("internals.isPreloaded('resources/preload-test.jpg?12');");
+
+    shouldBeFalse("internals.isPreloaded('resources/base-image1.png?13');");
+    shouldBeFalse("internals.isPreloaded('resources/base-image2.png?13');");
+    shouldBeTrue("internals.isPreloaded('resources/preload-test.jpg?13');");
+    testRunner.notifyDone();
+</script>
+<!-- Control group -->
+<picture>
+    <source srcset="resources/base-image1.png?0">
+    <img src="resources/preload-test.jpg?0">
+</picture>
+<!-- All permutations of type, media, srcset and sizes -->
+
+<picture>
+    <source type="image/png" srcset="resources/base-image1.png?1">
+    <img src="resources/preload-test.jpg?1">
+</picture>
+<picture>
+    <source srcset="resources/base-image1.png?2" type="image/png">
+    <img src="resources/preload-test.jpg?2">
+</picture>
+<picture>
+    <source type="image/bad" srcset="resources/base-image1.png?3">
+    <img src="resources/preload-test.jpg?3">
+</picture>
+<picture>
+    <source type="image/png" sizes="400px" srcset="resources/base-image1.png?4 200w, resources/base-image3.png?4 400w, resources/base-image2.png?4 800w">
+    <img src="resources/preload-test.jpg?4">
+</picture>
+<picture>
+    <source type="image/bad" sizes="400px" srcset="resources/base-image1.png?5 200w, resources/base-image3.png?5 400w, resources/base-image2.png?5 800w" >
+    <img src="resources/preload-test.jpg?5">
+</picture>
+<picture>
+    <source type="image/png" media="(min-width: 1px)" srcset="resources/base-image1.png?6">
+    <img src="resources/preload-test.jpg?6">
+</picture>
+<picture>
+    <source type="image/bad" media="(min-width: 1px)" srcset="resources/base-image1.png?7">
+    <img src="resources/preload-test.jpg?7">
+</picture>
+
+<!-- Duplicate attributes -->
+<picture>
+    <source type="image/png" type="image/bad" srcset="resources/base-image1.png?8">
+    <img src="resources/preload-test.jpg?8">
+</picture>
+<picture>
+    <source type="image/bad" type="image/png" srcset="resources/base-image1.png?9">
+    <img src="resources/preload-test.jpg?9">
+</picture>
+<!-- Multiple sources -->
+<picture>
+    <source type="image/png" media="(min-width: 1px)" srcset="resources/base-image1.png?10">
+    <source type="image/png" media="(min-width: 1px)" srcset="resources/base-image2.png?10">
+    <img src="resources/preload-test.jpg?10">
+</picture>
+<picture>
+    <source type="image/bad" media="(min-width: 1px)" srcset="resources/base-image1.png?11">
+    <source type="image/png" media="(min-width: 1px)" srcset="resources/base-image2.png?11">
+    <img src="resources/preload-test.jpg?11">
+</picture>
+<picture>
+    <source type="image/png" media="(min-width: 1px)" srcset="resources/base-image1.png?12">
+    <source type="image/bad" media="(min-width: 1px)" srcset="resources/base-image2.png?12">
+    <img src="resources/preload-test.jpg?12">
+</picture>
+<picture>
+    <source type="image/bad" media="(min-width: 1px)" srcset="resources/base-image1.png?13">
+    <source type="image/invalid" media="(min-width: 1px)" srcset="resources/base-image2.png?13">
+    <img src="resources/preload-test.jpg?13">
+</picture>
+
+</body>
+</html>

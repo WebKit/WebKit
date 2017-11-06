@@ -1,3 +1,14 @@
+2017-11-06  Colin Bendell  <colin@bendell.ca>
+
+        Add tests to ensure that <source> tags are only preloaded when the `type`
+        attribute matches.
+        https://bugs.webkit.org/show_bug.cgi?id=179231
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/loading/preload-picture-type-expected.txt: Added.
+        * http/tests/loading/preload-picture-type.html: Added.
+
 2017-11-05  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Schedule animations registered on the document timeline

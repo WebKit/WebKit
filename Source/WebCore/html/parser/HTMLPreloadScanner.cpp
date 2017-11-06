@@ -36,6 +36,7 @@
 #include "LinkLoader.h"
 #include "LinkRelAttribute.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderView.h"
@@ -121,7 +122,7 @@ public:
             processAttribute(attributeName, attributeValue, document, pictureState);
         }
         
-        if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last() && m_mediaMatched && !m_srcSetAttribute.isEmpty()) {
+        if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last() && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {
             
             auto sourceSize = SizesAttributeParser(m_sizesAttribute, document).length();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
@@ -218,6 +219,11 @@ private:
                 auto documentElement = makeRefPtr(document.documentElement());
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
                 m_mediaMatched = MediaQueryEvaluator { document.printing() ? "print" : "screen", document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
+            }
+            if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
+                // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)
+                m_typeAttribute = attributeValue;
+                m_typeMatched &= MIMETypeRegistry::isSupportedImageOrSVGMIMEType(m_typeAttribute);
             }
             break;
         case TagId::Script:
@@ -341,6 +347,7 @@ private:
     String m_srcSetAttribute;
     String m_sizesAttribute;
     bool m_mediaMatched { true };
+    bool m_typeMatched { true };
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
