@@ -1,3 +1,12 @@
+2017-11-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Properly use SYSTEM_INCLUDE_DIRECTORIES for WebKit build target
+        https://bugs.webkit.org/show_bug.cgi?id=179097
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformWPE.cmake:
+
 2017-11-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JIT call inline caches should cache calls to objects with getCallData/getConstructData traps

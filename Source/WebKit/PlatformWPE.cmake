@@ -423,6 +423,9 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WTF_DIR}/wtf/gtk/"
     "${WTF_DIR}/wtf/gobject"
     "${WTF_DIR}"
+)
+
+list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     ${CAIRO_INCLUDE_DIRS}
     ${FREETYPE2_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
