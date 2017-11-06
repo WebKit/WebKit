@@ -1,3 +1,15 @@
+2017-11-06  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Add proper implementation for 'updatefound' event
+        https://bugs.webkit.org/show_bug.cgi?id=179302
+
+        Reviewed by Brady Eidson.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::fireUpdateFoundEvent):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2017-11-06  Christopher Reid  <chris.reid@sony.com>
 
         Use enum classes within FileSystem

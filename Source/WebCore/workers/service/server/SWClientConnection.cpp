@@ -147,6 +147,15 @@ void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistration
     }
 }
 
+void SWClientConnection::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+{
+    // FIXME: We should iterate over all service worker clients, not only documents.
+    for (auto& document : Document::allDocuments()) {
+        if (auto* container = document->serviceWorkerContainer())
+            container->fireUpdateFoundEvent(key);
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

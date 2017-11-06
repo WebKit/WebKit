@@ -83,6 +83,22 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
     }
 }
 
+void SWServerRegistration::fireUpdateFoundEvent(uint64_t connectionIdentifier)
+{
+    // No matter what, we send the event to the connection that scheduled the job. The client registration
+    // may not have gotten a chance to register itself yet.
+    if (auto* connection = m_server.getConnection(connectionIdentifier))
+        connection->fireUpdateFoundEvent(m_registrationKey);
+
+    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
+        if (connectionIdentifierWithClients == connectionIdentifier)
+            continue;
+
+        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
+            connection->fireUpdateFoundEvent(m_registrationKey);
+    }
+}
+
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
     return { m_registrationKey, identifier(), m_activeServiceWorkerIdentifier, m_scopeURL, m_scriptURL, m_updateViaCache };

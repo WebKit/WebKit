@@ -115,7 +115,20 @@ void SWServerJobQueue::scriptContextStarted(SWServer::Connection&, ServiceWorker
     ASSERT(registration);
     registration->setActiveServiceWorkerIdentifier(identifier);
 
-    m_server.resolveRegistrationJob(firstJob(), registration->data());
+    install(*registration);
+}
+
+// https://w3c.github.io/ServiceWorker/#install
+void SWServerJobQueue::install(SWServerRegistration& registration)
+{
+    // Invoke Resolve Job Promise with job and registration.
+    m_server.resolveRegistrationJob(firstJob(), registration.data());
+
+    // Queue a task to fire an event named updatefound at all the ServiceWorkerRegistration objects
+    // for all the service worker clients whose creation URL matches registration's scope url and
+    // all the service workers whose containing service worker registration is registration.
+    registration.fireUpdateFoundEvent(firstJob().connectionIdentifier());
+
     finishCurrentJob();
 }
 

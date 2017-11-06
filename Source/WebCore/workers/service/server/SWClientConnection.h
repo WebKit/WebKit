@@ -67,6 +67,7 @@ protected:
     WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier source, const String& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
+    WEBCORE_EXPORT void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

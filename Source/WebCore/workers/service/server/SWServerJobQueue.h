@@ -63,6 +63,7 @@ private:
 
     void tryClearRegistration(SWServerRegistration&);
     void clearRegistration(SWServerRegistration&);
+    void install(SWServerRegistration&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 

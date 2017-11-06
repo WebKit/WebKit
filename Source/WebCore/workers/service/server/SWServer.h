@@ -64,6 +64,7 @@ public:
 
         // Messages to the client WebProcess
         virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>) = 0;
+        virtual void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&) = 0;
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);

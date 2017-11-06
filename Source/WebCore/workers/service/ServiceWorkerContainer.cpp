@@ -263,22 +263,28 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
     jobDidFinish(job);
 }
 
-class FakeServiceWorkerInstallMicrotask final : public Microtask {
+class FireUpdateFoundEventMicrotask final : public Microtask {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FakeServiceWorkerInstallMicrotask(Ref<ServiceWorkerRegistration>&& registration)
-        : m_registration(WTFMove(registration))
+    explicit FireUpdateFoundEventMicrotask(Ref<ServiceWorkerContainer>&& container, Ref<ServiceWorkerRegistration>&& registration)
+        : m_container(WTFMove(container))
+        , m_registration(WTFMove(registration))
     {
     }
-
 private:
     Result run() final
     {
-        // FIXME: We currently resolve the promise at the end of the install instead of the beginning so we need to fake
-        // a few events to make it look like we are installing and activing the service worker.
-        callOnMainThread([registration = WTFMove(m_registration)] () mutable {
+        callOnMainThread([container = WTFMove(m_container), registration = WTFMove(m_registration)] () mutable {
+            if (container->isStopped())
+                return;
+
             registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
+
+            // FIXME: We currently fake a few events to make it look like we are installing and activating the service worker.
             callOnMainThread([registration = WTFMove(registration)] () mutable {
+                if (!registration->installing())
+                    return;
+
                 registration->setWaitingWorker(registration->installing());
                 registration->setInstallingWorker(nullptr);
                 registration->waiting()->setState(ServiceWorker::State::Installed);
@@ -295,8 +301,21 @@ private:
         return Result::Done;
     }
 
+    Ref<ServiceWorkerContainer> m_container;
     Ref<ServiceWorkerRegistration> m_registration;
 };
+
+void ServiceWorkerContainer::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+{
+    if (isStopped())
+        return;
+
+    auto* registration = m_registrations.get(key);
+    if (!registration)
+        return;
+
+    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FireUpdateFoundEventMicrotask>(*this, *registration));
+}
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data)
 {
@@ -326,9 +345,6 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     registration->setInstallingWorker(activeServiceWorker);
 
     job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(*registration);
-
-    // Use a microtask because we need to make sure this is executed after the promise above is resolved.
-    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FakeServiceWorkerInstallMicrotask>(registration.releaseNonNull()));
 }
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)

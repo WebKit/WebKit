@@ -101,6 +101,11 @@ void WebSWServerConnection::updateRegistrationStateInClient(const ServiceWorkerR
     send(Messages::WebSWClientConnection::UpdateRegistrationState(key, state, serviceWorkerIdentifier));
 }
 
+void WebSWServerConnection::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+{
+    send(Messages::WebSWClientConnection::FireUpdateFoundEvent(key));
+}
+
 void WebSWServerConnection::updateServiceWorkerContext(const ServiceWorkerContextData& data)
 {
     if (sendToContextProcess(Messages::WebSWContextManagerConnection::UpdateServiceWorker(identifier(), data)))

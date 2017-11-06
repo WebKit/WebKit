@@ -66,6 +66,7 @@ public:
 
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
     void updateRegistration(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
+    void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
 
     using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistrations(RegistrationsPromise&&);
@@ -77,6 +78,8 @@ public:
 
     void ref() final { refEventTarget(); }
     void deref() final { derefEventTarget(); }
+
+    bool isStopped() const { return m_isStopped; };
 
 private:
     void scheduleJob(Ref<ServiceWorkerJob>&&);
