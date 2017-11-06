@@ -2800,30 +2800,6 @@ size_t CodeBlock::predictedMachineCodeSize()
     return static_cast<size_t>(doubleResult);
 }
 
-bool CodeBlock::usesOpcode(OpcodeID opcodeID)
-{
-    Instruction* instructionsBegin = instructions().begin();
-    unsigned instructionCount = instructions().size();
-    
-    for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount; ) {
-        switch (Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset])) {
-#define DEFINE_OP(curOpcode, length)        \
-        case curOpcode:                     \
-            if (curOpcode == opcodeID)      \
-                return true;                \
-            bytecodeOffset += length;       \
-            break;
-            FOR_EACH_OPCODE_ID(DEFINE_OP)
-#undef DEFINE_OP
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-    
-    return false;
-}
-
 String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 {
     for (auto& constantRegister : m_constantRegisters) {

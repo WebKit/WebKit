@@ -316,8 +316,6 @@ public:
 
     size_t predictedMachineCodeSize();
 
-    bool usesOpcode(OpcodeID);
-
     unsigned instructionCount() const { return m_instructions.size(); }
 
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
