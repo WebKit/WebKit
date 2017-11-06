@@ -314,7 +314,7 @@ private:
     
     static FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize);
 
-    bool recursiveVisibleRectChangeRequiresFlush(const TransformState&) const;
+    bool recursiveVisibleRectChangeRequiresFlush(const CommitState&, const TransformState&) const;
     
     bool isPageTiledBackingLayer() const { return type() == Type::PageTiledBacking; }
 

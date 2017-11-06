@@ -412,6 +412,22 @@ void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
     scheduleLayerFlushNow();
 }
 
+FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
+{
+    const FrameView& frameView = m_renderView.frameView();
+#if PLATFORM(IOS)
+    return frameView.exposedContentRect();
+#else
+    // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
+    FloatRect visibleRect = m_clipLayer ? FloatRect({ }, frameView.sizeForVisibleContent()) : frameView.visibleContentRect();
+
+    if (frameView.viewExposedRect())
+        visibleRect.intersect(frameView.viewExposedRect().value());
+
+    return visibleRect;
+#endif
+}
+
 void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 {
     // FrameView::flushCompositingStateIncludingSubframes() flushes each subframe,
@@ -436,23 +452,9 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     m_flushingLayers = true;
 
     if (auto* rootLayer = rootGraphicsLayer()) {
-#if PLATFORM(IOS)
-        FloatRect exposedRect = frameView.exposedContentRect();
-        LOG_WITH_STREAM(Compositing, stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges (is root " << isFlushRoot << ") exposedRect " << exposedRect);
-
-        // FIXME: Use optimized flushes.
-        rootLayer->flushCompositingState(exposedRect);
-#else
-        // Having a m_clipLayer indicates that we're doing scrolling via GraphicsLayers.
-        FloatRect visibleRect = m_clipLayer ? FloatRect({ 0, 0 }, frameView.sizeForVisibleContent()) : frameView.visibleContentRect();
-
-        if (frameView.viewExposedRect())
-            visibleRect.intersect(frameView.viewExposedRect().value());
-
+        FloatRect visibleRect = visibleRectForLayerFlushing();
         LOG_WITH_STREAM(Compositing,  stream << "\nRenderLayerCompositor " << this << " flushPendingLayerChanges (is root " << isFlushRoot << ") visible rect " << visibleRect);
         rootLayer->flushCompositingState(visibleRect);
-        LOG_WITH_STREAM(Compositing,  stream << "RenderLayerCompositor " << this << " flush complete\n");
-#endif
     }
     
     ASSERT(m_flushingLayers);
@@ -559,16 +561,11 @@ void RenderLayerCompositor::didChangeVisibleRect()
     if (!rootLayer)
         return;
 
-    const FrameView& frameView = m_renderView.frameView();
-
-#if PLATFORM(IOS)
-    IntRect visibleRect = enclosingIntRect(frameView.exposedContentRect());
-#else
-    IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView.contentsSize()) : frameView.visibleContentRect();
-#endif
-    if (!rootLayer->visibleRectChangeRequiresFlush(visibleRect))
-        return;
-    scheduleLayerFlushNow();
+    FloatRect visibleRect = visibleRectForLayerFlushing();
+    bool requiresFlush = rootLayer->visibleRectChangeRequiresFlush(visibleRect);
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor::didChangeVisibleRect " << visibleRect << " requiresFlush " << requiresFlush);
+    if (requiresFlush)
+        scheduleLayerFlushNow();
 }
 
 void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)

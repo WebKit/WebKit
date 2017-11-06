@@ -407,6 +407,8 @@ private:
     bool isFlushingLayers() const { return m_flushingLayers; }
     void updateScrollCoordinatedLayersAfterFlushIncludingSubframes();
     void updateScrollCoordinatedLayersAfterFlush();
+
+    FloatRect visibleRectForLayerFlushing() const;
     
     Page& page() const;
     

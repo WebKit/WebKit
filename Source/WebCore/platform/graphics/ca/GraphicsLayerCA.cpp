@@ -1235,14 +1235,22 @@ static inline bool accumulatesTransform(const GraphicsLayerCA& layer)
     return !layer.masksToBounds() && (layer.preserves3D() || (layer.parent() && layer.parent()->preserves3D()));
 }
 
-bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformState& state) const
+bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState& commitState, const TransformState& state) const
 {
     TransformState localState = state;
-    
+    CommitState childCommitState = commitState;
+
     // This may be called at times when layout has not been updated, so we want to avoid calling out to the client
     // for animating transforms.
     VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulatesTransform(*this), 0);
     adjustCoverageRect(rects, m_visibleRect);
+
+    auto bounds = FloatRect(m_boundsOrigin, size());
+
+    bool isViewportConstrained = m_isViewportConstrained || commitState.ancestorIsViewportConstrained;
+    bool intersectsCoverageRect = isViewportConstrained || rects.coverageRect.intersects(bounds);
+    if (intersectsCoverageRect != m_intersectsCoverageRect)
+        return true;
 
     if (rects.coverageRect != m_coverageRect) {
         if (TiledBacking* tiledBacking = this->tiledBacking()) {
@@ -1251,9 +1259,11 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformSta
         }
     }
 
+    childCommitState.ancestorIsViewportConstrained |= m_isViewportConstrained;
+
     if (m_maskLayer) {
         GraphicsLayerCA& maskLayerCA = downcast<GraphicsLayerCA>(*m_maskLayer);
-        if (maskLayerCA.recursiveVisibleRectChangeRequiresFlush(localState))
+        if (maskLayerCA.recursiveVisibleRectChangeRequiresFlush(childCommitState, localState))
             return true;
     }
 
@@ -1262,12 +1272,12 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformSta
     
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA& currentChild = downcast<GraphicsLayerCA>(*childLayers[i]);
-        if (currentChild.recursiveVisibleRectChangeRequiresFlush(localState))
+        if (currentChild.recursiveVisibleRectChangeRequiresFlush(childCommitState, localState))
             return true;
     }
 
     if (m_replicaLayer)
-        if (downcast<GraphicsLayerCA>(*m_replicaLayer).recursiveVisibleRectChangeRequiresFlush(localState))
+        if (downcast<GraphicsLayerCA>(*m_replicaLayer).recursiveVisibleRectChangeRequiresFlush(childCommitState, localState))
             return true;
     
     return false;
@@ -1276,7 +1286,8 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformSta
 bool GraphicsLayerCA::visibleRectChangeRequiresFlush(const FloatRect& clipRect) const
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
-    return recursiveVisibleRectChangeRequiresFlush(state);
+    CommitState commitState;
+    return recursiveVisibleRectChangeRequiresFlush(commitState, state);
 }
 
 TiledBacking* GraphicsLayerCA::tiledBacking() const

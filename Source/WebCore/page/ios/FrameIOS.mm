@@ -47,6 +47,7 @@
 #import "HTMLObjectElement.h"
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
+#import "Logging.h"
 #import "MainFrame.h"
 #import "NodeRenderStyle.h"
 #import "NodeTraversal.h"
@@ -67,6 +68,7 @@
 #import "WAKWindow.h"
 #import <runtime/JSLock.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/text/TextStream.h>
 
 using namespace WebCore::HTMLNames;
 using namespace WTF::Unicode;
@@ -708,6 +710,8 @@ static bool anyFrameHasTiledLayers(Frame* rootFrame)
 
 void Frame::viewportOffsetChanged(ViewportOffsetChangeType changeType)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "Frame::viewportOffsetChanged - " << (changeType == IncrementalScrollOffset ? "incremental" : "completed"));
+
     if (changeType == IncrementalScrollOffset) {
         if (anyFrameHasTiledLayers(this)) {
             if (RenderView* root = contentRenderer())
@@ -731,6 +735,8 @@ bool Frame::containsTiledBackingLayers() const
 
 void Frame::overflowScrollPositionChangedForNode(const IntPoint& position, Node* node, bool isUserScroll)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "Frame::overflowScrollPositionChangedForNode " << node << " position " << position);
+
     RenderObject* renderer = node->renderer();
     if (!renderer || !renderer->hasLayer())
         return;
