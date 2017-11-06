@@ -3428,7 +3428,7 @@ void Editor::respondToChangedSelection(const VisibleSelection&, FrameSelection::
     m_editorUIUpdateTimerShouldCheckSpellingAndGrammar = options & FrameSelection::CloseTyping
         && !(options & FrameSelection::SpellCorrectionTriggered);
     m_editorUIUpdateTimerWasTriggeredByDictation = options & FrameSelection::DictationTriggered;
-    m_editorUIUpdateTimer.startOneShot(0_s);
+    scheduleEditorUIUpdate();
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
@@ -3601,6 +3601,10 @@ void Editor::editorUIUpdateTimerFired()
         m_alternativeTextController->respondToChangedSelection(oldSelection);
 
     m_oldSelectionForEditorUIUpdate = m_frame.selection().selection();
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    notifyClientOfAttachmentUpdates();
+#endif
 }
 
 static Node* findFirstMarkable(Node* node)
@@ -3733,7 +3737,47 @@ RefPtr<Range> Editor::rangeForTextCheckingResult(const TextCheckingResult& resul
     return TextIterator::subrange(*contextRange, result.location, result.length);
 }
 
+void Editor::scheduleEditorUIUpdate()
+{
+    m_editorUIUpdateTimer.startOneShot(0_s);
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
+
+void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
+{
+    auto identifier = attachment.uniqueIdentifier();
+    if (identifier.isEmpty())
+        return;
+
+    if (!m_removedAttachmentIdentifiers.take(identifier))
+        m_insertedAttachmentIdentifiers.add(identifier);
+    scheduleEditorUIUpdate();
+}
+
+void Editor::didRemoveAttachmentElement(HTMLAttachmentElement& attachment)
+{
+    auto identifier = attachment.uniqueIdentifier();
+    if (identifier.isEmpty())
+        return;
+
+    if (!m_insertedAttachmentIdentifiers.take(identifier))
+        m_removedAttachmentIdentifiers.add(identifier);
+    scheduleEditorUIUpdate();
+}
+
+void Editor::notifyClientOfAttachmentUpdates()
+{
+    if (auto* editorClient = client()) {
+        for (auto& identifier : m_removedAttachmentIdentifiers)
+            editorClient->didRemoveAttachment(identifier);
+        for (auto& identifier : m_insertedAttachmentIdentifiers)
+            editorClient->didInsertAttachment(identifier);
+    }
+
+    m_removedAttachmentIdentifiers.clear();
+    m_insertedAttachmentIdentifiers.clear();
+}
 
 void Editor::insertAttachment(const String& identifier, const String& filename, const String& filepath, std::optional<String> contentType)
 {
@@ -3751,7 +3795,7 @@ void Editor::insertAttachment(const String& identifier, const String& filename, 
 
 void Editor::insertAttachmentFromFile(const String& identifier, const String& filename, const String& contentType, Ref<File>&& file)
 {
-    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document(), identifier);
+    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
     attachment->setAttribute(HTMLNames::titleAttr, filename);
     attachment->setAttribute(HTMLNames::subtitleAttr, fileSizeDescription(file->size()));
     attachment->setAttribute(HTMLNames::typeAttr, contentType);

@@ -1,3 +1,33 @@
+2017-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement delegate hooks for attachment element insertion and removal
+        https://bugs.webkit.org/show_bug.cgi?id=179016
+        <rdar://problem/35250890>
+
+        Reviewed by Tim Horton.
+
+        Introduces new API tests to check that various editing operations will or won't result in the new attachment
+        insertion and removal delegate hooks being fired. Additionally refactors an existing test to verify that
+        attachments insertion and removal is observable by the UI delegate.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[AttachmentUpdateObserver init]):
+        (-[AttachmentUpdateObserver inserted]):
+        (-[AttachmentUpdateObserver removed]):
+        (-[AttachmentUpdateObserver _webView:didInsertAttachment:]):
+        (-[AttachmentUpdateObserver _webView:didRemoveAttachment:]):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::ObserveAttachmentUpdatesForScope):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::~ObserveAttachmentUpdatesForScope):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::expectAttachmentUpdates):
+
+        Implement a testing mechanism to temporarily bind a UI delegate to a given WKWebView and listen for inserted or
+        removed attachments over the course of a particular scope. The API tests use this mechanism to check that the UI
+        delegate hooks added in this patch are invoked with the right attachments when performing edit commands.
+
+        (-[TestWKWebView _synchronouslyExecuteEditCommand:argument:]):
+        (-[TestWKWebView expectUpdatesAfterCommand:withArgument:expectedRemovals:expectedInsertions:]):
+        (TestWebKitAPI::TEST):
+
 2017-11-06  Christopher Reid  <chris.reid@sony.com>
 
         Use enum classes within FileSystem

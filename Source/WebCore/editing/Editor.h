@@ -503,6 +503,8 @@ public:
 #if ENABLE(ATTACHMENT_ELEMENT)
     WEBCORE_EXPORT void insertAttachment(const String& identifier, const String& filename, const String& filepath, std::optional<String> contentType = std::nullopt);
     WEBCORE_EXPORT void insertAttachment(const String& identifier, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType = std::nullopt);
+    void didInsertAttachmentElement(HTMLAttachmentElement&);
+    void didRemoveAttachmentElement(HTMLAttachmentElement&);
 #endif
 
 private:
@@ -550,6 +552,12 @@ private:
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
 
+    void scheduleEditorUIUpdate();
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void notifyClientOfAttachmentUpdates();
+#endif
+
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
     Frame& m_frame;
@@ -568,6 +576,11 @@ private:
     bool m_areMarkedTextMatchesHighlighted { false };
     EditorParagraphSeparator m_defaultParagraphSeparator { EditorParagraphSeparatorIsDiv };
     bool m_overwriteModeEnabled { false };
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    HashSet<String> m_insertedAttachmentIdentifiers;
+    HashSet<String> m_removedAttachmentIdentifiers;
+#endif
 
     VisibleSelection m_oldSelectionForEditorUIUpdate;
     Timer m_editorUIUpdateTimer;

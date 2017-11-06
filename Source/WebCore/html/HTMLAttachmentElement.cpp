@@ -33,22 +33,15 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderAttachment.h"
-#include <wtf/UUID.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document, const String& identifier)
+HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , m_uniqueIdentifier(identifier)
 {
     ASSERT(hasTagName(attachmentTag));
-}
-
-HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document)
-    : HTMLAttachmentElement(tagName, document, createCanonicalUUIDString())
-{
 }
 
 HTMLAttachmentElement::~HTMLAttachmentElement() = default;
@@ -56,11 +49,6 @@ HTMLAttachmentElement::~HTMLAttachmentElement() = default;
 Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLAttachmentElement(tagName, document));
-}
-
-Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& tagName, Document& document, const String& identifier)
-{
-    return adoptRef(*new HTMLAttachmentElement(tagName, document, identifier));
 }
 
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -81,6 +69,25 @@ void HTMLAttachmentElement::setFile(File* file)
         renderer->invalidate();
 }
 
+Node::InsertedIntoAncestorResult HTMLAttachmentElement::insertedIntoAncestor(InsertionType type, ContainerNode& ancestor)
+{
+    auto result = HTMLElement::insertedIntoAncestor(type, ancestor);
+    if (auto* frame = document().frame()) {
+        if (type.connectedToDocument)
+            frame->editor().didInsertAttachmentElement(*this);
+    }
+    return result;
+}
+
+void HTMLAttachmentElement::removedFromAncestor(RemovalType type, ContainerNode& ancestor)
+{
+    HTMLElement::removedFromAncestor(type, ancestor);
+    if (auto* frame = document().frame()) {
+        if (type.disconnectedFromDocument)
+            frame->editor().didRemoveAttachmentElement(*this);
+    }
+}
+
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr) {
@@ -89,6 +96,16 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
     }
 
     HTMLElement::parseAttribute(name, value);
+}
+
+String HTMLAttachmentElement::uniqueIdentifier() const
+{
+    return attributeWithoutSynchronization(HTMLNames::webkitattachmentidAttr);
+}
+
+void HTMLAttachmentElement::setUniqueIdentifier(const String& identifier)
+{
+    setAttributeWithoutSynchronization(HTMLNames::webkitattachmentidAttr, identifier);
 }
 
 String HTMLAttachmentElement::attachmentTitle() const

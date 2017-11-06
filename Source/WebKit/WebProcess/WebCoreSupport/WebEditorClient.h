@@ -59,6 +59,11 @@ private:
     void didApplyStyle() final;
     bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*) final;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void didInsertAttachment(const String& identifier) final;
+    void didRemoveAttachment(const String& identifier) final;
+#endif
+
     void didBeginEditing() final;
     void respondToChangedContents() final;
     void respondToChangedSelection(WebCore::Frame*) final;

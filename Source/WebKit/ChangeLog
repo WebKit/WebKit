@@ -1,3 +1,38 @@
+2017-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement delegate hooks for attachment element insertion and removal
+        https://bugs.webkit.org/show_bug.cgi?id=179016
+        <rdar://problem/35250890>
+
+        Reviewed by Tim Horton.
+
+        Adds boilerplate plumbing to WebEditorClient, WebPage, and the usual machinery in the UI process to notify
+        WebKit2 clients when attachment elements have been inserted or removed from the document. See the WebCore
+        ChangeLog for more details about the implementation, or the Tools ChangeLog for more information about new API
+        tests.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didInsertAttachment:]):
+        (-[WKWebView _didRemoveAttachment:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::didInsertAttachment):
+        (WebKit::PageClientImplCocoa::didRemoveAttachment):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didInsertAttachment):
+        (WebKit::PageClient::didRemoveAttachment):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didInsertAttachment):
+        (WebKit::WebPageProxy::didRemoveAttachment):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didInsertAttachment):
+        (WebKit::WebEditorClient::didRemoveAttachment):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2017-11-06  Jeremy Jones  <jeremyj@apple.com>
 
         iOS element fullscreen should use a UIGestureRecognizer to detect user interaction.

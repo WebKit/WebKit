@@ -148,6 +148,11 @@ struct PrintInfo;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+- (void)_didRemoveAttachment:(NSString *)identifier;
+- (void)_didInsertAttachment:(NSString *)identifier;
+#endif
+
 - (WKPageRef)_pageForTesting;
 - (WebKit::WebPageProxy*)_page;
 
