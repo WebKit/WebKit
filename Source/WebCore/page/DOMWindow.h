@@ -137,6 +137,7 @@ public:
     BarProp* statusbar() const;
     BarProp* toolbar() const;
     Navigator* navigator() const;
+    Navigator* optionalNavigator() const { return m_navigator.get(); }
     Navigator* clientInformation() const { return navigator(); }
 
     Location* location() const;

@@ -545,9 +545,9 @@ ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
     NavigatorBase* navigator = nullptr;
     if (is<Document>(*this)) {
         if (auto* window = downcast<Document>(*this).domWindow())
-            navigator = window->navigator();
+            navigator = window->optionalNavigator();
     } else
-        navigator = &downcast<WorkerGlobalScope>(*this).navigator();
+        navigator = downcast<WorkerGlobalScope>(*this).optionalNavigator();
 
     return navigator ? navigator->serviceWorker() : nullptr;
 }
