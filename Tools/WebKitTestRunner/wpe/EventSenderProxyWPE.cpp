@@ -289,7 +289,7 @@ void EventSenderProxy::addTouchPoint(int x, int y)
 
 void EventSenderProxy::updateTouchPoint(int index, int x, int y)
 {
-    ASSERT(index >= 0 && index <= m_touchEvents.size());
+    ASSERT(index >= 0 && static_cast<size_t>(index) <= m_touchEvents.size());
 
     auto& rawEvent = m_touchEvents[index];
     rawEvent.x = x;
@@ -364,7 +364,7 @@ void EventSenderProxy::clearTouchPoints()
 
 void EventSenderProxy::releaseTouchPoint(int index)
 {
-    ASSERT(index >= 0 && index <= m_touchEvents.size());
+    ASSERT(index >= 0 && static_cast<size_t>(index) <= m_touchEvents.size());
 
     auto& rawEvent = m_touchEvents[index];
     rawEvent.time = m_time;

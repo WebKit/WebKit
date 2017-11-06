@@ -1,3 +1,14 @@
+2017-11-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] -Wsign-compare warning in EventSenderProxyWPE.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=179039
+
+        Reviewed by Žan Doberšek.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+
 2017-11-06  Robin Morisset  <rmorisset@apple.com>
 
         Add a third benchmark to TailBench
