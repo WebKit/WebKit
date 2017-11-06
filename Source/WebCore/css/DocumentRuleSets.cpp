@@ -46,6 +46,39 @@ DocumentRuleSets::DocumentRuleSets(StyleResolver& styleResolver)
 
 DocumentRuleSets::~DocumentRuleSets() = default;
 
+RuleSet* DocumentRuleSets::userAgentMediaQueryStyle() const
+{
+    // FIXME: We should have a separate types for document rule sets and shadow tree rule sets.
+    if (m_isForShadowScope)
+        return m_styleResolver.document().styleScope().resolver().ruleSets().userAgentMediaQueryStyle();
+
+    updateUserAgentMediaQueryStyleIfNeeded();
+    return m_userAgentMediaQueryStyle.get();
+}
+
+void DocumentRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
+{
+    if (!CSSDefaultStyleSheets::mediaQueryStyleSheet)
+        return;
+
+    auto ruleCount = CSSDefaultStyleSheets::mediaQueryStyleSheet->ruleCount();
+    if (m_userAgentMediaQueryStyle && ruleCount == m_userAgentMediaQueryRuleCountOnUpdate)
+        return;
+    m_userAgentMediaQueryRuleCountOnUpdate = ruleCount;
+
+#if !ASSERT_DISABLED
+    bool hadViewportDependentMediaQueries = m_styleResolver.hasViewportDependentMediaQueries();
+#endif
+
+    // Media queries on user agent sheet need to evaluated in document context. They behave like author sheets in this respect.
+    auto& mediaQueryEvaluator = m_styleResolver.mediaQueryEvaluator();
+    m_userAgentMediaQueryStyle = std::make_unique<RuleSet>();
+    m_userAgentMediaQueryStyle->addRulesFromSheet(*CSSDefaultStyleSheets::mediaQueryStyleSheet, mediaQueryEvaluator, &m_styleResolver);
+
+    // Viewport dependent queries are currently too inefficient to allow on UA sheet.
+    ASSERT(!m_styleResolver.hasViewportDependentMediaQueries() || hadViewportDependentMediaQueries);
+}
+
 RuleSet* DocumentRuleSets::userStyle() const
 {
     if (m_usesSharedUserStyle)
@@ -93,6 +126,11 @@ void DocumentRuleSets::resetAuthorStyle()
     m_authorStyle->disableAutoShrinkToFit();
 }
 
+void DocumentRuleSets::resetUserAgentMediaQueryStyle()
+{
+    m_userAgentMediaQueryStyle = nullptr;
+}
+
 void DocumentRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers, StyleResolver* resolver)
 {
     // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
@@ -117,6 +155,9 @@ void DocumentRuleSets::collectFeatures() const
     if (CSSDefaultStyleSheets::defaultStyle)
         m_features.add(CSSDefaultStyleSheets::defaultStyle->features());
     m_defaultStyleVersionOnFeatureCollection = CSSDefaultStyleSheets::defaultStyleVersion;
+
+    if (auto* userAgentMediaQueryStyle = this->userAgentMediaQueryStyle())
+        m_features.add(userAgentMediaQueryStyle->features());
 
     if (m_authorStyle)
         m_features.add(m_authorStyle->features());

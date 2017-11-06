@@ -45,10 +45,15 @@ public:
     static StyleSheetContents* plugInsStyleSheet;
     static StyleSheetContents* imageControlsStyleSheet;
 
+    static StyleSheetContents* mediaQueryStyleSheet;
+
+    static void initDefaultStyle(const Element*);
     static void ensureDefaultStyleSheetsForElement(const Element&);
+
+private:
     static void loadFullDefaultStyle();
     static void loadSimpleDefaultStyle();
-    static void initDefaultStyle(const Element*);
+    static void addToDefaultStyle(StyleSheetContents&);
 };
 
 } // namespace WebCore

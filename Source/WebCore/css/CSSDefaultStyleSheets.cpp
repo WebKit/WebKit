@@ -69,6 +69,7 @@ StyleSheetContents* CSSDefaultStyleSheets::mediaControlsStyleSheet;
 StyleSheetContents* CSSDefaultStyleSheets::fullscreenStyleSheet;
 StyleSheetContents* CSSDefaultStyleSheets::plugInsStyleSheet;
 StyleSheetContents* CSSDefaultStyleSheets::imageControlsStyleSheet;
+StyleSheetContents* CSSDefaultStyleSheets::mediaQueryStyleSheet;
 
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto 5px -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
@@ -115,6 +116,30 @@ void CSSDefaultStyleSheets::initDefaultStyle(const Element* root)
     }
 }
 
+void CSSDefaultStyleSheets::addToDefaultStyle(StyleSheetContents& sheet)
+{
+    defaultStyle->addRulesFromSheet(sheet, screenEval());
+    defaultPrintStyle->addRulesFromSheet(sheet, printEval());
+
+    // Build a stylesheet consisting of non-trivial media queries seen in default style.
+    // Rulesets for these can't be global and need to be built in document context.
+    for (auto& rule : sheet.childRules()) {
+        if (!is<StyleRuleMedia>(*rule))
+            continue;
+        auto& mediaRule = downcast<StyleRuleMedia>(*rule);
+        auto* mediaQuery = mediaRule.mediaQueries();
+        if (!mediaQuery)
+            continue;
+        if (screenEval().evaluate(*mediaQuery, nullptr))
+            continue;
+        if (printEval().evaluate(*mediaQuery, nullptr))
+            continue;
+        mediaQueryStyleSheet->parserAppendRule(mediaRule.copy());
+    }
+
+    ++defaultStyleVersion;
+}
+
 void CSSDefaultStyleSheets::loadFullDefaultStyle()
 {
     if (simpleDefaultStyleSheet) {
@@ -122,21 +147,20 @@ void CSSDefaultStyleSheets::loadFullDefaultStyle()
         ASSERT(defaultPrintStyle == defaultStyle);
         delete defaultStyle;
         simpleDefaultStyleSheet->deref();
-        defaultStyle = std::make_unique<RuleSet>().release();
-        defaultPrintStyle = std::make_unique<RuleSet>().release();
-        simpleDefaultStyleSheet = 0;
+        simpleDefaultStyleSheet = nullptr;
     } else {
         ASSERT(!defaultStyle);
-        defaultStyle = std::make_unique<RuleSet>().release();
-        defaultPrintStyle = std::make_unique<RuleSet>().release();
         defaultQuirksStyle = std::make_unique<RuleSet>().release();
     }
+
+    defaultStyle = std::make_unique<RuleSet>().release();
+    defaultPrintStyle = std::make_unique<RuleSet>().release();
+    mediaQueryStyleSheet = &StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef();
 
     // Strict-mode rules.
     String defaultRules = String(htmlUserAgentStyleSheet, sizeof(htmlUserAgentStyleSheet)) + RenderTheme::singleton().extraDefaultStyleSheet();
     defaultStyleSheet = parseUASheet(defaultRules);
-    defaultStyle->addRulesFromSheet(*defaultStyleSheet, screenEval());
-    defaultPrintStyle->addRulesFromSheet(*defaultStyleSheet, printEval());
+    addToDefaultStyle(*defaultStyleSheet);
 
     // Quirks-mode rules.
     String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + RenderTheme::singleton().extraQuirksStyleSheet();
@@ -174,8 +198,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
                 if (plugInsRules.isEmpty())
                     plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
                 plugInsStyleSheet = parseUASheet(plugInsRules);
-                defaultStyle->addRulesFromSheet(*plugInsStyleSheet, screenEval());
-                ++defaultStyleVersion;
+                addToDefaultStyle(*plugInsStyleSheet);
             }
         }
 #if ENABLE(VIDEO)
@@ -185,9 +208,8 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
                 if (mediaRules.isEmpty())
                     mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::singleton().extraMediaControlsStyleSheet();
                 mediaControlsStyleSheet = parseUASheet(mediaRules);
-                defaultStyle->addRulesFromSheet(*mediaControlsStyleSheet, screenEval());
-                defaultPrintStyle->addRulesFromSheet(*mediaControlsStyleSheet, printEval());
-                ++defaultStyleVersion;
+                addToDefaultStyle(*mediaControlsStyleSheet);
+
             }
         }
 #endif // ENABLE(VIDEO)
@@ -196,9 +218,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
             if (!imageControlsStyleSheet) {
                 String imageControlsRules = RenderTheme::singleton().imageControlsStyleSheet();
                 imageControlsStyleSheet = parseUASheet(imageControlsRules);
-                defaultStyle->addRulesFromSheet(*imageControlsStyleSheet, screenEval());
-                defaultPrintStyle->addRulesFromSheet(*imageControlsStyleSheet, printEval());
-                ++defaultStyleVersion;
+                addToDefaultStyle(*imageControlsStyleSheet);
             }
         }
 #endif // ENABLE(SERVICE_CONTROLS)
@@ -206,9 +226,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
         if (!svgStyleSheet) {
             // SVG rules.
             svgStyleSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
-            defaultStyle->addRulesFromSheet(*svgStyleSheet, screenEval());
-            defaultPrintStyle->addRulesFromSheet(*svgStyleSheet, printEval());
-            ++defaultStyleVersion;
+            addToDefaultStyle(*svgStyleSheet);
         }
     }
 #if ENABLE(MATHML)
@@ -216,9 +234,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
         if (!mathMLStyleSheet) {
             // MathML rules.
             mathMLStyleSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
-            defaultStyle->addRulesFromSheet(*mathMLStyleSheet, screenEval());
-            defaultPrintStyle->addRulesFromSheet(*mathMLStyleSheet, printEval());
-            ++defaultStyleVersion;
+            addToDefaultStyle(*mathMLStyleSheet);
         }
     }
 #endif // ENABLE(MATHML)
@@ -227,9 +243,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
     if (!fullscreenStyleSheet && element.document().webkitIsFullScreen()) {
         String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::singleton().extraFullScreenStyleSheet();
         fullscreenStyleSheet = parseUASheet(fullscreenRules);
-        defaultStyle->addRulesFromSheet(*fullscreenStyleSheet, screenEval());
-        defaultQuirksStyle->addRulesFromSheet(*fullscreenStyleSheet, screenEval());
-        ++defaultStyleVersion;
+        addToDefaultStyle(*fullscreenStyleSheet);
     }
 #endif // ENABLE(FULLSCREEN_API)
 

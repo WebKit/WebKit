@@ -102,8 +102,10 @@ StyleResolver& Scope::resolver()
         if (!m_shadowRoot) {
             m_document.fontSelector().buildStarted();
             m_resolver->ruleSets().initializeUserStyle();
-        } else
+        } else {
+            m_resolver->ruleSets().setIsForShadowScope();
             m_resolver->ruleSets().setUsesSharedUserStyle(m_shadowRoot->mode() != ShadowRootMode::UserAgent);
+        }
 
         m_resolver->addCurrentSVGFontFaceRules();
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);

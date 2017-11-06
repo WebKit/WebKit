@@ -72,7 +72,7 @@ public:
 private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
-    void matchUARules(RuleSet*);
+    void matchUARules(const RuleSet&);
     void matchAuthorShadowPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
     void matchHostPseudoClassRules(bool includeEmptyRules, StyleResolver::RuleRange&);
     void matchSlottedPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
@@ -92,6 +92,7 @@ private:
     const Element& m_element;
     const RuleSet& m_authorStyle;
     const RuleSet* m_userStyle { nullptr };
+    const RuleSet* m_userAgentMediaQueryStyle { nullptr };
     const SelectorFilter* m_selectorFilter { nullptr };
 
     bool m_isPrintStyle { false };

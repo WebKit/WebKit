@@ -111,6 +111,7 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
         collectFromStyleSheetContents(CSSDefaultStyleSheets::mediaControlsStyleSheet);
         collectFromStyleSheetContents(CSSDefaultStyleSheets::fullscreenStyleSheet);
         collectFromStyleSheetContents(CSSDefaultStyleSheets::plugInsStyleSheet);
+        collectFromStyleSheetContents(CSSDefaultStyleSheets::mediaQueryStyleSheet);
 
         collect(extensionStyleSheets.pageUserSheet());
         collectFromStyleSheets(extensionStyleSheets.injectedUserStyleSheets());

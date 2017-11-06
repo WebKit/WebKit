@@ -83,6 +83,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const Documen
     : m_element(element)
     , m_authorStyle(ruleSets.authorStyle())
     , m_userStyle(ruleSets.userStyle())
+    , m_userAgentMediaQueryStyle(ruleSets.userAgentMediaQueryStyle())
     , m_selectorFilter(selectorFilter)
 {
     ASSERT(!m_selectorFilter || m_selectorFilter->parentStackIsConsistent(element.parentNode()));
@@ -320,20 +321,23 @@ void ElementRuleCollector::matchUARules()
         m_result.isCacheable = false;
     RuleSet* userAgentStyleSheet = m_isPrintStyle
         ? CSSDefaultStyleSheets::defaultPrintStyle : CSSDefaultStyleSheets::defaultStyle;
-    matchUARules(userAgentStyleSheet);
+    matchUARules(*userAgentStyleSheet);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
     if (m_element.document().inQuirksMode())
-        matchUARules(CSSDefaultStyleSheets::defaultQuirksStyle);
+        matchUARules(*CSSDefaultStyleSheets::defaultQuirksStyle);
+
+    if (m_userAgentMediaQueryStyle)
+        matchUARules(*m_userAgentMediaQueryStyle);
 }
 
-void ElementRuleCollector::matchUARules(RuleSet* rules)
+void ElementRuleCollector::matchUARules(const RuleSet& rules)
 {
     clearMatchedRules();
     
     m_result.ranges.lastUARule = m_result.matchedProperties().size() - 1;
     StyleResolver::RuleRange ruleRange = m_result.ranges.UARuleRange();
-    collectMatchingRules(MatchRequest(rules), ruleRange);
+    collectMatchingRules(MatchRequest(&rules), ruleRange);
 
     sortAndTransferMatchedRules();
 }
