@@ -71,6 +71,20 @@ MacroAssemblerCodePtr JITThunks::ctiNativeTailCallWithoutSavedTags(VM* vm)
     return ctiStub(vm, nativeTailCallWithoutSavedTagsGenerator).code();
 }
 
+MacroAssemblerCodePtr JITThunks::ctiInternalFunctionCall(VM* vm)
+{
+    if (!vm->canUseJIT())
+        return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_call_trampoline);
+    return ctiStub(vm, internalFunctionCallGenerator).code();
+}
+
+MacroAssemblerCodePtr JITThunks::ctiInternalFunctionConstruct(VM* vm)
+{
+    if (!vm->canUseJIT())
+        return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_construct_trampoline);
+    return ctiStub(vm, internalFunctionConstructGenerator).code();
+}
+
 MacroAssemblerCodeRef JITThunks::ctiStub(VM* vm, ThunkGenerator generator)
 {
     LockHolder locker(m_lock);

@@ -45,12 +45,10 @@ public:
 
 protected:
     JSPromiseConstructor(VM&, Structure*);
+    JSPromiseConstructor(VM&, Structure*, NativeFunction, NativeFunction);
     void finishCreation(VM&, JSPromisePrototype*, GetterSetter*);
 
 private:
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
-
     void addOwnInternalSlots(VM&, JSGlobalObject*);
 };
 

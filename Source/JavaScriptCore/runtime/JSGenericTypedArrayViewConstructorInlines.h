@@ -38,8 +38,14 @@
 namespace JSC {
 
 template<typename ViewClass>
+static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(ExecState*);
+
+template<typename ViewClass>
+EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState*);
+
+template<typename ViewClass>
 JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, callGenericTypedArrayView<ViewClass>, constructGenericTypedArrayView<ViewClass>)
 {
 }
 
@@ -73,7 +79,7 @@ Structure* JSGenericTypedArrayViewConstructor<ViewClass>::createStructure(
     VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(
-        vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 template<typename ViewClass>
@@ -199,9 +205,6 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 }
 
 template<typename ViewClass>
-EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState*);
-
-template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -249,25 +252,11 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
 }
 
 template<typename ViewClass>
-ConstructType JSGenericTypedArrayViewConstructor<ViewClass>::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructGenericTypedArrayView<ViewClass>;
-    return ConstructType::Host;
-}
-
-template<typename ViewClass>
 static EncodedJSValue JSC_HOST_CALL callGenericTypedArrayView(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, ViewClass::info()->className));
-}
-
-template<typename ViewClass>
-CallType JSGenericTypedArrayViewConstructor<ViewClass>::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callGenericTypedArrayView<ViewClass>;
-    return CallType::Host;
 }
 
 } // namespace JSC

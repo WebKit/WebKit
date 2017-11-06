@@ -44,7 +44,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSCallbackFunction);
 const ClassInfo JSCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackFunction) };
 
 JSCallbackFunction::JSCallbackFunction(VM& vm, Structure* structure, JSObjectCallAsFunctionCallback callback)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, APICallbackFunction::call<JSCallbackFunction>, nullptr)
     , m_callback(callback)
 {
 }
@@ -61,12 +61,6 @@ JSCallbackFunction* JSCallbackFunction::create(VM& vm, JSGlobalObject* globalObj
     JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(vm.heap)) JSCallbackFunction(vm, structure, callback);
     function->finishCreation(vm, name);
     return function;
-}
-
-CallType JSCallbackFunction::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = APICallbackFunction::call<JSCallbackFunction>;
-    return CallType::Host;
 }
 
 } // namespace JSC

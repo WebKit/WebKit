@@ -692,7 +692,7 @@ static JSCell* webAssemblyOwner(JSCell* callee)
 
 void linkFor(
     ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
-    JSFunction* callee, MacroAssemblerCodePtr codePtr)
+    JSObject* callee, MacroAssemblerCodePtr codePtr)
 {
     ASSERT(!callLinkInfo.stub());
 
@@ -815,9 +815,7 @@ void linkPolymorphicCall(
 {
     RELEASE_ASSERT(callLinkInfo.allowStubs());
     
-    // Currently we can't do anything for non-function callees.
-    // https://bugs.webkit.org/show_bug.cgi?id=140685
-    if (!newVariant || !newVariant.executable()) {
+    if (!newVariant) {
         linkVirtualFor(exec, callLinkInfo);
         return;
     }
@@ -839,7 +837,7 @@ void linkPolymorphicCall(
     CallVariantList list;
     if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub())
         list = stub->variants();
-    else if (JSFunction* oldCallee = callLinkInfo.callee())
+    else if (JSObject* oldCallee = callLinkInfo.callee())
         list = CallVariantList{ CallVariant(oldCallee) };
     
     list = variantListWithVariant(list, newVariant);
@@ -863,10 +861,8 @@ void linkPolymorphicCall(
     
     // Figure out what our cases are.
     for (CallVariant variant : list) {
-        CodeBlock* codeBlock;
-        if (variant.executable()->isHostFunction())
-            codeBlock = nullptr;
-        else {
+        CodeBlock* codeBlock = nullptr;
+        if (variant.executable() && !variant.executable()->isHostFunction()) {
             ExecutableBase* executable = variant.executable();
             codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
             // If we cannot handle a callee, either because we don't have a CodeBlock or because arity mismatch,
@@ -926,7 +922,8 @@ void linkPolymorphicCall(
 #else
         // We would have already checked that the callee is a cell.
 #endif
-    
+
+        // FIXME: We could add a fast path for InternalFunction with closure call.
         slowPath.append(
             stubJit.branch8(
                 CCallHelpers::NotEqual,
@@ -953,11 +950,19 @@ void linkPolymorphicCall(
             fastCounts[i] = 0;
         
         CallVariant variant = callCases[i].variant();
-        int64_t newCaseValue;
-        if (isClosureCall)
+        int64_t newCaseValue = 0;
+        if (isClosureCall) {
             newCaseValue = bitwise_cast<intptr_t>(variant.executable());
-        else
-            newCaseValue = bitwise_cast<intptr_t>(variant.function());
+            // FIXME: We could add a fast path for InternalFunction with closure call.
+            // https://bugs.webkit.org/show_bug.cgi?id=179311
+            if (!newCaseValue)
+                continue;
+        } else {
+            if (auto* function = variant.function())
+                newCaseValue = bitwise_cast<intptr_t>(function);
+            else
+                newCaseValue = bitwise_cast<intptr_t>(variant.internalFunction());
+        }
         
         if (!ASSERT_DISABLED) {
             for (size_t j = 0; j < i; ++j) {
@@ -996,9 +1001,14 @@ void linkPolymorphicCall(
         
         CallVariant variant = callCases[caseIndex].variant();
         
-        ASSERT(variant.executable()->hasJITCodeForCall());
-        MacroAssemblerCodePtr codePtr =
-            variant.executable()->generatedJITCodeForCall()->addressForCall(ArityCheckNotRequired);
+        MacroAssemblerCodePtr codePtr;
+        if (variant.executable()) {
+            ASSERT(variant.executable()->hasJITCodeForCall());
+            codePtr = variant.executable()->generatedJITCodeForCall()->addressForCall(ArityCheckNotRequired);
+        } else {
+            ASSERT(variant.internalFunction());
+            codePtr = vm.getCTIInternalFunctionTrampolineFor(CodeForCall);
+        }
         
         if (fastCounts) {
             stubJit.add32(

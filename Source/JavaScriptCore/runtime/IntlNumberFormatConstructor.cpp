@@ -66,11 +66,14 @@ IntlNumberFormatConstructor* IntlNumberFormatConstructor::create(VM& vm, Structu
 
 Structure* IntlNumberFormatConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
+static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState*);
+
 IntlNumberFormatConstructor::IntlNumberFormatConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callIntlNumberFormat, constructIntlNumberFormat)
 {
 }
 
@@ -121,18 +124,6 @@ static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState* state)
         numberFormat->initializeNumberFormat(*state, state->argument(0), state->argument(1));
         return numberFormat;
     }));
-}
-
-ConstructType IntlNumberFormatConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructIntlNumberFormat;
-    return ConstructType::Host;
-}
-
-CallType IntlNumberFormatConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callIntlNumberFormat;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(ExecState* state)

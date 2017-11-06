@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "CodeSpecializationKind.h"
 #include "JSDestructibleObject.h"
 
 namespace JSC {
@@ -30,6 +31,8 @@ namespace JSC {
 class FunctionPrototype;
 
 class InternalFunction : public JSDestructibleObject {
+    friend class JIT;
+    friend class LLIntOffsetsExtractor;
 public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance | TypeOfShouldCallGetCallData;
@@ -44,20 +47,40 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     { 
-        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
+        return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
     static Structure* createSubclassStructure(ExecState*, JSValue newTarget, Structure*);
 
+    NativeFunction nativeFunctionFor(CodeSpecializationKind kind)
+    {
+        if (kind == CodeForCall)
+            return m_functionForCall;
+        ASSERT(kind == CodeForConstruct);
+        return m_functionForConstruct;
+    }
+
+    static ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
+    {
+        if (kind == CodeForCall)
+            return OBJECT_OFFSETOF(InternalFunction, m_functionForCall);
+        ASSERT(kind == CodeForConstruct);
+        return OBJECT_OFFSETOF(InternalFunction, m_functionForConstruct);
+    }
+
 protected:
-    JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*);
+    JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct);
 
     enum class NameVisibility { Visible, Anonymous };
     JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name, NameVisibility = NameVisibility::Visible);
 
     JS_EXPORT_PRIVATE static Structure* createSubclassStructureSlow(ExecState*, JSValue newTarget, Structure*);
 
-    static CallType getCallData(JSCell*, CallData&);
+    JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
+    JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
+
+    NativeFunction m_functionForCall;
+    NativeFunction m_functionForConstruct;
     WriteBarrier<JSString> m_originalName;
 };
 

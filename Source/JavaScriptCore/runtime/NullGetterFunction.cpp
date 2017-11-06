@@ -40,15 +40,9 @@ static EncodedJSValue JSC_HOST_CALL callReturnUndefined(ExecState*)
 }
 }
 
-CallType NullGetterFunction::getCallData(JSCell*, CallData& callData)
+NullGetterFunction::NullGetterFunction(VM& vm, Structure* structure)
+    : Base(vm, structure, NullGetterFunctionInternal::callReturnUndefined, nullptr)
 {
-    callData.native.function = NullGetterFunctionInternal::callReturnUndefined;
-    return CallType::Host;
-}
-
-ConstructType NullGetterFunction::getConstructData(JSCell*, ConstructData&)
-{
-    return ConstructType::None;
 }
 
 }

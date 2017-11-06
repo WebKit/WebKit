@@ -578,16 +578,19 @@ void BytecodeDumper<Block>::printCallOp(PrintStream& out, int location, const ty
     if (cacheDumpMode == DumpCaches) {
         LLIntCallLinkInfo* callLinkInfo = getCallLinkInfo(it[1]);
         if (callLinkInfo->lastSeenCallee) {
-            out.printf(
-                " llint(%p, exec %p)",
-                callLinkInfo->lastSeenCallee.get(),
-                callLinkInfo->lastSeenCallee->executable());
+            JSObject* object = callLinkInfo->lastSeenCallee.get();
+            if (auto* function = jsDynamicCast<JSFunction*>(*vm(), object))
+                out.printf(" llint(%p, exec %p)", function, function->executable());
+            else
+                out.printf(" llint(%p)", object);
         }
 #if ENABLE(JIT)
         if (CallLinkInfo* info = map.get(CodeOrigin(location))) {
-            JSFunction* target = info->lastSeenCallee();
-            if (target)
-                out.printf(" jit(%p, exec %p)", target, target->executable());
+            JSObject* object = info->lastSeenCallee();
+            if (auto* function = jsDynamicCast<JSFunction*>(*vm(), object))
+                out.printf(" jit(%p, exec %p)", function, function->executable());
+            else
+                out.printf(" jit(%p)", object);
         }
 
         dumpCallLinkStatus(out, location, map);

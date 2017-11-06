@@ -34,18 +34,24 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(InternalFunction);
 
 const ClassInfo InternalFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(InternalFunction) };
 
-InternalFunction::InternalFunction(VM& vm, Structure* structure)
+InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction functionForCall, NativeFunction functionForConstruct)
     : JSDestructibleObject(vm, structure)
+    , m_functionForCall(functionForCall)
+    , m_functionForConstruct(functionForConstruct ? functionForConstruct : callHostFunctionAsConstructor)
 {
     // exec->vm() wants callees to not be large allocations.
     RELEASE_ASSERT(!isLargeAllocation());
+    ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
+    ASSERT(m_functionForConstruct);
 }
 
 void InternalFunction::finishCreation(VM& vm, const String& name, NameVisibility nameVisibility)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    ASSERT(methodTable(vm)->getCallData != InternalFunction::info()->methodTable.getCallData);
+    ASSERT(methodTable(vm)->getCallData == InternalFunction::info()->methodTable.getCallData);
+    ASSERT(methodTable(vm)->getConstructData == InternalFunction::info()->methodTable.getConstructData);
+    ASSERT(type() == InternalFunctionType);
     JSString* nameString = jsString(&vm, name);
     m_originalName.set(vm, this, nameString);
     if (nameVisibility == NameVisibility::Visible)
@@ -78,10 +84,21 @@ const String InternalFunction::displayName(VM& vm)
     return String();
 }
 
-CallType InternalFunction::getCallData(JSCell*, CallData&)
+CallType InternalFunction::getCallData(JSCell* cell, CallData& callData)
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return CallType::None;
+    auto* function = jsCast<InternalFunction*>(cell);
+    ASSERT(function->m_functionForCall);
+    callData.native.function = function->m_functionForCall;
+    return CallType::Host;
+}
+
+ConstructType InternalFunction::getConstructData(JSCell* cell, ConstructData& constructData)
+{
+    auto* function = jsCast<InternalFunction*>(cell);
+    if (function->m_functionForConstruct == callHostFunctionAsConstructor)
+        return ConstructType::None;
+    constructData.native.function = function->m_functionForConstruct;
+    return ConstructType::Host;
 }
 
 const String InternalFunction::calculatedDisplayName(VM& vm)

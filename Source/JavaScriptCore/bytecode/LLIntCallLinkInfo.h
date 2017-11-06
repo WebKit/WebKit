@@ -54,8 +54,8 @@ struct LLIntCallLinkInfo : public BasicRawSentinelNode<LLIntCallLinkInfo> {
             remove();
     }
     
-    WriteBarrier<JSFunction> callee;
-    WriteBarrier<JSFunction> lastSeenCallee;
+    WriteBarrier<JSObject> callee;
+    WriteBarrier<JSObject> lastSeenCallee;
     MacroAssemblerCodePtr machineCodeTarget;
 };
 

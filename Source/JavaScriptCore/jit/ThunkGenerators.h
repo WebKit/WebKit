@@ -46,6 +46,8 @@ MacroAssemblerCodeRef nativeCallGenerator(VM*);
 MacroAssemblerCodeRef nativeConstructGenerator(VM*);
 MacroAssemblerCodeRef nativeTailCallGenerator(VM*);
 MacroAssemblerCodeRef nativeTailCallWithoutSavedTagsGenerator(VM*);
+MacroAssemblerCodeRef internalFunctionCallGenerator(VM*);
+MacroAssemblerCodeRef internalFunctionConstructGenerator(VM*);
 MacroAssemblerCodeRef arityFixupGenerator(VM*);
 MacroAssemblerCodeRef unreachableGenerator(VM*);
 

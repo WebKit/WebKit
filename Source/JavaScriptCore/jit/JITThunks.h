@@ -55,6 +55,8 @@ public:
     MacroAssemblerCodePtr ctiNativeConstruct(VM*);
     MacroAssemblerCodePtr ctiNativeTailCall(VM*);    
     MacroAssemblerCodePtr ctiNativeTailCallWithoutSavedTags(VM*);    
+    MacroAssemblerCodePtr ctiInternalFunctionCall(VM*);
+    MacroAssemblerCodePtr ctiInternalFunctionConstruct(VM*);
 
     MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
     MacroAssemblerCodeRef existingCTIStub(ThunkGenerator);

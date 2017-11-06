@@ -68,8 +68,11 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DateConstructor);
 
+static EncodedJSValue JSC_HOST_CALL callDate(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState*);
+
 DateConstructor::DateConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callDate, constructWithDateConstructor)
 {
 }
 
@@ -153,12 +156,6 @@ static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec
     return JSValue::encode(constructDate(exec, asInternalFunction(exec->jsCallee())->globalObject(), exec->newTarget(), args));
 }
 
-ConstructType DateConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWithDateConstructor;
-    return ConstructType::Host;
-}
-
 // ECMA 15.9.2
 static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
 {
@@ -166,12 +163,6 @@ static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
     GregorianDateTime ts;
     msToGregorianDateTime(vm, currentTimeMS(), WTF::LocalTime, ts);
     return JSValue::encode(jsNontrivialString(&vm, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
-}
-
-CallType DateConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callDate;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)

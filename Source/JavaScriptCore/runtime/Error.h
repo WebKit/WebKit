@@ -106,7 +106,7 @@ inline EncodedJSValue throwVMDOMAttributeGetterTypeError(ExecState* state, Throw
 class StrictModeTypeErrorFunction : public InternalFunction {
 private:
     StrictModeTypeErrorFunction(VM& vm, Structure* structure, const String& message)
-        : InternalFunction(vm, structure)
+        : InternalFunction(vm, structure, callThrowTypeError, constructThrowTypeError)
         , m_message(message)
     {
     }
@@ -131,12 +131,6 @@ public:
         return JSValue::encode(jsNull());
     }
 
-    static ConstructType getConstructData(JSCell*, ConstructData& constructData)
-    {
-        constructData.native.function = constructThrowTypeError;
-        return ConstructType::Host;
-    }
-
     static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
     {
         VM& vm = exec->vm();
@@ -145,17 +139,11 @@ public:
         return JSValue::encode(jsNull());
     }
 
-    static CallType getCallData(JSCell*, CallData& callData)
-    {
-        callData.native.function = callThrowTypeError;
-        return CallType::Host;
-    }
-
     DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     { 
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
 private:

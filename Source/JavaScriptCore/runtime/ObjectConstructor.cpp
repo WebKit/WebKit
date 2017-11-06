@@ -90,8 +90,12 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
+
+static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructWithObjectConstructor(ExecState*);
+
 ObjectConstructor::ObjectConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callObjectConstructor, constructWithObjectConstructor)
 {
 }
 
@@ -143,21 +147,9 @@ static EncodedJSValue JSC_HOST_CALL constructWithObjectConstructor(ExecState* ex
     return JSValue::encode(constructObject(exec, exec->newTarget()));
 }
 
-ConstructType ObjectConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWithObjectConstructor;
-    return ConstructType::Host;
-}
-
 static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
 {
     return JSValue::encode(constructObject(exec, JSValue()));
-}
-
-CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callObjectConstructor;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)

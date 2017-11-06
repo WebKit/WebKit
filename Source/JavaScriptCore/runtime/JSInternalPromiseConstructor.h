@@ -44,8 +44,6 @@ public:
 
 private:
     JSInternalPromiseConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
 };
 
 } // namespace JSC

@@ -70,7 +70,7 @@ WebAssemblyRuntimeErrorConstructor* WebAssemblyRuntimeErrorConstructor::create(V
 
 Structure* WebAssemblyRuntimeErrorConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 void WebAssemblyRuntimeErrorConstructor::finishCreation(VM& vm, WebAssemblyRuntimeErrorPrototype* prototype)
@@ -81,20 +81,8 @@ void WebAssemblyRuntimeErrorConstructor::finishCreation(VM& vm, WebAssemblyRunti
 }
 
 WebAssemblyRuntimeErrorConstructor::WebAssemblyRuntimeErrorConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, callJSWebAssemblyRuntimeError, constructJSWebAssemblyRuntimeError)
 {
-}
-
-ConstructType WebAssemblyRuntimeErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructJSWebAssemblyRuntimeError;
-    return ConstructType::Host;
-}
-
-CallType WebAssemblyRuntimeErrorConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callJSWebAssemblyRuntimeError;
-    return CallType::Host;
 }
 
 } // namespace JSC

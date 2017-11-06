@@ -1,3 +1,16 @@
+2017-11-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        JIT call inline caches should cache calls to objects with getCallData/getConstructData traps
+        https://bugs.webkit.org/show_bug.cgi?id=144458
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::JSNPMethod):
+        (WebKit::JSNPMethod::getCallData): Deleted.
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        (WebKit::JSNPMethod::createStructure):
+
 2017-11-04  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r223718): Leaking WebProcessPool after reconfiguration

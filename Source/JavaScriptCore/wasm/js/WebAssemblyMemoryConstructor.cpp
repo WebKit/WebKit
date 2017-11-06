@@ -127,7 +127,7 @@ WebAssemblyMemoryConstructor* WebAssemblyMemoryConstructor::create(VM& vm, Struc
 
 Structure* WebAssemblyMemoryConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 void WebAssemblyMemoryConstructor::finishCreation(VM& vm, WebAssemblyMemoryPrototype* prototype)
@@ -138,20 +138,8 @@ void WebAssemblyMemoryConstructor::finishCreation(VM& vm, WebAssemblyMemoryProto
 }
 
 WebAssemblyMemoryConstructor::WebAssemblyMemoryConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, callJSWebAssemblyMemory, constructJSWebAssemblyMemory)
 {
-}
-
-ConstructType WebAssemblyMemoryConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructJSWebAssemblyMemory;
-    return ConstructType::Host;
-}
-
-CallType WebAssemblyMemoryConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callJSWebAssemblyMemory;
-    return CallType::Host;
 }
 
 } // namespace JSC

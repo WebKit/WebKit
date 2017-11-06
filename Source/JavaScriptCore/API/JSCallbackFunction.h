@@ -44,14 +44,12 @@ public:
     // refactor the code so this override isn't necessary
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
     { 
-        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
+        return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
 private:
     JSCallbackFunction(VM&, Structure*, JSObjectCallAsFunctionCallback);
     void finishCreation(VM&, const String& name);
-
-    static CallType getCallData(JSCell*, CallData&);
 
     JSObjectCallAsFunctionCallback functionCallback() { return m_callback; }
 

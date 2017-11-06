@@ -44,8 +44,11 @@ const ClassInfo JSArrayBufferConstructor::s_info = {
     CREATE_METHOD_TABLE(JSArrayBufferConstructor)
 };
 
+static EncodedJSValue JSC_HOST_CALL callArrayBuffer(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState*);
+
 JSArrayBufferConstructor::JSArrayBufferConstructor(VM& vm, Structure* structure, ArrayBufferSharingMode sharingMode)
-    : Base(vm, structure)
+    : Base(vm, structure, callArrayBuffer, constructArrayBuffer)
     , m_sharingMode(sharingMode)
 {
 }
@@ -77,7 +80,7 @@ Structure* JSArrayBufferConstructor::createStructure(
     VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(
-        vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
@@ -119,19 +122,6 @@ static EncodedJSValue JSC_HOST_CALL callArrayBuffer(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "ArrayBuffer"));
-}
-
-ConstructType JSArrayBufferConstructor::getConstructData(
-    JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructArrayBuffer;
-    return ConstructType::Host;
-}
-
-CallType JSArrayBufferConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callArrayBuffer;
-    return CallType::Host;
 }
 
 // ------------------------------ Functions --------------------------------

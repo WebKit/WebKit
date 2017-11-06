@@ -47,6 +47,14 @@ void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype, GetterSe
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
+static EncodedJSValue JSC_HOST_CALL callMap(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructMap(ExecState*);
+
+MapConstructor::MapConstructor(VM& vm, Structure* structure)
+    : Base(vm, structure, callMap, constructMap)
+{
+}
+
 static EncodedJSValue JSC_HOST_CALL callMap(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -111,18 +119,6 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
     });
 
     return JSValue::encode(map);
-}
-
-ConstructType MapConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructMap;
-    return ConstructType::Host;
-}
-
-CallType MapConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callMap;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketHead(ExecState* exec)

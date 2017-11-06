@@ -1834,6 +1834,15 @@ _llint_native_call_trampoline:
 _llint_native_construct_trampoline:
     nativeCallTrampoline(NativeExecutable::m_constructor)
 
+
+_llint_internal_function_call_trampoline:
+    internalFunctionCallTrampoline(InternalFunction::m_functionForCall)
+
+
+_llint_internal_function_construct_trampoline:
+    internalFunctionCallTrampoline(InternalFunction::m_functionForConstruct)
+
+
 _llint_op_get_enumerable_length:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_enumerable_length)

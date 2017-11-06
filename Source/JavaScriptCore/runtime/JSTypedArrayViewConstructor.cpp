@@ -37,8 +37,10 @@
 
 namespace JSC {
 
+static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState*);
+
 JSTypedArrayViewConstructor::JSTypedArrayViewConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, constructTypedArrayView, constructTypedArrayView)
 {
 }
 
@@ -58,7 +60,7 @@ void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalO
 Structure* JSTypedArrayViewConstructor::createStructure(
     VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 
@@ -68,18 +70,6 @@ static EncodedJSValue JSC_HOST_CALL constructTypedArrayView(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return throwVMTypeError(exec, scope, ASCIILiteral("%TypedArray% should not be called directly"));
-}
-
-ConstructType JSTypedArrayViewConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructTypedArrayView;
-    return ConstructType::Host;
-}
-
-CallType JSTypedArrayViewConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = constructTypedArrayView;
-    return CallType::Host;
 }
 
 } // namespace JSC

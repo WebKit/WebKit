@@ -41,9 +41,11 @@ using namespace Bindings;
 
 WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeMethod) };
 
+static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState*);
+
 RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Method* method)
     // Callers will need to pass in the right global object corresponding to this native object "method".
-    : InternalFunction(globalObject->vm(), structure)
+    : InternalFunction(globalObject->vm(), structure, callRuntimeMethod, nullptr)
     , m_method(method)
 {
 }
@@ -108,12 +110,6 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
     JSValue result = instance->invokeMethod(exec, method);
     instance->end();
     return JSValue::encode(result);
-}
-
-CallType RuntimeMethod::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callRuntimeMethod;
-    return CallType::Host;
 }
 
 }

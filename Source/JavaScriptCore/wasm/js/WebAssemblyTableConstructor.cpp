@@ -117,7 +117,7 @@ WebAssemblyTableConstructor* WebAssemblyTableConstructor::create(VM& vm, Structu
 
 Structure* WebAssemblyTableConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototype* prototype)
@@ -128,20 +128,8 @@ void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototy
 }
 
 WebAssemblyTableConstructor::WebAssemblyTableConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, callJSWebAssemblyTable, constructJSWebAssemblyTable)
 {
-}
-
-ConstructType WebAssemblyTableConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructJSWebAssemblyTable;
-    return ConstructType::Host;
-}
-
-CallType WebAssemblyTableConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callJSWebAssemblyTable;
-    return CallType::Host;
 }
 
 } // namespace JSC

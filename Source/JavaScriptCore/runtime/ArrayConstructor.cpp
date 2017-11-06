@@ -50,8 +50,11 @@ const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_in
 @end
 */
 
+static EncodedJSValue JSC_HOST_CALL callArrayConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState*);
+
 ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callArrayConstructor, constructWithArrayConstructor)
 {
 }
 
@@ -100,23 +103,10 @@ static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exe
     return JSValue::encode(constructArrayWithSizeQuirk(exec, args, exec->newTarget()));
 }
 
-ConstructType ArrayConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWithArrayConstructor;
-    return ConstructType::Host;
-}
-
 static EncodedJSValue JSC_HOST_CALL callArrayConstructor(ExecState* exec)
 {
     ArgList args(exec);
     return JSValue::encode(constructArrayWithSizeQuirk(exec, args, JSValue()));
-}
-
-CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
-{
-    // equivalent to 'new Array(....)'
-    callData.native.function = callArrayConstructor;
-    return CallType::Host;
 }
 
 static ALWAYS_INLINE bool isArraySlowInline(ExecState* exec, ProxyObject* proxy)

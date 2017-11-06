@@ -41,7 +41,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
-        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info());
     }
 
     DECLARE_INFO;
@@ -51,7 +51,6 @@ protected:
 
 private:
     FunctionPrototype(VM&, Structure*);
-    static CallType getCallData(JSCell*, CallData&);
 };
 
 } // namespace JSC

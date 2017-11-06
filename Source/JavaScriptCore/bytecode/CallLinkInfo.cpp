@@ -121,7 +121,7 @@ CodeLocationLabel CallLinkInfo::slowPathStart()
     return m_hotPathBeginOrSlowPathStart;
 }
 
-void CallLinkInfo::setCallee(VM& vm, JSCell* owner, JSFunction* callee)
+void CallLinkInfo::setCallee(VM& vm, JSCell* owner, JSObject* callee)
 {
     RELEASE_ASSERT(!isDirect());
     MacroAssembler::repatchPointer(hotPathBegin(), callee);
@@ -137,10 +137,10 @@ void CallLinkInfo::clearCallee()
     m_isLinked = false;
 }
 
-JSFunction* CallLinkInfo::callee()
+JSObject* CallLinkInfo::callee()
 {
     RELEASE_ASSERT(!isDirect());
-    return jsCast<JSFunction*>(m_calleeOrCodeBlock.get());
+    return jsCast<JSObject*>(m_calleeOrCodeBlock.get());
 }
 
 void CallLinkInfo::setCodeBlock(VM& vm, JSCell* owner, FunctionCodeBlock* codeBlock)
@@ -163,7 +163,7 @@ FunctionCodeBlock* CallLinkInfo::codeBlock()
     return jsCast<FunctionCodeBlock*>(m_calleeOrCodeBlock.get());
 }
 
-void CallLinkInfo::setLastSeenCallee(VM& vm, const JSCell* owner, JSFunction* callee)
+void CallLinkInfo::setLastSeenCallee(VM& vm, const JSCell* owner, JSObject* callee)
 {
     RELEASE_ASSERT(!isDirect());
     m_lastSeenCalleeOrExecutable.set(vm, owner, callee);
@@ -175,10 +175,10 @@ void CallLinkInfo::clearLastSeenCallee()
     m_lastSeenCalleeOrExecutable.clear();
 }
 
-JSFunction* CallLinkInfo::lastSeenCallee()
+JSObject* CallLinkInfo::lastSeenCallee()
 {
     RELEASE_ASSERT(!isDirect());
-    return jsCast<JSFunction*>(m_lastSeenCalleeOrExecutable.get());
+    return jsCast<JSObject*>(m_lastSeenCalleeOrExecutable.get());
 }
 
 bool CallLinkInfo::haveLastSeenCallee()
@@ -235,14 +235,20 @@ void CallLinkInfo::visitWeak(VM& vm)
                         pointerDump(codeBlock()), ").\n");
                 }
             } else {
-                if (Options::verboseOSR()) {
-                    dataLog(
-                        "Clearing call to ",
-                        RawPointer(callee()), " (",
-                        callee()->executable()->hashFor(specializationKind()),
-                        ").\n");
+                if (callee()->type() == JSFunctionType) {
+                    if (Options::verboseOSR()) {
+                        dataLog(
+                            "Clearing call to ",
+                            RawPointer(callee()), " (",
+                            static_cast<JSFunction*>(callee())->executable()->hashFor(specializationKind()),
+                            ").\n");
+                    }
+                    handleSpecificCallee(static_cast<JSFunction*>(callee()));
+                } else {
+                    if (Options::verboseOSR())
+                        dataLog("Clearing call to ", RawPointer(callee()), ".\n");
+                    m_clearedByGC = true;
                 }
-                handleSpecificCallee(callee());
             }
             unlink(vm);
         } else if (isDirect() && !Heap::isMarked(m_lastSeenCalleeOrExecutable.get())) {
@@ -258,7 +264,10 @@ void CallLinkInfo::visitWeak(VM& vm)
         }
     }
     if (!isDirect() && haveLastSeenCallee() && !Heap::isMarked(lastSeenCallee())) {
-        handleSpecificCallee(lastSeenCallee());
+        if (lastSeenCallee()->type() == JSFunctionType)
+            handleSpecificCallee(jsCast<JSFunction*>(lastSeenCallee()));
+        else
+            m_clearedByGC = true;
         clearLastSeenCallee();
     }
 }

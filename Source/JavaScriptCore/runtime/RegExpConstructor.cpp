@@ -76,8 +76,12 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
+
+static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState*);
+
 RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callRegExpConstructor, constructWithRegExpConstructor)
     , m_cachedResult(vm, this, regExpPrototype->emptyRegExp())
     , m_multiline(false)
 {
@@ -310,22 +314,10 @@ static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* ex
     return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, exec->jsCallee(), exec->newTarget()));
 }
 
-ConstructType RegExpConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWithRegExpConstructor;
-    return ConstructType::Host;
-}
-
 static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState* exec)
 {
     ArgList args(exec);
     return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, exec->jsCallee()));
-}
-
-CallType RegExpConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callRegExpConstructor;
-    return CallType::Host;
 }
 
 } // namespace JSC

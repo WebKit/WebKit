@@ -50,10 +50,6 @@ public:
     
     ArrayBufferSharingMode sharingMode() const { return m_sharingMode; }
 
-protected:
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
-
 private:
     ArrayBufferSharingMode m_sharingMode;
 };

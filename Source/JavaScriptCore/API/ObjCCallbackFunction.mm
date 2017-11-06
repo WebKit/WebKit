@@ -506,7 +506,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
 const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
 ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::Structure* structure, JSObjectCallAsFunctionCallback functionCallback, JSObjectCallAsConstructorCallback constructCallback, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
-    : Base(vm, structure)
+    : Base(vm, structure, APICallbackFunction::call<ObjCCallbackFunction>, impl->isConstructible() ? APICallbackFunction::construct<ObjCCallbackFunction> : nullptr)
     , m_functionCallback(functionCallback)
     , m_constructCallback(constructCallback)
     , m_impl(WTFMove(impl))
@@ -526,22 +526,6 @@ void ObjCCallbackFunction::destroy(JSCell* cell)
     ObjCCallbackFunction& function = *static_cast<ObjCCallbackFunction*>(cell);
     function.impl()->destroy(*Heap::heap(cell));
     function.~ObjCCallbackFunction();
-}
-
-
-CallType ObjCCallbackFunction::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = APICallbackFunction::call<ObjCCallbackFunction>;
-    return CallType::Host;
-}
-
-ConstructType ObjCCallbackFunction::getConstructData(JSCell* cell, ConstructData& constructData)
-{
-    ObjCCallbackFunction* callback = jsCast<ObjCCallbackFunction*>(cell);
-    if (!callback->impl()->isConstructible())
-        return Base::getConstructData(cell, constructData);
-    constructData.native.function = APICallbackFunction::construct<ObjCCallbackFunction>;
-    return ConstructType::Host;
 }
 
 String ObjCCallbackFunctionImpl::name()

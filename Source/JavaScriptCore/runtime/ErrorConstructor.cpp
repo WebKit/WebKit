@@ -34,7 +34,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorConstructor);
 const ClassInfo ErrorConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ErrorConstructor) };
 
 ErrorConstructor::ErrorConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, Interpreter::callErrorConstructor, Interpreter::constructWithErrorConstructor)
 {
 }
 
@@ -63,23 +63,11 @@ EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecStat
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }
 
-ConstructType ErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = Interpreter::constructWithErrorConstructor;
-    return ConstructType::Host;
-}
-
 EncodedJSValue JSC_HOST_CALL Interpreter::callErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argument(0);
     Structure* errorStructure = asInternalFunction(exec->jsCallee())->globalObject()->errorStructure();
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
-}
-
-CallType ErrorConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = Interpreter::callErrorConstructor;
-    return CallType::Host;
 }
 
 bool ErrorConstructor::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

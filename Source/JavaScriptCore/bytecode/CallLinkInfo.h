@@ -191,17 +191,17 @@ public:
         return m_hotPathOther;
     }
 
-    void setCallee(VM&, JSCell*, JSFunction* callee);
+    void setCallee(VM&, JSCell*, JSObject* callee);
     void clearCallee();
-    JSFunction* callee();
+    JSObject* callee();
 
     void setCodeBlock(VM&, JSCell*, FunctionCodeBlock*);
     void clearCodeBlock();
     FunctionCodeBlock* codeBlock();
 
-    void setLastSeenCallee(VM& vm, const JSCell* owner, JSFunction* callee);
+    void setLastSeenCallee(VM&, const JSCell* owner, JSObject* callee);
     void clearLastSeenCallee();
-    JSFunction* lastSeenCallee();
+    JSObject* lastSeenCallee();
     bool haveLastSeenCallee();
     
     void setExecutableDuringCompilation(ExecutableBase*);

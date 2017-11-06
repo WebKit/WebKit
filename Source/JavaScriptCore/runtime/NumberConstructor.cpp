@@ -53,8 +53,11 @@ const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
+static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(ExecState*);
+
 NumberConstructor::NumberConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callNumberConstructor, constructNumberConstructor)
 {
 }
 
@@ -80,7 +83,7 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 }
 
 // ECMA 15.7.1
-static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -94,22 +97,10 @@ static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* ex
     return JSValue::encode(object);
 }
 
-ConstructType NumberConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWithNumberConstructor;
-    return ConstructType::Host;
-}
-
 // ECMA 15.7.2
 static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec)
 {
     return JSValue::encode(jsNumber(!exec->argumentCount() ? 0 : exec->uncheckedArgument(0).toNumber(exec)));
-}
-
-CallType NumberConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callNumberConstructor;
-    return CallType::Host;
 }
 
 // ECMA-262 20.1.2.3

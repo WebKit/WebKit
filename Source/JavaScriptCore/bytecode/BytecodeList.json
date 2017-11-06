@@ -219,6 +219,8 @@
             { "name" : "llint_throw_during_call_trampoline" },
             { "name" : "llint_native_call_trampoline" },
             { "name" : "llint_native_construct_trampoline" },
+            { "name" : "llint_internal_function_call_trampoline" },
+            { "name" : "llint_internal_function_construct_trampoline" },
             { "name" : "handleUncaughtException" }
         ]
     }

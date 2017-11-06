@@ -51,8 +51,6 @@ protected:
 
 private:
     IntlNumberFormatConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
     static void visitChildren(JSCell*, SlotVisitor&);
     
     WriteBarrier<Structure> m_numberFormatStructure;

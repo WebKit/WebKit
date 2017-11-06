@@ -45,8 +45,10 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNPMethod);
 
 const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNPMethod) };
 
+static EncodedJSValue JSC_HOST_CALL callMethod(ExecState*);
+
 JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIdentifier npIdentifier)
-    : InternalFunction(globalObject->vm(), structure)
+    : InternalFunction(globalObject->vm(), structure, callMethod, nullptr)
     , m_npIdentifier(npIdentifier)
 {
 }
@@ -82,12 +84,6 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
     }
 
     return throwVMTypeError(exec, scope);
-}
-
-CallType JSNPMethod::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callMethod;
-    return CallType::Host;
 }
 
 } // namespace WebKit

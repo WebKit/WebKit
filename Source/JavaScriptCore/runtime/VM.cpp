@@ -351,6 +351,10 @@ VM::VM(VMType vmType, HeapType heapType)
         watchdog.setTimeLimit(timeoutMillis);
     }
 
+    // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
+    getCTIInternalFunctionTrampolineFor(CodeForCall);
+    getCTIInternalFunctionTrampolineFor(CodeForConstruct);
+
     VMInspector::instance().add(this);
 }
 
@@ -576,6 +580,19 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
         adoptRef(*new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
         adoptRef(*new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
         NoIntrinsic, signature, name);
+}
+
+MacroAssemblerCodePtr VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
+{
+#if ENABLE(JIT)
+    if (kind == CodeForCall)
+        return jitStubs->ctiInternalFunctionCall(this);
+    return jitStubs->ctiInternalFunctionConstruct(this);
+#else
+    if (kind == CodeForCall)
+        return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_call_trampoline);
+    return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_construct_trampoline);
+#endif
 }
 
 VM::ClientData::~ClientData()

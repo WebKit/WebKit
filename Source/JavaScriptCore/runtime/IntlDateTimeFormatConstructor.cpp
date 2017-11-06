@@ -66,11 +66,14 @@ IntlDateTimeFormatConstructor* IntlDateTimeFormatConstructor::create(VM& vm, Str
 
 Structure* IntlDateTimeFormatConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
+static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState*);
+
 IntlDateTimeFormatConstructor::IntlDateTimeFormatConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callIntlDateTimeFormat, constructIntlDateTimeFormat)
 {
 }
 
@@ -121,18 +124,6 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* state)
         dateTimeFormat->initializeDateTimeFormat(*state, state->argument(0), state->argument(1));
         return dateTimeFormat;
     }));
-}
-
-ConstructType IntlDateTimeFormatConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructIntlDateTimeFormat;
-    return ConstructType::Host;
-}
-
-CallType IntlDateTimeFormatConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callIntlDateTimeFormat;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf(ExecState* state)

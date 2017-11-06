@@ -939,9 +939,17 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     JSValue calleeAsValue = execCallee->guaranteedJSValueCallee();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
-        // FIXME: We should cache these kinds of calls. They can be common and currently they are
-        // expensive.
-        // https://bugs.webkit.org/show_bug.cgi?id=144458
+        if (calleeAsValue.isCell() && calleeAsValue.asCell()->type() == InternalFunctionType) {
+            MacroAssemblerCodePtr codePtr = vm->getCTIInternalFunctionTrampolineFor(kind);
+            RELEASE_ASSERT(!!codePtr);
+
+            if (!callLinkInfo->seenOnce())
+                callLinkInfo->setSeen();
+            else
+                linkFor(execCallee, *callLinkInfo, nullptr, asObject(calleeAsValue), codePtr);
+
+            return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+        }
         throwScope.release();
         return handleHostCall(execCallee, calleeAsValue, callLinkInfo);
     }
@@ -951,7 +959,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     ExecutableBase* executable = callee->executable();
 
     MacroAssemblerCodePtr codePtr;
-    CodeBlock* codeBlock = 0;
+    CodeBlock* codeBlock = nullptr;
     if (executable->isHostFunction()) {
         codePtr = executable->entrypointFor(kind, MustCheckArity);
     } else {
@@ -1053,6 +1061,11 @@ inline SlowPathReturnType virtualForWithFunction(
     JSValue calleeAsValue = execCallee->guaranteedJSValueCallee();
     calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (UNLIKELY(!calleeAsFunctionCell)) {
+        if (calleeAsValue.isCell() && calleeAsValue.asCell()->type() == InternalFunctionType) {
+            MacroAssemblerCodePtr codePtr = vm->getCTIInternalFunctionTrampolineFor(kind);
+            ASSERT(!!codePtr);
+            return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+        }
         throwScope.release();
         return handleHostCall(execCallee, calleeAsValue, callLinkInfo);
     }

@@ -70,11 +70,20 @@ JSPromiseConstructor* JSPromiseConstructor::create(VM& vm, Structure* structure,
 
 Structure* JSPromiseConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
+
+static EncodedJSValue JSC_HOST_CALL callPromise(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState*);
+
 JSPromiseConstructor::JSPromiseConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, callPromise, constructPromise)
+{
+}
+
+JSPromiseConstructor::JSPromiseConstructor(VM& vm, Structure* structure, NativeFunction functionForCall, NativeFunction functionForConstruct)
+    : Base(vm, structure, functionForCall, functionForConstruct)
 {
 }
 
@@ -116,22 +125,6 @@ static EncodedJSValue JSC_HOST_CALL callPromise(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "Promise"));
-}
-
-ConstructType JSPromiseConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructPromise;
-    return ConstructType::Host;
-}
-
-CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
-{
-    // FIXME: This is workaround. Since JSC does not expose @isConstructor to JS builtins,
-    // we use typeof function === "function" now. And since typeof constructorWithoutCallability
-    // returns "object", we need to define [[Call]] for now.
-    // https://bugs.webkit.org/show_bug.cgi?id=144093
-    callData.native.function = callPromise;
-    return CallType::Host;
 }
 
 } // namespace JSC

@@ -48,8 +48,11 @@ ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
     return constructor;
 }
 
+static EncodedJSValue JSC_HOST_CALL callProxy(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState*);
+
 ProxyConstructor::ProxyConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, callProxy, constructProxyObject)
 {
 }
 
@@ -103,22 +106,10 @@ static EncodedJSValue JSC_HOST_CALL constructProxyObject(ExecState* exec)
     return JSValue::encode(ProxyObject::create(exec, exec->lexicalGlobalObject(), target, handler));
 }
 
-ConstructType ProxyConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructProxyObject;
-    return ConstructType::Host;
-}
-
 static EncodedJSValue JSC_HOST_CALL callProxy(ExecState* exec)
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(exec, scope, "Proxy"));
-}
-
-CallType ProxyConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callProxy;
-    return CallType::Host;
 }
 
 } // namespace JSC

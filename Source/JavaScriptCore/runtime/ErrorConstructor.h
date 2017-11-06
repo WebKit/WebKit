@@ -42,7 +42,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
     { 
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+        return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
     std::optional<unsigned> stackTraceLimit() const { return m_stackTraceLimit; }
@@ -55,8 +55,6 @@ protected:
 
 private:
     ErrorConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
 
     std::optional<unsigned> m_stackTraceLimit;
 };

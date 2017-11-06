@@ -45,6 +45,14 @@ void WeakSetConstructor::finishCreation(VM& vm, WeakSetPrototype* prototype)
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
+static EncodedJSValue JSC_HOST_CALL callWeakSet(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState*);
+
+WeakSetConstructor::WeakSetConstructor(VM& vm, Structure* structure)
+    : Base(vm, structure, callWeakSet, constructWeakSet)
+{
+}
+
 static EncodedJSValue JSC_HOST_CALL callWeakSet(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -82,18 +90,6 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
     });
 
     return JSValue::encode(weakSet);
-}
-
-ConstructType WeakSetConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWeakSet;
-    return ConstructType::Host;
-}
-
-CallType WeakSetConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callWeakSet;
-    return CallType::Host;
 }
 
 }

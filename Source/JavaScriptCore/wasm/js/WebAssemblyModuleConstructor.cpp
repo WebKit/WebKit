@@ -198,7 +198,7 @@ WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Struc
 
 Structure* WebAssemblyModuleConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 void WebAssemblyModuleConstructor::finishCreation(VM& vm, WebAssemblyModulePrototype* prototype)
@@ -209,20 +209,8 @@ void WebAssemblyModuleConstructor::finishCreation(VM& vm, WebAssemblyModuleProto
 }
 
 WebAssemblyModuleConstructor::WebAssemblyModuleConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, callJSWebAssemblyModule, constructJSWebAssemblyModule)
 {
-}
-
-ConstructType WebAssemblyModuleConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructJSWebAssemblyModule;
-    return ConstructType::Host;
-}
-
-CallType WebAssemblyModuleConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callJSWebAssemblyModule;
-    return CallType::Host;
 }
 
 } // namespace JSC

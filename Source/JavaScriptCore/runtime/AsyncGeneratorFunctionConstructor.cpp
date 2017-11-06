@@ -36,20 +36,6 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AsyncGeneratorFunctionConstructor);
 
 const ClassInfo AsyncGeneratorFunctionConstructor::s_info = { "AsyncGeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionConstructor) };
 
-AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
-{
-}
-
-void AsyncGeneratorFunctionConstructor::finishCreation(VM& vm, AsyncGeneratorFunctionPrototype* prototype)
-{
-    Base::finishCreation(vm, "AsyncGeneratorFunction");
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-
-    // Number of arguments for constructor
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-}
-
 static EncodedJSValue JSC_HOST_CALL callAsyncGeneratorFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
@@ -62,16 +48,18 @@ static EncodedJSValue JSC_HOST_CALL constructAsyncGeneratorFunctionConstructor(E
     return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::AsyncGenerator));
 }
 
-CallType AsyncGeneratorFunctionConstructor::getCallData(JSCell*, CallData& callData)
+AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure, callAsyncGeneratorFunctionConstructor, constructAsyncGeneratorFunctionConstructor)
 {
-    callData.native.function = callAsyncGeneratorFunctionConstructor;
-    return CallType::Host;
 }
 
-ConstructType AsyncGeneratorFunctionConstructor::getConstructData(JSCell*, ConstructData& constructData)
+void AsyncGeneratorFunctionConstructor::finishCreation(VM& vm, AsyncGeneratorFunctionPrototype* prototype)
 {
-    constructData.native.function = constructAsyncGeneratorFunctionConstructor;
-    return ConstructType::Host;
+    Base::finishCreation(vm, "AsyncGeneratorFunction");
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+
+    // Number of arguments for constructor
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 } // namespace JSC

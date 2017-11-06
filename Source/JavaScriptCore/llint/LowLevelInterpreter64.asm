@@ -2094,6 +2094,45 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     jmp _llint_throw_from_slow_path_trampoline
 end
 
+macro internalFunctionCallTrampoline(offsetOfFunction)
+    functionPrologue()
+    storep 0, CodeBlock[cfr]
+    loadp Callee[cfr], t0
+    andp MarkedBlockMask, t0, t1
+    loadp MarkedBlock::m_vm[t1], t1
+    storep cfr, VM::topCallFrame[t1]
+    if ARM64 or C_LOOP
+        storep lr, ReturnPC[cfr]
+    end
+    move cfr, a0
+    loadp Callee[cfr], t1
+    checkStackPointerAlignment(t3, 0xdead0001)
+    if C_LOOP
+        cloopCallNative offsetOfFunction[t1]
+    else
+        if X86_64_WIN
+            subp 32, sp
+        end
+        call offsetOfFunction[t1]
+        if X86_64_WIN
+            addp 32, sp
+        end
+    end
+
+    loadp Callee[cfr], t3
+    andp MarkedBlockMask, t3
+    loadp MarkedBlock::m_vm[t3], t3
+
+    btqnz VM::m_exception[t3], .handleException
+
+    functionEpilogue()
+    ret
+
+.handleException:
+    storep cfr, VM::topCallFrame[t3]
+    jmp _llint_throw_from_slow_path_trampoline
+end
+
 macro getConstantScope(dst)
     loadpFromInstruction(6, t0)
     loadisFromInstruction(dst, t1)

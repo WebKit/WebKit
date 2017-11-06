@@ -42,8 +42,10 @@ ProxyRevoke* ProxyRevoke::create(VM& vm, Structure* structure, ProxyObject* prox
     return revoke;
 }
 
+static EncodedJSValue JSC_HOST_CALL performProxyRevoke(ExecState*);
+
 ProxyRevoke::ProxyRevoke(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : Base(vm, structure, performProxyRevoke, nullptr)
 {
 }
 
@@ -67,12 +69,6 @@ static EncodedJSValue JSC_HOST_CALL performProxyRevoke(ExecState* exec)
     proxy->revoke(vm);
     proxyRevoke->setProxyToNull(vm);
     return JSValue::encode(jsUndefined());
-}
-
-CallType ProxyRevoke::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = performProxyRevoke;
-    return CallType::Host;
 }
 
 void ProxyRevoke::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -47,6 +47,14 @@ void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype, GetterSe
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
+static EncodedJSValue JSC_HOST_CALL callSet(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructSet(ExecState*);
+
+SetConstructor::SetConstructor(VM& vm, Structure* structure)
+    : Base(vm, structure, callSet, constructSet)
+{
+}
+
 static EncodedJSValue JSC_HOST_CALL callSet(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -97,18 +105,6 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
     });
 
     return JSValue::encode(set);
-}
-
-ConstructType SetConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructSet;
-    return ConstructType::Host;
-}
-
-CallType SetConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callSet;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(ExecState* exec)

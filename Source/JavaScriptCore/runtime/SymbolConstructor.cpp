@@ -56,8 +56,10 @@ const ClassInfo SymbolConstructor::s_info = { "Function", &Base::s_info, &symbol
 @end
 */
 
+static EncodedJSValue JSC_HOST_CALL callSymbol(ExecState*);
+
 SymbolConstructor::SymbolConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callSymbol, nullptr)
 {
 }
 
@@ -81,17 +83,6 @@ static EncodedJSValue JSC_HOST_CALL callSymbol(ExecState* exec)
     if (description.isUndefined())
         return JSValue::encode(Symbol::create(exec->vm()));
     return JSValue::encode(Symbol::create(exec, description.toString(exec)));
-}
-
-ConstructType SymbolConstructor::getConstructData(JSCell*, ConstructData&)
-{
-    return ConstructType::None;
-}
-
-CallType SymbolConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callSymbol;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState* exec)

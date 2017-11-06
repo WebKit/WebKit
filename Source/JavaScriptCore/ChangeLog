@@ -1,3 +1,345 @@
+2017-11-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        JIT call inline caches should cache calls to objects with getCallData/getConstructData traps
+        https://bugs.webkit.org/show_bug.cgi?id=144458
+
+        Reviewed by Saam Barati.
+
+        Previously only JSFunction is handled by CallLinkInfo's caching mechanism. This means that
+        InternalFunction calls are not cached and they always go to the slow path. This is not good because
+
+        1. We need to query getCallData/getConstructData every time in the slow path.
+        2. CallLinkInfo tells nothing in the higher tier JITs.
+
+        This patch starts handling InternalFunction in CallLinkInfo's caching mechanism. We change InternalFunction
+        to hold pointers to the functions for call and construct. We have new stubs that can call/construct
+        InternalFunction. And we return this code pointer as a result of setup call to use CallLinkInfo mechanism.
+
+        This patch is critical to optimizing derived Array construction[1] since it starts using CallLinkInfo
+        for InternalFunction. Previously we did not record any information to CallLinkInfo. Except for the
+        case that DFGByteCodeParser figures out InternalFunction constant, we cannot attempt to emit DFG
+        nodes for these InternalFunctions since CallLinkInfo tells us nothing.
+
+        Attached microbenchmarks show performance improvement.
+
+                                                           baseline                  patched
+
+        dfg-internal-function-construct                 1.6439+-0.0826     ^      1.2829+-0.0727        ^ definitely 1.2813x faster
+        dfg-internal-function-not-handled-construct     2.1862+-0.1361            2.0696+-0.1201          might be 1.0564x faster
+        dfg-internal-function-not-handled-call         20.7592+-0.9085           19.7369+-0.7921          might be 1.0518x faster
+        dfg-internal-function-call                      1.6856+-0.0967     ^      1.2771+-0.0744        ^ definitely 1.3198x faster
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=178064
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::JSCallbackFunction):
+        (JSC::JSCallbackFunction::getCallData): Deleted.
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure):
+        * API/ObjCCallbackFunction.h:
+        (JSC::ObjCCallbackFunction::createStructure):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunction::ObjCCallbackFunction):
+        (JSC::ObjCCallbackFunction::getCallData): Deleted.
+        (JSC::ObjCCallbackFunction::getConstructData): Deleted.
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printCallOp):
+        * bytecode/BytecodeList.json:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setCallee):
+        (JSC::CallLinkInfo::callee):
+        (JSC::CallLinkInfo::setLastSeenCallee):
+        (JSC::CallLinkInfo::lastSeenCallee):
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkInfo.h:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        * bytecode/LLIntCallLinkInfo.h:
+        * jit/JITOperations.cpp:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        * jit/JITThunks.h:
+        * jit/Repatch.cpp:
+        (JSC::linkFor):
+        (JSC::linkPolymorphicCall):
+        * jit/Repatch.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::nativeCallGenerator):
+        (JSC::nativeTailCallGenerator):
+        (JSC::nativeTailCallWithoutSavedTagsGenerator):
+        (JSC::nativeConstructGenerator):
+        (JSC::internalFunctionCallGenerator):
+        (JSC::internalFunctionConstructGenerator):
+        * jit/ThunkGenerators.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        (JSC::ArrayConstructor::getConstructData): Deleted.
+        (JSC::ArrayConstructor::getCallData): Deleted.
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::createStructure):
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::AsyncFunctionConstructor::AsyncFunctionConstructor):
+        (JSC::AsyncFunctionConstructor::finishCreation):
+        (JSC::AsyncFunctionConstructor::getCallData): Deleted.
+        (JSC::AsyncFunctionConstructor::getConstructData): Deleted.
+        * runtime/AsyncFunctionConstructor.h:
+        (JSC::AsyncFunctionConstructor::createStructure):
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        (JSC::AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor):
+        (JSC::AsyncGeneratorFunctionConstructor::finishCreation):
+        (JSC::AsyncGeneratorFunctionConstructor::getCallData): Deleted.
+        (JSC::AsyncGeneratorFunctionConstructor::getConstructData): Deleted.
+        * runtime/AsyncGeneratorFunctionConstructor.h:
+        (JSC::AsyncGeneratorFunctionConstructor::createStructure):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::callBooleanConstructor):
+        (JSC::BooleanConstructor::BooleanConstructor):
+        (JSC::BooleanConstructor::finishCreation):
+        (JSC::BooleanConstructor::getConstructData): Deleted.
+        (JSC::BooleanConstructor::getCallData): Deleted.
+        * runtime/BooleanConstructor.h:
+        (JSC::BooleanConstructor::createStructure):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        (JSC::DateConstructor::getConstructData): Deleted.
+        (JSC::DateConstructor::getCallData): Deleted.
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::createStructure):
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction):
+        (JSC::StrictModeTypeErrorFunction::createStructure):
+        (JSC::StrictModeTypeErrorFunction::getConstructData): Deleted.
+        (JSC::StrictModeTypeErrorFunction::getCallData): Deleted.
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        (JSC::ErrorConstructor::getConstructData): Deleted.
+        (JSC::ErrorConstructor::getCallData): Deleted.
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::createStructure):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        (JSC::FunctionConstructor::finishCreation):
+        (JSC::FunctionConstructor::getConstructData): Deleted.
+        (JSC::FunctionConstructor::getCallData): Deleted.
+        * runtime/FunctionConstructor.h:
+        (JSC::FunctionConstructor::createStructure):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::callFunctionPrototype):
+        (JSC::FunctionPrototype::FunctionPrototype):
+        (JSC::FunctionPrototype::getCallData): Deleted.
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::GeneratorFunctionConstructor::GeneratorFunctionConstructor):
+        (JSC::GeneratorFunctionConstructor::finishCreation):
+        (JSC::GeneratorFunctionConstructor::getCallData): Deleted.
+        (JSC::GeneratorFunctionConstructor::getConstructData): Deleted.
+        * runtime/GeneratorFunctionConstructor.h:
+        (JSC::GeneratorFunctionConstructor::createStructure):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        (JSC::InternalFunction::finishCreation):
+        (JSC::InternalFunction::getCallData):
+        (JSC::InternalFunction::getConstructData):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        (JSC::InternalFunction::nativeFunctionFor):
+        (JSC::InternalFunction::offsetOfNativeFunctionFor):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::createStructure):
+        (JSC::IntlCollatorConstructor::IntlCollatorConstructor):
+        (JSC::IntlCollatorConstructor::getConstructData): Deleted.
+        (JSC::IntlCollatorConstructor::getCallData): Deleted.
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::createStructure):
+        (JSC::IntlDateTimeFormatConstructor::IntlDateTimeFormatConstructor):
+        (JSC::IntlDateTimeFormatConstructor::getConstructData): Deleted.
+        (JSC::IntlDateTimeFormatConstructor::getCallData): Deleted.
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::createStructure):
+        (JSC::IntlNumberFormatConstructor::IntlNumberFormatConstructor):
+        (JSC::IntlNumberFormatConstructor::getConstructData): Deleted.
+        (JSC::IntlNumberFormatConstructor::getCallData): Deleted.
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::JSArrayBufferConstructor):
+        (JSC::JSArrayBufferConstructor::createStructure):
+        (JSC::JSArrayBufferConstructor::getConstructData): Deleted.
+        (JSC::JSArrayBufferConstructor::getCallData): Deleted.
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructor):
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::createStructure):
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::getConstructData): Deleted.
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::getCallData): Deleted.
+        * runtime/JSInternalPromiseConstructor.cpp:
+        (JSC::JSInternalPromiseConstructor::createStructure):
+        (JSC::JSInternalPromiseConstructor::JSInternalPromiseConstructor):
+        (JSC::JSInternalPromiseConstructor::getConstructData): Deleted.
+        (JSC::JSInternalPromiseConstructor::getCallData): Deleted.
+        * runtime/JSInternalPromiseConstructor.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::createStructure):
+        (JSC::JSPromiseConstructor::JSPromiseConstructor):
+        (JSC::JSPromiseConstructor::getConstructData): Deleted.
+        (JSC::JSPromiseConstructor::getCallData): Deleted.
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSType.h:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::JSTypedArrayViewConstructor):
+        (JSC::JSTypedArrayViewConstructor::createStructure):
+        (JSC::JSTypedArrayViewConstructor::getConstructData): Deleted.
+        (JSC::JSTypedArrayViewConstructor::getCallData): Deleted.
+        * runtime/JSTypedArrayViewConstructor.h:
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::MapConstructor):
+        (JSC::MapConstructor::getConstructData): Deleted.
+        (JSC::MapConstructor::getCallData): Deleted.
+        * runtime/MapConstructor.h:
+        (JSC::MapConstructor::createStructure):
+        (JSC::MapConstructor::MapConstructor): Deleted.
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        (JSC::NativeErrorConstructor::getConstructData): Deleted.
+        (JSC::NativeErrorConstructor::getCallData): Deleted.
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::createStructure):
+        * runtime/NullGetterFunction.cpp:
+        (JSC::NullGetterFunction::NullGetterFunction):
+        (JSC::NullGetterFunction::getCallData): Deleted.
+        (JSC::NullGetterFunction::getConstructData): Deleted.
+        * runtime/NullGetterFunction.h:
+        (JSC::NullGetterFunction::createStructure):
+        (JSC::NullGetterFunction::NullGetterFunction): Deleted.
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunction::NullSetterFunction):
+        (JSC::NullSetterFunction::getCallData): Deleted.
+        (JSC::NullSetterFunction::getConstructData): Deleted.
+        * runtime/NullSetterFunction.h:
+        (JSC::NullSetterFunction::createStructure):
+        (JSC::NullSetterFunction::NullSetterFunction): Deleted.
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        (JSC::constructNumberConstructor):
+        (JSC::constructWithNumberConstructor): Deleted.
+        (JSC::NumberConstructor::getConstructData): Deleted.
+        (JSC::NumberConstructor::getCallData): Deleted.
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::ObjectConstructor::getConstructData): Deleted.
+        (JSC::ObjectConstructor::getCallData): Deleted.
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::createStructure):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::ProxyConstructor):
+        (JSC::ProxyConstructor::getConstructData): Deleted.
+        (JSC::ProxyConstructor::getCallData): Deleted.
+        * runtime/ProxyConstructor.h:
+        (JSC::ProxyConstructor::createStructure):
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::ProxyRevoke):
+        (JSC::ProxyRevoke::getCallData): Deleted.
+        * runtime/ProxyRevoke.h:
+        (JSC::ProxyRevoke::createStructure):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        (JSC::RegExpConstructor::getConstructData): Deleted.
+        (JSC::RegExpConstructor::getCallData): Deleted.
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::SetConstructor):
+        (JSC::SetConstructor::getConstructData): Deleted.
+        (JSC::SetConstructor::getCallData): Deleted.
+        * runtime/SetConstructor.h:
+        (JSC::SetConstructor::createStructure):
+        (JSC::SetConstructor::SetConstructor): Deleted.
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        (JSC::StringConstructor::getConstructData): Deleted.
+        (JSC::StringConstructor::getCallData): Deleted.
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::createStructure):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::SymbolConstructor):
+        (JSC::SymbolConstructor::getConstructData): Deleted.
+        (JSC::SymbolConstructor::getCallData): Deleted.
+        * runtime/SymbolConstructor.h:
+        (JSC::SymbolConstructor::createStructure):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::getCTIInternalFunctionTrampolineFor):
+        * runtime/VM.h:
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::WeakMapConstructor::WeakMapConstructor):
+        (JSC::WeakMapConstructor::getConstructData): Deleted.
+        (JSC::WeakMapConstructor::getCallData): Deleted.
+        * runtime/WeakMapConstructor.h:
+        (JSC::WeakMapConstructor::createStructure):
+        (JSC::WeakMapConstructor::WeakMapConstructor): Deleted.
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::WeakSetConstructor::WeakSetConstructor):
+        (JSC::WeakSetConstructor::getConstructData): Deleted.
+        (JSC::WeakSetConstructor::getCallData): Deleted.
+        * runtime/WeakSetConstructor.h:
+        (JSC::WeakSetConstructor::createStructure):
+        (JSC::WeakSetConstructor::WeakSetConstructor): Deleted.
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::WebAssemblyCompileErrorConstructor::createStructure):
+        (JSC::WebAssemblyCompileErrorConstructor::WebAssemblyCompileErrorConstructor):
+        (JSC::WebAssemblyCompileErrorConstructor::getConstructData): Deleted.
+        (JSC::WebAssemblyCompileErrorConstructor::getCallData): Deleted.
+        * wasm/js/WebAssemblyCompileErrorConstructor.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::createStructure):
+        (JSC::WebAssemblyInstanceConstructor::WebAssemblyInstanceConstructor):
+        (JSC::WebAssemblyInstanceConstructor::getConstructData): Deleted.
+        (JSC::WebAssemblyInstanceConstructor::getCallData): Deleted.
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::WebAssemblyLinkErrorConstructor::createStructure):
+        (JSC::WebAssemblyLinkErrorConstructor::WebAssemblyLinkErrorConstructor):
+        (JSC::WebAssemblyLinkErrorConstructor::getConstructData): Deleted.
+        (JSC::WebAssemblyLinkErrorConstructor::getCallData): Deleted.
+        * wasm/js/WebAssemblyLinkErrorConstructor.h:
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::WebAssemblyMemoryConstructor::createStructure):
+        (JSC::WebAssemblyMemoryConstructor::WebAssemblyMemoryConstructor):
+        (JSC::WebAssemblyMemoryConstructor::getConstructData): Deleted.
+        (JSC::WebAssemblyMemoryConstructor::getCallData): Deleted.
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createStructure):
+        (JSC::WebAssemblyModuleConstructor::WebAssemblyModuleConstructor):
+        (JSC::WebAssemblyModuleConstructor::getConstructData): Deleted.
+        (JSC::WebAssemblyModuleConstructor::getCallData): Deleted.
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::WebAssemblyRuntimeErrorConstructor::createStructure):
+        (JSC::WebAssemblyRuntimeErrorConstructor::WebAssemblyRuntimeErrorConstructor):
+        (JSC::WebAssemblyRuntimeErrorConstructor::getConstructData): Deleted.
+        (JSC::WebAssemblyRuntimeErrorConstructor::getCallData): Deleted.
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::WebAssemblyTableConstructor::createStructure):
+        (JSC::WebAssemblyTableConstructor::WebAssemblyTableConstructor):
+        (JSC::WebAssemblyTableConstructor::getConstructData): Deleted.
+        (JSC::WebAssemblyTableConstructor::getCallData): Deleted.
+        * wasm/js/WebAssemblyTableConstructor.h:
+
 2017-11-03  Michael Saboff  <msaboff@apple.com>
 
         The Abstract Interpreter needs to change similar to clobberize() in r224366

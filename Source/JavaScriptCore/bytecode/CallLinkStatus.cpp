@@ -215,7 +215,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     
     CallLinkStatus result;
     
-    if (JSFunction* target = callLinkInfo.lastSeenCallee()) {
+    if (JSObject* target = callLinkInfo.lastSeenCallee()) {
         CallVariant variant(target);
         if (callLinkInfo.hasSeenClosure())
             variant = variant.despecifiedClosure();

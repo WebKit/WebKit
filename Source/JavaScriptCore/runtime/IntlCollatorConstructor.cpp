@@ -49,6 +49,9 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesO
 
 namespace JSC {
 
+static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState*);
+
 const ClassInfo IntlCollatorConstructor::s_info = { "Function", &InternalFunction::s_info, &collatorConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlCollatorConstructor) };
 
 /* Source for IntlCollatorConstructor.lut.h
@@ -66,11 +69,11 @@ IntlCollatorConstructor* IntlCollatorConstructor::create(VM& vm, Structure* stru
 
 Structure* IntlCollatorConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 IntlCollatorConstructor::IntlCollatorConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callIntlCollator, constructIntlCollator)
 {
 }
 
@@ -121,18 +124,6 @@ static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* state)
     // 4. Return InitializeCollator(collator, locales, options).
     collator->initializeCollator(*state, state->argument(0), state->argument(1));
     return JSValue::encode(collator);
-}
-
-ConstructType IntlCollatorConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructIntlCollator;
-    return ConstructType::Host;
-}
-
-CallType IntlCollatorConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callIntlCollator;
-    return CallType::Host;
 }
 
 EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecState* state)

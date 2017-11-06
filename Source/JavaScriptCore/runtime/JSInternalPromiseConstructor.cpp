@@ -54,12 +54,7 @@ JSInternalPromiseConstructor* JSInternalPromiseConstructor::create(VM& vm, Struc
 
 Structure* JSInternalPromiseConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-}
-
-JSInternalPromiseConstructor::JSInternalPromiseConstructor(VM& vm, Structure* structure)
-    : Base(vm, structure)
-{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
@@ -71,16 +66,9 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
     return JSValue::encode(promise);
 }
 
-ConstructType JSInternalPromiseConstructor::getConstructData(JSCell*, ConstructData& constructData)
+JSInternalPromiseConstructor::JSInternalPromiseConstructor(VM& vm, Structure* structure)
+    : Base(vm, structure, constructPromise, constructPromise)
 {
-    constructData.native.function = constructPromise;
-    return ConstructType::Host;
-}
-
-CallType JSInternalPromiseConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = constructPromise;
-    return CallType::Host;
 }
 
 } // namespace JSC

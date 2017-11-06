@@ -57,10 +57,6 @@ public:
 #endif
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-
-protected:
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
 };
 
 } // namespace JSC

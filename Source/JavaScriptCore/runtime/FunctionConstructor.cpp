@@ -38,8 +38,21 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionConstructor);
 
 const ClassInfo FunctionConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionConstructor) };
 
+static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)
+{
+    ArgList args(exec);
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Function, exec->newTarget()));
+}
+
+// ECMA 15.3.1 The Function Constructor Called as a Function
+static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
+{
+    ArgList args(exec);
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args));
+}
+
 FunctionConstructor::FunctionConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure)
+    : InternalFunction(vm, structure, callFunctionConstructor, constructWithFunctionConstructor)
 {
 }
 
@@ -48,31 +61,6 @@ void FunctionConstructor::finishCreation(VM& vm, FunctionPrototype* functionProt
     Base::finishCreation(vm, functionPrototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, functionPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
-}
-
-static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)
-{
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Function, exec->newTarget()));
-}
-
-ConstructType FunctionConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWithFunctionConstructor;
-    return ConstructType::Host;
-}
-
-static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
-{
-    ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args));
-}
-
-// ECMA 15.3.1 The Function Constructor Called as a Function
-CallType FunctionConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callFunctionConstructor;
-    return CallType::Host;
 }
 
 // ECMA 15.3.2 The Function Constructor

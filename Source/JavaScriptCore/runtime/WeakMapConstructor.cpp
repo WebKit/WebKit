@@ -45,6 +45,14 @@ void WeakMapConstructor::finishCreation(VM& vm, WeakMapPrototype* prototype)
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
+static EncodedJSValue JSC_HOST_CALL callWeakMap(ExecState*);
+static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState*);
+
+WeakMapConstructor::WeakMapConstructor(VM& vm, Structure* structure)
+    : Base(vm, structure, callWeakMap, constructWeakMap)
+{
+}
+
 static EncodedJSValue JSC_HOST_CALL callWeakMap(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -96,18 +104,6 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)
     });
 
     return JSValue::encode(weakMap);
-}
-
-ConstructType WeakMapConstructor::getConstructData(JSCell*, ConstructData& constructData)
-{
-    constructData.native.function = constructWeakMap;
-    return ConstructType::Host;
-}
-
-CallType WeakMapConstructor::getCallData(JSCell*, CallData& callData)
-{
-    callData.native.function = callWeakMap;
-    return CallType::Host;
 }
 
 }
