@@ -993,6 +993,11 @@ WI.showNetworkTab = function()
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
+WI.isShowingNetworkTab = function()
+{
+    return this.tabBrowser.selectedTabContentView instanceof WI.NetworkTabContentView;
+};
+
 WI.showTimelineTab = function()
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.TimelineTabContentView);

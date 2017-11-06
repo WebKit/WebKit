@@ -1,5 +1,42 @@
 2017-11-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: no way to navigate from Resource tree element to its entry in Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=179328
+        <rdar://problem/35367294>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New reveal in network tab string.
+
+        * UserInterface/Base/Main.js:
+        (WI.isShowingNetworkTab):
+        Utility to know if the network tab is showing.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        (showResourceWithOptions):
+        (WI.appendContextMenuItemsForURL):
+        Generalize context menus for just a URL.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        Support more tab ignore options, this is starting to get icky. We may want to
+        move to just a preferredTab approach, since that is what some of these want.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._populateTagContextMenu):
+        Make use of new ContextMenu utility to add menu items for a URL.
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView.prototype.showRepresentedObject):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.showRepresentedObject):
+        Handle showing a Resource in the NetworkTab. We immediately show
+        the details view for it, otherwise we fallback to the list view.
+
+2017-11-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Uncaught Exception: TypeError: null is not an object (evaluating 'mimeType.endsWith')
         https://bugs.webkit.org/show_bug.cgi?id=179325
         <rdar://problem/35366896>

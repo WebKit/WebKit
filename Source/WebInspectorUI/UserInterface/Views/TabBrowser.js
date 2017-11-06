@@ -129,6 +129,12 @@ WI.TabBrowser = class TabBrowser extends WI.View
             if (options.ignoreNetworkTab && tabContentView instanceof WI.NetworkTabContentView)
                 continue;
 
+            if (options.ignoreResourcesTab && tabContentView instanceof WI.ResourcesTabContentView)
+                continue;
+
+            if (options.ignoreDebuggerTab && tabContentView instanceof WI.DebuggerTabContentView)
+                continue;
+
             if (tabContentView.canShowRepresentedObject(representedObject))
                 return tabContentView;
         }

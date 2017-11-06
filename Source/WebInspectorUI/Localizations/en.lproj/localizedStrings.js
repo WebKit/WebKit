@@ -779,6 +779,7 @@ localizedStrings["Reveal Breakpoint"] = "Reveal Breakpoint";
 localizedStrings["Reveal in DOM Tree"] = "Reveal in DOM Tree";
 localizedStrings["Reveal in Debugger Tab"] = "Reveal in Debugger Tab";
 localizedStrings["Reveal in Elements Tab"] = "Reveal in Elements Tab";
+localizedStrings["Reveal in Network Tab"] = "Reveal in Network Tab";
 localizedStrings["Reveal in Original Resource"] = "Reveal in Original Resource";
 localizedStrings["Reveal in Resources Tab"] = "Reveal in Resources Tab";
 localizedStrings["Right"] = "Right";

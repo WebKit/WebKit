@@ -42,26 +42,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     contextMenu.appendSeparator();
 
-    if (sourceCode.url) {
-        contextMenu.appendItem(WI.UIString("Open in New Tab"), () => {
-            const frame = null;
-            WI.openURL(sourceCode.url, frame, {alwaysOpenExternally: true});
-        });
-
-        if (WI.frameResourceManager.resourceForURL(sourceCode.url) && !WI.isShowingResourcesTab()) {
-            contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
-                const options = {ignoreNetworkTab: true};
-                if (location)
-                    WI.showSourceCodeLocation(location, options);
-                else
-                    WI.showSourceCode(sourceCode, options);
-            });
-        }
-
-        contextMenu.appendItem(WI.UIString("Copy Link Address"), () => {
-            InspectorFrontendHost.copyText(sourceCode.url);
-        });
-    }
+    WI.appendContextMenuItemsForURL(contextMenu, sourceCode.url, {sourceCode, location});
 
     if (sourceCode instanceof WI.Resource) {
         if (sourceCode.urlComponents.scheme !== "data") {
@@ -97,6 +78,44 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
         contextMenu.appendSeparator();
     }
+};
+
+WI.appendContextMenuItemsForURL = function(contextMenu, url, options)
+{
+    if (!url)
+        return;
+
+    let {sourceCode, location, frame} = options;
+    function showResourceWithOptions(options) {
+        if (location)
+            WI.showSourceCodeLocation(location, options);
+        else if (sourceCode)
+            WI.showSourceCode(sourceCode, options);
+        else
+            WI.openURL(url, frame, options);
+    }
+
+    contextMenu.appendItem(WI.UIString("Open in New Tab"), () => {
+        const frame = null;
+        WI.openURL(url, frame, {alwaysOpenExternally: true});
+    });
+
+    if (WI.frameResourceManager.resourceForURL(url)) {
+        if (!WI.isShowingResourcesTab()) {
+            contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
+                showResourceWithOptions({ignoreNetworkTab: true, ignoreSearchTab: true});
+            });
+        }
+        if (!WI.isShowingNetworkTab()) {
+            contextMenu.appendItem(WI.UIString("Reveal in Network Tab"), () => {
+                showResourceWithOptions({ignoreResourcesTab: true, ignoreDebuggerTab: true, ignoreSearchTab: true});
+            });
+        }
+    }
+
+    contextMenu.appendItem(WI.UIString("Copy Link Address"), () => {
+        InspectorFrontendHost.copyText(sourceCode.url);
+    });
 };
 
 WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {})

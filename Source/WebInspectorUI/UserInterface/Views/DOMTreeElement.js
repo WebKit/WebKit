@@ -739,27 +739,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         if (event.target && event.target.tagName === "A") {
             let url = event.target.href;
-
-            contextMenu.appendItem(WI.UIString("Open in New Tab"), () => {
-                const frame = null;
-                WI.openURL(url, frame, {alwaysOpenExternally: true});
-            });
-
-            if (WI.frameResourceManager.resourceForURL(url)) {
-                contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
-                    let frame = WI.frameResourceManager.frameForIdentifier(node.frameIdentifier);
-
-                    const options = {
-                        ignoreNetworkTab: true,
-                        ignoreSearchTab: true,
-                    };
-                    WI.openURL(url, frame, options);
-                });
-            }
-
-            contextMenu.appendItem(WI.UIString("Copy Link Address"), () => {
-                InspectorFrontendHost.copyText(url);
-            });
+            let frame = WI.frameResourceManager.frameForIdentifier(node.frameIdentifier);
+            WI.appendContextMenuItemsForURL(contextMenu, url, {frame});
         }
 
         contextMenu.appendSeparator();

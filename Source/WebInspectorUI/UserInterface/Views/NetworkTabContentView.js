@@ -98,6 +98,12 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         return representedObject instanceof WI.Resource;
     }
 
+    showRepresentedObject(representedObject, cookie)
+    {
+        console.assert(this._contentBrowser.currentContentView === this._networkTableContentView);
+        this._networkTableContentView.showRepresentedObject(representedObject, cookie);
+    }
+
     get supportsSplitContentBrowser()
     {
         return true;

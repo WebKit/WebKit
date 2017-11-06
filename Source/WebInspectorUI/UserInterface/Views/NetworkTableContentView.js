@@ -256,6 +256,21 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
     }
 
+    showRepresentedObject(representedObject, cookie)
+    {
+        console.assert(representedObject instanceof WI.Resource);
+
+        let rowIndex = this._rowIndexForResource(representedObject);
+        if (rowIndex === -1) {
+            this._selectedResource = null;
+            this._table.clearSelectedRow();
+            this._hideResourceDetailView();
+            return;
+        }
+   
+        this._table.selectRow(rowIndex);
+    }
+
     // NetworkResourceDetailView delegate
 
     networkResourceDetailViewClose(resourceDetailView)
