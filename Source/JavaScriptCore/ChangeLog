@@ -1,3 +1,20 @@
+2017-11-06  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r224426. rdar://problem/35364690
+
+    2017-11-03  Michael Saboff  <msaboff@apple.com>
+
+            The Abstract Interpreter needs to change similar to clobberize() in r224366
+            https://bugs.webkit.org/show_bug.cgi?id=179267
+
+            Reviewed by Saam Barati.
+
+            Add clobberWorld() to HasGenericProperty, HasStructureProperty & GetPropertyEnumerator
+            cases in the abstract interpreter to match what was done for r224366.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2017-11-05  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r224416. rdar://problem/35339831
