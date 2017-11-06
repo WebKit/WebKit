@@ -134,8 +134,6 @@ function TEST_mergeSort()
     let arrays = [
         buildArray(10, x => x),
         buildArray(10, x => -x),
-        buildArray(1000, x => x),
-        buildArray(10000, x => -x),
         buildArray(10000, x => random())
     ];
     
@@ -148,10 +146,11 @@ function TEST_mergeSort()
         let sorted = mergeSorted(array, (a, b) => a < b ? -1 : a > b ? 1 : 0);
         checkSorted(sorted);
         checkSpectrum(array, sorted);
+        test(index + 1)
     }
     
     test(0);
 }
 
-for (var i = 0; i < 3000; ++i)
+for (var i = 0; i < 100; ++i)
     TEST_mergeSort();

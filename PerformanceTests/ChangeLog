@@ -1,3 +1,13 @@
+2017-11-06  Robin Morisset  <rmorisset@apple.com>
+
+        PerformanceTests/TailBench9000/merge-sort.js does not actually sort any of the large arrays it allocates
+        https://bugs.webkit.org/show_bug.cgi?id=178817
+
+        Reviewed by Saam Barati.
+
+        * TailBench9000/merge-sort.js:
+        (TEST_mergeSort):
+
 2017-11-02  Jon Lee  <jonlee@apple.com>
 
         Add license for MotionMark
