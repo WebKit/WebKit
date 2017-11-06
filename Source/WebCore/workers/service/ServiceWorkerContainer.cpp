@@ -194,6 +194,8 @@ void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 {
     ASSERT(m_swConnection);
 
+    setPendingActivity(this);
+
     ServiceWorkerJob& rawJob = job.get();
     auto result = m_jobMap.add(rawJob.data().identifier(), WTFMove(job));
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -384,6 +386,8 @@ void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
 {
     auto taken = m_jobMap.take(job.data().identifier());
     ASSERT_UNUSED(taken, !taken || taken->ptr() == &job);
+
+    unsetPendingActivity(this);
 }
 
 uint64_t ServiceWorkerContainer::connectionIdentifier()
