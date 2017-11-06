@@ -271,13 +271,13 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         if (!event.data.selectedElement)
             return;
 
-        let selectedTreeElement = event.data.selectedElement;
-        if (selectedTreeElement instanceof WI.FolderTreeElement)
-            return;
-
         let recordingContentView = this.contentBrowser.currentContentView;
         if (!(recordingContentView instanceof WI.RecordingContentView))
             return;
+
+        let selectedTreeElement = event.data.selectedElement;
+        if (selectedTreeElement instanceof WI.FolderTreeElement)
+            selectedTreeElement = selectedTreeElement.children.lastValue;
 
         this._updateActionIndex(selectedTreeElement.index, {suppressNavigationSidebarUpdate: true});
     }

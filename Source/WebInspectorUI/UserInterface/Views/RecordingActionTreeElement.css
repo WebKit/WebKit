@@ -27,10 +27,6 @@
     content: url("../Images/Source.svg");
 }
 
-.tree-outline:not(:focus, .force-focus) .item.action:not(.initial-state, .parent, .invalid) > .icon {
-    opacity: 0.7;
-}
-
 .item.action:not(.initial-state)::before {
     position: relative;
     top: 3px;
@@ -61,7 +57,7 @@ body[dir=rtl] .item.action::before {
     opacity: 1;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .item.action > .titles .parameter.swizzled {
+.item.action > .titles .parameter.swizzled {
     color: var(--text-color-gray-medium);
 }
 

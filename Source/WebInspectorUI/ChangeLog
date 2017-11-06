@@ -1,3 +1,20 @@
+2017-11-05  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: selecting Frame tree element should update preview/slider, does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=179072
+        <rdar://problem/35278711>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype._navigationSidebarTreeOutlineSelectionChanged):
+
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.action > .titles .parameter.swizzled):
+        (.tree-outline:not(:focus, .force-focus) .item.action:not(.initial-state, .parent, .invalid) > .icon): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .item.action > .titles .parameter.swizzled): Deleted.
+        Drive-by: remove extra :focus selectors to prevent icon flashing when the window is blurred.
+
 2017-11-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add contextmenu item to arbitrarily add HTML/Child to DOMTree
