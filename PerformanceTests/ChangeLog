@@ -1,5 +1,20 @@
 2017-11-06  Robin Morisset  <rmorisset@apple.com>
 
+        Add a third benchmark to TailBench
+        https://bugs.webkit.org/show_bug.cgi?id=178815
+
+        Reviewed by Saam Barati.
+
+        Add a new benchmark to TailBench: a BF interpreter written in a weird kinda functional style
+
+        * TailBench9000/bf-interpreter.js: Added.
+        (lookForMatchingBracket):
+        (evalRec):
+        (infiniteTape):
+        (evalShort):
+
+2017-11-06  Robin Morisset  <rmorisset@apple.com>
+
         PerformanceTests/TailBench9000/merge-sort.js does not actually sort any of the large arrays it allocates
         https://bugs.webkit.org/show_bug.cgi?id=178817
 

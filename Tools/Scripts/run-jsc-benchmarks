@@ -3037,7 +3037,7 @@ begin
   }
 
   TAILBENCH = BenchmarkSuite.new("TailBench", :geometricMean, 0)
-  ["n-body", "merge-sort"].each {
+  ["n-body", "merge-sort", "bf-interpreter"].each {
     | name |
     TAILBENCH.add TailBenchBenchmark.new(name);
   }
