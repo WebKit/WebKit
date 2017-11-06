@@ -28,6 +28,7 @@
 
 #include "AffineTransform.h"
 #include "DIBPixelData.h"
+#include "GraphicsContextImpl.h"
 #include "Path.h"
 
 #include <cairo-win32.h>
