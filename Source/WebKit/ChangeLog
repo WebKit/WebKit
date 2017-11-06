@@ -1,3 +1,20 @@
+2017-11-06  Jeremy Jones  <jeremyj@apple.com>
+
+        iOS element fullscreen should use a UIGestureRecognizer to detect user interaction.
+        https://bugs.webkit.org/show_bug.cgi?id=179029
+        rdar://problem/35307882
+
+        Reviewed by Simon Fraser.
+
+        Replace _WKTapDelegatingView with a UILongPressGestureRecognizer. When set with a duration of 0, it effectively
+        recognizes UITouchBegin events.
+
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm:
+        (-[_WKFullScreenViewController loadView]):
+        (-[_WKFullScreenViewController gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[_WKTapDelegatingView setTarget:action:]): Deleted.
+        (-[_WKTapDelegatingView hitTest:withEvent:]): Deleted.
+
 2017-11-06  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Add proper implementation for 'updatefound' event

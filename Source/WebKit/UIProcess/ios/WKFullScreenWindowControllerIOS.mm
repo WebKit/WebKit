@@ -101,26 +101,7 @@ struct WKWebViewState {
 } // namespace WebKit
 
 
-@interface _WKTapDelegatingView: UIView
-@property (retain) id target;
-@property (assign) SEL action;
-@end
-
-@implementation _WKTapDelegatingView
-- (void)setTarget:(id)target action:(SEL)action
-{
-    [self setTarget:target];
-    [self setAction:action];
-}
-
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-    [[self target] performSelector:[self action]];
-    return nil;
-}
-@end
-
-@interface _WKFullScreenViewController : UIViewController
+@interface _WKFullScreenViewController : UIViewController <UIGestureRecognizerDelegate>
 @property (retain, nonatomic) NSArray *savedConstraints;
 @property (retain, nonatomic) UIView *contentView;
 @property (retain, nonatomic) id target;
@@ -129,7 +110,7 @@ struct WKWebViewState {
 
 @implementation _WKFullScreenViewController {
     RetainPtr<UIView> _backgroundView;
-    RetainPtr<_WKTapDelegatingView> _tapView;
+    RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
     RetainPtr<UIButton> _cancelButton;
     RetainPtr<UIVisualEffectView> _visualEffectView;
 }
@@ -225,10 +206,11 @@ struct WKWebViewState {
 
     [[self view] addSubview:_cancelButton.get()];
 
-    _tapView = adoptNS([[_WKTapDelegatingView alloc] initWithFrame:[[self view] bounds]]);
-    [_tapView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
-    [_tapView setTarget:self action:@selector(showCancelButton)];
-    [[self view] addSubview:_tapView.get()];
+    _touchGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showCancelButton:)]);
+    [_touchGestureRecognizer setDelegate:self];
+    [_touchGestureRecognizer setCancelsTouchesInView:NO];
+    [_touchGestureRecognizer setMinimumPressDuration:0];
+    [[self view] addGestureRecognizer:_touchGestureRecognizer.get()];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -261,7 +243,7 @@ struct WKWebViewState {
     }];
 }
 
-- (void)showCancelButton
+- (void)showCancelButton:(id)sender
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideCancelButton) object:nil];
     [self performSelector:@selector(hideCancelButton) withObject:nil afterDelay:3.0];
@@ -280,6 +262,13 @@ struct WKWebViewState {
 }
 
 - (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
+// MARK - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;
 }
