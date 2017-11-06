@@ -1,3 +1,14 @@
+2017-11-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r221338): Web Inspector: NavigationBar incorrectly calculates minimumWidth
+        https://bugs.webkit.org/show_bug.cgi?id=179292
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype._calculateMinimumWidth):
+        totalItemWidth was the minimumWidth of the last item.
+
 2017-11-05  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: selecting Frame tree element should update preview/slider, does nothing

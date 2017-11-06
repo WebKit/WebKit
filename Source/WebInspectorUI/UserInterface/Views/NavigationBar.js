@@ -427,7 +427,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (!wasCollapsed)
             this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
 
-        let totalItemWidth = this._visibleNavigationItems.reduce((total, item) => item.minimumWidth, 0);
+        let totalItemWidth = this._visibleNavigationItems.reduce((total, item) => total + item.minimumWidth, 0);
 
         // Remove the collapsed style class if we were not collapsed before.
         if (!wasCollapsed)
