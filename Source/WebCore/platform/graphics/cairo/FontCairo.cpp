@@ -253,7 +253,7 @@ Path CairoGlyphToPathTranslator::path()
     float syntheticBoldOffset = m_fontData->syntheticBoldOffset();
     if (syntheticBoldOffset) {
         cairo_translate(path.platformPath()->context(), syntheticBoldOffset, 0);
-        cairo_show_glyphs(path.platformPath()->context(), &cairoGlyph, 1);
+        cairo_glyph_path(path.platformPath()->context(), &cairoGlyph, 1);
     }
 
     path.transform(m_translation);
