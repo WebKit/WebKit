@@ -1782,7 +1782,7 @@ WI._domNodeWasInspected = function(event)
     InspectorFrontendHost.bringToFront();
 
     this.showElementsTab();
-    this.showMainFrameDOMTree(event.data.node);
+    this.showMainFrameDOMTree(event.data.node, {ignoreSearchTab: true});
 };
 
 WI._inspectModeStateChanged = function(event)

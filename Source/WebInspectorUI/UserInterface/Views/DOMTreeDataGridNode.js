@@ -64,6 +64,6 @@ WI.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WI.DataGridNode
 
     _goToArrowWasClicked()
     {
-        WI.showMainFrameDOMTree(this._domNode);
+        WI.showMainFrameDOMTree(this._domNode, {ignoreSearchTab: true});
     }
 };

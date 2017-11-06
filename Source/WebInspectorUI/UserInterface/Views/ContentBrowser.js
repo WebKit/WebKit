@@ -231,6 +231,9 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
     shown()
     {
+        this._updateContentViewSelectionPathNavigationItem(this.currentContentView);
+        this.updateHierarchicalPathForCurrentContentView()
+
         this._contentViewContainer.shown();
     }
 
@@ -487,6 +490,10 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
         if (event.target !== this.currentContentView)
             return;
 
+        // If the ContentView is a tombstone within our ContentViewContainer, do nothing. Let the owning ContentBrowser react.
+        if (event.target.parentContainer !== this._contentViewContainer)
+            return;
+
         this._updateContentViewSelectionPathNavigationItem(event.target);
         this._updateBackForwardButtons();
 
@@ -500,6 +507,10 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
     _contentViewSupplementalRepresentedObjectsDidChange(event)
     {
         if (event.target !== this.currentContentView)
+            return;
+
+        // If the ContentView is a tombstone within our ContentViewContainer, do nothing. Let the owning ContentBrowser react.
+        if (event.target.parentContainer !== this._contentViewContainer)
             return;
 
         this.soon._dispatchCurrentRepresentedObjectsDidChangeEvent();
@@ -526,6 +537,10 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
     _contentViewNavigationItemsDidChange(event)
     {
         if (event.target !== this.currentContentView)
+            return;
+
+        // If the ContentView is a tombstone within our ContentViewContainer, do nothing. Let the owning ContentBrowser react.
+        if (event.target.parentContainer !== this._contentViewContainer)
             return;
 
         const forceUpdate = true;

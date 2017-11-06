@@ -89,4 +89,26 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
     {
         return this.representedObject.sourceCodeTextRange.synthesizedTextValue + ":" + this.representedObject.title;
     }
+
+    // Protected
+
+    populateContextMenu(contextMenu, event)
+    {
+        if (this.representedObject instanceof WI.DOMSearchMatchObject) {
+            contextMenu.appendItem(WI.UIString("Reveal in Elements Tab"), () => {
+                WI.showMainFrameDOMTree(this.representedObject.domNode, {
+                    ignoreSearchTab: true,
+                });
+            });
+        } else if (this.representedObject instanceof WI.SourceCodeSearchMatchObject) {
+            contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
+                WI.showOriginalOrFormattedSourceCodeTextRange(this.representedObject.sourceCodeTextRange, {
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                });
+            });
+        }
+
+        super.populateContextMenu(contextMenu, event);
+    }
 };

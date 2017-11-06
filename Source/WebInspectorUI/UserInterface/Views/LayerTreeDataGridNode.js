@@ -160,6 +160,6 @@ WI.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WI.DataGridNode
     _goToArrowWasClicked()
     {
         var domNode = WI.domTreeManager.nodeForId(this._layer.nodeId);
-        WI.showMainFrameDOMTree(domNode);
+        WI.showMainFrameDOMTree(domNode, {ignoreSearchTab: true});
     }
 };

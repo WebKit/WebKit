@@ -1,3 +1,41 @@
+2017-11-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Selecting a DOM Search Result in Search Tab unexpectedly changes Tabs
+        https://bugs.webkit.org/show_bug.cgi?id=179223
+        <rdar://problem/33949556>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New string.
+
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WI.SearchResultTreeElement.prototype.populateContextMenu):
+        Add a context menu for search results to jump to a different tab.
+        These behaviors match the double click behavior for search results.
+
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView.prototype.canShowRepresentedObject):
+        Always support showing a DOM Tree. Clients should be using
+        ignoreSearchTab if they don't want to jump here.
+
+        * UserInterface/Views/DOMTreeDataGridNode.js:
+        (WI.DOMTreeDataGridNode.prototype._goToArrowWasClicked):
+        * UserInterface/Views/LayerTreeDataGridNode.js:
+        (WI.LayerTreeDataGridNode.prototype._goToArrowWasClicked):
+        Use ignoreSearchTab just in case when showing a DOM Tree.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype.shown):
+        When showing, update our UI to reflect the values of the current content view, which
+        for a while may have been owned by another ContentBrowser.
+
+        (WI.ContentBrowser.prototype._contentViewSelectionPathComponentDidChange):
+        (WI.ContentBrowser.prototype._contentViewSupplementalRepresentedObjectsDidChange):
+        (WI.ContentBrowser.prototype._contentViewNavigationItemsDidChange):
+        We can avoid work in a few places where we might not be the owning ContentBrowser
+        of a ContentView that is changing.
+
 2017-11-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r221338): Web Inspector: NavigationBar incorrectly calculates minimumWidth
